@@ -1,5 +1,7 @@
 # Sequence diagrams
 
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./sequenceDiagram.md)
+
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
 
 Mermaid can render sequence diagrams.
@@ -15,6 +17,10 @@ sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
 ```
+
+## A note on nodes, the word "end" could potentially break the diagram, due to the way that the mermaid language is scripted.
+## If unavoidable, one must use parentheses(), quotation marks "", or brackets {},[], to enclose the word "end". i.e : (end), [end], {end}.
+
 
 ## Syntax
 
@@ -506,8 +512,11 @@ mermaid.sequenceConfig = {
 | bottomMarginAdj   | Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists. | 1                              |
 | actorFontSize     | Sets the font size for the actor's description                                                                                             | 14                             |
 | actorFontFamily   | Sets the font family for the actor's description                                                                                           | "Open-Sans", "sans-serif"      |
+| actorFontWeight   | Sets the font weight for the actor's description                                                                                           | "Open-Sans", "sans-serif"      |
 | noteFontSize      | Sets the font size for actor-attached notes                                                                                                | 14                             |
 | noteFontFamily    | Sets the font family for actor-attached notes                                                                                              | "trebuchet ms", verdana, arial |
+| noteFontWeight    | Sets the font weight for actor-attached notes                                                                                              | "trebuchet ms", verdana, arial |
 | noteAlign         | Sets the text alignment for text in actor-attached notes                                                                                   | center                         |
 | messageFontSize   | Sets the font size for actor<->actor messages                                                                                              | 16                             |
 | messageFontFamily | Sets the font family for actor<->actor messages                                                                                            | "trebuchet ms", verdana, arial |
+| messageFontWeight | Sets the font weight for actor<->actor messages                                                                                            | "trebuchet ms", verdana, arial |

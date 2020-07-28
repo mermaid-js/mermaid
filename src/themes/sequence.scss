@@ -3,7 +3,7 @@
   fill: $actorBkg;
 }
 
-text.actor {
+text.actor > tspan {
   fill: $actorTextColor;
   stroke: none;
 }
@@ -14,18 +14,19 @@ text.actor {
 
 .messageLine0 {
   stroke-width: 1.5;
-  stroke-dasharray: '2 2';
+  stroke-dasharray: none;
   stroke: $signalColor;
 }
 
 .messageLine1 {
   stroke-width: 1.5;
-  stroke-dasharray: '2 2';
+  stroke-dasharray: 2, 2;
   stroke: $signalColor;
 }
 
-#arrowhead {
+#arrowhead path {
   fill: $signalColor;
+  stroke: $signalColor;
 }
 
 .sequenceNumber {
@@ -37,13 +38,13 @@ text.actor {
 }
 
 #crosshead path {
-  fill: $signalColor !important;
-  stroke: $signalColor !important;
+  fill: $signalColor;
+  stroke: $signalColor;
 }
 
 .messageText {
   fill: $signalTextColor;
-  stroke: none;
+  stroke: $signalTextColor;
 }
 
 .labelBox {
@@ -51,20 +52,21 @@ text.actor {
   fill: $labelBoxBkgColor;
 }
 
-.labelText {
+.labelText, .labelText > tspan {
   fill: $labelTextColor;
   stroke: none;
 }
 
-.loopText {
+.loopText, .loopText > tspan {
   fill: $loopTextColor;
   stroke: none;
 }
 
 .loopLine {
-  stroke-width: 2;
-  stroke-dasharray: '2 2';
+  stroke-width: 2px;
+  stroke-dasharray: 2, 2;
   stroke: $labelBoxBorderColor;
+  fill: $labelBoxBorderColor;
 }
 
 .note {
@@ -73,12 +75,9 @@ text.actor {
   fill: $noteBkgColor;
 }
 
-.noteText {
-  fill: black;
+.noteText, .noteText > tspan {
+  fill: $noteTextColor;
   stroke: none;
-  font-family: 'trebuchet ms', verdana, arial;
-  font-family: var(--mermaid-font-family);
-  font-size: 14px;
 }
 
 .activation0 {

@@ -4,15 +4,16 @@
       href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
       rel="stylesheet"
     />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        background:#333;
+        /* background:#333; */
         font-family: 'Arial';
         }
-      h1 { color: white;}
+      h1 { color: grey;}
       .mermaid2 {
         display: none;
       }
@@ -20,240 +21,84 @@
   </head>
   <body>
     <h1>info below</h1>
-      <div class="mermaid" style="width: 100%; height: 20%;">
-        flowchart LR
-          user1[fa:fa-user User 1] -- edit -> folder
-      </div>
+    <div class="flex">
       <div class="mermaid2" style="width: 50%; height: 20%;">
-flowchart LR
-    A{{A}}-- apa -->B{{B}};
-    click A callback "Tooltip"
-    click B "http://www.github.com" "This is a link"
-
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-graph LR
-    A{{A}}--apa-->B{{B}};
-
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-     stateDiagram-v2
-      [*]-->TV
-
-      state TV {
-        state fork_state &lt;&lt;fork&gt;&gt;
-        [*] --> fork_state
-        fork_state --> State2
-        fork_state --> State3
-
-        state join_state &lt;&lt;join&gt;&gt;
-        State2 --> join_state
-        State3 --> join_state
-        join_state --> State4
-        State4 --> [*]
-      }
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-        stateDiagram-v2
-        [*] --> Still
-        Still --> [*]
-        Still --> Moving
-        Moving --> Still
-        Moving --> Crash
-        Crash --> [*]
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-stateDiagram-v2
-    [*] --> First
-    First --> Third
-    First --> sec
-
-    state First {
-        [*] --> fir
-        fir --> [*]
-    }
-    state Second {
-        [*] --> sec
-        sec --> [*]
-   }
-    state Third {
-        [*] --> thi
-        thi --> [*]
-      }
-      thi --> sec
-    </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-flowchart TD
-    subgraph A
-      a
+flowchart BT
+    subgraph two
+    b1
     end
-    subgraph B
-      b
+    subgraph three
+    c1-->c2
     end
-    subgraph C
-      subgraph D
-        d
+    c1 --apa apa apa--> b1
+    two --> c2
+      </div>
+      <div class="mermaid" style="width: 50%; height: 200px;">
+sequenceDiagram
+   Alice->>Bob:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+   Bob->>Alice: I'm short though
+      </div>
+      <div class="mermaid" style="width: 50%; height: 200px;">
+        %%{init: {'securityLevel': 'loose'}}%%
+      graph TD
+        A[Christmas] -->|Get money| B(Go shopping)
+        B --> C{{Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?}}
+        C -->|One| D[Laptop]
+        C -->|Two| E[iPhone]
+        C -->|Three| F[Car]
+        click A "index.html#link-clicked" "link test"
+        click B callback "click test"
+        classDef someclass fill:#f96;
+        class A someclass;
+        class C someclass;
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 200px;">
+
+      flowchart BT
+      subgraph a
+        b1 -- ok --> b2
       end
-    end
-    A -- oAo --o B
-    A --> C
-    </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-flowchart TD
-    subgraph A
-      a
-    end
-    subgraph B
-      b
-    end
-    c-->A
-    c-->B
-  </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
+      a -- sert --> c
+      c --> d
+      b1 --> d
+      a --asd123 --> d
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
 stateDiagram-v2
-    [*] --> First
-    First --> Second
-    First --> Third
+  state A {
+    B1 --> B2: ok
+  }
+  A --> C: sert
+  C --> D
+  B1 --> D
+  A --> D: asd123
+      </div>
+      </div>
+      <div class="mermaid" style="width: 50%; height: 20%;">
 
-    state First {
-        [*] --> fir
-        fir --> [*]
-    }
-    state Second {
-        [*] --> sec
-        sec --> [*]
-    }
-    state Third {
-        [*] --> thi
-        thi --> [*]
-    }
-    </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-        stateDiagram-v2
-          [*]-->TV
-
-          state TV {
-            [*] --> Off: Off to start with
-            On --> Off : Turn off
-            Off --> On : Turn on
-          }
-
-          TV--> Console
-
-          state Console {
-            [*] --> Off2: Off to start with
-            On2--> Off2 : Turn off
-            Off2 --> On2 : Turn on
-            On2-->Playing
-
-            state Playing {
-              Alive --> Dead
-              Dead-->Alive
-            }
-          }
+        classDiagram
+    Customer "1" --> "*" Ticket
+    Student "1" --> "1..*" Course
+    Galaxy --> "many" Star : Contains
       </div>
 
-    <div style="display: flex;flex-direction:column;width: 100%; height: 100%">
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-        stateDiagram-v2
-          state apa {
-            [*] --> Still
-            Still --> [*]
-
-            Still --> Moving
-            Moving --> Still
-            Moving --> Crash
-            Crash --> [*]
-          }
-
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart TB
-        a --> b
-
-        subgraph id1 [Test]
-            a --apa--> c
-            b
-            c-->b
-            b-->H
-          end
-        G-->H
-        G-->id1
-        id1 --> I
-        I --> G
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart RL
-        a --> b
-
-        subgraph id1 [Test]
-            a --apa--> c
-            b
-            c-->b
-            b-->H
-          end
-        G-->H
-        G-->id1
-        id1 --> I
-        I --> G
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart RL
-
-        subgraph id1 [Test]
-          a
-        end
-        b-->id1
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart RL
-
-        subgraph id1 [Test1]
-          a
-        end
-        subgraph id2 [Test2]
-          b
-        end
-        a --> id2
-        a --> b
-        b-->id1
-        id1 --> id2
-      </div>
-      new:
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart LR
-          a <--> b
-          b o--o c
-          c x--x d
-          a21([In the box]) --> b2
-          b2((b2)) --o c2
-          c2(c2) --x d2 --> id1{{This is the text in the box}} --> A[(cylindrical<br />shape<br />test)]
-      </div>
-      old:
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        graph LR
-          a((a)) --> b --> id1{{This is the text in the box}}
-          A[(cylindrical<br />shape<br />test)]
-      </div>
-
-</div>
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'dark',
+        // theme: 'dark',
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'linear', "htmlLabels": false },
+        flowchart: { curve: 'cardinal', "htmlLabels": false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         fontFamily: '"arial", sans-serif',
-        curve: 'linear',
-        securityLevel: 'loose'
+        curve: 'cardinal',
+        securityLevel: 'strict'
       });
       function callback(){alert('It worked');}
     </script>

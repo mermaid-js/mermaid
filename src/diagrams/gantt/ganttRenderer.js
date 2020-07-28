@@ -80,6 +80,22 @@ export const draw = function(text, id) {
 
   categories = checkUnique(categories);
 
+  function taskCompare(a, b) {
+    const taskA = a.startTime;
+    const taskB = b.startTime;
+    let result = 0;
+    if (taskA > taskB) {
+      result = 1;
+    } else if (taskA < taskB) {
+      result = -1;
+    }
+    return result;
+  }
+
+  // Sort the task array using the above taskCompare() so that
+  // tasks are created based on their order of startTime
+  taskArray.sort(taskCompare);
+
   makeGant(taskArray, w, h);
   if (typeof conf.useWidth !== 'undefined') {
     elem.setAttribute('width', w);
@@ -119,6 +135,8 @@ export const draw = function(text, id) {
       .append('rect')
       .attr('x', 0)
       .attr('y', function(d, i) {
+        // Ignore the incoming i value and use our order instead
+        i = d.order;
         return i * theGap + theTopPad - 2;
       })
       .attr('width', function() {
@@ -160,6 +178,8 @@ export const draw = function(text, id) {
         return timeScale(d.startTime) + theSidePad;
       })
       .attr('y', function(d, i) {
+        // Ignore the incoming i value and use our order instead
+        i = d.order;
         return i * theGap + theTopPad;
       })
       .attr('width', function(d) {
@@ -263,6 +283,8 @@ export const draw = function(text, id) {
         }
       })
       .attr('y', function(d, i) {
+        // Ignore the incoming i value and use our order instead
+        i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
       })
       .attr('text-height', theBarHeight)
@@ -280,6 +302,7 @@ export const draw = function(text, id) {
         }
 
         let secNum = 0;
+        console.log(conf);
         for (let i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
             secNum = i % conf.numberSectionStyles;

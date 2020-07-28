@@ -4,26 +4,34 @@
  *  MIT license.
  */
 %lex
-%x string
 %options case-insensitive
 
-%{
-	// Pre-lexer code can go here
-%}
+%x string
+%x title
+%x open_directive
+%x type_directive
+%x arg_directive
+%x close_directive
 
 %%
-\%\%[^\n]*               /* do nothing */
-\s+                      /* skip whitespace */
-"pie"		             return 'pie'    ;
-[\s\n\r]+                 return 'NL'      ;
-[\s]+ 		              return 'space';
-"title"\s[^#\n;]+         return 'title';
-["]                       {/*console.log('begin str');*/this.begin("string");}
-<string>["]               {/*console.log('pop-state');*/this.popState();}
-<string>[^"]*             {/*console.log('ending string')*/return "STR";}
-":"[\s]*[\d]+(?:\.[\d]+)? return "VALUE";
-
-<<EOF>>           return 'EOF'     ;
+\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+\%\%(?!\{)[^\n]*                                                /* skip comments */
+[^\}]\%\%[^\n]*                                                 /* skip comments */{ console.log('Crap after close'); }
+[\n\r]+                                                         return 'NEWLINE';
+\%\%[^\n]*                                                      /* do nothing */
+[\s]+ 		                                                      /* ignore */
+title                                                           { this.begin("title");return 'title'; }
+<title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
+["]                                                             { this.begin("string"); }
+<string>["]                                                     { this.popState(); }
+<string>[^"]*                                                   { return "txt"; }
+"pie"		                                                        return 'PIE';
+":"[\s]*[\d]+(?:\.[\d]+)?                                       return "value";
+<<EOF>>                                                         return 'EOF';
 
 
 /lex
@@ -33,8 +41,9 @@
 %% /* language grammar */
 
 start
-// %{	: info document 'EOF' { return yy; } }
-	: pie document 'EOF'
+  : eol start
+  | directive start
+	| PIE document
 	;
 
 document
@@ -43,15 +52,41 @@ document
 	;
 
 line
-	: statement { }
-	| 'NL'
+	: statement eol { $$ = $1 }
 	;
 
 statement
-	:  STR VALUE {
-		/*console.log('str:'+$1+' value: '+$2)*/
-		yy.addSection($1,yy.cleanupValue($2));  }
-	| title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
+  :
+	| txt value          { yy.addSection($1,yy.cleanupValue($2)); }
+	| title title_value  { $$=$2.trim();yy.setTitle($$); }
+	| directive
 	;
+
+directive
+  : openDirective typeDirective closeDirective
+  | openDirective typeDirective ':' argDirective closeDirective
+  ;
+
+eol
+  : NEWLINE
+  | ';'
+  | EOF
+  ;
+
+openDirective
+  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
+  ;
+
+typeDirective
+  : type_directive { yy.parseDirective($1, 'type_directive'); }
+  ;
+
+argDirective
+  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
+  ;
+
+closeDirective
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'pie'); }
+  ;
 
 %%

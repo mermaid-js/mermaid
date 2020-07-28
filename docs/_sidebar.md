@@ -3,6 +3,7 @@
   - [mermaid](README.md)
   - [FAQ](faq.md)
   - [Usage](usage.md)
+  - [Integrations](integrations.md)
   - [Examples](examples.md)
   - [mermaid CLI](mermaidCLI.md)
 
@@ -16,15 +17,17 @@
   - [User Journey](user-journey.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
+  - [Directives](directives.md)
 
 - Guide
 
   - [Development](development.md)
-  - [mermaidAPI](mermaidAPI.md)
+  - [Configurations](Setup.md)
   - [Changelog](CHANGELOG.md)
 
-- I'm a n00b
+- Beginner's Guide
   - [overview](n00b-overview.md)
   - [Getting started - easier](n00b-gettingStarted.md)
+  - [Theming](theming.md)
   - [Diagram syntax intro](n00b-syntaxReference.md)
   - [Advanced usage](n00b-advanced.md)

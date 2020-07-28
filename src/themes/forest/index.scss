@@ -15,7 +15,7 @@ $clusterBorder: $border2;
 $defaultLinkColor: $lineColor;
 $titleColor: #333;
 $edgeLabelBackground: #e8e8e8;
-
+$edgeLabelcolor: #333;
 /* Sequence Diagram variables */
 
 $actorBorder: $border1;
@@ -30,6 +30,7 @@ $labelTextColor: $actorTextColor;
 $loopTextColor: $actorTextColor;
 $noteBorderColor: $border2;
 $noteBkgColor: #fff5ad;
+$noteTextColor: $actorTextColor;
 $activationBorderColor: #666;
 $activationBkgColor: #f4f4f4;
 $sequenceNumberColor: white;

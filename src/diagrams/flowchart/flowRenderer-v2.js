@@ -181,8 +181,15 @@ export const addEdges = function(edges, g) {
 
   edges.forEach(function(edge) {
     cnt++;
+
+    // Identify Link
+    var linkId = 'L-' + edge.start + '-' + edge.end;
+    var linkNameStart = 'LS-' + edge.start;
+    var linkNameEnd = 'LE-' + edge.end;
+
     const edgeData = {};
-    edgeData.id = 'id' + cnt;
+    //edgeData.id = 'id' + cnt;
+
     // Set link type for rendering
     if (edge.type === 'arrow_open') {
       edgeData.arrowhead = 'none';
@@ -190,8 +197,34 @@ export const addEdges = function(edges, g) {
       edgeData.arrowhead = 'normal';
     }
 
-    logger.info(edgeData, edge);
-    edgeData.arrowType = edge.type;
+    // Check of arrow types, placed here in order not to break old rendering
+    edgeData.arrowTypeStart = 'arrow_open';
+    edgeData.arrowTypeEnd = 'arrow_open';
+
+    /* eslint-disable no-fallthrough */
+    switch (edge.type) {
+      case 'double_arrow_cross':
+        edgeData.arrowTypeStart = 'arrow_cross';
+      case 'arrow_cross':
+        edgeData.arrowTypeEnd = 'arrow_cross';
+        break;
+      case 'double_arrow_point':
+        edgeData.arrowTypeStart = 'arrow_point';
+      case 'arrow_point':
+        edgeData.arrowTypeEnd = 'arrow_point';
+        break;
+      case 'double_arrow_circle':
+        edgeData.arrowTypeStart = 'arrow_circle';
+      case 'arrow_circle':
+        edgeData.arrowTypeEnd = 'arrow_circle';
+        break;
+    }
+
+    // logger.info('apa', edgeData, edge);
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowType = edgeData.arrowTypeEnd;
+    // logger.info('apa', edgeData, edge);
 
     let style = '';
     let labelStyle = '';
@@ -210,12 +243,16 @@ export const addEdges = function(edges, g) {
           if (typeof defaultLabelStyle !== 'undefined') {
             labelStyle = defaultLabelStyle;
           }
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'solid';
           break;
         case 'dotted':
-          style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'dotted';
           break;
         case 'thick':
-          style = ' stroke-width: 3.5px;fill:none';
+          edgeData.thickness = 'thick';
+          edgeData.pattern = 'solid';
           break;
       }
     }
@@ -241,7 +278,7 @@ export const addEdges = function(edges, g) {
 
       if (getConfig().flowchart.htmlLabels && false) { // eslint-disable-line
         edgeData.labelType = 'html';
-        edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
+        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
@@ -253,6 +290,10 @@ export const addEdges = function(edges, g) {
         edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
       }
     }
+
+    edgeData.id = linkId;
+    edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
+
     // Add the edge to the graph
     g.setEdge(edge.start, edge.end, edgeData, cnt);
   });
@@ -366,7 +407,7 @@ export const draw = function(text, id) {
     return flowDb.getTooltip(this.id);
   });
 
-  const padding = 8;
+  const padding = conf.diagramPadding;
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;

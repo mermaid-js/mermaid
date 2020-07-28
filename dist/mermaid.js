@@ -149,162 +149,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss":
-/*!*****************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss ***!
-  \*****************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #BDD5EA;\n  stroke: purple;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: lightgrey; }\n\n.edgePath .path {\n  stroke: lightgrey;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #6D6D65;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #F9FFFE; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #6D6D65;\n  border: 1px solid rgba(255, 255, 255, 0.25);\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #81B1DB;\n  fill: #BDD5EA; }\n\ntext.actor {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: lightgrey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: '2 2';\n  stroke: lightgrey; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: '2 2';\n  stroke: lightgrey; }\n\n#arrowhead {\n  fill: lightgrey; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: lightgrey; }\n\n#crosshead path {\n  fill: lightgrey !important;\n  stroke: lightgrey !important; }\n\n.messageText {\n  fill: lightgrey;\n  stroke: none; }\n\n.labelBox {\n  stroke: #81B1DB;\n  fill: #BDD5EA; }\n\n.labelText {\n  fill: #323D47;\n  stroke: none; }\n\n.loopText {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2;\n  stroke-dasharray: '2 2';\n  stroke: #81B1DB; }\n\n.note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\n.noteText {\n  fill: black;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 14px; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(255, 255, 255, 0.3); }\n\n.section2 {\n  fill: #EAE8B9; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #F9FFFE; }\n\n.sectionTitle1 {\n  fill: #F9FFFE; }\n\n.sectionTitle2 {\n  fill: #F9FFFE; }\n\n.sectionTitle3 {\n  fill: #F9FFFE; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #DB5757;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #323D47;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #323D47;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: #323D47; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #BDD5EA;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: lightgrey; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: lightgrey; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #81B1DB;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #323D47 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #323D47 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #E83737;\n  fill: #E83737;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #E83737;\n  fill: #81B1DB;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #E83737;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #323D47 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #323D47 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: purple;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #BDD5EA;\n  stroke: purple; }\n\ng.classGroup line {\n  stroke: purple;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #BDD5EA;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: purple;\n  font-size: 10px; }\n\n.relation {\n  stroke: purple;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #BDD5EA;\n  stroke: purple;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #BDD5EA;\n  stroke: purple;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: purple;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: purple;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #BDD5EA;\n  stroke: purple; }\n\ng.stateGroup line {\n  stroke: purple;\n  stroke-width: 1; }\n\n.transition {\n  stroke: purple;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #BDD5EA;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: purple; }\n\n.statediagram-cluster rect {\n  fill: #BDD5EA;\n  stroke: purple;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: purple; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n.error-icon {\n  fill: #a44141; }\n\n.error-text {\n  fill: #ddd;\n  stroke: #ddd; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss":
-/*!********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss ***!
-  \********************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: #333333; }\n\n.edgePath .path {\n  stroke: #333333;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #ffffde;\n  stroke: #aaaa33;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #ffffde;\n  border: 1px solid #aaaa33;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\ntext.actor {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: '2 2';\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: '2 2';\n  stroke: #333; }\n\n#arrowhead {\n  fill: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333 !important;\n  stroke: #333 !important; }\n\n.messageText {\n  fill: #333;\n  stroke: none; }\n\n.labelBox {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\n.labelText {\n  fill: black;\n  stroke: none; }\n\n.loopText {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2;\n  stroke-dasharray: '2 2';\n  stroke: #CCCCFF; }\n\n.note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n\n.noteText {\n  fill: black;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 14px; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(102, 102, 255, 0.49); }\n\n.section2 {\n  fill: #fff400; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #8a90dd;\n  stroke: #534fbc; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #bfc7ff;\n  stroke: #534fbc; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #bfc7ff;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.classGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #9370DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.stateGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #9370DB; }\n\n.statediagram-cluster rect {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #9370DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #aaaa33;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss":
-/*!*******************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss ***!
-  \*******************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: green; }\n\n.edgePath .path {\n  stroke: green;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #cdffb2;\n  stroke: #6eaa49;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #cdffb2;\n  border: 1px solid #6eaa49;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #13540c;\n  fill: #cde498; }\n\ntext.actor {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: '2 2';\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: '2 2';\n  stroke: #333; }\n\n#arrowhead {\n  fill: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333 !important;\n  stroke: #333 !important; }\n\n.messageText {\n  fill: #333;\n  stroke: none; }\n\n.labelBox {\n  stroke: #326932;\n  fill: #cde498; }\n\n.labelText {\n  fill: black;\n  stroke: none; }\n\n.loopText {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2;\n  stroke-dasharray: '2 2';\n  stroke: #326932; }\n\n.note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n\n.noteText {\n  fill: black;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 14px; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #6eaa49; }\n\n.section2 {\n  fill: #6eaa49; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #487e3a;\n  stroke: #13540c; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #cde498;\n  stroke: #13540c; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #cde498;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.classGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #13540c;\n  font-size: 10px; }\n\n.relation {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.stateGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #13540c; }\n\n.statediagram-cluster rect {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #13540c; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #6eaa49;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss":
-/*!********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss ***!
-  \********************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: #333333; }\n\n.edgePath .path {\n  stroke: #666;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: white;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #eaf2fb;\n  stroke: #26a;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #eaf2fb;\n  border: 1px solid #26a;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #999;\n  fill: #eee; }\n\ntext.actor {\n  fill: #333;\n  stroke: none; }\n\n.actor-line {\n  stroke: #666; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: '2 2';\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: '2 2';\n  stroke: #333; }\n\n#arrowhead {\n  fill: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333 !important;\n  stroke: #333 !important; }\n\n.messageText {\n  fill: #333;\n  stroke: none; }\n\n.labelBox {\n  stroke: #999;\n  fill: #eee; }\n\n.labelText {\n  fill: #333;\n  stroke: none; }\n\n.loopText {\n  fill: #333;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2;\n  stroke-dasharray: '2 2';\n  stroke: #999; }\n\n.note {\n  stroke: #777700;\n  fill: #ffa; }\n\n.noteText {\n  fill: black;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 14px; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #80b3e6; }\n\n.section2 {\n  fill: #80b3e6; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: #e6e6e6;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #d42;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #333;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #333;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #26a;\n  stroke: #1a4d80; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: #333; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: #333; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #eee;\n  stroke: #1a4d80; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #333 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: #666;\n  fill: #bbb;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #333 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #b1361b;\n  fill: #d42;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #b1361b;\n  fill: #eee;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #b1361b;\n  fill: #bbb;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #333 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #333 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #999;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.classGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #999;\n  font-size: 10px; }\n\n.relation {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #999;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #999;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.stateGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #777700;\n  fill: #ffa; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #999; }\n\n.statediagram-cluster rect {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #999; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #ffa;\n  stroke: #777700;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/runtime/api.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/css-loader/dist/runtime/api.js ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/*
-  MIT License http://www.opensource.org/licenses/mit-license.php
-  Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function (useSourceMap) {
-  var list = []; // return the list of modules as css string
-
-  list.toString = function toString() {
-    return this.map(function (item) {
-      var content = cssWithMappingToString(item, useSourceMap);
-
-      if (item[2]) {
-        return '@media ' + item[2] + '{' + content + '}';
-      } else {
-        return content;
-      }
-    }).join('');
-  }; // import a list of modules into the list
-
-
-  list.i = function (modules, mediaQuery) {
-    if (typeof modules === 'string') {
-      modules = [[null, modules, '']];
-    }
-
-    var alreadyImportedModules = {};
-
-    for (var i = 0; i < this.length; i++) {
-      var id = this[i][0];
-
-      if (id != null) {
-        alreadyImportedModules[id] = true;
-      }
-    }
-
-    for (i = 0; i < modules.length; i++) {
-      var item = modules[i]; // skip already imported module
-      // this implementation is not 100% perfect for weird media query combinations
-      // when a module is imported multiple times with different media queries.
-      // I hope this will never occur (Hey this way we have smaller bundles)
-
-      if (item[0] == null || !alreadyImportedModules[item[0]]) {
-        if (mediaQuery && !item[2]) {
-          item[2] = mediaQuery;
-        } else if (mediaQuery) {
-          item[2] = '(' + item[2] + ') and (' + mediaQuery + ')';
-        }
-
-        list.push(item);
-      }
-    }
-  };
-
-  return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-  var content = item[1] || '';
-  var cssMapping = item[3];
-
-  if (!cssMapping) {
-    return content;
-  }
-
-  if (useSourceMap && typeof btoa === 'function') {
-    var sourceMapping = toComment(cssMapping);
-    var sourceURLs = cssMapping.sources.map(function (source) {
-      return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
-    });
-    return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-  }
-
-  return [content].join('\n');
-} // Adapted from convert-source-map (MIT)
-
-
-function toComment(sourceMap) {
-  // eslint-disable-next-line no-undef
-  var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-  var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-  return '/*# ' + data + ' */';
-}
-
-/***/ }),
-
 /***/ "./node_modules/d3-array/src/array.js":
 /*!********************************************!*\
   !*** ./node_modules/d3-array/src/array.js ***!
@@ -34364,490 +34208,6 @@ function decode(html) {
 
 /***/ }),
 
-/***/ "./node_modules/escaper/dist/escaper.js":
-/*!**********************************************!*\
-  !*** ./node_modules/escaper/dist/escaper.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/*!
- * Escaper v2.5.3
- * https://github.com/kobezzza/Escaper
- *
- * Released under the MIT license
- * https://github.com/kobezzza/Escaper/blob/master/LICENSE
- *
- * Date: Tue, 23 Jan 2018 15:58:45 GMT
- */
-
-(function (global, factory) {
-	 true ? factory(exports) :
-	undefined;
-}(this, (function (exports) { 'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
-
-var Escaper = void 0;
-var escaper = Escaper = {
-	VERSION: [2, 5, 3],
-	content: [],
-	cache: {},
-	snakeskinRgxp: null,
-	symbols: null,
-	replace: replace,
-	paste: paste
-};
-
-var stringLiterals = {
-	'"': true,
-	'\'': true,
-	'`': true
-};
-
-var literals = {
-	'/': true
-};
-
-for (var key in stringLiterals) {
-	if (!stringLiterals.hasOwnProperty(key)) {
-		break;
-	}
-
-	literals[key] = true;
-}
-
-var singleComments = {
-	'//': true,
-	'//*': true,
-	'//!': true,
-	'//#': true,
-	'//@': true,
-	'//$': true
-};
-
-var multComments = {
-	'/*': true,
-	'/**': true,
-	'/*!': true,
-	'/*#': true,
-	'/*@': true,
-	'/*$': true
-};
-
-var keyArr = [];
-var finalMap = {};
-
-for (var _key in literals) {
-	if (!literals.hasOwnProperty(_key)) {
-		break;
-	}
-
-	keyArr.push(_key);
-	finalMap[_key] = true;
-}
-
-for (var _key2 in singleComments) {
-	if (!singleComments.hasOwnProperty(_key2)) {
-		break;
-	}
-
-	keyArr.push(_key2);
-	finalMap[_key2] = true;
-}
-
-for (var _key3 in multComments) {
-	if (!multComments.hasOwnProperty(_key3)) {
-		break;
-	}
-
-	keyArr.push(_key3);
-	finalMap[_key3] = true;
-}
-
-var rgxpFlags = [];
-var rgxpFlagsMap = {
-	'g': true,
-	'm': true,
-	'i': true,
-	'y': true,
-	'u': true
-};
-
-for (var _key4 in rgxpFlagsMap) {
-	if (!rgxpFlagsMap.hasOwnProperty(_key4)) {
-		break;
-	}
-
-	rgxpFlags.push(_key4);
-}
-
-var escapeEndMap = {
-	'-': true,
-	'+': true,
-	'*': true,
-	'%': true,
-	'~': true,
-	'>': true,
-	'<': true,
-	'^': true,
-	',': true,
-	';': true,
-	'=': true,
-	'|': true,
-	'&': true,
-	'!': true,
-	'?': true,
-	':': true,
-	'(': true,
-	'{': true,
-	'[': true
-};
-
-var escapeEndWordMap = {
-	'return': true,
-	'yield': true,
-	'await': true,
-	'typeof': true,
-	'void': true,
-	'instanceof': true,
-	'delete': true,
-	'in': true,
-	'new': true,
-	'of': true
-};
-
-/**
- * @param {!Object} obj
- * @param {!Object} p
- * @param {(boolean|number)} val
- */
-function mix(obj, p, val) {
-	for (var _key5 in obj) {
-		if (!obj.hasOwnProperty(_key5)) {
-			break;
-		}
-
-		if (_key5 in p === false) {
-			p[_key5] = val;
-		}
-	}
-}
-
-var symbols = void 0;
-var snakeskinRgxp = void 0;
-
-var uSRgxp = /[^\s/]/;
-var wRgxp = /[a-z]/;
-var sRgxp = /\s/;
-var nRgxp = /[\r\n]/;
-var posRgxp = /\${pos}/g;
-
-var objMap = {
-	'object': true,
-	'function': true
-};
-
-/**
- * Replaces all found blocks ' ... ', " ... ", ` ... `, / ... /, // ..., /* ... *\/ to
- * __ESCAPER_QUOT__number_ in a string and returns a new string
- *
- * @param {string} str - source string
- * @param {(Object<string, boolean>|boolean)=} [opt_withCommentsOrParams=false] - parameters:
- *
- *     (if a parameter value is set to -1, then all found matches will be removed from the final string,
- *          or if the value will be set to true/false they will be included/excluded)
- *
- *     *) @label    - template for replacement, e.g. __ESCAPER_QUOT__${pos}_
- *     *) @all      - replaces all found matches
- *     *) @comments - replaces all kinds of comments
- *     *) @strings  - replaces all kinds of string literals
- *     *) @literals - replaces all kinds of string literals and regular expressions
- *     *) `
- *     *) '
- *     *) "
- *     *) /
- *     *) //
- *     *) //*
- *     *) //!
- *     *) //#
- *     *) //@
- *     *) //$
- *     *) /*
- *     *) /**
- *     *) /*!
- *     *) /*#
- *     *) /*@
- *     *) /*$
- *
- *     OR if the value is boolean, then will be replaced all found comments (true) / literals (false)
- *
- * @param {Array=} [opt_content=Escaper.content] - array for matches
- * @param {?boolean=} [opt_snakeskin] - private parameter for using with Snakeskin
- * @return {string}
- */
-function replace(str, opt_withCommentsOrParams, opt_content, opt_snakeskin) {
-	symbols = symbols || Escaper.symbols || 'a-z';
-	snakeskinRgxp = snakeskinRgxp || Escaper.snakeskinRgxp || new RegExp('[!$' + symbols + '_]', 'i');
-
-	var _Escaper = Escaper,
-	    cache = _Escaper.cache,
-	    content = _Escaper.content;
-
-
-	var isObj = Boolean(opt_withCommentsOrParams && objMap[typeof opt_withCommentsOrParams === 'undefined' ? 'undefined' : _typeof(opt_withCommentsOrParams)]);
-
-	var p = isObj ? Object(opt_withCommentsOrParams) : {};
-
-	function mark(pos) {
-		if (p['@label']) {
-			return p['@label'].replace(posRgxp, pos);
-		}
-
-		return '__ESCAPER_QUOT__' + pos + '_';
-	}
-
-	var withComments = false;
-	if (typeof opt_withCommentsOrParams === 'boolean') {
-		withComments = Boolean(opt_withCommentsOrParams);
-	}
-
-	if ('@comments' in p) {
-		mix(multComments, p, p['@comments']);
-		mix(singleComments, p, p['@comments']);
-		delete p['@comments'];
-	}
-
-	if ('@strings' in p) {
-		mix(stringLiterals, p, p['@strings']);
-		delete p['@strings'];
-	}
-
-	if ('@literals' in p) {
-		mix(literals, p, p['@literals']);
-		delete p['@literals'];
-	}
-
-	if ('@all' in p) {
-		mix(finalMap, p, p['@all']);
-		delete p['@all'];
-	}
-
-	var cacheKey = '';
-	for (var i = -1; ++i < keyArr.length;) {
-		var el = keyArr[i];
-
-		if (multComments[el] || singleComments[el]) {
-			p[el] = withComments || p[el];
-		} else {
-			p[el] = p[el] || !isObj;
-		}
-
-		cacheKey += p[el] + ',';
-	}
-
-	var initStr = str,
-	    stack = opt_content || content;
-
-	if (stack === content && cache[cacheKey] && cache[cacheKey][initStr]) {
-		return cache[cacheKey][initStr];
-	}
-
-	var begin = false,
-	    end = true;
-
-	var escape = false,
-	    comment = false;
-
-	var selectionStart = 0,
-	    block = false;
-
-	var templateVar = 0,
-	    filterStart = false;
-
-	var cut = void 0,
-	    label = void 0;
-
-	var part = '',
-	    rPart = '';
-
-	for (var _i = -1; ++_i < str.length;) {
-		var _el = str.charAt(_i);
-
-		var next = str.charAt(_i + 1),
-		    word = str.substr(_i, 2),
-		    extWord = str.substr(_i, 3);
-
-		if (!comment) {
-			if (!begin) {
-				if (_el === '/') {
-					if (singleComments[word] || multComments[word]) {
-						if (singleComments[extWord] || multComments[extWord]) {
-							comment = extWord;
-						} else {
-							comment = word;
-						}
-					}
-
-					if (comment) {
-						selectionStart = _i;
-						continue;
-					}
-				}
-
-				if (escapeEndMap[_el] || escapeEndWordMap[rPart]) {
-					end = true;
-					rPart = '';
-				} else if (uSRgxp.test(_el)) {
-					end = false;
-				}
-
-				if (wRgxp.test(_el)) {
-					part += _el;
-				} else {
-					rPart = part;
-					part = '';
-				}
-
-				var skip = false;
-				if (opt_snakeskin) {
-					if (_el === '|' && snakeskinRgxp.test(next)) {
-						filterStart = true;
-						end = false;
-						skip = true;
-					} else if (filterStart && sRgxp.test(_el)) {
-						filterStart = false;
-						end = true;
-						skip = true;
-					}
-				}
-
-				if (!skip) {
-					if (escapeEndMap[_el]) {
-						end = true;
-					} else if (uSRgxp.test(_el)) {
-						end = false;
-					}
-				}
-			}
-
-			// [] inside RegExp
-			if (begin === '/' && !escape) {
-				if (_el === '[') {
-					block = true;
-				} else if (_el === ']') {
-					block = false;
-				}
-			}
-
-			if (!begin && templateVar) {
-				if (_el === '}') {
-					templateVar--;
-				} else if (_el === '{') {
-					templateVar++;
-				}
-
-				if (!templateVar) {
-					_el = '`';
-				}
-			}
-
-			if (begin === '`' && !escape && word === '${') {
-				_el = '`';
-				_i++;
-				templateVar++;
-			}
-
-			if (finalMap[_el] && (_el !== '/' || end) && !begin) {
-				begin = _el;
-				selectionStart = _i;
-			} else if (begin && (_el === '\\' || escape)) {
-				escape = !escape;
-			} else if (finalMap[_el] && begin === _el && !escape && (begin !== '/' || !block)) {
-				if (_el === '/') {
-					for (var j = -1; ++j < rgxpFlags.length;) {
-						if (rgxpFlagsMap[str.charAt(_i + 1)]) {
-							_i++;
-						}
-					}
-				}
-
-				begin = false;
-				end = false;
-
-				if (p[_el]) {
-					cut = str.substring(selectionStart, _i + 1);
-
-					if (p[_el] === -1) {
-						label = '';
-					} else {
-						label = mark(stack.length);
-						stack.push(cut);
-					}
-
-					str = str.substring(0, selectionStart) + label + str.substring(_i + 1);
-					_i += label.length - cut.length;
-				}
-			}
-		} else if (nRgxp.test(next) && singleComments[comment] || multComments[_el + str.charAt(_i - 1)] && _i - selectionStart > 2 && multComments[comment]) {
-			if (p[comment]) {
-				cut = str.substring(selectionStart, _i + 1);
-
-				if (p[comment] === -1) {
-					label = '';
-				} else {
-					label = mark(stack.length);
-					stack.push(cut);
-				}
-
-				str = str.substring(0, selectionStart) + label + str.substring(_i + 1);
-				_i += label.length - cut.length;
-			}
-
-			comment = false;
-		}
-	}
-
-	if (stack === content) {
-		cache[cacheKey] = cache[cacheKey] || {};
-		cache[cacheKey][initStr] = str;
-	}
-
-	return str;
-}
-
-var pasteRgxp = /__ESCAPER_QUOT__(\d+)_/g;
-
-/**
- * Replaces all found blocks __ESCAPER_QUOT__number_ to real content in a string
- * and returns a new string
- *
- * @param {string} str - source string
- * @param {Array=} [opt_content=Escaper.content] - array of matches
- * @param {RegExp=} [opt_rgxp] - RegExp for searching, e.g. /__ESCAPER_QUOT__(\d+)_/g
- * @return {string}
- */
-function paste(str, opt_content, opt_rgxp) {
-	return str.replace(opt_rgxp || pasteRgxp, function (str, pos) {
-		return (opt_content || Escaper.content)[pos];
-	});
-}
-
-exports['default'] = escaper;
-exports.replace = replace;
-exports.paste = paste;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
-
-
-/***/ }),
-
 /***/ "./node_modules/graphlib/index.js":
 /*!****************************************!*\
   !*** ./node_modules/graphlib/index.js ***!
@@ -36265,18 +35625,1620 @@ module.exports = '2.1.8';
 
 /***/ }),
 
-/***/ "./node_modules/is-regexp/index.js":
-/*!*****************************************!*\
-  !*** ./node_modules/is-regexp/index.js ***!
-  \*****************************************/
+/***/ "./node_modules/khroma/dist/channels/index.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/channels/index.js ***!
+  \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-module.exports = function (re) {
-	return Object.prototype.toString.call(re) === '[object RegExp]';
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var types_1 = __webpack_require__(/*! ../types */ "./node_modules/khroma/dist/types.js");
+var type_1 = __webpack_require__(/*! ./type */ "./node_modules/khroma/dist/channels/type.js");
+/* CHANNELS */
+var Channels = /** @class */ (function () {
+    /* CONSTRUCTOR */
+    function Channels(data, color) {
+        this.color = color;
+        this.changed = false;
+        this.data = data; //TSC
+        this.type = new type_1.default();
+    }
+    /* API */
+    Channels.prototype.set = function (data, color) {
+        this.color = color;
+        this.changed = false;
+        this.data = data; //TSC
+        this.type.type = types_1.TYPE.ALL;
+        return this;
+    };
+    /* HELPERS */
+    Channels.prototype._ensureHSL = function () {
+        if (this.data.h === undefined)
+            this.data.h = utils_1.default.channel.rgb2hsl(this.data, 'h');
+        if (this.data.s === undefined)
+            this.data.s = utils_1.default.channel.rgb2hsl(this.data, 's');
+        if (this.data.l === undefined)
+            this.data.l = utils_1.default.channel.rgb2hsl(this.data, 'l');
+    };
+    Channels.prototype._ensureRGB = function () {
+        if (this.data.r === undefined)
+            this.data.r = utils_1.default.channel.hsl2rgb(this.data, 'r');
+        if (this.data.g === undefined)
+            this.data.g = utils_1.default.channel.hsl2rgb(this.data, 'g');
+        if (this.data.b === undefined)
+            this.data.b = utils_1.default.channel.hsl2rgb(this.data, 'b');
+    };
+    Object.defineProperty(Channels.prototype, "r", {
+        /* GETTERS */
+        get: function () {
+            if (!this.type.is(types_1.TYPE.HSL) && this.data.r !== undefined)
+                return this.data.r;
+            this._ensureHSL();
+            return utils_1.default.channel.hsl2rgb(this.data, 'r');
+        },
+        /* SETTERS */
+        set: function (r) {
+            this.type.set(types_1.TYPE.RGB);
+            this.changed = true;
+            this.data.r = r;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "g", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.HSL) && this.data.g !== undefined)
+                return this.data.g;
+            this._ensureHSL();
+            return utils_1.default.channel.hsl2rgb(this.data, 'g');
+        },
+        set: function (g) {
+            this.type.set(types_1.TYPE.RGB);
+            this.changed = true;
+            this.data.g = g;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "b", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.HSL) && this.data.b !== undefined)
+                return this.data.b;
+            this._ensureHSL();
+            return utils_1.default.channel.hsl2rgb(this.data, 'b');
+        },
+        set: function (b) {
+            this.type.set(types_1.TYPE.RGB);
+            this.changed = true;
+            this.data.b = b;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "h", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.RGB) && this.data.h !== undefined)
+                return this.data.h;
+            this._ensureRGB();
+            return utils_1.default.channel.rgb2hsl(this.data, 'h');
+        },
+        set: function (h) {
+            this.type.set(types_1.TYPE.HSL);
+            this.changed = true;
+            this.data.h = h;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "s", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.RGB) && this.data.s !== undefined)
+                return this.data.s;
+            this._ensureRGB();
+            return utils_1.default.channel.rgb2hsl(this.data, 's');
+        },
+        set: function (s) {
+            this.type.set(types_1.TYPE.HSL);
+            this.changed = true;
+            this.data.s = s;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "l", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.RGB) && this.data.l !== undefined)
+                return this.data.l;
+            this._ensureRGB();
+            return utils_1.default.channel.rgb2hsl(this.data, 'l');
+        },
+        set: function (l) {
+            this.type.set(types_1.TYPE.HSL);
+            this.changed = true;
+            this.data.l = l;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "a", {
+        get: function () {
+            return this.data.a;
+        },
+        set: function (a) {
+            this.changed = true;
+            this.data.a = a;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Channels;
+}());
+/* EXPORT */
+exports.default = Channels;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/channels/reusable.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/khroma/dist/channels/reusable.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var _1 = __webpack_require__(/*! . */ "./node_modules/khroma/dist/channels/index.js");
+/* REUSABLE */
+var channels = new _1.default({ r: 0, g: 0, b: 0, a: 0 }, 'transparent');
+/* EXPORT */
+exports.default = channels;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/channels/type.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/channels/type.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = __webpack_require__(/*! ../types */ "./node_modules/khroma/dist/types.js");
+/* TYPE */
+var Type = /** @class */ (function () {
+    function Type() {
+        this.type = types_1.TYPE.ALL;
+    }
+    Type.prototype.get = function () {
+        return this.type;
+    };
+    Type.prototype.set = function (type) {
+        if (this.type && this.type !== type)
+            throw new Error('Cannot change both RGB and HSL channels at the same time');
+        this.type = type;
+    };
+    Type.prototype.reset = function () {
+        this.type = types_1.TYPE.ALL;
+    };
+    Type.prototype.is = function (type) {
+        return this.type === type;
+    };
+    return Type;
+}());
+/* EXPORT */
+exports.default = Type;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/hex.js":
+/*!***********************************************!*\
+  !*** ./node_modules/khroma/dist/color/hex.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+var consts_1 = __webpack_require__(/*! ../consts */ "./node_modules/khroma/dist/consts.js");
+/* HEX */
+var Hex = {
+    /* VARIABLES */
+    re: /^#((?:[a-f0-9]{2}){2,4}|[a-f0-9]{3})$/i,
+    /* API */
+    parse: function (color) {
+        if (color.charCodeAt(0) !== 35)
+            return; // '#'
+        var match = color.match(Hex.re);
+        if (!match)
+            return;
+        var hex = match[1], dec = parseInt(hex, 16), length = hex.length, hasAlpha = length % 4 === 0, isFullLength = length > 4, multiplier = isFullLength ? 1 : 17, bits = isFullLength ? 8 : 4, bitsOffset = hasAlpha ? 0 : -1, mask = isFullLength ? 255 : 15;
+        return reusable_1.default.set({
+            r: ((dec >> (bits * (bitsOffset + 3))) & mask) * multiplier,
+            g: ((dec >> (bits * (bitsOffset + 2))) & mask) * multiplier,
+            b: ((dec >> (bits * (bitsOffset + 1))) & mask) * multiplier,
+            a: hasAlpha ? (dec & mask) * multiplier / 255 : 1
+        }, color);
+    },
+    stringify: function (channels) {
+        if (channels.a < 1) { // #RRGGBBAA
+            return "#" + consts_1.DEC2HEX[Math.round(channels.r)] + consts_1.DEC2HEX[Math.round(channels.g)] + consts_1.DEC2HEX[Math.round(channels.b)] + utils_1.default.unit.frac2hex(channels.a);
+        }
+        else { // #RRGGBB
+            return "#" + consts_1.DEC2HEX[Math.round(channels.r)] + consts_1.DEC2HEX[Math.round(channels.g)] + consts_1.DEC2HEX[Math.round(channels.b)];
+        }
+    }
 };
+/* EXPORT */
+exports.default = Hex;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/hsl.js":
+/*!***********************************************!*\
+  !*** ./node_modules/khroma/dist/color/hsl.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+/* HSL */
+var HSL = {
+    /* VARIABLES */
+    re: /^hsla?\(\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e-?\d+)?(?:deg|grad|rad|turn)?)\s*?(?:,|\s)\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e-?\d+)?%)\s*?(?:,|\s)\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e-?\d+)?%)(?:\s*?(?:,|\/)\s*?\+?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e-?\d+)?(%)?))?\s*?\)$/i,
+    hueRe: /^(.+?)(deg|grad|rad|turn)$/i,
+    /* HELPERS */
+    _hue2deg: function (hue) {
+        var match = hue.match(HSL.hueRe);
+        if (match) {
+            var number = match[1], unit = match[2];
+            switch (unit) {
+                case 'grad': return utils_1.default.channel.clamp.h(parseFloat(number) * .9);
+                case 'rad': return utils_1.default.channel.clamp.h(parseFloat(number) * 180 / Math.PI);
+                case 'turn': return utils_1.default.channel.clamp.h(parseFloat(number) * 360);
+            }
+        }
+        return utils_1.default.channel.clamp.h(parseFloat(hue));
+    },
+    /* API */
+    parse: function (color) {
+        var charCode = color.charCodeAt(0);
+        if (charCode !== 104 && charCode !== 72)
+            return; // 'h'/'H'
+        var match = color.match(HSL.re);
+        if (!match)
+            return;
+        var h = match[1], s = match[2], l = match[3], a = match[4], isAlphaPercentage = match[5];
+        return reusable_1.default.set({
+            h: HSL._hue2deg(h),
+            s: utils_1.default.channel.clamp.s(parseFloat(s)),
+            l: utils_1.default.channel.clamp.l(parseFloat(l)),
+            a: a ? utils_1.default.channel.clamp.a(isAlphaPercentage ? parseFloat(a) / 100 : parseFloat(a)) : 1
+        }, color);
+    },
+    stringify: function (channels) {
+        if (channels.a < 1) { // HSLA
+            return "hsla(" + utils_1.default.lang.round(channels.h) + ", " + utils_1.default.lang.round(channels.s) + "%, " + utils_1.default.lang.round(channels.l) + "%, " + channels.a + ")";
+        }
+        else { // HSL
+            return "hsl(" + utils_1.default.lang.round(channels.h) + ", " + utils_1.default.lang.round(channels.s) + "%, " + utils_1.default.lang.round(channels.l) + "%)";
+        }
+    }
+};
+/* EXPORT */
+exports.default = HSL;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/index.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/color/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = __webpack_require__(/*! ../types */ "./node_modules/khroma/dist/types.js");
+var hex_1 = __webpack_require__(/*! ./hex */ "./node_modules/khroma/dist/color/hex.js");
+var keyword_1 = __webpack_require__(/*! ./keyword */ "./node_modules/khroma/dist/color/keyword.js");
+var rgb_1 = __webpack_require__(/*! ./rgb */ "./node_modules/khroma/dist/color/rgb.js");
+var hsl_1 = __webpack_require__(/*! ./hsl */ "./node_modules/khroma/dist/color/hsl.js");
+/* COLOR */
+var Color = {
+    /* VARIABLES */
+    format: {
+        keyword: keyword_1.default,
+        hex: hex_1.default,
+        rgb: rgb_1.default,
+        rgba: rgb_1.default,
+        hsl: hsl_1.default,
+        hsla: hsl_1.default
+    },
+    /* API */
+    parse: function (color) {
+        if (typeof color !== 'string')
+            return color;
+        var channels = hex_1.default.parse(color) || rgb_1.default.parse(color) || hsl_1.default.parse(color) || keyword_1.default.parse(color); // Color providers ordered with performance in mind
+        if (channels)
+            return channels;
+        throw new Error("Unsupported color format: \"" + color + "\"");
+    },
+    stringify: function (channels) {
+        // SASS returns a keyword if possible, but we avoid doing that as it's slower and doesn't really add any value
+        if (!channels.changed && channels.color)
+            return channels.color;
+        if (channels.type.is(types_1.TYPE.HSL) || channels.data.r === undefined) {
+            return hsl_1.default.stringify(channels);
+        }
+        else if (channels.a < 1 || !Number.isInteger(channels.r) || !Number.isInteger(channels.g) || !Number.isInteger(channels.b)) {
+            return rgb_1.default.stringify(channels);
+        }
+        else {
+            return hex_1.default.stringify(channels);
+        }
+    }
+};
+/* EXPORT */
+exports.default = Color;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/keyword.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/color/keyword.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var hex_1 = __webpack_require__(/*! ./hex */ "./node_modules/khroma/dist/color/hex.js");
+/* KEYWORD */
+var Keyword = {
+    /* VARIABLES */
+    colors: {
+        aliceblue: '#f0f8ff',
+        antiquewhite: '#faebd7',
+        aqua: '#00ffff',
+        aquamarine: '#7fffd4',
+        azure: '#f0ffff',
+        beige: '#f5f5dc',
+        bisque: '#ffe4c4',
+        black: '#000000',
+        blanchedalmond: '#ffebcd',
+        blue: '#0000ff',
+        blueviolet: '#8a2be2',
+        brown: '#a52a2a',
+        burlywood: '#deb887',
+        cadetblue: '#5f9ea0',
+        chartreuse: '#7fff00',
+        chocolate: '#d2691e',
+        coral: '#ff7f50',
+        cornflowerblue: '#6495ed',
+        cornsilk: '#fff8dc',
+        crimson: '#dc143c',
+        cyanaqua: '#00ffff',
+        darkblue: '#00008b',
+        darkcyan: '#008b8b',
+        darkgoldenrod: '#b8860b',
+        darkgray: '#a9a9a9',
+        darkgreen: '#006400',
+        darkgrey: '#a9a9a9',
+        darkkhaki: '#bdb76b',
+        darkmagenta: '#8b008b',
+        darkolivegreen: '#556b2f',
+        darkorange: '#ff8c00',
+        darkorchid: '#9932cc',
+        darkred: '#8b0000',
+        darksalmon: '#e9967a',
+        darkseagreen: '#8fbc8f',
+        darkslateblue: '#483d8b',
+        darkslategray: '#2f4f4f',
+        darkslategrey: '#2f4f4f',
+        darkturquoise: '#00ced1',
+        darkviolet: '#9400d3',
+        deeppink: '#ff1493',
+        deepskyblue: '#00bfff',
+        dimgray: '#696969',
+        dimgrey: '#696969',
+        dodgerblue: '#1e90ff',
+        firebrick: '#b22222',
+        floralwhite: '#fffaf0',
+        forestgreen: '#228b22',
+        fuchsia: '#ff00ff',
+        gainsboro: '#dcdcdc',
+        ghostwhite: '#f8f8ff',
+        gold: '#ffd700',
+        goldenrod: '#daa520',
+        gray: '#808080',
+        green: '#008000',
+        greenyellow: '#adff2f',
+        grey: '#808080',
+        honeydew: '#f0fff0',
+        hotpink: '#ff69b4',
+        indianred: '#cd5c5c',
+        indigo: '#4b0082',
+        ivory: '#fffff0',
+        khaki: '#f0e68c',
+        lavender: '#e6e6fa',
+        lavenderblush: '#fff0f5',
+        lawngreen: '#7cfc00',
+        lemonchiffon: '#fffacd',
+        lightblue: '#add8e6',
+        lightcoral: '#f08080',
+        lightcyan: '#e0ffff',
+        lightgoldenrodyellow: '#fafad2',
+        lightgray: '#d3d3d3',
+        lightgreen: '#90ee90',
+        lightgrey: '#d3d3d3',
+        lightpink: '#ffb6c1',
+        lightsalmon: '#ffa07a',
+        lightseagreen: '#20b2aa',
+        lightskyblue: '#87cefa',
+        lightslategray: '#778899',
+        lightslategrey: '#778899',
+        lightsteelblue: '#b0c4de',
+        lightyellow: '#ffffe0',
+        lime: '#00ff00',
+        limegreen: '#32cd32',
+        linen: '#faf0e6',
+        magenta: '#ff00ff',
+        maroon: '#800000',
+        mediumaquamarine: '#66cdaa',
+        mediumblue: '#0000cd',
+        mediumorchid: '#ba55d3',
+        mediumpurple: '#9370db',
+        mediumseagreen: '#3cb371',
+        mediumslateblue: '#7b68ee',
+        mediumspringgreen: '#00fa9a',
+        mediumturquoise: '#48d1cc',
+        mediumvioletred: '#c71585',
+        midnightblue: '#191970',
+        mintcream: '#f5fffa',
+        mistyrose: '#ffe4e1',
+        moccasin: '#ffe4b5',
+        navajowhite: '#ffdead',
+        navy: '#000080',
+        oldlace: '#fdf5e6',
+        olive: '#808000',
+        olivedrab: '#6b8e23',
+        orange: '#ffa500',
+        orangered: '#ff4500',
+        orchid: '#da70d6',
+        palegoldenrod: '#eee8aa',
+        palegreen: '#98fb98',
+        paleturquoise: '#afeeee',
+        palevioletred: '#db7093',
+        papayawhip: '#ffefd5',
+        peachpuff: '#ffdab9',
+        peru: '#cd853f',
+        pink: '#ffc0cb',
+        plum: '#dda0dd',
+        powderblue: '#b0e0e6',
+        purple: '#800080',
+        rebeccapurple: '#663399',
+        red: '#ff0000',
+        rosybrown: '#bc8f8f',
+        royalblue: '#4169e1',
+        saddlebrown: '#8b4513',
+        salmon: '#fa8072',
+        sandybrown: '#f4a460',
+        seagreen: '#2e8b57',
+        seashell: '#fff5ee',
+        sienna: '#a0522d',
+        silver: '#c0c0c0',
+        skyblue: '#87ceeb',
+        slateblue: '#6a5acd',
+        slategray: '#708090',
+        slategrey: '#708090',
+        snow: '#fffafa',
+        springgreen: '#00ff7f',
+        tan: '#d2b48c',
+        teal: '#008080',
+        thistle: '#d8bfd8',
+        transparent: '#00000000',
+        turquoise: '#40e0d0',
+        violet: '#ee82ee',
+        wheat: '#f5deb3',
+        white: '#ffffff',
+        whitesmoke: '#f5f5f5',
+        yellow: '#ffff00',
+        yellowgreen: '#9acd32'
+    },
+    /* API */
+    parse: function (color) {
+        color = color.toLowerCase();
+        var hex = Keyword.colors[color];
+        if (!hex)
+            return;
+        return hex_1.default.parse(hex);
+    },
+    stringify: function (channels) {
+        var hex = hex_1.default.stringify(channels);
+        for (var name_1 in Keyword.colors) {
+            if (Keyword.colors[name_1] === hex)
+                return name_1;
+        }
+    }
+};
+/* EXPORT */
+exports.default = Keyword;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/rgb.js":
+/*!***********************************************!*\
+  !*** ./node_modules/khroma/dist/color/rgb.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+/* RGB */
+var RGB = {
+    /* VARIABLES */
+    re: /^rgba?\(\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e\d+)?(%?))\s*?(?:,|\s)\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e\d+)?(%?))\s*?(?:,|\s)\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e\d+)?(%?))(?:\s*?(?:,|\/)\s*?\+?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e\d+)?(%?)))?\s*?\)$/i,
+    /* API */
+    parse: function (color) {
+        var charCode = color.charCodeAt(0);
+        if (charCode !== 114 && charCode !== 82)
+            return; // 'r'/'R'
+        var match = color.match(RGB.re);
+        if (!match)
+            return;
+        var r = match[1], isRedPercentage = match[2], g = match[3], isGreenPercentage = match[4], b = match[5], isBluePercentage = match[6], a = match[7], isAlphaPercentage = match[8];
+        return reusable_1.default.set({
+            r: utils_1.default.channel.clamp.r(isRedPercentage ? parseFloat(r) * 2.55 : parseFloat(r)),
+            g: utils_1.default.channel.clamp.g(isGreenPercentage ? parseFloat(g) * 2.55 : parseFloat(g)),
+            b: utils_1.default.channel.clamp.b(isBluePercentage ? parseFloat(b) * 2.55 : parseFloat(b)),
+            a: a ? utils_1.default.channel.clamp.a(isAlphaPercentage ? parseFloat(a) / 100 : parseFloat(a)) : 1
+        }, color);
+    },
+    stringify: function (channels) {
+        if (channels.a < 1) { // RGBA
+            return "rgba(" + utils_1.default.lang.round(channels.r) + ", " + utils_1.default.lang.round(channels.g) + ", " + utils_1.default.lang.round(channels.b) + ", " + utils_1.default.lang.round(channels.a) + ")";
+        }
+        else { // RGB
+            return "rgb(" + utils_1.default.lang.round(channels.r) + ", " + utils_1.default.lang.round(channels.g) + ", " + utils_1.default.lang.round(channels.b) + ")";
+        }
+    }
+};
+/* EXPORT */
+exports.default = RGB;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/consts.js":
+/*!********************************************!*\
+  !*** ./node_modules/khroma/dist/consts.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ./utils */ "./node_modules/khroma/dist/utils/index.js");
+/* CONSTS */
+var DEC2HEX = {};
+exports.DEC2HEX = DEC2HEX;
+for (var i = 0; i <= 255; i++)
+    DEC2HEX[i] = utils_1.default.unit.dec2hex(i); // Populating dynamically, striking a balance between code size and performance
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/index.js":
+/*!*******************************************!*\
+  !*** ./node_modules/khroma/dist/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* EXPORT */
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(/*! ./methods */ "./node_modules/khroma/dist/methods/index.js"));
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/adjust.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/adjust.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var change_1 = __webpack_require__(/*! ./change */ "./node_modules/khroma/dist/methods/change.js");
+/* ADJUST */
+function adjust(color, channels) {
+    var ch = color_1.default.parse(color), changes = {};
+    for (var c in channels) {
+        if (!channels[c])
+            continue;
+        changes[c] = ch[c] + channels[c];
+    }
+    return change_1.default(color, changes);
+}
+/* EXPORT */
+exports.default = adjust;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/adjust_channel.js":
+/*!************************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/adjust_channel.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* ADJUST CHANNEL */
+function adjustChannel(color, channel, amount) {
+    var channels = color_1.default.parse(color), amountCurrent = channels[channel], amountNext = utils_1.default.channel.clamp[channel](amountCurrent + amount);
+    if (amountCurrent !== amountNext)
+        channels[channel] = amountNext;
+    return color_1.default.stringify(channels);
+}
+/* EXPORT */
+exports.default = adjustChannel;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/alpha.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/alpha.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* ALPHA */
+function alpha(color) {
+    return channel_1.default(color, 'a');
+}
+/* EXPORT */
+exports.default = alpha;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/blue.js":
+/*!**************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/blue.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* BLUE */
+function blue(color) {
+    return channel_1.default(color, 'b');
+}
+/* EXPORT */
+exports.default = blue;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/change.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/change.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* CHANGE */
+function change(color, channels) {
+    var ch = color_1.default.parse(color);
+    for (var c in channels) {
+        ch[c] = utils_1.default.channel.clamp[c](channels[c]);
+    }
+    return color_1.default.stringify(ch);
+}
+/* EXPORT */
+exports.default = change;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/channel.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/channel.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* CHANNEL */
+function channel(color, channel) {
+    return utils_1.default.lang.round(color_1.default.parse(color)[channel]);
+}
+/* EXPORT */
+exports.default = channel;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/complement.js":
+/*!********************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/complement.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* COMPLEMENT */
+function complement(color) {
+    return adjust_channel_1.default(color, 'h', 180);
+}
+/* EXPORT */
+exports.default = complement;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/darken.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/darken.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* DARKEN */
+function darken(color, amount) {
+    return adjust_channel_1.default(color, 'l', -amount);
+}
+/* EXPORT */
+exports.default = darken;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/desaturate.js":
+/*!********************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/desaturate.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* DESATURATE */
+function desaturate(color, amount) {
+    return adjust_channel_1.default(color, 's', -amount);
+}
+/* EXPORT */
+exports.default = desaturate;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/grayscale.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/grayscale.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var change_1 = __webpack_require__(/*! ./change */ "./node_modules/khroma/dist/methods/change.js");
+/* GRAYSCALE */
+function grayscale(color) {
+    return change_1.default(color, { s: 0 });
+}
+/* EXPORT */
+exports.default = grayscale;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/green.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/green.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* GREEN */
+function green(color) {
+    return channel_1.default(color, 'g');
+}
+/* EXPORT */
+exports.default = green;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/hsla.js":
+/*!**************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/hsla.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* HSLA */
+function hsla(h, s, l, a) {
+    if (a === void 0) { a = 1; }
+    var channels = reusable_1.default.set({
+        h: utils_1.default.channel.clamp.h(h),
+        s: utils_1.default.channel.clamp.s(s),
+        l: utils_1.default.channel.clamp.l(l),
+        a: utils_1.default.channel.clamp.a(a)
+    });
+    return color_1.default.stringify(channels);
+}
+/* EXPORT */
+exports.default = hsla;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/hue.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/hue.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* HUE */
+function hue(color) {
+    return channel_1.default(color, 'h');
+}
+/* EXPORT */
+exports.default = hue;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var rgba_1 = __webpack_require__(/*! ./rgba */ "./node_modules/khroma/dist/methods/rgba.js"); // Alias
+exports.hex = rgba_1.default;
+var rgba_2 = __webpack_require__(/*! ./rgba */ "./node_modules/khroma/dist/methods/rgba.js"); // Alias
+exports.rgb = rgba_2.default;
+var rgba_3 = __webpack_require__(/*! ./rgba */ "./node_modules/khroma/dist/methods/rgba.js");
+exports.rgba = rgba_3.default;
+var hsla_1 = __webpack_require__(/*! ./hsla */ "./node_modules/khroma/dist/methods/hsla.js"); // Alias
+exports.hsl = hsla_1.default;
+var hsla_2 = __webpack_require__(/*! ./hsla */ "./node_modules/khroma/dist/methods/hsla.js");
+exports.hsla = hsla_2.default;
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+exports.channel = channel_1.default;
+var red_1 = __webpack_require__(/*! ./red */ "./node_modules/khroma/dist/methods/red.js");
+exports.red = red_1.default;
+var green_1 = __webpack_require__(/*! ./green */ "./node_modules/khroma/dist/methods/green.js");
+exports.green = green_1.default;
+var blue_1 = __webpack_require__(/*! ./blue */ "./node_modules/khroma/dist/methods/blue.js");
+exports.blue = blue_1.default;
+var hue_1 = __webpack_require__(/*! ./hue */ "./node_modules/khroma/dist/methods/hue.js");
+exports.hue = hue_1.default;
+var saturation_1 = __webpack_require__(/*! ./saturation */ "./node_modules/khroma/dist/methods/saturation.js");
+exports.saturation = saturation_1.default;
+var lightness_1 = __webpack_require__(/*! ./lightness */ "./node_modules/khroma/dist/methods/lightness.js");
+exports.lightness = lightness_1.default;
+var alpha_1 = __webpack_require__(/*! ./alpha */ "./node_modules/khroma/dist/methods/alpha.js");
+exports.alpha = alpha_1.default;
+var alpha_2 = __webpack_require__(/*! ./alpha */ "./node_modules/khroma/dist/methods/alpha.js"); // Alias
+exports.opacity = alpha_2.default;
+var luminance_1 = __webpack_require__(/*! ./luminance */ "./node_modules/khroma/dist/methods/luminance.js");
+exports.luminance = luminance_1.default;
+var is_dark_1 = __webpack_require__(/*! ./is_dark */ "./node_modules/khroma/dist/methods/is_dark.js");
+exports.isDark = is_dark_1.default;
+var is_light_1 = __webpack_require__(/*! ./is_light */ "./node_modules/khroma/dist/methods/is_light.js");
+exports.isLight = is_light_1.default;
+var is_valid_1 = __webpack_require__(/*! ./is_valid */ "./node_modules/khroma/dist/methods/is_valid.js");
+exports.isValid = is_valid_1.default;
+var saturate_1 = __webpack_require__(/*! ./saturate */ "./node_modules/khroma/dist/methods/saturate.js");
+exports.saturate = saturate_1.default;
+var desaturate_1 = __webpack_require__(/*! ./desaturate */ "./node_modules/khroma/dist/methods/desaturate.js");
+exports.desaturate = desaturate_1.default;
+var lighten_1 = __webpack_require__(/*! ./lighten */ "./node_modules/khroma/dist/methods/lighten.js");
+exports.lighten = lighten_1.default;
+var darken_1 = __webpack_require__(/*! ./darken */ "./node_modules/khroma/dist/methods/darken.js");
+exports.darken = darken_1.default;
+var opacify_1 = __webpack_require__(/*! ./opacify */ "./node_modules/khroma/dist/methods/opacify.js");
+exports.opacify = opacify_1.default;
+var opacify_2 = __webpack_require__(/*! ./opacify */ "./node_modules/khroma/dist/methods/opacify.js"); // Alias
+exports.fadeIn = opacify_2.default;
+var transparentize_1 = __webpack_require__(/*! ./transparentize */ "./node_modules/khroma/dist/methods/transparentize.js");
+exports.transparentize = transparentize_1.default;
+var transparentize_2 = __webpack_require__(/*! ./transparentize */ "./node_modules/khroma/dist/methods/transparentize.js"); // Alias
+exports.fadeOut = transparentize_2.default;
+var complement_1 = __webpack_require__(/*! ./complement */ "./node_modules/khroma/dist/methods/complement.js");
+exports.complement = complement_1.default;
+var grayscale_1 = __webpack_require__(/*! ./grayscale */ "./node_modules/khroma/dist/methods/grayscale.js");
+exports.grayscale = grayscale_1.default;
+var adjust_1 = __webpack_require__(/*! ./adjust */ "./node_modules/khroma/dist/methods/adjust.js");
+exports.adjust = adjust_1.default;
+var change_1 = __webpack_require__(/*! ./change */ "./node_modules/khroma/dist/methods/change.js");
+exports.change = change_1.default;
+var invert_1 = __webpack_require__(/*! ./invert */ "./node_modules/khroma/dist/methods/invert.js");
+exports.invert = invert_1.default;
+var mix_1 = __webpack_require__(/*! ./mix */ "./node_modules/khroma/dist/methods/mix.js");
+exports.mix = mix_1.default;
+var scale_1 = __webpack_require__(/*! ./scale */ "./node_modules/khroma/dist/methods/scale.js");
+exports.scale = scale_1.default;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/invert.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/invert.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var mix_1 = __webpack_require__(/*! ./mix */ "./node_modules/khroma/dist/methods/mix.js");
+/* INVERT */
+function invert(color, weight) {
+    if (weight === void 0) { weight = 100; }
+    var inverse = color_1.default.parse(color);
+    inverse.r = 255 - inverse.r;
+    inverse.g = 255 - inverse.g;
+    inverse.b = 255 - inverse.b;
+    return mix_1.default(inverse, color, weight);
+}
+/* EXPORT */
+exports.default = invert;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/is_dark.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/is_dark.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var is_light_1 = __webpack_require__(/*! ./is_light */ "./node_modules/khroma/dist/methods/is_light.js");
+/* IS DARK */
+function isDark(color) {
+    return !is_light_1.default(color);
+}
+/* EXPORT */
+exports.default = isDark;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/is_light.js":
+/*!******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/is_light.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var luminance_1 = __webpack_require__(/*! ./luminance */ "./node_modules/khroma/dist/methods/luminance.js");
+/* IS LIGHT */
+function isLight(color) {
+    return luminance_1.default(color) >= .5;
+}
+/* EXPORT */
+exports.default = isLight;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/is_valid.js":
+/*!******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/is_valid.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* IS VALID */
+function isValid(color) {
+    try {
+        color_1.default.parse(color);
+        return true;
+    }
+    catch (_a) {
+        return false;
+    }
+}
+/* EXPORT */
+exports.default = isValid;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/lighten.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/lighten.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* LIGHTEN */
+function lighten(color, amount) {
+    return adjust_channel_1.default(color, 'l', amount);
+}
+/* EXPORT */
+exports.default = lighten;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/lightness.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/lightness.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* LIGHTNESS */
+function lightness(color) {
+    return channel_1.default(color, 'l');
+}
+/* EXPORT */
+exports.default = lightness;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/luminance.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/luminance.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* LUMINANCE */
+//SOURCE: https://planetcalc.com/7779
+function luminance(color) {
+    var _a = color_1.default.parse(color), r = _a.r, g = _a.g, b = _a.b, luminance = .2126 * utils_1.default.channel.toLinear(r) + .7152 * utils_1.default.channel.toLinear(g) + .0722 * utils_1.default.channel.toLinear(b);
+    return utils_1.default.lang.round(luminance);
+}
+/* EXPORT */
+exports.default = luminance;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/mix.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/mix.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var rgba_1 = __webpack_require__(/*! ./rgba */ "./node_modules/khroma/dist/methods/rgba.js");
+/* MIX */
+//SOURCE: https://github.com/sass/dart-sass/blob/7457d2e9e7e623d9844ffd037a070cf32d39c348/lib/src/functions/color.dart#L718-L756
+function mix(color1, color2, weight) {
+    if (weight === void 0) { weight = 50; }
+    var _a = color_1.default.parse(color1), r1 = _a.r, g1 = _a.g, b1 = _a.b, a1 = _a.a, _b = color_1.default.parse(color2), r2 = _b.r, g2 = _b.g, b2 = _b.b, a2 = _b.a, weightScale = weight / 100, weightNormalized = (weightScale * 2) - 1, alphaDelta = a1 - a2, weight1combined = ((weightNormalized * alphaDelta) === -1) ? weightNormalized : (weightNormalized + alphaDelta) / (1 + weightNormalized * alphaDelta), weight1 = (weight1combined + 1) / 2, weight2 = 1 - weight1, r = (r1 * weight1) + (r2 * weight2), g = (g1 * weight1) + (g2 * weight2), b = (b1 * weight1) + (b2 * weight2), a = (a1 * weightScale) + (a2 * (1 - weightScale));
+    return rgba_1.default(r, g, b, a);
+}
+/* EXPORT */
+exports.default = mix;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/opacify.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/opacify.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* OPACIFY */
+function opacify(color, amount) {
+    return adjust_channel_1.default(color, 'a', amount);
+}
+/* EXPORT */
+exports.default = opacify;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/red.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/red.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* RED */
+function red(color) {
+    return channel_1.default(color, 'r');
+}
+/* EXPORT */
+exports.default = red;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/rgba.js":
+/*!**************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/rgba.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var change_1 = __webpack_require__(/*! ./change */ "./node_modules/khroma/dist/methods/change.js");
+function rgba(r, g, b, a) {
+    if (b === void 0) { b = 0; }
+    if (a === void 0) { a = 1; }
+    if (typeof r !== 'number')
+        return change_1.default(r, { a: g });
+    var channels = reusable_1.default.set({
+        r: utils_1.default.channel.clamp.r(r),
+        g: utils_1.default.channel.clamp.g(g),
+        b: utils_1.default.channel.clamp.b(b),
+        a: utils_1.default.channel.clamp.a(a)
+    });
+    return color_1.default.stringify(channels);
+}
+/* EXPORT */
+exports.default = rgba;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/saturate.js":
+/*!******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/saturate.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* SATURATE */
+function saturate(color, amount) {
+    return adjust_channel_1.default(color, 's', amount);
+}
+/* EXPORT */
+exports.default = saturate;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/saturation.js":
+/*!********************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/saturation.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* SATURATION */
+function saturation(color) {
+    return channel_1.default(color, 's');
+}
+/* EXPORT */
+exports.default = saturation;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/scale.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/scale.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var adjust_1 = __webpack_require__(/*! ./adjust */ "./node_modules/khroma/dist/methods/adjust.js");
+/* SCALE */
+function scale(color, channels) {
+    var ch = color_1.default.parse(color), adjustments = {}, delta = function (amount, weight, max) { return weight > 0 ? (max - amount) * weight / 100 : amount * weight / 100; };
+    for (var c in channels) {
+        adjustments[c] = delta(ch[c], channels[c], utils_1.default.channel.max[c]);
+    }
+    return adjust_1.default(color, adjustments);
+}
+/* EXPORT */
+exports.default = scale;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/transparentize.js":
+/*!************************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/transparentize.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* TRANSPARENTIZE */
+function transparentize(color, amount) {
+    return adjust_channel_1.default(color, 'a', -amount);
+}
+/* EXPORT */
+exports.default = transparentize;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/types.js":
+/*!*******************************************!*\
+  !*** ./node_modules/khroma/dist/types.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* ENUMS */
+Object.defineProperty(exports, "__esModule", { value: true });
+var TYPE;
+(function (TYPE) {
+    TYPE[TYPE["ALL"] = 0] = "ALL";
+    TYPE[TYPE["RGB"] = 1] = "RGB";
+    TYPE[TYPE["HSL"] = 2] = "HSL";
+})(TYPE || (TYPE = {}));
+exports.TYPE = TYPE;
+;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/utils/channel.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/utils/channel.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+/* CHANNEL */
+var Channel = {
+    /* CLAMP */
+    min: {
+        r: 0,
+        g: 0,
+        b: 0,
+        s: 0,
+        l: 0,
+        a: 0
+    },
+    max: {
+        r: 255,
+        g: 255,
+        b: 255,
+        h: 360,
+        s: 100,
+        l: 100,
+        a: 1
+    },
+    clamp: {
+        r: function (r) { return r >= 255 ? 255 : (r < 0 ? 0 : r); },
+        g: function (g) { return g >= 255 ? 255 : (g < 0 ? 0 : g); },
+        b: function (b) { return b >= 255 ? 255 : (b < 0 ? 0 : b); },
+        h: function (h) { return h % 360; },
+        s: function (s) { return s >= 100 ? 100 : (s < 0 ? 0 : s); },
+        l: function (l) { return l >= 100 ? 100 : (l < 0 ? 0 : l); },
+        a: function (a) { return a >= 1 ? 1 : (a < 0 ? 0 : a); }
+    },
+    /* CONVERSION */
+    //SOURCE: https://planetcalc.com/7779
+    toLinear: function (c) {
+        var n = c / 255;
+        return c > .03928 ? Math.pow(((n + .055) / 1.055), 2.4) : n / 12.92;
+    },
+    //SOURCE: https://gist.github.com/mjackson/5311256
+    hue2rgb: function (p, q, t) {
+        if (t < 0)
+            t += 1;
+        if (t > 1)
+            t -= 1;
+        if (t < 1 / 6)
+            return p + (q - p) * 6 * t;
+        if (t < 1 / 2)
+            return q;
+        if (t < 2 / 3)
+            return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+    },
+    hsl2rgb: function (_a, channel) {
+        var h = _a.h, s = _a.s, l = _a.l;
+        if (s === 100)
+            return l * 2.55; // Achromatic
+        h /= 360;
+        s /= 100;
+        l /= 100;
+        var q = (l < .5) ? l * (1 + s) : (l + s) - (l * s), p = 2 * l - q;
+        switch (channel) {
+            case 'r': return Channel.hue2rgb(p, q, h + 1 / 3) * 255;
+            case 'g': return Channel.hue2rgb(p, q, h) * 255;
+            case 'b': return Channel.hue2rgb(p, q, h - 1 / 3) * 255;
+        }
+    },
+    rgb2hsl: function (_a, channel) {
+        var r = _a.r, g = _a.g, b = _a.b;
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2;
+        if (channel === 'l')
+            return l * 100;
+        if (max === min)
+            return 0; // Achromatic
+        var d = max - min, s = (l > .5) ? d / (2 - max - min) : d / (max + min);
+        if (channel === 's')
+            return s * 100;
+        switch (max) {
+            case r: return ((g - b) / d + (g < b ? 6 : 0)) * 60;
+            case g: return ((b - r) / d + 2) * 60;
+            case b: return ((r - g) / d + 4) * 60;
+            default: return -1; //TSC: TypeScript is stupid and complains if there isn't this useless default statement
+        }
+    }
+};
+/* EXPORT */
+exports.default = Channel;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/utils/index.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/utils/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/utils/channel.js");
+var lang_1 = __webpack_require__(/*! ./lang */ "./node_modules/khroma/dist/utils/lang.js");
+var unit_1 = __webpack_require__(/*! ./unit */ "./node_modules/khroma/dist/utils/unit.js");
+/* UTILS */
+var Utils = {
+    channel: channel_1.default,
+    lang: lang_1.default,
+    unit: unit_1.default
+};
+/* EXPORT */
+exports.default = Utils;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/utils/lang.js":
+/*!************************************************!*\
+  !*** ./node_modules/khroma/dist/utils/lang.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* LANG */
+Object.defineProperty(exports, "__esModule", { value: true });
+var Lang = {
+    round: function (number) {
+        return Math.round(number * 10000000000) / 10000000000;
+    }
+};
+/* EXPORT */
+exports.default = Lang;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/utils/unit.js":
+/*!************************************************!*\
+  !*** ./node_modules/khroma/dist/utils/unit.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* UNIT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var Unit = {
+    frac2hex: function (frac) {
+        var hex = Math.round(frac * 255).toString(16);
+        return hex.length > 1 ? hex : "0" + hex;
+    },
+    dec2hex: function (dec) {
+        var hex = Math.round(dec).toString(16);
+        return hex.length > 1 ? hex : "0" + hex;
+    }
+};
+/* EXPORT */
+exports.default = Unit;
 
 
 /***/ }),
@@ -46296,230 +47258,1708 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ "./node_modules/scope-css/index.js":
-/*!*****************************************!*\
-  !*** ./node_modules/scope-css/index.js ***!
-  \*****************************************/
+/***/ "./node_modules/stylis/stylis.js":
+/*!***************************************!*\
+  !*** ./node_modules/stylis/stylis.js ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+/*
+ *          __        ___
+ *    _____/ /___  __/ (_)____
+ *   / ___/ __/ / / / / / ___/
+ *  (__  ) /_/ /_/ / / (__  )
+ * /____/\__/\__, /_/_/____/
+ *          /____/
+ *
+ * light - weight css preprocessor @licence MIT
+ */
+(function (factory) {/* eslint-disable */
+	 true ? (module['exports'] = factory(null)) :
+		undefined
+}(/** @param {*=} options */function factory (options) {/* eslint-disable */
 
+	'use strict'
 
-var slugify = __webpack_require__(/*! slugify */ "./node_modules/slugify/slugify.js")
-var escaper = __webpack_require__(/*! escaper */ "./node_modules/escaper/dist/escaper.js")
-var stripComments = __webpack_require__(/*! strip-css-comments */ "./node_modules/strip-css-comments/index.js")
+	/**
+	 * Notes
+	 *
+	 * The ['<method name>'] pattern is used to support closure compiler
+	 * the jsdoc signatures are also used to the same effect
+	 *
+	 * ----
+	 *
+	 * int + int + int === n4 [faster]
+	 *
+	 * vs
+	 *
+	 * int === n1 && int === n2 && int === n3
+	 *
+	 * ----
+	 *
+	 * switch (int) { case ints...} [faster]
+	 *
+	 * vs
+	 *
+	 * if (int == 1 && int === 2 ...)
+	 *
+	 * ----
+	 *
+	 * The (first*n1 + second*n2 + third*n3) format used in the property parser
+	 * is a simple way to hash the sequence of characters
+	 * taking into account the index they occur in
+	 * since any number of 3 character sequences could produce duplicates.
+	 *
+	 * On the other hand sequences that are directly tied to the index of the character
+	 * resolve a far more accurate measure, it's also faster
+	 * to evaluate one condition in a switch statement
+	 * than three in an if statement regardless of the added math.
+	 *
+	 * This allows the vendor prefixer to be both small and fast.
+	 */
 
-module.exports = scope
-scope.replace = replace
+	var nullptn = /^\0+/g /* matches leading null characters */
+	var formatptn = /[\0\r\f]/g /* matches new line, null and formfeed characters */
+	var colonptn = /: */g /* splits animation rules */
+	var cursorptn = /zoo|gra/ /* assert cursor varient */
+	var transformptn = /([,: ])(transform)/g /* vendor prefix transform, older webkit */
+	var animationptn = /,+\s*(?![^(]*[)])/g /* splits multiple shorthand notation animations */
+	var propertiesptn = / +\s*(?![^(]*[)])/g /* animation properties */
+	var elementptn = / *[\0] */g /* selector elements */
+	var selectorptn = /,\r+?/g /* splits selectors */
+	var andptn = /([\t\r\n ])*\f?&/g /* match & */
+	var escapeptn = /:global\(((?:[^\(\)\[\]]*|\[.*\]|\([^\(\)]*\))*)\)/g /* matches :global(.*) */
+	var invalidptn = /\W+/g /* removes invalid characters from keyframes */
+	var keyframeptn = /@(k\w+)\s*(\S*)\s*/ /* matches @keyframes $1 */
+	var plcholdrptn = /::(place)/g /* match ::placeholder varient */
+	var readonlyptn = /:(read-only)/g /* match :read-only varient */
+	var beforeptn = /\s+(?=[{\];=:>])/g /* matches \s before ] ; = : */
+	var afterptn = /([[}=:>])\s+/g /* matches \s after characters [ } = : */
+	var tailptn = /(\{[^{]+?);(?=\})/g /* matches tail semi-colons ;} */
+	var whiteptn = /\s{2,}/g /* matches repeating whitespace */
+	var pseudoptn = /([^\(])(:+) */g /* pseudo element */
+	var writingptn = /[svh]\w+-[tblr]{2}/ /* match writing mode property values */
+	var gradientptn = /([\w-]+t\()/g /* match *gradient property */
+	var supportsptn = /\(\s*(.*)\s*\)/g /* match supports (groups) */
+	var propertyptn = /([\s\S]*?);/g /* match properties leading semicolon */
+	var selfptn = /-self|flex-/g /* match flex- and -self in align-self: flex-*; */
+	var pseudofmt = /[^]*?(:[rp][el]a[\w-]+)[^]*/ /* extrats :readonly or :placholder from selector */
+	var trimptn = /[ \t]+$/ /* match tail whitspace */
+	var dimensionptn = /stretch|:\s*\w+\-(?:conte|avail)/ /* match max/min/fit-content, fill-available */
+	var imgsrcptn = /([^-])(image-set\()/
 
-function scope (css, parent, o) {
-	if (!css) return css
+	/* vendors */
+	var webkit = '-webkit-'
+	var moz = '-moz-'
+	var ms = '-ms-'
 
-	if (!parent) return css
+	/* character codes */
+	var SEMICOLON = 59 /* ; */
+	var CLOSEBRACES = 125 /* } */
+	var OPENBRACES = 123 /* { */
+	var OPENPARENTHESES = 40 /* ( */
+	var CLOSEPARENTHESES = 41 /* ) */
+	var OPENBRACKET = 91 /* [ */
+	var CLOSEBRACKET = 93 /* ] */
+	var NEWLINE = 10 /* \n */
+	var CARRIAGE = 13 /* \r */
+	var TAB = 9 /* \t */
+	var AT = 64 /* @ */
+	var SPACE = 32 /*   */
+	var AND = 38 /* & */
+	var DASH = 45 /* - */
+	var UNDERSCORE = 95 /* _ */
+	var STAR = 42 /* * */
+	var COMMA = 44 /* , */
+	var COLON = 58 /* : */
+	var SINGLEQUOTE = 39 /* ' */
+	var DOUBLEQUOTE = 34 /* " */
+	var FOWARDSLASH = 47 /* / */
+	var GREATERTHAN = 62 /* > */
+	var PLUS = 43 /* + */
+	var TILDE = 126 /* ~ */
+	var NULL = 0 /* \0 */
+	var FORMFEED = 12 /* \f */
+	var VERTICALTAB = 11 /* \v */
 
-	if (typeof o === 'string') o = {keyframes: o}
-	if (!o) o = {keyframes: false}
+	/* special identifiers */
+	var KEYFRAME = 107 /* k */
+	var MEDIA = 109 /* m */
+	var SUPPORTS = 115 /* s */
+	var PLACEHOLDER = 112 /* p */
+	var READONLY = 111 /* o */
+	var IMPORT = 105 /* <at>i */
+	var CHARSET = 99 /* <at>c */
+	var DOCUMENT = 100 /* <at>d */
+	var PAGE = 112 /* <at>p */
 
-	css = replace(css, parent + ' $1$2')
+	var column = 1 /* current column */
+	var line = 1 /* current line numebr */
+	var pattern = 0 /* :pattern */
 
-	//regexp.escape
-	var parentRe = parent.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+	var cascade = 1 /* #id h1 h2 vs h1#id h2#id  */
+	var prefix = 1 /* vendor prefix */
+	var escape = 1 /* escape :global() pattern */
+	var compress = 0 /* compress output */
+	var semicolon = 0 /* no/semicolon option */
+	var preserve = 0 /* preserve empty selectors */
 
-	//replace self-selectors
-	css = css.replace(new RegExp('(' + parentRe + ')\\s*\\1(?=[\\s\\r\\n,{])', 'g'), '$1')
+	/* empty reference */
+	var array = []
 
-	//replace `:host` with parent
-	css = css.replace(new RegExp('(' + parentRe + ')\\s*:host', 'g'), '$1')
+	/* plugins */
+	var plugins = []
+	var plugged = 0
+	var should = null
 
-	//revoke wrongly replaced @ statements, like @supports, @import, @media etc.
-	css = css.replace(new RegExp('(' + parentRe + ')\\s*@', 'g'), '@')
+	/* plugin context */
+	var POSTS = -2
+	var PREPS = -1
+	var UNKWN = 0
+	var PROPS = 1
+	var BLCKS = 2
+	var ATRUL = 3
 
-	//revoke wrongly replaced :root blocks
-	css = css.replace(new RegExp('(' + parentRe + ')\\s*:root', 'g'), ':root')
+	/* plugin newline context */
+	var unkwn = 0
 
-	//animations: prefix animation anmes
-	var animations = [],
-	    animationNameRe = /@keyframes\s+([a-zA-Z0-9_-]+)\s*{/g,
-	    match
-	while ((match = animationNameRe.exec(css)) !== null) {
-		if (animations.indexOf(match[1]) < 0)
-			animations.push(match[1])
-	}
+	/* keyframe animation */
+	var keyed = 1
+	var key = ''
 
-	var slug = slugify(parent)
+	/* selector namespace */
+	var nscopealt = ''
+	var nscope = ''
 
-	animations.forEach(function (name) {
-		var newName = (o.keyframes === true ? slug + '-' : typeof o.keyframes === 'string' ? o.keyframes : '') + name
-		css = css.replace(new RegExp('(@keyframes\\s+)' + name + '(\\s*{)', 'g'),
-				  '$1' + newName + '$2')
-		css = css.replace(new RegExp('(animation(?:-name)?\\s*:[^;]*\\s*)' + name + '([\\s;}])', 'g'),
-				  '$1' + newName + '$2')
-	})
- 	//animation: revoke wrongly replaced keyframes
-	css = css.replace(new RegExp('(' + parentRe + ' )(\\s*(?:to|from|[+-]?(?:(?:\\.\\d+)|(?:\\d+(?:\\.\\d*)?))%))(?=[\\s\\r\\n,{])', 'g'), '$2')
+	/**
+	 * Compile
+	 *
+	 * @param {Array<string>} parent
+	 * @param {Array<string>} current
+	 * @param {string} body
+	 * @param {number} id
+	 * @param {number} depth
+	 * @return {string}
+	 */
+	function compile (parent, current, body, id, depth) {
+		var bracket = 0 /* brackets [] */
+		var comment = 0 /* comments /* // or /* */
+		var parentheses = 0 /* functions () */
+		var quote = 0 /* quotes '', "" */
 
-	return css
-}
+		var first = 0 /* first character code */
+		var second = 0 /* second character code */
+		var code = 0 /* current character code */
+		var tail = 0 /* previous character code */
+		var trail = 0 /* character before previous code */
+		var peak = 0 /* previous non-whitespace code */
 
-function replace (css, replacer) {
-	var arr = []
+		var counter = 0 /* count sequence termination */
+		var context = 0 /* track current context */
+		var atrule = 0 /* track @at-rule context */
+		var pseudo = 0 /* track pseudo token index */
+		var caret = 0 /* current character index */
+		var format = 0 /* control character formating context */
+		var insert = 0 /* auto semicolon insertion */
+		var invert = 0 /* inverted selector pattern */
+		var length = 0 /* generic length address */
+		var eof = body.length /* end of file(length) */
+		var eol = eof - 1 /* end of file(characters) */
 
-	css = stripComments(css)
+		var char = '' /* current character */
+		var chars = '' /* current buffer of characters */
+		var child = '' /* next buffer of characters */
+		var out = '' /* compiled body */
+		var children = '' /* compiled children */
+		var flat = '' /* compiled leafs */
+		var selector /* generic selector address */
+		var result /* generic address */
 
-	// escape strings etc.
-	css = escaper.replace(css, true, arr)
+		// ...build body
+		while (caret < eof) {
+			code = body.charCodeAt(caret)
 
-	css = css.replace(/([^\r\n,{}]+)(,(?=[^}]*{)|\s*{)/g, replacer)
+			// eof varient
+			if (caret === eol) {
+				// last character + noop context, add synthetic padding for noop context to terminate
+				if (comment + quote + parentheses + bracket !== 0) {
+					if (comment !== 0) {
+						code = comment === FOWARDSLASH ? NEWLINE : FOWARDSLASH
+					}
 
-	// insert comments, strings etc. back
-	css = escaper.paste(css, arr)
-
-	return css
-}
-
-
-
-/***/ }),
-
-/***/ "./node_modules/slugify/slugify.js":
-/*!*****************************************!*\
-  !*** ./node_modules/slugify/slugify.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-;(function (name, root, factory) {
-  if (true) {
-    module.exports = factory()
-    module.exports['default'] = factory()
-  }
-  /* istanbul ignore next */
-  else {}
-}('slugify', this, function () {
-  var charMap = JSON.parse('{"$":"dollar","%":"percent","&":"and","<":"less",">":"greater","|":"or","¢":"cent","£":"pound","¤":"currency","¥":"yen","©":"(c)","ª":"a","®":"(r)","º":"o","À":"A","Á":"A","Â":"A","Ã":"A","Ä":"A","Å":"A","Æ":"AE","Ç":"C","È":"E","É":"E","Ê":"E","Ë":"E","Ì":"I","Í":"I","Î":"I","Ï":"I","Ð":"D","Ñ":"N","Ò":"O","Ó":"O","Ô":"O","Õ":"O","Ö":"O","Ø":"O","Ù":"U","Ú":"U","Û":"U","Ü":"U","Ý":"Y","Þ":"TH","ß":"ss","à":"a","á":"a","â":"a","ã":"a","ä":"a","å":"a","æ":"ae","ç":"c","è":"e","é":"e","ê":"e","ë":"e","ì":"i","í":"i","î":"i","ï":"i","ð":"d","ñ":"n","ò":"o","ó":"o","ô":"o","õ":"o","ö":"o","ø":"o","ù":"u","ú":"u","û":"u","ü":"u","ý":"y","þ":"th","ÿ":"y","Ā":"A","ā":"a","Ă":"A","ă":"a","Ą":"A","ą":"a","Ć":"C","ć":"c","Č":"C","č":"c","Ď":"D","ď":"d","Đ":"DJ","đ":"dj","Ē":"E","ē":"e","Ė":"E","ė":"e","Ę":"e","ę":"e","Ě":"E","ě":"e","Ğ":"G","ğ":"g","Ģ":"G","ģ":"g","Ĩ":"I","ĩ":"i","Ī":"i","ī":"i","Į":"I","į":"i","İ":"I","ı":"i","Ķ":"k","ķ":"k","Ļ":"L","ļ":"l","Ľ":"L","ľ":"l","Ł":"L","ł":"l","Ń":"N","ń":"n","Ņ":"N","ņ":"n","Ň":"N","ň":"n","Ő":"O","ő":"o","Œ":"OE","œ":"oe","Ŕ":"R","ŕ":"r","Ř":"R","ř":"r","Ś":"S","ś":"s","Ş":"S","ş":"s","Š":"S","š":"s","Ţ":"T","ţ":"t","Ť":"T","ť":"t","Ũ":"U","ũ":"u","Ū":"u","ū":"u","Ů":"U","ů":"u","Ű":"U","ű":"u","Ų":"U","ų":"u","Ŵ":"W","ŵ":"w","Ŷ":"Y","ŷ":"y","Ÿ":"Y","Ź":"Z","ź":"z","Ż":"Z","ż":"z","Ž":"Z","ž":"z","ƒ":"f","Ơ":"O","ơ":"o","Ư":"U","ư":"u","ǈ":"LJ","ǉ":"lj","ǋ":"NJ","ǌ":"nj","Ș":"S","ș":"s","Ț":"T","ț":"t","˚":"o","Ά":"A","Έ":"E","Ή":"H","Ί":"I","Ό":"O","Ύ":"Y","Ώ":"W","ΐ":"i","Α":"A","Β":"B","Γ":"G","Δ":"D","Ε":"E","Ζ":"Z","Η":"H","Θ":"8","Ι":"I","Κ":"K","Λ":"L","Μ":"M","Ν":"N","Ξ":"3","Ο":"O","Π":"P","Ρ":"R","Σ":"S","Τ":"T","Υ":"Y","Φ":"F","Χ":"X","Ψ":"PS","Ω":"W","Ϊ":"I","Ϋ":"Y","ά":"a","έ":"e","ή":"h","ί":"i","ΰ":"y","α":"a","β":"b","γ":"g","δ":"d","ε":"e","ζ":"z","η":"h","θ":"8","ι":"i","κ":"k","λ":"l","μ":"m","ν":"n","ξ":"3","ο":"o","π":"p","ρ":"r","ς":"s","σ":"s","τ":"t","υ":"y","φ":"f","χ":"x","ψ":"ps","ω":"w","ϊ":"i","ϋ":"y","ό":"o","ύ":"y","ώ":"w","Ё":"Yo","Ђ":"DJ","Є":"Ye","І":"I","Ї":"Yi","Ј":"J","Љ":"LJ","Њ":"NJ","Ћ":"C","Џ":"DZ","А":"A","Б":"B","В":"V","Г":"G","Д":"D","Е":"E","Ж":"Zh","З":"Z","И":"I","Й":"J","К":"K","Л":"L","М":"M","Н":"N","О":"O","П":"P","Р":"R","С":"S","Т":"T","У":"U","Ф":"F","Х":"H","Ц":"C","Ч":"Ch","Ш":"Sh","Щ":"Sh","Ъ":"U","Ы":"Y","Ь":"","Э":"E","Ю":"Yu","Я":"Ya","а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ж":"zh","з":"z","и":"i","й":"j","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"h","ц":"c","ч":"ch","ш":"sh","щ":"sh","ъ":"u","ы":"y","ь":"","э":"e","ю":"yu","я":"ya","ё":"yo","ђ":"dj","є":"ye","і":"i","ї":"yi","ј":"j","љ":"lj","њ":"nj","ћ":"c","ѝ":"u","џ":"dz","Ґ":"G","ґ":"g","Ғ":"GH","ғ":"gh","Қ":"KH","қ":"kh","Ң":"NG","ң":"ng","Ү":"UE","ү":"ue","Ұ":"U","ұ":"u","Һ":"H","һ":"h","Ә":"AE","ә":"ae","Ө":"OE","ө":"oe","฿":"baht","ა":"a","ბ":"b","გ":"g","დ":"d","ე":"e","ვ":"v","ზ":"z","თ":"t","ი":"i","კ":"k","ლ":"l","მ":"m","ნ":"n","ო":"o","პ":"p","ჟ":"zh","რ":"r","ს":"s","ტ":"t","უ":"u","ფ":"f","ქ":"k","ღ":"gh","ყ":"q","შ":"sh","ჩ":"ch","ც":"ts","ძ":"dz","წ":"ts","ჭ":"ch","ხ":"kh","ჯ":"j","ჰ":"h","Ẁ":"W","ẁ":"w","Ẃ":"W","ẃ":"w","Ẅ":"W","ẅ":"w","ẞ":"SS","Ạ":"A","ạ":"a","Ả":"A","ả":"a","Ấ":"A","ấ":"a","Ầ":"A","ầ":"a","Ẩ":"A","ẩ":"a","Ẫ":"A","ẫ":"a","Ậ":"A","ậ":"a","Ắ":"A","ắ":"a","Ằ":"A","ằ":"a","Ẳ":"A","ẳ":"a","Ẵ":"A","ẵ":"a","Ặ":"A","ặ":"a","Ẹ":"E","ẹ":"e","Ẻ":"E","ẻ":"e","Ẽ":"E","ẽ":"e","Ế":"E","ế":"e","Ề":"E","ề":"e","Ể":"E","ể":"e","Ễ":"E","ễ":"e","Ệ":"E","ệ":"e","Ỉ":"I","ỉ":"i","Ị":"I","ị":"i","Ọ":"O","ọ":"o","Ỏ":"O","ỏ":"o","Ố":"O","ố":"o","Ồ":"O","ồ":"o","Ổ":"O","ổ":"o","Ỗ":"O","ỗ":"o","Ộ":"O","ộ":"o","Ớ":"O","ớ":"o","Ờ":"O","ờ":"o","Ở":"O","ở":"o","Ỡ":"O","ỡ":"o","Ợ":"O","ợ":"o","Ụ":"U","ụ":"u","Ủ":"U","ủ":"u","Ứ":"U","ứ":"u","Ừ":"U","ừ":"u","Ử":"U","ử":"u","Ữ":"U","ữ":"u","Ự":"U","ự":"u","Ỳ":"Y","ỳ":"y","Ỵ":"Y","ỵ":"y","Ỷ":"Y","ỷ":"y","Ỹ":"Y","ỹ":"y","‘":"\'","’":"\'","“":"\\\"","”":"\\\"","†":"+","•":"*","…":"...","₠":"ecu","₢":"cruzeiro","₣":"french franc","₤":"lira","₥":"mill","₦":"naira","₧":"peseta","₨":"rupee","₩":"won","₪":"new shequel","₫":"dong","€":"euro","₭":"kip","₮":"tugrik","₯":"drachma","₰":"penny","₱":"peso","₲":"guarani","₳":"austral","₴":"hryvnia","₵":"cedi","₸":"kazakhstani tenge","₹":"indian rupee","₽":"russian ruble","₿":"bitcoin","℠":"sm","™":"tm","∂":"d","∆":"delta","∑":"sum","∞":"infinity","♥":"love","元":"yuan","円":"yen","﷼":"rial"}')
-  var locales = JSON.parse('{"vi":{"Đ":"D","đ":"d"}}')
-
-  function replace (string, options) {
-    if (typeof string !== 'string') {
-      throw new Error('slugify: string argument expected')
-    }
-
-    options = (typeof options === 'string')
-      ? { replacement: options }
-      : options || {}
-
-    var locale = locales[options.locale] || {}
-
-    var slug = string.split('')
-      .reduce(function (result, ch) {
-        return result + (locale[ch] || charMap[ch] || ch)
-          // allowed
-          .replace(options.remove || /[^\w\s$*_+~.()'"!\-:@]/g, '')
-      }, '')
-      // trim leading/trailing spaces
-      .trim()
-      // convert spaces
-      .replace(/[-\s]+/g, options.replacement || '-')
-
-    return options.lower ? slug.toLowerCase() : slug
-  }
-
-  replace.extend = function (customMap) {
-    for (var key in customMap) {
-      charMap[key] = customMap[key]
-    }
-  }
-
-  return replace
-}))
-
-
-/***/ }),
-
-/***/ "./node_modules/strip-css-comments/index.js":
-/*!**************************************************!*\
-  !*** ./node_modules/strip-css-comments/index.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var isRegExp = __webpack_require__(/*! is-regexp */ "./node_modules/is-regexp/index.js");
-
-module.exports = function (str, opts) {
-	str = str.toString();
-	opts = opts || {};
-
-	var preserveFilter;
-	var comment = '';
-	var currentChar = '';
-	var insideString = false;
-	var preserveImportant = !(opts.preserve === false || opts.all === true);
-	var ret = '';
-
-	if (typeof opts.preserve === 'function') {
-		preserveImportant = false;
-		preserveFilter = opts.preserve;
-	} else if (isRegExp(opts.preserve)) {
-		preserveImportant = false;
-		preserveFilter = function (comment) {
-			return opts.preserve.test(comment);
-		};
-	}
-
-	for (var i = 0; i < str.length; i++) {
-		currentChar = str[i];
-
-		if (str[i - 1] !== '\\') {
-			if (currentChar === '"' || currentChar === '\'') {
-				if (insideString === currentChar) {
-					insideString = false;
-				} else if (!insideString) {
-					insideString = currentChar;
+					quote = parentheses = bracket = 0
+					eof++
+					eol++
 				}
 			}
-		}
 
-		// find beginning of /* type comment
-		if (!insideString && currentChar === '/' && str[i + 1] === '*') {
-			// ignore important comment when configured to preserve comments using important syntax: /*!
-			if (!(preserveImportant && str[i + 2] === '!')) {
-				var j = i + 2;
+			if (comment + quote + parentheses + bracket === 0) {
+				// eof varient
+				if (caret === eol) {
+					if (format > 0) {
+						chars = chars.replace(formatptn, '')
+					}
 
-				// iterate over comment
-				for (; j < str.length; j++) {
-					// find end of comment
-					if (str[j] === '*' && str[j + 1] === '/') {
-						if (preserveFilter) {
-							// evaluate comment text
-							ret = preserveFilter(comment) ? ret + ('/*' + comment + '*/') : ret;
-							comment = '';
+					if (chars.trim().length > 0) {
+						switch (code) {
+							case SPACE:
+							case TAB:
+							case SEMICOLON:
+							case CARRIAGE:
+							case NEWLINE: {
+								break
+							}
+							default: {
+								chars += body.charAt(caret)
+							}
 						}
 
-						break;
-					}
-
-					// store comment text to be evaluated by the filter when the end of the comment is reached
-					if (preserveFilter) {
-						comment += str[j];
+						code = SEMICOLON
 					}
 				}
 
-				// resume iteration over CSS string from the end of the comment
-				i = j + 1;
+				// auto semicolon insertion
+				if (insert === 1) {
+					switch (code) {
+						// false flags
+						case OPENBRACES:
+						case CLOSEBRACES:
+						case SEMICOLON:
+						case DOUBLEQUOTE:
+						case SINGLEQUOTE:
+						case OPENPARENTHESES:
+						case CLOSEPARENTHESES:
+						case COMMA: {
+							insert = 0
+						}
+						// ignore
+						case TAB:
+						case CARRIAGE:
+						case NEWLINE:
+						case SPACE: {
+							break
+						}
+						// valid
+						default: {
+							insert = 0
+							length = caret
+							first = code
+							caret--
+							code = SEMICOLON
 
-				continue;
+							while (length < eof) {
+								switch (body.charCodeAt(length++)) {
+									case NEWLINE:
+									case CARRIAGE:
+									case SEMICOLON: {
+										++caret
+										code = first
+										length = eof
+										break
+									}
+									case COLON: {
+										if (format > 0) {
+											++caret
+											code = first
+										}
+									}
+									case OPENBRACES: {
+										length = eof
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// token varient
+				switch (code) {
+					case OPENBRACES: {
+						chars = chars.trim()
+						first = chars.charCodeAt(0)
+						counter = 1
+						length = ++caret
+
+						while (caret < eof) {
+							switch (code = body.charCodeAt(caret)) {
+								case OPENBRACES: {
+									counter++
+									break
+								}
+								case CLOSEBRACES: {
+									counter--
+									break
+								}
+								case FOWARDSLASH: {
+									switch (second = body.charCodeAt(caret + 1)) {
+										// /*, //
+										case STAR:
+										case FOWARDSLASH: {
+											caret = delimited(second, caret, eol, body)
+										}
+									}
+									break
+								}
+								// given "[" === 91 & "]" === 93 hence forth 91 + 1 + 1 === 93
+								case OPENBRACKET: {
+									code++
+								}
+								// given "(" === 40 & ")" === 41 hence forth 40 + 1 === 41
+								case OPENPARENTHESES: {
+									code++
+								}
+								// quote tail delimiter is identical to the head delimiter hence noop,
+								// fallthrough clauses have been shifted to the correct tail delimiter
+								case DOUBLEQUOTE:
+								case SINGLEQUOTE: {
+									while (caret++ < eol) {
+										if (body.charCodeAt(caret) === code) {
+											break
+										}
+									}
+								}
+							}
+
+							if (counter === 0) {
+								break
+							}
+
+							caret++
+						}
+
+						child = body.substring(length, caret)
+
+						if (first === NULL) {
+							first = (chars = chars.replace(nullptn, '').trim()).charCodeAt(0)
+						}
+
+						switch (first) {
+							// @at-rule
+							case AT: {
+								if (format > 0) {
+									chars = chars.replace(formatptn, '')
+								}
+
+								second = chars.charCodeAt(1)
+
+								switch (second) {
+									case DOCUMENT:
+									case MEDIA:
+									case SUPPORTS:
+									case DASH: {
+										selector = current
+										break
+									}
+									default: {
+										selector = array
+									}
+								}
+
+								child = compile(current, selector, child, second, depth+1)
+								length = child.length
+
+								// preserve empty @at-rule
+								if (preserve > 0 && length === 0) {
+									length = chars.length
+								}
+
+								// execute plugins, @at-rule context
+								if (plugged > 0) {
+									selector = select(array, chars, invert)
+									result = proxy(ATRUL, child, selector, current, line, column, length, second, depth, id)
+									chars = selector.join('')
+
+									if (result !== void 0) {
+										if ((length = (child = result.trim()).length) === 0) {
+											second = 0
+											child = ''
+										}
+									}
+								}
+
+								if (length > 0) {
+									switch (second) {
+										case SUPPORTS: {
+											chars = chars.replace(supportsptn, supports)
+										}
+										case DOCUMENT:
+										case MEDIA:
+										case DASH: {
+											child = chars + '{' + child + '}'
+											break
+										}
+										case KEYFRAME: {
+											chars = chars.replace(keyframeptn, '$1 $2' + (keyed > 0 ? key : ''))
+											child = chars + '{' + child + '}'
+
+											if (prefix === 1 || (prefix === 2 && vendor('@'+child, 3))) {
+												child = '@' + webkit + child + '@' + child
+											} else {
+												child = '@' + child
+											}
+											break
+										}
+										default: {
+											child = chars + child
+
+											if (id === PAGE) {
+												child = (out += child, '')
+											}
+										}
+									}
+								} else {
+									child = ''
+								}
+
+								break
+							}
+							// selector
+							default: {
+								child = compile(current, select(current, chars, invert), child, id, depth+1)
+							}
+						}
+
+						children += child
+
+						// reset
+						context = 0
+						insert = 0
+						pseudo = 0
+						format = 0
+						invert = 0
+						atrule = 0
+						chars = ''
+						child = ''
+						code = body.charCodeAt(++caret)
+						break
+					}
+					case CLOSEBRACES:
+					case SEMICOLON: {
+						chars = (format > 0 ? chars.replace(formatptn, '') : chars).trim()
+
+						if ((length = chars.length) > 1) {
+							// monkey-patch missing colon
+							if (pseudo === 0) {
+								first = chars.charCodeAt(0)
+
+								// first character is a letter or dash, buffer has a space character
+								if ((first === DASH || first > 96 && first < 123)) {
+									length = (chars = chars.replace(' ', ':')).length
+								}
+							}
+
+							// execute plugins, property context
+							if (plugged > 0) {
+								if ((result = proxy(PROPS, chars, current, parent, line, column, out.length, id, depth, id)) !== void 0) {
+									if ((length = (chars = result.trim()).length) === 0) {
+										chars = '\0\0'
+									}
+								}
+							}
+
+							first = chars.charCodeAt(0)
+							second = chars.charCodeAt(1)
+
+							switch (first) {
+								case NULL: {
+									break
+								}
+								case AT: {
+									if (second === IMPORT || second === CHARSET) {
+										flat += chars + body.charAt(caret)
+										break
+									}
+								}
+								default: {
+									if (chars.charCodeAt(length-1) === COLON) {
+										break
+									}
+
+									out += property(chars, first, second, chars.charCodeAt(2))
+								}
+							}
+						}
+
+						// reset
+						context = 0
+						insert = 0
+						pseudo = 0
+						format = 0
+						invert = 0
+						chars = ''
+						code = body.charCodeAt(++caret)
+						break
+					}
+				}
+			}
+
+			// parse characters
+			switch (code) {
+				case CARRIAGE:
+				case NEWLINE: {
+					// auto insert semicolon
+					if (comment + quote + parentheses + bracket + semicolon === 0) {
+						// valid non-whitespace characters that
+						// may precede a newline
+						switch (peak) {
+							case CLOSEPARENTHESES:
+							case SINGLEQUOTE:
+							case DOUBLEQUOTE:
+							case AT:
+							case TILDE:
+							case GREATERTHAN:
+							case STAR:
+							case PLUS:
+							case FOWARDSLASH:
+							case DASH:
+							case COLON:
+							case COMMA:
+							case SEMICOLON:
+							case OPENBRACES:
+							case CLOSEBRACES: {
+								break
+							}
+							default: {
+								// current buffer has a colon
+								if (pseudo > 0) {
+									insert = 1
+								}
+							}
+						}
+					}
+
+					// terminate line comment
+					if (comment === FOWARDSLASH) {
+						comment = 0
+					} else if (cascade + context === 0 && id !== KEYFRAME && chars.length > 0) {
+						format = 1
+						chars += '\0'
+					}
+
+					// execute plugins, newline context
+					if (plugged * unkwn > 0) {
+						proxy(UNKWN, chars, current, parent, line, column, out.length, id, depth, id)
+					}
+
+					// next line, reset column position
+					column = 1
+					line++
+					break
+				}
+				case SEMICOLON:
+				case CLOSEBRACES: {
+					if (comment + quote + parentheses + bracket === 0) {
+						column++
+						break
+					}
+				}
+				default: {
+					// increment column position
+					column++
+
+					// current character
+					char = body.charAt(caret)
+
+					// remove comments, escape functions, strings, attributes and prepare selectors
+					switch (code) {
+						case TAB:
+						case SPACE: {
+							if (quote + bracket + comment === 0) {
+								switch (tail) {
+									case COMMA:
+									case COLON:
+									case TAB:
+									case SPACE: {
+										char = ''
+										break
+									}
+									default: {
+										if (code !== SPACE) {
+											char = ' '
+										}
+									}
+								}
+							}
+							break
+						}
+						// escape breaking control characters
+						case NULL: {
+							char = '\\0'
+							break
+						}
+						case FORMFEED: {
+							char = '\\f'
+							break
+						}
+						case VERTICALTAB: {
+							char = '\\v'
+							break
+						}
+						// &
+						case AND: {
+							// inverted selector pattern i.e html &
+							if (quote + comment + bracket === 0 && cascade > 0) {
+								invert = 1
+								format = 1
+								char = '\f' + char
+							}
+							break
+						}
+						// ::p<l>aceholder, l
+						// :read-on<l>y, l
+						case 108: {
+							if (quote + comment + bracket + pattern === 0 && pseudo > 0) {
+								switch (caret - pseudo) {
+									// ::placeholder
+									case 2: {
+										if (tail === PLACEHOLDER && body.charCodeAt(caret-3) === COLON) {
+											pattern = tail
+										}
+									}
+									// :read-only
+									case 8: {
+										if (trail === READONLY) {
+											pattern = trail
+										}
+									}
+								}
+							}
+							break
+						}
+						// :<pattern>
+						case COLON: {
+							if (quote + comment + bracket === 0) {
+								pseudo = caret
+							}
+							break
+						}
+						// selectors
+						case COMMA: {
+							if (comment + parentheses + quote + bracket === 0) {
+								format = 1
+								char += '\r'
+							}
+							break
+						}
+						// quotes
+						case DOUBLEQUOTE:
+						case SINGLEQUOTE: {
+							if (comment === 0) {
+								quote = quote === code ? 0 : (quote === 0 ? code : quote)
+							}
+							break
+						}
+						// attributes
+						case OPENBRACKET: {
+							if (quote + comment + parentheses === 0) {
+								bracket++
+							}
+							break
+						}
+						case CLOSEBRACKET: {
+							if (quote + comment + parentheses === 0) {
+								bracket--
+							}
+							break
+						}
+						// functions
+						case CLOSEPARENTHESES: {
+							if (quote + comment + bracket === 0) {
+								parentheses--
+							}
+							break
+						}
+						case OPENPARENTHESES: {
+							if (quote + comment + bracket === 0) {
+								if (context === 0) {
+									switch (tail*2 + trail*3) {
+										// :matches
+										case 533: {
+											break
+										}
+										// :global, :not, :nth-child etc...
+										default: {
+											counter = 0
+											context = 1
+										}
+									}
+								}
+
+								parentheses++
+							}
+							break
+						}
+						case AT: {
+							if (comment + parentheses + quote + bracket + pseudo + atrule === 0) {
+								atrule = 1
+							}
+							break
+						}
+						// block/line comments
+						case STAR:
+						case FOWARDSLASH: {
+							if (quote + bracket + parentheses > 0) {
+								break
+							}
+
+							switch (comment) {
+								// initialize line/block comment context
+								case 0: {
+									switch (code*2 + body.charCodeAt(caret+1)*3) {
+										// //
+										case 235: {
+											comment = FOWARDSLASH
+											break
+										}
+										// /*
+										case 220: {
+											length = caret
+											comment = STAR
+											break
+										}
+									}
+									break
+								}
+								// end block comment context
+								case STAR: {
+									if (code === FOWARDSLASH && tail === STAR && length + 2 !== caret) {
+										// /*<!> ... */, !
+										if (body.charCodeAt(length+2) === 33) {
+											out += body.substring(length, caret+1)
+										}
+										char = ''
+										comment = 0
+									}
+								}
+							}
+						}
+					}
+
+					// ignore comment blocks
+					if (comment === 0) {
+						// aggressive isolation mode, divide each individual selector
+						// including selectors in :not function but excluding selectors in :global function
+						if (cascade + quote + bracket + atrule === 0 && id !== KEYFRAME && code !== SEMICOLON) {
+							switch (code) {
+								case COMMA:
+								case TILDE:
+								case GREATERTHAN:
+								case PLUS:
+								case CLOSEPARENTHESES:
+								case OPENPARENTHESES: {
+									if (context === 0) {
+										// outside of an isolated context i.e nth-child(<...>)
+										switch (tail) {
+											case TAB:
+											case SPACE:
+											case NEWLINE:
+											case CARRIAGE: {
+												char = char + '\0'
+												break
+											}
+											default: {
+												char = '\0' + char + (code === COMMA ? '' : '\0')
+											}
+										}
+										format = 1
+									} else {
+										// within an isolated context, sleep untill it's terminated
+										switch (code) {
+											case OPENPARENTHESES: {
+												// :globa<l>(
+												if (pseudo + 7 === caret && tail === 108) {
+													pseudo = 0
+												}
+												context = ++counter
+												break
+											}
+											case CLOSEPARENTHESES: {
+												if ((context = --counter) === 0) {
+													format = 1
+													char += '\0'
+												}
+												break
+											}
+										}
+									}
+									break
+								}
+								case TAB:
+								case SPACE: {
+									switch (tail) {
+										case NULL:
+										case OPENBRACES:
+										case CLOSEBRACES:
+										case SEMICOLON:
+										case COMMA:
+										case FORMFEED:
+										case TAB:
+										case SPACE:
+										case NEWLINE:
+										case CARRIAGE: {
+											break
+										}
+										default: {
+											// ignore in isolated contexts
+											if (context === 0) {
+												format = 1
+												char += '\0'
+											}
+										}
+									}
+								}
+							}
+						}
+
+						// concat buffer of characters
+						chars += char
+
+						// previous non-whitespace character code
+						if (code !== SPACE && code !== TAB) {
+							peak = code
+						}
+					}
+				}
+			}
+
+			// tail character codes
+			trail = tail
+			tail = code
+
+			// visit every character
+			caret++
+		}
+
+		length = out.length
+
+		// preserve empty selector
+ 		if (preserve > 0) {
+ 			if (length === 0 && children.length === 0 && (current[0].length === 0) === false) {
+ 				if (id !== MEDIA || (current.length === 1 && (cascade > 0 ? nscopealt : nscope) === current[0])) {
+					length = current.join(',').length + 2
+ 				}
+ 			}
+		}
+
+		if (length > 0) {
+			// cascade isolation mode?
+			selector = cascade === 0 && id !== KEYFRAME ? isolate(current) : current
+
+			// execute plugins, block context
+			if (plugged > 0) {
+				result = proxy(BLCKS, out, selector, parent, line, column, length, id, depth, id)
+
+				if (result !== void 0 && (out = result).length === 0) {
+					return flat + out + children
+				}
+			}
+
+			out = selector.join(',') + '{' + out + '}'
+
+			if (prefix*pattern !== 0) {
+				if (prefix === 2 && !vendor(out, 2))
+					pattern = 0
+
+				switch (pattern) {
+					// ::read-only
+					case READONLY: {
+						out = out.replace(readonlyptn, ':'+moz+'$1')+out
+						break
+					}
+					// ::placeholder
+					case PLACEHOLDER: {
+						out = (
+							out.replace(plcholdrptn, '::' + webkit + 'input-$1') +
+							out.replace(plcholdrptn, '::' + moz + '$1') +
+							out.replace(plcholdrptn, ':' + ms + 'input-$1') + out
+						)
+						break
+					}
+				}
+
+				pattern = 0
 			}
 		}
 
-		ret += currentChar;
+		return flat + out + children
 	}
 
-	return ret;
-};
+	/**
+	 * Select
+	 *
+	 * @param {Array<string>} parent
+	 * @param {string} current
+	 * @param {number} invert
+	 * @return {Array<string>}
+	 */
+	function select (parent, current, invert) {
+		var selectors = current.trim().split(selectorptn)
+		var out = selectors
+
+		var length = selectors.length
+		var l = parent.length
+
+		switch (l) {
+			// 0-1 parent selectors
+			case 0:
+			case 1: {
+				for (var i = 0, selector = l === 0 ? '' : parent[0] + ' '; i < length; ++i) {
+					out[i] = scope(selector, out[i], invert, l).trim()
+				}
+				break
+			}
+			// >2 parent selectors, nested
+			default: {
+				for (var i = 0, j = 0, out = []; i < length; ++i) {
+					for (var k = 0; k < l; ++k) {
+						out[j++] = scope(parent[k] + ' ', selectors[i], invert, l).trim()
+					}
+				}
+			}
+		}
+
+		return out
+	}
+
+	/**
+	 * Scope
+	 *
+	 * @param {string} parent
+	 * @param {string} current
+	 * @param {number} invert
+	 * @param {number} level
+	 * @return {string}
+	 */
+	function scope (parent, current, invert, level) {
+		var selector = current
+		var code = selector.charCodeAt(0)
+
+		// trim leading whitespace
+		if (code < 33) {
+			code = (selector = selector.trim()).charCodeAt(0)
+		}
+
+		switch (code) {
+			// &
+			case AND: {
+				switch (cascade + level) {
+					case 0:
+					case 1: {
+						if (parent.trim().length === 0) {
+							break
+						}
+					}
+					default: {
+						return selector.replace(andptn, '$1'+parent.trim())
+					}
+				}
+				break
+			}
+			// :
+			case COLON: {
+				switch (selector.charCodeAt(1)) {
+					// g in :global
+					case 103: {
+						if (escape > 0 && cascade > 0) {
+							return selector.replace(escapeptn, '$1').replace(andptn, '$1'+nscope)
+						}
+						break
+					}
+					default: {
+						// :hover
+						return parent.trim() + selector.replace(andptn, '$1'+parent.trim())
+					}
+				}
+			}
+			default: {
+				// html &
+				if (invert*cascade > 0 && selector.indexOf('\f') > 0) {
+					return selector.replace(andptn, (parent.charCodeAt(0) === COLON ? '' : '$1')+parent.trim())
+				}
+			}
+		}
+
+		return parent + selector
+	}
+
+	/**
+	 * Property
+	 *
+	 * @param {string} input
+	 * @param {number} first
+	 * @param {number} second
+	 * @param {number} third
+	 * @return {string}
+	 */
+	function property (input, first, second, third) {
+		var index = 0
+		var out = input + ';'
+		var hash = (first*2) + (second*3) + (third*4)
+		var cache
+
+		// animation: a, n, i characters
+		if (hash === 944) {
+			return animation(out)
+		} else if (prefix === 0 || (prefix === 2 && !vendor(out, 1))) {
+			return out
+		}
+
+		// vendor prefix
+		switch (hash) {
+			// text-decoration/text-size-adjust/text-shadow/text-align/text-transform: t, e, x
+			case 1015: {
+				// text-shadow/text-align/text-transform, a
+				return out.charCodeAt(10) === 97 ? webkit + out + out : out
+			}
+			// filter/fill f, i, l
+			case 951: {
+				// filter, t
+				return out.charCodeAt(3) === 116 ? webkit + out + out : out
+			}
+			// color/column, c, o, l
+			case 963: {
+				// column, n
+				return out.charCodeAt(5) === 110 ? webkit + out + out : out
+			}
+			// box-decoration-break, b, o, x
+			case 1009: {
+				if (out.charCodeAt(4) !== 100) {
+					break
+				}
+			}
+			// mask, m, a, s
+			// clip-path, c, l, i
+			case 969:
+			case 942: {
+				return webkit + out + out
+			}
+			// appearance: a, p, p
+			case 978: {
+				return webkit + out + moz + out + out
+			}
+			// hyphens: h, y, p
+			// user-select: u, s, e
+			case 1019:
+			case 983: {
+				return webkit + out + moz + out + ms + out + out
+			}
+			// background/backface-visibility, b, a, c
+			case 883: {
+				// backface-visibility, -
+				if (out.charCodeAt(8) === DASH) {
+					return webkit + out + out
+				}
+
+				// image-set(...)
+				if (out.indexOf('image-set(', 11) > 0) {
+					return out.replace(imgsrcptn, '$1'+webkit+'$2') + out
+				}
+
+				return out
+			}
+			// flex: f, l, e
+			case 932: {
+				if (out.charCodeAt(4) === DASH) {
+					switch (out.charCodeAt(5)) {
+						// flex-grow, g
+						case 103: {
+							return webkit + 'box-' + out.replace('-grow', '') + webkit + out + ms + out.replace('grow', 'positive') + out
+						}
+						// flex-shrink, s
+						case 115: {
+							return webkit + out + ms + out.replace('shrink', 'negative') + out
+						}
+						// flex-basis, b
+						case 98: {
+							return webkit + out + ms + out.replace('basis', 'preferred-size') + out
+						}
+					}
+				}
+
+				return webkit + out + ms + out + out
+			}
+			// order: o, r, d
+			case 964: {
+				return webkit + out + ms + 'flex' + '-' + out + out
+			}
+			// justify-items/justify-content, j, u, s
+			case 1023: {
+				// justify-content, c
+				if (out.charCodeAt(8) !== 99) {
+					break
+				}
+
+				cache = out.substring(out.indexOf(':', 15)).replace('flex-', '').replace('space-between', 'justify')
+				return webkit + 'box-pack' + cache + webkit + out + ms + 'flex-pack' + cache + out
+			}
+			// cursor, c, u, r
+			case 1005: {
+				return cursorptn.test(out) ? out.replace(colonptn, ':' + webkit) + out.replace(colonptn, ':' + moz) + out : out
+			}
+			// writing-mode, w, r, i
+			case 1000: {
+				cache = out.substring(13).trim()
+				index = cache.indexOf('-') + 1
+
+				switch (cache.charCodeAt(0)+cache.charCodeAt(index)) {
+					// vertical-lr
+					case 226: {
+						cache = out.replace(writingptn, 'tb')
+						break
+					}
+					// vertical-rl
+					case 232: {
+						cache = out.replace(writingptn, 'tb-rl')
+						break
+					}
+					// horizontal-tb
+					case 220: {
+						cache = out.replace(writingptn, 'lr')
+						break
+					}
+					default: {
+						return out
+					}
+				}
+
+				return webkit + out + ms + cache + out
+			}
+			// position: sticky
+			case 1017: {
+				if (out.indexOf('sticky', 9) === -1) {
+					return out
+				}
+			}
+			// display(flex/inline-flex/inline-box): d, i, s
+			case 975: {
+				index = (out = input).length - 10
+				cache = (out.charCodeAt(index) === 33 ? out.substring(0, index) : out).substring(input.indexOf(':', 7) + 1).trim()
+
+				switch (hash = cache.charCodeAt(0) + (cache.charCodeAt(7)|0)) {
+					// inline-
+					case 203: {
+						// inline-box
+						if (cache.charCodeAt(8) < 111) {
+							break
+						}
+					}
+					// inline-box/sticky
+					case 115: {
+						out = out.replace(cache, webkit+cache)+';'+out
+						break
+					}
+					// inline-flex
+					// flex
+					case 207:
+					case 102: {
+						out = (
+							out.replace(cache, webkit+(hash > 102 ? 'inline-' : '')+'box')+';'+
+							out.replace(cache, webkit+cache)+';'+
+							out.replace(cache, ms+cache+'box')+';'+
+							out
+						)
+					}
+				}
+
+				return out + ';'
+			}
+			// align-items, align-center, align-self: a, l, i, -
+			case 938: {
+				if (out.charCodeAt(5) === DASH) {
+					switch (out.charCodeAt(6)) {
+						// align-items, i
+						case 105: {
+							cache = out.replace('-items', '')
+							return webkit + out + webkit + 'box-' + cache + ms + 'flex-' + cache + out
+						}
+						// align-self, s
+						case 115: {
+							return webkit + out + ms + 'flex-item-' + out.replace(selfptn, '') + out
+						}
+						// align-content
+						default: {
+							return webkit + out + ms + 'flex-line-pack' + out.replace('align-content', '').replace(selfptn, '') + out
+						}
+					}
+				}
+				break
+			}
+			// min/max
+			case 973:
+			case 989: {
+				// min-/max- height/width/block-size/inline-size
+				if (out.charCodeAt(3) !== DASH || out.charCodeAt(4) === 122) {
+					break
+				}
+			}
+			// height/width: min-content / width: max-content
+			case 931:
+			case 953: {
+				if (dimensionptn.test(input) === true) {
+					// stretch
+					if ((cache = input.substring(input.indexOf(':') + 1)).charCodeAt(0) === 115)
+						return property(input.replace('stretch', 'fill-available'), first, second, third).replace(':fill-available', ':stretch')
+					else
+						return out.replace(cache, webkit + cache) + out.replace(cache, moz + cache.replace('fill-', '')) + out
+				}
+				break
+			}
+			// transform, transition: t, r, a
+			case 962: {
+				out = webkit + out + (out.charCodeAt(5) === 102 ? ms + out : '') + out
+
+				// transitions
+				if (second + third === 211 && out.charCodeAt(13) === 105 && out.indexOf('transform', 10) > 0) {
+					return out.substring(0, out.indexOf(';', 27) + 1).replace(transformptn, '$1' + webkit + '$2') + out
+				}
+
+				break
+			}
+		}
+
+		return out
+	}
+
+	/**
+	 * Vendor
+	 *
+	 * @param {string} content
+	 * @param {number} context
+	 * @return {boolean}
+	 */
+	function vendor (content, context) {
+		var index = content.indexOf(context === 1 ? ':' : '{')
+		var key = content.substring(0, context !== 3 ? index : 10)
+		var value = content.substring(index + 1, content.length - 1)
+
+		return should(context !== 2 ? key : key.replace(pseudofmt, '$1'), value, context)
+	}
+
+	/**
+	 * Supports
+	 *
+	 * @param {string} match
+	 * @param {string} group
+	 * @return {string}
+	 */
+	function supports (match, group) {
+		var out = property(group, group.charCodeAt(0), group.charCodeAt(1), group.charCodeAt(2))
+
+		return out !== group+';' ? out.replace(propertyptn, ' or ($1)').substring(4) : '('+group+')'
+	}
+
+	/**
+	 * Animation
+	 *
+	 * @param {string} input
+	 * @return {string}
+	 */
+	function animation (input) {
+		var length = input.length
+		var index = input.indexOf(':', 9) + 1
+		var declare = input.substring(0, index).trim()
+		var out = input.substring(index, length-1).trim()
+
+		switch (input.charCodeAt(9)*keyed) {
+			case 0: {
+				break
+			}
+			// animation-*, -
+			case DASH: {
+				// animation-name, n
+				if (input.charCodeAt(10) !== 110) {
+					break
+				}
+			}
+			// animation/animation-name
+			default: {
+				// split in case of multiple animations
+				var list = out.split((out = '', animationptn))
+
+				for (var i = 0, index = 0, length = list.length; i < length; index = 0, ++i) {
+					var value = list[i]
+					var items = value.split(propertiesptn)
+
+					while (value = items[index]) {
+						var peak = value.charCodeAt(0)
+
+						if (keyed === 1 && (
+							// letters
+							(peak > AT && peak < 90) || (peak > 96 && peak < 123) || peak === UNDERSCORE ||
+							// dash but not in sequence i.e --
+							(peak === DASH && value.charCodeAt(1) !== DASH)
+						)) {
+							// not a number/function
+							switch (isNaN(parseFloat(value)) + (value.indexOf('(') !== -1)) {
+								case 1: {
+									switch (value) {
+										// not a valid reserved keyword
+										case 'infinite': case 'alternate': case 'backwards': case 'running':
+										case 'normal': case 'forwards': case 'both': case 'none': case 'linear':
+										case 'ease': case 'ease-in': case 'ease-out': case 'ease-in-out':
+										case 'paused': case 'reverse': case 'alternate-reverse': case 'inherit':
+										case 'initial': case 'unset': case 'step-start': case 'step-end': {
+											break
+										}
+										default: {
+											value += key
+										}
+									}
+								}
+							}
+						}
+
+						items[index++] = value
+					}
+
+					out += (i === 0 ? '' : ',') + items.join(' ')
+				}
+			}
+		}
+
+		out = declare + out + ';'
+
+		if (prefix === 1 || (prefix === 2 && vendor(out, 1)))
+			return webkit + out + out
+
+		return out
+	}
+
+	/**
+	 * Isolate
+	 *
+	 * @param {Array<string>} current
+	 */
+	function isolate (current) {
+		for (var i = 0, length = current.length, selector = Array(length), padding, element; i < length; ++i) {
+			// split individual elements in a selector i.e h1 h2 === [h1, h2]
+			var elements = current[i].split(elementptn)
+			var out = ''
+
+			for (var j = 0, size = 0, tail = 0, code = 0, l = elements.length; j < l; ++j) {
+				// empty element
+				if ((size = (element = elements[j]).length) === 0 && l > 1) {
+					continue
+				}
+
+				tail = out.charCodeAt(out.length-1)
+				code = element.charCodeAt(0)
+				padding = ''
+
+				if (j !== 0) {
+					// determine if we need padding
+					switch (tail) {
+						case STAR:
+						case TILDE:
+						case GREATERTHAN:
+						case PLUS:
+						case SPACE:
+						case OPENPARENTHESES:  {
+							break
+						}
+						default: {
+							padding = ' '
+						}
+					}
+				}
+
+				switch (code) {
+					case AND: {
+						element = padding + nscopealt
+					}
+					case TILDE:
+					case GREATERTHAN:
+					case PLUS:
+					case SPACE:
+					case CLOSEPARENTHESES:
+					case OPENPARENTHESES: {
+						break
+					}
+					case OPENBRACKET: {
+						element = padding + element + nscopealt
+						break
+					}
+					case COLON: {
+						switch (element.charCodeAt(1)*2 + element.charCodeAt(2)*3) {
+							// :global
+							case 530: {
+								if (escape > 0) {
+									element = padding + element.substring(8, size - 1)
+									break
+								}
+							}
+							// :hover, :nth-child(), ...
+							default: {
+								if (j < 1 || elements[j-1].length < 1) {
+									element = padding + nscopealt + element
+								}
+							}
+						}
+						break
+					}
+					case COMMA: {
+						padding = ''
+					}
+					default: {
+						if (size > 1 && element.indexOf(':') > 0) {
+							element = padding + element.replace(pseudoptn, '$1' + nscopealt + '$2')
+						} else {
+							element = padding + element + nscopealt
+						}
+					}
+				}
+
+				out += element
+			}
+
+			selector[i] = out.replace(formatptn, '').trim()
+		}
+
+		return selector
+	}
+
+	/**
+	 * Proxy
+	 *
+	 * @param {number} context
+	 * @param {string} content
+	 * @param {Array<string>} selectors
+	 * @param {Array<string>} parents
+	 * @param {number} line
+	 * @param {number} column
+	 * @param {number} length
+	 * @param {number} id
+	 * @param {number} depth
+	 * @param {number} at
+	 * @return {(string|void|*)}
+	 */
+	function proxy (context, content, selectors, parents, line, column, length, id, depth, at) {
+		for (var i = 0, out = content, next; i < plugged; ++i) {
+			switch (next = plugins[i].call(stylis, context, out, selectors, parents, line, column, length, id, depth, at)) {
+				case void 0:
+				case false:
+				case true:
+				case null: {
+					break
+				}
+				default: {
+					out = next
+				}
+			}
+		}
+		if (out !== content) {
+		  return out
+		}
+	}
+
+	/**
+	 * @param {number} code
+	 * @param {number} index
+	 * @param {number} length
+	 * @param {string} body
+	 * @return {number}
+	 */
+	function delimited (code, index, length, body) {
+		for (var i = index + 1; i < length; ++i) {
+			switch (body.charCodeAt(i)) {
+				// /*
+				case FOWARDSLASH: {
+					if (code === STAR) {
+						if (body.charCodeAt(i - 1) === STAR &&  index + 2 !== i) {
+							return i + 1
+						}
+					}
+					break
+				}
+				// //
+				case NEWLINE: {
+					if (code === FOWARDSLASH) {
+						return i + 1
+					}
+				}
+			}
+		}
+
+		return i
+	}
+
+	/**
+	 * @param {number} type
+	 * @param {number} index
+	 * @param {number} length
+	 * @param {number} find
+	 * @param {string} body
+	 * @return {number}
+	 */
+	function match (type, index, length, body) {
+		for (var i = index + 1; i < length; ++i) {
+			switch (body.charCodeAt(i)) {
+				case type: {
+					return i
+				}
+			}
+		}
+
+		return i
+	}
+
+	/**
+	 * Minify
+	 *
+	 * @param {(string|*)} output
+	 * @return {string}
+	 */
+	function minify (output) {
+		return output
+			.replace(formatptn, '')
+			.replace(beforeptn, '')
+			.replace(afterptn, '$1')
+			.replace(tailptn, '$1')
+			.replace(whiteptn, ' ')
+	}
+
+	/**
+	 * Use
+	 *
+	 * @param {(Array<function(...?)>|function(...?)|number|void)?} plugin
+	 */
+	function use (plugin) {
+		switch (plugin) {
+			case void 0:
+			case null: {
+				plugged = plugins.length = 0
+				break
+			}
+			default: {
+				if (typeof plugin === 'function') {
+					plugins[plugged++] = plugin
+				}	else if (typeof plugin === 'object') {
+					for (var i = 0, length = plugin.length; i < length; ++i) {
+						use(plugin[i])
+					}
+				} else {
+					unkwn = !!plugin|0
+				}
+			}
+ 		}
+
+ 		return use
+	}
+
+	/**
+	 * Set
+	 *
+	 * @param {*} options
+	 */
+	function set (options) {
+		for (var name in options) {
+			var value = options[name]
+			switch (name) {
+				case 'keyframe': keyed = value|0; break
+				case 'global': escape = value|0; break
+				case 'cascade': cascade = value|0; break
+				case 'compress': compress = value|0; break
+				case 'semicolon': semicolon = value|0; break
+				case 'preserve': preserve = value|0; break
+				case 'prefix':
+					should = null
+
+					if (!value) {
+						prefix = 0
+					} else if (typeof value !== 'function') {
+						prefix = 1
+					} else {
+						prefix = 2
+						should = value
+					}
+			}
+		}
+
+		return set
+	}
+
+	/**
+	 * Stylis
+	 *
+	 * @param {string} selector
+	 * @param {string} input
+	 * @return {*}
+	 */
+	function stylis (selector, input) {
+		if (this !== void 0 && this.constructor === stylis) {
+			return factory(selector)
+		}
+
+		// setup
+		var ns = selector
+		var code = ns.charCodeAt(0)
+
+		// trim leading whitespace
+		if (code < 33) {
+			code = (ns = ns.trim()).charCodeAt(0)
+		}
+
+		// keyframe/animation namespace
+		if (keyed > 0) {
+			key = ns.replace(invalidptn, code === OPENBRACKET ? '' : '-')
+		}
+
+		// reset, used to assert if a plugin is moneky-patching the return value
+		code = 1
+
+		// cascade/isolate
+		if (cascade === 1) {
+			nscope = ns
+		} else {
+			nscopealt = ns
+		}
+
+		var selectors = [nscope]
+		var result
+
+		// execute plugins, pre-process context
+		if (plugged > 0) {
+			result = proxy(PREPS, input, selectors, selectors, line, column, 0, 0, 0, 0)
+
+			if (result !== void 0 && typeof result === 'string') {
+				input = result
+			}
+		}
+
+		// build
+		var output = compile(array, selectors, input, 0, 0)
+
+		// execute plugins, post-process context
+		if (plugged > 0) {
+			result = proxy(POSTS, output, selectors, selectors, line, column, output.length, 0, 0, 0)
+
+			// bypass minification
+			if (result !== void 0 && typeof(output = result) !== 'string') {
+				code = 0
+			}
+		}
+
+		// reset
+		key = ''
+		nscope = ''
+		nscopealt = ''
+		pattern = 0
+		line = 1
+		column = 1
+
+		return compress*code === 0 ? output : minify(output)
+	}
+
+	stylis['use'] = use
+	stylis['set'] = set
+
+	if (options !== void 0) {
+		set(options)
+	}
+
+	return stylis
+}));
 
 
 /***/ }),
@@ -46592,10 +49032,10 @@ module.exports = function(module) {
 /*!**********************!*\
   !*** ./package.json ***!
   \**********************/
-/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, default */
+/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.5.2\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js --shallow -f md --markdown-toc false -o docs/mermaidAPI.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"crypto-random-string\":\"^3.0.1\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"scope-css\":\"^1.2.1\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.4\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -46603,53 +49043,1030 @@ module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.5.2\",\"descr
 /*!***********************!*\
   !*** ./src/config.js ***!
   \***********************/
-/*! exports provided: setConfig, getConfig, default */
+/*! exports provided: defaultConfig, setSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, reset, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultConfig", function() { return defaultConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setSiteConfig", function() { return setSiteConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSiteConfig", function() { return getSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConfig", function() { return setConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getConfig", function() { return getConfig; });
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-var config = {};
-
-var setConf = function setConf(cnf) {
-  // Top level initially mermaid, gflow, sequenceDiagram and gantt
-  var lvl1Keys = Object.keys(cnf);
-
-  for (var i = 0; i < lvl1Keys.length; i++) {
-    if (_typeof(cnf[lvl1Keys[i]]) === 'object' && cnf[lvl1Keys[i]] != null) {
-      var lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
-
-      for (var j = 0; j < lvl2Keys.length; j++) {
-        // logger.debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j])
-        if (typeof config[lvl1Keys[i]] === 'undefined') {
-          config[lvl1Keys[i]] = {};
-        } // logger.debug('Setting config: ' + lvl1Keys[i] + ' ' + lvl2Keys[j] + ' to ' + cnf[lvl1Keys[i]][lvl2Keys[j]])
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sanitize", function() { return sanitize; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reset", function() { return reset; });
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
 
 
-        config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
-      }
-    } else {
-      config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
-    }
-  }
+ // import { unflatten } from 'flat';
+// import flatten from 'flat';
+// import themeVariables from './theme-default';
+// import themeForestVariables from './theme-forest';
+// import themeNeutralVariables from './theme-neutral';
+
+var handleThemeVariables = function handleThemeVariables(value) {
+  return _themes__WEBPACK_IMPORTED_MODULE_2__["default"][value] ? _themes__WEBPACK_IMPORTED_MODULE_2__["default"][value].getThemeVariables() : _themes__WEBPACK_IMPORTED_MODULE_2__["default"].default.getThemeVariables();
 };
+
+var manipulators = {
+  themeVariables: handleThemeVariables
+};
+/**
+ * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
+ *
+ * ## **What follows are config instructions for older versions**
+ * These are the default options which can be overridden with the initialization call like so:
+ * **Example 1:**
+ * <pre>
+ * mermaid.initialize({
+ *   flowchart:{
+ *     htmlLabels: false
+ *   }
+ * });
+ * </pre>
+ *
+ * **Example 2:**
+ * <pre>
+ * &lt;script>
+ *   var config = {
+ *     startOnLoad:true,
+ *     flowchart:{
+ *       useMaxWidth:true,
+ *       htmlLabels:true,
+ *       curve:'cardinal',
+ *     },
+ *
+ *     securityLevel:'loose',
+ *   };
+ *   mermaid.initialize(config);
+ * &lt;/script>
+ * </pre>
+ * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults). A description of each option follows below.
+ *
+ * @name Configuration
+ */
+
+var config = {
+  /** theme , the CSS style sheet
+   *
+   * theme , the CSS style sheet
+   *
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   *
+   ***Notes:**To disable any pre-defined mermaid theme, use "null".
+   * <pre>
+   *  "theme": "forest",
+   *  "themeCSS": ".node rect { fill: red; }"
+   * </pre>
+   */
+  theme: 'default',
+  themeVariables: _themes__WEBPACK_IMPORTED_MODULE_2__["default"]['default'].getThemeVariables(),
+  themeCSS: undefined,
+
+  /* **maxTextSize** - The maximum allowed size of the users text diamgram */
+  maxTextSize: 50000,
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
+   *
+   ***notes: Default value is \\"trebuchet ms\\".
+   */
+  fontFamily: '"trebuchet ms", verdana, arial;',
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
+   *
+   *
+   ***Notes:**
+   *-   debug: 1.
+   *-   info: 2.
+   *-   warn: 3.
+   *-   error: 4.
+   *-   fatal: 5(default).
+   */
+  logLevel: 5,
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose, antiscript |
+   *
+   ***Notes:
+   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   *-   **loose**: tags in text are allowed, click functionality is enabled
+   *-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
+   */
+  securityLevel: 'strict',
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
+   *
+   ***Notes:**
+   ***Default value: true**
+   */
+  startOnLoad: true,
+
+  /**
+   *| Parameter | Description |Type | Required |Values|
+   *| --- | --- | --- | --- | --- |
+   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
+   *
+   *
+   *## Notes**: This matters if you are using base tag settings.
+   ***Default value: false**.
+   */
+  arrowMarkerAbsolute: false,
+
+  /**
+   * This option controls which currentConfig keys are considered _secure_ and can only be changed via
+   * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
+   * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
+   * overriding a site's default security.
+   */
+  secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
+
+  /**
+   * The object containing configurations specific for flowcharts
+   */
+  flowchart: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 8**.
+     */
+    diagramPadding: 8,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
+     *
+     ***Notes: Default value: true**.
+     */
+    htmlLabels: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
+     *
+     ***Notes:
+     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
+     ***Default value 50**.
+     */
+    nodeSpacing: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
+     *
+     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+     ***Default value 50**.
+     */
+    rankSpacing: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
+     *
+     ***Notes:
+     *Default Vaue: Linear**
+     */
+    curve: 'linear',
+    // Only used in new experimental rendering
+    // repreesents the padding between the labels and the shape
+    padding: 15
+  },
+
+  /**
+   * The object containing configurations specific for sequence diagrams
+   */
+  sequence: {
+    /**
+     * widt of the activation rect
+     * **Default value 10**.
+     */
+    activationWidth: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    diagramMarginX: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
+     *
+     ***Notes:**
+     ***Default value 10**.
+     */
+    diagramMarginY: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    actorMargin: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
+     */
+    width: 150,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 65**..
+     */
+    height: 65,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
+     */
+    boxMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
+     *
+     ***Notes:**
+     *
+     ***Default value 5**.
+     */
+    boxTextMargin: 5,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
+     */
+    noteMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
+     */
+    messageMargin: 35,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
+     *
+     ***Notes:**center **default**
+     */
+    messageAlign: 'center',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
+     *
+     ***Notes:**
+     *
+     ***Default value true**.
+     */
+    mirrorActors: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
+     *available space. If set to false, the absolute space required is used.
+     ***Default value: True**.
+     */
+    useMaxWidth: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *
+     *This will display arrows that start and begin at the same node as right angles, rather than a curve
+     ***Default value false**.
+     */
+    rightAngles: false,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     ***Default value false**.
+     */
+    showSequenceNumbers: false,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
+     */
+    actorFontSize: 14,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
+     *
+     ***Notes:**
+     ***Default value "Open-Sans", "sans-serif"**.
+     */
+    actorFontFamily: '"Open-Sans", "sans-serif"',
+
+    /**
+     * This sets the font weight of the actor's description
+     * **Default value 400.
+     */
+    actorFontWeight: 400,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
+     */
+    noteFontSize: 14,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
+     *
+     ***Notes:**
+     ***Default value: trebuchet ms **.
+     */
+    noteFontFamily: '"trebuchet ms", verdana, arial',
+
+    /**
+     * This sets the font weight of the note's description
+     * **Default value 400.
+     */
+    noteFontWeight: 400,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
+     *
+     ***Notes:**
+     ***Default value center**.
+     */
+    noteAlign: 'center',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
+     *
+     ***Notes:**
+     ***Default value 16**.
+     */
+    messageFontSize: 16,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
+     *
+     ***Notes:**
+     ***Default value:"trebuchet ms**.
+     */
+    messageFontFamily: '"trebuchet ms", verdana, arial',
+
+    /**
+     * This sets the font weight of the message's description
+     * **Default value 400.
+     */
+    messageFontWeight: 400,
+
+    /**
+     * This sets the auto-wrap state for the diagram
+     * **Default value false.
+     */
+    wrap: false,
+
+    /**
+     * This sets the auto-wrap padding for the diagram (sides only)
+     * **Default value 10.
+     */
+    wrapPadding: 10,
+
+    /**
+     * This sets the width of the loop-box (loop, alt, opt, par)
+     * **Default value 50.
+     */
+    labelBoxWidth: 50,
+
+    /**
+     * This sets the height of the loop-box (loop, alt, opt, par)
+     * **Default value 20.
+     */
+    labelBoxHeight: 20,
+    messageFont: function messageFont() {
+      return {
+        fontFamily: this.messageFontFamily,
+        fontSize: this.messageFontSize,
+        fontWeight: this.messageFontWeight
+      };
+    },
+    noteFont: function noteFont() {
+      return {
+        fontFamily: this.noteFontFamily,
+        fontSize: this.noteFontSize,
+        fontWeight: this.noteFontWeight
+      };
+    },
+    actorFont: function actorFont() {
+      return {
+        fontFamily: this.actorFontFamily,
+        fontSize: this.actorFontSize,
+        fontWeight: this.actorFontWeight
+      };
+    }
+  },
+
+  /**
+   * The object containing configurations specific for gantt diagrams*
+   */
+  gantt: {
+    /**
+     *### titleTopMargin
+     *
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 25**.
+     */
+    titleTopMargin: 25,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 20**.
+     */
+    barHeight: 20,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
+     */
+    barGap: 4,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    topPadding: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 75**.
+     */
+    leftPadding: 75,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 35**.
+     */
+    gridLineStartPadding: 35,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize | Font size| Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 11**.
+     */
+    fontSize: 11,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
+     *
+     ***Notes:**
+     *
+     ***Default value '"Open-Sans", "sans-serif"'**.
+     */
+    fontFamily: '"Open-Sans", "sans-serif"',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
+     */
+    numberSectionStyles: 4,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
+     *
+     ***Notes:**
+     *
+     * This might need adjustment to match your locale and preferences
+     ***Default value '%Y-%m-%d'**.
+     */
+    axisFormat: '%Y-%m-%d'
+  },
+
+  /**
+   * The object containing configurations specific for sequence diagrams
+   */
+  journey: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    diagramMarginX: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 10**..
+     */
+    diagramMarginY: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    actorMargin: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
+     */
+    width: 150,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 65**.
+     */
+    height: 65,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
+     */
+    boxMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     */
+    boxTextMargin: 5,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
+     */
+    noteMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
+     */
+    messageMargin: 35,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
+     *
+     ***Notes:**default:center**
+     */
+    messageAlign: 'center',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
+     *
+     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
+     ***Default value false**.
+     */
+    rightAngles: false
+  },
+  class: {
+    arrowMarkerAbsolute: false
+  },
+  git: {
+    arrowMarkerAbsolute: false
+  },
+  state: {
+    dividerMargin: 10,
+    sizeUnit: 5,
+    padding: 8,
+    textHeight: 10,
+    titleShift: -15,
+    noteMargin: 10,
+    forkWidth: 70,
+    forkHeight: 7,
+    // Used
+    miniPadding: 2,
+    // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
+    // layout. This might need updating if/when switching font
+    fontSizeFactor: 5.02,
+    fontSize: 24,
+    labelHeight: 16,
+    edgeLengthFactor: '20',
+    compositTitleSize: 35,
+    radius: 5
+  },
+
+  /**
+   * The object containing configurations specific for entity relationship diagrams
+   */
+  er: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 20**.
+     */
+    diagramPadding: 20,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
+     *
+     ***Notes:**
+     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     * T = top, B = bottom, L = left, and R = right.
+     ***Default value: TB **.
+     */
+    layoutDirection: 'TB',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 100**.
+     */
+    minEntityWidth: 100,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 75 **
+     */
+    minEntityHeight: 75,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+     ***Default value: 15 **
+     */
+    entityPadding: 15,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
+     ***Default value: gray **
+     */
+    stroke: 'gray',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
+     *
+     ***Notes:**
+     ***Default value:'honeydew'**
+     */
+    fill: 'honeydew',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
+     *
+     ***Notes:**Font size (expressed as an integer representing a number of pixels)
+     ***Default value: 12 **
+     */
+    fontSize: 12,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     *
+     ***Notes:**
+     *When this flag is set to true, the diagram width is locked to 100% and
+     *scaled based on available space. If set to false, the diagram reserves its
+     *absolute width.
+     ***Default value: true**.
+     */
+    useMaxWidth: true
+  }
+}; // debugger;
+
+config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+var defaultConfig = Object.freeze(config);
+var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+/**
+ *## setSiteConfig
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
+ ***Notes:**
+ *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
+ *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
+ *to the defaultConfig
+ *Note: currentConfig is set in this function
+ **Default value: At default, will mirror Global Config**
+ * @param conf - the base currentConfig to use as siteConfig
+ * @returns {*} - the siteConfig
+ */
+
+var setSiteConfig = function setSiteConfig(conf) {
+  Object.keys(conf).forEach(function (key) {
+    var manipulator = manipulators[key];
+    conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
+  });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf, {
+    clobber: true
+  }); // Set theme variables if user has set the theme option
+
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
+  return getSiteConfig();
+};
+/**
+ *## getSiteConfig
+ *| Function | Description         | Type    |  Values             |
+ *| --------- | ------------------- | ------- |  ------------------ |
+ *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
+ ***Notes**:
+ *Returns **any** values in siteConfig.
+ * @returns {*}
+ */
+
+var getSiteConfig = function getSiteConfig() {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteConfig);
+};
+/**
+ *## setConfig
+ *| Function  | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
+ ***Notes**:
+ *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
+ *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
+ *siteConfig value.
+ * @param conf - the potential currentConfig
+ * @returns {*} - the currentConfig merged with the sanitized conf
+ */
 
 var setConfig = function setConfig(conf) {
-  setConf(conf);
+  sanitize(conf);
+  Object.keys(conf).forEach(function (key) {
+    var manipulator = manipulators[key];
+    conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
+  });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf);
+  return getConfig();
 };
-var getConfig = function getConfig() {
-  return config;
-};
-var configApi = {
-  setConfig: setConfig,
-  getConfig: getConfig // get conf() {
-  //   return config;
-  // }
+/**
+ *   ## getConfig
+ *| Function  | Description         | Type    | Return Values            |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
+ ***Notes**:
+ *Returns **any** the currentConfig
+ * @returns {*} - the currentConfig
+ */
 
+var getConfig = function getConfig() {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, currentConfig);
 };
+/**
+ *## sanitize
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
+ *Ensures options parameter does not attempt to override siteConfig secure keys
+ *Note: modifies options in-place
+ * @param options - the potential setConfig parameter
+ */
+
+var sanitize = function sanitize(options) {
+  Object.keys(siteConfig.secure).forEach(function (key) {
+    if (typeof options[siteConfig.secure[key]] !== 'undefined') {
+      // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
+      // can exploit the logger's attempt to stringify the value and execute arbitrary code
+      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].warn("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
+      delete options[siteConfig.secure[key]];
+    }
+  });
+};
+/**
+ *## reset
+ *| Function | Description         | Type    | Required | Values             |
+ *| --------- | ------------------- | ------- | -------- | ------------------ |
+ *| reset|Resets currentConfig to conf| Put Request | Required | None|
+ *
+ *| Parameter | Description |Type | Required | Values|
+ *| --- | --- | --- | --- | --- |
+ *| conf| base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array|
+ *
+ **Notes :
+ (default: current siteConfig ) (optional, default `getSiteConfig()`)
+ * @param conf - the base currentConfig to reset to (default: current siteConfig )
+ */
+
+var reset = function reset() {
+  var conf = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getSiteConfig();
+  Object.keys(siteConfig).forEach(function (key) {
+    return delete siteConfig[key];
+  });
+  Object.keys(currentConfig).forEach(function (key) {
+    return delete currentConfig[key];
+  });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf, {
+    clobber: true
+  });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf, {
+    clobber: true
+  });
+};
+var configApi = Object.freeze({
+  sanitize: sanitize,
+  setSiteConfig: setSiteConfig,
+  getSiteConfig: getSiteConfig,
+  setConfig: setConfig,
+  getConfig: getConfig,
+  reset: reset,
+  defaultConfig: defaultConfig
+});
 /* harmony default export */ __webpack_exports__["default"] = (configApi);
 
 /***/ }),
@@ -46969,7 +50386,7 @@ var createLabel = function createLabel(_vertexText, style, isTitle, isNode) {
 /*!************************************!*\
   !*** ./src/dagre-wrapper/edges.js ***!
   \************************************/
-/*! exports provided: clear, insertEdgeLabel, positionEdgeLabel, insertEdge */
+/*! exports provided: clear, insertEdgeLabel, positionEdgeLabel, intersection, insertEdge */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46977,15 +50394,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertEdgeLabel", function() { return insertEdgeLabel; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "positionEdgeLabel", function() { return positionEdgeLabel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "intersection", function() { return intersection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertEdge", function() { return insertEdge; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
 /* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
  // eslint-disable-line
 
 
 
+
+ // import { calcLabelPosition } from '../utils';
 
 var edgeLabels = {};
 var clear = function clear() {
@@ -47017,12 +50438,22 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
   edge.width = bbox.width;
   edge.height = bbox.height;
 };
-var positionEdgeLabel = function positionEdgeLabel(edge) {
+var positionEdgeLabel = function positionEdgeLabel(edge, points) {
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
 
   if (edge.label) {
     var el = edgeLabels[edge.id];
-    el.attr('transform', 'translate(' + edge.x + ', ' + edge.y + ')');
+    var x = edge.x;
+    var y = edge.y;
+
+    if (points) {
+      // debugger;
+      var pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcLabelPosition(points);
+      x = pos.x;
+      y = pos.y;
+    }
+
+    el.attr('transform', 'translate(' + x + ', ' + y + ')');
   }
 }; // const getRelationType = function(type) {
 //   switch (type) {
@@ -47038,6 +50469,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge) {
 // };
 
 var outsideNode = function outsideNode(node, point) {
+  // logger.warn('Checking bounds ', node, point);
   var x = node.x;
   var y = node.y;
   var dx = Math.abs(point.x - x);
@@ -47045,7 +50477,7 @@ var outsideNode = function outsideNode(node, point) {
   var w = node.width / 2;
   var h = node.height / 2;
 
-  if (dx > w || dy > h) {
+  if (dx >= w || dy >= h) {
     return true;
   }
 
@@ -47053,39 +50485,68 @@ var outsideNode = function outsideNode(node, point) {
 };
 
 var intersection = function intersection(node, outsidePoint, insidePoint) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('intersection o:', outsidePoint, ' i:', insidePoint, node);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
   var x = node.x;
   var y = node.y;
   var dx = Math.abs(x - insidePoint.x);
   var w = node.width / 2;
   var r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-  var dy = Math.abs(y - insidePoint.y);
   var h = node.height / 2;
-  var q = insidePoint.y < outsidePoint.y ? h - dy : h - dy;
-  var Q = Math.abs(outsidePoint.y - insidePoint.y);
-  var R = Math.abs(outsidePoint.x - insidePoint.x);
+  var edges = {
+    x1: x - w,
+    x2: x + w,
+    y1: y - h,
+    y2: y + h
+  };
 
-  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h || false) {
+  if (outsidePoint.x === edges.x1 || outsidePoint.x === edges.x2 || outsidePoint.y === edges.y1 || outsidePoint.y === edges.y2) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('calc equals on edge');
+    return outsidePoint;
+  }
+
+  var Q = Math.abs(outsidePoint.y - insidePoint.y);
+  var R = Math.abs(outsidePoint.x - insidePoint.x); // log.warn();
+
+  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // eslint-disable-line
     // Intersection is top or bottom of rect.
+    // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    var q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = R * q / Q;
-    return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - r,
-      y: insidePoint.y + q
+    var res = {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
+      y: outsidePoint.y + q
     };
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
+    return res;
   } else {
-    q = Q * r / R;
-    r = R * q / Q;
+    // Intersection onn sides of rect
+    // q = (Q * r) / R;
+    // q = 2;
+    // r = (R * q) / Q;
+    if (insidePoint.x < outsidePoint.x) {
+      r = outsidePoint.x - w - x;
+    } else {
+      // r = outsidePoint.x - w - x;
+      r = x - w - outsidePoint.x;
+    }
+
+    var _q = _q = Q * r / R;
+
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("sides calc, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
+    });
     return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
     };
   }
 }; //(edgePaths, e, edge, clusterDb, diagramtype, graph)
 
-
 var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, graph) {
   var points = edge.points;
+  var pointsHasChanged = false;
   var tail = graph.node(e.v);
   var head = graph.node(e.w);
 
@@ -47108,9 +50569,20 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
       if (!outsideNode(node, point) && !isInside) {
         _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('inside', edge.toCluster, point, lastPointOutside); // First point inside the rect
 
-        var insterection = intersection(node, lastPointOutside, point);
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('intersect', insterection);
-        points.push(insterection);
+        var inter = intersection(node, lastPointOutside, point);
+        var pointPresent = false;
+        points.forEach(function (p) {
+          pointPresent = pointPresent || p.x === inter.x && p.y === inter.y;
+        }); // if (!pointPresent) {
+
+        if (!points.find(function (e) {
+          return e.x === inter.x && e.y === inter.y;
+        })) {
+          points.push(inter);
+        } else {
+          _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('no intersect', inter, points);
+        }
+
         isInside = true;
       } else {
         if (!isInside) points.push(point);
@@ -47118,11 +50590,12 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
 
       lastPointOutside = point;
     });
+    pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
     _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('from cluster', clusterDb[edge.toCluster]);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('from cluster', clusterDb[edge.fromCluster]);
     var updatedPoints = [];
 
     var _lastPointOutside;
@@ -47134,7 +50607,7 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
       var node = clusterDb[edge.fromCluster].node;
 
       if (!outsideNode(node, point) && !_isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('inside', edge.toCluster, point); // First point inside the rect
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('inside', edge.fromCluster, point, node); // First point inside the rect
 
         var insterection = intersection(node, _lastPointOutside, point); // logger.trace('intersect', intersection(node, lastPointOutside, point));
 
@@ -47151,6 +50624,7 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     }
 
     points = updatedPoints;
+    pointsHasChanged = true;
   } // The data for our line
 
 
@@ -47162,8 +50636,38 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     return d.x;
   }).y(function (d) {
     return d.y;
-  }).curve(d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"]);
-  var svgPath = elem.append('path').attr('d', lineFunction(lineData)).attr('id', edge.id).attr('class', 'transition' + (edge.classes ? ' ' + edge.classes : '')); // DEBUG code, adds a red circle at each edge coordinate
+  }).curve(d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"]); // Contruct stroke classes based on properties
+
+  var strokeClasses;
+
+  switch (edge.thickness) {
+    case 'normal':
+      strokeClasses = 'edge-thickness-normal';
+      break;
+
+    case 'thick':
+      strokeClasses = 'edge-thickness-thick';
+      break;
+
+    default:
+      strokeClasses = '';
+  }
+
+  switch (edge.pattern) {
+    case 'solid':
+      strokeClasses += ' edge-pattern-solid';
+      break;
+
+    case 'dotted':
+      strokeClasses += ' edge-pattern-dotted';
+      break;
+
+    case 'dashed':
+      strokeClasses += ' edge-pattern-dashed';
+      break;
+  }
+
+  var svgPath = elem.append('path').attr('d', lineFunction(lineData)).attr('id', edge.id).attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '')); // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach(point => {
   //   elem
   //     .append('circle')
@@ -47182,46 +50686,83 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     url = url.replace(/\)/g, '\\)');
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('arrowType', edge.arrowType);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('arrowTypeStart', edge.arrowTypeStart);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  switch (edge.arrowType) {
+  switch (edge.arrowTypeStart) {
     case 'arrow_cross':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-crossEnd' + ')');
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-crossStart' + ')');
       break;
 
-    case 'double_arrow_cross':
+    case 'arrow_point':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-pointStart' + ')');
+      break;
+
+    case 'arrow_barb':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-barbStart' + ')');
+      break;
+
+    case 'arrow_circle':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-circleStart' + ')');
+      break;
+
+    case 'aggregation':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-aggregationStart' + ')');
+      break;
+
+    case 'extension':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-extensionStart' + ')');
+      break;
+
+    case 'composition':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-compositionStart' + ')');
+      break;
+
+    case 'dependency':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-dependencyStart' + ')');
+      break;
+
+    default:
+  }
+
+  switch (edge.arrowTypeEnd) {
+    case 'arrow_cross':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-crossEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-crossStart' + ')');
       break;
 
     case 'arrow_point':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-pointEnd' + ')');
       break;
 
-    case 'double_arrow_point':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-pointEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-pointStart' + ')');
-      break;
-
     case 'arrow_barb':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-barbEnd' + ')');
-      break;
-
-    case 'double_arrow_barb':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-barnEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-barbStart' + ')');
       break;
 
     case 'arrow_circle':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-circleEnd' + ')');
       break;
 
-    case 'double_arrow_circle':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-circleEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-circleStart' + ')');
+    case 'aggregation':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-aggregationEnd' + ')');
+      break;
+
+    case 'extension':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-extensionEnd' + ')');
+      break;
+
+    case 'composition':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-compositionEnd' + ')');
+      break;
+
+    case 'dependency':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-dependencyEnd' + ')');
       break;
 
     default:
+  }
+
+  if (pointsHasChanged) {
+    return points;
   }
 };
 
@@ -47267,13 +50808,13 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
 
 
   if (!graph.nodes()) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('No nodes found for', graph);
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('No nodes found for', graph);
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Recursive render', graph.nodes());
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Recursive render', graph.nodes());
   }
 
   if (graph.edges().length > 0) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Recursive edges', graph.edge(graph.edges()[0]));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Recursive edges', graph.edge(graph.edges()[0]));
   }
 
   var clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
@@ -47289,16 +50830,16 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
     if (typeof parentCluster !== 'undefined') {
       var data = JSON.parse(JSON.stringify(parentCluster.clusterData)); // data.clusterPositioning = true;
 
-      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Setting data for cluster', data);
+      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Setting data for cluster', data);
       graph.setNode(parentCluster.id, data);
       graph.setParent(v, parentCluster.id, data);
     }
 
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('(Insert) Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('(Insert) Node ' + v + ': ' + JSON.stringify(graph.node(v)));
 
     if (node && node.clusterNode) {
       // const children = graph.children(v);
-      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Cluster identified', v, node, graph.node(v));
+      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Cluster identified', v, node, graph.node(v));
       var newEl = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
       Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, newEl);
       Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["setNodeElem"])(newEl, node);
@@ -47307,14 +50848,14 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
       if (graph.children(v).length > 0) {
         // This is a cluster but not to be rendered recusively
         // Render as before
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Cluster - the non recursive path', v, node.id, node, graph);
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace(Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph));
+        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Cluster - the non recursive path', v, node.id, node, graph);
+        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info(Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph));
         _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][node.id] = {
           id: Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph),
           node: node
         }; // insertCluster(clusters, graph.node(v));
       } else {
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Node - the non recursive path', v, node.id, node);
+        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Node - the non recursive path', v, node.id, node);
         Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["insertNode"])(nodes, graph.node(v), dir);
       }
     }
@@ -47325,10 +50866,10 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
 
   graph.edges().forEach(function (e) {
     var edge = graph.edge(e.v, e.w, e.name);
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e))); // Check if link is either from or to a cluster
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e))); // Check if link is either from or to a cluster
 
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Fix', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], 'ids:', e.v, e.w, 'Translateing: ', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.v], _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.w]);
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Fix', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], 'ids:', e.v, e.w, 'Translateing: ', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.v], _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.w]);
     Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdgeLabel"])(edgeLabels, edge);
   });
   graph.edges().forEach(function (e) {
@@ -47339,11 +50880,11 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
   _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('#############################################');
   _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info(graph);
   dagre__WEBPACK_IMPORTED_MODULE_0___default.a.layout(graph);
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Graph after layout:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // Move the nodes to the correct place
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Graph after layout:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // Move the nodes to the correct place
 
   graph.nodes().forEach(function (v) {
     var node = graph.node(v);
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
     _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Position ' + v + ': (' + node.x, ',' + node.y, ') width: ', node.width, ' height: ', node.height);
 
     if (node && node.clusterNode) {
@@ -47365,8 +50906,8 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
   graph.edges().forEach(function (e) {
     var edge = graph.edge(e);
     _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
-    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdge"])(edgePaths, e, edge, _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], diagramtype, graph);
-    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["positionEdgeLabel"])(edge);
+    var updatedPath = Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdge"])(edgePaths, e, edge, _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], diagramtype, graph);
+    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["positionEdgeLabel"])(edge, updatedPath);
   });
   return elem;
 };
@@ -47601,10 +51142,17 @@ function intersectPolygon(node, polyPoints, point) {
   var intersections = [];
   var minX = Number.POSITIVE_INFINITY;
   var minY = Number.POSITIVE_INFINITY;
-  polyPoints.forEach(function (entry) {
-    minX = Math.min(minX, entry.x);
-    minY = Math.min(minY, entry.y);
-  });
+
+  if (typeof polyPoints.forEach === 'function') {
+    polyPoints.forEach(function (entry) {
+      minX = Math.min(minX, entry.x);
+      minY = Math.min(minY, entry.y);
+    });
+  } else {
+    minX = Math.min(minX, polyPoints.x);
+    minY = Math.min(minY, polyPoints.y);
+  }
+
   var left = x1 - node.width / 2 - minX;
   var top = y1 - node.height / 2 - minY;
 
@@ -47718,38 +51266,40 @@ var insertMarkers = function insertMarkers(elem, markerArray, type, id) {
 
 var extension = function extension(elem, type, id) {
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Making markers for ', id);
-  elem.append('defs').append('marker').attr('id', type + '-extensionStart').attr('class', 'extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 1,7 L18,13 V 1 Z');
-  elem.append('defs').append('marker').attr('id', type + '-extensionEnd ' + type).attr('class', 'extension ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
+  elem.append('defs').append('marker').attr('id', type + '-extensionStart').attr('class', 'marker extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 1,7 L18,13 V 1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-extensionEnd').attr('class', 'marker extension ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 };
 
 var composition = function composition(elem, type) {
-  elem.append('defs').append('marker').attr('id', type + '-compositionStart').attr('class', 'extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-  elem.append('defs').append('marker').attr('id', type + '-compositionEnd').attr('class', 'extension ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-compositionStart').attr('class', 'marker composition ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-compositionEnd').attr('class', 'marker composition ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
 
 var aggregation = function aggregation(elem, type) {
-  elem.append('defs').append('marker').attr('id', type + '-aggregationStart').attr('class', 'extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-  elem.append('defs').append('marker').attr('id', type + '-aggregationEnd').attr('class', type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-aggregationStart').attr('class', 'marker aggregation ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-aggregationEnd').attr('class', 'marker aggregation ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
 
 var dependency = function dependency(elem, type) {
-  elem.append('defs').append('marker').attr('id', type + '-dependencyStart').attr('class', 'extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
-  elem.append('defs').append('marker').attr('id', type + '-dependencyEnd').attr('class', type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-dependencyStart').attr('class', 'marker dependency ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-dependencyEnd').attr('class', 'marker dependency ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
 
 var point = function point(elem, type) {
-  elem.append('marker').attr('id', type + '-pointEnd').attr('class', type).attr('viewBox', '0 0 10 10').attr('refX', 10).attr('refY', 5).attr('markerUnits', 'strokeWidth').attr('markerWidth', 8).attr('markerHeight', 8).attr('orient', 'auto').append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
-  elem.append('marker').attr('id', type + '-pointStart').attr('class', type).attr('viewBox', '0 0 10 10').attr('refX', 0).attr('refY', 5).attr('markerUnits', 'strokeWidth').attr('markerWidth', 8).attr('markerHeight', 8).attr('orient', 'auto').append('path').attr('d', 'M 0 5 L 10 10 L 10 0 z').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
+  elem.append('marker').attr('id', type + '-pointEnd').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 12).attr('markerHeight', 12).attr('orient', 'auto').append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
+  elem.append('marker').attr('id', type + '-pointStart').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', 0).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 12).attr('markerHeight', 12).attr('orient', 'auto').append('path').attr('d', 'M 0 5 L 10 10 L 10 0 z').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
 };
 
 var circle = function circle(elem, type) {
-  elem.append('marker').attr('id', type + '-circleEnd').attr('class', type).attr('viewBox', '0 0 10 10').attr('refX', 11).attr('refY', 5).attr('markerUnits', 'strokeWidth').attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto').append('circle').attr('cx', '5').attr('cy', '5').attr('r', '5').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
-  elem.append('marker').attr('id', type + '-circleStart').attr('class', type).attr('viewBox', '0 0 10 10').attr('refX', -1).attr('refY', 5).attr('markerUnits', 'strokeWidth').attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto').append('circle').attr('cx', '5').attr('cy', '5').attr('r', '5').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
+  elem.append('marker').attr('id', type + '-circleEnd').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', 11).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('circle').attr('cx', '5').attr('cy', '5').attr('r', '5').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
+  elem.append('marker').attr('id', type + '-circleStart').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', -1).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('circle').attr('cx', '5').attr('cy', '5').attr('r', '5').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
 };
 
 var cross = function cross(elem, type) {
-  elem.append('marker').attr('id', type + '-crossEnd').attr('class', type).attr('viewBox', '0 0 11 11').attr('refX', 12).attr('refY', 5.2).attr('markerUnits', 'strokeWidth').attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto').append('path').attr('stroke', 'black').attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9').attr('class', 'arrowMarkerPath').style('stroke-width', 2).style('stroke-dasharray', '1,0');
-  elem.append('marker').attr('id', type + '-crossStart').attr('class', type).attr('viewBox', '0 0 11 11').attr('refX', -1).attr('refY', 5.2).attr('markerUnits', 'strokeWidth').attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto').append('path').attr('stroke', 'black').attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9').attr('class', 'arrowMarkerPath').style('stroke-width', 2).style('stroke-dasharray', '1,0');
+  elem.append('marker').attr('id', type + '-crossEnd').attr('class', 'marker cross ' + type).attr('viewBox', '0 0 11 11').attr('refX', 12).attr('refY', 5.2).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('path') // .attr('stroke', 'black')
+  .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9').attr('class', 'arrowMarkerPath').style('stroke-width', 2).style('stroke-dasharray', '1,0');
+  elem.append('marker').attr('id', type + '-crossStart').attr('class', 'marker cross ' + type).attr('viewBox', '0 0 11 11').attr('refX', -1).attr('refY', 5.2).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('path') // .attr('stroke', 'black')
+  .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9').attr('class', 'arrowMarkerPath').style('stroke-width', 2).style('stroke-dasharray', '1,0');
 };
 
 var barb = function barb(elem, type) {
@@ -47933,8 +51483,11 @@ var validate = function validate(graph) {
 
 var findNonClusterChild = function findNonClusterChild(id, graph) {
   // const node = graph.node(id);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching', id);
-  var children = graph.children(id);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching', id); // const children = graph.children(id).reverse();
+
+  var children = graph.children(id); //.reverse();
+
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching children of id ', id, children);
 
   if (children.length < 1) {
     _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('This is a valid node', id);
@@ -47983,7 +51536,7 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
     var children = graph.children(id);
 
     if (children.length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Cluster identified', id, ' Replacement id in edges: ', findNonClusterChild(id, graph));
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Cluster identified', id, ' Replacement id in edges: ', findNonClusterChild(id, graph));
       decendants[id] = extractDecendants(id, graph);
       clusterDb[id] = {
         id: findNonClusterChild(id, graph),
@@ -48029,17 +51582,17 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
     _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
 
     if (clusterDb[e.v] || clusterDb[e.w]) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Fixing and trixing - removing', e.v, e.w, e.name);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fixing and trixing - removing', e.v, e.w, e.name);
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) edge.fromCluster = e.v;
       if (w !== e.w) edge.toCluster = e.w;
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Replacing with', v, w, e.name);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Replacing with', v, w, e.name);
       graph.setEdge(v, w, edge, e.name);
     }
   });
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Adjusted Graph', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Adjusted Graph', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace(clusterDb); // Remove references to extracted cluster
   // graph.edges().forEach(edge => {
   //   if (isDecendant(edge.v, clusterId) || isDecendant(edge.w, clusterId)) {
@@ -48146,14 +51699,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setNodeElem", function() { return setNodeElem; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "positionNode", function() { return positionNode; });
-/* harmony import */ var _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect/index.js */ "./src/dagre-wrapper/intersect/index.js");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-/* harmony import */ var _shapes_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shapes/util */ "./src/dagre-wrapper/shapes/util.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../config */ "./src/config.js");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
+/* harmony import */ var _shapes_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shapes/util */ "./src/dagre-wrapper/shapes/util.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../config */ "./src/config.js");
+/* harmony import */ var _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./intersect/index.js */ "./src/dagre-wrapper/intersect/index.js");
 /* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
 /* harmony import */ var _shapes_note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./shapes/note */ "./src/dagre-wrapper/shapes/note.js");
-
 
  // eslint-disable-line
 
@@ -48162,8 +51714,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 var question = function question(parent, node) {
-  var _labelHelper = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper.shapeSvg,
       bbox = _labelHelper.bbox;
 
@@ -48183,20 +51736,20 @@ var question = function question(parent, node) {
     x: 0,
     y: -s / 2
   }];
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Question main (Circle)');
-  var questionElem = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, s, s, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, questionElem);
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Question main (Circle)');
+  var questionElem = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, s, s, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, questionElem);
 
   node.intersect = function (point) {
-    _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].warn('Intersect called');
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, points, point);
+    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].warn('Intersect called');
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, points, point);
   };
 
   return shapeSvg;
 };
 
 var hexagon = function hexagon(parent, node) {
-  var _labelHelper2 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper2 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper2.shapeSvg,
       bbox = _labelHelper2.bbox;
 
@@ -48223,18 +51776,18 @@ var hexagon = function hexagon(parent, node) {
     x: 0,
     y: -h / 2
   }];
-  var hex = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, hex);
+  var hex = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, hex);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
   };
 
   return shapeSvg;
 };
 
 var rect_left_inv_arrow = function rect_left_inv_arrow(parent, node) {
-  var _labelHelper3 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper3 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper3.shapeSvg,
       bbox = _labelHelper3.bbox;
 
@@ -48256,18 +51809,18 @@ var rect_left_inv_arrow = function rect_left_inv_arrow(parent, node) {
     x: 0,
     y: -h / 2
   }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
   };
 
   return shapeSvg;
 };
 
 var lean_right = function lean_right(parent, node) {
-  var _labelHelper4 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper4 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper4.shapeSvg,
       bbox = _labelHelper4.bbox;
 
@@ -48286,18 +51839,18 @@ var lean_right = function lean_right(parent, node) {
     x: h / 6,
     y: -h
   }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
   };
 
   return shapeSvg;
 };
 
 var lean_left = function lean_left(parent, node) {
-  var _labelHelper5 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper5 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper5.shapeSvg,
       bbox = _labelHelper5.bbox;
 
@@ -48316,18 +51869,18 @@ var lean_left = function lean_left(parent, node) {
     x: -h / 6,
     y: -h
   }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
   };
 
   return shapeSvg;
 };
 
 var trapezoid = function trapezoid(parent, node) {
-  var _labelHelper6 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper6 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper6.shapeSvg,
       bbox = _labelHelper6.bbox;
 
@@ -48346,18 +51899,18 @@ var trapezoid = function trapezoid(parent, node) {
     x: h / 6,
     y: -h
   }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
   };
 
   return shapeSvg;
 };
 
 var inv_trapezoid = function inv_trapezoid(parent, node) {
-  var _labelHelper7 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper7 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper7.shapeSvg,
       bbox = _labelHelper7.bbox;
 
@@ -48376,18 +51929,18 @@ var inv_trapezoid = function inv_trapezoid(parent, node) {
     x: -2 * h / 6,
     y: -h
   }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
   };
 
   return shapeSvg;
 };
 
 var rect_right_inv_arrow = function rect_right_inv_arrow(parent, node) {
-  var _labelHelper8 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper8 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper8.shapeSvg,
       bbox = _labelHelper8.bbox;
 
@@ -48409,18 +51962,18 @@ var rect_right_inv_arrow = function rect_right_inv_arrow(parent, node) {
     x: 0,
     y: -h
   }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
   };
 
   return shapeSvg;
 };
 
 var cylinder = function cylinder(parent, node) {
-  var _labelHelper9 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper9 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper9.shapeSvg,
       bbox = _labelHelper9.bbox;
 
@@ -48430,10 +51983,10 @@ var cylinder = function cylinder(parent, node) {
   var h = bbox.height + ry + node.padding;
   var shape = 'M 0,' + ry + ' a ' + rx + ',' + ry + ' 0,0,0 ' + w + ' 0 a ' + rx + ',' + ry + ' 0,0,0 ' + -w + ' 0 l 0,' + h + ' a ' + rx + ',' + ry + ' 0,0,0 ' + w + ' 0 l 0,' + -h;
   var el = shapeSvg.attr('label-offset-y', ry).insert('path', ':first-child').attr('d', shape).attr('transform', 'translate(' + -w / 2 + ',' + -(h / 2 + ry) + ')');
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
 
   node.intersect = function (point) {
-    var pos = _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
+    var pos = _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
     var x = pos.x - node.x;
 
     if (rx != 0 && (Math.abs(x) < node.width / 2 || Math.abs(x) == node.width / 2 && Math.abs(pos.y - node.y) > node.height / 2 - ry)) {
@@ -48453,19 +52006,19 @@ var cylinder = function cylinder(parent, node) {
 };
 
 var rect = function rect(parent, node) {
-  var _labelHelper10 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, 'node ' + node.classes, true),
+  var _labelHelper10 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, 'node ' + node.classes, true),
       shapeSvg = _labelHelper10.shapeSvg,
       bbox = _labelHelper10.bbox,
       halfPadding = _labelHelper10.halfPadding;
 
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].trace('Classes = ', node.classes); // add the rect
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Classes = ', node.classes); // add the rect
 
   var rect = shapeSvg.insert('rect', ':first-child');
   rect.attr('class', 'basic label-container').attr('rx', node.rx).attr('ry', node.ry).attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, rect);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, rect);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
   };
 
   return shapeSvg;
@@ -48489,27 +52042,27 @@ var rectWithTitle = function rectWithTitle(parent, node) {
   var innerLine = shapeSvg.insert('line');
   var label = shapeSvg.insert('g').attr('class', 'label');
   var text2 = node.labelText.flat();
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Label text', text2[0]);
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Label text', text2[0]);
   var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(text2[0], node.labelStyle, true, true));
   var bbox;
 
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
     var div = text.children[0];
-    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(text);
+    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(text);
     bbox = div.getBoundingClientRect();
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Text 2', text2);
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Text 2', text2);
   var textRows = text2.slice(1, text2.length);
   var titleBox = text.getBBox();
   var descr = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(textRows.join('<br/>'), node.labelStyle, true, true));
 
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
     var _div = descr.children[0];
 
-    var _dv = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(descr);
+    var _dv = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(descr);
 
     bbox = _div.getBoundingClientRect();
 
@@ -48521,9 +52074,9 @@ var rectWithTitle = function rectWithTitle(parent, node) {
 
 
   var halfPadding = node.padding / 2;
-  Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(descr).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(descr).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
   bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) + ', ' + (titleBox.height + halfPadding + 5) + ')');
-  Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(text).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(text).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
   bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) + ', ' + 0 + ')'); // Get the size of the label
   // Bounding box for title and text
 
@@ -48532,17 +52085,17 @@ var rectWithTitle = function rectWithTitle(parent, node) {
   label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')');
   rect.attr('class', 'outer title-state').attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
   innerLine.attr('class', 'divider').attr('x1', -bbox.width / 2 - halfPadding).attr('x2', bbox.width / 2 + halfPadding).attr('y1', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding).attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, rect);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, rect);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
   };
 
   return shapeSvg;
 };
 
 var stadium = function stadium(parent, node) {
-  var _labelHelper11 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper11 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper11.shapeSvg,
       bbox = _labelHelper11.bbox;
 
@@ -48550,17 +52103,17 @@ var stadium = function stadium(parent, node) {
   var w = bbox.width + h / 4 + node.padding; // add the rect
 
   var rect = shapeSvg.insert('rect', ':first-child').attr('rx', h / 2).attr('ry', h / 2).attr('x', -w / 2).attr('y', -h / 2).attr('width', w).attr('height', h);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, rect);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, rect);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
   };
 
   return shapeSvg;
 };
 
 var circle = function circle(parent, node) {
-  var _labelHelper12 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper12 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper12.shapeSvg,
       bbox = _labelHelper12.bbox,
       halfPadding = _labelHelper12.halfPadding;
@@ -48568,19 +52121,19 @@ var circle = function circle(parent, node) {
   var circle = shapeSvg.insert('circle', ':first-child'); // center the circle around its coordinate
 
   circle.attr('rx', node.rx).attr('ry', node.ry).attr('r', bbox.width / 2 + halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Circle main');
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, circle);
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Circle main');
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, circle);
 
   node.intersect = function (point) {
-    _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].circle(node, bbox.width / 2 + halfPadding, point);
+    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].circle(node, bbox.width / 2 + halfPadding, point);
   };
 
   return shapeSvg;
 };
 
 var subroutine = function subroutine(parent, node) {
-  var _labelHelper13 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
+  var _labelHelper13 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
       shapeSvg = _labelHelper13.shapeSvg,
       bbox = _labelHelper13.bbox;
 
@@ -48617,11 +52170,11 @@ var subroutine = function subroutine(parent, node) {
     x: -8,
     y: 0
   }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
   };
 
   return shapeSvg;
@@ -48632,10 +52185,10 @@ var start = function start(parent, node) {
   var circle = shapeSvg.insert('circle', ':first-child'); // center the circle around its coordinate
 
   circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, circle);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, circle);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].circle(node, 7, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].circle(node, 7, point);
   };
 
   return shapeSvg;
@@ -48652,12 +52205,12 @@ var forkJoin = function forkJoin(parent, node, dir) {
   }
 
   var shape = shapeSvg.append('rect').style('stroke', 'black').style('fill', 'black').attr('x', -1 * width / 2).attr('y', -1 * height / 2).attr('width', width).attr('height', height).attr('class', 'fork-join');
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, shape);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, shape);
   node.height = node.height + node.padding / 2;
   node.width = node.width + node.padding / 2;
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
   };
 
   return shapeSvg;
@@ -48669,10 +52222,167 @@ var end = function end(parent, node) {
   var circle = shapeSvg.insert('circle', ':first-child');
   circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
   innerCircle.attr('class', 'state-end').attr('r', 5).attr('width', 10).attr('height', 10);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, circle);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, circle);
 
   node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].circle(node, 7, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].circle(node, 7, point);
+  };
+
+  return shapeSvg;
+};
+
+var class_box = function class_box(parent, node) {
+  var halfPadding = node.padding / 2;
+  var rowPadding = 4;
+  var lineHeight = 8;
+  var classes;
+
+  if (!node.classes) {
+    classes = 'node default';
+  } else {
+    classes = 'node ' + node.classes;
+  } // Add outer g element
+
+
+  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.id); // Create the title label and insert it after the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child');
+  var topLine = shapeSvg.insert('line');
+  var bottomLine = shapeSvg.insert('line');
+  var maxWidth = 0;
+  var maxHeight = rowPadding;
+  var labelContainer = shapeSvg.insert('g').attr('class', 'label');
+  var verticalPos = 0;
+  var hasInterface = node.classData.annotations && node.classData.annotations[0]; // 1. Create the labels
+
+  var interfaceLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(node.classData.annotations[0], node.labelStyle, true, true));
+  var interfaceBBox = interfaceLabel.getBBox();
+
+  if (node.classData.annotations[0]) {
+    maxHeight += interfaceBBox.height + rowPadding;
+    maxWidth += interfaceBBox.width;
+  }
+
+  var classTitleLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(node.labelText, node.labelStyle, true, true));
+  var classTitleBBox = classTitleLabel.getBBox();
+  maxHeight += classTitleBBox.height + rowPadding;
+
+  if (classTitleBBox.width > maxWidth) {
+    maxWidth = classTitleBBox.width;
+  }
+
+  var classAttributes = [];
+  node.classData.members.forEach(function (str) {
+    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(str, node.labelStyle, true, true));
+    var bbox = lbl.getBBox();
+
+    if (bbox.width > maxWidth) {
+      maxWidth = bbox.width;
+    }
+
+    maxHeight += bbox.height + rowPadding;
+    classAttributes.push(lbl);
+  });
+  var classMethods = [];
+  node.classData.methods.forEach(function (str) {
+    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(str, node.labelStyle, true, true));
+    var bbox = lbl.getBBox();
+
+    if (bbox.width > maxWidth) {
+      maxWidth = bbox.width;
+    }
+
+    maxHeight += bbox.height + rowPadding;
+    classMethods.push(lbl);
+  });
+  maxHeight += lineHeight; // 2. Position the labels
+  // position the interface label
+
+  if (hasInterface) {
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(interfaceLabel).attr('transform', 'translate( ' + -(maxWidth + node.padding - interfaceBBox.width / 2) / 2 + ', ' + -1 * maxHeight / 2 + ')');
+    verticalPos = interfaceBBox.height + rowPadding;
+  } // Positin the class title label
+
+
+  var diffX = (maxWidth - classTitleBBox.width) / 2;
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(classTitleLabel).attr('transform', 'translate( ' + (-1 * maxWidth / 2 + diffX) + ', ' + (-1 * maxHeight / 2 + verticalPos) + ')');
+  verticalPos += classTitleBBox.height + rowPadding;
+  topLine.attr('class', 'divider').attr('x1', -maxWidth / 2 - halfPadding).attr('x2', maxWidth / 2 + halfPadding).attr('y1', -maxHeight / 2 - halfPadding + lineHeight + verticalPos).attr('y2', -maxHeight / 2 - halfPadding + lineHeight + verticalPos);
+  verticalPos += lineHeight;
+  classAttributes.forEach(function (lbl) {
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(lbl).attr('transform', 'translate( ' + -maxWidth / 2 + ', ' + (-1 * maxHeight / 2 + verticalPos + lineHeight / 2) + ')');
+    verticalPos += classTitleBBox.height + rowPadding;
+  });
+  bottomLine.attr('class', 'divider').attr('x1', -maxWidth / 2 - halfPadding).attr('x2', maxWidth / 2 + halfPadding).attr('y1', -maxHeight / 2 - halfPadding + lineHeight + verticalPos).attr('y2', -maxHeight / 2 - halfPadding + lineHeight + verticalPos);
+  verticalPos += lineHeight;
+  classMethods.forEach(function (lbl) {
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(lbl).attr('transform', 'translate( ' + -maxWidth / 2 + ', ' + (-1 * maxHeight / 2 + verticalPos) + ')');
+    verticalPos += classTitleBBox.height + rowPadding;
+  }); //
+
+  var bbox;
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+    var div = interfaceLabel.children[0];
+    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(interfaceLabel);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  } // bbox = labelContainer.getBBox();
+  // logger.info('Text 2', text2);
+  // const textRows = text2.slice(1, text2.length);
+  // let titleBox = text.getBBox();
+  // const descr = label
+  //   .node()
+  //   .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true, true));
+  // if (getConfig().flowchart.htmlLabels) {
+  //   const div = descr.children[0];
+  //   const dv = select(descr);
+  //   bbox = div.getBoundingClientRect();
+  //   dv.attr('width', bbox.width);
+  //   dv.attr('height', bbox.height);
+  // }
+  // // bbox = label.getBBox();
+  // // logger.info(descr);
+  // select(descr).attr(
+  //   'transform',
+  //   'translate( ' +
+  //     // (titleBox.width - bbox.width) / 2 +
+  //     (bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) +
+  //     ', ' +
+  //     (titleBox.height + halfPadding + 5) +
+  //     ')'
+  // );
+  // select(text).attr(
+  //   'transform',
+  //   'translate( ' +
+  //     // (titleBox.width - bbox.width) / 2 +
+  //     (bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) +
+  //     ', ' +
+  //     0 +
+  //     ')'
+  // );
+  // // Get the size of the label
+  // // Bounding box for title and text
+  // bbox = label.node().getBBox();
+  // // Center the label
+  // label.attr(
+  //   'transform',
+  //   'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')'
+  // );
+
+
+  rect.attr('class', 'outer title-state').attr('x', -maxWidth / 2 - halfPadding).attr('y', -(maxHeight / 2) - halfPadding).attr('width', maxWidth + node.padding).attr('height', maxHeight + node.padding); // innerLine
+  //   .attr('class', 'divider')
+  //   .attr('x1', -bbox.width / 2 - halfPadding)
+  //   .attr('x2', bbox.width / 2 + halfPadding)
+  //   .attr('y1', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding)
+  //   .attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
+
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, rect);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
   };
 
   return shapeSvg;
@@ -48697,7 +52407,8 @@ var shapes = {
   note: _shapes_note__WEBPACK_IMPORTED_MODULE_6__["default"],
   subroutine: subroutine,
   fork: forkJoin,
-  join: forkJoin
+  join: forkJoin,
+  class_box: class_box
 };
 var nodeElems = {};
 var insertNode = function insertNode(elem, node, dir) {
@@ -48711,7 +52422,7 @@ var clear = function clear() {
 };
 var positionNode = function positionNode(node) {
   var el = nodeElems[node.id];
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].trace('Transforming node', node, 'translate(' + (node.x - node.width / 2 - 5) + ', ' + (node.y - node.height / 2 - 5) + ')');
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Transforming node', node, 'translate(' + (node.x - node.width / 2 - 5) + ', ' + (node.y - node.height / 2 - 5) + ')');
   var padding = 8;
 
   if (node.clusterNode) {
@@ -48833,11 +52544,12 @@ function insertPolygonShape(parent, w, h, points) {
 /*!***************************************!*\
   !*** ./src/diagrams/class/classDb.js ***!
   \***************************************/
-/*! exports provided: addClass, lookUpDomId, clear, getClass, getClasses, getRelations, addRelation, addAnnotation, addMember, addMembers, cleanupLabel, setCssClass, setLink, setClickEvent, bindFunctions, lineType, relationType, default */
+/*! exports provided: parseDirective, addClass, lookUpDomId, clear, getClass, getClasses, getRelations, addRelation, addAnnotation, addMember, addMembers, cleanupLabel, setCssClass, setLink, setClickEvent, bindFunctions, lineType, relationType, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addClass", function() { return addClass; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lookUpDomId", function() { return lookUpDomId; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
@@ -48860,6 +52572,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+
 
 
 
@@ -48871,6 +52585,9 @@ var relations = [];
 var classes = {};
 var classCounter = 0;
 var funs = [];
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__["default"].parseDirective(statement, context, type);
+};
 
 var splitClassNameAndType = function splitClassNameAndType(id) {
   var genericType = '';
@@ -49076,7 +52793,7 @@ var setClickFunc = function setClickFunc(domId, functionName, tooltip) {
 
       if (elem !== null) {
         elem.addEventListener('click', function () {
-          window[functionName](elemId);
+          _utils__WEBPACK_IMPORTED_MODULE_4__["default"].runFunc(functionName, elemId);
         }, false);
       }
     });
@@ -49118,7 +52835,7 @@ var setupToolTips = function setupToolTips(element) {
 
     var rect = this.getBoundingClientRect();
     tooltipElem.transition().duration(200).style('opacity', '.9');
-    tooltipElem.html(el.attr('title')).style('left', rect.left + (rect.right - rect.left) / 2 + 'px').style('top', rect.top - 14 + document.body.scrollTop + 'px');
+    tooltipElem.html(el.attr('title')).style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px').style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
     el.classed('hover', true);
   }).on('mouseout', function () {
     tooltipElem.transition().duration(500).style('opacity', 0);
@@ -49129,6 +52846,7 @@ var setupToolTips = function setupToolTips(element) {
 
 funs.push(setupToolTips);
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
   addClass: addClass,
   bindFunctions: bindFunctions,
   clear: clear,
@@ -49147,6 +52865,504 @@ funs.push(setupToolTips);
   setLink: setLink,
   lookUpDomId: lookUpDomId
 });
+
+/***/ }),
+
+/***/ "./src/diagrams/class/classRenderer-v2.js":
+/*!************************************************!*\
+  !*** ./src/diagrams/class/classRenderer-v2.js ***!
+  \************************************************/
+/*! exports provided: addClasses, addRelations, setConf, drawOld, draw, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addClasses", function() { return addClasses; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addRelations", function() { return addRelations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConf", function() { return setConf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawOld", function() { return drawOld; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "draw", function() { return draw; });
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
+/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dagre */ "./node_modules/dagre/index.js");
+/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dagre__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! graphlib */ "./node_modules/graphlib/index.js");
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _classDb__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./classDb */ "./src/diagrams/class/classDb.js");
+/* harmony import */ var _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
+/* harmony import */ var _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _svgDraw__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./svgDraw */ "./src/diagrams/class/svgDraw.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../dagre-wrapper/index.js */ "./src/dagre-wrapper/index.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+
+
+
+
+
+
+
+
+ // import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
+
+
+
+
+_parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].yy = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"];
+var idCache = {};
+var padding = 20;
+var conf = {
+  dividerMargin: 10,
+  padding: 5,
+  textHeight: 10
+};
+/**
+ * Function that adds the vertices found during parsing to the graph to be rendered.
+ * @param vert Object containing the vertices.
+ * @param g The graph that is to be drawn.
+ */
+
+var addClasses = function addClasses(classes, g) {
+  // const svg = select(`[id="${svgId}"]`);
+  var keys = Object.keys(classes);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('keys:', keys);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(classes); // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
+
+  keys.forEach(function (id) {
+    var vertex = classes[id];
+    /**
+     * Variable for storing the classes for the vertex
+     * @type {string}
+     */
+
+    var classStr = 'default'; // if (vertex.classes.length > 0) {
+    //   classStr = vertex.classes.join(' ');
+    // }
+
+    var styles = {
+      labelStyle: ''
+    }; //getStylesFromArray(vertex.styles);
+    // Use vertex id as text in the box if no text is provided by the graph definition
+
+    var vertexText = vertex.text !== undefined ? vertex.text : vertex.id; // We create a SVG label, either by delegating to addHtmlLabel or manually
+    // let vertexNode;
+    // if (getConfig().flowchart.htmlLabels) {
+    //   const node = {
+    //     label: vertexText.replace(
+    //       /fa[lrsb]?:fa-[\w-]+/g,
+    //       s => `<i class='${s.replace(':', ' ')}'></i>`
+    //     )
+    //   };
+    //   vertexNode = addHtmlLabel(svg, node).node();
+    //   vertexNode.parentNode.removeChild(vertexNode);
+    // } else {
+    //   const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    //   svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
+    //   const rows = vertexText.split(common.lineBreakRegex);
+    //   for (let j = 0; j < rows.length; j++) {
+    //     const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    //     tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+    //     tspan.setAttribute('dy', '1em');
+    //     tspan.setAttribute('x', '1');
+    //     tspan.textContent = rows[j];
+    //     svgLabel.appendChild(tspan);
+    //   }
+    //   vertexNode = svgLabel;
+    // }
+
+    var radious = 0;
+    var _shape = ''; // Set the shape based parameters
+
+    switch (vertex.type) {
+      case 'class':
+        _shape = 'class_box';
+        break;
+
+      default:
+        _shape = 'class_box';
+    } // Add the node
+
+
+    g.setNode(vertex.id, {
+      labelStyle: styles.labelStyle,
+      shape: _shape,
+      labelText: vertexText,
+      classData: vertex,
+      rx: radious,
+      ry: radious,
+      class: classStr,
+      style: styles.style,
+      id: vertex.id,
+      width: vertex.type === 'group' ? 500 : undefined,
+      type: vertex.type,
+      padding: Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.padding
+    });
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('setNode', {
+      labelStyle: styles.labelStyle,
+      shape: _shape,
+      labelText: vertexText,
+      rx: radious,
+      ry: radious,
+      class: classStr,
+      style: styles.style,
+      id: vertex.id,
+      width: vertex.type === 'group' ? 500 : undefined,
+      type: vertex.type,
+      padding: Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.padding
+    });
+  });
+};
+/**
+ * Add edges to graph based on parsed graph defninition
+ * @param {Object} edges The edges to add to the graph
+ * @param {Object} g The graph object
+ */
+
+var addRelations = function addRelations(relations, g) {
+  var cnt = 0;
+  var defaultStyle;
+  var defaultLabelStyle; // if (typeof relations.defaultStyle !== 'undefined') {
+  //   const defaultStyles = getStylesFromArray(relations.defaultStyle);
+  //   defaultStyle = defaultStyles.style;
+  //   defaultLabelStyle = defaultStyles.labelStyle;
+  // }
+
+  relations.forEach(function (edge) {
+    cnt++;
+    var edgeData = {}; //Set relationship style and line type
+
+    edgeData.classes = 'relation';
+    edgeData.pattern = edge.relation.lineType == 1 ? 'dashed' : 'solid';
+    edgeData.id = 'id' + cnt; // Set link type for rendering
+
+    if (edge.type === 'arrow_open') {
+      edgeData.arrowhead = 'none';
+    } else {
+      edgeData.arrowhead = 'normal';
+    }
+
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(edgeData, edge); //Set relation arrow types
+
+    edgeData.arrowTypeStart = getArrowMarker(edge.relation.type1);
+    edgeData.arrowTypeEnd = getArrowMarker(edge.relation.type2);
+    var style = '';
+    var labelStyle = '';
+
+    if (typeof edge.style !== 'undefined') {
+      var styles = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["getStylesFromArray"])(edge.style);
+      style = styles.style;
+      labelStyle = styles.labelStyle;
+    } else {
+      style = 'fill:none';
+
+      if (typeof defaultStyle !== 'undefined') {
+        style = defaultStyle;
+      }
+
+      if (typeof defaultLabelStyle !== 'undefined') {
+        labelStyle = defaultLabelStyle;
+      }
+    }
+
+    edgeData.style = style;
+    edgeData.labelStyle = labelStyle;
+
+    if (typeof edge.interpolate !== 'undefined') {
+      edgeData.curve = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["interpolateToCurve"])(edge.interpolate, d3__WEBPACK_IMPORTED_MODULE_0__["curveLinear"]);
+    } else if (typeof relations.defaultInterpolate !== 'undefined') {
+      edgeData.curve = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["interpolateToCurve"])(relations.defaultInterpolate, d3__WEBPACK_IMPORTED_MODULE_0__["curveLinear"]);
+    } else {
+      edgeData.curve = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["interpolateToCurve"])(conf.curve, d3__WEBPACK_IMPORTED_MODULE_0__["curveLinear"]);
+    }
+
+    edge.text = edge.title;
+
+    if (typeof edge.text === 'undefined') {
+      if (typeof edge.style !== 'undefined') {
+        edgeData.arrowheadStyle = 'fill: #333';
+      }
+    } else {
+      edgeData.arrowheadStyle = 'fill: #333';
+      edgeData.labelpos = 'c';
+
+      if (Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.htmlLabels && false) {
+        // eslint-disable-line
+        edgeData.labelType = 'html';
+        edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
+      } else {
+        edgeData.labelType = 'text';
+        edgeData.label = edge.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_10__["default"].lineBreakRegex, '\n');
+
+        if (typeof edge.style === 'undefined') {
+          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
+        }
+
+        edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
+      }
+    } // Add the edge to the graph
+
+
+    g.setEdge(edge.id1, edge.id2, edgeData, cnt);
+  });
+}; // Todo optimize
+
+var getGraphId = function getGraphId(label) {
+  var keys = Object.keys(idCache);
+
+  for (var i = 0; i < keys.length; i++) {
+    if (idCache[keys[i]].label === label) {
+      return keys[i];
+    }
+  }
+
+  return undefined;
+};
+
+var setConf = function setConf(cnf) {
+  var keys = Object.keys(cnf);
+  keys.forEach(function (key) {
+    conf[key] = cnf[key];
+  });
+};
+/**
+ * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ * @param text
+ * @param id
+ */
+
+var drawOld = function drawOld(text, id) {
+  idCache = {};
+  _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].yy.clear();
+  _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].parse(text);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Rendering diagram ' + text); // Fetch the default direction, use TD if none was found
+
+  var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id='".concat(id, "']")); // insertMarkers(diagram);
+  // Layout graph, Create a new directed graph
+
+  var g = new graphlib__WEBPACK_IMPORTED_MODULE_2___default.a.Graph({
+    multigraph: true
+  }); // Set an object for the graph label
+
+  g.setGraph({
+    isMultiGraph: true
+  }); // Default to assigning a new object as a label for each new edge.
+
+  g.setDefaultEdgeLabel(function () {
+    return {};
+  });
+  var classes = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getClasses();
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('classes:');
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(classes);
+  var keys = Object.keys(classes);
+
+  for (var i = 0; i < keys.length; i++) {
+    var classDef = classes[keys[i]];
+    var node = _svgDraw__WEBPACK_IMPORTED_MODULE_6__["default"].drawClass(diagram, classDef, conf);
+    idCache[node.id] = node; // Add nodes to the graph. The first argument is the node id. The second is
+    // metadata about the node. In this case we're going to add labels to each of
+    // our nodes.
+
+    g.setNode(node.id, node);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Org height: ' + node.height);
+  }
+
+  var relations = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getRelations();
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('relations:', relations);
+  relations.forEach(function (relation) {
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation));
+    g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {
+      relation: relation
+    }, relation.title || 'DEFAULT');
+  });
+  dagre__WEBPACK_IMPORTED_MODULE_1___default.a.layout(g);
+  g.nodes().forEach(function (v) {
+    if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
+      Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + Object(_classDb__WEBPACK_IMPORTED_MODULE_4__["lookUpDomId"])(v)).attr('transform', 'translate(' + (g.node(v).x - g.node(v).width / 2) + ',' + (g.node(v).y - g.node(v).height / 2) + ' )');
+    }
+  });
+  g.edges().forEach(function (e) {
+    if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
+      _svgDraw__WEBPACK_IMPORTED_MODULE_6__["default"].drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
+    }
+  });
+  var svgBounds = diagram.node().getBBox();
+  var width = svgBounds.width + padding * 2;
+  var height = svgBounds.height + padding * 2;
+
+  if (conf.useMaxWidth) {
+    diagram.attr('width', '100%');
+    diagram.attr('style', "max-width: ".concat(width, "px;"));
+  } else {
+    diagram.attr('height', height);
+    diagram.attr('width', width);
+  } // Ensure the viewBox includes the whole svgBounds area with extra space for padding
+
+
+  var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("viewBox ".concat(vBox));
+  diagram.attr('viewBox', vBox);
+};
+var draw = function draw(text, id) {
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Drawing class');
+  _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].clear(); // const parser = classDb.parser;
+  // parser.yy = classDb;
+  // Parse the graph definition
+  // try {
+
+  _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].parse(text); // } catch (err) {
+  // logger.debug('Parsing failed');
+  // }
+  // Fetch the default direction, use TD if none was found
+
+  var dir = 'TD';
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart;
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('config:', conf);
+  var nodeSpacing = conf.nodeSpacing || 50;
+  var rankSpacing = conf.rankSpacing || 50; // Create the input mermaid.graph
+
+  var g = new graphlib__WEBPACK_IMPORTED_MODULE_2___default.a.Graph({
+    multigraph: true,
+    compound: true
+  }).setGraph({
+    rankdir: dir,
+    nodesep: nodeSpacing,
+    ranksep: rankSpacing,
+    marginx: 8,
+    marginy: 8
+  }).setDefaultEdgeLabel(function () {
+    return {};
+  }); // let subG;
+  // const subGraphs = flowDb.getSubGraphs();
+  // logger.info('Subgraphs - ', subGraphs);
+  // for (let i = subGraphs.length - 1; i >= 0; i--) {
+  //   subG = subGraphs[i];
+  //   logger.info('Subgraph - ', subG);
+  //   flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
+  // }
+  // Fetch the verices/nodes and edges/links from the parsed graph definition
+
+  var classes = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getClasses();
+  var relations = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getRelations();
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(relations); // let i = 0;
+  // for (i = subGraphs.length - 1; i >= 0; i--) {
+  //   subG = subGraphs[i];
+  //   selectAll('cluster').append('text');
+  //   for (let j = 0; j < subG.nodes.length; j++) {
+  //     g.setParent(subG.nodes[j], subG.id);
+  //   }
+  // }
+
+  addClasses(classes, g, id);
+  addRelations(relations, g); // Add custom shapes
+  // flowChartShapes.addToRenderV2(addShape);
+  // Set up an SVG group so that we can translate the final graph.
+
+  var svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")); // Run the renderer. This is what draws the final graph.
+
+  var element = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + id + ' g');
+  Object(_dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_8__["render"])(element, g, ['aggregation', 'extension', 'composition', 'dependency'], 'classDiagram', id); // element.selectAll('g.node').attr('title', function() {
+  //   return flowDb.getTooltip(this.id);
+  // });
+
+  var padding = 8;
+  var svgBounds = svg.node().getBBox();
+  var width = svgBounds.width + padding * 2;
+  var height = svgBounds.height + padding * 2;
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("new ViewBox 0 0 ".concat(width, " ").concat(height), "translate(".concat(padding - g._label.marginx, ", ").concat(padding - g._label.marginy, ")"));
+
+  if (conf.useMaxWidth) {
+    svg.attr('width', '100%');
+    svg.attr('style', "max-width: ".concat(width, "px;"));
+  } else {
+    svg.attr('height', height);
+    svg.attr('width', width);
+  }
+
+  svg.attr('viewBox', "0 0 ".concat(width, " ").concat(height));
+  svg.select('g').attr('transform', "translate(".concat(padding - g._label.marginx, ", ").concat(padding - svgBounds.y, ")")); // Index nodes
+  // flowDb.indexNodes('subGraph' + i);
+  // Add label rects for non html labels
+
+  if (!conf.htmlLabels) {
+    var labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
+
+    for (var k = 0; k < labels.length; k++) {
+      var label = labels[k]; // Get dimensions of label
+
+      var dim = label.getBBox();
+      var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('rx', 0);
+      rect.setAttribute('ry', 0);
+      rect.setAttribute('width', dim.width);
+      rect.setAttribute('height', dim.height);
+      rect.setAttribute('style', 'fill:#e8e8e8;');
+      label.insertBefore(rect, label.firstChild);
+    }
+  } // If node has a link, wrap it in an anchor SVG object.
+  // const keys = Object.keys(classes);
+  // keys.forEach(function(key) {
+  //   const vertex = classes[key];
+  //   if (vertex.link) {
+  //     const node = select('#' + id + ' [id="' + key + '"]');
+  //     if (node) {
+  //       const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+  //       link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
+  //       link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
+  //       link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+  //       const linkNode = node.insert(function() {
+  //         return link;
+  //       }, ':first-child');
+  //       const shape = node.select('.label-container');
+  //       if (shape) {
+  //         linkNode.append(function() {
+  //           return shape.node();
+  //         });
+  //       }
+  //       const label = node.select('.label');
+  //       if (label) {
+  //         linkNode.append(function() {
+  //           return label.node();
+  //         });
+  //       }
+  //     }
+  //   }
+  // });
+
+};
+/* harmony default export */ __webpack_exports__["default"] = ({
+  setConf: setConf,
+  draw: draw
+});
+
+function getArrowMarker(type) {
+  var marker;
+
+  switch (type) {
+    case 0:
+      marker = 'aggregation';
+      break;
+
+    case 1:
+      marker = 'extension';
+      break;
+
+    case 2:
+      marker = 'composition';
+      break;
+
+    case 3:
+      marker = 'dependency';
+      break;
+
+    default:
+      marker = 'none';
+  }
+
+  return marker;
+}
 
 /***/ }),
 
@@ -49386,120 +53602,132 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,13],$V1=[1,16],$V2=[1,14],$V3=[1,15],$V4=[1,17],$V5=[1,18],$V6=[1,20],$V7=[1,21],$V8=[1,22],$V9=[6,8],$Va=[1,31],$Vb=[1,32],$Vc=[1,33],$Vd=[1,34],$Ve=[1,35],$Vf=[1,36],$Vg=[6,8,14,20,28,31,32,33,34,35,36],$Vh=[6,8,12,14,20,24,28,31,32,33,34,35,36,52,53,54],$Vi=[28,52,53,54],$Vj=[28,35,36,52,53,54],$Vk=[28,31,32,33,34,52,53,54],$Vl=[6,8,14],$Vm=[1,59];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,6],$V2=[1,20],$V3=[1,23],$V4=[1,21],$V5=[1,22],$V6=[1,24],$V7=[1,25],$V8=[1,27],$V9=[1,28],$Va=[1,29],$Vb=[1,32],$Vc=[7,9],$Vd=[1,41],$Ve=[1,42],$Vf=[1,43],$Vg=[1,44],$Vh=[1,45],$Vi=[1,46],$Vj=[7,9,20,26,34,37,38,39,40,41,42],$Vk=[7,9,13,20,26,30,34,37,38,39,40,41,42,58,59,60],$Vl=[34,58,59,60],$Vm=[34,41,42,58,59,60],$Vn=[34,37,38,39,40,58,59,60],$Vo=[6,7,9,61],$Vp=[7,9,20],$Vq=[1,73];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"CLASS_DIAGRAM":5,"NEWLINE":6,"statements":7,"EOF":8,"statement":9,"className":10,"alphaNumToken":11,"GENERICTYPE":12,"relationStatement":13,"LABEL":14,"classStatement":15,"methodStatement":16,"annotationStatement":17,"clickStatement":18,"CLASS":19,"STRUCT_START":20,"members":21,"STRUCT_STOP":22,"ANNOTATION_START":23,"ANNOTATION_END":24,"MEMBER":25,"SEPARATOR":26,"relation":27,"STR":28,"relationType":29,"lineType":30,"AGGREGATION":31,"EXTENSION":32,"COMPOSITION":33,"DEPENDENCY":34,"LINE":35,"DOTTED_LINE":36,"CALLBACK":37,"LINK":38,"commentToken":39,"textToken":40,"graphCodeTokens":41,"textNoTagsToken":42,"TAGSTART":43,"TAGEND":44,"==":45,"--":46,"PCT":47,"DEFAULT":48,"SPACE":49,"MINUS":50,"keywords":51,"UNICODE_TEXT":52,"NUM":53,"ALPHA":54,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"CLASS_DIAGRAM",6:"NEWLINE",8:"EOF",12:"GENERICTYPE",14:"LABEL",19:"CLASS",20:"STRUCT_START",22:"STRUCT_STOP",23:"ANNOTATION_START",24:"ANNOTATION_END",25:"MEMBER",26:"SEPARATOR",28:"STR",31:"AGGREGATION",32:"EXTENSION",33:"COMPOSITION",34:"DEPENDENCY",35:"LINE",36:"DOTTED_LINE",37:"CALLBACK",38:"LINK",41:"graphCodeTokens",43:"TAGSTART",44:"TAGEND",45:"==",46:"--",47:"PCT",48:"DEFAULT",49:"SPACE",50:"MINUS",51:"keywords",52:"UNICODE_TEXT",53:"NUM",54:"ALPHA"},
-productions_: [0,[3,1],[4,4],[7,1],[7,2],[7,3],[10,2],[10,1],[10,3],[10,2],[9,1],[9,2],[9,1],[9,1],[9,1],[9,1],[15,2],[15,5],[17,4],[21,1],[21,2],[16,1],[16,2],[16,1],[16,1],[13,3],[13,4],[13,4],[13,5],[27,3],[27,2],[27,2],[27,1],[29,1],[29,1],[29,1],[29,1],[30,1],[30,1],[18,3],[18,4],[18,3],[18,4],[39,1],[39,1],[40,1],[40,1],[40,1],[40,1],[40,1],[40,1],[40,1],[42,1],[42,1],[42,1],[42,1],[11,1],[11,1],[11,1]],
+symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"directive":5,"CLASS_DIAGRAM":6,"NEWLINE":7,"statements":8,"EOF":9,"statement":10,"className":11,"alphaNumToken":12,"GENERICTYPE":13,"openDirective":14,"typeDirective":15,"closeDirective":16,":":17,"argDirective":18,"relationStatement":19,"LABEL":20,"classStatement":21,"methodStatement":22,"annotationStatement":23,"clickStatement":24,"CLASS":25,"STRUCT_START":26,"members":27,"STRUCT_STOP":28,"ANNOTATION_START":29,"ANNOTATION_END":30,"MEMBER":31,"SEPARATOR":32,"relation":33,"STR":34,"relationType":35,"lineType":36,"AGGREGATION":37,"EXTENSION":38,"COMPOSITION":39,"DEPENDENCY":40,"LINE":41,"DOTTED_LINE":42,"CALLBACK":43,"LINK":44,"commentToken":45,"textToken":46,"graphCodeTokens":47,"textNoTagsToken":48,"TAGSTART":49,"TAGEND":50,"==":51,"--":52,"PCT":53,"DEFAULT":54,"SPACE":55,"MINUS":56,"keywords":57,"UNICODE_TEXT":58,"NUM":59,"ALPHA":60,"open_directive":61,"type_directive":62,"arg_directive":63,"close_directive":64,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"CLASS_DIAGRAM",7:"NEWLINE",9:"EOF",13:"GENERICTYPE",17:":",20:"LABEL",25:"CLASS",26:"STRUCT_START",28:"STRUCT_STOP",29:"ANNOTATION_START",30:"ANNOTATION_END",31:"MEMBER",32:"SEPARATOR",34:"STR",37:"AGGREGATION",38:"EXTENSION",39:"COMPOSITION",40:"DEPENDENCY",41:"LINE",42:"DOTTED_LINE",43:"CALLBACK",44:"LINK",47:"graphCodeTokens",49:"TAGSTART",50:"TAGEND",51:"==",52:"--",53:"PCT",54:"DEFAULT",55:"SPACE",56:"MINUS",57:"keywords",58:"UNICODE_TEXT",59:"NUM",60:"ALPHA",61:"open_directive",62:"type_directive",63:"arg_directive",64:"close_directive"},
+productions_: [0,[3,1],[3,2],[4,4],[8,1],[8,2],[8,3],[11,2],[11,1],[11,3],[11,2],[5,4],[5,6],[10,1],[10,2],[10,1],[10,1],[10,1],[10,1],[10,1],[21,2],[21,5],[23,4],[27,1],[27,2],[22,1],[22,2],[22,1],[22,1],[19,3],[19,4],[19,4],[19,5],[33,3],[33,2],[33,2],[33,1],[35,1],[35,1],[35,1],[35,1],[36,1],[36,1],[24,3],[24,4],[24,3],[24,4],[45,1],[45,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[48,1],[48,1],[48,1],[48,1],[12,1],[12,1],[12,1],[14,1],[15,1],[18,1],[16,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 6:
+case 7:
  this.$=$$[$0-1]+$$[$0]; 
 break;
-case 7:
+case 8:
  this.$=$$[$0]; 
 break;
-case 8:
+case 9:
  this.$=$$[$0-2]+'~'+$$[$0-1]+$$[$0]; 
 break;
-case 9:
+case 10:
  this.$=$$[$0-1]+'~'+$$[$0]; 
 break;
-case 10:
+case 13:
  yy.addRelation($$[$0]); 
 break;
-case 11:
+case 14:
  $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
 break;
-case 16:
+case 20:
 yy.addClass($$[$0]);
 break;
-case 17:
+case 21:
 /*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
 break;
-case 18:
+case 22:
  yy.addAnnotation($$[$0],$$[$0-2]); 
 break;
-case 19:
+case 23:
  this.$ = [$$[$0]]; 
 break;
-case 20:
+case 24:
  $$[$0].push($$[$0-1]);this.$=$$[$0];
 break;
-case 21:
+case 25:
 /*console.log('Rel found',$$[$0]);*/
 break;
-case 22:
+case 26:
 yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
 break;
-case 23:
+case 27:
 /*console.warn('Member',$$[$0]);*/
 break;
-case 24:
+case 28:
 /*console.log('sep found',$$[$0]);*/
 break;
-case 25:
+case 29:
  this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
 break;
-case 26:
+case 30:
  this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
 break;
-case 27:
+case 31:
  this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
 break;
-case 28:
+case 32:
  this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
-case 29:
+case 33:
  this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
 break;
-case 30:
+case 34:
  this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
 break;
-case 31:
+case 35:
  this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
 break;
-case 32:
+case 36:
  this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
 break;
-case 33:
+case 37:
  this.$=yy.relationType.AGGREGATION;
 break;
-case 34:
+case 38:
  this.$=yy.relationType.EXTENSION;
 break;
-case 35:
+case 39:
  this.$=yy.relationType.COMPOSITION;
 break;
-case 36:
+case 40:
  this.$=yy.relationType.DEPENDENCY;
 break;
-case 37:
+case 41:
 this.$=yy.lineType.LINE;
 break;
-case 38:
+case 42:
 this.$=yy.lineType.DOTTED_LINE;
 break;
-case 39:
+case 43:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0], undefined);
 break;
-case 40:
+case 44:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 41:
+case 45:
 this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0], undefined);
 break;
-case 42:
+case 46:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1], $$[$0]);
+break;
+case 63:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 64:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 65:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 66:
+ yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:2,5:[1,3]},{1:[3]},{1:[2,1]},{6:[1,4]},{7:5,9:6,10:12,11:19,13:7,15:8,16:9,17:10,18:11,19:$V0,23:$V1,25:$V2,26:$V3,37:$V4,38:$V5,52:$V6,53:$V7,54:$V8},{8:[1,23]},{6:[1,24],8:[2,3]},o($V9,[2,10],{14:[1,25]}),o($V9,[2,12]),o($V9,[2,13]),o($V9,[2,14]),o($V9,[2,15]),o($V9,[2,21],{27:26,29:29,30:30,14:[1,28],28:[1,27],31:$Va,32:$Vb,33:$Vc,34:$Vd,35:$Ve,36:$Vf}),{10:37,11:19,52:$V6,53:$V7,54:$V8},o($V9,[2,23]),o($V9,[2,24]),{11:38,52:$V6,53:$V7,54:$V8},{10:39,11:19,52:$V6,53:$V7,54:$V8},{10:40,11:19,52:$V6,53:$V7,54:$V8},o($Vg,[2,7],{11:19,10:41,12:[1,42],52:$V6,53:$V7,54:$V8}),o($Vh,[2,56]),o($Vh,[2,57]),o($Vh,[2,58]),{1:[2,2]},{7:43,8:[2,4],9:6,10:12,11:19,13:7,15:8,16:9,17:10,18:11,19:$V0,23:$V1,25:$V2,26:$V3,37:$V4,38:$V5,52:$V6,53:$V7,54:$V8},o($V9,[2,11]),{10:44,11:19,28:[1,45],52:$V6,53:$V7,54:$V8},{27:46,29:29,30:30,31:$Va,32:$Vb,33:$Vc,34:$Vd,35:$Ve,36:$Vf},o($V9,[2,22]),{30:47,35:$Ve,36:$Vf},o($Vi,[2,32],{29:48,31:$Va,32:$Vb,33:$Vc,34:$Vd}),o($Vj,[2,33]),o($Vj,[2,34]),o($Vj,[2,35]),o($Vj,[2,36]),o($Vk,[2,37]),o($Vk,[2,38]),o($V9,[2,16],{20:[1,49]}),{24:[1,50]},{28:[1,51]},{28:[1,52]},o($Vg,[2,6]),o($Vg,[2,9],{11:19,10:53,52:$V6,53:$V7,54:$V8}),{8:[2,5]},o($Vl,[2,25]),{10:54,11:19,52:$V6,53:$V7,54:$V8},{10:55,11:19,28:[1,56],52:$V6,53:$V7,54:$V8},o($Vi,[2,31],{29:57,31:$Va,32:$Vb,33:$Vc,34:$Vd}),o($Vi,[2,30]),{21:58,25:$Vm},{10:60,11:19,52:$V6,53:$V7,54:$V8},o($V9,[2,39],{28:[1,61]}),o($V9,[2,41],{28:[1,62]}),o($Vg,[2,8]),o($Vl,[2,27]),o($Vl,[2,26]),{10:63,11:19,52:$V6,53:$V7,54:$V8},o($Vi,[2,29]),{22:[1,64]},{21:65,22:[2,19],25:$Vm},o($V9,[2,18]),o($V9,[2,40]),o($V9,[2,42]),o($Vl,[2,28]),o($V9,[2,17]),{22:[2,20]}],
-defaultActions: {2:[2,1],23:[2,2],43:[2,5],65:[2,20]},
+table: [{3:1,4:2,5:3,6:$V0,14:5,61:$V1},{1:[3]},{1:[2,1]},{3:7,4:2,5:3,6:$V0,14:5,61:$V1},{7:[1,8]},{15:9,62:[1,10]},{62:[2,63]},{1:[2,2]},{5:18,8:11,10:12,11:19,12:26,14:5,19:13,21:14,22:15,23:16,24:17,25:$V2,29:$V3,31:$V4,32:$V5,43:$V6,44:$V7,58:$V8,59:$V9,60:$Va,61:$V1},{16:30,17:[1,31],64:$Vb},o([17,64],[2,64]),{9:[1,33]},{7:[1,34],9:[2,4]},o($Vc,[2,13],{20:[1,35]}),o($Vc,[2,15]),o($Vc,[2,16]),o($Vc,[2,17]),o($Vc,[2,18]),o($Vc,[2,19]),o($Vc,[2,25],{33:36,35:39,36:40,20:[1,38],34:[1,37],37:$Vd,38:$Ve,39:$Vf,40:$Vg,41:$Vh,42:$Vi}),{11:47,12:26,58:$V8,59:$V9,60:$Va},o($Vc,[2,27]),o($Vc,[2,28]),{12:48,58:$V8,59:$V9,60:$Va},{11:49,12:26,58:$V8,59:$V9,60:$Va},{11:50,12:26,58:$V8,59:$V9,60:$Va},o($Vj,[2,8],{12:26,11:51,13:[1,52],58:$V8,59:$V9,60:$Va}),o($Vk,[2,60]),o($Vk,[2,61]),o($Vk,[2,62]),{7:[1,53]},{18:54,63:[1,55]},{7:[2,66]},{1:[2,3]},{5:18,8:56,9:[2,5],10:12,11:19,12:26,14:5,19:13,21:14,22:15,23:16,24:17,25:$V2,29:$V3,31:$V4,32:$V5,43:$V6,44:$V7,58:$V8,59:$V9,60:$Va,61:$V1},o($Vc,[2,14]),{11:57,12:26,34:[1,58],58:$V8,59:$V9,60:$Va},{33:59,35:39,36:40,37:$Vd,38:$Ve,39:$Vf,40:$Vg,41:$Vh,42:$Vi},o($Vc,[2,26]),{36:60,41:$Vh,42:$Vi},o($Vl,[2,36],{35:61,37:$Vd,38:$Ve,39:$Vf,40:$Vg}),o($Vm,[2,37]),o($Vm,[2,38]),o($Vm,[2,39]),o($Vm,[2,40]),o($Vn,[2,41]),o($Vn,[2,42]),o($Vc,[2,20],{26:[1,62]}),{30:[1,63]},{34:[1,64]},{34:[1,65]},o($Vj,[2,7]),o($Vj,[2,10],{12:26,11:66,58:$V8,59:$V9,60:$Va}),o($Vo,[2,11]),{16:67,64:$Vb},{64:[2,65]},{9:[2,6]},o($Vp,[2,29]),{11:68,12:26,58:$V8,59:$V9,60:$Va},{11:69,12:26,34:[1,70],58:$V8,59:$V9,60:$Va},o($Vl,[2,35],{35:71,37:$Vd,38:$Ve,39:$Vf,40:$Vg}),o($Vl,[2,34]),{27:72,31:$Vq},{11:74,12:26,58:$V8,59:$V9,60:$Va},o($Vc,[2,43],{34:[1,75]}),o($Vc,[2,45],{34:[1,76]}),o($Vj,[2,9]),{7:[1,77]},o($Vp,[2,31]),o($Vp,[2,30]),{11:78,12:26,58:$V8,59:$V9,60:$Va},o($Vl,[2,33]),{28:[1,79]},{27:80,28:[2,23],31:$Vq},o($Vc,[2,22]),o($Vc,[2,44]),o($Vc,[2,46]),o($Vo,[2,12]),o($Vp,[2,32]),o($Vc,[2,21]),{28:[2,24]}],
+defaultActions: {2:[2,1],6:[2,63],7:[2,2],32:[2,66],33:[2,3],55:[2,65],56:[2,6],80:[2,24]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -49978,94 +54206,110 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* do nothing */
+case 0: this.begin('open_directive'); return 61; 
 break;
-case 1:return 6;
+case 1: this.begin('type_directive'); return 62; 
 break;
-case 2:/* skip whitespace */
+case 2: this.popState(); this.begin('arg_directive'); return 17; 
 break;
-case 3:return 5;
+case 3: this.popState(); this.popState(); return 64; 
 break;
-case 4: this.begin("struct"); /*console.log('Starting struct');*/return 20;
+case 4:return 63;
 break;
-case 5:return "EOF_IN_STRUCT";
+case 5:/* skip comments */
 break;
-case 6:return "OPEN_IN_STRUCT";
+case 6:/* skip comments */
 break;
-case 7: /*console.log('Ending struct');*/this.popState(); return 22;
+case 7:/* do nothing */
 break;
-case 8:/* nothing */
+case 8:return 7;
 break;
-case 9: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
+case 9:/* skip whitespace */
 break;
-case 10:return 19;
+case 10:return 6;
 break;
-case 11:return 37;
+case 11:return 6;
 break;
-case 12:return 38;
+case 12: this.begin("struct"); /*console.log('Starting struct');*/return 26;
 break;
-case 13:return 23;
+case 13:return "EOF_IN_STRUCT";
 break;
-case 14:return 24;
+case 14:return "OPEN_IN_STRUCT";
 break;
-case 15:this.begin("generic");
+case 15: /*console.log('Ending struct');*/this.popState(); return 28;
 break;
-case 16:this.popState();
+case 16:/* nothing */
 break;
-case 17:return "GENERICTYPE";
+case 17: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
 break;
-case 18:this.begin("string");
+case 18:return 25;
 break;
-case 19:this.popState();
+case 19:return 43;
 break;
-case 20:return "STR";
+case 20:return 44;
 break;
-case 21:return 32;
+case 21:return 29;
 break;
-case 22:return 32;
+case 22:return 30;
 break;
-case 23:return 34;
+case 23:this.begin("generic");
 break;
-case 24:return 34;
+case 24:this.popState();
 break;
-case 25:return 33;
+case 25:return "GENERICTYPE";
 break;
-case 26:return 31;
+case 26:this.begin("string");
 break;
-case 27:return 35;
+case 27:this.popState();
 break;
-case 28:return 36;
+case 28:return "STR";
 break;
-case 29:return 14;
+case 29:return 38;
 break;
-case 30:return 50;
+case 30:return 38;
 break;
-case 31:return 'DOT';
+case 31:return 40;
 break;
-case 32:return 'PLUS';
+case 32:return 40;
 break;
-case 33:return 47;
+case 33:return 39;
 break;
-case 34:return 'EQUALS';
+case 34:return 37;
 break;
-case 35:return 'EQUALS';
+case 35:return 41;
 break;
-case 36:return 54;
+case 36:return 42;
 break;
-case 37:return 'PUNCTUATION';
+case 37:return 20;
 break;
-case 38:return 53;
+case 38:return 56;
 break;
-case 39:return 52;
+case 39:return 'DOT';
 break;
-case 40:return 49;
+case 40:return 'PLUS';
 break;
-case 41:return 8;
+case 41:return 53;
+break;
+case 42:return 'EQUALS';
+break;
+case 43:return 'EQUALS';
+break;
+case 44:return 60;
+break;
+case 45:return 'PUNCTUATION';
+break;
+case 46:return 59;
+break;
+case 47:return 58;
+break;
+case 48:return 55;
+break;
+case 49:return 9;
 break;
 }
 },
-rules: [/^(?:%%[^\n]*\n*)/,/^(?:\n+)/,/^(?:\s+)/,/^(?:classDiagram\b)/,/^(?:[\{])/,/^(?:$)/,/^(?:[\{])/,/^(?:\})/,/^(?:[\n])/,/^(?:[^\{\}\n]*)/,/^(?:class\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::[^\n;]+)/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
-conditions: {"string":{"rules":[19,20],"inclusive":false},"generic":{"rules":[16,17],"inclusive":false},"struct":{"rules":[5,6,7,8,9],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,10,11,12,13,14,15,18,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%(?!\{)[^\n]*)/,/^(?:[^\}]%%[^\n]*)/,/^(?:%%[^\n]*\n*)/,/^(?:\n+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[\{])/,/^(?:$)/,/^(?:[\{])/,/^(?:\})/,/^(?:[\n])/,/^(?:[^\{\}\n]*)/,/^(?:class\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::[^\n;]+)/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
+conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"string":{"rules":[27,28],"inclusive":false},"generic":{"rules":[24,25],"inclusive":false},"struct":{"rules":[13,14,15,16,17],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,18,19,20,21,22,23,26,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49],"inclusive":true}}
 });
 return lexer;
 })();
@@ -50095,6 +54339,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/class/styles.js":
+/*!**************************************!*\
+  !*** ./src/diagrams/class/styles.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.nodeBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.nodeBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -50294,12 +54555,12 @@ var drawClass = function drawClass(elem, classDef, conf) {
   return classInfo;
 };
 var parseMember = function parseMember(text) {
-  var fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)$/;
-  var methodRegEx = /^(\+|-|~|#)?(\w+)\s?\(\s*(\w+(~\w+~|\[\])?\s*(\w+)?)?\s*\)\s?([*|$])?\s?(\w+(~\w+~|\[\])?)?\s*$/;
+  var fieldRegEx = /(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)/;
+  var methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
   var fieldMatch = text.match(fieldRegEx);
   var methodMatch = text.match(methodRegEx);
 
-  if (fieldMatch) {
+  if (fieldMatch && !methodMatch) {
     return buildFieldDisplay(fieldMatch);
   } else if (methodMatch) {
     return buildMethodDisplay(methodMatch);
@@ -50309,49 +54570,74 @@ var parseMember = function parseMember(text) {
 };
 
 var buildFieldDisplay = function buildFieldDisplay(parsedText) {
-  var visibility = parsedText[1] ? parsedText[1].trim() : '';
-  var fieldType = parsedText[2] ? parsedText[2].trim() : '';
-  var genericType = parsedText[3] ? parseGenericTypes(parsedText[3]) : '';
-  var fieldName = parsedText[4] ? parsedText[4].trim() : '';
+  var displayText = '';
+
+  try {
+    var visibility = parsedText[1] ? parsedText[1].trim() : '';
+    var fieldType = parsedText[2] ? parsedText[2].trim() : '';
+    var genericType = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
+    var fieldName = parsedText[4] ? parsedText[4].trim() : '';
+    displayText = visibility + fieldType + genericType + ' ' + fieldName;
+  } catch (err) {
+    displayText = parsedText;
+  }
+
   return {
-    displayText: visibility + fieldType + genericType + ' ' + fieldName,
+    displayText: displayText,
     cssStyle: ''
   };
 };
 
 var buildMethodDisplay = function buildMethodDisplay(parsedText) {
   var cssStyle = '';
-  var displayText = parsedText;
-  var visibility = parsedText[1] ? parsedText[1].trim() : '';
-  var methodName = parsedText[2] ? parsedText[2].trim() : '';
-  var parameters = parsedText[3] ? parseGenericTypes(parsedText[3]) : '';
-  var classifier = parsedText[6] ? parsedText[6].trim() : '';
-  var returnType = parsedText[7] ? ' : ' + parseGenericTypes(parsedText[7]).trim() : '';
-  displayText = visibility + methodName + '(' + parameters + ')' + returnType;
-  cssStyle = parseClassifier(classifier);
-  var member = {
+  var displayText = '';
+
+  try {
+    var visibility = parsedText[1] ? parsedText[1].trim() : '';
+    var methodName = parsedText[2] ? parsedText[2].trim() : '';
+    var parameters = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
+    var classifier = parsedText[4] ? parsedText[4].trim() : '';
+    var returnType = parsedText[5] ? ' : ' + parseGenericTypes(parsedText[5]).trim() : '';
+    displayText = visibility + methodName + '(' + parameters + ')' + returnType;
+    cssStyle = parseClassifier(classifier);
+  } catch (err) {
+    displayText = parsedText;
+  }
+
+  return {
     displayText: displayText,
     cssStyle: cssStyle
   };
-  return member;
 };
 
 var buildLegacyDisplay = function buildLegacyDisplay(text) {
   // if for some reason we dont have any match, use old format to parse text
-  var memberText = '';
+  var displayText = '';
   var cssStyle = '';
+  var memberText = '';
   var returnType = '';
   var methodStart = text.indexOf('(');
   var methodEnd = text.indexOf(')');
 
   if (methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length) {
-    var parsedText = text.match(/(\+|-|~|#)?(\w+)/);
-    var visibility = parsedText[1] ? parsedText[1].trim() : '';
-    var methodName = parsedText[2];
+    var visibility = '';
+    var methodName = '';
+    var firstChar = text.substring(0, 1);
+
+    if (firstChar.match(/\w/)) {
+      methodName = text.substring(0, methodStart).trim();
+    } else {
+      if (firstChar.match(/\+|-|~|#/)) {
+        visibility = firstChar;
+      }
+
+      methodName = text.substring(1, methodStart).trim();
+    }
+
     var parameters = text.substring(methodStart + 1, methodEnd);
-    var classifier = text.substring(methodEnd, methodEnd + 1);
+    var classifier = text.substring(methodEnd + 1, 1);
     cssStyle = parseClassifier(classifier);
-    memberText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
+    displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
 
     if (methodEnd < memberText.length) {
       returnType = text.substring(methodEnd + 2).trim();
@@ -50362,14 +54648,13 @@ var buildLegacyDisplay = function buildLegacyDisplay(text) {
     }
   } else {
     // finally - if all else fails, just send the text back as written (other than parsing for generic types)
-    memberText = parseGenericTypes(text);
+    displayText = parseGenericTypes(text);
   }
 
-  var member = {
-    displayText: memberText + returnType,
+  return {
+    displayText: displayText,
     cssStyle: cssStyle
   };
-  return member;
 };
 
 var addTspan = function addTspan(textEl, txt, isFirst, conf) {
@@ -50422,36 +54707,79 @@ var parseClassifier = function parseClassifier(classifier) {
 /*!***************************************!*\
   !*** ./src/diagrams/common/common.js ***!
   \***************************************/
-/*! exports provided: getRows, sanitizeText, lineBreakRegex, default */
+/*! exports provided: getRows, removeScript, sanitizeText, lineBreakRegex, hasBreaks, splitBreaks, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRows", function() { return getRows; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeScript", function() { return removeScript; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sanitizeText", function() { return sanitizeText; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineBreakRegex", function() { return lineBreakRegex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasBreaks", function() { return hasBreaks; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "splitBreaks", function() { return splitBreaks; });
 var getRows = function getRows(s) {
   if (!s) return 1;
   var str = breakToPlaceholder(s);
   str = str.replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
+var removeScript = function removeScript(txt) {
+  var rs = '';
+  var idx = 0;
+
+  while (idx >= 0) {
+    idx = txt.indexOf('<script');
+
+    if (idx >= 0) {
+      rs += txt.substr(0, idx);
+      txt = txt.substr(idx + 1);
+      idx = txt.indexOf('</script>');
+
+      if (idx >= 0) {
+        idx += 9;
+        txt = txt.substr(idx);
+      }
+    } else {
+      rs += txt;
+      idx = -1;
+      break;
+    }
+  }
+
+  return rs;
+};
 var sanitizeText = function sanitizeText(text, config) {
   var txt = text;
   var htmlLabels = true;
-  if (config.flowchart && (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')) htmlLabels = false;
 
-  if (config.securityLevel !== 'loose' && htmlLabels) {
-    // eslint-disable-line
-    txt = breakToPlaceholder(txt);
-    txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    txt = txt.replace(/=/g, '&equals;');
-    txt = placeholderToBreak(txt);
+  if (config.flowchart && (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')) {
+    htmlLabels = false;
+  }
+
+  if (htmlLabels) {
+    var level = config.securityLevel;
+
+    if (level === 'antiscript') {
+      txt = removeScript(txt);
+    } else if (level !== 'loose') {
+      // eslint-disable-line
+      txt = breakToPlaceholder(txt);
+      txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      txt = txt.replace(/=/g, '&equals;');
+      txt = placeholderToBreak(txt);
+    }
   }
 
   return txt;
 };
 var lineBreakRegex = /<br\s*\/?>/gi;
+var hasBreaks = function hasBreaks(text) {
+  return /<br\s*[/]?>/gi.test(text);
+};
+var splitBreaks = function splitBreaks(text) {
+  return text.split(/<br\s*[/]?>/gi);
+};
 
 var breakToPlaceholder = function breakToPlaceholder(s) {
   return s.replace(lineBreakRegex, '#br#');
@@ -50464,7 +54792,10 @@ var placeholderToBreak = function placeholderToBreak(s) {
 /* harmony default export */ __webpack_exports__["default"] = ({
   getRows: getRows,
   sanitizeText: sanitizeText,
-  lineBreakRegex: lineBreakRegex
+  hasBreaks: hasBreaks,
+  splitBreaks: splitBreaks,
+  lineBreakRegex: lineBreakRegex,
+  removeScript: removeScript
 });
 
 /***/ }),
@@ -50473,15 +54804,18 @@ var placeholderToBreak = function placeholderToBreak(s) {
 /*!*********************************!*\
   !*** ./src/diagrams/er/erDb.js ***!
   \*********************************/
-/*! exports provided: default */
+/*! exports provided: parseDirective, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 /**
  *
  */
+
 
 var entities = {};
 var relationships = [];
@@ -50495,6 +54829,9 @@ var Cardinality = {
 var Identification = {
   NON_IDENTIFYING: 'NON_IDENTIFYING',
   IDENTIFYING: 'IDENTIFYING'
+};
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parseDirective(statement, context, type);
 };
 
 var addEntity = function addEntity(name) {
@@ -50549,6 +54886,7 @@ var clear = function clear() {
 /* harmony default export */ __webpack_exports__["default"] = ({
   Cardinality: Cardinality,
   Identification: Identification,
+  parseDirective: parseDirective,
   addEntity: addEntity,
   getEntities: getEntities,
   addRelationship: addRelationship,
@@ -50673,7 +55011,7 @@ var drawEntities = function drawEntities(svgNode, entities, graph) {
     // which then determines the size of the rectangle
 
     var textId = 'entity-' + id;
-    var textNode = groupNode.append('text').attr('id', textId).attr('x', 0).attr('y', 0).attr('dominant-baseline', 'middle').attr('text-anchor', 'middle').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + conf.fontSize + 'px').text(id); // Calculate the width and height of the entity
+    var textNode = groupNode.append('text').attr('class', 'er entityLabel').attr('id', textId).attr('x', 0).attr('y', 0).attr('dominant-baseline', 'middle').attr('text-anchor', 'middle').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + conf.fontSize + 'px').text(id); // Calculate the width and height of the entity
 
     var textBBox = textNode.node().getBBox();
     var entityWidth = Math.max(conf.minEntityWidth, textBBox.width + conf.entityPadding * 2);
@@ -50681,7 +55019,7 @@ var drawEntities = function drawEntities(svgNode, entities, graph) {
 
     textNode.attr('transform', 'translate(' + entityWidth / 2 + ',' + entityHeight / 2 + ')'); // Draw the rectangle - insert it before the text so that the text is not obscured
 
-    var rectNode = groupNode.insert('rect', '#' + textId).attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', 0).attr('y', 0).attr('width', entityWidth).attr('height', entityHeight);
+    var rectNode = groupNode.insert('rect', '#' + textId).attr('class', 'er entityBox').attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', 0).attr('y', 0).attr('width', entityWidth).attr('height', entityHeight);
     var rectBBox = rectNode.node().getBBox(); // Add the entity to the graph
 
     graph.setNode(id, {
@@ -50745,7 +55083,7 @@ var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g
     return d.y;
   }).curve(d3__WEBPACK_IMPORTED_MODULE_1__["curveBasis"]); // Insert the line at the right place
 
-  var svgPath = svg.insert('path', '#' + insert).attr('d', lineFunction(edge.points)).attr('stroke', conf.stroke).attr('fill', 'none'); // ...and with dashes if necessary
+  var svgPath = svg.insert('path', '#' + insert).attr('class', 'er relationshipLine').attr('d', lineFunction(edge.points)).attr('stroke', conf.stroke).attr('fill', 'none'); // ...and with dashes if necessary
 
   if (rel.relSpec.relType === _erDb__WEBPACK_IMPORTED_MODULE_2__["default"].Identification.NON_IDENTIFYING) {
     svgPath.attr('stroke-dasharray', '8,8');
@@ -50805,11 +55143,11 @@ var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g
   var labelPoint = svgPath.node().getPointAtLength(len * 0.5); // Append a text node containing the label
 
   var labelId = 'rel' + relCnt;
-  var labelNode = svg.append('text').attr('id', labelId).attr('x', labelPoint.x).attr('y', labelPoint.y).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + conf.fontSize + 'px').text(rel.roleA); // Figure out how big the opaque 'container' rectangle needs to be
+  var labelNode = svg.append('text').attr('class', 'er relationshipLabel').attr('id', labelId).attr('x', labelPoint.x).attr('y', labelPoint.y).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + conf.fontSize + 'px').text(rel.roleA); // Figure out how big the opaque 'container' rectangle needs to be
 
   var labelBBox = labelNode.node().getBBox(); // Insert the opaque rectangle before the text label
 
-  svg.insert('rect', '#' + labelId).attr('x', labelPoint.x - labelBBox.width / 2).attr('y', labelPoint.y - labelBBox.height / 2).attr('width', labelBBox.width).attr('height', labelBBox.height).attr('fill', 'white').attr('fill-opacity', '85%');
+  svg.insert('rect', '#' + labelId).attr('class', 'er relationshipLabelBox').attr('x', labelPoint.x - labelBBox.width / 2).attr('y', labelPoint.y - labelBBox.height / 2).attr('width', labelBBox.width).attr('height', labelBBox.height).attr('fill', 'white').attr('fill-opacity', '85%');
   return;
 };
 /**
@@ -50887,9 +55225,15 @@ var draw = function draw(text, id) {
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-  svg.attr('height', height);
-  svg.attr('width', '100%');
-  svg.attr('style', "max-width: ".concat(width, "px;"));
+
+  if (conf.useMaxWidth) {
+    svg.attr('width', '100%');
+    svg.attr('style', "max-width: ".concat(width, "px;"));
+  } else {
+    svg.attr('height', height);
+    svg.attr('width', width);
+  }
+
   svg.attr('viewBox', "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height));
 }; // draw
 
@@ -50981,12 +55325,12 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,12],$V1=[1,7],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[12,19,20],$V7=[15,16,17,18];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,5],$V2=[6,9,11,20,30],$V3=[1,17],$V4=[1,20],$V5=[1,24],$V6=[1,25],$V7=[1,26],$V8=[1,27],$V9=[20,27,28],$Va=[4,6,9,11,20,30],$Vb=[23,24,25,26];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"ER_DIAGRAM":4,"document":5,"EOF":6,"statement":7,"entityName":8,"relSpec":9,":":10,"role":11,"ALPHANUM":12,"cardinality":13,"relType":14,"ZERO_OR_ONE":15,"ZERO_OR_MORE":16,"ONE_OR_MORE":17,"ONLY_ONE":18,"NON_IDENTIFYING":19,"IDENTIFYING":20,"WORD":21,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"ER_DIAGRAM",6:"EOF",10:":",12:"ALPHANUM",15:"ZERO_OR_ONE",16:"ZERO_OR_MORE",17:"ONE_OR_MORE",18:"ONLY_ONE",19:"NON_IDENTIFYING",20:"IDENTIFYING",21:"WORD"},
-productions_: [0,[3,3],[5,0],[5,2],[7,5],[8,1],[9,3],[13,1],[13,1],[13,1],[13,1],[14,1],[14,1],[11,1],[11,1]],
+symbols_: {"error":2,"start":3,"ER_DIAGRAM":4,"document":5,"EOF":6,"directive":7,"line":8,"SPACE":9,"statement":10,"NEWLINE":11,"openDirective":12,"typeDirective":13,"closeDirective":14,":":15,"argDirective":16,"entityName":17,"relSpec":18,"role":19,"ALPHANUM":20,"cardinality":21,"relType":22,"ZERO_OR_ONE":23,"ZERO_OR_MORE":24,"ONE_OR_MORE":25,"ONLY_ONE":26,"NON_IDENTIFYING":27,"IDENTIFYING":28,"WORD":29,"open_directive":30,"type_directive":31,"arg_directive":32,"close_directive":33,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"ER_DIAGRAM",6:"EOF",9:"SPACE",11:"NEWLINE",15:":",20:"ALPHANUM",23:"ZERO_OR_ONE",24:"ZERO_OR_MORE",25:"ONE_OR_MORE",26:"ONLY_ONE",27:"NON_IDENTIFYING",28:"IDENTIFYING",29:"WORD",30:"open_directive",31:"type_directive",32:"arg_directive",33:"close_directive"},
+productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,5],[17,1],[18,3],[21,1],[21,1],[21,1],[21,1],[22,1],[22,1],[19,1],[19,1],[12,1],[13,1],[16,1],[14,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -50995,51 +55339,75 @@ switch (yystate) {
 case 1:
  /*console.log('finished parsing');*/ 
 break;
+case 3:
+ this.$ = [] 
+break;
 case 4:
+$$[$0-1].push($$[$0]);this.$ = $$[$0-1]
+break;
+case 5: case 6:
+ this.$ = $$[$0] 
+break;
+case 7: case 8:
+ this.$=[];
+break;
+case 12:
 
-          yy.addEntity($$[$0-4]); 
-          yy.addEntity($$[$0-2]); 
+          yy.addEntity($$[$0-4]);
+          yy.addEntity($$[$0-2]);
           yy.addRelationship($$[$0-4], $$[$0], $$[$0-2], $$[$0-3]);
           /*console.log($$[$0-4] + $$[$0-3] + $$[$0-2] + ':' + $$[$0]);*/
       
 break;
-case 5:
+case 13:
  this.$ = $$[$0]; /*console.log('Entity: ' + $$[$0]);*/ 
 break;
-case 6:
+case 14:
 
         this.$ = { cardA: $$[$0], relType: $$[$0-1], cardB: $$[$0-2] };
         /*console.log('relSpec: ' + $$[$0] + $$[$0-1] + $$[$0-2]);*/
       
 break;
-case 7:
+case 15:
  this.$ = yy.Cardinality.ZERO_OR_ONE; 
 break;
-case 8:
+case 16:
  this.$ = yy.Cardinality.ZERO_OR_MORE; 
 break;
-case 9:
+case 17:
  this.$ = yy.Cardinality.ONE_OR_MORE; 
 break;
-case 10:
+case 18:
  this.$ = yy.Cardinality.ONLY_ONE; 
 break;
-case 11:
+case 19:
  this.$ = yy.Identification.NON_IDENTIFYING;  
 break;
-case 12:
+case 20:
  this.$ = yy.Identification.IDENTIFYING; 
 break;
-case 13:
+case 21:
  this.$ = $$[$0].replace(/"/g, ''); 
 break;
-case 14:
+case 22:
  this.$ = $$[$0]; 
+break;
+case 23:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 24:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 25:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 26:
+ yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:6,12:$V1},{1:[2,1]},o($V0,[2,3]),{9:8,13:9,15:$V2,16:$V3,17:$V4,18:$V5},o([10,15,16,17,18],[2,5]),{8:14,12:$V1},{14:15,19:[1,16],20:[1,17]},o($V6,[2,7]),o($V6,[2,8]),o($V6,[2,9]),o($V6,[2,10]),{10:[1,18]},{13:19,15:$V2,16:$V3,17:$V4,18:$V5},o($V7,[2,11]),o($V7,[2,12]),{11:20,12:[1,22],21:[1,21]},{12:[2,6]},o($V0,[2,4]),o($V0,[2,13]),o($V0,[2,14])],
-defaultActions: {4:[2,1],19:[2,6]},
+table: [{3:1,4:$V0,7:3,12:4,30:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,30:$V1},{13:8,31:[1,9]},{31:[2,23]},{6:[1,10],7:15,8:11,9:[1,12],10:13,11:[1,14],12:4,17:16,20:$V3,30:$V1},{1:[2,2]},{14:18,15:[1,19],33:$V4},o([15,33],[2,24]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:15,10:21,12:4,17:16,20:$V3,30:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),{18:22,21:23,23:$V5,24:$V6,25:$V7,26:$V8},o([15,23,24,25,26],[2,13]),{11:[1,28]},{16:29,32:[1,30]},{11:[2,26]},o($V2,[2,5]),{17:31,20:$V3},{22:32,27:[1,33],28:[1,34]},o($V9,[2,15]),o($V9,[2,16]),o($V9,[2,17]),o($V9,[2,18]),o($Va,[2,9]),{14:35,33:$V4},{33:[2,25]},{15:[1,36]},{21:37,23:$V5,24:$V6,25:$V7,26:$V8},o($Vb,[2,19]),o($Vb,[2,20]),{11:[1,38]},{19:39,20:[1,41],29:[1,40]},{20:[2,14]},o($Va,[2,10]),o($V2,[2,12]),o($V2,[2,21]),o($V2,[2,22])],
+defaultActions: {5:[2,23],7:[2,2],20:[2,26],30:[2,25],37:[2,14]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -51518,46 +55886,62 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* skip whitespace */
+case 0: this.begin('open_directive'); return 30; 
 break;
-case 1:return 'SPACE';
+case 1: this.begin('type_directive'); return 31; 
 break;
-case 2:return 21;
+case 2: this.popState(); this.begin('arg_directive'); return 15; 
 break;
-case 3:return 4;
+case 3: this.popState(); this.popState(); return 33; 
 break;
-case 4:return 15;
+case 4:return 32;
 break;
-case 5:return 16;
+case 5:/* skip comments */
 break;
-case 6:return 17;
+case 6:/* skip comments */
 break;
-case 7:return 18;
+case 7:return 11;
 break;
-case 8:return 15;
+case 8:/* skip whitespace */
 break;
-case 9:return 16;
+case 9:return 9;
 break;
-case 10:return 17;
+case 10:return 29;
 break;
-case 11:return 19;
+case 11:return 4;
 break;
-case 12:return 20;
+case 12:return 23;
 break;
-case 13:return 19;
+case 13:return 24;
 break;
-case 14:return 19;
+case 14:return 25;
 break;
-case 15:return 12;
+case 15:return 26;
 break;
-case 16:return yy_.yytext[0];
+case 16:return 23;
 break;
-case 17:return 6;
+case 17:return 24;
+break;
+case 18:return 25;
+break;
+case 19:return 27;
+break;
+case 20:return 28;
+break;
+case 21:return 27;
+break;
+case 22:return 27;
+break;
+case 23:return 20;
+break;
+case 24:return yy_.yytext[0];
+break;
+case 25:return 6;
 break;
 }
 },
-rules: [/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-]*)/i,/^(?:.)/i,/^(?:$)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-]*)/i,/^(?:.)/i,/^(?:$)/i],
+conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],"inclusive":true}}
 });
 return lexer;
 })();
@@ -51587,6 +55971,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/er/styles.js":
+/*!***********************************!*\
+  !*** ./src/diagrams/er/styles.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return "\n  .entityBox {\n    fill: ".concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n  }\n\n  .relationshipLabelBox {\n    fill: ").concat(options.edgeLabelBackground, ";\n    fillopactity: 0;\n    background-color: ").concat(options.edgeLabelBackground, ";\n      rect {\n        opacity: 0.5;\n      }\n  }\n\n    .relationshipLine {\n      stroke: ").concat(options.lineColor, ";\n    }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -51981,11 +56382,12 @@ function insertPolygonShape(parent, w, h, points) {
 /*!******************************************!*\
   !*** ./src/diagrams/flowchart/flowDb.js ***!
   \******************************************/
-/*! exports provided: addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
+/*! exports provided: parseDirective, addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addVertex", function() { return addVertex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addSingleLink", function() { return addSingleLink; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addLink", function() { return addLink; });
@@ -52010,21 +56412,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSubGraphs", function() { return getSubGraphs; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "firstGraph", function() { return firstGraph; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 
- // eslint-disable-line
 
 
 
  // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 
 var MERMAID_DOM_ID_PREFIX = '';
-var config = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])();
+var config = Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])();
 var vertices = {};
 var edges = [];
 var classes = [];
@@ -52036,6 +56437,9 @@ var firstGraphFlag = true;
 var direction; // Functions to be run after graph rendering
 
 var funs = [];
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_4__["default"].parseDirective(statement, context, type);
+};
 /**
  * Function called by parser when a node definition has been found
  * @param id
@@ -52068,7 +56472,8 @@ var addVertex = function addVertex(_id, text, type, style, classes) {
   }
 
   if (typeof text !== 'undefined') {
-    txt = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(text.trim(), config); // strip quotes if string starts and ends with a quote
+    config = Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])();
+    txt = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(text.trim(), config); // strip quotes if string starts and ends with a quote
 
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
       txt = txt.substring(1, txt.length - 1);
@@ -52124,7 +56529,7 @@ var addSingleLink = function addSingleLink(_start, _end, type, linktext) {
   linktext = type.text;
 
   if (typeof linktext !== 'undefined') {
-    edge.text = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(linktext.trim(), config); // strip quotes if string starts and exnds with a quote
+    edge.text = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(linktext.trim(), config); // strip quotes if string starts and exnds with a quote
 
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
       edge.text = edge.text.substring(1, edge.text.length - 1);
@@ -52173,7 +56578,7 @@ var updateLink = function updateLink(positions, style) {
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
-      if (_utils__WEBPACK_IMPORTED_MODULE_2__["default"].isSubstringInArray('fill', style) === -1) {
+      if (_utils__WEBPACK_IMPORTED_MODULE_1__["default"].isSubstringInArray('fill', style) === -1) {
         style.push('fill:none');
       }
 
@@ -52252,7 +56657,7 @@ var setClass = function setClass(ids, className) {
 var setTooltip = function setTooltip(ids, tooltip) {
   ids.split(',').forEach(function (id) {
     if (typeof tooltip !== 'undefined') {
-      tooltips[id] = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(tooltip, config);
+      tooltips[id] = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(tooltip, config);
     }
   });
 };
@@ -52261,7 +56666,7 @@ var setClickFun = function setClickFun(_id, functionName) {
   var id = _id;
   if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
-  if (config.securityLevel !== 'loose') {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])().securityLevel !== 'loose') {
     return;
   }
 
@@ -52275,7 +56680,7 @@ var setClickFun = function setClickFun(_id, functionName) {
 
       if (elem !== null) {
         elem.addEventListener('click', function () {
-          window[functionName](id);
+          _utils__WEBPACK_IMPORTED_MODULE_1__["default"].runFunc(functionName, id);
         }, false);
       }
     });
@@ -52295,7 +56700,7 @@ var setLink = function setLink(ids, linkStr, tooltip) {
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
     if (typeof vertices[id] !== 'undefined') {
-      vertices[id].link = _utils__WEBPACK_IMPORTED_MODULE_2__["default"].formatUrl(linkStr, config);
+      vertices[id].link = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].formatUrl(linkStr, config);
     }
   });
   setTooltip(ids, tooltip);
@@ -52370,7 +56775,7 @@ var setupToolTips = function setupToolTips(element) {
 
     var rect = this.getBoundingClientRect();
     tooltipElem.transition().duration(200).style('opacity', '.9');
-    tooltipElem.html(el.attr('title')).style('left', rect.left + (rect.right - rect.left) / 2 + 'px').style('top', rect.top - 14 + document.body.scrollTop + 'px');
+    tooltipElem.html(el.attr('title')).style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px').style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
     el.classed('hover', true);
   }).on('mouseout', function () {
     tooltipElem.transition().duration(500).style('opacity', 0);
@@ -52449,7 +56854,7 @@ var addSubGraph = function addSubGraph(_id, list, _title) {
   id = id || 'subGraph' + subCount;
   if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   title = title || '';
-  title = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(title, config);
+  title = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(title, config);
   subCount = subCount + 1;
   var subGraph = {
     id: id,
@@ -52831,6 +57236,7 @@ var destructLink = function destructLink(_str, _startStr) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
   addVertex: addVertex,
   addLink: addLink,
   updateLinkInterpolate: updateLinkInterpolate,
@@ -53080,18 +57486,53 @@ var addEdges = function addEdges(edges, g) {
   }
 
   edges.forEach(function (edge) {
-    cnt++;
-    var edgeData = {};
-    edgeData.id = 'id' + cnt; // Set link type for rendering
+    cnt++; // Identify Link
+
+    var linkId = 'L-' + edge.start + '-' + edge.end;
+    var linkNameStart = 'LS-' + edge.start;
+    var linkNameEnd = 'LE-' + edge.end;
+    var edgeData = {}; //edgeData.id = 'id' + cnt;
+    // Set link type for rendering
 
     if (edge.type === 'arrow_open') {
       edgeData.arrowhead = 'none';
     } else {
       edgeData.arrowhead = 'normal';
-    }
+    } // Check of arrow types, placed here in order not to break old rendering
 
-    _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info(edgeData, edge);
-    edgeData.arrowType = edge.type;
+
+    edgeData.arrowTypeStart = 'arrow_open';
+    edgeData.arrowTypeEnd = 'arrow_open';
+    /* eslint-disable no-fallthrough */
+
+    switch (edge.type) {
+      case 'double_arrow_cross':
+        edgeData.arrowTypeStart = 'arrow_cross';
+
+      case 'arrow_cross':
+        edgeData.arrowTypeEnd = 'arrow_cross';
+        break;
+
+      case 'double_arrow_point':
+        edgeData.arrowTypeStart = 'arrow_point';
+
+      case 'arrow_point':
+        edgeData.arrowTypeEnd = 'arrow_point';
+        break;
+
+      case 'double_arrow_circle':
+        edgeData.arrowTypeStart = 'arrow_circle';
+
+      case 'arrow_circle':
+        edgeData.arrowTypeEnd = 'arrow_circle';
+        break;
+    } // logger.info('apa', edgeData, edge);
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowType = edgeData.arrowTypeEnd;
+    // logger.info('apa', edgeData, edge);
+
+
     var style = '';
     var labelStyle = '';
 
@@ -53112,14 +57553,18 @@ var addEdges = function addEdges(edges, g) {
             labelStyle = defaultLabelStyle;
           }
 
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'solid';
           break;
 
         case 'dotted':
-          style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'dotted';
           break;
 
         case 'thick':
-          style = ' stroke-width: 3.5px;fill:none';
+          edgeData.thickness = 'thick';
+          edgeData.pattern = 'solid';
           break;
       }
     }
@@ -53146,7 +57591,7 @@ var addEdges = function addEdges(edges, g) {
       if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels && false) {
         // eslint-disable-line
         edgeData.labelType = 'html';
-        edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
+        edgeData.label = "<span id=\"L-".concat(linkId, "\" class=\"edgeLabel L-").concat(linkNameStart, "' L-").concat(linkNameEnd, "\">").concat(edge.text, "</span>");
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_8__["default"].lineBreakRegex, '\n');
@@ -53157,8 +57602,10 @@ var addEdges = function addEdges(edges, g) {
 
         edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
       }
-    } // Add the edge to the graph
+    }
 
+    edgeData.id = linkId;
+    edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd; // Add the edge to the graph
 
     g.setEdge(edge.start, edge.end, edgeData, cnt);
   });
@@ -53172,9 +57619,15 @@ var getClasses = function getClasses(text) {
   _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Extracting classes');
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
   var parser = _parser_flow__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
-  parser.yy = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"]; // Parse the graph definition
+  parser.yy = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"];
 
-  parser.parse(text);
+  try {
+    // Parse the graph definition
+    parser.parse(text);
+  } catch (e) {
+    return;
+  }
+
   return _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getClasses();
 };
 /**
@@ -53255,7 +57708,7 @@ var draw = function draw(text, id) {
   element.selectAll('g.node').attr('title', function () {
     return _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getTooltip(this.id);
   });
-  var padding = 8;
+  var padding = conf.diagramPadding;
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
@@ -53562,7 +58015,11 @@ var addEdges = function addEdges(edges, g) {
   }
 
   edges.forEach(function (edge) {
-    cnt++;
+    cnt++; // Identify Link
+
+    var linkId = 'L-' + edge.start + '-' + edge.end;
+    var linkNameStart = 'LS-' + edge.start;
+    var linkNameEnd = 'LE-' + edge.end;
     var edgeData = {}; // Set link type for rendering
 
     if (edge.type === 'arrow_open') {
@@ -53624,7 +58081,7 @@ var addEdges = function addEdges(edges, g) {
 
       if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
         edgeData.labelType = 'html';
-        edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
+        edgeData.label = "<span id=\"L-".concat(linkId, "\" class=\"edgeLabel L-").concat(linkNameStart, "' L-").concat(linkNameEnd, "\">").concat(edge.text, "</span>");
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_8__["default"].lineBreakRegex, '\n');
@@ -53635,8 +58092,10 @@ var addEdges = function addEdges(edges, g) {
 
         edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
       }
-    } // Add the edge to the graph
+    }
 
+    edgeData.id = linkId;
+    edgeData.class = linkNameStart + ' ' + linkNameEnd; // Add the edge to the graph
 
     g.setEdge(edge.start, edge.end, edgeData, cnt);
   });
@@ -53750,7 +58209,7 @@ var draw = function draw(text, id) {
   element.selectAll('g.node').attr('title', function () {
     return _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getTooltip(this.id);
   });
-  var padding = 8;
+  var padding = conf.diagramPadding;
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
@@ -53935,199 +58394,211 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,3],$V2=[1,5],$V3=[1,8,9,10,11,26,34,63,64,65,66,67,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$V4=[2,2],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,22],$Va=[1,46],$Vb=[1,24],$Vc=[1,25],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,40],$Vh=[1,35],$Vi=[1,37],$Vj=[1,32],$Vk=[1,36],$Vl=[1,39],$Vm=[1,43],$Vn=[1,44],$Vo=[1,45],$Vp=[1,34],$Vq=[1,38],$Vr=[1,41],$Vs=[1,42],$Vt=[1,33],$Vu=[1,51],$Vv=[1,8,9,10,11,26,30,34,63,64,65,66,67,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$Vw=[1,55],$Vx=[1,54],$Vy=[1,56],$Vz=[8,9,11,57,58],$VA=[8,9,10,11,57,58],$VB=[8,9,10,11,35,57,58],$VC=[8,9,10,11,28,34,35,37,39,41,43,45,47,49,50,52,57,58,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$VD=[8,9,11,34,57,58,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$VE=[34,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$VF=[1,101],$VG=[1,122],$VH=[1,123],$VI=[1,124],$VJ=[1,125],$VK=[1,105],$VL=[1,96],$VM=[1,97],$VN=[1,93],$VO=[1,117],$VP=[1,118],$VQ=[1,119],$VR=[1,120],$VS=[1,121],$VT=[1,126],$VU=[1,127],$VV=[1,99],$VW=[1,107],$VX=[1,110],$VY=[1,108],$VZ=[1,109],$V_=[1,102],$V$=[1,115],$V01=[1,114],$V11=[1,98],$V21=[1,95],$V31=[1,104],$V41=[1,106],$V51=[1,111],$V61=[1,112],$V71=[1,113],$V81=[1,116],$V91=[8,9,10,11,26,30,34,63,64,65,66,67,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$Va1=[1,130],$Vb1=[1,134],$Vc1=[1,136],$Vd1=[1,137],$Ve1=[8,9,10,11,12,13,26,28,29,30,34,38,40,42,44,46,48,49,51,53,57,58,59,63,64,65,66,67,68,69,72,78,79,82,83,84,86,87,88,89,93,94,95,96,97,98],$Vf1=[8,9,10,11,13,34,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$Vg1=[10,79],$Vh1=[1,204],$Vi1=[1,208],$Vj1=[1,205],$Vk1=[1,202],$Vl1=[1,199],$Vm1=[1,200],$Vn1=[1,201],$Vo1=[1,203],$Vp1=[1,206],$Vq1=[1,207],$Vr1=[1,209],$Vs1=[8,9,11],$Vt1=[1,225],$Vu1=[8,9,11,79],$Vv1=[8,9,10,11,63,75,78,79,82,83,84,85,86,87,88];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[1,4],$V2=[1,6],$V3=[1,8],$V4=[1,9,10,11,12,32,40,68,69,70,71,72,73,83,84,87,88,89,91,92,98,99,100,101,102,103,110],$V5=[2,3],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,28],$Vb=[1,53],$Vc=[1,31],$Vd=[1,32],$Ve=[1,33],$Vf=[1,34],$Vg=[1,35],$Vh=[1,47],$Vi=[1,42],$Vj=[1,44],$Vk=[1,39],$Vl=[1,43],$Vm=[1,46],$Vn=[1,50],$Vo=[1,51],$Vp=[1,52],$Vq=[1,41],$Vr=[1,45],$Vs=[1,48],$Vt=[1,49],$Vu=[1,40],$Vv=[1,58],$Vw=[1,61],$Vx=[1,9,10,11,12,32,36,40,68,69,70,71,72,73,83,84,87,88,89,91,92,98,99,100,101,102,103,110],$Vy=[1,65],$Vz=[1,64],$VA=[1,66],$VB=[9,10,12,63,64],$VC=[9,10,11,12,63,64],$VD=[9,10,11,12,41,63,64],$VE=[9,10,11,12,34,40,41,43,45,47,49,51,53,55,56,58,63,64,73,83,84,87,88,89,91,92,98,99,100,101,102,103],$VF=[9,10,12,40,63,64,73,83,84,87,88,89,91,92,98,99,100,101,102,103],$VG=[9,10,12],$VH=[1,9,10,11,12,19,32,36,40,68,69,70,71,72,73,83,84,87,88,89,91,92,98,99,100,101,102,103,110],$VI=[40,73,83,84,87,88,89,91,92,98,99,100,101,102,103],$VJ=[1,114],$VK=[1,135],$VL=[1,136],$VM=[1,137],$VN=[1,138],$VO=[1,118],$VP=[1,109],$VQ=[1,107],$VR=[1,110],$VS=[1,130],$VT=[1,131],$VU=[1,132],$VV=[1,133],$VW=[1,134],$VX=[1,139],$VY=[1,140],$VZ=[1,112],$V_=[1,120],$V$=[1,123],$V01=[1,121],$V11=[1,122],$V21=[1,115],$V31=[1,128],$V41=[1,127],$V51=[1,111],$V61=[1,108],$V71=[1,117],$V81=[1,119],$V91=[1,124],$Va1=[1,125],$Vb1=[1,126],$Vc1=[1,129],$Vd1=[9,10,11,12,32,36,40,68,69,70,71,72,73,83,84,87,88,89,91,92,98,99,100,101,102,103,110],$Ve1=[1,143],$Vf1=[1,147],$Vg1=[1,149],$Vh1=[1,150],$Vi1=[9,10,11,12,19,20,32,34,35,36,40,44,46,48,50,52,54,55,57,59,62,63,64,65,68,69,70,71,72,73,74,77,83,84,87,88,89,91,92,93,94,98,99,100,101,102,103],$Vj1=[9,10,11,12,20,40,73,83,84,87,88,89,91,92,98,99,100,101,102,103],$Vk1=[11,84],$Vl1=[1,219],$Vm1=[1,223],$Vn1=[1,220],$Vo1=[1,217],$Vp1=[1,214],$Vq1=[1,215],$Vr1=[1,216],$Vs1=[1,218],$Vt1=[1,221],$Vu1=[1,222],$Vv1=[1,224],$Vw1=[1,240],$Vx1=[9,10,12,84],$Vy1=[9,10,11,12,68,80,83,84,87,88,89,90,91,92,93];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"document":5,"line":6,"statement":7,"SEMI":8,"NEWLINE":9,"SPACE":10,"EOF":11,"GRAPH":12,"DIR":13,"FirstStmtSeperator":14,"ending":15,"endToken":16,"spaceList":17,"spaceListNewline":18,"verticeStatement":19,"separator":20,"styleStatement":21,"linkStyleStatement":22,"classDefStatement":23,"classStatement":24,"clickStatement":25,"subgraph":26,"text":27,"SQS":28,"SQE":29,"end":30,"link":31,"node":32,"vertex":33,"AMP":34,"STYLE_SEPARATOR":35,"idString":36,"PS":37,"PE":38,"(-":39,"-)":40,"STADIUMSTART":41,"STADIUMEND":42,"SUBROUTINESTART":43,"SUBROUTINEEND":44,"CYLINDERSTART":45,"CYLINDEREND":46,"DIAMOND_START":47,"DIAMOND_STOP":48,"TAGEND":49,"TRAPSTART":50,"TRAPEND":51,"INVTRAPSTART":52,"INVTRAPEND":53,"linkStatement":54,"arrowText":55,"TESTSTR":56,"START_LINK":57,"LINK":58,"PIPE":59,"textToken":60,"STR":61,"keywords":62,"STYLE":63,"LINKSTYLE":64,"CLASSDEF":65,"CLASS":66,"CLICK":67,"DOWN":68,"UP":69,"textNoTags":70,"textNoTagsToken":71,"DEFAULT":72,"stylesOpt":73,"alphaNum":74,"HEX":75,"numList":76,"INTERPOLATE":77,"NUM":78,"COMMA":79,"style":80,"styleComponent":81,"ALPHA":82,"COLON":83,"MINUS":84,"UNIT":85,"BRKT":86,"DOT":87,"PCT":88,"TAGSTART":89,"alphaNumToken":90,"idStringToken":91,"alphaNumStatement":92,"PUNCTUATION":93,"UNICODE_TEXT":94,"PLUS":95,"EQUALS":96,"MULT":97,"UNDERSCORE":98,"graphCodeTokens":99,"ARROW_CROSS":100,"ARROW_POINT":101,"ARROW_CIRCLE":102,"ARROW_OPEN":103,"QUOTE":104,"$accept":0,"$end":1},
-terminals_: {2:"error",8:"SEMI",9:"NEWLINE",10:"SPACE",11:"EOF",12:"GRAPH",13:"DIR",26:"subgraph",28:"SQS",29:"SQE",30:"end",34:"AMP",35:"STYLE_SEPARATOR",37:"PS",38:"PE",39:"(-",40:"-)",41:"STADIUMSTART",42:"STADIUMEND",43:"SUBROUTINESTART",44:"SUBROUTINEEND",45:"CYLINDERSTART",46:"CYLINDEREND",47:"DIAMOND_START",48:"DIAMOND_STOP",49:"TAGEND",50:"TRAPSTART",51:"TRAPEND",52:"INVTRAPSTART",53:"INVTRAPEND",56:"TESTSTR",57:"START_LINK",58:"LINK",59:"PIPE",61:"STR",63:"STYLE",64:"LINKSTYLE",65:"CLASSDEF",66:"CLASS",67:"CLICK",68:"DOWN",69:"UP",72:"DEFAULT",75:"HEX",77:"INTERPOLATE",78:"NUM",79:"COMMA",82:"ALPHA",83:"COLON",84:"MINUS",85:"UNIT",86:"BRKT",87:"DOT",88:"PCT",89:"TAGSTART",93:"PUNCTUATION",94:"UNICODE_TEXT",95:"PLUS",96:"EQUALS",97:"MULT",98:"UNDERSCORE",100:"ARROW_CROSS",101:"ARROW_POINT",102:"ARROW_CIRCLE",103:"ARROW_OPEN",104:"QUOTE"},
-productions_: [0,[3,2],[5,0],[5,2],[6,1],[6,1],[6,1],[6,1],[6,1],[4,2],[4,2],[4,3],[15,2],[15,1],[16,1],[16,1],[16,1],[14,1],[14,1],[14,2],[18,2],[18,2],[18,1],[18,1],[17,2],[17,1],[7,2],[7,2],[7,2],[7,2],[7,2],[7,2],[7,9],[7,6],[7,4],[20,1],[20,1],[20,1],[19,3],[19,4],[19,2],[19,1],[32,1],[32,5],[32,3],[33,4],[33,6],[33,4],[33,4],[33,4],[33,4],[33,4],[33,4],[33,6],[33,4],[33,4],[33,4],[33,4],[33,4],[33,1],[31,2],[31,3],[31,3],[31,1],[31,3],[54,1],[55,3],[27,1],[27,2],[27,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[70,1],[70,2],[23,5],[23,5],[24,5],[25,5],[25,7],[25,5],[25,7],[21,5],[21,5],[22,5],[22,5],[22,9],[22,9],[22,7],[22,7],[76,1],[76,3],[73,1],[73,3],[80,1],[80,2],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[60,1],[60,1],[60,1],[60,1],[60,1],[60,1],[71,1],[71,1],[71,1],[71,1],[36,1],[36,2],[74,1],[74,2],[92,1],[92,1],[92,1],[92,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1]],
+symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"document":5,"directive":6,"line":7,"statement":8,"SEMI":9,"NEWLINE":10,"SPACE":11,"EOF":12,"openDirective":13,"typeDirective":14,"closeDirective":15,"separator":16,":":17,"argDirective":18,"GRAPH":19,"DIR":20,"FirstStmtSeperator":21,"ending":22,"endToken":23,"spaceList":24,"spaceListNewline":25,"verticeStatement":26,"styleStatement":27,"linkStyleStatement":28,"classDefStatement":29,"classStatement":30,"clickStatement":31,"subgraph":32,"text":33,"SQS":34,"SQE":35,"end":36,"link":37,"node":38,"vertex":39,"AMP":40,"STYLE_SEPARATOR":41,"idString":42,"PS":43,"PE":44,"(-":45,"-)":46,"STADIUMSTART":47,"STADIUMEND":48,"SUBROUTINESTART":49,"SUBROUTINEEND":50,"CYLINDERSTART":51,"CYLINDEREND":52,"DIAMOND_START":53,"DIAMOND_STOP":54,"TAGEND":55,"TRAPSTART":56,"TRAPEND":57,"INVTRAPSTART":58,"INVTRAPEND":59,"linkStatement":60,"arrowText":61,"STR":62,"START_LINK":63,"LINK":64,"PIPE":65,"textToken":66,"keywords":67,"STYLE":68,"LINKSTYLE":69,"CLASSDEF":70,"CLASS":71,"CLICK":72,"DOWN":73,"UP":74,"textNoTags":75,"textNoTagsToken":76,"DEFAULT":77,"stylesOpt":78,"alphaNum":79,"HEX":80,"numList":81,"INTERPOLATE":82,"NUM":83,"COMMA":84,"style":85,"styleComponent":86,"ALPHA":87,"COLON":88,"MINUS":89,"UNIT":90,"BRKT":91,"DOT":92,"PCT":93,"TAGSTART":94,"alphaNumToken":95,"idStringToken":96,"alphaNumStatement":97,"PUNCTUATION":98,"UNICODE_TEXT":99,"PLUS":100,"EQUALS":101,"MULT":102,"UNDERSCORE":103,"graphCodeTokens":104,"ARROW_CROSS":105,"ARROW_POINT":106,"ARROW_CIRCLE":107,"ARROW_OPEN":108,"QUOTE":109,"open_directive":110,"type_directive":111,"arg_directive":112,"close_directive":113,"$accept":0,"$end":1},
+terminals_: {2:"error",9:"SEMI",10:"NEWLINE",11:"SPACE",12:"EOF",17:":",19:"GRAPH",20:"DIR",32:"subgraph",34:"SQS",35:"SQE",36:"end",40:"AMP",41:"STYLE_SEPARATOR",43:"PS",44:"PE",45:"(-",46:"-)",47:"STADIUMSTART",48:"STADIUMEND",49:"SUBROUTINESTART",50:"SUBROUTINEEND",51:"CYLINDERSTART",52:"CYLINDEREND",53:"DIAMOND_START",54:"DIAMOND_STOP",55:"TAGEND",56:"TRAPSTART",57:"TRAPEND",58:"INVTRAPSTART",59:"INVTRAPEND",62:"STR",63:"START_LINK",64:"LINK",65:"PIPE",68:"STYLE",69:"LINKSTYLE",70:"CLASSDEF",71:"CLASS",72:"CLICK",73:"DOWN",74:"UP",77:"DEFAULT",80:"HEX",82:"INTERPOLATE",83:"NUM",84:"COMMA",87:"ALPHA",88:"COLON",89:"MINUS",90:"UNIT",91:"BRKT",92:"DOT",93:"PCT",94:"TAGSTART",98:"PUNCTUATION",99:"UNICODE_TEXT",100:"PLUS",101:"EQUALS",102:"MULT",103:"UNDERSCORE",105:"ARROW_CROSS",106:"ARROW_POINT",107:"ARROW_CIRCLE",108:"ARROW_OPEN",109:"QUOTE",110:"open_directive",111:"type_directive",112:"arg_directive",113:"close_directive"},
+productions_: [0,[3,2],[3,2],[5,0],[5,2],[7,1],[7,1],[7,1],[7,1],[7,1],[6,4],[6,6],[4,2],[4,2],[4,3],[22,2],[22,1],[23,1],[23,1],[23,1],[21,1],[21,1],[21,2],[25,2],[25,2],[25,1],[25,1],[24,2],[24,1],[8,2],[8,2],[8,2],[8,2],[8,2],[8,2],[8,9],[8,6],[8,4],[8,1],[16,1],[16,1],[16,1],[26,3],[26,4],[26,2],[26,1],[38,1],[38,5],[38,3],[39,4],[39,6],[39,4],[39,4],[39,4],[39,4],[39,4],[39,4],[39,6],[39,4],[39,4],[39,4],[39,4],[39,4],[39,1],[37,2],[37,3],[37,3],[37,1],[37,3],[60,1],[61,3],[33,1],[33,2],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[75,1],[75,2],[29,5],[29,5],[30,5],[31,5],[31,7],[31,5],[31,7],[27,5],[27,5],[28,5],[28,5],[28,9],[28,9],[28,7],[28,7],[81,1],[81,3],[78,1],[78,3],[85,1],[85,2],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[76,1],[76,1],[76,1],[76,1],[42,1],[42,2],[79,1],[79,2],[97,1],[97,1],[97,1],[97,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[13,1],[14,1],[18,1],[15,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 2:
+case 3:
  this.$ = [];
 break;
-case 3:
+case 4:
 
 	    if($$[$0] !== []){
 	        $$[$0-1].push($$[$0]);
 	    }
 	    this.$=$$[$0-1];
 break;
-case 4: case 67: case 69: case 81: case 127: case 129: case 130:
+case 5: case 71: case 84: case 119: case 131: case 133: case 134:
 this.$=$$[$0];
 break;
-case 11:
+case 14:
  yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
 break;
-case 26:
+case 29:
  /* console.warn('finat vs', $$[$0-1].nodes); */ this.$=$$[$0-1].nodes
 break;
-case 27: case 28: case 29: case 30: case 31:
+case 30: case 31: case 32: case 33: case 34:
 this.$=[];
 break;
-case 32:
+case 35:
 this.$=yy.addSubGraph($$[$0-6],$$[$0-1],$$[$0-4]);
 break;
-case 33:
+case 36:
 this.$=yy.addSubGraph($$[$0-3],$$[$0-1],$$[$0-3]);
 break;
-case 34:
+case 37:
 this.$=yy.addSubGraph(undefined,$$[$0-1],undefined);
 break;
-case 38:
+case 42:
  /* console.warn('vs',$$[$0-2].stmt,$$[$0]); */ yy.addLink($$[$0-2].stmt,$$[$0],$$[$0-1]); this.$ = { stmt: $$[$0], nodes: $$[$0].concat($$[$0-2].nodes) } 
 break;
-case 39:
+case 43:
  /* console.warn('vs',$$[$0-3].stmt,$$[$0-1]); */ yy.addLink($$[$0-3].stmt,$$[$0-1],$$[$0-2]); this.$ = { stmt: $$[$0-1], nodes: $$[$0-1].concat($$[$0-3].nodes) } 
 break;
-case 40:
+case 44:
 /*console.warn('noda', $$[$0-1]);*/ this.$ = {stmt: $$[$0-1], nodes:$$[$0-1] }
 break;
-case 41:
+case 45:
  /*console.warn('noda', $$[$0]);*/ this.$ = {stmt: $$[$0], nodes:$$[$0] }
 break;
-case 42:
+case 46:
  /* console.warn('nod', $$[$0]); */ this.$ = [$$[$0]];
 break;
-case 43:
+case 47:
  this.$ = $$[$0-4].concat($$[$0]); /* console.warn('pip', $$[$0-4][0], $$[$0], this.$); */ 
 break;
-case 44:
+case 48:
 this.$ = [$$[$0-2]];yy.setClass($$[$0-2],$$[$0])
 break;
-case 45:
+case 49:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
 break;
-case 46:
+case 50:
 this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'circle');
 break;
-case 47:
+case 51:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'ellipse');
 break;
-case 48:
+case 52:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'stadium');
 break;
-case 49:
+case 53:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'subroutine');
 break;
-case 50:
+case 54:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'cylinder');
 break;
-case 51:
+case 55:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
 break;
-case 52:
+case 56:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
 break;
-case 53:
+case 57:
 this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'hexagon');
 break;
-case 54:
+case 58:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'odd');
 break;
-case 55:
+case 59:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'trapezoid');
 break;
-case 56:
+case 60:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'inv_trapezoid');
 break;
-case 57:
+case 61:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'lean_right');
 break;
-case 58:
+case 62:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'lean_left');
 break;
-case 59:
+case 63:
  /*console.warn('h: ', $$[$0]);*/this.$ = $$[$0];yy.addVertex($$[$0]);
 break;
-case 60:
+case 64:
 $$[$0-1].text = $$[$0];this.$ = $$[$0-1];
 break;
-case 61: case 62:
+case 65: case 66:
 $$[$0-2].text = $$[$0-1];this.$ = $$[$0-2];
 break;
-case 63:
+case 67:
 this.$ = $$[$0];
 break;
-case 64:
+case 68:
 var inf = yy.destructLink($$[$0], $$[$0-2]); this.$ = {"type":inf.type,"stroke":inf.stroke,"text":$$[$0-1]};
 break;
-case 65:
+case 69:
 var inf = yy.destructLink($$[$0]);this.$ = {"type":inf.type,"stroke":inf.stroke};
 break;
-case 66:
+case 70:
 this.$ = $$[$0-1];
 break;
-case 68: case 82: case 128:
+case 72: case 85: case 132:
 this.$=$$[$0-1]+''+$$[$0];
 break;
-case 83: case 84:
+case 86: case 87:
 this.$ = $$[$0-4];yy.addClass($$[$0-2],$$[$0]);
 break;
-case 85:
+case 88:
 this.$ = $$[$0-4];yy.setClass($$[$0-2], $$[$0]);
 break;
-case 86:
+case 89:
 this.$ = $$[$0-4];yy.setClickEvent($$[$0-2], $$[$0], undefined);
 break;
-case 87:
+case 90:
 this.$ = $$[$0-6];yy.setClickEvent($$[$0-4], $$[$0-2], $$[$0])       ;
 break;
-case 88:
+case 91:
 this.$ = $$[$0-4];yy.setLink($$[$0-2], $$[$0], undefined);
 break;
-case 89:
+case 92:
 this.$ = $$[$0-6];yy.setLink($$[$0-4], $$[$0-2], $$[$0]       );
 break;
-case 90:
+case 93:
 this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
 break;
-case 91: case 93:
+case 94: case 96:
 this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
 break;
-case 92:
+case 95:
 this.$ = $$[$0-4];yy.updateLink([$$[$0-2]],$$[$0]);
 break;
-case 94:
+case 97:
 this.$ = $$[$0-8];yy.updateLinkInterpolate([$$[$0-6]],$$[$0-2]);yy.updateLink([$$[$0-6]],$$[$0]);
 break;
-case 95:
+case 98:
 this.$ = $$[$0-8];yy.updateLinkInterpolate($$[$0-6],$$[$0-2]);yy.updateLink($$[$0-6],$$[$0]);
 break;
-case 96:
+case 99:
 this.$ = $$[$0-6];yy.updateLinkInterpolate([$$[$0-4]],$$[$0]);
 break;
-case 97:
+case 100:
 this.$ = $$[$0-6];yy.updateLinkInterpolate($$[$0-4],$$[$0]);
 break;
-case 98: case 100:
+case 101: case 103:
 this.$ = [$$[$0]]
 break;
-case 99: case 101:
+case 102: case 104:
 $$[$0-2].push($$[$0]);this.$ = $$[$0-2];
 break;
-case 103:
+case 106:
 this.$ = $$[$0-1] + $$[$0];
 break;
-case 125:
+case 129:
 this.$=$$[$0]
 break;
-case 126:
+case 130:
 this.$=$$[$0-1]+''+$$[$0]
 break;
-case 131:
+case 135:
 this.$='v';
 break;
-case 132:
+case 136:
 this.$='-';
+break;
+case 190:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 191:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 192:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 193:
+ yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:2,9:$V0,10:$V1,12:$V2},{1:[3]},o($V3,$V4,{5:6}),{4:7,9:$V0,10:$V1,12:$V2},{4:8,9:$V0,10:$V1,12:$V2},{13:[1,9]},{1:[2,1],6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,19:16,21:17,22:18,23:19,24:20,25:21,26:$V9,32:23,33:29,34:$Va,36:30,63:$Vb,64:$Vc,65:$Vd,66:$Ve,67:$Vf,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},o($V3,[2,9]),o($V3,[2,10]),{8:[1,48],9:[1,49],10:$Vu,14:47,17:50},o($Vv,[2,3]),o($Vv,[2,4]),o($Vv,[2,5]),o($Vv,[2,6]),o($Vv,[2,7]),o($Vv,[2,8]),{8:$Vw,9:$Vx,11:$Vy,20:52,31:53,54:57,57:[1,58],58:[1,59]},{8:$Vw,9:$Vx,11:$Vy,20:60},{8:$Vw,9:$Vx,11:$Vy,20:61},{8:$Vw,9:$Vx,11:$Vy,20:62},{8:$Vw,9:$Vx,11:$Vy,20:63},{8:$Vw,9:$Vx,11:$Vy,20:64},{8:$Vw,9:$Vx,10:[1,65],11:$Vy,20:66},o($Vz,[2,41],{17:67,10:$Vu}),{10:[1,68]},{10:[1,69]},{10:[1,70]},{10:[1,71]},{10:[1,72]},o($VA,[2,42],{35:[1,73]}),o($VB,[2,59],{91:84,28:[1,74],34:$Va,37:[1,75],39:[1,76],41:[1,77],43:[1,78],45:[1,79],47:[1,80],49:[1,81],50:[1,82],52:[1,83],68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt}),o($VC,[2,125]),o($VC,[2,146]),o($VC,[2,147]),o($VC,[2,148]),o($VC,[2,149]),o($VC,[2,150]),o($VC,[2,151]),o($VC,[2,152]),o($VC,[2,153]),o($VC,[2,154]),o($VC,[2,155]),o($VC,[2,156]),o($VC,[2,157]),o($VC,[2,158]),o($VC,[2,159]),o($VC,[2,160]),o($V3,[2,11]),o($V3,[2,17]),o($V3,[2,18]),{9:[1,85]},o($VD,[2,25],{17:86,10:$Vu}),o($Vv,[2,26]),{32:87,33:29,34:$Va,36:30,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},o($Vv,[2,35]),o($Vv,[2,36]),o($Vv,[2,37]),o($VE,[2,63],{55:88,56:[1,89],59:[1,90]}),{10:$VF,12:$VG,13:$VH,26:$VI,27:91,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o([34,56,59,68,78,79,82,83,84,86,87,93,94,95,96,97,98],[2,65]),o($Vv,[2,27]),o($Vv,[2,28]),o($Vv,[2,29]),o($Vv,[2,30]),o($Vv,[2,31]),{10:$VF,12:$VG,13:$VH,26:$VI,27:128,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($V91,$V4,{5:129}),o($Vz,[2,40],{34:$Va1}),{13:$Vb1,34:$VK,68:$Vc1,74:131,75:[1,132],78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{72:[1,138],76:139,78:[1,140]},{13:$Vb1,34:$VK,68:$Vc1,72:[1,141],74:142,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{13:$Vb1,34:$VK,68:$Vc1,74:143,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{13:$Vb1,34:$VK,68:$Vc1,74:144,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{34:$Va,36:145,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},{10:$VF,12:$VG,13:$VH,26:$VI,27:146,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:148,30:$VJ,34:$VK,37:[1,147],49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:149,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:150,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:151,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:152,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:153,30:$VJ,34:$VK,47:[1,154],49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:155,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:156,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:157,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VC,[2,126]),o($V3,[2,19]),o($VD,[2,24]),o($Vz,[2,38],{17:158,10:$Vu}),o($VE,[2,60],{10:[1,159]}),{10:[1,160]},{10:$VF,12:$VG,13:$VH,26:$VI,27:161,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,49:$VL,57:$VM,58:[1,162],60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($Ve1,[2,67]),o($Ve1,[2,69]),o($Ve1,[2,115]),o($Ve1,[2,116]),o($Ve1,[2,117]),o($Ve1,[2,118]),o($Ve1,[2,119]),o($Ve1,[2,120]),o($Ve1,[2,121]),o($Ve1,[2,122]),o($Ve1,[2,123]),o($Ve1,[2,124]),o($Ve1,[2,133]),o($Ve1,[2,134]),o($Ve1,[2,135]),o($Ve1,[2,136]),o($Ve1,[2,137]),o($Ve1,[2,138]),o($Ve1,[2,139]),o($Ve1,[2,140]),o($Ve1,[2,141]),o($Ve1,[2,142]),o($Ve1,[2,143]),o($Ve1,[2,144]),o($Ve1,[2,145]),o($Ve1,[2,70]),o($Ve1,[2,71]),o($Ve1,[2,72]),o($Ve1,[2,73]),o($Ve1,[2,74]),o($Ve1,[2,75]),o($Ve1,[2,76]),o($Ve1,[2,77]),o($Ve1,[2,78]),o($Ve1,[2,79]),o($Ve1,[2,80]),{8:$Vw,9:$Vx,10:$VF,11:$Vy,12:$VG,13:$VH,20:165,26:$VI,28:[1,164],30:$VJ,34:$VK,49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,19:16,21:17,22:18,23:19,24:20,25:21,26:$V9,30:[1,166],32:23,33:29,34:$Va,36:30,63:$Vb,64:$Vc,65:$Vd,66:$Ve,67:$Vf,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},{10:$Vu,17:167},{10:[1,168],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:169,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:[1,170]},o($Vf1,[2,127]),o($Vf1,[2,129]),o($Vf1,[2,130]),o($Vf1,[2,131]),o($Vf1,[2,132]),{10:[1,171]},{10:[1,172],79:[1,173]},o($Vg1,[2,98]),{10:[1,174]},{10:[1,175],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:169,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:[1,176],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:169,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:[1,177],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:169,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VA,[2,44],{91:84,34:$Va,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt}),{10:$VF,12:$VG,13:$VH,26:$VI,29:[1,178],30:$VJ,34:$VK,49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:179,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,38:[1,180],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,40:[1,181],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,42:[1,182],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,44:[1,183],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,46:[1,184],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,48:[1,185],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:186,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,29:[1,187],30:$VJ,34:$VK,49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,49:$VL,51:[1,188],53:[1,189],57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,49:$VL,51:[1,191],53:[1,190],57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($Vz,[2,39],{34:$Va1}),o($VE,[2,62]),o($VE,[2,61]),{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,49:$VL,57:$VM,59:[1,192],60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VE,[2,64]),o($Ve1,[2,68]),{10:$VF,12:$VG,13:$VH,26:$VI,27:193,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($V91,$V4,{5:194}),o($Vv,[2,34]),{33:195,34:$Va,36:30,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},{10:$Vh1,63:$Vi1,73:196,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},o($Vf1,[2,128]),{10:$Vh1,63:$Vi1,73:210,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{10:$Vh1,63:$Vi1,73:211,75:$Vj1,77:[1,212],78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{10:$Vh1,63:$Vi1,73:213,75:$Vj1,77:[1,214],78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{78:[1,215]},{10:$Vh1,63:$Vi1,73:216,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{10:$Vh1,63:$Vi1,73:217,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{13:$Vb1,34:$VK,68:$Vc1,74:218,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{13:$Vb1,34:$VK,61:[1,220],68:$Vc1,74:219,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VB,[2,45]),{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,38:[1,221],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VB,[2,51]),o($VB,[2,47]),o($VB,[2,48]),o($VB,[2,49]),o($VB,[2,50]),o($VB,[2,52]),{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,48:[1,222],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VB,[2,54]),o($VB,[2,55]),o($VB,[2,57]),o($VB,[2,56]),o($VB,[2,58]),o([10,34,68,78,79,82,83,84,86,87,93,94,95,96,97,98],[2,66]),{10:$VF,12:$VG,13:$VH,26:$VI,29:[1,223],30:$VJ,34:$VK,49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,19:16,21:17,22:18,23:19,24:20,25:21,26:$V9,30:[1,224],32:23,33:29,34:$Va,36:30,63:$Vb,64:$Vc,65:$Vd,66:$Ve,67:$Vf,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},o($VA,[2,43]),o($Vs1,[2,90],{79:$Vt1}),o($Vu1,[2,100],{81:226,10:$Vh1,63:$Vi1,75:$Vj1,78:$Vk1,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1}),o($Vv1,[2,102]),o($Vv1,[2,104]),o($Vv1,[2,105]),o($Vv1,[2,106]),o($Vv1,[2,107]),o($Vv1,[2,108]),o($Vv1,[2,109]),o($Vv1,[2,110]),o($Vv1,[2,111]),o($Vv1,[2,112]),o($Vv1,[2,113]),o($Vv1,[2,114]),o($Vs1,[2,91],{79:$Vt1}),o($Vs1,[2,92],{79:$Vt1}),{10:[1,227]},o($Vs1,[2,93],{79:$Vt1}),{10:[1,228]},o($Vg1,[2,99]),o($Vs1,[2,83],{79:$Vt1}),o($Vs1,[2,84],{79:$Vt1}),o($Vs1,[2,85],{90:135,92:169,13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81}),o($Vs1,[2,86],{90:135,92:169,10:[1,229],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81}),o($Vs1,[2,88],{10:[1,230]}),{38:[1,231]},{48:[1,232]},{8:$Vw,9:$Vx,11:$Vy,20:233},o($Vv,[2,33]),{10:$Vh1,63:$Vi1,75:$Vj1,78:$Vk1,80:234,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},o($Vv1,[2,103]),{13:$Vb1,34:$VK,68:$Vc1,74:235,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{13:$Vb1,34:$VK,68:$Vc1,74:236,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{61:[1,237]},{61:[1,238]},o($VB,[2,46]),o($VB,[2,53]),o($V91,$V4,{5:239}),o($Vu1,[2,101],{81:226,10:$Vh1,63:$Vi1,75:$Vj1,78:$Vk1,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1}),o($Vs1,[2,96],{90:135,92:169,10:[1,240],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81}),o($Vs1,[2,97],{90:135,92:169,10:[1,241],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81}),o($Vs1,[2,87]),o($Vs1,[2,89]),{6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,19:16,21:17,22:18,23:19,24:20,25:21,26:$V9,30:[1,242],32:23,33:29,34:$Va,36:30,63:$Vb,64:$Vc,65:$Vd,66:$Ve,67:$Vf,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},{10:$Vh1,63:$Vi1,73:243,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{10:$Vh1,63:$Vi1,73:244,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},o($Vv,[2,32]),o($Vs1,[2,94],{79:$Vt1}),o($Vs1,[2,95],{79:$Vt1})],
-defaultActions: {},
+table: [{3:1,4:2,6:3,10:$V0,11:$V1,13:7,19:$V2,110:$V3},{1:[3]},o($V4,$V5,{5:9}),{3:10,4:2,6:3,10:$V0,11:$V1,13:7,19:$V2,110:$V3},{4:11,10:$V0,11:$V1,19:$V2},{4:12,10:$V0,11:$V1,19:$V2},{20:[1,13]},{14:14,111:[1,15]},{111:[2,190]},{1:[2,1],6:29,7:16,8:17,9:$V6,10:$V7,11:$V8,12:$V9,13:7,26:22,27:23,28:24,29:25,30:26,31:27,32:$Va,38:30,39:36,40:$Vb,42:37,68:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu,110:$V3},{1:[2,2]},o($V4,[2,12]),o($V4,[2,13]),{9:[1,55],10:[1,56],11:$Vv,21:54,24:57},{15:59,17:[1,60],113:$Vw},o([17,113],[2,191]),o($Vx,[2,4]),o($Vx,[2,5]),o($Vx,[2,6]),o($Vx,[2,7]),o($Vx,[2,8]),o($Vx,[2,9]),{9:$Vy,10:$Vz,12:$VA,16:62,37:63,60:67,63:[1,68],64:[1,69]},{9:$Vy,10:$Vz,12:$VA,16:70},{9:$Vy,10:$Vz,12:$VA,16:71},{9:$Vy,10:$Vz,12:$VA,16:72},{9:$Vy,10:$Vz,12:$VA,16:73},{9:$Vy,10:$Vz,12:$VA,16:74},{9:$Vy,10:$Vz,11:[1,75],12:$VA,16:76},o($Vx,[2,38]),o($VB,[2,45],{24:77,11:$Vv}),{11:[1,78]},{11:[1,79]},{11:[1,80]},{11:[1,81]},{11:[1,82]},o($VC,[2,46],{41:[1,83]}),o($VD,[2,63],{96:94,34:[1,84],40:$Vb,43:[1,85],45:[1,86],47:[1,87],49:[1,88],51:[1,89],53:[1,90],55:[1,91],56:[1,92],58:[1,93],73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu}),o($VE,[2,129]),o($VE,[2,150]),o($VE,[2,151]),o($VE,[2,152]),o($VE,[2,153]),o($VE,[2,154]),o($VE,[2,155]),o($VE,[2,156]),o($VE,[2,157]),o($VE,[2,158]),o($VE,[2,159]),o($VE,[2,160]),o($VE,[2,161]),o($VE,[2,162]),o($VE,[2,163]),o($VE,[2,164]),o($V4,[2,14]),o($V4,[2,20]),o($V4,[2,21]),{10:[1,95]},o($VF,[2,28],{24:96,11:$Vv}),{9:$Vy,10:$Vz,12:$VA,16:97},{18:98,112:[1,99]},o($VG,[2,193]),o($Vx,[2,29]),{38:100,39:36,40:$Vb,42:37,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu},o($VH,[2,39]),o($VH,[2,40]),o($VH,[2,41]),o($VI,[2,67],{61:101,62:[1,102],65:[1,103]}),{11:$VJ,19:$VK,20:$VL,32:$VM,33:104,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o([40,62,65,73,83,84,87,88,89,91,92,98,99,100,101,102,103],[2,69]),o($Vx,[2,30]),o($Vx,[2,31]),o($Vx,[2,32]),o($Vx,[2,33]),o($Vx,[2,34]),{11:$VJ,19:$VK,20:$VL,32:$VM,33:141,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($Vd1,$V5,{5:142}),o($VB,[2,44],{40:$Ve1}),{20:$Vf1,40:$VO,73:$Vg1,79:144,80:[1,145],83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{77:[1,151],81:152,83:[1,153]},{20:$Vf1,40:$VO,73:$Vg1,77:[1,154],79:155,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{20:$Vf1,40:$VO,73:$Vg1,79:156,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{20:$Vf1,40:$VO,73:$Vg1,79:157,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{40:$Vb,42:158,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu},{11:$VJ,19:$VK,20:$VL,32:$VM,33:159,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:161,36:$VN,40:$VO,43:[1,160],55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:162,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:163,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:164,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:165,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:166,36:$VN,40:$VO,53:[1,167],55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:168,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:169,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:170,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VE,[2,130]),o($V4,[2,22]),o($VF,[2,27]),o($VH,[2,10]),{15:171,113:$Vw},{113:[2,192]},o($VB,[2,42],{24:172,11:$Vv}),o($VI,[2,64],{11:[1,173]}),{11:[1,174]},{11:$VJ,19:$VK,20:$VL,32:$VM,33:175,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,64:[1,176],66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($Vi1,[2,71]),o($Vi1,[2,118]),o($Vi1,[2,119]),o($Vi1,[2,120]),o($Vi1,[2,121]),o($Vi1,[2,122]),o($Vi1,[2,123]),o($Vi1,[2,124]),o($Vi1,[2,125]),o($Vi1,[2,126]),o($Vi1,[2,127]),o($Vi1,[2,128]),o($Vi1,[2,137]),o($Vi1,[2,138]),o($Vi1,[2,139]),o($Vi1,[2,140]),o($Vi1,[2,141]),o($Vi1,[2,142]),o($Vi1,[2,143]),o($Vi1,[2,144]),o($Vi1,[2,145]),o($Vi1,[2,146]),o($Vi1,[2,147]),o($Vi1,[2,148]),o($Vi1,[2,149]),o($Vi1,[2,73]),o($Vi1,[2,74]),o($Vi1,[2,75]),o($Vi1,[2,76]),o($Vi1,[2,77]),o($Vi1,[2,78]),o($Vi1,[2,79]),o($Vi1,[2,80]),o($Vi1,[2,81]),o($Vi1,[2,82]),o($Vi1,[2,83]),{9:$Vy,10:$Vz,11:$VJ,12:$VA,16:179,19:$VK,20:$VL,32:$VM,34:[1,178],36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{6:29,7:16,8:17,9:$V6,10:$V7,11:$V8,12:$V9,13:7,26:22,27:23,28:24,29:25,30:26,31:27,32:$Va,36:[1,180],38:30,39:36,40:$Vb,42:37,68:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu,110:$V3},{11:$Vv,24:181},{11:[1,182],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:183,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:[1,184]},o($Vj1,[2,131]),o($Vj1,[2,133]),o($Vj1,[2,134]),o($Vj1,[2,135]),o($Vj1,[2,136]),{11:[1,185]},{11:[1,186],84:[1,187]},o($Vk1,[2,101]),{11:[1,188]},{11:[1,189],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:183,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:[1,190],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:183,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:[1,191],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:183,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VC,[2,48],{96:94,40:$Vb,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu}),{11:$VJ,19:$VK,20:$VL,32:$VM,35:[1,192],36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:193,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,44:[1,194],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,46:[1,195],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,48:[1,196],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,50:[1,197],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,52:[1,198],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,54:[1,199],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:200,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,35:[1,201],36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,55:$VP,57:[1,202],59:[1,203],62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,55:$VP,57:[1,205],59:[1,204],62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{9:$Vy,10:$Vz,12:$VA,16:206},o($VB,[2,43],{40:$Ve1}),o($VI,[2,66]),o($VI,[2,65]),{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,65:[1,207],66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VI,[2,68]),o($Vi1,[2,72]),{11:$VJ,19:$VK,20:$VL,32:$VM,33:208,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($Vd1,$V5,{5:209}),o($Vx,[2,37]),{39:210,40:$Vb,42:37,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu},{11:$Vl1,68:$Vm1,78:211,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},o($Vj1,[2,132]),{11:$Vl1,68:$Vm1,78:225,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{11:$Vl1,68:$Vm1,78:226,80:$Vn1,82:[1,227],83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{11:$Vl1,68:$Vm1,78:228,80:$Vn1,82:[1,229],83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{83:[1,230]},{11:$Vl1,68:$Vm1,78:231,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{11:$Vl1,68:$Vm1,78:232,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{20:$Vf1,40:$VO,73:$Vg1,79:233,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{20:$Vf1,40:$VO,62:[1,235],73:$Vg1,79:234,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VD,[2,49]),{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,44:[1,236],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VD,[2,55]),o($VD,[2,51]),o($VD,[2,52]),o($VD,[2,53]),o($VD,[2,54]),o($VD,[2,56]),{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,54:[1,237],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VD,[2,58]),o($VD,[2,59]),o($VD,[2,61]),o($VD,[2,60]),o($VD,[2,62]),o($VH,[2,11]),o([11,40,73,83,84,87,88,89,91,92,98,99,100,101,102,103],[2,70]),{11:$VJ,19:$VK,20:$VL,32:$VM,35:[1,238],36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{6:29,7:16,8:17,9:$V6,10:$V7,11:$V8,12:$V9,13:7,26:22,27:23,28:24,29:25,30:26,31:27,32:$Va,36:[1,239],38:30,39:36,40:$Vb,42:37,68:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu,110:$V3},o($VC,[2,47]),o($VG,[2,93],{84:$Vw1}),o($Vx1,[2,103],{86:241,11:$Vl1,68:$Vm1,80:$Vn1,83:$Vo1,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1}),o($Vy1,[2,105]),o($Vy1,[2,107]),o($Vy1,[2,108]),o($Vy1,[2,109]),o($Vy1,[2,110]),o($Vy1,[2,111]),o($Vy1,[2,112]),o($Vy1,[2,113]),o($Vy1,[2,114]),o($Vy1,[2,115]),o($Vy1,[2,116]),o($Vy1,[2,117]),o($VG,[2,94],{84:$Vw1}),o($VG,[2,95],{84:$Vw1}),{11:[1,242]},o($VG,[2,96],{84:$Vw1}),{11:[1,243]},o($Vk1,[2,102]),o($VG,[2,86],{84:$Vw1}),o($VG,[2,87],{84:$Vw1}),o($VG,[2,88],{95:148,97:183,20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1}),o($VG,[2,89],{95:148,97:183,11:[1,244],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1}),o($VG,[2,91],{11:[1,245]}),{44:[1,246]},{54:[1,247]},{9:$Vy,10:$Vz,12:$VA,16:248},o($Vx,[2,36]),{11:$Vl1,68:$Vm1,80:$Vn1,83:$Vo1,85:249,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},o($Vy1,[2,106]),{20:$Vf1,40:$VO,73:$Vg1,79:250,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{20:$Vf1,40:$VO,73:$Vg1,79:251,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{62:[1,252]},{62:[1,253]},o($VD,[2,50]),o($VD,[2,57]),o($Vd1,$V5,{5:254}),o($Vx1,[2,104],{86:241,11:$Vl1,68:$Vm1,80:$Vn1,83:$Vo1,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1}),o($VG,[2,99],{95:148,97:183,11:[1,255],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1}),o($VG,[2,100],{95:148,97:183,11:[1,256],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1}),o($VG,[2,90]),o($VG,[2,92]),{6:29,7:16,8:17,9:$V6,10:$V7,11:$V8,12:$V9,13:7,26:22,27:23,28:24,29:25,30:26,31:27,32:$Va,36:[1,257],38:30,39:36,40:$Vb,42:37,68:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu,110:$V3},{11:$Vl1,68:$Vm1,78:258,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{11:$Vl1,68:$Vm1,78:259,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},o($Vx,[2,35]),o($VG,[2,97],{84:$Vw1}),o($VG,[2,98],{84:$Vw1})],
+defaultActions: {8:[2,190],10:[2,2],99:[2,192]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -54606,232 +59077,244 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* do nothing */
+case 0: this.begin('open_directive'); return 110; 
 break;
-case 1:this.begin("string");
+case 1: this.begin('type_directive'); return 111; 
 break;
-case 2:this.popState();
+case 2: this.popState(); this.begin('arg_directive'); return 17; 
 break;
-case 3:return "STR";
+case 3: this.popState(); this.popState(); return 113; 
 break;
-case 4:return 63;
+case 4:return 112;
 break;
-case 5:return 72;
+case 5:/* skip comments */
 break;
-case 6:return 64;
+case 6:/* skip comments */
 break;
-case 7:return 77;
+case 7:this.begin("string");
 break;
-case 8:return 65;
+case 8:this.popState();
 break;
-case 9:return 66;
+case 9:return "STR";
 break;
-case 10:return 67;
+case 10:return 68;
 break;
-case 11:if(yy.lex.firstGraph()){this.begin("dir");}  return 12;
+case 11:return 77;
 break;
-case 12:if(yy.lex.firstGraph()){this.begin("dir");}  return 12;
+case 12:return 69;
 break;
-case 13:return 26;
+case 13:return 82;
 break;
-case 14:return 30;
+case 14:return 70;
 break;
-case 15:   this.popState();  return 13; 
+case 15:return 71;
 break;
-case 16:   this.popState();  return 13; 
+case 16:return 72;
 break;
-case 17:   this.popState();  return 13; 
+case 17:if(yy.lex.firstGraph()){this.begin("dir");}  return 19;
 break;
-case 18:   this.popState();  return 13; 
+case 18:if(yy.lex.firstGraph()){this.begin("dir");}  return 19;
 break;
-case 19:   this.popState();  return 13; 
+case 19:return 32;
 break;
-case 20:   this.popState();  return 13; 
+case 20:return 36;
 break;
-case 21:   this.popState();  return 13; 
+case 21:   this.popState();  return 20; 
 break;
-case 22:   this.popState();  return 13; 
+case 22:   this.popState();  return 20; 
 break;
-case 23:   this.popState();  return 13; 
+case 23:   this.popState();  return 20; 
 break;
-case 24:   this.popState();  return 13; 
+case 24:   this.popState();  return 20; 
 break;
-case 25: return 78;
+case 25:   this.popState();  return 20; 
 break;
-case 26:return 86;
+case 26:   this.popState();  return 20; 
 break;
-case 27:return 35;
+case 27:   this.popState();  return 20; 
 break;
-case 28:return 83;
+case 28:   this.popState();  return 20; 
 break;
-case 29:return 34;
+case 29:   this.popState();  return 20; 
 break;
-case 30:return 8;
+case 30:   this.popState();  return 20; 
 break;
-case 31:return 79;
+case 31: return 83;
 break;
-case 32:return 97;
+case 32:return 91;
 break;
-case 33:return 58;
+case 33:return 41;
 break;
-case 34:return 58;
+case 34:return 88;
 break;
-case 35:return 58;
+case 35:return 40;
 break;
-case 36:return 58;
+case 36:return 9;
 break;
-case 37:return 58;
+case 37:return 84;
 break;
-case 38:return 58;
+case 38:return 102;
 break;
-case 39:return 58;
+case 39:return 64;
 break;
-case 40:return 58;
+case 40:return 64;
 break;
-case 41:return 58;
+case 41:return 64;
 break;
-case 42:return 58;
+case 42:return 64;
 break;
-case 43:return 58;
+case 43:return 64;
 break;
-case 44:return 58;
+case 44:return 64;
 break;
-case 45:return 58;
+case 45:return 64;
 break;
-case 46:return 58;
+case 46:return 64;
 break;
-case 47:return 58;
+case 47:return 64;
 break;
-case 48:return 58;
+case 48:return 64;
 break;
-case 49:return 58;
+case 49:return 64;
 break;
-case 50:return 58;
+case 50:return 64;
 break;
-case 51:return 58;
+case 51:return 64;
 break;
-case 52:return 58;
+case 52:return 64;
 break;
-case 53:return 58;
+case 53:return 64;
 break;
-case 54:return 58;
+case 54:return 64;
 break;
-case 55:return 58;
+case 55:return 64;
 break;
-case 56:return 58;
+case 56:return 64;
 break;
-case 57:return 58;
+case 57:return 64;
 break;
-case 58:return 58;
+case 58:return 64;
 break;
-case 59:return 58;
+case 59:return 64;
 break;
-case 60:return 58;
+case 60:return 64;
 break;
-case 61:return 57;
+case 61:return 64;
 break;
-case 62:return 57;
+case 62:return 64;
 break;
-case 63:return 57;
+case 63:return 64;
 break;
-case 64:return 57;
+case 64:return 64;
 break;
-case 65:return 57;
+case 65:return 64;
 break;
-case 66:return 57;
+case 66:return 64;
 break;
-case 67:return 57;
+case 67:return 63;
 break;
-case 68:return 57;
+case 68:return 63;
 break;
-case 69:return 57;
+case 69:return 63;
 break;
-case 70:return 57;
+case 70:return 63;
 break;
-case 71:return 57;
+case 71:return 63;
 break;
-case 72:return 57;
+case 72:return 63;
 break;
-case 73:return 39;
+case 73:return 63;
 break;
-case 74:return 40;
+case 74:return 63;
 break;
-case 75:return 41;
+case 75:return 63;
 break;
-case 76:return 42;
+case 76:return 63;
 break;
-case 77:return 43;
+case 77:return 63;
 break;
-case 78:return 44;
+case 78:return 63;
 break;
 case 79:return 45;
 break;
 case 80:return 46;
 break;
-case 81:return 84;
+case 81:return 47;
 break;
-case 82:return 87;
+case 82:return 48;
 break;
-case 83:return 98;
+case 83:return 49;
 break;
-case 84:return 95;
+case 84:return 50;
 break;
-case 85:return 88;
+case 85:return 51;
 break;
-case 86:return 96;
+case 86:return 52;
 break;
-case 87:return 96;
+case 87:return 89;
 break;
-case 88:return 89;
+case 88:return 92;
 break;
-case 89:return 49;
+case 89:return 103;
 break;
-case 90:return 69;
+case 90:return 100;
 break;
-case 91:return 'SEP';
+case 91:return 93;
 break;
-case 92:return 68;
+case 92:return 101;
 break;
-case 93:return 82;
+case 93:return 101;
 break;
-case 94:return 51;
+case 94:return 94;
 break;
-case 95:return 50;
+case 95:return 55;
 break;
-case 96:return 53;
+case 96:return 74;
 break;
-case 97:return 52;
+case 97:return 'SEP';
 break;
-case 98:return 93;
+case 98:return 73;
 break;
-case 99:return 94;
+case 99:return 87;
 break;
-case 100:return 59;
+case 100:return 57;
 break;
-case 101:return 37;
+case 101:return 56;
 break;
-case 102:return 38;
+case 102:return 59;
 break;
-case 103:return 28;
+case 103:return 58;
 break;
-case 104:return 29;
+case 104:return 98;
 break;
-case 105:return 47
+case 105:return 99;
 break;
-case 106:return 48
+case 106:return 65;
 break;
-case 107:return 104;
+case 107:return 43;
 break;
-case 108:return 9;
+case 108:return 44;
 break;
-case 109:return 10;
+case 109:return 34;
 break;
-case 110:return 11;
+case 110:return 35;
+break;
+case 111:return 53
+break;
+case 112:return 54
+break;
+case 113:return 109;
+break;
+case 114:return 10;
+break;
+case 115:return 11;
+break;
+case 116:return 12;
 break;
 }
 },
-rules: [/^(?:%%[^\n]*\n*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:style\b)/,/^(?:default\b)/,/^(?:linkStyle\b)/,/^(?:interpolate\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:flowchart\b)/,/^(?:subgraph\b)/,/^(?:end\b\s*)/,/^(?:\s*LR\b)/,/^(?:\s*RL\b)/,/^(?:\s*TB\b)/,/^(?:\s*BT\b)/,/^(?:\s*TD\b)/,/^(?:\s*BR\b)/,/^(?:\s*<)/,/^(?:\s*>)/,/^(?:\s*\^)/,/^(?:\s*v\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::::)/,/^(?::)/,/^(?:&)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\s*--[x]\s*)/,/^(?:\s*-->\s*)/,/^(?:\s*<-->\s*)/,/^(?:\s*[x]--[x]\s*)/,/^(?:\s*[o]--[o]\s*)/,/^(?:\s*[o]\.-[o]\s*)/,/^(?:\s*<==>\s*)/,/^(?:\s*[o]==[o]\s*)/,/^(?:\s*[x]==[x]\s*)/,/^(?:\s*[x].-[x]\s*)/,/^(?:\s*[x]-\.-[x]\s*)/,/^(?:\s*<\.->\s*)/,/^(?:\s*<-\.->\s*)/,/^(?:\s*[o]-\.-[o]\s*)/,/^(?:\s*--[o]\s*)/,/^(?:\s*---\s*)/,/^(?:\s*-\.-[x]\s*)/,/^(?:\s*-\.->\s*)/,/^(?:\s*-\.-[o]\s*)/,/^(?:\s*-\.-\s*)/,/^(?:\s*.-[x]\s*)/,/^(?:\s*\.->\s*)/,/^(?:\s*\.-[o]\s*)/,/^(?:\s*\.-\s*)/,/^(?:\s*==[x]\s*)/,/^(?:\s*==>\s*)/,/^(?:\s*==[o]\s*)/,/^(?:\s*==[\=]\s*)/,/^(?:\s*<--\s*)/,/^(?:\s*[x]--\s*)/,/^(?:\s*[o]--\s*)/,/^(?:\s*<-\.\s*)/,/^(?:\s*[x]-\.\s*)/,/^(?:\s*[o]-\.\s*)/,/^(?:\s*<==\s*)/,/^(?:\s*[x]==\s*)/,/^(?:\s*[o]==\s*)/,/^(?:\s*--\s*)/,/^(?:\s*-\.\s*)/,/^(?:\s*==\s*)/,/^(?:\(-)/,/^(?:-\))/,/^(?:\(\[)/,/^(?:\]\))/,/^(?:\[\[)/,/^(?:\]\])/,/^(?:\[\()/,/^(?:\)\])/,/^(?:-)/,/^(?:\.)/,/^(?:[\_])/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:\\\|)/,/^(?:v\b)/,/^(?:[A-Za-z]+)/,/^(?:\\\])/,/^(?:\[\/)/,/^(?:\/\])/,/^(?:\[\\)/,/^(?:[!"#$%&'*+,-.`?\\_/])/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:(\r|\n|\r\n)+)/,/^(?:\s)/,/^(?:$)/],
-conditions: {"vertex":{"rules":[],"inclusive":false},"dir":{"rules":[15,16,17,18,19,20,21,22,23,24],"inclusive":false},"string":{"rules":[2,3],"inclusive":false},"INITIAL":{"rules":[0,1,4,5,6,7,8,9,10,11,12,13,14,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%[^\n]*)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%(?!\{)[^\n]*)/,/^(?:[^\}]%%[^\n]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:style\b)/,/^(?:default\b)/,/^(?:linkStyle\b)/,/^(?:interpolate\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:flowchart\b)/,/^(?:subgraph\b)/,/^(?:end\b\s*)/,/^(?:\s*LR\b)/,/^(?:\s*RL\b)/,/^(?:\s*TB\b)/,/^(?:\s*BT\b)/,/^(?:\s*TD\b)/,/^(?:\s*BR\b)/,/^(?:\s*<)/,/^(?:\s*>)/,/^(?:\s*\^)/,/^(?:\s*v\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::::)/,/^(?::)/,/^(?:&)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\s*--[x]\s*)/,/^(?:\s*-->\s*)/,/^(?:\s*<-->\s*)/,/^(?:\s*[x]--[x]\s*)/,/^(?:\s*[o]--[o]\s*)/,/^(?:\s*[o]\.-[o]\s*)/,/^(?:\s*<==>\s*)/,/^(?:\s*[o]==[o]\s*)/,/^(?:\s*[x]==[x]\s*)/,/^(?:\s*[x].-[x]\s*)/,/^(?:\s*[x]-\.-[x]\s*)/,/^(?:\s*<\.->\s*)/,/^(?:\s*<-\.->\s*)/,/^(?:\s*[o]-\.-[o]\s*)/,/^(?:\s*--[o]\s*)/,/^(?:\s*---\s*)/,/^(?:\s*-\.-[x]\s*)/,/^(?:\s*-\.->\s*)/,/^(?:\s*-\.-[o]\s*)/,/^(?:\s*-\.-\s*)/,/^(?:\s*.-[x]\s*)/,/^(?:\s*\.->\s*)/,/^(?:\s*\.-[o]\s*)/,/^(?:\s*\.-\s*)/,/^(?:\s*==[x]\s*)/,/^(?:\s*==>\s*)/,/^(?:\s*==[o]\s*)/,/^(?:\s*==[\=]\s*)/,/^(?:\s*<--\s*)/,/^(?:\s*[x]--\s*)/,/^(?:\s*[o]--\s*)/,/^(?:\s*<-\.\s*)/,/^(?:\s*[x]-\.\s*)/,/^(?:\s*[o]-\.\s*)/,/^(?:\s*<==\s*)/,/^(?:\s*[x]==\s*)/,/^(?:\s*[o]==\s*)/,/^(?:\s*--\s*)/,/^(?:\s*-\.\s*)/,/^(?:\s*==\s*)/,/^(?:\(-)/,/^(?:-\))/,/^(?:\(\[)/,/^(?:\]\))/,/^(?:\[\[)/,/^(?:\]\])/,/^(?:\[\()/,/^(?:\)\])/,/^(?:-)/,/^(?:\.)/,/^(?:[\_])/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:\\\|)/,/^(?:v\b)/,/^(?:[A-Za-z]+)/,/^(?:\\\])/,/^(?:\[\/)/,/^(?:\/\])/,/^(?:\[\\)/,/^(?:[!"#$%&'*+,-.`?\\_\/])/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:(\r|\n|\r\n)+)/,/^(?:\s)/,/^(?:$)/],
+conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"vertex":{"rules":[],"inclusive":false},"dir":{"rules":[21,22,23,24,25,26,27,28,29,30],"inclusive":false},"string":{"rules":[8,9],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,10,11,12,13,14,15,16,17,18,19,20,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116],"inclusive":true}}
 });
 return lexer;
 })();
@@ -54861,6 +59344,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/flowchart/styles.js":
+/*!******************************************!*\
+  !*** ./src/diagrams/flowchart/styles.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.secondBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.secondBkg, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -54902,6 +59402,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -54914,7 +59415,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 
 
-var config = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])();
+
 var dateFormat = '';
 var axisFormat = '';
 var todayMarker = '';
@@ -54925,7 +59426,9 @@ var tasks = [];
 var currentSection = '';
 var tags = ['active', 'done', 'crit', 'milestone'];
 var funs = [];
-var inclusiveEndDates = false;
+var inclusiveEndDates = false; // The serial order of the task in the script
+
+var lastOrder = 0;
 var clear = function clear() {
   sections = [];
   tasks = [];
@@ -54941,6 +59444,7 @@ var clear = function clear() {
   todayMarker = '';
   excludes = [];
   inclusiveEndDates = false;
+  lastOrder = 0;
 };
 var setAxisFormat = function setAxisFormat(txt) {
   axisFormat = txt;
@@ -55290,6 +59794,8 @@ var addTask = function addTask(descr, data) {
   rawTask.done = taskInfo.done;
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
+  rawTask.order = lastOrder;
+  lastOrder++;
   var pos = rawTasks.push(rawTask);
   lastTaskID = rawTask.id; // Store cross ref
 
@@ -55374,7 +59880,7 @@ var compileTasks = function compileTasks() {
 var setLink = function setLink(ids, _linkStr) {
   var linkStr = _linkStr;
 
-  if (config.securityLevel !== 'loose') {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
     linkStr = Object(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1__["sanitizeUrl"])(_linkStr);
   }
 
@@ -55406,7 +59912,7 @@ var setClass = function setClass(ids, className) {
 };
 
 var setClickFun = function setClickFun(id, functionName, functionArgs) {
-  if (config.securityLevel !== 'loose') {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
     return;
   }
 
@@ -55444,9 +59950,7 @@ var setClickFun = function setClickFun(id, functionName, functionArgs) {
 
   if (typeof rawTask !== 'undefined') {
     pushFun(id, function () {
-      var _window;
-
-      (_window = window)[functionName].apply(_window, _toConsumableArray(argList));
+      _utils__WEBPACK_IMPORTED_MODULE_4__["default"].runFunc.apply(_utils__WEBPACK_IMPORTED_MODULE_4__["default"], [functionName].concat(_toConsumableArray(argList)));
     });
   }
 };
@@ -55624,6 +60128,24 @@ var draw = function draw(text, id) {
   var catsUnfiltered = categories; // for vert labels
 
   categories = checkUnique(categories);
+
+  function taskCompare(a, b) {
+    var taskA = a.startTime;
+    var taskB = b.startTime;
+    var result = 0;
+
+    if (taskA > taskB) {
+      result = 1;
+    } else if (taskA < taskB) {
+      result = -1;
+    }
+
+    return result;
+  } // Sort the task array using the above taskCompare() so that
+  // tasks are created based on their order of startTime
+
+
+  taskArray.sort(taskCompare);
   makeGant(taskArray, w, h);
 
   if (typeof conf.useWidth !== 'undefined') {
@@ -55647,6 +60169,8 @@ var draw = function draw(text, id) {
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg.append('g').selectAll('rect').data(theArray).enter().append('rect').attr('x', 0).attr('y', function (d, i) {
+      // Ignore the incoming i value and use our order instead
+      i = d.order;
       return i * theGap + theTopPad - 2;
     }).attr('width', function () {
       return w - conf.rightPadding / 2;
@@ -55670,6 +60194,8 @@ var draw = function draw(text, id) {
 
       return timeScale(d.startTime) + theSidePad;
     }).attr('y', function (d, i) {
+      // Ignore the incoming i value and use our order instead
+      i = d.order;
       return i * theGap + theTopPad;
     }).attr('width', function (d) {
       if (d.milestone) {
@@ -55756,6 +60282,8 @@ var draw = function draw(text, id) {
         return (endX - startX) / 2 + startX + theSidePad;
       }
     }).attr('y', function (d, i) {
+      // Ignore the incoming i value and use our order instead
+      i = d.order;
       return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
     }).attr('text-height', theBarHeight).attr('class', function (d) {
       var startX = timeScale(d.startTime);
@@ -55773,6 +60301,7 @@ var draw = function draw(text, id) {
       }
 
       var secNum = 0;
+      console.log(conf);
 
       for (var _i3 = 0; _i3 < categories.length; _i3++) {
         if (d.type === categories[_i3]) {
@@ -56667,6 +61196,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 
 /***/ }),
 
+/***/ "./src/diagrams/gantt/styles.js":
+/*!**************************************!*\
+  !*** ./src/diagrams/gantt/styles.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    font-size: 11px;\n    text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .taskText:not([font-size]) {\n    font-size: 11px;\n  }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    font-size: 11px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    font-size: 11px;\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.taskTextDarkColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
+
+/***/ }),
+
 /***/ "./src/diagrams/git/gitGraphAst.js":
 /*!*****************************************!*\
   !*** ./src/diagrams/git/gitGraphAst.js ***!
@@ -56694,6 +61240,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDirection", function() { return getDirection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getHead", function() { return getHead; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 var commits = {};
 var head = null;
@@ -56704,20 +61252,10 @@ var curBranch = 'master';
 var direction = 'LR';
 var seq = 0;
 
-function makeid(length) {
-  var result = '';
-  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var charactersLength = characters.length;
-
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-
-  return result;
-}
-
 function getId() {
-  return makeid(7);
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["random"])({
+    length: 7
+  });
 }
 
 function isfastforwardable(currentCommit, otherCommit) {
@@ -57944,7 +62482,7 @@ case 21:return 7;
 break;
 }
 },
-rules: [/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:reset\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:\^)/i,/^(?:options\r?\n)/i,/^(?:end\r?\n)/i,/^(?:[^\n]+\r?\n)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][a-zA-Z0-9_]+)/i,/^(?:$)/i],
+rules: [/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:reset\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:\^)/i,/^(?:options\r?\n)/i,/^(?:end\r?\n)/i,/^(?:[^\n]+\r?\n)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][-_\.a-zA-Z0-9]*[-_a-zA-Z0-9])/i,/^(?:$)/i],
 conditions: {"options":{"rules":[15,16],"inclusive":false},"string":{"rules":[18,19],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,17,20,21],"inclusive":true}}
 });
 return lexer;
@@ -57975,6 +62513,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/git/styles.js":
+/*!************************************!*\
+  !*** ./src/diagrams/git/styles.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles() {
+  return "\n  .commit-id,\n  .commit-msg,\n  .branch-label {\n    fill: lightgrey;\n    color: lightgrey;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n";
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -58717,6 +63272,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/info/styles.js":
+/*!*************************************!*\
+  !*** ./src/diagrams/info/styles.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles() {
+  return "";
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -59550,6 +64122,23 @@ var draw = function draw(txt, id) {
 
 /***/ }),
 
+/***/ "./src/diagrams/pie/styles.js":
+/*!************************************!*\
+  !*** ./src/diagrams/pie/styles.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return ".pieTitleText {\n    text-anchor: middle;\n    font-size: 25px;\n    fill: ".concat(options.taskTextDarkColor, ";\n    font-family: ").concat(options.fontFamily, ";\n  }\n  .slice {\n    font-family: ").concat(options.fontFamily, ";\n    fill: ").concat(options.textColor, ";\n    // fill: white;\n  }\n  .legend text {\n    fill: ").concat(options.taskTextDarkColor, ";\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 17px;\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
+
+/***/ }),
+
 /***/ "./src/diagrams/sequence/parser/sequenceDiagram.jison":
 /*!************************************************************!*\
   !*** ./src/diagrams/sequence/parser/sequenceDiagram.jison ***!
@@ -59631,97 +64220,97 @@ var draw = function draw(txt, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[2,4],$V4=[1,9],$V5=[1,11],$V6=[1,12],$V7=[1,14],$V8=[1,15],$V9=[1,16],$Va=[1,18],$Vb=[1,19],$Vc=[1,20],$Vd=[1,21],$Ve=[1,22],$Vf=[1,23],$Vg=[1,25],$Vh=[1,26],$Vi=[1,4,5,10,15,16,17,19,21,22,23,24,25,27,29,30,31,42],$Vj=[1,34],$Vk=[4,5,10,15,16,17,19,21,22,23,24,25,27,31,42],$Vl=[4,5,10,15,16,17,19,21,22,23,24,25,27,30,31,42],$Vm=[4,5,10,15,16,17,19,21,22,23,24,25,27,29,31,42],$Vn=[40,41,42];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,24],$Vc=[1,25],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,29],$Vh=[1,32],$Vi=[1,33],$Vj=[1,36],$Vk=[1,4,5,16,21,22,23,25,27,28,29,30,31,33,35,36,37,48,56],$Vl=[1,44],$Vm=[4,5,16,21,22,23,25,27,28,29,30,31,33,37,48,56],$Vn=[4,5,16,21,22,23,25,27,28,29,30,31,33,36,37,48,56],$Vo=[4,5,16,21,22,23,25,27,28,29,30,31,33,35,37,48,56],$Vp=[46,47,48],$Vq=[1,4,5,7,16,21,22,23,25,27,28,29,30,31,33,35,36,37,48,56];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"SD":6,"document":7,"line":8,"statement":9,"participant":10,"actor":11,"AS":12,"restOfLine":13,"signal":14,"autonumber":15,"activate":16,"deactivate":17,"note_statement":18,"title":19,"text2":20,"loop":21,"end":22,"rect":23,"opt":24,"alt":25,"else_sections":26,"par":27,"par_sections":28,"and":29,"else":30,"note":31,"placement":32,"over":33,"actor_pair":34,"spaceList":35,",":36,"left_of":37,"right_of":38,"signaltype":39,"+":40,"-":41,"ACTOR":42,"SOLID_OPEN_ARROW":43,"DOTTED_OPEN_ARROW":44,"SOLID_ARROW":45,"DOTTED_ARROW":46,"SOLID_CROSS":47,"DOTTED_CROSS":48,"TXT":49,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NL",6:"SD",10:"participant",12:"AS",13:"restOfLine",15:"autonumber",16:"activate",17:"deactivate",19:"title",21:"loop",22:"end",23:"rect",24:"opt",25:"alt",27:"par",29:"and",30:"else",31:"note",33:"over",36:",",37:"left_of",38:"right_of",40:"+",41:"-",42:"ACTOR",43:"SOLID_OPEN_ARROW",44:"DOTTED_OPEN_ARROW",45:"SOLID_ARROW",46:"DOTTED_ARROW",47:"SOLID_CROSS",48:"DOTTED_CROSS",49:"TXT"},
-productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[8,1],[8,1],[9,5],[9,3],[9,2],[9,1],[9,3],[9,3],[9,2],[9,3],[9,4],[9,4],[9,4],[9,4],[9,4],[28,1],[28,4],[26,1],[26,4],[18,4],[18,4],[35,2],[35,1],[34,3],[34,1],[32,1],[32,1],[14,5],[14,5],[14,4],[11,1],[39,1],[39,1],[39,1],[39,1],[39,1],[39,1],[20,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"signal":20,"autonumber":21,"activate":22,"deactivate":23,"note_statement":24,"title":25,"text2":26,"loop":27,"end":28,"rect":29,"opt":30,"alt":31,"else_sections":32,"par":33,"par_sections":34,"and":35,"else":36,"note":37,"placement":38,"over":39,"actor_pair":40,"spaceList":41,",":42,"left_of":43,"right_of":44,"signaltype":45,"+":46,"-":47,"ACTOR":48,"SOLID_OPEN_ARROW":49,"DOTTED_OPEN_ARROW":50,"SOLID_ARROW":51,"DOTTED_ARROW":52,"SOLID_CROSS":53,"DOTTED_CROSS":54,"TXT":55,"open_directive":56,"type_directive":57,"arg_directive":58,"close_directive":59,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",21:"autonumber",22:"activate",23:"deactivate",25:"title",27:"loop",28:"end",29:"rect",30:"opt",31:"alt",33:"par",35:"and",36:"else",37:"note",39:"over",42:",",43:"left_of",44:"right_of",46:"+",47:"-",48:"ACTOR",49:"SOLID_OPEN_ARROW",50:"DOTTED_OPEN_ARROW",51:"SOLID_ARROW",52:"DOTTED_ARROW",53:"SOLID_CROSS",54:"DOTTED_CROSS",55:"TXT",56:"open_directive",57:"type_directive",58:"arg_directive",59:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,2],[10,1],[10,3],[10,3],[10,2],[10,3],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[34,1],[34,4],[32,1],[32,4],[24,4],[24,4],[41,2],[41,1],[40,3],[40,1],[38,1],[38,1],[20,5],[20,5],[20,4],[17,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[26,1],[11,1],[12,1],[15,1],[13,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 3:
+case 4:
  yy.apply($$[$0]);return $$[$0]; 
 break;
-case 4:
+case 5:
  this.$ = [] 
 break;
-case 5:
+case 6:
 $$[$0-1].push($$[$0]);this.$ = $$[$0-1]
 break;
-case 6: case 7:
+case 7: case 8:
  this.$ = $$[$0] 
 break;
-case 8:
- this.$=[];
-break;
 case 9:
-$$[$0-3].description=$$[$0-1]; this.$=$$[$0-3];
-break;
-case 10:
-this.$=$$[$0-1];
+ this.$=[]; 
 break;
 case 12:
-yy.enableSequenceNumbers()
+$$[$0-3].description=yy.parseMessage($$[$0-1]); this.$=$$[$0-3];
 break;
 case 13:
-this.$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]};
+this.$=$$[$0-1];
 break;
-case 14:
-this.$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-1]};
+case 15:
+yy.enableSequenceNumbers()
 break;
 case 16:
-this.$=[{type:'setTitle', text:$$[$0-1]}]
+this.$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]};
 break;
 case 17:
-
-		$$[$0-1].unshift({type: 'loopStart', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_START});
-		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
-		this.$=$$[$0-1];
-break;
-case 18:
-
-		$$[$0-1].unshift({type: 'rectStart', color:$$[$0-2], signalType: yy.LINETYPE.RECT_START });
-		$$[$0-1].push({type: 'rectEnd', color:$$[$0-2], signalType: yy.LINETYPE.RECT_END });
-		this.$=$$[$0-1];
+this.$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-1]};
 break;
 case 19:
-
-		$$[$0-1].unshift({type: 'optStart', optText:$$[$0-2], signalType: yy.LINETYPE.OPT_START});
-		$$[$0-1].push({type: 'optEnd', optText:$$[$0-2], signalType: yy.LINETYPE.OPT_END});
-		this.$=$$[$0-1];
+this.$=[{type:'setTitle', text:$$[$0-1]}]
 break;
 case 20:
 
+		$$[$0-1].unshift({type: 'loopStart', loopText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.LOOP_START});
+		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
+		this.$=$$[$0-1];
+break;
+case 21:
+
+		$$[$0-1].unshift({type: 'rectStart', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_START });
+		$$[$0-1].push({type: 'rectEnd', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_END });
+		this.$=$$[$0-1];
+break;
+case 22:
+
+		$$[$0-1].unshift({type: 'optStart', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_START});
+		$$[$0-1].push({type: 'optEnd', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_END});
+		this.$=$$[$0-1];
+break;
+case 23:
+
 		// Alt start
-		$$[$0-1].unshift({type: 'altStart', altText:$$[$0-2], signalType: yy.LINETYPE.ALT_START});
+		$$[$0-1].unshift({type: 'altStart', altText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.ALT_START});
 		// Content in alt is already in $$[$0-1]
 		// End
 		$$[$0-1].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
 		this.$=$$[$0-1];
 break;
-case 21:
+case 24:
 
 		// Parallel start
-		$$[$0-1].unshift({type: 'parStart', parText:$$[$0-2], signalType: yy.LINETYPE.PAR_START});
+		$$[$0-1].unshift({type: 'parStart', parText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.PAR_START});
 		// Content in par is already in $$[$0-1]
 		// End
 		$$[$0-1].push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		this.$=$$[$0-1];
 break;
-case 23:
- this.$ = $$[$0-3].concat([{type: 'and', parText:$$[$0-1], signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
+case 27:
+ this.$ = $$[$0-3].concat([{type: 'and', parText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
 break;
-case 25:
- this.$ = $$[$0-3].concat([{type: 'else', altText:$$[$0-1], signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
+case 29:
+ this.$ = $$[$0-3].concat([{type: 'else', altText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
 break;
-case 26:
+case 30:
 
 		this.$ = [$$[$0-1], {type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
-case 27:
+case 31:
 
 		// Coerce actor_pair into a [to, from, ...] array
 		$$[$0-2] = [].concat($$[$0-1], $$[$0-1]).slice(0, 2);
@@ -59729,59 +64318,71 @@ case 27:
 		$$[$0-2][1] = $$[$0-2][1].actor;
 		this.$ = [$$[$0-1], {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$$[$0-2].slice(0, 2), text:$$[$0]}];
 break;
-case 30:
+case 34:
  this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 31:
+case 35:
  this.$ = $$[$0]; 
 break;
-case 32:
+case 36:
  this.$ = yy.PLACEMENT.LEFTOF; 
 break;
-case 33:
+case 37:
  this.$ = yy.PLACEMENT.RIGHTOF; 
 break;
-case 34:
+case 38:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]}
 	             ]
 break;
-case 35:
+case 39:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-4]}
 	             ]
 break;
-case 36:
+case 40:
  this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
-case 37:
+case 41:
 this.$={type: 'addActor', actor:$$[$0]}
 break;
-case 38:
+case 42:
  this.$ = yy.LINETYPE.SOLID_OPEN; 
 break;
-case 39:
+case 43:
  this.$ = yy.LINETYPE.DOTTED_OPEN; 
 break;
-case 40:
+case 44:
  this.$ = yy.LINETYPE.SOLID; 
 break;
-case 41:
+case 45:
  this.$ = yy.LINETYPE.DOTTED; 
 break;
-case 42:
+case 46:
  this.$ = yy.LINETYPE.SOLID_CROSS; 
 break;
-case 43:
+case 47:
  this.$ = yy.LINETYPE.DOTTED_CROSS; 
 break;
-case 44:
-this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
+case 48:
+this.$ = yy.parseMessage($$[$0].trim().substring(1)) 
+break;
+case 49:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 50:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 51:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 52:
+ yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:$V2},{1:[3]},{3:5,4:$V0,5:$V1,6:$V2},{3:6,4:$V0,5:$V1,6:$V2},o([1,4,5,10,15,16,17,19,21,23,24,25,27,31,42],$V3,{7:7}),{1:[2,1]},{1:[2,2]},{1:[2,3],4:$V4,5:$V5,8:8,9:10,10:$V6,11:24,14:13,15:$V7,16:$V8,17:$V9,18:17,19:$Va,21:$Vb,23:$Vc,24:$Vd,25:$Ve,27:$Vf,31:$Vg,42:$Vh},o($Vi,[2,5]),{9:27,10:$V6,11:24,14:13,15:$V7,16:$V8,17:$V9,18:17,19:$Va,21:$Vb,23:$Vc,24:$Vd,25:$Ve,27:$Vf,31:$Vg,42:$Vh},o($Vi,[2,7]),o($Vi,[2,8]),{11:28,42:$Vh},{5:[1,29]},o($Vi,[2,12]),{11:30,42:$Vh},{11:31,42:$Vh},{5:[1,32]},{20:33,49:$Vj},{13:[1,35]},{13:[1,36]},{13:[1,37]},{13:[1,38]},{13:[1,39]},{39:40,43:[1,41],44:[1,42],45:[1,43],46:[1,44],47:[1,45],48:[1,46]},{32:47,33:[1,48],37:[1,49],38:[1,50]},o([5,12,36,43,44,45,46,47,48,49],[2,37]),o($Vi,[2,6]),{5:[1,52],12:[1,51]},o($Vi,[2,11]),{5:[1,53]},{5:[1,54]},o($Vi,[2,15]),{5:[1,55]},{5:[2,44]},o($Vk,$V3,{7:56}),o($Vk,$V3,{7:57}),o($Vk,$V3,{7:58}),o($Vl,$V3,{26:59,7:60}),o($Vm,$V3,{28:61,7:62}),{11:65,40:[1,63],41:[1,64],42:$Vh},o($Vn,[2,38]),o($Vn,[2,39]),o($Vn,[2,40]),o($Vn,[2,41]),o($Vn,[2,42]),o($Vn,[2,43]),{11:66,42:$Vh},{11:68,34:67,42:$Vh},{42:[2,32]},{42:[2,33]},{13:[1,69]},o($Vi,[2,10]),o($Vi,[2,13]),o($Vi,[2,14]),o($Vi,[2,16]),{4:$V4,5:$V5,8:8,9:10,10:$V6,11:24,14:13,15:$V7,16:$V8,17:$V9,18:17,19:$Va,21:$Vb,22:[1,70],23:$Vc,24:$Vd,25:$Ve,27:$Vf,31:$Vg,42:$Vh},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:24,14:13,15:$V7,16:$V8,17:$V9,18:17,19:$Va,21:$Vb,22:[1,71],23:$Vc,24:$Vd,25:$Ve,27:$Vf,31:$Vg,42:$Vh},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:24,14:13,15:$V7,16:$V8,17:$V9,18:17,19:$Va,21:$Vb,22:[1,72],23:$Vc,24:$Vd,25:$Ve,27:$Vf,31:$Vg,42:$Vh},{22:[1,73]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:24,14:13,15:$V7,16:$V8,17:$V9,18:17,19:$Va,21:$Vb,22:[2,24],23:$Vc,24:$Vd,25:$Ve,27:$Vf,30:[1,74],31:$Vg,42:$Vh},{22:[1,75]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:24,14:13,15:$V7,16:$V8,17:$V9,18:17,19:$Va,21:$Vb,22:[2,22],23:$Vc,24:$Vd,25:$Ve,27:$Vf,29:[1,76],31:$Vg,42:$Vh},{11:77,42:$Vh},{11:78,42:$Vh},{20:79,49:$Vj},{20:80,49:$Vj},{20:81,49:$Vj},{36:[1,82],49:[2,31]},{5:[1,83]},o($Vi,[2,17]),o($Vi,[2,18]),o($Vi,[2,19]),o($Vi,[2,20]),{13:[1,84]},o($Vi,[2,21]),{13:[1,85]},{20:86,49:$Vj},{20:87,49:$Vj},{5:[2,36]},{5:[2,26]},{5:[2,27]},{11:88,42:$Vh},o($Vi,[2,9]),o($Vl,$V3,{7:60,26:89}),o($Vm,$V3,{7:62,28:90}),{5:[2,34]},{5:[2,35]},{49:[2,30]},{22:[2,25]},{22:[2,23]}],
-defaultActions: {5:[2,1],6:[2,2],34:[2,44],49:[2,32],50:[2,33],79:[2,36],80:[2,26],81:[2,27],86:[2,34],87:[2,35],88:[2,30],89:[2,25],90:[2,23]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:6,56:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:6,56:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:6,56:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,11:6,56:$V3},o([1,4,5,16,21,22,23,25,27,29,30,31,33,37,48,56],$V4,{8:11}),{12:12,57:[1,13]},{57:[2,49]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,56:$V3},{13:34,14:[1,35],59:$Vj},o([14,59],[2,50]),o($Vk,[2,6]),{6:30,10:37,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,56:$V3},o($Vk,[2,8]),o($Vk,[2,9]),{17:38,48:$Vi},{5:[1,39]},o($Vk,[2,15]),{17:40,48:$Vi},{17:41,48:$Vi},{5:[1,42]},{26:43,55:$Vl},{19:[1,45]},{19:[1,46]},{19:[1,47]},{19:[1,48]},{19:[1,49]},o($Vk,[2,25]),{45:50,49:[1,51],50:[1,52],51:[1,53],52:[1,54],53:[1,55],54:[1,56]},{38:57,39:[1,58],43:[1,59],44:[1,60]},o([5,18,42,49,50,51,52,53,54,55],[2,41]),{5:[1,61]},{15:62,58:[1,63]},{5:[2,52]},o($Vk,[2,7]),{5:[1,65],18:[1,64]},o($Vk,[2,14]),{5:[1,66]},{5:[1,67]},o($Vk,[2,18]),{5:[1,68]},{5:[2,48]},o($Vm,$V4,{8:69}),o($Vm,$V4,{8:70}),o($Vm,$V4,{8:71}),o($Vn,$V4,{32:72,8:73}),o($Vo,$V4,{34:74,8:75}),{17:78,46:[1,76],47:[1,77],48:$Vi},o($Vp,[2,42]),o($Vp,[2,43]),o($Vp,[2,44]),o($Vp,[2,45]),o($Vp,[2,46]),o($Vp,[2,47]),{17:79,48:$Vi},{17:81,40:80,48:$Vi},{48:[2,36]},{48:[2,37]},o($Vq,[2,10]),{13:82,59:$Vj},{59:[2,51]},{19:[1,83]},o($Vk,[2,13]),o($Vk,[2,16]),o($Vk,[2,17]),o($Vk,[2,19]),{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[1,84],29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,56:$V3},{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[1,85],29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,56:$V3},{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[1,86],29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,56:$V3},{28:[1,87]},{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[2,28],29:$Vd,30:$Ve,31:$Vf,33:$Vg,36:[1,88],37:$Vh,48:$Vi,56:$V3},{28:[1,89]},{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[2,26],29:$Vd,30:$Ve,31:$Vf,33:$Vg,35:[1,90],37:$Vh,48:$Vi,56:$V3},{17:91,48:$Vi},{17:92,48:$Vi},{26:93,55:$Vl},{26:94,55:$Vl},{26:95,55:$Vl},{42:[1,96],55:[2,35]},{5:[1,97]},{5:[1,98]},o($Vk,[2,20]),o($Vk,[2,21]),o($Vk,[2,22]),o($Vk,[2,23]),{19:[1,99]},o($Vk,[2,24]),{19:[1,100]},{26:101,55:$Vl},{26:102,55:$Vl},{5:[2,40]},{5:[2,30]},{5:[2,31]},{17:103,48:$Vi},o($Vq,[2,11]),o($Vk,[2,12]),o($Vn,$V4,{8:73,32:104}),o($Vo,$V4,{8:75,34:105}),{5:[2,38]},{5:[2,39]},{55:[2,34]},{28:[2,29]},{28:[2,27]}],
+defaultActions: {7:[2,49],8:[2,1],9:[2,2],10:[2,3],36:[2,52],44:[2,48],59:[2,36],60:[2,37],63:[2,51],93:[2,40],94:[2,30],95:[2,31],101:[2,38],102:[2,39],103:[2,34],104:[2,29],105:[2,27]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -60260,92 +64861,104 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 5;
+case 0: this.begin('open_directive'); return 56; 
 break;
-case 1:/* skip all whitespace */
+case 1: this.begin('type_directive'); return 57; 
 break;
-case 2:/* skip same-line whitespace */
+case 2: this.popState(); this.begin('arg_directive'); return 14; 
 break;
-case 3:/* skip comments */
+case 3: this.popState(); this.popState(); return 59; 
 break;
-case 4:/* skip comments */
+case 4:return 58;
 break;
-case 5: this.begin('ID'); return 10; 
+case 5:/* skip comments */
 break;
-case 6: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 42; 
+case 6:/* skip comments */
 break;
-case 7: this.popState(); this.popState(); this.begin('LINE'); return 12; 
+case 7:return 5;
 break;
-case 8: this.popState(); this.popState(); return 5; 
+case 8:/* skip all whitespace */
 break;
-case 9: this.begin('LINE'); return 21; 
+case 9:/* skip same-line whitespace */
 break;
-case 10: this.begin('LINE'); return 23; 
+case 10:/* skip comments */
 break;
-case 11: this.begin('LINE'); return 24; 
+case 11: this.begin('ID'); return 16; 
 break;
-case 12: this.begin('LINE'); return 25; 
+case 12: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 48; 
 break;
-case 13: this.begin('LINE'); return 30; 
+case 13: this.popState(); this.popState(); this.begin('LINE'); return 18; 
 break;
-case 14: this.begin('LINE'); return 27; 
+case 14: this.popState(); this.popState(); return 5; 
 break;
-case 15: this.begin('LINE'); return 29; 
+case 15: this.begin('LINE'); return 27; 
 break;
-case 16: this.popState(); return 13; 
+case 16: this.begin('LINE'); return 29; 
 break;
-case 17:return 22;
+case 17: this.begin('LINE'); return 30; 
 break;
-case 18:return 37;
+case 18: this.begin('LINE'); return 31; 
 break;
-case 19:return 38;
+case 19: this.begin('LINE'); return 36; 
 break;
-case 20:return 33;
+case 20: this.begin('LINE'); return 33; 
 break;
-case 21:return 31;
+case 21: this.begin('LINE'); return 35; 
 break;
-case 22: this.begin('ID'); return 16; 
+case 22: this.popState(); return 19; 
 break;
-case 23: this.begin('ID'); return 17; 
+case 23:return 28;
 break;
-case 24:return 19;
+case 24:return 43;
 break;
-case 25:return 6;
+case 25:return 44;
 break;
-case 26:return 15;
+case 26:return 39;
 break;
-case 27:return 36;
+case 27:return 37;
 break;
-case 28:return 5;
+case 28: this.begin('ID'); return 22; 
 break;
-case 29: yy_.yytext = yy_.yytext.trim(); return 42; 
+case 29: this.begin('ID'); return 23; 
 break;
-case 30:return 45;
+case 30:return 25;
 break;
-case 31:return 46;
+case 31:return 7;
 break;
-case 32:return 43;
+case 32:return 21;
 break;
-case 33:return 44;
+case 33:return 42;
 break;
-case 34:return 47;
+case 34:return 5;
 break;
-case 35:return 48;
+case 35: yy_.yytext = yy_.yytext.trim(); return 48; 
 break;
-case 36:return 49;
+case 36:return 51;
 break;
-case 37:return 40;
+case 37:return 52;
 break;
-case 38:return 41;
+case 38:return 49;
 break;
-case 39:return 5;
+case 39:return 50;
 break;
-case 40:return 'INVALID';
+case 40:return 53;
+break;
+case 41:return 54;
+break;
+case 42:return 55;
+break;
+case 43:return 46;
+break;
+case 44:return 47;
+break;
+case 45:return 5;
+break;
+case 46:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"LINE":{"rules":[2,3,16],"inclusive":false},"ALIAS":{"rules":[2,3,7,8],"inclusive":false},"ID":{"rules":[2,3,6],"inclusive":false},"INITIAL":{"rules":[0,1,3,4,5,9,10,11,12,13,14,15,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1,10],"inclusive":false},"type_directive":{"rules":[2,3,10],"inclusive":false},"arg_directive":{"rules":[3,4,10],"inclusive":false},"ID":{"rules":[9,10,12],"inclusive":false},"ALIAS":{"rules":[9,10,13,14],"inclusive":false},"LINE":{"rules":[9,10,22],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46],"inclusive":true}}
 });
 return lexer;
 })();
@@ -60382,11 +64995,12 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 /*!*********************************************!*\
   !*** ./src/diagrams/sequence/sequenceDb.js ***!
   \*********************************************/
-/*! exports provided: addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, enableSequenceNumbers, showSequenceNumbers, clear, LINETYPE, ARROWTYPE, PLACEMENT, addNote, setTitle, apply, default */
+/*! exports provided: parseDirective, addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, getTitleWrapped, enableSequenceNumbers, showSequenceNumbers, setWrap, autoWrap, clear, parseMessage, LINETYPE, ARROWTYPE, PLACEMENT, addNote, setTitle, apply, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addActor", function() { return addActor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addMessage", function() { return addMessage; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addSignal", function() { return addSignal; });
@@ -60395,32 +65009,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getActor", function() { return getActor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getActorKeys", function() { return getActorKeys; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTitle", function() { return getTitle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTitleWrapped", function() { return getTitleWrapped; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableSequenceNumbers", function() { return enableSequenceNumbers; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showSequenceNumbers", function() { return showSequenceNumbers; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setWrap", function() { return setWrap; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "autoWrap", function() { return autoWrap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseMessage", function() { return parseMessage; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LINETYPE", function() { return LINETYPE; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ARROWTYPE", function() { return ARROWTYPE; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PLACEMENT", function() { return PLACEMENT; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addNote", function() { return addNote; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setTitle", function() { return setTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "apply", function() { return apply; });
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+
+
+
 
 var prevActor = undefined;
 var actors = {};
 var messages = [];
 var notes = [];
 var title = '';
+var titleWrapped = false;
 var sequenceNumbersEnabled = false;
+var wrapEnabled = false;
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(statement, context, type);
+};
 var addActor = function addActor(id, name, description) {
   // Don't allow description nulling
   var old = actors[id];
   if (old && name === old.name && description == null) return; // Don't allow null descriptions, either
 
-  if (description == null) description = name;
+  if (description == null || description.text == null) {
+    description = {
+      text: name,
+      wrap: null
+    };
+  }
+
   actors[id] = {
     name: name,
-    description: description,
+    description: description.text,
+    wrap: description.wrap === undefined && autoWrap() || !!description.wrap,
     prevActor: prevActor
   };
 
@@ -60432,7 +65068,7 @@ var addActor = function addActor(id, name, description) {
 };
 
 var activationCount = function activationCount(part) {
-  var i = 0;
+  var i;
   var count = 0;
 
   for (i = 0; i < messages.length; i++) {
@@ -60457,16 +65093,20 @@ var addMessage = function addMessage(idFrom, idTo, message, answer) {
   messages.push({
     from: idFrom,
     to: idTo,
-    message: message,
+    message: message.text,
+    wrap: message.wrap === undefined && autoWrap() || !!message.wrap,
     answer: answer
   });
 };
-var addSignal = function addSignal(idFrom, idTo, message, messageType) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType);
+var addSignal = function addSignal(idFrom, idTo) {
+  var message = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
+    text: undefined,
+    wrap: undefined
+  };
+  var messageType = arguments.length > 3 ? arguments[3] : undefined;
 
   if (messageType === LINETYPE.ACTIVE_END) {
     var cnt = activationCount(idFrom.actor);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Adding message from=', messages, cnt);
 
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
@@ -60490,7 +65130,8 @@ var addSignal = function addSignal(idFrom, idTo, message, messageType) {
   messages.push({
     from: idFrom,
     to: idTo,
-    message: message,
+    message: message.text,
+    wrap: message.wrap === undefined && autoWrap() || !!message.wrap,
     type: messageType
   });
   return true;
@@ -60510,15 +65151,34 @@ var getActorKeys = function getActorKeys() {
 var getTitle = function getTitle() {
   return title;
 };
+var getTitleWrapped = function getTitleWrapped() {
+  return titleWrapped;
+};
 var enableSequenceNumbers = function enableSequenceNumbers() {
   sequenceNumbersEnabled = true;
 };
 var showSequenceNumbers = function showSequenceNumbers() {
   return sequenceNumbersEnabled;
 };
+var setWrap = function setWrap(wrapSetting) {
+  wrapEnabled = wrapSetting;
+};
+var autoWrap = function autoWrap() {
+  return wrapEnabled;
+};
 var clear = function clear() {
   actors = {};
   messages = [];
+};
+var parseMessage = function parseMessage(str) {
+  var _str = str.trim();
+
+  var message = {
+    text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
+    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].hasBreaks(_str) || autoWrap() : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : autoWrap()
+  };
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('parseMessage:', message);
+  return message;
 };
 var LINETYPE = {
   SOLID: 0,
@@ -60556,7 +65216,8 @@ var addNote = function addNote(actor, placement, message) {
   var note = {
     actor: actor,
     placement: placement,
-    message: message
+    message: message.text,
+    wrap: message.wrap === undefined && autoWrap() || !!message.wrap
   }; // Coerce actor into a [to, from, ...] array
 
   var actors = [].concat(actor, actor);
@@ -60564,13 +65225,15 @@ var addNote = function addNote(actor, placement, message) {
   messages.push({
     from: actors[0],
     to: actors[1],
-    message: message,
+    message: message.text,
+    wrap: message.wrap === undefined && autoWrap() || !!message.wrap,
     type: LINETYPE.NOTE,
     placement: placement
   });
 };
-var setTitle = function setTitle(titleText) {
-  title = titleText;
+var setTitle = function setTitle(titleWrap) {
+  title = titleWrap.text;
+  titleWrapped = titleWrap.wrap === undefined && autoWrap() || !!titleWrap.wrap;
 };
 var apply = function apply(param) {
   if (param instanceof Array) {
@@ -60657,6 +65320,8 @@ var apply = function apply(param) {
   addActor: addActor,
   addMessage: addMessage,
   addSignal: addSignal,
+  autoWrap: autoWrap,
+  setWrap: setWrap,
   enableSequenceNumbers: enableSequenceNumbers,
   showSequenceNumbers: showSequenceNumbers,
   getMessages: getMessages,
@@ -60664,7 +65329,13 @@ var apply = function apply(param) {
   getActor: getActor,
   getActorKeys: getActorKeys,
   getTitle: getTitle,
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig().sequence;
+  },
+  getTitleWrapped: getTitleWrapped,
   clear: clear,
+  parseMessage: parseMessage,
   LINETYPE: LINETYPE,
   ARROWTYPE: ARROWTYPE,
   PLACEMENT: PLACEMENT,
@@ -60679,7 +65350,7 @@ var apply = function apply(param) {
 /*!***************************************************!*\
   !*** ./src/diagrams/sequence/sequenceRenderer.js ***!
   \***************************************************/
-/*! exports provided: bounds, drawActors, setConf, calculateTextWidth, draw, default */
+/*! exports provided: bounds, drawActors, setConf, draw, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -60687,7 +65358,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bounds", function() { return bounds; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawActors", function() { return drawActors; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConf", function() { return setConf; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextWidth", function() { return calculateTextWidth; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "draw", function() { return draw; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _svgDraw__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./svgDraw */ "./src/diagrams/sequence/svgDraw.js");
@@ -60696,13 +65366,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _sequenceDb__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 
 
 
@@ -60711,43 +65375,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 
 _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy = _sequenceDb__WEBPACK_IMPORTED_MODULE_5__["default"];
-var conf = {
-  diagramMarginX: 50,
-  diagramMarginY: 30,
-  // Margin between actors
-  actorMargin: 50,
-  // Width of actor boxes
-  width: 150,
-  // Height of actor boxes
-  height: 65,
-  actorFontSize: 14,
-  actorFontFamily: '"Open-Sans", "sans-serif"',
-  // Note font settings
-  noteFontSize: 14,
-  noteFontFamily: '"trebuchet ms", verdana, arial',
-  noteAlign: 'center',
-  // Message font settings
-  messageFontSize: 16,
-  messageFontFamily: '"trebuchet ms", verdana, arial',
-  // Margin around loop boxes
-  boxMargin: 10,
-  boxTextMargin: 5,
-  noteMargin: 10,
-  // Space between messages
-  messageMargin: 35,
-  // Multiline message alignment
-  messageAlign: 'center',
-  // mirror actors under diagram
-  mirrorActors: false,
-  // Depending on css styling this might need adjustment
-  // Prolongs the edge of the diagram downwards
-  bottomMarginAdj: 1,
-  // width of activation box
-  activationWidth: 10,
-  // text placement as: tspan | fo | old only text as before
-  textPlacement: 'tspan',
-  showSequenceNumbers: false
-};
+var conf = {};
 var bounds = {
   data: {
     startx: undefined,
@@ -60758,9 +65386,63 @@ var bounds = {
   verticalPos: 0,
   sequenceItems: [],
   activations: [],
+  models: {
+    getHeight: function getHeight() {
+      return Math.max.apply(null, this.actors.length === 0 ? [0] : this.actors.map(function (actor) {
+        return actor.height || 0;
+      })) + (this.loops.length === 0 ? 0 : this.loops.map(function (it) {
+        return it.height || 0;
+      }).reduce(function (acc, h) {
+        return acc + h;
+      })) + (this.messages.length === 0 ? 0 : this.messages.map(function (it) {
+        return it.height || 0;
+      }).reduce(function (acc, h) {
+        return acc + h;
+      })) + (this.notes.length === 0 ? 0 : this.notes.map(function (it) {
+        return it.height || 0;
+      }).reduce(function (acc, h) {
+        return acc + h;
+      }));
+    },
+    clear: function clear() {
+      this.actors = [];
+      this.loops = [];
+      this.messages = [];
+      this.notes = [];
+    },
+    addActor: function addActor(actorModel) {
+      this.actors.push(actorModel);
+    },
+    addLoop: function addLoop(loopModel) {
+      this.loops.push(loopModel);
+    },
+    addMessage: function addMessage(msgModel) {
+      this.messages.push(msgModel);
+    },
+    addNote: function addNote(noteModel) {
+      this.notes.push(noteModel);
+    },
+    lastActor: function lastActor() {
+      return this.actors[this.actors.length - 1];
+    },
+    lastLoop: function lastLoop() {
+      return this.loops[this.loops.length - 1];
+    },
+    lastMessage: function lastMessage() {
+      return this.messages[this.messages.length - 1];
+    },
+    lastNote: function lastNote() {
+      return this.notes[this.notes.length - 1];
+    },
+    actors: [],
+    loops: [],
+    messages: [],
+    notes: []
+  },
   init: function init() {
     this.sequenceItems = [];
     this.activations = [];
+    this.models.clear();
     this.data = {
       startx: undefined,
       stopx: undefined,
@@ -60768,6 +65450,7 @@ var bounds = {
       stopy: undefined
     };
     this.verticalPos = 0;
+    setConf(_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getConfig());
   },
   updateVal: function updateVal(obj, key, val, fun) {
     if (typeof obj[key] === 'undefined') {
@@ -60825,10 +65508,10 @@ var bounds = {
     this.updateVal(bounds.data, 'stopy', _stopy, Math.max);
     this.updateBounds(_startx, _starty, _stopx, _stopy);
   },
-  newActivation: function newActivation(message, diagram) {
-    var actorRect = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getActors()[message.from.actor];
-    var stackedSize = actorActivations(message.from.actor).length;
-    var x = actorRect.x + conf.width / 2 + (stackedSize - 1) * conf.activationWidth / 2;
+  newActivation: function newActivation(message, diagram, actors) {
+    var actorRect = actors[message.from.actor];
+    var stackedSize = actorActivations(message.from.actor).length || 0;
+    var x = actorRect.x + actorRect.width / 2 + (stackedSize - 1) * conf.activationWidth / 2;
     this.activations.push({
       startx: x,
       starty: this.verticalPos + 2,
@@ -60843,28 +65526,47 @@ var bounds = {
     var lastActorActivationIdx = this.activations.map(function (activation) {
       return activation.actor;
     }).lastIndexOf(message.from.actor);
-    var activation = this.activations.splice(lastActorActivationIdx, 1)[0];
-    return activation;
+    return this.activations.splice(lastActorActivationIdx, 1)[0];
   },
-  newLoop: function newLoop(title, fill) {
-    this.sequenceItems.push({
+  createLoop: function createLoop() {
+    var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+      message: undefined,
+      wrap: false,
+      width: undefined
+    };
+    var fill = arguments.length > 1 ? arguments[1] : undefined;
+    return {
       startx: undefined,
       starty: this.verticalPos,
       stopx: undefined,
       stopy: undefined,
-      title: title,
+      title: title.message,
+      wrap: title.wrap,
+      width: title.width,
+      height: 0,
       fill: fill
-    });
+    };
+  },
+  newLoop: function newLoop() {
+    var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+      message: undefined,
+      wrap: false,
+      width: undefined
+    };
+    var fill = arguments.length > 1 ? arguments[1] : undefined;
+    this.sequenceItems.push(this.createLoop(title, fill));
   },
   endLoop: function endLoop() {
-    var loop = this.sequenceItems.pop();
-    return loop;
+    return this.sequenceItems.pop();
   },
   addSectionToLoop: function addSectionToLoop(message) {
     var loop = this.sequenceItems.pop();
     loop.sections = loop.sections || [];
     loop.sectionTitles = loop.sectionTitles || [];
-    loop.sections.push(bounds.getVerticalPos());
+    loop.sections.push({
+      y: bounds.getVerticalPos(),
+      height: 0
+    });
     loop.sectionTitles.push(message);
     this.sequenceItems.push(loop);
   },
@@ -60876,184 +65578,126 @@ var bounds = {
     return this.verticalPos;
   },
   getBounds: function getBounds() {
-    return this.data;
+    return {
+      bounds: this.data,
+      models: this.models
+    };
   }
-};
-
-var _drawLongText = function _drawLongText(text, x, y, g, width) {
-  var textHeight = 0;
-  var prevTextHeight = 0;
-  var alignmentToAnchor = {
-    left: 'start',
-    start: 'start',
-    center: 'middle',
-    middle: 'middle',
-    right: 'end',
-    end: 'end'
-  };
-  var lines = text.split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex);
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
-
-  try {
-    for (var _iterator = lines[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var line = _step.value;
-      var textObj = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getTextObj();
-      var alignment = alignmentToAnchor[conf.noteAlign] || 'middle';
-
-      switch (alignment) {
-        case 'start':
-          textObj.x = x + conf.noteMargin;
-          break;
-
-        case 'middle':
-          textObj.x = x + width / 2;
-          break;
-
-        case 'end':
-          textObj.x = x + width - conf.noteMargin;
-          break;
-      }
-
-      textObj.y = y + textHeight;
-      textObj.dy = '1em';
-      textObj.text = line;
-      textObj.class = 'noteText';
-      var textElem = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawText(g, textObj).style('text-anchor', alignment).style('font-size', conf.noteFontSize).style('font-family', conf.noteFontFamily).attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
-      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
-      textElem.attr('y', y + (prevTextHeight + textHeight + 2 * conf.noteMargin) / 2);
-      prevTextHeight = textHeight;
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return != null) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-
-  return textHeight;
 };
 /**
- * Draws an note in the diagram with the attaced line
+ * Draws an note in the diagram with the attached line
  * @param elem - The diagram to draw to.
- * @param startx - The x axis start position.
- * @param verticalPos - The y axis position.
- * @param msg - The message to be drawn.
- * @param forceWidth - Set this with a custom width to override the default configured width.
+ * @param noteModel:{x: number, y: number, message: string, width: number} - startx: x axis start position, verticalPos: y axis position, messsage: the message to be shown, width: Set this with a custom width to override the default configured width.
  */
 
-
-var drawNote = function drawNote(elem, startx, verticalPos, msg, forceWidth) {
+var drawNote = function drawNote(elem, noteModel) {
+  bounds.bumpVerticalPos(conf.boxMargin);
+  noteModel.height = conf.boxMargin;
+  noteModel.starty = bounds.getVerticalPos();
   var rect = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getNoteRect();
-  rect.x = startx;
-  rect.y = verticalPos;
-  rect.width = forceWidth || conf.width;
+  rect.x = noteModel.startx;
+  rect.y = noteModel.starty;
+  rect.width = noteModel.width || conf.width;
   rect.class = 'note';
   var g = elem.append('g');
   var rectElem = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawRect(g, rect);
-
-  var textHeight = _drawLongText(msg.message, startx, verticalPos, g, rect.width);
-
-  bounds.insert(startx, verticalPos, startx + rect.width, verticalPos + 2 * conf.noteMargin + textHeight);
+  var textObj = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getTextObj();
+  textObj.x = noteModel.startx;
+  textObj.y = noteModel.starty;
+  textObj.width = rect.width;
+  textObj.dy = '1em';
+  textObj.text = noteModel.message;
+  textObj.class = 'noteText';
+  textObj.fontFamily = conf.noteFontFamily;
+  textObj.fontSize = conf.noteFontSize;
+  textObj.fontWeight = conf.noteFontWeight;
+  textObj.anchor = conf.noteAlign;
+  textObj.textMargin = conf.noteMargin;
+  textObj.valign = conf.noteAlign;
+  textObj.wrap = true;
+  var textElem = Object(_svgDraw__WEBPACK_IMPORTED_MODULE_1__["drawText"])(g, textObj);
+  var textHeight = Math.round(textElem.map(function (te) {
+    return (te._groups || te)[0][0].getBBox().height;
+  }).reduce(function (acc, curr) {
+    return acc + curr;
+  }));
   rectElem.attr('height', textHeight + 2 * conf.noteMargin);
+  noteModel.height += textHeight + 2 * conf.noteMargin;
   bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin);
+  noteModel.stopy = noteModel.starty + textHeight + 2 * conf.noteMargin;
+  noteModel.stopx = noteModel.startx + rect.width;
+  bounds.insert(noteModel.startx, noteModel.starty, noteModel.stopx, noteModel.stopy);
+  bounds.models.addNote(noteModel);
 };
 /**
  * Draws a message
- * @param elem
- * @param startx
- * @param stopx
- * @param verticalPos
- * @param txtCenter
- * @param msg
+ * @param g - the parent of the message element
+ * @param msgModel - the model containing fields describing a message
  */
 
 
-var drawMessage = function drawMessage(elem, startx, stopx, verticalPos, msg, sequenceIndex) {
-  var g = elem.append('g');
-  var txtCenter = startx + (stopx - startx) / 2;
-  var textElems = [];
-  var counterBreaklines = 0;
-  var breaklineOffset = 17;
-  var breaklines = msg.message.split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex);
-  var _iteratorNormalCompletion2 = true;
-  var _didIteratorError2 = false;
-  var _iteratorError2 = undefined;
-
-  try {
-    for (var _iterator2 = breaklines[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      var breakline = _step2.value;
-      textElems.push(g.append('text') // text label for the x axis
-      .attr('x', txtCenter).attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset).style('font-size', conf.messageFontSize).style('font-family', conf.messageFontFamily).style('text-anchor', 'middle').attr('class', 'messageText').text(breakline.trim()));
-      counterBreaklines++;
-    }
-  } catch (err) {
-    _didIteratorError2 = true;
-    _iteratorError2 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-        _iterator2.return();
-      }
-    } finally {
-      if (_didIteratorError2) {
-        throw _iteratorError2;
-      }
-    }
-  }
-
-  var offsetLineCounter = counterBreaklines - 1;
-  var totalOffset = offsetLineCounter * breaklineOffset;
-  var textWidths = textElems.map(function (textElem) {
-    return (textElem._groups || textElem)[0][0].getBBox().width;
-  });
-  var textWidth = Math.max.apply(Math, _toConsumableArray(textWidths));
-
-  for (var _i = 0, _textElems = textElems; _i < _textElems.length; _i++) {
-    var textElem = _textElems[_i];
-
-    if (conf.messageAlign === 'left') {
-      textElem.attr('x', txtCenter - textWidth / 2).style('text-anchor', 'start');
-    } else if (conf.messageAlign === 'right') {
-      textElem.attr('x', txtCenter + textWidth / 2).style('text-anchor', 'end');
-    }
-  }
-
-  bounds.bumpVerticalPos(totalOffset);
-  var line;
+var drawMessage = function drawMessage(g, msgModel) {
+  bounds.bumpVerticalPos(10);
+  var startx = msgModel.startx,
+      stopx = msgModel.stopx,
+      starty = msgModel.starty,
+      message = msgModel.message,
+      type = msgModel.type,
+      sequenceIndex = msgModel.sequenceIndex,
+      wrap = msgModel.wrap;
+  var lines = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].splitBreaks(message).length;
+  var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(message, conf.messageFont());
+  var lineHeight = textDims.height / lines;
+  msgModel.height += lineHeight;
+  bounds.bumpVerticalPos(lineHeight);
+  var textObj = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getTextObj();
+  textObj.x = startx;
+  textObj.y = starty + 10;
+  textObj.width = stopx - startx;
+  textObj.class = 'messageText';
+  textObj.dy = '1em';
+  textObj.text = message;
+  textObj.fontFamily = conf.messageFontFamily;
+  textObj.fontSize = conf.messageFontSize;
+  textObj.fontWeight = conf.messageFontWeight;
+  textObj.anchor = conf.messageAlign;
+  textObj.valign = conf.messageAlign;
+  textObj.textMargin = conf.wrapPadding;
+  textObj.tspan = false;
+  textObj.wrap = wrap;
+  Object(_svgDraw__WEBPACK_IMPORTED_MODULE_1__["drawText"])(g, textObj);
+  var totalOffset = textDims.height - 10;
+  var textWidth = textDims.width;
+  var line, lineStarty;
 
   if (startx === stopx) {
+    lineStarty = bounds.getVerticalPos() + totalOffset;
+
     if (conf.rightAngles) {
-      line = g.append('path').attr('d', "M  ".concat(startx, ",").concat(verticalPos + totalOffset, " H ").concat(startx + conf.width / 2, " V ").concat(verticalPos + 25 + totalOffset, " H ").concat(startx));
+      line = g.append('path').attr('d', "M  ".concat(startx, ",").concat(lineStarty, " H ").concat(startx + Math.max(conf.width / 2, textWidth / 2), " V ").concat(lineStarty + 25, " H ").concat(startx));
     } else {
-      totalOffset += 5;
-      line = g.append('path').attr('d', 'M ' + startx + ',' + (verticalPos + totalOffset) + ' C ' + (startx + 60) + ',' + (verticalPos - 10 + totalOffset) + ' ' + (startx + 60) + ',' + (verticalPos + 30 + totalOffset) + ' ' + startx + ',' + (verticalPos + 20 + totalOffset));
+      totalOffset += conf.boxMargin;
+      lineStarty = bounds.getVerticalPos() + totalOffset;
+      line = g.append('path').attr('d', 'M ' + startx + ',' + lineStarty + ' C ' + (startx + 60) + ',' + (lineStarty - 10) + ' ' + (startx + 60) + ',' + (lineStarty + 30) + ' ' + startx + ',' + (lineStarty + 20));
     }
 
-    bounds.bumpVerticalPos(30 + totalOffset);
-    var dx = Math.max(textWidth / 2, 100);
-    bounds.insert(startx - dx, bounds.getVerticalPos() - 10 + totalOffset, stopx + dx, bounds.getVerticalPos() + totalOffset);
+    totalOffset += 30;
+    var dx = Math.max(textWidth / 2, conf.width / 2);
+    bounds.insert(startx - dx, bounds.getVerticalPos() - 10 + totalOffset, stopx + dx, bounds.getVerticalPos() + 30 + totalOffset);
   } else {
+    totalOffset += conf.boxMargin;
+    lineStarty = bounds.getVerticalPos() + totalOffset;
     line = g.append('line');
     line.attr('x1', startx);
-    line.attr('y1', verticalPos + totalOffset);
+    line.attr('y1', lineStarty);
     line.attr('x2', stopx);
-    line.attr('y2', verticalPos + totalOffset);
-    bounds.insert(startx, bounds.getVerticalPos() - 10 + totalOffset, stopx, bounds.getVerticalPos() + totalOffset);
+    line.attr('y2', lineStarty);
+    bounds.insert(startx, lineStarty - 10, stopx, lineStarty);
   } // Make an SVG Container
   // Draw the line
 
 
-  if (msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED || msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS || msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_OPEN) {
+  if (type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED || type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS || type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_OPEN) {
     line.style('stroke-dasharray', '3, 3');
     line.attr('class', 'messageLine1');
   } else {
@@ -61069,22 +65713,28 @@ var drawMessage = function drawMessage(elem, startx, stopx, verticalPos, msg, se
   }
 
   line.attr('stroke-width', 2);
-  line.attr('stroke', 'black');
+  line.attr('stroke', 'none'); // handled by theme/css anyway
+
   line.style('fill', 'none'); // remove any fill colour
 
-  if (msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID || msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED) {
+  if (type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID || type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
   }
 
-  if (msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID_CROSS || msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS) {
+  if (type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID_CROSS || type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS) {
     line.attr('marker-end', 'url(' + url + '#crosshead)');
   } // add node number
 
 
   if (_sequenceDb__WEBPACK_IMPORTED_MODULE_5__["default"].showSequenceNumbers() || conf.showSequenceNumbers) {
     line.attr('marker-start', 'url(' + url + '#sequencenumber)');
-    g.append('text').attr('x', startx).attr('y', verticalPos + 4 + totalOffset).attr('font-family', 'sans-serif').attr('font-size', '12px').attr('text-anchor', 'middle').attr('textLength', '16px').attr('class', 'sequenceNumber').text(sequenceIndex);
+    g.append('text').attr('x', startx).attr('y', lineStarty + 4).attr('font-family', 'sans-serif').attr('font-size', '12px').attr('text-anchor', 'middle').attr('textLength', '16px').attr('class', 'sequenceNumber').text(sequenceIndex);
   }
+
+  bounds.bumpVerticalPos(totalOffset);
+  msgModel.height += totalOffset;
+  msgModel.stopy = msgModel.starty + msgModel.height;
+  bounds.insert(msgModel.fromBounds, msgModel.starty, msgModel.toBounds, msgModel.stopy);
 };
 
 var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
@@ -61095,29 +65745,35 @@ var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
   for (var i = 0; i < actorKeys.length; i++) {
     var actor = actors[actorKeys[i]]; // Add some rendering data to the object
 
-    actor.width = actor.width || calculateActorWidth(actor);
-    actor.height = conf.height;
+    actor.width = actor.width || conf.width;
+    actor.height = Math.max(actor.height || conf.height, conf.height);
     actor.margin = actor.margin || conf.actorMargin;
     actor.x = prevWidth + prevMargin;
     actor.y = verticalPos; // Draw the box with the attached line
 
     _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawActor(diagram, actor, conf);
-    bounds.insert(actor.x, verticalPos, actor.x + actor.width, conf.height);
+    bounds.insert(actor.x, verticalPos, actor.x + actor.width, actor.height);
     prevWidth += actor.width;
     prevMargin += actor.margin;
+    bounds.models.addActor(actor);
   } // Add a margin between the actor boxes and the first arrow
 
 
   bounds.bumpVerticalPos(conf.height);
 };
 var setConf = function setConf(cnf) {
-  var keys = Object.keys(cnf);
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_6__["assignWithDepth"])(conf, cnf);
 
   if (cnf.fontFamily) {
-    conf.actorFontFamily = conf.noteFontFamily = cnf.fontFamily;
+    conf.actorFontFamily = conf.noteFontFamily = conf.messageFontFamily = cnf.fontFamily;
+  }
+
+  if (cnf.fontSize) {
+    conf.actorFontSize = conf.noteFontSize = conf.messageFontSize = cnf.fontSize;
+  }
+
+  if (cnf.fontWeight) {
+    conf.actorFontWeight = conf.noteFontWeight = conf.messageFontWeight = cnf.fontWeight;
   }
 };
 
@@ -61127,9 +65783,9 @@ var actorActivations = function actorActivations(actor) {
   });
 };
 
-var actorFlowVerticaBounds = function actorFlowVerticaBounds(actor) {
+var activationBounds = function activationBounds(actor, actors) {
   // handle multiple stacked activations for same actor
-  var actorObj = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getActors()[actor];
+  var actorObj = actors[actor];
   var activations = actorActivations(actor);
   var left = activations.reduce(function (acc, activation) {
     return Math.min(acc, activation.startx);
@@ -61139,130 +65795,50 @@ var actorFlowVerticaBounds = function actorFlowVerticaBounds(actor) {
   }, actorObj.x + actorObj.width / 2);
   return [left, right];
 };
+
+function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn) {
+  bounds.bumpVerticalPos(preMargin);
+  var heightAdjust = postMargin;
+
+  if (msg.id && msg.message && loopWidths[msg.id]) {
+    var loopWidth = loopWidths[msg.id].width;
+    var textConf = conf.messageFont();
+    msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel("[".concat(msg.message, "]"), loopWidth - 2 * conf.wrapPadding, textConf);
+    msg.width = loopWidth;
+    msg.wrap = true; // const lines = common.splitBreaks(msg.message).length;
+
+    var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, textConf);
+    var totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
+    heightAdjust = postMargin + totalOffset;
+    _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("".concat(totalOffset, " - ").concat(msg.message));
+  }
+
+  addLoopFn(msg);
+  bounds.bumpVerticalPos(heightAdjust);
+}
 /**
- * This calculates the actor's width, taking into account both the statically configured width,
- * and the actor's description.
- *
- * If the description text has greater length, we extend the width of the actor, so it's description
- * won't overflow.
- *
- * @param actor - An actor object
- * @return - The width for the given actor
- */
-
-
-var calculateActorWidth = function calculateActorWidth(actor) {
-  if (!actor.description) {
-    return conf.width;
-  }
-
-  return Math.max(conf.width, calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily));
-};
-/**
- * This calculates the width of the given text, font size and family.
- *
- * @param text - The text to calculate the width of
- * @param fontSize - The font size of the given text
- * @param fontFamily - The font family (one, or more fonts) to render
- */
-
-
-var calculateTextWidth = function calculateTextWidth(text, fontSize, fontFamily) {
-  if (!text) {
-    return 0;
-  }
-
-  fontSize = fontSize ? fontSize : conf.actorFontSize;
-  fontFamily = fontFamily ? fontFamily : conf.actorFontFamily; // We can't really know if the user supplied font family will render on the user agent;
-  // thus, we'll take the max width between the user supplied font family, and a default
-  // of sans-serif.
-
-  var fontFamilies = ['sans-serif', fontFamily];
-  var lines = text.split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex);
-  var maxWidth = 0;
-  var body = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body'); // We don'y want to leak DOM elements - if a removal operation isn't available
-  // for any reason, do not continue.
-
-  if (!body.remove) {
-    return 0;
-  }
-
-  var g = body.append('svg');
-  var _iteratorNormalCompletion3 = true;
-  var _didIteratorError3 = false;
-  var _iteratorError3 = undefined;
-
-  try {
-    for (var _iterator3 = lines[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-      var line = _step3.value;
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
-
-      try {
-        for (var _iterator4 = fontFamilies[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var _fontFamily = _step4.value;
-          var textObj = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getTextObj();
-          textObj.text = line;
-          var textElem = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawText(g, textObj).style('font-size', fontSize).style('font-family', _fontFamily);
-          maxWidth = Math.max(maxWidth, (textElem._groups || textElem)[0][0].getBBox().width);
-        }
-      } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-            _iterator4.return();
-          }
-        } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
-          }
-        }
-      }
-    }
-  } catch (err) {
-    _didIteratorError3 = true;
-    _iteratorError3 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-        _iterator3.return();
-      }
-    } finally {
-      if (_didIteratorError3) {
-        throw _iteratorError3;
-      }
-    }
-  }
-
-  g.remove(); // Adds some padding, so the text won't sit exactly within the actor's borders
-
-  return maxWidth + 35;
-};
-/**
- * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  * @param text
  * @param id
  */
 
+
 var draw = function draw(text, id) {
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.clear();
+  _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.setWrap(conf.wrap);
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].parse(text + '\n');
   bounds.init();
-  var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]"));
-  var startx;
-  var stopx;
-  var forceWidth; // Fetch data from the parsing
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("C:".concat(JSON.stringify(conf, null, 2)));
+  var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")); // Fetch data from the parsing
 
   var actors = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getActors();
   var actorKeys = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getActorKeys();
   var messages = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getMessages();
   var title = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getTitle();
   var maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages);
-  calculateActorMargins(actors, maxMessageWidthPerActor);
-  drawActors(diagram, actors, actorKeys, 0); // The arrow head definition is attached to the svg once
+  conf.height = calculateActorMargins(actors, maxMessageWidthPerActor);
+  drawActors(diagram, actors, actorKeys, 0);
+  var loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor); // The arrow head definition is attached to the svg once
 
   _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].insertArrowHead(diagram);
   _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].insertArrowCrossHead(diagram);
@@ -61283,33 +65859,16 @@ var draw = function draw(text, id) {
 
   var sequenceIndex = 1;
   messages.forEach(function (msg) {
-    var loopData;
-    var noteWidth = Math.max(conf.width, calculateTextWidth(msg.message, conf.noteFontSize, conf.noteFontFamily));
+    var loopModel, noteModel, msgModel;
 
     switch (msg.type) {
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.NOTE:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        startx = actors[msg.from].x;
-        stopx = actors[msg.to].x;
-
-        if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF) {
-          drawNote(diagram, startx + (actors[msg.from].width + conf.actorMargin) / 2, bounds.getVerticalPos(), msg, noteWidth);
-        } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF) {
-          drawNote(diagram, startx - noteWidth + (actors[msg.from].width - conf.actorMargin) / 2, bounds.getVerticalPos(), msg, noteWidth);
-        } else if (msg.to === msg.from) {
-          // Single-actor over
-          drawNote(diagram, startx + (actors[msg.to].width - noteWidth) / 2, bounds.getVerticalPos(), msg, noteWidth);
-        } else {
-          // Multi-actor over
-          forceWidth = Math.abs(startx - stopx) + conf.actorMargin;
-          var x = startx < stopx ? startx + (actors[msg.from].width - conf.actorMargin) / 2 : stopx + (actors[msg.to].width - conf.actorMargin) / 2;
-          drawNote(diagram, x, bounds.getVerticalPos(), msg, forceWidth);
-        }
-
+        noteModel = msg.noteModel;
+        drawNote(diagram, noteModel);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ACTIVE_START:
-        bounds.newActivation(msg, diagram);
+        bounds.newActivation(msg, diagram, actors);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ACTIVE_END:
@@ -61317,93 +65876,90 @@ var draw = function draw(text, id) {
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.LOOP_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        bounds.newLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin + conf.boxTextMargin, function (message) {
+          return bounds.newLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.LOOP_END:
-        loopData = bounds.endLoop();
-        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopData, 'loop', conf);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopModel, 'loop', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.RECT_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        bounds.newLoop(undefined, msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin, function (message) {
+          return bounds.newLoop(undefined, message.message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.RECT_END:
-        {
-          var rectData = bounds.endLoop();
-          _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawBackgroundRect(diagram, rectData);
-          bounds.bumpVerticalPos(conf.boxMargin);
-          break;
-        }
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawBackgroundRect(diagram, loopModel);
+        bounds.models.addLoop(loopModel);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.OPT_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        bounds.newLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin + conf.boxTextMargin, function (message) {
+          return bounds.newLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.OPT_END:
-        loopData = bounds.endLoop();
-        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopData, 'opt', conf);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopModel, 'opt', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        bounds.newLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin + conf.boxTextMargin, function (message) {
+          return bounds.newLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_ELSE:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        loopData = bounds.addSectionToLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin + conf.boxTextMargin, conf.boxMargin, function (message) {
+          return bounds.addSectionToLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_END:
-        loopData = bounds.endLoop();
-        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopData, 'alt', conf);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopModel, 'alt', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        bounds.newLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin + conf.boxTextMargin, function (message) {
+          return bounds.newLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_AND:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        loopData = bounds.addSectionToLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin + conf.boxTextMargin, conf.boxMargin, function (message) {
+          return bounds.addSectionToLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_END:
-        loopData = bounds.endLoop();
-        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopData, 'par', conf);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopModel, 'par', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
         break;
 
       default:
         try {
           // lastMsg = msg
-          bounds.bumpVerticalPos(conf.messageMargin);
-          var fromBounds = actorFlowVerticaBounds(msg.from);
-          var toBounds = actorFlowVerticaBounds(msg.to);
-          var fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
-          var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
-          startx = fromBounds[fromIdx];
-          stopx = toBounds[toIdx];
-          var verticalPos = bounds.getVerticalPos();
-          drawMessage(diagram, startx, stopx, verticalPos, msg, sequenceIndex);
-          var allBounds = fromBounds.concat(toBounds);
-          bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos);
+          msgModel = msg.msgModel;
+          msgModel.starty = bounds.getVerticalPos();
+          msgModel.sequenceIndex = sequenceIndex;
+          drawMessage(diagram, msgModel);
+          bounds.models.addMessage(msgModel);
         } catch (e) {
           _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].error('error while drawing message', e);
         }
@@ -61422,7 +65978,9 @@ var draw = function draw(text, id) {
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
   }
 
-  var box = bounds.getBounds(); // Adjust line height of actor lines now that the height of the diagram is known
+  var _bounds$getBounds = bounds.getBounds(),
+      box = _bounds$getBounds.bounds; // Adjust line height of actor lines now that the height of the diagram is known
+
 
   _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('For line height fix Querying: #' + id + ' .actor-line');
   var actorLines = Object(d3__WEBPACK_IMPORTED_MODULE_0__["selectAll"])('#' + id + ' .actor-line');
@@ -61442,7 +66000,7 @@ var draw = function draw(text, id) {
   if (conf.useMaxWidth) {
     diagram.attr('height', '100%');
     diagram.attr('width', '100%');
-    diagram.attr('style', 'max-width:' + width + 'px;');
+    diagram.attr('style', 'max-width:' + width + 'px;'); // diagram.attr('style', 'max-width:100%;');
   } else {
     diagram.attr('height', height);
     diagram.attr('width', width);
@@ -61450,6 +66008,7 @@ var draw = function draw(text, id) {
 
   var extraVertForTitle = title ? 40 : 0;
   diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle));
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("models:", bounds.models);
 };
 /**
  * Retrieves the max message width of each actor, supports signals (messages, loops)
@@ -61468,20 +66027,21 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
     if (actors[msg.to] && actors[msg.from]) {
       var actor = actors[msg.to]; // If this is the first actor, and the message is left of it, no need to calculate the margin
 
-      if (msg.placement == _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF && !actor.prevActor) {
+      if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF && !actor.prevActor) {
         return;
       } // If this is the last actor, and the message is right of it, no need to calculate the margin
 
 
-      if (msg.placement == _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF && !actor.nextActor) {
+      if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF && !actor.nextActor) {
         return;
       }
 
       var isNote = msg.placement !== undefined;
       var isMessage = !isNote;
-      var fontSize = isNote ? conf.noteFontSize : conf.messageFontSize;
-      var fontFamily = isNote ? conf.noteFontFamily : conf.messageFontFamily;
-      var messageWidth = calculateTextWidth(msg.message, fontSize, fontFamily);
+      var textFont = isNote ? conf.noteFont() : conf.messageFont();
+      var wrappedMessage = msg.wrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, conf.width - 2 * conf.wrapPadding, textFont) : msg.message;
+      var messageDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(wrappedMessage, textFont);
+      var messageWidth = messageDimensions.width + 2 * conf.wrapPadding;
       /*
        * The following scenarios should be supported:
        *
@@ -61499,13 +66059,18 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
        *     margin
        */
 
-      if (isMessage && msg.from == actor.nextActor) {
+      if (isMessage && msg.from === actor.nextActor) {
         maxMessageWidthPerActor[msg.to] = Math.max(maxMessageWidthPerActor[msg.to] || 0, messageWidth);
-      } else if (isMessage && msg.from == actor.prevActor || msg.placement == _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF) {
+      } else if (isMessage && msg.from === actor.prevActor) {
         maxMessageWidthPerActor[msg.from] = Math.max(maxMessageWidthPerActor[msg.from] || 0, messageWidth);
-      } else if (msg.placement == _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF) {
+      } else if (isMessage && msg.from === msg.to) {
+        maxMessageWidthPerActor[msg.from] = Math.max(maxMessageWidthPerActor[msg.from] || 0, messageWidth / 2);
+        maxMessageWidthPerActor[msg.to] = Math.max(maxMessageWidthPerActor[msg.to] || 0, messageWidth / 2);
+      } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF) {
+        maxMessageWidthPerActor[msg.from] = Math.max(maxMessageWidthPerActor[msg.from] || 0, messageWidth);
+      } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF) {
         maxMessageWidthPerActor[actor.prevActor] = Math.max(maxMessageWidthPerActor[actor.prevActor] || 0, messageWidth);
-      } else if (msg.placement == _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.OVER) {
+      } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.OVER) {
         if (actor.prevActor) {
           maxMessageWidthPerActor[actor.prevActor] = Math.max(maxMessageWidthPerActor[actor.prevActor] || 0, messageWidth / 2);
         }
@@ -61516,6 +66081,7 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
       }
     }
   });
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
 };
 /**
@@ -61531,6 +66097,20 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
 
 
 var calculateActorMargins = function calculateActorMargins(actors, actorToMessageWidth) {
+  var maxHeight = 0;
+  Object.keys(actors).forEach(function (prop) {
+    var actor = actors[prop];
+
+    if (actor.wrap) {
+      actor.description = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(actor.description, conf.width - 2 * conf.wrapPadding, conf.actorFont());
+    }
+
+    var actDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(actor.description, conf.actorFont());
+    actor.width = actor.wrap ? conf.width : Math.max(conf.width, actDims.width + 2 * conf.wrapPadding);
+    actor.height = actor.wrap ? Math.max(actDims.height, conf.height) : conf.height;
+    maxHeight = Math.max(maxHeight, actor.height);
+  });
+
   for (var actorKey in actorToMessageWidth) {
     var actor = actors[actorKey];
 
@@ -61544,12 +66124,194 @@ var calculateActorMargins = function calculateActorMargins(actors, actorToMessag
       continue;
     }
 
-    actor.width = Math.max(conf.width, calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily));
-    nextActor.width = Math.max(conf.width, calculateTextWidth(nextActor.description, conf.actorFontSize, conf.actorFontFamily));
     var messageWidth = actorToMessageWidth[actorKey];
     var actorWidth = messageWidth + conf.actorMargin - actor.width / 2 - nextActor.width / 2;
     actor.margin = Math.max(actorWidth, conf.actorMargin);
   }
+
+  return Math.max(maxHeight, conf.height);
+};
+
+var buildNoteModel = function buildNoteModel(msg, actors) {
+  var startx = actors[msg.from].x;
+  var stopx = actors[msg.to].x;
+  var shouldWrap = msg.wrap && msg.message;
+  var textDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message, conf.noteFont());
+  var noteModel = {
+    width: shouldWrap ? conf.width : Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin),
+    height: 0,
+    startx: actors[msg.from].x,
+    stopx: 0,
+    starty: 0,
+    stopy: 0,
+    message: msg.message
+  };
+
+  if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF) {
+    noteModel.width = shouldWrap ? Math.max(conf.width, textDimensions.width) : Math.max(actors[msg.from].width / 2 + actors[msg.to].width / 2, textDimensions.width + 2 * conf.noteMargin);
+    noteModel.startx = startx + (actors[msg.from].width + conf.actorMargin) / 2;
+  } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF) {
+    noteModel.width = shouldWrap ? Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin) : Math.max(actors[msg.from].width / 2 + actors[msg.to].width / 2, textDimensions.width + 2 * conf.noteMargin);
+    noteModel.startx = startx - noteModel.width + (actors[msg.from].width - conf.actorMargin) / 2;
+  } else if (msg.to === msg.from) {
+    textDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, Math.max(conf.width, actors[msg.from].width), conf.noteFont()) : msg.message, conf.noteFont());
+    noteModel.width = shouldWrap ? Math.max(conf.width, actors[msg.from].width) : Math.max(actors[msg.from].width, conf.width, textDimensions.width + 2 * conf.noteMargin);
+    noteModel.startx = startx + (actors[msg.from].width - noteModel.width) / 2;
+  } else {
+    noteModel.width = Math.abs(startx + actors[msg.from].width / 2 - (stopx + actors[msg.to].width / 2)) + conf.actorMargin;
+    noteModel.startx = startx < stopx ? startx + actors[msg.from].width / 2 - conf.actorMargin / 2 : stopx + actors[msg.to].width / 2 - conf.actorMargin / 2;
+  }
+
+  if (shouldWrap) {
+    noteModel.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, noteModel.width - 2 * conf.wrapPadding, conf.noteFont());
+  }
+
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("NM:[".concat(noteModel.startx, ",").concat(noteModel.stopx, ",").concat(noteModel.starty, ",").concat(noteModel.stopy, ":").concat(noteModel.width, ",").concat(noteModel.height, "=").concat(msg.message, "]"));
+  return noteModel;
+};
+
+var buildMessageModel = function buildMessageModel(msg, actors) {
+  var process = false;
+
+  if ([_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID_OPEN, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_OPEN, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID_CROSS, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS].includes(msg.type)) {
+    process = true;
+  }
+
+  if (!process) {
+    return {};
+  }
+
+  var fromBounds = activationBounds(msg.from, actors);
+  var toBounds = activationBounds(msg.to, actors);
+  var fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
+  var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
+  var allBounds = fromBounds.concat(toBounds);
+  var boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
+  var msgDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, conf.messageFont());
+
+  if (msg.wrap && msg.message) {
+    msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width), conf.messageFont());
+  }
+
+  return {
+    width: Math.max(msg.wrap ? 0 : msgDims.width + 2 * conf.wrapPadding, boundedWidth + 2 * conf.wrapPadding, conf.width),
+    height: 0,
+    startx: fromBounds[fromIdx],
+    stopx: toBounds[toIdx],
+    starty: 0,
+    stopy: 0,
+    message: msg.message,
+    type: msg.type,
+    wrap: msg.wrap,
+    fromBounds: Math.min.apply(null, allBounds),
+    toBounds: Math.max.apply(null, allBounds)
+  };
+};
+
+var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
+  var loops = {};
+  var stack = [];
+  var current, noteModel, msgModel;
+  messages.forEach(function (msg) {
+    msg.id = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].random({
+      length: 10
+    });
+
+    switch (msg.type) {
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.LOOP_START:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_START:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.OPT_START:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_START:
+        stack.push({
+          id: msg.id,
+          msg: msg.message,
+          from: Number.MAX_SAFE_INTEGER,
+          to: Number.MIN_SAFE_INTEGER,
+          width: 0
+        });
+        break;
+
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_ELSE:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_AND:
+        if (msg.message) {
+          current = stack.pop();
+          loops[current.id] = current;
+          loops[msg.id] = current;
+          stack.push(current);
+        }
+
+        break;
+
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.LOOP_END:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_END:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.OPT_END:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_END:
+        current = stack.pop();
+        loops[current.id] = current;
+        break;
+
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ACTIVE_START:
+        {
+          var actorRect = actors[msg.from ? msg.from.actor : msg.to.actor];
+          var stackedSize = actorActivations(msg.from ? msg.from.actor : msg.to.actor).length;
+          var x = actorRect.x + actorRect.width / 2 + (stackedSize - 1) * conf.activationWidth / 2;
+          var toAdd = {
+            startx: x,
+            stopx: x + conf.activationWidth,
+            actor: msg.from.actor,
+            enabled: true
+          };
+          bounds.activations.push(toAdd);
+        }
+        break;
+
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ACTIVE_END:
+        {
+          var lastActorActivationIdx = bounds.activations.map(function (a) {
+            return a.actor;
+          }).lastIndexOf(msg.from.actor);
+          delete bounds.activations.splice(lastActorActivationIdx, 1)[0];
+        }
+        break;
+    }
+
+    var isNote = msg.placement !== undefined;
+
+    if (isNote) {
+      noteModel = buildNoteModel(msg, actors);
+      msg.noteModel = noteModel;
+      stack.forEach(function (stk) {
+        current = stk;
+        current.from = Math.min(current.from, noteModel.startx);
+        current.to = Math.max(current.to, noteModel.startx + noteModel.width);
+        current.width = Math.max(current.width, Math.abs(current.from - current.to)) - conf.labelBoxWidth;
+      });
+    } else {
+      msgModel = buildMessageModel(msg, actors);
+      msg.msgModel = msgModel;
+
+      if (msgModel.startx && msgModel.stopx && stack.length > 0) {
+        stack.forEach(function (stk) {
+          current = stk;
+
+          if (msgModel.startx === msgModel.stopx) {
+            var from = actors[msg.from];
+            var to = actors[msg.to];
+            current.from = Math.min(from.x - msgModel.width / 2, from.x - from.width / 2, current.from);
+            current.to = Math.max(to.x + msgModel.width / 2, to.x + from.width / 2, current.to);
+            current.width = Math.max(current.width, Math.abs(current.to - current.from)) - conf.labelBoxWidth;
+          } else {
+            current.from = Math.min(msgModel.startx, current.from);
+            current.to = Math.max(msgModel.stopx, current.to);
+            current.width = Math.max(current.width, msgModel.width) - conf.labelBoxWidth;
+          }
+        });
+      }
+    }
+  });
+  bounds.activations = [];
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Loop type widths:', loops);
+  return loops;
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -61558,6 +66320,23 @@ var calculateActorMargins = function calculateActorMargins(actors, actorToMessag
   setConf: setConf,
   draw: draw
 });
+
+/***/ }),
+
+/***/ "./src/diagrams/sequence/styles.js":
+/*!*****************************************!*\
+  !*** ./src/diagrams/sequence/styles.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return ".actor {\n    stroke: ".concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n  }\n\n  text.actor > tspan {\n    fill: ").concat(options.actorTextColor, ";\n    stroke: none;\n  }\n\n  .actor-line {\n    stroke: ").concat(options.actorLineColor, ";\n  }\n\n  .messageLine0 {\n    stroke-width: 1.5;\n    stroke-dasharray: none;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageLine1 {\n    stroke-width: 1.5;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  #arrowhead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .sequenceNumber {\n    fill: ").concat(options.sequenceNumberColor, ";\n  }\n\n  #sequencenumber {\n    fill: ").concat(options.signalColor, ";\n  }\n\n  #crosshead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageText {\n    fill: ").concat(options.signalTextColor, ";\n    stroke: ").concat(options.signalTextColor, ";\n  }\n\n  .labelBox {\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBkgColor, ";\n  }\n\n  .labelText, .labelText > tspan {\n    fill: ").concat(options.labelTextColor, ";\n    stroke: none;\n  }\n\n  .loopText, .loopText > tspan {\n    fill: ").concat(options.loopTextColor, ";\n    stroke: none;\n  }\n\n  .loopLine {\n    stroke-width: 2px;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBorderColor, ";\n  }\n\n  .note {\n    //stroke: #decc93;\n    stroke: ").concat(options.noteBorderColor, ";\n    fill: ").concat(options.noteBkgColor, ";\n  }\n\n  .noteText, .noteText > tspan {\n    fill: ").concat(options.noteTextColor, ";\n    stroke: none;\n  }\n\n  .activation0 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation1 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation2 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -61603,23 +66382,135 @@ var drawRect = function drawRect(elem, rectData) {
   return rectElem;
 };
 var drawText = function drawText(elem, textData) {
-  // Remove and ignore br:s
-  var nText = textData.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex, ' ');
-  var textElem = elem.append('text');
-  textElem.attr('x', textData.x);
-  textElem.attr('y', textData.y);
-  textElem.style('text-anchor', textData.anchor);
-  textElem.attr('fill', textData.fill);
+  var prevTextHeight = 0,
+      textHeight = 0;
+  var lines = textData.wrap ? textData.text.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex) : [textData.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex, ' ')];
+  var textElems = [];
+  var dy = 0;
 
-  if (typeof textData.class !== 'undefined') {
-    textElem.attr('class', textData.class);
+  var yfunc = function yfunc() {
+    return textData.y;
+  };
+
+  if (typeof textData.valign !== 'undefined' && typeof textData.textMargin !== 'undefined' && textData.textMargin > 0) {
+    switch (textData.valign) {
+      case 'top':
+      case 'start':
+        yfunc = function yfunc() {
+          return Math.round(textData.y + textData.textMargin);
+        };
+
+        break;
+
+      case 'middle':
+      case 'center':
+        yfunc = function yfunc() {
+          return Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
+        };
+
+        break;
+
+      case 'bottom':
+      case 'end':
+        yfunc = function yfunc() {
+          return Math.round(textData.y + (prevTextHeight + textHeight + 2 * textData.textMargin) - textData.textMargin);
+        };
+
+        break;
+    }
   }
 
-  var span = textElem.append('tspan');
-  span.attr('x', textData.x + textData.textMargin * 2);
-  span.attr('fill', textData.fill);
-  span.text(nText);
-  return textElem;
+  if (typeof textData.anchor !== 'undefined' && typeof textData.textMargin !== 'undefined' && typeof textData.width !== 'undefined') {
+    switch (textData.anchor) {
+      case 'left':
+      case 'start':
+        textData.x = Math.round(textData.x + textData.textMargin);
+        textData.anchor = 'start';
+        textData.dominantBaseline = 'text-after-edge';
+        textData.alignmentBaseline = 'middle';
+        break;
+
+      case 'middle':
+      case 'center':
+        textData.x = Math.round(textData.x + textData.width / 2);
+        textData.anchor = 'middle';
+        textData.dominantBaseline = 'middle';
+        textData.alignmentBaseline = 'middle';
+        break;
+
+      case 'right':
+      case 'end':
+        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
+        textData.anchor = 'end';
+        textData.dominantBaseline = 'text-before-edge';
+        textData.alignmentBaseline = 'middle';
+        break;
+    }
+  }
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+
+    if (typeof textData.textMargin !== 'undefined' && textData.textMargin === 0 && typeof textData.fontSize !== 'undefined') {
+      dy = i * textData.fontSize;
+    }
+
+    var textElem = elem.append('text');
+    textElem.attr('x', textData.x);
+    textElem.attr('y', yfunc());
+
+    if (typeof textData.anchor !== 'undefined') {
+      textElem.attr('text-anchor', textData.anchor).attr('dominant-baseline', textData.dominantBaseline).attr('alignment-baseline', textData.alignmentBaseline);
+    }
+
+    if (typeof textData.fontFamily !== 'undefined') {
+      textElem.style('font-family', textData.fontFamily);
+    }
+
+    if (typeof textData.fontSize !== 'undefined') {
+      textElem.style('font-size', textData.fontSize);
+    }
+
+    if (typeof textData.fontWeight !== 'undefined') {
+      textElem.style('font-weight', textData.fontWeight);
+    }
+
+    if (typeof textData.fill !== 'undefined') {
+      textElem.attr('fill', textData.fill);
+    }
+
+    if (typeof textData.class !== 'undefined') {
+      textElem.attr('class', textData.class);
+    }
+
+    if (typeof textData.dy !== 'undefined') {
+      textElem.attr('dy', textData.dy);
+    } else if (dy !== 0) {
+      textElem.attr('dy', dy);
+    }
+
+    if (textData.tspan) {
+      var span = textElem.append('tspan');
+      span.attr('x', textData.x);
+
+      if (typeof textData.fill !== 'undefined') {
+        span.attr('fill', textData.fill);
+      }
+
+      span.text(line);
+    } else {
+      textElem.text(line);
+    }
+
+    if (typeof textData.valign !== 'undefined' && typeof textData.textMargin !== 'undefined' && textData.textMargin > 0) {
+      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+      prevTextHeight = textHeight;
+    }
+
+    textElems.push(textElem);
+  }
+
+  return textElems;
 };
 var drawLabel = function drawLabel(elem, txtObject) {
   function genPoints(x, y, width, height, cut) {
@@ -61627,18 +66518,18 @@ var drawLabel = function drawLabel(elem, txtObject) {
   }
 
   var polygon = elem.append('polygon');
-  polygon.attr('points', genPoints(txtObject.x, txtObject.y, 50, 20, 7));
+  polygon.attr('points', genPoints(txtObject.x, txtObject.y, txtObject.width, txtObject.height, 7));
   polygon.attr('class', 'labelBox');
-  txtObject.y = txtObject.y + txtObject.labelMargin;
-  txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin;
+  txtObject.y = txtObject.y + txtObject.height / 2;
   drawText(elem, txtObject);
+  return polygon;
 };
 var actorCnt = -1;
 /**
- * Draws an actor in the diagram with the attaced line
+ * Draws an actor in the diagram with the attached line
  * @param elem - The diagram we'll draw to.
  * @param actor - The actor to draw.
- * @param config - The sequence diagram config object.
+ * @param conf - drawText implementation discriminator object
  */
 
 var drawActor = function drawActor(elem, actor, conf) {
@@ -61691,59 +66582,97 @@ var drawActivation = function drawActivation(elem, bounds, verticalPos, conf, ac
 /**
  * Draws a loop in the diagram
  * @param elem - elemenet to append the loop to.
- * @param bounds - bounds of the given loop.
+ * @param loopModel - loopModel of the given loop.
  * @param labelText - Text within the loop.
- * @param config - sequence diagram config object.
+ * @param conf - diagrom configuration
  */
 
-var drawLoop = function drawLoop(elem, bounds, labelText, conf) {
+var drawLoop = function drawLoop(elem, loopModel, labelText, conf) {
+  var boxMargin = conf.boxMargin,
+      boxTextMargin = conf.boxTextMargin,
+      labelBoxHeight = conf.labelBoxHeight,
+      labelBoxWidth = conf.labelBoxWidth,
+      fontFamily = conf.messageFontFamily,
+      fontSize = conf.messageFontSize,
+      fontWeight = conf.messageFontWeight;
   var g = elem.append('g');
 
   var drawLoopLine = function drawLoopLine(startx, starty, stopx, stopy) {
     return g.append('line').attr('x1', startx).attr('y1', starty).attr('x2', stopx).attr('y2', stopy).attr('class', 'loopLine');
   };
 
-  drawLoopLine(bounds.startx, bounds.starty, bounds.stopx, bounds.starty);
-  drawLoopLine(bounds.stopx, bounds.starty, bounds.stopx, bounds.stopy);
-  drawLoopLine(bounds.startx, bounds.stopy, bounds.stopx, bounds.stopy);
-  drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy);
+  drawLoopLine(loopModel.startx, loopModel.starty, loopModel.stopx, loopModel.starty);
+  drawLoopLine(loopModel.stopx, loopModel.starty, loopModel.stopx, loopModel.stopy);
+  drawLoopLine(loopModel.startx, loopModel.stopy, loopModel.stopx, loopModel.stopy);
+  drawLoopLine(loopModel.startx, loopModel.starty, loopModel.startx, loopModel.stopy);
 
-  if (typeof bounds.sections !== 'undefined') {
-    bounds.sections.forEach(function (item) {
-      drawLoopLine(bounds.startx, item, bounds.stopx, item).style('stroke-dasharray', '3, 3');
+  if (typeof loopModel.sections !== 'undefined') {
+    loopModel.sections.forEach(function (item) {
+      drawLoopLine(loopModel.startx, item.y, loopModel.stopx, item.y).style('stroke-dasharray', '3, 3');
     });
   }
 
   var txt = getTextObj();
   txt.text = labelText;
-  txt.x = bounds.startx;
-  txt.y = bounds.starty;
-  txt.labelMargin = 1.5 * 10; // This is the small box that says "loop"
-
-  txt.class = 'labelText'; // Its size & position are fixed.
-
+  txt.x = loopModel.startx;
+  txt.y = loopModel.starty;
+  txt.fontFamily = fontFamily;
+  txt.fontSize = fontSize;
+  txt.fontWeight = fontWeight;
+  txt.anchor = 'middle';
+  txt.valign = 'middle';
+  txt.tspan = false;
+  txt.width = labelBoxWidth || 50;
+  txt.height = labelBoxHeight || 20;
+  txt.textMargin = boxTextMargin;
+  txt.class = 'labelText';
   drawLabel(g, txt);
   txt = getTextObj();
-  txt.text = '[ ' + bounds.title + ' ]';
-  txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2;
-  txt.y = bounds.starty + 1.5 * conf.boxMargin;
+  txt.text = loopModel.title;
+  txt.x = loopModel.startx + labelBoxWidth / 2 + (loopModel.stopx - loopModel.startx) / 2;
+  txt.y = loopModel.starty + boxMargin + boxTextMargin;
   txt.anchor = 'middle';
+  txt.valign = 'middle';
+  txt.textMargin = boxTextMargin;
   txt.class = 'loopText';
-  drawText(g, txt);
+  txt.fontFamily = fontFamily;
+  txt.fontSize = fontSize;
+  txt.fontWeight = fontWeight;
+  txt.wrap = true;
+  var textElem = drawText(g, txt);
 
-  if (typeof bounds.sectionTitles !== 'undefined') {
-    bounds.sectionTitles.forEach(function (item, idx) {
-      if (item !== '') {
-        txt.text = '[ ' + item + ' ]';
-        txt.y = bounds.sections[idx] + 1.5 * conf.boxMargin;
-        drawText(g, txt);
+  if (typeof loopModel.sectionTitles !== 'undefined') {
+    loopModel.sectionTitles.forEach(function (item, idx) {
+      if (item.message) {
+        txt.text = item.message;
+        txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
+        txt.y = loopModel.sections[idx].y + boxMargin + boxTextMargin;
+        txt.class = 'loopText';
+        txt.anchor = 'middle';
+        txt.valign = 'middle';
+        txt.tspan = false;
+        txt.fontFamily = fontFamily;
+        txt.fontSize = fontSize;
+        txt.fontWeight = fontWeight;
+        txt.wrap = loopModel.wrap;
+        textElem = drawText(g, txt);
+        var sectionHeight = Math.round(textElem.map(function (te) {
+          return (te._groups || te)[0][0].getBBox().height;
+        }).reduce(function (acc, curr) {
+          return acc + curr;
+        }));
+        loopModel.sections[idx].height += sectionHeight - (boxMargin + boxTextMargin);
       }
     });
   }
+
+  loopModel.height = Math.round(loopModel.stopy - loopModel.starty);
+  return g;
 };
 /**
  * Draws a background rectangle
- * @param color - The fill color for the background
+ * @param elem diagram (reference for bounds)
+ * @param bounds shape of the rectangle
  */
 
 var drawBackgroundRect = function drawBackgroundRect(elem, bounds) {
@@ -61784,22 +66713,23 @@ var insertArrowCrossHead = function insertArrowCrossHead(elem) {
   marker.append('path').attr('fill', 'none').attr('stroke', '#000000').style('stroke-dasharray', '0, 0').attr('stroke-width', '1px').attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7'); // this is actual shape for arrowhead
 };
 var getTextObj = function getTextObj() {
-  var txt = {
+  return {
     x: 0,
     y: 0,
     fill: undefined,
-    'text-anchor': 'start',
+    anchor: undefined,
     style: '#666',
-    width: 100,
-    height: 100,
+    width: undefined,
+    height: undefined,
     textMargin: 0,
     rx: 0,
-    ry: 0
+    ry: 0,
+    tspan: true,
+    valign: undefined
   };
-  return txt;
 };
 var getNoteRect = function getNoteRect() {
-  var rect = {
+  return {
     x: 0,
     y: 0,
     fill: '#EDF2AE',
@@ -61810,7 +66740,6 @@ var getNoteRect = function getNoteRect() {
     rx: 0,
     ry: 0
   };
-  return rect;
 };
 
 var _drawTextCandidateFunc = function () {
@@ -61822,12 +66751,13 @@ var _drawTextCandidateFunc = function () {
 
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     var actorFontSize = conf.actorFontSize,
-        actorFontFamily = conf.actorFontFamily;
+        actorFontFamily = conf.actorFontFamily,
+        actorFontWeight = conf.actorFontWeight;
     var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
 
     for (var i = 0; i < lines.length; i++) {
       var dy = i * actorFontSize - actorFontSize * (lines.length - 1) / 2;
-      var text = g.append('text').attr('x', x + width / 2).attr('y', y).style('text-anchor', 'middle').style('font-size', actorFontSize).style('font-family', actorFontFamily);
+      var text = g.append('text').attr('x', x + width / 2).attr('y', y).style('text-anchor', 'middle').style('font-size', actorFontSize).style('font-weight', actorFontWeight).style('font-family', actorFontFamily);
       text.append('tspan').attr('x', x + width / 2).attr('dy', dy).text(lines[i]);
       text.attr('y', y + height / 2.0).attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
 
@@ -63605,10 +68535,11 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
         arrowType: '',
         style: 'fill:none',
         labelStyle: '',
-        classes: 'note-edge',
+        classes: 'transition note-edge',
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
-        labelType: 'text'
+        labelType: 'text',
+        thickness: 'normal'
       });
     } else {
       g.setNode(node.id, nodeData);
@@ -63641,13 +68572,15 @@ var setupDoc = function setupDoc(g, parent, doc, altFlag) {
       var edgeData = {
         id: 'edge' + cnt,
         arrowhead: 'normal',
-        arrowType: 'arrow_barb',
+        arrowTypeEnd: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
         label: item.description,
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
-        labelType: 'text'
+        labelType: 'text',
+        thickness: 'normal',
+        classes: 'transition'
       };
       var startId = item.state1.id;
       var endId = item.state2.id;
@@ -64061,15 +68994,33 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
 
 /***/ }),
 
-/***/ "./src/diagrams/user-journey/journeyDb.js":
-/*!************************************************!*\
-  !*** ./src/diagrams/user-journey/journeyDb.js ***!
-  \************************************************/
-/*! exports provided: clear, setTitle, getTitle, addSection, getSections, getTasks, addTask, addTaskOrg, default */
+/***/ "./src/diagrams/state/styles.js":
+/*!**************************************!*\
+  !*** ./src/diagrams/state/styles.js ***!
+  \**************************************/
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\n\n.node circle.state-start {\n  fill: black;\n  stroke: black;\n}\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
+
+/***/ }),
+
+/***/ "./src/diagrams/user-journey/journeyDb.js":
+/*!************************************************!*\
+  !*** ./src/diagrams/user-journey/journeyDb.js ***!
+  \************************************************/
+/*! exports provided: parseDirective, clear, setTitle, getTitle, addSection, getSections, getTasks, addTask, addTaskOrg, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setTitle", function() { return setTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTitle", function() { return getTitle; });
@@ -64078,6 +69029,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTasks", function() { return getTasks; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTask", function() { return addTask; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTaskOrg", function() { return addTaskOrg; });
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -64086,11 +69038,15 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+
 var title = '';
 var currentSection = '';
 var sections = [];
 var tasks = [];
 var rawTasks = [];
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(statement, context, type);
+};
 var clear = function clear() {
   sections.length = 0;
   tasks.length = 0;
@@ -64192,6 +69148,7 @@ var getActors = function getActors() {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
   clear: clear,
   setTitle: setTitle,
   getTitle: getTitle,
@@ -64284,7 +69241,8 @@ function drawActorLegend(diagram) {
       x: 40,
       y: yPos + 7,
       fill: '#666',
-      text: person
+      text: person,
+      textMargin: conf.boxTextMargin | 5
     };
     _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].drawText(diagram, labelData);
     yPos += 20;
@@ -64434,19 +69392,22 @@ var drawTasks = function drawTasks(diagram, tasks, verticalPos) {
   var taskPos = verticalPos + sectionVHeight;
   var sectionNumber = 0;
   var fill = '#CCC';
-  var colour = 'black'; // Draw the tasks
+  var colour = 'black';
+  var num = 0; // Draw the tasks
 
   for (var i = 0; i < tasks.length; i++) {
     var task = tasks[i];
 
     if (lastSection !== task.section) {
       fill = fills[sectionNumber % fills.length];
+      num = sectionNumber % fills.length;
       colour = textColours[sectionNumber % textColours.length];
       var section = {
         x: i * conf.taskMargin + i * conf.width + LEFT_MARGIN,
         y: 50,
         text: task.section,
         fill: fill,
+        num: num,
         colour: colour
       };
       _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].drawSection(diagram, section, conf);
@@ -64469,6 +69430,7 @@ var drawTasks = function drawTasks(diagram, tasks, verticalPos) {
     task.height = conf.diagramMarginY;
     task.colour = colour;
     task.fill = fill;
+    task.num = num;
     task.actors = taskActors; // Draw the box with the attached line
 
     _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].drawTask(diagram, task, conf);
@@ -64563,12 +69525,12 @@ var drawTasks = function drawTasks(diagram, tasks, verticalPos) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,12,13],$V1=[1,9],$V2=[1,10],$V3=[1,11];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,5],$V2=[6,9,11,17,18,19,21],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,21],$V7=[4,6,9,11,17,18,19,21];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"journey":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"title":11,"section":12,"taskName":13,"taskData":14,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"journey",6:"EOF",8:"SPACE",10:"NL",11:"title",12:"section",13:"taskName",14:"taskData"},
-productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,1],[9,1],[9,2]],
+symbols_: {"error":2,"start":3,"journey":4,"document":5,"EOF":6,"directive":7,"line":8,"SPACE":9,"statement":10,"NEWLINE":11,"openDirective":12,"typeDirective":13,"closeDirective":14,":":15,"argDirective":16,"title":17,"section":18,"taskName":19,"taskData":20,"open_directive":21,"type_directive":22,"arg_directive":23,"close_directive":24,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"journey",6:"EOF",9:"SPACE",11:"NEWLINE",15:":",17:"title",18:"section",19:"taskName",20:"taskData",21:"open_directive",22:"type_directive",23:"arg_directive",24:"close_directive"},
+productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,1],[10,2],[10,1],[12,1],[13,1],[16,1],[14,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -64577,31 +69539,43 @@ switch (yystate) {
 case 1:
  return $$[$0-1]; 
 break;
-case 2:
+case 3:
  this.$ = [] 
 break;
-case 3:
+case 4:
 $$[$0-1].push($$[$0]);this.$ = $$[$0-1]
 break;
-case 4: case 5:
+case 5: case 6:
  this.$ = $$[$0] 
 break;
-case 6: case 7:
+case 7: case 8:
  this.$=[];
 break;
-case 8:
+case 11:
 yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
 break;
-case 9:
+case 12:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
-case 10:
+case 13:
 yy.addTask($$[$0-1], $$[$0]);this.$='task';
+break;
+case 15:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 16:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 17:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 18:
+ yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:[1,6],9:7,10:[1,8],11:$V1,12:$V2,13:$V3},o($V0,[2,7],{1:[2,1]}),o($V0,[2,3]),{9:12,11:$V1,12:$V2,13:$V3},o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,8]),o($V0,[2,9]),{14:[1,13]},o($V0,[2,4]),o($V0,[2,10])],
-defaultActions: {},
+table: [{3:1,4:$V0,7:3,12:4,21:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,21:$V1},{13:8,22:[1,9]},{22:[2,15]},{6:[1,10],7:18,8:11,9:[1,12],10:13,11:[1,14],12:4,17:$V3,18:$V4,19:$V5,21:$V1},{1:[2,2]},{14:19,15:[1,20],24:$V6},o([15,24],[2,16]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:18,10:22,12:4,17:$V3,18:$V4,19:$V5,21:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),o($V2,[2,12]),{20:[1,23]},o($V2,[2,14]),{11:[1,24]},{16:25,23:[1,26]},{11:[2,18]},o($V2,[2,5]),o($V2,[2,13]),o($V7,[2,9]),{14:27,24:$V6},{24:[2,17]},{11:[1,28]},o($V7,[2,10])],
+defaultActions: {5:[2,15],7:[2,2],21:[2,18],26:[2,17]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -64751,6 +69725,7 @@ parse: function parse(input) {
     }
     return true;
 }};
+
 /* generated by jison-lex 0.3.4 */
 var lexer = (function(){
 var lexer = ({
@@ -65079,34 +70054,46 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 10;
+case 0: this.begin('open_directive'); return 21; 
 break;
-case 1:/* skip whitespace */
+case 1: this.begin('type_directive'); return 22; 
 break;
-case 2:/* skip comments */
+case 2: this.popState(); this.begin('arg_directive'); return 15; 
 break;
-case 3:/* skip comments */
+case 3: this.popState(); this.popState(); return 24; 
 break;
-case 4:return 4;
+case 4:return 23;
 break;
-case 5:return 11;
+case 5:/* skip comments */
 break;
-case 6:return 12;
+case 6:/* skip comments */
 break;
-case 7:return 13;
+case 7:return 11;
 break;
-case 8:return 14;
+case 8:/* skip whitespace */
 break;
-case 9:return ':';
+case 9:/* skip comments */
 break;
-case 10:return 6;
+case 10:return 4;
 break;
-case 11:return 'INVALID';
+case 11:return 17;
+break;
+case 12:return 18;
+break;
+case 13:return 19;
+break;
+case 14:return 20;
+break;
+case 15:return 15;
+break;
+case 16:return 6;
+break;
+case 17:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:journey\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:journey\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17],"inclusive":true}}
 });
 return lexer;
 })();
@@ -65136,6 +70123,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/user-journey/styles.js":
+/*!*********************************************!*\
+  !*** ./src/diagrams/user-journey/styles.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return ".label {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    color: ".concat(options.textColor, ";\n  }\n  .mouth {\n    stroke: #666;\n  }\n\n  line {\n    stroke: ").concat(options.textColor, "\n  }\n\n  .legend {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: #333;\n  }\n  .label {\n    color: ").concat(options.textColor, "\n  }\n\n  .face {\n    fill: #FFF8DC;\n    stroke: #999;\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.secondBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    font-size: 12px;\n    background: ").concat(options.secondBkg, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n\n  .task-type-0, .section-type-0  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType0) : '', ";\n  }\n  .task-type-1, .section-type-1  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType1) : '', ";\n  }\n  .task-type-2, .section-type-2  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType2) : '', ";\n  }\n  .task-type-3, .section-type-3  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType3) : '', ";\n  }\n  .task-type-4, .section-type-4  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType4) : '', ";\n  }\n  .task-type-5, .section-type-5  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType5) : '', ";\n  }\n  .task-type-6, .section-type-6  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType6) : '', ";\n  }\n  .task-type-7, .section-type-7  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType7) : '', ";\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -65179,7 +70183,7 @@ var drawRect = function drawRect(elem, rectData) {
 };
 var drawFace = function drawFace(element, faceData) {
   var radius = 15;
-  var circleElement = element.append('circle').attr('cx', faceData.cx).attr('cy', faceData.cy).attr('fill', '#FFF8DC').attr('stroke', '#999').attr('r', radius).attr('stroke-width', 2).attr('overflow', 'visible');
+  var circleElement = element.append('circle').attr('cx', faceData.cx).attr('cy', faceData.cy).attr('class', 'face').attr('r', radius).attr('stroke-width', 2).attr('overflow', 'visible');
   var face = element.append('g'); //left eye
 
   face.append('circle').attr('cx', faceData.cx - radius / 3).attr('cy', faceData.cy - radius / 3).attr('r', 1.5).attr('stroke-width', 2).attr('fill', '#666').attr('stroke', '#666'); //right eye
@@ -65189,17 +70193,17 @@ var drawFace = function drawFace(element, faceData) {
   function smile(face) {
     var arc = Object(d3__WEBPACK_IMPORTED_MODULE_0__["arc"])().startAngle(Math.PI / 2).endAngle(3 * (Math.PI / 2)).innerRadius(radius / 2).outerRadius(radius / 2.2); //mouth
 
-    face.append('path').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
+    face.append('path').attr('class', 'mouth').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
   }
 
   function sad(face) {
     var arc = Object(d3__WEBPACK_IMPORTED_MODULE_0__["arc"])().startAngle(3 * Math.PI / 2).endAngle(5 * (Math.PI / 2)).innerRadius(radius / 2).outerRadius(radius / 2.2); //mouth
 
-    face.append('path').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
+    face.append('path').attr('class', 'mouth').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
   }
 
   function ambivalent(face) {
-    face.append('line').attr('stroke', 2).attr('x1', faceData.cx - 5).attr('y1', faceData.cy + 7).attr('x2', faceData.cx + 5).attr('y2', faceData.cy + 7).attr('class', 'task-line').attr('stroke-width', '1px').attr('stroke', '#666');
+    face.append('line').attr('class', 'mouth').attr('stroke', 2).attr('x1', faceData.cx - 5).attr('y1', faceData.cy + 7).attr('x2', faceData.cx + 5).attr('y2', faceData.cy + 7).attr('class', 'mouth').attr('stroke-width', '1px').attr('stroke', '#666');
   }
 
   if (faceData.score > 3) {
@@ -65236,7 +70240,7 @@ var drawText = function drawText(elem, textData) {
   var textElem = elem.append('text');
   textElem.attr('x', textData.x);
   textElem.attr('y', textData.y);
-  textElem.attr('fill', textData.fill);
+  textElem.attr('class', 'legend');
   textElem.style('text-anchor', textData.anchor);
 
   if (typeof textData.class !== 'undefined') {
@@ -65268,13 +70272,13 @@ var drawSection = function drawSection(elem, section, conf) {
   rect.fill = section.fill;
   rect.width = conf.width;
   rect.height = conf.height;
-  rect.class = 'journey-section';
+  rect.class = 'journey-section section-type-' + section.num;
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);
 
   _drawTextCandidateFunc(conf)(section.text, g, rect.x, rect.y, rect.width, rect.height, {
-    class: 'journey-section'
+    class: 'journey-section section-type-' + section.num
   }, conf, section.colour);
 };
 var taskCount = -1;
@@ -65302,7 +70306,7 @@ var drawTask = function drawTask(elem, task, conf) {
   rect.fill = task.fill;
   rect.width = conf.width;
   rect.height = conf.height;
-  rect.class = 'task';
+  rect.class = 'task task-type-' + task.num;
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);
@@ -65389,11 +70393,12 @@ var _drawTextCandidateFunc = function () {
     }
   }
 
-  function byFo(content, g, x, y, width, height, textAttrs, conf, colour) {
+  function byFo(content, g, x, y, width, height, textAttrs, conf) {
     var body = g.append('switch');
     var f = body.append('foreignObject').attr('x', x).attr('y', y).attr('width', width).attr('height', height).attr('position', 'fixed');
     var text = f.append('div').style('display', 'table').style('height', '100%').style('width', '100%');
-    text.append('div').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle').style('color', colour).text(content);
+    text.append('div').attr('class', 'label').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle') // .style('color', colour)
+    .text(content);
     byTspan(content, body, x, y, width, height, textAttrs, conf);
 
     _setTextAttrs(text, textAttrs);
@@ -65524,7 +70529,17 @@ var logger = {
   error: function error() {},
   fatal: function fatal() {}
 };
-var setLogLevel = function setLogLevel(level) {
+var setLogLevel = function setLogLevel() {
+  var level = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'fatal';
+
+  if (isNaN(level)) {
+    level = level.toLowerCase();
+
+    if (LEVELS[level] !== undefined) {
+      level = LEVELS[level];
+    }
+  }
+
   logger.trace = function () {};
 
   logger.debug = function () {};
@@ -65578,11 +70593,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var entity_decode_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! entity-decode/browser */ "./node_modules/entity-decode/browser.js");
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
  */
 // import { decode } from 'he';
+
 
 
 
@@ -65611,8 +70628,8 @@ __webpack_require__.r(__webpack_exports__);
 var init = function init() {
   var _this = this;
 
-  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig();
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Starting rendering diagrams');
+  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init');
+
   var nodes;
 
   if (arguments.length >= 2) {
@@ -65677,6 +70694,11 @@ var init = function init() {
     txt = element.innerHTML; // transforms the html to pure text
 
     txt = Object(entity_decode_browser__WEBPACK_IMPORTED_MODULE_0__["default"])(txt).trim().replace(/<br\s*\/?>/gi, '<br/>');
+    var init = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].detectInit(txt);
+
+    if (init) {
+      _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Detected early reinit: ', init);
+    }
 
     try {
       _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].render(id, txt, function (svgCode, bindFunctions) {
@@ -65706,6 +70728,8 @@ var init = function init() {
 };
 
 var initialize = function initialize(config) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].reset();
+
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
@@ -65716,8 +70740,7 @@ var initialize = function initialize(config) {
     }
   }
 
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize(config);
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Initializing mermaid ');
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize(config); // mermaidAPI.reset();
 };
 /**
  * ##contentLoaded
@@ -65782,9 +70805,9 @@ var mermaid = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "encodeEntities", function() { return encodeEntities; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "decodeEntities", function() { return decodeEntities; });
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
-/* harmony import */ var scope_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! scope-css */ "./node_modules/scope-css/index.js");
-/* harmony import */ var scope_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(scope_css__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! stylis */ "./node_modules/stylis/stylis.js");
+/* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(stylis__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _package_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../package.json */ "./package.json");
 var _package_json__WEBPACK_IMPORTED_MODULE_2___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../package.json */ "./package.json", 1);
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./config */ "./src/config.js");
@@ -65804,41 +70827,44 @@ var _package_json__WEBPACK_IMPORTED_MODULE_2___namespace = /*#__PURE__*/__webpac
 /* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14__);
 /* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
 /* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
-/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
-/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
-/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24__);
-/* harmony import */ var _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/git/gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
-/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
-/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28__);
-/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
-/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31__);
-/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
-/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34__);
-/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__);
-/* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
-/* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
+/* harmony import */ var _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/class/classRenderer-v2 */ "./src/diagrams/class/classRenderer-v2.js");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18__);
+/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
+/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
+/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22__);
+/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
+/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25__);
+/* harmony import */ var _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/git/gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
+/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
+/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29__);
+/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
+/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32__);
+/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
+/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35__);
+/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37__);
+/* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
+/* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
+/* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
  * This is the api to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
  *
- * The core of this api is the [**render**](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render) function which, given a graph
+ * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
  * definition as text, renders the graph/diagram and returns an svg element for the graph.
  *
  * It is is then up to the user of the API to make use of the svg, either insert it somewhere in the page or do something completely different.
@@ -65886,512 +70912,27 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 
-var themes = {};
 
-for (var _i = 0, _arr = ['default', 'forest', 'dark', 'neutral']; _i < _arr.length; _i++) {
-  var themeName = _arr[_i];
-  themes[themeName] = __webpack_require__("./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$")("./".concat(themeName, "/index.scss"));
-}
-/**
- * These are the default options which can be overridden with the initialization call like so:
- * **Example 1:**
- * <pre>
- * mermaid.initialize({
- *   flowchart:{
- *     htmlLabels: false
- *   }
- * });
- * </pre>
- *
- * **Example 2:**
- * <pre>
- * &lt;script>
- *   var config = {
- *     startOnLoad:true,
- *     flowchart:{
- *       useMaxWidth:true,
- *       htmlLabels:true,
- *       curve:'cardinal',
- *     },
- *
- *     securityLevel:'loose',
- *   };
- *   mermaid.initialize(config);
- * &lt;/script>
- * </pre>
- * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
- *
- * @name Configuration
- */
 
 
-var config = {
-  /** theme , the CSS style sheet
-   *
-   * **theme** - Choose one of the built-in themes:
-   *    * default
-   *    * forest
-   *    * dark
-   *    * neutral.
-   * To disable any pre-defined mermaid theme, use "null".
-   *
-   * **themeCSS** - Use your own CSS. This overrides **theme**.
-   * <pre>
-   *  "theme": "forest",
-   *  "themeCSS": ".node rect { fill: red; }"
-   * </pre>
-   */
-  theme: 'default',
-  themeCSS: undefined,
 
-  /* **maxTextSize** - The maximum allowed size of the users text diamgram */
-  maxTextSize: 50000,
-
-  /**
-   * **fontFamily** The font to be used for the rendered diagrams. Default value is \"trebuchet ms\", verdana, arial;
-   */
-  fontFamily: '"trebuchet ms", verdana, arial;',
-
-  /**
-   * This option decides the amount of logging to be used.
-   *    * debug: 1
-   *    * info: 2
-   *    * warn: 3
-   *    * error: 4
-   *    * fatal: (**default**) 5
-   */
-  logLevel: 5,
-
-  /**
-   * Sets the level of trust to be used on the parsed diagrams.
-   *  * **strict**: (**default**) tags in text are encoded, click functionality is disabeled
-   *  * **loose**: tags in text are allowed, click functionality is enabled
-   */
-  securityLevel: 'strict',
-
-  /**
-   * This options controls whether or mermaid starts when the page loads
-   * **Default value true**.
-   */
-  startOnLoad: true,
-
-  /**
-   * This options controls whether or arrow markers in html code will be absolute paths or
-   * an anchor, #. This matters if you are using base tag settings.
-   * **Default value false**.
-   */
-  arrowMarkerAbsolute: false,
-
-  /**
-   * The object containing configurations specific for flowcharts
-   */
-  flowchart: {
-    /**
-     * Flag for setting whether or not a html tag should be used for rendering labels
-     * on the edges.
-     * **Default value true**.
-     */
-    htmlLabels: true,
-
-    /**
-     * Defines the spacing between nodes on the same level (meaning horizontal spacing for
-     * TB or BT graphs, and the vertical spacing for LR as well as RL graphs).
-     * **Default value 50**.
-     */
-    nodeSpacing: 50,
-
-    /**
-     * Defines the spacing between nodes on different levels (meaning vertical spacing for
-     * TB or BT graphs, and the horizontal spacing for LR as well as RL graphs).
-     * **Default value 50**.
-     */
-    rankSpacing: 50,
-
-    /**
-     * How mermaid renders curves for flowcharts. Possible values are
-     *   * basis
-     *   * linear **default**
-     *   * cardinal
-     */
-    curve: 'linear',
-    // Only used in new experimental rendering
-    // repreesents the padding between the labels and the shape
-    padding: 15
-  },
-
-  /**
-   * The object containing configurations specific for sequence diagrams
-   */
-  sequence: {
-    /**
-     * margin to the right and left of the sequence diagram.
-     * **Default value 50**.
-     */
-    diagramMarginX: 50,
-
-    /**
-     * margin to the over and under the sequence diagram.
-     * **Default value 10**.
-     */
-    diagramMarginY: 10,
-
-    /**
-     * Margin between actors.
-     * **Default value 50**.
-     */
-    actorMargin: 50,
-
-    /**
-     * Width of actor boxes
-     * **Default value 150**.
-     */
-    width: 150,
-
-    /**
-     * Height of actor boxes
-     * **Default value 65**.
-     */
-    height: 65,
-
-    /**
-     * Margin around loop boxes
-     * **Default value 10**.
-     */
-    boxMargin: 10,
-
-    /**
-     * margin around the text in loop/alt/opt boxes
-     * **Default value 5**.
-     */
-    boxTextMargin: 5,
-
-    /**
-     * margin around notes.
-     * **Default value 10**.
-     */
-    noteMargin: 10,
-
-    /**
-     * Space between messages.
-     * **Default value 35**.
-     */
-    messageMargin: 35,
-
-    /**
-     * Multiline message alignment. Possible values are:
-     *   * left
-     *   * center **default**
-     *   * right
-     */
-    messageAlign: 'center',
-
-    /**
-     * mirror actors under diagram.
-     * **Default value true**.
-     */
-    mirrorActors: true,
-
-    /**
-     * Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards.
-     * **Default value 1**.
-     */
-    bottomMarginAdj: 1,
-
-    /**
-     * when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     * **Default value true**.
-     */
-    useMaxWidth: true,
-
-    /**
-     * This will display arrows that start and begin at the same node as right angles, rather than a curve
-     * **Default value false**.
-     */
-    rightAngles: false,
-
-    /**
-     * This will show the node numbers
-     * **Default value false**.
-     */
-    showSequenceNumbers: false,
-
-    /**
-     * This sets the font size of the actor's description
-     * **Default value 14**.
-     */
-    actorFontSize: 14,
-
-    /**
-     * This sets the font family of the actor's description
-     * **Default value "Open-Sans", "sans-serif"**.
-     */
-    actorFontFamily: '"Open-Sans", "sans-serif"',
-
-    /**
-     * This sets the font size of actor-attached notes.
-     * **Default value 14**.
-     */
-    noteFontSize: 14,
-
-    /**
-     * This sets the font family of actor-attached notes.
-     * **Default value "trebuchet ms", verdana, arial**.
-     */
-    noteFontFamily: '"trebuchet ms", verdana, arial',
-
-    /**
-     * This sets the text alignment of actor-attached notes.
-     * **Default value center**.
-     */
-    noteAlign: 'center',
-
-    /**
-     * This sets the font size of actor messages.
-     * **Default value 16**.
-     */
-    messageFontSize: 16,
-
-    /**
-     * This sets the font family of actor messages.
-     * **Default value "trebuchet ms", verdana, arial**.
-     */
-    messageFontFamily: '"trebuchet ms", verdana, arial'
-  },
-
-  /**
-   * The object containing configurations specific for gantt diagrams*
-   */
-  gantt: {
-    /**
-     * Margin top for the text over the gantt diagram
-     * **Default value 25**.
-     */
-    titleTopMargin: 25,
-
-    /**
-     * The height of the bars in the graph
-     * **Default value 20**.
-     */
-    barHeight: 20,
-
-    /**
-     * The margin between the different activities in the gantt diagram.
-     * **Default value 4**.
-     */
-    barGap: 4,
-
-    /**
-     *  Margin between title and gantt diagram and between axis and gantt diagram.
-     * **Default value 50**.
-     */
-    topPadding: 50,
-
-    /**
-     *  The space allocated for the section name to the left of the activities.
-     * **Default value 75**.
-     */
-    leftPadding: 75,
-
-    /**
-     *  Vertical starting position of the grid lines.
-     * **Default value 35**.
-     */
-    gridLineStartPadding: 35,
-
-    /**
-     *  Font size ...
-     * **Default value 11**.
-     */
-    fontSize: 11,
-
-    /**
-     * font family ...
-     * **Default value '"Open-Sans", "sans-serif"'**.
-     */
-    fontFamily: '"Open-Sans", "sans-serif"',
-
-    /**
-     * The number of alternating section styles.
-     * **Default value 4**.
-     */
-    numberSectionStyles: 4,
-
-    /**
-     * Datetime format of the axis. This might need adjustment to match your locale and preferences
-     * **Default value '%Y-%m-%d'**.
-     */
-    axisFormat: '%Y-%m-%d'
-  },
-
-  /**
-   * The object containing configurations specific for sequence diagrams
-   */
-  journey: {
-    /**
-     * margin to the right and left of the sequence diagram.
-     * **Default value 50**.
-     */
-    diagramMarginX: 50,
-
-    /**
-     * margin to the over and under the sequence diagram.
-     * **Default value 10**.
-     */
-    diagramMarginY: 10,
-
-    /**
-     * Margin between actors.
-     * **Default value 50**.
-     */
-    actorMargin: 50,
-
-    /**
-     * Width of actor boxes
-     * **Default value 150**.
-     */
-    width: 150,
-
-    /**
-     * Height of actor boxes
-     * **Default value 65**.
-     */
-    height: 65,
-
-    /**
-     * Margin around loop boxes
-     * **Default value 10**.
-     */
-    boxMargin: 10,
-
-    /**
-     * margin around the text in loop/alt/opt boxes
-     * **Default value 5**.
-     */
-    boxTextMargin: 5,
-
-    /**
-     * margin around notes.
-     * **Default value 10**.
-     */
-    noteMargin: 10,
-
-    /**
-     * Space between messages.
-     * **Default value 35**.
-     */
-    messageMargin: 35,
-
-    /**
-     * Multiline message alignment. Possible values are:
-     *   * left
-     *   * center **default**
-     *   * right
-     */
-    messageAlign: 'center',
-
-    /**
-     * Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards.
-     * **Default value 1**.
-     */
-    bottomMarginAdj: 1,
-
-    /**
-     * when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     * **Default value true**.
-     */
-    useMaxWidth: true,
-
-    /**
-     * This will display arrows that start and begin at the same node as right angles, rather than a curve
-     * **Default value false**.
-     */
-    rightAngles: false
-  },
-  class: {},
-  git: {},
-  state: {
-    dividerMargin: 10,
-    sizeUnit: 5,
-    padding: 8,
-    textHeight: 10,
-    titleShift: -15,
-    noteMargin: 10,
-    forkWidth: 70,
-    forkHeight: 7,
-    // Used
-    miniPadding: 2,
-    // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
-    // layout. This might need updating if/when switching font
-    fontSizeFactor: 5.02,
-    fontSize: 24,
-    labelHeight: 16,
-    edgeLengthFactor: '20',
-    compositTitleSize: 35,
-    radius: 5
-  },
-
-  /**
-   * The object containing configurations specific for entity relationship diagrams
-   */
-  er: {
-    /**
-     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
-     */
-    diagramPadding: 20,
-
-    /**
-     * Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
-     * where T = top, B = bottom, L = left, and R = right.
-     */
-    layoutDirection: 'TB',
-
-    /**
-     * The mimimum width of an entity box, expressed in pixels
-     */
-    minEntityWidth: 100,
-
-    /**
-     * The minimum height of an entity box, expressed in pixels
-     */
-    minEntityHeight: 75,
-
-    /**
-     * The minimum internal padding between the text in an entity box and the enclosing box borders, expressed in pixels
-     */
-    entityPadding: 15,
-
-    /**
-     * Stroke color of box edges and lines
-     */
-    stroke: 'gray',
-
-    /**
-     * Fill color of entity boxes
-     */
-    fill: 'honeydew',
-
-    /**
-     * Font size (expressed as an integer representing a number of  pixels)
-     */
-    fontSize: 12
-  }
-};
-Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
-Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(config);
 
 function parse(text) {
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(text);
+
+  if (graphInit) {
+    reinitialize(graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('reinit ', graphInit);
+  }
+
   var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(text);
   var parser;
   _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Type ' + graphType);
 
   switch (graphType) {
     case 'git':
-      parser = _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24___default.a;
-      parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_25__["default"];
+      parser = _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25___default.a;
+      parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_26__["default"];
       break;
 
     case 'flowchart':
@@ -66417,44 +70958,51 @@ function parse(text) {
       break;
 
     case 'class':
-      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default.a;
-      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"];
+      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18___default.a;
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__["default"];
+      break;
+
+    case 'classDiagram':
+      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18___default.a;
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__["default"];
       break;
 
     case 'state':
-      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default.a;
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__["default"];
+      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22___default.a;
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_23__["default"];
       break;
 
     case 'stateDiagram':
-      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default.a;
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__["default"];
+      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22___default.a;
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_23__["default"];
       break;
 
     case 'info':
       _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('info info info');
-      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default.a;
-      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__["default"];
+      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29___default.a;
+      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_30__["default"];
       break;
 
     case 'pie':
       _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('pie');
-      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default.a;
-      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__["default"];
+      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32___default.a;
+      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_33__["default"];
       break;
 
     case 'er':
       _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('er');
-      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default.a;
-      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__["default"];
+      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35___default.a;
+      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_34__["default"];
       break;
 
     case 'journey':
       _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Journey');
-      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default.a;
-      parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__["default"];
+      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37___default.a;
+      parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_38__["default"];
       break;
   }
+
+  parser.parser.yy.graphType = graphType;
 
   parser.parser.yy.parseError = function (str, hash) {
     var error = {
@@ -66465,6 +71013,7 @@ function parse(text) {
   };
 
   parser.parse(text);
+  return parser;
 }
 
 var encodeEntities = function encodeEntities(text) {
@@ -66518,7 +71067,7 @@ var decodeEntities = function decodeEntities(text) {
  *  });
  *```
  * @param id the id of the element to be rendered
- * @param txt the graph definition
+ * @param _txt the graph definition
  * @param cb callback which is called after rendering is finished with the svg code as inparam.
  * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
@@ -66526,16 +71075,26 @@ var decodeEntities = function decodeEntities(text) {
  */
 
 var render = function render(id, _txt, cb, container) {
-  // Check the maximum allowed text size
   var txt = _txt;
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(txt);
 
-  if (_txt.length > config.maxTextSize) {
+  if (graphInit) {
+    reinitialize(graphInit);
+  } else {
+    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset();
+    var siteConfig = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
+    updateRendererConfigs(siteConfig);
+  }
+
+  var cnf = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])(); // Check the maximum allowed text size
+
+  if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
   if (typeof container !== 'undefined') {
     container.innerHTML = '';
-    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(container).append('div').attr('id', 'd' + id).attr('style', 'font-family: ' + config.fontFamily).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
+    Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(container).append('div').attr('id', 'd' + id).attr('style', 'font-family: ' + cnf.fontFamily).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
   } else {
     var existingSvg = document.getElementById(id);
 
@@ -66546,149 +71105,156 @@ var render = function render(id, _txt, cb, container) {
     var _element = document.querySelector('#' + 'd' + id);
 
     if (_element) {
-      _element.innerHTML = '';
+      _element.remove();
     }
 
-    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
+    Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
   }
 
   window.txt = txt;
   txt = encodeEntities(txt);
-  var element = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
+  var element = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
   var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(txt); // insert inline style into svg
 
   var svg = element.firstChild;
-  var firstChild = svg.firstChild; // pre-defined theme
+  var firstChild = svg.firstChild;
+  var userStyles = ''; // user provided theme CSS
 
-  var style = themes[config.theme];
-
-  if (style === undefined) {
-    style = '';
+  if (cnf.themeCSS !== undefined) {
+    userStyles += "\n".concat(cnf.themeCSS);
   } // user provided theme CSS
 
 
-  if (config.themeCSS !== undefined) {
-    style += "\n".concat(config.themeCSS);
+  if (cnf.fontFamily !== undefined) {
+    userStyles += "\n:root { --mermaid-font-family: ".concat(cnf.fontFamily, "}");
   } // user provided theme CSS
 
 
-  if (config.fontFamily !== undefined) {
-    style += "\n:root { --mermaid-font-family: ".concat(config.fontFamily, "}");
-  } // user provided theme CSS
-
-
-  if (config.altFontFamily !== undefined) {
-    style += "\n:root { --mermaid-alt-font-family: ".concat(config.altFontFamily, "}");
+  if (cnf.altFontFamily !== undefined) {
+    userStyles += "\n:root { --mermaid-alt-font-family: ".concat(cnf.altFontFamily, "}");
   } // classDef
 
 
-  if (graphType === 'flowchart' || graphType === 'flowchart-v2') {
+  if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].getClasses(txt);
 
     for (var className in classes) {
-      style += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+      userStyles += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
 
       if (classes[className].textStyles) {
-        style += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
       }
     }
   }
 
+  var stylis = new stylis__WEBPACK_IMPORTED_MODULE_0___default.a();
+  var rules = stylis("#".concat(id), Object(_styles__WEBPACK_IMPORTED_MODULE_40__["default"])(graphType, userStyles, cnf.themeVariables));
   var style1 = document.createElement('style');
-  style1.innerHTML = scope_css__WEBPACK_IMPORTED_MODULE_1___default()(style, "#".concat(id));
-  svg.insertBefore(style1, firstChild);
-  var style2 = document.createElement('style');
-  var cs = window.getComputedStyle(svg);
-  style2.innerHTML = "#".concat(id, " {\n    color: ").concat(cs.color, ";\n    font: ").concat(cs.font, ";\n  }");
-  svg.insertBefore(style2, firstChild);
+  style1.innerHTML = rules;
+  svg.insertBefore(style1, firstChild); // Verify that the generated svgs are ok before removing this
+  // const style2 = document.createElement('style');
+  // const cs = window.getComputedStyle(svg);
+  // style2.innerHTML = `#d${id} * {
+  //   color: ${cs.color};
+  //   // font: ${cs.font};
+  //   // font-family: Arial;
+  //   // font-size: 24px;
+  // }`;
+  // svg.insertBefore(style2, firstChild);
 
   try {
     switch (graphType) {
       case 'git':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(config.git);
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].draw(txt, id, false);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__["default"].setConf(cnf.git);
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(config.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(cnf.flowchart);
         _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart-v2':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(config.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(cnf.flowchart);
         _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].draw(txt, id, false);
         break;
 
       case 'sequence':
-        config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        cnf.sequence.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
 
-        if (config.sequenceDiagram) {
+        if (cnf.sequenceDiagram) {
           // backwards compatibility
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object.assign(config.sequence, config.sequenceDiagram));
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
           console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.');
         } else {
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(config.sequence);
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(cnf.sequence);
         }
 
         _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].draw(txt, id);
         break;
 
       case 'gantt':
-        config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(config.gantt);
+        cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(cnf.gantt);
         _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].draw(txt, id);
         break;
 
       case 'class':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(cnf.class);
         _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].draw(txt, id);
         break;
 
+      case 'classDiagram':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_17__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_17__["default"].draw(txt, id);
+        break;
+
       case 'state':
-        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(config.state);
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].draw(txt, id);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__["default"].draw(txt, id);
         break;
 
       case 'stateDiagram':
-        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(config.state);
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].draw(txt, id);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__["default"].draw(txt, id);
         break;
 
       case 'info':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(config.class);
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(cnf.class);
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'pie':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(config.class);
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(cnf.class);
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'er':
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(config.er);
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(cnf.er);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'journey':
-        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(config.journey);
-        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].setConf(cnf.journey);
+        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
     }
   } catch (e) {
-    _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(config.class);
-    _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+    // errorRenderer.setConf(cnf.class);
+    _errorRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
     throw e;
   }
 
-  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // if (config.arrowMarkerAbsolute) {
+  Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // if (cnf.arrowMarkerAbsolute) {
   //   url =
   //     window.location.protocol +
   //     '//' +
@@ -66700,9 +71266,10 @@ var render = function render(id, _txt, cb, container) {
   // }
   // Fix for when the base tag is used
 
-  var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node().innerHTML;
+  var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().innerHTML;
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
 
-  if (!config.arrowMarkerAbsolute || config.arrowMarkerAbsolute === 'false') {
+  if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 
@@ -66720,7 +71287,7 @@ var render = function render(id, _txt, cb, container) {
         break;
 
       case 'class':
-        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"].bindFunctions);
+        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__["default"].bindFunctions);
         break;
 
       default:
@@ -66730,60 +71297,171 @@ var render = function render(id, _txt, cb, container) {
     _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('CB = undefined!');
   }
 
-  var node = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
+  var node = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
 
   if (node !== null && typeof node.remove === 'function') {
-    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node().remove();
+    Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().remove();
   }
 
   return svgCode;
 };
 
-var setConf = function setConf(cnf) {
-  // Top level initially mermaid, gflow, sequenceDiagram and gantt
-  var lvl1Keys = Object.keys(cnf);
+var currentDirective = {};
 
-  for (var i = 0; i < lvl1Keys.length; i++) {
-    if (_typeof(cnf[lvl1Keys[i]]) === 'object' && cnf[lvl1Keys[i]] != null) {
-      var lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
+var parseDirective = function parseDirective(statement, context, type) {
+  try {
+    if (statement !== undefined) {
+      statement = statement.trim();
 
-      for (var j = 0; j < lvl2Keys.length; j++) {
-        _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j]);
+      switch (context) {
+        case 'open_directive':
+          currentDirective = {};
+          break;
 
-        if (typeof config[lvl1Keys[i]] === 'undefined') {
-          config[lvl1Keys[i]] = {};
-        }
+        case 'type_directive':
+          currentDirective.type = statement.toLowerCase();
+          break;
 
-        _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Setting config: ' + lvl1Keys[i] + ' ' + lvl2Keys[j] + ' to ' + cnf[lvl1Keys[i]][lvl2Keys[j]]);
-        config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
+        case 'arg_directive':
+          currentDirective.args = JSON.parse(statement);
+          break;
+
+        case 'close_directive':
+          handleDirective(currentDirective, type);
+          currentDirective = null;
+          break;
       }
-    } else {
-      config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
     }
+  } catch (error) {
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error(error.message);
   }
 };
 
-function initialize(options) {
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Initializing mermaidAPI ', _package_json__WEBPACK_IMPORTED_MODULE_2__.version); // Update default config with options supplied at initialization
+var handleDirective = function handleDirective(directive, type) {
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
 
-  if (_typeof(options) === 'object') {
-    setConf(options);
+  switch (directive.type) {
+    case 'init':
+    case 'initialize':
+      {
+        ['config'].forEach(function (prop) {
+          if (typeof directive.args[prop] !== 'undefined') {
+            if (type === 'flowchart-v2') {
+              type = 'flowchart';
+            }
+
+            directive.args[type] = directive.args[prop];
+            delete directive.args[prop];
+          }
+        });
+        reinitialize(directive.args);
+        break;
+      }
+
+    case 'wrap':
+    case 'nowrap':
+      directive.args = {
+        config: {
+          wrap: directive.type === 'wrap'
+        }
+      };
+      ['config'].forEach(function (prop) {
+        if (typeof directive.args[prop] !== 'undefined') {
+          if (type === 'flowchart-v2') {
+            type = 'flowchart';
+          }
+
+          directive.args[type] = directive.args[prop];
+          delete directive.args[prop];
+        }
+      });
+      reinitialize(directive.args);
+      break;
+
+    default:
+      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+      break;
+  }
+};
+
+function updateRendererConfigs(conf) {
+  _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__["default"].setConf(conf.git);
+  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(conf.flowchart);
+  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(conf.flowchart);
+
+  if (typeof conf['sequenceDiagram'] !== 'undefined') {
+    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_5__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
   }
 
-  Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(config);
+  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(conf.sequence);
+  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(conf.gantt);
+  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(conf.class);
+  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(conf.state);
+  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__["default"].setConf(conf.state);
+  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.class);
+  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(conf.class);
+  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(conf.er);
+  _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].setConf(conf.journey);
+  _errorRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].setConf(conf.class);
+}
+
+function reinitialize(options) {
+  // console.warn(`mermaidAPI.reinitialize: v${pkg.version}`, options);
+  if (options.theme && _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme]) {
+    // Todo merge with user options
+    options.themeVariables = options.theme;
+  } // Set default options
+
+
+  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
+  updateRendererConfigs(config);
   Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.reinitialize: ', config);
+}
+
+function initialize(options) {
+  // console.log(`mermaidAPI.initialize: v${pkg.version} ${options}`);
+  // Set default options
+  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme]) {
+    // Todo merge with user options
+    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme].getThemeVariables(options.themeVariables);
+  } else {
+    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"].default.getThemeVariables();
+  }
+
+  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
+  updateRendererConfigs(config);
+  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.initialize: ', config);
 } // function getConfig () {
 //   console.warn('get config')
 //   return config
 // }
 
 
-var mermaidAPI = {
+var mermaidAPI = Object.freeze({
   render: render,
   parse: parse,
+  parseDirective: parseDirective,
   initialize: initialize,
-  getConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]
-};
+  reinitialize: reinitialize,
+  getConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"],
+  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"],
+  reset: function reset() {
+    // console.warn('reset');
+    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset();
+    var siteConfig = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
+    updateRendererConfigs(siteConfig);
+  },
+  globalReset: function globalReset() {
+    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(_config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig);
+    updateRendererConfigs(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
+  },
+  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig
+});
+Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().logLevel);
+_config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
 /* harmony default export */ __webpack_exports__["default"] = (mermaidAPI);
 /**
  * ## mermaidAPI configuration defaults
@@ -66797,7 +71475,19 @@ var mermaidAPI = {
  *     startOnLoad:true,
  *     arrowMarkerAbsolute:false,
  *
+ *     er:{
+ *       diagramPadding:20,
+ *       layoutDirection:'TB',
+ *       minEntityWidth:100,
+ *       minEntityHeight:75,
+ *       entityPadding:15,
+ *       stroke:'gray',
+ *       fill:'honeydew',
+ *       fontSize:12,
+ *       useMaxWidth:true,
+ *     },
  *     flowchart:{
+ *       diagramPadding:8,
  *       htmlLabels:true,
  *       curve:'linear',
  *     },
@@ -66838,127 +71528,1095 @@ var mermaidAPI = {
 
 /***/ }),
 
-/***/ "./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$":
-/*!***********************************************!*\
-  !*** ./src/themes sync ^\.\/.*\/index\.scss$ ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/styles.js":
+/*!***********************!*\
+  !*** ./src/styles.js ***!
+  \***********************/
+/*! exports provided: calcThemeVariables, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var map = {
-	"./dark/index.scss": "./src/themes/dark/index.scss",
-	"./default/index.scss": "./src/themes/default/index.scss",
-	"./forest/index.scss": "./src/themes/forest/index.scss",
-	"./neutral/index.scss": "./src/themes/neutral/index.scss"
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calcThemeVariables", function() { return calcThemeVariables; });
+/* harmony import */ var _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./diagrams/class/styles */ "./src/diagrams/class/styles.js");
+/* harmony import */ var _diagrams_er_styles__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./diagrams/er/styles */ "./src/diagrams/er/styles.js");
+/* harmony import */ var _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./diagrams/flowchart/styles */ "./src/diagrams/flowchart/styles.js");
+/* harmony import */ var _diagrams_gantt_styles__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./diagrams/gantt/styles */ "./src/diagrams/gantt/styles.js");
+/* harmony import */ var _diagrams_git_styles__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./diagrams/git/styles */ "./src/diagrams/git/styles.js");
+/* harmony import */ var _diagrams_info_styles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diagrams/info/styles */ "./src/diagrams/info/styles.js");
+/* harmony import */ var _diagrams_pie_styles__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/pie/styles */ "./src/diagrams/pie/styles.js");
+/* harmony import */ var _diagrams_sequence_styles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/sequence/styles */ "./src/diagrams/sequence/styles.js");
+/* harmony import */ var _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/state/styles */ "./src/diagrams/state/styles.js");
+/* harmony import */ var _diagrams_user_journey_styles__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/user-journey/styles */ "./src/diagrams/user-journey/styles.js");
+
+
+
+
+
+
+
+
+
+
+var themes = {
+  flowchart: _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_2__["default"],
+  'flowchart-v2': _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_2__["default"],
+  sequence: _diagrams_sequence_styles__WEBPACK_IMPORTED_MODULE_7__["default"],
+  gantt: _diagrams_gantt_styles__WEBPACK_IMPORTED_MODULE_3__["default"],
+  classDiagram: _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__["default"],
+  'classDiagram-v2': _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__["default"],
+  class: _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__["default"],
+  stateDiagram: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_8__["default"],
+  state: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_8__["default"],
+  git: _diagrams_git_styles__WEBPACK_IMPORTED_MODULE_4__["default"],
+  info: _diagrams_info_styles__WEBPACK_IMPORTED_MODULE_5__["default"],
+  pie: _diagrams_pie_styles__WEBPACK_IMPORTED_MODULE_6__["default"],
+  er: _diagrams_er_styles__WEBPACK_IMPORTED_MODULE_1__["default"],
+  journey: _diagrams_user_journey_styles__WEBPACK_IMPORTED_MODULE_9__["default"]
+};
+var calcThemeVariables = function calcThemeVariables(theme, userOverRides) {
+  return theme.calcColors(userOverRides);
 };
 
-
-function webpackContext(req) {
-	var id = webpackContextResolve(req);
-	return __webpack_require__(id);
-}
-function webpackContextResolve(req) {
-	if(!__webpack_require__.o(map, req)) {
-		var e = new Error("Cannot find module '" + req + "'");
-		e.code = 'MODULE_NOT_FOUND';
-		throw e;
-	}
-	return map[req];
-}
-webpackContext.keys = function webpackContextKeys() {
-	return Object.keys(map);
+var getStyles = function getStyles(type, userStyles, options) {
+  return " {\n    font-family: ".concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n    fill: ").concat(options.textColor, "\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ").concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  ").concat(themes[type](options), "\n\n  ").concat(userStyles, "\n\n  ").concat(type, " { fill: apa;}\n");
 };
-webpackContext.resolve = webpackContextResolve;
-module.exports = webpackContext;
-webpackContext.id = "./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$";
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
-/***/ "./src/themes/dark/index.scss":
+/***/ "./src/themes/index.js":
+/*!*****************************!*\
+  !*** ./src/themes/index.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _theme_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./theme-base */ "./src/themes/theme-base.js");
+/* harmony import */ var _theme_dark__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-dark */ "./src/themes/theme-dark.js");
+/* harmony import */ var _theme_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./theme-default */ "./src/themes/theme-default.js");
+/* harmony import */ var _theme_forest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./theme-forest */ "./src/themes/theme-forest.js");
+/* harmony import */ var _theme_neutral__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./theme-neutral */ "./src/themes/theme-neutral.js");
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  base: {
+    getThemeVariables: _theme_base__WEBPACK_IMPORTED_MODULE_0__["getThemeVariables"]
+  },
+  dark: {
+    getThemeVariables: _theme_dark__WEBPACK_IMPORTED_MODULE_1__["getThemeVariables"]
+  },
+  default: {
+    getThemeVariables: _theme_default__WEBPACK_IMPORTED_MODULE_2__["getThemeVariables"]
+  },
+  forest: {
+    getThemeVariables: _theme_forest__WEBPACK_IMPORTED_MODULE_3__["getThemeVariables"]
+  },
+  neutral: {
+    getThemeVariables: _theme_neutral__WEBPACK_IMPORTED_MODULE_4__["getThemeVariables"]
+  }
+});
+
+/***/ }),
+
+/***/ "./src/themes/theme-base.js":
+/*!**********************************!*\
+  !*** ./src/themes/theme-base.js ***!
+  \**********************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    /* Base variables */
+    this.primaryColor = '#9f33be';
+    this.secondaryColor = '#b20238';
+    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 30);
+    this.relationColor = '#000'; // this.primaryColor = '#fa255e';
+    // this.secondaryColor = '#c39ea0';
+    // this.tertiaryColor = '#f8e5e5';
+    // this.primaryColor = '#ECECFF';
+    // this.secondaryColor = '#ffffde';
+    // this.tertiaryColor = '#ffffde';
+
+    this.background = 'white';
+    this.lineColor = '#333333';
+    this.border1 = '#9370DB';
+    this.arrowheadColor = '#333333';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    this.labelBackground = '#e8e8e8';
+    this.textColor = '#333';
+    this.noteBkgColor = '#fff5ad';
+    this.noteBorderColor = '#aaaa33';
+    this.updateColors();
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      this.secondBkg = this.tertiaryColor;
+      /* Flowchart variables */
+
+      this.nodeBkg = this.primaryColor;
+      this.mainBkg = this.primaryColor;
+      this.nodeBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.primaryColor, 23); // border 1
+
+      this.clusterBkg = this.tertiaryColor;
+      this.clusterBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.tertiaryColor, 30);
+      this.defaultLinkColor = this.lineColor;
+      this.titleColor = this.textColor;
+      this.edgeLabelBackground = this.labelBackground;
+      /* Sequence Diagram variables */
+      // this.actorBorder = lighten(this.border1, 0.5);
+
+      this.actorBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.border1, 23);
+      this.actorBkg = this.mainBkg;
+      this.actorTextColor = 'black';
+      this.actorLineColor = 'grey';
+      this.labelBoxBkgColor = this.actorBkg;
+      this.signalColor = this.textColor;
+      this.signalTextColor = this.textColor;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.actorTextColor;
+      this.loopTextColor = this.actorTextColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.actorTextColor;
+      this.activationBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 10);
+      this.activationBkgColor = this.secondaryColor;
+      this.sequenceNumberColor = 'white';
+      /* Gantt chart variables */
+
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      this.sectionBkgColor = this.tertiaryColor;
+      this.altSectionBkgColor = 'white';
+      this.sectionBkgColor = this.secondaryColor;
+      this.sectionBkgColor2 = this.tertiaryColor;
+      this.altSectionBkgColor = 'white';
+      this.sectionBkgColor2 = this.primaryColor;
+      this.taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 23);
+      this.taskBkgColor = this.primaryColor;
+      this.taskTextLightColor = 'white';
+      this.taskTextColor = 'calculated';
+      this.taskTextDarkColor = 'black';
+      this.taskTextOutsideColor = 'calculated';
+      this.taskTextClickableColor = '#003163';
+      this.activeTaskBorderColor = this.primaryColor;
+      this.activeTaskBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 23);
+      this.gridColor = 'lightgrey';
+      this.doneTaskBkgColor = 'lightgrey';
+      this.doneTaskBorderColor = 'grey';
+      this.critBorderColor = '#ff8888';
+      this.critBkgColor = 'red';
+      this.todayLineColor = 'red';
+      /* state colors */
+
+      this.labelColor = 'black';
+      this.errorBkgColor = '#552222';
+      this.errorTextColor = '#552222';
+      /* state colors */
+
+      /* class */
+
+      this.classText = this.textColor;
+      /* user-journey */
+
+      this.fillType0 = this.primaryColor;
+      this.fillType1 = this.secondaryColor;
+      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  return theme;
+};
+
+/***/ }),
+
+/***/ "./src/themes/theme-dark.js":
+/*!**********************************!*\
+  !*** ./src/themes/theme-dark.js ***!
+  \**********************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    this.background = '#333';
+    this.primaryColor = '#1f2020';
+    this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 16);
+    this.mainBkg = '#1f2020';
+    this.secondBkg = 'calculated';
+    this.mainContrastColor = 'lightgrey';
+    this.darkTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])('#323D47'), 10);
+    this.lineColor = 'calculated';
+    this.border1 = '#81B1DB';
+    this.border2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.25);
+    this.arrowheadColor = 'calculated';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    this.labelBackground = '#181818';
+    this.textColor = '#ccc';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = '#F9FFFE';
+    this.edgeLabelBackground = 'calculated';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'calculated';
+    this.actorLineColor = 'calculated';
+    this.signalColor = 'calculated';
+    this.signalTextColor = 'calculated';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = 'calculated';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = 'calculated';
+    this.activationBkgColor = 'calculated';
+    this.sequenceNumberColor = 'black';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])('#EAE8D9', 30);
+    this.altSectionBkgColor = 'calculated';
+    this.sectionBkgColor2 = '#EAE8D9';
+    this.taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 70);
+    this.taskBkgColor = 'calculated';
+    this.taskTextColor = 'calculated';
+    this.taskTextLightColor = 'calculated';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 50);
+    this.activeTaskBkgColor = '#81B1DB';
+    this.gridColor = 'calculated';
+    this.doneTaskBkgColor = 'calculated';
+    this.doneTaskBorderColor = 'grey';
+    this.critBorderColor = '#E83737';
+    this.critBkgColor = '#E83737';
+    this.taskTextDarkColor = 'calculated';
+    this.todayLineColor = '#DB5757';
+    /* state colors */
+
+    this.labelColor = 'calculated';
+    this.errorBkgColor = '#a44141';
+    this.errorTextColor = '#ddd';
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      this.secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.mainBkg, 16);
+      this.lineColor = this.mainContrastColor;
+      this.arrowheadColor = this.mainContrastColor;
+      /* Flowchart variables */
+
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1;
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      this.edgeLabelBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.labelBackground, 25);
+      /* Sequence Diagram variables */
+
+      this.actorBorder = this.border1;
+      this.actorBkg = this.mainBkg;
+      this.actorTextColor = this.mainContrastColor;
+      this.actorLineColor = this.mainContrastColor;
+      this.signalColor = this.mainContrastColor;
+      this.signalTextColor = this.mainContrastColor;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.mainContrastColor;
+      this.loopTextColor = this.mainContrastColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.mainBkg;
+      this.activationBorderColor = this.border1;
+      this.activationBkgColor = this.secondBkg;
+      /* Gantt chart variables */
+
+      this.altSectionBkgColor = this.background;
+      this.taskBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.mainBkg, 23);
+      this.taskTextColor = this.darkTextColor;
+      this.taskTextLightColor = this.mainContrastColor;
+      this.taskTextOutsideColor = this.taskTextLightColor;
+      this.gridColor = this.mainContrastColor;
+      this.doneTaskBkgColor = this.mainContrastColor;
+      this.taskTextDarkColor = this.darkTextColor;
+      /* state colors */
+
+      this.labelColor = this.textColor;
+      this.altBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.background, 20);
+      this.fillType0 = this.primaryColor;
+      this.fillType1 = this.secondaryColor;
+      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+      /* class */
+
+      this.classText = this.nodeBorder;
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  console.info('Theme(dark)', {
+    userOverrides: userOverrides,
+    theme: theme
+  });
+  return theme;
+};
+
+/***/ }),
+
+/***/ "./src/themes/theme-default.js":
+/*!*************************************!*\
+  !*** ./src/themes/theme-default.js ***!
+  \*************************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    /* Base variables */
+    this.primaryColor = '#ECECFF';
+    this.secondaryColor = '#ffffde';
+    this.background = 'white';
+    this.mainBkg = '#ECECFF';
+    this.secondBkg = '#ffffde';
+    this.lineColor = '#333333';
+    this.border1 = '#9370DB';
+    this.border2 = '#aaaa33';
+    this.arrowheadColor = '#333333';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    this.labelBackground = '#e8e8e8';
+    this.textColor = '#333';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = 'calculated';
+    this.edgeLabelBackground = 'calculated';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'black';
+    this.actorLineColor = 'grey';
+    this.signalColor = 'calculated';
+    this.signalTextColor = 'calculated';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = 'calculated';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = '#666';
+    this.activationBkgColor = '#f4f4f4';
+    this.sequenceNumberColor = 'white';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = 'calculated';
+    this.altSectionBkgColor = 'calculated';
+    this.sectionBkgColor2 = 'calculated';
+    this.taskBorderColor = 'calculated';
+    this.taskBkgColor = 'calculated';
+    this.taskTextLightColor = 'calculated';
+    this.taskTextColor = this.taskTextLightColor;
+    this.taskTextDarkColor = 'calculated';
+    this.taskTextOutsideColor = this.taskTextDarkColor;
+    this.taskTextClickableColor = 'calculated';
+    this.activeTaskBorderColor = 'calculated';
+    this.activeTaskBkgColor = 'calculated';
+    this.gridColor = 'calculated';
+    this.doneTaskBkgColor = 'calculated';
+    this.doneTaskBorderColor = 'calculated';
+    this.critBorderColor = 'calculated';
+    this.critBkgColor = 'calculated';
+    this.todayLineColor = 'calculated';
+    this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(102, 102, 255, 0.49);
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = '#fff400';
+    this.taskBorderColor = '#534fbc';
+    this.taskBkgColor = '#8a90dd';
+    this.taskTextLightColor = 'white';
+    this.taskTextColor = 'calculated';
+    this.taskTextDarkColor = 'black';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = '#534fbc';
+    this.activeTaskBkgColor = '#bfc7ff';
+    this.gridColor = 'lightgrey';
+    this.doneTaskBkgColor = 'lightgrey';
+    this.doneTaskBorderColor = 'grey';
+    this.critBorderColor = '#ff8888';
+    this.critBkgColor = 'red';
+    this.todayLineColor = 'red';
+    /* state colors */
+
+    this.labelColor = 'black';
+    this.errorBkgColor = '#552222';
+    this.errorTextColor = '#552222';
+    this.updateColors();
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      /* Flowchart variables */
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1; // border 1
+
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      this.titleColor = this.textColor;
+      this.edgeLabelBackground = this.labelBackground;
+      /* Sequence Diagram variables */
+      // this.actorBorder = lighten(this.border1, 0.5);
+
+      this.actorBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.border1, 23);
+      this.actorBkg = this.mainBkg;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.signalColor = this.textColor;
+      this.signalTextColor = this.textColor;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.actorTextColor;
+      this.loopTextColor = this.actorTextColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.actorTextColor;
+      /* Gantt chart variables */
+
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      /* state colors */
+
+      /* class */
+
+      this.classText = this.nodeBorder;
+      /* journey */
+
+      this.fillType0 = this.primaryColor;
+      this.fillType1 = this.secondaryColor;
+      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  console.info('Theme(default)', {
+    userOverrides: userOverrides,
+    theme: theme
+  });
+  return theme;
+};
+
+/***/ }),
+
+/***/ "./src/themes/theme-forest.js":
 /*!************************************!*\
-  !*** ./src/themes/dark/index.scss ***!
+  !*** ./src/themes/theme-forest.js ***!
   \************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    /* Base vales */
+    this.primaryColor = '#cde498';
+    this.secondaryColor = '#cdffb2';
+    this.background = 'white';
+    this.mainBkg = '#cde498';
+    this.secondBkg = '#cdffb2';
+    this.lineColor = 'green';
+    this.border1 = '#13540c';
+    this.border2 = '#6eaa49';
+    this.arrowheadColor = 'green';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = '#333';
+    this.edgeLabelBackground = '#e8e8e8';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'black';
+    this.actorLineColor = 'grey';
+    this.signalColor = '#333';
+    this.signalTextColor = '#333';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = '#326932';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = '#666';
+    this.activationBkgColor = '#f4f4f4';
+    this.sequenceNumberColor = 'white';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = '#6eaa49';
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = '#6eaa49';
+    this.taskBorderColor = 'calculated';
+    this.taskBkgColor = '#487e3a';
+    this.taskTextLightColor = 'white';
+    this.taskTextColor = 'calculated';
+    this.taskTextDarkColor = 'black';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = 'calculated';
+    this.activeTaskBkgColor = 'calculated';
+    this.gridColor = 'lightgrey';
+    this.doneTaskBkgColor = 'lightgrey';
+    this.doneTaskBorderColor = 'grey';
+    this.critBorderColor = '#ff8888';
+    this.critBkgColor = 'red';
+    this.todayLineColor = 'red';
+    /* state colors */
+
+    this.labelColor = 'black';
+    this.errorBkgColor = '#552222';
+    this.errorTextColor = '#552222';
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      /* Flowchart variables */
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1;
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      /* Sequence Diagram variables */
+
+      this.actorBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.mainBkg, 20);
+      this.actorBkg = this.mainBkg;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.labelTextColor = this.actorTextColor;
+      this.loopTextColor = this.actorTextColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.actorTextColor;
+      /* Gantt chart variables */
+
+      this.taskBorderColor = this.border1;
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      this.activeTaskBorderColor = this.taskBorderColor;
+      this.activeTaskBkgColor = this.mainBkg;
+      /* state colors */
+
+      /* class */
+
+      this.classText = this.nodeBorder;
+      /* journey */
+
+      this.fillType0 = this.primaryColor;
+      this.fillType1 = this.secondaryColor;
+      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  console.info('Theme(forest)', {
+    userOverrides: userOverrides,
+    theme: theme
+  });
+  return theme;
+};
 
 /***/ }),
 
-/***/ "./src/themes/default/index.scss":
-/*!***************************************!*\
-  !*** ./src/themes/default/index.scss ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/themes/theme-neutral.js":
+/*!*************************************!*\
+  !*** ./src/themes/theme-neutral.js ***!
+  \*************************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-/***/ }),
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-/***/ "./src/themes/forest/index.scss":
-/*!**************************************!*\
-  !*** ./src/themes/forest/index.scss ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+ // const Color = require ( 'khroma/dist/color' ).default
+// Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss");
+    this.primaryColor = '#eee';
+    this.contrast = '#26a';
+    this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
+    this.background = 'white';
+    this.mainBkg = '#eee';
+    this.secondBkg = 'calculated';
+    this.lineColor = '#666';
+    this.border1 = '#999';
+    this.border2 = 'calculated';
+    this.note = '#ffa';
+    this.text = '#333';
+    this.critical = '#d42';
+    this.done = '#bbb';
+    this.arrowheadColor = '#333333';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    /* Flowchart variables */
 
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = 'calculated';
+    this.edgeLabelBackground = 'white';
+    /* Sequence Diagram variables */
 
-/***/ }),
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'calculated';
+    this.actorLineColor = 'calculated';
+    this.signalColor = 'calculated';
+    this.signalTextColor = 'calculated';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = 'calculated';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = 'calculated';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = '#666';
+    this.activationBkgColor = '#f4f4f4';
+    this.sequenceNumberColor = 'white';
+    /* Gantt chart variables */
 
-/***/ "./src/themes/neutral/index.scss":
-/*!***************************************!*\
-  !*** ./src/themes/neutral/index.scss ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+    this.sectionBkgColor = 'calculated';
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = 'calculated';
+    this.taskBorderColor = 'calculated';
+    this.taskBkgColor = 'calculated';
+    this.taskTextLightColor = 'white';
+    this.taskTextColor = 'calculated';
+    this.taskTextDarkColor = 'calculated';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = 'calculated';
+    this.activeTaskBkgColor = 'calculated';
+    this.gridColor = 'calculated';
+    this.doneTaskBkgColor = 'calculated';
+    this.doneTaskBorderColor = 'calculated';
+    this.critBkgColor = 'calculated';
+    this.critBorderColor = 'calculated';
+    this.todayLineColor = 'calculated';
+    /* state colors */
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+    this.labelColor = 'black';
+    this.errorBkgColor = '#552222';
+    this.errorTextColor = '#552222';
+  }
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss");
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      this.secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
+      this.border2 = this.contrast;
+      /* Flowchart variables */
 
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1;
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      this.titleColor = this.text;
+      /* Sequence Diagram variables */
+
+      this.actorBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.border1, 23);
+      this.actorBkg = this.mainBkg;
+      this.actorTextColor = this.text;
+      this.actorLineColor = this.lineColor;
+      this.signalColor = this.text;
+      this.signalTextColor = this.text;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.text;
+      this.loopTextColor = this.text;
+      this.noteBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.note, 60);
+      this.noteBkgColor = this.note;
+      this.noteTextColor = this.actorTextColor;
+      /* Gantt chart variables */
+
+      this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 30);
+      this.sectionBkgColor2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 30);
+      this.taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.contrast, 10);
+      this.taskBkgColor = this.contrast;
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextDarkColor = this.text;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      this.activeTaskBorderColor = this.taskBorderColor;
+      this.activeTaskBkgColor = this.mainBkg;
+      this.gridColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.border1, 30);
+      this.doneTaskBkgColor = this.done;
+      this.doneTaskBorderColor = this.lineColor;
+      this.critBkgColor = this.critical;
+      this.critBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.critBkgColor, 10);
+      this.todayLineColor = this.critBkgColor;
+      /* state colors */
+
+      /* class */
+
+      this.classText = this.nodeBorder;
+      /* journey */
+
+      this.fillType0 = this.primaryColor;
+      this.fillType1 = this.secondaryColor;
+      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  console.info('Theme(neutral)', {
+    userOverrides: userOverrides,
+    theme: theme
+  });
+  return theme;
+};
 
 /***/ }),
 
@@ -66966,24 +72624,50 @@ if (typeof styles === 'string') {
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! exports provided: detectType, isSubstringInArray, interpolateToCurve, formatUrl, getStylesFromArray, generateId, default */
+/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, random, assignWithDepth, getTextObj, drawSimpleText, wrapLabel, calculateTextHeight, calculateTextWidth, calculateTextDimensions, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "detectInit", function() { return detectInit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "detectDirective", function() { return detectDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "detectType", function() { return detectType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isSubstringInArray", function() { return isSubstringInArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "interpolateToCurve", function() { return interpolateToCurve; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatUrl", function() { return formatUrl; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "runFunc", function() { return runFunc; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStylesFromArray", function() { return getStylesFromArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "generateId", function() { return generateId; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "random", function() { return random; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assignWithDepth", function() { return assignWithDepth; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTextObj", function() { return getTextObj; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawSimpleText", function() { return drawSimpleText; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "wrapLabel", function() { return wrapLabel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextHeight", function() { return calculateTextHeight; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextWidth", function() { return calculateTextWidth; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextDimensions", function() { return calculateTextDimensions; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @braintree/sanitize-url */ "./node_modules/@braintree/sanitize-url/index.js");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./diagrams/common/common */ "./src/diagrams/common/common.js");
+var _this = undefined;
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 
- // Effectively an enum of the supported curve types, accessible by name
+
+
+ // import cryptoRandomString from 'crypto-random-string';
+// Effectively an enum of the supported curve types, accessible by name
 
 var d3CurveTypes = {
   curveBasis: d3__WEBPACK_IMPORTED_MODULE_0__["curveBasis"],
@@ -66998,10 +72682,140 @@ var d3CurveTypes = {
   curveStepAfter: d3__WEBPACK_IMPORTED_MODULE_0__["curveStepAfter"],
   curveStepBefore: d3__WEBPACK_IMPORTED_MODULE_0__["curveStepBefore"]
 };
+var directive = /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+var directiveWithoutOpen = /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+var anyComment = /\s*%%.*\n/gm;
+/**
+ * @function detectInit
+ * Detects the init config object from the text
+ * ```mermaid
+ * %%{init: {"theme": "debug", "logLevel": 1 }}%%
+ * graph LR
+ *  a-->b
+ *  b-->c
+ *  c-->d
+ *  d-->e
+ *  e-->f
+ *  f-->g
+ *  g-->h
+ * ```
+ * or
+ * ```mermaid
+ * %%{initialize: {"theme": "dark", logLevel: "debug" }}%%
+ * graph LR
+ *  a-->b
+ *  b-->c
+ *  c-->d
+ *  d-->e
+ *  e-->f
+ *  f-->g
+ *  g-->h
+ * ```
+ *
+ * @param {string} text The text defining the graph
+ * @returns {object} the json object representing the init passed to mermaid.initialize()
+ */
+
+var detectInit = function detectInit(text) {
+  var inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
+  var results = {};
+
+  if (Array.isArray(inits)) {
+    var args = inits.map(function (init) {
+      return init.args;
+    });
+    results = assignWithDepth(results, _toConsumableArray(args));
+  } else {
+    results = inits.args;
+  }
+
+  if (results) {
+    var type = detectType(text);
+    ['config'].forEach(function (prop) {
+      if (typeof results[prop] !== 'undefined') {
+        if (type === 'flowchart-v2') {
+          type = 'flowchart';
+        }
+
+        results[type] = results[prop];
+        delete results[prop];
+      }
+    });
+  }
+
+  return results;
+};
+/**
+ * @function detectDirective
+ * Detects the directive from the text. Text can be single line or multiline. If type is null or omitted
+ * the first directive encountered in text will be returned
+ * ```mermaid
+ * graph LR
+ *  %%{somedirective}%%
+ *  a-->b
+ *  b-->c
+ *  c-->d
+ *  d-->e
+ *  e-->f
+ *  f-->g
+ *  g-->h
+ * ```
+ *
+ * @param {string} text The text defining the graph
+ * @param {string|RegExp} type The directive to return (default: null)
+ * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matched by the input type
+ *          if a single directive was found, that directive object will be returned.
+ */
+
+var detectDirective = function detectDirective(text) {
+  var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+  try {
+    var commentWithoutDirectives = new RegExp("[%]{2}(?![{]".concat(directiveWithoutOpen.source, ")(?=[}][%]{2}).*\n"), 'ig');
+    text = text.trim().replace(commentWithoutDirectives, '').replace(/'/gm, '"');
+    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug("Detecting diagram directive".concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
+    var match,
+        result = [];
+
+    while ((match = directive.exec(text)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (match.index === directive.lastIndex) {
+        directive.lastIndex++;
+      }
+
+      if (match && !type || type && match[1] && match[1].match(type) || type && match[2] && match[2].match(type)) {
+        var _type = match[1] ? match[1] : match[2];
+
+        var args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
+        result.push({
+          type: _type,
+          args: args
+        });
+      }
+    }
+
+    if (result.length === 0) {
+      result.push({
+        type: text,
+        args: null
+      });
+    }
+
+    return result.length === 1 ? result[0] : result;
+  } catch (error) {
+    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].error("ERROR: ".concat(error.message, " - Unable to parse directive").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
+    return {
+      type: null,
+      args: null
+    };
+  }
+};
 /**
  * @function detectType
- * Detects the type of the graph text.
+ * Detects the type of the graph text. Takes into consideration the possible existence of an %%init
+ * directive
  * ```mermaid
+ * %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -67017,7 +72831,7 @@ var d3CurveTypes = {
  */
 
 var detectType = function detectType(text) {
-  text = text.replace(/^\s*%%.*\n/g, '\n');
+  text = text.replace(directive, '').replace(anyComment, '\n');
   _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Detecting diagram type based on the text ' + text);
 
   if (text.match(/^\s*sequenceDiagram/)) {
@@ -67026,6 +72840,10 @@ var detectType = function detectType(text) {
 
   if (text.match(/^\s*gantt/)) {
     return 'gantt';
+  }
+
+  if (text.match(/^\s*classDiagram-v2/)) {
+    return 'classDiagram';
   }
 
   if (text.match(/^\s*classDiagram/)) {
@@ -67066,6 +72884,25 @@ var detectType = function detectType(text) {
 
   return 'flowchart';
 };
+
+var memoize = function memoize(fn, resolver) {
+  var cache = {};
+  return function () {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var n = resolver ? resolver.apply(_this, args) : args[0];
+
+    if (n in cache) {
+      return cache[n];
+    } else {
+      var result = fn.apply(void 0, args);
+      cache[n] = result;
+      return result;
+    }
+  };
+};
 /**
  * @function isSubstringInArray
  * Detects whether a substring in present in a given array
@@ -67073,6 +72910,7 @@ var detectType = function detectType(text) {
  * @param {array} arr The array to search
  * @returns {number} the array index containing the substring or -1 if not present
  **/
+
 
 var isSubstringInArray = function isSubstringInArray(str, arr) {
   for (var i = 0; i < arr.length; i++) {
@@ -67100,6 +72938,25 @@ var formatUrl = function formatUrl(linkStr, config) {
     return url;
   }
 };
+var runFunc = function runFunc(functionName) {
+  var _obj;
+
+  var arrPaths = functionName.split('.');
+  var len = arrPaths.length - 1;
+  var fnName = arrPaths[len];
+  var obj = window;
+
+  for (var i = 0; i < len; i++) {
+    obj = obj[arrPaths[i]];
+    if (!obj) return;
+  }
+
+  for (var _len2 = arguments.length, params = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    params[_key2 - 1] = arguments[_key2];
+  }
+
+  (_obj = obj)[fnName].apply(_obj, params);
+};
 
 var distance = function distance(p1, p2) {
   return p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
@@ -67113,9 +72970,8 @@ var traverseEdge = function traverseEdge(points) {
     prevPoint = point;
   }); // Traverse half of total distance along points
 
-  var distanceToLabel = totalDistance / 2;
-  var remainingDistance = distanceToLabel;
-  var center;
+  var remainingDistance = totalDistance / 2;
+  var center = undefined;
   prevPoint = undefined;
   points.forEach(function (point) {
     if (prevPoint && !center) {
@@ -67148,8 +73004,7 @@ var traverseEdge = function traverseEdge(points) {
 };
 
 var calcLabelPosition = function calcLabelPosition(points) {
-  var p = traverseEdge(points);
-  return p;
+  return traverseEdge(points);
 };
 
 var calcCardinalityPosition = function calcCardinalityPosition(isRelationTypePresent, points, initialPosition) {
@@ -67235,7 +73090,358 @@ var generateId = function generateId() {
   cnt++;
   return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
 };
+
+function makeid(length) {
+  var result = '';
+  var characters = '0123456789abcdef';
+  var charactersLength = characters.length;
+
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+}
+
+var random = function random(options) {
+  return makeid(options.length);
+};
+/**
+ * @function assignWithDepth
+ * Extends the functionality of {@link ObjectConstructor.assign} with the ability to merge arbitrary-depth objects
+ * For each key in src with path `k` (recursively) performs an Object.assign(dst[`k`], src[`k`]) with
+ * a slight change from the typical handling of undefined for dst[`k`]: instead of raising an error,
+ * dst[`k`] is auto-initialized to {} and effectively merged with src[`k`]
+ * <p>
+ * Additionally, dissimilar types will not clobber unless the config.clobber parameter === true. Example:
+ * ```
+ * let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
+ * let config_1 = { foo: 'foo', bar: 'bar' };
+ * let result = assignWithDepth(config_0, config_1);
+ * console.log(result);
+ * //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
+ * ```
+ * <p>
+ * Traditional Object.assign would have clobbered foo in config_0 with foo in config_1.
+ * <p>
+ * If src is a destructured array of objects and dst is not an array, assignWithDepth will apply each element of src to dst
+ * in order.
+ * @param dst:any - the destination of the merge
+ * @param src:any - the source object(s) to merge into destination
+ * @param config:{ depth: number, clobber: boolean } - depth: depth to traverse within src and dst for merging -
+ * clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
+ * @returns {*}
+ */
+
+var assignWithDepth = function assignWithDepth(dst, src, config) {
+  var _Object$assign = Object.assign({
+    depth: 2,
+    clobber: false
+  }, config),
+      depth = _Object$assign.depth,
+      clobber = _Object$assign.clobber;
+
+  if (Array.isArray(src) && !Array.isArray(dst)) {
+    src.forEach(function (s) {
+      return assignWithDepth(dst, s, config);
+    });
+    return dst;
+  } else if (Array.isArray(src) && Array.isArray(dst)) {
+    src.forEach(function (s) {
+      if (dst.indexOf(s) === -1) {
+        dst.push(s);
+      }
+    });
+    return dst;
+  }
+
+  if (typeof dst === 'undefined' || depth <= 0) {
+    if (dst !== undefined && dst !== null && _typeof(dst) === 'object' && _typeof(src) === 'object') {
+      return Object.assign(dst, src);
+    } else {
+      return src;
+    }
+  }
+
+  if (typeof src !== 'undefined' && _typeof(dst) === 'object' && _typeof(src) === 'object') {
+    Object.keys(src).forEach(function (key) {
+      if (_typeof(src[key]) === 'object' && (dst[key] === undefined || _typeof(dst[key]) === 'object')) {
+        if (dst[key] === undefined) {
+          dst[key] = Array.isArray(src[key]) ? [] : {};
+        }
+
+        dst[key] = assignWithDepth(dst[key], src[key], {
+          depth: depth - 1,
+          clobber: clobber
+        });
+      } else if (clobber || _typeof(dst[key]) !== 'object' && _typeof(src[key]) !== 'object') {
+        dst[key] = src[key];
+      }
+    });
+  }
+
+  return dst;
+};
+var getTextObj = function getTextObj() {
+  return {
+    x: 0,
+    y: 0,
+    fill: undefined,
+    anchor: 'start',
+    style: '#666',
+    width: 100,
+    height: 100,
+    textMargin: 0,
+    rx: 0,
+    ry: 0,
+    valign: undefined
+  };
+};
+var drawSimpleText = function drawSimpleText(elem, textData) {
+  // Remove and ignore br:s
+  var nText = textData.text.replace(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex, ' ');
+  var textElem = elem.append('text');
+  textElem.attr('x', textData.x);
+  textElem.attr('y', textData.y);
+  textElem.style('text-anchor', textData.anchor);
+  textElem.style('font-family', textData.fontFamily);
+  textElem.style('font-size', textData.fontSize);
+  textElem.style('font-weight', textData.fontWeight);
+  textElem.attr('fill', textData.fill);
+
+  if (typeof textData.class !== 'undefined') {
+    textElem.attr('class', textData.class);
+  }
+
+  var span = textElem.append('tspan');
+  span.attr('x', textData.x + textData.textMargin * 2);
+  span.attr('fill', textData.fill);
+  span.text(nText);
+  return textElem;
+};
+var wrapLabel = memoize(function (label, maxWidth, config) {
+  if (!label) {
+    return label;
+  }
+
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial',
+    joinWith: '<br/>'
+  }, config);
+
+  if (_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex.test(label)) {
+    return label;
+  }
+
+  var words = label.split(' ');
+  var completedLines = [];
+  var nextLine = '';
+  words.forEach(function (word, index) {
+    var wordLength = calculateTextWidth("".concat(word, " "), config);
+    var nextLineLength = calculateTextWidth(nextLine, config);
+
+    if (wordLength > maxWidth) {
+      var _breakString = breakString(word, maxWidth, '-', config),
+          hyphenatedStrings = _breakString.hyphenatedStrings,
+          remainingWord = _breakString.remainingWord;
+
+      completedLines.push.apply(completedLines, [nextLine].concat(_toConsumableArray(hyphenatedStrings)));
+      nextLine = remainingWord;
+    } else if (nextLineLength + wordLength >= maxWidth) {
+      completedLines.push(nextLine);
+      nextLine = word;
+    } else {
+      nextLine = [nextLine, word].filter(Boolean).join(' ');
+    }
+
+    var currentWord = index + 1;
+    var isLastWord = currentWord === words.length;
+
+    if (isLastWord) {
+      completedLines.push(nextLine);
+    }
+  });
+  return completedLines.filter(function (line) {
+    return line !== '';
+  }).join(config.joinWith);
+}, function (label, maxWidth, config) {
+  return "".concat(label, "-").concat(maxWidth, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily, "-").concat(config.joinWith);
+});
+var breakString = memoize(function (word, maxWidth) {
+  var hyphenCharacter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '-';
+  var config = arguments.length > 3 ? arguments[3] : undefined;
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial',
+    margin: 0
+  }, config);
+  var characters = word.split('');
+  var lines = [];
+  var currentLine = '';
+  characters.forEach(function (character, index) {
+    var nextLine = "".concat(currentLine).concat(character);
+    var lineWidth = calculateTextWidth(nextLine, config);
+
+    if (lineWidth >= maxWidth) {
+      var currentCharacter = index + 1;
+      var isLastLine = characters.length === currentCharacter;
+      var hyphenatedNextLine = "".concat(nextLine).concat(hyphenCharacter);
+      lines.push(isLastLine ? nextLine : hyphenatedNextLine);
+      currentLine = '';
+    } else {
+      currentLine = nextLine;
+    }
+  });
+  return {
+    hyphenatedStrings: lines,
+    remainingWord: currentLine
+  };
+}, function (word, maxWidth) {
+  var hyphenCharacter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '-';
+  var config = arguments.length > 3 ? arguments[3] : undefined;
+  return "".concat(word, "-").concat(maxWidth, "-").concat(hyphenCharacter, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily);
+});
+/**
+ * This calculates the text's height, taking into account the wrap breaks and
+ * both the statically configured height, width, and the length of the text (in pixels).
+ *
+ * If the wrapped text text has greater height, we extend the height, so it's
+ * value won't overflow.
+ *
+ * @return - The height for the given text
+ * @param text the text to measure
+ * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ */
+
+var calculateTextHeight = function calculateTextHeight(text, config) {
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial',
+    margin: 15
+  }, config);
+  return calculateTextDimensions(text, config).height;
+};
+/**
+ * This calculates the width of the given text, font size and family.
+ *
+ * @return - The width for the given text
+ * @param text - The text to calculate the width of
+ * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ */
+
+var calculateTextWidth = function calculateTextWidth(text, config) {
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial'
+  }, config);
+  return calculateTextDimensions(text, config).width;
+};
+/**
+ * This calculates the dimensions of the given text, font size, font family, font weight, and margins.
+ *
+ * @return - The width for the given text
+ * @param text - The text to calculate the width of
+ * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ */
+
+var calculateTextDimensions = memoize(function (text, config) {
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial'
+  }, config);
+  var _config = config,
+      fontSize = _config.fontSize,
+      fontFamily = _config.fontFamily,
+      fontWeight = _config.fontWeight;
+
+  if (!text) {
+    return {
+      width: 0,
+      height: 0
+    };
+  } // We can't really know if the user supplied font family will render on the user agent;
+  // thus, we'll take the max width between the user supplied font family, and a default
+  // of sans-serif.
+
+
+  var fontFamilies = ['sans-serif', fontFamily];
+  var lines = text.split(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex);
+  var dims = [];
+  var body = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body'); // We don't want to leak DOM elements - if a removal operation isn't available
+  // for any reason, do not continue.
+
+  if (!body.remove) {
+    return {
+      width: 0,
+      height: 0,
+      lineHeight: 0
+    };
+  }
+
+  var g = body.append('svg');
+
+  for (var _i = 0, _fontFamilies = fontFamilies; _i < _fontFamilies.length; _i++) {
+    var _fontFamily = _fontFamilies[_i];
+    var cheight = 0;
+    var dim = {
+      width: 0,
+      height: 0,
+      lineHeight: 0
+    };
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = lines[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var line = _step.value;
+        var textObj = getTextObj();
+        textObj.text = line;
+        var textElem = drawSimpleText(g, textObj).style('font-size', fontSize).style('font-weight', fontWeight).style('font-family', _fontFamily);
+        var bBox = (textElem._groups || textElem)[0][0].getBBox();
+        dim.width = Math.round(Math.max(dim.width, bBox.width));
+        cheight = Math.round(bBox.height);
+        dim.height += cheight;
+        dim.lineHeight = Math.round(Math.max(dim.lineHeight, cheight));
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    dims.push(dim);
+  }
+
+  g.remove();
+  var index = isNaN(dims[1].height) || isNaN(dims[1].width) || isNaN(dims[1].lineHeight) || dims[0].height > dims[1].height && dims[0].width > dims[1].width && dims[0].lineHeight > dims[1].lineHeight ? 0 : 1;
+  return dims[index];
+}, function (text, config) {
+  return "".concat(text, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily);
+});
 /* harmony default export */ __webpack_exports__["default"] = ({
+  assignWithDepth: assignWithDepth,
+  wrapLabel: wrapLabel,
+  calculateTextHeight: calculateTextHeight,
+  calculateTextWidth: calculateTextWidth,
+  calculateTextDimensions: calculateTextDimensions,
+  detectInit: detectInit,
+  detectDirective: detectDirective,
   detectType: detectType,
   isSubstringInArray: isSubstringInArray,
   interpolateToCurve: interpolateToCurve,
@@ -67243,7 +73449,10 @@ var generateId = function generateId() {
   calcCardinalityPosition: calcCardinalityPosition,
   formatUrl: formatUrl,
   getStylesFromArray: getStylesFromArray,
-  generateId: generateId
+  generateId: generateId,
+  random: random,
+  memoize: memoize,
+  runFunc: runFunc
 });
 
 /***/ })

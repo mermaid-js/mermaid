@@ -7,9 +7,13 @@ g.stateGroup text {
 }
 g.stateGroup text {
   fill: $nodeBorder;
+  fill: $titleColor;
   stroke: none;
   font-size: 10px;
 
+}
+g.statediagram-cluster .cluster-label text {
+  fill: $titleColor;
 }
 g.stateGroup .state-title {
   font-weight: bolder;
@@ -57,7 +61,11 @@ g.stateGroup line {
   stroke: none;
   stroke-width: 0;
   fill: $nodeBkg;
-  opacity: 0.5;
+  opacity: 0.7;
+}
+
+.edgeLabel text {
+  fill: #333;
 }
 
 .stateLabel text {
@@ -82,7 +90,7 @@ g.stateGroup line {
 }
 
 .statediagram-cluster rect {
-  fill: $nodeBkg;
+  // fill: $nodeBkg;
   stroke: $nodeBorder;
   stroke-width: 1px;
 }

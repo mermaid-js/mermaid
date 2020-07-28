@@ -166,6 +166,12 @@ export const addEdges = function(edges, g) {
 
   edges.forEach(function(edge) {
     cnt++;
+
+    // Identify Link
+    var linkId = 'L-' + edge.start + '-' + edge.end;
+    var linkNameStart = 'LS-' + edge.start;
+    var linkNameEnd = 'LE-' + edge.end;
+
     const edgeData = {};
 
     // Set link type for rendering
@@ -223,7 +229,7 @@ export const addEdges = function(edges, g) {
 
       if (getConfig().flowchart.htmlLabels) {
         edgeData.labelType = 'html';
-        edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
+        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
@@ -235,6 +241,10 @@ export const addEdges = function(edges, g) {
         edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
       }
     }
+
+    edgeData.id = linkId;
+    edgeData.class = linkNameStart + ' ' + linkNameEnd;
+
     // Add the edge to the graph
     g.setEdge(edge.start, edge.end, edgeData, cnt);
   });
@@ -384,7 +394,7 @@ export const draw = function(text, id) {
     return flowDb.getTooltip(this.id);
   });
 
-  const padding = 8;
+  const padding = conf.diagramPadding;
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;

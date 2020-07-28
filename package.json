@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.5.2",
+  "version": "8.6.4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -16,7 +16,7 @@
     "build:development": "webpack --progress --colors",
     "build:production": "yarn build:development -p --config webpack.config.prod.babel.js",
     "build": "yarn build:development && yarn build:production",
-    "postbuild": "documentation build src/mermaidAPI.js --shallow -f md --markdown-toc false -o docs/mermaidAPI.md",
+    "postbuild": "documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md",
     "build:watch": "yarn build --watch",
     "minify": "minify ./dist/mermaid.js > ./dist/mermaid.min.js",
     "release": "yarn build",
@@ -29,7 +29,6 @@
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn test && yarn e2e",
-    "prepush": "yarn test",
     "prepare": "yarn build"
   },
   "repository": {
@@ -50,16 +49,16 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^3.1.0",
-    "crypto-random-string": "^3.0.1",
     "d3": "^5.7.0",
     "dagre": "^0.8.4",
     "dagre-d3": "^0.6.4",
     "entity-decode": "^2.0.2",
     "graphlib": "^2.1.7",
     "he": "^1.2.0",
+    "khroma": "^1.1.0",
     "minify": "^4.1.1",
     "moment-mini": "^2.22.1",
-    "scope-css": "^1.2.1"
+    "stylis": "^3.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
@@ -106,5 +105,10 @@
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn test"
+    }
+  }
 }

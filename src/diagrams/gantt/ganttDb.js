@@ -1,9 +1,10 @@
 import moment from 'moment-mini';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { logger } from '../../logger';
-import { getConfig } from '../../config';
+import configApi, { getConfig } from '../../config';
+import utils from '../../utils';
+import mermaidAPI from '../../mermaidAPI';
 
-const config = getConfig();
 let dateFormat = '';
 let axisFormat = '';
 let todayMarker = '';
@@ -15,6 +16,13 @@ let currentSection = '';
 const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
+
+// The serial order of the task in the script
+let lastOrder = 0;
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(this, statement, context, type);
+};
 
 export const clear = function() {
   sections = [];
@@ -31,6 +39,7 @@ export const clear = function() {
   todayMarker = '';
   excludes = [];
   inclusiveEndDates = false;
+  lastOrder = 0;
 };
 
 export const setAxisFormat = function(txt) {
@@ -373,6 +382,9 @@ export const addTask = function(descr, data) {
   rawTask.done = taskInfo.done;
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
+  rawTask.order = lastOrder;
+
+  lastOrder++;
 
   const pos = rawTasks.push(rawTask);
 
@@ -461,7 +473,7 @@ const compileTasks = function() {
  */
 export const setLink = function(ids, _linkStr) {
   let linkStr = _linkStr;
-  if (config.securityLevel !== 'loose') {
+  if (getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
   ids.split(',').forEach(function(id) {
@@ -490,7 +502,7 @@ export const setClass = function(ids, className) {
 };
 
 const setClickFun = function(id, functionName, functionArgs) {
-  if (config.securityLevel !== 'loose') {
+  if (getConfig().securityLevel !== 'loose') {
     return;
   }
   if (typeof functionName === 'undefined') {
@@ -520,7 +532,7 @@ const setClickFun = function(id, functionName, functionArgs) {
   let rawTask = findTaskById(id);
   if (typeof rawTask !== 'undefined') {
     pushFun(id, () => {
-      window[functionName](...argList);
+      utils.runFunc(functionName, ...argList);
     });
   }
 };
@@ -575,6 +587,8 @@ export const bindFunctions = function(element) {
 };
 
 export default {
+  parseDirective,
+  getConfig: () => configApi.getConfig().gantt,
   clear,
   setDateFormat,
   getDateFormat,

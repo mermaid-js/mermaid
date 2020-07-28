@@ -1,10 +1,11 @@
 # Flowcharts - Basic Syntax
 
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./flowchart.md)
 ## Graph
 
-This statement declares a new graph and the direction of the graph layout.
+This statement declares the direction of the Flowchart.
 
-This declares a graph oriented from top to bottom (`TD` or `TB`).
+This declares the graph is oriented from top to bottom (`TD` or `TB`).
 
 ```
 graph TD
@@ -15,7 +16,7 @@ graph TD
     Start --> Stop
 ```
 
-This declares a graph oriented from left to right (`LR`).
+This declares the graph is oriented from left to right (`LR`).
 
 ```
 graph LR
@@ -26,18 +27,26 @@ graph LR
     Start --> Stop
 ```
 
-Possible directions are:
+## Flowchart Orientation
 
-* TB - top bottom
-* BT - bottom top
-* RL - right left
-* LR - left right
+Possible FlowChart orientations are:
 
-* TD - same as TB
+* TB - top to bottom
+* TD - top-down/ same as top to bottom
+* BT - bottom to top
+* RL - right to left
+* LR - left to right
 
-## flowchart
 
-This renders a flowchart in the same way as a graph but with a new rendering method opening up for long requested features such as: more arrow types, multi directional arrows, and linking to and from subgraphs. Apart from the graph type, flowchart/graph, the syntax is the same. This is currently experimental but when the beta period is over both the graph and flowchart keywords will render in the new way. This means it is ok to start beta testing flowcharts.
+
+## Flowcharts
+
+This renders a flowchart that allows for features such as: more arrow types, multi directional arrows, and linking to and from subgraphs. 
+
+Apart from the graph type, the syntax is the same. This is currently experimental but when the beta period is over, both the graph and flowchart keywords will render in the new way. This means it is ok to start beta testing flowcharts.
+
+
+## An important note on Flowchart nodes, do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).
 
 ## Nodes & shapes
 
@@ -52,7 +61,7 @@ graph LR
 graph LR
     id
 ```
-Note that the id is what is displayed in the box.
+# Note that the id is what is displayed in the box.
 
 ### A node with text
 
@@ -69,6 +78,7 @@ graph LR
     id1[This is the text in the box]
 ```
 
+## Node Shapes
 
 ### A node with round edges
 

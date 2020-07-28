@@ -6,24 +6,31 @@
 
 /* lexical grammar */
 %lex
-%x string generic struct
+%x string generic struct open_directive type_directive arg_directive
 
 %%
-\%\%[^\n]*\n*           /* do nothing */
-\n+                   return 'NEWLINE';
+\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+\%\%(?!\{)*[^\n]*(\r?\n)+                                       /* skip comments */
+\%\%[^\n]*(\r?\n)*                                              /* skip comments */
+(\r?\n)+                return 'NEWLINE';
 \s+                     /* skip whitespace */
+"classDiagram-v2"       return 'CLASS_DIAGRAM';
 "classDiagram"          return 'CLASS_DIAGRAM';
-[\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
+[{]                     { this.begin("struct"); /*console.log('Starting struct');*/ return 'STRUCT_START';}
 <struct><<EOF>>         return "EOF_IN_STRUCT";
-<struct>[\{]            return "OPEN_IN_STRUCT";
-<struct>\}           { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
-<struct>[\n]              /* nothing */
-<struct>[^\{\}\n]*     { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
+<struct>[{]             return "OPEN_IN_STRUCT";
+<struct>[}]             { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
+<struct>[\n]            /* nothing */
+<struct>[^{}\n]*        { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
 
 
 
 "class"               return 'CLASS';
-//"click"               return 'CLICK';
+//"click"             return 'CLICK';
 "callback"            return 'CALLBACK';
 "link"                return 'LINK';
 "<<"                  return 'ANNOTATION_START';
@@ -40,7 +47,7 @@
 \s*\|\>               return 'EXTENSION';
 \s*\>                 return 'DEPENDENCY';
 \s*\<                 return 'DEPENDENCY';
-\s*\*                  return 'COMPOSITION';
+\s*\*                 return 'COMPOSITION';
 \s*o                  return 'AGGREGATION';
 \-\-                  return 'LINE';
 \.\.                  return 'DOTTED_LINE';
@@ -53,7 +60,7 @@
 \=                    return 'EQUALS';
 \w+                   return 'ALPHA';
 [!"#$%&'*+,-.`?\\/]   return 'PUNCTUATION';
-[0-9]+                 return 'NUM';
+[0-9]+                return 'NUM';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
@@ -125,11 +132,39 @@
 
 %left '^'
 
-%start mermaidDoc
+%start start
 
 %% /* language grammar */
 
-mermaidDoc: graphConfig;
+start
+    : mermaidDoc
+    | directive start
+    ;
+
+mermaidDoc
+    : graphConfig
+    ;
+
+directive
+  : openDirective typeDirective closeDirective NEWLINE
+  | openDirective typeDirective ':' argDirective closeDirective NEWLINE
+  ;
+
+openDirective
+  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
+  ;
+
+typeDirective
+  : type_directive { yy.parseDirective($1, 'type_directive'); }
+  ;
+
+argDirective
+  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
+  ;
+
+closeDirective
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'class'); }
+  ;
 
 graphConfig
     : CLASS_DIAGRAM NEWLINE statements EOF
@@ -155,6 +190,7 @@ statement
     | methodStatement
     | annotationStatement
     | clickStatement
+    | directive
     ;
 
 classStatement

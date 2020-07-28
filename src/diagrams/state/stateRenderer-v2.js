@@ -145,10 +145,11 @@ const setupNode = (g, parent, node, altFlag) => {
         arrowType: '',
         style: 'fill:none',
         labelStyle: '',
-        classes: 'note-edge',
+        classes: 'transition note-edge',
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
-        labelType: 'text'
+        labelType: 'text',
+        thickness: 'normal'
       });
     } else {
       g.setNode(node.id, nodeData);
@@ -178,13 +179,15 @@ const setupDoc = (g, parent, doc, altFlag) => {
       const edgeData = {
         id: 'edge' + cnt,
         arrowhead: 'normal',
-        arrowType: 'arrow_barb',
+        arrowTypeEnd: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
         label: item.description,
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
-        labelType: 'text'
+        labelType: 'text',
+        thickness: 'normal',
+        classes: 'transition'
       };
       let startId = item.state1.id;
       let endId = item.state2.id;
@@ -208,11 +211,11 @@ export const draw = function(text, id) {
   parser.yy = stateDb;
 
   // Parse the graph definition
-  try {
-    parser.parse(text);
-  } catch (err) {
-    logger.debug('Parsing failed');
-  }
+  // try {
+  parser.parse(text);
+  // } catch (err) {
+  //   logger.error('Parsing failed', err);
+  // }
 
   // Fetch the default direction, use TD if none was found
   let dir = stateDb.getDirection();
@@ -321,7 +324,6 @@ export const draw = function(text, id) {
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
       rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
 
       label.insertBefore(rect, label.firstChild);
     }

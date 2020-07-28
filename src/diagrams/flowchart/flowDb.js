@@ -1,13 +1,13 @@
 import { select } from 'd3';
-import { logger } from '../../logger'; // eslint-disable-line
 import utils from '../../utils';
-import { getConfig } from '../../config';
+import configApi, { getConfig } from '../../config';
 import common from '../common/common';
+import mermaidAPI from '../../mermaidAPI';
 
 // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 const MERMAID_DOM_ID_PREFIX = '';
 
-const config = getConfig();
+let config = getConfig();
 let vertices = {};
 let edges = [];
 let classes = [];
@@ -19,6 +19,10 @@ let firstGraphFlag = true;
 let direction;
 // Functions to be run after graph rendering
 let funs = [];
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(this, statement, context, type);
+};
 
 /**
  * Function called by parser when a node definition has been found
@@ -44,6 +48,7 @@ export const addVertex = function(_id, text, type, style, classes) {
     vertices[id] = { id: id, styles: [], classes: [] };
   }
   if (typeof text !== 'undefined') {
+    config = getConfig();
     txt = common.sanitizeText(text.trim(), config);
 
     // strip quotes if string starts and ends with a quote
@@ -219,7 +224,7 @@ const setTooltip = function(ids, tooltip) {
 const setClickFun = function(_id, functionName) {
   let id = _id;
   if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-  if (config.securityLevel !== 'loose') {
+  if (getConfig().securityLevel !== 'loose') {
     return;
   }
   if (typeof functionName === 'undefined') {
@@ -232,7 +237,7 @@ const setClickFun = function(_id, functionName) {
         elem.addEventListener(
           'click',
           function() {
-            window[functionName](id);
+            utils.runFunc(functionName, id);
           },
           false
         );
@@ -324,6 +329,7 @@ const setupToolTips = function(element) {
     .on('mouseover', function() {
       const el = select(this);
       const title = el.attr('title');
+
       // Dont try to draw a tooltip if no data is provided
       if (title === null) {
         return;
@@ -336,8 +342,8 @@ const setupToolTips = function(element) {
         .style('opacity', '.9');
       tooltipElem
         .html(el.attr('title'))
-        .style('left', rect.left + (rect.right - rect.left) / 2 + 'px')
-        .style('top', rect.top - 14 + document.body.scrollTop + 'px');
+        .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
+        .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
       el.classed('hover', true);
     })
     .on('mouseout', function() {
@@ -615,6 +621,8 @@ const destructLink = (_str, _startStr) => {
 };
 
 export default {
+  parseDirective,
+  getConfig: () => configApi.getConfig().flowchart,
   addVertex,
   addLink,
   updateLinkInterpolate,
