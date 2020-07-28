@@ -6,10 +6,15 @@
 
 /* lexical grammar */
 %lex
+%options case-insensitive
+
 %x string
 %x dir
 %x vertex
-%x open_directive type_directive arg_directive
+%x open_directive
+%x type_directive
+%x arg_directive
+%x close_directive
 
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
@@ -33,6 +38,7 @@
 "flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
+<dir>[^\n\s]*            {   this.popState(); }
 <dir>\s*"LR"             {   this.popState();  return 'DIR'; }
 <dir>\s*"RL"             {   this.popState();  return 'DIR'; }
 <dir>\s*"TB"             {   this.popState();  return 'DIR'; }
@@ -187,7 +193,7 @@
 "{"                   return 'DIAMOND_START'
 "}"                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
-(\r|\n|\r\n)+         return 'NEWLINE';
+(\r?\n)+              return 'NEWLINE';
 \s                    return 'SPACE';
 <<EOF>>               return 'EOF';
 
@@ -233,8 +239,10 @@ directive
 graphConfig
     : SPACE graphConfig
     | NEWLINE graphConfig
+    | GRAPH FirstStmtSeperator
+        { console.log('GRAPH FirstStmtSeperator');yy.setDirection('TB');$$ = 'TB';}
     | GRAPH DIR FirstStmtSeperator
-        { yy.setDirection($2);$$ = $2;}
+        { console.log('GRAPH DIR FirstStmtSeperator');yy.setDirection($2);$$ = $2;}
     // | GRAPH SPACE TAGEND FirstStmtSeperator
     //     { yy.setDirection("LR");$$ = $3;}
     // | GRAPH SPACE TAGSTART FirstStmtSeperator
