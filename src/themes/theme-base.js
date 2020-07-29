@@ -56,6 +56,7 @@ class Theme {
 
     this.nodeBkg = this.primaryColor;
     this.mainBkg = this.primaryColor;
+    // console.warn('main bkg ', this.mainBkg);
     this.nodeBorder = this.primaryBorderColor;
     this.clusterBkg = this.tertiaryColor;
     this.clusterBorder = this.tertiaryBorderColor;

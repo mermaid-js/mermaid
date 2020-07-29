@@ -15,20 +15,27 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
   let cfg = assignWithDepth({}, siteCfg);
 
   // Apply directives
-  let themeVariables;
-  _directives.forEach(d => {
+  let themeVariables = {};
+  for (let i = 0; i < _directives.length; i++) {
+    const d = _directives[i];
     sanitize(d);
     cfg = assignWithDepth(cfg, d);
     if (d.themeVariables) {
       themeVariables = d.themeVariables;
     }
-  });
-  if (themeVariables && currentConfig.theme && theme[currentConfig.theme]) {
-    const variables = theme[currentConfig.theme].getThemeVariables(themeVariables);
+  }
+  if (cfg.theme && theme[cfg.theme]) {
+    // console.warn('cfg beeing updated main bkg', themeVariables, cfg.theme);
+    const variables = theme[cfg.theme].getThemeVariables(themeVariables);
+    // console.warn('cfg beeing updated 2 main bkg', variables.mainBkg);
     cfg.themeVariables = variables;
   }
+  // else {
+  //   console.warn('cfg not beeing updated main bkg', themeVariables, cfg.theme);
+  // }
 
   currentConfig = cfg;
+  // console.warn('cfg updated main bkg', cfg.sequence);
   return cfg;
 };
 /**
@@ -49,7 +56,6 @@ export const setSiteConfig = conf => {
   // siteConfig = { ...defaultConfig, ...conf };
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
-  // console.warn(siteConfig.sequence);
   currentConfig = updateCurrentConfig(siteConfig, directives);
   return siteConfig;
 };
@@ -165,6 +171,7 @@ export const reset = () => {
 
   // Replace current config with siteConfig
   directives = [];
+  // console.warn(siteConfig.sequence);
   updateCurrentConfig(siteConfig, directives);
 };
 

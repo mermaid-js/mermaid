@@ -216,9 +216,10 @@ const render = function(id, _txt, cb, container) {
     const siteConfig = configApi.getSiteConfig();
     configApi.addDirective(siteConfig);
   }
+  // console.warn('Render fetching config');
 
   const cnf = configApi.getConfig();
-  console.log('Render', cnf);
+  // console.warn('Render with config after adding new directives', cnf.themeVariables.mainBkg);
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -294,6 +295,9 @@ const render = function(id, _txt, cb, container) {
       }
     }
   }
+
+  // logger.warn(cnf.themeVariables);
+
   const stylis = new Stylis();
   const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
@@ -578,8 +582,8 @@ const mermaidAPI = Object.freeze({
   reset: () => {
     console.warn('reset');
     configApi.reset();
-    const siteConfig = configApi.getSiteConfig();
-    updateRendererConfigs(siteConfig);
+    // const siteConfig = configApi.getSiteConfig();
+    // updateRendererConfigs(siteConfig);
   },
   globalReset: () => {
     configApi.reset(configApi.defaultConfig);

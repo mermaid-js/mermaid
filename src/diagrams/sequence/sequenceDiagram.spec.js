@@ -942,8 +942,8 @@ describe('when rendering a sequenceDiagram APA', function() {
       wrap: false,
       mirrorActors: false
     };
+    console.warn('Set site config');
     configApi.setSiteConfig({ logLevel: 5, sequence: conf });
-    // console.warn('Config = ', configApi.getConfig())
   });
   let conf;
   beforeEach(function() {

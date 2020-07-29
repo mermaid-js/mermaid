@@ -74,8 +74,9 @@ stateDiagram-v2
   A --> D: asd123
       </div>
       </div>
+      %%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
       <div class="mermaid" style="width: 50%; height: 20%;">
-        %%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
+        %%{init: {'theme': 'base'}}%%
 
         graph TB
         subgraph apa
@@ -92,7 +93,7 @@ graph TD
             C
           end
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid2" style="width: 50%; height: 20%;">
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Note over Alice,Bob: Looks
@@ -105,8 +106,8 @@ Note over Bob,Alice: Looks back
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'base',
-        // themeVariables:{primaryColor: '#ff0000'},
+        // theme: 'base',
+        // themeVariables:{primaryColor: '#0000ff'},
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
