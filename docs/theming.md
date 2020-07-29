@@ -4,10 +4,12 @@
 
 With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated setting of the diagram's theme. The objective of this is to increase the customizability of mermaid, by allowing for the customization of themes through the `%%init%%` directive and `initialize`. With it a site integrator can override a vast majority of attributes used when rendering a diagram.
 
-Themes for all intents and purposes also follow the Levels of Configuration and employ `directives` that were introduced in Version [8.6.0](./8.6.0_docs.md). 
+Themes, for all intents and purposes also follow the Levels of Configuration and employ `directives` to modify configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md). 
 
-## Site-wide Themes 
-Examples of Initalize
+## Site-wide Themes
+Site-wide themes are still declared via `initialize` by site owners.
+
+Example of `Initalize` call:
 ```
     mermaidAPI.initialize({	
         'securityLevel': 'loose', 'theme': 'base'	
