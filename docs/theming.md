@@ -1,14 +1,24 @@
 # Theming
 
-Mermaid as a system for theming in place. With it a site integrator can override a vast majority of attributes used when rendering a diagram.
+With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated setting of the diagram's theme. The objective of this is to increase the customizability of mermaid, by allowing for the customization of themes through the `%%init%%` directive and `initialize`. With it a site integrator can override a vast majority of attributes used when rendering a diagram.
 
+Themes for all intents and purposes also follow the Levels of Configuration and employ `directives` that were introduced in Version [8.6.0](./8.6.0_docs.md). 
+
+## Site-wide Themes 
+Examples of Initalize
+```
+    mermaidAPI.initialize({	
+        'securityLevel': 'loose', 'theme': 'base'	
+    });	
+```
 The settings for a theme can be set globally for the site with the initialize call. The example below highlights how that can look:
 
 ```
  // example
 ```
+## Themes at the Local or Current Level
+When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array. 
 
-It is also possible to override theme settings locally in a diagram using directives.
 
 ```
 %%{init: {'theme':'base'}}%%
@@ -16,12 +26,6 @@ It is also possible to override theme settings locally in a diagram using direct
     a --> b
 ```
 
-The easiest way to make a custom theme is to start with the base theme, the theme named base and just modify these variables:
-* primaryColor   - the base color for the theme
-
-More specific color variables it is possible to change:
-* lineColor
-* textColor
 
 Here is an example of a showcase flowchart with theme set to base, with the default variables set:
 ```mermaid
@@ -42,8 +46,18 @@ Here is an example of a showcase flowchart with theme set to base, with the defa
           end
 ```
 
-Here is an example of overriding the primary color and giving everything a little different look.
-```mermaid
+# Making a Custom Theme
+The easiest way to make a custom theme is to start with the base theme, the theme named `base` and just modify theme variables through `themeVariables`, via `%%init%%. 
+
+* primaryColor   - the base color for the theme
+
+More specific color variables it is possible to change:
+* lineColor
+* textColor
+
+Here is an example of overriding the primary color and giving everything a little different look, using `%%init%%`. 
+```
+mermaid
 %%{init: {'theme':'base', 'themeVariables': {primaryColor: '#ff0000'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -60,13 +74,14 @@ Here is an example of overriding the primary color and giving everything a littl
             G
           end
 ```
-As the theming engine is using color codes to calculate values from the base color/base colors it needs proper color values contrain the actual color data. Aliases like color names is not supported so for instance, the color value 'red' will not work but '#ff0000' will work.
+The Theming Engine does not admit color codes and will only accept proper color values. Color Names is not supported so for instance, the color value 'red' will not work, but '#ff0000' will work.
 
-## Showcases
+# Examples:
 
 When adjusting a theme it might be helpful to look at the theme with these diagrams to evaluate that everything is visiable and looks good.
+In the following examples, the directive `init` is used, with the `theme` being declared as `base`. for more information on this, read the [8.6.0documentation](/8.6.0_docs.md)
 
-### flowchart
+### Flowchart
 ```
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         graph TD
@@ -102,8 +117,9 @@ When adjusting a theme it might be helpful to look at the theme with these diagr
           end
 ```
 
-### flowchart (beta)
-```mermaid
+### Flowchart (beta)
+```
+mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         flowchart TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -123,7 +139,8 @@ When adjusting a theme it might be helpful to look at the theme with these diagr
 
 ### Sequence diagram
 
-```mermaid
+```
+mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 
         sequenceDiagram
@@ -145,7 +162,8 @@ When adjusting a theme it might be helpful to look at the theme with these diagr
 
 ### Gantt
 
-```mermaid
+```
+mermaid
 gantt
        dateFormat                :YYYY-MM-DD
        title                     Adding GANTT diagram functionality to mermaid
@@ -176,7 +194,8 @@ gantt
 ```
 
 ### State diagram
-```mermaid
+```
+mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
       stateDiagram
         [*] --> Active
@@ -208,7 +227,8 @@ gantt
 
 ### State diagram (beta)
 
-```mermaid
+```
+mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 stateDiagram-v2
         [*] --> Active
@@ -239,7 +259,8 @@ stateDiagram-v2
 
 ### Entity Relations diagram
 
-```mermaid
+```
+mermaid
       erDiagram
         CUSTOMER }|..|{ DELIVERY-ADDRESS : has
         CUSTOMER ||--o{ ORDER : places
@@ -251,8 +272,9 @@ stateDiagram-v2
         PRODUCT ||--o{ ORDER-ITEM : "ordered in"
 ```
 
-### User journet diagram
-```mermaid
+### User journey diagram
+```
+mermaid
 journey
             title My working day
             section Go to work
