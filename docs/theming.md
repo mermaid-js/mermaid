@@ -1,5 +1,7 @@
 # Theming
 
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/theming.md)
+
 With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated setting of the diagram's theme. The objective of this is to increase the customizability of mermaid, by allowing for the customization of themes through the `%%init%%` directive and `initialize`. With it a site integrator can override a vast majority of attributes used when rendering a diagram.
 
 Themes for all intents and purposes also follow the Levels of Configuration and employ `directives` that were introduced in Version [8.6.0](./8.6.0_docs.md). 
@@ -11,7 +13,7 @@ Examples of Initalize
         'securityLevel': 'loose', 'theme': 'base'	
     });	
 ```
-**Notes**: Only site owners can use the `mermaidAPI.initialize` call to set values. Site-Users will have to use `%%init%%` to modify configurations.
+**Notes**: Only site owners can use the `mermaidAPI.initialize` call to set values. Site-Users will have to use `%%init%%` to modify configurations, everytime they create a diagram. 
 
 ## Themes at the Local or Current Level
 When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array. 
