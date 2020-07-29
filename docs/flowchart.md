@@ -562,6 +562,23 @@ graph LR
 
 ?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/s37cjoau/3/).
 
+Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
+```
+graph LR;
+    A-->B;
+    B-->C;
+    click A "http://www.github.com" _blank
+    click B "http://www.github.com" "Open this in a new tab" _blank
+```
+
+```mermaid
+graph LR;
+    A-->B;
+    B-->C;
+    click A "http://www.github.com" _blank
+    click B "http://www.github.com" "Open this in a new tab" _blank
+```
+
 Beginners tip, a full example using interactive links in a html context:
 ```
 <body>

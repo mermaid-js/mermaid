@@ -252,12 +252,13 @@ const setClickFun = function(_id, functionName) {
  * @param linkStr URL to create a link for
  * @param tooltip Tooltip for the clickable element
  */
-export const setLink = function(ids, linkStr, tooltip) {
+export const setLink = function(ids, linkStr, tooltip, target) {
   ids.split(',').forEach(function(_id) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = utils.formatUrl(linkStr, config);
+      vertices[id].linkTarget = target;
     }
   });
   setTooltip(ids, tooltip);

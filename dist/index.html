@@ -393,17 +393,19 @@ graph TB
   <div class="mermaid">
     graph TB
     TITLE["Link Click Events<br>(click the nodes below)"]
-    A[link test]
-    B[anchor test]
-    C[mailto test]
-    D[other protocol test]
-    E[script test]
-    TITLE --> A & B & C & D & E
-    click A "https://mermaid-js.github.io/mermaid/#/" "link test"
-    click B "#link-clicked" "anchor test"
-    click C "mailto:user@user.user" "mailto test"
-    click D "notes://do-your-thing/id" "other protocol test"
-    click E "javascript:alert('test')" "script test"
+    A["link test (open in same tab)"]
+    B["link test (open in new tab)"]
+    C[anchor test]
+    D[mailto test]
+    E[other protocol test]
+    F[script test]
+    TITLE --> A & B & C & D & E & F
+    click A "https://mermaid-js.github.io/mermaid/#/" "link test (open in same tab)"
+    click B "https://mermaid-js.github.io/mermaid/#/" "link test (open in new tab)" _blank
+    click C "#link-clicked"
+    click D "mailto:user@user.user" "mailto test"
+    click E "notes://do-your-thing/id" "other protocol test"
+    click F "javascript:alert('test')" "script test"
   </div>
   <hr/>
   <div class="mermaid">
