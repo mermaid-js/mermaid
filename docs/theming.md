@@ -25,7 +25,9 @@ When Generating a diagram using on a webpage that supports mermaid. It is also p
 
 
 Here is an example of how `%%init%%` can set the theme to 'base', this assumes that `themeVariables` are set to default:
-```mermaid
+
+```
+mermaid
 %%{init: {'theme':'base'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
