@@ -1,13 +1,13 @@
 import { select } from 'd3';
 import utils from '../../utils';
-import configApi, { getConfig } from '../../config';
+import * as configApi from '../../config';
 import common from '../common/common';
 import mermaidAPI from '../../mermaidAPI';
 
 // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 const MERMAID_DOM_ID_PREFIX = '';
 
-let config = getConfig();
+let config = configApi.defaultConfig;
 let vertices = {};
 let edges = [];
 let classes = [];
@@ -48,7 +48,7 @@ export const addVertex = function(_id, text, type, style, classes) {
     vertices[id] = { id: id, styles: [], classes: [] };
   }
   if (typeof text !== 'undefined') {
-    config = getConfig();
+    config = configApi.defaultConfig;
     txt = common.sanitizeText(text.trim(), config);
 
     // strip quotes if string starts and ends with a quote
@@ -224,7 +224,7 @@ const setTooltip = function(ids, tooltip) {
 const setClickFun = function(_id, functionName) {
   let id = _id;
   if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-  if (getConfig().securityLevel !== 'loose') {
+  if (configApi.defaultConfig.securityLevel !== 'loose') {
     return;
   }
   if (typeof functionName === 'undefined') {
@@ -622,7 +622,7 @@ const destructLink = (_str, _startStr) => {
 
 export default {
   parseDirective,
-  getConfig: () => configApi.getConfig().flowchart,
+  defaultConfig: () => configApi.defaultConfig.flowchart,
   addVertex,
   addLink,
   updateLinkInterpolate,

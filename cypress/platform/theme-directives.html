@@ -13,105 +13,107 @@
         /* background:#333; */
         font-family: 'Arial';
         }
-      h1 { color: grey;}
+      h1 {
+        color: #333;
+        font-size: 20px;
+        text-decoration: underline;
+      }
       .mermaid2 {
         display: none;
       }
-      .someClass > *   {
-        /* fill: red !important; */
+      .dark {
+        background: #333;
+      }
+      .dark h1 {
+        color: #f4f4f4;
+      }
+      .size {
+        width: 33%;
+        height: 250px;
       }
     </style>
   </head>
   <body>
-    <h1>info below</h1>
     <div class="flex flex-wrap">
-      <div class="mermaid" style="width: 50%; height: 20%;">
-%%{init: { 'logLevel': 0, 'theme': 'default'} }%%
-graph TD
-          A[Default] -->|Get money| B(Go shopping)
-          B --> C{Let me think}
-          B --> G[/Another/]
-          C ==>|One| D[Laptop]
-          C -->|Two| E[iPhone]
-          C -->|Three| F[fa:fa-car Car]
-          subgraph section
-            C
-            D
-            E
-            F
-            G
-          end
+      <div class="size">
+        <h1>Default</h1>
+        <div class="mermaid" >
+  %%{init: { 'logLevel': 0, 'theme': 'default'} }%%
+  graph TD
+            A(Start) --> B[/Another/]
+            A[/Another/] --> C[End]
+            subgraph section
+              B
+              C
+            end
+        </div>
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
-%%{init: { 'logLevel': 1, 'theme': 'forest'} }%%
-      graph TD
-          A[Forest] -->|Get money| B(Go shopping)
-          B --> C{Let me think}
-          B --> G[/Another/]
-          C ==>|One| D[Laptop]
-          C -->|Two| E[iPhone]
-          C -->|Three| F[fa:fa-car Car]
-          subgraph section
-            C
-            D
-            E
-            F
-            G
-          end
+      <div class="size">
+        <h1>Forest</h1>
+        <div class="mermaid" >
+  %%{init: { 'logLevel': 1, 'theme': 'forest'} }%%
+  graph TD
+            A(Start) --> B[/Another/]
+            A[/Another/] --> C[End]
+            subgraph section
+              B
+              C
+            end
+        </div>
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
-      %%{init: { 'logLevel': 1, 'theme': 'neutral'} }%%
+      <div class="size">
+        <h1>Neutral</h1>
+        <div class="mermaid" >
+        %%{init: { 'logLevel': 1, 'theme': 'neutral'} }%%
+  graph TD
+            A(Start) --> B[/Another/]
+            A[/Another/] --> C[End]
+            subgraph section
+              B
+              C
+            end
+        </div>
+      </div>
+      <div class="size dark">
+        <h1>Dark</h1>
+        <div class="mermaid">
+        %%{init: { 'logLevel': 1, 'theme': 'dark'} }%%
+  graph TD
+            A(Start) --> B[/Another/]
+            A[/Another/] --> C[End]
+            subgraph section
+              B
+              C
+            end
+        </div>
+      </div>
+      <div class="size">
+        <h1>Base with overriding themeVariable</h1>
+        <div class="mermaid">
+        %%{init: { 'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
 
-      graph TD
-          A[Neutral] -->|Get money| B(Go shopping)
-          B --> C{Let me think}
-          B --> G[/Another/]
-          C ==>|One| D[Laptop]
-          C -->|Two| E[iPhone]
-          C -->|Three| F[fa:fa-car Car]
-          subgraph section
-            C
-            D
-            E
-            F
-            G
-          end
+  graph TD
+            A(Start) --> B[/Another/]
+            A[/Another/] --> C[End]
+            subgraph section
+              B
+              C
+            end
+        </div>
       </div>
-      <div class="mermaid" style="background: #3f3f3f; width: 50%; height: 20%;">
-      %%{init: { 'logLevel': 1, 'theme': 'dark'} }%%
+      <div class="size">
+        <h1>Nothing set, should be Default</h1>
+        <div class="mermaid">
+        %%{init: { 'logLevel': 1} }%%
 
-      graph TD
-          A[Dark] -->|Get money| B(Go shopping)
-          B --> C{Let me think}
-          B --> G[/Another/]
-          C ==>|One| D[Laptop]
-          C -->|Two| E[iPhone]
-          C -->|Three| F[fa:fa-car Car]
-          subgraph section
-            C
-            D
-            E
-            F
-            G
-          end
-      </div>
-      <div class="mermaid" style="background: #3f3f3f; width: 50%; height: 20%;">
-      %%{init: { 'logLevel': 1} }%%
-
-      graph TD
-          A[None set] -->|Get money| B(Go shopping)
-          B --> C{Let me think}
-          B --> G[/Another/]
-          C ==>|One| D[Laptop]
-          C -->|Two| E[iPhone]
-          C -->|Three| F[fa:fa-car Car]
-          subgraph section
-            C
-            D
-            E
-            F
-            G
-          end
+  graph TD
+            A(Start) --> B[/Another/]
+            A[/Another/] --> C[End]
+            subgraph section
+              B
+              C
+            end
+        </div>
       </div>
     </div>
 
@@ -126,7 +128,7 @@ graph TD
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { useMaxWidth: true },
+        // flowchart: { useMaxWidth: true },
         graph: { curve: 'cardinal', "htmlLabels": false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },

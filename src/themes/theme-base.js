@@ -40,7 +40,7 @@ class Theme {
     /* Main */
     this.secondaryColor = adjust(this.primaryColor, { h: 120 });
     this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
-
+    console.warn('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
     this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);

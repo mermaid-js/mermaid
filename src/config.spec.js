@@ -1,9 +1,10 @@
 /* eslint-env jasmine */
-import configApi from './config';
+import * as configApi from './config';
 
 describe('when working with site config', function() {
   beforeEach(() => {
-    configApi.reset(configApi.defaultConfig);
+    // Resets the site config to default config
+    configApi.setSiteConfig({});
   });
   it('should set site config and config properly', function() {
     let config_0 = { foo: 'bar', bar: 0 };
@@ -14,14 +15,13 @@ describe('when working with site config', function() {
     expect(config_1.bar).toEqual(config_0.bar);
     expect(config_1).toEqual(config_2);
   });
-  it('should set config and respect secure keys', function() {
-    let config_0 = { foo: 'bar', bar: 0, secure: [...configApi.defaultConfig.secure, 'bar'] };
+  it('should respect secure keys when applying directives', function() {
+    let config_0 = { foo: 'bar', bar: 'cant-be-changed', secure: [...configApi.defaultConfig.secure, 'bar'] };
     configApi.setSiteConfig(config_0);
-    let config_1 = { foo: 'baf', bar: 'foo'};
-    configApi.setConfig(config_1);
-    let config_2 = configApi.getConfig();
-    expect(config_2.foo).toEqual(config_1.foo);
-    expect(config_2.bar).toEqual(0); // Should be siteConfig.bar
+    const directive = { foo: 'baf', bar: 'should-not-be-allowed'};
+    const cfg = configApi.updateCurrentConfig(config_0,[directive]);
+    expect(cfg.foo).toEqual(directive.foo);
+    expect(cfg.bar).toBe(config_0.bar)
   });
   it('should set reset config properly', function() {
     let config_0 = { foo: 'bar', bar: 0};
@@ -43,10 +43,11 @@ describe('when working with site config', function() {
     expect(config_1.foo).toEqual(config_0.foo);
     let config_2 = configApi.getConfig();
     expect(config_2.foo).toEqual(config_0.foo);
-    configApi.reset(configApi.defaultConfig);
-    let config_3 = configApi.getSiteConfig();
-    expect(config_3.foo).toBeUndefined();
+    configApi.setConfig({ foobar: 'bar0' })
+    let config_3 = configApi.getConfig();
+    expect(config_3.foobar).toEqual('bar0');
+    configApi.reset();
     let config_4 = configApi.getConfig();
-    expect(config_4.foo).toBeUndefined();
+    expect(config_4.foobar).toBeUndefined();
   });
 });

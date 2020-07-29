@@ -40,7 +40,7 @@
     <h1>Showcases of diagrams</h1>
     <div class="flex flex-wrap">
       <div class="mermaid width height">
-         %%{init: {'theme': 'dark'}}%%
+        %%{init: {'theme': 'base', 'themeVariables':{'primaryColor': '#ff0000'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -197,7 +197,7 @@ gantt
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'forest',
+        theme: 'dark',
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,

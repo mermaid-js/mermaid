@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^3.1.0",
+    "babel-eslint": "^10.1.0",
     "d3": "^5.7.0",
     "dagre": "^0.8.4",
     "dagre-d3": "^0.6.4",

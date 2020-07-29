@@ -48,7 +48,7 @@ const getStyles = options =>
   }
 
   .cluster rect {
-    fill: ${options.secondBkg};
+    fill: ${options.clusterBkg};
     stroke: ${options.clusterBorder};
     stroke-width: 1px;
   }

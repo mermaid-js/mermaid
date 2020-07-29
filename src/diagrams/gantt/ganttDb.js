@@ -1,7 +1,7 @@
 import moment from 'moment-mini';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { logger } from '../../logger';
-import configApi, { getConfig } from '../../config';
+import * as configApi from '../../config';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 
@@ -473,7 +473,7 @@ const compileTasks = function() {
  */
 export const setLink = function(ids, _linkStr) {
   let linkStr = _linkStr;
-  if (getConfig().securityLevel !== 'loose') {
+  if (configApi.getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
   ids.split(',').forEach(function(id) {
@@ -502,7 +502,7 @@ export const setClass = function(ids, className) {
 };
 
 const setClickFun = function(id, functionName, functionArgs) {
-  if (getConfig().securityLevel !== 'loose') {
+  if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
   if (typeof functionName === 'undefined') {

@@ -31,7 +31,7 @@ import utils from './utils';
  */
 const init = function() {
   const conf = mermaidAPI.getConfig();
-  // console.log('Starting rendering diagrams (init) - mermaid.init');
+  console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   let nodes;
   if (arguments.length >= 2) {
     /*! sequence config was passed as #1 */
@@ -71,11 +71,11 @@ const init = function() {
   logger.debug('Start On Load before: ' + mermaid.startOnLoad);
   if (typeof mermaid.startOnLoad !== 'undefined') {
     logger.debug('Start On Load inner: ' + mermaid.startOnLoad);
-    mermaidAPI.initialize({ startOnLoad: mermaid.startOnLoad });
+    mermaidAPI.updateSiteConfig({ startOnLoad: mermaid.startOnLoad });
   }
 
   if (typeof mermaid.ganttConfig !== 'undefined') {
-    mermaidAPI.initialize({ gantt: mermaid.ganttConfig });
+    mermaidAPI.updateSiteConfig({ gantt: mermaid.ganttConfig });
   }
 
   let txt;

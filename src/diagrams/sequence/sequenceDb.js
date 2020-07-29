@@ -1,5 +1,5 @@
 import mermaidAPI from '../../mermaidAPI';
-import configApi from '../../config';
+import * as configApi from '../../config';
 import common from '../common/common';
 import { logger } from '../../logger';
 

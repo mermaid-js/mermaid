@@ -4,11 +4,12 @@ import { logger } from '../../logger';
 import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
 import sequenceDb from './sequenceDb';
+import * as configApi from '../../config';
 import utils, { assignWithDepth } from '../../utils';
 
 parser.yy = sequenceDb;
 
-const conf = {};
+let conf = {};
 
 export const bounds = {
   data: {
@@ -191,6 +192,7 @@ export const bounds = {
     return this.verticalPos;
   },
   getBounds: function() {
+    console.log('here', this.data);
     return { bounds: this.data, models: this.models };
   }
 };
@@ -242,6 +244,28 @@ const drawNote = function(elem, noteModel) {
   bounds.models.addNote(noteModel);
 };
 
+const messageFont = cnf => {
+  return {
+    fontFamily: cnf.messageFontFamily,
+    fontSize: cnf.messageFontSize,
+    fontWeight: cnf.messageFontWeight
+  };
+};
+const noteFont = cnf => {
+  return {
+    fontFamily: cnf.noteFontFamily,
+    fontSize: cnf.noteFontSize,
+    fontWeight: cnf.noteFontWeight
+  };
+};
+const actorFont = cnf => {
+  return {
+    fontFamily: cnf.actorFontFamily,
+    fontSize: cnf.actorFontSize,
+    fontWeight: cnf.actorFontWeight
+  };
+};
+
 /**
  * Draws a message
  * @param g - the parent of the message element
@@ -251,7 +275,7 @@ const drawMessage = function(g, msgModel) {
   bounds.bumpVerticalPos(10);
   const { startx, stopx, starty, message, type, sequenceIndex, wrap } = msgModel;
   const lines = common.splitBreaks(message).length;
-  let textDims = utils.calculateTextDimensions(message, conf.messageFont());
+  let textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const lineHeight = textDims.height / lines;
   msgModel.height += lineHeight;
 
@@ -457,7 +481,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
   let heightAdjust = postMargin;
   if (msg.id && msg.message && loopWidths[msg.id]) {
     let loopWidth = loopWidths[msg.id].width;
-    let textConf = conf.messageFont();
+    let textConf = messageFont(conf);
     msg.message = utils.wrapLabel(`[${msg.message}]`, loopWidth - 2 * conf.wrapPadding, textConf);
     msg.width = loopWidth;
     msg.wrap = true;
@@ -478,6 +502,8 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
  * @param id
  */
 export const draw = function(text, id) {
+  conf = configApi.getConfig().sequence;
+  console.log('there ', conf);
   parser.yy.clear();
   parser.yy.setWrap(conf.wrap);
   parser.parse(text + '\n');
@@ -734,7 +760,7 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
       const isNote = msg.placement !== undefined;
       const isMessage = !isNote;
 
-      const textFont = isNote ? conf.noteFont() : conf.messageFont();
+      const textFont = isNote ? noteFont(conf) : messageFont(conf);
       let wrappedMessage = msg.wrap
         ? utils.wrapLabel(msg.message, conf.width - 2 * conf.wrapPadding, textFont)
         : msg.message;
@@ -827,10 +853,10 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
       actor.description = utils.wrapLabel(
         actor.description,
         conf.width - 2 * conf.wrapPadding,
-        conf.actorFont()
+        actorFont(conf)
       );
     }
-    const actDims = utils.calculateTextDimensions(actor.description, conf.actorFont());
+    const actDims = utils.calculateTextDimensions(actor.description, actorFont(conf));
     actor.width = actor.wrap
       ? conf.width
       : Math.max(conf.width, actDims.width + 2 * conf.wrapPadding);
@@ -868,8 +894,8 @@ const buildNoteModel = function(msg, actors) {
   let shouldWrap = msg.wrap && msg.message;
 
   let textDimensions = utils.calculateTextDimensions(
-    shouldWrap ? utils.wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message,
-    conf.noteFont()
+    shouldWrap ? utils.wrapLabel(msg.message, conf.width, noteFont(conf)) : msg.message,
+    noteFont(conf)
   );
   let noteModel = {
     width: shouldWrap
@@ -901,13 +927,9 @@ const buildNoteModel = function(msg, actors) {
   } else if (msg.to === msg.from) {
     textDimensions = utils.calculateTextDimensions(
       shouldWrap
-        ? utils.wrapLabel(
-            msg.message,
-            Math.max(conf.width, actors[msg.from].width),
-            conf.noteFont()
-          )
+        ? utils.wrapLabel(msg.message, Math.max(conf.width, actors[msg.from].width), noteFont(conf))
         : msg.message,
-      conf.noteFont()
+      noteFont(conf)
     );
     noteModel.width = shouldWrap
       ? Math.max(conf.width, actors[msg.from].width)
@@ -926,7 +948,7 @@ const buildNoteModel = function(msg, actors) {
     noteModel.message = utils.wrapLabel(
       msg.message,
       noteModel.width - 2 * conf.wrapPadding,
-      conf.noteFont()
+      noteFont(conf)
     );
   }
   logger.debug(
@@ -958,12 +980,12 @@ const buildMessageModel = function(msg, actors) {
   const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
   const allBounds = fromBounds.concat(toBounds);
   const boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
-  const msgDims = utils.calculateTextDimensions(msg.message, conf.messageFont());
+  const msgDims = utils.calculateTextDimensions(msg.message, messageFont(conf));
   if (msg.wrap && msg.message) {
     msg.message = utils.wrapLabel(
       msg.message,
       Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width),
-      conf.messageFont()
+      messageFont(conf)
     );
   }
   return {
