@@ -11,11 +11,8 @@ Examples of Initalize
         'securityLevel': 'loose', 'theme': 'base'	
     });	
 ```
-The settings for a theme can be set globally for the site with the initialize call. The example below highlights how that can look:
+**Notes**: Only site owners can use the `mermaidAPI.initialize` call to set values. Site-Users will have to use `%%init%%` to modify configurations.
 
-```
- // example
-```
 ## Themes at the Local or Current Level
 When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array. 
 
@@ -27,7 +24,7 @@ When Generating a diagram using on a webpage that supports mermaid. It is also p
 ```
 
 
-Here is an example of a showcase flowchart with theme set to base, with the default variables set:
+Here is an example of how `%%init%%` can set the theme to 'base', this assumes that `themeVariables` are set to default:
 ```mermaid
 %%{init: {'theme':'base'}}%%
         graph TD
@@ -46,16 +43,21 @@ Here is an example of a showcase flowchart with theme set to base, with the defa
           end
 ```
 
-# Making a Custom Theme
-The easiest way to make a custom theme is to start with the base theme, the theme named `base` and just modify theme variables through `themeVariables`, via `%%init%%. 
+# Making a Custom Theme  with `themeVariables`
 
-* primaryColor   - the base color for the theme
+The easiest way to make a custom theme is to start with the base theme, and just modify theme variables through `themeVariables`, via `%%init%%`. 
 
-More specific color variables it is possible to change:
-* lineColor
-* textColor
+| Parameter | Description |Type | Required | Objects contained|
+| --- | --- | --- | --- | --- |
+|themeVariables | Array containing objects, modifiable with the `%%init%%` directive| Array | Required | primaryColor, lineColor, textColor|
 
-Here is an example of overriding the primary color and giving everything a little different look, using `%%init%%`. 
+**Notes**:
+Leaving it empty will set the values to default
+* primaryColor- the base color for the theme 
+* lineColor- the line color for the theme 
+* textColor-the text color for the theme 
+
+**Here is an example of overriding `primaryColor` and giving everything a ifferent look, using `%%init%%`. 
 ```
 mermaid
 %%{init: {'theme':'base', 'themeVariables': {primaryColor: '#ff0000'}}%%
@@ -78,8 +80,8 @@ The Theming Engine does not admit color codes and will only accept proper color 
 
 # Examples:
 
-When adjusting a theme it might be helpful to look at the theme with these diagrams to evaluate that everything is visiable and looks good.
-In the following examples, the directive `init` is used, with the `theme` being declared as `base`. for more information on this, read the [8.6.0documentation](/8.6.0_docs.md)
+When adjusting a theme it might be helpful to look at the theme with these diagrams to evaluate that everything is visible and looks good.
+In the following examples, the directive `init` is used, with the `theme` being declared as `base`. for more information on this, read the documentation for [Version 8.6.0](/8.6.0_docs.md)
 
 ### Flowchart
 ```
