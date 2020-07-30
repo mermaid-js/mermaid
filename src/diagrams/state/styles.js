@@ -81,12 +81,17 @@ g.stateGroup line {
 }
 
 .node circle.state-start {
-  fill: ${options.primaryBorderColor};
+  fill: ${options.lineColor};
   stroke: black;
 }
 .node circle.state-end {
   fill: ${options.primaryBorderColor};
   stroke: ${options.background};
+  stroke-width: 1.5
+}
+.end-state-inner {
+  fill: ${options.background};
+  // stroke: ${options.background};
   stroke-width: 1.5
 }
 

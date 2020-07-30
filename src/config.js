@@ -20,12 +20,14 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
     const d = _directives[i];
     sanitize(d);
     cfg = assignWithDepth(cfg, d);
-    if (d.themeVariables) {
-      themeVariables = d.themeVariables;
+    if (d.theme) {
+      cfg.themeVariables = theme[cfg.theme].getThemeVariables(d.themeVariables);
     }
   }
   if (cfg.theme && theme[cfg.theme]) {
-    const variables = theme[cfg.theme].getThemeVariables(themeVariables);
+    let tVars = assignWithDepth({}, cfg.themeVariables);
+    tVars = assignWithDepth(tVars, themeVariables);
+    const variables = theme[cfg.theme].getThemeVariables(tVars);
     cfg.themeVariables = variables;
   }
 
@@ -47,8 +49,14 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  * @returns {*} - the siteConfig
  */
 export const setSiteConfig = conf => {
+  console.warn('Setting site config');
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
+
+  if (conf.theme) {
+    siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
+  }
+
   currentConfig = updateCurrentConfig(siteConfig, directives);
   return siteConfig;
 };

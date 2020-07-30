@@ -76,7 +76,7 @@ stateDiagram-v2
       </div>
       %%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
       <div class="mermaid" style="width: 50%; height: 20%;">
-        %%{init: {'theme': 'base'}}%%
+        %%{init: {'theme': 'dark'}}%%
 
         flowchart TB
         subgraph apa
@@ -106,8 +106,8 @@ Note over Bob,Alice: Looks back
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        // theme: 'base',
-        // themeVariables:{primaryColor: '#0000ff'},
+        theme: 'forest',
+        // themeVariables:{primaryColor: '#ff0000'},
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,

@@ -14,8 +14,9 @@ import { logger } from '../../logger';
 export const drawStartState = g =>
   g
     .append('circle')
-    .style('stroke', 'black')
-    .style('fill', 'black')
+    // .style('stroke', 'black')
+    // .style('fill', 'black')
+    .attr('class', 'start-state')
     .attr('r', getConfig().state.sizeUnit)
     .attr('cx', getConfig().state.padding + getConfig().state.sizeUnit)
     .attr('cy', getConfig().state.padding + getConfig().state.sizeUnit);
@@ -241,8 +242,9 @@ export const addTitleAndBox = (g, stateDef, altBkg) => {
 
 const drawEndState = g => {
   g.append('circle')
-    .style('stroke', 'black')
-    .style('fill', 'white')
+    // .style('stroke', 'black')
+    // .style('fill', 'white')
+    .attr('class', 'end-state-outer')
     .attr('r', getConfig().state.sizeUnit + getConfig().state.miniPadding)
     .attr(
       'cx',
@@ -253,13 +255,16 @@ const drawEndState = g => {
       getConfig().state.padding + getConfig().state.sizeUnit + getConfig().state.miniPadding
     );
 
-  return g
-    .append('circle')
-    .style('stroke', 'black')
-    .style('fill', 'black')
-    .attr('r', getConfig().state.sizeUnit)
-    .attr('cx', getConfig().state.padding + getConfig().state.sizeUnit + 2)
-    .attr('cy', getConfig().state.padding + getConfig().state.sizeUnit + 2);
+  return (
+    g
+      .append('circle')
+      // .style('stroke', 'black')
+      // .style('fill', 'black')
+      .attr('class', 'end-state-inner')
+      .attr('r', getConfig().state.sizeUnit)
+      .attr('cx', getConfig().state.padding + getConfig().state.sizeUnit + 2)
+      .attr('cy', getConfig().state.padding + getConfig().state.sizeUnit + 2)
+  );
 };
 const drawForkJoinState = (g, stateDef) => {
   let width = getConfig().state.forkWidth;
