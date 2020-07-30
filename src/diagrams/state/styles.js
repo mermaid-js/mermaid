@@ -63,10 +63,13 @@ g.stateGroup line {
 
 .edgeLabel .label rect {
   fill: ${options.tertiaryColor};
-  opacity: 0.2;
+  opacity: 0.5;
 }
 .edgeLabel .label text {
   fill: ${options.tertiaryTextColor};
+}
+.label div .edgeLabel {
+  color: ${options.tertiaryTextColor};
 }
 
 .stateLabel text {
@@ -78,12 +81,17 @@ g.stateGroup line {
 }
 
 .node circle.state-start {
-  fill: ${options.primaryBorderColor};
+  fill: ${options.lineColor};
   stroke: black;
 }
 .node circle.state-end {
   fill: ${options.primaryBorderColor};
   stroke: ${options.background};
+  stroke-width: 1.5
+}
+.end-state-inner {
+  fill: ${options.background};
+  // stroke: ${options.background};
   stroke-width: 1.5
 }
 

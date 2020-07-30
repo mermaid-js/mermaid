@@ -11,6 +11,7 @@
       body {
         /* background: rgb(221, 208, 208); */
         background: #f4f4f4;
+        background: #222;
         font-family: 'Arial';
         height: 100%;
         width: 100%;
@@ -40,7 +41,6 @@
     <h1>Showcases of diagrams</h1>
     <div class="flex flex-wrap">
       <div class="mermaid width height">
-%%{init2: {'securityLevel': 'loose', 'theme':'base'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -74,8 +74,6 @@
           end
       </div>
       <div class="mermaid width height" >
-%%{init2: {'securityLevel': 'loose', 'theme':'base'}}%%
-
         sequenceDiagram
           autonumber
           par Action 1
@@ -93,8 +91,6 @@
             end
       </div>
       <div class="mermaid width height" >
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
-
 classDiagram
 	Animal "1" <|-- Duck
 	Animal <|-- Fish
@@ -147,7 +143,6 @@ gantt
        Add another diagram to demo page    :48h
       </div>
       <div class="mermaid width height2">
-%%{init2: {'securityLevel': 'loose', 'theme':'base'}}%%
       stateDiagram
         [*] --> Active
 
@@ -176,7 +171,6 @@ gantt
 
       </div>
       <div class="mermaid width height2">
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 stateDiagram-v2
         [*] --> Active
 
@@ -233,7 +227,7 @@ journey
         };
       mermaid.initialize({
         theme: 'base',
-        themeVariables:
+        themeVariables: { primaryColor: '#9400D3', darkMode: true, background: '#222'},
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
@@ -243,7 +237,7 @@ journey
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         fontFamily: '"arial", sans-serif',
         curve: 'cardinal',
-        securityLevel: 'strict'
+        // securityLevel: 'strict'
       });
       function callback(){alert('It worked');}
     </script>

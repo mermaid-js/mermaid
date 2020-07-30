@@ -1,36 +1,40 @@
 import { darken, lighten, adjust, invert } from 'khroma';
-
-const mkBorder = (col, darkMode) =>
-  darkMode ? adjust(col, { s: -40, l: 10 }) : adjust(col, { s: -40, l: -10 });
+import { mkBorder } from './theme-helpers';
 class Theme {
   constructor() {
     /** # Base variables */
     /** * background - used to know what the background color is of the diagram. This is used for deducing colors for istance line color. Defaulr value is #f4f4f4. */
     this.background = '#f4f4f4';
     // this.background = '#0c0c0c';
+    // this.darkMode = true;
+    this.primaryColor = '#fff4dd';
+    // this.background = '#0c0c0c';
     /** * darkMode -In darkMode the color generation deduces other colors from the primary colors */
     this.darkMode = false;
-    // this.darkMode = true;
     // this.primaryColor = '#1f1f00';
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
+
+    // dark
+
+    // this.primaryColor = '#034694';
+    // this.primaryColor = '#f2ee7e';
     // this.primaryColor = '#9f33be';
-    this.primaryColor = '#f0fff0';
+    // this.primaryColor = '#f0fff0';
     // this.primaryColor = '#fa255e';
     // this.primaryColor = '#ECECFF';
 
     // this.secondaryColor = '#c39ea0';
     // this.tertiaryColor = '#f8e5e5';
 
-    this.secondaryColor = '#dfdfde';
-    this.tertiaryColor = '#CCCCFF';
+    // this.secondaryColor = '#dfdfde';
+    // this.tertiaryColor = '#CCCCFF';
 
     this.border1 = '#9370DB';
     this.arrowheadColor = '#333333';
     this.fontFamily = '"trebuchet ms", verdana, arial';
     this.fontSize = '16px';
-    this.textColor = '#333';
     this.updateColors();
     this.relationColor = '#000';
   }
@@ -38,19 +42,19 @@ class Theme {
     this.secondBkg = this.tertiaryColor;
 
     /* Main */
-    this.secondaryColor = adjust(this.primaryColor, { h: 120 });
-    this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
-    console.warn('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
+    this.primaryTextColor = this.darkMode ? '#ddd' : '#333'; // invert(this.primaryColor);
+    this.secondaryColor = adjust(this.primaryColor, { h: -120 });
+    this.tertiaryColor = adjust(this.primaryColor, { h: 180, l: 5 });
+
     this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
     this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
     this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
     this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
 
-    this.primaryTextColor = invert(this.primaryColor);
     this.secondaryTextColor = invert(this.secondaryColor);
     this.tertiaryTextColor = invert(this.tertiaryColor);
     this.lineColor = invert(this.background);
-    this.textColor = invert(this.background);
+    this.textColor = this.primaryTextColor;
 
     /* Flowchart variables */
 
@@ -62,7 +66,9 @@ class Theme {
     this.clusterBorder = this.tertiaryBorderColor;
     this.defaultLinkColor = this.lineColor;
     this.titleColor = this.tertiaryTextColor;
-    this.edgeLabelBackground = this.labelBackground;
+    this.edgeLabelBackground = this.darkMode
+      ? darken(this.secondaryColor, 30)
+      : this.secondaryColor;
 
     /* Sequence Diagram variables */
 
@@ -80,7 +86,7 @@ class Theme {
     // this.noteTextColor = this.actorTextColor;
     this.activationBorderColor = darken(this.secondaryColor, 10);
     this.activationBkgColor = this.secondaryColor;
-    this.sequenceNumberColor = 'white';
+    this.sequenceNumberColor = invert(this.lineColor);
 
     /* Gantt chart variables */
 
