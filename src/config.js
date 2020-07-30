@@ -421,34 +421,44 @@ const config = {
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
-     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
+     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms, verdana, aria |
      *
      ***Notes:**
      ***Default value:"trebuchet ms**.
      */
     messageFontFamily: '"trebuchet ms", verdana, arial',
     /**
-     * This sets the font weight of the message's description
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontWeight | This sets the font weight of messages, or their relative thickness or thinness. | Integer | Required | Any Positive Number |
      * **Default value 400.
      */
     messageFontWeight: 400,
     /**
-     * This sets the auto-wrap state for the diagram
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *|   wrap | This sets the auto-wrap state for the diagram | Boolean | Required | true, false |
      * **Default value false.
      */
     wrap: false,
     /**
-     * This sets the auto-wrap padding for the diagram (sides only)
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| wrapPadding | * This sets the auto-wrap padding for the diagram (sides only)| Integer | Required | Any Positive Number |
      * **Default value 10.
      */
     wrapPadding: 10,
     /**
-     * This sets the width of the loop-box (loop, alt, opt, par)
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontWeight | * This sets the width of the loop-box (loop, alt, opt, par). | Integer | Required | Any Positive Number |
      * **Default value 50.
      */
     labelBoxWidth: 50,
     /**
-     * This sets the height of the loop-box (loop, alt, opt, par)
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontWeight | This sets the height of the loop-box (loop, alt, opt, par) | Integer | Required | Any Positive Number |
      * **Default value 20.
      */
     labelBoxHeight: 20,
