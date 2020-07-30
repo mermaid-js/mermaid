@@ -1,10 +1,26 @@
-import { lighten, rgba, adjust } from 'khroma';
+import { invert, lighten, rgba, adjust } from 'khroma';
+import { mkBorder } from './theme-helpers';
 
 class Theme {
   constructor() {
     /* Base variables */
+    this.background = '#f4f4f4';
     this.primaryColor = '#ECECFF';
+
+    this.secondaryColor = adjust(this.primaryColor, { h: 120 });
     this.secondaryColor = '#ffffde';
+    this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
+    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
+    // this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
+
+    this.primaryTextColor = invert(this.primaryColor);
+    this.secondaryTextColor = invert(this.secondaryColor);
+    this.tertiaryTextColor = invert(this.tertiaryColor);
+    this.lineColor = invert(this.background);
+    this.textColor = invert(this.background);
+
     this.background = 'white';
     this.mainBkg = '#ECECFF';
     this.secondBkg = '#ffffde';
@@ -124,7 +140,7 @@ class Theme {
 
     /* state colors */
     /* class */
-    this.classText = this.nodeBorder;
+    this.classText = this.primaryTextColor;
     /* journey */
     this.fillType0 = this.primaryColor;
     this.fillType1 = this.secondaryColor;

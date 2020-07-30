@@ -1,7 +1,9 @@
-import { darken, adjust } from 'khroma';
+import { darken, lighten, adjust, invert } from 'khroma';
+import { mkBorder } from './theme-helpers';
 class Theme {
   constructor() {
     /* Base vales */
+    this.background = '#f4f4f4';
     this.primaryColor = '#cde498';
     this.secondaryColor = '#cdffb2';
     this.background = 'white';
@@ -14,8 +16,17 @@ class Theme {
     this.fontFamily = '"trebuchet ms", verdana, arial';
     this.fontSize = '16px';
 
-    /* Flowchart variables */
+    this.tertiaryColor = lighten('#cde498', 10);
+    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
+    this.primaryTextColor = invert(this.primaryColor);
+    this.secondaryTextColor = invert(this.secondaryColor);
+    this.tertiaryTextColor = invert(this.primaryColor);
+    this.lineColor = invert(this.background);
+    this.textColor = invert(this.background);
 
+    /* Flowchart variables */
     this.nodeBkg = 'calculated';
     this.nodeBorder = 'calculated';
     this.clusterBkg = 'calculated';
@@ -99,7 +110,7 @@ class Theme {
 
     /* state colors */
     /* class */
-    this.classText = this.nodeBorder;
+    this.classText = this.primaryTextColor;
     /* journey */
     this.fillType0 = this.primaryColor;
     this.fillType1 = this.secondaryColor;

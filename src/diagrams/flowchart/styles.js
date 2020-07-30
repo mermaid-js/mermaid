@@ -43,6 +43,8 @@ const getStyles = options =>
     background-color: ${options.edgeLabelBackground};
     rect {
       opacity: 0.5;
+      background-color: ${options.edgeLabelBackground};
+      fill: ${options.edgeLabelBackground};
     }
     text-align: center;
   }
