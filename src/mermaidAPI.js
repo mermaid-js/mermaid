@@ -581,7 +581,7 @@ const mermaidAPI = Object.freeze({
   getSiteConfig: configApi.getSiteConfig,
   updateSiteConfig: configApi.updateSiteConfig,
   reset: () => {
-    console.warn('reset');
+    // console.warn('reset');
     configApi.reset();
     // const siteConfig = configApi.getSiteConfig();
     // updateRendererConfigs(siteConfig);

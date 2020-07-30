@@ -25,17 +25,11 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
     }
   }
   if (cfg.theme && theme[cfg.theme]) {
-    // console.warn('cfg beeing updated main bkg', themeVariables, cfg.theme);
     const variables = theme[cfg.theme].getThemeVariables(themeVariables);
-    // console.warn('cfg beeing updated 2 main bkg', variables.mainBkg);
     cfg.themeVariables = variables;
   }
-  // else {
-  //   console.warn('cfg not beeing updated main bkg', themeVariables, cfg.theme);
-  // }
 
   currentConfig = cfg;
-  // console.warn('cfg updated main bkg', cfg.sequence);
   return cfg;
 };
 /**
@@ -53,23 +47,14 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  * @returns {*} - the siteConfig
  */
 export const setSiteConfig = conf => {
-  // siteConfig = { ...defaultConfig, ...conf };
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
   currentConfig = updateCurrentConfig(siteConfig, directives);
   return siteConfig;
 };
 export const updateSiteConfig = conf => {
-  // Object.keys(conf).forEach(key => {
-  //   const manipulator = manipulators[key];
-  //   conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
-  // });
   siteConfig = assignWithDepth(siteConfig, conf);
-  console.log('updateSiteConfig', siteConfig);
   updateCurrentConfig(siteConfig, directives);
-  // assignWithDesetpth(currentConfig, conf, { clobber: true });
-  // // Set theme variables if user has set the theme option
-  // assignWithDepth(siteConfig, conf);
 
   return siteConfig;
 };
@@ -164,24 +149,7 @@ export const addDirective = directive => {
  * @param conf - the base currentConfig to reset to (default: current siteConfig )
  */
 export const reset = () => {
-  // Object.keys(siteConfig).forEach(key => delete siteConfig[key]);
-  // Object.keys(currentConfig).forEach(key => delete currentConfig[key]);
-  // assignWithDepth(siteConfig, conf, { clobber: true });
-  // assignWithDepth(currentConfig, conf, { clobber: true });
-
   // Replace current config with siteConfig
   directives = [];
-  // console.warn(siteConfig.sequence);
   updateCurrentConfig(siteConfig, directives);
 };
-
-// const configApi = Object.freeze({
-//   sanitize,
-//   setSiteConfig,
-//   getSiteConfig,
-//   setConfig,
-//   getConfig,
-//   reset,
-//   defaultConfig
-// });
-// export default configApi;
