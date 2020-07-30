@@ -17,13 +17,13 @@ This allows for simplified generation and updating of even the most complex diag
 
 mermaid, is a simple markdown-inspired script language for generating charts from text-definitions, via javascript. As such, using it cuts the times it takes to create, modify and render diagrams. 
 
-**Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor).**
+## Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor).
+You can watch some popular mermaid Live Editor tutorials on  [mermaid Overview](./n00b-overview.md) for a quick intro. 
 
-**To use mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md)**
+## To use mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md)**
+For a more detailed introduction to mermaid and some of it's more basic uses, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) and [Usage](./usage.md).
 
-For a more detailed introduction to mermaid, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) and [Usage](./usage.md).
 
-You can also watch some popular mermaid tutorials on the [mermaid Overview](./n00b-overview.md)
 
 ## [CDN](https://unpkg.com/mermaid/)
 
