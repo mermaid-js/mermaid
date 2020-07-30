@@ -211,11 +211,12 @@ const render = function(id, _txt, cb, container) {
   const graphInit = utils.detectInit(txt);
   if (graphInit) {
     configApi.addDirective(graphInit);
-  } else {
-    configApi.reset();
-    const siteConfig = configApi.getSiteConfig();
-    configApi.addDirective(siteConfig);
   }
+  // else {
+  //   configApi.reset();
+  //   const siteConfig = configApi.getSiteConfig();
+  //   configApi.addDirective(siteConfig);
+  // }
   // console.warn('Render fetching config');
 
   const cnf = configApi.getConfig();
