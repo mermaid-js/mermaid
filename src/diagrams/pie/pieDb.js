@@ -3,7 +3,7 @@
  */
 import { logger } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
-import configApi from '../../config';
+import * as configApi from '../../config';
 
 let sections = {};
 let title = '';

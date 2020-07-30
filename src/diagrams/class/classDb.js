@@ -1,13 +1,13 @@
 import { select } from 'd3';
 import { logger } from '../../logger';
-import configApi, { getConfig } from '../../config';
+import * as configApi from '../../config';
 import common from '../common/common';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 
-const config = getConfig();
+const config = configApi.getConfig();
 
 let relations = [];
 let classes = {};

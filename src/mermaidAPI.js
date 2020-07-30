@@ -13,7 +13,15 @@
 import Stylis from 'stylis';
 import { select } from 'd3';
 import pkg from '../package.json';
-import { setConfig, getConfig, setSiteConfig, getSiteConfig } from './config';
+// import * as configApi from './config';
+// // , {
+// //   setConfig,
+// //   configApi.getConfig,
+// //   configApi.updateSiteConfig,
+// //   configApi.setSiteConfig,
+// //   configApi.getSiteConfig,
+// //   configApi.defaultConfig
+// // }
 import { logger, setLogLevel } from './logger';
 import utils, { assignWithDepth } from './utils';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
@@ -50,7 +58,7 @@ import erRenderer from './diagrams/er/erRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
-import configApi from './config';
+import * as configApi from './config';
 import getStyles from './styles';
 import theme from './themes';
 
@@ -198,17 +206,21 @@ export const decodeEntities = function(text) {
  * completed.
  */
 const render = function(id, _txt, cb, container) {
+  configApi.reset();
   let txt = _txt;
   const graphInit = utils.detectInit(txt);
   if (graphInit) {
-    reinitialize(graphInit);
-  } else {
-    configApi.reset();
-    const siteConfig = getSiteConfig();
-    reinitialize(siteConfig);
+    configApi.addDirective(graphInit);
   }
+  // else {
+  //   configApi.reset();
+  //   const siteConfig = configApi.getSiteConfig();
+  //   configApi.addDirective(siteConfig);
+  // }
+  // console.warn('Render fetching config');
 
-  const cnf = getConfig();
+  const cnf = configApi.getConfig();
+  // console.warn('Render with config after adding new directives', cnf.themeVariables.mainBkg);
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -284,6 +296,9 @@ const render = function(id, _txt, cb, container) {
       }
     }
   }
+
+  // logger.warn(cnf.themeVariables);
+
   const stylis = new Stylis();
   const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
@@ -482,6 +497,7 @@ const handleDirective = function(p, directive, type) {
       });
 
       reinitialize(directive.args);
+      configApi.addDirective(directive.args);
       break;
     }
     case 'wrap':
@@ -520,22 +536,23 @@ function updateRendererConfigs(conf) {
   errorRenderer.setConf(conf.class);
 }
 
-function reinitialize(options) {
-  // console.warn(`mermaidAPI.reinitialize: v${pkg.version}`, options);
-  if (options.theme && theme[options.theme]) {
-    // Todo merge with user options
-    options.themeVariables = options.theme;
-  }
-
-  // Set default options
-  const config = typeof options === 'object' ? setConfig(options) : getSiteConfig();
-  updateRendererConfigs(config);
-  setLogLevel(config.logLevel);
-  logger.debug('mermaidAPI.reinitialize: ', config);
+function reinitialize() {
+  // `mermaidAPI.reinitialize: v${pkg.version}`,
+  //   JSON.stringify(options),
+  //   options.themeVariables.primaryColor;
+  // // if (options.theme && theme[options.theme]) {
+  // //   options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
+  // // }
+  // // Set default options
+  // const config =
+  //   typeof options === 'object' ? configApi.setConfig(options) : configApi.getSiteConfig();
+  // updateRendererConfigs(config);
+  // setLogLevel(config.logLevel);
+  // logger.debug('mermaidAPI.reinitialize: ', config);
 }
 
 function initialize(options) {
-  // console.log(`mermaidAPI.initialize: v${pkg.version} ${options}`);
+  logger.debug(`mermaidAPI.initialize: v${pkg.version} ${options}`);
   // Set default options
 
   if (options && options.theme && theme[options.theme]) {
@@ -545,40 +562,39 @@ function initialize(options) {
     if (options) options.themeVariables = theme.default.getThemeVariables();
   }
 
-  const config = typeof options === 'object' ? setSiteConfig(options) : getSiteConfig();
+  const config =
+    typeof options === 'object' ? configApi.setSiteConfig(options) : configApi.getSiteConfig();
 
   updateRendererConfigs(config);
   setLogLevel(config.logLevel);
-  logger.debug('mermaidAPI.initialize: ', config);
+  // logger.debug('mermaidAPI.initialize: ', config);
 }
 
-// function getConfig () {
-//   console.warn('get config')
-//   return config
-// }
 const mermaidAPI = Object.freeze({
   render,
   parse,
   parseDirective,
   initialize,
   reinitialize,
-  getConfig,
-  getSiteConfig,
+  getConfig: configApi.getConfig,
+  setConfig: configApi.setConfig,
+  getSiteConfig: configApi.getSiteConfig,
+  updateSiteConfig: configApi.updateSiteConfig,
   reset: () => {
-    // console.warn('reset');
+    console.warn('reset');
     configApi.reset();
-    const siteConfig = getSiteConfig();
-    updateRendererConfigs(siteConfig);
+    // const siteConfig = configApi.getSiteConfig();
+    // updateRendererConfigs(siteConfig);
   },
   globalReset: () => {
     configApi.reset(configApi.defaultConfig);
-    updateRendererConfigs(getConfig());
+    updateRendererConfigs(configApi.getConfig());
   },
   defaultConfig: configApi.defaultConfig
 });
 
-setLogLevel(getConfig().logLevel);
-configApi.reset(getConfig());
+setLogLevel(configApi.getConfig().logLevel);
+configApi.reset(configApi.getConfig());
 
 export default mermaidAPI;
 /**
