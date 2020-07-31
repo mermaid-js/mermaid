@@ -74,15 +74,22 @@ stateDiagram-v2
   A --> D: asd123
       </div>
       </div>
-      %%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
       <div class="mermaid" style="width: 50%; height: 20%;">
-        %%{init: {'theme': 'dark'}}%%
-
-        flowchart TB
-        subgraph apa
-          a --> A %% comment
-          a --> a{apa} %% comment
-        end
+        %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
 graph TD
@@ -106,7 +113,7 @@ Note over Bob,Alice: Looks back
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'forest',
+        // theme: 'forest',
         // themeVariables:{primaryColor: '#ff0000'},
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
