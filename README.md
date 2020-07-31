@@ -1,24 +1,47 @@
-<!-- <Remove this in the future> -->
-| :mega: :mega: :mega: |
-| :----: |
-| * If you're upgrading from a version __< v8.2.0__, there are [non-backward-compatible changes](http://mermaid-js.github.io/mermaid/#/usage?id=to-enable-click-event-and-tags-in-nodes) related to security issues. Default behaviour of the library might have changed for your implementation.|
-<!-- </Remove this in the future> -->
+
 
 # mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 
-<!-- <Main description> -->
-__mermaid is a Javascript based diagramming and charting tool. It generates diagrams flowcharts and more, using markdown-inspired text for ease and speed.__
-
-Check out the list of [Integrations and Usages of Mermaid](https://github.com/mermaid-js/mermaid/blob/develop/docs/integrations.md)
-
-For more information and help in getting started, please view our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Alternatively, you can also play with our [live editor](https://mermaidjs.github.io/mermaid-live-editor/).
-<!-- </Main description> -->
+![banner](./img/header.png)
+**Edit this Page** [![N|Solid](./docs/img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/README.md)
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
-## New diagram
 
-This version comes with a new diagram type, user journey diagrams.
+<!-- <Main description> -->
+__mermaid is a Javascript based diagramming and charting tool that uses markdown-inspired text definitions and a renderer to create and modify complex diagrams.  The main purpose of mermaid is to help Documentation catch up with Development .__ 
+
+# Diagrams and Doc-Rot create a catch-22 scenario.
+## Diagramming and Documentation takes up precious developer time and they get outdated quickly. 
+## But not having diagrams or docs ruins productivity and hurts organizational learning. 
+
+**mermaid addresses this problem by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.** 
+
+The text definitions for  mermaid diagrams allows for it to be updated easily, it can also be made part of production scripts (and other pieces of code). So less time needs be spent on documenting, as a separate and laborious task. 
+
+## Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor).
+
+## You can watch some popular mermaid Live Editor tutorials on  [mermaid Overview](./n00b-overview.md) for a quick intro. 
+
+## To use mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md)**
+
+## For a more detailed introduction to mermaid and some of it's more basic uses, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) and [Usage](./usage.md).
+
+
+## [CDN](https://unpkg.com/mermaid/)
+
+## [Documentation](https://mermaidjs.github.io)
+
+## [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
+
+## [Recent Mermaid Versions](./versionUpdates.md).
+
+# Version News: Version 8.6.0
+
+## [New Mermaid Live-Editor Beta](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
+
+## [New Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
+
 
 ## New diagrams in 8.4
 
@@ -45,7 +68,6 @@ mermaidAPI.initialize({
 });
 ```
 
-For more information and help in getting started, please view our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Play with our [live editor](https://mermaidjs.github.io/mermaid-live-editor/) or jump straight to the [installation and usage](http://mermaid-js.github.io/mermaid/#/usage).
 <!-- </Main description> -->
 
 __The following are some examples of the diagrams, charts and graphs that can be made using mermaid and the Markdown-inspired text specific to it. Click here jump into the [text syntax](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference).__
