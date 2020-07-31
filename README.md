@@ -12,18 +12,20 @@
 __mermaid is a Javascript based diagramming and charting tool that uses markdown-inspired text definitions and a renderer to create and modify complex diagrams.  The main purpose of mermaid is to help Documentation catch up with Development .__ 
 
 # Diagrams and Doc-Rot create a catch-22 scenario.
-## Diagramming and Documentation takes up precious developer time and they get outdated quickly. 
-## But not having diagrams or docs ruins productivity and hurts organizational learning. 
+
+### Diagramming and Documentation takes up precious developer time and they get outdated quickly. 
+### But not having diagrams or docs ruins productivity and hurts organizational learning. 
 
 **mermaid addresses this problem by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.** 
 
 The text definitions for  mermaid diagrams allows for it to be updated easily, it can also be made part of production scripts (and other pieces of code). So less time needs be spent on documenting, as a separate and laborious task. 
 
-## Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor).
 
-## You can watch some popular mermaid Live Editor tutorials on  [mermaid Overview](./n00b-overview.md) for a quick intro. 
+# Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor).
 
-## To use mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md)**
+## [mermaid Overview](./n00b-overview.md) has Live Editor tutorials. 
+
+## Use mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md)**
 
 ## For a more detailed introduction to mermaid and some of it's more basic uses, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) and [Usage](./usage.md).
 
