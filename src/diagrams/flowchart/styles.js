@@ -1,11 +1,11 @@
 const getStyles = options =>
   `.label {
     font-family: ${options.fontFamily};
-    color: ${options.textColor};
+    color: ${options.nodeTextColor || options.textColor};
   }
 
   .label text {
-    fill: ${options.textColor};
+    fill: ${options.nodeTextColor || options.textColor};
   }
 
   .node rect,
@@ -66,7 +66,7 @@ const getStyles = options =>
     padding: 2px;
     font-family: ${options.fontFamily};
     font-size: 12px;
-    background: ${options.secondBkg};
+    background: ${options.tertiaryColor};
     border: 1px solid ${options.border2};
     border-radius: 2px;
     pointer-events: none;

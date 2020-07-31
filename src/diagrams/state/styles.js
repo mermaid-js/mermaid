@@ -18,7 +18,7 @@ g.stateGroup .state-title {
 }
 
 g.stateGroup rect {
-  fill: ${options.nodeBkg};
+  fill: ${options.mainBkg};
   stroke: ${options.nodeBorder};
 }
 
@@ -57,7 +57,7 @@ g.stateGroup line {
 .stateLabel .box {
   stroke: none;
   stroke-width: 0;
-  fill: ${options.nodeBkg};
+  fill: ${options.mainBkg};
   opacity: 0.5;
 }
 
@@ -105,7 +105,7 @@ g.stateGroup line {
 }
 
 .statediagram-cluster rect {
-  fill: ${options.nodeBkg};
+  fill: ${options.mainBkg};
   stroke: ${options.nodeBorder};
   stroke-width: 1px;
 }
