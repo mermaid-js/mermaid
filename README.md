@@ -9,11 +9,11 @@
 
 
 <!-- <Main description> -->
-__mermaid is a Javascript based diagramming and charting tool that uses markdown-inspired text definitions and a renderer to create and modify complex diagrams.  The main purpose of mermaid is to help Documentation catch up with Development .__ 
+__mermaid is a Javascript based diagramming and charting tool that uses markdown-inspired text definitions and a renderer to create and modify complex diagrams.  The main purpose of mermaid is to help Documentation catch up with Development.__ 
 
-# Diagrams and Doc-Rot create a catch-22 scenario.
+# Doc-Rot is catch-22.
 
-### Diagramming and Documentation takes up precious developer time and they get outdated quickly. 
+### Diagramming and Documentation take up precious developer time and they get outdated quickly. 
 ### But not having diagrams or docs ruins productivity and hurts organizational learning. 
 
 **mermaid addresses this problem by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.** 
@@ -21,9 +21,9 @@ __mermaid is a Javascript based diagramming and charting tool that uses markdown
 The text definitions for  mermaid diagrams allows for it to be updated easily, it can also be made part of production scripts (and other pieces of code). So less time needs be spent on documenting, as a separate and laborious task. 
 
 
-# Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor).
+## Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor).
 
-## [mermaid Overview](./n00b-overview.md) has Live Editor tutorials. 
+## [mermaid Overview](./n00b-overview.md) has video tutorials. 
 
 ## Use mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md)**
 
@@ -36,13 +36,17 @@ The text definitions for  mermaid diagrams allows for it to be updated easily, i
 
 ## [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
 
-## [Recent Mermaid Versions](./versionUpdates.md).
+## Record of [Mermaid Version Changes](./versionUpdates.md).
 
-# Version News: Version 8.6.0
 
-## [New Mermaid Live-Editor Beta](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
+# Version News: 8.7.0 Released
 
-## [New Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
+
+
+# [Version 8.7.0](./docs/theming.md) Mermaid comes out with a system for dynamic and integrated setting of the diagram's theme
+
+
+## [New Configuration Protocols in Version 8.6.0](./docs/8.6.0_docs.md)
 
 
 ## New diagrams in 8.4
