@@ -1,4 +1,4 @@
-# Version 8.7.0: Theming
+# Version 8.7.0: Theme Configuration
 
 **Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/theming.md)
 
