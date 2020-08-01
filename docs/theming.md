@@ -60,7 +60,8 @@ The easiest way to make a custom theme is to start with the base theme, and just
 | themeVariables | Array containing objects, modifiable with the `%%init%%` directive | Array | Required | primaryColor, lineColor, textColor |
 
 
-# Here is an example of overriding `primaryColor` through `themeVariables` and giving everything a different look, using `%%init%%`.
+## Here is an example of overriding `primaryColor` through `themeVariables` and giving everything a different look, using `%%init%%`.
+
 ```
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
