@@ -5,13 +5,13 @@
 
 ## Here is the list of the newest versions in Descending Order, beginning from the latest version.
 
-## [Version 8.7.0](./theming.md) brings with it a system for dynamic and integrated configuration of the diagram themes. The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls. 
+# [Version 8.7.0](./theming.md) brings with it a system for dynamic and integrated configuration of the diagram themes. The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls. 
 
 Themes follow and build upon the Levels of Configuration and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
 
 **These Theming Configurations, similar to directives, will also be made applicable in the Live-Editor, for easier styling. 
 
-## Site-wide Themes
+### Site-wide Themes
 Site-wide themes are still declared via `initialize` by site owners.
 
 Example of `Initalize` call setting `theme` to `base`:
@@ -34,7 +34,7 @@ When Generating a diagram using on a webpage that supports mermaid. It is also p
 ```
 
 
-# Making a Custom Theme  with `themeVariables`
+### Making a Custom Theme  with `themeVariables`
 
 The easiest way to make a custom theme is to start with the base theme, and just modify theme variables through `themeVariables`, via `%%init%%`.
 
@@ -43,7 +43,7 @@ The easiest way to make a custom theme is to start with the base theme, and just
 | themeVariables | Array containing objects, modifiable with the `%%init%%` directive | Array | Required | primaryColor, lineColor, textColor |
 
 
-# Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
+### Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
 ```
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
