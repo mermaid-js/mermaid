@@ -84,15 +84,20 @@ The easiest way to make a custom theme is to start with the base theme, and just
 **Notes:
 Leaving it empty will set all variable values to default.
 
+## Color and Color Calculation:
 
-You can create your own themes, by changing any of the given variables below. If you are using a dark background, set dark mode to true to make colors more visible. It is possible to override the calculations using the variable names below, with `%%init%%` if you wish to style it differently.
+Color definitions have certain interactions in mermaid, this is in order to ensure visibility for diagrams. mermaid will adjust some variables automatically, when colors are changed in order to compensate and maintain readability. 
+
+**The Default Value Column** to the right of the Variable coloumn will denote the Variable paired/associated with the Variable on the left and the nature of this pairing or association. If it for instance says primaryColor it means that it gets primaryColor as default value. If it says "based on primaryColor" it means that it is calculated/ derived from primaryColor. This calculation can be primary color inversion, a change of hue, darkening or lightening by 10%, etc. 
+
+You can create your own themes, by changing any of the given variables below. If you are using a dark background, set dark mode to true to adjust the colors. It is possible to override the calculations using the variable names below, with `%%init%%` if you wish to style it differently.
 
 
 ## Theme Variables Reference Table
 
 **Notes: Variables that are unique to some diagrams can be affected by changes in Theme Variables. 
 
-|         name         |         Default value          | Calc |                                                           Description                                                            |
+|       Variable       |         Default/Base/Factor value          | Calc |                                                           Description                                                            |
 | -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
 | darkMode             | false                          |      | Boolean Value that dictates how to calculate colors. "true" will activate darkmode.                                                                                 |
 | background           | #f4f4f4                        |      | Used to calculate color for items that should either be background colored or contrasting to the background.                     |
@@ -197,7 +202,7 @@ You can create your own themes, by changing any of the given variables below. If
           end
 ```
 
-This got a bit too dark and bit too colorful. With some easy steps this can be fixed:
+**This got a bit too dark and bit too colorful. With some easy steps this can be fixed:
 
 * Make the primary color a little lighter
 * set the teriary color to a redish shade as well
