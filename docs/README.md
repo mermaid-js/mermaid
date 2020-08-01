@@ -11,11 +11,14 @@
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
 
-Mermaid is a tool that generates diagrams and charts, from markdown-inspired text definitions
+# Doc-Rot is a Catch-22 that Mermaid helps to solve.
 
-This allows for simplified generation and updating of even the most complex diagrams and charts, while avoiding time-damanding and heavy tools like visio. 
+### Diagramming and Documentation costs precious developer time and gets outdated quickly. 
+### But not having diagrams or Docs ruins productivity and hurts organizational learning. 
 
-mermaid, is a simple markdown-inspired script language for generating charts from text-definitions, via javascript. As such, using it cuts the times it takes to create, modify and render diagrams. 
+## mermaid addresses this problem by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.** 
+
+The text definitions that create mermaid diagrams allows for easy updates, it can also be made part of production scripts (and other pieces of code). So less time needs be spent on documenting, as a separate and laborious task. 
 
 ## Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor).
 
@@ -24,7 +27,6 @@ mermaid, is a simple markdown-inspired script language for generating charts fro
 ## To use mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md)**
 
 ## For a more detailed introduction to mermaid and some of it's more basic uses, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) and [Usage](./usage.md).
-
 
 ## [CDN](https://unpkg.com/mermaid/)
 
