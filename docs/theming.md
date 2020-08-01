@@ -4,7 +4,7 @@
 
 With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of the diagram themes. The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls. 
 
-Themes follow the Levels of Configuration and employ `directives` to modify configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
+Themes follow and build upon the Levels of Configuration and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
 
 **These Theming Configurations, similar to directives, will also be made applicable in the Live-Editor, to maximize customizability. 
 
@@ -58,6 +58,27 @@ The easiest way to make a custom theme is to start with the base theme, and just
 |   Parameter    |                            Description                             | Type  | Required |         Objects contained          |
 | -------------- | ------------------------------------------------------------------ | ----- | -------- | ---------------------------------- |
 | themeVariables | Array containing objects, modifiable with the `%%init%%` directive | Array | Required | primaryColor, lineColor, textColor |
+
+
+# Here is an example of overriding `primaryColor` through `themeVariables` and giving everything a different look, using `%%init%%`.
+```
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
 
 **Notes:
 Leaving it empty will set all variable values to default.
@@ -156,7 +177,6 @@ You can create your own themes, by changing any of the given variables below. If
 
 
 # Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
-
 ```
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
