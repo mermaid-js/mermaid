@@ -39,14 +39,13 @@ The text definitions for  mermaid diagrams allows for it to be updated easily, i
 ## Record of [Mermaid Version Changes](./versionUpdates.md).
 
 
-# Version News: 8.7.0 Released
+# Version News: 8.7.0 Released with Updates to Theme Configuration
 
 
+## [Version 8.7.0](./docs/theming.md) Mermaid comes out with a System for Dynamic and Integrated Diagram Theme Configuration.
 
-# [Version 8.7.0](./docs/theming.md) Mermaid comes out with a system for dynamic and integrated setting of the diagram's theme
 
-
-## [New Configuration Protocols in Version 8.6.0](./docs/8.6.0_docs.md)
+## Mermaid comes out with [New Configuration Protocols in Version 8.6.0](./docs/8.6.0_docs.md)
 
 
 ## New diagrams in 8.4
