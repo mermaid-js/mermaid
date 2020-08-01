@@ -88,7 +88,8 @@ Leaving it empty will set all variable values to default.
 You can create your own themes, by changing any of the given variables below. If you are using a dark background, set dark mode to true to make colors more visible. It is possible to override the calculations using the variable names below, with `%%init%%` if you wish to style it differently.
 
 
-## Reference over Theme Variables that can be used with base theme and their effect:
+## Theme Variables Reference Table
+
 **Notes: Variables that are unique to some diagrams can be affected by changes in Theme Variables. 
 
 |         name         |         Default value          | Calc |                                                           Description                                                            |
