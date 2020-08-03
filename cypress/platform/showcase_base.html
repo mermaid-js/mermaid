@@ -11,7 +11,6 @@
       body {
         /* background: rgb(221, 208, 208); */
         background: #f4f4f4;
-        /* background: #0c0c0c; */
         font-family: 'Arial';
         height: 100%;
         width: 100%;
@@ -93,6 +92,31 @@
                 John-->Alice: Great!
             end
       </div>
+      <div class="mermaid width height" >
+%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+
+classDiagram
+	Animal "1" <|-- Duck
+	Animal <|-- Fish
+	Animal <--o Zebra
+	Animal : +int age
+	Animal : +String gender
+	Animal: +isMammal()
+	Animal: +mate()
+	class Duck{
+		+String beakColor
+		+swim()
+		+quack()
+	}
+	class Fish{
+		-int sizeInFeet
+		-canEat()
+	}
+	class Zebra{
+		+bool is_wild
+		+run()
+	}
+      </div>
       <div class="mermaid width height">
 gantt
        dateFormat                :YYYY-MM-DD
@@ -152,7 +176,7 @@ gantt
 
       </div>
       <div class="mermaid width height2">
-%%{init2: {'securityLevel': 'loose', 'theme':'base'}}%%
+%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 stateDiagram-v2
         [*] --> Active
 
@@ -209,7 +233,7 @@ journey
         };
       mermaid.initialize({
         theme: 'base',
-        themeVariables: { primaryColor: '#ff0000'},
+        // themeVariables:
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,

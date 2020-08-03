@@ -31,7 +31,7 @@ describe('when using mermaidAPI and ', function() {
       let config = mermaidAPI.getConfig();
 
       expect(config.testObject.test1).toBe(1);
-      mermaidAPI.initialize({ testObject: { test3: true } });
+      mermaidAPI.updateSiteConfig({ testObject: { test3: true } });
       config = mermaidAPI.getConfig();
 
       expect(config.testObject.test1).toBe(1);
@@ -44,49 +44,14 @@ describe('when using mermaidAPI and ', function() {
         securityLevel: 'loose'
       };
       mermaidAPI.initialize(config);
+      mermaidAPI.setConfig({securityLevel:'strict', logLevel: 1});
+      expect(mermaidAPI.getConfig().logLevel).toBe(1);
+      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      mermaidAPI.globalReset();
       expect(mermaidAPI.getConfig().logLevel).toBe(0);
       expect(mermaidAPI.getConfig().securityLevel).toBe('loose');
-      mermaidAPI.globalReset();
-      expect(mermaidAPI.getConfig()).toEqual(mermaidAPI.defaultConfig);
     });
-    it('should reset mermaid config to site defaults', function() {
-      let config = {
-        logLevel: 0
-      };
-      mermaidAPI.initialize(config);
-      const siteConfig = mermaidAPI.getSiteConfig();
-      expect(mermaidAPI.getConfig().logLevel).toBe(0);
-      config.logLevel = 3;
-      config.securityLevel = 'loose';
-      mermaidAPI.reinitialize(config);
-      expect(mermaidAPI.getConfig().logLevel).toBe(3);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
-      mermaidAPI.reset();
-      expect(mermaidAPI.getSiteConfig()).toEqual(siteConfig)
-      expect(mermaidAPI.getConfig()).toEqual(siteConfig);
-    });
-    it('should allow site config secure to global defaults', function() {
-      let config = {
-        logLevel: 0,
-        secure: ['foo']
-      };
-      mermaidAPI.initialize(config);
-      const siteConfig = mermaidAPI.getSiteConfig();
-      expect(mermaidAPI.getConfig().logLevel).toBe(0);
-      expect(mermaidAPI.getConfig().secure).toContain('foo');
-      config = {
-        logLevel: 3,
-        securityLevel: 'loose',
-        secure: ['foo', 'bar']
-      };
-      mermaidAPI.reinitialize(config);
-      expect(mermaidAPI.getConfig().secure).toEqual(mermaidAPI.getSiteConfig().secure);
-      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
-      expect(mermaidAPI.getConfig().secure).not.toContain('bar');
-      mermaidAPI.reset();
-      expect(mermaidAPI.getSiteConfig()).toEqual(siteConfig)
-      expect(mermaidAPI.getConfig()).toEqual(siteConfig);
-    });
+
     it('should prevent changes to site defaults (sneaky)', function() {
       let config = {
         logLevel: 0

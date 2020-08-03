@@ -49035,7 +49035,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.4\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.4\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -49043,896 +49043,54 @@ module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.4\",\"descr
 /*!***********************!*\
   !*** ./src/config.js ***!
   \***********************/
-/*! exports provided: defaultConfig, setSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, reset, default */
+/*! exports provided: defaultConfig, setSiteConfig, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultConfig", function() { return defaultConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setSiteConfig", function() { return setSiteConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateSiteConfig", function() { return updateSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSiteConfig", function() { return getSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConfig", function() { return setConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getConfig", function() { return getConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sanitize", function() { return sanitize; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addDirective", function() { return addDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reset", function() { return reset; });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 /* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
+/* harmony import */ var _defaultConfig__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./defaultConfig */ "./src/defaultConfig.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
- // import { unflatten } from 'flat';
-// import flatten from 'flat';
-// import themeVariables from './theme-default';
-// import themeForestVariables from './theme-forest';
-// import themeNeutralVariables from './theme-neutral';
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var handleThemeVariables = function handleThemeVariables(value) {
-  return _themes__WEBPACK_IMPORTED_MODULE_2__["default"][value] ? _themes__WEBPACK_IMPORTED_MODULE_2__["default"][value].getThemeVariables() : _themes__WEBPACK_IMPORTED_MODULE_2__["default"].default.getThemeVariables();
-};
 
-var manipulators = {
-  themeVariables: handleThemeVariables
-};
-/**
- * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
- *
- * ## **What follows are config instructions for older versions**
- * These are the default options which can be overridden with the initialization call like so:
- * **Example 1:**
- * <pre>
- * mermaid.initialize({
- *   flowchart:{
- *     htmlLabels: false
- *   }
- * });
- * </pre>
- *
- * **Example 2:**
- * <pre>
- * &lt;script>
- *   var config = {
- *     startOnLoad:true,
- *     flowchart:{
- *       useMaxWidth:true,
- *       htmlLabels:true,
- *       curve:'cardinal',
- *     },
- *
- *     securityLevel:'loose',
- *   };
- *   mermaid.initialize(config);
- * &lt;/script>
- * </pre>
- * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults). A description of each option follows below.
- *
- * @name Configuration
- */
 
-var config = {
-  /** theme , the CSS style sheet
-   *
-   * theme , the CSS style sheet
-   *
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
-   *
-   ***Notes:**To disable any pre-defined mermaid theme, use "null".
-   * <pre>
-   *  "theme": "forest",
-   *  "themeCSS": ".node rect { fill: red; }"
-   * </pre>
-   */
-  theme: 'default',
-  themeVariables: _themes__WEBPACK_IMPORTED_MODULE_2__["default"]['default'].getThemeVariables(),
-  themeCSS: undefined,
 
-  /* **maxTextSize** - The maximum allowed size of the users text diamgram */
-  maxTextSize: 50000,
+ // debugger;
 
-  /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
-   *
-   ***notes: Default value is \\"trebuchet ms\\".
-   */
-  fontFamily: '"trebuchet ms", verdana, arial;',
-
-  /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
-   *
-   *
-   ***Notes:**
-   *-   debug: 1.
-   *-   info: 2.
-   *-   warn: 3.
-   *-   error: 4.
-   *-   fatal: 5(default).
-   */
-  logLevel: 5,
-
-  /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose, antiscript |
-   *
-   ***Notes:
-   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
-   *-   **loose**: tags in text are allowed, click functionality is enabled
-   *-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
-   */
-  securityLevel: 'strict',
-
-  /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
-   *
-   ***Notes:**
-   ***Default value: true**
-   */
-  startOnLoad: true,
-
-  /**
-   *| Parameter | Description |Type | Required |Values|
-   *| --- | --- | --- | --- | --- |
-   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
-   *
-   *
-   *## Notes**: This matters if you are using base tag settings.
-   ***Default value: false**.
-   */
-  arrowMarkerAbsolute: false,
-
-  /**
-   * This option controls which currentConfig keys are considered _secure_ and can only be changed via
-   * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
-   * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
-   * overriding a site's default security.
-   */
-  secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
-
-  /**
-   * The object containing configurations specific for flowcharts
-   */
-  flowchart: {
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
-     ***Default value: 8**.
-     */
-    diagramPadding: 8,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
-     *
-     ***Notes: Default value: true**.
-     */
-    htmlLabels: true,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
-     *
-     ***Notes:
-     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
-     ***Default value 50**.
-     */
-    nodeSpacing: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
-     *
-     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
-     ***Default value 50**.
-     */
-    rankSpacing: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
-     *
-     ***Notes:
-     *Default Vaue: Linear**
-     */
-    curve: 'linear',
-    // Only used in new experimental rendering
-    // repreesents the padding between the labels and the shape
-    padding: 15
-  },
-
-  /**
-   * The object containing configurations specific for sequence diagrams
-   */
-  sequence: {
-    /**
-     * widt of the activation rect
-     * **Default value 10**.
-     */
-    activationWidth: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    diagramMarginX: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
-     *
-     ***Notes:**
-     ***Default value 10**.
-     */
-    diagramMarginY: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    actorMargin: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 150**.
-     */
-    width: 150,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
-     *
-     ***Notes:**
-     ***Default value 65**..
-     */
-    height: 65,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     *
-     ***Default value 10**.
-     */
-    boxMargin: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
-     *
-     ***Notes:**
-     *
-     ***Default value 5**.
-     */
-    boxTextMargin: 5,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     *
-     ***Default value 10**.
-     */
-    noteMargin: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     *
-     *Space between messages.
-     ***Default value 35**.
-     */
-    messageMargin: 35,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
-     *
-     ***Notes:**center **default**
-     */
-    messageAlign: 'center',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
-     *
-     ***Notes:**
-     *
-     ***Default value true**.
-     */
-    mirrorActors: true,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**Depending on css styling this might need adjustment.
-     ***Default value 1**.
-     */
-    bottomMarginAdj: 1,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | True, False |
-     *
-     ***Notes:**
-     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
-     *available space. If set to false, the absolute space required is used.
-     ***Default value: True**.
-     */
-    useMaxWidth: true,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
-     *
-     ***Notes:**
-     *
-     *This will display arrows that start and begin at the same node as right angles, rather than a curve
-     ***Default value false**.
-     */
-    rightAngles: false,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
-     *
-     ***Notes:**
-     ***Default value false**.
-     */
-    showSequenceNumbers: false,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 14**..
-     */
-    actorFontSize: 14,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
-     *
-     ***Notes:**
-     ***Default value "Open-Sans", "sans-serif"**.
-     */
-    actorFontFamily: '"Open-Sans", "sans-serif"',
-
-    /**
-     * This sets the font weight of the actor's description
-     * **Default value 400.
-     */
-    actorFontWeight: 400,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 14**..
-     */
-    noteFontSize: 14,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
-     *
-     ***Notes:**
-     ***Default value: trebuchet ms **.
-     */
-    noteFontFamily: '"trebuchet ms", verdana, arial',
-
-    /**
-     * This sets the font weight of the note's description
-     * **Default value 400.
-     */
-    noteFontWeight: 400,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
-     *
-     ***Notes:**
-     ***Default value center**.
-     */
-    noteAlign: 'center',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
-     *
-     ***Notes:**
-     ***Default value 16**.
-     */
-    messageFontSize: 16,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
-     *
-     ***Notes:**
-     ***Default value:"trebuchet ms**.
-     */
-    messageFontFamily: '"trebuchet ms", verdana, arial',
-
-    /**
-     * This sets the font weight of the message's description
-     * **Default value 400.
-     */
-    messageFontWeight: 400,
-
-    /**
-     * This sets the auto-wrap state for the diagram
-     * **Default value false.
-     */
-    wrap: false,
-
-    /**
-     * This sets the auto-wrap padding for the diagram (sides only)
-     * **Default value 10.
-     */
-    wrapPadding: 10,
-
-    /**
-     * This sets the width of the loop-box (loop, alt, opt, par)
-     * **Default value 50.
-     */
-    labelBoxWidth: 50,
-
-    /**
-     * This sets the height of the loop-box (loop, alt, opt, par)
-     * **Default value 20.
-     */
-    labelBoxHeight: 20,
-    messageFont: function messageFont() {
-      return {
-        fontFamily: this.messageFontFamily,
-        fontSize: this.messageFontSize,
-        fontWeight: this.messageFontWeight
-      };
-    },
-    noteFont: function noteFont() {
-      return {
-        fontFamily: this.noteFontFamily,
-        fontSize: this.noteFontSize,
-        fontWeight: this.noteFontWeight
-      };
-    },
-    actorFont: function actorFont() {
-      return {
-        fontFamily: this.actorFontFamily,
-        fontSize: this.actorFontSize,
-        fontWeight: this.actorFontWeight
-      };
-    }
-  },
-
-  /**
-   * The object containing configurations specific for gantt diagrams*
-   */
-  gantt: {
-    /**
-     *### titleTopMargin
-     *
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 25**.
-     */
-    titleTopMargin: 25,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 20**.
-     */
-    barHeight: 20,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 4**.
-     */
-    barGap: 4,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    topPadding: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 75**.
-     */
-    leftPadding: 75,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 35**.
-     */
-    gridLineStartPadding: 35,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontSize | Font size| Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 11**.
-     */
-    fontSize: 11,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
-     *
-     ***Notes:**
-     *
-     ***Default value '"Open-Sans", "sans-serif"'**.
-     */
-    fontFamily: '"Open-Sans", "sans-serif"',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 4**.
-     */
-    numberSectionStyles: 4,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
-     *
-     ***Notes:**
-     *
-     * This might need adjustment to match your locale and preferences
-     ***Default value '%Y-%m-%d'**.
-     */
-    axisFormat: '%Y-%m-%d'
-  },
-
-  /**
-   * The object containing configurations specific for sequence diagrams
-   */
-  journey: {
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    diagramMarginX: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
-     *
-     ***Notes:**
-     ***Default value 10**..
-     */
-    diagramMarginY: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    actorMargin: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 150**.
-     */
-    width: 150,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 65**.
-     */
-    height: 65,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 10**.
-     */
-    boxMargin: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     */
-    boxTextMargin: 5,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 10**.
-     */
-    noteMargin: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     *
-     *Space between messages.
-     ***Default value 35**.
-     */
-    messageMargin: 35,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
-     *
-     ***Notes:**default:center**
-     */
-    messageAlign: 'center',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
-     *
-     ***Notes:**Depending on css styling this might need adjustment.
-     ***Default value 1**.
-     */
-    bottomMarginAdj: 1,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
-     *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
-     *
-     ***Default value true**.
-     */
-    useMaxWidth: true,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
-     *
-     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
-     ***Default value false**.
-     */
-    rightAngles: false
-  },
-  class: {
-    arrowMarkerAbsolute: false
-  },
-  git: {
-    arrowMarkerAbsolute: false
-  },
-  state: {
-    dividerMargin: 10,
-    sizeUnit: 5,
-    padding: 8,
-    textHeight: 10,
-    titleShift: -15,
-    noteMargin: 10,
-    forkWidth: 70,
-    forkHeight: 7,
-    // Used
-    miniPadding: 2,
-    // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
-    // layout. This might need updating if/when switching font
-    fontSizeFactor: 5.02,
-    fontSize: 24,
-    labelHeight: 16,
-    edgeLengthFactor: '20',
-    compositTitleSize: 35,
-    radius: 5
-  },
-
-  /**
-   * The object containing configurations specific for entity relationship diagrams
-   */
-  er: {
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
-     ***Default value: 20**.
-     */
-    diagramPadding: 20,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
-     *
-     ***Notes:**
-     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
-     * T = top, B = bottom, L = left, and R = right.
-     ***Default value: TB **.
-     */
-    layoutDirection: 'TB',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
-     *
-     ***Notes:**expressed in pixels
-     ***Default value: 100**.
-     */
-    minEntityWidth: 100,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
-     *
-     ***Notes:**expressed in pixels
-     ***Default value: 75 **
-     */
-    minEntityHeight: 75,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
-     *
-     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
-     ***Default value: 15 **
-     */
-    entityPadding: 15,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
-     ***Default value: gray **
-     */
-    stroke: 'gray',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
-     *
-     ***Notes:**
-     ***Default value:'honeydew'**
-     */
-    fill: 'honeydew',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
-     *
-     ***Notes:**Font size (expressed as an integer representing a number of pixels)
-     ***Default value: 12 **
-     */
-    fontSize: 12,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | true, false |
-     *
-     ***Notes:**
-     *When this flag is set to true, the diagram width is locked to 100% and
-     *scaled based on available space. If set to false, the diagram reserves its
-     *absolute width.
-     ***Default value: true**.
-     */
-    useMaxWidth: true
-  }
-}; // debugger;
-
-config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-var defaultConfig = Object.freeze(config);
+var defaultConfig = Object.freeze(_defaultConfig__WEBPACK_IMPORTED_MODULE_3__["default"]);
 var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+var directives = [];
 var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+
+var updateCurrentConfig = function updateCurrentConfig(conf) {
+  currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteConfig); // Apply directives
+
+  var themeVariables;
+  directives.forEach(function (d) {
+    currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, d);
+
+    if (d.themeVariables) {
+      themeVariables = d.themeVariables;
+    }
+  });
+  var variables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][currentConfig.theme].getThemeVariables(themeVariables);
+  currentConfig.themeVariables = variables;
+};
 /**
  *## setSiteConfig
  *| Function | Description         | Type    | Values             |
@@ -49948,17 +49106,22 @@ var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"
  * @returns {*} - the siteConfig
  */
 
-var setSiteConfig = function setSiteConfig(conf) {
-  Object.keys(conf).forEach(function (key) {
-    var manipulator = manipulators[key];
-    conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
-  });
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf, {
-    clobber: true
-  }); // Set theme variables if user has set the theme option
 
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
-  return getSiteConfig();
+var setSiteConfig = function setSiteConfig(conf) {
+  siteConfig = _objectSpread({}, defaultConfig, {}, conf);
+  return siteConfig;
+};
+var updateSiteConfig = function updateSiteConfig(conf) {
+  console.log('setSiteConfig'); // Object.keys(conf).forEach(key => {
+  //   const manipulator = manipulators[key];
+  //   conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
+  // });
+
+  siteConfig = _objectSpread({}, siteConfig, {}, conf); // assignWithDesetpth(currentConfig, conf, { clobber: true });
+  // // Set theme variables if user has set the theme option
+  // assignWithDepth(siteConfig, conf);
+
+  return siteConfig;
 };
 /**
  *## getSiteConfig
@@ -49987,12 +49150,12 @@ var getSiteConfig = function getSiteConfig() {
  */
 
 var setConfig = function setConfig(conf) {
-  sanitize(conf);
-  Object.keys(conf).forEach(function (key) {
-    var manipulator = manipulators[key];
-    conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
-  });
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf);
+  // sanitize(conf);
+  // Object.keys(conf).forEach(key => {
+  //   const manipulator = manipulators[key];
+  //   conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
+  // });
+  // assignWithDepth(currentConfig, conf);
   return getConfig();
 };
 /**
@@ -50023,10 +49186,14 @@ var sanitize = function sanitize(options) {
     if (typeof options[siteConfig.secure[key]] !== 'undefined') {
       // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
-      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].warn("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
+      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
       delete options[siteConfig.secure[key]];
     }
   });
+};
+var addDirective = function addDirective(directive) {
+  directives.push(directive);
+  updateCurrentConfig();
 };
 /**
  *## reset
@@ -50045,29 +49212,23 @@ var sanitize = function sanitize(options) {
 
 var reset = function reset() {
   var conf = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getSiteConfig();
-  Object.keys(siteConfig).forEach(function (key) {
-    return delete siteConfig[key];
-  });
-  Object.keys(currentConfig).forEach(function (key) {
-    return delete currentConfig[key];
-  });
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf, {
-    clobber: true
-  });
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf, {
-    clobber: true
-  });
-};
-var configApi = Object.freeze({
-  sanitize: sanitize,
-  setSiteConfig: setSiteConfig,
-  getSiteConfig: getSiteConfig,
-  setConfig: setConfig,
-  getConfig: getConfig,
-  reset: reset,
-  defaultConfig: defaultConfig
-});
-/* harmony default export */ __webpack_exports__["default"] = (configApi);
+  // Object.keys(siteConfig).forEach(key => delete siteConfig[key]);
+  // Object.keys(currentConfig).forEach(key => delete currentConfig[key]);
+  // assignWithDepth(siteConfig, conf, { clobber: true });
+  // assignWithDepth(currentConfig, conf, { clobber: true });
+  // Replace current config with siteConfig
+  directives = [];
+  updateCurrentConfig();
+}; // const configApi = Object.freeze({
+//   sanitize,
+//   setSiteConfig,
+//   getSiteConfig,
+//   setConfig,
+//   getConfig,
+//   reset,
+//   defaultConfig
+// });
+// export default configApi;
 
 /***/ }),
 
@@ -51303,7 +50464,7 @@ var cross = function cross(elem, type) {
 };
 
 var barb = function barb(elem, type) {
-  elem.append('defs').append('marker').attr('id', type + '-barbEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 14).attr('markerUnits', 0).attr('orient', 'auto').append('path').attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-barbEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 14).attr('markerUnits', 'strokeWidth').attr('orient', 'auto').append('path').attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
 }; // TODO rename the class diagram markers to something shape descriptive and semanitc free
 
 
@@ -52540,6 +51701,877 @@ function insertPolygonShape(parent, w, h, points) {
 
 /***/ }),
 
+/***/ "./src/defaultConfig.js":
+/*!******************************!*\
+  !*** ./src/defaultConfig.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
+
+/**
+ * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
+ *
+ * ## **What follows are config instructions for older versions**
+ * These are the default options which can be overridden with the initialization call like so:
+ * **Example 1:**
+ * <pre>
+ * mermaid.initialize({
+ *   flowchart:{
+ *     htmlLabels: false
+ *   }
+ * });
+ * </pre>
+ *
+ * **Example 2:**
+ * <pre>
+ * &lt;script>
+ *   var config = {
+ *     startOnLoad:true,
+ *     flowchart:{
+ *       useMaxWidth:true,
+ *       htmlLabels:true,
+ *       curve:'cardinal',
+ *     },
+ *
+ *     securityLevel:'loose',
+ *   };
+ *   mermaid.initialize(config);
+ * &lt;/script>
+ * </pre>
+ * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults). A description of each option follows below.
+ *
+ * @name Configuration
+ */
+
+var config = {
+  /** theme , the CSS style sheet
+   *
+   * theme , the CSS style sheet
+   *
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   *
+   ***Notes:**To disable any pre-defined mermaid theme, use "null".
+   * <pre>
+   *  "theme": "forest",
+   *  "themeCSS": ".node rect { fill: red; }"
+   * </pre>
+   */
+  theme: 'default',
+  themeVariables: _themes__WEBPACK_IMPORTED_MODULE_0__["default"]['default'].getThemeVariables(),
+  themeCSS: undefined,
+
+  /* **maxTextSize** - The maximum allowed size of the users text diamgram */
+  maxTextSize: 50000,
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
+   *
+   ***notes: Default value is \\"trebuchet ms\\".
+   */
+  fontFamily: '"trebuchet ms", verdana, arial;',
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
+   *
+   *
+   ***Notes:**
+   *-   debug: 1.
+   *-   info: 2.
+   *-   warn: 3.
+   *-   error: 4.
+   *-   fatal: 5(default).
+   */
+  logLevel: 5,
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose, antiscript |
+   *
+   ***Notes:
+   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   *-   **loose**: tags in text are allowed, click functionality is enabled
+   *-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
+   */
+  securityLevel: 'strict',
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
+   *
+   ***Notes:**
+   ***Default value: true**
+   */
+  startOnLoad: true,
+
+  /**
+   *| Parameter | Description |Type | Required |Values|
+   *| --- | --- | --- | --- | --- |
+   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
+   *
+   *
+   *## Notes**: This matters if you are using base tag settings.
+   ***Default value: false**.
+   */
+  arrowMarkerAbsolute: false,
+
+  /**
+   * This option controls which currentConfig keys are considered _secure_ and can only be changed via
+   * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
+   * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
+   * overriding a site's default security.
+   */
+  secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
+
+  /**
+   * The object containing configurations specific for flowcharts
+   */
+  flowchart: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 8**.
+     */
+    diagramPadding: 8,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
+     *
+     ***Notes: Default value: true**.
+     */
+    htmlLabels: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
+     *
+     ***Notes:
+     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
+     ***Default value 50**.
+     */
+    nodeSpacing: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
+     *
+     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+     ***Default value 50**.
+     */
+    rankSpacing: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
+     *
+     ***Notes:
+     *Default Vaue: Linear**
+     */
+    curve: 'linear',
+    // Only used in new experimental rendering
+    // repreesents the padding between the labels and the shape
+    padding: 15
+  },
+
+  /**
+   * The object containing configurations specific for sequence diagrams
+   */
+  sequence: {
+    /**
+     * widt of the activation rect
+     * **Default value 10**.
+     */
+    activationWidth: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    diagramMarginX: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
+     *
+     ***Notes:**
+     ***Default value 10**.
+     */
+    diagramMarginY: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    actorMargin: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
+     */
+    width: 150,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 65**..
+     */
+    height: 65,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
+     */
+    boxMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
+     *
+     ***Notes:**
+     *
+     ***Default value 5**.
+     */
+    boxTextMargin: 5,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
+     */
+    noteMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
+     */
+    messageMargin: 35,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
+     *
+     ***Notes:**center **default**
+     */
+    messageAlign: 'center',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
+     *
+     ***Notes:**
+     *
+     ***Default value true**.
+     */
+    mirrorActors: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
+     *available space. If set to false, the absolute space required is used.
+     ***Default value: True**.
+     */
+    useMaxWidth: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *
+     *This will display arrows that start and begin at the same node as right angles, rather than a curve
+     ***Default value false**.
+     */
+    rightAngles: false,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     ***Default value false**.
+     */
+    showSequenceNumbers: false,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
+     */
+    actorFontSize: 14,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
+     *
+     ***Notes:**
+     ***Default value "Open-Sans", "sans-serif"**.
+     */
+    actorFontFamily: '"Open-Sans", "sans-serif"',
+
+    /**
+     * This sets the font weight of the actor's description
+     * **Default value 400.
+     */
+    actorFontWeight: 400,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
+     */
+    noteFontSize: 14,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
+     *
+     ***Notes:**
+     ***Default value: trebuchet ms **.
+     */
+    noteFontFamily: '"trebuchet ms", verdana, arial',
+
+    /**
+     * This sets the font weight of the note's description
+     * **Default value 400.
+     */
+    noteFontWeight: 400,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
+     *
+     ***Notes:**
+     ***Default value center**.
+     */
+    noteAlign: 'center',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
+     *
+     ***Notes:**
+     ***Default value 16**.
+     */
+    messageFontSize: 16,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
+     *
+     ***Notes:**
+     ***Default value:"trebuchet ms**.
+     */
+    messageFontFamily: '"trebuchet ms", verdana, arial',
+
+    /**
+     * This sets the font weight of the message's description
+     * **Default value 400.
+     */
+    messageFontWeight: 400,
+
+    /**
+     * This sets the auto-wrap state for the diagram
+     * **Default value false.
+     */
+    wrap: false,
+
+    /**
+     * This sets the auto-wrap padding for the diagram (sides only)
+     * **Default value 10.
+     */
+    wrapPadding: 10,
+
+    /**
+     * This sets the width of the loop-box (loop, alt, opt, par)
+     * **Default value 50.
+     */
+    labelBoxWidth: 50,
+
+    /**
+     * This sets the height of the loop-box (loop, alt, opt, par)
+     * **Default value 20.
+     */
+    labelBoxHeight: 20,
+    messageFont: function messageFont() {
+      return {
+        fontFamily: this.messageFontFamily,
+        fontSize: this.messageFontSize,
+        fontWeight: this.messageFontWeight
+      };
+    },
+    noteFont: function noteFont() {
+      return {
+        fontFamily: this.noteFontFamily,
+        fontSize: this.noteFontSize,
+        fontWeight: this.noteFontWeight
+      };
+    },
+    actorFont: function actorFont() {
+      return {
+        fontFamily: this.actorFontFamily,
+        fontSize: this.actorFontSize,
+        fontWeight: this.actorFontWeight
+      };
+    }
+  },
+
+  /**
+   * The object containing configurations specific for gantt diagrams*
+   */
+  gantt: {
+    /**
+     *### titleTopMargin
+     *
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 25**.
+     */
+    titleTopMargin: 25,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 20**.
+     */
+    barHeight: 20,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
+     */
+    barGap: 4,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    topPadding: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 75**.
+     */
+    leftPadding: 75,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 35**.
+     */
+    gridLineStartPadding: 35,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize | Font size| Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 11**.
+     */
+    fontSize: 11,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
+     *
+     ***Notes:**
+     *
+     ***Default value '"Open-Sans", "sans-serif"'**.
+     */
+    fontFamily: '"Open-Sans", "sans-serif"',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
+     */
+    numberSectionStyles: 4,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
+     *
+     ***Notes:**
+     *
+     * This might need adjustment to match your locale and preferences
+     ***Default value '%Y-%m-%d'**.
+     */
+    axisFormat: '%Y-%m-%d'
+  },
+
+  /**
+   * The object containing configurations specific for journey diagrams
+   */
+  journey: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    diagramMarginX: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 10**..
+     */
+    diagramMarginY: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    actorMargin: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
+     */
+    width: 150,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 65**.
+     */
+    height: 65,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
+     */
+    boxMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     */
+    boxTextMargin: 5,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
+     */
+    noteMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
+     */
+    messageMargin: 35,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
+     *
+     ***Notes:**default:center**
+     */
+    messageAlign: 'center',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
+     *
+     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
+     ***Default value false**.
+     */
+    rightAngles: false
+  },
+  class: {
+    arrowMarkerAbsolute: false
+  },
+  git: {
+    arrowMarkerAbsolute: false
+  },
+  state: {
+    dividerMargin: 10,
+    sizeUnit: 5,
+    padding: 8,
+    textHeight: 10,
+    titleShift: -15,
+    noteMargin: 10,
+    forkWidth: 70,
+    forkHeight: 7,
+    // Used
+    miniPadding: 2,
+    // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
+    // layout. This might need updating if/when switching font
+    fontSizeFactor: 5.02,
+    fontSize: 24,
+    labelHeight: 16,
+    edgeLengthFactor: '20',
+    compositTitleSize: 35,
+    radius: 5
+  },
+
+  /**
+   * The object containing configurations specific for entity relationship diagrams
+   */
+  er: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 20**.
+     */
+    diagramPadding: 20,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
+     *
+     ***Notes:**
+     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     * T = top, B = bottom, L = left, and R = right.
+     ***Default value: TB **.
+     */
+    layoutDirection: 'TB',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 100**.
+     */
+    minEntityWidth: 100,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 75 **
+     */
+    minEntityHeight: 75,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+     ***Default value: 15 **
+     */
+    entityPadding: 15,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
+     ***Default value: gray **
+     */
+    stroke: 'gray',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
+     *
+     ***Notes:**
+     ***Default value:'honeydew'**
+     */
+    fill: 'honeydew',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
+     *
+     ***Notes:**Font size (expressed as an integer representing a number of pixels)
+     ***Default value: 12 **
+     */
+    fontSize: 12,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     *
+     ***Notes:**
+     *When this flag is set to true, the diagram width is locked to 100% and
+     *scaled based on available space. If set to false, the diagram reserves its
+     *absolute width.
+     ***Default value: true**.
+     */
+    useMaxWidth: true
+  }
+};
+config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+/* harmony default export */ __webpack_exports__["default"] = (config);
+
+/***/ }),
+
 /***/ "./src/diagrams/class/classDb.js":
 /*!***************************************!*\
   !*** ./src/diagrams/class/classDb.js ***!
@@ -52580,13 +52612,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var MERMAID_DOM_ID_PREFIX = 'classid-';
-var config = Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])();
+var config = _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]();
 var relations = [];
 var classes = {};
 var classCounter = 0;
 var funs = [];
 var parseDirective = function parseDirective(statement, context, type) {
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__["default"].parseDirective(statement, context, type);
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__["default"].parseDirective(this, statement, context, type);
 };
 
 var splitClassNameAndType = function splitClassNameAndType(id) {
@@ -52847,6 +52879,9 @@ var setupToolTips = function setupToolTips(element) {
 funs.push(setupToolTips);
 /* harmony default export */ __webpack_exports__["default"] = ({
   parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]().class;
+  },
   addClass: addClass,
   bindFunctions: bindFunctions,
   clear: clear,
@@ -53602,132 +53637,132 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,6],$V2=[1,20],$V3=[1,23],$V4=[1,21],$V5=[1,22],$V6=[1,24],$V7=[1,25],$V8=[1,27],$V9=[1,28],$Va=[1,29],$Vb=[1,32],$Vc=[7,9],$Vd=[1,41],$Ve=[1,42],$Vf=[1,43],$Vg=[1,44],$Vh=[1,45],$Vi=[1,46],$Vj=[7,9,20,26,34,37,38,39,40,41,42],$Vk=[7,9,13,20,26,30,34,37,38,39,40,41,42,58,59,60],$Vl=[34,58,59,60],$Vm=[34,41,42,58,59,60],$Vn=[34,37,38,39,40,58,59,60],$Vo=[6,7,9,61],$Vp=[7,9,20],$Vq=[1,73];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,6],$V2=[1,14],$V3=[1,24],$V4=[1,27],$V5=[1,25],$V6=[1,26],$V7=[1,28],$V8=[1,29],$V9=[1,31],$Va=[1,32],$Vb=[1,33],$Vc=[10,19],$Vd=[1,45],$Ve=[1,46],$Vf=[1,47],$Vg=[1,48],$Vh=[1,49],$Vi=[1,50],$Vj=[10,19,25,31,39,42,43,44,45,46,47],$Vk=[10,19,23,25,31,35,39,42,43,44,45,46,47,63,64,65],$Vl=[10,13,17,19],$Vm=[39,63,64,65],$Vn=[39,46,47,63,64,65],$Vo=[39,42,43,44,45,63,64,65],$Vp=[10,19,25],$Vq=[1,75];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"directive":5,"CLASS_DIAGRAM":6,"NEWLINE":7,"statements":8,"EOF":9,"statement":10,"className":11,"alphaNumToken":12,"GENERICTYPE":13,"openDirective":14,"typeDirective":15,"closeDirective":16,":":17,"argDirective":18,"relationStatement":19,"LABEL":20,"classStatement":21,"methodStatement":22,"annotationStatement":23,"clickStatement":24,"CLASS":25,"STRUCT_START":26,"members":27,"STRUCT_STOP":28,"ANNOTATION_START":29,"ANNOTATION_END":30,"MEMBER":31,"SEPARATOR":32,"relation":33,"STR":34,"relationType":35,"lineType":36,"AGGREGATION":37,"EXTENSION":38,"COMPOSITION":39,"DEPENDENCY":40,"LINE":41,"DOTTED_LINE":42,"CALLBACK":43,"LINK":44,"commentToken":45,"textToken":46,"graphCodeTokens":47,"textNoTagsToken":48,"TAGSTART":49,"TAGEND":50,"==":51,"--":52,"PCT":53,"DEFAULT":54,"SPACE":55,"MINUS":56,"keywords":57,"UNICODE_TEXT":58,"NUM":59,"ALPHA":60,"open_directive":61,"type_directive":62,"arg_directive":63,"close_directive":64,"$accept":0,"$end":1},
-terminals_: {2:"error",6:"CLASS_DIAGRAM",7:"NEWLINE",9:"EOF",13:"GENERICTYPE",17:":",20:"LABEL",25:"CLASS",26:"STRUCT_START",28:"STRUCT_STOP",29:"ANNOTATION_START",30:"ANNOTATION_END",31:"MEMBER",32:"SEPARATOR",34:"STR",37:"AGGREGATION",38:"EXTENSION",39:"COMPOSITION",40:"DEPENDENCY",41:"LINE",42:"DOTTED_LINE",43:"CALLBACK",44:"LINK",47:"graphCodeTokens",49:"TAGSTART",50:"TAGEND",51:"==",52:"--",53:"PCT",54:"DEFAULT",55:"SPACE",56:"MINUS",57:"keywords",58:"UNICODE_TEXT",59:"NUM",60:"ALPHA",61:"open_directive",62:"type_directive",63:"arg_directive",64:"close_directive"},
-productions_: [0,[3,1],[3,2],[4,4],[8,1],[8,2],[8,3],[11,2],[11,1],[11,3],[11,2],[5,4],[5,6],[10,1],[10,2],[10,1],[10,1],[10,1],[10,1],[10,1],[21,2],[21,5],[23,4],[27,1],[27,2],[22,1],[22,2],[22,1],[22,1],[19,3],[19,4],[19,4],[19,5],[33,3],[33,2],[33,2],[33,1],[35,1],[35,1],[35,1],[35,1],[36,1],[36,1],[24,3],[24,4],[24,3],[24,4],[45,1],[45,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[48,1],[48,1],[48,1],[48,1],[12,1],[12,1],[12,1],[14,1],[15,1],[18,1],[16,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"graphConfig":6,"openDirective":7,"typeDirective":8,"closeDirective":9,"NEWLINE":10,":":11,"argDirective":12,"open_directive":13,"type_directive":14,"arg_directive":15,"close_directive":16,"CLASS_DIAGRAM":17,"statements":18,"EOF":19,"statement":20,"className":21,"alphaNumToken":22,"GENERICTYPE":23,"relationStatement":24,"LABEL":25,"classStatement":26,"methodStatement":27,"annotationStatement":28,"clickStatement":29,"CLASS":30,"STRUCT_START":31,"members":32,"STRUCT_STOP":33,"ANNOTATION_START":34,"ANNOTATION_END":35,"MEMBER":36,"SEPARATOR":37,"relation":38,"STR":39,"relationType":40,"lineType":41,"AGGREGATION":42,"EXTENSION":43,"COMPOSITION":44,"DEPENDENCY":45,"LINE":46,"DOTTED_LINE":47,"CALLBACK":48,"LINK":49,"commentToken":50,"textToken":51,"graphCodeTokens":52,"textNoTagsToken":53,"TAGSTART":54,"TAGEND":55,"==":56,"--":57,"PCT":58,"DEFAULT":59,"SPACE":60,"MINUS":61,"keywords":62,"UNICODE_TEXT":63,"NUM":64,"ALPHA":65,"$accept":0,"$end":1},
+terminals_: {2:"error",10:"NEWLINE",11:":",13:"open_directive",14:"type_directive",15:"arg_directive",16:"close_directive",17:"CLASS_DIAGRAM",19:"EOF",23:"GENERICTYPE",25:"LABEL",30:"CLASS",31:"STRUCT_START",33:"STRUCT_STOP",34:"ANNOTATION_START",35:"ANNOTATION_END",36:"MEMBER",37:"SEPARATOR",39:"STR",42:"AGGREGATION",43:"EXTENSION",44:"COMPOSITION",45:"DEPENDENCY",46:"LINE",47:"DOTTED_LINE",48:"CALLBACK",49:"LINK",52:"graphCodeTokens",54:"TAGSTART",55:"TAGEND",56:"==",57:"--",58:"PCT",59:"DEFAULT",60:"SPACE",61:"MINUS",62:"keywords",63:"UNICODE_TEXT",64:"NUM",65:"ALPHA"},
+productions_: [0,[3,1],[3,2],[4,1],[5,4],[5,6],[7,1],[8,1],[12,1],[9,1],[6,4],[18,1],[18,2],[18,3],[21,2],[21,1],[21,3],[21,2],[20,1],[20,2],[20,1],[20,1],[20,1],[20,1],[20,1],[26,2],[26,5],[28,4],[32,1],[32,2],[27,1],[27,2],[27,1],[27,1],[24,3],[24,4],[24,4],[24,5],[38,3],[38,2],[38,2],[38,1],[40,1],[40,1],[40,1],[40,1],[41,1],[41,1],[29,3],[29,4],[29,3],[29,4],[50,1],[50,1],[51,1],[51,1],[51,1],[51,1],[51,1],[51,1],[51,1],[53,1],[53,1],[53,1],[53,1],[22,1],[22,1],[22,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 7:
- this.$=$$[$0-1]+$$[$0]; 
-break;
-case 8:
- this.$=$$[$0]; 
-break;
-case 9:
- this.$=$$[$0-2]+'~'+$$[$0-1]+$$[$0]; 
-break;
-case 10:
- this.$=$$[$0-1]+'~'+$$[$0]; 
-break;
-case 13:
- yy.addRelation($$[$0]); 
-break;
-case 14:
- $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
-break;
-case 20:
-yy.addClass($$[$0]);
-break;
-case 21:
-/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
-break;
-case 22:
- yy.addAnnotation($$[$0],$$[$0-2]); 
-break;
-case 23:
- this.$ = [$$[$0]]; 
-break;
-case 24:
- $$[$0].push($$[$0-1]);this.$=$$[$0];
-break;
-case 25:
-/*console.log('Rel found',$$[$0]);*/
-break;
-case 26:
-yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
-break;
-case 27:
-/*console.warn('Member',$$[$0]);*/
-break;
-case 28:
-/*console.log('sep found',$$[$0]);*/
-break;
-case 29:
- this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
-break;
-case 30:
- this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
-break;
-case 31:
- this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
-break;
-case 32:
- this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
-break;
-case 33:
- this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
-break;
-case 34:
- this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
-break;
-case 35:
- this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
-break;
-case 36:
- this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
-break;
-case 37:
- this.$=yy.relationType.AGGREGATION;
-break;
-case 38:
- this.$=yy.relationType.EXTENSION;
-break;
-case 39:
- this.$=yy.relationType.COMPOSITION;
-break;
-case 40:
- this.$=yy.relationType.DEPENDENCY;
-break;
-case 41:
-this.$=yy.lineType.LINE;
-break;
-case 42:
-this.$=yy.lineType.DOTTED_LINE;
-break;
-case 43:
-this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0], undefined);
-break;
-case 44:
-this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
-break;
-case 45:
-this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0], undefined);
-break;
-case 46:
-this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1], $$[$0]);
-break;
-case 63:
+case 6:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 64:
+case 7:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 65:
+case 8:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 66:
- yy.parseDirective('}%%', 'close_directive', 'sequence'); 
+case 9:
+ yy.parseDirective('}%%', 'close_directive', 'class'); 
+break;
+case 14:
+ this.$=$$[$0-1]+$$[$0]; 
+break;
+case 15:
+ this.$=$$[$0]; 
+break;
+case 16:
+ this.$=$$[$0-2]+'~'+$$[$0-1]+$$[$0]; 
+break;
+case 17:
+ this.$=$$[$0-1]+'~'+$$[$0]; 
+break;
+case 18:
+ yy.addRelation($$[$0]); 
+break;
+case 19:
+ $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
+break;
+case 25:
+yy.addClass($$[$0]);
+break;
+case 26:
+/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
+break;
+case 27:
+ yy.addAnnotation($$[$0],$$[$0-2]); 
+break;
+case 28:
+ this.$ = [$$[$0]]; 
+break;
+case 29:
+ $$[$0].push($$[$0-1]);this.$=$$[$0];
+break;
+case 30:
+/*console.log('Rel found',$$[$0]);*/
+break;
+case 31:
+yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
+break;
+case 32:
+/*console.warn('Member',$$[$0]);*/
+break;
+case 33:
+/*console.log('sep found',$$[$0]);*/
+break;
+case 34:
+ this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
+break;
+case 35:
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
+break;
+case 36:
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
+break;
+case 37:
+ this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
+break;
+case 38:
+ this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
+break;
+case 39:
+ this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
+break;
+case 40:
+ this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
+break;
+case 41:
+ this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
+break;
+case 42:
+ this.$=yy.relationType.AGGREGATION;
+break;
+case 43:
+ this.$=yy.relationType.EXTENSION;
+break;
+case 44:
+ this.$=yy.relationType.COMPOSITION;
+break;
+case 45:
+ this.$=yy.relationType.DEPENDENCY;
+break;
+case 46:
+this.$=yy.lineType.LINE;
+break;
+case 47:
+this.$=yy.lineType.DOTTED_LINE;
+break;
+case 48:
+this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0], undefined);
+break;
+case 49:
+this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
+break;
+case 50:
+this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0], undefined);
+break;
+case 51:
+this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1], $$[$0]);
 break;
 }
 },
-table: [{3:1,4:2,5:3,6:$V0,14:5,61:$V1},{1:[3]},{1:[2,1]},{3:7,4:2,5:3,6:$V0,14:5,61:$V1},{7:[1,8]},{15:9,62:[1,10]},{62:[2,63]},{1:[2,2]},{5:18,8:11,10:12,11:19,12:26,14:5,19:13,21:14,22:15,23:16,24:17,25:$V2,29:$V3,31:$V4,32:$V5,43:$V6,44:$V7,58:$V8,59:$V9,60:$Va,61:$V1},{16:30,17:[1,31],64:$Vb},o([17,64],[2,64]),{9:[1,33]},{7:[1,34],9:[2,4]},o($Vc,[2,13],{20:[1,35]}),o($Vc,[2,15]),o($Vc,[2,16]),o($Vc,[2,17]),o($Vc,[2,18]),o($Vc,[2,19]),o($Vc,[2,25],{33:36,35:39,36:40,20:[1,38],34:[1,37],37:$Vd,38:$Ve,39:$Vf,40:$Vg,41:$Vh,42:$Vi}),{11:47,12:26,58:$V8,59:$V9,60:$Va},o($Vc,[2,27]),o($Vc,[2,28]),{12:48,58:$V8,59:$V9,60:$Va},{11:49,12:26,58:$V8,59:$V9,60:$Va},{11:50,12:26,58:$V8,59:$V9,60:$Va},o($Vj,[2,8],{12:26,11:51,13:[1,52],58:$V8,59:$V9,60:$Va}),o($Vk,[2,60]),o($Vk,[2,61]),o($Vk,[2,62]),{7:[1,53]},{18:54,63:[1,55]},{7:[2,66]},{1:[2,3]},{5:18,8:56,9:[2,5],10:12,11:19,12:26,14:5,19:13,21:14,22:15,23:16,24:17,25:$V2,29:$V3,31:$V4,32:$V5,43:$V6,44:$V7,58:$V8,59:$V9,60:$Va,61:$V1},o($Vc,[2,14]),{11:57,12:26,34:[1,58],58:$V8,59:$V9,60:$Va},{33:59,35:39,36:40,37:$Vd,38:$Ve,39:$Vf,40:$Vg,41:$Vh,42:$Vi},o($Vc,[2,26]),{36:60,41:$Vh,42:$Vi},o($Vl,[2,36],{35:61,37:$Vd,38:$Ve,39:$Vf,40:$Vg}),o($Vm,[2,37]),o($Vm,[2,38]),o($Vm,[2,39]),o($Vm,[2,40]),o($Vn,[2,41]),o($Vn,[2,42]),o($Vc,[2,20],{26:[1,62]}),{30:[1,63]},{34:[1,64]},{34:[1,65]},o($Vj,[2,7]),o($Vj,[2,10],{12:26,11:66,58:$V8,59:$V9,60:$Va}),o($Vo,[2,11]),{16:67,64:$Vb},{64:[2,65]},{9:[2,6]},o($Vp,[2,29]),{11:68,12:26,58:$V8,59:$V9,60:$Va},{11:69,12:26,34:[1,70],58:$V8,59:$V9,60:$Va},o($Vl,[2,35],{35:71,37:$Vd,38:$Ve,39:$Vf,40:$Vg}),o($Vl,[2,34]),{27:72,31:$Vq},{11:74,12:26,58:$V8,59:$V9,60:$Va},o($Vc,[2,43],{34:[1,75]}),o($Vc,[2,45],{34:[1,76]}),o($Vj,[2,9]),{7:[1,77]},o($Vp,[2,31]),o($Vp,[2,30]),{11:78,12:26,58:$V8,59:$V9,60:$Va},o($Vl,[2,33]),{28:[1,79]},{27:80,28:[2,23],31:$Vq},o($Vc,[2,22]),o($Vc,[2,44]),o($Vc,[2,46]),o($Vo,[2,12]),o($Vp,[2,32]),o($Vc,[2,21]),{28:[2,24]}],
-defaultActions: {2:[2,1],6:[2,63],7:[2,2],32:[2,66],33:[2,3],55:[2,65],56:[2,6],80:[2,24]},
+table: [{3:1,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[3]},{1:[2,1]},{3:8,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[2,3]},{8:9,14:[1,10]},{10:[1,11]},{14:[2,6]},{1:[2,2]},{9:12,11:[1,13],16:$V2},o([11,16],[2,7]),{5:22,7:5,13:$V0,18:15,20:16,21:23,22:30,24:17,26:18,27:19,28:20,29:21,30:$V3,34:$V4,36:$V5,37:$V6,48:$V7,49:$V8,63:$V9,64:$Va,65:$Vb},{10:[1,34]},{12:35,15:[1,36]},{10:[2,9]},{19:[1,37]},{10:[1,38],19:[2,11]},o($Vc,[2,18],{25:[1,39]}),o($Vc,[2,20]),o($Vc,[2,21]),o($Vc,[2,22]),o($Vc,[2,23]),o($Vc,[2,24]),o($Vc,[2,30],{38:40,40:43,41:44,25:[1,42],39:[1,41],42:$Vd,43:$Ve,44:$Vf,45:$Vg,46:$Vh,47:$Vi}),{21:51,22:30,63:$V9,64:$Va,65:$Vb},o($Vc,[2,32]),o($Vc,[2,33]),{22:52,63:$V9,64:$Va,65:$Vb},{21:53,22:30,63:$V9,64:$Va,65:$Vb},{21:54,22:30,63:$V9,64:$Va,65:$Vb},o($Vj,[2,15],{22:30,21:55,23:[1,56],63:$V9,64:$Va,65:$Vb}),o($Vk,[2,65]),o($Vk,[2,66]),o($Vk,[2,67]),o($Vl,[2,4]),{9:57,16:$V2},{16:[2,8]},{1:[2,10]},{5:22,7:5,13:$V0,18:58,19:[2,12],20:16,21:23,22:30,24:17,26:18,27:19,28:20,29:21,30:$V3,34:$V4,36:$V5,37:$V6,48:$V7,49:$V8,63:$V9,64:$Va,65:$Vb},o($Vc,[2,19]),{21:59,22:30,39:[1,60],63:$V9,64:$Va,65:$Vb},{38:61,40:43,41:44,42:$Vd,43:$Ve,44:$Vf,45:$Vg,46:$Vh,47:$Vi},o($Vc,[2,31]),{41:62,46:$Vh,47:$Vi},o($Vm,[2,41],{40:63,42:$Vd,43:$Ve,44:$Vf,45:$Vg}),o($Vn,[2,42]),o($Vn,[2,43]),o($Vn,[2,44]),o($Vn,[2,45]),o($Vo,[2,46]),o($Vo,[2,47]),o($Vc,[2,25],{31:[1,64]}),{35:[1,65]},{39:[1,66]},{39:[1,67]},o($Vj,[2,14]),o($Vj,[2,17],{22:30,21:68,63:$V9,64:$Va,65:$Vb}),{10:[1,69]},{19:[2,13]},o($Vp,[2,34]),{21:70,22:30,63:$V9,64:$Va,65:$Vb},{21:71,22:30,39:[1,72],63:$V9,64:$Va,65:$Vb},o($Vm,[2,40],{40:73,42:$Vd,43:$Ve,44:$Vf,45:$Vg}),o($Vm,[2,39]),{32:74,36:$Vq},{21:76,22:30,63:$V9,64:$Va,65:$Vb},o($Vc,[2,48],{39:[1,77]}),o($Vc,[2,50],{39:[1,78]}),o($Vj,[2,16]),o($Vl,[2,5]),o($Vp,[2,36]),o($Vp,[2,35]),{21:79,22:30,63:$V9,64:$Va,65:$Vb},o($Vm,[2,38]),{33:[1,80]},{32:81,33:[2,28],36:$Vq},o($Vc,[2,27]),o($Vc,[2,49]),o($Vc,[2,51]),o($Vp,[2,37]),o($Vc,[2,26]),{33:[2,29]}],
+defaultActions: {2:[2,1],4:[2,3],7:[2,6],8:[2,2],14:[2,9],36:[2,8],37:[2,10],58:[2,13],81:[2,29]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -54206,110 +54241,108 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 61; 
+case 0: this.begin('open_directive'); return 13; 
 break;
-case 1: this.begin('type_directive'); return 62; 
+case 1: this.begin('type_directive'); return 14; 
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 17; 
+case 2: this.popState(); this.begin('arg_directive'); return 11; 
 break;
-case 3: this.popState(); this.popState(); return 64; 
+case 3: this.popState(); this.popState(); return 16; 
 break;
-case 4:return 63;
+case 4:return 15;
 break;
 case 5:/* skip comments */
 break;
 case 6:/* skip comments */
 break;
-case 7:/* do nothing */
+case 7:return 10;
 break;
-case 8:return 7;
+case 8:/* skip whitespace */
 break;
-case 9:/* skip whitespace */
+case 9:return 17;
 break;
-case 10:return 6;
+case 10:return 17;
 break;
-case 11:return 6;
+case 11: this.begin("struct"); /*console.log('Starting struct');*/ return 31;
 break;
-case 12: this.begin("struct"); /*console.log('Starting struct');*/return 26;
+case 12:return "EOF_IN_STRUCT";
 break;
-case 13:return "EOF_IN_STRUCT";
+case 13:return "OPEN_IN_STRUCT";
 break;
-case 14:return "OPEN_IN_STRUCT";
+case 14: /*console.log('Ending struct');*/this.popState(); return 33;
 break;
-case 15: /*console.log('Ending struct');*/this.popState(); return 28;
+case 15:/* nothing */
 break;
-case 16:/* nothing */
+case 16: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
 break;
-case 17: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
+case 17:return 30;
 break;
-case 18:return 25;
+case 18:return 48;
 break;
-case 19:return 43;
+case 19:return 49;
 break;
-case 20:return 44;
+case 20:return 34;
 break;
-case 21:return 29;
+case 21:return 35;
 break;
-case 22:return 30;
+case 22:this.begin("generic");
 break;
-case 23:this.begin("generic");
+case 23:this.popState();
 break;
-case 24:this.popState();
+case 24:return "GENERICTYPE";
 break;
-case 25:return "GENERICTYPE";
+case 25:this.begin("string");
 break;
-case 26:this.begin("string");
+case 26:this.popState();
 break;
-case 27:this.popState();
+case 27:return "STR";
 break;
-case 28:return "STR";
+case 28:return 43;
 break;
-case 29:return 38;
+case 29:return 43;
 break;
-case 30:return 38;
+case 30:return 45;
 break;
-case 31:return 40;
+case 31:return 45;
 break;
-case 32:return 40;
+case 32:return 44;
 break;
-case 33:return 39;
+case 33:return 42;
 break;
-case 34:return 37;
+case 34:return 46;
 break;
-case 35:return 41;
+case 35:return 47;
 break;
-case 36:return 42;
+case 36:return 25;
 break;
-case 37:return 20;
+case 37:return 61;
 break;
-case 38:return 56;
+case 38:return 'DOT';
 break;
-case 39:return 'DOT';
+case 39:return 'PLUS';
 break;
-case 40:return 'PLUS';
+case 40:return 58;
 break;
-case 41:return 53;
+case 41:return 'EQUALS';
 break;
 case 42:return 'EQUALS';
 break;
-case 43:return 'EQUALS';
+case 43:return 65;
 break;
-case 44:return 60;
+case 44:return 'PUNCTUATION';
 break;
-case 45:return 'PUNCTUATION';
+case 45:return 64;
 break;
-case 46:return 59;
+case 46:return 63;
 break;
-case 47:return 58;
+case 47:return 60;
 break;
-case 48:return 55;
-break;
-case 49:return 9;
+case 48:return 19;
 break;
 }
 },
-rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%(?!\{)[^\n]*)/,/^(?:[^\}]%%[^\n]*)/,/^(?:%%[^\n]*\n*)/,/^(?:\n+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[\{])/,/^(?:$)/,/^(?:[\{])/,/^(?:\})/,/^(?:[\n])/,/^(?:[^\{\}\n]*)/,/^(?:class\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::[^\n;]+)/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
-conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"string":{"rules":[27,28],"inclusive":false},"generic":{"rules":[24,25],"inclusive":false},"struct":{"rules":[13,14,15,16,17],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,18,19,20,21,22,23,26,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::[^\n;]+)/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
+conditions: {"string":{"rules":[26,27],"inclusive":false},"generic":{"rules":[23,24],"inclusive":false},"struct":{"rules":[12,13,14,15,16],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,17,18,19,20,21,22,25,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],"inclusive":true}}
 });
 return lexer;
 })();
@@ -54812,9 +54845,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /**
  *
  */
+
 
 
 var entities = {};
@@ -54831,7 +54866,7 @@ var Identification = {
   IDENTIFYING: 'IDENTIFYING'
 };
 var parseDirective = function parseDirective(statement, context, type) {
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parseDirective(statement, context, type);
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parseDirective(this, statement, context, type);
 };
 
 var addEntity = function addEntity(name) {
@@ -54887,6 +54922,9 @@ var clear = function clear() {
   Cardinality: Cardinality,
   Identification: Identification,
   parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]().er;
+  },
   addEntity: addEntity,
   getEntities: getEntities,
   addRelationship: addRelationship,
@@ -55402,7 +55440,7 @@ case 25:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
 case 26:
- yy.parseDirective('}%%', 'close_directive', 'sequence'); 
+ yy.parseDirective('}%%', 'close_directive', 'er'); 
 break;
 }
 },
@@ -55984,7 +56022,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "\n  .entityBox {\n    fill: ".concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n  }\n\n  .relationshipLabelBox {\n    fill: ").concat(options.edgeLabelBackground, ";\n    fillopactity: 0;\n    background-color: ").concat(options.edgeLabelBackground, ";\n      rect {\n        opacity: 0.5;\n      }\n  }\n\n    .relationshipLine {\n      stroke: ").concat(options.lineColor, ";\n    }\n");
+  return "\n  .entityBox {\n    fill: ".concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n  }\n\n  .relationshipLabelBox {\n    fill: ").concat(options.tertiaryColor, ";\n    opacity: 0.3;\n    background-color: ").concat(options.tertiaryColor, ";\n      rect {\n        opacity: 0.5;\n      }\n  }\n\n    .relationshipLine {\n      stroke: ").concat(options.lineColor, ";\n    }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -56425,7 +56463,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 
 var MERMAID_DOM_ID_PREFIX = '';
-var config = Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])();
+var config = _config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"];
 var vertices = {};
 var edges = [];
 var classes = [];
@@ -56438,7 +56476,7 @@ var direction; // Functions to be run after graph rendering
 
 var funs = [];
 var parseDirective = function parseDirective(statement, context, type) {
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_4__["default"].parseDirective(statement, context, type);
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_4__["default"].parseDirective(this, statement, context, type);
 };
 /**
  * Function called by parser when a node definition has been found
@@ -56472,7 +56510,7 @@ var addVertex = function addVertex(_id, text, type, style, classes) {
   }
 
   if (typeof text !== 'undefined') {
-    config = Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])();
+    config = _config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"];
     txt = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(text.trim(), config); // strip quotes if string starts and ends with a quote
 
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
@@ -56666,7 +56704,7 @@ var setClickFun = function setClickFun(_id, functionName) {
   var id = _id;
   if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])().securityLevel !== 'loose') {
+  if (_config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"].securityLevel !== 'loose') {
     return;
   }
 
@@ -57237,6 +57275,9 @@ var destructLink = function destructLink(_str, _startStr) {
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   parseDirective: parseDirective,
+  defaultConfig: function defaultConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"].flowchart;
+  },
   addVertex: addVertex,
   addLink: addLink,
   updateLinkInterpolate: updateLinkInterpolate,
@@ -58394,211 +58435,214 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[1,4],$V2=[1,6],$V3=[1,8],$V4=[1,9,10,11,12,32,40,68,69,70,71,72,73,83,84,87,88,89,91,92,98,99,100,101,102,103,110],$V5=[2,3],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,28],$Vb=[1,53],$Vc=[1,31],$Vd=[1,32],$Ve=[1,33],$Vf=[1,34],$Vg=[1,35],$Vh=[1,47],$Vi=[1,42],$Vj=[1,44],$Vk=[1,39],$Vl=[1,43],$Vm=[1,46],$Vn=[1,50],$Vo=[1,51],$Vp=[1,52],$Vq=[1,41],$Vr=[1,45],$Vs=[1,48],$Vt=[1,49],$Vu=[1,40],$Vv=[1,58],$Vw=[1,61],$Vx=[1,9,10,11,12,32,36,40,68,69,70,71,72,73,83,84,87,88,89,91,92,98,99,100,101,102,103,110],$Vy=[1,65],$Vz=[1,64],$VA=[1,66],$VB=[9,10,12,63,64],$VC=[9,10,11,12,63,64],$VD=[9,10,11,12,41,63,64],$VE=[9,10,11,12,34,40,41,43,45,47,49,51,53,55,56,58,63,64,73,83,84,87,88,89,91,92,98,99,100,101,102,103],$VF=[9,10,12,40,63,64,73,83,84,87,88,89,91,92,98,99,100,101,102,103],$VG=[9,10,12],$VH=[1,9,10,11,12,19,32,36,40,68,69,70,71,72,73,83,84,87,88,89,91,92,98,99,100,101,102,103,110],$VI=[40,73,83,84,87,88,89,91,92,98,99,100,101,102,103],$VJ=[1,114],$VK=[1,135],$VL=[1,136],$VM=[1,137],$VN=[1,138],$VO=[1,118],$VP=[1,109],$VQ=[1,107],$VR=[1,110],$VS=[1,130],$VT=[1,131],$VU=[1,132],$VV=[1,133],$VW=[1,134],$VX=[1,139],$VY=[1,140],$VZ=[1,112],$V_=[1,120],$V$=[1,123],$V01=[1,121],$V11=[1,122],$V21=[1,115],$V31=[1,128],$V41=[1,127],$V51=[1,111],$V61=[1,108],$V71=[1,117],$V81=[1,119],$V91=[1,124],$Va1=[1,125],$Vb1=[1,126],$Vc1=[1,129],$Vd1=[9,10,11,12,32,36,40,68,69,70,71,72,73,83,84,87,88,89,91,92,98,99,100,101,102,103,110],$Ve1=[1,143],$Vf1=[1,147],$Vg1=[1,149],$Vh1=[1,150],$Vi1=[9,10,11,12,19,20,32,34,35,36,40,44,46,48,50,52,54,55,57,59,62,63,64,65,68,69,70,71,72,73,74,77,83,84,87,88,89,91,92,93,94,98,99,100,101,102,103],$Vj1=[9,10,11,12,20,40,73,83,84,87,88,89,91,92,98,99,100,101,102,103],$Vk1=[11,84],$Vl1=[1,219],$Vm1=[1,223],$Vn1=[1,220],$Vo1=[1,217],$Vp1=[1,214],$Vq1=[1,215],$Vr1=[1,216],$Vs1=[1,218],$Vt1=[1,221],$Vu1=[1,222],$Vv1=[1,224],$Vw1=[1,240],$Vx1=[9,10,12,84],$Vy1=[9,10,11,12,68,80,83,84,87,88,89,90,91,92,93];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,9],$V1=[1,7],$V2=[1,6],$V3=[1,8],$V4=[1,20,21,22,23,38,46,75,76,77,78,79,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$V5=[2,10],$V6=[1,20],$V7=[1,21],$V8=[1,22],$V9=[1,23],$Va=[1,30],$Vb=[1,54],$Vc=[1,32],$Vd=[1,33],$Ve=[1,34],$Vf=[1,35],$Vg=[1,36],$Vh=[1,48],$Vi=[1,43],$Vj=[1,45],$Vk=[1,40],$Vl=[1,44],$Vm=[1,47],$Vn=[1,51],$Vo=[1,52],$Vp=[1,53],$Vq=[1,42],$Vr=[1,46],$Vs=[1,49],$Vt=[1,50],$Vu=[1,41],$Vv=[1,57],$Vw=[1,62],$Vx=[1,20,21,22,23,38,42,46,75,76,77,78,79,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$Vy=[1,66],$Vz=[1,65],$VA=[1,67],$VB=[20,21,23,69,70],$VC=[20,21,22,23,69,70],$VD=[20,21,22,23,47,69,70],$VE=[20,21,22,23,40,46,47,49,51,53,55,57,59,61,62,64,69,70,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$VF=[20,21,23],$VG=[20,21,23,46,69,70,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$VH=[1,12,20,21,22,23,24,38,42,46,75,76,77,78,79,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$VI=[46,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$VJ=[1,115],$VK=[1,136],$VL=[1,137],$VM=[1,138],$VN=[1,139],$VO=[1,119],$VP=[1,110],$VQ=[1,111],$VR=[1,107],$VS=[1,131],$VT=[1,132],$VU=[1,133],$VV=[1,134],$VW=[1,135],$VX=[1,140],$VY=[1,141],$VZ=[1,113],$V_=[1,121],$V$=[1,124],$V01=[1,122],$V11=[1,123],$V21=[1,116],$V31=[1,129],$V41=[1,128],$V51=[1,112],$V61=[1,109],$V71=[1,118],$V81=[1,120],$V91=[1,125],$Va1=[1,126],$Vb1=[1,127],$Vc1=[1,130],$Vd1=[20,21,22,23,38,42,46,75,76,77,78,79,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$Ve1=[1,144],$Vf1=[1,148],$Vg1=[1,150],$Vh1=[1,151],$Vi1=[12,21,22,24],$Vj1=[20,21,22,23,24,26,38,40,41,42,46,50,52,54,56,58,60,61,63,65,69,70,71,75,76,77,78,79,80,81,84,90,91,94,95,96,98,99,100,101,105,106,107,108,109,110],$Vk1=[20,21,22,23,26,46,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$Vl1=[22,91],$Vm1=[1,220],$Vn1=[1,224],$Vo1=[1,221],$Vp1=[1,218],$Vq1=[1,215],$Vr1=[1,216],$Vs1=[1,217],$Vt1=[1,219],$Vu1=[1,222],$Vv1=[1,223],$Vw1=[1,225],$Vx1=[1,241],$Vy1=[20,21,23,91],$Vz1=[20,21,22,23,75,87,90,91,94,95,96,97,98,99,100];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"document":5,"directive":6,"line":7,"statement":8,"SEMI":9,"NEWLINE":10,"SPACE":11,"EOF":12,"openDirective":13,"typeDirective":14,"closeDirective":15,"separator":16,":":17,"argDirective":18,"GRAPH":19,"DIR":20,"FirstStmtSeperator":21,"ending":22,"endToken":23,"spaceList":24,"spaceListNewline":25,"verticeStatement":26,"styleStatement":27,"linkStyleStatement":28,"classDefStatement":29,"classStatement":30,"clickStatement":31,"subgraph":32,"text":33,"SQS":34,"SQE":35,"end":36,"link":37,"node":38,"vertex":39,"AMP":40,"STYLE_SEPARATOR":41,"idString":42,"PS":43,"PE":44,"(-":45,"-)":46,"STADIUMSTART":47,"STADIUMEND":48,"SUBROUTINESTART":49,"SUBROUTINEEND":50,"CYLINDERSTART":51,"CYLINDEREND":52,"DIAMOND_START":53,"DIAMOND_STOP":54,"TAGEND":55,"TRAPSTART":56,"TRAPEND":57,"INVTRAPSTART":58,"INVTRAPEND":59,"linkStatement":60,"arrowText":61,"STR":62,"START_LINK":63,"LINK":64,"PIPE":65,"textToken":66,"keywords":67,"STYLE":68,"LINKSTYLE":69,"CLASSDEF":70,"CLASS":71,"CLICK":72,"DOWN":73,"UP":74,"textNoTags":75,"textNoTagsToken":76,"DEFAULT":77,"stylesOpt":78,"alphaNum":79,"HEX":80,"numList":81,"INTERPOLATE":82,"NUM":83,"COMMA":84,"style":85,"styleComponent":86,"ALPHA":87,"COLON":88,"MINUS":89,"UNIT":90,"BRKT":91,"DOT":92,"PCT":93,"TAGSTART":94,"alphaNumToken":95,"idStringToken":96,"alphaNumStatement":97,"PUNCTUATION":98,"UNICODE_TEXT":99,"PLUS":100,"EQUALS":101,"MULT":102,"UNDERSCORE":103,"graphCodeTokens":104,"ARROW_CROSS":105,"ARROW_POINT":106,"ARROW_CIRCLE":107,"ARROW_OPEN":108,"QUOTE":109,"open_directive":110,"type_directive":111,"arg_directive":112,"close_directive":113,"$accept":0,"$end":1},
-terminals_: {2:"error",9:"SEMI",10:"NEWLINE",11:"SPACE",12:"EOF",17:":",19:"GRAPH",20:"DIR",32:"subgraph",34:"SQS",35:"SQE",36:"end",40:"AMP",41:"STYLE_SEPARATOR",43:"PS",44:"PE",45:"(-",46:"-)",47:"STADIUMSTART",48:"STADIUMEND",49:"SUBROUTINESTART",50:"SUBROUTINEEND",51:"CYLINDERSTART",52:"CYLINDEREND",53:"DIAMOND_START",54:"DIAMOND_STOP",55:"TAGEND",56:"TRAPSTART",57:"TRAPEND",58:"INVTRAPSTART",59:"INVTRAPEND",62:"STR",63:"START_LINK",64:"LINK",65:"PIPE",68:"STYLE",69:"LINKSTYLE",70:"CLASSDEF",71:"CLASS",72:"CLICK",73:"DOWN",74:"UP",77:"DEFAULT",80:"HEX",82:"INTERPOLATE",83:"NUM",84:"COMMA",87:"ALPHA",88:"COLON",89:"MINUS",90:"UNIT",91:"BRKT",92:"DOT",93:"PCT",94:"TAGSTART",98:"PUNCTUATION",99:"UNICODE_TEXT",100:"PLUS",101:"EQUALS",102:"MULT",103:"UNDERSCORE",105:"ARROW_CROSS",106:"ARROW_POINT",107:"ARROW_CIRCLE",108:"ARROW_OPEN",109:"QUOTE",110:"open_directive",111:"type_directive",112:"arg_directive",113:"close_directive"},
-productions_: [0,[3,2],[3,2],[5,0],[5,2],[7,1],[7,1],[7,1],[7,1],[7,1],[6,4],[6,6],[4,2],[4,2],[4,3],[22,2],[22,1],[23,1],[23,1],[23,1],[21,1],[21,1],[21,2],[25,2],[25,2],[25,1],[25,1],[24,2],[24,1],[8,2],[8,2],[8,2],[8,2],[8,2],[8,2],[8,9],[8,6],[8,4],[8,1],[16,1],[16,1],[16,1],[26,3],[26,4],[26,2],[26,1],[38,1],[38,5],[38,3],[39,4],[39,6],[39,4],[39,4],[39,4],[39,4],[39,4],[39,4],[39,6],[39,4],[39,4],[39,4],[39,4],[39,4],[39,1],[37,2],[37,3],[37,3],[37,1],[37,3],[60,1],[61,3],[33,1],[33,2],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[75,1],[75,2],[29,5],[29,5],[30,5],[31,5],[31,7],[31,5],[31,7],[27,5],[27,5],[28,5],[28,5],[28,9],[28,9],[28,7],[28,7],[81,1],[81,3],[78,1],[78,3],[85,1],[85,2],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[76,1],[76,1],[76,1],[76,1],[42,1],[42,2],[79,1],[79,2],[97,1],[97,1],[97,1],[97,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[95,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[96,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[13,1],[14,1],[18,1],[15,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"openDirective":6,"typeDirective":7,"closeDirective":8,"separator":9,":":10,"argDirective":11,"open_directive":12,"type_directive":13,"arg_directive":14,"close_directive":15,"graphConfig":16,"document":17,"line":18,"statement":19,"SEMI":20,"NEWLINE":21,"SPACE":22,"EOF":23,"GRAPH":24,"NODIR":25,"DIR":26,"FirstStmtSeperator":27,"ending":28,"endToken":29,"spaceList":30,"spaceListNewline":31,"verticeStatement":32,"styleStatement":33,"linkStyleStatement":34,"classDefStatement":35,"classStatement":36,"clickStatement":37,"subgraph":38,"text":39,"SQS":40,"SQE":41,"end":42,"link":43,"node":44,"vertex":45,"AMP":46,"STYLE_SEPARATOR":47,"idString":48,"PS":49,"PE":50,"(-":51,"-)":52,"STADIUMSTART":53,"STADIUMEND":54,"SUBROUTINESTART":55,"SUBROUTINEEND":56,"CYLINDERSTART":57,"CYLINDEREND":58,"DIAMOND_START":59,"DIAMOND_STOP":60,"TAGEND":61,"TRAPSTART":62,"TRAPEND":63,"INVTRAPSTART":64,"INVTRAPEND":65,"linkStatement":66,"arrowText":67,"TESTSTR":68,"START_LINK":69,"LINK":70,"PIPE":71,"textToken":72,"STR":73,"keywords":74,"STYLE":75,"LINKSTYLE":76,"CLASSDEF":77,"CLASS":78,"CLICK":79,"DOWN":80,"UP":81,"textNoTags":82,"textNoTagsToken":83,"DEFAULT":84,"stylesOpt":85,"alphaNum":86,"HEX":87,"numList":88,"INTERPOLATE":89,"NUM":90,"COMMA":91,"style":92,"styleComponent":93,"ALPHA":94,"COLON":95,"MINUS":96,"UNIT":97,"BRKT":98,"DOT":99,"PCT":100,"TAGSTART":101,"alphaNumToken":102,"idStringToken":103,"alphaNumStatement":104,"PUNCTUATION":105,"UNICODE_TEXT":106,"PLUS":107,"EQUALS":108,"MULT":109,"UNDERSCORE":110,"graphCodeTokens":111,"ARROW_CROSS":112,"ARROW_POINT":113,"ARROW_CIRCLE":114,"ARROW_OPEN":115,"QUOTE":116,"$accept":0,"$end":1},
+terminals_: {2:"error",10:":",12:"open_directive",13:"type_directive",14:"arg_directive",15:"close_directive",20:"SEMI",21:"NEWLINE",22:"SPACE",23:"EOF",24:"GRAPH",25:"NODIR",26:"DIR",38:"subgraph",40:"SQS",41:"SQE",42:"end",46:"AMP",47:"STYLE_SEPARATOR",49:"PS",50:"PE",51:"(-",52:"-)",53:"STADIUMSTART",54:"STADIUMEND",55:"SUBROUTINESTART",56:"SUBROUTINEEND",57:"CYLINDERSTART",58:"CYLINDEREND",59:"DIAMOND_START",60:"DIAMOND_STOP",61:"TAGEND",62:"TRAPSTART",63:"TRAPEND",64:"INVTRAPSTART",65:"INVTRAPEND",68:"TESTSTR",69:"START_LINK",70:"LINK",71:"PIPE",73:"STR",75:"STYLE",76:"LINKSTYLE",77:"CLASSDEF",78:"CLASS",79:"CLICK",80:"DOWN",81:"UP",84:"DEFAULT",87:"HEX",89:"INTERPOLATE",90:"NUM",91:"COMMA",94:"ALPHA",95:"COLON",96:"MINUS",97:"UNIT",98:"BRKT",99:"DOT",100:"PCT",101:"TAGSTART",105:"PUNCTUATION",106:"UNICODE_TEXT",107:"PLUS",108:"EQUALS",109:"MULT",110:"UNDERSCORE",112:"ARROW_CROSS",113:"ARROW_POINT",114:"ARROW_CIRCLE",115:"ARROW_OPEN",116:"QUOTE"},
+productions_: [0,[3,1],[3,2],[5,4],[5,6],[6,1],[7,1],[11,1],[8,1],[4,2],[17,0],[17,2],[18,1],[18,1],[18,1],[18,1],[18,1],[16,2],[16,2],[16,2],[16,3],[28,2],[28,1],[29,1],[29,1],[29,1],[27,1],[27,1],[27,2],[31,2],[31,2],[31,1],[31,1],[30,2],[30,1],[19,2],[19,2],[19,2],[19,2],[19,2],[19,2],[19,9],[19,6],[19,4],[9,1],[9,1],[9,1],[32,3],[32,4],[32,2],[32,1],[44,1],[44,5],[44,3],[45,4],[45,6],[45,4],[45,4],[45,4],[45,4],[45,4],[45,4],[45,6],[45,4],[45,4],[45,4],[45,4],[45,4],[45,1],[43,2],[43,3],[43,3],[43,1],[43,3],[66,1],[67,3],[39,1],[39,2],[39,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[82,1],[82,2],[35,5],[35,5],[36,5],[37,5],[37,7],[37,5],[37,7],[33,5],[33,5],[34,5],[34,5],[34,9],[34,9],[34,7],[34,7],[88,1],[88,3],[85,1],[85,3],[92,1],[92,2],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[72,1],[72,1],[72,1],[72,1],[72,1],[72,1],[83,1],[83,1],[83,1],[83,1],[48,1],[48,2],[86,1],[86,2],[104,1],[104,1],[104,1],[104,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 3:
+case 5:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 6:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 7:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 8:
+ yy.parseDirective('}%%', 'close_directive', 'flowchart'); 
+break;
+case 10:
  this.$ = [];
 break;
-case 4:
+case 11:
 
 	    if($$[$0] !== []){
 	        $$[$0-1].push($$[$0]);
 	    }
 	    this.$=$$[$0-1];
 break;
-case 5: case 71: case 84: case 119: case 131: case 133: case 134:
+case 12: case 76: case 78: case 90: case 136: case 138: case 139:
 this.$=$$[$0];
 break;
-case 14:
+case 19:
+ yy.setDirection('TB');this.$ = 'TB';
+break;
+case 20:
  yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
 break;
-case 29:
+case 35:
  /* console.warn('finat vs', $$[$0-1].nodes); */ this.$=$$[$0-1].nodes
 break;
-case 30: case 31: case 32: case 33: case 34:
+case 36: case 37: case 38: case 39: case 40:
 this.$=[];
 break;
-case 35:
+case 41:
 this.$=yy.addSubGraph($$[$0-6],$$[$0-1],$$[$0-4]);
 break;
-case 36:
+case 42:
 this.$=yy.addSubGraph($$[$0-3],$$[$0-1],$$[$0-3]);
 break;
-case 37:
+case 43:
 this.$=yy.addSubGraph(undefined,$$[$0-1],undefined);
 break;
-case 42:
+case 47:
  /* console.warn('vs',$$[$0-2].stmt,$$[$0]); */ yy.addLink($$[$0-2].stmt,$$[$0],$$[$0-1]); this.$ = { stmt: $$[$0], nodes: $$[$0].concat($$[$0-2].nodes) } 
 break;
-case 43:
+case 48:
  /* console.warn('vs',$$[$0-3].stmt,$$[$0-1]); */ yy.addLink($$[$0-3].stmt,$$[$0-1],$$[$0-2]); this.$ = { stmt: $$[$0-1], nodes: $$[$0-1].concat($$[$0-3].nodes) } 
 break;
-case 44:
+case 49:
 /*console.warn('noda', $$[$0-1]);*/ this.$ = {stmt: $$[$0-1], nodes:$$[$0-1] }
 break;
-case 45:
+case 50:
  /*console.warn('noda', $$[$0]);*/ this.$ = {stmt: $$[$0], nodes:$$[$0] }
 break;
-case 46:
+case 51:
  /* console.warn('nod', $$[$0]); */ this.$ = [$$[$0]];
 break;
-case 47:
+case 52:
  this.$ = $$[$0-4].concat($$[$0]); /* console.warn('pip', $$[$0-4][0], $$[$0], this.$); */ 
 break;
-case 48:
+case 53:
 this.$ = [$$[$0-2]];yy.setClass($$[$0-2],$$[$0])
 break;
-case 49:
+case 54:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
 break;
-case 50:
+case 55:
 this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'circle');
 break;
-case 51:
+case 56:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'ellipse');
 break;
-case 52:
+case 57:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'stadium');
 break;
-case 53:
+case 58:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'subroutine');
 break;
-case 54:
+case 59:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'cylinder');
 break;
-case 55:
+case 60:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
 break;
-case 56:
+case 61:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
 break;
-case 57:
+case 62:
 this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'hexagon');
 break;
-case 58:
+case 63:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'odd');
 break;
-case 59:
+case 64:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'trapezoid');
 break;
-case 60:
+case 65:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'inv_trapezoid');
 break;
-case 61:
+case 66:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'lean_right');
 break;
-case 62:
+case 67:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'lean_left');
 break;
-case 63:
+case 68:
  /*console.warn('h: ', $$[$0]);*/this.$ = $$[$0];yy.addVertex($$[$0]);
 break;
-case 64:
+case 69:
 $$[$0-1].text = $$[$0];this.$ = $$[$0-1];
 break;
-case 65: case 66:
+case 70: case 71:
 $$[$0-2].text = $$[$0-1];this.$ = $$[$0-2];
 break;
-case 67:
+case 72:
 this.$ = $$[$0];
 break;
-case 68:
+case 73:
 var inf = yy.destructLink($$[$0], $$[$0-2]); this.$ = {"type":inf.type,"stroke":inf.stroke,"text":$$[$0-1]};
 break;
-case 69:
+case 74:
 var inf = yy.destructLink($$[$0]);this.$ = {"type":inf.type,"stroke":inf.stroke};
 break;
-case 70:
+case 75:
 this.$ = $$[$0-1];
 break;
-case 72: case 85: case 132:
+case 77: case 91: case 137:
 this.$=$$[$0-1]+''+$$[$0];
 break;
-case 86: case 87:
+case 92: case 93:
 this.$ = $$[$0-4];yy.addClass($$[$0-2],$$[$0]);
 break;
-case 88:
+case 94:
 this.$ = $$[$0-4];yy.setClass($$[$0-2], $$[$0]);
 break;
-case 89:
+case 95:
 this.$ = $$[$0-4];yy.setClickEvent($$[$0-2], $$[$0], undefined);
 break;
-case 90:
+case 96:
 this.$ = $$[$0-6];yy.setClickEvent($$[$0-4], $$[$0-2], $$[$0])       ;
 break;
-case 91:
+case 97:
 this.$ = $$[$0-4];yy.setLink($$[$0-2], $$[$0], undefined);
 break;
-case 92:
+case 98:
 this.$ = $$[$0-6];yy.setLink($$[$0-4], $$[$0-2], $$[$0]       );
 break;
-case 93:
+case 99:
 this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
 break;
-case 94: case 96:
+case 100: case 102:
 this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
 break;
-case 95:
+case 101:
 this.$ = $$[$0-4];yy.updateLink([$$[$0-2]],$$[$0]);
 break;
-case 97:
+case 103:
 this.$ = $$[$0-8];yy.updateLinkInterpolate([$$[$0-6]],$$[$0-2]);yy.updateLink([$$[$0-6]],$$[$0]);
 break;
-case 98:
+case 104:
 this.$ = $$[$0-8];yy.updateLinkInterpolate($$[$0-6],$$[$0-2]);yy.updateLink($$[$0-6],$$[$0]);
 break;
-case 99:
+case 105:
 this.$ = $$[$0-6];yy.updateLinkInterpolate([$$[$0-4]],$$[$0]);
 break;
-case 100:
+case 106:
 this.$ = $$[$0-6];yy.updateLinkInterpolate($$[$0-4],$$[$0]);
 break;
-case 101: case 103:
+case 107: case 109:
 this.$ = [$$[$0]]
 break;
-case 102: case 104:
+case 108: case 110:
 $$[$0-2].push($$[$0]);this.$ = $$[$0-2];
 break;
-case 106:
+case 112:
 this.$ = $$[$0-1] + $$[$0];
 break;
-case 129:
+case 134:
 this.$=$$[$0]
 break;
-case 130:
+case 135:
 this.$=$$[$0-1]+''+$$[$0]
 break;
-case 135:
+case 140:
 this.$='v';
 break;
-case 136:
+case 141:
 this.$='-';
-break;
-case 190:
- yy.parseDirective('%%{', 'open_directive'); 
-break;
-case 191:
- yy.parseDirective($$[$0], 'type_directive'); 
-break;
-case 192:
- $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
-break;
-case 193:
- yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:2,6:3,10:$V0,11:$V1,13:7,19:$V2,110:$V3},{1:[3]},o($V4,$V5,{5:9}),{3:10,4:2,6:3,10:$V0,11:$V1,13:7,19:$V2,110:$V3},{4:11,10:$V0,11:$V1,19:$V2},{4:12,10:$V0,11:$V1,19:$V2},{20:[1,13]},{14:14,111:[1,15]},{111:[2,190]},{1:[2,1],6:29,7:16,8:17,9:$V6,10:$V7,11:$V8,12:$V9,13:7,26:22,27:23,28:24,29:25,30:26,31:27,32:$Va,38:30,39:36,40:$Vb,42:37,68:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu,110:$V3},{1:[2,2]},o($V4,[2,12]),o($V4,[2,13]),{9:[1,55],10:[1,56],11:$Vv,21:54,24:57},{15:59,17:[1,60],113:$Vw},o([17,113],[2,191]),o($Vx,[2,4]),o($Vx,[2,5]),o($Vx,[2,6]),o($Vx,[2,7]),o($Vx,[2,8]),o($Vx,[2,9]),{9:$Vy,10:$Vz,12:$VA,16:62,37:63,60:67,63:[1,68],64:[1,69]},{9:$Vy,10:$Vz,12:$VA,16:70},{9:$Vy,10:$Vz,12:$VA,16:71},{9:$Vy,10:$Vz,12:$VA,16:72},{9:$Vy,10:$Vz,12:$VA,16:73},{9:$Vy,10:$Vz,12:$VA,16:74},{9:$Vy,10:$Vz,11:[1,75],12:$VA,16:76},o($Vx,[2,38]),o($VB,[2,45],{24:77,11:$Vv}),{11:[1,78]},{11:[1,79]},{11:[1,80]},{11:[1,81]},{11:[1,82]},o($VC,[2,46],{41:[1,83]}),o($VD,[2,63],{96:94,34:[1,84],40:$Vb,43:[1,85],45:[1,86],47:[1,87],49:[1,88],51:[1,89],53:[1,90],55:[1,91],56:[1,92],58:[1,93],73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu}),o($VE,[2,129]),o($VE,[2,150]),o($VE,[2,151]),o($VE,[2,152]),o($VE,[2,153]),o($VE,[2,154]),o($VE,[2,155]),o($VE,[2,156]),o($VE,[2,157]),o($VE,[2,158]),o($VE,[2,159]),o($VE,[2,160]),o($VE,[2,161]),o($VE,[2,162]),o($VE,[2,163]),o($VE,[2,164]),o($V4,[2,14]),o($V4,[2,20]),o($V4,[2,21]),{10:[1,95]},o($VF,[2,28],{24:96,11:$Vv}),{9:$Vy,10:$Vz,12:$VA,16:97},{18:98,112:[1,99]},o($VG,[2,193]),o($Vx,[2,29]),{38:100,39:36,40:$Vb,42:37,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu},o($VH,[2,39]),o($VH,[2,40]),o($VH,[2,41]),o($VI,[2,67],{61:101,62:[1,102],65:[1,103]}),{11:$VJ,19:$VK,20:$VL,32:$VM,33:104,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o([40,62,65,73,83,84,87,88,89,91,92,98,99,100,101,102,103],[2,69]),o($Vx,[2,30]),o($Vx,[2,31]),o($Vx,[2,32]),o($Vx,[2,33]),o($Vx,[2,34]),{11:$VJ,19:$VK,20:$VL,32:$VM,33:141,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($Vd1,$V5,{5:142}),o($VB,[2,44],{40:$Ve1}),{20:$Vf1,40:$VO,73:$Vg1,79:144,80:[1,145],83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{77:[1,151],81:152,83:[1,153]},{20:$Vf1,40:$VO,73:$Vg1,77:[1,154],79:155,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{20:$Vf1,40:$VO,73:$Vg1,79:156,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{20:$Vf1,40:$VO,73:$Vg1,79:157,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{40:$Vb,42:158,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu},{11:$VJ,19:$VK,20:$VL,32:$VM,33:159,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:161,36:$VN,40:$VO,43:[1,160],55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:162,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:163,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:164,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:165,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:166,36:$VN,40:$VO,53:[1,167],55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:168,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:169,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:170,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VE,[2,130]),o($V4,[2,22]),o($VF,[2,27]),o($VH,[2,10]),{15:171,113:$Vw},{113:[2,192]},o($VB,[2,42],{24:172,11:$Vv}),o($VI,[2,64],{11:[1,173]}),{11:[1,174]},{11:$VJ,19:$VK,20:$VL,32:$VM,33:175,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,64:[1,176],66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($Vi1,[2,71]),o($Vi1,[2,118]),o($Vi1,[2,119]),o($Vi1,[2,120]),o($Vi1,[2,121]),o($Vi1,[2,122]),o($Vi1,[2,123]),o($Vi1,[2,124]),o($Vi1,[2,125]),o($Vi1,[2,126]),o($Vi1,[2,127]),o($Vi1,[2,128]),o($Vi1,[2,137]),o($Vi1,[2,138]),o($Vi1,[2,139]),o($Vi1,[2,140]),o($Vi1,[2,141]),o($Vi1,[2,142]),o($Vi1,[2,143]),o($Vi1,[2,144]),o($Vi1,[2,145]),o($Vi1,[2,146]),o($Vi1,[2,147]),o($Vi1,[2,148]),o($Vi1,[2,149]),o($Vi1,[2,73]),o($Vi1,[2,74]),o($Vi1,[2,75]),o($Vi1,[2,76]),o($Vi1,[2,77]),o($Vi1,[2,78]),o($Vi1,[2,79]),o($Vi1,[2,80]),o($Vi1,[2,81]),o($Vi1,[2,82]),o($Vi1,[2,83]),{9:$Vy,10:$Vz,11:$VJ,12:$VA,16:179,19:$VK,20:$VL,32:$VM,34:[1,178],36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{6:29,7:16,8:17,9:$V6,10:$V7,11:$V8,12:$V9,13:7,26:22,27:23,28:24,29:25,30:26,31:27,32:$Va,36:[1,180],38:30,39:36,40:$Vb,42:37,68:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu,110:$V3},{11:$Vv,24:181},{11:[1,182],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:183,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:[1,184]},o($Vj1,[2,131]),o($Vj1,[2,133]),o($Vj1,[2,134]),o($Vj1,[2,135]),o($Vj1,[2,136]),{11:[1,185]},{11:[1,186],84:[1,187]},o($Vk1,[2,101]),{11:[1,188]},{11:[1,189],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:183,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:[1,190],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:183,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:[1,191],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:183,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VC,[2,48],{96:94,40:$Vb,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu}),{11:$VJ,19:$VK,20:$VL,32:$VM,35:[1,192],36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:193,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,44:[1,194],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,46:[1,195],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,48:[1,196],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,50:[1,197],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,52:[1,198],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,54:[1,199],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,33:200,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,35:[1,201],36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,55:$VP,57:[1,202],59:[1,203],62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,55:$VP,57:[1,205],59:[1,204],62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{9:$Vy,10:$Vz,12:$VA,16:206},o($VB,[2,43],{40:$Ve1}),o($VI,[2,66]),o($VI,[2,65]),{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,65:[1,207],66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VI,[2,68]),o($Vi1,[2,72]),{11:$VJ,19:$VK,20:$VL,32:$VM,33:208,36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:105,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($Vd1,$V5,{5:209}),o($Vx,[2,37]),{39:210,40:$Vb,42:37,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu},{11:$Vl1,68:$Vm1,78:211,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},o($Vj1,[2,132]),{11:$Vl1,68:$Vm1,78:225,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{11:$Vl1,68:$Vm1,78:226,80:$Vn1,82:[1,227],83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{11:$Vl1,68:$Vm1,78:228,80:$Vn1,82:[1,229],83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{83:[1,230]},{11:$Vl1,68:$Vm1,78:231,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{11:$Vl1,68:$Vm1,78:232,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{20:$Vf1,40:$VO,73:$Vg1,79:233,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{20:$Vf1,40:$VO,62:[1,235],73:$Vg1,79:234,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VD,[2,49]),{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,44:[1,236],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VD,[2,55]),o($VD,[2,51]),o($VD,[2,52]),o($VD,[2,53]),o($VD,[2,54]),o($VD,[2,56]),{11:$VJ,19:$VK,20:$VL,32:$VM,36:$VN,40:$VO,54:[1,237],55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},o($VD,[2,58]),o($VD,[2,59]),o($VD,[2,61]),o($VD,[2,60]),o($VD,[2,62]),o($VH,[2,11]),o([11,40,73,83,84,87,88,89,91,92,98,99,100,101,102,103],[2,70]),{11:$VJ,19:$VK,20:$VL,32:$VM,35:[1,238],36:$VN,40:$VO,55:$VP,62:$VQ,63:$VR,66:177,67:116,68:$VS,69:$VT,70:$VU,71:$VV,72:$VW,73:$VX,74:$VY,76:106,77:$VZ,83:$V_,84:$V$,87:$V01,88:$V11,89:$V21,91:$V31,92:$V41,93:$V51,94:$V61,95:113,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{6:29,7:16,8:17,9:$V6,10:$V7,11:$V8,12:$V9,13:7,26:22,27:23,28:24,29:25,30:26,31:27,32:$Va,36:[1,239],38:30,39:36,40:$Vb,42:37,68:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu,110:$V3},o($VC,[2,47]),o($VG,[2,93],{84:$Vw1}),o($Vx1,[2,103],{86:241,11:$Vl1,68:$Vm1,80:$Vn1,83:$Vo1,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1}),o($Vy1,[2,105]),o($Vy1,[2,107]),o($Vy1,[2,108]),o($Vy1,[2,109]),o($Vy1,[2,110]),o($Vy1,[2,111]),o($Vy1,[2,112]),o($Vy1,[2,113]),o($Vy1,[2,114]),o($Vy1,[2,115]),o($Vy1,[2,116]),o($Vy1,[2,117]),o($VG,[2,94],{84:$Vw1}),o($VG,[2,95],{84:$Vw1}),{11:[1,242]},o($VG,[2,96],{84:$Vw1}),{11:[1,243]},o($Vk1,[2,102]),o($VG,[2,86],{84:$Vw1}),o($VG,[2,87],{84:$Vw1}),o($VG,[2,88],{95:148,97:183,20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1}),o($VG,[2,89],{95:148,97:183,11:[1,244],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1}),o($VG,[2,91],{11:[1,245]}),{44:[1,246]},{54:[1,247]},{9:$Vy,10:$Vz,12:$VA,16:248},o($Vx,[2,36]),{11:$Vl1,68:$Vm1,80:$Vn1,83:$Vo1,85:249,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},o($Vy1,[2,106]),{20:$Vf1,40:$VO,73:$Vg1,79:250,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{20:$Vf1,40:$VO,73:$Vg1,79:251,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,95:148,97:146,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1},{62:[1,252]},{62:[1,253]},o($VD,[2,50]),o($VD,[2,57]),o($Vd1,$V5,{5:254}),o($Vx1,[2,104],{86:241,11:$Vl1,68:$Vm1,80:$Vn1,83:$Vo1,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1}),o($VG,[2,99],{95:148,97:183,11:[1,255],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1}),o($VG,[2,100],{95:148,97:183,11:[1,256],20:$Vf1,40:$VO,73:$Vg1,83:$V_,84:$V$,87:$V01,88:$V11,89:$Vh1,91:$V31,92:$V41,98:$V71,99:$V81,100:$V91,101:$Va1,102:$Vb1,103:$Vc1}),o($VG,[2,90]),o($VG,[2,92]),{6:29,7:16,8:17,9:$V6,10:$V7,11:$V8,12:$V9,13:7,26:22,27:23,28:24,29:25,30:26,31:27,32:$Va,36:[1,257],38:30,39:36,40:$Vb,42:37,68:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,83:$Vi,84:$Vj,87:$Vk,88:$Vl,89:$Vm,91:$Vn,92:$Vo,96:38,98:$Vp,99:$Vq,100:$Vr,101:$Vs,102:$Vt,103:$Vu,110:$V3},{11:$Vl1,68:$Vm1,78:258,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},{11:$Vl1,68:$Vm1,78:259,80:$Vn1,83:$Vo1,85:212,86:213,87:$Vp1,88:$Vq1,89:$Vr1,90:$Vs1,91:$Vt1,92:$Vu1,93:$Vv1},o($Vx,[2,35]),o($VG,[2,97],{84:$Vw1}),o($VG,[2,98],{84:$Vw1})],
-defaultActions: {8:[2,190],10:[2,2],99:[2,192]},
+table: [{3:1,4:2,5:3,6:5,12:$V0,16:4,21:$V1,22:$V2,24:$V3},{1:[3]},{1:[2,1]},{3:10,4:2,5:3,6:5,12:$V0,16:4,21:$V1,22:$V2,24:$V3},o($V4,$V5,{17:11}),{7:12,13:[1,13]},{16:14,21:$V1,22:$V2,24:$V3},{16:15,21:$V1,22:$V2,24:$V3},{25:[1,16],26:[1,17]},{13:[2,5]},{1:[2,2]},{1:[2,9],18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{8:55,10:[1,56],15:$Vv},o([10,15],[2,6]),o($V4,[2,17]),o($V4,[2,18]),o($V4,[2,19]),{20:[1,59],21:[1,60],22:$Vw,27:58,30:61},o($Vx,[2,11]),o($Vx,[2,12]),o($Vx,[2,13]),o($Vx,[2,14]),o($Vx,[2,15]),o($Vx,[2,16]),{9:63,20:$Vy,21:$Vz,23:$VA,43:64,66:68,69:[1,69],70:[1,70]},{9:71,20:$Vy,21:$Vz,23:$VA},{9:72,20:$Vy,21:$Vz,23:$VA},{9:73,20:$Vy,21:$Vz,23:$VA},{9:74,20:$Vy,21:$Vz,23:$VA},{9:75,20:$Vy,21:$Vz,23:$VA},{9:77,20:$Vy,21:$Vz,22:[1,76],23:$VA},o($VB,[2,50],{30:78,22:$Vw}),{22:[1,79]},{22:[1,80]},{22:[1,81]},{22:[1,82]},{22:[1,83]},o($VC,[2,51],{47:[1,84]}),o($VD,[2,68],{103:95,40:[1,85],46:$Vb,49:[1,86],51:[1,87],53:[1,88],55:[1,89],57:[1,90],59:[1,91],61:[1,92],62:[1,93],64:[1,94],80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu}),o($VE,[2,134]),o($VE,[2,155]),o($VE,[2,156]),o($VE,[2,157]),o($VE,[2,158]),o($VE,[2,159]),o($VE,[2,160]),o($VE,[2,161]),o($VE,[2,162]),o($VE,[2,163]),o($VE,[2,164]),o($VE,[2,165]),o($VE,[2,166]),o($VE,[2,167]),o($VE,[2,168]),o($VE,[2,169]),{9:96,20:$Vy,21:$Vz,23:$VA},{11:97,14:[1,98]},o($VF,[2,8]),o($V4,[2,20]),o($V4,[2,26]),o($V4,[2,27]),{21:[1,99]},o($VG,[2,34],{30:100,22:$Vw}),o($Vx,[2,35]),{44:101,45:37,46:$Vb,48:38,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},o($VH,[2,44]),o($VH,[2,45]),o($VH,[2,46]),o($VI,[2,72],{67:102,68:[1,103],71:[1,104]}),{22:$VJ,24:$VK,26:$VL,38:$VM,39:105,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o([46,68,71,80,90,91,94,95,96,98,99,105,106,107,108,109,110],[2,74]),o($Vx,[2,36]),o($Vx,[2,37]),o($Vx,[2,38]),o($Vx,[2,39]),o($Vx,[2,40]),{22:$VJ,24:$VK,26:$VL,38:$VM,39:142,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($Vd1,$V5,{17:143}),o($VB,[2,49],{46:$Ve1}),{26:$Vf1,46:$VO,80:$Vg1,86:145,87:[1,146],90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{84:[1,152],88:153,90:[1,154]},{26:$Vf1,46:$VO,80:$Vg1,84:[1,155],86:156,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:157,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:158,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{46:$Vb,48:159,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{22:$VJ,24:$VK,26:$VL,38:$VM,39:160,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:162,42:$VN,46:$VO,49:[1,161],61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:163,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:164,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:165,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:166,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:167,42:$VN,46:$VO,59:[1,168],61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:169,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:170,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:171,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VE,[2,135]),o($Vi1,[2,3]),{8:172,15:$Vv},{15:[2,7]},o($V4,[2,28]),o($VG,[2,33]),o($VB,[2,47],{30:173,22:$Vw}),o($VI,[2,69],{22:[1,174]}),{22:[1,175]},{22:$VJ,24:$VK,26:$VL,38:$VM,39:176,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,69:$VQ,70:[1,177],72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($Vj1,[2,76]),o($Vj1,[2,78]),o($Vj1,[2,124]),o($Vj1,[2,125]),o($Vj1,[2,126]),o($Vj1,[2,127]),o($Vj1,[2,128]),o($Vj1,[2,129]),o($Vj1,[2,130]),o($Vj1,[2,131]),o($Vj1,[2,132]),o($Vj1,[2,133]),o($Vj1,[2,142]),o($Vj1,[2,143]),o($Vj1,[2,144]),o($Vj1,[2,145]),o($Vj1,[2,146]),o($Vj1,[2,147]),o($Vj1,[2,148]),o($Vj1,[2,149]),o($Vj1,[2,150]),o($Vj1,[2,151]),o($Vj1,[2,152]),o($Vj1,[2,153]),o($Vj1,[2,154]),o($Vj1,[2,79]),o($Vj1,[2,80]),o($Vj1,[2,81]),o($Vj1,[2,82]),o($Vj1,[2,83]),o($Vj1,[2,84]),o($Vj1,[2,85]),o($Vj1,[2,86]),o($Vj1,[2,87]),o($Vj1,[2,88]),o($Vj1,[2,89]),{9:180,20:$Vy,21:$Vz,22:$VJ,23:$VA,24:$VK,26:$VL,38:$VM,40:[1,179],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,181],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{22:$Vw,30:182},{22:[1,183],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:184,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:[1,185]},o($Vk1,[2,136]),o($Vk1,[2,138]),o($Vk1,[2,139]),o($Vk1,[2,140]),o($Vk1,[2,141]),{22:[1,186]},{22:[1,187],91:[1,188]},o($Vl1,[2,107]),{22:[1,189]},{22:[1,190],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:184,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:[1,191],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:184,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:[1,192],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:184,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VC,[2,53],{103:95,46:$Vb,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu}),{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,193],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:194,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,50:[1,195],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,52:[1,196],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,54:[1,197],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,56:[1,198],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,58:[1,199],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,60:[1,200],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:201,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,202],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,63:[1,203],65:[1,204],69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,63:[1,206],65:[1,205],69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{9:207,20:$Vy,21:$Vz,23:$VA},o($VB,[2,48],{46:$Ve1}),o($VI,[2,71]),o($VI,[2,70]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,69:$VQ,71:[1,208],72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VI,[2,73]),o($Vj1,[2,77]),{22:$VJ,24:$VK,26:$VL,38:$VM,39:209,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($Vd1,$V5,{17:210}),o($Vx,[2,43]),{45:211,46:$Vb,48:38,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{22:$Vm1,75:$Vn1,85:212,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},o($Vk1,[2,137]),{22:$Vm1,75:$Vn1,85:226,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{22:$Vm1,75:$Vn1,85:227,87:$Vo1,89:[1,228],90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{22:$Vm1,75:$Vn1,85:229,87:$Vo1,89:[1,230],90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{90:[1,231]},{22:$Vm1,75:$Vn1,85:232,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{22:$Vm1,75:$Vn1,85:233,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{26:$Vf1,46:$VO,80:$Vg1,86:234,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{26:$Vf1,46:$VO,73:[1,236],80:$Vg1,86:235,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VD,[2,54]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,50:[1,237],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VD,[2,60]),o($VD,[2,56]),o($VD,[2,57]),o($VD,[2,58]),o($VD,[2,59]),o($VD,[2,61]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,60:[1,238],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VD,[2,63]),o($VD,[2,64]),o($VD,[2,66]),o($VD,[2,65]),o($VD,[2,67]),o($Vi1,[2,4]),o([22,46,80,90,91,94,95,96,98,99,105,106,107,108,109,110],[2,75]),{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,239],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,240],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},o($VC,[2,52]),o($VF,[2,99],{91:$Vx1}),o($Vy1,[2,109],{93:242,22:$Vm1,75:$Vn1,87:$Vo1,90:$Vp1,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1}),o($Vz1,[2,111]),o($Vz1,[2,113]),o($Vz1,[2,114]),o($Vz1,[2,115]),o($Vz1,[2,116]),o($Vz1,[2,117]),o($Vz1,[2,118]),o($Vz1,[2,119]),o($Vz1,[2,120]),o($Vz1,[2,121]),o($Vz1,[2,122]),o($Vz1,[2,123]),o($VF,[2,100],{91:$Vx1}),o($VF,[2,101],{91:$Vx1}),{22:[1,243]},o($VF,[2,102],{91:$Vx1}),{22:[1,244]},o($Vl1,[2,108]),o($VF,[2,92],{91:$Vx1}),o($VF,[2,93],{91:$Vx1}),o($VF,[2,94],{102:149,104:184,26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1}),o($VF,[2,95],{102:149,104:184,22:[1,245],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1}),o($VF,[2,97],{22:[1,246]}),{50:[1,247]},{60:[1,248]},{9:249,20:$Vy,21:$Vz,23:$VA},o($Vx,[2,42]),{22:$Vm1,75:$Vn1,87:$Vo1,90:$Vp1,92:250,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},o($Vz1,[2,112]),{26:$Vf1,46:$VO,80:$Vg1,86:251,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:252,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{73:[1,253]},{73:[1,254]},o($VD,[2,55]),o($VD,[2,62]),o($Vd1,$V5,{17:255}),o($Vy1,[2,110],{93:242,22:$Vm1,75:$Vn1,87:$Vo1,90:$Vp1,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1}),o($VF,[2,105],{102:149,104:184,22:[1,256],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1}),o($VF,[2,106],{102:149,104:184,22:[1,257],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1}),o($VF,[2,96]),o($VF,[2,98]),{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,258],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{22:$Vm1,75:$Vn1,85:259,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{22:$Vm1,75:$Vn1,85:260,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},o($Vx,[2,41]),o($VF,[2,103],{91:$Vx1}),o($VF,[2,104],{91:$Vx1})],
+defaultActions: {2:[2,1],9:[2,5],10:[2,2],98:[2,7]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -59077,15 +59121,15 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 110; 
+case 0: this.begin('open_directive'); return 12; 
 break;
-case 1: this.begin('type_directive'); return 111; 
+case 1: this.begin('type_directive'); return 13; 
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 17; 
+case 2: this.popState(); this.begin('arg_directive'); return 10; 
 break;
-case 3: this.popState(); this.popState(); return 113; 
+case 3: this.popState(); this.popState(); return 15; 
 break;
-case 4:return 112;
+case 4:return 14;
 break;
 case 5:/* skip comments */
 break;
@@ -59097,224 +59141,226 @@ case 8:this.popState();
 break;
 case 9:return "STR";
 break;
-case 10:return 68;
+case 10:return 75;
 break;
-case 11:return 77;
+case 11:return 84;
 break;
-case 12:return 69;
+case 12:return 76;
 break;
-case 13:return 82;
+case 13:return 89;
 break;
-case 14:return 70;
+case 14:return 77;
 break;
-case 15:return 71;
+case 15:return 78;
 break;
-case 16:return 72;
+case 16:return 79;
 break;
-case 17:if(yy.lex.firstGraph()){this.begin("dir");}  return 19;
+case 17:if(yy.lex.firstGraph()){this.begin("dir");}  return 24;
 break;
-case 18:if(yy.lex.firstGraph()){this.begin("dir");}  return 19;
+case 18:if(yy.lex.firstGraph()){this.begin("dir");}  return 24;
 break;
-case 19:return 32;
+case 19:return 38;
 break;
-case 20:return 36;
+case 20:return 42;
 break;
-case 21:   this.popState();  return 20; 
+case 21:   this.popState();  return 25; 
 break;
-case 22:   this.popState();  return 20; 
+case 22:   this.popState();  return 26; 
 break;
-case 23:   this.popState();  return 20; 
+case 23:   this.popState();  return 26; 
 break;
-case 24:   this.popState();  return 20; 
+case 24:   this.popState();  return 26; 
 break;
-case 25:   this.popState();  return 20; 
+case 25:   this.popState();  return 26; 
 break;
-case 26:   this.popState();  return 20; 
+case 26:   this.popState();  return 26; 
 break;
-case 27:   this.popState();  return 20; 
+case 27:   this.popState();  return 26; 
 break;
-case 28:   this.popState();  return 20; 
+case 28:   this.popState();  return 26; 
 break;
-case 29:   this.popState();  return 20; 
+case 29:   this.popState();  return 26; 
 break;
-case 30:   this.popState();  return 20; 
+case 30:   this.popState();  return 26; 
 break;
-case 31: return 83;
+case 31:   this.popState();  return 26; 
 break;
-case 32:return 91;
+case 32: return 90;
 break;
-case 33:return 41;
+case 33:return 98;
 break;
-case 34:return 88;
+case 34:return 47;
 break;
-case 35:return 40;
+case 35:return 95;
 break;
-case 36:return 9;
+case 36:return 46;
 break;
-case 37:return 84;
+case 37:return 20;
 break;
-case 38:return 102;
+case 38:return 91;
 break;
-case 39:return 64;
+case 39:return 109;
 break;
-case 40:return 64;
+case 40:return 70;
 break;
-case 41:return 64;
+case 41:return 70;
 break;
-case 42:return 64;
+case 42:return 70;
 break;
-case 43:return 64;
+case 43:return 70;
 break;
-case 44:return 64;
+case 44:return 70;
 break;
-case 45:return 64;
+case 45:return 70;
 break;
-case 46:return 64;
+case 46:return 70;
 break;
-case 47:return 64;
+case 47:return 70;
 break;
-case 48:return 64;
+case 48:return 70;
 break;
-case 49:return 64;
+case 49:return 70;
 break;
-case 50:return 64;
+case 50:return 70;
 break;
-case 51:return 64;
+case 51:return 70;
 break;
-case 52:return 64;
+case 52:return 70;
 break;
-case 53:return 64;
+case 53:return 70;
 break;
-case 54:return 64;
+case 54:return 70;
 break;
-case 55:return 64;
+case 55:return 70;
 break;
-case 56:return 64;
+case 56:return 70;
 break;
-case 57:return 64;
+case 57:return 70;
 break;
-case 58:return 64;
+case 58:return 70;
 break;
-case 59:return 64;
+case 59:return 70;
 break;
-case 60:return 64;
+case 60:return 70;
 break;
-case 61:return 64;
+case 61:return 70;
 break;
-case 62:return 64;
+case 62:return 70;
 break;
-case 63:return 64;
+case 63:return 70;
 break;
-case 64:return 64;
+case 64:return 70;
 break;
-case 65:return 64;
+case 65:return 70;
 break;
-case 66:return 64;
+case 66:return 70;
 break;
-case 67:return 63;
+case 67:return 70;
 break;
-case 68:return 63;
+case 68:return 69;
 break;
-case 69:return 63;
+case 69:return 69;
 break;
-case 70:return 63;
+case 70:return 69;
 break;
-case 71:return 63;
+case 71:return 69;
 break;
-case 72:return 63;
+case 72:return 69;
 break;
-case 73:return 63;
+case 73:return 69;
 break;
-case 74:return 63;
+case 74:return 69;
 break;
-case 75:return 63;
+case 75:return 69;
 break;
-case 76:return 63;
+case 76:return 69;
 break;
-case 77:return 63;
+case 77:return 69;
 break;
-case 78:return 63;
+case 78:return 69;
 break;
-case 79:return 45;
+case 79:return 69;
 break;
-case 80:return 46;
+case 80:return 51;
 break;
-case 81:return 47;
+case 81:return 52;
 break;
-case 82:return 48;
+case 82:return 53;
 break;
-case 83:return 49;
+case 83:return 54;
 break;
-case 84:return 50;
+case 84:return 55;
 break;
-case 85:return 51;
+case 85:return 56;
 break;
-case 86:return 52;
+case 86:return 57;
 break;
-case 87:return 89;
+case 87:return 58;
 break;
-case 88:return 92;
+case 88:return 96;
 break;
-case 89:return 103;
+case 89:return 99;
 break;
-case 90:return 100;
+case 90:return 110;
 break;
-case 91:return 93;
+case 91:return 107;
 break;
-case 92:return 101;
+case 92:return 100;
 break;
-case 93:return 101;
+case 93:return 108;
 break;
-case 94:return 94;
+case 94:return 108;
 break;
-case 95:return 55;
+case 95:return 101;
 break;
-case 96:return 74;
+case 96:return 61;
 break;
-case 97:return 'SEP';
+case 97:return 81;
 break;
-case 98:return 73;
+case 98:return 'SEP';
 break;
-case 99:return 87;
+case 99:return 80;
 break;
-case 100:return 57;
+case 100:return 94;
 break;
-case 101:return 56;
+case 101:return 63;
 break;
-case 102:return 59;
+case 102:return 62;
 break;
-case 103:return 58;
+case 103:return 65;
 break;
-case 104:return 98;
+case 104:return 64;
 break;
-case 105:return 99;
+case 105:return 105;
 break;
-case 106:return 65;
+case 106:return 106;
 break;
-case 107:return 43;
+case 107:return 71;
 break;
-case 108:return 44;
+case 108:return 49;
 break;
-case 109:return 34;
+case 109:return 50;
 break;
-case 110:return 35;
+case 110:return 40;
 break;
-case 111:return 53
+case 111:return 41;
 break;
-case 112:return 54
+case 112:return 59
 break;
-case 113:return 109;
+case 113:return 60
 break;
-case 114:return 10;
+case 114:return 116;
 break;
-case 115:return 11;
+case 115:return 21;
 break;
-case 116:return 12;
+case 116:return 22;
+break;
+case 117:return 23;
 break;
 }
 },
-rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%[^\n]*)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%(?!\{)[^\n]*)/,/^(?:[^\}]%%[^\n]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:style\b)/,/^(?:default\b)/,/^(?:linkStyle\b)/,/^(?:interpolate\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:flowchart\b)/,/^(?:subgraph\b)/,/^(?:end\b\s*)/,/^(?:\s*LR\b)/,/^(?:\s*RL\b)/,/^(?:\s*TB\b)/,/^(?:\s*BT\b)/,/^(?:\s*TD\b)/,/^(?:\s*BR\b)/,/^(?:\s*<)/,/^(?:\s*>)/,/^(?:\s*\^)/,/^(?:\s*v\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::::)/,/^(?::)/,/^(?:&)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\s*--[x]\s*)/,/^(?:\s*-->\s*)/,/^(?:\s*<-->\s*)/,/^(?:\s*[x]--[x]\s*)/,/^(?:\s*[o]--[o]\s*)/,/^(?:\s*[o]\.-[o]\s*)/,/^(?:\s*<==>\s*)/,/^(?:\s*[o]==[o]\s*)/,/^(?:\s*[x]==[x]\s*)/,/^(?:\s*[x].-[x]\s*)/,/^(?:\s*[x]-\.-[x]\s*)/,/^(?:\s*<\.->\s*)/,/^(?:\s*<-\.->\s*)/,/^(?:\s*[o]-\.-[o]\s*)/,/^(?:\s*--[o]\s*)/,/^(?:\s*---\s*)/,/^(?:\s*-\.-[x]\s*)/,/^(?:\s*-\.->\s*)/,/^(?:\s*-\.-[o]\s*)/,/^(?:\s*-\.-\s*)/,/^(?:\s*.-[x]\s*)/,/^(?:\s*\.->\s*)/,/^(?:\s*\.-[o]\s*)/,/^(?:\s*\.-\s*)/,/^(?:\s*==[x]\s*)/,/^(?:\s*==>\s*)/,/^(?:\s*==[o]\s*)/,/^(?:\s*==[\=]\s*)/,/^(?:\s*<--\s*)/,/^(?:\s*[x]--\s*)/,/^(?:\s*[o]--\s*)/,/^(?:\s*<-\.\s*)/,/^(?:\s*[x]-\.\s*)/,/^(?:\s*[o]-\.\s*)/,/^(?:\s*<==\s*)/,/^(?:\s*[x]==\s*)/,/^(?:\s*[o]==\s*)/,/^(?:\s*--\s*)/,/^(?:\s*-\.\s*)/,/^(?:\s*==\s*)/,/^(?:\(-)/,/^(?:-\))/,/^(?:\(\[)/,/^(?:\]\))/,/^(?:\[\[)/,/^(?:\]\])/,/^(?:\[\()/,/^(?:\)\])/,/^(?:-)/,/^(?:\.)/,/^(?:[\_])/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:\\\|)/,/^(?:v\b)/,/^(?:[A-Za-z]+)/,/^(?:\\\])/,/^(?:\[\/)/,/^(?:\/\])/,/^(?:\[\\)/,/^(?:[!"#$%&'*+,-.`?\\_\/])/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:(\r|\n|\r\n)+)/,/^(?:\s)/,/^(?:$)/],
-conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"vertex":{"rules":[],"inclusive":false},"dir":{"rules":[21,22,23,24,25,26,27,28,29,30],"inclusive":false},"string":{"rules":[8,9],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,10,11,12,13,14,15,16,17,18,19,20,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)[^\n]*)/,/^(?:[^\}]%%[^\n]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:style\b)/,/^(?:default\b)/,/^(?:linkStyle\b)/,/^(?:interpolate\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:flowchart\b)/,/^(?:subgraph\b)/,/^(?:end\b\s*)/,/^(?:(\r?\n)*\s*\n)/,/^(?:\s*LR\b)/,/^(?:\s*RL\b)/,/^(?:\s*TB\b)/,/^(?:\s*BT\b)/,/^(?:\s*TD\b)/,/^(?:\s*BR\b)/,/^(?:\s*<)/,/^(?:\s*>)/,/^(?:\s*\^)/,/^(?:\s*v\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::::)/,/^(?::)/,/^(?:&)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\s*--[x]\s*)/,/^(?:\s*-->\s*)/,/^(?:\s*<-->\s*)/,/^(?:\s*[x]--[x]\s*)/,/^(?:\s*[o]--[o]\s*)/,/^(?:\s*[o]\.-[o]\s*)/,/^(?:\s*<==>\s*)/,/^(?:\s*[o]==[o]\s*)/,/^(?:\s*[x]==[x]\s*)/,/^(?:\s*[x].-[x]\s*)/,/^(?:\s*[x]-\.-[x]\s*)/,/^(?:\s*<\.->\s*)/,/^(?:\s*<-\.->\s*)/,/^(?:\s*[o]-\.-[o]\s*)/,/^(?:\s*--[o]\s*)/,/^(?:\s*---\s*)/,/^(?:\s*-\.-[x]\s*)/,/^(?:\s*-\.->\s*)/,/^(?:\s*-\.-[o]\s*)/,/^(?:\s*-\.-\s*)/,/^(?:\s*.-[x]\s*)/,/^(?:\s*\.->\s*)/,/^(?:\s*\.-[o]\s*)/,/^(?:\s*\.-\s*)/,/^(?:\s*==[x]\s*)/,/^(?:\s*==>\s*)/,/^(?:\s*==[o]\s*)/,/^(?:\s*==[\=]\s*)/,/^(?:\s*<--\s*)/,/^(?:\s*[x]--\s*)/,/^(?:\s*[o]--\s*)/,/^(?:\s*<-\.\s*)/,/^(?:\s*[x]-\.\s*)/,/^(?:\s*[o]-\.\s*)/,/^(?:\s*<==\s*)/,/^(?:\s*[x]==\s*)/,/^(?:\s*[o]==\s*)/,/^(?:\s*--\s*)/,/^(?:\s*-\.\s*)/,/^(?:\s*==\s*)/,/^(?:\(-)/,/^(?:-\))/,/^(?:\(\[)/,/^(?:\]\))/,/^(?:\[\[)/,/^(?:\]\])/,/^(?:\[\()/,/^(?:\)\])/,/^(?:-)/,/^(?:\.)/,/^(?:[\_])/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:\\\|)/,/^(?:v\b)/,/^(?:[A-Za-z]+)/,/^(?:\\\])/,/^(?:\[\/)/,/^(?:\/\])/,/^(?:\[\\)/,/^(?:[!"#$%&'*+,-.`?\\_/])/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:(\r?\n)+)/,/^(?:\s)/,/^(?:$)/],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"vertex":{"rules":[],"inclusive":false},"dir":{"rules":[21,22,23,24,25,26,27,28,29,30,31],"inclusive":false},"string":{"rules":[8,9],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,10,11,12,13,14,15,16,17,18,19,20,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117],"inclusive":true}}
 });
 return lexer;
 })();
@@ -59357,7 +59403,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.secondBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.secondBkg, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
+  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.secondBkg, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -59368,11 +59414,12 @@ var getStyles = function getStyles(options) {
 /*!***************************************!*\
   !*** ./src/diagrams/gantt/ganttDb.js ***!
   \***************************************/
-/*! exports provided: clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
+/*! exports provided: parseDirective, clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setAxisFormat", function() { return setAxisFormat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAxisFormat", function() { return getAxisFormat; });
@@ -59403,6 +59450,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -59410,6 +59458,7 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 
 
 
@@ -59429,6 +59478,9 @@ var funs = [];
 var inclusiveEndDates = false; // The serial order of the task in the script
 
 var lastOrder = 0;
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__["default"].parseDirective(this, statement, context, type);
+};
 var clear = function clear() {
   sections = [];
   tasks = [];
@@ -59880,7 +59932,7 @@ var compileTasks = function compileTasks() {
 var setLink = function setLink(ids, _linkStr) {
   var linkStr = _linkStr;
 
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
+  if (_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().securityLevel !== 'loose') {
     linkStr = Object(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1__["sanitizeUrl"])(_linkStr);
   }
 
@@ -59912,7 +59964,7 @@ var setClass = function setClass(ids, className) {
 };
 
 var setClickFun = function setClickFun(id, functionName, functionArgs) {
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
+  if (_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().securityLevel !== 'loose') {
     return;
   }
 
@@ -60008,6 +60060,10 @@ var bindFunctions = function bindFunctions(element) {
   });
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().gantt;
+  },
   clear: clear,
   setDateFormat: setDateFormat,
   getDateFormat: getDateFormat,
@@ -60538,90 +60594,102 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,12,13,14,15,16,17,19,21],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,14],$V7=[1,15],$V8=[1,17],$V9=[1,18];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,20,27,32],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,23],$Vb=[1,25],$Vc=[1,28],$Vd=[5,7,9,11,12,13,14,15,16,17,18,20,27,32];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"gantt":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"dateFormat":11,"inclusiveEndDates":12,"axisFormat":13,"excludes":14,"todayMarker":15,"title":16,"section":17,"clickStatement":18,"taskTxt":19,"taskData":20,"click":21,"callbackname":22,"callbackargs":23,"href":24,"clickStatementDebug":25,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"gantt",6:"EOF",8:"SPACE",10:"NL",11:"dateFormat",12:"inclusiveEndDates",13:"axisFormat",14:"excludes",15:"todayMarker",16:"title",17:"section",19:"taskTxt",20:"taskData",21:"click",22:"callbackname",23:"callbackargs",24:"href"},
-productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,2],[18,2],[18,3],[18,3],[18,4],[18,3],[18,4],[18,2],[25,2],[25,3],[25,3],[25,4],[25,3],[25,4],[25,2]],
+symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"axisFormat":14,"excludes":15,"todayMarker":16,"title":17,"section":18,"clickStatement":19,"taskTxt":20,"taskData":21,"openDirective":22,"typeDirective":23,"closeDirective":24,":":25,"argDirective":26,"click":27,"callbackname":28,"callbackargs":29,"href":30,"clickStatementDebug":31,"open_directive":32,"type_directive":33,"arg_directive":34,"close_directive":35,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"axisFormat",15:"excludes",16:"todayMarker",17:"title",18:"section",20:"taskTxt",21:"taskData",25:":",27:"click",28:"callbackname",29:"callbackargs",30:"href",32:"open_directive",33:"type_directive",34:"arg_directive",35:"close_directive"},
+productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[19,2],[19,3],[19,3],[19,4],[19,3],[19,4],[19,2],[31,2],[31,3],[31,3],[31,4],[31,3],[31,4],[31,2],[22,1],[23,1],[26,1],[24,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1:
+case 2:
  return $$[$0-1]; 
 break;
-case 2:
+case 3:
  this.$ = [] 
 break;
-case 3:
+case 4:
 $$[$0-1].push($$[$0]);this.$ = $$[$0-1]
 break;
-case 4: case 5:
+case 5: case 6:
  this.$ = $$[$0] 
 break;
-case 6: case 7:
+case 7: case 8:
  this.$=[];
 break;
-case 8:
+case 9:
 yy.setDateFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
-case 9:
+case 10:
 yy.enableInclusiveEndDates();this.$=$$[$0].substr(18);
 break;
-case 10:
+case 11:
 yy.setAxisFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
-case 11:
+case 12:
 yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
 break;
-case 12:
+case 13:
 yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
 break;
-case 13:
+case 14:
 yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
 break;
-case 14:
+case 15:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
-case 16:
+case 17:
 yy.addTask($$[$0-1],$$[$0]);this.$='task';
 break;
-case 17:
+case 21:
 this.$ = $$[$0-1];yy.setClickEvent($$[$0-1], $$[$0], null);
 break;
-case 18:
+case 22:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 19:
+case 23:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], null);yy.setLink($$[$0-2],$$[$0]);
 break;
-case 20:
+case 24:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setLink($$[$0-3],$$[$0]);
 break;
-case 21:
+case 25:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0], null);yy.setLink($$[$0-2],$$[$0-1]);
 break;
-case 22:
+case 26:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-1], $$[$0]);yy.setLink($$[$0-3],$$[$0-2]);
 break;
-case 23:
+case 27:
 this.$ = $$[$0-1];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 24: case 30:
+case 28: case 34:
 this.$=$$[$0-1] + ' ' + $$[$0];
 break;
-case 25: case 26: case 28:
+case 29: case 30: case 32:
 this.$=$$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 27: case 29:
+case 31: case 33:
 this.$=$$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
+break;
+case 35:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 36:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 37:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 38:
+ yy.parseDirective('}%%', 'close_directive', 'gantt'); 
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:[1,6],9:7,10:[1,8],11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:$V6,17:$V7,18:16,19:$V8,21:$V9},o($V0,[2,7],{1:[2,1]}),o($V0,[2,3]),{9:19,11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:$V6,17:$V7,18:16,19:$V8,21:$V9},o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,8]),o($V0,[2,9]),o($V0,[2,10]),o($V0,[2,11]),o($V0,[2,12]),o($V0,[2,13]),o($V0,[2,14]),o($V0,[2,15]),{20:[1,20]},{22:[1,21],24:[1,22]},o($V0,[2,4]),o($V0,[2,16]),o($V0,[2,17],{23:[1,23],24:[1,24]}),o($V0,[2,23],{22:[1,25]}),o($V0,[2,18],{24:[1,26]}),o($V0,[2,19]),o($V0,[2,21],{23:[1,27]}),o($V0,[2,20]),o($V0,[2,22])],
-defaultActions: {},
+table: [{3:1,4:2,5:$V0,22:4,32:$V1},{1:[3]},{3:6,4:2,5:$V0,22:4,32:$V1},o($V2,[2,3],{6:7}),{23:8,33:[1,9]},{33:[2,35]},{1:[2,1]},{4:24,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:22,20:$Va,22:4,27:$Vb,32:$V1},{24:26,25:[1,27],35:$Vc},o([25,35],[2,36]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:24,10:29,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:22,20:$Va,22:4,27:$Vb,32:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),{21:[1,30]},o($V2,[2,18]),{28:[1,31],30:[1,32]},{11:[1,33]},{26:34,34:[1,35]},{11:[2,38]},o($V2,[2,5]),o($V2,[2,17]),o($V2,[2,21],{29:[1,36],30:[1,37]}),o($V2,[2,27],{28:[1,38]}),o($Vd,[2,19]),{24:39,35:$Vc},{35:[2,37]},o($V2,[2,22],{30:[1,40]}),o($V2,[2,23]),o($V2,[2,25],{29:[1,41]}),{11:[1,42]},o($V2,[2,24]),o($V2,[2,26]),o($Vd,[2,20])],
+defaultActions: {5:[2,35],6:[2,1],28:[2,38],35:[2,37]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -61100,70 +61168,86 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 10;
+case 0: this.begin('open_directive'); return 32; 
 break;
-case 1:/* skip whitespace */
+case 1: this.begin('type_directive'); return 33; 
 break;
-case 2:/* skip comments */
+case 2: this.popState(); this.begin('arg_directive'); return 25; 
 break;
-case 3:/* skip comments */
+case 3: this.popState(); this.popState(); return 35; 
 break;
-case 4:this.begin("href");
+case 4:return 34;
 break;
-case 5:this.popState();
+case 5:/* skip comments */
 break;
-case 6:return 24;
+case 6:/* skip comments */
 break;
-case 7:this.begin("callbackname");
+case 7:/* do nothing */
 break;
-case 8:this.popState();
+case 8:return 11;
 break;
-case 9:this.popState(); this.begin("callbackargs");
+case 9:/* skip whitespace */
 break;
-case 10:return 22;
+case 10:/* skip comments */
 break;
-case 11:this.popState();
+case 11:/* skip comments */
 break;
-case 12:return 23;
+case 12:this.begin("href");
 break;
-case 13:this.begin("click");
+case 13:this.popState();
 break;
-case 14:this.popState();
+case 14:return 30;
 break;
-case 15:return 21;
+case 15:this.begin("callbackname");
 break;
-case 16:return 4;
+case 16:this.popState();
 break;
-case 17:return 11;
+case 17:this.popState(); this.begin("callbackargs");
 break;
-case 18:return 12;
+case 18:return 28;
 break;
-case 19:return 13;
+case 19:this.popState();
 break;
-case 20:return 14;
+case 20:return 29;
 break;
-case 21:return 15;
+case 21:this.begin("click");
 break;
-case 22:return 'date';
+case 22:this.popState();
 break;
-case 23:return 16;
+case 23:return 27;
 break;
-case 24:return 17;
+case 24:return 5;
 break;
-case 25:return 19;
+case 25:return 12;
 break;
-case 26:return 20;
+case 26:return 13;
 break;
-case 27:return ':';
+case 27:return 14;
 break;
-case 28:return 6;
+case 28:return 15;
 break;
-case 29:return 'INVALID';
+case 29:return 16;
+break;
+case 30:return 'date';
+break;
+case 31:return 17;
+break;
+case 32:return 18;
+break;
+case 33:return 20;
+break;
+case 34:return 21;
+break;
+case 35:return 25;
+break;
+case 36:return 7;
+break;
+case 37:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"callbackargs":{"rules":[11,12],"inclusive":false},"callbackname":{"rules":[8,9,10],"inclusive":false},"href":{"rules":[5,6],"inclusive":false},"click":{"rules":[14,15],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,7,13,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true}}
 });
 return lexer;
 })();
@@ -61206,7 +61290,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    font-size: 11px;\n    text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .taskText:not([font-size]) {\n    font-size: 11px;\n  }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    font-size: 11px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    font-size: 11px;\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.taskTextDarkColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n");
+  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    font-size: 11px;\n    text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .taskText:not([font-size]) {\n    font-size: 11px;\n  }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    font-size: 11px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    font-size: 11px;\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -63373,32 +63457,42 @@ var getStyles = function getStyles() {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,9,10,12];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,5],$V2=[1,6],$V3=[1,7],$V4=[1,9],$V5=[1,10,12,19,20,21,22],$V6=[1,6,10,12,19,20,21,22],$V7=[19,20,21],$V8=[1,22],$V9=[6,19,20,21,22];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"pie":4,"document":5,"EOF":6,"line":7,"statement":8,"NL":9,"STR":10,"VALUE":11,"title":12,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"pie",6:"EOF",9:"NL",10:"STR",11:"VALUE",12:"title"},
-productions_: [0,[3,3],[5,0],[5,2],[7,1],[7,1],[8,2],[8,1]],
+symbols_: {"error":2,"start":3,"eol":4,"directive":5,"PIE":6,"document":7,"line":8,"statement":9,"txt":10,"value":11,"title":12,"title_value":13,"openDirective":14,"typeDirective":15,"closeDirective":16,":":17,"argDirective":18,"NEWLINE":19,";":20,"EOF":21,"open_directive":22,"type_directive":23,"arg_directive":24,"close_directive":25,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"PIE",10:"txt",11:"value",12:"title",13:"title_value",17:":",19:"NEWLINE",20:";",21:"EOF",22:"open_directive",23:"type_directive",24:"arg_directive",25:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[9,0],[9,2],[9,2],[9,1],[5,3],[5,5],[4,1],[4,1],[4,1],[14,1],[15,1],[18,1],[16,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 4:
- 
-break;
 case 6:
-
-		/*console.log('str:'+$$[$0-1]+' value: '+$$[$0])*/
-		yy.addSection($$[$0-1],yy.cleanupValue($$[$0]));  
+ this.$ = $$[$0-1] 
 break;
-case 7:
-yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+case 8:
+ yy.addSection($$[$0-1],yy.cleanupValue($$[$0])); 
+break;
+case 9:
+ this.$=$$[$0].trim();yy.setTitle(this.$); 
+break;
+case 16:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 17:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 18:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 19:
+ yy.parseDirective('}%%', 'close_directive', 'pie'); 
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:6,9:[1,7],10:[1,8],12:[1,9]},{1:[2,1]},o($V0,[2,3]),o($V0,[2,4]),o($V0,[2,5]),{11:[1,10]},o($V0,[2,7]),o($V0,[2,6])],
-defaultActions: {4:[2,1]},
+table: [{3:1,4:2,5:3,6:$V0,14:8,19:$V1,20:$V2,21:$V3,22:$V4},{1:[3]},{3:10,4:2,5:3,6:$V0,14:8,19:$V1,20:$V2,21:$V3,22:$V4},{3:11,4:2,5:3,6:$V0,14:8,19:$V1,20:$V2,21:$V3,22:$V4},o($V5,[2,4],{7:12}),o($V6,[2,13]),o($V6,[2,14]),o($V6,[2,15]),{15:13,23:[1,14]},{23:[2,16]},{1:[2,1]},{1:[2,2]},o($V7,[2,7],{14:8,8:15,9:16,5:19,1:[2,3],10:[1,17],12:[1,18],22:$V4}),{16:20,17:[1,21],25:$V8},o([17,25],[2,17]),o($V5,[2,5]),{4:23,19:$V1,20:$V2,21:$V3},{11:[1,24]},{13:[1,25]},o($V7,[2,10]),o($V9,[2,11]),{18:26,24:[1,27]},o($V9,[2,19]),o($V5,[2,6]),o($V7,[2,8]),o($V7,[2,9]),{16:28,25:$V8},{25:[2,18]},o($V9,[2,12])],
+defaultActions: {9:[2,16],10:[2,1],11:[2,2],27:[2,18]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -63875,36 +63969,48 @@ stateStackSize:function stateStackSize() {
     },
 options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-	// Pre-lexer code can go here
-
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* do nothing */
+case 0: this.begin('open_directive'); return 22; 
 break;
-case 1:/* skip whitespace */
+case 1: this.begin('type_directive'); return 23; 
 break;
-case 2:return 4    ;
+case 2: this.popState(); this.begin('arg_directive'); return 17; 
 break;
-case 3:return 9      ;
+case 3: this.popState(); this.popState(); return 25; 
 break;
-case 4:return 'space';
+case 4:return 24;
 break;
-case 5:return 12;
+case 5:/* skip comments */
 break;
-case 6:/*console.log('begin str');*/this.begin("string");
+case 6:/* skip comments */{ console.log('Crap after close'); }
 break;
-case 7:/*console.log('pop-state');*/this.popState();
+case 7:return 19;
 break;
-case 8:/*console.log('ending string')*/return "STR";
+case 8:/* do nothing */
 break;
-case 9:return "VALUE";
+case 9:/* ignore */
 break;
-case 10:return 6     ;
+case 10: this.begin("title");return 12; 
+break;
+case 11: this.popState(); return "title_value"; 
+break;
+case 12: this.begin("string"); 
+break;
+case 13: this.popState(); 
+break;
+case 14: return "txt"; 
+break;
+case 15:return 6;
+break;
+case 16:return "value";
+break;
+case 17:return 21;
 break;
 }
 },
-rules: [/^(?:%%[^\n]*)/i,/^(?:\s+)/i,/^(?:pie\b)/i,/^(?:[\s\n\r]+)/i,/^(?:[\s]+)/i,/^(?:title\s[^#\n;]+)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?::[\s]*[\d]+(?:\.[\d]+)?)/i,/^(?:$)/i],
-conditions: {"string":{"rules":[7,8],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,9,10],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n\r]+)/i,/^(?:%%[^\n]*)/i,/^(?:[\s]+)/i,/^(?:title\b)/i,/^(?:(?!\n||)*[^\n]*)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:pie\b)/i,/^(?::[\s]*[\d]+(?:\.[\d]+)?)/i,/^(?:$)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"title":{"rules":[11],"inclusive":false},"string":{"rules":[13,14],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,12,15,16,17],"inclusive":true}}
 });
 return lexer;
 })();
@@ -63941,18 +64047,26 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 /*!***********************************!*\
   !*** ./src/diagrams/pie/pieDb.js ***!
   \***********************************/
-/*! exports provided: default */
+/*! exports provided: parseDirective, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /**
  *
  */
 
+
+
 var sections = {};
 var title = '';
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parseDirective(this, statement, context, type);
+};
 
 var addSection = function addSection(id, value) {
   if (typeof sections[id] === 'undefined') {
@@ -63991,6 +64105,10 @@ var clear = function clear() {
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]().pie;
+  },
   addSection: addSection,
   getSections: getSections,
   cleanupValue: cleanupValue,
@@ -64112,7 +64230,7 @@ var draw = function draw(txt, id) {
     });
   } catch (e) {
     _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error('Error while rendering info diagram');
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(e.message);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(e);
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -64871,15 +64989,15 @@ case 3: this.popState(); this.popState(); return 59;
 break;
 case 4:return 58;
 break;
-case 5:/* skip comments */
+case 5:return 5;
 break;
-case 6:/* skip comments */
+case 6:/* skip all whitespace */
 break;
-case 7:return 5;
+case 7:/* skip same-line whitespace */
 break;
-case 8:/* skip all whitespace */
+case 8:/* skip comments */
 break;
-case 9:/* skip same-line whitespace */
+case 9:/* skip comments */
 break;
 case 10:/* skip comments */
 break;
@@ -64957,8 +65075,8 @@ case 46:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"open_directive":{"rules":[1,10],"inclusive":false},"type_directive":{"rules":[2,3,10],"inclusive":false},"arg_directive":{"rules":[3,4,10],"inclusive":false},"ID":{"rules":[9,10,12],"inclusive":false},"ALIAS":{"rules":[9,10,13,14],"inclusive":false},"LINE":{"rules":[9,10,22],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,12],"inclusive":false},"ALIAS":{"rules":[7,8,13,14],"inclusive":false},"LINE":{"rules":[7,8,22],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46],"inclusive":true}}
 });
 return lexer;
 })();
@@ -65039,7 +65157,7 @@ var titleWrapped = false;
 var sequenceNumbersEnabled = false;
 var wrapEnabled = false;
 var parseDirective = function parseDirective(statement, context, type) {
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(statement, context, type);
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(this, statement, context, type);
 };
 var addActor = function addActor(id, name, description) {
   // Don't allow description nulling
@@ -65175,7 +65293,7 @@ var parseMessage = function parseMessage(str) {
 
   var message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
-    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].hasBreaks(_str) || autoWrap() : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : autoWrap()
+    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].hasBreaks(_str) || undefined : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : undefined
   };
   _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('parseMessage:', message);
   return message;
@@ -65331,7 +65449,7 @@ var apply = function apply(param) {
   getTitle: getTitle,
   parseDirective: parseDirective,
   getConfig: function getConfig() {
-    return _config__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig().sequence;
+    return _config__WEBPACK_IMPORTED_MODULE_1__["getConfig"]().sequence;
   },
   getTitleWrapped: getTitleWrapped,
   clear: clear,
@@ -66923,24 +67041,24 @@ var size = function size() {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[2,4],$V4=[1,9],$V5=[1,11],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,16],$Va=[1,21],$Vb=[1,17],$Vc=[1,18],$Vd=[1,19],$Ve=[1,20],$Vf=[1,22],$Vg=[1,4,5,13,14,16,18,19,21,22,23,24,25,28],$Vh=[1,4,5,11,12,13,14,16,18,19,21,22,23,24,25,28],$Vi=[4,5,13,14,16,18,19,21,22,23,24,25,28];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,28],$Vc=[1,23],$Vd=[1,24],$Ve=[1,25],$Vf=[1,26],$Vg=[1,29],$Vh=[1,32],$Vi=[1,4,5,14,15,17,19,20,22,23,24,25,26,36,39],$Vj=[1,4,5,12,13,14,15,17,19,20,22,23,24,25,26,36,39],$Vk=[1,4,5,7,14,15,17,19,20,22,23,24,25,26,36,39],$Vl=[4,5,14,15,17,19,20,22,23,24,25,26,36,39];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"SD":6,"document":7,"line":8,"statement":9,"idStatement":10,"DESCR":11,"-->":12,"HIDE_EMPTY":13,"scale":14,"WIDTH":15,"COMPOSIT_STATE":16,"STRUCT_START":17,"STRUCT_STOP":18,"STATE_DESCR":19,"AS":20,"ID":21,"FORK":22,"JOIN":23,"CONCURRENT":24,"note":25,"notePosition":26,"NOTE_TEXT":27,"EDGE_STATE":28,"left_of":29,"right_of":30,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NL",6:"SD",11:"DESCR",12:"-->",13:"HIDE_EMPTY",14:"scale",15:"WIDTH",16:"COMPOSIT_STATE",17:"STRUCT_START",18:"STRUCT_STOP",19:"STATE_DESCR",20:"AS",21:"ID",22:"FORK",23:"JOIN",24:"CONCURRENT",25:"note",27:"NOTE_TEXT",28:"EDGE_STATE",29:"left_of",30:"right_of"},
-productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[8,1],[8,1],[9,1],[9,2],[9,3],[9,4],[9,1],[9,2],[9,1],[9,4],[9,3],[9,6],[9,1],[9,1],[9,1],[9,4],[9,4],[10,1],[10,1],[26,1],[26,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"idStatement":11,"DESCR":12,"-->":13,"HIDE_EMPTY":14,"scale":15,"WIDTH":16,"COMPOSIT_STATE":17,"STRUCT_START":18,"STRUCT_STOP":19,"STATE_DESCR":20,"AS":21,"ID":22,"FORK":23,"JOIN":24,"CONCURRENT":25,"note":26,"notePosition":27,"NOTE_TEXT":28,"openDirective":29,"typeDirective":30,"closeDirective":31,":":32,"argDirective":33,"eol":34,";":35,"EDGE_STATE":36,"left_of":37,"right_of":38,"open_directive":39,"type_directive":40,"arg_directive":41,"close_directive":42,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NL",7:"SD",12:"DESCR",13:"-->",14:"HIDE_EMPTY",15:"scale",16:"WIDTH",17:"COMPOSIT_STATE",18:"STRUCT_START",19:"STRUCT_STOP",20:"STATE_DESCR",21:"AS",22:"ID",23:"FORK",24:"JOIN",25:"CONCURRENT",26:"note",28:"NOTE_TEXT",32:":",35:";",36:"EDGE_STATE",37:"left_of",38:"right_of",39:"open_directive",40:"type_directive",41:"arg_directive",42:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[10,1],[10,2],[10,3],[10,4],[10,1],[10,2],[10,1],[10,4],[10,3],[10,6],[10,1],[10,1],[10,1],[10,4],[10,4],[10,1],[6,3],[6,5],[34,1],[34,1],[11,1],[11,1],[27,1],[27,1],[29,1],[30,1],[33,1],[31,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 3:
+case 4:
  /*console.warn('Root document', $$[$0]);*/ yy.setRootDoc($$[$0]);return $$[$0]; 
 break;
-case 4:
+case 5:
  this.$ = [] 
 break;
-case 5:
+case 6:
 
         if($$[$0]!='nl'){
             $$[$0-1].push($$[$0]);this.$ = $$[$0-1]
@@ -66948,38 +67066,38 @@ case 5:
         // console.warn('Got document',$$[$0-1], $$[$0]);
     
 break;
-case 6: case 7:
+case 7: case 8:
  this.$ = $$[$0] 
 break;
-case 8:
+case 9:
  this.$='nl';
 break;
-case 9:
+case 10:
  /*console.warn('got id and descr', $$[$0]);*/this.$={ stmt: 'state', id: $$[$0], type: 'default', description: ''};
 break;
-case 10:
+case 11:
  /*console.warn('got id and descr', $$[$0-1], $$[$0].trim());*/this.$={ stmt: 'state', id: $$[$0-1], type: 'default', description: yy.trimColon($$[$0])};
 break;
-case 11:
+case 12:
 
         /*console.warn('got id', $$[$0-2]);yy.addRelation($$[$0-2], $$[$0]);*/
         this.$={ stmt: 'relation', state1: { stmt: 'state', id: $$[$0-2], type: 'default', description: '' }, state2:{ stmt: 'state', id: $$[$0] ,type: 'default', description: ''}};
     
 break;
-case 12:
+case 13:
 
         /*yy.addRelation($$[$0-3], $$[$0-1], $$[$0].substr(1).trim());*/
         this.$={ stmt: 'relation', state1: { stmt: 'state', id: $$[$0-3], type: 'default', description: '' }, state2:{ stmt: 'state', id: $$[$0-1] ,type: 'default', description: ''}, description: $$[$0].substr(1).trim()};
     
 break;
-case 16:
+case 17:
 
 
         /* console.warn('Adding document for state without id ', $$[$0-3]);*/
         this.$={ stmt: 'state', id: $$[$0-3], type: 'default', description: '', doc: $$[$0-1] }
     
 break;
-case 17:
+case 18:
 
         var id=$$[$0];
         var description = $$[$0-2].trim();
@@ -66992,40 +67110,52 @@ case 17:
 
     
 break;
-case 18:
+case 19:
 
          //console.warn('Adding document for state with id ', $$[$0-3], $$[$0-2]); yy.addDocument($$[$0-3]);
          this.$={ stmt: 'state', id: $$[$0-3], type: 'default', description: $$[$0-5], doc: $$[$0-1] }
     
 break;
-case 19:
+case 20:
 
         this.$={ stmt: 'state', id: $$[$0], type: 'fork' }
     
 break;
-case 20:
+case 21:
 
         this.$={ stmt: 'state', id: $$[$0], type: 'join' }
     
 break;
-case 21:
+case 22:
 
         this.$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
     
 break;
-case 22:
+case 23:
 
         /*console.warn('got NOTE, position: ', $$[$0-2].trim(), 'id = ', $$[$0-1].trim(), 'note: ', $$[$0]);*/
         this.$={ stmt: 'state', id: $$[$0-1].trim(), note:{position: $$[$0-2].trim(), text: $$[$0].trim()}};
     
 break;
-case 24: case 25:
+case 30: case 31:
 this.$=$$[$0];
+break;
+case 34:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 35:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 36:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 37:
+ yy.parseDirective('}%%', 'close_directive', 'state'); 
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:$V2},{1:[3]},{3:5,4:$V0,5:$V1,6:$V2},{3:6,4:$V0,5:$V1,6:$V2},o([1,4,5,13,14,16,19,21,22,23,24,25,28],$V3,{7:7}),{1:[2,1]},{1:[2,2]},{1:[2,3],4:$V4,5:$V5,8:8,9:10,10:12,13:$V6,14:$V7,16:$V8,19:$V9,21:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,28:$Vf},o($Vg,[2,5]),{9:23,10:12,13:$V6,14:$V7,16:$V8,19:$V9,21:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,28:$Vf},o($Vg,[2,7]),o($Vg,[2,8]),o($Vg,[2,9],{11:[1,24],12:[1,25]}),o($Vg,[2,13]),{15:[1,26]},o($Vg,[2,15],{17:[1,27]}),{20:[1,28]},o($Vg,[2,19]),o($Vg,[2,20]),o($Vg,[2,21]),{26:29,27:[1,30],29:[1,31],30:[1,32]},o($Vh,[2,24]),o($Vh,[2,25]),o($Vg,[2,6]),o($Vg,[2,10]),{10:33,21:$Va,28:$Vf},o($Vg,[2,14]),o($Vi,$V3,{7:34}),{21:[1,35]},{21:[1,36]},{20:[1,37]},{21:[2,26]},{21:[2,27]},o($Vg,[2,11],{11:[1,38]}),{4:$V4,5:$V5,8:8,9:10,10:12,13:$V6,14:$V7,16:$V8,18:[1,39],19:$V9,21:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,28:$Vf},o($Vg,[2,17],{17:[1,40]}),{27:[1,41]},{21:[1,42]},o($Vg,[2,12]),o($Vg,[2,16]),o($Vi,$V3,{7:43}),o($Vg,[2,22]),o($Vg,[2,23]),{4:$V4,5:$V5,8:8,9:10,10:12,13:$V6,14:$V7,16:$V8,18:[1,44],19:$V9,21:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,28:$Vf},o($Vg,[2,18])],
-defaultActions: {5:[2,1],6:[2,2],31:[2,26],32:[2,27]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},o([1,4,5,14,15,17,20,22,23,24,25,26,36,39],$V4,{8:11}),{30:12,40:[1,13]},{40:[2,34]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},{31:30,32:[1,31],42:$Vh},o([32,42],[2,35]),o($Vi,[2,6]),{6:27,10:33,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,8]),o($Vi,[2,9]),o($Vi,[2,10],{12:[1,34],13:[1,35]}),o($Vi,[2,14]),{16:[1,36]},o($Vi,[2,16],{18:[1,37]}),{21:[1,38]},o($Vi,[2,20]),o($Vi,[2,21]),o($Vi,[2,22]),{27:39,28:[1,40],37:[1,41],38:[1,42]},o($Vi,[2,25]),o($Vj,[2,30]),o($Vj,[2,31]),o($Vk,[2,26]),{33:43,41:[1,44]},o($Vk,[2,37]),o($Vi,[2,7]),o($Vi,[2,11]),{11:45,22:$Vb,36:$Vg},o($Vi,[2,15]),o($Vl,$V4,{8:46}),{22:[1,47]},{22:[1,48]},{21:[1,49]},{22:[2,32]},{22:[2,33]},{31:50,42:$Vh},{42:[2,36]},o($Vi,[2,12],{12:[1,51]}),{4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,52],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,18],{18:[1,53]}),{28:[1,54]},{22:[1,55]},o($Vk,[2,27]),o($Vi,[2,13]),o($Vi,[2,17]),o($Vl,$V4,{8:56}),o($Vi,[2,23]),o($Vi,[2,24]),{4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,57],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,19])],
+defaultActions: {7:[2,34],8:[2,1],9:[2,2],10:[2,3],41:[2,32],42:[2,33],44:[2,36]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -67504,98 +67634,112 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 5;
+case 0: this.begin('open_directive'); return 39; 
 break;
-case 1:/* skip all whitespace */
+case 1: this.begin('type_directive'); return 40; 
 break;
-case 2:/* skip same-line whitespace */
+case 2: this.popState(); this.begin('arg_directive'); return 32; 
 break;
-case 3:/* skip comments */
+case 3: this.popState(); this.popState(); return 42; 
 break;
-case 4:/* skip comments */
+case 4:return 41;
 break;
-case 5: this.pushState('SCALE'); /* console.log('Got scale', yy_.yytext);*/ return 14; 
+case 5:/* skip comments */
 break;
-case 6:return 15;
+case 6:/* skip comments */{ console.log('Crap after close'); }
 break;
-case 7:this.popState();
+case 7:return 5;
 break;
-case 8: this.pushState('STATE'); 
+case 8:/* skip all whitespace */
 break;
-case 9:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yy_.yytext);*/return 22;
+case 9:/* skip same-line whitespace */
 break;
-case 10:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 23;
+case 10:/* skip comments */
 break;
-case 11:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yy_.yytext);*/return 22;
+case 11:/* skip comments */
 break;
-case 12:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 23;
+case 12: this.pushState('SCALE'); /* console.log('Got scale', yy_.yytext);*/ return 15; 
 break;
-case 13:this.begin("STATE_STRING");
+case 13:return 16;
 break;
-case 14:this.popState();this.pushState('STATE_ID');return "AS";
+case 14:this.popState();
 break;
-case 15:this.popState();/* console.log('STATE_ID', yy_.yytext);*/return "ID";
+case 15: this.pushState('STATE'); 
 break;
-case 16:this.popState();
+case 16:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
 break;
-case 17: /*console.log('Long description:', yy_.yytext);*/return "STATE_DESCR";
+case 17:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
 break;
-case 18:/*console.log('COMPOSIT_STATE', yy_.yytext);*/return 16;
+case 18:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
 break;
-case 19:this.popState();
+case 19:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
 break;
-case 20:this.popState();this.pushState('struct'); /*console.log('begin struct', yy_.yytext);*/return 17;
+case 20:this.begin("STATE_STRING");
 break;
-case 21: /*console.log('Ending struct');*/ this.popState(); return 18;
+case 21:this.popState();this.pushState('STATE_ID');return "AS";
 break;
-case 22:/* nothing */
+case 22:this.popState();/* console.log('STATE_ID', yy_.yytext);*/return "ID";
 break;
-case 23: this.begin('NOTE'); return 25; 
+case 23:this.popState();
 break;
-case 24: this.popState();this.pushState('NOTE_ID');return 29;
+case 24: /*console.log('Long description:', yy_.yytext);*/return "STATE_DESCR";
 break;
-case 25: this.popState();this.pushState('NOTE_ID');return 30;
+case 25:/*console.log('COMPOSIT_STATE', yy_.yytext);*/return 17;
 break;
-case 26: this.popState();this.pushState('FLOATING_NOTE');
+case 26:this.popState();
 break;
-case 27:this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";
+case 27:this.popState();this.pushState('struct'); /*console.log('begin struct', yy_.yytext);*/return 18;
 break;
-case 28:/**/
+case 28: /*console.log('Ending struct');*/ this.popState(); return 19;
 break;
-case 29: /*console.log('Floating note text: ', yy_.yytext);*/return "NOTE_TEXT";
+case 29:/* nothing */
 break;
-case 30:this.popState();/*console.log('Floating note ID', yy_.yytext);*/return "ID";
+case 30: this.begin('NOTE'); return 26; 
 break;
-case 31: this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yy_.yytext);*/return 21;
+case 31: this.popState();this.pushState('NOTE_ID');return 37;
 break;
-case 32: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.substr(2).trim();return 27;
+case 32: this.popState();this.pushState('NOTE_ID');return 38;
 break;
-case 33: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.slice(0,-8).trim();return 27;
+case 33: this.popState();this.pushState('FLOATING_NOTE');
 break;
-case 34: /*console.log('Got state diagram', yy_.yytext,'#');*/return 6; 
+case 34:this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";
 break;
-case 35: /*console.log('Got state diagram', yy_.yytext,'#');*/return 6; 
+case 35:/**/
 break;
-case 36: /*console.log('HIDE_EMPTY', yy_.yytext,'#');*/return 13; 
+case 36: /*console.log('Floating note text: ', yy_.yytext);*/return "NOTE_TEXT";
 break;
-case 37: /*console.log('EDGE_STATE=',yy_.yytext);*/ return 28;
+case 37:this.popState();/*console.log('Floating note ID', yy_.yytext);*/return "ID";
 break;
-case 38: /*console.log('=>ID=',yy_.yytext);*/ return 21;
+case 38: this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yy_.yytext);*/return 22;
 break;
-case 39: yy_.yytext = yy_.yytext.trim(); /*console.log('Descr = ', yy_.yytext);*/ return 11; 
+case 39: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.substr(2).trim();return 28;
 break;
-case 40:return 12;
+case 40: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.slice(0,-8).trim();return 28;
 break;
-case 41:return 24;
+case 41: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
 break;
-case 42:return 5;
+case 42: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
 break;
-case 43:return 'INVALID';
+case 43: /*console.log('HIDE_EMPTY', yy_.yytext,'#');*/return 14; 
+break;
+case 44: /*console.log('EDGE_STATE=',yy_.yytext);*/ return 36;
+break;
+case 45: /*console.log('=>ID=',yy_.yytext);*/ return 22;
+break;
+case 46: yy_.yytext = yy_.yytext.trim(); /*console.log('Descr = ', yy_.yytext);*/ return 12; 
+break;
+case 47:return 13;
+break;
+case 48:return 25;
+break;
+case 49:return 5;
+break;
+case 50:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:scale\s+)/i,/^(?:\d+)/i,/^(?:\s+width\b)/i,/^(?:state\s+)/i,/^(?:.*<<fork>>)/i,/^(?:.*<<join>>)/i,/^(?:.*\[\[fork\]\])/i,/^(?:.*\[\[join\]\])/i,/^(?:["])/i,/^(?:\s*as\s+)/i,/^(?:[^\n\{]*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n\s\{]+)/i,/^(?:\n)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:[\n])/i,/^(?:note\s+)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:")/i,/^(?:\s*as\s*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n]*)/i,/^(?:\s*[^:\n\s\-]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:\s*[^:;]+end note\b)/i,/^(?:stateDiagram\s+)/i,/^(?:stateDiagram-v2\s+)/i,/^(?:hide empty description\b)/i,/^(?:\[\*\])/i,/^(?:[^:\n\s\-\{]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:-->)/i,/^(?:--)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"LINE":{"rules":[2,3],"inclusive":false},"struct":{"rules":[2,3,8,21,22,23,37,38,39,40,41],"inclusive":false},"FLOATING_NOTE_ID":{"rules":[30],"inclusive":false},"FLOATING_NOTE":{"rules":[27,28,29],"inclusive":false},"NOTE_TEXT":{"rules":[32,33],"inclusive":false},"NOTE_ID":{"rules":[31],"inclusive":false},"NOTE":{"rules":[24,25,26],"inclusive":false},"SCALE":{"rules":[6,7],"inclusive":false},"ALIAS":{"rules":[],"inclusive":false},"STATE_ID":{"rules":[15],"inclusive":false},"STATE_STRING":{"rules":[16,17],"inclusive":false},"FORK_STATE":{"rules":[],"inclusive":false},"STATE":{"rules":[2,3,9,10,11,12,13,14,18,19,20],"inclusive":false},"ID":{"rules":[2,3],"inclusive":false},"INITIAL":{"rules":[0,1,3,4,5,8,20,23,34,35,36,37,38,39,40,42,43],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:[\s]+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:scale\s+)/i,/^(?:\d+)/i,/^(?:\s+width\b)/i,/^(?:state\s+)/i,/^(?:.*<<fork>>)/i,/^(?:.*<<join>>)/i,/^(?:.*\[\[fork\]\])/i,/^(?:.*\[\[join\]\])/i,/^(?:["])/i,/^(?:\s*as\s+)/i,/^(?:[^\n\{]*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n\s\{]+)/i,/^(?:\n)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:[\n])/i,/^(?:note\s+)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:")/i,/^(?:\s*as\s*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n]*)/i,/^(?:\s*[^:\n\s\-]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:\s*[^:;]+end note\b)/i,/^(?:stateDiagram\s+)/i,/^(?:stateDiagram-v2\s+)/i,/^(?:hide empty description\b)/i,/^(?:\[\*\])/i,/^(?:[^:\n\s\-\{]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:-->)/i,/^(?:--)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"LINE":{"rules":[9,10],"inclusive":false},"close_directive":{"rules":[9,10],"inclusive":false},"arg_directive":{"rules":[3,4,9,10],"inclusive":false},"type_directive":{"rules":[2,3,9,10],"inclusive":false},"open_directive":{"rules":[1,9,10],"inclusive":false},"struct":{"rules":[9,10,15,28,29,30,44,45,46,47,48],"inclusive":false},"FLOATING_NOTE_ID":{"rules":[37],"inclusive":false},"FLOATING_NOTE":{"rules":[34,35,36],"inclusive":false},"NOTE_TEXT":{"rules":[39,40],"inclusive":false},"NOTE_ID":{"rules":[38],"inclusive":false},"NOTE":{"rules":[31,32,33],"inclusive":false},"SCALE":{"rules":[13,14],"inclusive":false},"ALIAS":{"rules":[],"inclusive":false},"STATE_ID":{"rules":[22],"inclusive":false},"STATE_STRING":{"rules":[23,24],"inclusive":false},"FORK_STATE":{"rules":[],"inclusive":false},"STATE":{"rules":[9,10,16,17,18,19,20,21,25,26,27],"inclusive":false},"ID":{"rules":[9,10],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,10,11,12,15,27,30,41,42,43,44,45,46,47,49,50],"inclusive":true}}
 });
 return lexer;
 })();
@@ -68055,11 +68199,12 @@ var drawEdge = function drawEdge(elem, path, relation) {
 /*!***************************************!*\
   !*** ./src/diagrams/state/stateDb.js ***!
   \***************************************/
-/*! exports provided: addState, clear, getState, getStates, logDocuments, getRelations, addRelation, cleanupLabel, lineType, relationType, default */
+/*! exports provided: parseDirective, addState, clear, getState, getStates, logDocuments, getRelations, addRelation, cleanupLabel, lineType, relationType, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addState", function() { return addState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getState", function() { return getState; });
@@ -68072,7 +68217,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "relationType", function() { return relationType; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+
 
 
 
@@ -68082,6 +68231,9 @@ var clone = function clone(o) {
 };
 
 var rootDoc = [];
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__["default"].parseDirective(this, statement, context, type);
+};
 
 var setRootDoc = function setRootDoc(o) {
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Setting root doc', o); // rootDoc = { id: 'root', doc: o };
@@ -68340,6 +68492,10 @@ var trimColon = function trimColon(str) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().state;
+  },
   addState: addState,
   clear: clear,
   getState: getState,
@@ -68602,13 +68758,12 @@ var draw = function draw(text, id) {
   nodeDb = {};
   var parser = _parser_stateDiagram__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
   parser.yy = _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"]; // Parse the graph definition
+  // try {
 
-  try {
-    parser.parse(text);
-  } catch (err) {
-    _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].debug('Parsing failed');
-  } // Fetch the default direction, use TD if none was found
-
+  parser.parse(text); // } catch (err) {
+  //   logger.error('Parsing failed', err);
+  // }
+  // Fetch the default direction, use TD if none was found
 
   var dir = _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getDirection();
 
@@ -68701,7 +68856,6 @@ var draw = function draw(text, id) {
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
       rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
       label.insertBefore(rect, label.firstChild);
     }
   }
@@ -69004,7 +69158,7 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\n\n.node circle.state-start {\n  fill: black;\n  stroke: black;\n}\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
+  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.tertiaryColor, ";\n  opacity: 0.2;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\n\n.node circle.state-start {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -69030,6 +69184,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTask", function() { return addTask; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTaskOrg", function() { return addTaskOrg; });
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -69039,13 +69194,14 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 
+
 var title = '';
 var currentSection = '';
 var sections = [];
 var tasks = [];
 var rawTasks = [];
 var parseDirective = function parseDirective(statement, context, type) {
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(statement, context, type);
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(this, statement, context, type);
 };
 var clear = function clear() {
   sections.length = 0;
@@ -69149,6 +69305,9 @@ var getActors = function getActors() {
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_1__["getConfig"]().journey;
+  },
   clear: clear,
   setTitle: setTitle,
   getTitle: getTitle,
@@ -69570,7 +69729,7 @@ case 17:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
 case 18:
- yy.parseDirective('}%%', 'close_directive', 'sequence'); 
+ yy.parseDirective('}%%', 'close_directive', 'journey'); 
 break;
 }
 },
@@ -70628,8 +70787,8 @@ __webpack_require__.r(__webpack_exports__);
 var init = function init() {
   var _this = this;
 
-  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init');
-
+  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig();
+  console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   var nodes;
 
   if (arguments.length >= 2) {
@@ -70666,13 +70825,13 @@ var init = function init() {
 
   if (typeof mermaid.startOnLoad !== 'undefined') {
     _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Start On Load inner: ' + mermaid.startOnLoad);
-    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize({
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].updateSiteConfig({
       startOnLoad: mermaid.startOnLoad
     });
   }
 
   if (typeof mermaid.ganttConfig !== 'undefined') {
-    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize({
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].updateSiteConfig({
       gantt: mermaid.ganttConfig
     });
   }
@@ -70810,53 +70969,53 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _package_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../package.json */ "./package.json");
 var _package_json__WEBPACK_IMPORTED_MODULE_2___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../package.json */ "./package.json", 1);
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./config */ "./src/config.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
-/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
-/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
-/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
-/* harmony import */ var _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/class/classRenderer-v2 */ "./src/diagrams/class/classRenderer-v2.js");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18__);
-/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
-/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
-/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22__);
-/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
-/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25__);
-/* harmony import */ var _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/git/gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
-/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
-/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29__);
-/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
-/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32__);
-/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
-/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35__);
-/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37__);
-/* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
-/* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
+/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
+/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
+/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
+/* harmony import */ var _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/class/classRenderer-v2 */ "./src/diagrams/class/classRenderer-v2.js");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
+/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
+/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21__);
+/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
+/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24__);
+/* harmony import */ var _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/git/gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
+/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
+/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28__);
+/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
+/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31__);
+/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
+/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34__);
+/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__);
+/* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
+/* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./config */ "./src/config.js");
 /* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
 /* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -70875,7 +71034,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  */
 
 
-
+ // import * as configApi from './config';
+// // , {
+// //   setConfig,
+// //   configApi.getConfig,
+// //   configApi.updateSiteConfig,
+// //   configApi.setSiteConfig,
+// //   configApi.getSiteConfig,
+// //   configApi.defaultConfig
+// // }
 
 
 
@@ -70918,87 +71085,87 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 function parse(text) {
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(text);
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectInit(text);
 
   if (graphInit) {
     reinitialize(graphInit);
-    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('reinit ', graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('reinit ', graphInit);
   }
 
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(text);
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectType(text);
   var parser;
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Type ' + graphType);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Type ' + graphType);
 
   switch (graphType) {
     case 'git':
-      parser = _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25___default.a;
-      parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_26__["default"];
+      parser = _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24___default.a;
+      parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_25__["default"];
       break;
 
     case 'flowchart':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"].clear();
-      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default.a;
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].clear();
+      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7___default.a;
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"];
       break;
 
     case 'flowchart-v2':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"].clear();
-      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default.a;
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].clear();
+      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7___default.a;
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"];
       break;
 
     case 'sequence':
-      parser = _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11___default.a;
-      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_12__["default"];
+      parser = _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10___default.a;
+      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_11__["default"];
       break;
 
     case 'gantt':
-      parser = _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14___default.a;
-      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__["default"];
+      parser = _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13___default.a;
+      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_14__["default"];
       break;
 
     case 'class':
-      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18___default.a;
-      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__["default"];
+      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default.a;
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"];
       break;
 
     case 'classDiagram':
-      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18___default.a;
-      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__["default"];
+      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default.a;
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"];
       break;
 
     case 'state':
-      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22___default.a;
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_23__["default"];
+      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default.a;
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__["default"];
       break;
 
     case 'stateDiagram':
-      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22___default.a;
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_23__["default"];
+      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default.a;
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__["default"];
       break;
 
     case 'info':
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('info info info');
-      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29___default.a;
-      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_30__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('info info info');
+      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default.a;
+      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__["default"];
       break;
 
     case 'pie':
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('pie');
-      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32___default.a;
-      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_33__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('pie');
+      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default.a;
+      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__["default"];
       break;
 
     case 'er':
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('er');
-      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35___default.a;
-      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_34__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('er');
+      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default.a;
+      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__["default"];
       break;
 
     case 'journey':
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Journey');
-      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37___default.a;
-      parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_38__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Journey');
+      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default.a;
+      parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__["default"];
       break;
   }
 
@@ -71075,18 +71242,20 @@ var decodeEntities = function decodeEntities(text) {
  */
 
 var render = function render(id, _txt, cb, container) {
+  _config__WEBPACK_IMPORTED_MODULE_39__["reset"]();
   var txt = _txt;
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(txt);
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectInit(txt);
 
   if (graphInit) {
-    reinitialize(graphInit);
+    _config__WEBPACK_IMPORTED_MODULE_39__["addDirective"](graphInit);
   } else {
-    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset();
-    var siteConfig = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
-    updateRendererConfigs(siteConfig);
+    _config__WEBPACK_IMPORTED_MODULE_39__["reset"]();
+    var siteConfig = _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
+    _config__WEBPACK_IMPORTED_MODULE_39__["addDirective"](siteConfig);
   }
 
-  var cnf = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])(); // Check the maximum allowed text size
+  var cnf = _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]();
+  console.log('Render', cnf); // Check the maximum allowed text size
 
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -71114,7 +71283,7 @@ var render = function render(id, _txt, cb, container) {
   window.txt = txt;
   txt = encodeEntities(txt);
   var element = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(txt); // insert inline style into svg
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectType(txt); // insert inline style into svg
 
   var svg = element.firstChild;
   var firstChild = svg.firstChild;
@@ -71136,7 +71305,7 @@ var render = function render(id, _txt, cb, container) {
 
 
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].getClasses(txt);
+    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].getClasses(txt);
 
     for (var className in classes) {
       userStyles += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
@@ -71166,20 +71335,20 @@ var render = function render(id, _txt, cb, container) {
     switch (graphType) {
       case 'git':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__["default"].setConf(cnf.git);
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__["default"].draw(txt, id, false);
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(cnf.git);
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart-v2':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].draw(txt, id, false);
         break;
 
       case 'sequence':
@@ -71187,70 +71356,70 @@ var render = function render(id, _txt, cb, container) {
 
         if (cnf.sequenceDiagram) {
           // backwards compatibility
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
           console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.');
         } else {
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(cnf.sequence);
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(cnf.sequence);
         }
 
-        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].draw(txt, id);
+        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].draw(txt, id);
         break;
 
       case 'gantt':
         cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(cnf.gantt);
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].draw(txt, id);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(cnf.gantt);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].draw(txt, id);
         break;
 
       case 'class':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(cnf.class);
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].draw(txt, id);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__["default"].draw(txt, id);
         break;
 
       case 'classDiagram':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_17__["default"].setConf(cnf.class);
-        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_17__["default"].draw(txt, id);
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_16__["default"].draw(txt, id);
         break;
 
       case 'state':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(cnf.state);
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__["default"].draw(txt, id);
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].draw(txt, id);
         break;
 
       case 'stateDiagram':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__["default"].setConf(cnf.state);
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__["default"].draw(txt, id);
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].draw(txt, id);
         break;
 
       case 'info':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(cnf.class);
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(cnf.class);
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'pie':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(cnf.class);
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(cnf.class);
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'er':
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(cnf.er);
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(cnf.er);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'journey':
-        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].setConf(cnf.journey);
-        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(cnf.journey);
+        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
     }
   } catch (e) {
     // errorRenderer.setConf(cnf.class);
-    _errorRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+    _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
     throw e;
   }
 
@@ -71267,7 +71436,7 @@ var render = function render(id, _txt, cb, container) {
   // Fix for when the base tag is used
 
   var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().innerHTML;
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
 
   if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -71279,22 +71448,22 @@ var render = function render(id, _txt, cb, container) {
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
-        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"].bindFunctions);
+        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].bindFunctions);
         break;
 
       case 'gantt':
-        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__["default"].bindFunctions);
+        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_14__["default"].bindFunctions);
         break;
 
       case 'class':
-        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__["default"].bindFunctions);
+        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"].bindFunctions);
         break;
 
       default:
         cb(svgCode);
     }
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('CB = undefined!');
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('CB = undefined!');
   }
 
   var node = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
@@ -71308,7 +71477,7 @@ var render = function render(id, _txt, cb, container) {
 
 var currentDirective = {};
 
-var parseDirective = function parseDirective(statement, context, type) {
+var parseDirective = function parseDirective(p, statement, context, type) {
   try {
     if (statement !== undefined) {
       statement = statement.trim();
@@ -71327,19 +71496,19 @@ var parseDirective = function parseDirective(statement, context, type) {
           break;
 
         case 'close_directive':
-          handleDirective(currentDirective, type);
+          handleDirective(p, currentDirective, type);
           currentDirective = null;
           break;
       }
     }
   } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
-    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error(error.message);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(error.message);
   }
 };
 
-var handleDirective = function handleDirective(directive, type) {
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
+var handleDirective = function handleDirective(p, directive, type) {
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
 
   switch (directive.type) {
     case 'init':
@@ -71356,73 +71525,60 @@ var handleDirective = function handleDirective(directive, type) {
           }
         });
         reinitialize(directive.args);
+        _config__WEBPACK_IMPORTED_MODULE_39__["addDirective"](directive.args);
         break;
       }
 
     case 'wrap':
     case 'nowrap':
-      directive.args = {
-        config: {
-          wrap: directive.type === 'wrap'
-        }
-      };
-      ['config'].forEach(function (prop) {
-        if (typeof directive.args[prop] !== 'undefined') {
-          if (type === 'flowchart-v2') {
-            type = 'flowchart';
-          }
+      if (p && p['setWrap']) {
+        p.setWrap(directive.type === 'wrap');
+      }
 
-          directive.args[type] = directive.args[prop];
-          delete directive.args[prop];
-        }
-      });
-      reinitialize(directive.args);
       break;
 
     default:
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
       break;
   }
 };
 
 function updateRendererConfigs(conf) {
-  _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__["default"].setConf(conf.git);
-  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(conf.flowchart);
-  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(conf.flowchart);
+  _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(conf.git);
+  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(conf.flowchart);
+  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(conf.flowchart);
 
   if (typeof conf['sequenceDiagram'] !== 'undefined') {
-    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_5__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
+    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_4__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
   }
 
-  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(conf.sequence);
-  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(conf.gantt);
-  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(conf.class);
-  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(conf.state);
-  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__["default"].setConf(conf.state);
-  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.class);
-  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(conf.class);
-  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(conf.er);
-  _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].setConf(conf.journey);
-  _errorRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].setConf(conf.class);
+  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(conf.sequence);
+  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(conf.gantt);
+  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__["default"].setConf(conf.class);
+  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(conf.state);
+  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(conf.state);
+  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(conf.class);
+  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(conf.class);
+  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(conf.er);
+  _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(conf.journey);
+  _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.class);
 }
 
 function reinitialize(options) {
-  // console.warn(`mermaidAPI.reinitialize: v${pkg.version}`, options);
-  if (options.theme && _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme]) {
-    // Todo merge with user options
-    options.themeVariables = options.theme;
-  } // Set default options
-
-
-  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
-  updateRendererConfigs(config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.reinitialize: ', config);
+  "mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version), JSON.stringify(options), options.themeVariables.primaryColor; // // if (options.theme && theme[options.theme]) {
+  // //   options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
+  // // }
+  // // Set default options
+  // const config =
+  //   typeof options === 'object' ? configApi.setConfig(options) : configApi.getSiteConfig();
+  // updateRendererConfigs(config);
+  // setLogLevel(config.logLevel);
+  // logger.debug('mermaidAPI.reinitialize: ', config);
 }
 
 function initialize(options) {
-  // console.log(`mermaidAPI.initialize: v${pkg.version} ${options}`);
-  // Set default options
+  console.trace("mermaidAPI.initialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version, " ").concat(options)); // Set default options
+
   if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme]) {
     // Todo merge with user options
     options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme].getThemeVariables(options.themeVariables);
@@ -71430,15 +71586,11 @@ function initialize(options) {
     if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"].default.getThemeVariables();
   }
 
-  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
+  var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_39__["setSiteConfig"](options) : _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
   updateRendererConfigs(config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.initialize: ', config);
-} // function getConfig () {
-//   console.warn('get config')
-//   return config
-// }
-
+  Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(config.logLevel);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('mermaidAPI.initialize: ', config);
+}
 
 var mermaidAPI = Object.freeze({
   render: render,
@@ -71446,22 +71598,23 @@ var mermaidAPI = Object.freeze({
   parseDirective: parseDirective,
   initialize: initialize,
   reinitialize: reinitialize,
-  getConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"],
-  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"],
+  getConfig: _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"],
+  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"],
+  updateSiteConfig: _config__WEBPACK_IMPORTED_MODULE_39__["updateSiteConfig"],
   reset: function reset() {
-    // console.warn('reset');
-    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset();
-    var siteConfig = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
+    console.warn('reset');
+    _config__WEBPACK_IMPORTED_MODULE_39__["reset"]();
+    var siteConfig = _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
     updateRendererConfigs(siteConfig);
   },
   globalReset: function globalReset() {
-    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(_config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig);
-    updateRendererConfigs(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
+    _config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_39__["defaultConfig"]);
+    updateRendererConfigs(_config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]());
   },
-  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig
+  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_39__["defaultConfig"]
 });
-Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().logLevel);
-_config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
+Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(_config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]().logLevel);
+_config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]());
 /* harmony default export */ __webpack_exports__["default"] = (mermaidAPI);
 /**
  * ## mermaidAPI configuration defaults
@@ -71647,86 +71800,110 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
+var mkBorder = function mkBorder(col, darkMode) {
+  return darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(col, {
+    s: -40,
+    l: 10
+  }) : Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(col, {
+    s: -40,
+    l: -10
+  });
+};
+
 var Theme =
 /*#__PURE__*/
 function () {
   function Theme() {
     _classCallCheck(this, Theme);
 
-    /* Base variables */
-    this.primaryColor = '#9f33be';
-    this.secondaryColor = '#b20238';
-    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 30);
-    this.relationColor = '#000'; // this.primaryColor = '#fa255e';
+    /** # Base variables */
+
+    /** * background - used to know what the background color is of the diagram. This is used for deducing colors for istance line color. Defaulr value is #f4f4f4. */
+    this.background = '#f4f4f4'; // this.background = '#0c0c0c';
+
+    /** * darkMode -In darkMode the color generation deduces other colors from the primary colors */
+
+    this.darkMode = false; // this.darkMode = true;
+    // this.primaryColor = '#1f1f00';
+
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = '#333'; // this.primaryColor = '#9f33be';
+
+    this.primaryColor = '#f0fff0'; // this.primaryColor = '#fa255e';
+    // this.primaryColor = '#ECECFF';
     // this.secondaryColor = '#c39ea0';
     // this.tertiaryColor = '#f8e5e5';
-    // this.primaryColor = '#ECECFF';
-    // this.secondaryColor = '#ffffde';
-    // this.tertiaryColor = '#ffffde';
 
-    this.background = 'white';
-    this.lineColor = '#333333';
+    this.secondaryColor = '#dfdfde';
+    this.tertiaryColor = '#CCCCFF';
     this.border1 = '#9370DB';
     this.arrowheadColor = '#333333';
     this.fontFamily = '"trebuchet ms", verdana, arial';
     this.fontSize = '16px';
-    this.labelBackground = '#e8e8e8';
     this.textColor = '#333';
-    this.noteBkgColor = '#fff5ad';
-    this.noteBorderColor = '#aaaa33';
     this.updateColors();
+    this.relationColor = '#000';
   }
 
   _createClass(Theme, [{
     key: "updateColors",
     value: function updateColors() {
       this.secondBkg = this.tertiaryColor;
+      /* Main */
+
+      this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120
+      });
+      this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -160
+      });
+      console.warn('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
+      this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
+      this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
+      this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
+      this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
+      this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+      this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+      this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
+      this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+      this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
       /* Flowchart variables */
 
       this.nodeBkg = this.primaryColor;
       this.mainBkg = this.primaryColor;
-      this.nodeBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.primaryColor, 23); // border 1
-
+      this.nodeBorder = this.primaryBorderColor;
       this.clusterBkg = this.tertiaryColor;
-      this.clusterBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.tertiaryColor, 30);
+      this.clusterBorder = this.tertiaryBorderColor;
       this.defaultLinkColor = this.lineColor;
-      this.titleColor = this.textColor;
+      this.titleColor = this.tertiaryTextColor;
       this.edgeLabelBackground = this.labelBackground;
       /* Sequence Diagram variables */
       // this.actorBorder = lighten(this.border1, 0.5);
 
-      this.actorBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.border1, 23);
+      this.actorBorder = this.primaryBorderColor;
       this.actorBkg = this.mainBkg;
-      this.actorTextColor = 'black';
+      this.actorTextColor = this.primaryTextColor;
       this.actorLineColor = 'grey';
       this.labelBoxBkgColor = this.actorBkg;
       this.signalColor = this.textColor;
       this.signalTextColor = this.textColor;
       this.labelBoxBorderColor = this.actorBorder;
       this.labelTextColor = this.actorTextColor;
-      this.loopTextColor = this.actorTextColor;
-      this.noteBorderColor = this.border2;
-      this.noteTextColor = this.actorTextColor;
+      this.loopTextColor = this.actorTextColor; // this.noteTextColor = this.actorTextColor;
+
       this.activationBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 10);
       this.activationBkgColor = this.secondaryColor;
       this.sequenceNumberColor = 'white';
       /* Gantt chart variables */
 
-      this.taskTextColor = this.taskTextLightColor;
-      this.taskTextOutsideColor = this.taskTextDarkColor;
       this.sectionBkgColor = this.tertiaryColor;
       this.altSectionBkgColor = 'white';
       this.sectionBkgColor = this.secondaryColor;
       this.sectionBkgColor2 = this.tertiaryColor;
       this.altSectionBkgColor = 'white';
       this.sectionBkgColor2 = this.primaryColor;
-      this.taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 23);
+      this.taskBorderColor = this.primaryBorderColor;
       this.taskBkgColor = this.primaryColor;
-      this.taskTextLightColor = 'white';
-      this.taskTextColor = 'calculated';
-      this.taskTextDarkColor = 'black';
-      this.taskTextOutsideColor = 'calculated';
-      this.taskTextClickableColor = '#003163';
       this.activeTaskBorderColor = this.primaryColor;
       this.activeTaskBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 23);
       this.gridColor = 'lightgrey';
@@ -71735,9 +71912,17 @@ function () {
       this.critBorderColor = '#ff8888';
       this.critBkgColor = 'red';
       this.todayLineColor = 'red';
+      this.taskTextColor = this.textColor;
+      this.taskTextOutsideColor = this.textColor;
+      this.taskTextLightColor = this.textColor;
+      this.taskTextColor = this.primaryTextColor;
+      this.taskTextDarkColor = this.textColor;
+      this.taskTextOutsideColor = 'calculated';
+      this.taskTextClickableColor = '#003163';
       /* state colors */
 
-      this.labelColor = 'black';
+      this.labelColor = this.primaryTextColor;
+      this.altBackground = this.tertiaryColor;
       this.errorBkgColor = '#552222';
       this.errorTextColor = '#552222';
       /* state colors */

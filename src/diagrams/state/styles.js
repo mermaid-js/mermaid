@@ -18,7 +18,7 @@ g.stateGroup .state-title {
 }
 
 g.stateGroup rect {
-  fill: ${options.nodeBkg};
+  fill: ${options.mainBkg};
   stroke: ${options.nodeBorder};
 }
 
@@ -57,16 +57,19 @@ g.stateGroup line {
 .stateLabel .box {
   stroke: none;
   stroke-width: 0;
-  fill: ${options.nodeBkg};
+  fill: ${options.mainBkg};
   opacity: 0.5;
 }
 
 .edgeLabel .label rect {
   fill: ${options.tertiaryColor};
-  opacity: 0.2;
+  opacity: 0.5;
 }
 .edgeLabel .label text {
   fill: ${options.tertiaryTextColor};
+}
+.label div .edgeLabel {
+  color: ${options.tertiaryTextColor};
 }
 
 .stateLabel text {
@@ -78,12 +81,17 @@ g.stateGroup line {
 }
 
 .node circle.state-start {
-  fill: ${options.primaryBorderColor};
+  fill: ${options.lineColor};
   stroke: black;
 }
 .node circle.state-end {
   fill: ${options.primaryBorderColor};
   stroke: ${options.background};
+  stroke-width: 1.5
+}
+.end-state-inner {
+  fill: ${options.background};
+  // stroke: ${options.background};
   stroke-width: 1.5
 }
 
@@ -97,7 +105,7 @@ g.stateGroup line {
 }
 
 .statediagram-cluster rect {
-  fill: ${options.nodeBkg};
+  fill: ${options.mainBkg};
   stroke: ${options.nodeBorder};
   stroke-width: 1px;
 }

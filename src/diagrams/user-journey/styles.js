@@ -68,9 +68,6 @@ const getStyles = options =>
   }
 
   .cluster rect {
-    fill: ${options.secondBkg};
-    stroke: ${options.clusterBorder};
-    stroke-width: 1px;
   }
 
   .cluster text {
@@ -85,7 +82,7 @@ const getStyles = options =>
     font-family: 'trebuchet ms', verdana, arial;
     font-family: var(--mermaid-font-family);
     font-size: 12px;
-    background: ${options.secondBkg};
+    background: ${options.tertiaryColor};
     border: 1px solid ${options.border2};
     border-radius: 2px;
     pointer-events: none;

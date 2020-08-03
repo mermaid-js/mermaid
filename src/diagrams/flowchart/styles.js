@@ -1,11 +1,11 @@
 const getStyles = options =>
   `.label {
     font-family: ${options.fontFamily};
-    color: ${options.textColor};
+    color: ${options.nodeTextColor || options.textColor};
   }
 
   .label text {
-    fill: ${options.textColor};
+    fill: ${options.nodeTextColor || options.textColor};
   }
 
   .node rect,
@@ -43,12 +43,14 @@ const getStyles = options =>
     background-color: ${options.edgeLabelBackground};
     rect {
       opacity: 0.5;
+      background-color: ${options.edgeLabelBackground};
+      fill: ${options.edgeLabelBackground};
     }
     text-align: center;
   }
 
   .cluster rect {
-    fill: ${options.secondBkg};
+    fill: ${options.clusterBkg};
     stroke: ${options.clusterBorder};
     stroke-width: 1px;
   }
@@ -64,7 +66,7 @@ const getStyles = options =>
     padding: 2px;
     font-family: ${options.fontFamily};
     font-size: 12px;
-    background: ${options.secondBkg};
+    background: ${options.tertiaryColor};
     border: 1px solid ${options.border2};
     border-radius: 2px;
     pointer-events: none;

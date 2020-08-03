@@ -1,7 +1,7 @@
 import { logger } from '../../logger';
 import { generateId } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
-import configApi from '../../config';
+import * as configApi from '../../config';
 
 const clone = o => JSON.parse(JSON.stringify(o));
 
