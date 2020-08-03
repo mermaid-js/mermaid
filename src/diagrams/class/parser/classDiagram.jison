@@ -27,10 +27,8 @@
 <struct>[\n]            /* nothing */
 <struct>[^{}\n]*        { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
 
-
-
 "class"               return 'CLASS';
-//"click"             return 'CLICK';
+"cssClass"            return 'CSSCLASS';
 "callback"            return 'CALLBACK';
 "link"                return 'LINK';
 "<<"                  return 'ANNOTATION_START';
@@ -51,7 +49,8 @@
 \s*o                  return 'AGGREGATION';
 \-\-                  return 'LINE';
 \.\.                  return 'DOTTED_LINE';
-":"[^\n;]+            return 'LABEL';
+":"{1}[^:\n;]+        return 'LABEL';
+":::"                 return 'STYLE_SEPARATOR';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 \+                    return 'PLUS';
@@ -177,8 +176,8 @@ statements
     ;
 
 className
-    : alphaNumToken className { $$=$1+$2; }
-    | alphaNumToken { $$=$1; }
+    : alphaNumToken { $$=$1; }
+    | alphaNumToken className { $$=$1+$2; }
     | alphaNumToken GENERICTYPE className { $$=$1+'~'+$2+$3; }
     | alphaNumToken GENERICTYPE { $$=$1+'~'+$2; }
     ;
@@ -190,12 +189,15 @@ statement
     | methodStatement
     | annotationStatement
     | clickStatement
+    | cssClassStatement
     | directive
     ;
 
 classStatement
     : CLASS className         {yy.addClass($2);}
+    | CLASS className STYLE_SEPARATOR alphaNumToken    {yy.addClass($2);yy.setCssClass($2, $4);}
     | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addClass($2);yy.addMembers($2,$4);}
+    | CLASS className STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.addClass($2);yy.setCssClass($2, $4);yy.addMembers($2,$6);}
     ;
 
 annotationStatement
@@ -241,10 +243,14 @@ lineType
     ;
 
 clickStatement
-    : CALLBACK className STR                    {$$ = $1;yy.setClickEvent($2, $3, undefined);}
-    | CALLBACK className STR STR                {$$ = $1;yy.setClickEvent($2, $3, $4);}
-    | LINK className STR                        {$$ = $1;yy.setLink($2, $3, undefined);}
-    | LINK className STR STR                    {$$ = $1;yy.setLink($2, $3, $4);}
+    : CALLBACK className STR        {$$ = $1;yy.setClickEvent($2, $3, undefined);}
+    | CALLBACK className STR STR    {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | LINK className STR            {$$ = $1;yy.setLink($2, $3, undefined);}
+    | LINK className STR STR        {$$ = $1;yy.setLink($2, $3, $4);}
+    ;
+
+cssClassStatement
+    : CSSCLASS STR alphaNumToken  {yy.setCssClass($2, $3);}
     ;
 
 commentToken   : textToken | graphCodeTokens ;
@@ -254,4 +260,5 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
 alphaNumToken  : UNICODE_TEXT | NUM | ALPHA;
+
 %%
