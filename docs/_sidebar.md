@@ -23,6 +23,7 @@
 
   - [Development](development.md)
   - [Configurations](Setup.md)
+  - [Mermaid Versions](versionUpdates.md)
   - [Changelog](CHANGELOG.md)
   - [Mermaid Versions](versionUpdate.md)
 
