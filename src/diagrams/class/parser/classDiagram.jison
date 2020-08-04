@@ -50,7 +50,7 @@
 \-\-                  return 'LINE';
 \.\.                  return 'DOTTED_LINE';
 ":"{1}[^:\n;]+        return 'LABEL';
-":::"                 return 'STYLE_SEPARATOR';
+":"{3}                return 'STYLE_SEPARATOR';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 \+                    return 'PLUS';

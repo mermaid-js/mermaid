@@ -588,7 +588,7 @@ classDiagram
     }
 ```
 
-?> cssClasses cannot be applied at the same time as a relation statement.
+?> cssClasses cannot be added using this shorthand method at the same time as a relation statement.
 
 ?> Due to limitations with existing markup for class diagrams, it is not currently possible to define css classes within the diagram itself.  ***Coming soon!***
 
