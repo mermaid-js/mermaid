@@ -26,6 +26,7 @@ const splitClassNameAndType = function(id) {
   if (id.indexOf('~') > 0) {
     let split = id.split('~');
     className = split[0];
+
     genericType = split[1];
   }
 
@@ -51,6 +52,7 @@ export const addClass = function(id) {
     annotations: [],
     domId: MERMAID_DOM_ID_PREFIX + classId.className + '-' + classCounter
   };
+
   classCounter++;
 };
 
