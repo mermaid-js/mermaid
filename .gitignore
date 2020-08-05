@@ -18,4 +18,3 @@ dist/sequenceTest.html
 cypress/platform/current.html
 cypress/platform/experimental.html
 local/
-dist/
