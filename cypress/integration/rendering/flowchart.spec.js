@@ -696,4 +696,22 @@ describe('Flowchart', () => {
       {  }
     );
   });
+
+  it('35: should honor minimum edge length as specified by the user', () => {
+    imgSnapshotTest(
+      `graph TD
+      L1 --- L2
+      L2 --- C
+      M1 ---> C
+      R1 .-> R2
+      R2 <.-> C
+      C -->|Label 1| E1
+      C -- Label 2 ---> E2
+      C ----> E3
+      C -----> E4
+      C ======> E5
+      `,
+      {  }
+    );
+  });
 });
