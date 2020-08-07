@@ -109,6 +109,11 @@ g.classGroup line {
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
+
+.edgeTerminals {
+  font-size: 11px;
+}
+
 `;
 
 export default getStyles;

@@ -155,6 +155,13 @@ export const addRelations = function(relations, g) {
     }
 
     logger.info(edgeData, edge);
+
+    //Set edge extra labels
+    edgeData.startLabelLeft = 'TL';
+    edgeData.startLabelRight = 'TR';
+    edgeData.endLabelLeft = 'BL';
+    edgeData.endLabelRight = 'BR';
+
     //Set relation arrow types
     edgeData.arrowTypeStart = getArrowMarker(edge.relation.type1);
     edgeData.arrowTypeEnd = getArrowMarker(edge.relation.type2);
