@@ -2,11 +2,11 @@
 
 **Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/theming.md)
 
-With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of the diagram themes. The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls. 
+With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of the diagram themes. The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls.
 
 Themes follow and build upon the Levels of Configuration and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
 
-**These Theming Configurations, similar to directives, will also be made applicable in the Live-Editor, to maximize customizability. 
+**These Theming Configurations, similar to directives, will also be made applicable in the Live-Editor, to maximize customizability.
 
 ## Site-wide Themes
 Site-wide themes are still declared via `initialize` by site owners.
@@ -17,7 +17,7 @@ Example of `Initalize` call setting `theme` to `base`:
         'securityLevel': 'loose', 'theme': 'base'
     });
 ```
-**Notes**: Only site owners can use the `mermaidAPI.initialize` call, to set values. Site-Users will have to use `%%init%%` to modify or create the theme for their diagrams. 
+**Notes**: Only site owners can use the `mermaidAPI.initialize` call, to set values. Site-Users will have to use `%%init%%` to modify or create the theme for their diagrams.
 
 ## Themes at the Local or Current Level
 When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array.
@@ -32,8 +32,7 @@ When Generating a diagram using on a webpage that supports mermaid. It is also p
 
 Here is an example of how `%%init%%` can set the theme to 'base', this assumes that `themeVariables` are set to default:
 
-```
-mermaid
+```mermaid
 %%{init: {'theme':'base'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -80,22 +79,40 @@ The easiest way to make a custom theme is to start with the base theme, and just
           end
 ```
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#00ff00'}}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
 
 **Notes:
 Leaving it empty will set all variable values to default.
 
 ## Color and Color Calculation:
 
-Color definitions have certain interactions in mermaid, this is in order to ensure visibility for diagrams. mermaid will adjust some variables automatically, when colors are changed in order to compensate and maintain readability. 
+Color definitions have certain interactions in mermaid, this is in order to ensure visibility for diagrams. mermaid will adjust some variables automatically, when colors are changed in order to compensate and maintain readability.
 
-**The Default Value Column** to the right of the Variable coloumn will denote the Variable paired/associated with the Variable on the left and the nature of this pairing or association. If it for instance says primaryColor it means that it gets primaryColor as default value. If it says "based on primaryColor" it means that it is calculated/ derived from primaryColor. This calculation can be primary color inversion, a change of hue, darkening or lightening by 10%, etc. 
+**The Default Value Column** to the right of the Variable coloumn will denote the Variable paired/associated with the Variable on the left and the nature of this pairing or association. If it for instance says primaryColor it means that it gets primaryColor as default value. If it says "based on primaryColor" it means that it is calculated/ derived from primaryColor. This calculation can be primary color inversion, a change of hue, darkening or lightening by 10%, etc.
 
 You can create your own themes, by changing any of the given variables below. If you are using a dark background, set dark mode to true to adjust the colors. It is possible to override the calculations using the variable names below, with `%%init%%` if you wish to style it differently.
 
 
 ## Theme Variables Reference Table
 
-**Notes: Variables that are unique to some diagrams can be affected by changes in Theme Variables. 
+**Notes: Variables that are unique to some diagrams can be affected by changes in Theme Variables.
 
 |       Variable       |         Default/Base/Factor value          | Calc |                                                           Description                                                            |
 | -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -121,9 +138,9 @@ You can create your own themes, by changing any of the given variables below. If
 | errorBkgColor        | tertiaryColor                  | *    | Color for syntax error message                                                                                                   |
 | errorTextColor       | tertiaryTextColor              | *    | Color for syntax error message                                                                                                   |
 
-# What follows are Variables, specific to different diagrams and charts. 
+# What follows are Variables, specific to different diagrams and charts.
 
-## Some Theme Variables serve as, or affect the Default Values for Specific Diagram Variables, unless changed using `%%init%%` . 
+## Some Theme Variables serve as, or affect the Default Values for Specific Diagram Variables, unless changed using `%%init%%` .
 
 ## Flowchart
 
@@ -180,11 +197,30 @@ You can create your own themes, by changing any of the given variables below. If
 | fillType6 | based on primaryColor    | *    | Fill for 7th section in journey diagram |
 | fillType7 | based on secondaryColor  | *    | Fill for 8th section in journey diagram |
 
-**Notes: Values are meant to create an alternating look. 
+**Notes: Values are meant to create an alternating look.
 
 
 # Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
 ```
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
+```mermaid
+
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -227,8 +263,7 @@ You can create your own themes, by changing any of the given variables below. If
           end
 ```
 
-```
-mermaid
+```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffcccc', 'edgeLabelBackground':'#ffffee', 'tertiaryColor': '#fff0f0'}}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -315,8 +350,7 @@ mermaid
 
 ### Sequence diagram
 
-```
-mermaid
+```mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 
         sequenceDiagram
@@ -366,9 +400,37 @@ classDiagram
 ```
 
 ### Gantt
-
 ```
-mermaid
+gantt
+       dateFormat                :YYYY-MM-DD
+       title                     Adding GANTT diagram functionality to mermaid
+       excludes                  :excludes the named dates/days from being included in a charted task..
+       section A section
+       Completed task            :done,    des1, 2014-01-06,2014-01-08
+       Active task               :active,  des2, 2014-01-09, 3d
+       Future task               :         des3, after des2, 5d
+       Future task2              :         des4, after des3, 5d
+
+       section Critical tasks
+       Completed task in the critical line :crit, done, 2014-01-06,24h
+       Implement parser and jison          :crit, done, after des1, 2d
+       Create tests for parser             :crit, active, 3d
+       Future task in critical line        :crit, 5d
+       Create tests for renderer           :2d
+       Add to mermaid                      :1d
+
+       section Documentation
+       Describe gantt syntax               :active, a1, after des1, 3d
+       Add gantt diagram to demo page      :after a1  , 20h
+       Add another diagram to demo page    :doc1, after a1  , 48h
+
+       section Last section
+       Describe gantt syntax               :after doc1, 3d
+       Add gantt diagram to demo page      :20h
+       Add another diagram to demo page    :48h
+```
+
+```mermaid
 gantt
        dateFormat                :YYYY-MM-DD
        title                     Adding GANTT diagram functionality to mermaid
@@ -429,11 +491,67 @@ mermaid
         SomethingElse --> [*]
 
 ```
+```mermaid
+%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+      stateDiagram
+        [*] --> Active
+
+        state Active {
+            [*] --> NumLockOff
+            NumLockOff --> NumLockOn : EvNumLockPressed
+            NumLockOn --> NumLockOff : EvNumLockPressed
+            --
+            [*] --> CapsLockOff
+            CapsLockOff --> CapsLockOn : EvCapsLockPressed
+            CapsLockOn --> CapsLockOff : EvCapsLockPressed
+            --
+            [*] --> ScrollLockOff
+            ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+            ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+        }
+        state SomethingElse {
+          A --> B
+          B --> A
+        }
+
+        Active --> SomethingElse
+        note right of SomethingElse : This is the note to the right.
+
+        SomethingElse --> [*]
+
+```
 
 ### State diagram (beta)
 
 ```
-mermaid
+%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+stateDiagram-v2
+        [*] --> Active
+
+        state Active {
+            [*] --> NumLockOff
+            NumLockOff --> NumLockOn : EvNumLockPressed
+            NumLockOn --> NumLockOff : EvNumLockPressed
+            --
+            [*] --> CapsLockOff
+            CapsLockOff --> CapsLockOn : EvCapsLockPressed
+            CapsLockOn --> CapsLockOff : EvCapsLockPressed
+            --
+            [*] --> ScrollLockOff
+            ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+            ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+        }
+        state SomethingElse {
+          A --> B
+          B --> A
+        }
+
+        Active --> SomethingElse2
+        note right of SomethingElse2 : This is the note to the right.
+
+        SomethingElse2 --> [*]
+```
+```mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 stateDiagram-v2
         [*] --> Active
@@ -465,7 +583,17 @@ stateDiagram-v2
 ### Entity Relations diagram
 
 ```
-mermaid
+      erDiagram
+        CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+        CUSTOMER ||--o{ ORDER : places
+        CUSTOMER ||--o{ INVOICE : "liable for"
+        DELIVERY-ADDRESS ||--o{ ORDER : receives
+        INVOICE ||--|{ ORDER : covers
+        ORDER ||--|{ ORDER-ITEM : includes
+        PRODUCT-CATEGORY ||--|{ PRODUCT : contains
+        PRODUCT ||--o{ ORDER-ITEM : "ordered in"
+```
+```mermaid
       erDiagram
         CUSTOMER }|..|{ DELIVERY-ADDRESS : has
         CUSTOMER ||--o{ ORDER : places
@@ -479,7 +607,18 @@ mermaid
 
 ### User journey diagram
 ```
-mermaid
+journey
+            title My working day
+            section Go to work
+              Make tea: 5: Me
+              Go upstairs: 3: Me
+              Do work: 1: Me, Cat
+            section Go home
+              Go downstairs: 5: Me
+              Sit down: 5: Me
+```
+
+```mermaid
 journey
             title My working day
             section Go to work
