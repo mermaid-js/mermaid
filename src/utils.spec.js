@@ -116,13 +116,13 @@ Alice->Bob: hi`;
   });
   it('should handle an init definition with config converted to the proper diagram configuration', function() {
     const str = `
-%%{init: { 'logLevel': 0, 'theme': 'dark', 'config': {'wrapEnabled': true} } }%%
+%%{init: { 'logLevel': 0, 'theme': 'dark', 'config': {'wrap': true} } }%%
 sequenceDiagram
 Alice->Bob: hi`;
     const type = utils.detectType(str);
     const init = utils.detectInit(str);
     expect(type).toBe('sequence');
-    expect(init).toEqual({logLevel:0, theme:"dark", sequence: { wrapEnabled: true }});
+    expect(init).toEqual({logLevel:0, theme:"dark", sequence: { wrap: true }});
   });
   it('should handle a multiline init definition', function() {
     const str = `

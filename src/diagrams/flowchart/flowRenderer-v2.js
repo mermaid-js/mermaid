@@ -197,8 +197,34 @@ export const addEdges = function(edges, g) {
       edgeData.arrowhead = 'normal';
     }
 
-    logger.info(edgeData, edge);
-    edgeData.arrowType = edge.type;
+    // Check of arrow types, placed here in order not to break old rendering
+    edgeData.arrowTypeStart = 'arrow_open';
+    edgeData.arrowTypeEnd = 'arrow_open';
+
+    /* eslint-disable no-fallthrough */
+    switch (edge.type) {
+      case 'double_arrow_cross':
+        edgeData.arrowTypeStart = 'arrow_cross';
+      case 'arrow_cross':
+        edgeData.arrowTypeEnd = 'arrow_cross';
+        break;
+      case 'double_arrow_point':
+        edgeData.arrowTypeStart = 'arrow_point';
+      case 'arrow_point':
+        edgeData.arrowTypeEnd = 'arrow_point';
+        break;
+      case 'double_arrow_circle':
+        edgeData.arrowTypeStart = 'arrow_circle';
+      case 'arrow_circle':
+        edgeData.arrowTypeEnd = 'arrow_circle';
+        break;
+    }
+
+    // logger.info('apa', edgeData, edge);
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowType = edgeData.arrowTypeEnd;
+    // logger.info('apa', edgeData, edge);
 
     let style = '';
     let labelStyle = '';
@@ -381,7 +407,7 @@ export const draw = function(text, id) {
     return flowDb.getTooltip(this.id);
   });
 
-  const padding = 8;
+  const padding = conf.diagramPadding;
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
@@ -442,7 +468,7 @@ export const draw = function(text, id) {
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
       rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
+      // rect.setAttribute('style', 'fill:#e8e8e8;');
 
       label.insertBefore(rect, label.firstChild);
     }
@@ -460,6 +486,9 @@ export const draw = function(text, id) {
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
         link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+        if (vertex.linkTarget) {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
+        }
 
         const linkNode = node.insert(function() {
           return link;

@@ -33,12 +33,12 @@ flowchart BT
     c1 --apa apa apa--> b1
     two --> c2
       </div>
-      <div class="mermaid" style="width: 50%; height: 200px;">
+      <div class="mermaid2" style="width: 50%; height: 200px;">
 sequenceDiagram
    Alice->>Bob:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
    Bob->>Alice: I'm short though
       </div>
-      <div class="mermaid" style="width: 50%; height: 200px;">
+      <div class="mermaid2" style="width: 50%; height: 200px;">
         %%{init: {'securityLevel': 'loose'}}%%
       graph TD
         A[Christmas] -->|Get money| B(Go shopping)
@@ -75,11 +75,25 @@ stateDiagram-v2
       </div>
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
+        %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+classDiagram
+	Animal <|-- Duck
 
-        classDiagram
-    Customer "1" --> "*" Ticket
-    Student "1" --> "1..*" Course
-    Galaxy --> "many" Star : Contains
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
+graph TD
+          A(Start) --> B[/Another/]
+          A[/Another/] --> C[End]
+          subgraph section
+            B
+            C
+          end
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
+sequenceDiagram
+Alice->Bob: Hello Bob, how are you?
+Note over Alice,Bob: Looks
+Note over Bob,Alice: Looks back
       </div>
 
   <script src="./mermaid.js"></script>
@@ -88,7 +102,8 @@ stateDiagram-v2
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        // theme: 'dark',
+        // theme: 'forest',
+        // themeVariables:{primaryColor: '#ff0000'},
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,

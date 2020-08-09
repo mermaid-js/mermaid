@@ -16,10 +16,15 @@ function intersectPolygon(node, polyPoints, point) {
 
   var minX = Number.POSITIVE_INFINITY;
   var minY = Number.POSITIVE_INFINITY;
-  polyPoints.forEach(function(entry) {
-    minX = Math.min(minX, entry.x);
-    minY = Math.min(minY, entry.y);
-  });
+  if (typeof polyPoints.forEach === 'function') {
+    polyPoints.forEach(function(entry) {
+      minX = Math.min(minX, entry.x);
+      minY = Math.min(minY, entry.y);
+    });
+  } else {
+    minX = Math.min(minX, polyPoints.x);
+    minY = Math.min(minY, polyPoints.y);
+  }
 
   var left = x1 - node.width / 2 - minX;
   var top = y1 - node.height / 2 - minY;
@@ -39,7 +44,7 @@ function intersectPolygon(node, polyPoints, point) {
   }
 
   if (!intersections.length) {
-    console.log('NO INTERSECTION FOUND, RETURN NODE CENTER', node);
+    // console.log('NO INTERSECTION FOUND, RETURN NODE CENTER', node);
     return node;
   }
 

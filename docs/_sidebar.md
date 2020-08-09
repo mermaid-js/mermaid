@@ -3,6 +3,7 @@
   - [mermaid](README.md)
   - [FAQ](faq.md)
   - [Usage](usage.md)
+  - [Integrations](integrations.md)
   - [Examples](examples.md)
   - [mermaid CLI](mermaidCLI.md)
 
@@ -22,10 +23,13 @@
 
   - [Development](development.md)
   - [Configurations](Setup.md)
+  - [Mermaid Versions](versionUpdates.md)
   - [Changelog](CHANGELOG.md)
+  - [Mermaid Versions](versionUpdate.md)
 
 - Beginner's Guide
   - [overview](n00b-overview.md)
   - [Getting started - easier](n00b-gettingStarted.md)
+  - [Theming](theming.md)
   - [Diagram syntax intro](n00b-syntaxReference.md)
   - [Advanced usage](n00b-advanced.md)

@@ -96,162 +96,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss":
-/*!*****************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss ***!
-  \*****************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  fill: #F9FFFE;\n  color: #F9FFFE; }\n\n.label text {\n  fill: #F9FFFE; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center;\n  fill: #F9FFFE; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: lightgrey; }\n\n.edgePath .path {\n  stroke: lightgrey;\n  stroke-width: 1.5px; }\n\n.flowchart-link {\n  stroke: lightgrey;\n  fill: none; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.9; }\n  .edgeLabel span {\n    color: #333; }\n\n.cluster rect {\n  fill: #474949;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #F9FFFE; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #474949;\n  border: 1px solid rgba(255, 255, 255, 0.25);\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\ntext.actor > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.actor-line {\n  stroke: lightgrey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: lightgrey; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: lightgrey; }\n\n#arrowhead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.sequenceNumber {\n  fill: black; }\n\n#sequencenumber {\n  fill: lightgrey; }\n\n#crosshead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.messageText {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.labelBox {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\n.labelText, .labelText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #81B1DB;\n  fill: #81B1DB; }\n\n.note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: #1f2020;\n  stroke: none; }\n\n.activation0 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation1 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation2 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(255, 255, 255, 0.3); }\n\n.section2 {\n  fill: #EAE8B9; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #F9FFFE; }\n\n.sectionTitle1 {\n  fill: #F9FFFE; }\n\n.sectionTitle2 {\n  fill: #F9FFFE; }\n\n.sectionTitle3 {\n  fill: #F9FFFE; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #DB5757;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #fefefe;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #fefefe;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: #fefefe; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #1f2020;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: lightgrey; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: lightgrey; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #81B1DB;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #fefefe !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #fefefe !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #E83737;\n  fill: #E83737;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #E83737;\n  fill: #81B1DB;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #E83737;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #fefefe !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #fefefe !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #fefefe;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.classGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #81B1DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #fefefe;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  fill: #F9FFFE;\n  stroke: none;\n  font-size: 10px; }\n\ng.statediagram-cluster .cluster-label text {\n  fill: #F9FFFE; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: #f4f4f4; }\n\ng.stateGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.stateGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.7; }\n\n.edgeLabel text {\n  fill: #333; }\n\n.stateLabel text {\n  fill: #f4f4f4;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #81B1DB; }\n\n.statediagram-cluster rect {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #81B1DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #a44141; }\n\n.error-text {\n  fill: #ddd;\n  stroke: #ddd; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: lightgrey; }\n\n.marker.cross {\n  stroke: lightgrey; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss":
-/*!********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss ***!
-  \********************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  fill: #333;\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center;\n  fill: #333; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: #333333; }\n\n.edgePath .path {\n  stroke: #333333;\n  stroke-width: 1.5px; }\n\n.flowchart-link {\n  stroke: #333333;\n  fill: none; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.9; }\n  .edgeLabel span {\n    color: #333; }\n\n.cluster rect {\n  fill: #ffffde;\n  stroke: #aaaa33;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #ffffde;\n  border: 1px solid #aaaa33;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\ntext.actor > tspan {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\n.labelText, .labelText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #CCCCFF;\n  fill: #CCCCFF; }\n\n.note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: black;\n  stroke: none; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(102, 102, 255, 0.49); }\n\n.section2 {\n  fill: #fff400; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #8a90dd;\n  stroke: #534fbc; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #bfc7ff;\n  stroke: #534fbc; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #bfc7ff;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.classGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #9370DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #9370DB;\n  fill: #333;\n  stroke: none;\n  font-size: 10px; }\n\ng.statediagram-cluster .cluster-label text {\n  fill: #333; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.stateGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.7; }\n\n.edgeLabel text {\n  fill: #333; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #9370DB; }\n\n.statediagram-cluster rect {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #9370DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #aaaa33;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: #333333; }\n\n.marker.cross {\n  stroke: #333333; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss":
-/*!*******************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss ***!
-  \*******************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  fill: #333;\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center;\n  fill: #333; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: green; }\n\n.edgePath .path {\n  stroke: green;\n  stroke-width: 1.5px; }\n\n.flowchart-link {\n  stroke: green;\n  fill: none; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.9; }\n  .edgeLabel span {\n    color: #333; }\n\n.cluster rect {\n  fill: #cdffb2;\n  stroke: #6eaa49;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #cdffb2;\n  border: 1px solid #6eaa49;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #13540c;\n  fill: #cde498; }\n\ntext.actor > tspan {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #326932;\n  fill: #cde498; }\n\n.labelText, .labelText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #326932;\n  fill: #326932; }\n\n.note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: black;\n  stroke: none; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #6eaa49; }\n\n.section2 {\n  fill: #6eaa49; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #487e3a;\n  stroke: #13540c; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #cde498;\n  stroke: #13540c; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #cde498;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.classGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #13540c;\n  font-size: 10px; }\n\n.relation {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #13540c;\n  fill: #333;\n  stroke: none;\n  font-size: 10px; }\n\ng.statediagram-cluster .cluster-label text {\n  fill: #333; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.stateGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.7; }\n\n.edgeLabel text {\n  fill: #333; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #13540c; }\n\n.statediagram-cluster rect {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #13540c; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #6eaa49;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: green; }\n\n.marker.cross {\n  stroke: green; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss":
-/*!********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss ***!
-  \********************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  fill: #333;\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center;\n  fill: #333; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: #333333; }\n\n.edgePath .path {\n  stroke: #666;\n  stroke-width: 1.5px; }\n\n.flowchart-link {\n  stroke: #666;\n  fill: none; }\n\n.edgeLabel {\n  background-color: white;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.9; }\n  .edgeLabel span {\n    color: #333; }\n\n.cluster rect {\n  fill: #eaf2fb;\n  stroke: #26a;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #eaf2fb;\n  border: 1px solid #26a;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #999;\n  fill: #eee; }\n\ntext.actor > tspan {\n  fill: #333;\n  stroke: none; }\n\n.actor-line {\n  stroke: #666; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #999;\n  fill: #eee; }\n\n.labelText, .labelText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #999;\n  fill: #999; }\n\n.note {\n  stroke: #777700;\n  fill: #ffa; }\n\n.noteText, .noteText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #80b3e6; }\n\n.section2 {\n  fill: #80b3e6; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: #e6e6e6;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #d42;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #333;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #333;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #26a;\n  stroke: #1a4d80; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: #333; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: #333; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #eee;\n  stroke: #1a4d80; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #333 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: #666;\n  fill: #bbb;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #333 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #b1361b;\n  fill: #d42;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #b1361b;\n  fill: #eee;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #b1361b;\n  fill: #bbb;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #333 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #333 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #999;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.classGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #999;\n  font-size: 10px; }\n\n.relation {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #999;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #999;\n  fill: #333;\n  stroke: none;\n  font-size: 10px; }\n\ng.statediagram-cluster .cluster-label text {\n  fill: #333; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.stateGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #777700;\n  fill: #ffa; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.7; }\n\n.edgeLabel text {\n  fill: #333; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #999; }\n\n.statediagram-cluster rect {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #999; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #ffa;\n  stroke: #777700;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: #666; }\n\n.marker.cross {\n  stroke: #666; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/runtime/api.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/css-loader/dist/runtime/api.js ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/*
-  MIT License http://www.opensource.org/licenses/mit-license.php
-  Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function (useSourceMap) {
-  var list = []; // return the list of modules as css string
-
-  list.toString = function toString() {
-    return this.map(function (item) {
-      var content = cssWithMappingToString(item, useSourceMap);
-
-      if (item[2]) {
-        return '@media ' + item[2] + '{' + content + '}';
-      } else {
-        return content;
-      }
-    }).join('');
-  }; // import a list of modules into the list
-
-
-  list.i = function (modules, mediaQuery) {
-    if (typeof modules === 'string') {
-      modules = [[null, modules, '']];
-    }
-
-    var alreadyImportedModules = {};
-
-    for (var i = 0; i < this.length; i++) {
-      var id = this[i][0];
-
-      if (id != null) {
-        alreadyImportedModules[id] = true;
-      }
-    }
-
-    for (i = 0; i < modules.length; i++) {
-      var item = modules[i]; // skip already imported module
-      // this implementation is not 100% perfect for weird media query combinations
-      // when a module is imported multiple times with different media queries.
-      // I hope this will never occur (Hey this way we have smaller bundles)
-
-      if (item[0] == null || !alreadyImportedModules[item[0]]) {
-        if (mediaQuery && !item[2]) {
-          item[2] = mediaQuery;
-        } else if (mediaQuery) {
-          item[2] = '(' + item[2] + ') and (' + mediaQuery + ')';
-        }
-
-        list.push(item);
-      }
-    }
-  };
-
-  return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-  var content = item[1] || '';
-  var cssMapping = item[3];
-
-  if (!cssMapping) {
-    return content;
-  }
-
-  if (useSourceMap && typeof btoa === 'function') {
-    var sourceMapping = toComment(cssMapping);
-    var sourceURLs = cssMapping.sources.map(function (source) {
-      return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
-    });
-    return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-  }
-
-  return [content].join('\n');
-} // Adapted from convert-source-map (MIT)
-
-
-function toComment(sourceMap) {
-  // eslint-disable-next-line no-undef
-  var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-  var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-  return '/*# ' + data + ' */';
-}
-
-/***/ }),
-
 /***/ "./node_modules/node-libs-browser/mock/empty.js":
 /*!******************************************************!*\
   !*** ./node_modules/node-libs-browser/mock/empty.js ***!
@@ -809,10 +653,10 @@ module.exports = function(module) {
 /*!**********************!*\
   !*** ./package.json ***!
   \**********************/
-/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, default */
+/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.4\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"crypto-random-string\":\"^3.0.1\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"scope-css\":\"^1.2.1\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.7.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -820,21 +664,2670 @@ module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.4\",\"descr
 /*!***********************!*\
   !*** ./src/config.js ***!
   \***********************/
-/*! exports provided: defaultConfig, setSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, reset, default */
+/*! exports provided: defaultConfig, updateCurrentConfig, setSiteConfig, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultConfig", function() { return defaultConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateCurrentConfig", function() { return updateCurrentConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setSiteConfig", function() { return setSiteConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateSiteConfig", function() { return updateSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSiteConfig", function() { return getSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConfig", function() { return setConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getConfig", function() { return getConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sanitize", function() { return sanitize; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addDirective", function() { return addDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reset", function() { return reset; });
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
+/* harmony import */ var _defaultConfig__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./defaultConfig */ "./src/defaultConfig.js");
 
+
+
+ // debugger;
+
+var defaultConfig = Object.freeze(_defaultConfig__WEBPACK_IMPORTED_MODULE_3__["default"]);
+var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+var directives = [];
+var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+var updateCurrentConfig = function updateCurrentConfig(siteCfg, _directives) {
+  var cfg = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteCfg); // Apply directives
+
+  var themeVariables = {};
+
+  for (var i = 0; i < _directives.length; i++) {
+    var d = _directives[i];
+    sanitize(d);
+    cfg = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(cfg, d);
+
+    if (d.theme) {
+      cfg.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme].getThemeVariables(d.themeVariables);
+    }
+  }
+
+  if (cfg.theme && _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme]) {
+    var tVars = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, cfg.themeVariables);
+    tVars = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(tVars, themeVariables);
+    var variables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme].getThemeVariables(tVars);
+    cfg.themeVariables = variables;
+  }
+
+  currentConfig = cfg;
+  return cfg;
+};
+/**
+ *## setSiteConfig
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
+ ***Notes:**
+ *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
+ *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
+ *to the defaultConfig
+ *Note: currentConfig is set in this function
+ **Default value: At default, will mirror Global Config**
+ * @param conf - the base currentConfig to use as siteConfig
+ * @returns {*} - the siteConfig
+ */
+
+var setSiteConfig = function setSiteConfig(conf) {
+  console.warn('Setting site config');
+  siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+  siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
+
+  if (conf.theme) {
+    siteConfig.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][conf.theme].getThemeVariables(conf.themeVariables);
+  }
+
+  currentConfig = updateCurrentConfig(siteConfig, directives);
+  return siteConfig;
+};
+var updateSiteConfig = function updateSiteConfig(conf) {
+  siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
+  updateCurrentConfig(siteConfig, directives);
+  return siteConfig;
+};
+/**
+ *## getSiteConfig
+ *| Function | Description         | Type    |  Values             |
+ *| --------- | ------------------- | ------- |  ------------------ |
+ *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
+ ***Notes**:
+ *Returns **any** values in siteConfig.
+ * @returns {*}
+ */
+
+var getSiteConfig = function getSiteConfig() {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteConfig);
+};
+/**
+ *## setConfig
+ *| Function  | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
+ ***Notes**:
+ *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
+ *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
+ *siteConfig value.
+ * @param conf - the potential currentConfig
+ * @returns {*} - the currentConfig merged with the sanitized conf
+ */
+
+var setConfig = function setConfig(conf) {
+  // sanitize(conf);
+  // Object.keys(conf).forEach(key => {
+  //   const manipulator = manipulators[key];
+  //   conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
+  // });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf);
+  return getConfig();
+};
+/**
+ *   ## getConfig
+ *| Function  | Description         | Type    | Return Values            |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
+ ***Notes**:
+ *Returns **any** the currentConfig
+ * @returns {*} - the currentConfig
+ */
+
+var getConfig = function getConfig() {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, currentConfig);
+};
+/**
+ *## sanitize
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
+ *Ensures options parameter does not attempt to override siteConfig secure keys
+ *Note: modifies options in-place
+ * @param options - the potential setConfig parameter
+ */
+
+var sanitize = function sanitize(options) {
+  Object.keys(siteConfig.secure).forEach(function (key) {
+    if (typeof options[siteConfig.secure[key]] !== 'undefined') {
+      // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
+      // can exploit the logger's attempt to stringify the value and execute arbitrary code
+      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
+      delete options[siteConfig.secure[key]];
+    }
+  });
+};
+var addDirective = function addDirective(directive) {
+  directives.push(directive);
+  updateCurrentConfig(siteConfig, directives);
+};
+/**
+ *## reset
+ *| Function | Description         | Type    | Required | Values             |
+ *| --------- | ------------------- | ------- | -------- | ------------------ |
+ *| reset|Resets currentConfig to conf| Put Request | Required | None|
+ *
+ *| Parameter | Description |Type | Required | Values|
+ *| --- | --- | --- | --- | --- |
+ *| conf| base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array|
+ *
+ **Notes :
+ (default: current siteConfig ) (optional, default `getSiteConfig()`)
+ * @param conf  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
+ */
+
+var reset = function reset() {
+  // Replace current config with siteConfig
+  directives = [];
+  updateCurrentConfig(siteConfig, directives);
+};
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/clusters.js":
+/*!***************************************!*\
+  !*** ./src/dagre-wrapper/clusters.js ***!
+  \***************************************/
+/*! exports provided: insertCluster, getClusterTitleWidth, clear, positionCluster */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertCluster", function() { return insertCluster; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getClusterTitleWidth", function() { return getClusterTitleWidth; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "positionCluster", function() { return positionCluster; });
+/* harmony import */ var _intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect/intersect-rect */ "./src/dagre-wrapper/intersect/intersect-rect.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
+/* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../config */ "./src/config.js");
+
+ // eslint-disable-line
+
+
+
+
+
+var rect = function rect(parent, node) {
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Creating subgraph rect for ', node.id, node); // Add outer g element
+
+  var shapeSvg = parent.insert('g').attr('class', 'cluster').attr('id', node.id); // add the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child'); // Create the label and insert it after the rect
+
+  var label = shapeSvg.insert('g').attr('class', 'cluster-label');
+  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_2__["default"])(node.labelText, node.labelStyle, undefined, true)); // Get the size of the label
+
+  var bbox = text.getBBox();
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
+    var div = text.children[0];
+    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_3__["select"])(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+
+  var padding = 0 * node.padding;
+  var halfPadding = padding / 2;
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Data ', node, JSON.stringify(node)); // center the rect around its coordinate
+
+  rect.attr('rx', node.rx).attr('ry', node.ry).attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', node.width + padding).attr('height', node.height + padding); // Center the label
+
+  label.attr('transform', 'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2 - node.padding / 3 + 3) + ')');
+  var rectBox = rect.node().getBBox();
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+
+  node.intersect = function (point) {
+    return Object(_intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point);
+  };
+
+  return shapeSvg;
+};
+/**
+ * Non visiable cluster where the note is group with its
+ */
+
+
+var noteGroup = function noteGroup(parent, node) {
+  // Add outer g element
+  var shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id); // add the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child');
+  var padding = 0 * node.padding;
+  var halfPadding = padding / 2; // center the rect around its coordinate
+
+  rect.attr('rx', node.rx).attr('ry', node.ry).attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', node.width + padding).attr('height', node.height + padding).attr('fill', 'none');
+  var rectBox = rect.node().getBBox();
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+
+  node.intersect = function (point) {
+    return Object(_intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var roundedWithTitle = function roundedWithTitle(parent, node) {
+  // Add outer g element
+  var shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id); // add the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child'); // Create the label and insert it after the rect
+
+  var label = shapeSvg.insert('g').attr('class', 'cluster-label');
+  var innerRect = shapeSvg.append('rect');
+  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_2__["default"])(node.labelText, node.labelStyle, undefined, true)); // Get the size of the label
+
+  var bbox = text.getBBox();
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
+    var div = text.children[0];
+    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_3__["select"])(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+
+  bbox = text.getBBox();
+  var padding = 0 * node.padding;
+  var halfPadding = padding / 2; // center the rect around its coordinate
+
+  rect.attr('class', 'outer').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', node.width + padding).attr('height', node.height + padding);
+  innerRect.attr('class', 'inner').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1).attr('width', node.width + padding).attr('height', node.height + padding - bbox.height - 3); // Center the label
+
+  label.attr('transform', 'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2 - node.padding / 3 + (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels ? 5 : 3)) + ')');
+  var rectBox = rect.node().getBBox();
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+
+  node.intersect = function (point) {
+    return Object(_intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var divider = function divider(parent, node) {
+  // Add outer g element
+  var shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id); // add the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child');
+  var padding = 0 * node.padding;
+  var halfPadding = padding / 2; // center the rect around its coordinate
+
+  rect.attr('class', 'divider').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2).attr('width', node.width + padding).attr('height', node.height + padding);
+  var rectBox = rect.node().getBBox();
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+
+  node.intersect = function (point) {
+    return Object(_intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var shapes = {
+  rect: rect,
+  roundedWithTitle: roundedWithTitle,
+  noteGroup: noteGroup,
+  divider: divider
+};
+var clusterElems = {};
+var insertCluster = function insertCluster(elem, node) {
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Inserting cluster');
+  var shape = node.shape || 'rect';
+  clusterElems[node.id] = shapes[shape](elem, node);
+};
+var getClusterTitleWidth = function getClusterTitleWidth(elem, node) {
+  var label = Object(_createLabel__WEBPACK_IMPORTED_MODULE_2__["default"])(node.labelText, node.labelStyle, undefined, true);
+  elem.node().appendChild(label);
+  var width = label.getBBox().width;
+  elem.node().removeChild(label);
+  return width;
+};
+var clear = function clear() {
+  clusterElems = {};
+};
+var positionCluster = function positionCluster(node) {
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Position cluster');
+  var el = clusterElems[node.id];
+  el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
+};
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/createLabel.js":
+/*!******************************************!*\
+  !*** ./src/dagre-wrapper/createLabel.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../config */ "./src/config.js");
+
+ // eslint-disable-line
+// let vertexNode;
+// if (getConfig().flowchart.htmlLabels) {
+//   // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
+//   const node = {
+//     label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, s => `<i class='${s.replace(':', ' ')}'></i>`)
+//   };
+//   vertexNode = addHtmlLabel(svg, node).node();
+//   vertexNode.parentNode.removeChild(vertexNode);
+// } else {
+//   const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+//   svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
+//   const rows = vertexText.split(common.lineBreakRegex);
+//   for (let j = 0; j < rows.length; j++) {
+//     const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+//     tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+//     tspan.setAttribute('dy', '1em');
+//     tspan.setAttribute('x', '1');
+//     tspan.textContent = rows[j];
+//     svgLabel.appendChild(tspan);
+//   }
+//   vertexNode = svgLabel;
+// }
+
+
+
+function applyStyle(dom, styleFn) {
+  if (styleFn) {
+    dom.attr('style', styleFn);
+  }
+}
+
+function addHtmlLabel(node) {
+  // var fo = root.append('foreignObject').attr('width', '100000');
+  // var div = fo.append('xhtml:div');
+  // div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
+  // var label = node.label;
+  // switch (typeof label) {
+  //   case 'function':
+  //     div.insert(label);
+  //     break;
+  //   case 'object':
+  //     // Currently we assume this is a DOM object.
+  //     div.insert(function() {
+  //       return label;
+  //     });
+  //     break;
+  //   default:
+  //     div.html(label);
+  // }
+  // applyStyle(div, node.labelStyle);
+  // div.style('display', 'inline-block');
+  // // Fix for firefox
+  // div.style('white-space', 'nowrap');
+  // var client = div.node().getBoundingClientRect();
+  // fo.attr('width', client.width).attr('height', client.height);
+  var fo = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));
+  var div = fo.append('xhtml:div');
+  var label = node.label;
+  var labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
+  div.html('<span class="' + labelClass + '">' + label + '</span>');
+  applyStyle(div, node.labelStyle);
+  div.style('display', 'inline-block'); // Fix for firefox
+
+  div.style('white-space', 'nowrap');
+  div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
+  return fo.node();
+}
+
+var createLabel = function createLabel(_vertexText, style, isTitle, isNode) {
+  var vertexText = _vertexText || '';
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])().flowchart.htmlLabels) {
+    // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
+    vertexText = vertexText.replace(/\\n|\n/g, '<br />');
+    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('vertexText' + vertexText);
+    var node = {
+      isNode: isNode,
+      label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, function (s) {
+        return "<i class='".concat(s.replace(':', ' '), "'></i>");
+      })
+    };
+    var vertexNode = addHtmlLabel(node); // vertexNode.parentNode.removeChild(vertexNode);
+
+    return vertexNode;
+  } else {
+    var svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
+    var rows = [];
+
+    if (typeof vertexText === 'string') {
+      rows = vertexText.split(/\\n|\n|<br\s*\/?>/gi);
+    } else if (Array.isArray(vertexText)) {
+      rows = vertexText;
+    } else {
+      rows = [];
+    }
+
+    for (var j = 0; j < rows.length; j++) {
+      var tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+      tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+      tspan.setAttribute('dy', '1em');
+      tspan.setAttribute('x', '0');
+
+      if (isTitle) {
+        tspan.setAttribute('class', 'title-row');
+      } else {
+        tspan.setAttribute('class', 'row');
+      }
+
+      tspan.textContent = rows[j].trim();
+      svgLabel.appendChild(tspan);
+    }
+
+    return svgLabel;
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (createLabel);
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/edges.js":
+/*!************************************!*\
+  !*** ./src/dagre-wrapper/edges.js ***!
+  \************************************/
+/*! exports provided: clear, insertEdgeLabel, positionEdgeLabel, intersection, insertEdge */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertEdgeLabel", function() { return insertEdgeLabel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "positionEdgeLabel", function() { return positionEdgeLabel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "intersection", function() { return intersection; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertEdge", function() { return insertEdge; });
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
+/* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
+ // eslint-disable-line
+
+
+
+
+ // import { calcLabelPosition } from '../utils';
+
+var edgeLabels = {};
+var clear = function clear() {
+  edgeLabels = {};
+};
+var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
+  // Create the actual text element
+  var labelElement = Object(_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(edge.label, edge.labelStyle); // Create outer g, edgeLabel, this will be positioned after graph layout
+
+  var edgeLabel = elem.insert('g').attr('class', 'edgeLabel'); // Create inner g, label, this will be positioned now for centering the text
+
+  var label = edgeLabel.insert('g').attr('class', 'label');
+  label.node().appendChild(labelElement); // Center the label
+
+  var bbox = labelElement.getBBox();
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+    var div = labelElement.children[0];
+    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_2__["select"])(labelElement);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+
+  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')'); // Make element accessible by id for positioning
+
+  edgeLabels[edge.id] = edgeLabel; // Update the abstract data of the edge with the new information about its width and height
+
+  edge.width = bbox.width;
+  edge.height = bbox.height;
+};
+var positionEdgeLabel = function positionEdgeLabel(edge, points) {
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+
+  if (edge.label) {
+    var el = edgeLabels[edge.id];
+    var x = edge.x;
+    var y = edge.y;
+
+    if (points) {
+      // debugger;
+      var pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcLabelPosition(points);
+      x = pos.x;
+      y = pos.y;
+    }
+
+    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+  }
+}; // const getRelationType = function(type) {
+//   switch (type) {
+//     case stateDb.relationType.AGGREGATION:
+//       return 'aggregation';
+//     case stateDb.relationType.EXTENSION:
+//       return 'extension';
+//     case stateDb.relationType.COMPOSITION:
+//       return 'composition';
+//     case stateDb.relationType.DEPENDENCY:
+//       return 'dependency';
+//   }
+// };
+
+var outsideNode = function outsideNode(node, point) {
+  // logger.warn('Checking bounds ', node, point);
+  var x = node.x;
+  var y = node.y;
+  var dx = Math.abs(point.x - x);
+  var dy = Math.abs(point.y - y);
+  var w = node.width / 2;
+  var h = node.height / 2;
+
+  if (dx >= w || dy >= h) {
+    return true;
+  }
+
+  return false;
+};
+
+var intersection = function intersection(node, outsidePoint, insidePoint) {
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
+  var x = node.x;
+  var y = node.y;
+  var dx = Math.abs(x - insidePoint.x);
+  var w = node.width / 2;
+  var r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
+  var h = node.height / 2;
+  var edges = {
+    x1: x - w,
+    x2: x + w,
+    y1: y - h,
+    y2: y + h
+  };
+
+  if (outsidePoint.x === edges.x1 || outsidePoint.x === edges.x2 || outsidePoint.y === edges.y1 || outsidePoint.y === edges.y2) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('calc equals on edge');
+    return outsidePoint;
+  }
+
+  var Q = Math.abs(outsidePoint.y - insidePoint.y);
+  var R = Math.abs(outsidePoint.x - insidePoint.x); // log.warn();
+
+  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
+    // eslint-disable-line
+    // Intersection is top or bottom of rect.
+    // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    var q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    r = R * q / Q;
+    var res = {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
+      y: outsidePoint.y + q
+    };
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
+    return res;
+  } else {
+    // Intersection onn sides of rect
+    // q = (Q * r) / R;
+    // q = 2;
+    // r = (R * q) / Q;
+    if (insidePoint.x < outsidePoint.x) {
+      r = outsidePoint.x - w - x;
+    } else {
+      // r = outsidePoint.x - w - x;
+      r = x - w - outsidePoint.x;
+    }
+
+    var _q = _q = Q * r / R;
+
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("sides calc, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
+    });
+    return {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
+    };
+  }
+}; //(edgePaths, e, edge, clusterDb, diagramtype, graph)
+
+var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, graph) {
+  var points = edge.points;
+  var pointsHasChanged = false;
+  var tail = graph.node(e.v);
+  var head = graph.node(e.w);
+
+  if (head.intersect && tail.intersect) {
+    points = points.slice(1, edge.points.length - 1);
+    points.unshift(tail.intersect(points[0]));
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Last point', points[points.length - 1], head, head.intersect(points[points.length - 1]));
+    points.push(head.intersect(points[points.length - 1]));
+  }
+
+  if (edge.toCluster) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('edge', edge);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('to cluster', clusterDb[edge.toCluster]);
+    points = [];
+    var lastPointOutside;
+    var isInside = false;
+    edge.points.forEach(function (point) {
+      var node = clusterDb[edge.toCluster].node;
+
+      if (!outsideNode(node, point) && !isInside) {
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('inside', edge.toCluster, point, lastPointOutside); // First point inside the rect
+
+        var inter = intersection(node, lastPointOutside, point);
+        var pointPresent = false;
+        points.forEach(function (p) {
+          pointPresent = pointPresent || p.x === inter.x && p.y === inter.y;
+        }); // if (!pointPresent) {
+
+        if (!points.find(function (e) {
+          return e.x === inter.x && e.y === inter.y;
+        })) {
+          points.push(inter);
+        } else {
+          _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('no intersect', inter, points);
+        }
+
+        isInside = true;
+      } else {
+        if (!isInside) points.push(point);
+      }
+
+      lastPointOutside = point;
+    });
+    pointsHasChanged = true;
+  }
+
+  if (edge.fromCluster) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('edge', edge);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('from cluster', clusterDb[edge.fromCluster]);
+    var updatedPoints = [];
+
+    var _lastPointOutside;
+
+    var _isInside = false;
+
+    for (var i = points.length - 1; i >= 0; i--) {
+      var point = points[i];
+      var node = clusterDb[edge.fromCluster].node;
+
+      if (!outsideNode(node, point) && !_isInside) {
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('inside', edge.fromCluster, point, node); // First point inside the rect
+
+        var insterection = intersection(node, _lastPointOutside, point); // logger.trace('intersect', intersection(node, lastPointOutside, point));
+
+        updatedPoints.unshift(insterection); // points.push(insterection);
+
+        _isInside = true;
+      } else {
+        // at the outside
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Outside point', point);
+        if (!_isInside) updatedPoints.unshift(point);
+      }
+
+      _lastPointOutside = point;
+    }
+
+    points = updatedPoints;
+    pointsHasChanged = true;
+  } // The data for our line
+
+
+  var lineData = points.filter(function (p) {
+    return !Number.isNaN(p.y);
+  }); // This is the accessor function we talked about above
+
+  var lineFunction = Object(d3__WEBPACK_IMPORTED_MODULE_2__["line"])().x(function (d) {
+    return d.x;
+  }).y(function (d) {
+    return d.y;
+  }).curve(d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"]); // Contruct stroke classes based on properties
+
+  var strokeClasses;
+
+  switch (edge.thickness) {
+    case 'normal':
+      strokeClasses = 'edge-thickness-normal';
+      break;
+
+    case 'thick':
+      strokeClasses = 'edge-thickness-thick';
+      break;
+
+    default:
+      strokeClasses = '';
+  }
+
+  switch (edge.pattern) {
+    case 'solid':
+      strokeClasses += ' edge-pattern-solid';
+      break;
+
+    case 'dotted':
+      strokeClasses += ' edge-pattern-dotted';
+      break;
+
+    case 'dashed':
+      strokeClasses += ' edge-pattern-dashed';
+      break;
+  }
+
+  var svgPath = elem.append('path').attr('d', lineFunction(lineData)).attr('id', edge.id).attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '')); // DEBUG code, adds a red circle at each edge coordinate
+  // edge.points.forEach(point => {
+  //   elem
+  //     .append('circle')
+  //     .style('stroke', 'red')
+  //     .style('fill', 'red')
+  //     .attr('r', 1)
+  //     .attr('cx', point.x)
+  //     .attr('cy', point.y);
+  // });
+
+  var url = '';
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().state.arrowMarkerAbsolute) {
+    url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
+  }
+
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('arrowTypeStart', edge.arrowTypeStart);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('arrowTypeEnd', edge.arrowTypeEnd);
+
+  switch (edge.arrowTypeStart) {
+    case 'arrow_cross':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-crossStart' + ')');
+      break;
+
+    case 'arrow_point':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-pointStart' + ')');
+      break;
+
+    case 'arrow_barb':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-barbStart' + ')');
+      break;
+
+    case 'arrow_circle':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-circleStart' + ')');
+      break;
+
+    case 'aggregation':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-aggregationStart' + ')');
+      break;
+
+    case 'extension':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-extensionStart' + ')');
+      break;
+
+    case 'composition':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-compositionStart' + ')');
+      break;
+
+    case 'dependency':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-dependencyStart' + ')');
+      break;
+
+    default:
+  }
+
+  switch (edge.arrowTypeEnd) {
+    case 'arrow_cross':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-crossEnd' + ')');
+      break;
+
+    case 'arrow_point':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-pointEnd' + ')');
+      break;
+
+    case 'arrow_barb':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-barbEnd' + ')');
+      break;
+
+    case 'arrow_circle':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-circleEnd' + ')');
+      break;
+
+    case 'aggregation':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-aggregationEnd' + ')');
+      break;
+
+    case 'extension':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-extensionEnd' + ')');
+      break;
+
+    case 'composition':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-compositionEnd' + ')');
+      break;
+
+    case 'dependency':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-dependencyEnd' + ')');
+      break;
+
+    default:
+  }
+
+  if (pointsHasChanged) {
+    return points;
+  }
+};
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/index.js":
+/*!************************************!*\
+  !*** ./src/dagre-wrapper/index.js ***!
+  \************************************/
+/*! exports provided: render */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dagre */ "dagre");
+/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dagre__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! graphlib */ "graphlib");
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _markers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./markers */ "./src/dagre-wrapper/markers.js");
+/* harmony import */ var _shapes_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shapes/util */ "./src/dagre-wrapper/shapes/util.js");
+/* harmony import */ var _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./mermaid-graphlib */ "./src/dagre-wrapper/mermaid-graphlib.js");
+/* harmony import */ var _nodes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./nodes */ "./src/dagre-wrapper/nodes.js");
+/* harmony import */ var _clusters__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./clusters */ "./src/dagre-wrapper/clusters.js");
+/* harmony import */ var _edges__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./edges */ "./src/dagre-wrapper/edges.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
+
+
+
+
+
+
+
+
+
+
+var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parentCluster) {
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Graph in recursive render:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), parentCluster);
+  var dir = graph.graph().rankdir;
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Dir in recursive render - dir:', dir);
+
+  var elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
+
+
+  if (!graph.nodes()) {
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('No nodes found for', graph);
+  } else {
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Recursive render', graph.nodes());
+  }
+
+  if (graph.edges().length > 0) {
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Recursive edges', graph.edge(graph.edges()[0]));
+  }
+
+  var clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
+
+  var edgePaths = elem.insert('g').attr('class', 'edgePaths');
+  var edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
+  var nodes = elem.insert('g').attr('class', 'nodes'); // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
+  // to the abstract node and is later used by dagre for the layout
+
+  graph.nodes().forEach(function (v) {
+    var node = graph.node(v);
+
+    if (typeof parentCluster !== 'undefined') {
+      var data = JSON.parse(JSON.stringify(parentCluster.clusterData)); // data.clusterPositioning = true;
+
+      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Setting data for cluster', data);
+      graph.setNode(parentCluster.id, data);
+      graph.setParent(v, parentCluster.id, data);
+    }
+
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('(Insert) Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+
+    if (node && node.clusterNode) {
+      // const children = graph.children(v);
+      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Cluster identified', v, node, graph.node(v));
+      var newEl = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
+      Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, newEl);
+      Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["setNodeElem"])(newEl, node);
+      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Recursive render complete', newEl, node);
+    } else {
+      if (graph.children(v).length > 0) {
+        // This is a cluster but not to be rendered recusively
+        // Render as before
+        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Cluster - the non recursive path', v, node.id, node, graph);
+        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info(Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph));
+        _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][node.id] = {
+          id: Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph),
+          node: node
+        }; // insertCluster(clusters, graph.node(v));
+      } else {
+        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Node - the non recursive path', v, node.id, node);
+        Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["insertNode"])(nodes, graph.node(v), dir);
+      }
+    }
+  }); // Insert labels, this will insert them into the dom so that the width can be calculated
+  // Also figure out which edges point to/from clusters and adjust them accordingly
+  // Edges from/to clusters really points to the first child in the cluster.
+  // TODO: pick optimal child in the cluster to us as link anchor
+
+  graph.edges().forEach(function (e) {
+    var edge = graph.edge(e.v, e.w, e.name);
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e))); // Check if link is either from or to a cluster
+
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Fix', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], 'ids:', e.v, e.w, 'Translateing: ', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.v], _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.w]);
+    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdgeLabel"])(edgeLabels, edge);
+  });
+  graph.edges().forEach(function (e) {
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+  });
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('#############################################');
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('###                Layout                 ###');
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('#############################################');
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info(graph);
+  dagre__WEBPACK_IMPORTED_MODULE_0___default.a.layout(graph);
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Graph after layout:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // Move the nodes to the correct place
+
+  graph.nodes().forEach(function (v) {
+    var node = graph.node(v);
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Position ' + v + ': (' + node.x, ',' + node.y, ') width: ', node.width, ' height: ', node.height);
+
+    if (node && node.clusterNode) {
+      // clusterDb[node.id].node = node;
+      Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["positionNode"])(node);
+    } else {
+      // Non cluster node
+      if (graph.children(v).length > 0) {
+        // A cluster in the non-recurive way
+        // positionCluster(node);
+        Object(_clusters__WEBPACK_IMPORTED_MODULE_6__["insertCluster"])(clusters, node);
+        _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][node.id].node = node;
+      } else {
+        Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["positionNode"])(node);
+      }
+    }
+  }); // Move the edge labels to the correct place after layout
+
+  graph.edges().forEach(function (e) {
+    var edge = graph.edge(e);
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+    var updatedPath = Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdge"])(edgePaths, e, edge, _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], diagramtype, graph);
+    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["positionEdgeLabel"])(edge, updatedPath);
+  });
+  return elem;
+};
+
+var render = function render(elem, graph, markers, diagramtype, id) {
+  Object(_markers__WEBPACK_IMPORTED_MODULE_2__["default"])(elem, markers, diagramtype, id);
+  Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["clear"])();
+  Object(_edges__WEBPACK_IMPORTED_MODULE_7__["clear"])();
+  Object(_clusters__WEBPACK_IMPORTED_MODULE_6__["clear"])();
+  Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clear"])();
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph before:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+  Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["adjustClustersAndEdges"])(graph);
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph after:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph ever  after:', graph.graph());
+  recursiveRender(elem, graph, diagramtype);
+}; // const shapeDefinitions = {};
+// export const addShape = ({ shapeType: fun }) => {
+//   shapeDefinitions[shapeType] = fun;
+// };
+// const arrowDefinitions = {};
+// export const addArrow = ({ arrowType: fun }) => {
+//   arrowDefinitions[arrowType] = fun;
+// };
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/intersect/index.js":
+/*!**********************************************!*\
+  !*** ./src/dagre-wrapper/intersect/index.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _intersect_node_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect-node.js */ "./src/dagre-wrapper/intersect/intersect-node.js");
+/* harmony import */ var _intersect_node_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_intersect_node_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _intersect_circle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./intersect-circle.js */ "./src/dagre-wrapper/intersect/intersect-circle.js");
+/* harmony import */ var _intersect_ellipse_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./intersect-ellipse.js */ "./src/dagre-wrapper/intersect/intersect-ellipse.js");
+/* harmony import */ var _intersect_polygon_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./intersect-polygon.js */ "./src/dagre-wrapper/intersect/intersect-polygon.js");
+/* harmony import */ var _intersect_rect_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./intersect-rect.js */ "./src/dagre-wrapper/intersect/intersect-rect.js");
+/*
+ * Borrowed with love from from dagrge-d3. Many thanks to cpettitt!
+ */
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  node: _intersect_node_js__WEBPACK_IMPORTED_MODULE_0___default.a,
+  circle: _intersect_circle_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+  ellipse: _intersect_ellipse_js__WEBPACK_IMPORTED_MODULE_2__["default"],
+  polygon: _intersect_polygon_js__WEBPACK_IMPORTED_MODULE_3__["default"],
+  rect: _intersect_rect_js__WEBPACK_IMPORTED_MODULE_4__["default"]
+});
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/intersect/intersect-circle.js":
+/*!*********************************************************!*\
+  !*** ./src/dagre-wrapper/intersect/intersect-circle.js ***!
+  \*********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _intersect_ellipse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect-ellipse */ "./src/dagre-wrapper/intersect/intersect-ellipse.js");
+
+
+function intersectCircle(node, rx, point) {
+  return Object(_intersect_ellipse__WEBPACK_IMPORTED_MODULE_0__["default"])(node, rx, rx, point);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (intersectCircle);
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/intersect/intersect-ellipse.js":
+/*!**********************************************************!*\
+  !*** ./src/dagre-wrapper/intersect/intersect-ellipse.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function intersectEllipse(node, rx, ry, point) {
+  // Formulae from: http://mathworld.wolfram.com/Ellipse-LineIntersection.html
+  var cx = node.x;
+  var cy = node.y;
+  var px = cx - point.x;
+  var py = cy - point.y;
+  var det = Math.sqrt(rx * rx * py * py + ry * ry * px * px);
+  var dx = Math.abs(rx * ry * px / det);
+
+  if (point.x < cx) {
+    dx = -dx;
+  }
+
+  var dy = Math.abs(rx * ry * py / det);
+
+  if (point.y < cy) {
+    dy = -dy;
+  }
+
+  return {
+    x: cx + dx,
+    y: cy + dy
+  };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (intersectEllipse);
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/intersect/intersect-line.js":
+/*!*******************************************************!*\
+  !*** ./src/dagre-wrapper/intersect/intersect-line.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/*
+ * Returns the point at which two lines, p and q, intersect or returns
+ * undefined if they do not intersect.
+ */
+function intersectLine(p1, p2, q1, q2) {
+  // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
+  // p7 and p473.
+  var a1, a2, b1, b2, c1, c2;
+  var r1, r2, r3, r4;
+  var denom, offset, num;
+  var x, y; // Compute a1, b1, c1, where line joining points 1 and 2 is F(x,y) = a1 x +
+  // b1 y + c1 = 0.
+
+  a1 = p2.y - p1.y;
+  b1 = p1.x - p2.x;
+  c1 = p2.x * p1.y - p1.x * p2.y; // Compute r3 and r4.
+
+  r3 = a1 * q1.x + b1 * q1.y + c1;
+  r4 = a1 * q2.x + b1 * q2.y + c1; // Check signs of r3 and r4. If both point 3 and point 4 lie on
+  // same side of line 1, the line segments do not intersect.
+
+  if (r3 !== 0 && r4 !== 0 && sameSign(r3, r4)) {
+    return;
+  } // Compute a2, b2, c2 where line joining points 3 and 4 is G(x,y) = a2 x + b2 y + c2 = 0
+
+
+  a2 = q2.y - q1.y;
+  b2 = q1.x - q2.x;
+  c2 = q2.x * q1.y - q1.x * q2.y; // Compute r1 and r2
+
+  r1 = a2 * p1.x + b2 * p1.y + c2;
+  r2 = a2 * p2.x + b2 * p2.y + c2; // Check signs of r1 and r2. If both point 1 and point 2 lie
+  // on same side of second line segment, the line segments do
+  // not intersect.
+
+  if (r1 !== 0 && r2 !== 0 && sameSign(r1, r2)) {
+    return;
+  } // Line segments intersect: compute intersection point.
+
+
+  denom = a1 * b2 - a2 * b1;
+
+  if (denom === 0) {
+    return;
+  }
+
+  offset = Math.abs(denom / 2); // The denom/2 is to get rounding instead of truncating. It
+  // is added or subtracted to the numerator, depending upon the
+  // sign of the numerator.
+
+  num = b1 * c2 - b2 * c1;
+  x = num < 0 ? (num - offset) / denom : (num + offset) / denom;
+  num = a2 * c1 - a1 * c2;
+  y = num < 0 ? (num - offset) / denom : (num + offset) / denom;
+  return {
+    x: x,
+    y: y
+  };
+}
+
+function sameSign(r1, r2) {
+  return r1 * r2 > 0;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (intersectLine);
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/intersect/intersect-node.js":
+/*!*******************************************************!*\
+  !*** ./src/dagre-wrapper/intersect/intersect-node.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = intersectNode;
+
+function intersectNode(node, point) {
+  // console.info('Intersect Node');
+  return node.intersect(point);
+}
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/intersect/intersect-polygon.js":
+/*!**********************************************************!*\
+  !*** ./src/dagre-wrapper/intersect/intersect-polygon.js ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _intersect_line__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect-line */ "./src/dagre-wrapper/intersect/intersect-line.js");
+/* eslint "no-console": off */
+
+/* harmony default export */ __webpack_exports__["default"] = (intersectPolygon);
+/*
+ * Returns the point ({x, y}) at which the point argument intersects with the
+ * node argument assuming that it has the shape specified by polygon.
+ */
+
+function intersectPolygon(node, polyPoints, point) {
+  var x1 = node.x;
+  var y1 = node.y;
+  var intersections = [];
+  var minX = Number.POSITIVE_INFINITY;
+  var minY = Number.POSITIVE_INFINITY;
+
+  if (typeof polyPoints.forEach === 'function') {
+    polyPoints.forEach(function (entry) {
+      minX = Math.min(minX, entry.x);
+      minY = Math.min(minY, entry.y);
+    });
+  } else {
+    minX = Math.min(minX, polyPoints.x);
+    minY = Math.min(minY, polyPoints.y);
+  }
+
+  var left = x1 - node.width / 2 - minX;
+  var top = y1 - node.height / 2 - minY;
+
+  for (var i = 0; i < polyPoints.length; i++) {
+    var p1 = polyPoints[i];
+    var p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
+    var intersect = Object(_intersect_line__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point, {
+      x: left + p1.x,
+      y: top + p1.y
+    }, {
+      x: left + p2.x,
+      y: top + p2.y
+    });
+
+    if (intersect) {
+      intersections.push(intersect);
+    }
+  }
+
+  if (!intersections.length) {
+    // console.log('NO INTERSECTION FOUND, RETURN NODE CENTER', node);
+    return node;
+  }
+
+  if (intersections.length > 1) {
+    // More intersections, find the one nearest to edge end point
+    intersections.sort(function (p, q) {
+      var pdx = p.x - point.x;
+      var pdy = p.y - point.y;
+      var distp = Math.sqrt(pdx * pdx + pdy * pdy);
+      var qdx = q.x - point.x;
+      var qdy = q.y - point.y;
+      var distq = Math.sqrt(qdx * qdx + qdy * qdy);
+      return distp < distq ? -1 : distp === distq ? 0 : 1;
+    });
+  }
+
+  return intersections[0];
+}
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/intersect/intersect-rect.js":
+/*!*******************************************************!*\
+  !*** ./src/dagre-wrapper/intersect/intersect-rect.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var intersectRect = function intersectRect(node, point) {
+  var x = node.x;
+  var y = node.y; // Rectangle intersection algorithm from:
+  // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
+
+  var dx = point.x - x;
+  var dy = point.y - y;
+  var w = node.width / 2;
+  var h = node.height / 2;
+  var sx, sy;
+
+  if (Math.abs(dy) * w > Math.abs(dx) * h) {
+    // Intersection is top or bottom of rect.
+    if (dy < 0) {
+      h = -h;
+    }
+
+    sx = dy === 0 ? 0 : h * dx / dy;
+    sy = h;
+  } else {
+    // Intersection is left or right of rect.
+    if (dx < 0) {
+      w = -w;
+    }
+
+    sx = w;
+    sy = dx === 0 ? 0 : w * dy / dx;
+  }
+
+  return {
+    x: x + sx,
+    y: y + sy
+  };
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (intersectRect);
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/markers.js":
+/*!**************************************!*\
+  !*** ./src/dagre-wrapper/markers.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ */
+ // Only add the number of markers that the diagram needs
+
+var insertMarkers = function insertMarkers(elem, markerArray, type, id) {
+  markerArray.forEach(function (markerName) {
+    markers[markerName](elem, type, id);
+  });
+};
+
+var extension = function extension(elem, type, id) {
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Making markers for ', id);
+  elem.append('defs').append('marker').attr('id', type + '-extensionStart').attr('class', 'marker extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 1,7 L18,13 V 1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-extensionEnd').attr('class', 'marker extension ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
+};
+
+var composition = function composition(elem, type) {
+  elem.append('defs').append('marker').attr('id', type + '-compositionStart').attr('class', 'marker composition ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-compositionEnd').attr('class', 'marker composition ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+};
+
+var aggregation = function aggregation(elem, type) {
+  elem.append('defs').append('marker').attr('id', type + '-aggregationStart').attr('class', 'marker aggregation ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-aggregationEnd').attr('class', 'marker aggregation ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+};
+
+var dependency = function dependency(elem, type) {
+  elem.append('defs').append('marker').attr('id', type + '-dependencyStart').attr('class', 'marker dependency ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
+  elem.append('defs').append('marker').attr('id', type + '-dependencyEnd').attr('class', 'marker dependency ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
+};
+
+var point = function point(elem, type) {
+  elem.append('marker').attr('id', type + '-pointEnd').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 12).attr('markerHeight', 12).attr('orient', 'auto').append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
+  elem.append('marker').attr('id', type + '-pointStart').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', 0).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 12).attr('markerHeight', 12).attr('orient', 'auto').append('path').attr('d', 'M 0 5 L 10 10 L 10 0 z').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
+};
+
+var circle = function circle(elem, type) {
+  elem.append('marker').attr('id', type + '-circleEnd').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', 11).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('circle').attr('cx', '5').attr('cy', '5').attr('r', '5').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
+  elem.append('marker').attr('id', type + '-circleStart').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', -1).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('circle').attr('cx', '5').attr('cy', '5').attr('r', '5').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
+};
+
+var cross = function cross(elem, type) {
+  elem.append('marker').attr('id', type + '-crossEnd').attr('class', 'marker cross ' + type).attr('viewBox', '0 0 11 11').attr('refX', 12).attr('refY', 5.2).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('path') // .attr('stroke', 'black')
+  .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9').attr('class', 'arrowMarkerPath').style('stroke-width', 2).style('stroke-dasharray', '1,0');
+  elem.append('marker').attr('id', type + '-crossStart').attr('class', 'marker cross ' + type).attr('viewBox', '0 0 11 11').attr('refX', -1).attr('refY', 5.2).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('path') // .attr('stroke', 'black')
+  .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9').attr('class', 'arrowMarkerPath').style('stroke-width', 2).style('stroke-dasharray', '1,0');
+};
+
+var barb = function barb(elem, type) {
+  elem.append('defs').append('marker').attr('id', type + '-barbEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 14).attr('markerUnits', 'strokeWidth').attr('orient', 'auto').append('path').attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
+}; // TODO rename the class diagram markers to something shape descriptive and semanitc free
+
+
+var markers = {
+  extension: extension,
+  composition: composition,
+  aggregation: aggregation,
+  dependency: dependency,
+  point: point,
+  circle: circle,
+  cross: cross,
+  barb: barb
+};
+/* harmony default export */ __webpack_exports__["default"] = (insertMarkers);
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/mermaid-graphlib.js":
+/*!***********************************************!*\
+  !*** ./src/dagre-wrapper/mermaid-graphlib.js ***!
+  \***********************************************/
+/*! exports provided: clusterDb, clear, extractDecendants, validate, findNonClusterChild, adjustClustersAndEdges, extractor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterDb", function() { return clusterDb; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extractDecendants", function() { return extractDecendants; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "validate", function() { return validate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findNonClusterChild", function() { return findNonClusterChild; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "adjustClustersAndEdges", function() { return adjustClustersAndEdges; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extractor", function() { return extractor; });
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! graphlib */ "graphlib");
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_1__);
+/**
+ * Decorates with functions required by mermaids dagre-wrapper.
+ */
+
+
+var clusterDb = {};
+var decendants = {};
+var parents = {};
+var clear = function clear() {
+  decendants = {};
+  parents = {};
+  clusterDb = {};
+};
+
+var isDecendant = function isDecendant(id, ancenstorId) {
+  // if (id === ancenstorId) return true;
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('In isDecendant', ancenstorId, ' ', id, ' = ', decendants[ancenstorId].indexOf(id) >= 0);
+  if (decendants[ancenstorId].indexOf(id) >= 0) return true;
+  return false;
+};
+
+var edgeInCluster = function edgeInCluster(edge, clusterId) {
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Decendants of ', clusterId, ' is ', decendants[clusterId]);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Edge is ', edge); // Edges to/from the cluster is not in the cluster, they are in the parent
+
+  if (edge.v === clusterId) return false;
+  if (edge.w === clusterId) return false;
+
+  if (!decendants[clusterId]) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Tilt, ', clusterId, ',not in decendants');
+    return false;
+  }
+
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Here ');
+  if (decendants[clusterId].indexOf(edge.v) >= 0) return true;
+  if (isDecendant(edge.v, clusterId)) return true;
+  if (isDecendant(edge.w, clusterId)) return true;
+  if (decendants[clusterId].indexOf(edge.w) >= 0) return true;
+  return false;
+};
+
+var copy = function copy(clusterId, graph, newGraph, rootId) {
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Copying children of ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
+  var nodes = graph.children(clusterId) || []; // Include cluster node if it is not the root
+
+  if (clusterId !== rootId) {
+    nodes.push(clusterId);
+  }
+
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
+  nodes.forEach(function (node) {
+    if (graph.children(node).length > 0) {
+      copy(node, graph, newGraph, rootId);
+    } else {
+      var data = graph.node(node);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('cp ', node, ' to ', rootId, ' with parent ', clusterId); //,node, data, ' parent is ', clusterId);
+
+      newGraph.setNode(node, data);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Setting parent', node, graph.parent(node));
+
+      if (rootId !== graph.parent(node)) {
+        newGraph.setParent(node, graph.parent(node));
+      }
+
+      if (clusterId !== rootId && node !== clusterId) {
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Setting parent', node, clusterId);
+        newGraph.setParent(node, clusterId);
+      } else {
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('In copy ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Not Setting parent for node=', node, 'cluster!==rootId', clusterId !== rootId, 'node!==clusterId', node !== clusterId);
+      }
+
+      var edges = graph.edges(node);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Copying Edges', edges);
+      edges.forEach(function (edge) {
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Edge', edge);
+        var data = graph.edge(edge.v, edge.w, edge.name);
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Edge data', data, rootId);
+
+        try {
+          // Do not copy edges in and out of the root cluster, they belong to the parent graph
+          if (edgeInCluster(edge, rootId)) {
+            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Copying as ', edge.v, edge.w, data, edge.name);
+            newGraph.setEdge(edge.v, edge.w, data, edge.name);
+            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('newGraph edges ', newGraph.edges(), newGraph.edge(newGraph.edges()[0]));
+          } else {
+            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Skipping copy of edge ', edge.v, '-->', edge.w, ' rootId: ', rootId, ' clusterId:', clusterId);
+          }
+        } catch (e) {
+          _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error(e);
+        }
+      });
+    }
+
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Removing node', node);
+    graph.removeNode(node);
+  });
+};
+
+var extractDecendants = function extractDecendants(id, graph) {
+  // log.debug('Extracting ', id);
+  var children = graph.children(id);
+  var res = [].concat(children);
+
+  for (var i = 0; i < children.length; i++) {
+    parents[children[i]] = id;
+    res = res.concat(extractDecendants(children[i], graph));
+  }
+
+  return res;
+};
+/**
+ * Validates the graph, checking that all parent child relation points to existing nodes and that
+ * edges between nodes also ia correct. When not correct the function logs the discrepancies.
+ * @param {graphlib graph} g
+ */
+
+var validate = function validate(graph) {
+  var edges = graph.edges();
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Edges: ', edges);
+
+  for (var i = 0; i < edges.length; i++) {
+    if (graph.children(edges[i].v).length > 0) {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('The node ', edges[i].v, ' is part of and edge even though it has children');
+      return false;
+    }
+
+    if (graph.children(edges[i].w).length > 0) {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('The node ', edges[i].w, ' is part of and edge even though it has children');
+      return false;
+    }
+  }
+
+  return true;
+};
+/**
+ * Finds a child that is not a cluster. When faking a edge between a node and a cluster.
+ * @param {Finds a } id
+ * @param {*} graph
+ */
+
+var findNonClusterChild = function findNonClusterChild(id, graph) {
+  // const node = graph.node(id);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching', id); // const children = graph.children(id).reverse();
+
+  var children = graph.children(id); //.reverse();
+
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching children of id ', id, children);
+
+  if (children.length < 1) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('This is a valid node', id);
+    return id;
+  }
+
+  for (var i = 0; i < children.length; i++) {
+    var _id = findNonClusterChild(children[i], graph);
+
+    if (_id) {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Found replacement for', id, ' => ', _id);
+      return _id;
+    }
+  }
+};
+
+var getAnchorId = function getAnchorId(id) {
+  if (!clusterDb[id]) {
+    return id;
+  } // If the cluster has no external connections
+
+
+  if (!clusterDb[id].externalConnections) {
+    return id;
+  } // Return the replacement node
+
+
+  if (clusterDb[id]) {
+    return clusterDb[id].id;
+  }
+
+  return id;
+};
+
+var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
+  if (!graph || depth > 10) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Opting out, no graph ');
+    return;
+  } else {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Opting in, graph ');
+  } // Go through the nodes and for each cluster found, save a replacment node, this can be used when
+  // faking a link to a cluster
+
+
+  graph.nodes().forEach(function (id) {
+    var children = graph.children(id);
+
+    if (children.length > 0) {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Cluster identified', id, ' Replacement id in edges: ', findNonClusterChild(id, graph));
+      decendants[id] = extractDecendants(id, graph);
+      clusterDb[id] = {
+        id: findNonClusterChild(id, graph),
+        clusterData: graph.node(id)
+      };
+    }
+  }); // Check incoming and outgoing edges for each cluster
+
+  graph.nodes().forEach(function (id) {
+    var children = graph.children(id);
+    var edges = graph.edges();
+
+    if (children.length > 0) {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Cluster identified', id, decendants);
+      edges.forEach(function (edge) {
+        // log.debug('Edge, decendants: ', edge, decendants[id]);
+        // Check if any edge leaves the cluster (not the actual cluster, thats a link from the box)
+        if (edge.v !== id && edge.w !== id) {
+          // Any edge where either the one of the nodes is decending to the cluster but not the other
+          // if (decendants[id].indexOf(edge.v) < 0 && decendants[id].indexOf(edge.w) < 0) {
+          var d1 = isDecendant(edge.v, id);
+          var d2 = isDecendant(edge.w, id); // d1 xor d2 - if either d1 is true and d2 is false or the other way around
+
+          if (d1 ^ d2) {
+            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Edge: ', edge, ' leaves cluster ', id);
+            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Decendants of ', id, ': ', decendants[id]);
+            clusterDb[id].externalConnections = true;
+          }
+        }
+      });
+    }
+  });
+  extractor(graph, 0); // For clusters with incoming and/or outgoing edges translate those edges to a real node
+  // in the cluster inorder to fake the edge
+
+  graph.edges().forEach(function (e) {
+    var edge = graph.edge(e);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+    var v = e.v;
+    var w = e.w; // Check if link is either from or to a cluster
+
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
+
+    if (clusterDb[e.v] || clusterDb[e.w]) {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fixing and trixing - removing', e.v, e.w, e.name);
+      v = getAnchorId(e.v);
+      w = getAnchorId(e.w);
+      graph.removeEdge(e.v, e.w, e.name);
+      if (v !== e.v) edge.fromCluster = e.v;
+      if (w !== e.w) edge.toCluster = e.w;
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Replacing with', v, w, e.name);
+      graph.setEdge(v, w, edge, e.name);
+    }
+  });
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Adjusted Graph', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace(clusterDb); // Remove references to extracted cluster
+  // graph.edges().forEach(edge => {
+  //   if (isDecendant(edge.v, clusterId) || isDecendant(edge.w, clusterId)) {
+  //     graph.removeEdge(edge);
+  //   }
+  // });
+};
+var extractor = function extractor(graph, depth) {
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('extractor - ', depth, graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), graph.children('D'));
+
+  if (depth > 10) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error('Bailing out');
+    return;
+  } // For clusters without incoming and/or outgoing edges, create a new cluster-node
+  // containing the nodes and edges in the custer in a new graph
+  // for (let i = 0;)
+
+
+  var nodes = graph.nodes();
+  var hasChildren = false;
+
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
+    var children = graph.children(node);
+    hasChildren = hasChildren || children.length > 0;
+  }
+
+  if (!hasChildren) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Done, no node has children', graph.nodes());
+    return;
+  } // const clusters = Object.keys(clusterDb);
+  // clusters.forEach(clusterId => {
+
+
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Nodes = ', nodes, depth);
+
+  for (var _i = 0; _i < nodes.length; _i++) {
+    var _node = nodes[_i];
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Extracting node', _node, clusterDb, clusterDb[_node] && !clusterDb[_node].externalConnections, !graph.parent(_node), graph.node(_node), graph.children('D'), ' Depth ', depth); // Note that the node might have been removed after the Object.keys call so better check
+    // that it still is in the game
+
+    if (!clusterDb[_node]) {
+      // Skip if the node is not a cluster
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Not a cluster', _node, depth); // break;
+    } else if (!clusterDb[_node].externalConnections && !graph.parent(_node) && graph.children(_node) && graph.children(_node).length > 0) {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Cluster without external connections, without a parent and with children', _node, depth);
+      var graphSettings = graph.graph();
+      var clusterGraph = new graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.Graph({
+        multigraph: true,
+        compound: true
+      }).setGraph({
+        rankdir: graphSettings.rankdir === 'TB' ? 'LR' : 'TB',
+        // Todo: set proper spacing
+        nodesep: 50,
+        ranksep: 50,
+        marginx: 8,
+        marginy: 8
+      }).setDefaultEdgeLabel(function () {
+        return {};
+      });
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Old graph before copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+      copy(_node, graph, clusterGraph, _node);
+      graph.setNode(_node, {
+        clusterNode: true,
+        id: _node,
+        clusterData: clusterDb[_node].clusterData,
+        labelText: clusterDb[_node].labelText,
+        graph: clusterGraph
+      });
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('New graph after copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(clusterGraph));
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Old graph after copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+    } else {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Cluster ** ', _node, ' **not meeting the criteria !externalConnections:', !clusterDb[_node].externalConnections, ' no parent: ', !graph.parent(_node), ' children ', graph.children(_node) && graph.children(_node).length > 0, graph.children('D'), depth);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(clusterDb);
+    }
+  }
+
+  nodes = graph.nodes();
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('New list of nodes', nodes);
+
+  for (var _i2 = 0; _i2 < nodes.length; _i2++) {
+    var _node2 = nodes[_i2];
+    var data = graph.node(_node2);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(' Now next leveö', _node2, data);
+
+    if (data.clusterNode) {
+      extractor(data.graph, depth + 1);
+    }
+  }
+};
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/nodes.js":
+/*!************************************!*\
+  !*** ./src/dagre-wrapper/nodes.js ***!
+  \************************************/
+/*! exports provided: insertNode, setNodeElem, clear, positionNode */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertNode", function() { return insertNode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setNodeElem", function() { return setNodeElem; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "positionNode", function() { return positionNode; });
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
+/* harmony import */ var _shapes_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shapes/util */ "./src/dagre-wrapper/shapes/util.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../config */ "./src/config.js");
+/* harmony import */ var _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./intersect/index.js */ "./src/dagre-wrapper/intersect/index.js");
+/* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
+/* harmony import */ var _shapes_note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./shapes/note */ "./src/dagre-wrapper/shapes/note.js");
+
+ // eslint-disable-line
+
+
+
+
+
+
+
+var question = function question(parent, node) {
+  var _labelHelper = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper.shapeSvg,
+      bbox = _labelHelper.bbox;
+
+  var w = bbox.width + node.padding;
+  var h = bbox.height + node.padding;
+  var s = w + h;
+  var points = [{
+    x: s / 2,
+    y: 0
+  }, {
+    x: s,
+    y: -s / 2
+  }, {
+    x: s / 2,
+    y: -s
+  }, {
+    x: 0,
+    y: -s / 2
+  }];
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Question main (Circle)');
+  var questionElem = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, s, s, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, questionElem);
+
+  node.intersect = function (point) {
+    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].warn('Intersect called');
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, points, point);
+  };
+
+  return shapeSvg;
+};
+
+var hexagon = function hexagon(parent, node) {
+  var _labelHelper2 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper2.shapeSvg,
+      bbox = _labelHelper2.bbox;
+
+  var f = 4;
+  var h = bbox.height + node.padding;
+  var m = h / f;
+  var w = bbox.width + 2 * m + node.padding;
+  var points = [{
+    x: m,
+    y: 0
+  }, {
+    x: w - m,
+    y: 0
+  }, {
+    x: w,
+    y: -h / 2
+  }, {
+    x: w - m,
+    y: -h
+  }, {
+    x: m,
+    y: -h
+  }, {
+    x: 0,
+    y: -h / 2
+  }];
+  var hex = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, hex);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var rect_left_inv_arrow = function rect_left_inv_arrow(parent, node) {
+  var _labelHelper3 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper3.shapeSvg,
+      bbox = _labelHelper3.bbox;
+
+  var w = bbox.width + node.padding;
+  var h = bbox.height + node.padding;
+  var points = [{
+    x: -h / 2,
+    y: 0
+  }, {
+    x: w,
+    y: 0
+  }, {
+    x: w,
+    y: -h
+  }, {
+    x: -h / 2,
+    y: -h
+  }, {
+    x: 0,
+    y: -h / 2
+  }];
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var lean_right = function lean_right(parent, node) {
+  var _labelHelper4 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper4.shapeSvg,
+      bbox = _labelHelper4.bbox;
+
+  var w = bbox.width + node.padding;
+  var h = bbox.height + node.padding;
+  var points = [{
+    x: -2 * h / 6,
+    y: 0
+  }, {
+    x: w - h / 6,
+    y: 0
+  }, {
+    x: w + 2 * h / 6,
+    y: -h
+  }, {
+    x: h / 6,
+    y: -h
+  }];
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var lean_left = function lean_left(parent, node) {
+  var _labelHelper5 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper5.shapeSvg,
+      bbox = _labelHelper5.bbox;
+
+  var w = bbox.width + node.padding;
+  var h = bbox.height + node.padding;
+  var points = [{
+    x: 2 * h / 6,
+    y: 0
+  }, {
+    x: w + h / 6,
+    y: 0
+  }, {
+    x: w - 2 * h / 6,
+    y: -h
+  }, {
+    x: -h / 6,
+    y: -h
+  }];
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var trapezoid = function trapezoid(parent, node) {
+  var _labelHelper6 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper6.shapeSvg,
+      bbox = _labelHelper6.bbox;
+
+  var w = bbox.width + node.padding;
+  var h = bbox.height + node.padding;
+  var points = [{
+    x: -2 * h / 6,
+    y: 0
+  }, {
+    x: w + 2 * h / 6,
+    y: 0
+  }, {
+    x: w - h / 6,
+    y: -h
+  }, {
+    x: h / 6,
+    y: -h
+  }];
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var inv_trapezoid = function inv_trapezoid(parent, node) {
+  var _labelHelper7 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper7.shapeSvg,
+      bbox = _labelHelper7.bbox;
+
+  var w = bbox.width + node.padding;
+  var h = bbox.height + node.padding;
+  var points = [{
+    x: h / 6,
+    y: 0
+  }, {
+    x: w - h / 6,
+    y: 0
+  }, {
+    x: w + 2 * h / 6,
+    y: -h
+  }, {
+    x: -2 * h / 6,
+    y: -h
+  }];
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var rect_right_inv_arrow = function rect_right_inv_arrow(parent, node) {
+  var _labelHelper8 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper8.shapeSvg,
+      bbox = _labelHelper8.bbox;
+
+  var w = bbox.width + node.padding;
+  var h = bbox.height + node.padding;
+  var points = [{
+    x: 0,
+    y: 0
+  }, {
+    x: w + h / 2,
+    y: 0
+  }, {
+    x: w,
+    y: -h / 2
+  }, {
+    x: w + h / 2,
+    y: -h
+  }, {
+    x: 0,
+    y: -h
+  }];
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var cylinder = function cylinder(parent, node) {
+  var _labelHelper9 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper9.shapeSvg,
+      bbox = _labelHelper9.bbox;
+
+  var w = bbox.width + node.padding;
+  var rx = w / 2;
+  var ry = rx / (2.5 + w / 50);
+  var h = bbox.height + ry + node.padding;
+  var shape = 'M 0,' + ry + ' a ' + rx + ',' + ry + ' 0,0,0 ' + w + ' 0 a ' + rx + ',' + ry + ' 0,0,0 ' + -w + ' 0 l 0,' + h + ' a ' + rx + ',' + ry + ' 0,0,0 ' + w + ' 0 l 0,' + -h;
+  var el = shapeSvg.attr('label-offset-y', ry).insert('path', ':first-child').attr('d', shape).attr('transform', 'translate(' + -w / 2 + ',' + -(h / 2 + ry) + ')');
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
+
+  node.intersect = function (point) {
+    var pos = _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
+    var x = pos.x - node.x;
+
+    if (rx != 0 && (Math.abs(x) < node.width / 2 || Math.abs(x) == node.width / 2 && Math.abs(pos.y - node.y) > node.height / 2 - ry)) {
+      // ellipsis equation: x*x / a*a + y*y / b*b = 1
+      // solve for y to get adjustion value for pos.y
+      var y = ry * ry * (1 - x * x / (rx * rx));
+      if (y != 0) y = Math.sqrt(y);
+      y = ry - y;
+      if (point.y - node.y > 0) y = -y;
+      pos.y += y;
+    }
+
+    return pos;
+  };
+
+  return shapeSvg;
+};
+
+var rect = function rect(parent, node) {
+  var _labelHelper10 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, 'node ' + node.classes, true),
+      shapeSvg = _labelHelper10.shapeSvg,
+      bbox = _labelHelper10.bbox,
+      halfPadding = _labelHelper10.halfPadding;
+
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Classes = ', node.classes); // add the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child');
+  rect.attr('class', 'basic label-container').attr('rx', node.rx).attr('ry', node.ry).attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, rect);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var rectWithTitle = function rectWithTitle(parent, node) {
+  // const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
+  var classes;
+
+  if (!node.classes) {
+    classes = 'node default';
+  } else {
+    classes = 'node ' + node.classes;
+  } // Add outer g element
+
+
+  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.id); // Create the title label and insert it after the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child'); // const innerRect = shapeSvg.insert('rect');
+
+  var innerLine = shapeSvg.insert('line');
+  var label = shapeSvg.insert('g').attr('class', 'label');
+  var text2 = node.labelText.flat();
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Label text', text2[0]);
+  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(text2[0], node.labelStyle, true, true));
+  var bbox;
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+    var div = text.children[0];
+    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Text 2', text2);
+  var textRows = text2.slice(1, text2.length);
+  var titleBox = text.getBBox();
+  var descr = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(textRows.join('<br/>'), node.labelStyle, true, true));
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+    var _div = descr.children[0];
+
+    var _dv = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(descr);
+
+    bbox = _div.getBoundingClientRect();
+
+    _dv.attr('width', bbox.width);
+
+    _dv.attr('height', bbox.height);
+  } // bbox = label.getBBox();
+  // logger.info(descr);
+
+
+  var halfPadding = node.padding / 2;
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(descr).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
+  bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) + ', ' + (titleBox.height + halfPadding + 5) + ')');
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(text).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
+  bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) + ', ' + 0 + ')'); // Get the size of the label
+  // Bounding box for title and text
+
+  bbox = label.node().getBBox(); // Center the label
+
+  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')');
+  rect.attr('class', 'outer title-state').attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
+  innerLine.attr('class', 'divider').attr('x1', -bbox.width / 2 - halfPadding).attr('x2', bbox.width / 2 + halfPadding).attr('y1', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding).attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, rect);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var stadium = function stadium(parent, node) {
+  var _labelHelper11 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper11.shapeSvg,
+      bbox = _labelHelper11.bbox;
+
+  var h = bbox.height + node.padding;
+  var w = bbox.width + h / 4 + node.padding; // add the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child').attr('rx', h / 2).attr('ry', h / 2).attr('x', -w / 2).attr('y', -h / 2).attr('width', w).attr('height', h);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, rect);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var circle = function circle(parent, node) {
+  var _labelHelper12 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper12.shapeSvg,
+      bbox = _labelHelper12.bbox,
+      halfPadding = _labelHelper12.halfPadding;
+
+  var circle = shapeSvg.insert('circle', ':first-child'); // center the circle around its coordinate
+
+  circle.attr('rx', node.rx).attr('ry', node.ry).attr('r', bbox.width / 2 + halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Circle main');
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, circle);
+
+  node.intersect = function (point) {
+    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].circle(node, bbox.width / 2 + halfPadding, point);
+  };
+
+  return shapeSvg;
+};
+
+var subroutine = function subroutine(parent, node) {
+  var _labelHelper13 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["labelHelper"])(parent, node, undefined, true),
+      shapeSvg = _labelHelper13.shapeSvg,
+      bbox = _labelHelper13.bbox;
+
+  var w = bbox.width + node.padding;
+  var h = bbox.height + node.padding;
+  var points = [{
+    x: 0,
+    y: 0
+  }, {
+    x: w,
+    y: 0
+  }, {
+    x: w,
+    y: -h
+  }, {
+    x: 0,
+    y: -h
+  }, {
+    x: 0,
+    y: 0
+  }, {
+    x: -8,
+    y: 0
+  }, {
+    x: w + 8,
+    y: 0
+  }, {
+    x: w + 8,
+    y: -h
+  }, {
+    x: -8,
+    y: -h
+  }, {
+    x: -8,
+    y: 0
+  }];
+  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, w, h, points);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, el);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var start = function start(parent, node) {
+  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.id);
+  var circle = shapeSvg.insert('circle', ':first-child'); // center the circle around its coordinate
+
+  circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, circle);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].circle(node, 7, point);
+  };
+
+  return shapeSvg;
+};
+
+var forkJoin = function forkJoin(parent, node, dir) {
+  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.id);
+  var width = 70;
+  var height = 10;
+
+  if (dir === 'LR') {
+    width = 10;
+    height = 70;
+  }
+
+  var shape = shapeSvg.append('rect').style('stroke', 'black').style('fill', 'black').attr('x', -1 * width / 2).attr('y', -1 * height / 2).attr('width', width).attr('height', height).attr('class', 'fork-join');
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, shape);
+  node.height = node.height + node.padding / 2;
+  node.width = node.width + node.padding / 2;
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var end = function end(parent, node) {
+  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.id);
+  var innerCircle = shapeSvg.insert('circle', ':first-child');
+  var circle = shapeSvg.insert('circle', ':first-child');
+  circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
+  innerCircle.attr('class', 'state-end').attr('r', 5).attr('width', 10).attr('height', 10);
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, circle);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].circle(node, 7, point);
+  };
+
+  return shapeSvg;
+};
+
+var class_box = function class_box(parent, node) {
+  var halfPadding = node.padding / 2;
+  var rowPadding = 4;
+  var lineHeight = 8;
+  var classes;
+
+  if (!node.classes) {
+    classes = 'node default';
+  } else {
+    classes = 'node ' + node.classes;
+  } // Add outer g element
+
+
+  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.id); // Create the title label and insert it after the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child');
+  var topLine = shapeSvg.insert('line');
+  var bottomLine = shapeSvg.insert('line');
+  var maxWidth = 0;
+  var maxHeight = rowPadding;
+  var labelContainer = shapeSvg.insert('g').attr('class', 'label');
+  var verticalPos = 0;
+  var hasInterface = node.classData.annotations && node.classData.annotations[0]; // 1. Create the labels
+
+  var interfaceLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(node.classData.annotations[0], node.labelStyle, true, true));
+  var interfaceBBox = interfaceLabel.getBBox();
+
+  if (node.classData.annotations[0]) {
+    maxHeight += interfaceBBox.height + rowPadding;
+    maxWidth += interfaceBBox.width;
+  }
+
+  var classTitleLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(node.labelText, node.labelStyle, true, true));
+  var classTitleBBox = classTitleLabel.getBBox();
+  maxHeight += classTitleBBox.height + rowPadding;
+
+  if (classTitleBBox.width > maxWidth) {
+    maxWidth = classTitleBBox.width;
+  }
+
+  var classAttributes = [];
+  node.classData.members.forEach(function (str) {
+    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(str, node.labelStyle, true, true));
+    var bbox = lbl.getBBox();
+
+    if (bbox.width > maxWidth) {
+      maxWidth = bbox.width;
+    }
+
+    maxHeight += bbox.height + rowPadding;
+    classAttributes.push(lbl);
+  });
+  var classMethods = [];
+  node.classData.methods.forEach(function (str) {
+    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(str, node.labelStyle, true, true));
+    var bbox = lbl.getBBox();
+
+    if (bbox.width > maxWidth) {
+      maxWidth = bbox.width;
+    }
+
+    maxHeight += bbox.height + rowPadding;
+    classMethods.push(lbl);
+  });
+  maxHeight += lineHeight; // 2. Position the labels
+  // position the interface label
+
+  if (hasInterface) {
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(interfaceLabel).attr('transform', 'translate( ' + -(maxWidth + node.padding - interfaceBBox.width / 2) / 2 + ', ' + -1 * maxHeight / 2 + ')');
+    verticalPos = interfaceBBox.height + rowPadding;
+  } // Positin the class title label
+
+
+  var diffX = (maxWidth - classTitleBBox.width) / 2;
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(classTitleLabel).attr('transform', 'translate( ' + (-1 * maxWidth / 2 + diffX) + ', ' + (-1 * maxHeight / 2 + verticalPos) + ')');
+  verticalPos += classTitleBBox.height + rowPadding;
+  topLine.attr('class', 'divider').attr('x1', -maxWidth / 2 - halfPadding).attr('x2', maxWidth / 2 + halfPadding).attr('y1', -maxHeight / 2 - halfPadding + lineHeight + verticalPos).attr('y2', -maxHeight / 2 - halfPadding + lineHeight + verticalPos);
+  verticalPos += lineHeight;
+  classAttributes.forEach(function (lbl) {
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(lbl).attr('transform', 'translate( ' + -maxWidth / 2 + ', ' + (-1 * maxHeight / 2 + verticalPos + lineHeight / 2) + ')');
+    verticalPos += classTitleBBox.height + rowPadding;
+  });
+  bottomLine.attr('class', 'divider').attr('x1', -maxWidth / 2 - halfPadding).attr('x2', maxWidth / 2 + halfPadding).attr('y1', -maxHeight / 2 - halfPadding + lineHeight + verticalPos).attr('y2', -maxHeight / 2 - halfPadding + lineHeight + verticalPos);
+  verticalPos += lineHeight;
+  classMethods.forEach(function (lbl) {
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(lbl).attr('transform', 'translate( ' + -maxWidth / 2 + ', ' + (-1 * maxHeight / 2 + verticalPos) + ')');
+    verticalPos += classTitleBBox.height + rowPadding;
+  }); //
+
+  var bbox;
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+    var div = interfaceLabel.children[0];
+    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(interfaceLabel);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  } // bbox = labelContainer.getBBox();
+  // logger.info('Text 2', text2);
+  // const textRows = text2.slice(1, text2.length);
+  // let titleBox = text.getBBox();
+  // const descr = label
+  //   .node()
+  //   .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true, true));
+  // if (getConfig().flowchart.htmlLabels) {
+  //   const div = descr.children[0];
+  //   const dv = select(descr);
+  //   bbox = div.getBoundingClientRect();
+  //   dv.attr('width', bbox.width);
+  //   dv.attr('height', bbox.height);
+  // }
+  // // bbox = label.getBBox();
+  // // logger.info(descr);
+  // select(descr).attr(
+  //   'transform',
+  //   'translate( ' +
+  //     // (titleBox.width - bbox.width) / 2 +
+  //     (bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) +
+  //     ', ' +
+  //     (titleBox.height + halfPadding + 5) +
+  //     ')'
+  // );
+  // select(text).attr(
+  //   'transform',
+  //   'translate( ' +
+  //     // (titleBox.width - bbox.width) / 2 +
+  //     (bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) +
+  //     ', ' +
+  //     0 +
+  //     ')'
+  // );
+  // // Get the size of the label
+  // // Bounding box for title and text
+  // bbox = label.node().getBBox();
+  // // Center the label
+  // label.attr(
+  //   'transform',
+  //   'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')'
+  // );
+
+
+  rect.attr('class', 'outer title-state').attr('x', -maxWidth / 2 - halfPadding).attr('y', -(maxHeight / 2) - halfPadding).attr('width', maxWidth + node.padding).attr('height', maxHeight + node.padding); // innerLine
+  //   .attr('class', 'divider')
+  //   .attr('x1', -bbox.width / 2 - halfPadding)
+  //   .attr('x2', bbox.width / 2 + halfPadding)
+  //   .attr('y1', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding)
+  //   .attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
+
+  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, rect);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+var shapes = {
+  question: question,
+  rect: rect,
+  rectWithTitle: rectWithTitle,
+  circle: circle,
+  stadium: stadium,
+  hexagon: hexagon,
+  rect_left_inv_arrow: rect_left_inv_arrow,
+  lean_right: lean_right,
+  lean_left: lean_left,
+  trapezoid: trapezoid,
+  inv_trapezoid: inv_trapezoid,
+  rect_right_inv_arrow: rect_right_inv_arrow,
+  cylinder: cylinder,
+  start: start,
+  end: end,
+  note: _shapes_note__WEBPACK_IMPORTED_MODULE_6__["default"],
+  subroutine: subroutine,
+  fork: forkJoin,
+  join: forkJoin,
+  class_box: class_box
+};
+var nodeElems = {};
+var insertNode = function insertNode(elem, node, dir) {
+  nodeElems[node.id] = shapes[node.shape](elem, node, dir);
+};
+var setNodeElem = function setNodeElem(elem, node) {
+  nodeElems[node.id] = elem;
+};
+var clear = function clear() {
+  nodeElems = {};
+};
+var positionNode = function positionNode(node) {
+  var el = nodeElems[node.id];
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Transforming node', node, 'translate(' + (node.x - node.width / 2 - 5) + ', ' + (node.y - node.height / 2 - 5) + ')');
+  var padding = 8;
+
+  if (node.clusterNode) {
+    el.attr('transform', 'translate(' + (node.x - node.width / 2 - padding) + ', ' + (node.y - node.height / 2 - padding) + ')');
+  } else {
+    el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
+  }
+};
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/shapes/note.js":
+/*!******************************************!*\
+  !*** ./src/dagre-wrapper/shapes/note.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/dagre-wrapper/shapes/util.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _intersect_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../intersect/index.js */ "./src/dagre-wrapper/intersect/index.js");
+
+ // eslint-disable-line
+
+
+
+var note = function note(parent, node) {
+  var _labelHelper = Object(_util__WEBPACK_IMPORTED_MODULE_0__["labelHelper"])(parent, node, 'node ' + node.classes, true),
+      shapeSvg = _labelHelper.shapeSvg,
+      bbox = _labelHelper.bbox,
+      halfPadding = _labelHelper.halfPadding;
+
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Classes = ', node.classes); // add the rect
+
+  var rect = shapeSvg.insert('rect', ':first-child');
+  rect.attr('rx', node.rx).attr('ry', node.ry).attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
+  Object(_util__WEBPACK_IMPORTED_MODULE_0__["updateNodeBounds"])(node, rect);
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_2__["default"].rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (note);
+
+/***/ }),
+
+/***/ "./src/dagre-wrapper/shapes/util.js":
+/*!******************************************!*\
+  !*** ./src/dagre-wrapper/shapes/util.js ***!
+  \******************************************/
+/*! exports provided: labelHelper, updateNodeBounds, insertPolygonShape */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelHelper", function() { return labelHelper; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateNodeBounds", function() { return updateNodeBounds; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertPolygonShape", function() { return insertPolygonShape; });
+/* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../createLabel */ "./src/dagre-wrapper/createLabel.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+var labelHelper = function labelHelper(parent, node, _classes, isNode) {
+  var classes;
+
+  if (!_classes) {
+    classes = 'node default';
+  } else {
+    classes = _classes;
+  } // Add outer g element
+
+
+  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.id); // Create the label and insert it after the rect
+
+  var label = shapeSvg.insert('g').attr('class', 'label');
+  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_0__["default"])(node.labelText, node.labelStyle, false, isNode)); // Get the size of the label
+
+  var bbox = text.getBBox();
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_1__["getConfig"])().flowchart.htmlLabels) {
+    var div = text.children[0];
+    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_2__["select"])(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+
+  var halfPadding = node.padding / 2; // Center the label
+
+  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
+  return {
+    shapeSvg: shapeSvg,
+    bbox: bbox,
+    halfPadding: halfPadding,
+    label: label
+  };
+};
+var updateNodeBounds = function updateNodeBounds(node, element) {
+  var bbox = element.node().getBBox();
+  node.width = bbox.width;
+  node.height = bbox.height;
+};
+function insertPolygonShape(parent, w, h, points) {
+  return parent.insert('polygon', ':first-child').attr('points', points.map(function (d) {
+    return d.x + ',' + d.y;
+  }).join(' ')).attr('class', 'label-container').attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
+}
+
+/***/ }),
+
+/***/ "./src/defaultConfig.js":
+/*!******************************!*\
+  !*** ./src/defaultConfig.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
 
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
@@ -887,6 +3380,7 @@ var config = {
    * </pre>
    */
   theme: 'default',
+  themeVariables: _themes__WEBPACK_IMPORTED_MODULE_0__["default"]['default'].getThemeVariables(),
   themeCSS: undefined,
 
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
@@ -919,11 +3413,12 @@ var config = {
   /**
    *| Parameter | Description |Type | Required | Values|
    *| --- | --- | --- | --- | --- |
-   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose, antiscript |
    *
    ***Notes:
    *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
    *-   **loose**: tags in text are allowed, click functionality is enabled
+   *-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
    */
   securityLevel: 'strict',
 
@@ -960,6 +3455,16 @@ var config = {
    * The object containing configurations specific for flowcharts
    */
   flowchart: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 8**.
+     */
+    diagramPadding: 8,
+
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
@@ -1418,7 +3923,7 @@ var config = {
   },
 
   /**
-   * The object containing configurations specific for sequence diagrams
+   * The object containing configurations specific for journey diagrams
    */
   journey: {
     /**
@@ -1659,2417 +4164,28 @@ var config = {
      *| --- | --- | --- | --- | --- |
      *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
      *
-     ***Notes:**Font size (expressed as an integer representing a number of  pixels)
+     ***Notes:**Font size (expressed as an integer representing a number of pixels)
      ***Default value: 12 **
      */
-    fontSize: 12
+    fontSize: 12,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     *
+     ***Notes:**
+     *When this flag is set to true, the diagram width is locked to 100% and
+     *scaled based on available space. If set to false, the diagram reserves its
+     *absolute width.
+     ***Default value: true**.
+     */
+    useMaxWidth: true
   }
 };
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-var defaultConfig = Object.freeze(config);
-var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
-var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
-/**
- *## setSiteConfig
-  
- *| Function | Description         | Type    | Values             |
- *| --------- | ------------------- | ------- | ------------------ |
- *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
- 
- ***Notes:**
- *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
- *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
- *to the defaultConfig
- *Note: currentConfig is set in this function
-  
- **Default value: At default, will mirror Global Config**
- * @param conf - the base currentConfig to use as siteConfig
- * @returns {*} - the siteConfig
- */
-
-var setSiteConfig = function setSiteConfig(conf) {
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf, {
-    clobber: true
-  });
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
-  return getSiteConfig();
-};
-/**
- *## getSiteConfig
- *| Function | Description         | Type    |  Values             |
- *| --------- | ------------------- | ------- |  ------------------ |
- *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
-  
- ***Notes**:
- *Returns **any** values in siteConfig.
- * @returns {*}
- */
-
-var getSiteConfig = function getSiteConfig() {
-  return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteConfig);
-};
-/**
- *## setConfig
- *| Function  | Description         | Type    | Values             |
- *| --------- | ------------------- | ------- | ------------------ |
- *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
-  
-  
- ***Notes**:
- *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
- *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
- *siteConfig value.
- * @param conf - the potential currentConfig
- * @returns {*} - the currentConfig merged with the sanitized conf
- */
-
-var setConfig = function setConfig(conf) {
-  sanitize(conf);
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf);
-  return getConfig();
-};
-/**
- *   ## getConfig
- *| Function  | Description         | Type    | Return Values            |
- *| --------- | ------------------- | ------- | ------------------ |
- *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
-  
- ***Notes**:
- *Returns **any** the currentConfig
- * @returns {*} - the currentConfig
- */
-
-var getConfig = function getConfig() {
-  return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, currentConfig);
-};
-/**
- *## sanitize
- *| Function | Description         | Type    | Values             |
- *| --------- | ------------------- | ------- | ------------------ |
- *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
-  
- *Ensures options parameter does not attempt to override siteConfig secure keys
- *Note: modifies options in-place
- * @param options - the potential setConfig parameter
- */
-
-var sanitize = function sanitize(options) {
-  Object.keys(siteConfig.secure).forEach(function (key) {
-    if (typeof options[siteConfig.secure[key]] !== 'undefined') {
-      // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
-      // can exploit the logger's attempt to stringify the value and execute arbitrary code
-      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].warn("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
-      delete options[siteConfig.secure[key]];
-    }
-  });
-};
-/**
- *## reset
-  
- *| Function | Description         | Type    | Required | Values             |
- *| --------- | ------------------- | ------- | -------- | ------------------ |
- *| reset|Resets currentConfig to conf| Put Request | Required | None|
- *
- *| Parameter | Description |Type | Required | Values|
- *| --- | --- | --- | --- | --- |
- *| conf| base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array|
- *
- **Notes :
- (default: current siteConfig ) (optional, default `getSiteConfig()`)
- * @param conf - the base currentConfig to reset to (default: current siteConfig )
- */
-
-var reset = function reset() {
-  var conf = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getSiteConfig();
-  Object.keys(siteConfig).forEach(function (key) {
-    return delete siteConfig[key];
-  });
-  Object.keys(currentConfig).forEach(function (key) {
-    return delete currentConfig[key];
-  });
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf, {
-    clobber: true
-  });
-  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf, {
-    clobber: true
-  });
-};
-var configApi = Object.freeze({
-  sanitize: sanitize,
-  setSiteConfig: setSiteConfig,
-  getSiteConfig: getSiteConfig,
-  setConfig: setConfig,
-  getConfig: getConfig,
-  reset: reset,
-  defaultConfig: defaultConfig
-});
-/* harmony default export */ __webpack_exports__["default"] = (configApi);
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/clusters.js":
-/*!***************************************!*\
-  !*** ./src/dagre-wrapper/clusters.js ***!
-  \***************************************/
-/*! exports provided: insertCluster, getClusterTitleWidth, clear, positionCluster */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertCluster", function() { return insertCluster; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getClusterTitleWidth", function() { return getClusterTitleWidth; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "positionCluster", function() { return positionCluster; });
-/* harmony import */ var _intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect/intersect-rect */ "./src/dagre-wrapper/intersect/intersect-rect.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-/* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! d3 */ "d3");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../config */ "./src/config.js");
-
- // eslint-disable-line
-
-
-
-
-
-var rect = function rect(parent, node) {
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Creating subgraph rect for ', node.id, node); // Add outer g element
-
-  var shapeSvg = parent.insert('g').attr('class', 'cluster').attr('id', node.id); // add the rect
-
-  var rect = shapeSvg.insert('rect', ':first-child'); // Create the label and insert it after the rect
-
-  var label = shapeSvg.insert('g').attr('class', 'cluster-label');
-  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_2__["default"])(node.labelText, node.labelStyle, undefined, true)); // Get the size of the label
-
-  var bbox = text.getBBox();
-
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
-    var div = text.children[0];
-    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_3__["select"])(text);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  }
-
-  var padding = 0 * node.padding;
-  var halfPadding = padding / 2;
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Data ', node, JSON.stringify(node)); // center the rect around its coordinate
-
-  rect.attr('rx', node.rx).attr('ry', node.ry).attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', node.width + padding).attr('height', node.height + padding); // Center the label
-
-  label.attr('transform', 'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2 - node.padding / 3 + 3) + ')');
-  var rectBox = rect.node().getBBox();
-  node.width = rectBox.width;
-  node.height = rectBox.height;
-
-  node.intersect = function (point) {
-    return Object(_intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point);
-  };
-
-  return shapeSvg;
-};
-/**
- * Non visiable cluster where the note is group with its
- */
-
-
-var noteGroup = function noteGroup(parent, node) {
-  // Add outer g element
-  var shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id); // add the rect
-
-  var rect = shapeSvg.insert('rect', ':first-child');
-  var padding = 0 * node.padding;
-  var halfPadding = padding / 2; // center the rect around its coordinate
-
-  rect.attr('rx', node.rx).attr('ry', node.ry).attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', node.width + padding).attr('height', node.height + padding).attr('fill', 'none');
-  var rectBox = rect.node().getBBox();
-  node.width = rectBox.width;
-  node.height = rectBox.height;
-
-  node.intersect = function (point) {
-    return Object(_intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var roundedWithTitle = function roundedWithTitle(parent, node) {
-  // Add outer g element
-  var shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id); // add the rect
-
-  var rect = shapeSvg.insert('rect', ':first-child'); // Create the label and insert it after the rect
-
-  var label = shapeSvg.insert('g').attr('class', 'cluster-label');
-  var innerRect = shapeSvg.append('rect');
-  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_2__["default"])(node.labelText, node.labelStyle, undefined, true)); // Get the size of the label
-
-  var bbox = text.getBBox();
-
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
-    var div = text.children[0];
-    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_3__["select"])(text);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  }
-
-  bbox = text.getBBox();
-  var padding = 0 * node.padding;
-  var halfPadding = padding / 2; // center the rect around its coordinate
-
-  rect.attr('class', 'outer').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', node.width + padding).attr('height', node.height + padding);
-  innerRect.attr('class', 'inner').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1).attr('width', node.width + padding).attr('height', node.height + padding - bbox.height - 3); // Center the label
-
-  label.attr('transform', 'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2 - node.padding / 3 + (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels ? 5 : 3)) + ')');
-  var rectBox = rect.node().getBBox();
-  node.width = rectBox.width;
-  node.height = rectBox.height;
-
-  node.intersect = function (point) {
-    return Object(_intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var divider = function divider(parent, node) {
-  // Add outer g element
-  var shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id); // add the rect
-
-  var rect = shapeSvg.insert('rect', ':first-child');
-  var padding = 0 * node.padding;
-  var halfPadding = padding / 2; // center the rect around its coordinate
-
-  rect.attr('class', 'divider').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2).attr('width', node.width + padding).attr('height', node.height + padding);
-  var rectBox = rect.node().getBBox();
-  node.width = rectBox.width;
-  node.height = rectBox.height;
-
-  node.intersect = function (point) {
-    return Object(_intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var shapes = {
-  rect: rect,
-  roundedWithTitle: roundedWithTitle,
-  noteGroup: noteGroup,
-  divider: divider
-};
-var clusterElems = {};
-var insertCluster = function insertCluster(elem, node) {
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Inserting cluster');
-  var shape = node.shape || 'rect';
-  clusterElems[node.id] = shapes[shape](elem, node);
-};
-var getClusterTitleWidth = function getClusterTitleWidth(elem, node) {
-  var label = Object(_createLabel__WEBPACK_IMPORTED_MODULE_2__["default"])(node.labelText, node.labelStyle, undefined, true);
-  elem.node().appendChild(label);
-  var width = label.getBBox().width;
-  elem.node().removeChild(label);
-  return width;
-};
-var clear = function clear() {
-  clusterElems = {};
-};
-var positionCluster = function positionCluster(node) {
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Position cluster');
-  var el = clusterElems[node.id];
-  el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
-};
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/createLabel.js":
-/*!******************************************!*\
-  !*** ./src/dagre-wrapper/createLabel.js ***!
-  \******************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../config */ "./src/config.js");
-
- // eslint-disable-line
-// let vertexNode;
-// if (getConfig().flowchart.htmlLabels) {
-//   // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-//   const node = {
-//     label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, s => `<i class='${s.replace(':', ' ')}'></i>`)
-//   };
-//   vertexNode = addHtmlLabel(svg, node).node();
-//   vertexNode.parentNode.removeChild(vertexNode);
-// } else {
-//   const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-//   svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-//   const rows = vertexText.split(common.lineBreakRegex);
-//   for (let j = 0; j < rows.length; j++) {
-//     const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-//     tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-//     tspan.setAttribute('dy', '1em');
-//     tspan.setAttribute('x', '1');
-//     tspan.textContent = rows[j];
-//     svgLabel.appendChild(tspan);
-//   }
-//   vertexNode = svgLabel;
-// }
-
-
-
-function applyStyle(dom, styleFn) {
-  if (styleFn) {
-    dom.attr('style', styleFn);
-  }
-}
-
-function addHtmlLabel(node) {
-  // var fo = root.append('foreignObject').attr('width', '100000');
-  // var div = fo.append('xhtml:div');
-  // div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
-  // var label = node.label;
-  // switch (typeof label) {
-  //   case 'function':
-  //     div.insert(label);
-  //     break;
-  //   case 'object':
-  //     // Currently we assume this is a DOM object.
-  //     div.insert(function() {
-  //       return label;
-  //     });
-  //     break;
-  //   default:
-  //     div.html(label);
-  // }
-  // applyStyle(div, node.labelStyle);
-  // div.style('display', 'inline-block');
-  // // Fix for firefox
-  // div.style('white-space', 'nowrap');
-  // var client = div.node().getBoundingClientRect();
-  // fo.attr('width', client.width).attr('height', client.height);
-  var fo = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));
-  var div = fo.append('xhtml:div');
-  var label = node.label;
-  var labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  div.html('<span class="' + labelClass + '">' + label + '</span>');
-  applyStyle(div, node.labelStyle);
-  div.style('display', 'inline-block'); // Fix for firefox
-
-  div.style('white-space', 'nowrap');
-  div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
-  return fo.node();
-}
-
-var createLabel = function createLabel(_vertexText, style, isTitle, isNode) {
-  var vertexText = _vertexText || '';
-
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])().flowchart.htmlLabels) {
-    // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-    vertexText = vertexText.replace(/\\n|\n/g, '<br />');
-    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('vertexText' + vertexText);
-    var node = {
-      isNode: isNode,
-      label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, function (s) {
-        return "<i class='".concat(s.replace(':', ' '), "'></i>");
-      })
-    };
-    var vertexNode = addHtmlLabel(node); // vertexNode.parentNode.removeChild(vertexNode);
-
-    return vertexNode;
-  } else {
-    var svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
-    var rows = [];
-
-    if (typeof vertexText === 'string') {
-      rows = vertexText.split(/\\n|\n|<br\s*\/?>/gi);
-    } else if (Array.isArray(vertexText)) {
-      rows = vertexText;
-    } else {
-      rows = [];
-    }
-
-    for (var j = 0; j < rows.length; j++) {
-      var tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-      tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-      tspan.setAttribute('dy', '1em');
-      tspan.setAttribute('x', '0');
-
-      if (isTitle) {
-        tspan.setAttribute('class', 'title-row');
-      } else {
-        tspan.setAttribute('class', 'row');
-      }
-
-      tspan.textContent = rows[j].trim();
-      svgLabel.appendChild(tspan);
-    }
-
-    return svgLabel;
-  }
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (createLabel);
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/edges.js":
-/*!************************************!*\
-  !*** ./src/dagre-wrapper/edges.js ***!
-  \************************************/
-/*! exports provided: clear, insertEdgeLabel, positionEdgeLabel, intersection, insertEdge */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertEdgeLabel", function() { return insertEdgeLabel; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "positionEdgeLabel", function() { return positionEdgeLabel; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "intersection", function() { return intersection; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertEdge", function() { return insertEdge; });
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-/* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! d3 */ "d3");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../config */ "./src/config.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
- // eslint-disable-line
-
-
-
-
- // import { calcLabelPosition } from '../utils';
-
-var edgeLabels = {};
-var clear = function clear() {
-  edgeLabels = {};
-};
-var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
-  // Create the actual text element
-  var labelElement = Object(_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(edge.label, edge.labelStyle); // Create outer g, edgeLabel, this will be positioned after graph layout
-
-  var edgeLabel = elem.insert('g').attr('class', 'edgeLabel'); // Create inner g, label, this will be positioned now for centering the text
-
-  var label = edgeLabel.insert('g').attr('class', 'label');
-  label.node().appendChild(labelElement); // Center the label
-
-  var bbox = labelElement.getBBox();
-
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
-    var div = labelElement.children[0];
-    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_2__["select"])(labelElement);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  }
-
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')'); // Make element accessible by id for positioning
-
-  edgeLabels[edge.id] = edgeLabel; // Update the abstract data of the edge with the new information about its width and height
-
-  edge.width = bbox.width;
-  edge.height = bbox.height;
-};
-var positionEdgeLabel = function positionEdgeLabel(edge, points) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
-
-  if (edge.label) {
-    var el = edgeLabels[edge.id];
-    var x = edge.x;
-    var y = edge.y;
-
-    if (points) {
-      // debugger;
-      var pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcLabelPosition(points);
-      x = pos.x;
-      y = pos.y;
-    }
-
-    el.attr('transform', 'translate(' + x + ', ' + y + ')');
-  }
-}; // const getRelationType = function(type) {
-//   switch (type) {
-//     case stateDb.relationType.AGGREGATION:
-//       return 'aggregation';
-//     case stateDb.relationType.EXTENSION:
-//       return 'extension';
-//     case stateDb.relationType.COMPOSITION:
-//       return 'composition';
-//     case stateDb.relationType.DEPENDENCY:
-//       return 'dependency';
-//   }
-// };
-
-var outsideNode = function outsideNode(node, point) {
-  // logger.warn('Checking bounds ', node, point);
-  var x = node.x;
-  var y = node.y;
-  var dx = Math.abs(point.x - x);
-  var dy = Math.abs(point.y - y);
-  var w = node.width / 2;
-  var h = node.height / 2;
-
-  if (dx >= w || dy >= h) {
-    return true;
-  }
-
-  return false;
-};
-
-var intersection = function intersection(node, outsidePoint, insidePoint) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
-  var x = node.x;
-  var y = node.y;
-  var dx = Math.abs(x - insidePoint.x);
-  var w = node.width / 2;
-  var r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-  var h = node.height / 2;
-  var edges = {
-    x1: x - w,
-    x2: x + w,
-    y1: y - h,
-    y2: y + h
-  };
-
-  if (outsidePoint.x === edges.x1 || outsidePoint.x === edges.x2 || outsidePoint.y === edges.y1 || outsidePoint.y === edges.y2) {
-    // logger.warn('calc equals on edge');
-    return outsidePoint;
-  }
-
-  var Q = Math.abs(outsidePoint.y - insidePoint.y);
-  var R = Math.abs(outsidePoint.x - insidePoint.x); // log.warn();
-
-  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
-    // eslint-disable-line
-    // Intersection is top or bottom of rect.
-    // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
-    var q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
-    r = R * q / Q;
-    var res = {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
-      y: outsidePoint.y + q
-    };
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
-    return res;
-  } else {
-    // Intersection onn sides of rect
-    // q = (Q * r) / R;
-    // q = 2;
-    // r = (R * q) / Q;
-    if (insidePoint.x < outsidePoint.x) {
-      r = outsidePoint.x - w - x;
-    } else {
-      // r = outsidePoint.x - w - x;
-      r = x - w - outsidePoint.x;
-    }
-
-    var _q = _q = Q * r / R;
-
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("sides calc, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
-    });
-    return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
-    };
-  }
-}; //(edgePaths, e, edge, clusterDb, diagramtype, graph)
-
-var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, graph) {
-  var points = edge.points;
-  var pointsHasChanged = false;
-  var tail = graph.node(e.v);
-  var head = graph.node(e.w);
-
-  if (head.intersect && tail.intersect) {
-    points = points.slice(1, edge.points.length - 1);
-    points.unshift(tail.intersect(points[0]));
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Last point', points[points.length - 1], head, head.intersect(points[points.length - 1]));
-    points.push(head.intersect(points[points.length - 1]));
-  }
-
-  if (edge.toCluster) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('to cluster', clusterDb[edge.toCluster]);
-    points = [];
-    var lastPointOutside;
-    var isInside = false;
-    edge.points.forEach(function (point) {
-      var node = clusterDb[edge.toCluster].node;
-
-      if (!outsideNode(node, point) && !isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('inside', edge.toCluster, point, lastPointOutside); // First point inside the rect
-
-        var insterection = intersection(node, lastPointOutside, point);
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('intersect', insterection);
-        points.push(insterection);
-        isInside = true;
-      } else {
-        if (!isInside) points.push(point);
-      }
-
-      lastPointOutside = point;
-    });
-    pointsHasChanged = true;
-  }
-
-  if (edge.fromCluster) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('from cluster', clusterDb[edge.fromCluster]);
-    var updatedPoints = [];
-
-    var _lastPointOutside;
-
-    var _isInside = false;
-
-    for (var i = points.length - 1; i >= 0; i--) {
-      var point = points[i];
-      var node = clusterDb[edge.fromCluster].node;
-
-      if (!outsideNode(node, point) && !_isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('inside', edge.fromCluster, point, node); // First point inside the rect
-
-        var insterection = intersection(node, _lastPointOutside, point); // logger.trace('intersect', intersection(node, lastPointOutside, point));
-
-        updatedPoints.unshift(insterection); // points.push(insterection);
-
-        _isInside = true;
-      } else {
-        // at the outside
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Outside point', point);
-        if (!_isInside) updatedPoints.unshift(point);
-      }
-
-      _lastPointOutside = point;
-    }
-
-    points = updatedPoints;
-    pointsHasChanged = true;
-  } // The data for our line
-
-
-  var lineData = points.filter(function (p) {
-    return !Number.isNaN(p.y);
-  }); // This is the accessor function we talked about above
-
-  var lineFunction = Object(d3__WEBPACK_IMPORTED_MODULE_2__["line"])().x(function (d) {
-    return d.x;
-  }).y(function (d) {
-    return d.y;
-  }).curve(d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"]); // Contruct stroke classes based on properties
-
-  var strokeClasses;
-
-  switch (edge.thickness) {
-    case 'normal':
-      strokeClasses = 'edge-thickness-normal';
-      break;
-
-    case 'thick':
-      strokeClasses = 'edge-thickness-thick';
-      break;
-
-    default:
-      strokeClasses = '';
-  }
-
-  switch (edge.pattern) {
-    case 'solid':
-      strokeClasses += ' edge-pattern-solid';
-      break;
-
-    case 'dotted':
-      strokeClasses += ' edge-pattern-dotted';
-      break;
-
-    case 'dashed':
-      strokeClasses += ' edge-pattern-dashed';
-      break;
-  }
-
-  var svgPath = elem.append('path').attr('d', lineFunction(lineData)).attr('id', edge.id).attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '')); // DEBUG code, adds a red circle at each edge coordinate
-  // edge.points.forEach(point => {
-  //   elem
-  //     .append('circle')
-  //     .style('stroke', 'red')
-  //     .style('fill', 'red')
-  //     .attr('r', 1)
-  //     .attr('cx', point.x)
-  //     .attr('cy', point.y);
-  // });
-
-  var url = '';
-
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().state.arrowMarkerAbsolute) {
-    url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
-  }
-
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('arrowType', edge.arrowType);
-
-  switch (edge.arrowType) {
-    case 'arrow_cross':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-crossEnd' + ')');
-      break;
-
-    case 'double_arrow_cross':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-crossEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-crossStart' + ')');
-      break;
-
-    case 'arrow_point':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-pointEnd' + ')');
-      break;
-
-    case 'double_arrow_point':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-pointEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-pointStart' + ')');
-      break;
-
-    case 'arrow_barb':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-barbEnd' + ')');
-      break;
-
-    case 'double_arrow_barb':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-barnEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-barbStart' + ')');
-      break;
-
-    case 'arrow_circle':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-circleEnd' + ')');
-      break;
-
-    case 'double_arrow_circle':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-circleEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-circleStart' + ')');
-      break;
-
-    default:
-  }
-
-  if (pointsHasChanged) {
-    return points;
-  }
-};
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/index.js":
-/*!************************************!*\
-  !*** ./src/dagre-wrapper/index.js ***!
-  \************************************/
-/*! exports provided: render */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dagre */ "dagre");
-/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dagre__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! graphlib */ "graphlib");
-/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _markers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./markers */ "./src/dagre-wrapper/markers.js");
-/* harmony import */ var _shapes_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shapes/util */ "./src/dagre-wrapper/shapes/util.js");
-/* harmony import */ var _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./mermaid-graphlib */ "./src/dagre-wrapper/mermaid-graphlib.js");
-/* harmony import */ var _nodes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./nodes */ "./src/dagre-wrapper/nodes.js");
-/* harmony import */ var _clusters__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./clusters */ "./src/dagre-wrapper/clusters.js");
-/* harmony import */ var _edges__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./edges */ "./src/dagre-wrapper/edges.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-
-
-
-
-
-
-
-
-
-
-var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parentCluster) {
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Graph in recursive render:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), parentCluster);
-  var dir = graph.graph().rankdir;
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Dir in recursive render - dir:', dir);
-
-  var elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
-
-
-  if (!graph.nodes()) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('No nodes found for', graph);
-  } else {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Recursive render', graph.nodes());
-  }
-
-  if (graph.edges().length > 0) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Recursive edges', graph.edge(graph.edges()[0]));
-  }
-
-  var clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
-
-  var edgePaths = elem.insert('g').attr('class', 'edgePaths');
-  var edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
-  var nodes = elem.insert('g').attr('class', 'nodes'); // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
-  // to the abstract node and is later used by dagre for the layout
-
-  graph.nodes().forEach(function (v) {
-    var node = graph.node(v);
-
-    if (typeof parentCluster !== 'undefined') {
-      var data = JSON.parse(JSON.stringify(parentCluster.clusterData)); // data.clusterPositioning = true;
-
-      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Setting data for cluster', data);
-      graph.setNode(parentCluster.id, data);
-      graph.setParent(v, parentCluster.id, data);
-    }
-
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('(Insert) Node ' + v + ': ' + JSON.stringify(graph.node(v)));
-
-    if (node && node.clusterNode) {
-      // const children = graph.children(v);
-      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Cluster identified', v, node, graph.node(v));
-      var newEl = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
-      Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, newEl);
-      Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["setNodeElem"])(newEl, node);
-      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Recursive render complete', newEl, node);
-    } else {
-      if (graph.children(v).length > 0) {
-        // This is a cluster but not to be rendered recusively
-        // Render as before
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Cluster - the non recursive path', v, node.id, node, graph);
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace(Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph));
-        _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][node.id] = {
-          id: Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph),
-          node: node
-        }; // insertCluster(clusters, graph.node(v));
-      } else {
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Node - the non recursive path', v, node.id, node);
-        Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["insertNode"])(nodes, graph.node(v), dir);
-      }
-    }
-  }); // Insert labels, this will insert them into the dom so that the width can be calculated
-  // Also figure out which edges point to/from clusters and adjust them accordingly
-  // Edges from/to clusters really points to the first child in the cluster.
-  // TODO: pick optimal child in the cluster to us as link anchor
-
-  graph.edges().forEach(function (e) {
-    var edge = graph.edge(e.v, e.w, e.name);
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e))); // Check if link is either from or to a cluster
-
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Fix', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], 'ids:', e.v, e.w, 'Translateing: ', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.v], _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.w]);
-    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdgeLabel"])(edgeLabels, edge);
-  });
-  graph.edges().forEach(function (e) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-  });
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('#############################################');
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('###                Layout                 ###');
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('#############################################');
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info(graph);
-  dagre__WEBPACK_IMPORTED_MODULE_0___default.a.layout(graph);
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Graph after layout:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // Move the nodes to the correct place
-
-  graph.nodes().forEach(function (v) {
-    var node = graph.node(v);
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].trace('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Position ' + v + ': (' + node.x, ',' + node.y, ') width: ', node.width, ' height: ', node.height);
-
-    if (node && node.clusterNode) {
-      // clusterDb[node.id].node = node;
-      Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["positionNode"])(node);
-    } else {
-      // Non cluster node
-      if (graph.children(v).length > 0) {
-        // A cluster in the non-recurive way
-        // positionCluster(node);
-        Object(_clusters__WEBPACK_IMPORTED_MODULE_6__["insertCluster"])(clusters, node);
-        _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][node.id].node = node;
-      } else {
-        Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["positionNode"])(node);
-      }
-    }
-  }); // Move the edge labels to the correct place after layout
-
-  graph.edges().forEach(function (e) {
-    var edge = graph.edge(e);
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
-    var updatedPath = Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdge"])(edgePaths, e, edge, _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], diagramtype, graph);
-    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["positionEdgeLabel"])(edge, updatedPath);
-  });
-  return elem;
-};
-
-var render = function render(elem, graph, markers, diagramtype, id) {
-  Object(_markers__WEBPACK_IMPORTED_MODULE_2__["default"])(elem, markers, diagramtype, id);
-  Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["clear"])();
-  Object(_edges__WEBPACK_IMPORTED_MODULE_7__["clear"])();
-  Object(_clusters__WEBPACK_IMPORTED_MODULE_6__["clear"])();
-  Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clear"])();
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph before:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
-  Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["adjustClustersAndEdges"])(graph);
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph after:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph ever  after:', graph.graph());
-  recursiveRender(elem, graph, diagramtype);
-}; // const shapeDefinitions = {};
-// export const addShape = ({ shapeType: fun }) => {
-//   shapeDefinitions[shapeType] = fun;
-// };
-// const arrowDefinitions = {};
-// export const addArrow = ({ arrowType: fun }) => {
-//   arrowDefinitions[arrowType] = fun;
-// };
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/intersect/index.js":
-/*!**********************************************!*\
-  !*** ./src/dagre-wrapper/intersect/index.js ***!
-  \**********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _intersect_node_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect-node.js */ "./src/dagre-wrapper/intersect/intersect-node.js");
-/* harmony import */ var _intersect_node_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_intersect_node_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _intersect_circle_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./intersect-circle.js */ "./src/dagre-wrapper/intersect/intersect-circle.js");
-/* harmony import */ var _intersect_ellipse_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./intersect-ellipse.js */ "./src/dagre-wrapper/intersect/intersect-ellipse.js");
-/* harmony import */ var _intersect_polygon_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./intersect-polygon.js */ "./src/dagre-wrapper/intersect/intersect-polygon.js");
-/* harmony import */ var _intersect_rect_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./intersect-rect.js */ "./src/dagre-wrapper/intersect/intersect-rect.js");
-/*
- * Borrowed with love from from dagrge-d3. Many thanks to cpettitt!
- */
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  node: _intersect_node_js__WEBPACK_IMPORTED_MODULE_0___default.a,
-  circle: _intersect_circle_js__WEBPACK_IMPORTED_MODULE_1__["default"],
-  ellipse: _intersect_ellipse_js__WEBPACK_IMPORTED_MODULE_2__["default"],
-  polygon: _intersect_polygon_js__WEBPACK_IMPORTED_MODULE_3__["default"],
-  rect: _intersect_rect_js__WEBPACK_IMPORTED_MODULE_4__["default"]
-});
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/intersect/intersect-circle.js":
-/*!*********************************************************!*\
-  !*** ./src/dagre-wrapper/intersect/intersect-circle.js ***!
-  \*********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _intersect_ellipse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect-ellipse */ "./src/dagre-wrapper/intersect/intersect-ellipse.js");
-
-
-function intersectCircle(node, rx, point) {
-  return Object(_intersect_ellipse__WEBPACK_IMPORTED_MODULE_0__["default"])(node, rx, rx, point);
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (intersectCircle);
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/intersect/intersect-ellipse.js":
-/*!**********************************************************!*\
-  !*** ./src/dagre-wrapper/intersect/intersect-ellipse.js ***!
-  \**********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-function intersectEllipse(node, rx, ry, point) {
-  // Formulae from: http://mathworld.wolfram.com/Ellipse-LineIntersection.html
-  var cx = node.x;
-  var cy = node.y;
-  var px = cx - point.x;
-  var py = cy - point.y;
-  var det = Math.sqrt(rx * rx * py * py + ry * ry * px * px);
-  var dx = Math.abs(rx * ry * px / det);
-
-  if (point.x < cx) {
-    dx = -dx;
-  }
-
-  var dy = Math.abs(rx * ry * py / det);
-
-  if (point.y < cy) {
-    dy = -dy;
-  }
-
-  return {
-    x: cx + dx,
-    y: cy + dy
-  };
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (intersectEllipse);
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/intersect/intersect-line.js":
-/*!*******************************************************!*\
-  !*** ./src/dagre-wrapper/intersect/intersect-line.js ***!
-  \*******************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/*
- * Returns the point at which two lines, p and q, intersect or returns
- * undefined if they do not intersect.
- */
-function intersectLine(p1, p2, q1, q2) {
-  // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
-  // p7 and p473.
-  var a1, a2, b1, b2, c1, c2;
-  var r1, r2, r3, r4;
-  var denom, offset, num;
-  var x, y; // Compute a1, b1, c1, where line joining points 1 and 2 is F(x,y) = a1 x +
-  // b1 y + c1 = 0.
-
-  a1 = p2.y - p1.y;
-  b1 = p1.x - p2.x;
-  c1 = p2.x * p1.y - p1.x * p2.y; // Compute r3 and r4.
-
-  r3 = a1 * q1.x + b1 * q1.y + c1;
-  r4 = a1 * q2.x + b1 * q2.y + c1; // Check signs of r3 and r4. If both point 3 and point 4 lie on
-  // same side of line 1, the line segments do not intersect.
-
-  if (r3 !== 0 && r4 !== 0 && sameSign(r3, r4)) {
-    return;
-  } // Compute a2, b2, c2 where line joining points 3 and 4 is G(x,y) = a2 x + b2 y + c2 = 0
-
-
-  a2 = q2.y - q1.y;
-  b2 = q1.x - q2.x;
-  c2 = q2.x * q1.y - q1.x * q2.y; // Compute r1 and r2
-
-  r1 = a2 * p1.x + b2 * p1.y + c2;
-  r2 = a2 * p2.x + b2 * p2.y + c2; // Check signs of r1 and r2. If both point 1 and point 2 lie
-  // on same side of second line segment, the line segments do
-  // not intersect.
-
-  if (r1 !== 0 && r2 !== 0 && sameSign(r1, r2)) {
-    return;
-  } // Line segments intersect: compute intersection point.
-
-
-  denom = a1 * b2 - a2 * b1;
-
-  if (denom === 0) {
-    return;
-  }
-
-  offset = Math.abs(denom / 2); // The denom/2 is to get rounding instead of truncating. It
-  // is added or subtracted to the numerator, depending upon the
-  // sign of the numerator.
-
-  num = b1 * c2 - b2 * c1;
-  x = num < 0 ? (num - offset) / denom : (num + offset) / denom;
-  num = a2 * c1 - a1 * c2;
-  y = num < 0 ? (num - offset) / denom : (num + offset) / denom;
-  return {
-    x: x,
-    y: y
-  };
-}
-
-function sameSign(r1, r2) {
-  return r1 * r2 > 0;
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (intersectLine);
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/intersect/intersect-node.js":
-/*!*******************************************************!*\
-  !*** ./src/dagre-wrapper/intersect/intersect-node.js ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = intersectNode;
-
-function intersectNode(node, point) {
-  console.info('Intersect Node');
-  return node.intersect(point);
-}
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/intersect/intersect-polygon.js":
-/*!**********************************************************!*\
-  !*** ./src/dagre-wrapper/intersect/intersect-polygon.js ***!
-  \**********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _intersect_line__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect-line */ "./src/dagre-wrapper/intersect/intersect-line.js");
-/* eslint "no-console": off */
-
-/* harmony default export */ __webpack_exports__["default"] = (intersectPolygon);
-/*
- * Returns the point ({x, y}) at which the point argument intersects with the
- * node argument assuming that it has the shape specified by polygon.
- */
-
-function intersectPolygon(node, polyPoints, point) {
-  var x1 = node.x;
-  var y1 = node.y;
-  var intersections = [];
-  var minX = Number.POSITIVE_INFINITY;
-  var minY = Number.POSITIVE_INFINITY;
-  polyPoints.forEach(function (entry) {
-    minX = Math.min(minX, entry.x);
-    minY = Math.min(minY, entry.y);
-  });
-  var left = x1 - node.width / 2 - minX;
-  var top = y1 - node.height / 2 - minY;
-
-  for (var i = 0; i < polyPoints.length; i++) {
-    var p1 = polyPoints[i];
-    var p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
-    var intersect = Object(_intersect_line__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point, {
-      x: left + p1.x,
-      y: top + p1.y
-    }, {
-      x: left + p2.x,
-      y: top + p2.y
-    });
-
-    if (intersect) {
-      intersections.push(intersect);
-    }
-  }
-
-  if (!intersections.length) {
-    console.log('NO INTERSECTION FOUND, RETURN NODE CENTER', node);
-    return node;
-  }
-
-  if (intersections.length > 1) {
-    // More intersections, find the one nearest to edge end point
-    intersections.sort(function (p, q) {
-      var pdx = p.x - point.x;
-      var pdy = p.y - point.y;
-      var distp = Math.sqrt(pdx * pdx + pdy * pdy);
-      var qdx = q.x - point.x;
-      var qdy = q.y - point.y;
-      var distq = Math.sqrt(qdx * qdx + qdy * qdy);
-      return distp < distq ? -1 : distp === distq ? 0 : 1;
-    });
-  }
-
-  return intersections[0];
-}
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/intersect/intersect-rect.js":
-/*!*******************************************************!*\
-  !*** ./src/dagre-wrapper/intersect/intersect-rect.js ***!
-  \*******************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-var intersectRect = function intersectRect(node, point) {
-  var x = node.x;
-  var y = node.y; // Rectangle intersection algorithm from:
-  // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
-
-  var dx = point.x - x;
-  var dy = point.y - y;
-  var w = node.width / 2;
-  var h = node.height / 2;
-  var sx, sy;
-
-  if (Math.abs(dy) * w > Math.abs(dx) * h) {
-    // Intersection is top or bottom of rect.
-    if (dy < 0) {
-      h = -h;
-    }
-
-    sx = dy === 0 ? 0 : h * dx / dy;
-    sy = h;
-  } else {
-    // Intersection is left or right of rect.
-    if (dx < 0) {
-      w = -w;
-    }
-
-    sx = w;
-    sy = dx === 0 ? 0 : w * dy / dx;
-  }
-
-  return {
-    x: x + sx,
-    y: y + sy
-  };
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (intersectRect);
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/markers.js":
-/*!**************************************!*\
-  !*** ./src/dagre-wrapper/markers.js ***!
-  \**************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
- // Only add the number of markers that the diagram needs
-
-var insertMarkers = function insertMarkers(elem, markerArray, type, id) {
-  markerArray.forEach(function (markerName) {
-    markers[markerName](elem, type, id);
-  });
-};
-
-var extension = function extension(elem, type, id) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Making markers for ', id);
-  elem.append('defs').append('marker').attr('id', type + '-extensionStart').attr('class', 'marker extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 1,7 L18,13 V 1 Z');
-  elem.append('defs').append('marker').attr('id', type + '-extensionEnd ' + type).attr('class', 'marker extension ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
-};
-
-var composition = function composition(elem, type) {
-  elem.append('defs').append('marker').attr('id', type + '-compositionStart').attr('class', 'marker extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-  elem.append('defs').append('marker').attr('id', type + '-compositionEnd').attr('class', 'marker extension ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-};
-
-var aggregation = function aggregation(elem, type) {
-  elem.append('defs').append('marker').attr('id', type + '-aggregationStart').attr('class', 'marker extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-  elem.append('defs').append('marker').attr('id', type + '-aggregationEnd').attr('class', 'marker ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-};
-
-var dependency = function dependency(elem, type) {
-  elem.append('defs').append('marker').attr('id', type + '-dependencyStart').attr('class', 'marker extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
-  elem.append('defs').append('marker').attr('id', type + '-dependencyEnd').attr('class', 'marker ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
-};
-
-var point = function point(elem, type) {
-  elem.append('marker').attr('id', type + '-pointEnd').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 12).attr('markerHeight', 12).attr('orient', 'auto').append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
-  elem.append('marker').attr('id', type + '-pointStart').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', 0).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 12).attr('markerHeight', 12).attr('orient', 'auto').append('path').attr('d', 'M 0 5 L 10 10 L 10 0 z').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
-};
-
-var circle = function circle(elem, type) {
-  elem.append('marker').attr('id', type + '-circleEnd').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', 11).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('circle').attr('cx', '5').attr('cy', '5').attr('r', '5').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
-  elem.append('marker').attr('id', type + '-circleStart').attr('class', 'marker ' + type).attr('viewBox', '0 0 10 10').attr('refX', -1).attr('refY', 5).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('circle').attr('cx', '5').attr('cy', '5').attr('r', '5').attr('class', 'arrowMarkerPath').style('stroke-width', 1).style('stroke-dasharray', '1,0');
-};
-
-var cross = function cross(elem, type) {
-  elem.append('marker').attr('id', type + '-crossEnd').attr('class', 'marker cross ' + type).attr('viewBox', '0 0 11 11').attr('refX', 12).attr('refY', 5.2).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('path') // .attr('stroke', 'black')
-  .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9').attr('class', 'arrowMarkerPath').style('stroke-width', 2).style('stroke-dasharray', '1,0');
-  elem.append('marker').attr('id', type + '-crossStart').attr('class', 'marker cross ' + type).attr('viewBox', '0 0 11 11').attr('refX', -1).attr('refY', 5.2).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 11).attr('markerHeight', 11).attr('orient', 'auto').append('path') // .attr('stroke', 'black')
-  .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9').attr('class', 'arrowMarkerPath').style('stroke-width', 2).style('stroke-dasharray', '1,0');
-};
-
-var barb = function barb(elem, type) {
-  elem.append('defs').append('marker').attr('id', type + '-barbEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 14).attr('markerUnits', 0).attr('orient', 'auto').append('path').attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
-}; // TODO rename the class diagram markers to something shape descriptive and semanitc free
-
-
-var markers = {
-  extension: extension,
-  composition: composition,
-  aggregation: aggregation,
-  dependency: dependency,
-  point: point,
-  circle: circle,
-  cross: cross,
-  barb: barb
-};
-/* harmony default export */ __webpack_exports__["default"] = (insertMarkers);
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/mermaid-graphlib.js":
-/*!***********************************************!*\
-  !*** ./src/dagre-wrapper/mermaid-graphlib.js ***!
-  \***********************************************/
-/*! exports provided: clusterDb, clear, extractDecendants, validate, findNonClusterChild, adjustClustersAndEdges, extractor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterDb", function() { return clusterDb; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extractDecendants", function() { return extractDecendants; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "validate", function() { return validate; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findNonClusterChild", function() { return findNonClusterChild; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "adjustClustersAndEdges", function() { return adjustClustersAndEdges; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extractor", function() { return extractor; });
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! graphlib */ "graphlib");
-/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_1__);
-/**
- * Decorates with functions required by mermaids dagre-wrapper.
- */
-
-
-var clusterDb = {};
-var decendants = {};
-var parents = {};
-var clear = function clear() {
-  decendants = {};
-  parents = {};
-  clusterDb = {};
-};
-
-var isDecendant = function isDecendant(id, ancenstorId) {
-  // if (id === ancenstorId) return true;
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('In isDecendant', ancenstorId, ' ', id, ' = ', decendants[ancenstorId].indexOf(id) >= 0);
-  if (decendants[ancenstorId].indexOf(id) >= 0) return true;
-  return false;
-};
-
-var edgeInCluster = function edgeInCluster(edge, clusterId) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Decendants of ', clusterId, ' is ', decendants[clusterId]);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Edge is ', edge); // Edges to/from the cluster is not in the cluster, they are in the parent
-
-  if (edge.v === clusterId) return false;
-  if (edge.w === clusterId) return false;
-
-  if (!decendants[clusterId]) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Tilt, ', clusterId, ',not in decendants');
-    return false;
-  }
-
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Here ');
-  if (decendants[clusterId].indexOf(edge.v) >= 0) return true;
-  if (isDecendant(edge.v, clusterId)) return true;
-  if (isDecendant(edge.w, clusterId)) return true;
-  if (decendants[clusterId].indexOf(edge.w) >= 0) return true;
-  return false;
-};
-
-var copy = function copy(clusterId, graph, newGraph, rootId) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Copying children of ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
-  var nodes = graph.children(clusterId) || []; // Include cluster node if it is not the root
-
-  if (clusterId !== rootId) {
-    nodes.push(clusterId);
-  }
-
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
-  nodes.forEach(function (node) {
-    if (graph.children(node).length > 0) {
-      copy(node, graph, newGraph, rootId);
-    } else {
-      var data = graph.node(node);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('cp ', node, ' to ', rootId, ' with parent ', clusterId); //,node, data, ' parent is ', clusterId);
-
-      newGraph.setNode(node, data);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Setting parent', node, graph.parent(node));
-
-      if (rootId !== graph.parent(node)) {
-        newGraph.setParent(node, graph.parent(node));
-      }
-
-      if (clusterId !== rootId && node !== clusterId) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Setting parent', node, clusterId);
-        newGraph.setParent(node, clusterId);
-      } else {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('In copy ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Not Setting parent for node=', node, 'cluster!==rootId', clusterId !== rootId, 'node!==clusterId', node !== clusterId);
-      }
-
-      var edges = graph.edges(node);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Copying Edges', edges);
-      edges.forEach(function (edge) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Edge', edge);
-        var data = graph.edge(edge.v, edge.w, edge.name);
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Edge data', data, rootId);
-
-        try {
-          // Do not copy edges in and out of the root cluster, they belong to the parent graph
-          if (edgeInCluster(edge, rootId)) {
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Copying as ', edge.v, edge.w, data, edge.name);
-            newGraph.setEdge(edge.v, edge.w, data, edge.name);
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('newGraph edges ', newGraph.edges(), newGraph.edge(newGraph.edges()[0]));
-          } else {
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Skipping copy of edge ', edge.v, '-->', edge.w, ' rootId: ', rootId, ' clusterId:', clusterId);
-          }
-        } catch (e) {
-          _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error(e);
-        }
-      });
-    }
-
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Removing node', node);
-    graph.removeNode(node);
-  });
-};
-
-var extractDecendants = function extractDecendants(id, graph) {
-  // log.debug('Extracting ', id);
-  var children = graph.children(id);
-  var res = [].concat(children);
-
-  for (var i = 0; i < children.length; i++) {
-    parents[children[i]] = id;
-    res = res.concat(extractDecendants(children[i], graph));
-  }
-
-  return res;
-};
-/**
- * Validates the graph, checking that all parent child relation points to existing nodes and that
- * edges between nodes also ia correct. When not correct the function logs the discrepancies.
- * @param {graphlib graph} g
- */
-
-var validate = function validate(graph) {
-  var edges = graph.edges();
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Edges: ', edges);
-
-  for (var i = 0; i < edges.length; i++) {
-    if (graph.children(edges[i].v).length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('The node ', edges[i].v, ' is part of and edge even though it has children');
-      return false;
-    }
-
-    if (graph.children(edges[i].w).length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('The node ', edges[i].w, ' is part of and edge even though it has children');
-      return false;
-    }
-  }
-
-  return true;
-};
-/**
- * Finds a child that is not a cluster. When faking a edge between a node and a cluster.
- * @param {Finds a } id
- * @param {*} graph
- */
-
-var findNonClusterChild = function findNonClusterChild(id, graph) {
-  // const node = graph.node(id);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching', id); // const children = graph.children(id).reverse();
-
-  var children = graph.children(id); //.reverse();
-
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching children of id ', id, children);
-
-  if (children.length < 1) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('This is a valid node', id);
-    return id;
-  }
-
-  for (var i = 0; i < children.length; i++) {
-    var _id = findNonClusterChild(children[i], graph);
-
-    if (_id) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Found replacement for', id, ' => ', _id);
-      return _id;
-    }
-  }
-};
-
-var getAnchorId = function getAnchorId(id) {
-  if (!clusterDb[id]) {
-    return id;
-  } // If the cluster has no external connections
-
-
-  if (!clusterDb[id].externalConnections) {
-    return id;
-  } // Return the replacement node
-
-
-  if (clusterDb[id]) {
-    return clusterDb[id].id;
-  }
-
-  return id;
-};
-
-var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
-  if (!graph || depth > 10) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Opting out, no graph ');
-    return;
-  } else {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Opting in, graph ');
-  } // Go through the nodes and for each cluster found, save a replacment node, this can be used when
-  // faking a link to a cluster
-
-
-  graph.nodes().forEach(function (id) {
-    var children = graph.children(id);
-
-    if (children.length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Cluster identified', id, ' Replacement id in edges: ', findNonClusterChild(id, graph));
-      decendants[id] = extractDecendants(id, graph);
-      clusterDb[id] = {
-        id: findNonClusterChild(id, graph),
-        clusterData: graph.node(id)
-      };
-    }
-  }); // Check incoming and outgoing edges for each cluster
-
-  graph.nodes().forEach(function (id) {
-    var children = graph.children(id);
-    var edges = graph.edges();
-
-    if (children.length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Cluster identified', id, decendants);
-      edges.forEach(function (edge) {
-        // log.debug('Edge, decendants: ', edge, decendants[id]);
-        // Check if any edge leaves the cluster (not the actual cluster, thats a link from the box)
-        if (edge.v !== id && edge.w !== id) {
-          // Any edge where either the one of the nodes is decending to the cluster but not the other
-          // if (decendants[id].indexOf(edge.v) < 0 && decendants[id].indexOf(edge.w) < 0) {
-          var d1 = isDecendant(edge.v, id);
-          var d2 = isDecendant(edge.w, id); // d1 xor d2 - if either d1 is true and d2 is false or the other way around
-
-          if (d1 ^ d2) {
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Edge: ', edge, ' leaves cluster ', id);
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Decendants of ', id, ': ', decendants[id]);
-            clusterDb[id].externalConnections = true;
-          }
-        }
-      });
-    }
-  });
-  extractor(graph, 0); // For clusters with incoming and/or outgoing edges translate those edges to a real node
-  // in the cluster inorder to fake the edge
-
-  graph.edges().forEach(function (e) {
-    var edge = graph.edge(e);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
-    var v = e.v;
-    var w = e.w; // Check if link is either from or to a cluster
-
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
-
-    if (clusterDb[e.v] || clusterDb[e.w]) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fixing and trixing - removing', e.v, e.w, e.name);
-      v = getAnchorId(e.v);
-      w = getAnchorId(e.w);
-      graph.removeEdge(e.v, e.w, e.name);
-      if (v !== e.v) edge.fromCluster = e.v;
-      if (w !== e.w) edge.toCluster = e.w;
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Replacing with', v, w, e.name);
-      graph.setEdge(v, w, edge, e.name);
-    }
-  });
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Adjusted Graph', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace(clusterDb); // Remove references to extracted cluster
-  // graph.edges().forEach(edge => {
-  //   if (isDecendant(edge.v, clusterId) || isDecendant(edge.w, clusterId)) {
-  //     graph.removeEdge(edge);
-  //   }
-  // });
-};
-var extractor = function extractor(graph, depth) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('extractor - ', depth, graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), graph.children('D'));
-
-  if (depth > 10) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error('Bailing out');
-    return;
-  } // For clusters without incoming and/or outgoing edges, create a new cluster-node
-  // containing the nodes and edges in the custer in a new graph
-  // for (let i = 0;)
-
-
-  var nodes = graph.nodes();
-  var hasChildren = false;
-
-  for (var i = 0; i < nodes.length; i++) {
-    var node = nodes[i];
-    var children = graph.children(node);
-    hasChildren = hasChildren || children.length > 0;
-  }
-
-  if (!hasChildren) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Done, no node has children', graph.nodes());
-    return;
-  } // const clusters = Object.keys(clusterDb);
-  // clusters.forEach(clusterId => {
-
-
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Nodes = ', nodes, depth);
-
-  for (var _i = 0; _i < nodes.length; _i++) {
-    var _node = nodes[_i];
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Extracting node', _node, clusterDb, clusterDb[_node] && !clusterDb[_node].externalConnections, !graph.parent(_node), graph.node(_node), graph.children('D'), ' Depth ', depth); // Note that the node might have been removed after the Object.keys call so better check
-    // that it still is in the game
-
-    if (!clusterDb[_node]) {
-      // Skip if the node is not a cluster
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Not a cluster', _node, depth); // break;
-    } else if (!clusterDb[_node].externalConnections && !graph.parent(_node) && graph.children(_node) && graph.children(_node).length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Cluster without external connections, without a parent and with children', _node, depth);
-      var graphSettings = graph.graph();
-      var clusterGraph = new graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.Graph({
-        multigraph: true,
-        compound: true
-      }).setGraph({
-        rankdir: graphSettings.rankdir === 'TB' ? 'LR' : 'TB',
-        // Todo: set proper spacing
-        nodesep: 50,
-        ranksep: 50,
-        marginx: 8,
-        marginy: 8
-      }).setDefaultEdgeLabel(function () {
-        return {};
-      });
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Old graph before copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
-      copy(_node, graph, clusterGraph, _node);
-      graph.setNode(_node, {
-        clusterNode: true,
-        id: _node,
-        clusterData: clusterDb[_node].clusterData,
-        labelText: clusterDb[_node].labelText,
-        graph: clusterGraph
-      });
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('New graph after copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(clusterGraph));
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Old graph after copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
-    } else {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Cluster ** ', _node, ' **not meeting the criteria !externalConnections:', !clusterDb[_node].externalConnections, ' no parent: ', !graph.parent(_node), ' children ', graph.children(_node) && graph.children(_node).length > 0, graph.children('D'), depth);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(clusterDb);
-    }
-  }
-
-  nodes = graph.nodes();
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('New list of nodes', nodes);
-
-  for (var _i2 = 0; _i2 < nodes.length; _i2++) {
-    var _node2 = nodes[_i2];
-    var data = graph.node(_node2);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(' Now next leveö', _node2, data);
-
-    if (data.clusterNode) {
-      extractor(data.graph, depth + 1);
-    }
-  }
-};
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/nodes.js":
-/*!************************************!*\
-  !*** ./src/dagre-wrapper/nodes.js ***!
-  \************************************/
-/*! exports provided: insertNode, setNodeElem, clear, positionNode */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertNode", function() { return insertNode; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setNodeElem", function() { return setNodeElem; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "positionNode", function() { return positionNode; });
-/* harmony import */ var _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect/index.js */ "./src/dagre-wrapper/intersect/index.js");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "d3");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-/* harmony import */ var _shapes_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./shapes/util */ "./src/dagre-wrapper/shapes/util.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../config */ "./src/config.js");
-/* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
-/* harmony import */ var _shapes_note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./shapes/note */ "./src/dagre-wrapper/shapes/note.js");
-
-
- // eslint-disable-line
-
-
-
-
-
-
-var question = function question(parent, node) {
-  var _labelHelper = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper.shapeSvg,
-      bbox = _labelHelper.bbox;
-
-  var w = bbox.width + node.padding;
-  var h = bbox.height + node.padding;
-  var s = w + h;
-  var points = [{
-    x: s / 2,
-    y: 0
-  }, {
-    x: s,
-    y: -s / 2
-  }, {
-    x: s / 2,
-    y: -s
-  }, {
-    x: 0,
-    y: -s / 2
-  }];
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Question main (Circle)');
-  var questionElem = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, s, s, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, questionElem);
-
-  node.intersect = function (point) {
-    _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].warn('Intersect called');
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, points, point);
-  };
-
-  return shapeSvg;
-};
-
-var hexagon = function hexagon(parent, node) {
-  var _labelHelper2 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper2.shapeSvg,
-      bbox = _labelHelper2.bbox;
-
-  var f = 4;
-  var h = bbox.height + node.padding;
-  var m = h / f;
-  var w = bbox.width + 2 * m + node.padding;
-  var points = [{
-    x: m,
-    y: 0
-  }, {
-    x: w - m,
-    y: 0
-  }, {
-    x: w,
-    y: -h / 2
-  }, {
-    x: w - m,
-    y: -h
-  }, {
-    x: m,
-    y: -h
-  }, {
-    x: 0,
-    y: -h / 2
-  }];
-  var hex = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, hex);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var rect_left_inv_arrow = function rect_left_inv_arrow(parent, node) {
-  var _labelHelper3 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper3.shapeSvg,
-      bbox = _labelHelper3.bbox;
-
-  var w = bbox.width + node.padding;
-  var h = bbox.height + node.padding;
-  var points = [{
-    x: -h / 2,
-    y: 0
-  }, {
-    x: w,
-    y: 0
-  }, {
-    x: w,
-    y: -h
-  }, {
-    x: -h / 2,
-    y: -h
-  }, {
-    x: 0,
-    y: -h / 2
-  }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var lean_right = function lean_right(parent, node) {
-  var _labelHelper4 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper4.shapeSvg,
-      bbox = _labelHelper4.bbox;
-
-  var w = bbox.width + node.padding;
-  var h = bbox.height + node.padding;
-  var points = [{
-    x: -2 * h / 6,
-    y: 0
-  }, {
-    x: w - h / 6,
-    y: 0
-  }, {
-    x: w + 2 * h / 6,
-    y: -h
-  }, {
-    x: h / 6,
-    y: -h
-  }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var lean_left = function lean_left(parent, node) {
-  var _labelHelper5 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper5.shapeSvg,
-      bbox = _labelHelper5.bbox;
-
-  var w = bbox.width + node.padding;
-  var h = bbox.height + node.padding;
-  var points = [{
-    x: 2 * h / 6,
-    y: 0
-  }, {
-    x: w + h / 6,
-    y: 0
-  }, {
-    x: w - 2 * h / 6,
-    y: -h
-  }, {
-    x: -h / 6,
-    y: -h
-  }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var trapezoid = function trapezoid(parent, node) {
-  var _labelHelper6 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper6.shapeSvg,
-      bbox = _labelHelper6.bbox;
-
-  var w = bbox.width + node.padding;
-  var h = bbox.height + node.padding;
-  var points = [{
-    x: -2 * h / 6,
-    y: 0
-  }, {
-    x: w + 2 * h / 6,
-    y: 0
-  }, {
-    x: w - h / 6,
-    y: -h
-  }, {
-    x: h / 6,
-    y: -h
-  }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var inv_trapezoid = function inv_trapezoid(parent, node) {
-  var _labelHelper7 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper7.shapeSvg,
-      bbox = _labelHelper7.bbox;
-
-  var w = bbox.width + node.padding;
-  var h = bbox.height + node.padding;
-  var points = [{
-    x: h / 6,
-    y: 0
-  }, {
-    x: w - h / 6,
-    y: 0
-  }, {
-    x: w + 2 * h / 6,
-    y: -h
-  }, {
-    x: -2 * h / 6,
-    y: -h
-  }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var rect_right_inv_arrow = function rect_right_inv_arrow(parent, node) {
-  var _labelHelper8 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper8.shapeSvg,
-      bbox = _labelHelper8.bbox;
-
-  var w = bbox.width + node.padding;
-  var h = bbox.height + node.padding;
-  var points = [{
-    x: 0,
-    y: 0
-  }, {
-    x: w + h / 2,
-    y: 0
-  }, {
-    x: w,
-    y: -h / 2
-  }, {
-    x: w + h / 2,
-    y: -h
-  }, {
-    x: 0,
-    y: -h
-  }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var cylinder = function cylinder(parent, node) {
-  var _labelHelper9 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper9.shapeSvg,
-      bbox = _labelHelper9.bbox;
-
-  var w = bbox.width + node.padding;
-  var rx = w / 2;
-  var ry = rx / (2.5 + w / 50);
-  var h = bbox.height + ry + node.padding;
-  var shape = 'M 0,' + ry + ' a ' + rx + ',' + ry + ' 0,0,0 ' + w + ' 0 a ' + rx + ',' + ry + ' 0,0,0 ' + -w + ' 0 l 0,' + h + ' a ' + rx + ',' + ry + ' 0,0,0 ' + w + ' 0 l 0,' + -h;
-  var el = shapeSvg.attr('label-offset-y', ry).insert('path', ':first-child').attr('d', shape).attr('transform', 'translate(' + -w / 2 + ',' + -(h / 2 + ry) + ')');
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
-
-  node.intersect = function (point) {
-    var pos = _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
-    var x = pos.x - node.x;
-
-    if (rx != 0 && (Math.abs(x) < node.width / 2 || Math.abs(x) == node.width / 2 && Math.abs(pos.y - node.y) > node.height / 2 - ry)) {
-      // ellipsis equation: x*x / a*a + y*y / b*b = 1
-      // solve for y to get adjustion value for pos.y
-      var y = ry * ry * (1 - x * x / (rx * rx));
-      if (y != 0) y = Math.sqrt(y);
-      y = ry - y;
-      if (point.y - node.y > 0) y = -y;
-      pos.y += y;
-    }
-
-    return pos;
-  };
-
-  return shapeSvg;
-};
-
-var rect = function rect(parent, node) {
-  var _labelHelper10 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, 'node ' + node.classes, true),
-      shapeSvg = _labelHelper10.shapeSvg,
-      bbox = _labelHelper10.bbox,
-      halfPadding = _labelHelper10.halfPadding;
-
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].trace('Classes = ', node.classes); // add the rect
-
-  var rect = shapeSvg.insert('rect', ':first-child');
-  rect.attr('class', 'basic label-container').attr('rx', node.rx).attr('ry', node.ry).attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, rect);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var rectWithTitle = function rectWithTitle(parent, node) {
-  // const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
-  var classes;
-
-  if (!node.classes) {
-    classes = 'node default';
-  } else {
-    classes = 'node ' + node.classes;
-  } // Add outer g element
-
-
-  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.id); // Create the title label and insert it after the rect
-
-  var rect = shapeSvg.insert('rect', ':first-child'); // const innerRect = shapeSvg.insert('rect');
-
-  var innerLine = shapeSvg.insert('line');
-  var label = shapeSvg.insert('g').attr('class', 'label');
-  var text2 = node.labelText.flat();
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Label text', text2[0]);
-  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(text2[0], node.labelStyle, true, true));
-  var bbox;
-
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
-    var div = text.children[0];
-    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(text);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  }
-
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Text 2', text2);
-  var textRows = text2.slice(1, text2.length);
-  var titleBox = text.getBBox();
-  var descr = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(textRows.join('<br/>'), node.labelStyle, true, true));
-
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
-    var _div = descr.children[0];
-
-    var _dv = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(descr);
-
-    bbox = _div.getBoundingClientRect();
-
-    _dv.attr('width', bbox.width);
-
-    _dv.attr('height', bbox.height);
-  } // bbox = label.getBBox();
-  // logger.info(descr);
-
-
-  var halfPadding = node.padding / 2;
-  Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(descr).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
-  bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) + ', ' + (titleBox.height + halfPadding + 5) + ')');
-  Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(text).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
-  bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) + ', ' + 0 + ')'); // Get the size of the label
-  // Bounding box for title and text
-
-  bbox = label.node().getBBox(); // Center the label
-
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')');
-  rect.attr('class', 'outer title-state').attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
-  innerLine.attr('class', 'divider').attr('x1', -bbox.width / 2 - halfPadding).attr('x2', bbox.width / 2 + halfPadding).attr('y1', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding).attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, rect);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var stadium = function stadium(parent, node) {
-  var _labelHelper11 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper11.shapeSvg,
-      bbox = _labelHelper11.bbox;
-
-  var h = bbox.height + node.padding;
-  var w = bbox.width + h / 4 + node.padding; // add the rect
-
-  var rect = shapeSvg.insert('rect', ':first-child').attr('rx', h / 2).attr('ry', h / 2).attr('x', -w / 2).attr('y', -h / 2).attr('width', w).attr('height', h);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, rect);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var circle = function circle(parent, node) {
-  var _labelHelper12 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper12.shapeSvg,
-      bbox = _labelHelper12.bbox,
-      halfPadding = _labelHelper12.halfPadding;
-
-  var circle = shapeSvg.insert('circle', ':first-child'); // center the circle around its coordinate
-
-  circle.attr('rx', node.rx).attr('ry', node.ry).attr('r', bbox.width / 2 + halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Circle main');
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, circle);
-
-  node.intersect = function (point) {
-    _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].circle(node, bbox.width / 2 + halfPadding, point);
-  };
-
-  return shapeSvg;
-};
-
-var subroutine = function subroutine(parent, node) {
-  var _labelHelper13 = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["labelHelper"])(parent, node, undefined, true),
-      shapeSvg = _labelHelper13.shapeSvg,
-      bbox = _labelHelper13.bbox;
-
-  var w = bbox.width + node.padding;
-  var h = bbox.height + node.padding;
-  var points = [{
-    x: 0,
-    y: 0
-  }, {
-    x: w,
-    y: 0
-  }, {
-    x: w,
-    y: -h
-  }, {
-    x: 0,
-    y: -h
-  }, {
-    x: 0,
-    y: 0
-  }, {
-    x: -8,
-    y: 0
-  }, {
-    x: w + 8,
-    y: 0
-  }, {
-    x: w + 8,
-    y: -h
-  }, {
-    x: -8,
-    y: -h
-  }, {
-    x: -8,
-    y: 0
-  }];
-  var el = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["insertPolygonShape"])(shapeSvg, w, h, points);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, el);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].polygon(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var start = function start(parent, node) {
-  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.id);
-  var circle = shapeSvg.insert('circle', ':first-child'); // center the circle around its coordinate
-
-  circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, circle);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].circle(node, 7, point);
-  };
-
-  return shapeSvg;
-};
-
-var forkJoin = function forkJoin(parent, node, dir) {
-  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.id);
-  var width = 70;
-  var height = 10;
-
-  if (dir === 'LR') {
-    width = 10;
-    height = 70;
-  }
-
-  var shape = shapeSvg.append('rect').style('stroke', 'black').style('fill', 'black').attr('x', -1 * width / 2).attr('y', -1 * height / 2).attr('width', width).attr('height', height).attr('class', 'fork-join');
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, shape);
-  node.height = node.height + node.padding / 2;
-  node.width = node.width + node.padding / 2;
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].rect(node, point);
-  };
-
-  return shapeSvg;
-};
-
-var end = function end(parent, node) {
-  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.id);
-  var innerCircle = shapeSvg.insert('circle', ':first-child');
-  var circle = shapeSvg.insert('circle', ':first-child');
-  circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
-  innerCircle.attr('class', 'state-end').attr('r', 5).attr('width', 10).attr('height', 10);
-  Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, circle);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_0__["default"].circle(node, 7, point);
-  };
-
-  return shapeSvg;
-};
-
-var shapes = {
-  question: question,
-  rect: rect,
-  rectWithTitle: rectWithTitle,
-  circle: circle,
-  stadium: stadium,
-  hexagon: hexagon,
-  rect_left_inv_arrow: rect_left_inv_arrow,
-  lean_right: lean_right,
-  lean_left: lean_left,
-  trapezoid: trapezoid,
-  inv_trapezoid: inv_trapezoid,
-  rect_right_inv_arrow: rect_right_inv_arrow,
-  cylinder: cylinder,
-  start: start,
-  end: end,
-  note: _shapes_note__WEBPACK_IMPORTED_MODULE_6__["default"],
-  subroutine: subroutine,
-  fork: forkJoin,
-  join: forkJoin
-};
-var nodeElems = {};
-var insertNode = function insertNode(elem, node, dir) {
-  nodeElems[node.id] = shapes[node.shape](elem, node, dir);
-};
-var setNodeElem = function setNodeElem(elem, node) {
-  nodeElems[node.id] = elem;
-};
-var clear = function clear() {
-  nodeElems = {};
-};
-var positionNode = function positionNode(node) {
-  var el = nodeElems[node.id];
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].trace('Transforming node', node, 'translate(' + (node.x - node.width / 2 - 5) + ', ' + (node.y - node.height / 2 - 5) + ')');
-  var padding = 8;
-
-  if (node.clusterNode) {
-    el.attr('transform', 'translate(' + (node.x - node.width / 2 - padding) + ', ' + (node.y - node.height / 2 - padding) + ')');
-  } else {
-    el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
-  }
-};
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/shapes/note.js":
-/*!******************************************!*\
-  !*** ./src/dagre-wrapper/shapes/note.js ***!
-  \******************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/dagre-wrapper/shapes/util.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-/* harmony import */ var _intersect_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../intersect/index.js */ "./src/dagre-wrapper/intersect/index.js");
-
- // eslint-disable-line
-
-
-
-var note = function note(parent, node) {
-  var _labelHelper = Object(_util__WEBPACK_IMPORTED_MODULE_0__["labelHelper"])(parent, node, 'node ' + node.classes, true),
-      shapeSvg = _labelHelper.shapeSvg,
-      bbox = _labelHelper.bbox,
-      halfPadding = _labelHelper.halfPadding;
-
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Classes = ', node.classes); // add the rect
-
-  var rect = shapeSvg.insert('rect', ':first-child');
-  rect.attr('rx', node.rx).attr('ry', node.ry).attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
-  Object(_util__WEBPACK_IMPORTED_MODULE_0__["updateNodeBounds"])(node, rect);
-
-  node.intersect = function (point) {
-    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_2__["default"].rect(node, point);
-  };
-
-  return shapeSvg;
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (note);
-
-/***/ }),
-
-/***/ "./src/dagre-wrapper/shapes/util.js":
-/*!******************************************!*\
-  !*** ./src/dagre-wrapper/shapes/util.js ***!
-  \******************************************/
-/*! exports provided: labelHelper, updateNodeBounds, insertPolygonShape */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelHelper", function() { return labelHelper; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateNodeBounds", function() { return updateNodeBounds; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertPolygonShape", function() { return insertPolygonShape; });
-/* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../createLabel */ "./src/dagre-wrapper/createLabel.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! d3 */ "d3");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_2__);
-
-
-
-var labelHelper = function labelHelper(parent, node, _classes, isNode) {
-  var classes;
-
-  if (!_classes) {
-    classes = 'node default';
-  } else {
-    classes = _classes;
-  } // Add outer g element
-
-
-  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.id); // Create the label and insert it after the rect
-
-  var label = shapeSvg.insert('g').attr('class', 'label');
-  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_0__["default"])(node.labelText, node.labelStyle, false, isNode)); // Get the size of the label
-
-  var bbox = text.getBBox();
-
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_1__["getConfig"])().flowchart.htmlLabels) {
-    var div = text.children[0];
-    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_2__["select"])(text);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  }
-
-  var halfPadding = node.padding / 2; // Center the label
-
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
-  return {
-    shapeSvg: shapeSvg,
-    bbox: bbox,
-    halfPadding: halfPadding,
-    label: label
-  };
-};
-var updateNodeBounds = function updateNodeBounds(node, element) {
-  var bbox = element.node().getBBox();
-  node.width = bbox.width;
-  node.height = bbox.height;
-};
-function insertPolygonShape(parent, w, h, points) {
-  return parent.insert('polygon', ':first-child').attr('points', points.map(function (d) {
-    return d.x + ',' + d.y;
-  }).join(' ')).attr('class', 'label-container').attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
-}
+/* harmony default export */ __webpack_exports__["default"] = (config);
 
 /***/ }),
 
@@ -4077,11 +4193,12 @@ function insertPolygonShape(parent, w, h, points) {
 /*!***************************************!*\
   !*** ./src/diagrams/class/classDb.js ***!
   \***************************************/
-/*! exports provided: addClass, lookUpDomId, clear, getClass, getClasses, getRelations, addRelation, addAnnotation, addMember, addMembers, cleanupLabel, setCssClass, setLink, setClickEvent, bindFunctions, lineType, relationType, default */
+/*! exports provided: parseDirective, addClass, lookUpDomId, clear, getClass, getClasses, getRelations, addRelation, addAnnotation, addMember, addMembers, cleanupLabel, setCssClass, setLink, setClickEvent, bindFunctions, lineType, relationType, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addClass", function() { return addClass; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lookUpDomId", function() { return lookUpDomId; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
@@ -4105,17 +4222,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+
 
 
 
 
 
 var MERMAID_DOM_ID_PREFIX = 'classid-';
-var config = Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])();
+var config = _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]();
 var relations = [];
 var classes = {};
 var classCounter = 0;
 var funs = [];
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__["default"].parseDirective(this, statement, context, type);
+};
 
 var splitClassNameAndType = function splitClassNameAndType(id) {
   var genericType = '';
@@ -4374,6 +4496,10 @@ var setupToolTips = function setupToolTips(element) {
 
 funs.push(setupToolTips);
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]().class;
+  },
   addClass: addClass,
   bindFunctions: bindFunctions,
   clear: clear,
@@ -4392,6 +4518,505 @@ funs.push(setupToolTips);
   setLink: setLink,
   lookUpDomId: lookUpDomId
 });
+
+/***/ }),
+
+/***/ "./src/diagrams/class/classRenderer-v2.js":
+/*!************************************************!*\
+  !*** ./src/diagrams/class/classRenderer-v2.js ***!
+  \************************************************/
+/*! exports provided: addClasses, addRelations, setConf, drawOld, draw, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addClasses", function() { return addClasses; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addRelations", function() { return addRelations; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConf", function() { return setConf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawOld", function() { return drawOld; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "draw", function() { return draw; });
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dagre */ "dagre");
+/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dagre__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! graphlib */ "graphlib");
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _classDb__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./classDb */ "./src/diagrams/class/classDb.js");
+/* harmony import */ var _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
+/* harmony import */ var _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _svgDraw__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./svgDraw */ "./src/diagrams/class/svgDraw.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../dagre-wrapper/index.js */ "./src/dagre-wrapper/index.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+
+
+
+
+
+
+
+
+ // import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
+
+
+
+
+_parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].yy = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"];
+var idCache = {};
+var padding = 20;
+var conf = {
+  dividerMargin: 10,
+  padding: 5,
+  textHeight: 10
+};
+/**
+ * Function that adds the vertices found during parsing to the graph to be rendered.
+ * @param vert Object containing the vertices.
+ * @param g The graph that is to be drawn.
+ */
+
+var addClasses = function addClasses(classes, g) {
+  // const svg = select(`[id="${svgId}"]`);
+  var keys = Object.keys(classes);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('keys:', keys);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(classes); // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
+
+  keys.forEach(function (id) {
+    var vertex = classes[id];
+    /**
+     * Variable for storing the classes for the vertex
+     * @type {string}
+     */
+
+    var classStr = 'default'; // if (vertex.classes.length > 0) {
+    //   classStr = vertex.classes.join(' ');
+    // }
+
+    var styles = {
+      labelStyle: ''
+    }; //getStylesFromArray(vertex.styles);
+    // Use vertex id as text in the box if no text is provided by the graph definition
+
+    var vertexText = vertex.text !== undefined ? vertex.text : vertex.id; // We create a SVG label, either by delegating to addHtmlLabel or manually
+    // let vertexNode;
+    // if (getConfig().flowchart.htmlLabels) {
+    //   const node = {
+    //     label: vertexText.replace(
+    //       /fa[lrsb]?:fa-[\w-]+/g,
+    //       s => `<i class='${s.replace(':', ' ')}'></i>`
+    //     )
+    //   };
+    //   vertexNode = addHtmlLabel(svg, node).node();
+    //   vertexNode.parentNode.removeChild(vertexNode);
+    // } else {
+    //   const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    //   svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
+    //   const rows = vertexText.split(common.lineBreakRegex);
+    //   for (let j = 0; j < rows.length; j++) {
+    //     const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    //     tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+    //     tspan.setAttribute('dy', '1em');
+    //     tspan.setAttribute('x', '1');
+    //     tspan.textContent = rows[j];
+    //     svgLabel.appendChild(tspan);
+    //   }
+    //   vertexNode = svgLabel;
+    // }
+
+    var radious = 0;
+    var _shape = ''; // Set the shape based parameters
+
+    switch (vertex.type) {
+      case 'class':
+        _shape = 'class_box';
+        break;
+
+      default:
+        _shape = 'class_box';
+    } // Add the node
+
+
+    g.setNode(vertex.id, {
+      labelStyle: styles.labelStyle,
+      shape: _shape,
+      labelText: vertexText,
+      classData: vertex,
+      rx: radious,
+      ry: radious,
+      class: classStr,
+      style: styles.style,
+      id: vertex.id,
+      width: vertex.type === 'group' ? 500 : undefined,
+      type: vertex.type,
+      padding: Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.padding
+    });
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('setNode', {
+      labelStyle: styles.labelStyle,
+      shape: _shape,
+      labelText: vertexText,
+      rx: radious,
+      ry: radious,
+      class: classStr,
+      style: styles.style,
+      id: vertex.id,
+      width: vertex.type === 'group' ? 500 : undefined,
+      type: vertex.type,
+      padding: Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.padding
+    });
+  });
+};
+/**
+ * Add edges to graph based on parsed graph defninition
+ * @param {Object} edges The edges to add to the graph
+ * @param {Object} g The graph object
+ */
+
+var addRelations = function addRelations(relations, g) {
+  var cnt = 0;
+  var defaultStyle;
+  var defaultLabelStyle; // if (typeof relations.defaultStyle !== 'undefined') {
+  //   const defaultStyles = getStylesFromArray(relations.defaultStyle);
+  //   defaultStyle = defaultStyles.style;
+  //   defaultLabelStyle = defaultStyles.labelStyle;
+  // }
+
+  relations.forEach(function (edge) {
+    cnt++;
+    var edgeData = {}; //Set relationship style and line type
+
+    edgeData.classes = 'relation';
+    edgeData.pattern = edge.relation.lineType == 1 ? 'dashed' : 'solid';
+    edgeData.id = 'id' + cnt; // Set link type for rendering
+
+    if (edge.type === 'arrow_open') {
+      edgeData.arrowhead = 'none';
+    } else {
+      edgeData.arrowhead = 'normal';
+    }
+
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(edgeData, edge); //Set relation arrow types
+
+    edgeData.arrowTypeStart = getArrowMarker(edge.relation.type1);
+    edgeData.arrowTypeEnd = getArrowMarker(edge.relation.type2);
+    var style = '';
+    var labelStyle = '';
+
+    if (typeof edge.style !== 'undefined') {
+      var styles = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["getStylesFromArray"])(edge.style);
+      style = styles.style;
+      labelStyle = styles.labelStyle;
+    } else {
+      style = 'fill:none';
+
+      if (typeof defaultStyle !== 'undefined') {
+        style = defaultStyle;
+      }
+
+      if (typeof defaultLabelStyle !== 'undefined') {
+        labelStyle = defaultLabelStyle;
+      }
+    }
+
+    edgeData.style = style;
+    edgeData.labelStyle = labelStyle;
+
+    if (typeof edge.interpolate !== 'undefined') {
+      edgeData.curve = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["interpolateToCurve"])(edge.interpolate, d3__WEBPACK_IMPORTED_MODULE_0__["curveLinear"]);
+    } else if (typeof relations.defaultInterpolate !== 'undefined') {
+      edgeData.curve = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["interpolateToCurve"])(relations.defaultInterpolate, d3__WEBPACK_IMPORTED_MODULE_0__["curveLinear"]);
+    } else {
+      edgeData.curve = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["interpolateToCurve"])(conf.curve, d3__WEBPACK_IMPORTED_MODULE_0__["curveLinear"]);
+    }
+
+    edge.text = edge.title;
+
+    if (typeof edge.text === 'undefined') {
+      if (typeof edge.style !== 'undefined') {
+        edgeData.arrowheadStyle = 'fill: #333';
+      }
+    } else {
+      edgeData.arrowheadStyle = 'fill: #333';
+      edgeData.labelpos = 'c';
+
+      if (Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.htmlLabels && false) {
+        // eslint-disable-line
+        edgeData.labelType = 'html';
+        edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
+      } else {
+        edgeData.labelType = 'text';
+        edgeData.label = edge.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_10__["default"].lineBreakRegex, '\n');
+
+        if (typeof edge.style === 'undefined') {
+          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
+        }
+
+        edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
+      }
+    } // Add the edge to the graph
+
+
+    g.setEdge(edge.id1, edge.id2, edgeData, cnt);
+  });
+}; // Todo optimize
+
+var getGraphId = function getGraphId(label) {
+  var keys = Object.keys(idCache);
+
+  for (var i = 0; i < keys.length; i++) {
+    if (idCache[keys[i]].label === label) {
+      return keys[i];
+    }
+  }
+
+  return undefined;
+};
+
+var setConf = function setConf(cnf) {
+  var keys = Object.keys(cnf);
+  keys.forEach(function (key) {
+    conf[key] = cnf[key];
+  });
+};
+/**
+ * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ * @param text
+ * @param id
+ */
+
+var drawOld = function drawOld(text, id) {
+  idCache = {};
+  _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].yy.clear();
+  _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].parse(text);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Rendering diagram ' + text); // Fetch the default direction, use TD if none was found
+
+  var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id='".concat(id, "']")); // insertMarkers(diagram);
+  // Layout graph, Create a new directed graph
+
+  var g = new graphlib__WEBPACK_IMPORTED_MODULE_2___default.a.Graph({
+    multigraph: true
+  }); // Set an object for the graph label
+
+  g.setGraph({
+    isMultiGraph: true
+  }); // Default to assigning a new object as a label for each new edge.
+
+  g.setDefaultEdgeLabel(function () {
+    return {};
+  });
+  var classes = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getClasses();
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('classes:');
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(classes);
+  var keys = Object.keys(classes);
+
+  for (var i = 0; i < keys.length; i++) {
+    var classDef = classes[keys[i]];
+    var node = _svgDraw__WEBPACK_IMPORTED_MODULE_6__["default"].drawClass(diagram, classDef, conf);
+    idCache[node.id] = node; // Add nodes to the graph. The first argument is the node id. The second is
+    // metadata about the node. In this case we're going to add labels to each of
+    // our nodes.
+
+    g.setNode(node.id, node);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Org height: ' + node.height);
+  }
+
+  var relations = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getRelations();
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('relations:', relations);
+  relations.forEach(function (relation) {
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation));
+    g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {
+      relation: relation
+    }, relation.title || 'DEFAULT');
+  });
+  dagre__WEBPACK_IMPORTED_MODULE_1___default.a.layout(g);
+  g.nodes().forEach(function (v) {
+    if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
+      Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + Object(_classDb__WEBPACK_IMPORTED_MODULE_4__["lookUpDomId"])(v)).attr('transform', 'translate(' + (g.node(v).x - g.node(v).width / 2) + ',' + (g.node(v).y - g.node(v).height / 2) + ' )');
+    }
+  });
+  g.edges().forEach(function (e) {
+    if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
+      _svgDraw__WEBPACK_IMPORTED_MODULE_6__["default"].drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
+    }
+  });
+  var svgBounds = diagram.node().getBBox();
+  var width = svgBounds.width + padding * 2;
+  var height = svgBounds.height + padding * 2;
+
+  if (conf.useMaxWidth) {
+    diagram.attr('width', '100%');
+    diagram.attr('style', "max-width: ".concat(width, "px;"));
+  } else {
+    diagram.attr('height', height);
+    diagram.attr('width', width);
+  } // Ensure the viewBox includes the whole svgBounds area with extra space for padding
+
+
+  var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("viewBox ".concat(vBox));
+  diagram.attr('viewBox', vBox);
+};
+var draw = function draw(text, id) {
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Drawing class');
+  _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].clear(); // const parser = classDb.parser;
+  // parser.yy = classDb;
+  // Parse the graph definition
+  // try {
+
+  _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].parse(text); // } catch (err) {
+  // logger.debug('Parsing failed');
+  // }
+  // Fetch the default direction, use TD if none was found
+
+  var dir = 'TD';
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart;
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('config:', conf);
+  var nodeSpacing = conf.nodeSpacing || 50;
+  var rankSpacing = conf.rankSpacing || 50; // Create the input mermaid.graph
+
+  var g = new graphlib__WEBPACK_IMPORTED_MODULE_2___default.a.Graph({
+    multigraph: true,
+    compound: true
+  }).setGraph({
+    rankdir: dir,
+    nodesep: nodeSpacing,
+    ranksep: rankSpacing,
+    marginx: 8,
+    marginy: 8
+  }).setDefaultEdgeLabel(function () {
+    return {};
+  }); // let subG;
+  // const subGraphs = flowDb.getSubGraphs();
+  // logger.info('Subgraphs - ', subGraphs);
+  // for (let i = subGraphs.length - 1; i >= 0; i--) {
+  //   subG = subGraphs[i];
+  //   logger.info('Subgraph - ', subG);
+  //   flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
+  // }
+  // Fetch the verices/nodes and edges/links from the parsed graph definition
+
+  var classes = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getClasses();
+  var relations = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getRelations();
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(relations); // let i = 0;
+  // for (i = subGraphs.length - 1; i >= 0; i--) {
+  //   subG = subGraphs[i];
+  //   selectAll('cluster').append('text');
+  //   for (let j = 0; j < subG.nodes.length; j++) {
+  //     g.setParent(subG.nodes[j], subG.id);
+  //   }
+  // }
+
+  addClasses(classes, g, id);
+  addRelations(relations, g); // Add custom shapes
+  // flowChartShapes.addToRenderV2(addShape);
+  // Set up an SVG group so that we can translate the final graph.
+
+  var svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")); // Run the renderer. This is what draws the final graph.
+
+  var element = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + id + ' g');
+  Object(_dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_8__["render"])(element, g, ['aggregation', 'extension', 'composition', 'dependency'], 'classDiagram', id); // element.selectAll('g.node').attr('title', function() {
+  //   return flowDb.getTooltip(this.id);
+  // });
+
+  var padding = 8;
+  var svgBounds = svg.node().getBBox();
+  var width = svgBounds.width + padding * 2;
+  var height = svgBounds.height + padding * 2;
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("new ViewBox 0 0 ".concat(width, " ").concat(height), "translate(".concat(padding - g._label.marginx, ", ").concat(padding - g._label.marginy, ")"));
+
+  if (conf.useMaxWidth) {
+    svg.attr('width', '100%');
+    svg.attr('style', "max-width: ".concat(width, "px;"));
+  } else {
+    svg.attr('height', height);
+    svg.attr('width', width);
+  }
+
+  svg.attr('viewBox', "0 0 ".concat(width, " ").concat(height));
+  svg.select('g').attr('transform', "translate(".concat(padding - g._label.marginx, ", ").concat(padding - svgBounds.y, ")")); // Index nodes
+  // flowDb.indexNodes('subGraph' + i);
+  // Add label rects for non html labels
+
+  if (!conf.htmlLabels) {
+    var labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
+
+    for (var k = 0; k < labels.length; k++) {
+      var label = labels[k]; // Get dimensions of label
+
+      var dim = label.getBBox();
+      var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('rx', 0);
+      rect.setAttribute('ry', 0);
+      rect.setAttribute('width', dim.width);
+      rect.setAttribute('height', dim.height);
+      rect.setAttribute('style', 'fill:#e8e8e8;');
+      label.insertBefore(rect, label.firstChild);
+    }
+  } // If node has a link, wrap it in an anchor SVG object.
+  // const keys = Object.keys(classes);
+  // keys.forEach(function(key) {
+  //   const vertex = classes[key];
+  //   if (vertex.link) {
+  //     const node = select('#' + id + ' [id="' + key + '"]');
+  //     if (node) {
+  //       const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+  //       link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
+  //       link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
+  //       link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+  //       const linkNode = node.insert(function() {
+  //         return link;
+  //       }, ':first-child');
+  //       const shape = node.select('.label-container');
+  //       if (shape) {
+  //         linkNode.append(function() {
+  //           return shape.node();
+  //         });
+  //       }
+  //       const label = node.select('.label');
+  //       if (label) {
+  //         linkNode.append(function() {
+  //           return label.node();
+  //         });
+  //       }
+  //     }
+  //   }
+  // });
+
+};
+/* harmony default export */ __webpack_exports__["default"] = ({
+  setConf: setConf,
+  draw: draw
+});
+
+function getArrowMarker(type) {
+  var marker;
+
+  switch (type) {
+    case 0:
+      marker = 'aggregation';
+      break;
+
+    case 1:
+      marker = 'extension';
+      break;
+
+    case 2:
+      marker = 'composition';
+      break;
+
+    case 3:
+      marker = 'dependency';
+      break;
+
+    default:
+      marker = 'none';
+  }
+
+  return marker;
+}
 
 /***/ }),
 
@@ -4632,120 +5257,141 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,13],$V1=[1,16],$V2=[1,14],$V3=[1,15],$V4=[1,17],$V5=[1,18],$V6=[1,20],$V7=[1,21],$V8=[1,22],$V9=[6,8],$Va=[1,31],$Vb=[1,32],$Vc=[1,33],$Vd=[1,34],$Ve=[1,35],$Vf=[1,36],$Vg=[6,8,14,20,28,31,32,33,34,35,36],$Vh=[6,8,12,14,20,24,28,31,32,33,34,35,36,52,53,54],$Vi=[28,52,53,54],$Vj=[28,35,36,52,53,54],$Vk=[28,31,32,33,34,52,53,54],$Vl=[6,8,14],$Vm=[1,59];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,6],$V2=[1,14],$V3=[1,25],$V4=[1,28],$V5=[1,26],$V6=[1,27],$V7=[1,29],$V8=[1,30],$V9=[1,31],$Va=[1,33],$Vb=[1,34],$Vc=[1,35],$Vd=[10,19],$Ve=[1,47],$Vf=[1,48],$Vg=[1,49],$Vh=[1,50],$Vi=[1,51],$Vj=[1,52],$Vk=[10,19,25,32,33,41,44,45,46,47,48,49],$Vl=[10,19,23,25,32,33,37,41,44,45,46,47,48,49,66,67,68],$Vm=[10,13,17,19],$Vn=[41,66,67,68],$Vo=[41,48,49,66,67,68],$Vp=[41,44,45,46,47,66,67,68],$Vq=[10,19,25],$Vr=[1,81];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"CLASS_DIAGRAM":5,"NEWLINE":6,"statements":7,"EOF":8,"statement":9,"className":10,"alphaNumToken":11,"GENERICTYPE":12,"relationStatement":13,"LABEL":14,"classStatement":15,"methodStatement":16,"annotationStatement":17,"clickStatement":18,"CLASS":19,"STRUCT_START":20,"members":21,"STRUCT_STOP":22,"ANNOTATION_START":23,"ANNOTATION_END":24,"MEMBER":25,"SEPARATOR":26,"relation":27,"STR":28,"relationType":29,"lineType":30,"AGGREGATION":31,"EXTENSION":32,"COMPOSITION":33,"DEPENDENCY":34,"LINE":35,"DOTTED_LINE":36,"CALLBACK":37,"LINK":38,"commentToken":39,"textToken":40,"graphCodeTokens":41,"textNoTagsToken":42,"TAGSTART":43,"TAGEND":44,"==":45,"--":46,"PCT":47,"DEFAULT":48,"SPACE":49,"MINUS":50,"keywords":51,"UNICODE_TEXT":52,"NUM":53,"ALPHA":54,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"CLASS_DIAGRAM",6:"NEWLINE",8:"EOF",12:"GENERICTYPE",14:"LABEL",19:"CLASS",20:"STRUCT_START",22:"STRUCT_STOP",23:"ANNOTATION_START",24:"ANNOTATION_END",25:"MEMBER",26:"SEPARATOR",28:"STR",31:"AGGREGATION",32:"EXTENSION",33:"COMPOSITION",34:"DEPENDENCY",35:"LINE",36:"DOTTED_LINE",37:"CALLBACK",38:"LINK",41:"graphCodeTokens",43:"TAGSTART",44:"TAGEND",45:"==",46:"--",47:"PCT",48:"DEFAULT",49:"SPACE",50:"MINUS",51:"keywords",52:"UNICODE_TEXT",53:"NUM",54:"ALPHA"},
-productions_: [0,[3,1],[4,4],[7,1],[7,2],[7,3],[10,2],[10,1],[10,3],[10,2],[9,1],[9,2],[9,1],[9,1],[9,1],[9,1],[15,2],[15,5],[17,4],[21,1],[21,2],[16,1],[16,2],[16,1],[16,1],[13,3],[13,4],[13,4],[13,5],[27,3],[27,2],[27,2],[27,1],[29,1],[29,1],[29,1],[29,1],[30,1],[30,1],[18,3],[18,4],[18,3],[18,4],[39,1],[39,1],[40,1],[40,1],[40,1],[40,1],[40,1],[40,1],[40,1],[42,1],[42,1],[42,1],[42,1],[11,1],[11,1],[11,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"graphConfig":6,"openDirective":7,"typeDirective":8,"closeDirective":9,"NEWLINE":10,":":11,"argDirective":12,"open_directive":13,"type_directive":14,"arg_directive":15,"close_directive":16,"CLASS_DIAGRAM":17,"statements":18,"EOF":19,"statement":20,"className":21,"alphaNumToken":22,"GENERICTYPE":23,"relationStatement":24,"LABEL":25,"classStatement":26,"methodStatement":27,"annotationStatement":28,"clickStatement":29,"cssClassStatement":30,"CLASS":31,"STYLE_SEPARATOR":32,"STRUCT_START":33,"members":34,"STRUCT_STOP":35,"ANNOTATION_START":36,"ANNOTATION_END":37,"MEMBER":38,"SEPARATOR":39,"relation":40,"STR":41,"relationType":42,"lineType":43,"AGGREGATION":44,"EXTENSION":45,"COMPOSITION":46,"DEPENDENCY":47,"LINE":48,"DOTTED_LINE":49,"CALLBACK":50,"LINK":51,"CSSCLASS":52,"commentToken":53,"textToken":54,"graphCodeTokens":55,"textNoTagsToken":56,"TAGSTART":57,"TAGEND":58,"==":59,"--":60,"PCT":61,"DEFAULT":62,"SPACE":63,"MINUS":64,"keywords":65,"UNICODE_TEXT":66,"NUM":67,"ALPHA":68,"$accept":0,"$end":1},
+terminals_: {2:"error",10:"NEWLINE",11:":",13:"open_directive",14:"type_directive",15:"arg_directive",16:"close_directive",17:"CLASS_DIAGRAM",19:"EOF",23:"GENERICTYPE",25:"LABEL",31:"CLASS",32:"STYLE_SEPARATOR",33:"STRUCT_START",35:"STRUCT_STOP",36:"ANNOTATION_START",37:"ANNOTATION_END",38:"MEMBER",39:"SEPARATOR",41:"STR",44:"AGGREGATION",45:"EXTENSION",46:"COMPOSITION",47:"DEPENDENCY",48:"LINE",49:"DOTTED_LINE",50:"CALLBACK",51:"LINK",52:"CSSCLASS",55:"graphCodeTokens",57:"TAGSTART",58:"TAGEND",59:"==",60:"--",61:"PCT",62:"DEFAULT",63:"SPACE",64:"MINUS",65:"keywords",66:"UNICODE_TEXT",67:"NUM",68:"ALPHA"},
+productions_: [0,[3,1],[3,2],[4,1],[5,4],[5,6],[7,1],[8,1],[12,1],[9,1],[6,4],[18,1],[18,2],[18,3],[21,1],[21,2],[21,3],[21,2],[20,1],[20,2],[20,1],[20,1],[20,1],[20,1],[20,1],[20,1],[26,2],[26,4],[26,5],[26,7],[28,4],[34,1],[34,2],[27,1],[27,2],[27,1],[27,1],[24,3],[24,4],[24,4],[24,5],[40,3],[40,2],[40,2],[40,1],[42,1],[42,1],[42,1],[42,1],[43,1],[43,1],[29,3],[29,4],[29,3],[29,4],[30,3],[53,1],[53,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[56,1],[56,1],[56,1],[56,1],[22,1],[22,1],[22,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
 case 6:
- this.$=$$[$0-1]+$$[$0]; 
+ yy.parseDirective('%%{', 'open_directive'); 
 break;
 case 7:
- this.$=$$[$0]; 
+ yy.parseDirective($$[$0], 'type_directive'); 
 break;
 case 8:
- this.$=$$[$0-2]+'~'+$$[$0-1]+$$[$0]; 
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
 case 9:
- this.$=$$[$0-1]+'~'+$$[$0]; 
+ yy.parseDirective('}%%', 'close_directive', 'class'); 
 break;
-case 10:
- yy.addRelation($$[$0]); 
+case 14:
+ this.$=$$[$0]; 
 break;
-case 11:
- $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
+case 15:
+ this.$=$$[$0-1]+$$[$0]; 
 break;
 case 16:
-yy.addClass($$[$0]);
+ this.$=$$[$0-2]+'~'+$$[$0-1]+$$[$0]; 
 break;
 case 17:
-/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
+ this.$=$$[$0-1]+'~'+$$[$0]; 
 break;
 case 18:
- yy.addAnnotation($$[$0],$$[$0-2]); 
+ yy.addRelation($$[$0]); 
 break;
 case 19:
- this.$ = [$$[$0]]; 
-break;
-case 20:
- $$[$0].push($$[$0-1]);this.$=$$[$0];
-break;
-case 21:
-/*console.log('Rel found',$$[$0]);*/
-break;
-case 22:
-yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
-break;
-case 23:
-/*console.warn('Member',$$[$0]);*/
-break;
-case 24:
-/*console.log('sep found',$$[$0]);*/
-break;
-case 25:
- this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
+ $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
 break;
 case 26:
- this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
+yy.addClass($$[$0]);
 break;
 case 27:
- this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
+yy.addClass($$[$0-2]);yy.setCssClass($$[$0-2], $$[$0]);
 break;
 case 28:
- this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
+/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
 break;
 case 29:
- this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
+yy.addClass($$[$0-5]);yy.setCssClass($$[$0-5], $$[$0-3]);yy.addMembers($$[$0-5],$$[$0-1]);
 break;
 case 30:
- this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
+ yy.addAnnotation($$[$0],$$[$0-2]); 
 break;
 case 31:
- this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
+ this.$ = [$$[$0]]; 
 break;
 case 32:
- this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
+ $$[$0].push($$[$0-1]);this.$=$$[$0];
 break;
 case 33:
- this.$=yy.relationType.AGGREGATION;
+/*console.log('Rel found',$$[$0]);*/
 break;
 case 34:
- this.$=yy.relationType.EXTENSION;
+yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
 break;
 case 35:
- this.$=yy.relationType.COMPOSITION;
+/*console.warn('Member',$$[$0]);*/
 break;
 case 36:
- this.$=yy.relationType.DEPENDENCY;
+/*console.log('sep found',$$[$0]);*/
 break;
 case 37:
-this.$=yy.lineType.LINE;
+ this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
 break;
 case 38:
-this.$=yy.lineType.DOTTED_LINE;
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
 break;
 case 39:
-this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0], undefined);
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
 break;
 case 40:
-this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
+ this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
 case 41:
-this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0], undefined);
+ this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
 break;
 case 42:
+ this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
+break;
+case 43:
+ this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
+break;
+case 44:
+ this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
+break;
+case 45:
+ this.$=yy.relationType.AGGREGATION;
+break;
+case 46:
+ this.$=yy.relationType.EXTENSION;
+break;
+case 47:
+ this.$=yy.relationType.COMPOSITION;
+break;
+case 48:
+ this.$=yy.relationType.DEPENDENCY;
+break;
+case 49:
+this.$=yy.lineType.LINE;
+break;
+case 50:
+this.$=yy.lineType.DOTTED_LINE;
+break;
+case 51:
+this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0], undefined);
+break;
+case 52:
+this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
+break;
+case 53:
+this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0], undefined);
+break;
+case 54:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1], $$[$0]);
+break;
+case 55:
+yy.setCssClass($$[$0-1], $$[$0]);
 break;
 }
 },
-table: [{3:1,4:2,5:[1,3]},{1:[3]},{1:[2,1]},{6:[1,4]},{7:5,9:6,10:12,11:19,13:7,15:8,16:9,17:10,18:11,19:$V0,23:$V1,25:$V2,26:$V3,37:$V4,38:$V5,52:$V6,53:$V7,54:$V8},{8:[1,23]},{6:[1,24],8:[2,3]},o($V9,[2,10],{14:[1,25]}),o($V9,[2,12]),o($V9,[2,13]),o($V9,[2,14]),o($V9,[2,15]),o($V9,[2,21],{27:26,29:29,30:30,14:[1,28],28:[1,27],31:$Va,32:$Vb,33:$Vc,34:$Vd,35:$Ve,36:$Vf}),{10:37,11:19,52:$V6,53:$V7,54:$V8},o($V9,[2,23]),o($V9,[2,24]),{11:38,52:$V6,53:$V7,54:$V8},{10:39,11:19,52:$V6,53:$V7,54:$V8},{10:40,11:19,52:$V6,53:$V7,54:$V8},o($Vg,[2,7],{11:19,10:41,12:[1,42],52:$V6,53:$V7,54:$V8}),o($Vh,[2,56]),o($Vh,[2,57]),o($Vh,[2,58]),{1:[2,2]},{7:43,8:[2,4],9:6,10:12,11:19,13:7,15:8,16:9,17:10,18:11,19:$V0,23:$V1,25:$V2,26:$V3,37:$V4,38:$V5,52:$V6,53:$V7,54:$V8},o($V9,[2,11]),{10:44,11:19,28:[1,45],52:$V6,53:$V7,54:$V8},{27:46,29:29,30:30,31:$Va,32:$Vb,33:$Vc,34:$Vd,35:$Ve,36:$Vf},o($V9,[2,22]),{30:47,35:$Ve,36:$Vf},o($Vi,[2,32],{29:48,31:$Va,32:$Vb,33:$Vc,34:$Vd}),o($Vj,[2,33]),o($Vj,[2,34]),o($Vj,[2,35]),o($Vj,[2,36]),o($Vk,[2,37]),o($Vk,[2,38]),o($V9,[2,16],{20:[1,49]}),{24:[1,50]},{28:[1,51]},{28:[1,52]},o($Vg,[2,6]),o($Vg,[2,9],{11:19,10:53,52:$V6,53:$V7,54:$V8}),{8:[2,5]},o($Vl,[2,25]),{10:54,11:19,52:$V6,53:$V7,54:$V8},{10:55,11:19,28:[1,56],52:$V6,53:$V7,54:$V8},o($Vi,[2,31],{29:57,31:$Va,32:$Vb,33:$Vc,34:$Vd}),o($Vi,[2,30]),{21:58,25:$Vm},{10:60,11:19,52:$V6,53:$V7,54:$V8},o($V9,[2,39],{28:[1,61]}),o($V9,[2,41],{28:[1,62]}),o($Vg,[2,8]),o($Vl,[2,27]),o($Vl,[2,26]),{10:63,11:19,52:$V6,53:$V7,54:$V8},o($Vi,[2,29]),{22:[1,64]},{21:65,22:[2,19],25:$Vm},o($V9,[2,18]),o($V9,[2,40]),o($V9,[2,42]),o($Vl,[2,28]),o($V9,[2,17]),{22:[2,20]}],
-defaultActions: {2:[2,1],23:[2,2],43:[2,5],65:[2,20]},
+table: [{3:1,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[3]},{1:[2,1]},{3:8,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[2,3]},{8:9,14:[1,10]},{10:[1,11]},{14:[2,6]},{1:[2,2]},{9:12,11:[1,13],16:$V2},o([11,16],[2,7]),{5:23,7:5,13:$V0,18:15,20:16,21:24,22:32,24:17,26:18,27:19,28:20,29:21,30:22,31:$V3,36:$V4,38:$V5,39:$V6,50:$V7,51:$V8,52:$V9,66:$Va,67:$Vb,68:$Vc},{10:[1,36]},{12:37,15:[1,38]},{10:[2,9]},{19:[1,39]},{10:[1,40],19:[2,11]},o($Vd,[2,18],{25:[1,41]}),o($Vd,[2,20]),o($Vd,[2,21]),o($Vd,[2,22]),o($Vd,[2,23]),o($Vd,[2,24]),o($Vd,[2,25]),o($Vd,[2,33],{40:42,42:45,43:46,25:[1,44],41:[1,43],44:$Ve,45:$Vf,46:$Vg,47:$Vh,48:$Vi,49:$Vj}),{21:53,22:32,66:$Va,67:$Vb,68:$Vc},o($Vd,[2,35]),o($Vd,[2,36]),{22:54,66:$Va,67:$Vb,68:$Vc},{21:55,22:32,66:$Va,67:$Vb,68:$Vc},{21:56,22:32,66:$Va,67:$Vb,68:$Vc},{41:[1,57]},o($Vk,[2,14],{22:32,21:58,23:[1,59],66:$Va,67:$Vb,68:$Vc}),o($Vl,[2,69]),o($Vl,[2,70]),o($Vl,[2,71]),o($Vm,[2,4]),{9:60,16:$V2},{16:[2,8]},{1:[2,10]},{5:23,7:5,13:$V0,18:61,19:[2,12],20:16,21:24,22:32,24:17,26:18,27:19,28:20,29:21,30:22,31:$V3,36:$V4,38:$V5,39:$V6,50:$V7,51:$V8,52:$V9,66:$Va,67:$Vb,68:$Vc},o($Vd,[2,19]),{21:62,22:32,41:[1,63],66:$Va,67:$Vb,68:$Vc},{40:64,42:45,43:46,44:$Ve,45:$Vf,46:$Vg,47:$Vh,48:$Vi,49:$Vj},o($Vd,[2,34]),{43:65,48:$Vi,49:$Vj},o($Vn,[2,44],{42:66,44:$Ve,45:$Vf,46:$Vg,47:$Vh}),o($Vo,[2,45]),o($Vo,[2,46]),o($Vo,[2,47]),o($Vo,[2,48]),o($Vp,[2,49]),o($Vp,[2,50]),o($Vd,[2,26],{32:[1,67],33:[1,68]}),{37:[1,69]},{41:[1,70]},{41:[1,71]},{22:72,66:$Va,67:$Vb,68:$Vc},o($Vk,[2,15]),o($Vk,[2,17],{22:32,21:73,66:$Va,67:$Vb,68:$Vc}),{10:[1,74]},{19:[2,13]},o($Vq,[2,37]),{21:75,22:32,66:$Va,67:$Vb,68:$Vc},{21:76,22:32,41:[1,77],66:$Va,67:$Vb,68:$Vc},o($Vn,[2,43],{42:78,44:$Ve,45:$Vf,46:$Vg,47:$Vh}),o($Vn,[2,42]),{22:79,66:$Va,67:$Vb,68:$Vc},{34:80,38:$Vr},{21:82,22:32,66:$Va,67:$Vb,68:$Vc},o($Vd,[2,51],{41:[1,83]}),o($Vd,[2,53],{41:[1,84]}),o($Vd,[2,55]),o($Vk,[2,16]),o($Vm,[2,5]),o($Vq,[2,39]),o($Vq,[2,38]),{21:85,22:32,66:$Va,67:$Vb,68:$Vc},o($Vn,[2,41]),o($Vd,[2,27],{33:[1,86]}),{35:[1,87]},{34:88,35:[2,31],38:$Vr},o($Vd,[2,30]),o($Vd,[2,52]),o($Vd,[2,54]),o($Vq,[2,40]),{34:89,38:$Vr},o($Vd,[2,28]),{35:[2,32]},{35:[1,90]},o($Vd,[2,29])],
+defaultActions: {2:[2,1],4:[2,3],7:[2,6],8:[2,2],14:[2,9],38:[2,8],39:[2,10],61:[2,13],88:[2,32]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -5224,94 +5870,112 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* do nothing */
+case 0: this.begin('open_directive'); return 13; 
 break;
-case 1:return 6;
+case 1: this.begin('type_directive'); return 14; 
 break;
-case 2:/* skip whitespace */
+case 2: this.popState(); this.begin('arg_directive'); return 11; 
 break;
-case 3:return 5;
+case 3: this.popState(); this.popState(); return 16; 
 break;
-case 4: this.begin("struct"); /*console.log('Starting struct');*/return 20;
+case 4:return 15;
 break;
-case 5:return "EOF_IN_STRUCT";
+case 5:/* skip comments */
 break;
-case 6:return "OPEN_IN_STRUCT";
+case 6:/* skip comments */
 break;
-case 7: /*console.log('Ending struct');*/this.popState(); return 22;
+case 7:return 10;
 break;
-case 8:/* nothing */
+case 8:/* skip whitespace */
 break;
-case 9: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
+case 9:return 17;
 break;
-case 10:return 19;
+case 10:return 17;
 break;
-case 11:return 37;
+case 11: this.begin("struct"); /*console.log('Starting struct');*/ return 33;
 break;
-case 12:return 38;
+case 12:return "EOF_IN_STRUCT";
 break;
-case 13:return 23;
+case 13:return "OPEN_IN_STRUCT";
 break;
-case 14:return 24;
+case 14: /*console.log('Ending struct');*/this.popState(); return 35;
 break;
-case 15:this.begin("generic");
+case 15:/* nothing */
 break;
-case 16:this.popState();
+case 16: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
 break;
-case 17:return "GENERICTYPE";
+case 17:return 31;
 break;
-case 18:this.begin("string");
+case 18:return 52;
 break;
-case 19:this.popState();
+case 19:return 50;
 break;
-case 20:return "STR";
+case 20:return 51;
 break;
-case 21:return 32;
+case 21:return 36;
 break;
-case 22:return 32;
+case 22:return 37;
 break;
-case 23:return 34;
+case 23:this.begin("generic");
 break;
-case 24:return 34;
+case 24:this.popState();
 break;
-case 25:return 33;
+case 25:return "GENERICTYPE";
 break;
-case 26:return 31;
+case 26:this.begin("string");
 break;
-case 27:return 35;
+case 27:this.popState();
 break;
-case 28:return 36;
+case 28:return "STR";
 break;
-case 29:return 14;
+case 29:return 45;
 break;
-case 30:return 50;
+case 30:return 45;
 break;
-case 31:return 'DOT';
+case 31:return 47;
 break;
-case 32:return 'PLUS';
+case 32:return 47;
 break;
-case 33:return 47;
+case 33:return 46;
 break;
-case 34:return 'EQUALS';
+case 34:return 44;
 break;
-case 35:return 'EQUALS';
+case 35:return 48;
 break;
-case 36:return 54;
+case 36:return 49;
 break;
-case 37:return 'PUNCTUATION';
+case 37:return 25;
 break;
-case 38:return 53;
+case 38:return 32;
 break;
-case 39:return 52;
+case 39:return 64;
 break;
-case 40:return 49;
+case 40:return 'DOT';
 break;
-case 41:return 8;
+case 41:return 'PLUS';
+break;
+case 42:return 61;
+break;
+case 43:return 'EQUALS';
+break;
+case 44:return 'EQUALS';
+break;
+case 45:return 68;
+break;
+case 46:return 'PUNCTUATION';
+break;
+case 47:return 67;
+break;
+case 48:return 66;
+break;
+case 49:return 63;
+break;
+case 50:return 19;
 break;
 }
 },
-rules: [/^(?:%%[^\n]*\n*)/,/^(?:\n+)/,/^(?:\s+)/,/^(?:classDiagram\b)/,/^(?:[\{])/,/^(?:$)/,/^(?:[\{])/,/^(?:\})/,/^(?:[\n])/,/^(?:[^\{\}\n]*)/,/^(?:class\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::[^\n;]+)/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
-conditions: {"string":{"rules":[19,20],"inclusive":false},"generic":{"rules":[16,17],"inclusive":false},"struct":{"rules":[5,6,7,8,9],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,10,11,12,13,14,15,18,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n?)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:cssClass\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::{1}[^:\n;]+)/,/^(?::{3})/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
+conditions: {"string":{"rules":[27,28],"inclusive":false},"generic":{"rules":[24,25],"inclusive":false},"struct":{"rules":[12,13,14,15,16],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,17,18,19,20,21,22,23,26,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"inclusive":true}}
 });
 return lexer;
 })();
@@ -5341,6 +6005,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/class/styles.js":
+/*!**************************************!*\
+  !*** ./src/diagrams/class/styles.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -5461,12 +6142,6 @@ var drawEdge = function drawEdge(elem, path, relation, conf) {
 };
 var drawClass = function drawClass(elem, classDef, conf) {
   _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Rendering class ' + classDef);
-  var cssClassStr = 'classGroup ';
-
-  if (classDef.cssClasses.length > 0) {
-    cssClassStr = cssClassStr + classDef.cssClasses.join(' ');
-  }
-
   var id = classDef.id;
   var classInfo = {
     id: id,
@@ -5475,7 +6150,7 @@ var drawClass = function drawClass(elem, classDef, conf) {
     height: 0
   }; // add class group
 
-  var g = elem.append('g').attr('id', Object(_classDb__WEBPACK_IMPORTED_MODULE_1__["lookUpDomId"])(id)).attr('class', cssClassStr); // add title
+  var g = elem.append('g').attr('id', Object(_classDb__WEBPACK_IMPORTED_MODULE_1__["lookUpDomId"])(id)).attr('class', 'classGroup'); // add title
 
   var title;
 
@@ -5522,7 +6197,13 @@ var drawClass = function drawClass(elem, classDef, conf) {
     isFirst = false;
   });
   var classBox = g.node().getBBox();
-  var rect = g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('width', classBox.width + 2 * conf.padding).attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
+  var cssClassStr = ' ';
+
+  if (classDef.cssClasses.length > 0) {
+    cssClassStr = cssClassStr + classDef.cssClasses.join(' ');
+  }
+
+  var rect = g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('width', classBox.width + 2 * conf.padding).attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin).attr('class', cssClassStr);
   var rectWidth = rect.node().getBBox().width; // Center title
   // We subtract the width of each text element from the class box width and divide it by 2
 
@@ -5693,12 +6374,13 @@ var parseClassifier = function parseClassifier(classifier) {
 /*!***************************************!*\
   !*** ./src/diagrams/common/common.js ***!
   \***************************************/
-/*! exports provided: getRows, sanitizeText, lineBreakRegex, hasBreaks, splitBreaks, default */
+/*! exports provided: getRows, removeScript, sanitizeText, lineBreakRegex, hasBreaks, splitBreaks, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRows", function() { return getRows; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeScript", function() { return removeScript; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sanitizeText", function() { return sanitizeText; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineBreakRegex", function() { return lineBreakRegex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasBreaks", function() { return hasBreaks; });
@@ -5709,17 +6391,51 @@ var getRows = function getRows(s) {
   str = str.replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
+var removeScript = function removeScript(txt) {
+  var rs = '';
+  var idx = 0;
+
+  while (idx >= 0) {
+    idx = txt.indexOf('<script');
+
+    if (idx >= 0) {
+      rs += txt.substr(0, idx);
+      txt = txt.substr(idx + 1);
+      idx = txt.indexOf('</script>');
+
+      if (idx >= 0) {
+        idx += 9;
+        txt = txt.substr(idx);
+      }
+    } else {
+      rs += txt;
+      idx = -1;
+      break;
+    }
+  }
+
+  return rs;
+};
 var sanitizeText = function sanitizeText(text, config) {
   var txt = text;
   var htmlLabels = true;
-  if (config.flowchart && (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')) htmlLabels = false;
 
-  if (config.securityLevel !== 'loose' && htmlLabels) {
-    // eslint-disable-line
-    txt = breakToPlaceholder(txt);
-    txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    txt = txt.replace(/=/g, '&equals;');
-    txt = placeholderToBreak(txt);
+  if (config.flowchart && (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')) {
+    htmlLabels = false;
+  }
+
+  if (htmlLabels) {
+    var level = config.securityLevel;
+
+    if (level === 'antiscript') {
+      txt = removeScript(txt);
+    } else if (level !== 'loose') {
+      // eslint-disable-line
+      txt = breakToPlaceholder(txt);
+      txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      txt = txt.replace(/=/g, '&equals;');
+      txt = placeholderToBreak(txt);
+    }
   }
 
   return txt;
@@ -5745,7 +6461,8 @@ var placeholderToBreak = function placeholderToBreak(s) {
   sanitizeText: sanitizeText,
   hasBreaks: hasBreaks,
   splitBreaks: splitBreaks,
-  lineBreakRegex: lineBreakRegex
+  lineBreakRegex: lineBreakRegex,
+  removeScript: removeScript
 });
 
 /***/ }),
@@ -5754,15 +6471,20 @@ var placeholderToBreak = function placeholderToBreak(s) {
 /*!*********************************!*\
   !*** ./src/diagrams/er/erDb.js ***!
   \*********************************/
-/*! exports provided: default */
+/*! exports provided: parseDirective, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /**
  *
  */
+
+
 
 var entities = {};
 var relationships = [];
@@ -5776,6 +6498,9 @@ var Cardinality = {
 var Identification = {
   NON_IDENTIFYING: 'NON_IDENTIFYING',
   IDENTIFYING: 'IDENTIFYING'
+};
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parseDirective(this, statement, context, type);
 };
 
 var addEntity = function addEntity(name) {
@@ -5830,6 +6555,10 @@ var clear = function clear() {
 /* harmony default export */ __webpack_exports__["default"] = ({
   Cardinality: Cardinality,
   Identification: Identification,
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]().er;
+  },
   addEntity: addEntity,
   getEntities: getEntities,
   addRelationship: addRelationship,
@@ -5955,7 +6684,7 @@ var drawEntities = function drawEntities(svgNode, entities, graph) {
     // which then determines the size of the rectangle
 
     var textId = 'entity-' + id;
-    var textNode = groupNode.append('text').attr('id', textId).attr('x', 0).attr('y', 0).attr('dominant-baseline', 'middle').attr('text-anchor', 'middle').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + conf.fontSize + 'px').text(id); // Calculate the width and height of the entity
+    var textNode = groupNode.append('text').attr('class', 'er entityLabel').attr('id', textId).attr('x', 0).attr('y', 0).attr('dominant-baseline', 'middle').attr('text-anchor', 'middle').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + conf.fontSize + 'px').text(id); // Calculate the width and height of the entity
 
     var textBBox = textNode.node().getBBox();
     var entityWidth = Math.max(conf.minEntityWidth, textBBox.width + conf.entityPadding * 2);
@@ -5963,7 +6692,7 @@ var drawEntities = function drawEntities(svgNode, entities, graph) {
 
     textNode.attr('transform', 'translate(' + entityWidth / 2 + ',' + entityHeight / 2 + ')'); // Draw the rectangle - insert it before the text so that the text is not obscured
 
-    var rectNode = groupNode.insert('rect', '#' + textId).attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', 0).attr('y', 0).attr('width', entityWidth).attr('height', entityHeight);
+    var rectNode = groupNode.insert('rect', '#' + textId).attr('class', 'er entityBox').attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', 0).attr('y', 0).attr('width', entityWidth).attr('height', entityHeight);
     var rectBBox = rectNode.node().getBBox(); // Add the entity to the graph
 
     graph.setNode(id, {
@@ -6027,7 +6756,7 @@ var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g
     return d.y;
   }).curve(d3__WEBPACK_IMPORTED_MODULE_1__["curveBasis"]); // Insert the line at the right place
 
-  var svgPath = svg.insert('path', '#' + insert).attr('d', lineFunction(edge.points)).attr('stroke', conf.stroke).attr('fill', 'none'); // ...and with dashes if necessary
+  var svgPath = svg.insert('path', '#' + insert).attr('class', 'er relationshipLine').attr('d', lineFunction(edge.points)).attr('stroke', conf.stroke).attr('fill', 'none'); // ...and with dashes if necessary
 
   if (rel.relSpec.relType === _erDb__WEBPACK_IMPORTED_MODULE_2__["default"].Identification.NON_IDENTIFYING) {
     svgPath.attr('stroke-dasharray', '8,8');
@@ -6087,11 +6816,11 @@ var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g
   var labelPoint = svgPath.node().getPointAtLength(len * 0.5); // Append a text node containing the label
 
   var labelId = 'rel' + relCnt;
-  var labelNode = svg.append('text').attr('id', labelId).attr('x', labelPoint.x).attr('y', labelPoint.y).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + conf.fontSize + 'px').text(rel.roleA); // Figure out how big the opaque 'container' rectangle needs to be
+  var labelNode = svg.append('text').attr('class', 'er relationshipLabel').attr('id', labelId).attr('x', labelPoint.x).attr('y', labelPoint.y).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + conf.fontSize + 'px').text(rel.roleA); // Figure out how big the opaque 'container' rectangle needs to be
 
   var labelBBox = labelNode.node().getBBox(); // Insert the opaque rectangle before the text label
 
-  svg.insert('rect', '#' + labelId).attr('x', labelPoint.x - labelBBox.width / 2).attr('y', labelPoint.y - labelBBox.height / 2).attr('width', labelBBox.width).attr('height', labelBBox.height).attr('fill', 'white').attr('fill-opacity', '85%');
+  svg.insert('rect', '#' + labelId).attr('class', 'er relationshipLabelBox').attr('x', labelPoint.x - labelBBox.width / 2).attr('y', labelPoint.y - labelBBox.height / 2).attr('width', labelBBox.width).attr('height', labelBBox.height).attr('fill', 'white').attr('fill-opacity', '85%');
   return;
 };
 /**
@@ -6169,9 +6898,15 @@ var draw = function draw(text, id) {
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-  svg.attr('height', height);
-  svg.attr('width', '100%');
-  svg.attr('style', "max-width: ".concat(width, "px;"));
+
+  if (conf.useMaxWidth) {
+    svg.attr('width', '100%');
+    svg.attr('style', "max-width: ".concat(width, "px;"));
+  } else {
+    svg.attr('height', height);
+    svg.attr('width', width);
+  }
+
   svg.attr('viewBox', "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height));
 }; // draw
 
@@ -6263,12 +6998,12 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,12],$V1=[1,7],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[12,19,20],$V7=[15,16,17,18];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,5],$V2=[6,9,11,20,30],$V3=[1,17],$V4=[1,20],$V5=[1,24],$V6=[1,25],$V7=[1,26],$V8=[1,27],$V9=[20,27,28],$Va=[4,6,9,11,20,30],$Vb=[23,24,25,26];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"ER_DIAGRAM":4,"document":5,"EOF":6,"statement":7,"entityName":8,"relSpec":9,":":10,"role":11,"ALPHANUM":12,"cardinality":13,"relType":14,"ZERO_OR_ONE":15,"ZERO_OR_MORE":16,"ONE_OR_MORE":17,"ONLY_ONE":18,"NON_IDENTIFYING":19,"IDENTIFYING":20,"WORD":21,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"ER_DIAGRAM",6:"EOF",10:":",12:"ALPHANUM",15:"ZERO_OR_ONE",16:"ZERO_OR_MORE",17:"ONE_OR_MORE",18:"ONLY_ONE",19:"NON_IDENTIFYING",20:"IDENTIFYING",21:"WORD"},
-productions_: [0,[3,3],[5,0],[5,2],[7,5],[8,1],[9,3],[13,1],[13,1],[13,1],[13,1],[14,1],[14,1],[11,1],[11,1]],
+symbols_: {"error":2,"start":3,"ER_DIAGRAM":4,"document":5,"EOF":6,"directive":7,"line":8,"SPACE":9,"statement":10,"NEWLINE":11,"openDirective":12,"typeDirective":13,"closeDirective":14,":":15,"argDirective":16,"entityName":17,"relSpec":18,"role":19,"ALPHANUM":20,"cardinality":21,"relType":22,"ZERO_OR_ONE":23,"ZERO_OR_MORE":24,"ONE_OR_MORE":25,"ONLY_ONE":26,"NON_IDENTIFYING":27,"IDENTIFYING":28,"WORD":29,"open_directive":30,"type_directive":31,"arg_directive":32,"close_directive":33,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"ER_DIAGRAM",6:"EOF",9:"SPACE",11:"NEWLINE",15:":",20:"ALPHANUM",23:"ZERO_OR_ONE",24:"ZERO_OR_MORE",25:"ONE_OR_MORE",26:"ONLY_ONE",27:"NON_IDENTIFYING",28:"IDENTIFYING",29:"WORD",30:"open_directive",31:"type_directive",32:"arg_directive",33:"close_directive"},
+productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,5],[17,1],[18,3],[21,1],[21,1],[21,1],[21,1],[22,1],[22,1],[19,1],[19,1],[12,1],[13,1],[16,1],[14,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -6277,51 +7012,75 @@ switch (yystate) {
 case 1:
  /*console.log('finished parsing');*/ 
 break;
+case 3:
+ this.$ = [] 
+break;
 case 4:
+$$[$0-1].push($$[$0]);this.$ = $$[$0-1]
+break;
+case 5: case 6:
+ this.$ = $$[$0] 
+break;
+case 7: case 8:
+ this.$=[];
+break;
+case 12:
 
-          yy.addEntity($$[$0-4]); 
-          yy.addEntity($$[$0-2]); 
+          yy.addEntity($$[$0-4]);
+          yy.addEntity($$[$0-2]);
           yy.addRelationship($$[$0-4], $$[$0], $$[$0-2], $$[$0-3]);
           /*console.log($$[$0-4] + $$[$0-3] + $$[$0-2] + ':' + $$[$0]);*/
       
 break;
-case 5:
+case 13:
  this.$ = $$[$0]; /*console.log('Entity: ' + $$[$0]);*/ 
 break;
-case 6:
+case 14:
 
         this.$ = { cardA: $$[$0], relType: $$[$0-1], cardB: $$[$0-2] };
         /*console.log('relSpec: ' + $$[$0] + $$[$0-1] + $$[$0-2]);*/
       
 break;
-case 7:
+case 15:
  this.$ = yy.Cardinality.ZERO_OR_ONE; 
 break;
-case 8:
+case 16:
  this.$ = yy.Cardinality.ZERO_OR_MORE; 
 break;
-case 9:
+case 17:
  this.$ = yy.Cardinality.ONE_OR_MORE; 
 break;
-case 10:
+case 18:
  this.$ = yy.Cardinality.ONLY_ONE; 
 break;
-case 11:
+case 19:
  this.$ = yy.Identification.NON_IDENTIFYING;  
 break;
-case 12:
+case 20:
  this.$ = yy.Identification.IDENTIFYING; 
 break;
-case 13:
+case 21:
  this.$ = $$[$0].replace(/"/g, ''); 
 break;
-case 14:
+case 22:
  this.$ = $$[$0]; 
+break;
+case 23:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 24:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 25:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 26:
+ yy.parseDirective('}%%', 'close_directive', 'er'); 
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:6,12:$V1},{1:[2,1]},o($V0,[2,3]),{9:8,13:9,15:$V2,16:$V3,17:$V4,18:$V5},o([10,15,16,17,18],[2,5]),{8:14,12:$V1},{14:15,19:[1,16],20:[1,17]},o($V6,[2,7]),o($V6,[2,8]),o($V6,[2,9]),o($V6,[2,10]),{10:[1,18]},{13:19,15:$V2,16:$V3,17:$V4,18:$V5},o($V7,[2,11]),o($V7,[2,12]),{11:20,12:[1,22],21:[1,21]},{12:[2,6]},o($V0,[2,4]),o($V0,[2,13]),o($V0,[2,14])],
-defaultActions: {4:[2,1],19:[2,6]},
+table: [{3:1,4:$V0,7:3,12:4,30:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,30:$V1},{13:8,31:[1,9]},{31:[2,23]},{6:[1,10],7:15,8:11,9:[1,12],10:13,11:[1,14],12:4,17:16,20:$V3,30:$V1},{1:[2,2]},{14:18,15:[1,19],33:$V4},o([15,33],[2,24]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:15,10:21,12:4,17:16,20:$V3,30:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),{18:22,21:23,23:$V5,24:$V6,25:$V7,26:$V8},o([15,23,24,25,26],[2,13]),{11:[1,28]},{16:29,32:[1,30]},{11:[2,26]},o($V2,[2,5]),{17:31,20:$V3},{22:32,27:[1,33],28:[1,34]},o($V9,[2,15]),o($V9,[2,16]),o($V9,[2,17]),o($V9,[2,18]),o($Va,[2,9]),{14:35,33:$V4},{33:[2,25]},{15:[1,36]},{21:37,23:$V5,24:$V6,25:$V7,26:$V8},o($Vb,[2,19]),o($Vb,[2,20]),{11:[1,38]},{19:39,20:[1,41],29:[1,40]},{20:[2,14]},o($Va,[2,10]),o($V2,[2,12]),o($V2,[2,21]),o($V2,[2,22])],
+defaultActions: {5:[2,23],7:[2,2],20:[2,26],30:[2,25],37:[2,14]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -6800,46 +7559,62 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* skip whitespace */
+case 0: this.begin('open_directive'); return 30; 
 break;
-case 1:return 'SPACE';
+case 1: this.begin('type_directive'); return 31; 
 break;
-case 2:return 21;
+case 2: this.popState(); this.begin('arg_directive'); return 15; 
 break;
-case 3:return 4;
+case 3: this.popState(); this.popState(); return 33; 
 break;
-case 4:return 15;
+case 4:return 32;
 break;
-case 5:return 16;
+case 5:/* skip comments */
 break;
-case 6:return 17;
+case 6:/* skip comments */
 break;
-case 7:return 18;
+case 7:return 11;
 break;
-case 8:return 15;
+case 8:/* skip whitespace */
 break;
-case 9:return 16;
+case 9:return 9;
 break;
-case 10:return 17;
+case 10:return 29;
 break;
-case 11:return 19;
+case 11:return 4;
 break;
-case 12:return 20;
+case 12:return 23;
 break;
-case 13:return 19;
+case 13:return 24;
 break;
-case 14:return 19;
+case 14:return 25;
 break;
-case 15:return 12;
+case 15:return 26;
 break;
-case 16:return yy_.yytext[0];
+case 16:return 23;
 break;
-case 17:return 6;
+case 17:return 24;
+break;
+case 18:return 25;
+break;
+case 19:return 27;
+break;
+case 20:return 28;
+break;
+case 21:return 27;
+break;
+case 22:return 27;
+break;
+case 23:return 20;
+break;
+case 24:return yy_.yytext[0];
+break;
+case 25:return 6;
 break;
 }
 },
-rules: [/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-]*)/i,/^(?:.)/i,/^(?:$)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-]*)/i,/^(?:.)/i,/^(?:$)/i],
+conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],"inclusive":true}}
 });
 return lexer;
 })();
@@ -6869,6 +7644,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/er/styles.js":
+/*!***********************************!*\
+  !*** ./src/diagrams/er/styles.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return "\n  .entityBox {\n    fill: ".concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n  }\n\n  .relationshipLabelBox {\n    fill: ").concat(options.tertiaryColor, ";\n    opacity: 0.7;\n    background-color: ").concat(options.tertiaryColor, ";\n      rect {\n        opacity: 0.5;\n      }\n  }\n\n    .relationshipLine {\n      stroke: ").concat(options.lineColor, ";\n    }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -7263,11 +8055,12 @@ function insertPolygonShape(parent, w, h, points) {
 /*!******************************************!*\
   !*** ./src/diagrams/flowchart/flowDb.js ***!
   \******************************************/
-/*! exports provided: addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
+/*! exports provided: parseDirective, addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addVertex", function() { return addVertex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addSingleLink", function() { return addSingleLink; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addLink", function() { return addLink; });
@@ -7293,21 +8086,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "firstGraph", function() { return firstGraph; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 
- // eslint-disable-line
 
 
 
  // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 
 var MERMAID_DOM_ID_PREFIX = '';
-var config = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])();
+var config = _config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"];
 var vertices = {};
 var edges = [];
 var classes = [];
@@ -7319,6 +8111,9 @@ var firstGraphFlag = true;
 var direction; // Functions to be run after graph rendering
 
 var funs = [];
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_4__["default"].parseDirective(this, statement, context, type);
+};
 /**
  * Function called by parser when a node definition has been found
  * @param id
@@ -7351,8 +8146,8 @@ var addVertex = function addVertex(_id, text, type, style, classes) {
   }
 
   if (typeof text !== 'undefined') {
-    config = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])();
-    txt = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(text.trim(), config); // strip quotes if string starts and ends with a quote
+    config = _config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"];
+    txt = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(text.trim(), config); // strip quotes if string starts and ends with a quote
 
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
       txt = txt.substring(1, txt.length - 1);
@@ -7408,7 +8203,7 @@ var addSingleLink = function addSingleLink(_start, _end, type, linktext) {
   linktext = type.text;
 
   if (typeof linktext !== 'undefined') {
-    edge.text = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(linktext.trim(), config); // strip quotes if string starts and exnds with a quote
+    edge.text = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(linktext.trim(), config); // strip quotes if string starts and exnds with a quote
 
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
       edge.text = edge.text.substring(1, edge.text.length - 1);
@@ -7457,7 +8252,7 @@ var updateLink = function updateLink(positions, style) {
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
-      if (_utils__WEBPACK_IMPORTED_MODULE_2__["default"].isSubstringInArray('fill', style) === -1) {
+      if (_utils__WEBPACK_IMPORTED_MODULE_1__["default"].isSubstringInArray('fill', style) === -1) {
         style.push('fill:none');
       }
 
@@ -7536,7 +8331,7 @@ var setClass = function setClass(ids, className) {
 var setTooltip = function setTooltip(ids, tooltip) {
   ids.split(',').forEach(function (id) {
     if (typeof tooltip !== 'undefined') {
-      tooltips[id] = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(tooltip, config);
+      tooltips[id] = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(tooltip, config);
     }
   });
 };
@@ -7545,7 +8340,7 @@ var setClickFun = function setClickFun(_id, functionName) {
   var id = _id;
   if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
+  if (_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]().securityLevel !== 'loose') {
     return;
   }
 
@@ -7559,7 +8354,7 @@ var setClickFun = function setClickFun(_id, functionName) {
 
       if (elem !== null) {
         elem.addEventListener('click', function () {
-          _utils__WEBPACK_IMPORTED_MODULE_2__["default"].runFunc(functionName, id);
+          _utils__WEBPACK_IMPORTED_MODULE_1__["default"].runFunc(functionName, id);
         }, false);
       }
     });
@@ -7573,13 +8368,14 @@ var setClickFun = function setClickFun(_id, functionName) {
  */
 
 
-var setLink = function setLink(ids, linkStr, tooltip) {
+var setLink = function setLink(ids, linkStr, tooltip, target) {
   ids.split(',').forEach(function (_id) {
     var id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
     if (typeof vertices[id] !== 'undefined') {
-      vertices[id].link = _utils__WEBPACK_IMPORTED_MODULE_2__["default"].formatUrl(linkStr, config);
+      vertices[id].link = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].formatUrl(linkStr, config);
+      vertices[id].linkTarget = target;
     }
   });
   setTooltip(ids, tooltip);
@@ -7733,7 +8529,7 @@ var addSubGraph = function addSubGraph(_id, list, _title) {
   id = id || 'subGraph' + subCount;
   if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   title = title || '';
-  title = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(title, config);
+  title = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(title, config);
   subCount = subCount + 1;
   var subGraph = {
     id: id,
@@ -8115,6 +8911,10 @@ var destructLink = function destructLink(_str, _startStr) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
+  defaultConfig: function defaultConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"].flowchart;
+  },
   addVertex: addVertex,
   addLink: addLink,
   updateLinkInterpolate: updateLinkInterpolate,
@@ -8377,10 +9177,41 @@ var addEdges = function addEdges(edges, g) {
       edgeData.arrowhead = 'none';
     } else {
       edgeData.arrowhead = 'normal';
-    }
+    } // Check of arrow types, placed here in order not to break old rendering
 
-    _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info(edgeData, edge);
-    edgeData.arrowType = edge.type;
+
+    edgeData.arrowTypeStart = 'arrow_open';
+    edgeData.arrowTypeEnd = 'arrow_open';
+    /* eslint-disable no-fallthrough */
+
+    switch (edge.type) {
+      case 'double_arrow_cross':
+        edgeData.arrowTypeStart = 'arrow_cross';
+
+      case 'arrow_cross':
+        edgeData.arrowTypeEnd = 'arrow_cross';
+        break;
+
+      case 'double_arrow_point':
+        edgeData.arrowTypeStart = 'arrow_point';
+
+      case 'arrow_point':
+        edgeData.arrowTypeEnd = 'arrow_point';
+        break;
+
+      case 'double_arrow_circle':
+        edgeData.arrowTypeStart = 'arrow_circle';
+
+      case 'arrow_circle':
+        edgeData.arrowTypeEnd = 'arrow_circle';
+        break;
+    } // logger.info('apa', edgeData, edge);
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowType = edgeData.arrowTypeEnd;
+    // logger.info('apa', edgeData, edge);
+
+
     var style = '';
     var labelStyle = '';
 
@@ -8556,7 +9387,7 @@ var draw = function draw(text, id) {
   element.selectAll('g.node').attr('title', function () {
     return _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getTooltip(this.id);
   });
-  var padding = 8;
+  var padding = conf.diagramPadding;
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
@@ -8604,8 +9435,8 @@ var draw = function draw(text, id) {
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
-      rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
+      rect.setAttribute('height', dim.height); // rect.setAttribute('style', 'fill:#e8e8e8;');
+
       label.insertBefore(rect, label.firstChild);
     }
   } // If node has a link, wrap it in an anchor SVG object.
@@ -8623,6 +9454,11 @@ var draw = function draw(text, id) {
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
         link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+
+        if (vertex.linkTarget) {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
+        }
+
         var linkNode = node.insert(function () {
           return link;
         }, ':first-child');
@@ -9058,7 +9894,7 @@ var draw = function draw(text, id) {
   element.selectAll('g.node').attr('title', function () {
     return _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getTooltip(this.id);
   });
-  var padding = 8;
+  var padding = conf.diagramPadding;
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
@@ -9111,8 +9947,8 @@ var draw = function draw(text, id) {
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
-      rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
+      rect.setAttribute('height', dim.height); // rect.setAttribute('style', 'fill:#e8e8e8;');
+
       label.insertBefore(rect, label.firstChild);
     }
   } // If node has a link, wrap it in an anchor SVG object.
@@ -9130,6 +9966,11 @@ var draw = function draw(text, id) {
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
         link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+
+        if (vertex.linkTarget) {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
+        }
+
         var linkNode = node.insert(function () {
           return link;
         }, ':first-child');
@@ -9243,199 +10084,220 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,3],$V2=[1,5],$V3=[1,8,9,10,11,26,34,63,64,65,66,67,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$V4=[2,2],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,22],$Va=[1,46],$Vb=[1,24],$Vc=[1,25],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,40],$Vh=[1,35],$Vi=[1,37],$Vj=[1,32],$Vk=[1,36],$Vl=[1,39],$Vm=[1,43],$Vn=[1,44],$Vo=[1,45],$Vp=[1,34],$Vq=[1,38],$Vr=[1,41],$Vs=[1,42],$Vt=[1,33],$Vu=[1,51],$Vv=[1,8,9,10,11,26,30,34,63,64,65,66,67,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$Vw=[1,55],$Vx=[1,54],$Vy=[1,56],$Vz=[8,9,11,57,58],$VA=[8,9,10,11,57,58],$VB=[8,9,10,11,35,57,58],$VC=[8,9,10,11,28,34,35,37,39,41,43,45,47,49,50,52,57,58,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$VD=[8,9,11,34,57,58,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$VE=[34,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$VF=[1,101],$VG=[1,122],$VH=[1,123],$VI=[1,124],$VJ=[1,125],$VK=[1,105],$VL=[1,96],$VM=[1,97],$VN=[1,93],$VO=[1,117],$VP=[1,118],$VQ=[1,119],$VR=[1,120],$VS=[1,121],$VT=[1,126],$VU=[1,127],$VV=[1,99],$VW=[1,107],$VX=[1,110],$VY=[1,108],$VZ=[1,109],$V_=[1,102],$V$=[1,115],$V01=[1,114],$V11=[1,98],$V21=[1,95],$V31=[1,104],$V41=[1,106],$V51=[1,111],$V61=[1,112],$V71=[1,113],$V81=[1,116],$V91=[8,9,10,11,26,30,34,63,64,65,66,67,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$Va1=[1,130],$Vb1=[1,134],$Vc1=[1,136],$Vd1=[1,137],$Ve1=[8,9,10,11,12,13,26,28,29,30,34,38,40,42,44,46,48,49,51,53,57,58,59,63,64,65,66,67,68,69,72,78,79,82,83,84,86,87,88,89,93,94,95,96,97,98],$Vf1=[8,9,10,11,13,34,68,78,79,82,83,84,86,87,93,94,95,96,97,98],$Vg1=[10,79],$Vh1=[1,204],$Vi1=[1,208],$Vj1=[1,205],$Vk1=[1,202],$Vl1=[1,199],$Vm1=[1,200],$Vn1=[1,201],$Vo1=[1,203],$Vp1=[1,206],$Vq1=[1,207],$Vr1=[1,209],$Vs1=[8,9,11],$Vt1=[1,225],$Vu1=[8,9,11,79],$Vv1=[8,9,10,11,63,75,78,79,82,83,84,85,86,87,88];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,9],$V1=[1,7],$V2=[1,6],$V3=[1,8],$V4=[1,20,21,22,23,38,46,75,76,77,78,79,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$V5=[2,10],$V6=[1,20],$V7=[1,21],$V8=[1,22],$V9=[1,23],$Va=[1,30],$Vb=[1,54],$Vc=[1,32],$Vd=[1,33],$Ve=[1,34],$Vf=[1,35],$Vg=[1,36],$Vh=[1,48],$Vi=[1,43],$Vj=[1,45],$Vk=[1,40],$Vl=[1,44],$Vm=[1,47],$Vn=[1,51],$Vo=[1,52],$Vp=[1,53],$Vq=[1,42],$Vr=[1,46],$Vs=[1,49],$Vt=[1,50],$Vu=[1,41],$Vv=[1,57],$Vw=[1,62],$Vx=[1,20,21,22,23,38,42,46,75,76,77,78,79,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$Vy=[1,66],$Vz=[1,65],$VA=[1,67],$VB=[20,21,23,69,70],$VC=[20,21,22,23,69,70],$VD=[20,21,22,23,47,69,70],$VE=[20,21,22,23,40,46,47,49,51,53,55,57,59,61,62,64,69,70,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$VF=[20,21,23],$VG=[20,21,23,46,69,70,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$VH=[1,12,20,21,22,23,24,38,42,46,75,76,77,78,79,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$VI=[46,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$VJ=[1,115],$VK=[1,136],$VL=[1,137],$VM=[1,138],$VN=[1,139],$VO=[1,119],$VP=[1,110],$VQ=[1,111],$VR=[1,107],$VS=[1,131],$VT=[1,132],$VU=[1,133],$VV=[1,134],$VW=[1,135],$VX=[1,140],$VY=[1,141],$VZ=[1,113],$V_=[1,121],$V$=[1,124],$V01=[1,122],$V11=[1,123],$V21=[1,116],$V31=[1,129],$V41=[1,128],$V51=[1,112],$V61=[1,109],$V71=[1,118],$V81=[1,120],$V91=[1,125],$Va1=[1,126],$Vb1=[1,127],$Vc1=[1,130],$Vd1=[20,21,22,23,38,42,46,75,76,77,78,79,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$Ve1=[1,144],$Vf1=[1,148],$Vg1=[1,150],$Vh1=[1,151],$Vi1=[12,21,22,24],$Vj1=[20,21,22,23,24,26,38,40,41,42,46,50,52,54,56,58,60,61,63,65,69,70,71,75,76,77,78,79,80,81,84,91,92,95,96,97,99,100,101,102,106,107,108,109,110,111],$Vk1=[20,21,22,23,26,46,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$Vl1=[22,92],$Vm1=[1,220],$Vn1=[1,224],$Vo1=[1,221],$Vp1=[1,218],$Vq1=[1,215],$Vr1=[1,216],$Vs1=[1,217],$Vt1=[1,219],$Vu1=[1,222],$Vv1=[1,223],$Vw1=[1,225],$Vx1=[1,241],$Vy1=[20,21,23,92],$Vz1=[20,21,22,23,75,88,91,92,95,96,97,98,99,100,101];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"document":5,"line":6,"statement":7,"SEMI":8,"NEWLINE":9,"SPACE":10,"EOF":11,"GRAPH":12,"DIR":13,"FirstStmtSeperator":14,"ending":15,"endToken":16,"spaceList":17,"spaceListNewline":18,"verticeStatement":19,"separator":20,"styleStatement":21,"linkStyleStatement":22,"classDefStatement":23,"classStatement":24,"clickStatement":25,"subgraph":26,"text":27,"SQS":28,"SQE":29,"end":30,"link":31,"node":32,"vertex":33,"AMP":34,"STYLE_SEPARATOR":35,"idString":36,"PS":37,"PE":38,"(-":39,"-)":40,"STADIUMSTART":41,"STADIUMEND":42,"SUBROUTINESTART":43,"SUBROUTINEEND":44,"CYLINDERSTART":45,"CYLINDEREND":46,"DIAMOND_START":47,"DIAMOND_STOP":48,"TAGEND":49,"TRAPSTART":50,"TRAPEND":51,"INVTRAPSTART":52,"INVTRAPEND":53,"linkStatement":54,"arrowText":55,"TESTSTR":56,"START_LINK":57,"LINK":58,"PIPE":59,"textToken":60,"STR":61,"keywords":62,"STYLE":63,"LINKSTYLE":64,"CLASSDEF":65,"CLASS":66,"CLICK":67,"DOWN":68,"UP":69,"textNoTags":70,"textNoTagsToken":71,"DEFAULT":72,"stylesOpt":73,"alphaNum":74,"HEX":75,"numList":76,"INTERPOLATE":77,"NUM":78,"COMMA":79,"style":80,"styleComponent":81,"ALPHA":82,"COLON":83,"MINUS":84,"UNIT":85,"BRKT":86,"DOT":87,"PCT":88,"TAGSTART":89,"alphaNumToken":90,"idStringToken":91,"alphaNumStatement":92,"PUNCTUATION":93,"UNICODE_TEXT":94,"PLUS":95,"EQUALS":96,"MULT":97,"UNDERSCORE":98,"graphCodeTokens":99,"ARROW_CROSS":100,"ARROW_POINT":101,"ARROW_CIRCLE":102,"ARROW_OPEN":103,"QUOTE":104,"$accept":0,"$end":1},
-terminals_: {2:"error",8:"SEMI",9:"NEWLINE",10:"SPACE",11:"EOF",12:"GRAPH",13:"DIR",26:"subgraph",28:"SQS",29:"SQE",30:"end",34:"AMP",35:"STYLE_SEPARATOR",37:"PS",38:"PE",39:"(-",40:"-)",41:"STADIUMSTART",42:"STADIUMEND",43:"SUBROUTINESTART",44:"SUBROUTINEEND",45:"CYLINDERSTART",46:"CYLINDEREND",47:"DIAMOND_START",48:"DIAMOND_STOP",49:"TAGEND",50:"TRAPSTART",51:"TRAPEND",52:"INVTRAPSTART",53:"INVTRAPEND",56:"TESTSTR",57:"START_LINK",58:"LINK",59:"PIPE",61:"STR",63:"STYLE",64:"LINKSTYLE",65:"CLASSDEF",66:"CLASS",67:"CLICK",68:"DOWN",69:"UP",72:"DEFAULT",75:"HEX",77:"INTERPOLATE",78:"NUM",79:"COMMA",82:"ALPHA",83:"COLON",84:"MINUS",85:"UNIT",86:"BRKT",87:"DOT",88:"PCT",89:"TAGSTART",93:"PUNCTUATION",94:"UNICODE_TEXT",95:"PLUS",96:"EQUALS",97:"MULT",98:"UNDERSCORE",100:"ARROW_CROSS",101:"ARROW_POINT",102:"ARROW_CIRCLE",103:"ARROW_OPEN",104:"QUOTE"},
-productions_: [0,[3,2],[5,0],[5,2],[6,1],[6,1],[6,1],[6,1],[6,1],[4,2],[4,2],[4,3],[15,2],[15,1],[16,1],[16,1],[16,1],[14,1],[14,1],[14,2],[18,2],[18,2],[18,1],[18,1],[17,2],[17,1],[7,2],[7,2],[7,2],[7,2],[7,2],[7,2],[7,9],[7,6],[7,4],[20,1],[20,1],[20,1],[19,3],[19,4],[19,2],[19,1],[32,1],[32,5],[32,3],[33,4],[33,6],[33,4],[33,4],[33,4],[33,4],[33,4],[33,4],[33,6],[33,4],[33,4],[33,4],[33,4],[33,4],[33,1],[31,2],[31,3],[31,3],[31,1],[31,3],[54,1],[55,3],[27,1],[27,2],[27,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[70,1],[70,2],[23,5],[23,5],[24,5],[25,5],[25,7],[25,5],[25,7],[21,5],[21,5],[22,5],[22,5],[22,9],[22,9],[22,7],[22,7],[76,1],[76,3],[73,1],[73,3],[80,1],[80,2],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[81,1],[60,1],[60,1],[60,1],[60,1],[60,1],[60,1],[71,1],[71,1],[71,1],[71,1],[36,1],[36,2],[74,1],[74,2],[92,1],[92,1],[92,1],[92,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[91,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1],[99,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"openDirective":6,"typeDirective":7,"closeDirective":8,"separator":9,":":10,"argDirective":11,"open_directive":12,"type_directive":13,"arg_directive":14,"close_directive":15,"graphConfig":16,"document":17,"line":18,"statement":19,"SEMI":20,"NEWLINE":21,"SPACE":22,"EOF":23,"GRAPH":24,"NODIR":25,"DIR":26,"FirstStmtSeperator":27,"ending":28,"endToken":29,"spaceList":30,"spaceListNewline":31,"verticeStatement":32,"styleStatement":33,"linkStyleStatement":34,"classDefStatement":35,"classStatement":36,"clickStatement":37,"subgraph":38,"text":39,"SQS":40,"SQE":41,"end":42,"link":43,"node":44,"vertex":45,"AMP":46,"STYLE_SEPARATOR":47,"idString":48,"PS":49,"PE":50,"(-":51,"-)":52,"STADIUMSTART":53,"STADIUMEND":54,"SUBROUTINESTART":55,"SUBROUTINEEND":56,"CYLINDERSTART":57,"CYLINDEREND":58,"DIAMOND_START":59,"DIAMOND_STOP":60,"TAGEND":61,"TRAPSTART":62,"TRAPEND":63,"INVTRAPSTART":64,"INVTRAPEND":65,"linkStatement":66,"arrowText":67,"TESTSTR":68,"START_LINK":69,"LINK":70,"PIPE":71,"textToken":72,"STR":73,"keywords":74,"STYLE":75,"LINKSTYLE":76,"CLASSDEF":77,"CLASS":78,"CLICK":79,"DOWN":80,"UP":81,"textNoTags":82,"textNoTagsToken":83,"DEFAULT":84,"stylesOpt":85,"alphaNum":86,"LINK_TARGET":87,"HEX":88,"numList":89,"INTERPOLATE":90,"NUM":91,"COMMA":92,"style":93,"styleComponent":94,"ALPHA":95,"COLON":96,"MINUS":97,"UNIT":98,"BRKT":99,"DOT":100,"PCT":101,"TAGSTART":102,"alphaNumToken":103,"idStringToken":104,"alphaNumStatement":105,"PUNCTUATION":106,"UNICODE_TEXT":107,"PLUS":108,"EQUALS":109,"MULT":110,"UNDERSCORE":111,"graphCodeTokens":112,"ARROW_CROSS":113,"ARROW_POINT":114,"ARROW_CIRCLE":115,"ARROW_OPEN":116,"QUOTE":117,"$accept":0,"$end":1},
+terminals_: {2:"error",10:":",12:"open_directive",13:"type_directive",14:"arg_directive",15:"close_directive",20:"SEMI",21:"NEWLINE",22:"SPACE",23:"EOF",24:"GRAPH",25:"NODIR",26:"DIR",38:"subgraph",40:"SQS",41:"SQE",42:"end",46:"AMP",47:"STYLE_SEPARATOR",49:"PS",50:"PE",51:"(-",52:"-)",53:"STADIUMSTART",54:"STADIUMEND",55:"SUBROUTINESTART",56:"SUBROUTINEEND",57:"CYLINDERSTART",58:"CYLINDEREND",59:"DIAMOND_START",60:"DIAMOND_STOP",61:"TAGEND",62:"TRAPSTART",63:"TRAPEND",64:"INVTRAPSTART",65:"INVTRAPEND",68:"TESTSTR",69:"START_LINK",70:"LINK",71:"PIPE",73:"STR",75:"STYLE",76:"LINKSTYLE",77:"CLASSDEF",78:"CLASS",79:"CLICK",80:"DOWN",81:"UP",84:"DEFAULT",87:"LINK_TARGET",88:"HEX",90:"INTERPOLATE",91:"NUM",92:"COMMA",95:"ALPHA",96:"COLON",97:"MINUS",98:"UNIT",99:"BRKT",100:"DOT",101:"PCT",102:"TAGSTART",106:"PUNCTUATION",107:"UNICODE_TEXT",108:"PLUS",109:"EQUALS",110:"MULT",111:"UNDERSCORE",113:"ARROW_CROSS",114:"ARROW_POINT",115:"ARROW_CIRCLE",116:"ARROW_OPEN",117:"QUOTE"},
+productions_: [0,[3,1],[3,2],[5,4],[5,6],[6,1],[7,1],[11,1],[8,1],[4,2],[17,0],[17,2],[18,1],[18,1],[18,1],[18,1],[18,1],[16,2],[16,2],[16,2],[16,3],[28,2],[28,1],[29,1],[29,1],[29,1],[27,1],[27,1],[27,2],[31,2],[31,2],[31,1],[31,1],[30,2],[30,1],[19,2],[19,2],[19,2],[19,2],[19,2],[19,2],[19,9],[19,6],[19,4],[9,1],[9,1],[9,1],[32,3],[32,4],[32,2],[32,1],[44,1],[44,5],[44,3],[45,4],[45,6],[45,4],[45,4],[45,4],[45,4],[45,4],[45,4],[45,6],[45,4],[45,4],[45,4],[45,4],[45,4],[45,1],[43,2],[43,3],[43,3],[43,1],[43,3],[66,1],[67,3],[39,1],[39,2],[39,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[82,1],[82,2],[35,5],[35,5],[36,5],[37,5],[37,7],[37,5],[37,7],[37,7],[37,9],[33,5],[33,5],[34,5],[34,5],[34,9],[34,9],[34,7],[34,7],[89,1],[89,3],[85,1],[85,3],[93,1],[93,2],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[72,1],[72,1],[72,1],[72,1],[72,1],[72,1],[83,1],[83,1],[83,1],[83,1],[48,1],[48,2],[86,1],[86,2],[105,1],[105,1],[105,1],[105,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 2:
+case 5:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 6:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 7:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 8:
+ yy.parseDirective('}%%', 'close_directive', 'flowchart'); 
+break;
+case 10:
  this.$ = [];
 break;
-case 3:
+case 11:
 
 	    if($$[$0] !== []){
 	        $$[$0-1].push($$[$0]);
 	    }
 	    this.$=$$[$0-1];
 break;
-case 4: case 67: case 69: case 81: case 127: case 129: case 130:
+case 12: case 76: case 78: case 90: case 138: case 140: case 141:
 this.$=$$[$0];
 break;
-case 11:
+case 19:
+ yy.setDirection('TB');this.$ = 'TB';
+break;
+case 20:
  yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
 break;
-case 26:
+case 35:
  /* console.warn('finat vs', $$[$0-1].nodes); */ this.$=$$[$0-1].nodes
 break;
-case 27: case 28: case 29: case 30: case 31:
+case 36: case 37: case 38: case 39: case 40:
 this.$=[];
 break;
-case 32:
+case 41:
 this.$=yy.addSubGraph($$[$0-6],$$[$0-1],$$[$0-4]);
 break;
-case 33:
+case 42:
 this.$=yy.addSubGraph($$[$0-3],$$[$0-1],$$[$0-3]);
 break;
-case 34:
+case 43:
 this.$=yy.addSubGraph(undefined,$$[$0-1],undefined);
 break;
-case 38:
+case 47:
  /* console.warn('vs',$$[$0-2].stmt,$$[$0]); */ yy.addLink($$[$0-2].stmt,$$[$0],$$[$0-1]); this.$ = { stmt: $$[$0], nodes: $$[$0].concat($$[$0-2].nodes) } 
 break;
-case 39:
+case 48:
  /* console.warn('vs',$$[$0-3].stmt,$$[$0-1]); */ yy.addLink($$[$0-3].stmt,$$[$0-1],$$[$0-2]); this.$ = { stmt: $$[$0-1], nodes: $$[$0-1].concat($$[$0-3].nodes) } 
 break;
-case 40:
+case 49:
 /*console.warn('noda', $$[$0-1]);*/ this.$ = {stmt: $$[$0-1], nodes:$$[$0-1] }
 break;
-case 41:
+case 50:
  /*console.warn('noda', $$[$0]);*/ this.$ = {stmt: $$[$0], nodes:$$[$0] }
 break;
-case 42:
+case 51:
  /* console.warn('nod', $$[$0]); */ this.$ = [$$[$0]];
 break;
-case 43:
+case 52:
  this.$ = $$[$0-4].concat($$[$0]); /* console.warn('pip', $$[$0-4][0], $$[$0], this.$); */ 
 break;
-case 44:
+case 53:
 this.$ = [$$[$0-2]];yy.setClass($$[$0-2],$$[$0])
 break;
-case 45:
+case 54:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
 break;
-case 46:
+case 55:
 this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'circle');
 break;
-case 47:
+case 56:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'ellipse');
 break;
-case 48:
+case 57:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'stadium');
 break;
-case 49:
+case 58:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'subroutine');
 break;
-case 50:
+case 59:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'cylinder');
 break;
-case 51:
+case 60:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
 break;
-case 52:
+case 61:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
 break;
-case 53:
+case 62:
 this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'hexagon');
 break;
-case 54:
+case 63:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'odd');
 break;
-case 55:
+case 64:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'trapezoid');
 break;
-case 56:
+case 65:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'inv_trapezoid');
 break;
-case 57:
+case 66:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'lean_right');
 break;
-case 58:
+case 67:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'lean_left');
 break;
-case 59:
+case 68:
  /*console.warn('h: ', $$[$0]);*/this.$ = $$[$0];yy.addVertex($$[$0]);
 break;
-case 60:
+case 69:
 $$[$0-1].text = $$[$0];this.$ = $$[$0-1];
 break;
-case 61: case 62:
+case 70: case 71:
 $$[$0-2].text = $$[$0-1];this.$ = $$[$0-2];
 break;
-case 63:
+case 72:
 this.$ = $$[$0];
 break;
-case 64:
+case 73:
 var inf = yy.destructLink($$[$0], $$[$0-2]); this.$ = {"type":inf.type,"stroke":inf.stroke,"text":$$[$0-1]};
 break;
-case 65:
+case 74:
 var inf = yy.destructLink($$[$0]);this.$ = {"type":inf.type,"stroke":inf.stroke};
 break;
-case 66:
+case 75:
 this.$ = $$[$0-1];
 break;
-case 68: case 82: case 128:
+case 77: case 91: case 139:
 this.$=$$[$0-1]+''+$$[$0];
 break;
-case 83: case 84:
+case 92: case 93:
 this.$ = $$[$0-4];yy.addClass($$[$0-2],$$[$0]);
 break;
-case 85:
+case 94:
 this.$ = $$[$0-4];yy.setClass($$[$0-2], $$[$0]);
 break;
-case 86:
+case 95:
 this.$ = $$[$0-4];yy.setClickEvent($$[$0-2], $$[$0], undefined);
 break;
-case 87:
+case 96:
 this.$ = $$[$0-6];yy.setClickEvent($$[$0-4], $$[$0-2], $$[$0])       ;
 break;
-case 88:
-this.$ = $$[$0-4];yy.setLink($$[$0-2], $$[$0], undefined);
+case 97:
+this.$ = $$[$0-4];yy.setLink($$[$0-2], $$[$0], undefined, undefined);
 break;
-case 89:
-this.$ = $$[$0-6];yy.setLink($$[$0-4], $$[$0-2], $$[$0]       );
+case 98:
+this.$ = $$[$0-6];yy.setLink($$[$0-4], $$[$0-2], $$[$0], undefined       );
 break;
-case 90:
+case 99:
+this.$ = $$[$0-6];yy.setLink($$[$0-4], $$[$0-2], undefined, $$[$0]       );
+break;
+case 100:
+this.$ = $$[$0-8];yy.setLink($$[$0-6], $$[$0-4], $$[$0-2], $$[$0]              );
+break;
+case 101:
 this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
 break;
-case 91: case 93:
+case 102: case 104:
 this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
 break;
-case 92:
+case 103:
 this.$ = $$[$0-4];yy.updateLink([$$[$0-2]],$$[$0]);
 break;
-case 94:
+case 105:
 this.$ = $$[$0-8];yy.updateLinkInterpolate([$$[$0-6]],$$[$0-2]);yy.updateLink([$$[$0-6]],$$[$0]);
 break;
-case 95:
+case 106:
 this.$ = $$[$0-8];yy.updateLinkInterpolate($$[$0-6],$$[$0-2]);yy.updateLink($$[$0-6],$$[$0]);
 break;
-case 96:
+case 107:
 this.$ = $$[$0-6];yy.updateLinkInterpolate([$$[$0-4]],$$[$0]);
 break;
-case 97:
+case 108:
 this.$ = $$[$0-6];yy.updateLinkInterpolate($$[$0-4],$$[$0]);
 break;
-case 98: case 100:
+case 109: case 111:
 this.$ = [$$[$0]]
 break;
-case 99: case 101:
+case 110: case 112:
 $$[$0-2].push($$[$0]);this.$ = $$[$0-2];
 break;
-case 103:
+case 114:
 this.$ = $$[$0-1] + $$[$0];
 break;
-case 125:
+case 136:
 this.$=$$[$0]
 break;
-case 126:
+case 137:
 this.$=$$[$0-1]+''+$$[$0]
 break;
-case 131:
+case 142:
 this.$='v';
 break;
-case 132:
+case 143:
 this.$='-';
 break;
 }
 },
-table: [{3:1,4:2,9:$V0,10:$V1,12:$V2},{1:[3]},o($V3,$V4,{5:6}),{4:7,9:$V0,10:$V1,12:$V2},{4:8,9:$V0,10:$V1,12:$V2},{13:[1,9]},{1:[2,1],6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,19:16,21:17,22:18,23:19,24:20,25:21,26:$V9,32:23,33:29,34:$Va,36:30,63:$Vb,64:$Vc,65:$Vd,66:$Ve,67:$Vf,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},o($V3,[2,9]),o($V3,[2,10]),{8:[1,48],9:[1,49],10:$Vu,14:47,17:50},o($Vv,[2,3]),o($Vv,[2,4]),o($Vv,[2,5]),o($Vv,[2,6]),o($Vv,[2,7]),o($Vv,[2,8]),{8:$Vw,9:$Vx,11:$Vy,20:52,31:53,54:57,57:[1,58],58:[1,59]},{8:$Vw,9:$Vx,11:$Vy,20:60},{8:$Vw,9:$Vx,11:$Vy,20:61},{8:$Vw,9:$Vx,11:$Vy,20:62},{8:$Vw,9:$Vx,11:$Vy,20:63},{8:$Vw,9:$Vx,11:$Vy,20:64},{8:$Vw,9:$Vx,10:[1,65],11:$Vy,20:66},o($Vz,[2,41],{17:67,10:$Vu}),{10:[1,68]},{10:[1,69]},{10:[1,70]},{10:[1,71]},{10:[1,72]},o($VA,[2,42],{35:[1,73]}),o($VB,[2,59],{91:84,28:[1,74],34:$Va,37:[1,75],39:[1,76],41:[1,77],43:[1,78],45:[1,79],47:[1,80],49:[1,81],50:[1,82],52:[1,83],68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt}),o($VC,[2,125]),o($VC,[2,146]),o($VC,[2,147]),o($VC,[2,148]),o($VC,[2,149]),o($VC,[2,150]),o($VC,[2,151]),o($VC,[2,152]),o($VC,[2,153]),o($VC,[2,154]),o($VC,[2,155]),o($VC,[2,156]),o($VC,[2,157]),o($VC,[2,158]),o($VC,[2,159]),o($VC,[2,160]),o($V3,[2,11]),o($V3,[2,17]),o($V3,[2,18]),{9:[1,85]},o($VD,[2,25],{17:86,10:$Vu}),o($Vv,[2,26]),{32:87,33:29,34:$Va,36:30,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},o($Vv,[2,35]),o($Vv,[2,36]),o($Vv,[2,37]),o($VE,[2,63],{55:88,56:[1,89],59:[1,90]}),{10:$VF,12:$VG,13:$VH,26:$VI,27:91,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o([34,56,59,68,78,79,82,83,84,86,87,93,94,95,96,97,98],[2,65]),o($Vv,[2,27]),o($Vv,[2,28]),o($Vv,[2,29]),o($Vv,[2,30]),o($Vv,[2,31]),{10:$VF,12:$VG,13:$VH,26:$VI,27:128,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($V91,$V4,{5:129}),o($Vz,[2,40],{34:$Va1}),{13:$Vb1,34:$VK,68:$Vc1,74:131,75:[1,132],78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{72:[1,138],76:139,78:[1,140]},{13:$Vb1,34:$VK,68:$Vc1,72:[1,141],74:142,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{13:$Vb1,34:$VK,68:$Vc1,74:143,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{13:$Vb1,34:$VK,68:$Vc1,74:144,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{34:$Va,36:145,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},{10:$VF,12:$VG,13:$VH,26:$VI,27:146,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:148,30:$VJ,34:$VK,37:[1,147],49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:149,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:150,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:151,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:152,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:153,30:$VJ,34:$VK,47:[1,154],49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:155,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:156,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:157,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VC,[2,126]),o($V3,[2,19]),o($VD,[2,24]),o($Vz,[2,38],{17:158,10:$Vu}),o($VE,[2,60],{10:[1,159]}),{10:[1,160]},{10:$VF,12:$VG,13:$VH,26:$VI,27:161,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,49:$VL,57:$VM,58:[1,162],60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($Ve1,[2,67]),o($Ve1,[2,69]),o($Ve1,[2,115]),o($Ve1,[2,116]),o($Ve1,[2,117]),o($Ve1,[2,118]),o($Ve1,[2,119]),o($Ve1,[2,120]),o($Ve1,[2,121]),o($Ve1,[2,122]),o($Ve1,[2,123]),o($Ve1,[2,124]),o($Ve1,[2,133]),o($Ve1,[2,134]),o($Ve1,[2,135]),o($Ve1,[2,136]),o($Ve1,[2,137]),o($Ve1,[2,138]),o($Ve1,[2,139]),o($Ve1,[2,140]),o($Ve1,[2,141]),o($Ve1,[2,142]),o($Ve1,[2,143]),o($Ve1,[2,144]),o($Ve1,[2,145]),o($Ve1,[2,70]),o($Ve1,[2,71]),o($Ve1,[2,72]),o($Ve1,[2,73]),o($Ve1,[2,74]),o($Ve1,[2,75]),o($Ve1,[2,76]),o($Ve1,[2,77]),o($Ve1,[2,78]),o($Ve1,[2,79]),o($Ve1,[2,80]),{8:$Vw,9:$Vx,10:$VF,11:$Vy,12:$VG,13:$VH,20:165,26:$VI,28:[1,164],30:$VJ,34:$VK,49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,19:16,21:17,22:18,23:19,24:20,25:21,26:$V9,30:[1,166],32:23,33:29,34:$Va,36:30,63:$Vb,64:$Vc,65:$Vd,66:$Ve,67:$Vf,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},{10:$Vu,17:167},{10:[1,168],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:169,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:[1,170]},o($Vf1,[2,127]),o($Vf1,[2,129]),o($Vf1,[2,130]),o($Vf1,[2,131]),o($Vf1,[2,132]),{10:[1,171]},{10:[1,172],79:[1,173]},o($Vg1,[2,98]),{10:[1,174]},{10:[1,175],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:169,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:[1,176],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:169,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:[1,177],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:169,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VA,[2,44],{91:84,34:$Va,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt}),{10:$VF,12:$VG,13:$VH,26:$VI,29:[1,178],30:$VJ,34:$VK,49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:179,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,38:[1,180],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,40:[1,181],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,42:[1,182],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,44:[1,183],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,46:[1,184],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,48:[1,185],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,27:186,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,29:[1,187],30:$VJ,34:$VK,49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,49:$VL,51:[1,188],53:[1,189],57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,49:$VL,51:[1,191],53:[1,190],57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($Vz,[2,39],{34:$Va1}),o($VE,[2,62]),o($VE,[2,61]),{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,49:$VL,57:$VM,59:[1,192],60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VE,[2,64]),o($Ve1,[2,68]),{10:$VF,12:$VG,13:$VH,26:$VI,27:193,30:$VJ,34:$VK,49:$VL,57:$VM,60:92,61:$VN,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($V91,$V4,{5:194}),o($Vv,[2,34]),{33:195,34:$Va,36:30,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},{10:$Vh1,63:$Vi1,73:196,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},o($Vf1,[2,128]),{10:$Vh1,63:$Vi1,73:210,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{10:$Vh1,63:$Vi1,73:211,75:$Vj1,77:[1,212],78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{10:$Vh1,63:$Vi1,73:213,75:$Vj1,77:[1,214],78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{78:[1,215]},{10:$Vh1,63:$Vi1,73:216,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{10:$Vh1,63:$Vi1,73:217,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{13:$Vb1,34:$VK,68:$Vc1,74:218,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{13:$Vb1,34:$VK,61:[1,220],68:$Vc1,74:219,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VB,[2,45]),{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,38:[1,221],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VB,[2,51]),o($VB,[2,47]),o($VB,[2,48]),o($VB,[2,49]),o($VB,[2,50]),o($VB,[2,52]),{10:$VF,12:$VG,13:$VH,26:$VI,30:$VJ,34:$VK,48:[1,222],49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},o($VB,[2,54]),o($VB,[2,55]),o($VB,[2,57]),o($VB,[2,56]),o($VB,[2,58]),o([10,34,68,78,79,82,83,84,86,87,93,94,95,96,97,98],[2,66]),{10:$VF,12:$VG,13:$VH,26:$VI,29:[1,223],30:$VJ,34:$VK,49:$VL,57:$VM,60:163,62:103,63:$VO,64:$VP,65:$VQ,66:$VR,67:$VS,68:$VT,69:$VU,71:94,72:$VV,78:$VW,79:$VX,82:$VY,83:$VZ,84:$V_,86:$V$,87:$V01,88:$V11,89:$V21,90:100,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,19:16,21:17,22:18,23:19,24:20,25:21,26:$V9,30:[1,224],32:23,33:29,34:$Va,36:30,63:$Vb,64:$Vc,65:$Vd,66:$Ve,67:$Vf,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},o($VA,[2,43]),o($Vs1,[2,90],{79:$Vt1}),o($Vu1,[2,100],{81:226,10:$Vh1,63:$Vi1,75:$Vj1,78:$Vk1,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1}),o($Vv1,[2,102]),o($Vv1,[2,104]),o($Vv1,[2,105]),o($Vv1,[2,106]),o($Vv1,[2,107]),o($Vv1,[2,108]),o($Vv1,[2,109]),o($Vv1,[2,110]),o($Vv1,[2,111]),o($Vv1,[2,112]),o($Vv1,[2,113]),o($Vv1,[2,114]),o($Vs1,[2,91],{79:$Vt1}),o($Vs1,[2,92],{79:$Vt1}),{10:[1,227]},o($Vs1,[2,93],{79:$Vt1}),{10:[1,228]},o($Vg1,[2,99]),o($Vs1,[2,83],{79:$Vt1}),o($Vs1,[2,84],{79:$Vt1}),o($Vs1,[2,85],{90:135,92:169,13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81}),o($Vs1,[2,86],{90:135,92:169,10:[1,229],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81}),o($Vs1,[2,88],{10:[1,230]}),{38:[1,231]},{48:[1,232]},{8:$Vw,9:$Vx,11:$Vy,20:233},o($Vv,[2,33]),{10:$Vh1,63:$Vi1,75:$Vj1,78:$Vk1,80:234,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},o($Vv1,[2,103]),{13:$Vb1,34:$VK,68:$Vc1,74:235,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{13:$Vb1,34:$VK,68:$Vc1,74:236,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,90:135,92:133,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81},{61:[1,237]},{61:[1,238]},o($VB,[2,46]),o($VB,[2,53]),o($V91,$V4,{5:239}),o($Vu1,[2,101],{81:226,10:$Vh1,63:$Vi1,75:$Vj1,78:$Vk1,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1}),o($Vs1,[2,96],{90:135,92:169,10:[1,240],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81}),o($Vs1,[2,97],{90:135,92:169,10:[1,241],13:$Vb1,34:$VK,68:$Vc1,78:$VW,79:$VX,82:$VY,83:$VZ,84:$Vd1,86:$V$,87:$V01,93:$V31,94:$V41,95:$V51,96:$V61,97:$V71,98:$V81}),o($Vs1,[2,87]),o($Vs1,[2,89]),{6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,19:16,21:17,22:18,23:19,24:20,25:21,26:$V9,30:[1,242],32:23,33:29,34:$Va,36:30,63:$Vb,64:$Vc,65:$Vd,66:$Ve,67:$Vf,68:$Vg,78:$Vh,79:$Vi,82:$Vj,83:$Vk,84:$Vl,86:$Vm,87:$Vn,91:31,93:$Vo,94:$Vp,95:$Vq,96:$Vr,97:$Vs,98:$Vt},{10:$Vh1,63:$Vi1,73:243,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},{10:$Vh1,63:$Vi1,73:244,75:$Vj1,78:$Vk1,80:197,81:198,82:$Vl1,83:$Vm1,84:$Vn1,85:$Vo1,86:$Vp1,87:$Vq1,88:$Vr1},o($Vv,[2,32]),o($Vs1,[2,94],{79:$Vt1}),o($Vs1,[2,95],{79:$Vt1})],
-defaultActions: {},
+table: [{3:1,4:2,5:3,6:5,12:$V0,16:4,21:$V1,22:$V2,24:$V3},{1:[3]},{1:[2,1]},{3:10,4:2,5:3,6:5,12:$V0,16:4,21:$V1,22:$V2,24:$V3},o($V4,$V5,{17:11}),{7:12,13:[1,13]},{16:14,21:$V1,22:$V2,24:$V3},{16:15,21:$V1,22:$V2,24:$V3},{25:[1,16],26:[1,17]},{13:[2,5]},{1:[2,2]},{1:[2,9],18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{8:55,10:[1,56],15:$Vv},o([10,15],[2,6]),o($V4,[2,17]),o($V4,[2,18]),o($V4,[2,19]),{20:[1,59],21:[1,60],22:$Vw,27:58,30:61},o($Vx,[2,11]),o($Vx,[2,12]),o($Vx,[2,13]),o($Vx,[2,14]),o($Vx,[2,15]),o($Vx,[2,16]),{9:63,20:$Vy,21:$Vz,23:$VA,43:64,66:68,69:[1,69],70:[1,70]},{9:71,20:$Vy,21:$Vz,23:$VA},{9:72,20:$Vy,21:$Vz,23:$VA},{9:73,20:$Vy,21:$Vz,23:$VA},{9:74,20:$Vy,21:$Vz,23:$VA},{9:75,20:$Vy,21:$Vz,23:$VA},{9:77,20:$Vy,21:$Vz,22:[1,76],23:$VA},o($VB,[2,50],{30:78,22:$Vw}),{22:[1,79]},{22:[1,80]},{22:[1,81]},{22:[1,82]},{22:[1,83]},o($VC,[2,51],{47:[1,84]}),o($VD,[2,68],{104:95,40:[1,85],46:$Vb,49:[1,86],51:[1,87],53:[1,88],55:[1,89],57:[1,90],59:[1,91],61:[1,92],62:[1,93],64:[1,94],80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu}),o($VE,[2,136]),o($VE,[2,157]),o($VE,[2,158]),o($VE,[2,159]),o($VE,[2,160]),o($VE,[2,161]),o($VE,[2,162]),o($VE,[2,163]),o($VE,[2,164]),o($VE,[2,165]),o($VE,[2,166]),o($VE,[2,167]),o($VE,[2,168]),o($VE,[2,169]),o($VE,[2,170]),o($VE,[2,171]),{9:96,20:$Vy,21:$Vz,23:$VA},{11:97,14:[1,98]},o($VF,[2,8]),o($V4,[2,20]),o($V4,[2,26]),o($V4,[2,27]),{21:[1,99]},o($VG,[2,34],{30:100,22:$Vw}),o($Vx,[2,35]),{44:101,45:37,46:$Vb,48:38,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},o($VH,[2,44]),o($VH,[2,45]),o($VH,[2,46]),o($VI,[2,72],{67:102,68:[1,103],71:[1,104]}),{22:$VJ,24:$VK,26:$VL,38:$VM,39:105,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o([46,68,71,80,91,92,95,96,97,99,100,106,107,108,109,110,111],[2,74]),o($Vx,[2,36]),o($Vx,[2,37]),o($Vx,[2,38]),o($Vx,[2,39]),o($Vx,[2,40]),{22:$VJ,24:$VK,26:$VL,38:$VM,39:142,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($Vd1,$V5,{17:143}),o($VB,[2,49],{46:$Ve1}),{26:$Vf1,46:$VO,80:$Vg1,86:145,88:[1,146],91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{84:[1,152],89:153,91:[1,154]},{26:$Vf1,46:$VO,80:$Vg1,84:[1,155],86:156,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:157,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:158,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{46:$Vb,48:159,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{22:$VJ,24:$VK,26:$VL,38:$VM,39:160,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:162,42:$VN,46:$VO,49:[1,161],61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:163,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:164,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:165,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:166,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:167,42:$VN,46:$VO,59:[1,168],61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:169,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:170,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:171,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VE,[2,137]),o($Vi1,[2,3]),{8:172,15:$Vv},{15:[2,7]},o($V4,[2,28]),o($VG,[2,33]),o($VB,[2,47],{30:173,22:$Vw}),o($VI,[2,69],{22:[1,174]}),{22:[1,175]},{22:$VJ,24:$VK,26:$VL,38:$VM,39:176,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,69:$VQ,70:[1,177],72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($Vj1,[2,76]),o($Vj1,[2,78]),o($Vj1,[2,126]),o($Vj1,[2,127]),o($Vj1,[2,128]),o($Vj1,[2,129]),o($Vj1,[2,130]),o($Vj1,[2,131]),o($Vj1,[2,132]),o($Vj1,[2,133]),o($Vj1,[2,134]),o($Vj1,[2,135]),o($Vj1,[2,144]),o($Vj1,[2,145]),o($Vj1,[2,146]),o($Vj1,[2,147]),o($Vj1,[2,148]),o($Vj1,[2,149]),o($Vj1,[2,150]),o($Vj1,[2,151]),o($Vj1,[2,152]),o($Vj1,[2,153]),o($Vj1,[2,154]),o($Vj1,[2,155]),o($Vj1,[2,156]),o($Vj1,[2,79]),o($Vj1,[2,80]),o($Vj1,[2,81]),o($Vj1,[2,82]),o($Vj1,[2,83]),o($Vj1,[2,84]),o($Vj1,[2,85]),o($Vj1,[2,86]),o($Vj1,[2,87]),o($Vj1,[2,88]),o($Vj1,[2,89]),{9:180,20:$Vy,21:$Vz,22:$VJ,23:$VA,24:$VK,26:$VL,38:$VM,40:[1,179],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,181],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{22:$Vw,30:182},{22:[1,183],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:184,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:[1,185]},o($Vk1,[2,138]),o($Vk1,[2,140]),o($Vk1,[2,141]),o($Vk1,[2,142]),o($Vk1,[2,143]),{22:[1,186]},{22:[1,187],92:[1,188]},o($Vl1,[2,109]),{22:[1,189]},{22:[1,190],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:184,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:[1,191],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:184,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:[1,192],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:184,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VC,[2,53],{104:95,46:$Vb,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu}),{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,193],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:194,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,50:[1,195],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,52:[1,196],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,54:[1,197],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,56:[1,198],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,58:[1,199],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,60:[1,200],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:201,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,202],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,63:[1,203],65:[1,204],69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,63:[1,206],65:[1,205],69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{9:207,20:$Vy,21:$Vz,23:$VA},o($VB,[2,48],{46:$Ve1}),o($VI,[2,71]),o($VI,[2,70]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,69:$VQ,71:[1,208],72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VI,[2,73]),o($Vj1,[2,77]),{22:$VJ,24:$VK,26:$VL,38:$VM,39:209,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($Vd1,$V5,{17:210}),o($Vx,[2,43]),{45:211,46:$Vb,48:38,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{22:$Vm1,75:$Vn1,85:212,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},o($Vk1,[2,139]),{22:$Vm1,75:$Vn1,85:226,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{22:$Vm1,75:$Vn1,85:227,88:$Vo1,90:[1,228],91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{22:$Vm1,75:$Vn1,85:229,88:$Vo1,90:[1,230],91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{91:[1,231]},{22:$Vm1,75:$Vn1,85:232,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{22:$Vm1,75:$Vn1,85:233,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{26:$Vf1,46:$VO,80:$Vg1,86:234,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{26:$Vf1,46:$VO,73:[1,236],80:$Vg1,86:235,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VD,[2,54]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,50:[1,237],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VD,[2,60]),o($VD,[2,56]),o($VD,[2,57]),o($VD,[2,58]),o($VD,[2,59]),o($VD,[2,61]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,60:[1,238],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VD,[2,63]),o($VD,[2,64]),o($VD,[2,66]),o($VD,[2,65]),o($VD,[2,67]),o($Vi1,[2,4]),o([22,46,80,91,92,95,96,97,99,100,106,107,108,109,110,111],[2,75]),{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,239],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,240],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},o($VC,[2,52]),o($VF,[2,101],{92:$Vx1}),o($Vy1,[2,111],{94:242,22:$Vm1,75:$Vn1,88:$Vo1,91:$Vp1,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1}),o($Vz1,[2,113]),o($Vz1,[2,115]),o($Vz1,[2,116]),o($Vz1,[2,117]),o($Vz1,[2,118]),o($Vz1,[2,119]),o($Vz1,[2,120]),o($Vz1,[2,121]),o($Vz1,[2,122]),o($Vz1,[2,123]),o($Vz1,[2,124]),o($Vz1,[2,125]),o($VF,[2,102],{92:$Vx1}),o($VF,[2,103],{92:$Vx1}),{22:[1,243]},o($VF,[2,104],{92:$Vx1}),{22:[1,244]},o($Vl1,[2,110]),o($VF,[2,92],{92:$Vx1}),o($VF,[2,93],{92:$Vx1}),o($VF,[2,94],{103:149,105:184,26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1}),o($VF,[2,95],{103:149,105:184,22:[1,245],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1}),o($VF,[2,97],{22:[1,246]}),{50:[1,247]},{60:[1,248]},{9:249,20:$Vy,21:$Vz,23:$VA},o($Vx,[2,42]),{22:$Vm1,75:$Vn1,88:$Vo1,91:$Vp1,93:250,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},o($Vz1,[2,114]),{26:$Vf1,46:$VO,80:$Vg1,86:251,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:252,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{73:[1,253]},{73:[1,254],87:[1,255]},o($VD,[2,55]),o($VD,[2,62]),o($Vd1,$V5,{17:256}),o($Vy1,[2,112],{94:242,22:$Vm1,75:$Vn1,88:$Vo1,91:$Vp1,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1}),o($VF,[2,107],{103:149,105:184,22:[1,257],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1}),o($VF,[2,108],{103:149,105:184,22:[1,258],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1}),o($VF,[2,96]),o($VF,[2,98],{22:[1,259]}),o($VF,[2,99]),{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,260],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{22:$Vm1,75:$Vn1,85:261,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{22:$Vm1,75:$Vn1,85:262,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{87:[1,263]},o($Vx,[2,41]),o($VF,[2,105],{92:$Vx1}),o($VF,[2,106],{92:$Vx1}),o($VF,[2,100])],
+defaultActions: {2:[2,1],9:[2,5],10:[2,2],98:[2,7]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -9914,232 +10776,254 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* do nothing */
+case 0: this.begin('open_directive'); return 12; 
 break;
-case 1:this.begin("string");
+case 1: this.begin('type_directive'); return 13; 
 break;
-case 2:this.popState();
+case 2: this.popState(); this.begin('arg_directive'); return 10; 
 break;
-case 3:return "STR";
+case 3: this.popState(); this.popState(); return 15; 
 break;
-case 4:return 63;
+case 4:return 14;
 break;
-case 5:return 72;
+case 5:/* skip comments */
 break;
-case 6:return 64;
+case 6:/* skip comments */
 break;
-case 7:return 77;
+case 7:this.begin("string");
 break;
-case 8:return 65;
+case 8:this.popState();
 break;
-case 9:return 66;
+case 9:return "STR";
 break;
-case 10:return 67;
+case 10:return 75;
 break;
-case 11:if(yy.lex.firstGraph()){this.begin("dir");}  return 12;
+case 11:return 84;
 break;
-case 12:if(yy.lex.firstGraph()){this.begin("dir");}  return 12;
+case 12:return 76;
 break;
-case 13:return 26;
+case 13:return 90;
 break;
-case 14:return 30;
+case 14:return 77;
 break;
-case 15:   this.popState();  return 13; 
+case 15:return 78;
 break;
-case 16:   this.popState();  return 13; 
+case 16:return 79;
 break;
-case 17:   this.popState();  return 13; 
+case 17:if(yy.lex.firstGraph()){this.begin("dir");}  return 24;
 break;
-case 18:   this.popState();  return 13; 
+case 18:if(yy.lex.firstGraph()){this.begin("dir");}  return 24;
 break;
-case 19:   this.popState();  return 13; 
+case 19:return 38;
 break;
-case 20:   this.popState();  return 13; 
+case 20:return 42;
 break;
-case 21:   this.popState();  return 13; 
+case 21:return 87;
 break;
-case 22:   this.popState();  return 13; 
+case 22:return 87;
 break;
-case 23:   this.popState();  return 13; 
+case 23:return 87;
 break;
-case 24:   this.popState();  return 13; 
+case 24:return 87;
 break;
-case 25: return 78;
+case 25:   this.popState();  return 25; 
 break;
-case 26:return 86;
+case 26:   this.popState();  return 26; 
 break;
-case 27:return 35;
+case 27:   this.popState();  return 26; 
 break;
-case 28:return 83;
+case 28:   this.popState();  return 26; 
 break;
-case 29:return 34;
+case 29:   this.popState();  return 26; 
 break;
-case 30:return 8;
+case 30:   this.popState();  return 26; 
 break;
-case 31:return 79;
+case 31:   this.popState();  return 26; 
 break;
-case 32:return 97;
+case 32:   this.popState();  return 26; 
 break;
-case 33:return 58;
+case 33:   this.popState();  return 26; 
 break;
-case 34:return 58;
+case 34:   this.popState();  return 26; 
 break;
-case 35:return 58;
+case 35:   this.popState();  return 26; 
 break;
-case 36:return 58;
+case 36: return 91;
 break;
-case 37:return 58;
+case 37:return 99;
 break;
-case 38:return 58;
+case 38:return 47;
 break;
-case 39:return 58;
+case 39:return 96;
 break;
-case 40:return 58;
+case 40:return 46;
 break;
-case 41:return 58;
+case 41:return 20;
 break;
-case 42:return 58;
+case 42:return 92;
 break;
-case 43:return 58;
+case 43:return 110;
 break;
-case 44:return 58;
+case 44:return 70;
 break;
-case 45:return 58;
+case 45:return 70;
 break;
-case 46:return 58;
+case 46:return 70;
 break;
-case 47:return 58;
+case 47:return 70;
 break;
-case 48:return 58;
+case 48:return 70;
 break;
-case 49:return 58;
+case 49:return 70;
 break;
-case 50:return 58;
+case 50:return 70;
 break;
-case 51:return 58;
+case 51:return 70;
 break;
-case 52:return 58;
+case 52:return 70;
 break;
-case 53:return 58;
+case 53:return 70;
 break;
-case 54:return 58;
+case 54:return 70;
 break;
-case 55:return 58;
+case 55:return 70;
 break;
-case 56:return 58;
+case 56:return 70;
 break;
-case 57:return 58;
+case 57:return 70;
 break;
-case 58:return 58;
+case 58:return 70;
 break;
-case 59:return 58;
+case 59:return 70;
 break;
-case 60:return 58;
+case 60:return 70;
 break;
-case 61:return 57;
+case 61:return 70;
 break;
-case 62:return 57;
+case 62:return 70;
 break;
-case 63:return 57;
+case 63:return 70;
 break;
-case 64:return 57;
+case 64:return 70;
 break;
-case 65:return 57;
+case 65:return 70;
 break;
-case 66:return 57;
+case 66:return 70;
 break;
-case 67:return 57;
+case 67:return 70;
 break;
-case 68:return 57;
+case 68:return 70;
 break;
-case 69:return 57;
+case 69:return 70;
 break;
-case 70:return 57;
+case 70:return 70;
 break;
-case 71:return 57;
+case 71:return 70;
 break;
-case 72:return 57;
+case 72:return 69;
 break;
-case 73:return 39;
+case 73:return 69;
 break;
-case 74:return 40;
+case 74:return 69;
 break;
-case 75:return 41;
+case 75:return 69;
 break;
-case 76:return 42;
+case 76:return 69;
 break;
-case 77:return 43;
+case 77:return 69;
 break;
-case 78:return 44;
+case 78:return 69;
 break;
-case 79:return 45;
+case 79:return 69;
 break;
-case 80:return 46;
+case 80:return 69;
 break;
-case 81:return 84;
+case 81:return 69;
 break;
-case 82:return 87;
+case 82:return 69;
 break;
-case 83:return 98;
+case 83:return 69;
 break;
-case 84:return 95;
+case 84:return 51;
 break;
-case 85:return 88;
+case 85:return 52;
 break;
-case 86:return 96;
+case 86:return 53;
 break;
-case 87:return 96;
+case 87:return 54;
 break;
-case 88:return 89;
+case 88:return 55;
 break;
-case 89:return 49;
+case 89:return 56;
 break;
-case 90:return 69;
+case 90:return 57;
 break;
-case 91:return 'SEP';
+case 91:return 58;
 break;
-case 92:return 68;
+case 92:return 97;
 break;
-case 93:return 82;
+case 93:return 100;
 break;
-case 94:return 51;
+case 94:return 111;
 break;
-case 95:return 50;
+case 95:return 108;
 break;
-case 96:return 53;
+case 96:return 101;
 break;
-case 97:return 52;
+case 97:return 109;
 break;
-case 98:return 93;
+case 98:return 109;
 break;
-case 99:return 94;
+case 99:return 102;
 break;
-case 100:return 59;
+case 100:return 61;
 break;
-case 101:return 37;
+case 101:return 81;
 break;
-case 102:return 38;
+case 102:return 'SEP';
 break;
-case 103:return 28;
+case 103:return 80;
 break;
-case 104:return 29;
+case 104:return 95;
 break;
-case 105:return 47
+case 105:return 63;
 break;
-case 106:return 48
+case 106:return 62;
 break;
-case 107:return 104;
+case 107:return 65;
 break;
-case 108:return 9;
+case 108:return 64;
 break;
-case 109:return 10;
+case 109:return 106;
 break;
-case 110:return 11;
+case 110:return 107;
+break;
+case 111:return 71;
+break;
+case 112:return 49;
+break;
+case 113:return 50;
+break;
+case 114:return 40;
+break;
+case 115:return 41;
+break;
+case 116:return 59
+break;
+case 117:return 60
+break;
+case 118:return 117;
+break;
+case 119:return 21;
+break;
+case 120:return 22;
+break;
+case 121:return 23;
 break;
 }
 },
-rules: [/^(?:%%[^\n]*\n*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:style\b)/,/^(?:default\b)/,/^(?:linkStyle\b)/,/^(?:interpolate\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:flowchart\b)/,/^(?:subgraph\b)/,/^(?:end\b\s*)/,/^(?:\s*LR\b)/,/^(?:\s*RL\b)/,/^(?:\s*TB\b)/,/^(?:\s*BT\b)/,/^(?:\s*TD\b)/,/^(?:\s*BR\b)/,/^(?:\s*<)/,/^(?:\s*>)/,/^(?:\s*\^)/,/^(?:\s*v\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::::)/,/^(?::)/,/^(?:&)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\s*--[x]\s*)/,/^(?:\s*-->\s*)/,/^(?:\s*<-->\s*)/,/^(?:\s*[x]--[x]\s*)/,/^(?:\s*[o]--[o]\s*)/,/^(?:\s*[o]\.-[o]\s*)/,/^(?:\s*<==>\s*)/,/^(?:\s*[o]==[o]\s*)/,/^(?:\s*[x]==[x]\s*)/,/^(?:\s*[x].-[x]\s*)/,/^(?:\s*[x]-\.-[x]\s*)/,/^(?:\s*<\.->\s*)/,/^(?:\s*<-\.->\s*)/,/^(?:\s*[o]-\.-[o]\s*)/,/^(?:\s*--[o]\s*)/,/^(?:\s*---\s*)/,/^(?:\s*-\.-[x]\s*)/,/^(?:\s*-\.->\s*)/,/^(?:\s*-\.-[o]\s*)/,/^(?:\s*-\.-\s*)/,/^(?:\s*.-[x]\s*)/,/^(?:\s*\.->\s*)/,/^(?:\s*\.-[o]\s*)/,/^(?:\s*\.-\s*)/,/^(?:\s*==[x]\s*)/,/^(?:\s*==>\s*)/,/^(?:\s*==[o]\s*)/,/^(?:\s*==[\=]\s*)/,/^(?:\s*<--\s*)/,/^(?:\s*[x]--\s*)/,/^(?:\s*[o]--\s*)/,/^(?:\s*<-\.\s*)/,/^(?:\s*[x]-\.\s*)/,/^(?:\s*[o]-\.\s*)/,/^(?:\s*<==\s*)/,/^(?:\s*[x]==\s*)/,/^(?:\s*[o]==\s*)/,/^(?:\s*--\s*)/,/^(?:\s*-\.\s*)/,/^(?:\s*==\s*)/,/^(?:\(-)/,/^(?:-\))/,/^(?:\(\[)/,/^(?:\]\))/,/^(?:\[\[)/,/^(?:\]\])/,/^(?:\[\()/,/^(?:\)\])/,/^(?:-)/,/^(?:\.)/,/^(?:[\_])/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:\\\|)/,/^(?:v\b)/,/^(?:[A-Za-z]+)/,/^(?:\\\])/,/^(?:\[\/)/,/^(?:\/\])/,/^(?:\[\\)/,/^(?:[!"#$%&'*+,-.`?\\_/])/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:(\r|\n|\r\n)+)/,/^(?:\s)/,/^(?:$)/],
-conditions: {"vertex":{"rules":[],"inclusive":false},"dir":{"rules":[15,16,17,18,19,20,21,22,23,24],"inclusive":false},"string":{"rules":[2,3],"inclusive":false},"INITIAL":{"rules":[0,1,4,5,6,7,8,9,10,11,12,13,14,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)[^\n]*)/,/^(?:[^\}]%%[^\n]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:style\b)/,/^(?:default\b)/,/^(?:linkStyle\b)/,/^(?:interpolate\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:flowchart\b)/,/^(?:subgraph\b)/,/^(?:end\b\s*)/,/^(?:_self\b)/,/^(?:_blank\b)/,/^(?:_parent\b)/,/^(?:_top\b)/,/^(?:(\r?\n)*\s*\n)/,/^(?:\s*LR\b)/,/^(?:\s*RL\b)/,/^(?:\s*TB\b)/,/^(?:\s*BT\b)/,/^(?:\s*TD\b)/,/^(?:\s*BR\b)/,/^(?:\s*<)/,/^(?:\s*>)/,/^(?:\s*\^)/,/^(?:\s*v\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::::)/,/^(?::)/,/^(?:&)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\s*--[x]\s*)/,/^(?:\s*-->\s*)/,/^(?:\s*<-->\s*)/,/^(?:\s*[x]--[x]\s*)/,/^(?:\s*[o]--[o]\s*)/,/^(?:\s*[o]\.-[o]\s*)/,/^(?:\s*<==>\s*)/,/^(?:\s*[o]==[o]\s*)/,/^(?:\s*[x]==[x]\s*)/,/^(?:\s*[x].-[x]\s*)/,/^(?:\s*[x]-\.-[x]\s*)/,/^(?:\s*<\.->\s*)/,/^(?:\s*<-\.->\s*)/,/^(?:\s*[o]-\.-[o]\s*)/,/^(?:\s*--[o]\s*)/,/^(?:\s*---\s*)/,/^(?:\s*-\.-[x]\s*)/,/^(?:\s*-\.->\s*)/,/^(?:\s*-\.-[o]\s*)/,/^(?:\s*-\.-\s*)/,/^(?:\s*.-[x]\s*)/,/^(?:\s*\.->\s*)/,/^(?:\s*\.-[o]\s*)/,/^(?:\s*\.-\s*)/,/^(?:\s*==[x]\s*)/,/^(?:\s*==>\s*)/,/^(?:\s*==[o]\s*)/,/^(?:\s*==[\=]\s*)/,/^(?:\s*<--\s*)/,/^(?:\s*[x]--\s*)/,/^(?:\s*[o]--\s*)/,/^(?:\s*<-\.\s*)/,/^(?:\s*[x]-\.\s*)/,/^(?:\s*[o]-\.\s*)/,/^(?:\s*<==\s*)/,/^(?:\s*[x]==\s*)/,/^(?:\s*[o]==\s*)/,/^(?:\s*--\s*)/,/^(?:\s*-\.\s*)/,/^(?:\s*==\s*)/,/^(?:\(-)/,/^(?:-\))/,/^(?:\(\[)/,/^(?:\]\))/,/^(?:\[\[)/,/^(?:\]\])/,/^(?:\[\()/,/^(?:\)\])/,/^(?:-)/,/^(?:\.)/,/^(?:[\_])/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:\\\|)/,/^(?:v\b)/,/^(?:[A-Za-z]+)/,/^(?:\\\])/,/^(?:\[\/)/,/^(?:\/\])/,/^(?:\[\\)/,/^(?:[!"#$%&'*+,-.`?\\_/])/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:(\r?\n)+)/,/^(?:\s)/,/^(?:$)/],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"vertex":{"rules":[],"inclusive":false},"dir":{"rules":[25,26,27,28,29,30,31,32,33,34,35],"inclusive":false},"string":{"rules":[8,9],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121],"inclusive":true}}
 });
 return lexer;
 })();
@@ -10172,15 +11056,33 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 
 /***/ }),
 
-/***/ "./src/diagrams/gantt/ganttDb.js":
-/*!***************************************!*\
-  !*** ./src/diagrams/gantt/ganttDb.js ***!
-  \***************************************/
-/*! exports provided: clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
+/***/ "./src/diagrams/flowchart/styles.js":
+/*!******************************************!*\
+  !*** ./src/diagrams/flowchart/styles.js ***!
+  \******************************************/
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .label text {\n    fill: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n      background-color: ").concat(options.edgeLabelBackground, ";\n      fill: ").concat(options.edgeLabelBackground, ";\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
+
+/***/ }),
+
+/***/ "./src/diagrams/gantt/ganttDb.js":
+/*!***************************************!*\
+  !*** ./src/diagrams/gantt/ganttDb.js ***!
+  \***************************************/
+/*! exports provided: parseDirective, clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setAxisFormat", function() { return setAxisFormat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAxisFormat", function() { return getAxisFormat; });
@@ -10211,6 +11113,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -10218,6 +11121,7 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 
 
 
@@ -10237,6 +11141,9 @@ var funs = [];
 var inclusiveEndDates = false; // The serial order of the task in the script
 
 var lastOrder = 0;
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_5__["default"].parseDirective(this, statement, context, type);
+};
 var clear = function clear() {
   sections = [];
   tasks = [];
@@ -10688,7 +11595,7 @@ var compileTasks = function compileTasks() {
 var setLink = function setLink(ids, _linkStr) {
   var linkStr = _linkStr;
 
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
+  if (_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().securityLevel !== 'loose') {
     linkStr = Object(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1__["sanitizeUrl"])(_linkStr);
   }
 
@@ -10720,7 +11627,7 @@ var setClass = function setClass(ids, className) {
 };
 
 var setClickFun = function setClickFun(id, functionName, functionArgs) {
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
+  if (_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().securityLevel !== 'loose') {
     return;
   }
 
@@ -10816,6 +11723,10 @@ var bindFunctions = function bindFunctions(element) {
   });
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().gantt;
+  },
   clear: clear,
   setDateFormat: setDateFormat,
   getDateFormat: getDateFormat,
@@ -11347,90 +12258,102 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,12,13,14,15,16,17,19,21],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,14],$V7=[1,15],$V8=[1,17],$V9=[1,18];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,20,27,32],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,23],$Vb=[1,25],$Vc=[1,28],$Vd=[5,7,9,11,12,13,14,15,16,17,18,20,27,32];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"gantt":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"dateFormat":11,"inclusiveEndDates":12,"axisFormat":13,"excludes":14,"todayMarker":15,"title":16,"section":17,"clickStatement":18,"taskTxt":19,"taskData":20,"click":21,"callbackname":22,"callbackargs":23,"href":24,"clickStatementDebug":25,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"gantt",6:"EOF",8:"SPACE",10:"NL",11:"dateFormat",12:"inclusiveEndDates",13:"axisFormat",14:"excludes",15:"todayMarker",16:"title",17:"section",19:"taskTxt",20:"taskData",21:"click",22:"callbackname",23:"callbackargs",24:"href"},
-productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,2],[18,2],[18,3],[18,3],[18,4],[18,3],[18,4],[18,2],[25,2],[25,3],[25,3],[25,4],[25,3],[25,4],[25,2]],
+symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"axisFormat":14,"excludes":15,"todayMarker":16,"title":17,"section":18,"clickStatement":19,"taskTxt":20,"taskData":21,"openDirective":22,"typeDirective":23,"closeDirective":24,":":25,"argDirective":26,"click":27,"callbackname":28,"callbackargs":29,"href":30,"clickStatementDebug":31,"open_directive":32,"type_directive":33,"arg_directive":34,"close_directive":35,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"axisFormat",15:"excludes",16:"todayMarker",17:"title",18:"section",20:"taskTxt",21:"taskData",25:":",27:"click",28:"callbackname",29:"callbackargs",30:"href",32:"open_directive",33:"type_directive",34:"arg_directive",35:"close_directive"},
+productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[19,2],[19,3],[19,3],[19,4],[19,3],[19,4],[19,2],[31,2],[31,3],[31,3],[31,4],[31,3],[31,4],[31,2],[22,1],[23,1],[26,1],[24,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1:
+case 2:
  return $$[$0-1]; 
 break;
-case 2:
+case 3:
  this.$ = [] 
 break;
-case 3:
+case 4:
 $$[$0-1].push($$[$0]);this.$ = $$[$0-1]
 break;
-case 4: case 5:
+case 5: case 6:
  this.$ = $$[$0] 
 break;
-case 6: case 7:
+case 7: case 8:
  this.$=[];
 break;
-case 8:
+case 9:
 yy.setDateFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
-case 9:
+case 10:
 yy.enableInclusiveEndDates();this.$=$$[$0].substr(18);
 break;
-case 10:
+case 11:
 yy.setAxisFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
-case 11:
+case 12:
 yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
 break;
-case 12:
+case 13:
 yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
 break;
-case 13:
+case 14:
 yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
 break;
-case 14:
+case 15:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
-case 16:
+case 17:
 yy.addTask($$[$0-1],$$[$0]);this.$='task';
 break;
-case 17:
+case 21:
 this.$ = $$[$0-1];yy.setClickEvent($$[$0-1], $$[$0], null);
 break;
-case 18:
+case 22:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 19:
+case 23:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], null);yy.setLink($$[$0-2],$$[$0]);
 break;
-case 20:
+case 24:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setLink($$[$0-3],$$[$0]);
 break;
-case 21:
+case 25:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0], null);yy.setLink($$[$0-2],$$[$0-1]);
 break;
-case 22:
+case 26:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-1], $$[$0]);yy.setLink($$[$0-3],$$[$0-2]);
 break;
-case 23:
+case 27:
 this.$ = $$[$0-1];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 24: case 30:
+case 28: case 34:
 this.$=$$[$0-1] + ' ' + $$[$0];
 break;
-case 25: case 26: case 28:
+case 29: case 30: case 32:
 this.$=$$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 27: case 29:
+case 31: case 33:
 this.$=$$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
+break;
+case 35:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 36:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 37:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 38:
+ yy.parseDirective('}%%', 'close_directive', 'gantt'); 
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:[1,6],9:7,10:[1,8],11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:$V6,17:$V7,18:16,19:$V8,21:$V9},o($V0,[2,7],{1:[2,1]}),o($V0,[2,3]),{9:19,11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:$V6,17:$V7,18:16,19:$V8,21:$V9},o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,8]),o($V0,[2,9]),o($V0,[2,10]),o($V0,[2,11]),o($V0,[2,12]),o($V0,[2,13]),o($V0,[2,14]),o($V0,[2,15]),{20:[1,20]},{22:[1,21],24:[1,22]},o($V0,[2,4]),o($V0,[2,16]),o($V0,[2,17],{23:[1,23],24:[1,24]}),o($V0,[2,23],{22:[1,25]}),o($V0,[2,18],{24:[1,26]}),o($V0,[2,19]),o($V0,[2,21],{23:[1,27]}),o($V0,[2,20]),o($V0,[2,22])],
-defaultActions: {},
+table: [{3:1,4:2,5:$V0,22:4,32:$V1},{1:[3]},{3:6,4:2,5:$V0,22:4,32:$V1},o($V2,[2,3],{6:7}),{23:8,33:[1,9]},{33:[2,35]},{1:[2,1]},{4:24,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:22,20:$Va,22:4,27:$Vb,32:$V1},{24:26,25:[1,27],35:$Vc},o([25,35],[2,36]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:24,10:29,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:22,20:$Va,22:4,27:$Vb,32:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),{21:[1,30]},o($V2,[2,18]),{28:[1,31],30:[1,32]},{11:[1,33]},{26:34,34:[1,35]},{11:[2,38]},o($V2,[2,5]),o($V2,[2,17]),o($V2,[2,21],{29:[1,36],30:[1,37]}),o($V2,[2,27],{28:[1,38]}),o($Vd,[2,19]),{24:39,35:$Vc},{35:[2,37]},o($V2,[2,22],{30:[1,40]}),o($V2,[2,23]),o($V2,[2,25],{29:[1,41]}),{11:[1,42]},o($V2,[2,24]),o($V2,[2,26]),o($Vd,[2,20])],
+defaultActions: {5:[2,35],6:[2,1],28:[2,38],35:[2,37]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -11909,70 +12832,86 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 10;
+case 0: this.begin('open_directive'); return 32; 
 break;
-case 1:/* skip whitespace */
+case 1: this.begin('type_directive'); return 33; 
 break;
-case 2:/* skip comments */
+case 2: this.popState(); this.begin('arg_directive'); return 25; 
 break;
-case 3:/* skip comments */
+case 3: this.popState(); this.popState(); return 35; 
 break;
-case 4:this.begin("href");
+case 4:return 34;
 break;
-case 5:this.popState();
+case 5:/* skip comments */
 break;
-case 6:return 24;
+case 6:/* skip comments */
 break;
-case 7:this.begin("callbackname");
+case 7:/* do nothing */
 break;
-case 8:this.popState();
+case 8:return 11;
 break;
-case 9:this.popState(); this.begin("callbackargs");
+case 9:/* skip whitespace */
 break;
-case 10:return 22;
+case 10:/* skip comments */
 break;
-case 11:this.popState();
+case 11:/* skip comments */
 break;
-case 12:return 23;
+case 12:this.begin("href");
 break;
-case 13:this.begin("click");
+case 13:this.popState();
 break;
-case 14:this.popState();
+case 14:return 30;
 break;
-case 15:return 21;
+case 15:this.begin("callbackname");
 break;
-case 16:return 4;
+case 16:this.popState();
 break;
-case 17:return 11;
+case 17:this.popState(); this.begin("callbackargs");
 break;
-case 18:return 12;
+case 18:return 28;
 break;
-case 19:return 13;
+case 19:this.popState();
 break;
-case 20:return 14;
+case 20:return 29;
 break;
-case 21:return 15;
+case 21:this.begin("click");
 break;
-case 22:return 'date';
+case 22:this.popState();
 break;
-case 23:return 16;
+case 23:return 27;
 break;
-case 24:return 17;
+case 24:return 5;
 break;
-case 25:return 19;
+case 25:return 12;
 break;
-case 26:return 20;
+case 26:return 13;
 break;
-case 27:return ':';
+case 27:return 14;
 break;
-case 28:return 6;
+case 28:return 15;
 break;
-case 29:return 'INVALID';
+case 29:return 16;
+break;
+case 30:return 'date';
+break;
+case 31:return 17;
+break;
+case 32:return 18;
+break;
+case 33:return 20;
+break;
+case 34:return 21;
+break;
+case 35:return 25;
+break;
+case 36:return 7;
+break;
+case 37:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"callbackargs":{"rules":[11,12],"inclusive":false},"callbackname":{"rules":[8,9,10],"inclusive":false},"href":{"rules":[5,6],"inclusive":false},"click":{"rules":[14,15],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,7,13,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true}}
 });
 return lexer;
 })();
@@ -12005,6 +12944,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 
 /***/ }),
 
+/***/ "./src/diagrams/gantt/styles.js":
+/*!**************************************!*\
+  !*** ./src/diagrams/gantt/styles.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    font-size: 11px;\n    text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .taskText:not([font-size]) {\n    font-size: 11px;\n  }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    font-size: 11px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    font-size: 11px;\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
+
+/***/ }),
+
 /***/ "./src/diagrams/git/gitGraphAst.js":
 /*!*****************************************!*\
   !*** ./src/diagrams/git/gitGraphAst.js ***!
@@ -12032,6 +12988,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDirection", function() { return getDirection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getHead", function() { return getHead; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 var commits = {};
 var head = null;
@@ -12042,20 +13000,10 @@ var curBranch = 'master';
 var direction = 'LR';
 var seq = 0;
 
-function makeid(length) {
-  var result = '';
-  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var charactersLength = characters.length;
-
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-
-  return result;
-}
-
 function getId() {
-  return makeid(7);
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_1__["random"])({
+    length: 7
+  });
 }
 
 function isfastforwardable(currentCommit, otherCommit) {
@@ -13317,6 +14265,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 
 /***/ }),
 
+/***/ "./src/diagrams/git/styles.js":
+/*!************************************!*\
+  !*** ./src/diagrams/git/styles.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles() {
+  return "\n  .commit-id,\n  .commit-msg,\n  .branch-label {\n    fill: lightgrey;\n    color: lightgrey;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n  }\n";
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
+
+/***/ }),
+
 /***/ "./src/diagrams/info/infoDb.js":
 /*!*************************************!*\
   !*** ./src/diagrams/info/infoDb.js ***!
@@ -14060,6 +15025,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 
 /***/ }),
 
+/***/ "./src/diagrams/info/styles.js":
+/*!*************************************!*\
+  !*** ./src/diagrams/info/styles.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles() {
+  return "";
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
+
+/***/ }),
+
 /***/ "./src/diagrams/pie/parser/pie.jison":
 /*!*******************************************!*\
   !*** ./src/diagrams/pie/parser/pie.jison ***!
@@ -14141,32 +15123,42 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,9,10,12];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,5],$V2=[1,6],$V3=[1,7],$V4=[1,9],$V5=[1,10,12,19,20,21,22],$V6=[1,6,10,12,19,20,21,22],$V7=[19,20,21],$V8=[1,22],$V9=[6,19,20,21,22];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"pie":4,"document":5,"EOF":6,"line":7,"statement":8,"NL":9,"STR":10,"VALUE":11,"title":12,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"pie",6:"EOF",9:"NL",10:"STR",11:"VALUE",12:"title"},
-productions_: [0,[3,3],[5,0],[5,2],[7,1],[7,1],[8,2],[8,1]],
+symbols_: {"error":2,"start":3,"eol":4,"directive":5,"PIE":6,"document":7,"line":8,"statement":9,"txt":10,"value":11,"title":12,"title_value":13,"openDirective":14,"typeDirective":15,"closeDirective":16,":":17,"argDirective":18,"NEWLINE":19,";":20,"EOF":21,"open_directive":22,"type_directive":23,"arg_directive":24,"close_directive":25,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"PIE",10:"txt",11:"value",12:"title",13:"title_value",17:":",19:"NEWLINE",20:";",21:"EOF",22:"open_directive",23:"type_directive",24:"arg_directive",25:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[9,0],[9,2],[9,2],[9,1],[5,3],[5,5],[4,1],[4,1],[4,1],[14,1],[15,1],[18,1],[16,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 4:
- 
-break;
 case 6:
-
-		/*console.log('str:'+$$[$0-1]+' value: '+$$[$0])*/
-		yy.addSection($$[$0-1],yy.cleanupValue($$[$0]));  
+ this.$ = $$[$0-1] 
 break;
-case 7:
-yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+case 8:
+ yy.addSection($$[$0-1],yy.cleanupValue($$[$0])); 
+break;
+case 9:
+ this.$=$$[$0].trim();yy.setTitle(this.$); 
+break;
+case 16:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 17:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 18:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 19:
+ yy.parseDirective('}%%', 'close_directive', 'pie'); 
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:6,9:[1,7],10:[1,8],12:[1,9]},{1:[2,1]},o($V0,[2,3]),o($V0,[2,4]),o($V0,[2,5]),{11:[1,10]},o($V0,[2,7]),o($V0,[2,6])],
-defaultActions: {4:[2,1]},
+table: [{3:1,4:2,5:3,6:$V0,14:8,19:$V1,20:$V2,21:$V3,22:$V4},{1:[3]},{3:10,4:2,5:3,6:$V0,14:8,19:$V1,20:$V2,21:$V3,22:$V4},{3:11,4:2,5:3,6:$V0,14:8,19:$V1,20:$V2,21:$V3,22:$V4},o($V5,[2,4],{7:12}),o($V6,[2,13]),o($V6,[2,14]),o($V6,[2,15]),{15:13,23:[1,14]},{23:[2,16]},{1:[2,1]},{1:[2,2]},o($V7,[2,7],{14:8,8:15,9:16,5:19,1:[2,3],10:[1,17],12:[1,18],22:$V4}),{16:20,17:[1,21],25:$V8},o([17,25],[2,17]),o($V5,[2,5]),{4:23,19:$V1,20:$V2,21:$V3},{11:[1,24]},{13:[1,25]},o($V7,[2,10]),o($V9,[2,11]),{18:26,24:[1,27]},o($V9,[2,19]),o($V5,[2,6]),o($V7,[2,8]),o($V7,[2,9]),{16:28,25:$V8},{25:[2,18]},o($V9,[2,12])],
+defaultActions: {9:[2,16],10:[2,1],11:[2,2],27:[2,18]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -14643,36 +15635,48 @@ stateStackSize:function stateStackSize() {
     },
 options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-	// Pre-lexer code can go here
-
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* do nothing */
+case 0: this.begin('open_directive'); return 22; 
 break;
-case 1:/* skip whitespace */
+case 1: this.begin('type_directive'); return 23; 
 break;
-case 2:return 4    ;
+case 2: this.popState(); this.begin('arg_directive'); return 17; 
 break;
-case 3:return 9      ;
+case 3: this.popState(); this.popState(); return 25; 
 break;
-case 4:return 'space';
+case 4:return 24;
 break;
-case 5:return 12;
+case 5:/* skip comments */
 break;
-case 6:/*console.log('begin str');*/this.begin("string");
+case 6:/* skip comments */{ console.log('Crap after close'); }
 break;
-case 7:/*console.log('pop-state');*/this.popState();
+case 7:return 19;
 break;
-case 8:/*console.log('ending string')*/return "STR";
+case 8:/* do nothing */
 break;
-case 9:return "VALUE";
+case 9:/* ignore */
 break;
-case 10:return 6     ;
+case 10: this.begin("title");return 12; 
+break;
+case 11: this.popState(); return "title_value"; 
+break;
+case 12: this.begin("string"); 
+break;
+case 13: this.popState(); 
+break;
+case 14: return "txt"; 
+break;
+case 15:return 6;
+break;
+case 16:return "value";
+break;
+case 17:return 21;
 break;
 }
 },
-rules: [/^(?:%%[^\n]*)/i,/^(?:\s+)/i,/^(?:pie\b)/i,/^(?:[\s\n\r]+)/i,/^(?:[\s]+)/i,/^(?:title\s[^#\n;]+)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?::[\s]*[\d]+(?:\.[\d]+)?)/i,/^(?:$)/i],
-conditions: {"string":{"rules":[7,8],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,9,10],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n\r]+)/i,/^(?:%%[^\n]*)/i,/^(?:[\s]+)/i,/^(?:title\b)/i,/^(?:(?!\n||)*[^\n]*)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:pie\b)/i,/^(?::[\s]*[\d]+(?:\.[\d]+)?)/i,/^(?:$)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"title":{"rules":[11],"inclusive":false},"string":{"rules":[13,14],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,12,15,16,17],"inclusive":true}}
 });
 return lexer;
 })();
@@ -14709,18 +15713,26 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 /*!***********************************!*\
   !*** ./src/diagrams/pie/pieDb.js ***!
   \***********************************/
-/*! exports provided: default */
+/*! exports provided: parseDirective, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /**
  *
  */
 
+
+
 var sections = {};
 var title = '';
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parseDirective(this, statement, context, type);
+};
 
 var addSection = function addSection(id, value) {
   if (typeof sections[id] === 'undefined') {
@@ -14759,6 +15771,10 @@ var clear = function clear() {
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]().pie;
+  },
   addSection: addSection,
   getSections: getSections,
   cleanupValue: cleanupValue,
@@ -14881,13 +15897,30 @@ var draw = function draw(txt, id) {
     });
   } catch (e) {
     _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error('Error while rendering info diagram');
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(e.message);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(e);
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
   setConf: setConf,
   draw: draw
 });
+
+/***/ }),
+
+/***/ "./src/diagrams/pie/styles.js":
+/*!************************************!*\
+  !*** ./src/diagrams/pie/styles.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return ".pieTitleText {\n    text-anchor: middle;\n    font-size: 25px;\n    fill: ".concat(options.taskTextDarkColor, ";\n    font-family: ").concat(options.fontFamily, ";\n  }\n  .slice {\n    font-family: ").concat(options.fontFamily, ";\n    fill: ").concat(options.textColor, ";\n    // fill: white;\n  }\n  .legend text {\n    fill: ").concat(options.taskTextDarkColor, ";\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 17px;\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -14975,8 +16008,8 @@ var parser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,24],$Vc=[1,25],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,29],$Vh=[1,32],$Vi=[1,33],$Vj=[1,36],$Vk=[1,4,5,16,21,22,23,25,27,28,29,30,31,33,35,36,37,48,56],$Vl=[1,44],$Vm=[4,5,16,21,22,23,25,27,28,29,30,31,33,37,48,56],$Vn=[4,5,16,21,22,23,25,27,28,29,30,31,33,36,37,48,56],$Vo=[4,5,16,21,22,23,25,27,28,29,30,31,33,35,37,48,56],$Vp=[46,47,48],$Vq=[1,4,5,7,16,21,22,23,25,27,28,29,30,31,33,35,36,37,48,56];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"signal":20,"autonumber":21,"activate":22,"deactivate":23,"note_statement":24,"title":25,"text2":26,"loop":27,"end":28,"rect":29,"opt":30,"alt":31,"else_sections":32,"par":33,"par_sections":34,"and":35,"else":36,"note":37,"placement":38,"over":39,"actor_pair":40,"spaceList":41,",":42,"left_of":43,"right_of":44,"signaltype":45,"+":46,"-":47,"ACTOR":48,"SOLID_OPEN_ARROW":49,"DOTTED_OPEN_ARROW":50,"SOLID_ARROW":51,"DOTTED_ARROW":52,"SOLID_CROSS":53,"DOTTED_CROSS":54,"TXT":55,"open_directive":56,"type_directive":57,"arg_directive":58,"close_directive":59,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NL",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",21:"autonumber",22:"activate",23:"deactivate",25:"title",27:"loop",28:"end",29:"rect",30:"opt",31:"alt",33:"par",35:"and",36:"else",37:"note",39:"over",42:",",43:"left_of",44:"right_of",46:"+",47:"-",48:"ACTOR",49:"SOLID_OPEN_ARROW",50:"DOTTED_OPEN_ARROW",51:"SOLID_ARROW",52:"DOTTED_ARROW",53:"SOLID_CROSS",54:"DOTTED_CROSS",55:"TXT",56:"open_directive",57:"type_directive",58:"arg_directive",59:"close_directive"},
+symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"signal":20,"autonumber":21,"activate":22,"deactivate":23,"note_statement":24,"title":25,"text2":26,"loop":27,"end":28,"rect":29,"opt":30,"alt":31,"else_sections":32,"par":33,"par_sections":34,"and":35,"else":36,"note":37,"placement":38,"over":39,"actor_pair":40,"spaceList":41,",":42,"left_of":43,"right_of":44,"signaltype":45,"+":46,"-":47,"ACTOR":48,"SOLID_OPEN_ARROW":49,"DOTTED_OPEN_ARROW":50,"SOLID_ARROW":51,"DOTTED_ARROW":52,"SOLID_CROSS":53,"DOTTED_CROSS":54,"TXT":55,"open_directive":56,"type_directive":57,"arg_directive":58,"close_directive":59,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",21:"autonumber",22:"activate",23:"deactivate",25:"title",27:"loop",28:"end",29:"rect",30:"opt",31:"alt",33:"par",35:"and",36:"else",37:"note",39:"over",42:",",43:"left_of",44:"right_of",46:"+",47:"-",48:"ACTOR",49:"SOLID_OPEN_ARROW",50:"DOTTED_OPEN_ARROW",51:"SOLID_ARROW",52:"DOTTED_ARROW",53:"SOLID_CROSS",54:"DOTTED_CROSS",55:"TXT",56:"open_directive",57:"type_directive",58:"arg_directive",59:"close_directive"},
 productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,2],[10,1],[10,3],[10,3],[10,2],[10,3],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[34,1],[34,4],[32,1],[32,4],[24,4],[24,4],[41,2],[41,1],[40,3],[40,1],[38,1],[38,1],[20,5],[20,5],[20,4],[17,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[26,1],[11,1],[12,1],[15,1],[13,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
@@ -15613,11 +16646,11 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('OPEN_DIRECTIVE'); return 56; 
+case 0: this.begin('open_directive'); return 56; 
 break;
-case 1: this.begin('TYPE_DIRECTIVE'); return 57; 
+case 1: this.begin('type_directive'); return 57; 
 break;
-case 2: this.popState(); this.begin('ARG_DIRECTIVE'); return 14; 
+case 2: this.popState(); this.begin('arg_directive'); return 14; 
 break;
 case 3: this.popState(); this.popState(); return 59; 
 break;
@@ -15709,8 +16742,8 @@ case 46:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"LINE":{"rules":[7,8,22],"inclusive":false},"ARG_DIRECTIVE":{"rules":[3,4,8],"inclusive":false},"TYPE_DIRECTIVE":{"rules":[2,3,8],"inclusive":false},"OPEN_DIRECTIVE":{"rules":[1,8],"inclusive":false},"ALIAS":{"rules":[7,8,13,14],"inclusive":false},"ID":{"rules":[7,8,12],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,12],"inclusive":false},"ALIAS":{"rules":[7,8,13,14],"inclusive":false},"LINE":{"rules":[7,8,22],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46],"inclusive":true}}
 });
 return lexer;
 })();
@@ -15791,7 +16824,7 @@ var titleWrapped = false;
 var sequenceNumbersEnabled = false;
 var wrapEnabled = false;
 var parseDirective = function parseDirective(statement, context, type) {
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(statement, context, type);
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(this, statement, context, type);
 };
 var addActor = function addActor(id, name, description) {
   // Don't allow description nulling
@@ -15927,7 +16960,7 @@ var parseMessage = function parseMessage(str) {
 
   var message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
-    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].hasBreaks(_str) || autoWrap() : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : autoWrap()
+    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].hasBreaks(_str) || undefined : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : undefined
   };
   _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('parseMessage:', message);
   return message;
@@ -16083,7 +17116,7 @@ var apply = function apply(param) {
   getTitle: getTitle,
   parseDirective: parseDirective,
   getConfig: function getConfig() {
-    return _config__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig().sequence;
+    return _config__WEBPACK_IMPORTED_MODULE_1__["getConfig"]().sequence;
   },
   getTitleWrapped: getTitleWrapped,
   clear: clear,
@@ -16119,7 +17152,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _sequenceDb__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
@@ -16331,6 +17366,7 @@ var bounds = {
     return this.verticalPos;
   },
   getBounds: function getBounds() {
+    console.log('here', this.data);
     return {
       bounds: this.data,
       models: this.models
@@ -16382,6 +17418,30 @@ var drawNote = function drawNote(elem, noteModel) {
   bounds.insert(noteModel.startx, noteModel.starty, noteModel.stopx, noteModel.stopy);
   bounds.models.addNote(noteModel);
 };
+
+var messageFont = function messageFont(cnf) {
+  return {
+    fontFamily: cnf.messageFontFamily,
+    fontSize: cnf.messageFontSize,
+    fontWeight: cnf.messageFontWeight
+  };
+};
+
+var noteFont = function noteFont(cnf) {
+  return {
+    fontFamily: cnf.noteFontFamily,
+    fontSize: cnf.noteFontSize,
+    fontWeight: cnf.noteFontWeight
+  };
+};
+
+var actorFont = function actorFont(cnf) {
+  return {
+    fontFamily: cnf.actorFontFamily,
+    fontSize: cnf.actorFontSize,
+    fontWeight: cnf.actorFontWeight
+  };
+};
 /**
  * Draws a message
  * @param g - the parent of the message element
@@ -16399,7 +17459,7 @@ var drawMessage = function drawMessage(g, msgModel) {
       sequenceIndex = msgModel.sequenceIndex,
       wrap = msgModel.wrap;
   var lines = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].splitBreaks(message).length;
-  var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(message, conf.messageFont());
+  var textDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(message, messageFont(conf));
   var lineHeight = textDims.height / lines;
   msgModel.height += lineHeight;
   bounds.bumpVerticalPos(lineHeight);
@@ -16515,7 +17575,7 @@ var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
   bounds.bumpVerticalPos(conf.height);
 };
 var setConf = function setConf(cnf) {
-  Object(_utils__WEBPACK_IMPORTED_MODULE_6__["assignWithDepth"])(conf, cnf);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_7__["assignWithDepth"])(conf, cnf);
 
   if (cnf.fontFamily) {
     conf.actorFontFamily = conf.noteFontFamily = conf.messageFontFamily = cnf.fontFamily;
@@ -16555,12 +17615,12 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 
   if (msg.id && msg.message && loopWidths[msg.id]) {
     var loopWidth = loopWidths[msg.id].width;
-    var textConf = conf.messageFont();
-    msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel("[".concat(msg.message, "]"), loopWidth - 2 * conf.wrapPadding, textConf);
+    var textConf = messageFont(conf);
+    msg.message = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel("[".concat(msg.message, "]"), loopWidth - 2 * conf.wrapPadding, textConf);
     msg.width = loopWidth;
     msg.wrap = true; // const lines = common.splitBreaks(msg.message).length;
 
-    var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, textConf);
+    var textDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(msg.message, textConf);
     var totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
     heightAdjust = postMargin + totalOffset;
     _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("".concat(totalOffset, " - ").concat(msg.message));
@@ -16577,6 +17637,8 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 
 
 var draw = function draw(text, id) {
+  conf = _config__WEBPACK_IMPORTED_MODULE_6__["getConfig"]().sequence;
+  console.log('there ', conf);
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.clear();
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.setWrap(conf.wrap);
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].parse(text + '\n');
@@ -16791,9 +17853,9 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
 
       var isNote = msg.placement !== undefined;
       var isMessage = !isNote;
-      var textFont = isNote ? conf.noteFont() : conf.messageFont();
-      var wrappedMessage = msg.wrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, conf.width - 2 * conf.wrapPadding, textFont) : msg.message;
-      var messageDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(wrappedMessage, textFont);
+      var textFont = isNote ? noteFont(conf) : messageFont(conf);
+      var wrappedMessage = msg.wrap ? _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, conf.width - 2 * conf.wrapPadding, textFont) : msg.message;
+      var messageDimensions = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(wrappedMessage, textFont);
       var messageWidth = messageDimensions.width + 2 * conf.wrapPadding;
       /*
        * The following scenarios should be supported:
@@ -16855,10 +17917,10 @@ var calculateActorMargins = function calculateActorMargins(actors, actorToMessag
     var actor = actors[prop];
 
     if (actor.wrap) {
-      actor.description = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(actor.description, conf.width - 2 * conf.wrapPadding, conf.actorFont());
+      actor.description = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(actor.description, conf.width - 2 * conf.wrapPadding, actorFont(conf));
     }
 
-    var actDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(actor.description, conf.actorFont());
+    var actDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(actor.description, actorFont(conf));
     actor.width = actor.wrap ? conf.width : Math.max(conf.width, actDims.width + 2 * conf.wrapPadding);
     actor.height = actor.wrap ? Math.max(actDims.height, conf.height) : conf.height;
     maxHeight = Math.max(maxHeight, actor.height);
@@ -16889,7 +17951,7 @@ var buildNoteModel = function buildNoteModel(msg, actors) {
   var startx = actors[msg.from].x;
   var stopx = actors[msg.to].x;
   var shouldWrap = msg.wrap && msg.message;
-  var textDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message, conf.noteFont());
+  var textDimensions = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, conf.width, noteFont(conf)) : msg.message, noteFont(conf));
   var noteModel = {
     width: shouldWrap ? conf.width : Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin),
     height: 0,
@@ -16907,7 +17969,7 @@ var buildNoteModel = function buildNoteModel(msg, actors) {
     noteModel.width = shouldWrap ? Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin) : Math.max(actors[msg.from].width / 2 + actors[msg.to].width / 2, textDimensions.width + 2 * conf.noteMargin);
     noteModel.startx = startx - noteModel.width + (actors[msg.from].width - conf.actorMargin) / 2;
   } else if (msg.to === msg.from) {
-    textDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, Math.max(conf.width, actors[msg.from].width), conf.noteFont()) : msg.message, conf.noteFont());
+    textDimensions = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, Math.max(conf.width, actors[msg.from].width), noteFont(conf)) : msg.message, noteFont(conf));
     noteModel.width = shouldWrap ? Math.max(conf.width, actors[msg.from].width) : Math.max(actors[msg.from].width, conf.width, textDimensions.width + 2 * conf.noteMargin);
     noteModel.startx = startx + (actors[msg.from].width - noteModel.width) / 2;
   } else {
@@ -16916,7 +17978,7 @@ var buildNoteModel = function buildNoteModel(msg, actors) {
   }
 
   if (shouldWrap) {
-    noteModel.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, noteModel.width - 2 * conf.wrapPadding, conf.noteFont());
+    noteModel.message = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, noteModel.width - 2 * conf.wrapPadding, noteFont(conf));
   }
 
   _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("NM:[".concat(noteModel.startx, ",").concat(noteModel.stopx, ",").concat(noteModel.starty, ",").concat(noteModel.stopy, ":").concat(noteModel.width, ",").concat(noteModel.height, "=").concat(msg.message, "]"));
@@ -16940,10 +18002,10 @@ var buildMessageModel = function buildMessageModel(msg, actors) {
   var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
   var allBounds = fromBounds.concat(toBounds);
   var boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
-  var msgDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, conf.messageFont());
+  var msgDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(msg.message, messageFont(conf));
 
   if (msg.wrap && msg.message) {
-    msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width), conf.messageFont());
+    msg.message = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width), messageFont(conf));
   }
 
   return {
@@ -16966,7 +18028,7 @@ var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
   var stack = [];
   var current, noteModel, msgModel;
   messages.forEach(function (msg) {
-    msg.id = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].random({
+    msg.id = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].random({
       length: 10
     });
 
@@ -17073,6 +18135,23 @@ var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
   setConf: setConf,
   draw: draw
 });
+
+/***/ }),
+
+/***/ "./src/diagrams/sequence/styles.js":
+/*!*****************************************!*\
+  !*** ./src/diagrams/sequence/styles.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return ".actor {\n    stroke: ".concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n  }\n\n  text.actor > tspan {\n    fill: ").concat(options.actorTextColor, ";\n    stroke: none;\n  }\n\n  .actor-line {\n    stroke: ").concat(options.actorLineColor, ";\n  }\n\n  .messageLine0 {\n    stroke-width: 1.5;\n    stroke-dasharray: none;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageLine1 {\n    stroke-width: 1.5;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  #arrowhead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .sequenceNumber {\n    fill: ").concat(options.sequenceNumberColor, ";\n  }\n\n  #sequencenumber {\n    fill: ").concat(options.signalColor, ";\n  }\n\n  #crosshead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageText {\n    fill: ").concat(options.signalTextColor, ";\n    stroke: ").concat(options.signalTextColor, ";\n  }\n\n  .labelBox {\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBkgColor, ";\n  }\n\n  .labelText, .labelText > tspan {\n    fill: ").concat(options.labelTextColor, ";\n    stroke: none;\n  }\n\n  .loopText, .loopText > tspan {\n    fill: ").concat(options.loopTextColor, ";\n    stroke: none;\n  }\n\n  .loopLine {\n    stroke-width: 2px;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBorderColor, ";\n  }\n\n  .note {\n    //stroke: #decc93;\n    stroke: ").concat(options.noteBorderColor, ";\n    fill: ").concat(options.noteBkgColor, ";\n  }\n\n  .noteText, .noteText > tspan {\n    fill: ").concat(options.noteTextColor, ";\n    stroke: none;\n  }\n\n  .activation0 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation1 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation2 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -17659,24 +18738,24 @@ var size = function size() {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[2,4],$V4=[1,9],$V5=[1,11],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,16],$Va=[1,21],$Vb=[1,17],$Vc=[1,18],$Vd=[1,19],$Ve=[1,20],$Vf=[1,22],$Vg=[1,4,5,13,14,16,18,19,21,22,23,24,25,28],$Vh=[1,4,5,11,12,13,14,16,18,19,21,22,23,24,25,28],$Vi=[4,5,13,14,16,18,19,21,22,23,24,25,28];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,28],$Vc=[1,23],$Vd=[1,24],$Ve=[1,25],$Vf=[1,26],$Vg=[1,29],$Vh=[1,32],$Vi=[1,4,5,14,15,17,19,20,22,23,24,25,26,36,39],$Vj=[1,4,5,12,13,14,15,17,19,20,22,23,24,25,26,36,39],$Vk=[1,4,5,7,14,15,17,19,20,22,23,24,25,26,36,39],$Vl=[4,5,14,15,17,19,20,22,23,24,25,26,36,39];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"SD":6,"document":7,"line":8,"statement":9,"idStatement":10,"DESCR":11,"-->":12,"HIDE_EMPTY":13,"scale":14,"WIDTH":15,"COMPOSIT_STATE":16,"STRUCT_START":17,"STRUCT_STOP":18,"STATE_DESCR":19,"AS":20,"ID":21,"FORK":22,"JOIN":23,"CONCURRENT":24,"note":25,"notePosition":26,"NOTE_TEXT":27,"EDGE_STATE":28,"left_of":29,"right_of":30,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NL",6:"SD",11:"DESCR",12:"-->",13:"HIDE_EMPTY",14:"scale",15:"WIDTH",16:"COMPOSIT_STATE",17:"STRUCT_START",18:"STRUCT_STOP",19:"STATE_DESCR",20:"AS",21:"ID",22:"FORK",23:"JOIN",24:"CONCURRENT",25:"note",27:"NOTE_TEXT",28:"EDGE_STATE",29:"left_of",30:"right_of"},
-productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[8,1],[8,1],[9,1],[9,2],[9,3],[9,4],[9,1],[9,2],[9,1],[9,4],[9,3],[9,6],[9,1],[9,1],[9,1],[9,4],[9,4],[10,1],[10,1],[26,1],[26,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"idStatement":11,"DESCR":12,"-->":13,"HIDE_EMPTY":14,"scale":15,"WIDTH":16,"COMPOSIT_STATE":17,"STRUCT_START":18,"STRUCT_STOP":19,"STATE_DESCR":20,"AS":21,"ID":22,"FORK":23,"JOIN":24,"CONCURRENT":25,"note":26,"notePosition":27,"NOTE_TEXT":28,"openDirective":29,"typeDirective":30,"closeDirective":31,":":32,"argDirective":33,"eol":34,";":35,"EDGE_STATE":36,"left_of":37,"right_of":38,"open_directive":39,"type_directive":40,"arg_directive":41,"close_directive":42,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NL",7:"SD",12:"DESCR",13:"-->",14:"HIDE_EMPTY",15:"scale",16:"WIDTH",17:"COMPOSIT_STATE",18:"STRUCT_START",19:"STRUCT_STOP",20:"STATE_DESCR",21:"AS",22:"ID",23:"FORK",24:"JOIN",25:"CONCURRENT",26:"note",28:"NOTE_TEXT",32:":",35:";",36:"EDGE_STATE",37:"left_of",38:"right_of",39:"open_directive",40:"type_directive",41:"arg_directive",42:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[10,1],[10,2],[10,3],[10,4],[10,1],[10,2],[10,1],[10,4],[10,3],[10,6],[10,1],[10,1],[10,1],[10,4],[10,4],[10,1],[6,3],[6,5],[34,1],[34,1],[11,1],[11,1],[27,1],[27,1],[29,1],[30,1],[33,1],[31,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 3:
+case 4:
  /*console.warn('Root document', $$[$0]);*/ yy.setRootDoc($$[$0]);return $$[$0]; 
 break;
-case 4:
+case 5:
  this.$ = [] 
 break;
-case 5:
+case 6:
 
         if($$[$0]!='nl'){
             $$[$0-1].push($$[$0]);this.$ = $$[$0-1]
@@ -17684,38 +18763,38 @@ case 5:
         // console.warn('Got document',$$[$0-1], $$[$0]);
     
 break;
-case 6: case 7:
+case 7: case 8:
  this.$ = $$[$0] 
 break;
-case 8:
+case 9:
  this.$='nl';
 break;
-case 9:
+case 10:
  /*console.warn('got id and descr', $$[$0]);*/this.$={ stmt: 'state', id: $$[$0], type: 'default', description: ''};
 break;
-case 10:
+case 11:
  /*console.warn('got id and descr', $$[$0-1], $$[$0].trim());*/this.$={ stmt: 'state', id: $$[$0-1], type: 'default', description: yy.trimColon($$[$0])};
 break;
-case 11:
+case 12:
 
         /*console.warn('got id', $$[$0-2]);yy.addRelation($$[$0-2], $$[$0]);*/
         this.$={ stmt: 'relation', state1: { stmt: 'state', id: $$[$0-2], type: 'default', description: '' }, state2:{ stmt: 'state', id: $$[$0] ,type: 'default', description: ''}};
     
 break;
-case 12:
+case 13:
 
         /*yy.addRelation($$[$0-3], $$[$0-1], $$[$0].substr(1).trim());*/
         this.$={ stmt: 'relation', state1: { stmt: 'state', id: $$[$0-3], type: 'default', description: '' }, state2:{ stmt: 'state', id: $$[$0-1] ,type: 'default', description: ''}, description: $$[$0].substr(1).trim()};
     
 break;
-case 16:
+case 17:
 
 
         /* console.warn('Adding document for state without id ', $$[$0-3]);*/
         this.$={ stmt: 'state', id: $$[$0-3], type: 'default', description: '', doc: $$[$0-1] }
     
 break;
-case 17:
+case 18:
 
         var id=$$[$0];
         var description = $$[$0-2].trim();
@@ -17728,40 +18807,52 @@ case 17:
 
     
 break;
-case 18:
+case 19:
 
          //console.warn('Adding document for state with id ', $$[$0-3], $$[$0-2]); yy.addDocument($$[$0-3]);
          this.$={ stmt: 'state', id: $$[$0-3], type: 'default', description: $$[$0-5], doc: $$[$0-1] }
     
 break;
-case 19:
+case 20:
 
         this.$={ stmt: 'state', id: $$[$0], type: 'fork' }
     
 break;
-case 20:
+case 21:
 
         this.$={ stmt: 'state', id: $$[$0], type: 'join' }
     
 break;
-case 21:
+case 22:
 
         this.$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
     
 break;
-case 22:
+case 23:
 
         /*console.warn('got NOTE, position: ', $$[$0-2].trim(), 'id = ', $$[$0-1].trim(), 'note: ', $$[$0]);*/
         this.$={ stmt: 'state', id: $$[$0-1].trim(), note:{position: $$[$0-2].trim(), text: $$[$0].trim()}};
     
 break;
-case 24: case 25:
+case 30: case 31:
 this.$=$$[$0];
+break;
+case 34:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 35:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 36:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 37:
+ yy.parseDirective('}%%', 'close_directive', 'state'); 
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:$V2},{1:[3]},{3:5,4:$V0,5:$V1,6:$V2},{3:6,4:$V0,5:$V1,6:$V2},o([1,4,5,13,14,16,19,21,22,23,24,25,28],$V3,{7:7}),{1:[2,1]},{1:[2,2]},{1:[2,3],4:$V4,5:$V5,8:8,9:10,10:12,13:$V6,14:$V7,16:$V8,19:$V9,21:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,28:$Vf},o($Vg,[2,5]),{9:23,10:12,13:$V6,14:$V7,16:$V8,19:$V9,21:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,28:$Vf},o($Vg,[2,7]),o($Vg,[2,8]),o($Vg,[2,9],{11:[1,24],12:[1,25]}),o($Vg,[2,13]),{15:[1,26]},o($Vg,[2,15],{17:[1,27]}),{20:[1,28]},o($Vg,[2,19]),o($Vg,[2,20]),o($Vg,[2,21]),{26:29,27:[1,30],29:[1,31],30:[1,32]},o($Vh,[2,24]),o($Vh,[2,25]),o($Vg,[2,6]),o($Vg,[2,10]),{10:33,21:$Va,28:$Vf},o($Vg,[2,14]),o($Vi,$V3,{7:34}),{21:[1,35]},{21:[1,36]},{20:[1,37]},{21:[2,26]},{21:[2,27]},o($Vg,[2,11],{11:[1,38]}),{4:$V4,5:$V5,8:8,9:10,10:12,13:$V6,14:$V7,16:$V8,18:[1,39],19:$V9,21:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,28:$Vf},o($Vg,[2,17],{17:[1,40]}),{27:[1,41]},{21:[1,42]},o($Vg,[2,12]),o($Vg,[2,16]),o($Vi,$V3,{7:43}),o($Vg,[2,22]),o($Vg,[2,23]),{4:$V4,5:$V5,8:8,9:10,10:12,13:$V6,14:$V7,16:$V8,18:[1,44],19:$V9,21:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,28:$Vf},o($Vg,[2,18])],
-defaultActions: {5:[2,1],6:[2,2],31:[2,26],32:[2,27]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},o([1,4,5,14,15,17,20,22,23,24,25,26,36,39],$V4,{8:11}),{30:12,40:[1,13]},{40:[2,34]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},{31:30,32:[1,31],42:$Vh},o([32,42],[2,35]),o($Vi,[2,6]),{6:27,10:33,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,8]),o($Vi,[2,9]),o($Vi,[2,10],{12:[1,34],13:[1,35]}),o($Vi,[2,14]),{16:[1,36]},o($Vi,[2,16],{18:[1,37]}),{21:[1,38]},o($Vi,[2,20]),o($Vi,[2,21]),o($Vi,[2,22]),{27:39,28:[1,40],37:[1,41],38:[1,42]},o($Vi,[2,25]),o($Vj,[2,30]),o($Vj,[2,31]),o($Vk,[2,26]),{33:43,41:[1,44]},o($Vk,[2,37]),o($Vi,[2,7]),o($Vi,[2,11]),{11:45,22:$Vb,36:$Vg},o($Vi,[2,15]),o($Vl,$V4,{8:46}),{22:[1,47]},{22:[1,48]},{21:[1,49]},{22:[2,32]},{22:[2,33]},{31:50,42:$Vh},{42:[2,36]},o($Vi,[2,12],{12:[1,51]}),{4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,52],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,18],{18:[1,53]}),{28:[1,54]},{22:[1,55]},o($Vk,[2,27]),o($Vi,[2,13]),o($Vi,[2,17]),o($Vl,$V4,{8:56}),o($Vi,[2,23]),o($Vi,[2,24]),{4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,57],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,19])],
+defaultActions: {7:[2,34],8:[2,1],9:[2,2],10:[2,3],41:[2,32],42:[2,33],44:[2,36]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -18240,98 +19331,112 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 5;
+case 0: this.begin('open_directive'); return 39; 
 break;
-case 1:/* skip all whitespace */
+case 1: this.begin('type_directive'); return 40; 
 break;
-case 2:/* skip same-line whitespace */
+case 2: this.popState(); this.begin('arg_directive'); return 32; 
 break;
-case 3:/* skip comments */
+case 3: this.popState(); this.popState(); return 42; 
 break;
-case 4:/* skip comments */
+case 4:return 41;
 break;
-case 5: this.pushState('SCALE'); /* console.log('Got scale', yy_.yytext);*/ return 14; 
+case 5:/* skip comments */
 break;
-case 6:return 15;
+case 6:/* skip comments */{ console.log('Crap after close'); }
 break;
-case 7:this.popState();
+case 7:return 5;
 break;
-case 8: this.pushState('STATE'); 
+case 8:/* skip all whitespace */
 break;
-case 9:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yy_.yytext);*/return 22;
+case 9:/* skip same-line whitespace */
 break;
-case 10:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 23;
+case 10:/* skip comments */
 break;
-case 11:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yy_.yytext);*/return 22;
+case 11:/* skip comments */
 break;
-case 12:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 23;
+case 12: this.pushState('SCALE'); /* console.log('Got scale', yy_.yytext);*/ return 15; 
 break;
-case 13:this.begin("STATE_STRING");
+case 13:return 16;
 break;
-case 14:this.popState();this.pushState('STATE_ID');return "AS";
+case 14:this.popState();
 break;
-case 15:this.popState();/* console.log('STATE_ID', yy_.yytext);*/return "ID";
+case 15: this.pushState('STATE'); 
 break;
-case 16:this.popState();
+case 16:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
 break;
-case 17: /*console.log('Long description:', yy_.yytext);*/return "STATE_DESCR";
+case 17:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
 break;
-case 18:/*console.log('COMPOSIT_STATE', yy_.yytext);*/return 16;
+case 18:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
 break;
-case 19:this.popState();
+case 19:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
 break;
-case 20:this.popState();this.pushState('struct'); /*console.log('begin struct', yy_.yytext);*/return 17;
+case 20:this.begin("STATE_STRING");
 break;
-case 21: /*console.log('Ending struct');*/ this.popState(); return 18;
+case 21:this.popState();this.pushState('STATE_ID');return "AS";
 break;
-case 22:/* nothing */
+case 22:this.popState();/* console.log('STATE_ID', yy_.yytext);*/return "ID";
 break;
-case 23: this.begin('NOTE'); return 25; 
+case 23:this.popState();
 break;
-case 24: this.popState();this.pushState('NOTE_ID');return 29;
+case 24: /*console.log('Long description:', yy_.yytext);*/return "STATE_DESCR";
 break;
-case 25: this.popState();this.pushState('NOTE_ID');return 30;
+case 25:/*console.log('COMPOSIT_STATE', yy_.yytext);*/return 17;
 break;
-case 26: this.popState();this.pushState('FLOATING_NOTE');
+case 26:this.popState();
 break;
-case 27:this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";
+case 27:this.popState();this.pushState('struct'); /*console.log('begin struct', yy_.yytext);*/return 18;
 break;
-case 28:/**/
+case 28: /*console.log('Ending struct');*/ this.popState(); return 19;
 break;
-case 29: /*console.log('Floating note text: ', yy_.yytext);*/return "NOTE_TEXT";
+case 29:/* nothing */
 break;
-case 30:this.popState();/*console.log('Floating note ID', yy_.yytext);*/return "ID";
+case 30: this.begin('NOTE'); return 26; 
 break;
-case 31: this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yy_.yytext);*/return 21;
+case 31: this.popState();this.pushState('NOTE_ID');return 37;
 break;
-case 32: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.substr(2).trim();return 27;
+case 32: this.popState();this.pushState('NOTE_ID');return 38;
 break;
-case 33: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.slice(0,-8).trim();return 27;
+case 33: this.popState();this.pushState('FLOATING_NOTE');
 break;
-case 34: /*console.log('Got state diagram', yy_.yytext,'#');*/return 6; 
+case 34:this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";
 break;
-case 35: /*console.log('Got state diagram', yy_.yytext,'#');*/return 6; 
+case 35:/**/
 break;
-case 36: /*console.log('HIDE_EMPTY', yy_.yytext,'#');*/return 13; 
+case 36: /*console.log('Floating note text: ', yy_.yytext);*/return "NOTE_TEXT";
 break;
-case 37: /*console.log('EDGE_STATE=',yy_.yytext);*/ return 28;
+case 37:this.popState();/*console.log('Floating note ID', yy_.yytext);*/return "ID";
 break;
-case 38: /*console.log('=>ID=',yy_.yytext);*/ return 21;
+case 38: this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yy_.yytext);*/return 22;
 break;
-case 39: yy_.yytext = yy_.yytext.trim(); /*console.log('Descr = ', yy_.yytext);*/ return 11; 
+case 39: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.substr(2).trim();return 28;
 break;
-case 40:return 12;
+case 40: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.slice(0,-8).trim();return 28;
 break;
-case 41:return 24;
+case 41: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
 break;
-case 42:return 5;
+case 42: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
 break;
-case 43:return 'INVALID';
+case 43: /*console.log('HIDE_EMPTY', yy_.yytext,'#');*/return 14; 
+break;
+case 44: /*console.log('EDGE_STATE=',yy_.yytext);*/ return 36;
+break;
+case 45: /*console.log('=>ID=',yy_.yytext);*/ return 22;
+break;
+case 46: yy_.yytext = yy_.yytext.trim(); /*console.log('Descr = ', yy_.yytext);*/ return 12; 
+break;
+case 47:return 13;
+break;
+case 48:return 25;
+break;
+case 49:return 5;
+break;
+case 50:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:scale\s+)/i,/^(?:\d+)/i,/^(?:\s+width\b)/i,/^(?:state\s+)/i,/^(?:.*<<fork>>)/i,/^(?:.*<<join>>)/i,/^(?:.*\[\[fork\]\])/i,/^(?:.*\[\[join\]\])/i,/^(?:["])/i,/^(?:\s*as\s+)/i,/^(?:[^\n\{]*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n\s\{]+)/i,/^(?:\n)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:[\n])/i,/^(?:note\s+)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:")/i,/^(?:\s*as\s*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n]*)/i,/^(?:\s*[^:\n\s\-]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:\s*[^:;]+end note\b)/i,/^(?:stateDiagram\s+)/i,/^(?:stateDiagram-v2\s+)/i,/^(?:hide empty description\b)/i,/^(?:\[\*\])/i,/^(?:[^:\n\s\-\{]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:-->)/i,/^(?:--)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"LINE":{"rules":[2,3],"inclusive":false},"struct":{"rules":[2,3,8,21,22,23,37,38,39,40,41],"inclusive":false},"FLOATING_NOTE_ID":{"rules":[30],"inclusive":false},"FLOATING_NOTE":{"rules":[27,28,29],"inclusive":false},"NOTE_TEXT":{"rules":[32,33],"inclusive":false},"NOTE_ID":{"rules":[31],"inclusive":false},"NOTE":{"rules":[24,25,26],"inclusive":false},"SCALE":{"rules":[6,7],"inclusive":false},"ALIAS":{"rules":[],"inclusive":false},"STATE_ID":{"rules":[15],"inclusive":false},"STATE_STRING":{"rules":[16,17],"inclusive":false},"FORK_STATE":{"rules":[],"inclusive":false},"STATE":{"rules":[2,3,9,10,11,12,13,14,18,19,20],"inclusive":false},"ID":{"rules":[2,3],"inclusive":false},"INITIAL":{"rules":[0,1,3,4,5,8,20,23,34,35,36,37,38,39,40,42,43],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:[\s]+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:scale\s+)/i,/^(?:\d+)/i,/^(?:\s+width\b)/i,/^(?:state\s+)/i,/^(?:.*<<fork>>)/i,/^(?:.*<<join>>)/i,/^(?:.*\[\[fork\]\])/i,/^(?:.*\[\[join\]\])/i,/^(?:["])/i,/^(?:\s*as\s+)/i,/^(?:[^\n\{]*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n\s\{]+)/i,/^(?:\n)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:[\n])/i,/^(?:note\s+)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:")/i,/^(?:\s*as\s*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n]*)/i,/^(?:\s*[^:\n\s\-]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:\s*[^:;]+end note\b)/i,/^(?:stateDiagram\s+)/i,/^(?:stateDiagram-v2\s+)/i,/^(?:hide empty description\b)/i,/^(?:\[\*\])/i,/^(?:[^:\n\s\-\{]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:-->)/i,/^(?:--)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"LINE":{"rules":[9,10],"inclusive":false},"close_directive":{"rules":[9,10],"inclusive":false},"arg_directive":{"rules":[3,4,9,10],"inclusive":false},"type_directive":{"rules":[2,3,9,10],"inclusive":false},"open_directive":{"rules":[1,9,10],"inclusive":false},"struct":{"rules":[9,10,15,28,29,30,44,45,46,47,48],"inclusive":false},"FLOATING_NOTE_ID":{"rules":[37],"inclusive":false},"FLOATING_NOTE":{"rules":[34,35,36],"inclusive":false},"NOTE_TEXT":{"rules":[39,40],"inclusive":false},"NOTE_ID":{"rules":[38],"inclusive":false},"NOTE":{"rules":[31,32,33],"inclusive":false},"SCALE":{"rules":[13,14],"inclusive":false},"ALIAS":{"rules":[],"inclusive":false},"STATE_ID":{"rules":[22],"inclusive":false},"STATE_STRING":{"rules":[23,24],"inclusive":false},"FORK_STATE":{"rules":[],"inclusive":false},"STATE":{"rules":[9,10,16,17,18,19,20,21,25,26,27],"inclusive":false},"ID":{"rules":[9,10],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,10,11,12,15,27,30,41,42,43,44,45,46,47,49,50],"inclusive":true}}
 });
 return lexer;
 })();
@@ -18403,7 +19508,9 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 var drawStartState = function drawStartState(g) {
-  return g.append('circle').style('stroke', 'black').style('fill', 'black').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit);
+  return g.append('circle') // .style('stroke', 'black')
+  // .style('fill', 'black')
+  .attr('class', 'start-state').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit);
 };
 /**
  * Draws a start state as a black circle
@@ -18540,8 +19647,12 @@ var addTitleAndBox = function addTitleAndBox(g, stateDef, altBkg) {
 };
 
 var drawEndState = function drawEndState(g) {
-  g.append('circle').style('stroke', 'black').style('fill', 'white').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding);
-  return g.append('circle').style('stroke', 'black').style('fill', 'black').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + 2).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + 2);
+  g.append('circle') // .style('stroke', 'black')
+  // .style('fill', 'white')
+  .attr('class', 'end-state-outer').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding);
+  return g.append('circle') // .style('stroke', 'black')
+  // .style('fill', 'black')
+  .attr('class', 'end-state-inner').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + 2).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + 2);
 };
 
 var drawForkJoinState = function drawForkJoinState(g, stateDef) {
@@ -18792,11 +19903,12 @@ var drawEdge = function drawEdge(elem, path, relation) {
 /*!***************************************!*\
   !*** ./src/diagrams/state/stateDb.js ***!
   \***************************************/
-/*! exports provided: addState, clear, getState, getStates, logDocuments, getRelations, addRelation, cleanupLabel, lineType, relationType, default */
+/*! exports provided: parseDirective, addState, clear, getState, getStates, logDocuments, getRelations, addRelation, cleanupLabel, lineType, relationType, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addState", function() { return addState; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getState", function() { return getState; });
@@ -18809,7 +19921,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "relationType", function() { return relationType; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+
 
 
 
@@ -18819,6 +19935,9 @@ var clone = function clone(o) {
 };
 
 var rootDoc = [];
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__["default"].parseDirective(this, statement, context, type);
+};
 
 var setRootDoc = function setRootDoc(o) {
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Setting root doc', o); // rootDoc = { id: 'root', doc: o };
@@ -19077,6 +20196,10 @@ var trimColon = function trimColon(str) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().state;
+  },
   addState: addState,
   clear: clear,
   getState: getState,
@@ -19310,7 +20433,7 @@ var setupDoc = function setupDoc(g, parent, doc, altFlag) {
       var edgeData = {
         id: 'edge' + cnt,
         arrowhead: 'normal',
-        arrowType: 'arrow_barb',
+        arrowTypeEnd: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
         label: item.description,
@@ -19340,13 +20463,12 @@ var draw = function draw(text, id) {
   nodeDb = {};
   var parser = _parser_stateDiagram__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
   parser.yy = _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"]; // Parse the graph definition
+  // try {
 
-  try {
-    parser.parse(text);
-  } catch (err) {
-    _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].debug('Parsing failed');
-  } // Fetch the default direction, use TD if none was found
-
+  parser.parse(text); // } catch (err) {
+  //   logger.error('Parsing failed', err);
+  // }
+  // Fetch the default direction, use TD if none was found
 
   var dir = _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getDirection();
 
@@ -19439,7 +20561,6 @@ var draw = function draw(text, id) {
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
       rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
       label.insertBefore(rect, label.firstChild);
     }
   }
@@ -19733,15 +20854,33 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
 
 /***/ }),
 
-/***/ "./src/diagrams/user-journey/journeyDb.js":
-/*!************************************************!*\
-  !*** ./src/diagrams/user-journey/journeyDb.js ***!
-  \************************************************/
-/*! exports provided: clear, setTitle, getTitle, addSection, getSections, getTasks, addTask, addTaskOrg, default */
+/***/ "./src/diagrams/state/styles.js":
+/*!**************************************!*\
+  !*** ./src/diagrams/state/styles.js ***!
+  \**************************************/
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.tertiaryColor, ";\n  opacity: 0.5;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.tertiaryTextColor, ";\n}\n.label div .edgeLabel {\n  color: ").concat(options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\n\n.node circle.state-start {\n  fill: ").concat(options.lineColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n.end-state-inner {\n  fill: ").concat(options.background, ";\n  // stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
+
+/***/ }),
+
+/***/ "./src/diagrams/user-journey/journeyDb.js":
+/*!************************************************!*\
+  !*** ./src/diagrams/user-journey/journeyDb.js ***!
+  \************************************************/
+/*! exports provided: parseDirective, clear, setTitle, getTitle, addSection, getSections, getTasks, addTask, addTaskOrg, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setTitle", function() { return setTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTitle", function() { return getTitle; });
@@ -19750,6 +20889,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTasks", function() { return getTasks; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTask", function() { return addTask; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addTaskOrg", function() { return addTaskOrg; });
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -19758,11 +20899,16 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+
+
 var title = '';
 var currentSection = '';
 var sections = [];
 var tasks = [];
 var rawTasks = [];
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(this, statement, context, type);
+};
 var clear = function clear() {
   sections.length = 0;
   tasks.length = 0;
@@ -19864,6 +21010,10 @@ var getActors = function getActors() {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_1__["getConfig"]().journey;
+  },
   clear: clear,
   setTitle: setTitle,
   getTitle: getTitle,
@@ -19957,7 +21107,8 @@ function drawActorLegend(diagram) {
       x: 40,
       y: yPos + 7,
       fill: '#666',
-      text: person
+      text: person,
+      textMargin: conf.boxTextMargin | 5
     };
     _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].drawText(diagram, labelData);
     yPos += 20;
@@ -20107,19 +21258,22 @@ var drawTasks = function drawTasks(diagram, tasks, verticalPos) {
   var taskPos = verticalPos + sectionVHeight;
   var sectionNumber = 0;
   var fill = '#CCC';
-  var colour = 'black'; // Draw the tasks
+  var colour = 'black';
+  var num = 0; // Draw the tasks
 
   for (var i = 0; i < tasks.length; i++) {
     var task = tasks[i];
 
     if (lastSection !== task.section) {
       fill = fills[sectionNumber % fills.length];
+      num = sectionNumber % fills.length;
       colour = textColours[sectionNumber % textColours.length];
       var section = {
         x: i * conf.taskMargin + i * conf.width + LEFT_MARGIN,
         y: 50,
         text: task.section,
         fill: fill,
+        num: num,
         colour: colour
       };
       _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].drawSection(diagram, section, conf);
@@ -20142,6 +21296,7 @@ var drawTasks = function drawTasks(diagram, tasks, verticalPos) {
     task.height = conf.diagramMarginY;
     task.colour = colour;
     task.fill = fill;
+    task.num = num;
     task.actors = taskActors; // Draw the box with the attached line
 
     _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].drawTask(diagram, task, conf);
@@ -20236,12 +21391,12 @@ var drawTasks = function drawTasks(diagram, tasks, verticalPos) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,12,13],$V1=[1,9],$V2=[1,10],$V3=[1,11];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,5],$V2=[6,9,11,17,18,19,21],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,21],$V7=[4,6,9,11,17,18,19,21];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"journey":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"title":11,"section":12,"taskName":13,"taskData":14,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"journey",6:"EOF",8:"SPACE",10:"NL",11:"title",12:"section",13:"taskName",14:"taskData"},
-productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,1],[9,1],[9,2]],
+symbols_: {"error":2,"start":3,"journey":4,"document":5,"EOF":6,"directive":7,"line":8,"SPACE":9,"statement":10,"NEWLINE":11,"openDirective":12,"typeDirective":13,"closeDirective":14,":":15,"argDirective":16,"title":17,"section":18,"taskName":19,"taskData":20,"open_directive":21,"type_directive":22,"arg_directive":23,"close_directive":24,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"journey",6:"EOF",9:"SPACE",11:"NEWLINE",15:":",17:"title",18:"section",19:"taskName",20:"taskData",21:"open_directive",22:"type_directive",23:"arg_directive",24:"close_directive"},
+productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,1],[10,2],[10,1],[12,1],[13,1],[16,1],[14,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -20250,31 +21405,43 @@ switch (yystate) {
 case 1:
  return $$[$0-1]; 
 break;
-case 2:
+case 3:
  this.$ = [] 
 break;
-case 3:
+case 4:
 $$[$0-1].push($$[$0]);this.$ = $$[$0-1]
 break;
-case 4: case 5:
+case 5: case 6:
  this.$ = $$[$0] 
 break;
-case 6: case 7:
+case 7: case 8:
  this.$=[];
 break;
-case 8:
+case 11:
 yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
 break;
-case 9:
+case 12:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
-case 10:
+case 13:
 yy.addTask($$[$0-1], $$[$0]);this.$='task';
+break;
+case 15:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 16:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 17:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 18:
+ yy.parseDirective('}%%', 'close_directive', 'journey'); 
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:[1,6],9:7,10:[1,8],11:$V1,12:$V2,13:$V3},o($V0,[2,7],{1:[2,1]}),o($V0,[2,3]),{9:12,11:$V1,12:$V2,13:$V3},o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,8]),o($V0,[2,9]),{14:[1,13]},o($V0,[2,4]),o($V0,[2,10])],
-defaultActions: {},
+table: [{3:1,4:$V0,7:3,12:4,21:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,21:$V1},{13:8,22:[1,9]},{22:[2,15]},{6:[1,10],7:18,8:11,9:[1,12],10:13,11:[1,14],12:4,17:$V3,18:$V4,19:$V5,21:$V1},{1:[2,2]},{14:19,15:[1,20],24:$V6},o([15,24],[2,16]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:18,10:22,12:4,17:$V3,18:$V4,19:$V5,21:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),o($V2,[2,12]),{20:[1,23]},o($V2,[2,14]),{11:[1,24]},{16:25,23:[1,26]},{11:[2,18]},o($V2,[2,5]),o($V2,[2,13]),o($V7,[2,9]),{14:27,24:$V6},{24:[2,17]},{11:[1,28]},o($V7,[2,10])],
+defaultActions: {5:[2,15],7:[2,2],21:[2,18],26:[2,17]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -20424,6 +21591,7 @@ parse: function parse(input) {
     }
     return true;
 }};
+
 /* generated by jison-lex 0.3.4 */
 var lexer = (function(){
 var lexer = ({
@@ -20752,34 +21920,46 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 10;
+case 0: this.begin('open_directive'); return 21; 
 break;
-case 1:/* skip whitespace */
+case 1: this.begin('type_directive'); return 22; 
 break;
-case 2:/* skip comments */
+case 2: this.popState(); this.begin('arg_directive'); return 15; 
 break;
-case 3:/* skip comments */
+case 3: this.popState(); this.popState(); return 24; 
 break;
-case 4:return 4;
+case 4:return 23;
 break;
-case 5:return 11;
+case 5:/* skip comments */
 break;
-case 6:return 12;
+case 6:/* skip comments */
 break;
-case 7:return 13;
+case 7:return 11;
 break;
-case 8:return 14;
+case 8:/* skip whitespace */
 break;
-case 9:return ':';
+case 9:/* skip comments */
 break;
-case 10:return 6;
+case 10:return 4;
 break;
-case 11:return 'INVALID';
+case 11:return 17;
+break;
+case 12:return 18;
+break;
+case 13:return 19;
+break;
+case 14:return 20;
+break;
+case 15:return 15;
+break;
+case 16:return 6;
+break;
+case 17:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:journey\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:journey\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17],"inclusive":true}}
 });
 return lexer;
 })();
@@ -20809,6 +21989,23 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/user-journey/styles.js":
+/*!*********************************************!*\
+  !*** ./src/diagrams/user-journey/styles.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles(options) {
+  return ".label {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    color: ".concat(options.textColor, ";\n  }\n  .mouth {\n    stroke: #666;\n  }\n\n  line {\n    stroke: ").concat(options.textColor, "\n  }\n\n  .legend {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: #333;\n  }\n  .label {\n    color: ").concat(options.textColor, "\n  }\n\n  .face {\n    fill: #FFF8DC;\n    stroke: #999;\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n\n  .task-type-0, .section-type-0  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType0) : '', ";\n  }\n  .task-type-1, .section-type-1  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType1) : '', ";\n  }\n  .task-type-2, .section-type-2  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType2) : '', ";\n  }\n  .task-type-3, .section-type-3  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType3) : '', ";\n  }\n  .task-type-4, .section-type-4  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType4) : '', ";\n  }\n  .task-type-5, .section-type-5  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType5) : '', ";\n  }\n  .task-type-6, .section-type-6  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType6) : '', ";\n  }\n  .task-type-7, .section-type-7  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType7) : '', ";\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
@@ -20853,7 +22050,7 @@ var drawRect = function drawRect(elem, rectData) {
 };
 var drawFace = function drawFace(element, faceData) {
   var radius = 15;
-  var circleElement = element.append('circle').attr('cx', faceData.cx).attr('cy', faceData.cy).attr('fill', '#FFF8DC').attr('stroke', '#999').attr('r', radius).attr('stroke-width', 2).attr('overflow', 'visible');
+  var circleElement = element.append('circle').attr('cx', faceData.cx).attr('cy', faceData.cy).attr('class', 'face').attr('r', radius).attr('stroke-width', 2).attr('overflow', 'visible');
   var face = element.append('g'); //left eye
 
   face.append('circle').attr('cx', faceData.cx - radius / 3).attr('cy', faceData.cy - radius / 3).attr('r', 1.5).attr('stroke-width', 2).attr('fill', '#666').attr('stroke', '#666'); //right eye
@@ -20863,17 +22060,17 @@ var drawFace = function drawFace(element, faceData) {
   function smile(face) {
     var arc = Object(d3__WEBPACK_IMPORTED_MODULE_0__["arc"])().startAngle(Math.PI / 2).endAngle(3 * (Math.PI / 2)).innerRadius(radius / 2).outerRadius(radius / 2.2); //mouth
 
-    face.append('path').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
+    face.append('path').attr('class', 'mouth').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
   }
 
   function sad(face) {
     var arc = Object(d3__WEBPACK_IMPORTED_MODULE_0__["arc"])().startAngle(3 * Math.PI / 2).endAngle(5 * (Math.PI / 2)).innerRadius(radius / 2).outerRadius(radius / 2.2); //mouth
 
-    face.append('path').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
+    face.append('path').attr('class', 'mouth').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
   }
 
   function ambivalent(face) {
-    face.append('line').attr('stroke', 2).attr('x1', faceData.cx - 5).attr('y1', faceData.cy + 7).attr('x2', faceData.cx + 5).attr('y2', faceData.cy + 7).attr('class', 'task-line').attr('stroke-width', '1px').attr('stroke', '#666');
+    face.append('line').attr('class', 'mouth').attr('stroke', 2).attr('x1', faceData.cx - 5).attr('y1', faceData.cy + 7).attr('x2', faceData.cx + 5).attr('y2', faceData.cy + 7).attr('class', 'mouth').attr('stroke-width', '1px').attr('stroke', '#666');
   }
 
   if (faceData.score > 3) {
@@ -20910,7 +22107,7 @@ var drawText = function drawText(elem, textData) {
   var textElem = elem.append('text');
   textElem.attr('x', textData.x);
   textElem.attr('y', textData.y);
-  textElem.attr('fill', textData.fill);
+  textElem.attr('class', 'legend');
   textElem.style('text-anchor', textData.anchor);
 
   if (typeof textData.class !== 'undefined') {
@@ -20942,13 +22139,13 @@ var drawSection = function drawSection(elem, section, conf) {
   rect.fill = section.fill;
   rect.width = conf.width;
   rect.height = conf.height;
-  rect.class = 'journey-section';
+  rect.class = 'journey-section section-type-' + section.num;
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);
 
   _drawTextCandidateFunc(conf)(section.text, g, rect.x, rect.y, rect.width, rect.height, {
-    class: 'journey-section'
+    class: 'journey-section section-type-' + section.num
   }, conf, section.colour);
 };
 var taskCount = -1;
@@ -20976,7 +22173,7 @@ var drawTask = function drawTask(elem, task, conf) {
   rect.fill = task.fill;
   rect.width = conf.width;
   rect.height = conf.height;
-  rect.class = 'task';
+  rect.class = 'task task-type-' + task.num;
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);
@@ -21063,11 +22260,12 @@ var _drawTextCandidateFunc = function () {
     }
   }
 
-  function byFo(content, g, x, y, width, height, textAttrs, conf, colour) {
+  function byFo(content, g, x, y, width, height, textAttrs, conf) {
     var body = g.append('switch');
     var f = body.append('foreignObject').attr('x', x).attr('y', y).attr('width', width).attr('height', height).attr('position', 'fixed');
     var text = f.append('div').style('display', 'table').style('height', '100%').style('width', '100%');
-    text.append('div').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle').style('color', colour).text(content);
+    text.append('div').attr('class', 'label').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle') // .style('color', colour)
+    .text(content);
     byTspan(content, body, x, y, width, height, textAttrs, conf);
 
     _setTextAttrs(text, textAttrs);
@@ -21299,7 +22497,7 @@ __webpack_require__.r(__webpack_exports__);
 var init = function init() {
   var _this = this;
 
-  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init');
+  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
 
   var nodes;
 
@@ -21337,13 +22535,13 @@ var init = function init() {
 
   if (typeof mermaid.startOnLoad !== 'undefined') {
     _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Start On Load inner: ' + mermaid.startOnLoad);
-    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize({
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].updateSiteConfig({
       startOnLoad: mermaid.startOnLoad
     });
   }
 
   if (typeof mermaid.ganttConfig !== 'undefined') {
-    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize({
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].updateSiteConfig({
       gantt: mermaid.ganttConfig
     });
   }
@@ -21399,8 +22597,7 @@ var init = function init() {
 };
 
 var initialize = function initialize(config) {
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].reset();
-
+  // mermaidAPI.reset();
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
@@ -21411,7 +22608,7 @@ var initialize = function initialize(config) {
     }
   }
 
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize(config);
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize(config); // mermaidAPI.reset();
 };
 /**
  * ##contentLoaded
@@ -21476,29 +22673,29 @@ var mermaid = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "encodeEntities", function() { return encodeEntities; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "decodeEntities", function() { return decodeEntities; });
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var scope_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! scope-css */ "scope-css");
-/* harmony import */ var scope_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(scope_css__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! stylis */ "stylis");
+/* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(stylis__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _package_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../package.json */ "./package.json");
 var _package_json__WEBPACK_IMPORTED_MODULE_2___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../package.json */ "./package.json", 1);
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./config */ "./src/config.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
-/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
-/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
-/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
+/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
+/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
+/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
+/* harmony import */ var _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/class/classRenderer-v2 */ "./src/diagrams/class/classRenderer-v2.js");
 /* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
 /* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__);
 /* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
@@ -21528,6 +22725,9 @@ var _package_json__WEBPACK_IMPORTED_MODULE_2___namespace = /*#__PURE__*/__webpac
 /* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__);
 /* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
 /* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./config */ "./src/config.js");
+/* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -21544,6 +22744,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  */
 
 
+ // import * as configApi from './config';
+// // , {
+// //   setConfig,
+// //   configApi.getConfig,
+// //   configApi.updateSiteConfig,
+// //   configApi.setSiteConfig,
+// //   configApi.getSiteConfig,
+// //   configApi.defaultConfig
+// // }
 
 
 
@@ -21582,24 +22791,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 
-var themes = {};
 
-for (var _i = 0, _arr = ['default', 'forest', 'dark', 'neutral']; _i < _arr.length; _i++) {
-  var themeName = _arr[_i];
-  themes[themeName] = __webpack_require__("./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$")("./".concat(themeName, "/index.scss"));
-}
+
 
 function parse(text) {
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(text);
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectInit(text);
 
   if (graphInit) {
     reinitialize(graphInit);
-    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('reinit ', graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('reinit ', graphInit);
   }
 
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(text);
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectType(text);
   var parser;
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Type ' + graphType);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Type ' + graphType);
 
   switch (graphType) {
     case 'git':
@@ -21608,28 +22813,33 @@ function parse(text) {
       break;
 
     case 'flowchart':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"].clear();
-      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default.a;
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].clear();
+      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7___default.a;
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"];
       break;
 
     case 'flowchart-v2':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"].clear();
-      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default.a;
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].clear();
+      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7___default.a;
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"];
       break;
 
     case 'sequence':
-      parser = _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11___default.a;
-      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_12__["default"];
+      parser = _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10___default.a;
+      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_11__["default"];
       break;
 
     case 'gantt':
-      parser = _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14___default.a;
-      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__["default"];
+      parser = _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13___default.a;
+      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_14__["default"];
       break;
 
     case 'class':
+      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default.a;
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"];
+      break;
+
+    case 'classDiagram':
       parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default.a;
       parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"];
       break;
@@ -21645,25 +22855,25 @@ function parse(text) {
       break;
 
     case 'info':
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('info info info');
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('info info info');
       parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default.a;
       parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__["default"];
       break;
 
     case 'pie':
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('pie');
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('pie');
       parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default.a;
       parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__["default"];
       break;
 
     case 'er':
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('er');
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('er');
       parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default.a;
       parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__["default"];
       break;
 
     case 'journey':
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Journey');
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Journey');
       parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default.a;
       parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__["default"];
       break;
@@ -21742,24 +22952,30 @@ var decodeEntities = function decodeEntities(text) {
  */
 
 var render = function render(id, _txt, cb, container) {
-  var cnf = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])(); // Check the maximum allowed text size
-
+  _config__WEBPACK_IMPORTED_MODULE_39__["reset"]();
   var txt = _txt;
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectInit(txt);
+
+  if (graphInit) {
+    _config__WEBPACK_IMPORTED_MODULE_39__["addDirective"](graphInit);
+  } // else {
+  //   configApi.reset();
+  //   const siteConfig = configApi.getSiteConfig();
+  //   configApi.addDirective(siteConfig);
+  // }
+  // console.warn('Render fetching config');
+
+
+  var cnf = _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]();
+  console.warn('Render with config after adding new directives', cnf.themeVariables.primaryColor); // Check the maximum allowed text size
 
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(txt);
-
-  if (graphInit) {
-    reinitialize(graphInit);
-    Object(_utils__WEBPACK_IMPORTED_MODULE_5__["assignWithDepth"])(cnf, Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
-  }
-
   if (typeof container !== 'undefined') {
     container.innerHTML = '';
-    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(container).append('div').attr('id', 'd' + id).attr('style', 'font-family: ' + cnf.fontFamily).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
+    Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(container).append('div').attr('id', 'd' + id).attr('style', 'font-family: ' + cnf.fontFamily).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
   } else {
     var existingSvg = document.getElementById(id);
 
@@ -21773,58 +22989,60 @@ var render = function render(id, _txt, cb, container) {
       _element.remove();
     }
 
-    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
+    Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
   }
 
   window.txt = txt;
   txt = encodeEntities(txt);
-  var element = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(txt); // insert inline style into svg
+  var element = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectType(txt); // insert inline style into svg
 
   var svg = element.firstChild;
-  var firstChild = svg.firstChild; // pre-defined theme
-
-  var style = themes[cnf.theme];
-
-  if (style === undefined) {
-    style = '';
-  } // user provided theme CSS
-
+  var firstChild = svg.firstChild;
+  var userStyles = ''; // user provided theme CSS
 
   if (cnf.themeCSS !== undefined) {
-    style += "\n".concat(cnf.themeCSS);
+    userStyles += "\n".concat(cnf.themeCSS);
   } // user provided theme CSS
 
 
   if (cnf.fontFamily !== undefined) {
-    style += "\n:root { --mermaid-font-family: ".concat(cnf.fontFamily, "}");
+    userStyles += "\n:root { --mermaid-font-family: ".concat(cnf.fontFamily, "}");
   } // user provided theme CSS
 
 
   if (cnf.altFontFamily !== undefined) {
-    style += "\n:root { --mermaid-alt-font-family: ".concat(cnf.altFontFamily, "}");
+    userStyles += "\n:root { --mermaid-alt-font-family: ".concat(cnf.altFontFamily, "}");
   } // classDef
 
 
-  if (graphType === 'flowchart' || graphType === 'flowchart-v2') {
-    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].getClasses(txt);
+  if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
+    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].getClasses(txt);
 
     for (var className in classes) {
-      style += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+      userStyles += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
 
       if (classes[className].textStyles) {
-        style += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
       }
     }
-  }
+  } // logger.warn(cnf.themeVariables);
 
+
+  var stylis = new stylis__WEBPACK_IMPORTED_MODULE_0___default.a();
+  var rules = stylis("#".concat(id), Object(_styles__WEBPACK_IMPORTED_MODULE_40__["default"])(graphType, userStyles, cnf.themeVariables));
   var style1 = document.createElement('style');
-  style1.innerHTML = scope_css__WEBPACK_IMPORTED_MODULE_1___default()(style, "#".concat(id));
-  svg.insertBefore(style1, firstChild);
-  var style2 = document.createElement('style');
-  var cs = window.getComputedStyle(svg);
-  style2.innerHTML = "#".concat(id, " {\n    color: ").concat(cs.color, ";\n    font: ").concat(cs.font, ";\n  }");
-  svg.insertBefore(style2, firstChild);
+  style1.innerHTML = rules;
+  svg.insertBefore(style1, firstChild); // Verify that the generated svgs are ok before removing this
+  // const style2 = document.createElement('style');
+  // const cs = window.getComputedStyle(svg);
+  // style2.innerHTML = `#d${id} * {
+  //   color: ${cs.color};
+  //   // font: ${cs.font};
+  //   // font-family: Arial;
+  //   // font-size: 24px;
+  // }`;
+  // svg.insertBefore(style2, firstChild);
 
   try {
     switch (graphType) {
@@ -21836,14 +23054,14 @@ var render = function render(id, _txt, cb, container) {
 
       case 'flowchart':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart-v2':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].draw(txt, id, false);
         break;
 
       case 'sequence':
@@ -21851,25 +23069,31 @@ var render = function render(id, _txt, cb, container) {
 
         if (cnf.sequenceDiagram) {
           // backwards compatibility
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
           console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.');
         } else {
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(cnf.sequence);
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(cnf.sequence);
         }
 
-        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].draw(txt, id);
+        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].draw(txt, id);
         break;
 
       case 'gantt':
         cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(cnf.gantt);
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].draw(txt, id);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(cnf.gantt);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].draw(txt, id);
         break;
 
       case 'class':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(cnf.class);
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].draw(txt, id);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__["default"].draw(txt, id);
+        break;
+
+      case 'classDiagram':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_16__["default"].draw(txt, id);
         break;
 
       case 'state':
@@ -21912,7 +23136,7 @@ var render = function render(id, _txt, cb, container) {
     throw e;
   }
 
-  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // if (cnf.arrowMarkerAbsolute) {
+  Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // if (cnf.arrowMarkerAbsolute) {
   //   url =
   //     window.location.protocol +
   //     '//' +
@@ -21924,8 +23148,8 @@ var render = function render(id, _txt, cb, container) {
   // }
   // Fix for when the base tag is used
 
-  var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node().innerHTML;
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().innerHTML;
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
 
   if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -21937,11 +23161,11 @@ var render = function render(id, _txt, cb, container) {
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
-        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"].bindFunctions);
+        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].bindFunctions);
         break;
 
       case 'gantt':
-        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__["default"].bindFunctions);
+        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_14__["default"].bindFunctions);
         break;
 
       case 'class':
@@ -21952,13 +23176,13 @@ var render = function render(id, _txt, cb, container) {
         cb(svgCode);
     }
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('CB = undefined!');
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('CB = undefined!');
   }
 
-  var node = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
+  var node = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
 
   if (node !== null && typeof node.remove === 'function') {
-    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node().remove();
+    Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().remove();
   }
 
   return svgCode;
@@ -21966,7 +23190,7 @@ var render = function render(id, _txt, cb, container) {
 
 var currentDirective = {};
 
-var parseDirective = function parseDirective(statement, context, type) {
+var parseDirective = function parseDirective(p, statement, context, type) {
   try {
     if (statement !== undefined) {
       statement = statement.trim();
@@ -21985,19 +23209,19 @@ var parseDirective = function parseDirective(statement, context, type) {
           break;
 
         case 'close_directive':
-          handleDirective(currentDirective, type);
+          handleDirective(p, currentDirective, type);
           currentDirective = null;
           break;
       }
     }
   } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
-    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error(error.message);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(error.message);
   }
 };
 
-var handleDirective = function handleDirective(directive, type) {
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
+var handleDirective = function handleDirective(p, directive, type) {
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
 
   switch (directive.type) {
     case 'init':
@@ -22014,47 +23238,36 @@ var handleDirective = function handleDirective(directive, type) {
           }
         });
         reinitialize(directive.args);
+        _config__WEBPACK_IMPORTED_MODULE_39__["addDirective"](directive.args);
         break;
       }
 
     case 'wrap':
     case 'nowrap':
-      directive.args = {
-        config: {
-          wrap: directive.type === 'wrap'
-        }
-      };
-      ['config'].forEach(function (prop) {
-        if (typeof directive.args[prop] !== 'undefined') {
-          if (type === 'flowchart-v2') {
-            type = 'flowchart';
-          }
+      if (p && p['setWrap']) {
+        p.setWrap(directive.type === 'wrap');
+      }
 
-          directive.args[type] = directive.args[prop];
-          delete directive.args[prop];
-        }
-      });
-      reinitialize(directive.args);
       break;
 
     default:
-      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
       break;
   }
 };
 
 function updateRendererConfigs(conf) {
   _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(conf.git);
-  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(conf.flowchart);
-  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(conf.flowchart);
+  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(conf.flowchart);
+  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(conf.flowchart);
 
   if (typeof conf['sequenceDiagram'] !== 'undefined') {
-    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_5__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
+    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_4__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
   }
 
-  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(conf.sequence);
-  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(conf.gantt);
-  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(conf.class);
+  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(conf.sequence);
+  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(conf.gantt);
+  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__["default"].setConf(conf.class);
   _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(conf.state);
   _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(conf.state);
   _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(conf.class);
@@ -22064,27 +23277,34 @@ function updateRendererConfigs(conf) {
   _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.class);
 }
 
-function reinitialize(options) {
-  console.log("mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version), options); // Set default options
-
-  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
-  updateRendererConfigs(config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.reinitialize: ', config);
+function reinitialize() {// `mermaidAPI.reinitialize: v${pkg.version}`,
+  //   JSON.stringify(options),
+  //   options.themeVariables.primaryColor;
+  // // if (options.theme && theme[options.theme]) {
+  // //   options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
+  // // }
+  // // Set default options
+  // const config =
+  //   typeof options === 'object' ? configApi.setConfig(options) : configApi.getSiteConfig();
+  // updateRendererConfigs(config);
+  // setLogLevel(config.logLevel);
+  // logger.debug('mermaidAPI.reinitialize: ', config);
 }
 
 function initialize(options) {
-  // console.log(`mermaidAPI.initialize: v${pkg.version}`);
-  // Set default options
-  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
-  updateRendererConfigs(config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.initialize: ', config);
-} // function getConfig () {
-//   console.warn('get config')
-//   return config
-// }
+  console.warn("mermaidAPI.initialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version, " "), options); // Set default options
 
+  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme]) {
+    // Todo merge with user options
+    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme].getThemeVariables(options.themeVariables);
+  } else {
+    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"].default.getThemeVariables();
+  }
+
+  var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_39__["setSiteConfig"](options) : _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
+  updateRendererConfigs(config);
+  Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(config.logLevel); // logger.debug('mermaidAPI.initialize: ', config);
+}
 
 var mermaidAPI = Object.freeze({
   render: render,
@@ -22092,22 +23312,23 @@ var mermaidAPI = Object.freeze({
   parseDirective: parseDirective,
   initialize: initialize,
   reinitialize: reinitialize,
-  getConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"],
-  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"],
+  getConfig: _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"],
+  setConfig: _config__WEBPACK_IMPORTED_MODULE_39__["setConfig"],
+  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"],
+  updateSiteConfig: _config__WEBPACK_IMPORTED_MODULE_39__["updateSiteConfig"],
   reset: function reset() {
     // console.warn('reset');
-    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset();
-    var siteConfig = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
-    updateRendererConfigs(siteConfig);
+    _config__WEBPACK_IMPORTED_MODULE_39__["reset"](); // const siteConfig = configApi.getSiteConfig();
+    // updateRendererConfigs(siteConfig);
   },
   globalReset: function globalReset() {
-    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(_config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig);
-    updateRendererConfigs(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
+    _config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_39__["defaultConfig"]);
+    updateRendererConfigs(_config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]());
   },
-  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig
+  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_39__["defaultConfig"]
 });
-Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().logLevel);
-_config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
+Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(_config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]().logLevel);
+_config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]());
 /* harmony default export */ __webpack_exports__["default"] = (mermaidAPI);
 /**
  * ## mermaidAPI configuration defaults
@@ -22121,7 +23342,19 @@ _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(Object(_config__WEBPACK_IM
  *     startOnLoad:true,
  *     arrowMarkerAbsolute:false,
  *
+ *     er:{
+ *       diagramPadding:20,
+ *       layoutDirection:'TB',
+ *       minEntityWidth:100,
+ *       minEntityHeight:75,
+ *       entityPadding:15,
+ *       stroke:'gray',
+ *       fill:'honeydew',
+ *       fontSize:12,
+ *       useMaxWidth:true,
+ *     },
  *     flowchart:{
+ *       diagramPadding:8,
  *       htmlLabels:true,
  *       curve:'linear',
  *     },
@@ -22162,127 +23395,1195 @@ _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(Object(_config__WEBPACK_IM
 
 /***/ }),
 
-/***/ "./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$":
-/*!***********************************************!*\
-  !*** ./src/themes sync ^\.\/.*\/index\.scss$ ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/styles.js":
+/*!***********************!*\
+  !*** ./src/styles.js ***!
+  \***********************/
+/*! exports provided: calcThemeVariables, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var map = {
-	"./dark/index.scss": "./src/themes/dark/index.scss",
-	"./default/index.scss": "./src/themes/default/index.scss",
-	"./forest/index.scss": "./src/themes/forest/index.scss",
-	"./neutral/index.scss": "./src/themes/neutral/index.scss"
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calcThemeVariables", function() { return calcThemeVariables; });
+/* harmony import */ var _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./diagrams/class/styles */ "./src/diagrams/class/styles.js");
+/* harmony import */ var _diagrams_er_styles__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./diagrams/er/styles */ "./src/diagrams/er/styles.js");
+/* harmony import */ var _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./diagrams/flowchart/styles */ "./src/diagrams/flowchart/styles.js");
+/* harmony import */ var _diagrams_gantt_styles__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./diagrams/gantt/styles */ "./src/diagrams/gantt/styles.js");
+/* harmony import */ var _diagrams_git_styles__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./diagrams/git/styles */ "./src/diagrams/git/styles.js");
+/* harmony import */ var _diagrams_info_styles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diagrams/info/styles */ "./src/diagrams/info/styles.js");
+/* harmony import */ var _diagrams_pie_styles__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/pie/styles */ "./src/diagrams/pie/styles.js");
+/* harmony import */ var _diagrams_sequence_styles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/sequence/styles */ "./src/diagrams/sequence/styles.js");
+/* harmony import */ var _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/state/styles */ "./src/diagrams/state/styles.js");
+/* harmony import */ var _diagrams_user_journey_styles__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/user-journey/styles */ "./src/diagrams/user-journey/styles.js");
+
+
+
+
+
+
+
+
+
+
+var themes = {
+  flowchart: _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_2__["default"],
+  'flowchart-v2': _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_2__["default"],
+  sequence: _diagrams_sequence_styles__WEBPACK_IMPORTED_MODULE_7__["default"],
+  gantt: _diagrams_gantt_styles__WEBPACK_IMPORTED_MODULE_3__["default"],
+  classDiagram: _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__["default"],
+  'classDiagram-v2': _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__["default"],
+  class: _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__["default"],
+  stateDiagram: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_8__["default"],
+  state: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_8__["default"],
+  git: _diagrams_git_styles__WEBPACK_IMPORTED_MODULE_4__["default"],
+  info: _diagrams_info_styles__WEBPACK_IMPORTED_MODULE_5__["default"],
+  pie: _diagrams_pie_styles__WEBPACK_IMPORTED_MODULE_6__["default"],
+  er: _diagrams_er_styles__WEBPACK_IMPORTED_MODULE_1__["default"],
+  journey: _diagrams_user_journey_styles__WEBPACK_IMPORTED_MODULE_9__["default"]
+};
+var calcThemeVariables = function calcThemeVariables(theme, userOverRides) {
+  return theme.calcColors(userOverRides);
 };
 
-
-function webpackContext(req) {
-	var id = webpackContextResolve(req);
-	return __webpack_require__(id);
-}
-function webpackContextResolve(req) {
-	if(!__webpack_require__.o(map, req)) {
-		var e = new Error("Cannot find module '" + req + "'");
-		e.code = 'MODULE_NOT_FOUND';
-		throw e;
-	}
-	return map[req];
-}
-webpackContext.keys = function webpackContextKeys() {
-	return Object.keys(map);
+var getStyles = function getStyles(type, userStyles, options) {
+  return " {\n    font-family: ".concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n    fill: ").concat(options.textColor, "\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ").concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  ").concat(themes[type](options), "\n\n  ").concat(userStyles, "\n\n  ").concat(type, " { fill: apa;}\n");
 };
-webpackContext.resolve = webpackContextResolve;
-module.exports = webpackContext;
-webpackContext.id = "./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$";
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
-/***/ "./src/themes/dark/index.scss":
+/***/ "./src/themes/index.js":
+/*!*****************************!*\
+  !*** ./src/themes/index.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _theme_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./theme-base */ "./src/themes/theme-base.js");
+/* harmony import */ var _theme_dark__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-dark */ "./src/themes/theme-dark.js");
+/* harmony import */ var _theme_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./theme-default */ "./src/themes/theme-default.js");
+/* harmony import */ var _theme_forest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./theme-forest */ "./src/themes/theme-forest.js");
+/* harmony import */ var _theme_neutral__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./theme-neutral */ "./src/themes/theme-neutral.js");
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  base: {
+    getThemeVariables: _theme_base__WEBPACK_IMPORTED_MODULE_0__["getThemeVariables"]
+  },
+  dark: {
+    getThemeVariables: _theme_dark__WEBPACK_IMPORTED_MODULE_1__["getThemeVariables"]
+  },
+  default: {
+    getThemeVariables: _theme_default__WEBPACK_IMPORTED_MODULE_2__["getThemeVariables"]
+  },
+  forest: {
+    getThemeVariables: _theme_forest__WEBPACK_IMPORTED_MODULE_3__["getThemeVariables"]
+  },
+  neutral: {
+    getThemeVariables: _theme_neutral__WEBPACK_IMPORTED_MODULE_4__["getThemeVariables"]
+  }
+});
+
+/***/ }),
+
+/***/ "./src/themes/theme-base.js":
+/*!**********************************!*\
+  !*** ./src/themes/theme-base.js ***!
+  \**********************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    /** # Base variables */
+
+    /** * background - used to know what the background color is of the diagram. This is used for deducing colors for istance line color. Defaulr value is #f4f4f4. */
+    this.background = '#f4f4f4';
+    this.darkMode = false; // this.background = '#0c0c0c';
+    // this.darkMode = true;
+
+    this.primaryColor = '#fff4dd'; // this.background = '#0c0c0c';
+    // this.primaryColor = '#1f1f00';
+
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = '#333'; // dark
+    // this.primaryColor = '#034694';
+    // this.primaryColor = '#f2ee7e';
+    // this.primaryColor = '#9f33be';
+    // this.primaryColor = '#f0fff0';
+    // this.primaryColor = '#fa255e';
+    // this.primaryColor = '#ECECFF';
+    // this.secondaryColor = '#c39ea0';
+    // this.tertiaryColor = '#f8e5e5';
+    // this.secondaryColor = '#dfdfde';
+    // this.tertiaryColor = '#CCCCFF';
+
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px'; // this.updateColors();
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      // The || is to make sure that if the variable has been defiend by a user override that value is to be used
+
+      /* Main */
+      this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#ddd' : '#333'); // invert(this.primaryColor);
+
+      this.secondaryColor = this.secondaryColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -120
+      });
+      this.tertiaryColor = this.tertiaryColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 180,
+        l: 5
+      });
+      this.primaryBorderColor = this.primaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+      this.secondaryBorderColor = this.secondaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+      this.tertiaryBorderColor = this.tertiaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode);
+      this.noteBorderColor = this.noteBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.noteBkgColor, this.darkMode);
+      this.secondaryTextColor = this.secondaryTextColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+      this.tertiaryTextColor = this.tertiaryTextColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
+      this.lineColor = this.lineColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+      this.textColor = this.textColor || this.primaryTextColor;
+      /* Flowchart variables */
+
+      this.nodeBkg = this.nodeBkg || this.primaryColor;
+      this.mainBkg = this.mainBkg || this.primaryColor;
+      this.nodeBorder = this.nodeBorder || this.primaryBorderColor;
+      this.clusterBkg = this.clusterBkg || this.tertiaryColor;
+      this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
+      this.defaultLinkColor = this.defaultLinkColor || this.lineColor;
+      this.titleColor = this.titleColor || this.tertiaryTextColor;
+      this.edgeLabelBackground = this.edgeLabelBackground || this.darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 30) : this.secondaryColor;
+      this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
+      /* Sequence Diagram variables */
+      // this.actorBorder = lighten(this.border1, 0.5);
+
+      this.actorBorder = this.actorBorder || this.primaryBorderColor;
+      this.actorBkg = this.actorBkg || this.mainBkg;
+      this.actorTextColor = this.actorTextColor || this.primaryTextColor;
+      this.actorLineColor = this.actorLineColor || 'grey';
+      this.labelBoxBkgColor = this.labelBoxBkgColor || this.actorBkg;
+      this.signalColor = this.signalColor || this.textColor;
+      this.signalTextColor = this.signalTextColor || this.textColor;
+      this.labelBoxBorderColor = this.labelBoxBorderColor || this.actorBorder;
+      this.labelTextColor = this.labelTextColor || this.actorTextColor;
+      this.loopTextColor = this.loopTextColor || this.actorTextColor;
+      this.activationBorderColor = this.activationBorderColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 10);
+      this.activationBkgColor = this.activationBkgColor || this.secondaryColor;
+      this.sequenceNumberColor = this.sequenceNumberColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.lineColor);
+      /* Gantt chart variables */
+
+      this.sectionBkgColor = this.sectionBkgColor || this.tertiaryColor;
+      this.altSectionBkgColor = this.altSectionBkgColor || 'white';
+      this.sectionBkgColor = this.sectionBkgColor || this.secondaryColor;
+      this.sectionBkgColor2 = this.sectionBkgColor2 || this.primaryColor;
+      this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
+      this.taskBkgColor = this.taskBkgColor || this.primaryColor;
+      this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;
+      this.activeTaskBkgColor = this.activeTaskBkgColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 23);
+      this.gridColor = this.gridColor || 'lightgrey';
+      this.doneTaskBkgColor = this.doneTaskBkgColor || 'lightgrey';
+      this.doneTaskBorderColor = this.doneTaskBorderColor || 'grey';
+      this.critBorderColor = this.critBorderColor || '#ff8888';
+      this.critBkgColor = this.critBkgColor || 'red';
+      this.todayLineColor = this.todayLineColor || 'red';
+      this.taskTextColor = this.taskTextColor || this.textColor;
+      this.taskTextOutsideColor = this.taskTextOutsideColor || this.textColor;
+      this.taskTextLightColor = this.taskTextLightColor || this.textColor;
+      this.taskTextColor = this.taskTextColor || this.primaryTextColor;
+      this.taskTextDarkColor = this.taskTextDarkColor || this.textColor;
+      this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
+      /* state colors */
+
+      this.labelColor = this.labelColor || this.primaryTextColor;
+      this.altBackground = this.altBackground || this.tertiaryColor;
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+      /* class */
+
+      this.classText = this.classText || this.textColor;
+      /* user-journey */
+
+      this.fillType0 = this.fillType0 || this.primaryColor;
+      this.fillType1 = this.fillType1 || this.secondaryColor;
+      this.fillType2 = this.fillType2 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = this.fillType3 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = this.fillType4 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = this.fillType5 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = this.fillType6 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = this.fillType7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  return theme;
+};
+
+/***/ }),
+
+/***/ "./src/themes/theme-dark.js":
+/*!**********************************!*\
+  !*** ./src/themes/theme-dark.js ***!
+  \**********************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    this.background = '#333';
+    this.primaryColor = '#1f2020';
+    this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 16);
+    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      h: -160
+    });
+    this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode);
+    this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+    this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
+    this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.mainBkg = '#1f2020';
+    this.secondBkg = 'calculated';
+    this.mainContrastColor = 'lightgrey';
+    this.darkTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])('#323D47'), 10);
+    this.lineColor = 'calculated';
+    this.border1 = '#81B1DB';
+    this.border2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.25);
+    this.arrowheadColor = 'calculated';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    this.labelBackground = '#181818';
+    this.textColor = '#ccc';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = '#F9FFFE';
+    this.edgeLabelBackground = 'calculated';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'calculated';
+    this.actorLineColor = 'calculated';
+    this.signalColor = 'calculated';
+    this.signalTextColor = 'calculated';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = 'calculated';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = 'calculated';
+    this.activationBkgColor = 'calculated';
+    this.sequenceNumberColor = 'black';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])('#EAE8D9', 30);
+    this.altSectionBkgColor = 'calculated';
+    this.sectionBkgColor2 = '#EAE8D9';
+    this.taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 70);
+    this.taskBkgColor = 'calculated';
+    this.taskTextColor = 'calculated';
+    this.taskTextLightColor = 'calculated';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 50);
+    this.activeTaskBkgColor = '#81B1DB';
+    this.gridColor = 'calculated';
+    this.doneTaskBkgColor = 'calculated';
+    this.doneTaskBorderColor = 'grey';
+    this.critBorderColor = '#E83737';
+    this.critBkgColor = '#E83737';
+    this.taskTextDarkColor = 'calculated';
+    this.todayLineColor = '#DB5757';
+    /* state colors */
+
+    this.labelColor = 'calculated';
+    this.errorBkgColor = '#a44141';
+    this.errorTextColor = '#ddd';
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      this.secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.mainBkg, 16);
+      this.lineColor = this.mainContrastColor;
+      this.arrowheadColor = this.mainContrastColor;
+      /* Flowchart variables */
+
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1;
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      this.edgeLabelBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.labelBackground, 25);
+      /* Sequence Diagram variables */
+
+      this.actorBorder = this.border1;
+      this.actorBkg = this.mainBkg;
+      this.actorTextColor = this.mainContrastColor;
+      this.actorLineColor = this.mainContrastColor;
+      this.signalColor = this.mainContrastColor;
+      this.signalTextColor = this.mainContrastColor;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.mainContrastColor;
+      this.loopTextColor = this.mainContrastColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.mainBkg;
+      this.activationBorderColor = this.border1;
+      this.activationBkgColor = this.secondBkg;
+      /* Gantt chart variables */
+
+      this.altSectionBkgColor = this.background;
+      this.taskBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.mainBkg, 23);
+      this.taskTextColor = this.darkTextColor;
+      this.taskTextLightColor = this.mainContrastColor;
+      this.taskTextOutsideColor = this.taskTextLightColor;
+      this.gridColor = this.mainContrastColor;
+      this.doneTaskBkgColor = this.mainContrastColor;
+      this.taskTextDarkColor = this.darkTextColor;
+      /* state colors */
+
+      this.labelColor = this.textColor;
+      this.altBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.background, 20);
+      this.fillType0 = this.primaryColor;
+      this.fillType1 = this.secondaryColor;
+      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+      /* class */
+
+      this.classText = this.primaryTextColor;
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  console.info('Theme(dark)', {
+    userOverrides: userOverrides,
+    theme: theme
+  });
+  return theme;
+};
+
+/***/ }),
+
+/***/ "./src/themes/theme-default.js":
+/*!*************************************!*\
+  !*** ./src/themes/theme-default.js ***!
+  \*************************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    /* Base variables */
+    this.background = '#f4f4f4';
+    this.primaryColor = '#ECECFF';
+    this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      h: 120
+    });
+    this.secondaryColor = '#ffffde';
+    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      h: -160
+    });
+    this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode); // this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
+
+    this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+    this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
+    this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.background = 'white';
+    this.mainBkg = '#ECECFF';
+    this.secondBkg = '#ffffde';
+    this.lineColor = '#333333';
+    this.border1 = '#9370DB';
+    this.border2 = '#aaaa33';
+    this.arrowheadColor = '#333333';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    this.labelBackground = '#e8e8e8';
+    this.textColor = '#333';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = 'calculated';
+    this.edgeLabelBackground = 'calculated';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'black';
+    this.actorLineColor = 'grey';
+    this.signalColor = 'calculated';
+    this.signalTextColor = 'calculated';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = 'calculated';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = '#666';
+    this.activationBkgColor = '#f4f4f4';
+    this.sequenceNumberColor = 'white';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = 'calculated';
+    this.altSectionBkgColor = 'calculated';
+    this.sectionBkgColor2 = 'calculated';
+    this.taskBorderColor = 'calculated';
+    this.taskBkgColor = 'calculated';
+    this.taskTextLightColor = 'calculated';
+    this.taskTextColor = this.taskTextLightColor;
+    this.taskTextDarkColor = 'calculated';
+    this.taskTextOutsideColor = this.taskTextDarkColor;
+    this.taskTextClickableColor = 'calculated';
+    this.activeTaskBorderColor = 'calculated';
+    this.activeTaskBkgColor = 'calculated';
+    this.gridColor = 'calculated';
+    this.doneTaskBkgColor = 'calculated';
+    this.doneTaskBorderColor = 'calculated';
+    this.critBorderColor = 'calculated';
+    this.critBkgColor = 'calculated';
+    this.todayLineColor = 'calculated';
+    this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(102, 102, 255, 0.49);
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = '#fff400';
+    this.taskBorderColor = '#534fbc';
+    this.taskBkgColor = '#8a90dd';
+    this.taskTextLightColor = 'white';
+    this.taskTextColor = 'calculated';
+    this.taskTextDarkColor = 'black';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = '#534fbc';
+    this.activeTaskBkgColor = '#bfc7ff';
+    this.gridColor = 'lightgrey';
+    this.doneTaskBkgColor = 'lightgrey';
+    this.doneTaskBorderColor = 'grey';
+    this.critBorderColor = '#ff8888';
+    this.critBkgColor = 'red';
+    this.todayLineColor = 'red';
+    /* state colors */
+
+    this.labelColor = 'black';
+    this.errorBkgColor = '#552222';
+    this.errorTextColor = '#552222';
+    this.updateColors();
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      /* Flowchart variables */
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1; // border 1
+
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      this.titleColor = this.textColor;
+      this.edgeLabelBackground = this.labelBackground;
+      /* Sequence Diagram variables */
+      // this.actorBorder = lighten(this.border1, 0.5);
+
+      this.actorBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.border1, 23);
+      this.actorBkg = this.mainBkg;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.signalColor = this.textColor;
+      this.signalTextColor = this.textColor;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.actorTextColor;
+      this.loopTextColor = this.actorTextColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.actorTextColor;
+      /* Gantt chart variables */
+
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      /* state colors */
+
+      /* class */
+
+      this.classText = this.primaryTextColor;
+      /* journey */
+
+      this.fillType0 = this.primaryColor;
+      this.fillType1 = this.secondaryColor;
+      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides); // console.info('Theme(default)', { userOverrides, theme });
+
+  return theme;
+};
+
+/***/ }),
+
+/***/ "./src/themes/theme-forest.js":
 /*!************************************!*\
-  !*** ./src/themes/dark/index.scss ***!
+  !*** ./src/themes/theme-forest.js ***!
   \************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    /* Base vales */
+    this.background = '#f4f4f4';
+    this.primaryColor = '#cde498';
+    this.secondaryColor = '#cdffb2';
+    this.background = 'white';
+    this.mainBkg = '#cde498';
+    this.secondBkg = '#cdffb2';
+    this.lineColor = 'green';
+    this.border1 = '#13540c';
+    this.border2 = '#6eaa49';
+    this.arrowheadColor = 'green';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])('#cde498', 10);
+    this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode);
+    this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+    this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = '#333';
+    this.edgeLabelBackground = '#e8e8e8';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'black';
+    this.actorLineColor = 'grey';
+    this.signalColor = '#333';
+    this.signalTextColor = '#333';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = '#326932';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = '#666';
+    this.activationBkgColor = '#f4f4f4';
+    this.sequenceNumberColor = 'white';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = '#6eaa49';
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = '#6eaa49';
+    this.taskBorderColor = 'calculated';
+    this.taskBkgColor = '#487e3a';
+    this.taskTextLightColor = 'white';
+    this.taskTextColor = 'calculated';
+    this.taskTextDarkColor = 'black';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = 'calculated';
+    this.activeTaskBkgColor = 'calculated';
+    this.gridColor = 'lightgrey';
+    this.doneTaskBkgColor = 'lightgrey';
+    this.doneTaskBorderColor = 'grey';
+    this.critBorderColor = '#ff8888';
+    this.critBkgColor = 'red';
+    this.todayLineColor = 'red';
+    /* state colors */
+
+    this.labelColor = 'black';
+    this.errorBkgColor = '#552222';
+    this.errorTextColor = '#552222';
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      /* Flowchart variables */
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1;
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      /* Sequence Diagram variables */
+
+      this.actorBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.mainBkg, 20);
+      this.actorBkg = this.mainBkg;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.labelTextColor = this.actorTextColor;
+      this.loopTextColor = this.actorTextColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.actorTextColor;
+      /* Gantt chart variables */
+
+      this.taskBorderColor = this.border1;
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      this.activeTaskBorderColor = this.taskBorderColor;
+      this.activeTaskBkgColor = this.mainBkg;
+      /* state colors */
+
+      /* class */
+
+      this.classText = this.primaryTextColor;
+      /* journey */
+
+      this.fillType0 = this.primaryColor;
+      this.fillType1 = this.secondaryColor;
+      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  console.info('Theme(forest)', {
+    userOverrides: userOverrides,
+    theme: theme
+  });
+  return theme;
+};
 
 /***/ }),
 
-/***/ "./src/themes/default/index.scss":
-/*!***************************************!*\
-  !*** ./src/themes/default/index.scss ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/themes/theme-helpers.js":
+/*!*************************************!*\
+  !*** ./src/themes/theme-helpers.js ***!
+  \*************************************/
+/*! exports provided: mkBorder */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mkBorder", function() { return mkBorder; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss");
-
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
-
-/***/ }),
-
-/***/ "./src/themes/forest/index.scss":
-/*!**************************************!*\
-  !*** ./src/themes/forest/index.scss ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// css-to-string-loader: transforms styles from css-loader to a string output
-
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss");
-
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+var mkBorder = function mkBorder(col, darkMode) {
+  return darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(col, {
+    s: -40,
+    l: 10
+  }) : Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(col, {
+    s: -40,
+    l: -10
+  });
+};
 
 /***/ }),
 
-/***/ "./src/themes/neutral/index.scss":
-/*!***************************************!*\
-  !*** ./src/themes/neutral/index.scss ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/themes/theme-neutral.js":
+/*!*************************************!*\
+  !*** ./src/themes/theme-neutral.js ***!
+  \*************************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+ // const Color = require ( 'khroma/dist/color' ).default
+// Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    this.primaryColor = '#eee';
+    this.contrast = '#26a';
+    this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
+    this.background = '#ffffff'; // this.secondaryColor = adjust(this.primaryColor, { h: 120 });
+
+    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      h: -160
+    });
+    console.warn('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
+    this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode); // this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
+
+    this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+    this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
+    this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.altBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
+    this.mainBkg = '#eee';
+    this.secondBkg = 'calculated';
+    this.lineColor = '#666';
+    this.border1 = '#999';
+    this.border2 = 'calculated';
+    this.note = '#ffa';
+    this.text = '#333';
+    this.critical = '#d42';
+    this.done = '#bbb';
+    this.arrowheadColor = '#333333';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = 'calculated';
+    this.edgeLabelBackground = 'white';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'calculated';
+    this.actorLineColor = 'calculated';
+    this.signalColor = 'calculated';
+    this.signalTextColor = 'calculated';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = 'calculated';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = 'calculated';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = '#666';
+    this.activationBkgColor = '#f4f4f4';
+    this.sequenceNumberColor = 'white';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = 'calculated';
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = 'calculated';
+    this.taskBorderColor = 'calculated';
+    this.taskBkgColor = 'calculated';
+    this.taskTextLightColor = 'white';
+    this.taskTextColor = 'calculated';
+    this.taskTextDarkColor = 'calculated';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = 'calculated';
+    this.activeTaskBkgColor = 'calculated';
+    this.gridColor = 'calculated';
+    this.doneTaskBkgColor = 'calculated';
+    this.doneTaskBorderColor = 'calculated';
+    this.critBkgColor = 'calculated';
+    this.critBorderColor = 'calculated';
+    this.todayLineColor = 'calculated';
+    /* state colors */
+
+    this.labelColor = 'black';
+    this.errorBkgColor = '#552222';
+    this.errorTextColor = '#552222';
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      this.secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
+      this.border2 = this.contrast;
+      /* Flowchart variables */
+
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1;
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      this.titleColor = this.text;
+      /* Sequence Diagram variables */
+
+      this.actorBorder = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.border1, 23);
+      this.actorBkg = this.mainBkg;
+      this.actorTextColor = this.text;
+      this.actorLineColor = this.lineColor;
+      this.signalColor = this.text;
+      this.signalTextColor = this.text;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.text;
+      this.loopTextColor = this.text;
+      this.noteBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.note, 60);
+      this.noteBkgColor = this.note;
+      this.noteTextColor = this.actorTextColor;
+      /* Gantt chart variables */
+
+      this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 30);
+      this.sectionBkgColor2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 30);
+      this.taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.contrast, 10);
+      this.taskBkgColor = this.contrast;
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextDarkColor = this.text;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      this.activeTaskBorderColor = this.taskBorderColor;
+      this.activeTaskBkgColor = this.mainBkg;
+      this.gridColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.border1, 30);
+      this.doneTaskBkgColor = this.done;
+      this.doneTaskBorderColor = this.lineColor;
+      this.critBkgColor = this.critical;
+      this.critBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.critBkgColor, 10);
+      this.todayLineColor = this.critBkgColor;
+      /* state colors */
+
+      /* class */
+
+      this.classText = this.primaryTextColor;
+      /* journey */
+
+      this.fillType0 = this.primaryColor;
+      this.fillType1 = this.secondaryColor;
+      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 64
+      });
+      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 64
+      });
+      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -64
+      });
+      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: -64
+      });
+      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 128
+      });
+      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        h: 128
+      });
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  console.info('Theme(neutral)', {
+    userOverrides: userOverrides,
+    theme: theme
+  });
+  return theme;
+};
 
 /***/ }),
 
@@ -22318,8 +24619,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @braintree/sanitize-url */ "@braintree/sanitize-url");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./diagrams/common/common */ "./src/diagrams/common/common.js");
-/* harmony import */ var crypto_random_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! crypto-random-string */ "crypto-random-string");
-/* harmony import */ var crypto_random_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(crypto_random_string__WEBPACK_IMPORTED_MODULE_4__);
 var _this = undefined;
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -22335,8 +24634,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 
 
-
- // Effectively an enum of the supported curve types, accessible by name
+ // import cryptoRandomString from 'crypto-random-string';
+// Effectively an enum of the supported curve types, accessible by name
 
 var d3CurveTypes = {
   curveBasis: d3__WEBPACK_IMPORTED_MODULE_0__["curveBasis"],
@@ -22509,6 +24808,10 @@ var detectType = function detectType(text) {
 
   if (text.match(/^\s*gantt/)) {
     return 'gantt';
+  }
+
+  if (text.match(/^\s*classDiagram-v2/)) {
+    return 'classDiagram';
   }
 
   if (text.match(/^\s*classDiagram/)) {
@@ -22755,8 +25058,21 @@ var generateId = function generateId() {
   cnt++;
   return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
 };
+
+function makeid(length) {
+  var result = '';
+  var characters = '0123456789abcdef';
+  var charactersLength = characters.length;
+
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+}
+
 var random = function random(options) {
-  return crypto_random_string__WEBPACK_IMPORTED_MODULE_4___default()(options);
+  return makeid(options.length);
 };
 /**
  * @function assignWithDepth
@@ -23120,17 +25436,6 @@ module.exports = require("@braintree/sanitize-url");
 
 /***/ }),
 
-/***/ "crypto-random-string":
-/*!***************************************!*\
-  !*** external "crypto-random-string" ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = require("crypto-random-string");
-
-/***/ }),
-
 /***/ "d3":
 /*!*********************!*\
   !*** external "d3" ***!
@@ -23197,6 +25502,17 @@ module.exports = require("graphlib");
 
 /***/ }),
 
+/***/ "khroma":
+/*!*************************!*\
+  !*** external "khroma" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("khroma");
+
+/***/ }),
+
 /***/ "moment-mini":
 /*!******************************!*\
   !*** external "moment-mini" ***!
@@ -23208,14 +25524,14 @@ module.exports = require("moment-mini");
 
 /***/ }),
 
-/***/ "scope-css":
-/*!****************************!*\
-  !*** external "scope-css" ***!
-  \****************************/
+/***/ "stylis":
+/*!*************************!*\
+  !*** external "stylis" ***!
+  \*************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = require("scope-css");
+module.exports = require("stylis");
 
 /***/ })
 

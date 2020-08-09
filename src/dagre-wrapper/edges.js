@@ -107,7 +107,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     outsidePoint.y === edges.y1 ||
     outsidePoint.y === edges.y2
   ) {
-    // logger.warn('calc equals on edge');
+    logger.warn('calc equals on edge');
     return outsidePoint;
   }
 
@@ -181,9 +181,18 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
         logger.trace('inside', edge.toCluster, point, lastPointOutside);
 
         // First point inside the rect
-        const insterection = intersection(node, lastPointOutside, point);
-        logger.trace('intersect', insterection);
-        points.push(insterection);
+        const inter = intersection(node, lastPointOutside, point);
+
+        let pointPresent = false;
+        points.forEach(p => {
+          pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+        });
+        // if (!pointPresent) {
+        if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+          points.push(inter);
+        } else {
+          logger.warn('no intersect', inter, points);
+        }
         isInside = true;
       } else {
         if (!isInside) points.push(point);
@@ -288,35 +297,60 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }
-  logger.info('arrowType', edge.arrowType);
-  switch (edge.arrowType) {
+  logger.info('arrowTypeStart', edge.arrowTypeStart);
+  logger.info('arrowTypeEnd', edge.arrowTypeEnd);
+
+  switch (edge.arrowTypeStart) {
+    case 'arrow_cross':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-crossStart' + ')');
+      break;
+    case 'arrow_point':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-pointStart' + ')');
+      break;
+    case 'arrow_barb':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-barbStart' + ')');
+      break;
+    case 'arrow_circle':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-circleStart' + ')');
+      break;
+    case 'aggregation':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-aggregationStart' + ')');
+      break;
+    case 'extension':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-extensionStart' + ')');
+      break;
+    case 'composition':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-compositionStart' + ')');
+      break;
+    case 'dependency':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-dependencyStart' + ')');
+      break;
+    default:
+  }
+  switch (edge.arrowTypeEnd) {
     case 'arrow_cross':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-crossEnd' + ')');
-      break;
-    case 'double_arrow_cross':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-crossEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-crossStart' + ')');
       break;
     case 'arrow_point':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-pointEnd' + ')');
       break;
-    case 'double_arrow_point':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-pointEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-pointStart' + ')');
-      break;
     case 'arrow_barb':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-barbEnd' + ')');
-      break;
-    case 'double_arrow_barb':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-barnEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-barbStart' + ')');
       break;
     case 'arrow_circle':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-circleEnd' + ')');
       break;
-    case 'double_arrow_circle':
-      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-circleEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-circleStart' + ')');
+    case 'aggregation':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-aggregationEnd' + ')');
+      break;
+    case 'extension':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-extensionEnd' + ')');
+      break;
+    case 'composition':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-compositionEnd' + ')');
+      break;
+    case 'dependency':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-dependencyEnd' + ')');
       break;
     default:
   }

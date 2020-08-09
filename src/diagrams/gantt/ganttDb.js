@@ -1,8 +1,9 @@
 import moment from 'moment-mini';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { logger } from '../../logger';
-import { getConfig } from '../../config';
+import * as configApi from '../../config';
 import utils from '../../utils';
+import mermaidAPI from '../../mermaidAPI';
 
 let dateFormat = '';
 let axisFormat = '';
@@ -18,6 +19,10 @@ let inclusiveEndDates = false;
 
 // The serial order of the task in the script
 let lastOrder = 0;
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(this, statement, context, type);
+};
 
 export const clear = function() {
   sections = [];
@@ -468,7 +473,7 @@ const compileTasks = function() {
  */
 export const setLink = function(ids, _linkStr) {
   let linkStr = _linkStr;
-  if (getConfig().securityLevel !== 'loose') {
+  if (configApi.getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
   ids.split(',').forEach(function(id) {
@@ -497,7 +502,7 @@ export const setClass = function(ids, className) {
 };
 
 const setClickFun = function(id, functionName, functionArgs) {
-  if (getConfig().securityLevel !== 'loose') {
+  if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
   if (typeof functionName === 'undefined') {
@@ -582,6 +587,8 @@ export const bindFunctions = function(element) {
 };
 
 export default {
+  parseDirective,
+  getConfig: () => configApi.getConfig().gantt,
   clear,
   setDateFormat,
   getDateFormat,

@@ -1,6 +1,6 @@
 # Development
 
-
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md)
 ## Updating the documentation
 
 Please continue writing documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs).

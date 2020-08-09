@@ -9,8 +9,19 @@
 %x string
 %x dir
 %x vertex
+%x open_directive
+%x type_directive
+%x arg_directive
+%x close_directive
+
 %%
-\%\%[^\n]*\n*           /* do nothing */
+\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+\%\%(?!\{)[^\n]*                                                /* skip comments */
+[^\}]\%\%[^\n]*                                                 /* skip comments */
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";
@@ -25,6 +36,13 @@
 "flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
+
+"_self"               return 'LINK_TARGET';
+"_blank"              return 'LINK_TARGET';
+"_parent"             return 'LINK_TARGET';
+"_top"                return 'LINK_TARGET';
+
+<dir>(\r?\n)*\s*\n       {   this.popState();  return 'NODIR'; }
 <dir>\s*"LR"             {   this.popState();  return 'DIR'; }
 <dir>\s*"RL"             {   this.popState();  return 'DIR'; }
 <dir>\s*"TB"             {   this.popState();  return 'DIR'; }
@@ -179,7 +197,7 @@
 "{"                   return 'DIAMOND_START'
 "}"                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
-(\r|\n|\r\n)+         return 'NEWLINE';
+(\r?\n)+              return 'NEWLINE';
 \s                    return 'SPACE';
 <<EOF>>               return 'EOF';
 
@@ -189,11 +207,39 @@
 
 %left '^'
 
-%start mermaidDoc
+%start start
 
 %% /* language grammar */
 
-mermaidDoc: graphConfig document;
+start
+  : mermaidDoc
+  | directive start
+  ;
+
+directive
+  : openDirective typeDirective closeDirective separator
+  | openDirective typeDirective ':' argDirective closeDirective separator
+  ;
+
+openDirective
+  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
+  ;
+
+typeDirective
+  : type_directive { yy.parseDirective($1, 'type_directive'); }
+  ;
+
+argDirective
+  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
+  ;
+
+closeDirective
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'flowchart'); }
+  ;
+
+mermaidDoc
+  : graphConfig document
+  ;
 
 document
 	: /* empty */
@@ -218,6 +264,8 @@ line
 graphConfig
     : SPACE graphConfig
     | NEWLINE graphConfig
+    | GRAPH NODIR
+        { yy.setDirection('TB');$$ = 'TB';}
     | GRAPH DIR FirstStmtSeperator
         { yy.setDirection($2);$$ = $2;}
     // | GRAPH SPACE TAGEND FirstStmtSeperator
@@ -397,10 +445,12 @@ classStatement:CLASS SPACE alphaNum SPACE alphaNum
     ;
 
 clickStatement
-    : CLICK SPACE alphaNum SPACE alphaNum           {$$ = $1;yy.setClickEvent($3, $5, undefined);}
-    | CLICK SPACE alphaNum SPACE alphaNum SPACE STR {$$ = $1;yy.setClickEvent($3, $5, $7)       ;}
-    | CLICK SPACE alphaNum SPACE STR                {$$ = $1;yy.setLink($3, $5, undefined);}
-    | CLICK SPACE alphaNum SPACE STR SPACE STR      {$$ = $1;yy.setLink($3, $5, $7       );}
+    : CLICK SPACE alphaNum SPACE alphaNum                         {$$ = $1;yy.setClickEvent($3, $5, undefined);}
+    | CLICK SPACE alphaNum SPACE alphaNum SPACE STR               {$$ = $1;yy.setClickEvent($3, $5, $7)       ;}
+    | CLICK SPACE alphaNum SPACE STR                              {$$ = $1;yy.setLink($3, $5, undefined, undefined);}
+    | CLICK SPACE alphaNum SPACE STR SPACE STR                    {$$ = $1;yy.setLink($3, $5, $7, undefined       );}
+    | CLICK SPACE alphaNum SPACE STR SPACE LINK_TARGET            {$$ = $1;yy.setLink($3, $5, undefined, $7       );}
+    | CLICK SPACE alphaNum SPACE STR SPACE STR SPACE LINK_TARGET  {$$ = $1;yy.setLink($3, $5, $7, $9              );}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt

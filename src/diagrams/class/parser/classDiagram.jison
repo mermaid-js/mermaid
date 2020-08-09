@@ -6,24 +6,29 @@
 
 /* lexical grammar */
 %lex
-%x string generic struct
+%x string generic struct open_directive type_directive arg_directive
 
 %%
-\%\%[^\n]*\n*           /* do nothing */
-\n+                     return 'NEWLINE';
+\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+\%\%(?!\{)*[^\n]*(\r?\n?)+                                      /* skip comments */
+\%\%[^\n]*(\r?\n)*                                              /* skip comments */
+(\r?\n)+                return 'NEWLINE';
 \s+                     /* skip whitespace */
+"classDiagram-v2"       return 'CLASS_DIAGRAM';
 "classDiagram"          return 'CLASS_DIAGRAM';
-[\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
+[{]                     { this.begin("struct"); /*console.log('Starting struct');*/ return 'STRUCT_START';}
 <struct><<EOF>>         return "EOF_IN_STRUCT";
-<struct>[\{]            return "OPEN_IN_STRUCT";
-<struct>\}              { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
-<struct>[\n]              /* nothing */
-<struct>[^\{\}\n]*      { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
-
-
+<struct>[{]             return "OPEN_IN_STRUCT";
+<struct>[}]             { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
+<struct>[\n]            /* nothing */
+<struct>[^{}\n]*        { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
 
 "class"               return 'CLASS';
-//"click"               return 'CLICK';
+"cssClass"            return 'CSSCLASS';
 "callback"            return 'CALLBACK';
 "link"                return 'LINK';
 "<<"                  return 'ANNOTATION_START';
@@ -44,7 +49,8 @@
 \s*o                  return 'AGGREGATION';
 \-\-                  return 'LINE';
 \.\.                  return 'DOTTED_LINE';
-":"[^\n;]+            return 'LABEL';
+":"{1}[^:\n;]+        return 'LABEL';
+":"{3}                return 'STYLE_SEPARATOR';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 \+                    return 'PLUS';
@@ -125,11 +131,39 @@
 
 %left '^'
 
-%start mermaidDoc
+%start start
 
 %% /* language grammar */
 
-mermaidDoc: graphConfig;
+start
+    : mermaidDoc
+    | directive start
+    ;
+
+mermaidDoc
+    : graphConfig
+    ;
+
+directive
+  : openDirective typeDirective closeDirective NEWLINE
+  | openDirective typeDirective ':' argDirective closeDirective NEWLINE
+  ;
+
+openDirective
+  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
+  ;
+
+typeDirective
+  : type_directive { yy.parseDirective($1, 'type_directive'); }
+  ;
+
+argDirective
+  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
+  ;
+
+closeDirective
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'class'); }
+  ;
 
 graphConfig
     : CLASS_DIAGRAM NEWLINE statements EOF
@@ -142,8 +176,8 @@ statements
     ;
 
 className
-    : alphaNumToken className { $$=$1+$2; }
-    | alphaNumToken { $$=$1; }
+    : alphaNumToken { $$=$1; }
+    | alphaNumToken className { $$=$1+$2; }
     | alphaNumToken GENERICTYPE className { $$=$1+'~'+$2+$3; }
     | alphaNumToken GENERICTYPE { $$=$1+'~'+$2; }
     ;
@@ -155,11 +189,15 @@ statement
     | methodStatement
     | annotationStatement
     | clickStatement
+    | cssClassStatement
+    | directive
     ;
 
 classStatement
     : CLASS className         {yy.addClass($2);}
+    | CLASS className STYLE_SEPARATOR alphaNumToken    {yy.addClass($2);yy.setCssClass($2, $4);}
     | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addClass($2);yy.addMembers($2,$4);}
+    | CLASS className STYLE_SEPARATOR alphaNumToken STRUCT_START members STRUCT_STOP {yy.addClass($2);yy.setCssClass($2, $4);yy.addMembers($2,$6);}
     ;
 
 annotationStatement
@@ -205,10 +243,14 @@ lineType
     ;
 
 clickStatement
-    : CALLBACK className STR                    {$$ = $1;yy.setClickEvent($2, $3, undefined);}
-    | CALLBACK className STR STR                {$$ = $1;yy.setClickEvent($2, $3, $4);}
-    | LINK className STR                        {$$ = $1;yy.setLink($2, $3, undefined);}
-    | LINK className STR STR                    {$$ = $1;yy.setLink($2, $3, $4);}
+    : CALLBACK className STR        {$$ = $1;yy.setClickEvent($2, $3, undefined);}
+    | CALLBACK className STR STR    {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | LINK className STR            {$$ = $1;yy.setLink($2, $3, undefined);}
+    | LINK className STR STR        {$$ = $1;yy.setLink($2, $3, $4);}
+    ;
+
+cssClassStatement
+    : CSSCLASS STR alphaNumToken  {yy.setCssClass($2, $3);}
     ;
 
 commentToken   : textToken | graphCodeTokens ;
@@ -218,4 +260,5 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
 alphaNumToken  : UNICODE_TEXT | NUM | ALPHA;
+
 %%

@@ -1,13 +1,13 @@
 import { select } from 'd3';
-import { logger } from '../../logger'; // eslint-disable-line
 import utils from '../../utils';
-import { getConfig } from '../../config';
+import * as configApi from '../../config';
 import common from '../common/common';
+import mermaidAPI from '../../mermaidAPI';
 
 // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 const MERMAID_DOM_ID_PREFIX = '';
 
-let config = getConfig();
+let config = configApi.defaultConfig;
 let vertices = {};
 let edges = [];
 let classes = [];
@@ -19,6 +19,10 @@ let firstGraphFlag = true;
 let direction;
 // Functions to be run after graph rendering
 let funs = [];
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(this, statement, context, type);
+};
 
 /**
  * Function called by parser when a node definition has been found
@@ -44,7 +48,7 @@ export const addVertex = function(_id, text, type, style, classes) {
     vertices[id] = { id: id, styles: [], classes: [] };
   }
   if (typeof text !== 'undefined') {
-    config = getConfig();
+    config = configApi.defaultConfig;
     txt = common.sanitizeText(text.trim(), config);
 
     // strip quotes if string starts and ends with a quote
@@ -220,7 +224,7 @@ const setTooltip = function(ids, tooltip) {
 const setClickFun = function(_id, functionName) {
   let id = _id;
   if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-  if (getConfig().securityLevel !== 'loose') {
+  if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
   if (typeof functionName === 'undefined') {
@@ -248,12 +252,13 @@ const setClickFun = function(_id, functionName) {
  * @param linkStr URL to create a link for
  * @param tooltip Tooltip for the clickable element
  */
-export const setLink = function(ids, linkStr, tooltip) {
+export const setLink = function(ids, linkStr, tooltip, target) {
   ids.split(',').forEach(function(_id) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = utils.formatUrl(linkStr, config);
+      vertices[id].linkTarget = target;
     }
   });
   setTooltip(ids, tooltip);
@@ -617,6 +622,8 @@ const destructLink = (_str, _startStr) => {
 };
 
 export default {
+  parseDirective,
+  defaultConfig: () => configApi.defaultConfig.flowchart,
   addVertex,
   addLink,
   updateLinkInterpolate,

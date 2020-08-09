@@ -1,6 +1,7 @@
 /* eslint-env jasmine */
 import { parser } from './parser/sequenceDiagram';
 import sequenceDb from './sequenceDb';
+import * as configApi from '../../config';
 import renderer from './sequenceRenderer';
 import mermaidAPI from '../../mermaidAPI';
 
@@ -91,6 +92,23 @@ Bob-->Alice: I am good thanks!`;
 
     expect(messages.length).toBe(2);
     expect(messages[0].from).toBe('Alice');
+    expect(messages[1].from).toBe('Bob');
+  });
+  it('it should handle dashes in actor names', function() {
+    const str = `
+sequenceDiagram
+Alice-in-Wonderland->Bob:Hello Bob, how are - you?
+Bob-->Alice-in-Wonderland:I am good thanks!`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+    expect(actors["Alice-in-Wonderland"].description).toBe('Alice-in-Wonderland');
+    actors.Bob.description = 'Bob';
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(2);
+    expect(messages[0].from).toBe('Alice-in-Wonderland');
     expect(messages[1].from).toBe('Bob');
   });
   it('it should alias participants', function() {
@@ -908,7 +926,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
   });
 });
 
-describe('when rendering a sequenceDiagram', function() {
+describe('when rendering a sequenceDiagram APA', function() {
   beforeAll(() => {
     let conf = {
       diagramMarginX: 50,
@@ -924,15 +942,30 @@ describe('when rendering a sequenceDiagram', function() {
       wrap: false,
       mirrorActors: false
     };
-    mermaidAPI.initialize({ sequence: conf });
+    console.warn('Set site config');
+    configApi.setSiteConfig({ logLevel: 5, sequence: conf });
   });
   let conf;
   beforeEach(function() {
     mermaidAPI.reset();
+    conf = {
+      diagramMarginX: 50,
+      diagramMarginY: 10,
+      actorMargin: 50,
+      width: 150,
+      // Height of actor boxes
+      height: 65,
+      boxMargin: 10,
+      messageMargin: 40,
+      boxTextMargin: 15,
+      noteMargin: 25,
+      wrap: false,
+      mirrorActors: false
+    };
+    configApi.setSiteConfig({ logLevel: 5, sequence: conf });
     parser.yy = sequenceDb;
     parser.yy.clear();
-    conf = parser.yy.getConfig();
-    renderer.bounds.init();
+    // conf = parser.yy.getConfig();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function(textPlacement) {
     it(`
@@ -1077,7 +1110,7 @@ Alice->Bob: Hello Bob, how are you?
 Note over Alice,Bob: Looks
 Note over Bob,Alice: Looks back
 `;
-    mermaidAPI.initialize({logLevel:0})
+    // mermaidAPI.initialize({logLevel:0})
     mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
@@ -1205,7 +1238,7 @@ Bob->>Alice: Fine!`;
   });
   it('it should draw two actors, notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', function() {
     const str = `
-%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrap": true }}}%%
+    %%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrap": true }}}%%
 sequenceDiagram
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
@@ -1216,6 +1249,7 @@ Bob->>Alice: Fine!`;
     const { bounds, models } = renderer.bounds.getBounds();
     const msgs = parser.yy.getMessages();
     const mermaid = mermaidAPI.getConfig();
+    console.log(mermaid)
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
     expect(mermaid.theme).toBe('dark');
