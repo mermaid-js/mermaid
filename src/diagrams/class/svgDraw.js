@@ -147,11 +147,6 @@ export const drawEdge = function(elem, path, relation, conf) {
 export const drawClass = function(elem, classDef, conf) {
   logger.info('Rendering class ' + classDef);
 
-  let cssClassStr = 'classGroup ';
-  if (classDef.cssClasses.length > 0) {
-    cssClassStr = cssClassStr + classDef.cssClasses.join(' ');
-  }
-
   const id = classDef.id;
   const classInfo = {
     id: id,
@@ -164,7 +159,7 @@ export const drawClass = function(elem, classDef, conf) {
   const g = elem
     .append('g')
     .attr('id', lookUpDomId(id))
-    .attr('class', cssClassStr);
+    .attr('class', 'classGroup');
 
   // add title
   let title;
@@ -249,12 +244,19 @@ export const drawClass = function(elem, classDef, conf) {
   });
 
   const classBox = g.node().getBBox();
+  var cssClassStr = ' ';
+
+  if (classDef.cssClasses.length > 0) {
+    cssClassStr = cssClassStr + classDef.cssClasses.join(' ');
+  }
+
   const rect = g
     .insert('rect', ':first-child')
     .attr('x', 0)
     .attr('y', 0)
     .attr('width', classBox.width + 2 * conf.padding)
-    .attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
+    .attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin)
+    .attr('class', cssClassStr);
 
   const rectWidth = rect.node().getBBox().width;
 

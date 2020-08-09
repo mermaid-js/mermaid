@@ -154,7 +154,7 @@ export const addDirective = directive => {
  *
  **Notes :
  (default: current siteConfig ) (optional, default `getSiteConfig()`)
- * @param conf - the base currentConfig to reset to (default: current siteConfig )
+ * @param conf  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
  */
 export const reset = () => {
   // Replace current config with siteConfig
