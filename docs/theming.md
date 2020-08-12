@@ -152,10 +152,9 @@ Variables derived from the ones above:
 | name      | Default value | Description |
 
 
-**Here is an example of overriding `primaryColor` and giving everything a ifferent look, using `%%init%%`.
+**Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
 ```
-mermaid
-%%{init: {'theme':'base', 'themeVariables': {primaryColor: '#ff0000'}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -171,6 +170,48 @@ mermaid
             G
           end
 ```
+
+Thsi got a bit to dark and bit to colorful. With some easy steps this can be fixed:
+
+* Make the primary color a little lighter
+* set the teriary color to a redish shade as well
+* make the edge label background differ from the subgraph by setting the edgeLabelBackground
+
+```
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffcccc', 'edgeLabelBackground':'#ffffee', 'tertiaryColor': '#fff0f0'}}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffcccc', 'edgeLabelBackground':'#ffffee', 'tertiaryColor': '#fff0f0'}}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
 The Theming Engine does not admit color codes and will only accept proper color values. Color Names is not supported so for instance, the color value 'red' will not work, but '#ff0000' will work.
 
 # Common theming activities
