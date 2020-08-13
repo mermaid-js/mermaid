@@ -49,7 +49,6 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  * @returns {*} - the siteConfig
  */
 export const setSiteConfig = conf => {
-  console.warn('Setting site config');
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
 
@@ -138,6 +137,15 @@ export const sanitize = options => {
 };
 
 export const addDirective = directive => {
+  if (directive.fontFamily) {
+    if (!directive.themeVariables) {
+      directive.themeVariables = { fontFamily: directive.fontFamily };
+    } else {
+      if (!directive.themeVariables.fontFamily) {
+        directive.themeVariables = { fontFamily: directive.fontFamily };
+      }
+    }
+  }
   directives.push(directive);
   updateCurrentConfig(siteConfig, directives);
 };

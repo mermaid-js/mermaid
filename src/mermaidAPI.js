@@ -220,7 +220,7 @@ const render = function(id, _txt, cb, container) {
   // console.warn('Render fetching config');
 
   const cnf = configApi.getConfig();
-  console.warn('Render with config after adding new directives', cnf.themeVariables.primaryColor);
+  console.warn('Render with config after adding new directives', cnf.fontFamily);
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -553,6 +553,18 @@ function reinitialize() {
 
 function initialize(options) {
   console.warn(`mermaidAPI.initialize: v${pkg.version} `, options);
+
+  // Handle legacy location of font-family configuration
+  // console.warn('Conf - ', options.themeVariables.fontFamily);
+  if (options.fontFamily) {
+    if (!options.themeVariables) {
+      options.themeVariables = { fontFamily: options.fontFamily };
+    } else {
+      if (!options.themeVariables.fontFamily) {
+        options.themeVariables = { fontFamily: options.fontFamily };
+      }
+    }
+  }
   // Set default options
 
   if (options && options.theme && theme[options.theme]) {
