@@ -36,14 +36,16 @@ And they are rendered into this and made part of the documentation:
 
 ## Advantages of Using Mermaid
 
-- The Advantages of mermaid include its ease of generation, modification and rendering.
-- The number of integrations that it has. 
-- It is a package that can be deployed to create 
+- Ease of generation, modification and rendering.
+- The number of integrations and plugins it has. 
+- It can be added to your or your company's website. 
 
 
-## Diagramming and charting is a gigantic waste of developer time, but not having diagrams ruins productivity. 
+## The catch-22 of Diagrams and Charts: 
 
-mermaid can cut down the amount of time, effort and the learning curve that is associated with creating diagrams and charts, by a wide margin. 
+**Diagramming and charting is a gigantic waste of developer time, but not having diagrams ruins productivity. **
+
+mermaid solves this by cutting the time, effort and tooling that is required to create diagrams and charts. 
 
 Because, the text base for  diagrams allows for it to be updated easily, it can also be made part of production scripts (and other pieces of code). So less time needs be spent on documenting, as a separate task. 
 

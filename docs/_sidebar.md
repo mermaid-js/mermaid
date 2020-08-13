@@ -23,7 +23,9 @@
 
   - [Development](development.md)
   - [Configurations](Setup.md)
+  - [Mermaid Versions](versionUpdates.md)
   - [Changelog](CHANGELOG.md)
+  - [Mermaid Versions](versionUpdate.md)
 
 - Beginner's Guide
   - [overview](n00b-overview.md)
