@@ -109,7 +109,7 @@ Note: modifies options in-place
 
 ### Parameters
 
--   `conf`  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
+-   `conf`  the base currentConfig to reset to (default: current siteConfig )
 
 ## render
 
