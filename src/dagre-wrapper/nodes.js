@@ -568,9 +568,12 @@ const class_box = (parent, node) => {
   const hasInterface = node.classData.annotations && node.classData.annotations[0];
 
   // 1. Create the labels
+  const interfaceLabelText = node.classData.annotations[0]
+    ? '<<' + node.classData.annotations[0] + '>>'
+    : '';
   const interfaceLabel = labelContainer
     .node()
-    .appendChild(createLabel(node.classData.annotations[0], node.labelStyle, true, true));
+    .appendChild(createLabel(interfaceLabelText, node.labelStyle, true, true));
   const interfaceBBox = interfaceLabel.getBBox();
   if (node.classData.annotations[0]) {
     maxHeight += interfaceBBox.height + rowPadding;
@@ -614,13 +617,10 @@ const class_box = (parent, node) => {
 
   // position the interface label
   if (hasInterface) {
+    let diffX = (maxWidth - interfaceBBox.width) / 2;
     select(interfaceLabel).attr(
       'transform',
-      'translate( ' +
-        -(maxWidth + node.padding - interfaceBBox.width / 2) / 2 +
-        ', ' +
-        (-1 * maxHeight) / 2 +
-        ')'
+      'translate( ' + ((-1 * maxWidth) / 2 + diffX) + ', ' + (-1 * maxHeight) / 2 + ')'
     );
     verticalPos = interfaceBBox.height + rowPadding;
   }
