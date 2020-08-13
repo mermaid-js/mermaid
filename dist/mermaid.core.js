@@ -656,7 +656,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.4\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.7.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -664,12 +664,13 @@ module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.4\",\"descr
 /*!***********************!*\
   !*** ./src/config.js ***!
   \***********************/
-/*! exports provided: defaultConfig, setSiteConfig, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
+/*! exports provided: defaultConfig, updateCurrentConfig, setSiteConfig, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultConfig", function() { return defaultConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateCurrentConfig", function() { return updateCurrentConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setSiteConfig", function() { return setSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateSiteConfig", function() { return updateSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSiteConfig", function() { return getSiteConfig; });
@@ -682,12 +683,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 /* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
 /* harmony import */ var _defaultConfig__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./defaultConfig */ "./src/defaultConfig.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 
 
 
@@ -697,20 +692,30 @@ var defaultConfig = Object.freeze(_defaultConfig__WEBPACK_IMPORTED_MODULE_3__["d
 var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
 var directives = [];
 var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+var updateCurrentConfig = function updateCurrentConfig(siteCfg, _directives) {
+  var cfg = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteCfg); // Apply directives
 
-var updateCurrentConfig = function updateCurrentConfig(conf) {
-  currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteConfig); // Apply directives
+  var themeVariables = {};
 
-  var themeVariables;
-  directives.forEach(function (d) {
-    currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, d);
+  for (var i = 0; i < _directives.length; i++) {
+    var d = _directives[i];
+    sanitize(d);
+    cfg = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(cfg, d);
 
-    if (d.themeVariables) {
-      themeVariables = d.themeVariables;
+    if (d.theme) {
+      cfg.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme].getThemeVariables(d.themeVariables);
     }
-  });
-  var variables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][currentConfig.theme].getThemeVariables(themeVariables);
-  currentConfig.themeVariables = variables;
+  }
+
+  if (cfg.theme && _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme]) {
+    var tVars = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, cfg.themeVariables);
+    tVars = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(tVars, themeVariables);
+    var variables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme].getThemeVariables(tVars);
+    cfg.themeVariables = variables;
+  }
+
+  currentConfig = cfg;
+  return cfg;
 };
 /**
  *## setSiteConfig
@@ -727,21 +732,21 @@ var updateCurrentConfig = function updateCurrentConfig(conf) {
  * @returns {*} - the siteConfig
  */
 
-
 var setSiteConfig = function setSiteConfig(conf) {
-  siteConfig = _objectSpread({}, defaultConfig, {}, conf);
+  console.warn('Setting site config');
+  siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+  siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
+
+  if (conf.theme) {
+    siteConfig.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][conf.theme].getThemeVariables(conf.themeVariables);
+  }
+
+  currentConfig = updateCurrentConfig(siteConfig, directives);
   return siteConfig;
 };
 var updateSiteConfig = function updateSiteConfig(conf) {
-  console.log('setSiteConfig'); // Object.keys(conf).forEach(key => {
-  //   const manipulator = manipulators[key];
-  //   conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
-  // });
-
-  siteConfig = _objectSpread({}, siteConfig, {}, conf); // assignWithDesetpth(currentConfig, conf, { clobber: true });
-  // // Set theme variables if user has set the theme option
-  // assignWithDepth(siteConfig, conf);
-
+  siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
+  updateCurrentConfig(siteConfig, directives);
   return siteConfig;
 };
 /**
@@ -776,7 +781,7 @@ var setConfig = function setConfig(conf) {
   //   const manipulator = manipulators[key];
   //   conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
   // });
-  // assignWithDepth(currentConfig, conf);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf);
   return getConfig();
 };
 /**
@@ -807,14 +812,14 @@ var sanitize = function sanitize(options) {
     if (typeof options[siteConfig.secure[key]] !== 'undefined') {
       // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
-      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
+      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
       delete options[siteConfig.secure[key]];
     }
   });
 };
 var addDirective = function addDirective(directive) {
   directives.push(directive);
-  updateCurrentConfig();
+  updateCurrentConfig(siteConfig, directives);
 };
 /**
  *## reset
@@ -828,28 +833,14 @@ var addDirective = function addDirective(directive) {
  *
  **Notes :
  (default: current siteConfig ) (optional, default `getSiteConfig()`)
- * @param conf - the base currentConfig to reset to (default: current siteConfig )
+ * @param conf  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
  */
 
 var reset = function reset() {
-  var conf = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getSiteConfig();
-  // Object.keys(siteConfig).forEach(key => delete siteConfig[key]);
-  // Object.keys(currentConfig).forEach(key => delete currentConfig[key]);
-  // assignWithDepth(siteConfig, conf, { clobber: true });
-  // assignWithDepth(currentConfig, conf, { clobber: true });
   // Replace current config with siteConfig
   directives = [];
-  updateCurrentConfig();
-}; // const configApi = Object.freeze({
-//   sanitize,
-//   setSiteConfig,
-//   getSiteConfig,
-//   setConfig,
-//   getConfig,
-//   reset,
-//   defaultConfig
-// });
-// export default configApi;
+  updateCurrentConfig(siteConfig, directives);
+};
 
 /***/ }),
 
@@ -1897,7 +1888,7 @@ function sameSign(r1, r2) {
 module.exports = intersectNode;
 
 function intersectNode(node, point) {
-  console.info('Intersect Node');
+  // console.info('Intersect Node');
   return node.intersect(point);
 }
 
@@ -1958,7 +1949,7 @@ function intersectPolygon(node, polyPoints, point) {
   }
 
   if (!intersections.length) {
-    console.log('NO INTERSECTION FOUND, RETURN NODE CENTER', node);
+    // console.log('NO INTERSECTION FOUND, RETURN NODE CENTER', node);
     return node;
   }
 
@@ -5266,12 +5257,12 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,6],$V2=[1,14],$V3=[1,24],$V4=[1,27],$V5=[1,25],$V6=[1,26],$V7=[1,28],$V8=[1,29],$V9=[1,31],$Va=[1,32],$Vb=[1,33],$Vc=[10,19],$Vd=[1,45],$Ve=[1,46],$Vf=[1,47],$Vg=[1,48],$Vh=[1,49],$Vi=[1,50],$Vj=[10,19,25,31,39,42,43,44,45,46,47],$Vk=[10,19,23,25,31,35,39,42,43,44,45,46,47,63,64,65],$Vl=[10,13,17,19],$Vm=[39,63,64,65],$Vn=[39,46,47,63,64,65],$Vo=[39,42,43,44,45,63,64,65],$Vp=[10,19,25],$Vq=[1,75];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,6],$V2=[1,14],$V3=[1,25],$V4=[1,28],$V5=[1,26],$V6=[1,27],$V7=[1,29],$V8=[1,30],$V9=[1,31],$Va=[1,33],$Vb=[1,34],$Vc=[1,35],$Vd=[10,19],$Ve=[1,47],$Vf=[1,48],$Vg=[1,49],$Vh=[1,50],$Vi=[1,51],$Vj=[1,52],$Vk=[10,19,25,32,33,41,44,45,46,47,48,49],$Vl=[10,19,23,25,32,33,37,41,44,45,46,47,48,49,66,67,68],$Vm=[10,13,17,19],$Vn=[41,66,67,68],$Vo=[41,48,49,66,67,68],$Vp=[41,44,45,46,47,66,67,68],$Vq=[10,19,25],$Vr=[1,81];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"graphConfig":6,"openDirective":7,"typeDirective":8,"closeDirective":9,"NEWLINE":10,":":11,"argDirective":12,"open_directive":13,"type_directive":14,"arg_directive":15,"close_directive":16,"CLASS_DIAGRAM":17,"statements":18,"EOF":19,"statement":20,"className":21,"alphaNumToken":22,"GENERICTYPE":23,"relationStatement":24,"LABEL":25,"classStatement":26,"methodStatement":27,"annotationStatement":28,"clickStatement":29,"CLASS":30,"STRUCT_START":31,"members":32,"STRUCT_STOP":33,"ANNOTATION_START":34,"ANNOTATION_END":35,"MEMBER":36,"SEPARATOR":37,"relation":38,"STR":39,"relationType":40,"lineType":41,"AGGREGATION":42,"EXTENSION":43,"COMPOSITION":44,"DEPENDENCY":45,"LINE":46,"DOTTED_LINE":47,"CALLBACK":48,"LINK":49,"commentToken":50,"textToken":51,"graphCodeTokens":52,"textNoTagsToken":53,"TAGSTART":54,"TAGEND":55,"==":56,"--":57,"PCT":58,"DEFAULT":59,"SPACE":60,"MINUS":61,"keywords":62,"UNICODE_TEXT":63,"NUM":64,"ALPHA":65,"$accept":0,"$end":1},
-terminals_: {2:"error",10:"NEWLINE",11:":",13:"open_directive",14:"type_directive",15:"arg_directive",16:"close_directive",17:"CLASS_DIAGRAM",19:"EOF",23:"GENERICTYPE",25:"LABEL",30:"CLASS",31:"STRUCT_START",33:"STRUCT_STOP",34:"ANNOTATION_START",35:"ANNOTATION_END",36:"MEMBER",37:"SEPARATOR",39:"STR",42:"AGGREGATION",43:"EXTENSION",44:"COMPOSITION",45:"DEPENDENCY",46:"LINE",47:"DOTTED_LINE",48:"CALLBACK",49:"LINK",52:"graphCodeTokens",54:"TAGSTART",55:"TAGEND",56:"==",57:"--",58:"PCT",59:"DEFAULT",60:"SPACE",61:"MINUS",62:"keywords",63:"UNICODE_TEXT",64:"NUM",65:"ALPHA"},
-productions_: [0,[3,1],[3,2],[4,1],[5,4],[5,6],[7,1],[8,1],[12,1],[9,1],[6,4],[18,1],[18,2],[18,3],[21,2],[21,1],[21,3],[21,2],[20,1],[20,2],[20,1],[20,1],[20,1],[20,1],[20,1],[26,2],[26,5],[28,4],[32,1],[32,2],[27,1],[27,2],[27,1],[27,1],[24,3],[24,4],[24,4],[24,5],[38,3],[38,2],[38,2],[38,1],[40,1],[40,1],[40,1],[40,1],[41,1],[41,1],[29,3],[29,4],[29,3],[29,4],[50,1],[50,1],[51,1],[51,1],[51,1],[51,1],[51,1],[51,1],[51,1],[53,1],[53,1],[53,1],[53,1],[22,1],[22,1],[22,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"graphConfig":6,"openDirective":7,"typeDirective":8,"closeDirective":9,"NEWLINE":10,":":11,"argDirective":12,"open_directive":13,"type_directive":14,"arg_directive":15,"close_directive":16,"CLASS_DIAGRAM":17,"statements":18,"EOF":19,"statement":20,"className":21,"alphaNumToken":22,"GENERICTYPE":23,"relationStatement":24,"LABEL":25,"classStatement":26,"methodStatement":27,"annotationStatement":28,"clickStatement":29,"cssClassStatement":30,"CLASS":31,"STYLE_SEPARATOR":32,"STRUCT_START":33,"members":34,"STRUCT_STOP":35,"ANNOTATION_START":36,"ANNOTATION_END":37,"MEMBER":38,"SEPARATOR":39,"relation":40,"STR":41,"relationType":42,"lineType":43,"AGGREGATION":44,"EXTENSION":45,"COMPOSITION":46,"DEPENDENCY":47,"LINE":48,"DOTTED_LINE":49,"CALLBACK":50,"LINK":51,"CSSCLASS":52,"commentToken":53,"textToken":54,"graphCodeTokens":55,"textNoTagsToken":56,"TAGSTART":57,"TAGEND":58,"==":59,"--":60,"PCT":61,"DEFAULT":62,"SPACE":63,"MINUS":64,"keywords":65,"UNICODE_TEXT":66,"NUM":67,"ALPHA":68,"$accept":0,"$end":1},
+terminals_: {2:"error",10:"NEWLINE",11:":",13:"open_directive",14:"type_directive",15:"arg_directive",16:"close_directive",17:"CLASS_DIAGRAM",19:"EOF",23:"GENERICTYPE",25:"LABEL",31:"CLASS",32:"STYLE_SEPARATOR",33:"STRUCT_START",35:"STRUCT_STOP",36:"ANNOTATION_START",37:"ANNOTATION_END",38:"MEMBER",39:"SEPARATOR",41:"STR",44:"AGGREGATION",45:"EXTENSION",46:"COMPOSITION",47:"DEPENDENCY",48:"LINE",49:"DOTTED_LINE",50:"CALLBACK",51:"LINK",52:"CSSCLASS",55:"graphCodeTokens",57:"TAGSTART",58:"TAGEND",59:"==",60:"--",61:"PCT",62:"DEFAULT",63:"SPACE",64:"MINUS",65:"keywords",66:"UNICODE_TEXT",67:"NUM",68:"ALPHA"},
+productions_: [0,[3,1],[3,2],[4,1],[5,4],[5,6],[7,1],[8,1],[12,1],[9,1],[6,4],[18,1],[18,2],[18,3],[21,1],[21,2],[21,3],[21,2],[20,1],[20,2],[20,1],[20,1],[20,1],[20,1],[20,1],[20,1],[26,2],[26,4],[26,5],[26,7],[28,4],[34,1],[34,2],[27,1],[27,2],[27,1],[27,1],[24,3],[24,4],[24,4],[24,5],[40,3],[40,2],[40,2],[40,1],[42,1],[42,1],[42,1],[42,1],[43,1],[43,1],[29,3],[29,4],[29,3],[29,4],[30,3],[53,1],[53,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[56,1],[56,1],[56,1],[56,1],[22,1],[22,1],[22,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -5290,10 +5281,10 @@ case 9:
  yy.parseDirective('}%%', 'close_directive', 'class'); 
 break;
 case 14:
- this.$=$$[$0-1]+$$[$0]; 
+ this.$=$$[$0]; 
 break;
 case 15:
- this.$=$$[$0]; 
+ this.$=$$[$0-1]+$$[$0]; 
 break;
 case 16:
  this.$=$$[$0-2]+'~'+$$[$0-1]+$$[$0]; 
@@ -5307,91 +5298,100 @@ break;
 case 19:
  $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
 break;
-case 25:
+case 26:
 yy.addClass($$[$0]);
 break;
-case 26:
-/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
-break;
 case 27:
- yy.addAnnotation($$[$0],$$[$0-2]); 
+yy.addClass($$[$0-2]);yy.setCssClass($$[$0-2], $$[$0]);
 break;
 case 28:
- this.$ = [$$[$0]]; 
+/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
 break;
 case 29:
- $$[$0].push($$[$0-1]);this.$=$$[$0];
+yy.addClass($$[$0-5]);yy.setCssClass($$[$0-5], $$[$0-3]);yy.addMembers($$[$0-5],$$[$0-1]);
 break;
 case 30:
-/*console.log('Rel found',$$[$0]);*/
+ yy.addAnnotation($$[$0],$$[$0-2]); 
 break;
 case 31:
-yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
+ this.$ = [$$[$0]]; 
 break;
 case 32:
-/*console.warn('Member',$$[$0]);*/
+ $$[$0].push($$[$0-1]);this.$=$$[$0];
 break;
 case 33:
-/*console.log('sep found',$$[$0]);*/
+/*console.log('Rel found',$$[$0]);*/
 break;
 case 34:
- this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
+yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
 break;
 case 35:
- this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
+/*console.warn('Member',$$[$0]);*/
 break;
 case 36:
- this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
+/*console.log('sep found',$$[$0]);*/
 break;
 case 37:
- this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
+ this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
 break;
 case 38:
- this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
 break;
 case 39:
- this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
 break;
 case 40:
- this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
+ this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
 case 41:
- this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
+ this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
 break;
 case 42:
- this.$=yy.relationType.AGGREGATION;
+ this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
 break;
 case 43:
- this.$=yy.relationType.EXTENSION;
+ this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
 break;
 case 44:
- this.$=yy.relationType.COMPOSITION;
+ this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
 break;
 case 45:
- this.$=yy.relationType.DEPENDENCY;
+ this.$=yy.relationType.AGGREGATION;
 break;
 case 46:
-this.$=yy.lineType.LINE;
+ this.$=yy.relationType.EXTENSION;
 break;
 case 47:
-this.$=yy.lineType.DOTTED_LINE;
+ this.$=yy.relationType.COMPOSITION;
 break;
 case 48:
-this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0], undefined);
+ this.$=yy.relationType.DEPENDENCY;
 break;
 case 49:
-this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
+this.$=yy.lineType.LINE;
 break;
 case 50:
-this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0], undefined);
+this.$=yy.lineType.DOTTED_LINE;
 break;
 case 51:
+this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0], undefined);
+break;
+case 52:
+this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
+break;
+case 53:
+this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0], undefined);
+break;
+case 54:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1], $$[$0]);
+break;
+case 55:
+yy.setCssClass($$[$0-1], $$[$0]);
 break;
 }
 },
-table: [{3:1,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[3]},{1:[2,1]},{3:8,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[2,3]},{8:9,14:[1,10]},{10:[1,11]},{14:[2,6]},{1:[2,2]},{9:12,11:[1,13],16:$V2},o([11,16],[2,7]),{5:22,7:5,13:$V0,18:15,20:16,21:23,22:30,24:17,26:18,27:19,28:20,29:21,30:$V3,34:$V4,36:$V5,37:$V6,48:$V7,49:$V8,63:$V9,64:$Va,65:$Vb},{10:[1,34]},{12:35,15:[1,36]},{10:[2,9]},{19:[1,37]},{10:[1,38],19:[2,11]},o($Vc,[2,18],{25:[1,39]}),o($Vc,[2,20]),o($Vc,[2,21]),o($Vc,[2,22]),o($Vc,[2,23]),o($Vc,[2,24]),o($Vc,[2,30],{38:40,40:43,41:44,25:[1,42],39:[1,41],42:$Vd,43:$Ve,44:$Vf,45:$Vg,46:$Vh,47:$Vi}),{21:51,22:30,63:$V9,64:$Va,65:$Vb},o($Vc,[2,32]),o($Vc,[2,33]),{22:52,63:$V9,64:$Va,65:$Vb},{21:53,22:30,63:$V9,64:$Va,65:$Vb},{21:54,22:30,63:$V9,64:$Va,65:$Vb},o($Vj,[2,15],{22:30,21:55,23:[1,56],63:$V9,64:$Va,65:$Vb}),o($Vk,[2,65]),o($Vk,[2,66]),o($Vk,[2,67]),o($Vl,[2,4]),{9:57,16:$V2},{16:[2,8]},{1:[2,10]},{5:22,7:5,13:$V0,18:58,19:[2,12],20:16,21:23,22:30,24:17,26:18,27:19,28:20,29:21,30:$V3,34:$V4,36:$V5,37:$V6,48:$V7,49:$V8,63:$V9,64:$Va,65:$Vb},o($Vc,[2,19]),{21:59,22:30,39:[1,60],63:$V9,64:$Va,65:$Vb},{38:61,40:43,41:44,42:$Vd,43:$Ve,44:$Vf,45:$Vg,46:$Vh,47:$Vi},o($Vc,[2,31]),{41:62,46:$Vh,47:$Vi},o($Vm,[2,41],{40:63,42:$Vd,43:$Ve,44:$Vf,45:$Vg}),o($Vn,[2,42]),o($Vn,[2,43]),o($Vn,[2,44]),o($Vn,[2,45]),o($Vo,[2,46]),o($Vo,[2,47]),o($Vc,[2,25],{31:[1,64]}),{35:[1,65]},{39:[1,66]},{39:[1,67]},o($Vj,[2,14]),o($Vj,[2,17],{22:30,21:68,63:$V9,64:$Va,65:$Vb}),{10:[1,69]},{19:[2,13]},o($Vp,[2,34]),{21:70,22:30,63:$V9,64:$Va,65:$Vb},{21:71,22:30,39:[1,72],63:$V9,64:$Va,65:$Vb},o($Vm,[2,40],{40:73,42:$Vd,43:$Ve,44:$Vf,45:$Vg}),o($Vm,[2,39]),{32:74,36:$Vq},{21:76,22:30,63:$V9,64:$Va,65:$Vb},o($Vc,[2,48],{39:[1,77]}),o($Vc,[2,50],{39:[1,78]}),o($Vj,[2,16]),o($Vl,[2,5]),o($Vp,[2,36]),o($Vp,[2,35]),{21:79,22:30,63:$V9,64:$Va,65:$Vb},o($Vm,[2,38]),{33:[1,80]},{32:81,33:[2,28],36:$Vq},o($Vc,[2,27]),o($Vc,[2,49]),o($Vc,[2,51]),o($Vp,[2,37]),o($Vc,[2,26]),{33:[2,29]}],
-defaultActions: {2:[2,1],4:[2,3],7:[2,6],8:[2,2],14:[2,9],36:[2,8],37:[2,10],58:[2,13],81:[2,29]},
+table: [{3:1,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[3]},{1:[2,1]},{3:8,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[2,3]},{8:9,14:[1,10]},{10:[1,11]},{14:[2,6]},{1:[2,2]},{9:12,11:[1,13],16:$V2},o([11,16],[2,7]),{5:23,7:5,13:$V0,18:15,20:16,21:24,22:32,24:17,26:18,27:19,28:20,29:21,30:22,31:$V3,36:$V4,38:$V5,39:$V6,50:$V7,51:$V8,52:$V9,66:$Va,67:$Vb,68:$Vc},{10:[1,36]},{12:37,15:[1,38]},{10:[2,9]},{19:[1,39]},{10:[1,40],19:[2,11]},o($Vd,[2,18],{25:[1,41]}),o($Vd,[2,20]),o($Vd,[2,21]),o($Vd,[2,22]),o($Vd,[2,23]),o($Vd,[2,24]),o($Vd,[2,25]),o($Vd,[2,33],{40:42,42:45,43:46,25:[1,44],41:[1,43],44:$Ve,45:$Vf,46:$Vg,47:$Vh,48:$Vi,49:$Vj}),{21:53,22:32,66:$Va,67:$Vb,68:$Vc},o($Vd,[2,35]),o($Vd,[2,36]),{22:54,66:$Va,67:$Vb,68:$Vc},{21:55,22:32,66:$Va,67:$Vb,68:$Vc},{21:56,22:32,66:$Va,67:$Vb,68:$Vc},{41:[1,57]},o($Vk,[2,14],{22:32,21:58,23:[1,59],66:$Va,67:$Vb,68:$Vc}),o($Vl,[2,69]),o($Vl,[2,70]),o($Vl,[2,71]),o($Vm,[2,4]),{9:60,16:$V2},{16:[2,8]},{1:[2,10]},{5:23,7:5,13:$V0,18:61,19:[2,12],20:16,21:24,22:32,24:17,26:18,27:19,28:20,29:21,30:22,31:$V3,36:$V4,38:$V5,39:$V6,50:$V7,51:$V8,52:$V9,66:$Va,67:$Vb,68:$Vc},o($Vd,[2,19]),{21:62,22:32,41:[1,63],66:$Va,67:$Vb,68:$Vc},{40:64,42:45,43:46,44:$Ve,45:$Vf,46:$Vg,47:$Vh,48:$Vi,49:$Vj},o($Vd,[2,34]),{43:65,48:$Vi,49:$Vj},o($Vn,[2,44],{42:66,44:$Ve,45:$Vf,46:$Vg,47:$Vh}),o($Vo,[2,45]),o($Vo,[2,46]),o($Vo,[2,47]),o($Vo,[2,48]),o($Vp,[2,49]),o($Vp,[2,50]),o($Vd,[2,26],{32:[1,67],33:[1,68]}),{37:[1,69]},{41:[1,70]},{41:[1,71]},{22:72,66:$Va,67:$Vb,68:$Vc},o($Vk,[2,15]),o($Vk,[2,17],{22:32,21:73,66:$Va,67:$Vb,68:$Vc}),{10:[1,74]},{19:[2,13]},o($Vq,[2,37]),{21:75,22:32,66:$Va,67:$Vb,68:$Vc},{21:76,22:32,41:[1,77],66:$Va,67:$Vb,68:$Vc},o($Vn,[2,43],{42:78,44:$Ve,45:$Vf,46:$Vg,47:$Vh}),o($Vn,[2,42]),{22:79,66:$Va,67:$Vb,68:$Vc},{34:80,38:$Vr},{21:82,22:32,66:$Va,67:$Vb,68:$Vc},o($Vd,[2,51],{41:[1,83]}),o($Vd,[2,53],{41:[1,84]}),o($Vd,[2,55]),o($Vk,[2,16]),o($Vm,[2,5]),o($Vq,[2,39]),o($Vq,[2,38]),{21:85,22:32,66:$Va,67:$Vb,68:$Vc},o($Vn,[2,41]),o($Vd,[2,27],{33:[1,86]}),{35:[1,87]},{34:88,35:[2,31],38:$Vr},o($Vd,[2,30]),o($Vd,[2,52]),o($Vd,[2,54]),o($Vq,[2,40]),{34:89,38:$Vr},o($Vd,[2,28]),{35:[2,32]},{35:[1,90]},o($Vd,[2,29])],
+defaultActions: {2:[2,1],4:[2,3],7:[2,6],8:[2,2],14:[2,9],38:[2,8],39:[2,10],61:[2,13],88:[2,32]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -5892,86 +5892,90 @@ case 9:return 17;
 break;
 case 10:return 17;
 break;
-case 11: this.begin("struct"); /*console.log('Starting struct');*/ return 31;
+case 11: this.begin("struct"); /*console.log('Starting struct');*/ return 33;
 break;
 case 12:return "EOF_IN_STRUCT";
 break;
 case 13:return "OPEN_IN_STRUCT";
 break;
-case 14: /*console.log('Ending struct');*/this.popState(); return 33;
+case 14: /*console.log('Ending struct');*/this.popState(); return 35;
 break;
 case 15:/* nothing */
 break;
 case 16: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
 break;
-case 17:return 30;
+case 17:return 31;
 break;
-case 18:return 48;
+case 18:return 52;
 break;
-case 19:return 49;
+case 19:return 50;
 break;
-case 20:return 34;
+case 20:return 51;
 break;
-case 21:return 35;
+case 21:return 36;
 break;
-case 22:this.begin("generic");
+case 22:return 37;
 break;
-case 23:this.popState();
+case 23:this.begin("generic");
 break;
-case 24:return "GENERICTYPE";
+case 24:this.popState();
 break;
-case 25:this.begin("string");
+case 25:return "GENERICTYPE";
 break;
-case 26:this.popState();
+case 26:this.begin("string");
 break;
-case 27:return "STR";
+case 27:this.popState();
 break;
-case 28:return 43;
+case 28:return "STR";
 break;
-case 29:return 43;
+case 29:return 45;
 break;
 case 30:return 45;
 break;
-case 31:return 45;
+case 31:return 47;
 break;
-case 32:return 44;
+case 32:return 47;
 break;
-case 33:return 42;
+case 33:return 46;
 break;
-case 34:return 46;
+case 34:return 44;
 break;
-case 35:return 47;
+case 35:return 48;
 break;
-case 36:return 25;
+case 36:return 49;
 break;
-case 37:return 61;
+case 37:return 25;
 break;
-case 38:return 'DOT';
+case 38:return 32;
 break;
-case 39:return 'PLUS';
+case 39:return 64;
 break;
-case 40:return 58;
+case 40:return 'DOT';
 break;
-case 41:return 'EQUALS';
+case 41:return 'PLUS';
 break;
-case 42:return 'EQUALS';
+case 42:return 61;
 break;
-case 43:return 65;
+case 43:return 'EQUALS';
 break;
-case 44:return 'PUNCTUATION';
+case 44:return 'EQUALS';
 break;
-case 45:return 64;
+case 45:return 68;
 break;
-case 46:return 63;
+case 46:return 'PUNCTUATION';
 break;
-case 47:return 60;
+case 47:return 67;
 break;
-case 48:return 19;
+case 48:return 66;
+break;
+case 49:return 63;
+break;
+case 50:return 19;
 break;
 }
 },
-rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::[^\n;]+)/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
-conditions: {"string":{"rules":[26,27],"inclusive":false},"generic":{"rules":[23,24],"inclusive":false},"struct":{"rules":[12,13,14,15,16],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,17,18,19,20,21,22,25,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n?)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:cssClass\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::{1}[^:\n;]+)/,/^(?::{3})/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
+conditions: {"string":{"rules":[27,28],"inclusive":false},"generic":{"rules":[24,25],"inclusive":false},"struct":{"rules":[12,13,14,15,16],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,17,18,19,20,21,22,23,26,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"inclusive":true}}
 });
 return lexer;
 })();
@@ -6014,7 +6018,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.nodeBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.nodeBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n");
+  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -6138,12 +6142,6 @@ var drawEdge = function drawEdge(elem, path, relation, conf) {
 };
 var drawClass = function drawClass(elem, classDef, conf) {
   _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Rendering class ' + classDef);
-  var cssClassStr = 'classGroup ';
-
-  if (classDef.cssClasses.length > 0) {
-    cssClassStr = cssClassStr + classDef.cssClasses.join(' ');
-  }
-
   var id = classDef.id;
   var classInfo = {
     id: id,
@@ -6152,7 +6150,7 @@ var drawClass = function drawClass(elem, classDef, conf) {
     height: 0
   }; // add class group
 
-  var g = elem.append('g').attr('id', Object(_classDb__WEBPACK_IMPORTED_MODULE_1__["lookUpDomId"])(id)).attr('class', cssClassStr); // add title
+  var g = elem.append('g').attr('id', Object(_classDb__WEBPACK_IMPORTED_MODULE_1__["lookUpDomId"])(id)).attr('class', 'classGroup'); // add title
 
   var title;
 
@@ -6199,7 +6197,13 @@ var drawClass = function drawClass(elem, classDef, conf) {
     isFirst = false;
   });
   var classBox = g.node().getBBox();
-  var rect = g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('width', classBox.width + 2 * conf.padding).attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
+  var cssClassStr = ' ';
+
+  if (classDef.cssClasses.length > 0) {
+    cssClassStr = cssClassStr + classDef.cssClasses.join(' ');
+  }
+
+  var rect = g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('width', classBox.width + 2 * conf.padding).attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin).attr('class', cssClassStr);
   var rectWidth = rect.node().getBBox().width; // Center title
   // We subtract the width of each text element from the class box width and divide it by 2
 
@@ -7653,7 +7657,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "\n  .entityBox {\n    fill: ".concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n  }\n\n  .relationshipLabelBox {\n    fill: ").concat(options.tertiaryColor, ";\n    opacity: 0.3;\n    background-color: ").concat(options.tertiaryColor, ";\n      rect {\n        opacity: 0.5;\n      }\n  }\n\n    .relationshipLine {\n      stroke: ").concat(options.lineColor, ";\n    }\n");
+  return "\n  .entityBox {\n    fill: ".concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n  }\n\n  .relationshipLabelBox {\n    fill: ").concat(options.tertiaryColor, ";\n    opacity: 0.7;\n    background-color: ").concat(options.tertiaryColor, ";\n      rect {\n        opacity: 0.5;\n      }\n  }\n\n    .relationshipLine {\n      stroke: ").concat(options.lineColor, ";\n    }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -8336,7 +8340,7 @@ var setClickFun = function setClickFun(_id, functionName) {
   var id = _id;
   if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
-  if (_config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"].securityLevel !== 'loose') {
+  if (_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]().securityLevel !== 'loose') {
     return;
   }
 
@@ -8364,13 +8368,14 @@ var setClickFun = function setClickFun(_id, functionName) {
  */
 
 
-var setLink = function setLink(ids, linkStr, tooltip) {
+var setLink = function setLink(ids, linkStr, tooltip, target) {
   ids.split(',').forEach(function (_id) {
     var id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].formatUrl(linkStr, config);
+      vertices[id].linkTarget = target;
     }
   });
   setTooltip(ids, tooltip);
@@ -9430,8 +9435,8 @@ var draw = function draw(text, id) {
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
-      rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
+      rect.setAttribute('height', dim.height); // rect.setAttribute('style', 'fill:#e8e8e8;');
+
       label.insertBefore(rect, label.firstChild);
     }
   } // If node has a link, wrap it in an anchor SVG object.
@@ -9449,6 +9454,11 @@ var draw = function draw(text, id) {
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
         link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+
+        if (vertex.linkTarget) {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
+        }
+
         var linkNode = node.insert(function () {
           return link;
         }, ':first-child');
@@ -9937,8 +9947,8 @@ var draw = function draw(text, id) {
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
-      rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
+      rect.setAttribute('height', dim.height); // rect.setAttribute('style', 'fill:#e8e8e8;');
+
       label.insertBefore(rect, label.firstChild);
     }
   } // If node has a link, wrap it in an anchor SVG object.
@@ -9956,6 +9966,11 @@ var draw = function draw(text, id) {
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
         link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+
+        if (vertex.linkTarget) {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
+        }
+
         var linkNode = node.insert(function () {
           return link;
         }, ':first-child');
@@ -10069,12 +10084,12 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,9],$V1=[1,7],$V2=[1,6],$V3=[1,8],$V4=[1,20,21,22,23,38,46,75,76,77,78,79,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$V5=[2,10],$V6=[1,20],$V7=[1,21],$V8=[1,22],$V9=[1,23],$Va=[1,30],$Vb=[1,54],$Vc=[1,32],$Vd=[1,33],$Ve=[1,34],$Vf=[1,35],$Vg=[1,36],$Vh=[1,48],$Vi=[1,43],$Vj=[1,45],$Vk=[1,40],$Vl=[1,44],$Vm=[1,47],$Vn=[1,51],$Vo=[1,52],$Vp=[1,53],$Vq=[1,42],$Vr=[1,46],$Vs=[1,49],$Vt=[1,50],$Vu=[1,41],$Vv=[1,57],$Vw=[1,62],$Vx=[1,20,21,22,23,38,42,46,75,76,77,78,79,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$Vy=[1,66],$Vz=[1,65],$VA=[1,67],$VB=[20,21,23,69,70],$VC=[20,21,22,23,69,70],$VD=[20,21,22,23,47,69,70],$VE=[20,21,22,23,40,46,47,49,51,53,55,57,59,61,62,64,69,70,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$VF=[20,21,23],$VG=[20,21,23,46,69,70,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$VH=[1,12,20,21,22,23,24,38,42,46,75,76,77,78,79,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$VI=[46,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$VJ=[1,115],$VK=[1,136],$VL=[1,137],$VM=[1,138],$VN=[1,139],$VO=[1,119],$VP=[1,110],$VQ=[1,111],$VR=[1,107],$VS=[1,131],$VT=[1,132],$VU=[1,133],$VV=[1,134],$VW=[1,135],$VX=[1,140],$VY=[1,141],$VZ=[1,113],$V_=[1,121],$V$=[1,124],$V01=[1,122],$V11=[1,123],$V21=[1,116],$V31=[1,129],$V41=[1,128],$V51=[1,112],$V61=[1,109],$V71=[1,118],$V81=[1,120],$V91=[1,125],$Va1=[1,126],$Vb1=[1,127],$Vc1=[1,130],$Vd1=[20,21,22,23,38,42,46,75,76,77,78,79,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$Ve1=[1,144],$Vf1=[1,148],$Vg1=[1,150],$Vh1=[1,151],$Vi1=[12,21,22,24],$Vj1=[20,21,22,23,24,26,38,40,41,42,46,50,52,54,56,58,60,61,63,65,69,70,71,75,76,77,78,79,80,81,84,90,91,94,95,96,98,99,100,101,105,106,107,108,109,110],$Vk1=[20,21,22,23,26,46,80,90,91,94,95,96,98,99,105,106,107,108,109,110],$Vl1=[22,91],$Vm1=[1,220],$Vn1=[1,224],$Vo1=[1,221],$Vp1=[1,218],$Vq1=[1,215],$Vr1=[1,216],$Vs1=[1,217],$Vt1=[1,219],$Vu1=[1,222],$Vv1=[1,223],$Vw1=[1,225],$Vx1=[1,241],$Vy1=[20,21,23,91],$Vz1=[20,21,22,23,75,87,90,91,94,95,96,97,98,99,100];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,9],$V1=[1,7],$V2=[1,6],$V3=[1,8],$V4=[1,20,21,22,23,38,46,75,76,77,78,79,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$V5=[2,10],$V6=[1,20],$V7=[1,21],$V8=[1,22],$V9=[1,23],$Va=[1,30],$Vb=[1,54],$Vc=[1,32],$Vd=[1,33],$Ve=[1,34],$Vf=[1,35],$Vg=[1,36],$Vh=[1,48],$Vi=[1,43],$Vj=[1,45],$Vk=[1,40],$Vl=[1,44],$Vm=[1,47],$Vn=[1,51],$Vo=[1,52],$Vp=[1,53],$Vq=[1,42],$Vr=[1,46],$Vs=[1,49],$Vt=[1,50],$Vu=[1,41],$Vv=[1,57],$Vw=[1,62],$Vx=[1,20,21,22,23,38,42,46,75,76,77,78,79,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$Vy=[1,66],$Vz=[1,65],$VA=[1,67],$VB=[20,21,23,69,70],$VC=[20,21,22,23,69,70],$VD=[20,21,22,23,47,69,70],$VE=[20,21,22,23,40,46,47,49,51,53,55,57,59,61,62,64,69,70,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$VF=[20,21,23],$VG=[20,21,23,46,69,70,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$VH=[1,12,20,21,22,23,24,38,42,46,75,76,77,78,79,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$VI=[46,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$VJ=[1,115],$VK=[1,136],$VL=[1,137],$VM=[1,138],$VN=[1,139],$VO=[1,119],$VP=[1,110],$VQ=[1,111],$VR=[1,107],$VS=[1,131],$VT=[1,132],$VU=[1,133],$VV=[1,134],$VW=[1,135],$VX=[1,140],$VY=[1,141],$VZ=[1,113],$V_=[1,121],$V$=[1,124],$V01=[1,122],$V11=[1,123],$V21=[1,116],$V31=[1,129],$V41=[1,128],$V51=[1,112],$V61=[1,109],$V71=[1,118],$V81=[1,120],$V91=[1,125],$Va1=[1,126],$Vb1=[1,127],$Vc1=[1,130],$Vd1=[20,21,22,23,38,42,46,75,76,77,78,79,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$Ve1=[1,144],$Vf1=[1,148],$Vg1=[1,150],$Vh1=[1,151],$Vi1=[12,21,22,24],$Vj1=[20,21,22,23,24,26,38,40,41,42,46,50,52,54,56,58,60,61,63,65,69,70,71,75,76,77,78,79,80,81,84,91,92,95,96,97,99,100,101,102,106,107,108,109,110,111],$Vk1=[20,21,22,23,26,46,80,91,92,95,96,97,99,100,106,107,108,109,110,111],$Vl1=[22,92],$Vm1=[1,220],$Vn1=[1,224],$Vo1=[1,221],$Vp1=[1,218],$Vq1=[1,215],$Vr1=[1,216],$Vs1=[1,217],$Vt1=[1,219],$Vu1=[1,222],$Vv1=[1,223],$Vw1=[1,225],$Vx1=[1,241],$Vy1=[20,21,23,92],$Vz1=[20,21,22,23,75,88,91,92,95,96,97,98,99,100,101];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"openDirective":6,"typeDirective":7,"closeDirective":8,"separator":9,":":10,"argDirective":11,"open_directive":12,"type_directive":13,"arg_directive":14,"close_directive":15,"graphConfig":16,"document":17,"line":18,"statement":19,"SEMI":20,"NEWLINE":21,"SPACE":22,"EOF":23,"GRAPH":24,"NODIR":25,"DIR":26,"FirstStmtSeperator":27,"ending":28,"endToken":29,"spaceList":30,"spaceListNewline":31,"verticeStatement":32,"styleStatement":33,"linkStyleStatement":34,"classDefStatement":35,"classStatement":36,"clickStatement":37,"subgraph":38,"text":39,"SQS":40,"SQE":41,"end":42,"link":43,"node":44,"vertex":45,"AMP":46,"STYLE_SEPARATOR":47,"idString":48,"PS":49,"PE":50,"(-":51,"-)":52,"STADIUMSTART":53,"STADIUMEND":54,"SUBROUTINESTART":55,"SUBROUTINEEND":56,"CYLINDERSTART":57,"CYLINDEREND":58,"DIAMOND_START":59,"DIAMOND_STOP":60,"TAGEND":61,"TRAPSTART":62,"TRAPEND":63,"INVTRAPSTART":64,"INVTRAPEND":65,"linkStatement":66,"arrowText":67,"TESTSTR":68,"START_LINK":69,"LINK":70,"PIPE":71,"textToken":72,"STR":73,"keywords":74,"STYLE":75,"LINKSTYLE":76,"CLASSDEF":77,"CLASS":78,"CLICK":79,"DOWN":80,"UP":81,"textNoTags":82,"textNoTagsToken":83,"DEFAULT":84,"stylesOpt":85,"alphaNum":86,"HEX":87,"numList":88,"INTERPOLATE":89,"NUM":90,"COMMA":91,"style":92,"styleComponent":93,"ALPHA":94,"COLON":95,"MINUS":96,"UNIT":97,"BRKT":98,"DOT":99,"PCT":100,"TAGSTART":101,"alphaNumToken":102,"idStringToken":103,"alphaNumStatement":104,"PUNCTUATION":105,"UNICODE_TEXT":106,"PLUS":107,"EQUALS":108,"MULT":109,"UNDERSCORE":110,"graphCodeTokens":111,"ARROW_CROSS":112,"ARROW_POINT":113,"ARROW_CIRCLE":114,"ARROW_OPEN":115,"QUOTE":116,"$accept":0,"$end":1},
-terminals_: {2:"error",10:":",12:"open_directive",13:"type_directive",14:"arg_directive",15:"close_directive",20:"SEMI",21:"NEWLINE",22:"SPACE",23:"EOF",24:"GRAPH",25:"NODIR",26:"DIR",38:"subgraph",40:"SQS",41:"SQE",42:"end",46:"AMP",47:"STYLE_SEPARATOR",49:"PS",50:"PE",51:"(-",52:"-)",53:"STADIUMSTART",54:"STADIUMEND",55:"SUBROUTINESTART",56:"SUBROUTINEEND",57:"CYLINDERSTART",58:"CYLINDEREND",59:"DIAMOND_START",60:"DIAMOND_STOP",61:"TAGEND",62:"TRAPSTART",63:"TRAPEND",64:"INVTRAPSTART",65:"INVTRAPEND",68:"TESTSTR",69:"START_LINK",70:"LINK",71:"PIPE",73:"STR",75:"STYLE",76:"LINKSTYLE",77:"CLASSDEF",78:"CLASS",79:"CLICK",80:"DOWN",81:"UP",84:"DEFAULT",87:"HEX",89:"INTERPOLATE",90:"NUM",91:"COMMA",94:"ALPHA",95:"COLON",96:"MINUS",97:"UNIT",98:"BRKT",99:"DOT",100:"PCT",101:"TAGSTART",105:"PUNCTUATION",106:"UNICODE_TEXT",107:"PLUS",108:"EQUALS",109:"MULT",110:"UNDERSCORE",112:"ARROW_CROSS",113:"ARROW_POINT",114:"ARROW_CIRCLE",115:"ARROW_OPEN",116:"QUOTE"},
-productions_: [0,[3,1],[3,2],[5,4],[5,6],[6,1],[7,1],[11,1],[8,1],[4,2],[17,0],[17,2],[18,1],[18,1],[18,1],[18,1],[18,1],[16,2],[16,2],[16,2],[16,3],[28,2],[28,1],[29,1],[29,1],[29,1],[27,1],[27,1],[27,2],[31,2],[31,2],[31,1],[31,1],[30,2],[30,1],[19,2],[19,2],[19,2],[19,2],[19,2],[19,2],[19,9],[19,6],[19,4],[9,1],[9,1],[9,1],[32,3],[32,4],[32,2],[32,1],[44,1],[44,5],[44,3],[45,4],[45,6],[45,4],[45,4],[45,4],[45,4],[45,4],[45,4],[45,6],[45,4],[45,4],[45,4],[45,4],[45,4],[45,1],[43,2],[43,3],[43,3],[43,1],[43,3],[66,1],[67,3],[39,1],[39,2],[39,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[82,1],[82,2],[35,5],[35,5],[36,5],[37,5],[37,7],[37,5],[37,7],[33,5],[33,5],[34,5],[34,5],[34,9],[34,9],[34,7],[34,7],[88,1],[88,3],[85,1],[85,3],[92,1],[92,2],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[93,1],[72,1],[72,1],[72,1],[72,1],[72,1],[72,1],[83,1],[83,1],[83,1],[83,1],[48,1],[48,2],[86,1],[86,2],[104,1],[104,1],[104,1],[104,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[102,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1],[111,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"openDirective":6,"typeDirective":7,"closeDirective":8,"separator":9,":":10,"argDirective":11,"open_directive":12,"type_directive":13,"arg_directive":14,"close_directive":15,"graphConfig":16,"document":17,"line":18,"statement":19,"SEMI":20,"NEWLINE":21,"SPACE":22,"EOF":23,"GRAPH":24,"NODIR":25,"DIR":26,"FirstStmtSeperator":27,"ending":28,"endToken":29,"spaceList":30,"spaceListNewline":31,"verticeStatement":32,"styleStatement":33,"linkStyleStatement":34,"classDefStatement":35,"classStatement":36,"clickStatement":37,"subgraph":38,"text":39,"SQS":40,"SQE":41,"end":42,"link":43,"node":44,"vertex":45,"AMP":46,"STYLE_SEPARATOR":47,"idString":48,"PS":49,"PE":50,"(-":51,"-)":52,"STADIUMSTART":53,"STADIUMEND":54,"SUBROUTINESTART":55,"SUBROUTINEEND":56,"CYLINDERSTART":57,"CYLINDEREND":58,"DIAMOND_START":59,"DIAMOND_STOP":60,"TAGEND":61,"TRAPSTART":62,"TRAPEND":63,"INVTRAPSTART":64,"INVTRAPEND":65,"linkStatement":66,"arrowText":67,"TESTSTR":68,"START_LINK":69,"LINK":70,"PIPE":71,"textToken":72,"STR":73,"keywords":74,"STYLE":75,"LINKSTYLE":76,"CLASSDEF":77,"CLASS":78,"CLICK":79,"DOWN":80,"UP":81,"textNoTags":82,"textNoTagsToken":83,"DEFAULT":84,"stylesOpt":85,"alphaNum":86,"LINK_TARGET":87,"HEX":88,"numList":89,"INTERPOLATE":90,"NUM":91,"COMMA":92,"style":93,"styleComponent":94,"ALPHA":95,"COLON":96,"MINUS":97,"UNIT":98,"BRKT":99,"DOT":100,"PCT":101,"TAGSTART":102,"alphaNumToken":103,"idStringToken":104,"alphaNumStatement":105,"PUNCTUATION":106,"UNICODE_TEXT":107,"PLUS":108,"EQUALS":109,"MULT":110,"UNDERSCORE":111,"graphCodeTokens":112,"ARROW_CROSS":113,"ARROW_POINT":114,"ARROW_CIRCLE":115,"ARROW_OPEN":116,"QUOTE":117,"$accept":0,"$end":1},
+terminals_: {2:"error",10:":",12:"open_directive",13:"type_directive",14:"arg_directive",15:"close_directive",20:"SEMI",21:"NEWLINE",22:"SPACE",23:"EOF",24:"GRAPH",25:"NODIR",26:"DIR",38:"subgraph",40:"SQS",41:"SQE",42:"end",46:"AMP",47:"STYLE_SEPARATOR",49:"PS",50:"PE",51:"(-",52:"-)",53:"STADIUMSTART",54:"STADIUMEND",55:"SUBROUTINESTART",56:"SUBROUTINEEND",57:"CYLINDERSTART",58:"CYLINDEREND",59:"DIAMOND_START",60:"DIAMOND_STOP",61:"TAGEND",62:"TRAPSTART",63:"TRAPEND",64:"INVTRAPSTART",65:"INVTRAPEND",68:"TESTSTR",69:"START_LINK",70:"LINK",71:"PIPE",73:"STR",75:"STYLE",76:"LINKSTYLE",77:"CLASSDEF",78:"CLASS",79:"CLICK",80:"DOWN",81:"UP",84:"DEFAULT",87:"LINK_TARGET",88:"HEX",90:"INTERPOLATE",91:"NUM",92:"COMMA",95:"ALPHA",96:"COLON",97:"MINUS",98:"UNIT",99:"BRKT",100:"DOT",101:"PCT",102:"TAGSTART",106:"PUNCTUATION",107:"UNICODE_TEXT",108:"PLUS",109:"EQUALS",110:"MULT",111:"UNDERSCORE",113:"ARROW_CROSS",114:"ARROW_POINT",115:"ARROW_CIRCLE",116:"ARROW_OPEN",117:"QUOTE"},
+productions_: [0,[3,1],[3,2],[5,4],[5,6],[6,1],[7,1],[11,1],[8,1],[4,2],[17,0],[17,2],[18,1],[18,1],[18,1],[18,1],[18,1],[16,2],[16,2],[16,2],[16,3],[28,2],[28,1],[29,1],[29,1],[29,1],[27,1],[27,1],[27,2],[31,2],[31,2],[31,1],[31,1],[30,2],[30,1],[19,2],[19,2],[19,2],[19,2],[19,2],[19,2],[19,9],[19,6],[19,4],[9,1],[9,1],[9,1],[32,3],[32,4],[32,2],[32,1],[44,1],[44,5],[44,3],[45,4],[45,6],[45,4],[45,4],[45,4],[45,4],[45,4],[45,4],[45,6],[45,4],[45,4],[45,4],[45,4],[45,4],[45,1],[43,2],[43,3],[43,3],[43,1],[43,3],[66,1],[67,3],[39,1],[39,2],[39,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[74,1],[82,1],[82,2],[35,5],[35,5],[36,5],[37,5],[37,7],[37,5],[37,7],[37,7],[37,9],[33,5],[33,5],[34,5],[34,5],[34,9],[34,9],[34,7],[34,7],[89,1],[89,3],[85,1],[85,3],[93,1],[93,2],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[94,1],[72,1],[72,1],[72,1],[72,1],[72,1],[72,1],[83,1],[83,1],[83,1],[83,1],[48,1],[48,2],[86,1],[86,2],[105,1],[105,1],[105,1],[105,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[103,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[104,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1],[112,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -10102,7 +10117,7 @@ case 11:
 	    }
 	    this.$=$$[$0-1];
 break;
-case 12: case 76: case 78: case 90: case 136: case 138: case 139:
+case 12: case 76: case 78: case 90: case 138: case 140: case 141:
 this.$=$$[$0];
 break;
 case 19:
@@ -10210,7 +10225,7 @@ break;
 case 75:
 this.$ = $$[$0-1];
 break;
-case 77: case 91: case 137:
+case 77: case 91: case 139:
 this.$=$$[$0-1]+''+$$[$0];
 break;
 case 92: case 93:
@@ -10226,56 +10241,62 @@ case 96:
 this.$ = $$[$0-6];yy.setClickEvent($$[$0-4], $$[$0-2], $$[$0])       ;
 break;
 case 97:
-this.$ = $$[$0-4];yy.setLink($$[$0-2], $$[$0], undefined);
+this.$ = $$[$0-4];yy.setLink($$[$0-2], $$[$0], undefined, undefined);
 break;
 case 98:
-this.$ = $$[$0-6];yy.setLink($$[$0-4], $$[$0-2], $$[$0]       );
+this.$ = $$[$0-6];yy.setLink($$[$0-4], $$[$0-2], $$[$0], undefined       );
 break;
 case 99:
-this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
+this.$ = $$[$0-6];yy.setLink($$[$0-4], $$[$0-2], undefined, $$[$0]       );
 break;
-case 100: case 102:
-this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
+case 100:
+this.$ = $$[$0-8];yy.setLink($$[$0-6], $$[$0-4], $$[$0-2], $$[$0]              );
 break;
 case 101:
-this.$ = $$[$0-4];yy.updateLink([$$[$0-2]],$$[$0]);
+this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
+break;
+case 102: case 104:
+this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
 break;
 case 103:
-this.$ = $$[$0-8];yy.updateLinkInterpolate([$$[$0-6]],$$[$0-2]);yy.updateLink([$$[$0-6]],$$[$0]);
-break;
-case 104:
-this.$ = $$[$0-8];yy.updateLinkInterpolate($$[$0-6],$$[$0-2]);yy.updateLink($$[$0-6],$$[$0]);
+this.$ = $$[$0-4];yy.updateLink([$$[$0-2]],$$[$0]);
 break;
 case 105:
-this.$ = $$[$0-6];yy.updateLinkInterpolate([$$[$0-4]],$$[$0]);
+this.$ = $$[$0-8];yy.updateLinkInterpolate([$$[$0-6]],$$[$0-2]);yy.updateLink([$$[$0-6]],$$[$0]);
 break;
 case 106:
+this.$ = $$[$0-8];yy.updateLinkInterpolate($$[$0-6],$$[$0-2]);yy.updateLink($$[$0-6],$$[$0]);
+break;
+case 107:
+this.$ = $$[$0-6];yy.updateLinkInterpolate([$$[$0-4]],$$[$0]);
+break;
+case 108:
 this.$ = $$[$0-6];yy.updateLinkInterpolate($$[$0-4],$$[$0]);
 break;
-case 107: case 109:
+case 109: case 111:
 this.$ = [$$[$0]]
 break;
-case 108: case 110:
+case 110: case 112:
 $$[$0-2].push($$[$0]);this.$ = $$[$0-2];
 break;
-case 112:
+case 114:
 this.$ = $$[$0-1] + $$[$0];
 break;
-case 134:
+case 136:
 this.$=$$[$0]
 break;
-case 135:
+case 137:
 this.$=$$[$0-1]+''+$$[$0]
 break;
-case 140:
+case 142:
 this.$='v';
 break;
-case 141:
+case 143:
 this.$='-';
 break;
 }
 },
-table: [{3:1,4:2,5:3,6:5,12:$V0,16:4,21:$V1,22:$V2,24:$V3},{1:[3]},{1:[2,1]},{3:10,4:2,5:3,6:5,12:$V0,16:4,21:$V1,22:$V2,24:$V3},o($V4,$V5,{17:11}),{7:12,13:[1,13]},{16:14,21:$V1,22:$V2,24:$V3},{16:15,21:$V1,22:$V2,24:$V3},{25:[1,16],26:[1,17]},{13:[2,5]},{1:[2,2]},{1:[2,9],18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{8:55,10:[1,56],15:$Vv},o([10,15],[2,6]),o($V4,[2,17]),o($V4,[2,18]),o($V4,[2,19]),{20:[1,59],21:[1,60],22:$Vw,27:58,30:61},o($Vx,[2,11]),o($Vx,[2,12]),o($Vx,[2,13]),o($Vx,[2,14]),o($Vx,[2,15]),o($Vx,[2,16]),{9:63,20:$Vy,21:$Vz,23:$VA,43:64,66:68,69:[1,69],70:[1,70]},{9:71,20:$Vy,21:$Vz,23:$VA},{9:72,20:$Vy,21:$Vz,23:$VA},{9:73,20:$Vy,21:$Vz,23:$VA},{9:74,20:$Vy,21:$Vz,23:$VA},{9:75,20:$Vy,21:$Vz,23:$VA},{9:77,20:$Vy,21:$Vz,22:[1,76],23:$VA},o($VB,[2,50],{30:78,22:$Vw}),{22:[1,79]},{22:[1,80]},{22:[1,81]},{22:[1,82]},{22:[1,83]},o($VC,[2,51],{47:[1,84]}),o($VD,[2,68],{103:95,40:[1,85],46:$Vb,49:[1,86],51:[1,87],53:[1,88],55:[1,89],57:[1,90],59:[1,91],61:[1,92],62:[1,93],64:[1,94],80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu}),o($VE,[2,134]),o($VE,[2,155]),o($VE,[2,156]),o($VE,[2,157]),o($VE,[2,158]),o($VE,[2,159]),o($VE,[2,160]),o($VE,[2,161]),o($VE,[2,162]),o($VE,[2,163]),o($VE,[2,164]),o($VE,[2,165]),o($VE,[2,166]),o($VE,[2,167]),o($VE,[2,168]),o($VE,[2,169]),{9:96,20:$Vy,21:$Vz,23:$VA},{11:97,14:[1,98]},o($VF,[2,8]),o($V4,[2,20]),o($V4,[2,26]),o($V4,[2,27]),{21:[1,99]},o($VG,[2,34],{30:100,22:$Vw}),o($Vx,[2,35]),{44:101,45:37,46:$Vb,48:38,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},o($VH,[2,44]),o($VH,[2,45]),o($VH,[2,46]),o($VI,[2,72],{67:102,68:[1,103],71:[1,104]}),{22:$VJ,24:$VK,26:$VL,38:$VM,39:105,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o([46,68,71,80,90,91,94,95,96,98,99,105,106,107,108,109,110],[2,74]),o($Vx,[2,36]),o($Vx,[2,37]),o($Vx,[2,38]),o($Vx,[2,39]),o($Vx,[2,40]),{22:$VJ,24:$VK,26:$VL,38:$VM,39:142,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($Vd1,$V5,{17:143}),o($VB,[2,49],{46:$Ve1}),{26:$Vf1,46:$VO,80:$Vg1,86:145,87:[1,146],90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{84:[1,152],88:153,90:[1,154]},{26:$Vf1,46:$VO,80:$Vg1,84:[1,155],86:156,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:157,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:158,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{46:$Vb,48:159,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{22:$VJ,24:$VK,26:$VL,38:$VM,39:160,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:162,42:$VN,46:$VO,49:[1,161],61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:163,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:164,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:165,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:166,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:167,42:$VN,46:$VO,59:[1,168],61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:169,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:170,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:171,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VE,[2,135]),o($Vi1,[2,3]),{8:172,15:$Vv},{15:[2,7]},o($V4,[2,28]),o($VG,[2,33]),o($VB,[2,47],{30:173,22:$Vw}),o($VI,[2,69],{22:[1,174]}),{22:[1,175]},{22:$VJ,24:$VK,26:$VL,38:$VM,39:176,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,69:$VQ,70:[1,177],72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($Vj1,[2,76]),o($Vj1,[2,78]),o($Vj1,[2,124]),o($Vj1,[2,125]),o($Vj1,[2,126]),o($Vj1,[2,127]),o($Vj1,[2,128]),o($Vj1,[2,129]),o($Vj1,[2,130]),o($Vj1,[2,131]),o($Vj1,[2,132]),o($Vj1,[2,133]),o($Vj1,[2,142]),o($Vj1,[2,143]),o($Vj1,[2,144]),o($Vj1,[2,145]),o($Vj1,[2,146]),o($Vj1,[2,147]),o($Vj1,[2,148]),o($Vj1,[2,149]),o($Vj1,[2,150]),o($Vj1,[2,151]),o($Vj1,[2,152]),o($Vj1,[2,153]),o($Vj1,[2,154]),o($Vj1,[2,79]),o($Vj1,[2,80]),o($Vj1,[2,81]),o($Vj1,[2,82]),o($Vj1,[2,83]),o($Vj1,[2,84]),o($Vj1,[2,85]),o($Vj1,[2,86]),o($Vj1,[2,87]),o($Vj1,[2,88]),o($Vj1,[2,89]),{9:180,20:$Vy,21:$Vz,22:$VJ,23:$VA,24:$VK,26:$VL,38:$VM,40:[1,179],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,181],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{22:$Vw,30:182},{22:[1,183],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:184,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:[1,185]},o($Vk1,[2,136]),o($Vk1,[2,138]),o($Vk1,[2,139]),o($Vk1,[2,140]),o($Vk1,[2,141]),{22:[1,186]},{22:[1,187],91:[1,188]},o($Vl1,[2,107]),{22:[1,189]},{22:[1,190],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:184,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:[1,191],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:184,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:[1,192],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:184,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VC,[2,53],{103:95,46:$Vb,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu}),{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,193],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:194,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,50:[1,195],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,52:[1,196],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,54:[1,197],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,56:[1,198],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,58:[1,199],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,60:[1,200],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:201,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,202],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,63:[1,203],65:[1,204],69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,63:[1,206],65:[1,205],69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{9:207,20:$Vy,21:$Vz,23:$VA},o($VB,[2,48],{46:$Ve1}),o($VI,[2,71]),o($VI,[2,70]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,69:$VQ,71:[1,208],72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VI,[2,73]),o($Vj1,[2,77]),{22:$VJ,24:$VK,26:$VL,38:$VM,39:209,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($Vd1,$V5,{17:210}),o($Vx,[2,43]),{45:211,46:$Vb,48:38,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{22:$Vm1,75:$Vn1,85:212,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},o($Vk1,[2,137]),{22:$Vm1,75:$Vn1,85:226,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{22:$Vm1,75:$Vn1,85:227,87:$Vo1,89:[1,228],90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{22:$Vm1,75:$Vn1,85:229,87:$Vo1,89:[1,230],90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{90:[1,231]},{22:$Vm1,75:$Vn1,85:232,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{22:$Vm1,75:$Vn1,85:233,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{26:$Vf1,46:$VO,80:$Vg1,86:234,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{26:$Vf1,46:$VO,73:[1,236],80:$Vg1,86:235,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VD,[2,54]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,50:[1,237],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VD,[2,60]),o($VD,[2,56]),o($VD,[2,57]),o($VD,[2,58]),o($VD,[2,59]),o($VD,[2,61]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,60:[1,238],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},o($VD,[2,63]),o($VD,[2,64]),o($VD,[2,66]),o($VD,[2,65]),o($VD,[2,67]),o($Vi1,[2,4]),o([22,46,80,90,91,94,95,96,98,99,105,106,107,108,109,110],[2,75]),{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,239],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,90:$V_,91:$V$,94:$V01,95:$V11,96:$V21,98:$V31,99:$V41,100:$V51,101:$V61,102:114,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,240],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},o($VC,[2,52]),o($VF,[2,99],{91:$Vx1}),o($Vy1,[2,109],{93:242,22:$Vm1,75:$Vn1,87:$Vo1,90:$Vp1,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1}),o($Vz1,[2,111]),o($Vz1,[2,113]),o($Vz1,[2,114]),o($Vz1,[2,115]),o($Vz1,[2,116]),o($Vz1,[2,117]),o($Vz1,[2,118]),o($Vz1,[2,119]),o($Vz1,[2,120]),o($Vz1,[2,121]),o($Vz1,[2,122]),o($Vz1,[2,123]),o($VF,[2,100],{91:$Vx1}),o($VF,[2,101],{91:$Vx1}),{22:[1,243]},o($VF,[2,102],{91:$Vx1}),{22:[1,244]},o($Vl1,[2,108]),o($VF,[2,92],{91:$Vx1}),o($VF,[2,93],{91:$Vx1}),o($VF,[2,94],{102:149,104:184,26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1}),o($VF,[2,95],{102:149,104:184,22:[1,245],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1}),o($VF,[2,97],{22:[1,246]}),{50:[1,247]},{60:[1,248]},{9:249,20:$Vy,21:$Vz,23:$VA},o($Vx,[2,42]),{22:$Vm1,75:$Vn1,87:$Vo1,90:$Vp1,92:250,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},o($Vz1,[2,112]),{26:$Vf1,46:$VO,80:$Vg1,86:251,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:252,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,102:149,104:147,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1},{73:[1,253]},{73:[1,254]},o($VD,[2,55]),o($VD,[2,62]),o($Vd1,$V5,{17:255}),o($Vy1,[2,110],{93:242,22:$Vm1,75:$Vn1,87:$Vo1,90:$Vp1,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1}),o($VF,[2,105],{102:149,104:184,22:[1,256],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1}),o($VF,[2,106],{102:149,104:184,22:[1,257],26:$Vf1,46:$VO,80:$Vg1,90:$V_,91:$V$,94:$V01,95:$V11,96:$Vh1,98:$V31,99:$V41,105:$V71,106:$V81,107:$V91,108:$Va1,109:$Vb1,110:$Vc1}),o($VF,[2,96]),o($VF,[2,98]),{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,258],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,90:$Vi,91:$Vj,94:$Vk,95:$Vl,96:$Vm,98:$Vn,99:$Vo,103:39,105:$Vp,106:$Vq,107:$Vr,108:$Vs,109:$Vt,110:$Vu},{22:$Vm1,75:$Vn1,85:259,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},{22:$Vm1,75:$Vn1,85:260,87:$Vo1,90:$Vp1,92:213,93:214,94:$Vq1,95:$Vr1,96:$Vs1,97:$Vt1,98:$Vu1,99:$Vv1,100:$Vw1},o($Vx,[2,41]),o($VF,[2,103],{91:$Vx1}),o($VF,[2,104],{91:$Vx1})],
+table: [{3:1,4:2,5:3,6:5,12:$V0,16:4,21:$V1,22:$V2,24:$V3},{1:[3]},{1:[2,1]},{3:10,4:2,5:3,6:5,12:$V0,16:4,21:$V1,22:$V2,24:$V3},o($V4,$V5,{17:11}),{7:12,13:[1,13]},{16:14,21:$V1,22:$V2,24:$V3},{16:15,21:$V1,22:$V2,24:$V3},{25:[1,16],26:[1,17]},{13:[2,5]},{1:[2,2]},{1:[2,9],18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{8:55,10:[1,56],15:$Vv},o([10,15],[2,6]),o($V4,[2,17]),o($V4,[2,18]),o($V4,[2,19]),{20:[1,59],21:[1,60],22:$Vw,27:58,30:61},o($Vx,[2,11]),o($Vx,[2,12]),o($Vx,[2,13]),o($Vx,[2,14]),o($Vx,[2,15]),o($Vx,[2,16]),{9:63,20:$Vy,21:$Vz,23:$VA,43:64,66:68,69:[1,69],70:[1,70]},{9:71,20:$Vy,21:$Vz,23:$VA},{9:72,20:$Vy,21:$Vz,23:$VA},{9:73,20:$Vy,21:$Vz,23:$VA},{9:74,20:$Vy,21:$Vz,23:$VA},{9:75,20:$Vy,21:$Vz,23:$VA},{9:77,20:$Vy,21:$Vz,22:[1,76],23:$VA},o($VB,[2,50],{30:78,22:$Vw}),{22:[1,79]},{22:[1,80]},{22:[1,81]},{22:[1,82]},{22:[1,83]},o($VC,[2,51],{47:[1,84]}),o($VD,[2,68],{104:95,40:[1,85],46:$Vb,49:[1,86],51:[1,87],53:[1,88],55:[1,89],57:[1,90],59:[1,91],61:[1,92],62:[1,93],64:[1,94],80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu}),o($VE,[2,136]),o($VE,[2,157]),o($VE,[2,158]),o($VE,[2,159]),o($VE,[2,160]),o($VE,[2,161]),o($VE,[2,162]),o($VE,[2,163]),o($VE,[2,164]),o($VE,[2,165]),o($VE,[2,166]),o($VE,[2,167]),o($VE,[2,168]),o($VE,[2,169]),o($VE,[2,170]),o($VE,[2,171]),{9:96,20:$Vy,21:$Vz,23:$VA},{11:97,14:[1,98]},o($VF,[2,8]),o($V4,[2,20]),o($V4,[2,26]),o($V4,[2,27]),{21:[1,99]},o($VG,[2,34],{30:100,22:$Vw}),o($Vx,[2,35]),{44:101,45:37,46:$Vb,48:38,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},o($VH,[2,44]),o($VH,[2,45]),o($VH,[2,46]),o($VI,[2,72],{67:102,68:[1,103],71:[1,104]}),{22:$VJ,24:$VK,26:$VL,38:$VM,39:105,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o([46,68,71,80,91,92,95,96,97,99,100,106,107,108,109,110,111],[2,74]),o($Vx,[2,36]),o($Vx,[2,37]),o($Vx,[2,38]),o($Vx,[2,39]),o($Vx,[2,40]),{22:$VJ,24:$VK,26:$VL,38:$VM,39:142,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($Vd1,$V5,{17:143}),o($VB,[2,49],{46:$Ve1}),{26:$Vf1,46:$VO,80:$Vg1,86:145,88:[1,146],91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{84:[1,152],89:153,91:[1,154]},{26:$Vf1,46:$VO,80:$Vg1,84:[1,155],86:156,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:157,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:158,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{46:$Vb,48:159,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{22:$VJ,24:$VK,26:$VL,38:$VM,39:160,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:162,42:$VN,46:$VO,49:[1,161],61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:163,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:164,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:165,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:166,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:167,42:$VN,46:$VO,59:[1,168],61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:169,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:170,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:171,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VE,[2,137]),o($Vi1,[2,3]),{8:172,15:$Vv},{15:[2,7]},o($V4,[2,28]),o($VG,[2,33]),o($VB,[2,47],{30:173,22:$Vw}),o($VI,[2,69],{22:[1,174]}),{22:[1,175]},{22:$VJ,24:$VK,26:$VL,38:$VM,39:176,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,69:$VQ,70:[1,177],72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($Vj1,[2,76]),o($Vj1,[2,78]),o($Vj1,[2,126]),o($Vj1,[2,127]),o($Vj1,[2,128]),o($Vj1,[2,129]),o($Vj1,[2,130]),o($Vj1,[2,131]),o($Vj1,[2,132]),o($Vj1,[2,133]),o($Vj1,[2,134]),o($Vj1,[2,135]),o($Vj1,[2,144]),o($Vj1,[2,145]),o($Vj1,[2,146]),o($Vj1,[2,147]),o($Vj1,[2,148]),o($Vj1,[2,149]),o($Vj1,[2,150]),o($Vj1,[2,151]),o($Vj1,[2,152]),o($Vj1,[2,153]),o($Vj1,[2,154]),o($Vj1,[2,155]),o($Vj1,[2,156]),o($Vj1,[2,79]),o($Vj1,[2,80]),o($Vj1,[2,81]),o($Vj1,[2,82]),o($Vj1,[2,83]),o($Vj1,[2,84]),o($Vj1,[2,85]),o($Vj1,[2,86]),o($Vj1,[2,87]),o($Vj1,[2,88]),o($Vj1,[2,89]),{9:180,20:$Vy,21:$Vz,22:$VJ,23:$VA,24:$VK,26:$VL,38:$VM,40:[1,179],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,181],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{22:$Vw,30:182},{22:[1,183],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:184,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:[1,185]},o($Vk1,[2,138]),o($Vk1,[2,140]),o($Vk1,[2,141]),o($Vk1,[2,142]),o($Vk1,[2,143]),{22:[1,186]},{22:[1,187],92:[1,188]},o($Vl1,[2,109]),{22:[1,189]},{22:[1,190],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:184,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:[1,191],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:184,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:[1,192],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:184,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VC,[2,53],{104:95,46:$Vb,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu}),{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,193],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:194,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,50:[1,195],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,52:[1,196],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,54:[1,197],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,56:[1,198],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,58:[1,199],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,60:[1,200],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,39:201,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,202],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,63:[1,203],65:[1,204],69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,63:[1,206],65:[1,205],69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{9:207,20:$Vy,21:$Vz,23:$VA},o($VB,[2,48],{46:$Ve1}),o($VI,[2,71]),o($VI,[2,70]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,61:$VP,69:$VQ,71:[1,208],72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VI,[2,73]),o($Vj1,[2,77]),{22:$VJ,24:$VK,26:$VL,38:$VM,39:209,42:$VN,46:$VO,61:$VP,69:$VQ,72:106,73:$VR,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($Vd1,$V5,{17:210}),o($Vx,[2,43]),{45:211,46:$Vb,48:38,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{22:$Vm1,75:$Vn1,85:212,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},o($Vk1,[2,139]),{22:$Vm1,75:$Vn1,85:226,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{22:$Vm1,75:$Vn1,85:227,88:$Vo1,90:[1,228],91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{22:$Vm1,75:$Vn1,85:229,88:$Vo1,90:[1,230],91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{91:[1,231]},{22:$Vm1,75:$Vn1,85:232,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{22:$Vm1,75:$Vn1,85:233,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{26:$Vf1,46:$VO,80:$Vg1,86:234,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{26:$Vf1,46:$VO,73:[1,236],80:$Vg1,86:235,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VD,[2,54]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,50:[1,237],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VD,[2,60]),o($VD,[2,56]),o($VD,[2,57]),o($VD,[2,58]),o($VD,[2,59]),o($VD,[2,61]),{22:$VJ,24:$VK,26:$VL,38:$VM,42:$VN,46:$VO,60:[1,238],61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},o($VD,[2,63]),o($VD,[2,64]),o($VD,[2,66]),o($VD,[2,65]),o($VD,[2,67]),o($Vi1,[2,4]),o([22,46,80,91,92,95,96,97,99,100,106,107,108,109,110,111],[2,75]),{22:$VJ,24:$VK,26:$VL,38:$VM,41:[1,239],42:$VN,46:$VO,61:$VP,69:$VQ,72:178,74:117,75:$VS,76:$VT,77:$VU,78:$VV,79:$VW,80:$VX,81:$VY,83:108,84:$VZ,91:$V_,92:$V$,95:$V01,96:$V11,97:$V21,99:$V31,100:$V41,101:$V51,102:$V61,103:114,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,240],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},o($VC,[2,52]),o($VF,[2,101],{92:$Vx1}),o($Vy1,[2,111],{94:242,22:$Vm1,75:$Vn1,88:$Vo1,91:$Vp1,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1}),o($Vz1,[2,113]),o($Vz1,[2,115]),o($Vz1,[2,116]),o($Vz1,[2,117]),o($Vz1,[2,118]),o($Vz1,[2,119]),o($Vz1,[2,120]),o($Vz1,[2,121]),o($Vz1,[2,122]),o($Vz1,[2,123]),o($Vz1,[2,124]),o($Vz1,[2,125]),o($VF,[2,102],{92:$Vx1}),o($VF,[2,103],{92:$Vx1}),{22:[1,243]},o($VF,[2,104],{92:$Vx1}),{22:[1,244]},o($Vl1,[2,110]),o($VF,[2,92],{92:$Vx1}),o($VF,[2,93],{92:$Vx1}),o($VF,[2,94],{103:149,105:184,26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1}),o($VF,[2,95],{103:149,105:184,22:[1,245],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1}),o($VF,[2,97],{22:[1,246]}),{50:[1,247]},{60:[1,248]},{9:249,20:$Vy,21:$Vz,23:$VA},o($Vx,[2,42]),{22:$Vm1,75:$Vn1,88:$Vo1,91:$Vp1,93:250,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},o($Vz1,[2,114]),{26:$Vf1,46:$VO,80:$Vg1,86:251,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{26:$Vf1,46:$VO,80:$Vg1,86:252,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,103:149,105:147,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1},{73:[1,253]},{73:[1,254],87:[1,255]},o($VD,[2,55]),o($VD,[2,62]),o($Vd1,$V5,{17:256}),o($Vy1,[2,112],{94:242,22:$Vm1,75:$Vn1,88:$Vo1,91:$Vp1,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1}),o($VF,[2,107],{103:149,105:184,22:[1,257],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1}),o($VF,[2,108],{103:149,105:184,22:[1,258],26:$Vf1,46:$VO,80:$Vg1,91:$V_,92:$V$,95:$V01,96:$V11,97:$Vh1,99:$V31,100:$V41,106:$V71,107:$V81,108:$V91,109:$Va1,110:$Vb1,111:$Vc1}),o($VF,[2,96]),o($VF,[2,98],{22:[1,259]}),o($VF,[2,99]),{18:18,19:19,20:$V6,21:$V7,22:$V8,23:$V9,32:24,33:25,34:26,35:27,36:28,37:29,38:$Va,42:[1,260],44:31,45:37,46:$Vb,48:38,75:$Vc,76:$Vd,77:$Ve,78:$Vf,79:$Vg,80:$Vh,91:$Vi,92:$Vj,95:$Vk,96:$Vl,97:$Vm,99:$Vn,100:$Vo,104:39,106:$Vp,107:$Vq,108:$Vr,109:$Vs,110:$Vt,111:$Vu},{22:$Vm1,75:$Vn1,85:261,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{22:$Vm1,75:$Vn1,85:262,88:$Vo1,91:$Vp1,93:213,94:214,95:$Vq1,96:$Vr1,97:$Vs1,98:$Vt1,99:$Vu1,100:$Vv1,101:$Vw1},{87:[1,263]},o($Vx,[2,41]),o($VF,[2,105],{92:$Vx1}),o($VF,[2,106],{92:$Vx1}),o($VF,[2,100])],
 defaultActions: {2:[2,1],9:[2,5],10:[2,2],98:[2,7]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
@@ -10781,7 +10802,7 @@ case 11:return 84;
 break;
 case 12:return 76;
 break;
-case 13:return 89;
+case 13:return 90;
 break;
 case 14:return 77;
 break;
@@ -10797,15 +10818,15 @@ case 19:return 38;
 break;
 case 20:return 42;
 break;
-case 21:   this.popState();  return 25; 
+case 21:return 87;
 break;
-case 22:   this.popState();  return 26; 
+case 22:return 87;
 break;
-case 23:   this.popState();  return 26; 
+case 23:return 87;
 break;
-case 24:   this.popState();  return 26; 
+case 24:return 87;
 break;
-case 25:   this.popState();  return 26; 
+case 25:   this.popState();  return 25; 
 break;
 case 26:   this.popState();  return 26; 
 break;
@@ -10819,29 +10840,29 @@ case 30:   this.popState();  return 26;
 break;
 case 31:   this.popState();  return 26; 
 break;
-case 32: return 90;
+case 32:   this.popState();  return 26; 
 break;
-case 33:return 98;
+case 33:   this.popState();  return 26; 
 break;
-case 34:return 47;
+case 34:   this.popState();  return 26; 
 break;
-case 35:return 95;
+case 35:   this.popState();  return 26; 
 break;
-case 36:return 46;
+case 36: return 91;
 break;
-case 37:return 20;
+case 37:return 99;
 break;
-case 38:return 91;
+case 38:return 47;
 break;
-case 39:return 109;
+case 39:return 96;
 break;
-case 40:return 70;
+case 40:return 46;
 break;
-case 41:return 70;
+case 41:return 20;
 break;
-case 42:return 70;
+case 42:return 92;
 break;
-case 43:return 70;
+case 43:return 110;
 break;
 case 44:return 70;
 break;
@@ -10891,13 +10912,13 @@ case 66:return 70;
 break;
 case 67:return 70;
 break;
-case 68:return 69;
+case 68:return 70;
 break;
-case 69:return 69;
+case 69:return 70;
 break;
-case 70:return 69;
+case 70:return 70;
 break;
-case 71:return 69;
+case 71:return 70;
 break;
 case 72:return 69;
 break;
@@ -10915,86 +10936,94 @@ case 78:return 69;
 break;
 case 79:return 69;
 break;
-case 80:return 51;
+case 80:return 69;
 break;
-case 81:return 52;
+case 81:return 69;
 break;
-case 82:return 53;
+case 82:return 69;
 break;
-case 83:return 54;
+case 83:return 69;
 break;
-case 84:return 55;
+case 84:return 51;
 break;
-case 85:return 56;
+case 85:return 52;
 break;
-case 86:return 57;
+case 86:return 53;
 break;
-case 87:return 58;
+case 87:return 54;
 break;
-case 88:return 96;
+case 88:return 55;
 break;
-case 89:return 99;
+case 89:return 56;
 break;
-case 90:return 110;
+case 90:return 57;
 break;
-case 91:return 107;
+case 91:return 58;
 break;
-case 92:return 100;
+case 92:return 97;
 break;
-case 93:return 108;
+case 93:return 100;
 break;
-case 94:return 108;
+case 94:return 111;
 break;
-case 95:return 101;
+case 95:return 108;
 break;
-case 96:return 61;
+case 96:return 101;
 break;
-case 97:return 81;
+case 97:return 109;
 break;
-case 98:return 'SEP';
+case 98:return 109;
 break;
-case 99:return 80;
+case 99:return 102;
 break;
-case 100:return 94;
+case 100:return 61;
 break;
-case 101:return 63;
+case 101:return 81;
 break;
-case 102:return 62;
+case 102:return 'SEP';
 break;
-case 103:return 65;
+case 103:return 80;
 break;
-case 104:return 64;
+case 104:return 95;
 break;
-case 105:return 105;
+case 105:return 63;
 break;
-case 106:return 106;
+case 106:return 62;
 break;
-case 107:return 71;
+case 107:return 65;
 break;
-case 108:return 49;
+case 108:return 64;
 break;
-case 109:return 50;
+case 109:return 106;
 break;
-case 110:return 40;
+case 110:return 107;
 break;
-case 111:return 41;
+case 111:return 71;
 break;
-case 112:return 59
+case 112:return 49;
 break;
-case 113:return 60
+case 113:return 50;
 break;
-case 114:return 116;
+case 114:return 40;
 break;
-case 115:return 21;
+case 115:return 41;
 break;
-case 116:return 22;
+case 116:return 59
 break;
-case 117:return 23;
+case 117:return 60
+break;
+case 118:return 117;
+break;
+case 119:return 21;
+break;
+case 120:return 22;
+break;
+case 121:return 23;
 break;
 }
 },
-rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)[^\n]*)/,/^(?:[^\}]%%[^\n]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:style\b)/,/^(?:default\b)/,/^(?:linkStyle\b)/,/^(?:interpolate\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:flowchart\b)/,/^(?:subgraph\b)/,/^(?:end\b\s*)/,/^(?:(\r?\n)*\s*\n)/,/^(?:\s*LR\b)/,/^(?:\s*RL\b)/,/^(?:\s*TB\b)/,/^(?:\s*BT\b)/,/^(?:\s*TD\b)/,/^(?:\s*BR\b)/,/^(?:\s*<)/,/^(?:\s*>)/,/^(?:\s*\^)/,/^(?:\s*v\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::::)/,/^(?::)/,/^(?:&)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\s*--[x]\s*)/,/^(?:\s*-->\s*)/,/^(?:\s*<-->\s*)/,/^(?:\s*[x]--[x]\s*)/,/^(?:\s*[o]--[o]\s*)/,/^(?:\s*[o]\.-[o]\s*)/,/^(?:\s*<==>\s*)/,/^(?:\s*[o]==[o]\s*)/,/^(?:\s*[x]==[x]\s*)/,/^(?:\s*[x].-[x]\s*)/,/^(?:\s*[x]-\.-[x]\s*)/,/^(?:\s*<\.->\s*)/,/^(?:\s*<-\.->\s*)/,/^(?:\s*[o]-\.-[o]\s*)/,/^(?:\s*--[o]\s*)/,/^(?:\s*---\s*)/,/^(?:\s*-\.-[x]\s*)/,/^(?:\s*-\.->\s*)/,/^(?:\s*-\.-[o]\s*)/,/^(?:\s*-\.-\s*)/,/^(?:\s*.-[x]\s*)/,/^(?:\s*\.->\s*)/,/^(?:\s*\.-[o]\s*)/,/^(?:\s*\.-\s*)/,/^(?:\s*==[x]\s*)/,/^(?:\s*==>\s*)/,/^(?:\s*==[o]\s*)/,/^(?:\s*==[\=]\s*)/,/^(?:\s*<--\s*)/,/^(?:\s*[x]--\s*)/,/^(?:\s*[o]--\s*)/,/^(?:\s*<-\.\s*)/,/^(?:\s*[x]-\.\s*)/,/^(?:\s*[o]-\.\s*)/,/^(?:\s*<==\s*)/,/^(?:\s*[x]==\s*)/,/^(?:\s*[o]==\s*)/,/^(?:\s*--\s*)/,/^(?:\s*-\.\s*)/,/^(?:\s*==\s*)/,/^(?:\(-)/,/^(?:-\))/,/^(?:\(\[)/,/^(?:\]\))/,/^(?:\[\[)/,/^(?:\]\])/,/^(?:\[\()/,/^(?:\)\])/,/^(?:-)/,/^(?:\.)/,/^(?:[\_])/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:\\\|)/,/^(?:v\b)/,/^(?:[A-Za-z]+)/,/^(?:\\\])/,/^(?:\[\/)/,/^(?:\/\])/,/^(?:\[\\)/,/^(?:[!"#$%&'*+,-.`?\\_/])/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:(\r?\n)+)/,/^(?:\s)/,/^(?:$)/],
-conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"vertex":{"rules":[],"inclusive":false},"dir":{"rules":[21,22,23,24,25,26,27,28,29,30,31],"inclusive":false},"string":{"rules":[8,9],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,10,11,12,13,14,15,16,17,18,19,20,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)[^\n]*)/,/^(?:[^\}]%%[^\n]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:style\b)/,/^(?:default\b)/,/^(?:linkStyle\b)/,/^(?:interpolate\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:flowchart\b)/,/^(?:subgraph\b)/,/^(?:end\b\s*)/,/^(?:_self\b)/,/^(?:_blank\b)/,/^(?:_parent\b)/,/^(?:_top\b)/,/^(?:(\r?\n)*\s*\n)/,/^(?:\s*LR\b)/,/^(?:\s*RL\b)/,/^(?:\s*TB\b)/,/^(?:\s*BT\b)/,/^(?:\s*TD\b)/,/^(?:\s*BR\b)/,/^(?:\s*<)/,/^(?:\s*>)/,/^(?:\s*\^)/,/^(?:\s*v\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::::)/,/^(?::)/,/^(?:&)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:\s*--[x]\s*)/,/^(?:\s*-->\s*)/,/^(?:\s*<-->\s*)/,/^(?:\s*[x]--[x]\s*)/,/^(?:\s*[o]--[o]\s*)/,/^(?:\s*[o]\.-[o]\s*)/,/^(?:\s*<==>\s*)/,/^(?:\s*[o]==[o]\s*)/,/^(?:\s*[x]==[x]\s*)/,/^(?:\s*[x].-[x]\s*)/,/^(?:\s*[x]-\.-[x]\s*)/,/^(?:\s*<\.->\s*)/,/^(?:\s*<-\.->\s*)/,/^(?:\s*[o]-\.-[o]\s*)/,/^(?:\s*--[o]\s*)/,/^(?:\s*---\s*)/,/^(?:\s*-\.-[x]\s*)/,/^(?:\s*-\.->\s*)/,/^(?:\s*-\.-[o]\s*)/,/^(?:\s*-\.-\s*)/,/^(?:\s*.-[x]\s*)/,/^(?:\s*\.->\s*)/,/^(?:\s*\.-[o]\s*)/,/^(?:\s*\.-\s*)/,/^(?:\s*==[x]\s*)/,/^(?:\s*==>\s*)/,/^(?:\s*==[o]\s*)/,/^(?:\s*==[\=]\s*)/,/^(?:\s*<--\s*)/,/^(?:\s*[x]--\s*)/,/^(?:\s*[o]--\s*)/,/^(?:\s*<-\.\s*)/,/^(?:\s*[x]-\.\s*)/,/^(?:\s*[o]-\.\s*)/,/^(?:\s*<==\s*)/,/^(?:\s*[x]==\s*)/,/^(?:\s*[o]==\s*)/,/^(?:\s*--\s*)/,/^(?:\s*-\.\s*)/,/^(?:\s*==\s*)/,/^(?:\(-)/,/^(?:-\))/,/^(?:\(\[)/,/^(?:\]\))/,/^(?:\[\[)/,/^(?:\]\])/,/^(?:\[\()/,/^(?:\)\])/,/^(?:-)/,/^(?:\.)/,/^(?:[\_])/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:\\\|)/,/^(?:v\b)/,/^(?:[A-Za-z]+)/,/^(?:\\\])/,/^(?:\[\/)/,/^(?:\/\])/,/^(?:\[\\)/,/^(?:[!"#$%&'*+,-.`?\\_/])/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:(\r?\n)+)/,/^(?:\s)/,/^(?:$)/],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"vertex":{"rules":[],"inclusive":false},"dir":{"rules":[25,26,27,28,29,30,31,32,33,34,35],"inclusive":false},"string":{"rules":[8,9],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121],"inclusive":true}}
 });
 return lexer;
 })();
@@ -11037,7 +11066,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.secondBkg, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
+  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .label text {\n    fill: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n      background-color: ").concat(options.edgeLabelBackground, ";\n      fill: ").concat(options.edgeLabelBackground, ";\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -17123,7 +17152,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _sequenceDb__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
@@ -17335,6 +17366,7 @@ var bounds = {
     return this.verticalPos;
   },
   getBounds: function getBounds() {
+    console.log('here', this.data);
     return {
       bounds: this.data,
       models: this.models
@@ -17386,6 +17418,30 @@ var drawNote = function drawNote(elem, noteModel) {
   bounds.insert(noteModel.startx, noteModel.starty, noteModel.stopx, noteModel.stopy);
   bounds.models.addNote(noteModel);
 };
+
+var messageFont = function messageFont(cnf) {
+  return {
+    fontFamily: cnf.messageFontFamily,
+    fontSize: cnf.messageFontSize,
+    fontWeight: cnf.messageFontWeight
+  };
+};
+
+var noteFont = function noteFont(cnf) {
+  return {
+    fontFamily: cnf.noteFontFamily,
+    fontSize: cnf.noteFontSize,
+    fontWeight: cnf.noteFontWeight
+  };
+};
+
+var actorFont = function actorFont(cnf) {
+  return {
+    fontFamily: cnf.actorFontFamily,
+    fontSize: cnf.actorFontSize,
+    fontWeight: cnf.actorFontWeight
+  };
+};
 /**
  * Draws a message
  * @param g - the parent of the message element
@@ -17403,7 +17459,7 @@ var drawMessage = function drawMessage(g, msgModel) {
       sequenceIndex = msgModel.sequenceIndex,
       wrap = msgModel.wrap;
   var lines = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].splitBreaks(message).length;
-  var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(message, conf.messageFont());
+  var textDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(message, messageFont(conf));
   var lineHeight = textDims.height / lines;
   msgModel.height += lineHeight;
   bounds.bumpVerticalPos(lineHeight);
@@ -17519,7 +17575,7 @@ var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
   bounds.bumpVerticalPos(conf.height);
 };
 var setConf = function setConf(cnf) {
-  Object(_utils__WEBPACK_IMPORTED_MODULE_6__["assignWithDepth"])(conf, cnf);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_7__["assignWithDepth"])(conf, cnf);
 
   if (cnf.fontFamily) {
     conf.actorFontFamily = conf.noteFontFamily = conf.messageFontFamily = cnf.fontFamily;
@@ -17559,12 +17615,12 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 
   if (msg.id && msg.message && loopWidths[msg.id]) {
     var loopWidth = loopWidths[msg.id].width;
-    var textConf = conf.messageFont();
-    msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel("[".concat(msg.message, "]"), loopWidth - 2 * conf.wrapPadding, textConf);
+    var textConf = messageFont(conf);
+    msg.message = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel("[".concat(msg.message, "]"), loopWidth - 2 * conf.wrapPadding, textConf);
     msg.width = loopWidth;
     msg.wrap = true; // const lines = common.splitBreaks(msg.message).length;
 
-    var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, textConf);
+    var textDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(msg.message, textConf);
     var totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
     heightAdjust = postMargin + totalOffset;
     _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("".concat(totalOffset, " - ").concat(msg.message));
@@ -17581,6 +17637,8 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 
 
 var draw = function draw(text, id) {
+  conf = _config__WEBPACK_IMPORTED_MODULE_6__["getConfig"]().sequence;
+  console.log('there ', conf);
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.clear();
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.setWrap(conf.wrap);
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].parse(text + '\n');
@@ -17795,9 +17853,9 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
 
       var isNote = msg.placement !== undefined;
       var isMessage = !isNote;
-      var textFont = isNote ? conf.noteFont() : conf.messageFont();
-      var wrappedMessage = msg.wrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, conf.width - 2 * conf.wrapPadding, textFont) : msg.message;
-      var messageDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(wrappedMessage, textFont);
+      var textFont = isNote ? noteFont(conf) : messageFont(conf);
+      var wrappedMessage = msg.wrap ? _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, conf.width - 2 * conf.wrapPadding, textFont) : msg.message;
+      var messageDimensions = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(wrappedMessage, textFont);
       var messageWidth = messageDimensions.width + 2 * conf.wrapPadding;
       /*
        * The following scenarios should be supported:
@@ -17859,10 +17917,10 @@ var calculateActorMargins = function calculateActorMargins(actors, actorToMessag
     var actor = actors[prop];
 
     if (actor.wrap) {
-      actor.description = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(actor.description, conf.width - 2 * conf.wrapPadding, conf.actorFont());
+      actor.description = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(actor.description, conf.width - 2 * conf.wrapPadding, actorFont(conf));
     }
 
-    var actDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(actor.description, conf.actorFont());
+    var actDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(actor.description, actorFont(conf));
     actor.width = actor.wrap ? conf.width : Math.max(conf.width, actDims.width + 2 * conf.wrapPadding);
     actor.height = actor.wrap ? Math.max(actDims.height, conf.height) : conf.height;
     maxHeight = Math.max(maxHeight, actor.height);
@@ -17893,7 +17951,7 @@ var buildNoteModel = function buildNoteModel(msg, actors) {
   var startx = actors[msg.from].x;
   var stopx = actors[msg.to].x;
   var shouldWrap = msg.wrap && msg.message;
-  var textDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message, conf.noteFont());
+  var textDimensions = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, conf.width, noteFont(conf)) : msg.message, noteFont(conf));
   var noteModel = {
     width: shouldWrap ? conf.width : Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin),
     height: 0,
@@ -17911,7 +17969,7 @@ var buildNoteModel = function buildNoteModel(msg, actors) {
     noteModel.width = shouldWrap ? Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin) : Math.max(actors[msg.from].width / 2 + actors[msg.to].width / 2, textDimensions.width + 2 * conf.noteMargin);
     noteModel.startx = startx - noteModel.width + (actors[msg.from].width - conf.actorMargin) / 2;
   } else if (msg.to === msg.from) {
-    textDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, Math.max(conf.width, actors[msg.from].width), conf.noteFont()) : msg.message, conf.noteFont());
+    textDimensions = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, Math.max(conf.width, actors[msg.from].width), noteFont(conf)) : msg.message, noteFont(conf));
     noteModel.width = shouldWrap ? Math.max(conf.width, actors[msg.from].width) : Math.max(actors[msg.from].width, conf.width, textDimensions.width + 2 * conf.noteMargin);
     noteModel.startx = startx + (actors[msg.from].width - noteModel.width) / 2;
   } else {
@@ -17920,7 +17978,7 @@ var buildNoteModel = function buildNoteModel(msg, actors) {
   }
 
   if (shouldWrap) {
-    noteModel.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, noteModel.width - 2 * conf.wrapPadding, conf.noteFont());
+    noteModel.message = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, noteModel.width - 2 * conf.wrapPadding, noteFont(conf));
   }
 
   _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("NM:[".concat(noteModel.startx, ",").concat(noteModel.stopx, ",").concat(noteModel.starty, ",").concat(noteModel.stopy, ":").concat(noteModel.width, ",").concat(noteModel.height, "=").concat(msg.message, "]"));
@@ -17944,10 +18002,10 @@ var buildMessageModel = function buildMessageModel(msg, actors) {
   var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
   var allBounds = fromBounds.concat(toBounds);
   var boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
-  var msgDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, conf.messageFont());
+  var msgDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(msg.message, messageFont(conf));
 
   if (msg.wrap && msg.message) {
-    msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width), conf.messageFont());
+    msg.message = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width), messageFont(conf));
   }
 
   return {
@@ -17970,7 +18028,7 @@ var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
   var stack = [];
   var current, noteModel, msgModel;
   messages.forEach(function (msg) {
-    msg.id = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].random({
+    msg.id = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].random({
       length: 10
     });
 
@@ -19450,7 +19508,9 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 var drawStartState = function drawStartState(g) {
-  return g.append('circle').style('stroke', 'black').style('fill', 'black').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit);
+  return g.append('circle') // .style('stroke', 'black')
+  // .style('fill', 'black')
+  .attr('class', 'start-state').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit);
 };
 /**
  * Draws a start state as a black circle
@@ -19587,8 +19647,12 @@ var addTitleAndBox = function addTitleAndBox(g, stateDef, altBkg) {
 };
 
 var drawEndState = function drawEndState(g) {
-  g.append('circle').style('stroke', 'black').style('fill', 'white').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding);
-  return g.append('circle').style('stroke', 'black').style('fill', 'black').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + 2).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + 2);
+  g.append('circle') // .style('stroke', 'black')
+  // .style('fill', 'white')
+  .attr('class', 'end-state-outer').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.miniPadding);
+  return g.append('circle') // .style('stroke', 'black')
+  // .style('fill', 'black')
+  .attr('class', 'end-state-inner').attr('r', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit).attr('cx', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + 2).attr('cy', Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.sizeUnit + 2);
 };
 
 var drawForkJoinState = function drawForkJoinState(g, stateDef) {
@@ -20800,7 +20864,7 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.tertiaryColor, ";\n  opacity: 0.2;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\n\n.node circle.state-start {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
+  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.tertiaryColor, ";\n  opacity: 0.5;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.tertiaryTextColor, ";\n}\n.label div .edgeLabel {\n  color: ").concat(options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\n\n.node circle.state-start {\n  fill: ").concat(options.lineColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n.end-state-inner {\n  fill: ").concat(options.background, ";\n  // stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -21938,7 +22002,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return ".label {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    color: ".concat(options.textColor, ";\n  }\n  .mouth {\n    stroke: #666;\n  }\n\n  line {\n    stroke: ").concat(options.textColor, "\n  }\n\n  .legend {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: #333;\n  }\n  .label {\n    color: ").concat(options.textColor, "\n  }\n\n  .face {\n    fill: #FFF8DC;\n    stroke: #999;\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.secondBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    font-size: 12px;\n    background: ").concat(options.secondBkg, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n\n  .task-type-0, .section-type-0  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType0) : '', ";\n  }\n  .task-type-1, .section-type-1  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType1) : '', ";\n  }\n  .task-type-2, .section-type-2  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType2) : '', ";\n  }\n  .task-type-3, .section-type-3  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType3) : '', ";\n  }\n  .task-type-4, .section-type-4  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType4) : '', ";\n  }\n  .task-type-5, .section-type-5  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType5) : '', ";\n  }\n  .task-type-6, .section-type-6  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType6) : '', ";\n  }\n  .task-type-7, .section-type-7  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType7) : '', ";\n  }\n");
+  return ".label {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    color: ".concat(options.textColor, ";\n  }\n  .mouth {\n    stroke: #666;\n  }\n\n  line {\n    stroke: ").concat(options.textColor, "\n  }\n\n  .legend {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: #333;\n  }\n  .label {\n    color: ").concat(options.textColor, "\n  }\n\n  .face {\n    fill: #FFF8DC;\n    stroke: #999;\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n\n  .task-type-0, .section-type-0  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType0) : '', ";\n  }\n  .task-type-1, .section-type-1  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType1) : '', ";\n  }\n  .task-type-2, .section-type-2  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType2) : '', ";\n  }\n  .task-type-3, .section-type-3  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType3) : '', ";\n  }\n  .task-type-4, .section-type-4  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType4) : '', ";\n  }\n  .task-type-5, .section-type-5  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType5) : '', ";\n  }\n  .task-type-6, .section-type-6  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType6) : '', ";\n  }\n  .task-type-7, .section-type-7  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType7) : '', ";\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -22433,8 +22497,8 @@ __webpack_require__.r(__webpack_exports__);
 var init = function init() {
   var _this = this;
 
-  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig();
-  console.log('Starting rendering diagrams (init) - mermaid.init', conf);
+  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
+
   var nodes;
 
   if (arguments.length >= 2) {
@@ -22533,8 +22597,7 @@ var init = function init() {
 };
 
 var initialize = function initialize(config) {
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].reset();
-
+  // mermaidAPI.reset();
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
@@ -22895,14 +22958,16 @@ var render = function render(id, _txt, cb, container) {
 
   if (graphInit) {
     _config__WEBPACK_IMPORTED_MODULE_39__["addDirective"](graphInit);
-  } else {
-    _config__WEBPACK_IMPORTED_MODULE_39__["reset"]();
-    var siteConfig = _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
-    _config__WEBPACK_IMPORTED_MODULE_39__["addDirective"](siteConfig);
-  }
+  } // else {
+  //   configApi.reset();
+  //   const siteConfig = configApi.getSiteConfig();
+  //   configApi.addDirective(siteConfig);
+  // }
+  // console.warn('Render fetching config');
+
 
   var cnf = _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]();
-  console.log('Render', cnf); // Check the maximum allowed text size
+  console.warn('Render with config after adding new directives', cnf.themeVariables.primaryColor); // Check the maximum allowed text size
 
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -22961,7 +23026,8 @@ var render = function render(id, _txt, cb, container) {
         userStyles += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
       }
     }
-  }
+  } // logger.warn(cnf.themeVariables);
+
 
   var stylis = new stylis__WEBPACK_IMPORTED_MODULE_0___default.a();
   var rules = stylis("#".concat(id), Object(_styles__WEBPACK_IMPORTED_MODULE_40__["default"])(graphType, userStyles, cnf.themeVariables));
@@ -23211,8 +23277,10 @@ function updateRendererConfigs(conf) {
   _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.class);
 }
 
-function reinitialize(options) {
-  "mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version), JSON.stringify(options), options.themeVariables.primaryColor; // // if (options.theme && theme[options.theme]) {
+function reinitialize() {// `mermaidAPI.reinitialize: v${pkg.version}`,
+  //   JSON.stringify(options),
+  //   options.themeVariables.primaryColor;
+  // // if (options.theme && theme[options.theme]) {
   // //   options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
   // // }
   // // Set default options
@@ -23224,7 +23292,7 @@ function reinitialize(options) {
 }
 
 function initialize(options) {
-  console.trace("mermaidAPI.initialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version, " ").concat(options)); // Set default options
+  console.warn("mermaidAPI.initialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version, " "), options); // Set default options
 
   if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme]) {
     // Todo merge with user options
@@ -23235,8 +23303,7 @@ function initialize(options) {
 
   var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_39__["setSiteConfig"](options) : _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
   updateRendererConfigs(config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(config.logLevel);
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('mermaidAPI.initialize: ', config);
+  Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(config.logLevel); // logger.debug('mermaidAPI.initialize: ', config);
 }
 
 var mermaidAPI = Object.freeze({
@@ -23246,13 +23313,13 @@ var mermaidAPI = Object.freeze({
   initialize: initialize,
   reinitialize: reinitialize,
   getConfig: _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"],
+  setConfig: _config__WEBPACK_IMPORTED_MODULE_39__["setConfig"],
   getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"],
   updateSiteConfig: _config__WEBPACK_IMPORTED_MODULE_39__["updateSiteConfig"],
   reset: function reset() {
-    console.warn('reset');
-    _config__WEBPACK_IMPORTED_MODULE_39__["reset"]();
-    var siteConfig = _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
-    updateRendererConfigs(siteConfig);
+    // console.warn('reset');
+    _config__WEBPACK_IMPORTED_MODULE_39__["reset"](); // const siteConfig = configApi.getSiteConfig();
+    // updateRendererConfigs(siteConfig);
   },
   globalReset: function globalReset() {
     _config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_39__["defaultConfig"]);
@@ -23437,6 +23504,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23447,15 +23515,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
-var mkBorder = function mkBorder(col, darkMode) {
-  return darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(col, {
-    s: -40,
-    l: 10
-  }) : Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(col, {
-    s: -40,
-    l: -10
-  });
-};
 
 var Theme =
 /*#__PURE__*/
@@ -23466,137 +23525,131 @@ function () {
     /** # Base variables */
 
     /** * background - used to know what the background color is of the diagram. This is used for deducing colors for istance line color. Defaulr value is #f4f4f4. */
-    this.background = '#f4f4f4'; // this.background = '#0c0c0c';
+    this.background = '#f4f4f4';
+    this.darkMode = false; // this.background = '#0c0c0c';
+    // this.darkMode = true;
 
-    /** * darkMode -In darkMode the color generation deduces other colors from the primary colors */
-
-    this.darkMode = false; // this.darkMode = true;
+    this.primaryColor = '#fff4dd'; // this.background = '#0c0c0c';
     // this.primaryColor = '#1f1f00';
 
     this.noteBkgColor = '#fff5ad';
-    this.noteTextColor = '#333'; // this.primaryColor = '#9f33be';
-
-    this.primaryColor = '#f0fff0'; // this.primaryColor = '#fa255e';
+    this.noteTextColor = '#333'; // dark
+    // this.primaryColor = '#034694';
+    // this.primaryColor = '#f2ee7e';
+    // this.primaryColor = '#9f33be';
+    // this.primaryColor = '#f0fff0';
+    // this.primaryColor = '#fa255e';
     // this.primaryColor = '#ECECFF';
     // this.secondaryColor = '#c39ea0';
     // this.tertiaryColor = '#f8e5e5';
+    // this.secondaryColor = '#dfdfde';
+    // this.tertiaryColor = '#CCCCFF';
 
-    this.secondaryColor = '#dfdfde';
-    this.tertiaryColor = '#CCCCFF';
-    this.border1 = '#9370DB';
-    this.arrowheadColor = '#333333';
     this.fontFamily = '"trebuchet ms", verdana, arial';
-    this.fontSize = '16px';
-    this.textColor = '#333';
-    this.updateColors();
-    this.relationColor = '#000';
+    this.fontSize = '16px'; // this.updateColors();
   }
 
   _createClass(Theme, [{
     key: "updateColors",
     value: function updateColors() {
-      this.secondBkg = this.tertiaryColor;
-      /* Main */
+      // The || is to make sure that if the variable has been defiend by a user override that value is to be used
 
-      this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
-        h: 120
+      /* Main */
+      this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#ddd' : '#333'); // invert(this.primaryColor);
+
+      this.secondaryColor = this.secondaryColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -120
       });
-      this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
-        h: -160
+      this.tertiaryColor = this.tertiaryColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 180,
+        l: 5
       });
-      console.warn('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
-      this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
-      this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
-      this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
-      this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
-      this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
-      this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
-      this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
-      this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
-      this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+      this.primaryBorderColor = this.primaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+      this.secondaryBorderColor = this.secondaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+      this.tertiaryBorderColor = this.tertiaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode);
+      this.noteBorderColor = this.noteBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.noteBkgColor, this.darkMode);
+      this.secondaryTextColor = this.secondaryTextColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+      this.tertiaryTextColor = this.tertiaryTextColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
+      this.lineColor = this.lineColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+      this.textColor = this.textColor || this.primaryTextColor;
       /* Flowchart variables */
 
-      this.nodeBkg = this.primaryColor;
-      this.mainBkg = this.primaryColor;
-      this.nodeBorder = this.primaryBorderColor;
-      this.clusterBkg = this.tertiaryColor;
-      this.clusterBorder = this.tertiaryBorderColor;
-      this.defaultLinkColor = this.lineColor;
-      this.titleColor = this.tertiaryTextColor;
-      this.edgeLabelBackground = this.labelBackground;
+      this.nodeBkg = this.nodeBkg || this.primaryColor;
+      this.mainBkg = this.mainBkg || this.primaryColor;
+      this.nodeBorder = this.nodeBorder || this.primaryBorderColor;
+      this.clusterBkg = this.clusterBkg || this.tertiaryColor;
+      this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
+      this.defaultLinkColor = this.defaultLinkColor || this.lineColor;
+      this.titleColor = this.titleColor || this.tertiaryTextColor;
+      this.edgeLabelBackground = this.edgeLabelBackground || this.darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 30) : this.secondaryColor;
+      this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
       /* Sequence Diagram variables */
       // this.actorBorder = lighten(this.border1, 0.5);
 
-      this.actorBorder = this.primaryBorderColor;
-      this.actorBkg = this.mainBkg;
-      this.actorTextColor = this.primaryTextColor;
-      this.actorLineColor = 'grey';
-      this.labelBoxBkgColor = this.actorBkg;
-      this.signalColor = this.textColor;
-      this.signalTextColor = this.textColor;
-      this.labelBoxBorderColor = this.actorBorder;
-      this.labelTextColor = this.actorTextColor;
-      this.loopTextColor = this.actorTextColor; // this.noteTextColor = this.actorTextColor;
-
-      this.activationBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 10);
-      this.activationBkgColor = this.secondaryColor;
-      this.sequenceNumberColor = 'white';
+      this.actorBorder = this.actorBorder || this.primaryBorderColor;
+      this.actorBkg = this.actorBkg || this.mainBkg;
+      this.actorTextColor = this.actorTextColor || this.primaryTextColor;
+      this.actorLineColor = this.actorLineColor || 'grey';
+      this.labelBoxBkgColor = this.labelBoxBkgColor || this.actorBkg;
+      this.signalColor = this.signalColor || this.textColor;
+      this.signalTextColor = this.signalTextColor || this.textColor;
+      this.labelBoxBorderColor = this.labelBoxBorderColor || this.actorBorder;
+      this.labelTextColor = this.labelTextColor || this.actorTextColor;
+      this.loopTextColor = this.loopTextColor || this.actorTextColor;
+      this.activationBorderColor = this.activationBorderColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 10);
+      this.activationBkgColor = this.activationBkgColor || this.secondaryColor;
+      this.sequenceNumberColor = this.sequenceNumberColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.lineColor);
       /* Gantt chart variables */
 
-      this.sectionBkgColor = this.tertiaryColor;
-      this.altSectionBkgColor = 'white';
-      this.sectionBkgColor = this.secondaryColor;
-      this.sectionBkgColor2 = this.tertiaryColor;
-      this.altSectionBkgColor = 'white';
-      this.sectionBkgColor2 = this.primaryColor;
-      this.taskBorderColor = this.primaryBorderColor;
-      this.taskBkgColor = this.primaryColor;
-      this.activeTaskBorderColor = this.primaryColor;
-      this.activeTaskBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 23);
-      this.gridColor = 'lightgrey';
-      this.doneTaskBkgColor = 'lightgrey';
-      this.doneTaskBorderColor = 'grey';
-      this.critBorderColor = '#ff8888';
-      this.critBkgColor = 'red';
-      this.todayLineColor = 'red';
-      this.taskTextColor = this.textColor;
-      this.taskTextOutsideColor = this.textColor;
-      this.taskTextLightColor = this.textColor;
-      this.taskTextColor = this.primaryTextColor;
-      this.taskTextDarkColor = this.textColor;
-      this.taskTextOutsideColor = 'calculated';
-      this.taskTextClickableColor = '#003163';
+      this.sectionBkgColor = this.sectionBkgColor || this.tertiaryColor;
+      this.altSectionBkgColor = this.altSectionBkgColor || 'white';
+      this.sectionBkgColor = this.sectionBkgColor || this.secondaryColor;
+      this.sectionBkgColor2 = this.sectionBkgColor2 || this.primaryColor;
+      this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
+      this.taskBkgColor = this.taskBkgColor || this.primaryColor;
+      this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;
+      this.activeTaskBkgColor = this.activeTaskBkgColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 23);
+      this.gridColor = this.gridColor || 'lightgrey';
+      this.doneTaskBkgColor = this.doneTaskBkgColor || 'lightgrey';
+      this.doneTaskBorderColor = this.doneTaskBorderColor || 'grey';
+      this.critBorderColor = this.critBorderColor || '#ff8888';
+      this.critBkgColor = this.critBkgColor || 'red';
+      this.todayLineColor = this.todayLineColor || 'red';
+      this.taskTextColor = this.taskTextColor || this.textColor;
+      this.taskTextOutsideColor = this.taskTextOutsideColor || this.textColor;
+      this.taskTextLightColor = this.taskTextLightColor || this.textColor;
+      this.taskTextColor = this.taskTextColor || this.primaryTextColor;
+      this.taskTextDarkColor = this.taskTextDarkColor || this.textColor;
+      this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
       /* state colors */
 
-      this.labelColor = this.primaryTextColor;
-      this.altBackground = this.tertiaryColor;
-      this.errorBkgColor = '#552222';
-      this.errorTextColor = '#552222';
-      /* state colors */
-
+      this.labelColor = this.labelColor || this.primaryTextColor;
+      this.altBackground = this.altBackground || this.tertiaryColor;
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
       /* class */
 
-      this.classText = this.textColor;
+      this.classText = this.classText || this.textColor;
       /* user-journey */
 
-      this.fillType0 = this.primaryColor;
-      this.fillType1 = this.secondaryColor;
-      this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      this.fillType0 = this.fillType0 || this.primaryColor;
+      this.fillType1 = this.fillType1 || this.secondaryColor;
+      this.fillType2 = this.fillType2 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
         h: 64
       });
-      this.fillType3 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+      this.fillType3 = this.fillType3 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 64
       });
-      this.fillType4 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      this.fillType4 = this.fillType4 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
         h: -64
       });
-      this.fillType5 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+      this.fillType5 = this.fillType5 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: -64
       });
-      this.fillType6 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      this.fillType6 = this.fillType6 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
         h: 128
       });
-      this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+      this.fillType7 = this.fillType7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
     }
@@ -23648,6 +23701,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23655,6 +23709,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 
 
 
@@ -23667,6 +23722,17 @@ function () {
     this.background = '#333';
     this.primaryColor = '#1f2020';
     this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.primaryColor, 16);
+    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      h: -160
+    });
+    this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode);
+    this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+    this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
+    this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
     this.mainBkg = '#1f2020';
     this.secondBkg = 'calculated';
     this.mainContrastColor = 'lightgrey';
@@ -23799,7 +23865,7 @@ function () {
       });
       /* class */
 
-      this.classText = this.nodeBorder;
+      this.classText = this.primaryTextColor;
     }
   }, {
     key: "calculate",
@@ -23853,6 +23919,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23863,6 +23930,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
+
 var Theme =
 /*#__PURE__*/
 function () {
@@ -23870,8 +23938,24 @@ function () {
     _classCallCheck(this, Theme);
 
     /* Base variables */
+    this.background = '#f4f4f4';
     this.primaryColor = '#ECECFF';
+    this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      h: 120
+    });
     this.secondaryColor = '#ffffde';
+    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      h: -160
+    });
+    this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode); // this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
+
+    this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+    this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
+    this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
     this.background = 'white';
     this.mainBkg = '#ECECFF';
     this.secondBkg = '#ffffde';
@@ -23989,7 +24073,7 @@ function () {
 
       /* class */
 
-      this.classText = this.nodeBorder;
+      this.classText = this.primaryTextColor;
       /* journey */
 
       this.fillType0 = this.primaryColor;
@@ -24043,11 +24127,8 @@ function () {
 
 var getThemeVariables = function getThemeVariables(userOverrides) {
   var theme = new Theme();
-  theme.calculate(userOverrides);
-  console.info('Theme(default)', {
-    userOverrides: userOverrides,
-    theme: theme
-  });
+  theme.calculate(userOverrides); // console.info('Theme(default)', { userOverrides, theme });
+
   return theme;
 };
 
@@ -24065,6 +24146,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24075,6 +24157,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
+
 var Theme =
 /*#__PURE__*/
 function () {
@@ -24082,6 +24165,7 @@ function () {
     _classCallCheck(this, Theme);
 
     /* Base vales */
+    this.background = '#f4f4f4';
     this.primaryColor = '#cde498';
     this.secondaryColor = '#cdffb2';
     this.background = 'white';
@@ -24093,6 +24177,15 @@ function () {
     this.arrowheadColor = 'green';
     this.fontFamily = '"trebuchet ms", verdana, arial';
     this.fontSize = '16px';
+    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])('#cde498', 10);
+    this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode);
+    this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+    this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
     /* Flowchart variables */
 
     this.nodeBkg = 'calculated';
@@ -24176,7 +24269,7 @@ function () {
 
       /* class */
 
-      this.classText = this.nodeBorder;
+      this.classText = this.primaryTextColor;
       /* journey */
 
       this.fillType0 = this.primaryColor;
@@ -24240,6 +24333,31 @@ var getThemeVariables = function getThemeVariables(userOverrides) {
 
 /***/ }),
 
+/***/ "./src/themes/theme-helpers.js":
+/*!*************************************!*\
+  !*** ./src/themes/theme-helpers.js ***!
+  \*************************************/
+/*! exports provided: mkBorder */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mkBorder", function() { return mkBorder; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+
+var mkBorder = function mkBorder(col, darkMode) {
+  return darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(col, {
+    s: -40,
+    l: 10
+  }) : Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(col, {
+    s: -40,
+    l: -10
+  });
+};
+
+/***/ }),
+
 /***/ "./src/themes/theme-neutral.js":
 /*!*************************************!*\
   !*** ./src/themes/theme-neutral.js ***!
@@ -24252,6 +24370,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _theme_helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./theme-helpers */ "./src/themes/theme-helpers.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24259,6 +24378,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 
  // const Color = require ( 'khroma/dist/color' ).default
 // Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
@@ -24272,7 +24392,22 @@ function () {
     this.primaryColor = '#eee';
     this.contrast = '#26a';
     this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
-    this.background = 'white';
+    this.background = '#ffffff'; // this.secondaryColor = adjust(this.primaryColor, { h: 120 });
+
+    this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+      h: -160
+    });
+    console.warn('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
+    this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode); // this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
+
+    this.primaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.primaryColor);
+    this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
+    this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
+    this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
+    this.altBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
     this.mainBkg = '#eee';
     this.secondBkg = 'calculated';
     this.lineColor = '#666';
@@ -24388,7 +24523,7 @@ function () {
 
       /* class */
 
-      this.classText = this.nodeBorder;
+      this.classText = this.primaryTextColor;
       /* journey */
 
       this.fillType0 = this.primaryColor;

@@ -31,7 +31,7 @@ import utils from './utils';
  */
 const init = function() {
   const conf = mermaidAPI.getConfig();
-  console.log('Starting rendering diagrams (init) - mermaid.init', conf);
+  // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   let nodes;
   if (arguments.length >= 2) {
     /*! sequence config was passed as #1 */
@@ -129,7 +129,7 @@ const init = function() {
 };
 
 const initialize = function(config) {
-  mermaidAPI.reset();
+  // mermaidAPI.reset();
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;

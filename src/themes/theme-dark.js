@@ -1,10 +1,21 @@
 import { invert, lighten, darken, rgba, adjust } from 'khroma';
-
+import { mkBorder } from './theme-helpers';
 class Theme {
   constructor() {
     this.background = '#333';
     this.primaryColor = '#1f2020';
     this.secondaryColor = lighten(this.primaryColor, 16);
+
+    this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
+    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
+    this.primaryTextColor = invert(this.primaryColor);
+    this.secondaryTextColor = invert(this.secondaryColor);
+    this.tertiaryTextColor = invert(this.tertiaryColor);
+    this.lineColor = invert(this.background);
+    this.textColor = invert(this.background);
+
     this.mainBkg = '#1f2020';
     this.secondBkg = 'calculated';
     this.mainContrastColor = 'lightgrey';
@@ -127,7 +138,7 @@ class Theme {
     this.fillType6 = adjust(this.primaryColor, { h: 128 });
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
     /* class */
-    this.classText = this.nodeBorder;
+    this.classText = this.primaryTextColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

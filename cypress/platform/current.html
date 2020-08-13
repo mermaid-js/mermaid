@@ -74,15 +74,11 @@ stateDiagram-v2
   A --> D: asd123
       </div>
       </div>
-      %%{init: {'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
       <div class="mermaid" style="width: 50%; height: 20%;">
-        %%{init: {'theme': 'base'}}%%
+        %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+classDiagram
+	Animal <|-- Duck
 
-        flowchart TB
-        subgraph apa
-          a --> A %% comment
-          a --> a{apa} %% comment
-        end
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
 graph TD
@@ -106,8 +102,8 @@ Note over Bob,Alice: Looks back
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        // theme: 'base',
-        // themeVariables:{primaryColor: '#0000ff'},
+        // theme: 'forest',
+        // themeVariables:{primaryColor: '#ff0000'},
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,

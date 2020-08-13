@@ -1,4 +1,5 @@
-import { darken, lighten, adjust } from 'khroma';
+import { invert, darken, lighten, adjust } from 'khroma';
+import { mkBorder } from './theme-helpers';
 
 // const Color = require ( 'khroma/dist/color' ).default
 // Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
@@ -8,7 +9,23 @@ class Theme {
     this.primaryColor = '#eee';
     this.contrast = '#26a';
     this.secondaryColor = lighten(this.contrast, 55);
-    this.background = 'white';
+    this.background = '#ffffff';
+
+    // this.secondaryColor = adjust(this.primaryColor, { h: 120 });
+    this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
+    console.warn('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
+    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
+    this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
+    this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
+    // this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
+
+    this.primaryTextColor = invert(this.primaryColor);
+    this.secondaryTextColor = invert(this.secondaryColor);
+    this.tertiaryTextColor = invert(this.tertiaryColor);
+    this.lineColor = invert(this.background);
+    this.textColor = invert(this.background);
+
+    this.altBackground = lighten(this.contrast, 55);
     this.mainBkg = '#eee';
     this.secondBkg = 'calculated';
     this.lineColor = '#666';
@@ -131,7 +148,7 @@ class Theme {
 
     /* state colors */
     /* class */
-    this.classText = this.nodeBorder;
+    this.classText = this.primaryTextColor;
     /* journey */
     this.fillType0 = this.primaryColor;
     this.fillType1 = this.secondaryColor;

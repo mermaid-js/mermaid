@@ -305,4 +305,52 @@ describe('Class diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('13: should render a simple class diagram with css classes applied', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      class Class10 {
+        int[] id
+        List~int~ ids
+        test(List~int~ ids) List~bool~
+        testArray() bool[]
+      }
+
+      cssClass "Class10" exClass
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
+
+  it('14: should render a simple class diagram with css classes applied directly', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      class Class10:::exClass {
+        int[] id
+        List~int~ ids
+        test(List~int~ ids) List~bool~
+        testArray() bool[]
+      }
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
+
+  it('15: should render a simple class diagram with css classes applied two multiple classes', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      class Class10
+      class Class20
+
+      cssClass "Class10, class20" exClass
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
 });

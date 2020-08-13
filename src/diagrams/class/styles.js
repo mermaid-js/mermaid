@@ -31,7 +31,7 @@ g.clickable {
 }
 
 g.classGroup rect {
-  fill: ${options.nodeBkg};
+  fill: ${options.mainBkg};
   stroke: ${options.nodeBorder};
 }
 
@@ -43,7 +43,7 @@ g.classGroup line {
 .classLabel .box {
   stroke: none;
   stroke-width: 0;
-  fill: ${options.nodeBkg};
+  fill: ${options.mainBkg};
   opacity: 0.5;
 }
 
@@ -99,13 +99,13 @@ g.classGroup line {
 }
 
 #aggregationStart, .aggregation {
-  fill: ${options.nodeBkg} !important;
+  fill: ${options.mainBkg} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
 #aggregationEnd, .aggregation {
-  fill: ${options.nodeBkg} !important;
+  fill: ${options.mainBkg} !important;
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
