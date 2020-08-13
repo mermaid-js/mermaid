@@ -5,6 +5,7 @@ import { getConfig } from '../config';
 import intersect from './intersect/index.js';
 import createLabel from './createLabel';
 import note from './shapes/note';
+import { parseMember } from '../diagrams/class/svgDraw';
 
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
@@ -569,7 +570,7 @@ const class_box = (parent, node) => {
 
   // 1. Create the labels
   const interfaceLabelText = node.classData.annotations[0]
-    ? '<<' + node.classData.annotations[0] + '>>'
+    ? '«' + node.classData.annotations[0] + '»'
     : '';
   const interfaceLabel = labelContainer
     .node()
@@ -590,7 +591,10 @@ const class_box = (parent, node) => {
   }
   const classAttributes = [];
   node.classData.members.forEach(str => {
-    const lbl = labelContainer.node().appendChild(createLabel(str, node.labelStyle, true, true));
+    const parsedText = parseMember(str).displayText;
+    const lbl = labelContainer
+      .node()
+      .appendChild(createLabel(parsedText, node.labelStyle, true, true));
     const bbox = lbl.getBBox();
     if (bbox.width > maxWidth) {
       maxWidth = bbox.width;
@@ -599,9 +603,14 @@ const class_box = (parent, node) => {
     classAttributes.push(lbl);
   });
 
+  maxHeight += lineHeight;
+
   const classMethods = [];
   node.classData.methods.forEach(str => {
-    const lbl = labelContainer.node().appendChild(createLabel(str, node.labelStyle, true, true));
+    const parsedText = parseMember(str).displayText;
+    const lbl = labelContainer
+      .node()
+      .appendChild(createLabel(parsedText, node.labelStyle, true, true));
     const bbox = lbl.getBBox();
     if (bbox.width > maxWidth) {
       maxWidth = bbox.width;
@@ -657,6 +666,7 @@ const class_box = (parent, node) => {
     verticalPos += classTitleBBox.height + rowPadding;
   });
 
+  verticalPos += lineHeight;
   bottomLine
     .attr('class', 'divider')
     .attr('x1', -maxWidth / 2 - halfPadding)
