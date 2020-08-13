@@ -20,7 +20,15 @@
   </head>
   <body>
     <h1>info below</h1>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
+      <div class="mermaid" style="width: 100%; height: 20%;">
+        classDiagram-v2
+
+        classA -- classB : Inheritance
+        classA -- classC : link
+        classC -- classD : link
+        classB -- classD
+      </div>
+      <div class="mermaid" style="width: 100%; height: 20%;">
         classDiagram-v2
          class BankAccount{
           +String owner

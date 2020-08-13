@@ -11,13 +11,13 @@ describe('Class diagram', () => {
         classA -- classC : link
         classC -- classD : link
         classB -- classD
-        
+
         `,
-        {logLevel : 1}
+        {logLevel : 1, flowchart: { "htmlLabels": false },}
       );
       cy.get('svg');
     });
-  
+
   it('1: should render a simple class diagram', () => {
     imgSnapshotTest(
       `
@@ -47,7 +47,7 @@ describe('Class diagram', () => {
         test()
       }
       `,
-      {logLevel : 1}
+      {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -76,7 +76,8 @@ describe('Class diagram', () => {
         test()
       }
       `,
-      {}
+      {logLevel : 1, flowchart: { "htmlLabels": false },}
+
     );
     cy.get('svg');
   });
@@ -94,7 +95,7 @@ describe('Class diagram', () => {
       Class01 : +int publicGorilla
       Class01 : #int protectedMarmoset
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -147,7 +148,7 @@ describe('Class diagram', () => {
       }
       `,
       ],
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -177,7 +178,7 @@ describe('Class diagram', () => {
         test()
       }
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -189,7 +190,7 @@ describe('Class diagram', () => {
       Class01 <|-- AveryLongClass : Cool
       Class01 : someMethod()*
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -201,7 +202,7 @@ describe('Class diagram', () => {
       Class01 <|-- AveryLongClass : Cool
       Class01 : someMethod()$
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -221,7 +222,7 @@ describe('Class diagram', () => {
         test()
       }
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -242,7 +243,7 @@ describe('Class diagram', () => {
         test()
       }
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -264,7 +265,7 @@ describe('Class diagram', () => {
       }
       link class01 "google.com" "A Tooltip"
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -286,7 +287,7 @@ describe('Class diagram', () => {
       }
       callback class01 "functionCall" "A Tooltip"
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -301,7 +302,7 @@ describe('Class diagram', () => {
         testArray() bool[]
       }
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -317,7 +318,7 @@ describe('Class diagram', () => {
         testArray() bool[]
       }
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -335,7 +336,7 @@ describe('Class diagram', () => {
 
       cssClass "Class10" exClass
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -351,7 +352,7 @@ describe('Class diagram', () => {
         testArray() bool[]
       }
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
@@ -365,7 +366,7 @@ describe('Class diagram', () => {
 
       cssClass "Class10, class20" exClass
       `,
-      {}
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
     cy.get('svg');
   });
