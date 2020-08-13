@@ -20,6 +20,15 @@
   </head>
   <body>
     <h1>info below</h1>
+      <div class="mermaid" style="width: 100%; height: 20%;">
+        %%{init: {'theme': 'base',  'fontFamily': 'arial', 'themeVariables': {  'primaryColor': '#ff0000'}}}%%
+        classDiagram-v2
+
+        classApa -- classB : Inheritance
+        classA -- classC : link
+        classC -- classD : link
+        classB -- classD
+      </div>
       <div class="mermaid2" style="width: 100%; height: 20%;">
         classDiagram-v2
          class BankAccount{
@@ -43,7 +52,7 @@
         classB : method2() int
       </div>
 
-      <div class="mermaid" style="width: 100%; height: 20%;">
+      <div class="mermaid2" style="width: 100%; height: 20%;">
         classDiagram-v2
 
         classA -- classB : Inheritance
@@ -71,7 +80,10 @@
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
-        fontFamily: '"arial", sans-serif',
+        // fontFamily: '"arial", sans-serif',
+        // themeVariables: {
+        //   fontFamily: '"arial", sans-serif',
+        // },
         curve: 'linear',
         securityLevel: 'loose'
       });
