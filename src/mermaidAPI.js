@@ -556,7 +556,7 @@ function initialize(options) {
 
   // Handle legacy location of font-family configuration
   // console.warn('Conf - ', options.themeVariables.fontFamily);
-  if (options.fontFamily) {
+  if (options && options.fontFamily) {
     if (!options.themeVariables) {
       options.themeVariables = { fontFamily: options.fontFamily };
     } else {
