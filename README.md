@@ -65,7 +65,7 @@ Closed issues:
 
 ⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the securityLevel is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
 
-If your application is taking resposibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
+If your application is taking responsibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
 
 ```javascript
 mermaidAPI.initialize({
