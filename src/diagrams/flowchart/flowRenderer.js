@@ -244,6 +244,7 @@ export const addEdges = function(edges, g) {
 
     edgeData.id = linkId;
     edgeData.class = linkNameStart + ' ' + linkNameEnd;
+    edgeData.minlen = edge.length || 1;
 
     // Add the edge to the graph
     g.setEdge(edge.start, edge.end, edgeData, cnt);
