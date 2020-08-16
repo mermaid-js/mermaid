@@ -188,6 +188,7 @@ export const addEdges = function(edges, g) {
     var linkNameEnd = 'LE-' + edge.end;
 
     const edgeData = {};
+    edgeData.minlen = edge.length || 1;
     //edgeData.id = 'id' + cnt;
 
     // Set link type for rendering
