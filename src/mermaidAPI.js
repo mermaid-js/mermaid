@@ -220,7 +220,7 @@ const render = function(id, _txt, cb, container) {
   // console.warn('Render fetching config');
 
   const cnf = configApi.getConfig();
-  // console.log('Render with config after adding new directives', cnf.fontFamily);
+  console.warn('Render with config after adding new directives', cnf.sequence);
   // console.warn(
   //   'Render with config after adding new directives',
   //   cnf.fontFamily,
@@ -570,6 +570,7 @@ function initialize(options) {
     }
   }
   // Set default options
+  configApi.setSiteConfigDelta(options);
 
   if (options && options.theme && theme[options.theme]) {
     // Todo merge with user options

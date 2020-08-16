@@ -22,7 +22,24 @@
   <body>
     <h1>info below</h1>
     <div class="flex">
+      <div class="mermaid" style="width: 50%; height: 400px;">
+sequenceDiagram
+	Alice->>+John: Hello John, how are you?
+	Alice->>+John: John, can you hear me?
+	John-->>-Alice: Hi Alice, I can hear you!
+	John-->>-Alice: I feel great!
+      </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
+        %%{init: { 'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
+graph TD
+          A(Start) --> B[/Another/]
+          A[/Another/] --> C[End]
+          subgraph section
+            B
+            C
+          end
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
         %%{init: {"fontFamily": "arial2"}}%%
 graph TD
       A[Christmas]
@@ -68,10 +85,10 @@ graph TD
         logLevel: 0,
         flowchart: { curve: 'cardinal', "htmlLabels": true },
         // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorMargin: 50, showSequenceNumbers: true },
+        sequence: { actorFontFamily: 'courier',actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         // fontFamily: '"arial", sans-serif',
-        fontFamily: 'times new roman',
+        fontFamily: 'courier',
         curve: 'cardinal',
         securityLevel: 'strict'
       });
