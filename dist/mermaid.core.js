@@ -733,7 +733,6 @@ var updateCurrentConfig = function updateCurrentConfig(siteCfg, _directives) {
  */
 
 var setSiteConfig = function setSiteConfig(conf) {
-  console.warn('Setting site config');
   siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
   siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
 
@@ -818,6 +817,20 @@ var sanitize = function sanitize(options) {
   });
 };
 var addDirective = function addDirective(directive) {
+  if (directive.fontFamily) {
+    if (!directive.themeVariables) {
+      directive.themeVariables = {
+        fontFamily: directive.fontFamily
+      };
+    } else {
+      if (!directive.themeVariables.fontFamily) {
+        directive.themeVariables = {
+          fontFamily: directive.fontFamily
+        };
+      }
+    }
+  }
+
   directives.push(directive);
   updateCurrentConfig(siteConfig, directives);
 };
@@ -9032,7 +9045,8 @@ var addEdges = function addEdges(edges, g) {
     var linkId = 'L-' + edge.start + '-' + edge.end;
     var linkNameStart = 'LS-' + edge.start;
     var linkNameEnd = 'LE-' + edge.end;
-    var edgeData = {}; //edgeData.id = 'id' + cnt;
+    var edgeData = {};
+    edgeData.minlen = edge.length || 1; //edgeData.id = 'id' + cnt;
     // Set link type for rendering
 
     if (edge.type === 'arrow_open') {
@@ -22764,7 +22778,8 @@ var render = function render(id, _txt, cb, container) {
 
 
   var cnf = _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]();
-  console.warn('Render with config after adding new directives', cnf.themeVariables.primaryColor); // Check the maximum allowed text size
+  console.log('Render with config after adding new directives', cnf.fontFamily);
+  console.warn('Render with config after adding new directives', cnf.fontFamily, cnf.themeVariables.fontFamily); // Check the maximum allowed text size
 
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -23089,13 +23104,28 @@ function reinitialize() {// `mermaidAPI.reinitialize: v${pkg.version}`,
 }
 
 function initialize(options) {
-  console.warn("mermaidAPI.initialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version, " "), options); // Set default options
+  // console.warn(`mermaidAPI.initialize: v${pkg.version} `, options);
+  // Handle legacy location of font-family configuration
+  if (options && options.fontFamily) {
+    if (!options.themeVariables) {
+      options.themeVariables = {
+        fontFamily: options.fontFamily
+      };
+    } else {
+      if (!options.themeVariables.fontFamily) {
+        options.themeVariables = {
+          fontFamily: options.fontFamily
+        };
+      }
+    }
+  } // Set default options
+
 
   if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme]) {
     // Todo merge with user options
     options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme].getThemeVariables(options.themeVariables);
   } else {
-    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"].default.getThemeVariables();
+    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"].default.getThemeVariables(options.themeVariables);
   }
 
   var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_39__["setSiteConfig"](options) : _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
@@ -23243,6 +23273,7 @@ var calcThemeVariables = function calcThemeVariables(theme, userOverRides) {
 };
 
 var getStyles = function getStyles(type, userStyles, options) {
+  console.warn('options in styles: ', options);
   return " {\n    font-family: ".concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n    fill: ").concat(options.textColor, "\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ").concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  ").concat(themes[type](options), "\n\n  ").concat(userStyles, "\n\n  ").concat(type, " { fill: apa;}\n");
 };
 
@@ -24193,8 +24224,8 @@ function () {
 
     this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
       h: -160
-    });
-    console.warn('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
+    }); // console.log('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
+
     this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
     this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
     this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode); // this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
