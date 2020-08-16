@@ -118,7 +118,7 @@ describe('State diagram', () => {
       And another line...
     end note
     `,
-      {}
+      { logLevel: 0, fontFamily: 'Arial' }
     );
   });
   it('should handle multiline notes with different line breaks', () => {
@@ -130,7 +130,7 @@ describe('State diagram', () => {
       Line1<br>Line2<br/>Line3<br />Line4<br	/>Line5
       end note
       `,
-      {}
+      { logLevel: 0, fontFamily: 'Arial' }
     );
   });
 
@@ -315,7 +315,7 @@ describe('State diagram', () => {
     }
     `,
       {
-        logLevel: 0,
+        logLevel: 0, fontFamily: 'Arial'
       }
     );
   });
@@ -328,7 +328,7 @@ describe('State diagram', () => {
         }
     `,
       {
-        logLevel: 0,
+        logLevel: 0, fontFamily: 'Arial'
       }
     );
   });
@@ -340,7 +340,7 @@ describe('State diagram', () => {
         a --> b: Stop
     `,
       {
-        logLevel: 0,
+        logLevel: 0, fontFamily: 'Arial'
       }
     );
   });
