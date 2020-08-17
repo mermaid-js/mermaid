@@ -11,7 +11,7 @@ describe('Flowchart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -24,7 +24,7 @@ describe('Flowchart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { htmlLabels: true } }
+      { flowchart: { htmlLabels: true }, fontFamily: 'courier' }
     );
   });
 
@@ -38,7 +38,7 @@ describe('Flowchart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[Car]
       `,
-      {}
+      {fontFamily: 'courier'}
     );
   });
 
@@ -53,7 +53,7 @@ describe('Flowchart', () => {
       C -->|Two| E[\\iPhone\\]
       C -->|Three| F[Car]
       `,
-      {}
+      { fontFamily: 'courier'}
     );
   });
 
@@ -69,7 +69,7 @@ describe('Flowchart', () => {
       classDef processHead fill:#888888,color:white,font-weight:bold,stroke-width:3px,stroke:#001f3f
       class 1A,1B,D,E processHead
       `,
-      {}
+      {fontFamily: 'courier'}
     );
   });
 
@@ -98,7 +98,7 @@ describe('Flowchart', () => {
       35(SAM.CommonFA.PopulationFME)-->39(SAM.CommonFA.ChargeDetails)
       36(SAM.CommonFA.PremetricCost)-->39(SAM.CommonFA.ChargeDetails)
       `,
-      {}
+       { fontFamily: 'courier' }
     );
   });
 
@@ -169,7 +169,7 @@ describe('Flowchart', () => {
       9a072290_1ec3_e711_8c5a_005056ad0002-->d6072290_1ec3_e711_8c5a_005056ad0002
       9a072290_1ec3_e711_8c5a_005056ad0002-->71082290_1ec3_e711_8c5a_005056ad0002
       `,
-      {}
+       { fontFamily: 'courier' }
     );
   });
 
@@ -178,7 +178,7 @@ describe('Flowchart', () => {
       `
     graph TB;subgraph "number as labels";1;end;
       `,
-      {}
+       { fontFamily: 'courier' }
     );
   });
 
@@ -190,7 +190,7 @@ describe('Flowchart', () => {
         a1-->a2
       end
       `,
-      {}
+       { fontFamily: 'courier' }
     );
   });
 
@@ -202,7 +202,7 @@ describe('Flowchart', () => {
         a1-->a2
       end
       `,
-      {}
+       { fontFamily: 'courier' }
     );
   });
 
@@ -237,7 +237,7 @@ describe('Flowchart', () => {
       style foo fill:#F99,stroke-width:2px,stroke:#F0F
       style bar fill:#999,stroke-width:10px,stroke:#0F0
       `,
-      {}
+       { fontFamily: 'courier' }
     );
   });
 
@@ -339,7 +339,7 @@ describe('Flowchart', () => {
       sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4DA958A0-26D9-4D47-93A7-70F39FD7D51A;
       sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4FC27B48-A6F9-460A-A675-021F5854FE22;
       `,
-      {}
+       { fontFamily: 'courier' }
     );
   });
 
@@ -356,6 +356,7 @@ describe('Flowchart', () => {
       {
         listUrl: false,
         listId: 'color styling',
+        fontFamily: 'courier',
         logLevel: 0
       }
     );
@@ -378,7 +379,7 @@ describe('Flowchart', () => {
       `,
       {
         listUrl: false,
-        listId: 'color styling',
+        listId: 'color styling', fontFamily: 'courier',
         logLevel: 0
       }
     );
@@ -394,7 +395,7 @@ describe('Flowchart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -413,7 +414,7 @@ describe('Flowchart', () => {
       class A someclass;
       class C someclass;
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -430,7 +431,7 @@ describe('Flowchart', () => {
         linkStyle 1 stroke:DarkGray,stroke-width:2px
         linkStyle 2 stroke:DarkGray,stroke-width:2px
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -439,7 +440,7 @@ describe('Flowchart', () => {
       `graph LR
         a --> b --> c
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -448,7 +449,7 @@ describe('Flowchart', () => {
       `graph LR
         a --> b & c--> d
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -458,7 +459,7 @@ describe('Flowchart', () => {
       A[ h ] -- hello --> B[" test "]:::exClass & C --> D;
       classDef exClass background:#bbb,border:1px solid red;
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -480,7 +481,7 @@ describe('Flowchart', () => {
       click B testClick "click test"
       classDef someclass fill:#f96;
       class A someclass;`,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -494,7 +495,7 @@ describe('Flowchart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { nodeSpacing: 50 } }
+      { flowchart: { nodeSpacing: 50 }, fontFamily: 'courier' }
     );
   });
 
@@ -508,7 +509,7 @@ describe('Flowchart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { rankSpacing: '100' } }
+      { flowchart: { rankSpacing: '100' }, fontFamily: 'courier' }
     );
   });
 
@@ -521,7 +522,7 @@ describe('Flowchart', () => {
       linkStyle 1 stroke:greenyellow,stroke-width:2px
       style C fill:greenyellow,stroke:green,stroke-width:4px
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -543,7 +544,7 @@ describe('Flowchart', () => {
       click E "notes://do-your-thing/id" "other protocol test"
       click F "javascript:alert('test')" "script test"
       `,
-      { securityLevel: 'loose' }
+      { securityLevel: 'loose', fontFamily: 'courier' }
       );
   });
 
@@ -583,7 +584,7 @@ describe('Flowchart', () => {
       click B "index.html#link-clicked" "link test"
       click D testClick "click test"
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -615,7 +616,7 @@ describe('Flowchart', () => {
       class A myClass1
       class D myClass2
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -639,7 +640,7 @@ describe('Flowchart', () => {
       classDef redBg fill:#622;
       classDef whiteTxt color: white;
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -651,7 +652,7 @@ describe('Flowchart', () => {
       eat --> sleep
       work --> eat
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 
@@ -670,7 +671,7 @@ describe('Flowchart', () => {
       class A someclass;
       class C someclass;
       `,
-      { flowchart: { htmlLabels: false } }
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
     );
   });
 

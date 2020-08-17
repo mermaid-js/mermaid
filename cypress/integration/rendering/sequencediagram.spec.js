@@ -29,7 +29,7 @@ context('Sequence diagram', () => {
         Alice -->> John: Parallel message 2
         end
       `,
-      {}
+      {sequence:{actorFontFamily:'courier'}}
     );
   });
   it('should handle different line breaks', () => {
@@ -92,7 +92,7 @@ context('Sequence diagram', () => {
         Alice->>Bob: I'm short
         Bob->>Alice: Short as well
       `,
-        { sequence: { actorFontSize: 18, actorFontFamily: 'Arial' } }
+        { sequence: { actorFontSize: 18, actorFontFamily: 'times' } }
       );
     });
     it('should render notes aligned to the left when configured', () => {
