@@ -27,7 +27,7 @@ For a more detailed introduction to Mermaid and some of it's more basic uses, lo
 
 🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [Version Log](./docs/versionUpdates.md)
 
-**🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866)**
+**🖖 Keep a steady pulse: mermaid needs more Collaborators.[Read More](https://github.com/knsv/mermaid/issues/866)**
 
 # Diagrams that mermaid can render:
 
