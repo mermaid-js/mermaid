@@ -94,7 +94,7 @@ Mermaid can load multiple diagrams, in the same page.
 
  A `securityLevel` configuration has to first be cleared, `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality. This was introduce in version 8.2 as a security improvement, aimed at preventing malicious use. 
  
- **It is the site owner's resposniblity to discriminate between trustworthy and untrustworthy user-bases and we encourage the use of discretion.**
+ **It is the site owner's responsibility to discriminate between trustworthy and untrustworthy user-bases and we encourage the use of discretion.**
  
 ## securityLevel
 
