@@ -26,7 +26,35 @@ Another:
 
 ## Committing documentation
 
-Less strict here, it is ok to commit directly in the develop branch if you are a collaborator.
+Less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
+
+The documentation is located in the `docs` directory and published using GitHub Pages.
+The documentation site is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.
+
+The documentation is written in Markdown, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
+
+If you want to preview the documentation site on your machine, you need to install `docsify-cli`:
+
+```
+$ npm i docsify-cli -g
+````
+
+If you are more familiar with Yarn, you can use the following command:
+
+```
+$ yarn global add docsify-cli
+```
+
+The above command will install `docsify-cli` globally.
+If the installation is successful, the command `docsify` will be available in your `PATH`.
+
+You can now run the following command to serve the documentation site:
+
+```
+$ docsify serve docs
+```
+
+Once the local HTTP server is listening, you can point your browser at http://localhost:3000.
 
 ## Branching
 
