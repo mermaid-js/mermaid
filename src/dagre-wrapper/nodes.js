@@ -575,7 +575,14 @@ const class_box = (parent, node) => {
   const interfaceLabel = labelContainer
     .node()
     .appendChild(createLabel(interfaceLabelText, node.labelStyle, true, true));
-  const interfaceBBox = interfaceLabel.getBBox();
+  let interfaceBBox = interfaceLabel.getBBox();
+  if (getConfig().flowchart.htmlLabels) {
+    const div = interfaceLabel.children[0];
+    const dv = select(interfaceLabel);
+    interfaceBBox = div.getBoundingClientRect();
+    dv.attr('width', interfaceBBox.width);
+    dv.attr('height', interfaceBBox.height);
+  }
   if (node.classData.annotations[0]) {
     maxHeight += interfaceBBox.height + rowPadding;
     maxWidth += interfaceBBox.width;
@@ -584,7 +591,14 @@ const class_box = (parent, node) => {
   const classTitleLabel = labelContainer
     .node()
     .appendChild(createLabel(node.labelText, node.labelStyle, true, true));
-  const classTitleBBox = classTitleLabel.getBBox();
+  let classTitleBBox = classTitleLabel.getBBox();
+  if (getConfig().flowchart.htmlLabels) {
+    const div = classTitleLabel.children[0];
+    const dv = select(classTitleLabel);
+    classTitleBBox = div.getBoundingClientRect();
+    dv.attr('width', classTitleBBox.width);
+    dv.attr('height', classTitleBBox.height);
+  }
   maxHeight += classTitleBBox.height + rowPadding;
   if (classTitleBBox.width > maxWidth) {
     maxWidth = classTitleBBox.width;
@@ -595,7 +609,14 @@ const class_box = (parent, node) => {
     const lbl = labelContainer
       .node()
       .appendChild(createLabel(parsedText, node.labelStyle, true, true));
-    const bbox = lbl.getBBox();
+    let bbox = lbl.getBBox();
+    if (getConfig().flowchart.htmlLabels) {
+      const div = lbl.children[0];
+      const dv = select(lbl);
+      bbox = div.getBoundingClientRect();
+      dv.attr('width', bbox.width);
+      dv.attr('height', bbox.height);
+    }
     if (bbox.width > maxWidth) {
       maxWidth = bbox.width;
     }
@@ -611,7 +632,14 @@ const class_box = (parent, node) => {
     const lbl = labelContainer
       .node()
       .appendChild(createLabel(parsedText, node.labelStyle, true, true));
-    const bbox = lbl.getBBox();
+    let bbox = lbl.getBBox();
+    if (getConfig().flowchart.htmlLabels) {
+      const div = lbl.children[0];
+      const dv = select(lbl);
+      bbox = div.getBoundingClientRect();
+      dv.attr('width', bbox.width);
+      dv.attr('height', bbox.height);
+    }
     if (bbox.width > maxWidth) {
       maxWidth = bbox.width;
     }
@@ -684,14 +712,14 @@ const class_box = (parent, node) => {
     verticalPos += classTitleBBox.height + rowPadding;
   });
   //
-  let bbox;
-  if (getConfig().flowchart.htmlLabels) {
-    const div = interfaceLabel.children[0];
-    const dv = select(interfaceLabel);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  }
+  // let bbox;
+  // if (getConfig().flowchart.htmlLabels) {
+  //   const div = interfaceLabel.children[0];
+  //   const dv = select(interfaceLabel);
+  //   bbox = div.getBoundingClientRect();
+  //   dv.attr('width', bbox.width);
+  //   dv.attr('height', bbox.height);
+  // }
   // bbox = labelContainer.getBBox();
 
   // logger.info('Text 2', text2);
