@@ -421,7 +421,7 @@ graph TD
     B -->|Yes| C[OK];
     C --> D[Rethink];
     D --> B;
-    B ---->|No| E[End];
+    B -->|No| E[End];
 ```
 
 ```mermaid
@@ -430,7 +430,7 @@ graph TD
     B -->|Yes| C[OK];
     C --> D[Rethink];
     D --> B;
-    B ---->|No| E[End];
+    B -->|No| E[End];
 ```
 
 > **Note** Links may still be made longer than the requested number of ranks
@@ -446,7 +446,7 @@ graph TD
     B -- Yes --> C[OK];
     C --> D[Rethink];
     D --> B;
-    B -- No ----> E[End];
+    B -- No --> E[End];
 ```
 
 ```mermaid
@@ -455,7 +455,7 @@ graph TD
     B -->|Yes| C[OK];
     C --> D[Rethink];
     D --> B;
-    B ---->|No| E[End];
+    B -- No --> E[End];
 ```
 
 For dotted or thick links, the characters to add are equals signs or dots,
