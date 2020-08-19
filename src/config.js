@@ -8,28 +8,41 @@ import config from './defaultConfig';
 export const defaultConfig = Object.freeze(config);
 
 let siteConfig = assignWithDepth({}, defaultConfig);
+let siteConfigDelta;
 let directives = [];
 let currentConfig = assignWithDepth({}, defaultConfig);
 
 export const updateCurrentConfig = (siteCfg, _directives) => {
+  // start with config beeing the siteConfig
   let cfg = assignWithDepth({}, siteCfg);
+  // let sCfg = assignWithDepth(defaultConfig, siteConfigDelta);
 
-  // Apply directives
-  let themeVariables = {};
+  // Join directives
+  let sumOfDirectives = {};
   for (let i = 0; i < _directives.length; i++) {
     const d = _directives[i];
     sanitize(d);
-    cfg = assignWithDepth(cfg, d);
-    if (d.theme) {
-      cfg.themeVariables = theme[cfg.theme].getThemeVariables(d.themeVariables);
-    }
+
+    // Apply the data from the directive where the the overrides the themeVaraibles
+    sumOfDirectives = assignWithDepth(sumOfDirectives, d);
   }
-  if (cfg.theme && theme[cfg.theme]) {
-    let tVars = assignWithDepth({}, cfg.themeVariables);
-    tVars = assignWithDepth(tVars, themeVariables);
-    const variables = theme[cfg.theme].getThemeVariables(tVars);
-    cfg.themeVariables = variables;
+
+  cfg = assignWithDepth(cfg, sumOfDirectives);
+
+  if (sumOfDirectives.theme) {
+    const themeVariables = assignWithDepth(
+      siteConfigDelta.themeVariables || {},
+      sumOfDirectives.themeVariables
+    );
+    cfg.themeVariables = theme[cfg.theme].getThemeVariables(themeVariables);
   }
+
+  // if (cfg.theme && theme[cfg.theme]) {
+  //   let tVars = assignWithDepth({}, cfg.themeVariables);
+  //   tVars = assignWithDepth(tVars, themeVariables);
+  //   const variables = theme[cfg.theme].getThemeVariables(tVars);
+  //   cfg.themeVariables = variables;
+  // }
 
   currentConfig = cfg;
   return cfg;
@@ -58,6 +71,10 @@ export const setSiteConfig = conf => {
 
   currentConfig = updateCurrentConfig(siteConfig, directives);
   return siteConfig;
+};
+
+export const setSiteConfigDelta = conf => {
+  siteConfigDelta = assignWithDepth({}, conf);
 };
 export const updateSiteConfig = conf => {
   siteConfig = assignWithDepth(siteConfig, conf);

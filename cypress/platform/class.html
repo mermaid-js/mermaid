@@ -20,16 +20,8 @@
   </head>
   <body>
     <h1>info below</h1>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
+      <div class="mermaid" style="width: 100%; height: 20%;">
         %%{init: {'theme': 'base',  'fontFamily': 'arial', 'themeVariables': {  'primaryColor': '#ff0000'}}}%%
-        classDiagram-v2
-
-        classApa -- classB : Inheritance
-        classA -- classC : link
-        classC -- classD : link
-        classB -- classD
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
         classDiagram-v2
          class BankAccount{
           +String owner
@@ -59,30 +51,6 @@
         classA -- classC : link
         classC -- classD : link
         classB -- classD
-
-        Customer "1" --> "*" Ticket
-    Student "1" --> "1..*" Course
-    Galaxy --> "many" Star : Contains
-    &lt;&lt;interface&gt;&gt; Customer
-    &lt;&lt;Service&gt;&gt; Galaxy
-
-    class BankAccount{
-      +String owner
-      +BigDecimal balance
-      +deposit(amount) bool
-      +withdrawl(amount) int
-  }
-
-  class Square~Shape~{
-    int id
-    List~int~ position
-    setPoints(List~int~ points)
-    getPoints() List~int~
-}
-
-Square : -List~string~ messages
-Square : +setMessages(List~string~ messages)
-Square : +getMessages() List~string~
       </div>
       <script src="./mermaid.js"></script>
     <script>

@@ -45,8 +45,7 @@ This renders a flowchart that allows for features such as: more arrow types, mul
 
 Apart from the graph type, the syntax is the same. This is currently experimental but when the beta period is over, both the graph and flowchart keywords will render in the new way. This means it is ok to start beta testing flowcharts.
 
-
-## An important note on Flowchart nodes, do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).
+> **Important note** Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).**
 
 ## Nodes & shapes
 
@@ -61,7 +60,8 @@ graph LR
 graph LR
     id
 ```
-# Note that the id is what is displayed in the box.
+
+> **Note** The id is what is displayed in the box.
 
 ### A node with text
 
@@ -369,7 +369,7 @@ graph TB
     B --> D
 ```
 
-## Beta: New arrow types
+### Beta: New arrow types
 
 When using flowchart instead of graph there is the are new types of arrows supported as per below:
 
@@ -386,7 +386,7 @@ flowchart LR
 ```
 
 
-## Beta: multi directional arrows
+### Beta: Multi directional arrows
 
 When using flowchart instead of graph there is the possibility to use multidirectional arrows.
 
@@ -403,6 +403,72 @@ flowchart LR
     B <--> C
     C x--x D
 ```
+
+### Minimum length of a link
+
+Each node in the flowchart is ultimately assigned to a rank in the rendered
+graph, i.e. to a vertical or horizontal level (depending on the flowchart
+orientation), based on the nodes to which it is linked. By default, links
+can span any number of ranks, but you can ask for any link to be longer
+than the others by adding extra dashes in the link definition.
+
+In the following example, two extra dashes are added in the link from node _B_
+to node _E_, so that it spans two more ranks than regular links:
+
+```
+graph TD
+    A[Start] --> B{Is it?};
+    B -->|Yes| C[OK];
+    C --> D[Rethink];
+    D --> B;
+    B ---->|No| E[End];
+```
+
+```mermaid
+graph TD
+    A[Start] --> B{Is it?};
+    B -->|Yes| C[OK];
+    C --> D[Rethink];
+    D --> B;
+    B ---->|No| E[End];
+```
+
+> **Note** Links may still be made longer than the requested number of ranks
+> by the rendering engine to accommodate other requests.
+
+When the link label is written in the middle of the link, the extra dashes must
+be added on the right side of the link. The following example is equivalent to
+the previous one:
+
+```
+graph TD
+    A[Start] --> B{Is it?};
+    B -- Yes --> C[OK];
+    C --> D[Rethink];
+    D --> B;
+    B -- No ----> E[End];
+```
+
+```mermaid
+graph TD
+    A[Start] --> B{Is it?};
+    B -->|Yes| C[OK];
+    C --> D[Rethink];
+    D --> B;
+    B ---->|No| E[End];
+```
+
+For dotted or thick links, the characters to add are equals signs or dots,
+as summed up in the following table:
+
+| Length            |    1   |    2    |     3    |
+|-------------------|:------:|:-------:|:--------:|
+| Normal            |  `---` |  `----` |  `-----` |
+| Normal with arrow |  `-->` |  `--->` |  `---->` |
+| Thick             |  `===` |  `====` |  `=====` |
+| Thick with arrow  |  `==>` |  `===>` |  `====>` |
+| Dotted            | `-.-`  | `-..-`  | `-...-`  |
+| Dotted with arrow | `-.->` | `-..->` | `-...->` |
 
 ## Special characters that break syntax
 

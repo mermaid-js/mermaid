@@ -6,7 +6,7 @@ Note that practitioners of ER modelling almost always refer to *entity types* si
 
 Mermaid can render ER diagrams
 
-```mermaid
+```markdown
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -34,7 +34,7 @@ ER diagrams are a new feature in Mermaid and are **experimental**.  There are li
 
 Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to label the relationship.  Each statement consists of the following parts, all of which are mandatory:
 
-```mermaid
+```markdown
     <first-entity> <relationship> <second-entity> : <relationship-label>
 ```
 
@@ -47,7 +47,7 @@ Where:
 
 For example:
 
-```mermaid
+```markdown
     PROPERTY ||--|{ ROOM : contains
 ```
 
@@ -74,7 +74,7 @@ Cardinality is a property that describes how many elements of another entity can
 
 Relationships may be classified as either *identifying* or *non-identifying* and these are rendered with either solid or dashed lines respectively. This is relevant when one of the entities in question can not have independent existence without the other.  For example a firm that insures people to drive cars might need to store data on `NAMED-DRIVER`s. In modelling this we might start out by observing that a `CAR` can be driven by many `PERSON` instances, and a `PERSON` can drive many `CAR`s - both entities can exist without the other, so this is a non-identifying relationship that we might specify in Mermaid as: `PERSON }|..|{ CAR : "driver"`.  Note the two dots in the middle of the relationship that will result in a dashed line being drawn between the two entities.  But when this many-to-many relationship is resolved into two one-to-many relationships, we observe that a `NAMED-DRIVER` cannot exist without both a `PERSON` and a `CAR` - the relationships become identifying and would be specified using hyphens, which translate to a solid line:
 
-```mermaid
+```markdown
     CAR ||--o{ NAMED-DRIVER : allows
     PERSON ||--o{ NAMED-DRIVER : is
 ```

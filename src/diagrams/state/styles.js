@@ -3,8 +3,6 @@ const getStyles = options =>
   fill: ${options.nodeBorder};
   stroke: none;
   font-size: 10px;
-  font-family: 'trebuchet ms', verdana, arial;
-  font-family: var(--mermaid-font-family);
 }
 g.stateGroup text {
   fill: ${options.textColor};
@@ -76,8 +74,6 @@ g.stateGroup line {
   fill: ${options.labelColor};
   font-size: 10px;
   font-weight: bold;
-  font-family: 'trebuchet ms', verdana, arial;
-  font-family: var(--mermaid-font-family);
 }
 
 .node circle.state-start {

@@ -23,7 +23,7 @@ describe('Pie Chart', () => {
       it('should render a flowchart diagram', () => {
         imgSnapshotTest(
           `
-        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
+        %%{init: { 'logLevel': 0} }%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}

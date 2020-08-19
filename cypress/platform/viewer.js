@@ -37,6 +37,27 @@ const contentLoaded = function() {
     global.mermaid.init();
   }
 };
+
+function merge(current, update) {
+  Object.keys(update).forEach(function(key) {
+    // if update[key] exist, and it's not a string or array,
+    // we go in one level deeper
+    if (
+      current.hasOwnProperty(key) && // eslint-disable-line
+      typeof current[key] === 'object' &&
+      !(current[key] instanceof Array)
+    ) {
+      merge(current[key], update[key]);
+
+      // if update[key] doesn't exist in current, or it's a string
+      // or array, then assign/overwrite current[key] to update[key]
+    } else {
+      current[key] = update[key];
+    }
+  });
+  return current;
+}
+
 const contentLoadedApi = function() {
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
@@ -57,7 +78,11 @@ const contentLoadedApi = function() {
         divs[i] = div;
       }
 
-      mermaid2.initialize(graphObj.mermaid);
+      const defaultE2eCnf = { theme: 'forest' };
+
+      const cnf = merge(defaultE2eCnf, graphObj.mermaid);
+
+      mermaid2.initialize(cnf);
 
       for (let i = 0; i < numCodes; i++) {
         mermaid2.render(

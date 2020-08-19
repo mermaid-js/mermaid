@@ -108,7 +108,7 @@ c. The `mermaid.initialize()` API call to start the rendering process.
 </body>
 ```
 
-### b. The embedded mermaid diagram definition needs to be contains inside a `<div>` tag that signifies that it is a mermaid diagram:
+### b. The embedded mermaid diagram definition needs to be contained inside a `<div>` tag that signifies that it is a mermaid diagram:
 
 ```
 <body>

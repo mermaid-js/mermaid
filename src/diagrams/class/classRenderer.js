@@ -157,6 +157,7 @@ export const draw = function(text, id) {
 
   // Fetch the default direction, use TD if none was found
   const diagram = select(`[id='${id}']`);
+  diagram.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
   insertMarkers(diagram);
 
   // Layout graph, Create a new directed graph
@@ -176,6 +177,7 @@ export const draw = function(text, id) {
 
   const classes = classDb.getClasses();
   const keys = Object.keys(classes);
+
   for (let i = 0; i < keys.length; i++) {
     const classDef = classes[keys[i]];
     const node = svgDraw.drawClass(diagram, classDef, conf);

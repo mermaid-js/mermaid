@@ -110,6 +110,7 @@ export const addSingleLink = function(_start, _end, type, linktext) {
   if (typeof type !== 'undefined') {
     edge.type = type.type;
     edge.stroke = type.stroke;
+    edge.length = type.length;
   }
   edges.push(edge);
 };
@@ -498,97 +499,92 @@ export const firstGraph = () => {
 };
 
 const destructStartLink = _str => {
-  const str = _str.trim();
+  let str = _str.trim();
+  let type = 'arrow_open';
 
-  switch (str) {
-    case '<--':
-      return { type: 'arrow_point', stroke: 'normal' };
-    case 'x--':
-      return { type: 'arrow_cross', stroke: 'normal' };
-    case 'o--':
-      return { type: 'arrow_circle', stroke: 'normal' };
-    case '<-.':
-      return { type: 'arrow_point', stroke: 'dotted' };
-    case 'x-.':
-      return { type: 'arrow_cross', stroke: 'dotted' };
-    case 'o-.':
-      return { type: 'arrow_circle', stroke: 'dotted' };
-    case '<==':
-      return { type: 'arrow_point', stroke: 'thick' };
-    case 'x==':
-      return { type: 'arrow_cross', stroke: 'thick' };
-    case 'o==':
-      return { type: 'arrow_circle', stroke: 'thick' };
-    case '--':
-      return { type: 'arrow_open', stroke: 'normal' };
-    case '==':
-      return { type: 'arrow_open', stroke: 'thick' };
-    case '-.':
-      return { type: 'arrow_open', stroke: 'dotted' };
+  switch (str[0]) {
+    case '<':
+      type = 'arrow_point';
+      str = str.slice(1);
+      break;
+    case 'x':
+      type = 'arrow_cross';
+      str = str.slice(1);
+      break;
+    case 'o':
+      type = 'arrow_circle';
+      str = str.slice(1);
+      break;
   }
+
+  let stroke = 'normal';
+
+  if (str.indexOf('=') !== -1) {
+    stroke = 'thick';
+  }
+
+  if (str.indexOf('.') !== -1) {
+    stroke = 'dotted';
+  }
+
+  return { type, stroke };
+};
+
+const countChar = (char, str) => {
+  const length = str.length;
+  let count = 0;
+  for (let i = 0; i < length; ++i) {
+    if (str[i] === char) {
+      ++count;
+    }
+  }
+  return count;
 };
 
 const destructEndLink = _str => {
   const str = _str.trim();
+  let line = str.slice(0, -1);
+  let type = 'arrow_open';
 
-  switch (str) {
-    case '--x':
-      return { type: 'arrow_cross', stroke: 'normal' };
-    case '-->':
-      return { type: 'arrow_point', stroke: 'normal' };
-    case '<-->':
-      return { type: 'double_arrow_point', stroke: 'normal' };
-    case 'x--x':
-      return { type: 'double_arrow_cross', stroke: 'normal' };
-    case 'o--o':
-      return { type: 'double_arrow_circle', stroke: 'normal' };
-    case 'o.-o':
-      return { type: 'double_arrow_circle', stroke: 'dotted' };
-    case '<==>':
-      return { type: 'double_arrow_point', stroke: 'thick' };
-    case 'o==o':
-      return { type: 'double_arrow_circle', stroke: 'thick' };
-    case 'x==x':
-      return { type: 'double_arrow_cross', stroke: 'thick' };
-    case 'x.-x':
-      return { type: 'double_arrow_cross', stroke: 'dotted' };
-    case 'x-.-x':
-      return { type: 'double_arrow_cross', stroke: 'dotted' };
-    case '<.->':
-      return { type: 'double_arrow_point', stroke: 'dotted' };
-    case '<-.->':
-      return { type: 'double_arrow_point', stroke: 'dotted' };
-    case 'o-.-o':
-      return { type: 'double_arrow_circle', stroke: 'dotted' };
-    case '--o':
-      return { type: 'arrow_circle', stroke: 'normal' };
-    case '---':
-      return { type: 'arrow_open', stroke: 'normal' };
-    case '-.-x':
-      return { type: 'arrow_cross', stroke: 'dotted' };
-    case '-.->':
-      return { type: 'arrow_point', stroke: 'dotted' };
-    case '-.-o':
-      return { type: 'arrow_circle', stroke: 'dotted' };
-    case '-.-':
-      return { type: 'arrow_open', stroke: 'dotted' };
-    case '.-x':
-      return { type: 'arrow_cross', stroke: 'dotted' };
-    case '.->':
-      return { type: 'arrow_point', stroke: 'dotted' };
-    case '.-o':
-      return { type: 'arrow_circle', stroke: 'dotted' };
-    case '.-':
-      return { type: 'arrow_open', stroke: 'dotted' };
-    case '==x':
-      return { type: 'arrow_cross', stroke: 'thick' };
-    case '==>':
-      return { type: 'arrow_point', stroke: 'thick' };
-    case '==o':
-      return { type: 'arrow_circle', stroke: 'thick' };
-    case '===':
-      return { type: 'arrow_open', stroke: 'thick' };
+  switch (str.slice(-1)) {
+    case 'x':
+      type = 'arrow_cross';
+      if (str[0] === 'x') {
+        type = 'double_' + type;
+        line = line.slice(1);
+      }
+      break;
+    case '>':
+      type = 'arrow_point';
+      if (str[0] === '<') {
+        type = 'double_' + type;
+        line = line.slice(1);
+      }
+      break;
+    case 'o':
+      type = 'arrow_circle';
+      if (str[0] === 'o') {
+        type = 'double_' + type;
+        line = line.slice(1);
+      }
+      break;
   }
+
+  let stroke = 'normal';
+  let length = line.length - 1;
+
+  if (line[0] === '=') {
+    stroke = 'thick';
+  }
+
+  let dots = countChar('.', line);
+
+  if (dots) {
+    stroke = 'dotted';
+    length = dots;
+  }
+
+  return { type, stroke, length };
 };
 
 const destructLink = (_str, _startStr) => {
@@ -602,7 +598,7 @@ const destructLink = (_str, _startStr) => {
     }
 
     if (startInfo.type === 'arrow_open') {
-      // -- xyz -->  - take arrow type form ending
+      // -- xyz -->  - take arrow type from ending
       startInfo.type = info.type;
     } else {
       // x-- xyz -->  - not supported
@@ -615,6 +611,7 @@ const destructLink = (_str, _startStr) => {
       startInfo.type = 'double_arrow_point';
     }
 
+    startInfo.length = info.length;
     return startInfo;
   }
 

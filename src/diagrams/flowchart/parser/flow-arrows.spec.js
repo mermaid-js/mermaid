@@ -25,6 +25,8 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
+    expect(edges[0].stroke).toBe('normal');
+    expect(edges[0].length).toBe(1);
   });
 
   it("should handle angle bracket ' > ' as direction LR", function() {
@@ -43,6 +45,8 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
+    expect(edges[0].stroke).toBe('normal');
+    expect(edges[0].length).toBe(1);
   });
 
   it("should handle angle bracket ' < ' as direction RL", function() {
@@ -61,6 +65,8 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
+    expect(edges[0].stroke).toBe('normal');
+    expect(edges[0].length).toBe(1);
   });
 
   it("should handle caret ' ^ ' as direction BT", function() {
@@ -77,8 +83,11 @@ describe('[Arrows] when parsing', () => {
     expect(edges.length).toBe(1);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
+    expect(edges[0].length).toBe(1);
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
+    expect(edges[0].stroke).toBe('normal');
+    expect(edges[0].length).toBe(1);
   });
 
   it("should handle lower-case 'v' as direction TB", function() {
@@ -97,6 +106,8 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
+    expect(edges[0].stroke).toBe('normal');
+    expect(edges[0].length).toBe(1);
   });
 
   it('should handle a nodes and edges and a space between link and node', function() {
@@ -112,6 +123,8 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
+    expect(edges[0].stroke).toBe('normal');
+    expect(edges[0].length).toBe(1);
   });
 
   it('should handle a nodes and edges, a space between link and node and each line ending without semicolon', function() {
@@ -127,6 +140,8 @@ describe('[Arrows] when parsing', () => {
     expect(edges[0].end).toBe('B');
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
+    expect(edges[0].stroke).toBe('normal');
+    expect(edges[0].length).toBe(1);
   });
 
   it('should handle statements ending without semicolon', function() {
@@ -142,9 +157,11 @@ describe('[Arrows] when parsing', () => {
     expect(edges[1].end).toBe('C');
     expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
+    expect(edges[0].stroke).toBe('normal');
+    expect(edges[0].length).toBe(1);
   });
 
-  describe('it should multi directional arrows', function() {
+  describe('it should handle multi directional arrows', function() {
     describe('point', function() {
       it('should handle double edged nodes and edges', function() {
         const res = flow.parser.parse('graph TD;\nA<-->B;');
@@ -159,6 +176,8 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
         expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
       });
 
       it('should handle double edged nodes with text', function() {
@@ -173,8 +192,9 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
-        expect(edges[0].stroke).toBe('normal');
         expect(edges[0].text).toBe('text');
+        expect(edges[0].stroke).toBe('normal');
+        expect(edges[0].length).toBe(1);
       });
 
       it('should handle double edged nodes and edges on thick arrows', function() {
@@ -189,8 +209,9 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
-        expect(edges[0].stroke).toBe('thick');
         expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('thick');
+        expect(edges[0].length).toBe(1);
       });
 
       it('should handle double edged nodes with text on thick arrows', function() {
@@ -205,8 +226,9 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
-        expect(edges[0].stroke).toBe('thick');
         expect(edges[0].text).toBe('text');
+        expect(edges[0].stroke).toBe('thick');
+        expect(edges[0].length).toBe(1);
       });
 
       it('should handle double edged nodes and edges on dotted arrows', function() {
@@ -221,8 +243,9 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
-        expect(edges[0].stroke).toBe('dotted');
         expect(edges[0].text).toBe('');
+        expect(edges[0].stroke).toBe('dotted');
+        expect(edges[0].length).toBe(1);
       });
 
       it('should handle double edged nodes with text on dotted arrows', function() {
@@ -237,8 +260,9 @@ describe('[Arrows] when parsing', () => {
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
         expect(edges[0].type).toBe('double_arrow_point');
-        expect(edges[0].stroke).toBe('dotted');
         expect(edges[0].text).toBe('text');
+        expect(edges[0].stroke).toBe('dotted');
+        expect(edges[0].length).toBe(1);
       });
     });
   });
