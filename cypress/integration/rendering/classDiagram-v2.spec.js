@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import { imgSnapshotTest } from '../../helpers/util';
-describe('Class diagram', () => {
+describe('Class diagram V2', () => {
 
     it('0: should render a simple class diagram', () => {
       imgSnapshotTest(
