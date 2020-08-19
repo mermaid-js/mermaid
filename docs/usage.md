@@ -3,7 +3,7 @@
 
 mermaid is a javascript tool that makes use of a markdown based syntax to render customizable diagrams and charts, for greater speed and ease. 
 
-mermaid was made to 0help Documentation catch up with Development, in quickly changing projects.
+mermaid was made to help Documentation catch up with Development, in quickly changing projects.
 
 ### CDN
 
