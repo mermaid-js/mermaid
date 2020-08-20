@@ -2,8 +2,8 @@ title: mermaid
 lang: en
 description: Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.
 
-theme: jekyll-rtd-theme
-# remote_theme: rundocs/jekyll-rtd-theme
+# theme: jekyll-rtd-theme
+remote_theme: rundocs/jekyll-rtd-theme
 
 sass:
   style: compressed
