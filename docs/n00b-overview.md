@@ -1,7 +1,7 @@
 # Overview for Beginners
 **Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-overview.md)
 
-## There is no explanation like a Good Diagram
+## There is no explanation like a Good Diagram 	
 
 A picture is worth a thousand words, a good diagram would be worth more. There is no disputing that they are indeed very useful. Yet very few people use them, even fewer still do so, for documentation.
 
@@ -19,27 +19,33 @@ The fast setting Doc-Rot in diagrams makes it quite hard to rationalize taking h
 
 mermaid seeks to change that. mermaid is a javascript based tool that utilizes a markdown inspired syntax to generate documentation, which is actually quicker, less complicated and more convenient than most traditional diagramming software. This is a relatively straightforward solution to a major hurdle in software teams.  
 
-# The primary objective of mermaid is to help in addressing the problem of Doc Rot. 
+# :blue_book: Definition of Terms/ Dictionary
 
-With mermaid, diagrams can be created through comments like this in a script:
+**Mermaid definitions**
 
-```
-graph TD
-A[Client] --> B[Load Balancer]
-B --> C[Server01]
-B --> D[Server02]
-```
+>These are the instrunctions for how the diagram is to rendered, written in mermaid, which is based on Markdown. These can be found inside `<div>` tags, with the `class=mermaid`.**
+ ` <div class="mermaid">
+    graph TD
+    A[Client] --> B[Load Balancer]
+    B --> C[Server01]
+    B --> D[Server02]
+  </div>`
 
-And they are rendered into this and made part of the documentation:
+**render**
 
-![Flowchart](./img/n00b-firstFlow.png)
+>This is the core function of Mermaid and its API, it is a function that is called to read all the `Mermaid Definitions` and returns an SVG file, based on the definitions.**
+
+
+**Nodes**
+
+>These are the boxes that contain text or otherwise discrete pieces of each diagram, separated generally by arrows, except for Gantt Charts and User Journey Diagrams. They will be refered to often in the instructions. For Diagram Specific Syntax and Instructions, refer to 
 
 ## Advantages of Using Mermaid
 
-- Ease of generation, modification and rendering.
+- Ease of generate, modify and render diagrams, when you make 
 - The number of integrations and plugins it has. 
 - It can be added to your or your company's website. 
-
+- Diagrams can be created through comments like this in a script:
 
 ## The catch-22 of Diagrams and Charts: 
 
@@ -57,20 +63,8 @@ In fact one can pick up the syntax for it quite easily from the examples given a
 
 ## mermaid is for everyone.
 
+For anyone who may need video [Tutorials](./Tutorials.md)
 For information on how to use mermaid, click [here](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).
 You can try out the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
-Alternatively, you could also view the [integrations and uses](https://mermaid-js.github.io/mermaid/#/./integrations). 
+Alternatively, you could also view the [integrations and uses](https://mermaid-js.github.io/mermaid/#/./integrations), to see how mermaid is used. 
 
-# For anyone who may need video tutorials, here is a list of beginner friendly introductions: 
-
-https://www.youtube.com/watch?v=SQ9QmuTHuSI&t=438s
-
-https://www.youtube.com/watch?v=5RQqht3NNSE
-
-https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s
-
-https://www.youtube.com/watch?v=9HZzKkAqrX8
-
-https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s
-
-https://www.youtube.com/watch?v=9HZzKkAqrX8
