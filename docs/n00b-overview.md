@@ -23,14 +23,16 @@ mermaid seeks to change that. mermaid is a javascript based tool that utilizes a
 
 **Mermaid definitions**
 
->These are the instrunctions for how the diagram is to rendered, written in mermaid, which is based on Markdown. These can be found inside `<div>` tags, with the `class=mermaid`.**
- ` <div class="mermaid">
+>These are the instrunctions for how the diagram is to rendered, written in mermaid, which is based on Markdown. These can be found inside `<div>` tags, with the `class=mermaid`.
+```
+ <div class="mermaid">
     graph TD
     A[Client] --> B[Load Balancer]
     B --> C[Server01]
     B --> D[Server02]
-  </div>`
-
+  </div>
+  ```
+  
 **render**
 
 >This is the core function of Mermaid and its API, it is a function that is called to read all the `Mermaid Definitions` and returns an SVG file, based on the definitions.
