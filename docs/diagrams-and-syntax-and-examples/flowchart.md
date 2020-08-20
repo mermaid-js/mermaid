@@ -1,6 +1,10 @@
+---
+sort: 3
+title: Flowchart
+---
+
 # Flowcharts - Basic Syntax
 
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./flowchart.md)
 ## Graph
 
 This statement declares the direction of the Flowchart.
@@ -41,7 +45,7 @@ Possible FlowChart orientations are:
 
 ## Flowcharts
 
-This renders a flowchart that allows for features such as: more arrow types, multi directional arrows, and linking to and from subgraphs. 
+This renders a flowchart that allows for features such as: more arrow types, multi directional arrows, and linking to and from subgraphs.
 
 Apart from the graph type, the syntax is the same. This is currently experimental but when the beta period is over, both the graph and flowchart keywords will render in the new way. This means it is ok to start beta testing flowcharts.
 
@@ -159,14 +163,18 @@ graph LR
 ```
 
 ### A hexagon node
+{% raw %}
+```
+graph LR
+    id1{{This is the text in the box}}
+```
+{% endraw %}
 
-```
-graph LR
-    id1{{This is the text in the box}}
-```
 ```mermaid
+{% raw %}
 graph LR
     id1{{This is the text in the box}}
+{% endraw %}
 ```
 
 ### Parallelogram

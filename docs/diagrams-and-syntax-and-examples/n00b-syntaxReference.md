@@ -1,19 +1,23 @@
+---
+sort: 1
+title: Diagram syntax intro
+---
+
 ## Diagram syntax
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-syntaxReference.md)
 
-If you are new to mermaid, read the [Getting Started](n00b-gettingStarted.md) and [Overview](n00b-overview.md) sections, to learn the basics of mermaid. 
-Video Tutorials can be found at the bottom of the Overview Section. 
+If you are new to mermaid, read the [Getting Started](n00b-gettingStarted.md) and [Overview](n00b-overview.md) sections, to learn the basics of mermaid.
+Video Tutorials can be found at the bottom of the Overview Section.
 
-This section is a list of diagram types supported by mermaid. Below is a list of links to aricles that explain the syntax of the diagrams or charts that 0can be called. 
+This section is a list of diagram types supported by mermaid. Below is a list of links to aricles that explain the syntax of the diagrams or charts that 0can be called.
 
-They also  detail how diagrams can be defined, or described in the manner with which the diagram is to be rendered by the renderer. 
+They also  detail how diagrams can be defined, or described in the manner with which the diagram is to be rendered by the renderer.
 
 ### The benefits of text based diagramming are its speed and modifiability. mermaid allows for easy maintenance and modification of diagrams. This means your diagrams will always be up to date and closely follow your code and improve your documentation.  
 
 ## mermaid tag:
 These Diagram Definitions can be entered within a \<div class=mermaid> tag.
-like so : 
-```
+like so :
+```html
 <div class="mermaid">
      graph LR
       A --- B

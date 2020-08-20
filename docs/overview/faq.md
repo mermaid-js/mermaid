@@ -1,6 +1,9 @@
-Frequently Asked Questions: 
+---
+sort: 3
+title: FAQ
+---
 
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/faq.md)
+# Frequently Asked Questions
 
 1. [How to add title to flowchart?](https://github.com/knsv/mermaid/issues/556#issuecomment-363182217)
 1. [How to specify custom CSS file?](https://github.com/mermaidjs/mermaid.cli/pull/24#issuecomment-373402785)

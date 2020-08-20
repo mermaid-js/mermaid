@@ -5,19 +5,25 @@ description: Markdownish syntax for generating flowcharts, sequence diagrams, cl
 # theme: jekyll-rtd-theme
 remote_theme: rundocs/jekyll-rtd-theme
 
-sass:
-  style: compressed
-
 copyright:
   revision: true
 
 edit: true
 addons_branch: true
 
+google:
+  gtag: UA-153180559-1
+
+sass:
+  style: compressed
+
 addons:
   - github
   - i18n
   - analytics
+
+plugins:
+  - jemoji
 
 readme_index:
   with_frontmatter: true

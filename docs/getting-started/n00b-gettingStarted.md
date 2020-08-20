@@ -1,11 +1,15 @@
+---
+sort: 1
+title: Getting started - easier
+---
+
 # A basic mermaid User-Guide for Beginners
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-gettingStarted.md)
 
 Creating diagrams and charts using mermaid code is simple.
 The code is turned into a diagram in the web page with the use of a mermaid renderer.
 
 The mermaid renderer is a piece of javascript that parses mermaid definitions, when called.
-This then renders a diagram based on that code in SVG, alternatively it 
+This then renders a diagram based on that code in SVG, alternatively it
 
 Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot.
 
@@ -13,7 +17,7 @@ Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Inter
 1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/). For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
 2. Using one of the many [mermaid plugins](https://mermaid-js.github.io/mermaid/#/integrations).
 3. Hosting mermaid on a webpage, with an absolute link.
-4. Downloading mermaid and hosting it on your Web Page. 
+4. Downloading mermaid and hosting it on your Web Page.
 
 **Notes**: More in depth information can be found on [Usage](./usage.md).
 .
@@ -25,17 +29,17 @@ Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Inter
 
 In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
 
-**This is a great way to learn how to define a mermaid diagram.** 
+**This is a great way to learn how to define a mermaid diagram.**
 
 For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
 
-![Flowchart](./img/n00b-liveEditor.png) 
+![Flowchart](../assets/img/n00b-liveEditor.png)
 
 **Notes:**
 
-You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation. 
+You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation.
 
-![Flowchart](./img/liveEditorOptions.png)
+![Flowchart](../assets/img/liveEditorOptions.png)
 
 The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](https://mermaid-js.github.io/mermaid/#/Setup) page.
 
@@ -44,7 +48,7 @@ The `Mermaid configuration` is for controlling mermaid behaviour. An easy introd
 
 Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer. An extensive list can be found [here](./integrations.md).
 
-One example in the list is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview) 
+One example in the list is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
 
 When the mermaid plugin is installed on a Confluence server, one can insert a mermaid object into any Confluence page.
 ### Here is a step by step process for using the mermaid-Confluence plugin:
@@ -53,25 +57,25 @@ When the mermaid plugin is installed on a Confluence server, one can insert a me
 
 - In a Confluence page, Add Other macros.
 
-![Flowchart](./img/n00b-Confluence1.png)
+![Flowchart](../assets/img/n00b-Confluence1.png)
 
 ---
 
 - Search for mermaid.
 
-![Flowchart](./img/n00b-Confluence2.png)
+![Flowchart](../assets/img/n00b-Confluence2.png)
 
 ---
 
 - The mermaid object appears. Paste your mermaid code into it.
 
-![Flowchart](./img/n00b-Confluence3.png)
+![Flowchart](../assets/img/n00b-Confluence3.png)
 
 ---
 
 - Save the page and the diagram appears.
 
-![Flowchart](./img/n00b-Confluence4.png)
+![Flowchart](../../assets/img/n00b-Confluence4.png)
 
 ---
 ## The following are two ways of hosting mermaid on a webpage.  
@@ -81,7 +85,7 @@ When the mermaid plugin is installed on a Confluence server, one can insert a me
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
-We do not need to install anything on the server, apart from a program (like Notepad++) that can generate an html file, which is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer). 
+We do not need to install anything on the server, apart from a program (like Notepad++) that can generate an html file, which is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
 
 So if you want to really simplify things when testing this out, don't use a web server at all but just create an HTML file locally and drag it into your browser window. The browser will do the work of rendering the mermaid diagrams according to the descriptions you've given!
 
@@ -93,7 +97,7 @@ a. A reference for fetching the online mermaid renderer, which is written in Jav
 
 b. The mermaid code for the diagram we want to create.
 
-c. The `mermaid.initialize()` API call to start the rendering process. 
+c. The `mermaid.initialize()` API call to start the rendering process.
 
 
 ## This is what needs to go into the html file (and all of them are important), for the mermaidAPI to render the diagrams:
@@ -125,7 +129,7 @@ c. The `mermaid.initialize()` API call to start the rendering process.
 
 ### c. The `mermaid.initialize()` API call
 
-`mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and starts to render them one by one. It is called this way: 
+`mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and starts to render them one by one. It is called this way:
 
 ```
 <body>
@@ -166,9 +170,9 @@ c. The `mermaid.initialize()` API call to start the rendering process.
 **Notes**: This has to be saved in an `HTML` file and opened with a browser.
 
 ---
-## 4. Calling mermaid from a relative link. 
+## 4. Calling mermaid from a relative link.
 
-This method is similar to 3, if only a little more involved. The difference may be very subtle even, but it offers its own advantages, mainly in speed. 
+This method is similar to 3, if only a little more involved. The difference may be very subtle even, but it offers its own advantages, mainly in speed.
 
 1. install node v10 or 12, which would have npm
 
@@ -183,9 +187,9 @@ This method is similar to 3, if only a little more involved. The difference may 
 5. Find the `mermaid.min.js` file,
     a. select the file.
     b. press the shift key and right click on it
-    c. select copy as path from the options. 
+    c. select copy as path from the options.
 
-6. Paste it within the `script` tag as the `src`. 
+6. Paste it within the `script` tag as the `src`.
 ```
 <script src="Paste the mermaid.min.js file address here"></script>
  <script>mermaid.initialize({startOnLoad:true});</script>
@@ -196,11 +200,11 @@ This method is similar to 3, if only a little more involved. The difference may 
   <script>mermaid.initialize({startOnLoad:true});</script>
 ```
 8. Add the graph and diagram definitions as you would in number 3.
-    a. be mindful of the `div` tags. 
+    a. be mindful of the `div` tags.
 
 9. Save, load/edit your HTML file to your liking.  
 
- 
+
 **Note** placing the HTML file on the same folder the `mermaid` file you've downloaded is a good practice and allows you to shorten the address on the `src` section.
 
 **As seen here, in this full example:**
@@ -232,12 +236,11 @@ This method is similar to 3, if only a little more involved. The difference may 
 
 **Three additional comments from Knut Sveidqvist, creator of mermaid:**
 - In early versions of mermaid, the `<script src>` tag was invoked in the `<head>` part of the web page. Nowdays we can place it directly in `<body>` as seen above. However, older parts of the documentation frequently reflects the previous way which still works.
-  
+
 - We initialize the mermaid rendering with `mermaid.initialize()` directly in the html code. In principle this could be done through placing `mermaid.initialize()` inside of `mermaid.min.js`. We would then eliminate the need for this explicit line in the html. However, there are use cases where we do want to separate the two steps. Sometimes we want full control over when we start looking for `<div>`tags inside the web page with `mermaid.initialize()`, for example when we think that all `<div>` tags may not have been loaded by the time `mermaid.min.js` runs.
 
 - In the third method, `mermaid.min.js` is called using an absolute path. Even worse, the example includes the mermaid version number which of course will change as time goes by. However, the example makes it easy to understand what is going on - even though it is perhaps doomed in a way we do not want in a production environment. When going from testing mermaid out to getting serious with it, I would suggest one of the following approaches for calling `mermaid.min.js`:
-  
+
   1. If you do not enter a specific version, you automatically get the latest one.
   2. If you really need a specific version, hard code it (this is rare but it happens).
   3. If you need to know the current mermaid version, replace a mermaid code block with the word `info` and the version will be returned like [this](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiaW5mb1xuXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ==)
-   

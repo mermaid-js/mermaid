@@ -1,6 +1,9 @@
-# Version 8.7.0: Theme Configuration
+---
+sort: 5
+title: Theming
+---
 
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/theming.md)
+# Version 8.7.0: Theme Configuration
 
 With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of the diagram themes. The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls.
 
@@ -112,7 +115,9 @@ You can create your own themes, by changing any of the given variables below. If
 
 ## Theme Variables Reference Table
 
-**Notes: Variables that are unique to some diagrams can be affected by changes in Theme Variables.
+```note
+Variables that are unique to some diagrams can be affected by changes in Theme Variables
+```
 
 |       Variable       |         Default/Base/Factor value          | Calc |                                                           Description                                                            |
 | -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -155,6 +160,7 @@ You can create your own themes, by changing any of the given variables below. If
 | nodeTextColor        | primaryTextColor               | *    |  Color for text inside Nodes.                                                                                                                                |
 
 # sequence diagram
+
 |         name          |      Default value      | Calc | Description |
 | --------------------- | ----------------------- | ---- | ----------- |
 | actorBorder           | primaryBorderColor      | *    |   Actor Border Color          |

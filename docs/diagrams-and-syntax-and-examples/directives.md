@@ -1,17 +1,17 @@
+---
+sort: 10
+---
+
 ## Directives
-
-**Edit this Page** [![N|Solid](/img/GitHub-Mark-32px.png)](./directives.md)
-Directives were added in [Version 8.6.0](/8.6.0_docs.md)
-
 
 ## Directives were added in [Version 8.6.0](/8.6.0_docs.md). Please Read it for more information.
 
-## Directives 
+## Directives
 With this version, directives are supported. Directives are divided in two sets, by priority. the first set, containing 'init' or 'initialize' directives take priority. While the other set, containing all other kinds of directives are considered only after 'init' and the graph-type declared.
 
-#### Init 
+#### Init
 
- 
+
 | Parameter | Description |Type | Required | Values|
 | --- | --- | --- | --- | --- |
 | init | modifies configurations| Directive| Optional | Any parameters not included in the secure array|
@@ -21,7 +21,7 @@ With this version, directives are supported. Directives are divided in two sets,
 init would be an argument-directive: %%{init: { **insert argument here**}}%%
 
 The json object that is passed as {**argument** } must be valid, quoted json or it will be ignored.
-    
+
 The init/initialize directive is parsed early in the flow, enough to be able to re-initialize mermaid with a new configuration object. Example:
 ```
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
@@ -50,7 +50,7 @@ will result an init object looking like this:
 ```
 
 to be sent to `mermaid.initialize(...)`
- 
+
 
 #### Other directives
 
@@ -63,7 +63,7 @@ sequenceDiagram
 Alice->>Bob: Hi Bob
 Bob->>Alice: Hi Alice
 ```
-## Chronology 
+## Chronology
 This will set the `logLevel` to `debug` and `theme` to `dark` for a sequence diagram. Then, during processing, the config for the sequence diagram is set by the `config` directive. This directive is handled in the `sequenceDb.js`. In this example, the fontFamily, fontSize, and fontWeight are all set for this sequence diagram.
 
 #### Backwards Compatibility
@@ -75,7 +75,7 @@ Multiline directives, however, will pose an issue and will render an error. This
 ### Wrapping
 
 # Wrap
+
 | Parameter | Description |Type | Required | Values|
 | --- | --- | --- | --- | --- |
 | wrap | a callable text-wrap function| Directive| Optional | %%{wrap}%%|
-

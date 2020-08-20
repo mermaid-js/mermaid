@@ -1,6 +1,10 @@
+---
+sort: 1
+title: Development and Contribution
+---
+
 # Development
 
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md)
 ## Updating the documentation
 
 Please continue writing documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs).
@@ -61,7 +65,9 @@ statement
 
 In the extract of the grammar above, it is defined that a call to the setTitle method in the data object will be done when parsing and the title keyword is encountered.
 
-> **Info** Make sure that the `parseError` function for the parser is defined and calling `mermaidPAI.parseError`. This way a common way of detecting parse errors is provided for the end-user.
+```tip
+Make sure that the `parseError` function for the parser is defined and calling `mermaidPAI.parseError`. This way a common way of detecting parse errors is provided for the end-user.
+```
 
 For more info look in the example diagram type:
 
