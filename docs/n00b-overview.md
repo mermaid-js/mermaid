@@ -33,7 +33,7 @@ mermaid seeks to change that. mermaid is a javascript based tool that utilizes a
 
 **render**
 
->This is the core function of Mermaid and its API, it is a function that is called to read all the `Mermaid Definitions` and returns an SVG file, based on the definitions.**
+>This is the core function of Mermaid and its API, it is a function that is called to read all the `Mermaid Definitions` and returns an SVG file, based on the definitions.
 
 
 **Nodes**
