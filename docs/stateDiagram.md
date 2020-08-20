@@ -169,7 +169,7 @@ stateDiagram-v2
 ```
 
 ```mermaid
-stateDiagram-v2-v2
+stateDiagram-v2
     [*] --> First
 
     state First {
