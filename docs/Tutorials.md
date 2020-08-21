@@ -1,5 +1,5 @@
 # Tutorials
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/doc/Tutorials.md)
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/Tutorials.md)
 
 This is  list of publicly available Tutorials in Mermaid. This is intended as a basic introduction for the use of the Live Editor and HTML with mermaid.  
 
