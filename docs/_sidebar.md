@@ -1,12 +1,12 @@
 - Overview
   - [mermaid](README.md) 
-  - [overview](n00b-overview.md)
+  - [Overview](n00b-overview.md)
   - [Use-Cases and Integrations](integrations.md)
   - [FAQ](faq.md)
   
 - Getting Started 
 
-  - [Getting started - easier](n00b-gettingStarted.md)
+  - [Getting started](n00b-gettingStarted.md)
   - [Tutorials](Tutorials.md)
   - [API-Usage](usage.md)
   - [Configurations](Setup.md)
@@ -16,14 +16,14 @@
   - [Advanced usage](n00b-advanced.md)
 
   
-- Tutorials and Community
+- Contributions and Community
 
   - [Development and Contribution](development.md)
   - [Mermaid Versions](versionUpdates.md)
   - [Changelog](CHANGELOG.md)
   
 
-- Diagrams and Syntax and Examples 
+- Diagrams, Syntax, and Examples 
 
   - [Diagram syntax intro](n00b-syntaxReference.md)
   - [Examples](examples.md)
@@ -35,4 +35,3 @@
   - [User Journey](user-journey.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
-  - [Directives](directives.md)
