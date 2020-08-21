@@ -62,9 +62,9 @@ They also serve as proof of concept, for the variety of things that cen be built
 
 ## Wikis
 
-- [Media Wiki](https://www.mediawiki.org/wiki/Extension:Mermaid)
-- [Semantic Media Wiki](https://semantic-mediawiki.org)
-  - [Mermaid Plugin](https://github.com/SemanticMediaWiki/Mermaid)
+- [MediaWiki](https://www.mediawiki.org)
+  - [Mermaid Extension](https://www.mediawiki.org/wiki/Extension:Mermaid)
+  - [Flex Diagrams Extension](https://www.mediawiki.org/wiki/Extension:Flex_Diagrams)
 - [FosWiki](https://foswiki.org)
   - [Mermaid Plugin](https://foswiki.org/Extensions/MermaidPlugin)
 - [DokuWiki](https://dokuwiki.org)
