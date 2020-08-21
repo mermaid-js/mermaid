@@ -21,16 +21,20 @@ https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s
 
 https://www.youtube.com/watch?v=9HZzKkAqrX8
 
-# Mermaid HTML samples
+# Mermaid with HTML: 
 Examples are provided in [Gettting Started](./docs/n00b-gettingStarted.md)
 
-## Mermaid with Text Area: 
+**CodePen Examples:** 
 
-https://codepen.io/Ryuno-Ki/pen/LNxwgR 
-
-## Other CodePen Examples: 
 https://codepen.io/CarlBoneri/pen/BQwZzq
 
 https://codepen.io/tdkn/pen/vZxQzd
 
 https://codepen.io/janzeteachesit/pen/OWWZKN
+
+
+## Mermaid with Text Area: 
+
+https://codepen.io/Ryuno-Ki/pen/LNxwgR 
+
+
