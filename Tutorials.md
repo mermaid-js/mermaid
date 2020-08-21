@@ -29,4 +29,8 @@ Examples are provided in [Gettting Started](./docs/n00b-gettingStarted.md)
 https://codepen.io/Ryuno-Ki/pen/LNxwgR 
 
 ## Other CodePen Examples: 
+https://codepen.io/CarlBoneri/pen/BQwZzq
 
+https://codepen.io/tdkn/pen/vZxQzd
+
+https://codepen.io/janzeteachesit/pen/OWWZKN
