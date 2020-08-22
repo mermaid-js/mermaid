@@ -7,7 +7,7 @@
 - Getting Started
 
   <!-- - [Getting started - easier](n00b-gettingStarted.md) -->
-  - [Tutorials](Tutorials.md)
+  <!-- - [Tutorials](Tutorials.md) -->
   <!-- - [API-Usage](usage.md) -->
   <!-- - [Configurations](Setup.md) -->
   <!-- - [Directives](8.6.0_docs.md) -->
@@ -35,4 +35,3 @@
   - [User Journey](user-journey.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
-  - [Directives](directives.md) -->
