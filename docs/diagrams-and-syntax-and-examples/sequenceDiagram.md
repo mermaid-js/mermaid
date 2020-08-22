@@ -1,6 +1,8 @@
-# Sequence diagrams
+---
+sort: 4
+---
 
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./sequenceDiagram.md)
+# Sequence diagrams
 
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
 

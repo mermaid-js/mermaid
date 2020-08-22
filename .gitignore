@@ -18,3 +18,6 @@ dist/sequenceTest.html
 cypress/platform/current.html
 cypress/platform/experimental.html
 local/
+
+_site
+Gemfile.lock

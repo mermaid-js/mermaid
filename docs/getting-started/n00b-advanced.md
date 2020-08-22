@@ -1,3 +1,8 @@
+---
+sort: 7
+title: Advanced usage
+---
+
 # Advanced n00b mermaid (Coming soon..)
 
 ## splitting mermaid code from html

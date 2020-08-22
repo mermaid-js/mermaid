@@ -1,9 +1,13 @@
+---
+sort: 2
+title: Use-Cases and Integrations
+---
+
 # Integrations
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-gettingStarted.md)
 
-The following list is a compilation of different integrations and plugins that allow the rendering of mermaid definitions 
+The following list is a compilation of different integrations and plugins that allow the rendering of mermaid definitions
 
-They also serve as proof of concept, for the variety of things that cen be built with mermaid. 
+They also serve as proof of concept, for the variety of things that cen be built with mermaid.
 
 
 ## Productivity
