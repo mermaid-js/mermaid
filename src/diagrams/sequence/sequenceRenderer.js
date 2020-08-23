@@ -5,7 +5,7 @@ import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
 import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
-import utils, { assignWithDepth } from '../../utils';
+import utils, { assignWithDepth, configureSvgSize } from '../../utils';
 
 parser.yy = sequenceDb;
 
@@ -706,15 +706,8 @@ export const draw = function(text, id) {
       .attr('y', -25);
   }
 
-  if (conf.useMaxWidth) {
-    diagram.attr('height', '100%');
-    diagram.attr('width', '100%');
-    diagram.attr('style', 'max-width:' + width + 'px;');
-    // diagram.attr('style', 'max-width:100%;');
-  } else {
-    diagram.attr('height', height);
-    diagram.attr('width', width);
-  }
+  configureSvgSize(diagram, height, width, conf.useMaxWidth);
+
   const extraVertForTitle = title ? 40 : 0;
   diagram.attr(
     'viewBox',

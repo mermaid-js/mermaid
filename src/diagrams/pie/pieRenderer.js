@@ -5,6 +5,7 @@ import { select, scaleOrdinal, schemeSet2, pie as d3pie, entries, arc } from 'd3
 import pieData from './pieDb';
 import pieParser from './parser/pie';
 import { logger } from '../../logger';
+import { configureSvgSize } from '../../utils';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -20,7 +21,8 @@ export const setConf = function(cnf) {
  * @param text
  * @param id
  */
-let w;
+let width;
+const height = 450;
 export const draw = (txt, id) => {
   try {
     const parser = pieParser.parser;
@@ -31,24 +33,22 @@ export const draw = (txt, id) => {
     parser.parse(txt);
     logger.debug('Parsed info diagram');
     const elem = document.getElementById(id);
-    w = elem.parentElement.offsetWidth;
+    width = elem.parentElement.offsetWidth;
 
-    if (typeof w === 'undefined') {
-      w = 1200;
+    if (typeof width === 'undefined') {
+      width = 1200;
     }
 
     if (typeof conf.useWidth !== 'undefined') {
-      w = conf.useWidth;
+      width = conf.useWidth;
     }
-    const h = 450;
-    elem.setAttribute('height', '100%');
+
+    configureSvgSize(elem, height, width, conf.useMaxWidth);
+
     // Set viewBox
-    elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
     // Fetch the default direction, use TD if none was found
-
-    var width = w; // 450
-    var height = 450;
     var margin = 40;
     var legendRectSize = 18;
     var legendSpacing = 4;
@@ -119,7 +119,7 @@ export const draw = (txt, id) => {
       .append('text')
       .text(parser.yy.getTitle())
       .attr('x', 0)
-      .attr('y', -(h - 50) / 2)
+      .attr('y', -(height - 50) / 2)
       .attr('class', 'pieTitleText');
 
     //Add the slegend/annotations for each section

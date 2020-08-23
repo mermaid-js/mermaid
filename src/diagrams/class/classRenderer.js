@@ -5,6 +5,7 @@ import { logger } from '../../logger';
 import classDb, { lookUpDomId } from './classDb';
 import { parser } from './parser/classDiagram';
 import svgDraw from './svgDraw';
+import { configureSvgSize } from '../../utils';
 
 parser.yy = classDb;
 
@@ -232,13 +233,7 @@ export const draw = function(text, id) {
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 
-  if (conf.useMaxWidth) {
-    diagram.attr('width', '100%');
-    diagram.attr('style', `max-width: ${width}px;`);
-  } else {
-    diagram.attr('height', height);
-    diagram.attr('width', width);
-  }
+  configureSvgSize(diagram, height, width, conf.useMaxWidth);
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;

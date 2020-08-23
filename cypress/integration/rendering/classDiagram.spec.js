@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 describe('Class diagram', () => {
   it('1: should render a simple class diagram', () => {
@@ -65,7 +65,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('should render a simple class diagram with different visibilities', () => {
+  it('3: should render a simple class diagram with different visibilities', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -78,59 +78,6 @@ describe('Class diagram', () => {
       Class01 : +int publicGorilla
       Class01 : #int protectedMarmoset
       `,
-      {}
-    );
-    cy.get('svg');
-  });
-
-  it('should render multiple class diagrams', () => {
-    imgSnapshotTest(
-      [
-      `
-    classDiagram
-      Class01 "1" <|--|> "*" AveryLongClass : Cool
-      &lt;&lt;interface&gt;&gt; Class01
-      Class03 "1" *-- "*" Class04
-      Class05 "1" o-- "many" Class06
-      Class07 "1" .. "*" Class08
-      Class09 "1" --> "*" C2 : Where am i?
-      Class09 "*" --* "*" C3
-      Class09 "1" --|> "1" Class07
-      Class07  : equals()
-      Class07  : Object[] elementData
-      Class01  : size()
-      Class01  : int chimp
-      Class01  : int gorilla
-      Class08 "1" <--> "*" C2: Cool label
-      class Class10 {
-        &lt;&lt;service&gt;&gt;
-        int id
-        test()
-      }
-      `,
-      `
-    classDiagram
-      Class01 "1" <|--|> "*" AveryLongClass : Cool
-      &lt;&lt;interface&gt;&gt; Class01
-      Class03 "1" *-- "*" Class04
-      Class05 "1" o-- "many" Class06
-      Class07 "1" .. "*" Class08
-      Class09 "1" --> "*" C2 : Where am i?
-      Class09 "*" --* "*" C3
-      Class09 "1" --|> "1" Class07
-      Class07  : equals()
-      Class07  : Object[] elementData
-      Class01  : size()
-      Class01  : int chimp
-      Class01  : int gorilla
-      Class08 "1" <--> "*" C2: Cool label
-      class Class10 {
-        &lt;&lt;service&gt;&gt;
-        int id
-        test()
-      }
-      `,
-      ],
       {}
     );
     cy.get('svg');
@@ -352,5 +299,98 @@ describe('Class diagram', () => {
       {}
     );
     cy.get('svg');
+  });
+
+  it('16: should render multiple class diagrams', () => {
+    imgSnapshotTest(
+      [
+        `
+    classDiagram
+      Class01 "1" <|--|> "*" AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 "1" *-- "*" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 "1" .. "*" Class08
+      Class09 "1" --> "*" C2 : Where am i?
+      Class09 "*" --* "*" C3
+      Class09 "1" --|> "1" Class07
+      Class07  : equals()
+      Class07  : Object[] elementData
+      Class01  : size()
+      Class01  : int chimp
+      Class01  : int gorilla
+      Class08 "1" <--> "*" C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      `,
+        `
+    classDiagram
+      Class01 "1" <|--|> "*" AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 "1" *-- "*" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 "1" .. "*" Class08
+      Class09 "1" --> "*" C2 : Where am i?
+      Class09 "*" --* "*" C3
+      Class09 "1" --|> "1" Class07
+      Class07  : equals()
+      Class07  : Object[] elementData
+      Class01  : size()
+      Class01  : int chimp
+      Class01  : int gorilla
+      Class08 "1" <--> "*" C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      `,
+      ],
+      {}
+    );
+    cy.get('svg');
+  });
+
+  it('17: should render a class diagrams when useMaxWidth is true (default)', () => {
+    renderGraph(
+      `
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      `,
+      { class: { useMaxWidth: true } }
+    );
+    cy.get('svg')
+      .should('have.attr', 'width', '100%')
+      .should('have.attr', 'height', '218')
+      .should('have.attr', 'style', 'max-width: 162.28125px;')
+  });
+
+  it('18: should render a class diagrams when useMaxWidth is false', () => {
+    renderGraph(
+      `
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      `,
+      { class: { useMaxWidth: false } }
+    );
+    cy.get('svg')
+      .should('have.attr', 'width', '162.28125')
+      .should('have.attr', 'height', '218')
+      .should('not.have.attr', 'style')
   });
 });

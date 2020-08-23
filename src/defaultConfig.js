@@ -173,8 +173,20 @@ const config = {
      */
     curve: 'linear',
     // Only used in new experimental rendering
-    // repreesents the padding between the labels and the shape
-    padding: 15
+    // represents the padding between the labels and the shape
+    padding: 15,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true
   },
 
   /**
@@ -572,8 +584,23 @@ const config = {
      * This might need adjustment to match your locale and preferences
      ***Default value '%Y-%m-%d'**.
      */
-    axisFormat: '%Y-%m-%d'
+    axisFormat: '%Y-%m-%d',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true,
+
+    useWidth: undefined
   },
+
   /**
    * The object containing configurations specific for journey diagrams
    */
@@ -711,10 +738,35 @@ const config = {
     rightAngles: false
   },
   class: {
-    arrowMarkerAbsolute: false
+    arrowMarkerAbsolute: false,
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true
   },
   git: {
-    arrowMarkerAbsolute: false
+    arrowMarkerAbsolute: false,
+
+    useWidth: undefined,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true
   },
   state: {
     dividerMargin: 10,
@@ -734,7 +786,18 @@ const config = {
     labelHeight: 16,
     edgeLengthFactor: '20',
     compositTitleSize: 35,
-    radius: 5
+    radius: 5,
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true
   },
 
   /**
