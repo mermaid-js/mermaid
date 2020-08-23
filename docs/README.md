@@ -189,17 +189,17 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({startOnLoad:true});</script>
 ```
-## doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.
+## Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.
 
 ## Examples can be found in [Getting Started](./n00b-gettingStarted.md)
 
 # Sibling projects
-- [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
-- [mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
-- [mermaid webpack demo](https://github.com/mermaidjs/mermaid-webpack-demo)
-- [mermaid Parcel demo](https://github.com/mermaidjs/mermaid-parcel-demo)
+- [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor)
+- [Mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
+- [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
+- [Mermaid Parcel Demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 
-## Request for assistance
+## Request for Assistance
 
 Things are piling up and I have a hard time keeping up. To remedy this
 it would be great if we could form a core team of developers to cooperate
