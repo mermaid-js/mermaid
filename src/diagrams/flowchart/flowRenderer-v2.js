@@ -476,6 +476,35 @@ export const draw = function(text, id) {
     }
   }
 
+  // Wrap titles of subgraphs which have link in an anchor SVG object.
+  for (i = 0; i < subGraphs.length; i++) {
+    subG = subGraphs[i];
+
+    if (subG.title !== 'undefined') {
+      const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
+      const cluster = select(clusterEl[0]);
+      const label = cluster.select('.cluster-label');
+
+      if (subG.link) {
+        const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'class', subG.classes.join(' '));
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'href', subG.link);
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+        if (subG.linkTarget) {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', subG.linkTarget);
+        }
+
+        const linkNode = cluster.insert(function() {
+          return link;
+        }, 'rect::after');
+
+        linkNode.append(function() {
+          return label.node();
+        });
+      }
+    }
+  }
+
   // If node has a link, wrap it in an anchor SVG object.
   const keys = Object.keys(vert);
   keys.forEach(function(key) {
