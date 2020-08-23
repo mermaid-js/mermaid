@@ -64,4 +64,21 @@ describe('Flowchart v2', () => {
       { flowchart: { diagramPadding: 0 } }
     );
   });
+  it('36: should render escaped without html labels', () => {
+    imgSnapshotTest(
+      `flowchart TD
+        a["<strong>Haiya</strong>"]---->b
+      `,
+      {htmlLabels: false, flowchart: {htmlLabels: false}}
+    );
+  });
+  it('37: should render non-escaped with html labels', () => {
+    imgSnapshotTest(
+      `flowchart TD
+        a["<strong>Haiya</strong>"]===>b
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+
+    );
+  });
 });

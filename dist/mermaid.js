@@ -30304,7 +30304,7 @@ function addHtmlLabel(root, node) {
   var client = div.node().getBoundingClientRect();
   fo
     .attr("width", client.width)
-    .attr("height", client.height); 
+    .attr("height", client.height);
 
   return fo;
 }
@@ -49043,7 +49043,7 @@ module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.7.0\",\"descr
 /*!***********************!*\
   !*** ./src/config.js ***!
   \***********************/
-/*! exports provided: defaultConfig, updateCurrentConfig, setSiteConfig, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
+/*! exports provided: defaultConfig, updateCurrentConfig, setSiteConfig, setSiteConfigDelta, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49051,6 +49051,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultConfig", function() { return defaultConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateCurrentConfig", function() { return updateCurrentConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setSiteConfig", function() { return setSiteConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setSiteConfigDelta", function() { return setSiteConfigDelta; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateSiteConfig", function() { return updateSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSiteConfig", function() { return getSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConfig", function() { return setConfig; });
@@ -49069,29 +49070,35 @@ __webpack_require__.r(__webpack_exports__);
 
 var defaultConfig = Object.freeze(_defaultConfig__WEBPACK_IMPORTED_MODULE_3__["default"]);
 var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+var siteConfigDelta;
 var directives = [];
 var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
 var updateCurrentConfig = function updateCurrentConfig(siteCfg, _directives) {
-  var cfg = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteCfg); // Apply directives
+  // start with config beeing the siteConfig
+  var cfg = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteCfg); // let sCfg = assignWithDepth(defaultConfig, siteConfigDelta);
+  // Join directives
 
-  var themeVariables = {};
+  var sumOfDirectives = {};
 
   for (var i = 0; i < _directives.length; i++) {
     var d = _directives[i];
-    sanitize(d);
-    cfg = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(cfg, d);
+    sanitize(d); // Apply the data from the directive where the the overrides the themeVaraibles
 
-    if (d.theme) {
-      cfg.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme].getThemeVariables(d.themeVariables);
-    }
+    sumOfDirectives = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(sumOfDirectives, d);
   }
 
-  if (cfg.theme && _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme]) {
-    var tVars = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, cfg.themeVariables);
-    tVars = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(tVars, themeVariables);
-    var variables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme].getThemeVariables(tVars);
-    cfg.themeVariables = variables;
-  }
+  cfg = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(cfg, sumOfDirectives);
+
+  if (sumOfDirectives.theme) {
+    var themeVariables = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfigDelta.themeVariables || {}, sumOfDirectives.themeVariables);
+    cfg.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_2__["default"][cfg.theme].getThemeVariables(themeVariables);
+  } // if (cfg.theme && theme[cfg.theme]) {
+  //   let tVars = assignWithDepth({}, cfg.themeVariables);
+  //   tVars = assignWithDepth(tVars, themeVariables);
+  //   const variables = theme[cfg.theme].getThemeVariables(tVars);
+  //   cfg.themeVariables = variables;
+  // }
+
 
   currentConfig = cfg;
   return cfg;
@@ -49121,6 +49128,9 @@ var setSiteConfig = function setSiteConfig(conf) {
 
   currentConfig = updateCurrentConfig(siteConfig, directives);
   return siteConfig;
+};
+var setSiteConfigDelta = function setSiteConfigDelta(conf) {
+  siteConfigDelta = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, conf);
 };
 var updateSiteConfig = function updateSiteConfig(conf) {
   siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
@@ -56482,7 +56492,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 
 var MERMAID_DOM_ID_PREFIX = '';
-var config = _config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"];
+var config = _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]();
 var vertices = {};
 var edges = [];
 var classes = [];
@@ -56529,7 +56539,7 @@ var addVertex = function addVertex(_id, text, type, style, classes) {
   }
 
   if (typeof text !== 'undefined') {
-    config = _config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"];
+    config = _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]();
     txt = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(text.trim(), config); // strip quotes if string starts and ends with a quote
 
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
@@ -71477,6 +71487,8 @@ function initialize(options) {
     }
   } // Set default options
 
+
+  _config__WEBPACK_IMPORTED_MODULE_39__["setSiteConfigDelta"](options);
 
   if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme]) {
     // Todo merge with user options

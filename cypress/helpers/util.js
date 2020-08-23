@@ -20,6 +20,7 @@ export const mermaidUrl = (graphStr, options, api) => {
 };
 
 export const imgSnapshotTest = (graphStr, _options, api) => {
+  cy.log(_options);
   const options = Object.assign(_options);
   if (!options.fontFamily) {
     options.fontFamily = 'courier';
@@ -42,6 +43,7 @@ export const imgSnapshotTest = (graphStr, _options, api) => {
   if (!options.fontSize) {
     options.fontSize = '16px';
   }
+  cy.log(options);
   const url = mermaidUrl(graphStr, options, api);
 
   cy.visit(url);
