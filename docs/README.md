@@ -172,7 +172,7 @@ Latest Version: [https://unpkg.com/browse/mermaid@8.6.0/](https://unpkg.com/brow
 To support mermaid on your website, all you have to do is add Mermaid’s JavaScript package
 
 ```
-1.You will need to isntall node v10 or 12, which would have npm
+1.You will need to install node v10 or 12, which would have npm
 
 2. download yarn using npm.
 
