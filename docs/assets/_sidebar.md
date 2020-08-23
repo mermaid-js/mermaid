@@ -16,7 +16,7 @@
   <!-- - [Advanced usage](n00b-advanced.md) -->
 
 
-- Tutorials and Community
+- Contributions and Community
 
   <!-- - [Development and Contribution](development.md)
   - [Mermaid Versions](versionUpdates.md)

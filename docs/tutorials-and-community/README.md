@@ -2,5 +2,5 @@
 sort: 3
 ---
 
-# Tutorials and Community
+# Contributions and Community
 {% include list.liquid %}
