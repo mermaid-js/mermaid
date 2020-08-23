@@ -261,6 +261,10 @@ export const setLink = function(ids, linkStr, tooltip, target) {
       vertices[id].link = utils.formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
     }
+    else if (typeof subGraphs[getPosForId(id)] !== 'undefined') {
+      subGraphs[getPosForId(id)].link = utils.formatUrl(linkStr, config);
+      subGraphs[getPosForId(id)].linkTarget = target;
+    }
   });
   setTooltip(ids, tooltip);
   setClass(ids, 'clickable');
