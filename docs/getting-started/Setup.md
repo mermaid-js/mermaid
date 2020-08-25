@@ -48,7 +48,7 @@ Returns **any** the siteConfig
 **Notes**:
 Returns **any** values in siteConfig.
 
-Returns **any**
+Returns **any** 
 
 ## setConfig
 
@@ -142,10 +142,13 @@ mermaidAPI.initialize({
     provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
     completed.
 
+## 
+
 ## mermaidAPI configuration defaults
 
-```html
-<script>
+<pre>
+
+&lt;script>
   var config = {
     theme:'default',
     logLevel:'fatal',
@@ -200,7 +203,7 @@ mermaidAPI.initialize({
     }
   };
   mermaid.initialize(config);
-</script>
-```
+&lt;/script>
+</pre>
 
 [1]: Setup.md?id=render
