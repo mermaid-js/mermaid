@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 describe('State diagram', () => {
   it('should render a simple state diagrams', () => {
@@ -37,7 +37,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a single state with short descr', () => {
+  it('should render a single state with short descriptions', () => {
     imgSnapshotTest(
       `
     stateDiagram
@@ -48,7 +48,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a transition descrions with new lines', () => {
+  it('should render a transition descriptions with new lines', () => {
     imgSnapshotTest(
       `
       stateDiagram
@@ -191,7 +191,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render composit states', () => {
+  it('should render composite states', () => {
     imgSnapshotTest(
       `
       stateDiagram
@@ -280,7 +280,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render conurrency states', () => {
+  it('should render concurrency states', () => {
     imgSnapshotTest(
       `
     stateDiagram
@@ -319,7 +319,7 @@ describe('State diagram', () => {
       }
     );
   });
-  it('Simplest composit state', () => {
+  it('Simplest composite state', () => {
     imgSnapshotTest(
       `
       stateDiagram
@@ -344,5 +344,45 @@ describe('State diagram', () => {
       }
     );
   });
-
+  it('should render a state diagram when useMaxWidth is true (default)', () => {
+    renderGraph(
+      `
+    stateDiagram
+    [*] --> State1
+    State1 --> [*]
+      `,
+      { state: { useMaxWidth: true } }
+    );
+    cy.get('svg')
+      .should((svg) => {
+        expect(svg).to.have.attr('width', '100%');
+        expect(svg).to.have.attr('height');
+        const height = parseFloat(svg.attr('height'));
+        expect(height).to.eq(139);
+        const style = svg.attr('style');
+        expect(style).to.match(/^max-width: [\d.]+px;$/);
+        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(maxWidthValue).to.be.within(112 * .95, 112 * 1.05);
+      });
+  });
+  it('should render a state diagram when useMaxWidth is false', () => {
+    renderGraph(
+      `
+    stateDiagram
+    [*] --> State1
+    State1 --> [*]
+      `,
+      { state: { useMaxWidth: false } }
+    );
+    cy.get('svg')
+      .should((svg) => {
+        const height = parseFloat(svg.attr('height'));
+        const width = parseFloat(svg.attr('width'));
+        expect(height).to.eq(139);
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(width).to.be.within(112 * .95, 112 * 1.05);
+        expect(svg).to.not.have.attr('style');
+      });
+  });
 });

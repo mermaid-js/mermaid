@@ -43,7 +43,9 @@ export const draw = (txt, id) => {
       width = conf.useWidth;
     }
 
-    configureSvgSize(elem, height, width, conf.useMaxWidth);
+    const diagram = select('#' + id);
+    console.log('conf', conf);
+    configureSvgSize(diagram, height, width, conf.useMaxWidth);
 
     // Set viewBox
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
@@ -55,10 +57,7 @@ export const draw = (txt, id) => {
 
     var radius = Math.min(width, height) / 2 - margin;
 
-    var svg = select('#' + id)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height)
+    var svg = diagram
       .append('g')
       .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
@@ -67,9 +66,8 @@ export const draw = (txt, id) => {
     Object.keys(data).forEach(function(key) {
       sum += data[key];
     });
-    logger.info(data);
 
-    // set the color scale
+    // Set the color scale
     var color = scaleOrdinal()
       .domain(data)
       .range(schemeSet2);
@@ -80,12 +78,12 @@ export const draw = (txt, id) => {
     });
     var dataReady = pie(entries(data));
 
-    // shape helper to build arcs:
+    // Shape helper to build arcs:
     var arcGenerator = arc()
       .innerRadius(0)
       .outerRadius(radius);
 
-    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    // Build the pie chart: each part of the pie is a path that we build using the arc function.
     svg
       .selectAll('mySlices')
       .data(dataReady)
@@ -99,7 +97,8 @@ export const draw = (txt, id) => {
       .style('stroke-width', '2px')
       .style('opacity', 0.7);
 
-    // Now add the Percentage. Use the centroid method to get the best coordinates
+    // Now add the percentage.
+    // Use the centroid method to get the best coordinates.
     svg
       .selectAll('mySlices')
       .data(dataReady)
@@ -122,7 +121,7 @@ export const draw = (txt, id) => {
       .attr('y', -(height - 50) / 2)
       .attr('class', 'pieTitleText');
 
-    //Add the slegend/annotations for each section
+    // Add the legends/annotations for each section
     var legend = svg
       .selectAll('.legend')
       .data(color.domain())

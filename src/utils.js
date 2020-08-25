@@ -715,6 +715,7 @@ export const calculateSvgSizeAttrs = function(height, width, useMaxWidth) {
 
 export const configureSvgSize = function(svgElem, height, width, useMaxWidth) {
   const attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
+  console.log('svgElem', svgElem);
   d3Attrs(svgElem, attrs);
 };
 

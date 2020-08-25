@@ -354,7 +354,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('17: should render a class diagrams when useMaxWidth is true (default)', () => {
+  it('17: should render a class diagram when useMaxWidth is true (default)', () => {
     renderGraph(
       `
     classDiagram
@@ -369,12 +369,18 @@ describe('Class diagram', () => {
       { class: { useMaxWidth: true } }
     );
     cy.get('svg')
-      .should('have.attr', 'width', '100%')
-      .should('have.attr', 'height', '218')
-      .should('have.attr', 'style', 'max-width: 162.28125px;')
+      .should((svg) => {
+        expect(svg).to.have.attr('width', '100%');
+        expect(svg).to.have.attr('height', '218');
+        const style = svg.attr('style');
+        expect(style).to.match(/^max-width: [\d.]+px;$/);
+        const maxWidthValue = parseInt(style.match(/[\d.]+/g).join(''));
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(maxWidthValue).to.be.within(160 * .95, 160 * 1.05);
+      });
   });
 
-  it('18: should render a class diagrams when useMaxWidth is false', () => {
+  it('18: should render a class diagram when useMaxWidth is false', () => {
     renderGraph(
       `
     classDiagram
@@ -389,8 +395,12 @@ describe('Class diagram', () => {
       { class: { useMaxWidth: false } }
     );
     cy.get('svg')
-      .should('have.attr', 'width', '162.28125')
-      .should('have.attr', 'height', '218')
-      .should('not.have.attr', 'style')
+      .should((svg) => {
+        const width = parseFloat(svg.attr('width'));
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(width).to.be.within(160 * .95, 160 * 1.05);
+        expect(svg).to.have.attr('height', '218');
+        expect(svg).to.not.have.attr('style');
+      });
   });
 });

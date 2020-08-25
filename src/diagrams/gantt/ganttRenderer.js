@@ -98,7 +98,7 @@ export const draw = function(text, id) {
 
   makeGant(taskArray, w, h);
 
-  configureSvgSize(elem, h, w, conf.useMaxWidth);
+  configureSvgSize(svg, h, w, conf.useMaxWidth);
 
   svg
     .append('text')

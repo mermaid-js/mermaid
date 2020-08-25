@@ -1,4 +1,5 @@
 /* eslint-env jest */
+/* global cy */
 import { Base64 } from 'js-base64';
 
 export const mermaidUrl = (graphStr, options, api) => {

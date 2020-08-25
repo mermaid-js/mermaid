@@ -1,5 +1,5 @@
 /* eslint-env jasmine */
-import utils  from './utils';
+import utils from './utils';
 
 describe('when assignWithDepth: should merge objects within objects', function() {
   it('should handle simple, depth:1 types (identity)', function() {
