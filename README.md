@@ -21,7 +21,7 @@ The text definitions for Mermaid diagrams allows for it to be updated easily, it
 So less time needs be spent on documenting, as a separate and laborious task. <br/>
 Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor). <br/>
 [Tutorials](./docs/getting-started/Tutorials.md) has video tutorials.
-Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/getting-started/integrations.md).
+Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/overview/integrations.md).
 
 For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](./docs/overview/n00b-overview.md) and [Usage](./docs/getting-started/usage.md).
 
