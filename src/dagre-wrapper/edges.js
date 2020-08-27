@@ -103,28 +103,30 @@ export const insertEdgeLabel = (elem, edge) => {
   }
 };
 
-export const positionEdgeLabel = (edge, points) => {
+export const positionEdgeLabel = (edge, paths) => {
   logger.info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.label) {
     const el = edgeLabels[edge.id];
     let x = edge.x;
     let y = edge.y;
-    if (points) {
+    if (path) {
       // debugger;
-      const pos = utils.calcLabelPosition(points);
+      const pos = utils.calcLabelPosition(path);
       x = pos.x;
       y = pos.y;
     }
     el.attr('transform', 'translate(' + x + ', ' + y + ')');
   }
 
+  //let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.startLabelLeft) {
     const el = terminalLabels[edge.id].startLeft;
     let x = edge.x;
     let y = edge.y;
-    if (points) {
+    if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'start_left', points);
+      const pos = utils.calcTerminalLabelPosition(0, 'start_left', path);
       x = pos.x;
       y = pos.y;
     }
@@ -134,9 +136,9 @@ export const positionEdgeLabel = (edge, points) => {
     const el = terminalLabels[edge.id].startRight;
     let x = edge.x;
     let y = edge.y;
-    if (points) {
+    if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'start_right', points);
+      const pos = utils.calcTerminalLabelPosition(0, 'start_right', path);
       x = pos.x;
       y = pos.y;
     }
@@ -146,9 +148,9 @@ export const positionEdgeLabel = (edge, points) => {
     const el = terminalLabels[edge.id].endLeft;
     let x = edge.x;
     let y = edge.y;
-    if (points) {
+    if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'end_left', points);
+      const pos = utils.calcTerminalLabelPosition(0, 'end_left', path);
       x = pos.x;
       y = pos.y;
     }
@@ -158,9 +160,9 @@ export const positionEdgeLabel = (edge, points) => {
     const el = terminalLabels[edge.id].endRight;
     let x = edge.x;
     let y = edge.y;
-    if (points) {
+    if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'end_right', points);
+      const pos = utils.calcTerminalLabelPosition(0, 'end_right', path);
       x = pos.x;
       y = pos.y;
     }
@@ -465,10 +467,10 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
       break;
     default:
   }
-
+  let paths = {};
   if (pointsHasChanged) {
-    return points;
-  } else {
-    return edge.points;
+    paths.updatedPath = points;
   }
+  paths.originalPath = edge.points;
+  return paths;
 };
