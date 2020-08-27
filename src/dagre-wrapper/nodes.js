@@ -596,6 +596,7 @@ const class_box = (parent, node) => {
   const classTitleLabel = labelContainer
     .node()
     .appendChild(createLabel(classTitleString, node.labelStyle, true, true));
+  select(classTitleLabel).attr('class', 'classTitle');
   let classTitleBBox = classTitleLabel.getBBox();
   if (getConfig().flowchart.htmlLabels) {
     const div = classTitleLabel.children[0];

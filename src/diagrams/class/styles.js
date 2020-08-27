@@ -6,9 +6,11 @@ const getStyles = options =>
   font-family: ${options.fontFamily};
   font-size: 10px;
 
-  .title {
-    font-weight: bolder;
-  }
+  
+}
+
+.classTitle {
+  font-weight: bolder;
 }
 .node rect,
   .node circle,

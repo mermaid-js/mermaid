@@ -58,7 +58,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('v2 should render a transition descrions with new lines', () => {
+  it('v2 should render a transition descriptions with new lines', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2

@@ -39,7 +39,7 @@ export const insertEdgeLabel = (elem, edge) => {
   edgeLabels[edge.id] = edgeLabel;
 
   // Update the abstract data of the edge with the new information about its width and height
-  edge.width = bbox.width;
+  edge.width = bbox.width + 40;
   edge.height = bbox.height;
 
   if (edge.startLabelLeft) {
