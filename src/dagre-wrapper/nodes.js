@@ -588,9 +588,14 @@ const class_box = (parent, node) => {
     maxWidth += interfaceBBox.width;
   }
 
+  let classTitleString = node.classData.id;
+
+  if (node.classData.type !== undefined && node.classData.type !== '') {
+    classTitleString += '<' + node.classData.type + '>';
+  }
   const classTitleLabel = labelContainer
     .node()
-    .appendChild(createLabel(node.labelText, node.labelStyle, true, true));
+    .appendChild(createLabel(classTitleString, node.labelStyle, true, true));
   let classTitleBBox = classTitleLabel.getBBox();
   if (getConfig().flowchart.htmlLabels) {
     const div = classTitleLabel.children[0];
