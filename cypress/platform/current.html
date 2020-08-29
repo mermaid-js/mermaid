@@ -76,8 +76,12 @@ stateDiagram-v2
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
         %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
-classDiagram
-	Animal <|-- Duck
+flowchart TD
+%%subgraph A
+  C -->|Label1 long long long| E1
+  C --> E3
+  C ==>E3
+%%end
 
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">

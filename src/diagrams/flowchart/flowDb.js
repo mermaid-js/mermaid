@@ -7,7 +7,7 @@ import mermaidAPI from '../../mermaidAPI';
 // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 const MERMAID_DOM_ID_PREFIX = '';
 
-let config = configApi.defaultConfig;
+let config = configApi.getConfig();
 let vertices = {};
 let edges = [];
 let classes = [];
@@ -48,7 +48,7 @@ export const addVertex = function(_id, text, type, style, classes) {
     vertices[id] = { id: id, styles: [], classes: [] };
   }
   if (typeof text !== 'undefined') {
-    config = configApi.defaultConfig;
+    config = configApi.getConfig();
     txt = common.sanitizeText(text.trim(), config);
 
     // strip quotes if string starts and ends with a quote

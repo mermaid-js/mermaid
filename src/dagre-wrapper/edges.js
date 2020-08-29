@@ -39,7 +39,7 @@ export const insertEdgeLabel = (elem, edge) => {
   edgeLabels[edge.id] = edgeLabel;
 
   // Update the abstract data of the edge with the new information about its width and height
-  edge.width = bbox.width + 40;
+  edge.width = bbox.width;
   edge.height = bbox.height;
 
   if (edge.startLabelLeft) {
@@ -111,10 +111,11 @@ export const positionEdgeLabel = (edge, paths) => {
     let x = edge.x;
     let y = edge.y;
     if (path) {
-      // debugger;
+      //   // debugger;
       const pos = utils.calcLabelPosition(path);
-      x = pos.x;
-      y = pos.y;
+      logger.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')');
+      // x = pos.x;
+      // y = pos.y;
     }
     el.attr('transform', 'translate(' + x + ', ' + y + ')');
   }
