@@ -421,6 +421,22 @@ export const addSubGraph = function(_id, list, _title) {
   title = common.sanitizeText(title, config);
   subCount = subCount + 1;
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
+
+  /**
+   * Deletes an id from all subgraphs
+   */
+  const del = _id => {
+    subGraphs.forEach(sg => {
+      const pos = sg.nodes.indexOf(_id);
+      if (pos >= 0) {
+        console.log(sg.nodes, pos, _id);
+        sg.nodes.splice(pos, 1);
+      }
+    });
+  };
+  // Removes the members of this subgraph from any other subgraphs, a node only belong to one subgraph
+  subGraph.nodes.forEach(_id => del(_id));
+  console.log(subGraph.nodes);
   subGraphs.push(subGraph);
   subGraphLookup[id] = subGraph;
   return id;

@@ -125,4 +125,32 @@ describe('Flowchart v2', () => {
         expect(svg).to.not.have.attr('style');
       });
   });
+  it('50: handle nested subgraphs in reverse order', () => {
+    imgSnapshotTest(
+      `flowchart LR
+        a -->b
+        subgraph A
+        B
+        end
+        subgraph B
+        b
+        end
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('51: handle nested subgraphs in reverse order', () => {
+    imgSnapshotTest(
+      `flowchart LR
+        a -->b
+        subgraph A
+        B
+        end
+        subgraph B
+        b
+        end
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
 });
