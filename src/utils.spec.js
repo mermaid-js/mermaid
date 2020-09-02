@@ -171,7 +171,6 @@ Alice->Bob: hi`;
     expect(type).toBe('git');
   });
 });
-
 describe('when finding substring in array ', function() {
   it('should return the array index that contains the substring', function() {
     const arr = ['stroke:val1', 'fill:val2'];
@@ -184,7 +183,6 @@ describe('when finding substring in array ', function() {
     expect(result).toEqual(-1);
   });
 });
-
 describe('when formatting urls', function() {
   it('should handle links', function() {
     const url = 'https://mermaid-js.github.io/mermaid/#/';
@@ -240,5 +238,18 @@ describe('when formatting urls', function() {
     config.securityLevel = 'strict';
     result = utils.formatUrl(url, config);
     expect(result).toEqual('about:blank');
+  });
+});
+describe('when calculating SVG size', function() {
+  it('should return width 100% when useMaxWidth is true', function () {
+    const attrs = utils.calculateSvgSizeAttrs(100, 200, true);
+    expect(attrs.get('height')).toEqual(100);
+    expect(attrs.get('style')).toEqual('max-width: 200px;');
+    expect(attrs.get('width')).toEqual('100%');
+  });
+  it('should return absolute width when useMaxWidth is false', function () {
+    const attrs = utils.calculateSvgSizeAttrs(100, 200, false);
+    expect(attrs.get('height')).toEqual(100);
+    expect(attrs.get('width')).toEqual(200);
   });
 });

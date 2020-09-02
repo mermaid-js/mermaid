@@ -9,7 +9,7 @@ import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import common from '../common/common';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
+import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 import flowChartShapes from './flowChartShapes';
 
 const conf = {};
@@ -401,13 +401,7 @@ export const draw = function(text, id) {
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
+  configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;

@@ -695,12 +695,38 @@ export const calculateTextDimensions = memoize(
   (text, config) => `${text}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
 );
 
+const d3Attrs = function(d3Elem, attrs) {
+  for (let attr of attrs) {
+    d3Elem.attr(attr[0], attr[1]);
+  }
+};
+
+export const calculateSvgSizeAttrs = function(height, width, useMaxWidth) {
+  let attrs = new Map();
+  attrs.set('height', height);
+  if (useMaxWidth) {
+    attrs.set('width', '100%');
+    attrs.set('style', `max-width: ${width}px;`);
+  } else {
+    attrs.set('width', width);
+  }
+  return attrs;
+};
+
+export const configureSvgSize = function(svgElem, height, width, useMaxWidth) {
+  const attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
+  console.log('svgElem', svgElem);
+  d3Attrs(svgElem, attrs);
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
   calculateTextHeight,
   calculateTextWidth,
   calculateTextDimensions,
+  calculateSvgSizeAttrs,
+  configureSvgSize,
   detectInit,
   detectDirective,
   detectType,
