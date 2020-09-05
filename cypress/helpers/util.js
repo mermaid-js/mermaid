@@ -19,7 +19,31 @@ export const mermaidUrl = (graphStr, options, api) => {
   return url;
 };
 
-export const imgSnapshotTest = (graphStr, options, api) => {
+export const imgSnapshotTest = (graphStr, _options, api) => {
+  cy.log(_options);
+  const options = Object.assign(_options);
+  if (!options.fontFamily) {
+    options.fontFamily = 'courier';
+  }
+  if (!options.sequence) {
+    options.sequence = {};
+  }
+  if (!options.sequence || (options.sequence && !options.sequence.actorFontFamily)) {
+    options.sequence.actorFontFamily = 'courier';
+  }
+  if (options.sequence && !options.sequence.noteFontFamily) {
+    options.sequence.noteFontFamily = 'courier';
+  }
+  options.sequence.actorFontFamily = 'courier';
+  options.sequence.noteFontFamily = 'courier';
+  options.sequence.messageFontFamily = 'courier';
+  if (options.sequence && !options.sequence.actorFontFamily) {
+    options.sequence.actorFontFamily = 'courier';
+  }
+  if (!options.fontSize) {
+    options.fontSize = '16px';
+  }
+  cy.log(options);
   const url = mermaidUrl(graphStr, options, api);
 
   cy.visit(url);

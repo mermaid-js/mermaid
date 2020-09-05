@@ -7,7 +7,7 @@ describe('State diagram', () => {
       `
     info
       `,
-      { logLevel: 1 }
+      { logLevel: 1, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -19,7 +19,7 @@ describe('State diagram', () => {
     [*] --> State1
     State1 --> [*]
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -31,7 +31,7 @@ describe('State diagram', () => {
       [*] --> S1
       state "Some long name" as S1
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -43,7 +43,7 @@ describe('State diagram', () => {
       [*] --> S1
       state "Some long name" as S1: The description
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -54,7 +54,7 @@ describe('State diagram', () => {
       state "A long long name" as long1
       state "A" as longlonglongid
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -68,7 +68,7 @@ describe('State diagram', () => {
       S1 --> S3: long line using <br>should work
       S1 --> S4: long line using \\nshould work
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -82,7 +82,7 @@ describe('State diagram', () => {
       notes.
     end note
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -96,7 +96,7 @@ describe('State diagram', () => {
       notes with . and  in them.
     end note
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -112,7 +112,7 @@ describe('State diagram', () => {
     State1 --> State2 : With +,-
     note left of State2 : This is the note +,-<br/>
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -128,7 +128,7 @@ describe('State diagram', () => {
       And another line...
     end note
     `,
-      {}
+      { logLevel: 0, fontFamily: 'courier' }
     );
   });
   it('v2 should handle multiline notes with different line breaks', () => {
@@ -140,7 +140,7 @@ describe('State diagram', () => {
       Line1<br>Line2<br/>Line3<br />Line4<br	/>Line5
       end note
       `,
-      {}
+      { logLevel: 0, fontFamily: 'courier' }
     );
   });
 
@@ -155,7 +155,7 @@ describe('State diagram', () => {
     State1 --> State2
     State2 --> [*]
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -168,7 +168,7 @@ describe('State diagram', () => {
     State1 --> State3
     State1 --> [*]
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -184,7 +184,7 @@ describe('State diagram', () => {
     State2 --> State3 : Transition 5
     State1 --> [*]
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -197,7 +197,7 @@ describe('State diagram', () => {
         XState2 : New line
         XState1 --> XState2
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -216,7 +216,7 @@ describe('State diagram', () => {
         Configuring --> Idle : EvConfig  EvConfig EvConfig  EvConfig EvConfig
       }
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -246,7 +246,7 @@ describe('State diagram', () => {
          }
       }
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
   });
   it('v2 should render forks in composit states', () => {
@@ -268,7 +268,7 @@ describe('State diagram', () => {
         State4 --> [*]
       }
       `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
   });
   it('v2 should render forks and joins', () => {
@@ -286,7 +286,7 @@ describe('State diagram', () => {
       join_state --> State4
       State4 --> [*]
     `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -310,7 +310,7 @@ describe('State diagram', () => {
       ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
     }
     `,
-      { logLevel: 0 }
+      { logLevel: 0, fontFamily: 'courier' }
     );
     cy.get('svg');
   });
@@ -338,7 +338,7 @@ describe('State diagram', () => {
         }
     `,
       {
-        logLevel: 0,
+        logLevel: 0, fontFamily: 'courier'
       }
     );
   });
@@ -350,7 +350,7 @@ describe('State diagram', () => {
         a --> b: Stop
     `,
       {
-        logLevel: 0,
+        logLevel: 0, fontFamily: 'courier',
       }
     );
   });

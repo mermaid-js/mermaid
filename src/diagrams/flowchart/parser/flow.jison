@@ -61,46 +61,12 @@
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
 "*"                   return 'MULT';
-\s*\-\-[x]\s*            return 'LINK';
-\s*\-\-\>\s*             return 'LINK';
-\s*\<\-\-\>\s*           return 'LINK';
-\s*[x]\-\-[x]\s*         return 'LINK';
-\s*[o]\-\-[o]\s*         return 'LINK';
-\s*[o]\.\-[o]\s*         return 'LINK';
-\s*\<\=\=\>\s*           return 'LINK';
-\s*[o]\=\=[o]\s*         return 'LINK';
-\s*[x]\=\=[x]\s*         return 'LINK';
-\s*[x].\-[x]\s*          return 'LINK';
-\s*[x]\-\.\-[x]\s*       return 'LINK';
-\s*\<\.\-\>\s*           return 'LINK';
-\s*\<\-\.\-\>\s*         return 'LINK';
-\s*[o]\-\.\-[o]\s*       return 'LINK';
-\s*\-\-[o]\s*            return 'LINK';
-\s*\-\-\-\s*             return 'LINK';
-\s*\-\.\-[x]\s*          return 'LINK';
-\s*\-\.\-\>\s*           return 'LINK';
-\s*\-\.\-[o]\s*          return 'LINK';
-\s*\-\.\-\s*             return 'LINK';
-\s*.\-[x]\s*             return 'LINK';
-\s*\.\-\>\s*             return 'LINK';
-\s*\.\-[o]\s*            return 'LINK';
-\s*\.\-\s*               return 'LINK';
-\s*\=\=[x]\s*            return 'LINK';
-\s*\=\=\>\s*             return 'LINK';
-\s*\=\=[o]\s*            return 'LINK';
-\s*\=\=[\=]\s*           return 'LINK';
-\s*\<\-\-\s*             return 'START_LINK';
-\s*[x]\-\-\s*            return 'START_LINK';
-\s*[o]\-\-\s*            return 'START_LINK';
-\s*\<\-\.\s*             return 'START_LINK';
-\s*[x]\-\.\s*            return 'START_LINK';
-\s*[o]\-\.\s*            return 'START_LINK';
-\s*\<\=\=\s*             return 'START_LINK';
-\s*[x]\=\=\s*            return 'START_LINK';
-\s*[o]\=\=\s*            return 'START_LINK';
-\s*\-\-\s*               return 'START_LINK';
-\s*\-\.\s*               return 'START_LINK';
-\s*\=\=\s*               return 'START_LINK';
+\s*[xo<]?\-\-+[-xo>]\s*     return 'LINK';
+\s*[xo<]?\=\=+[=xo>]\s*     return 'LINK';
+\s*[xo<]?\-?\.+\-[xo>]?\s*  return 'LINK';
+\s*[xo<]?\-\-\s*            return 'START_LINK';
+\s*[xo<]?\=\=\s*            return 'START_LINK';
+\s*[xo<]?\-\.\s*            return 'START_LINK';
 "(-"                  return '(-';
 "-)"                  return '-)';
 "(["                  return 'STADIUMSTART';
@@ -401,11 +367,11 @@ link: linkStatement arrowText
     | linkStatement
     {$$ = $1;}
     | START_LINK text LINK
-        {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"text":$2};}
+        {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length,"text":$2};}
     ;
 
 linkStatement: LINK
-        {var inf = yy.destructLink($1);$$ = {"type":inf.type,"stroke":inf.stroke};}
+        {var inf = yy.destructLink($1);$$ = {"type":inf.type,"stroke":inf.stroke,"length":inf.length};}
         ;
 
 arrowText:

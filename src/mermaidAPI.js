@@ -220,7 +220,12 @@ const render = function(id, _txt, cb, container) {
   // console.warn('Render fetching config');
 
   const cnf = configApi.getConfig();
-  console.warn('Render with config after adding new directives', cnf.themeVariables.primaryColor);
+  console.warn('Render with config after adding new directives', cnf.sequence);
+  // console.warn(
+  //   'Render with config after adding new directives',
+  //   cnf.fontFamily,
+  //   cnf.themeVariables.fontFamily
+  // );
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -552,14 +557,26 @@ function reinitialize() {
 }
 
 function initialize(options) {
-  console.warn(`mermaidAPI.initialize: v${pkg.version} `, options);
+  // console.warn(`mermaidAPI.initialize: v${pkg.version} `, options);
+
+  // Handle legacy location of font-family configuration
+  if (options && options.fontFamily) {
+    if (!options.themeVariables) {
+      options.themeVariables = { fontFamily: options.fontFamily };
+    } else {
+      if (!options.themeVariables.fontFamily) {
+        options.themeVariables = { fontFamily: options.fontFamily };
+      }
+    }
+  }
   // Set default options
+  configApi.setSiteConfigDelta(options);
 
   if (options && options.theme && theme[options.theme]) {
     // Todo merge with user options
     options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
   } else {
-    if (options) options.themeVariables = theme.default.getThemeVariables();
+    if (options) options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
   }
 
   const config =
