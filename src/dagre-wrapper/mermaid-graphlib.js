@@ -347,7 +347,7 @@ export const extractor = (graph, depth) => {
       // break;
     } else if (
       !clusterDb[node].externalConnections &&
-      !graph.parent(node) &&
+      // !graph.parent(node) &&
       graph.children(node) &&
       graph.children(node).length > 0
     ) {

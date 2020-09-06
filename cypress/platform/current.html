@@ -74,7 +74,7 @@ stateDiagram-v2
   A --> D: asd123
       </div>
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid" style="width: 50%; height: 40%;">
 %% this does not produce the desired result
 flowchart TB
   subgraph container_Beta
@@ -87,7 +87,7 @@ flowchart TB
   end
 
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid" style="width: 50%; height: 40%;">
         %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
 flowchart TB
     b-->B
@@ -105,24 +105,62 @@ flowchart TB
     end
 
       </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
+      <div class="mermaid" style="width: 50%; height: 50%;">
 flowchart TB
-  subgraph O
-    A
+  internet
+  nat
+  routeur
+  lb1
+  lb2
+  compute1
+  compute2
+  subgraph project
+  routeur
+  nat
+    subgraph subnet1
+      compute1
+      lb1
+    end
+    subgraph subnet2
+      compute2
+      lb2
+    end
   end
-  subgraph A
-    b-->B
-    a-->c
-  end
-  subgraph B
-    c
-  end
+  internet --> routeur
+  routeur --> subnet1 & subnet2
+  subnet1 & subnet2 --> nat --> internet
       </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-sequenceDiagram
-Alice->Bob: Hello Bob, how are you?
-Note over Alice,Bob: Looks
-Note over Bob,Alice: Looks back
+      <div class="mermaid" style="width: 50%; height: 50%;">
+flowchart TD
+
+subgraph one[One]
+    subgraph sub_one[Sub One]
+        _sub_one
+    end
+end
+
+subgraph two[Two]
+    _two
+end
+
+sub_one --> two
+      </div>
+      <div class="mermaid" style="width: 50%; height: 50%;">
+flowchart TD
+
+subgraph one[One]
+    subgraph sub_one[Sub One]
+        _sub_one
+    end
+    subgraph sub_two[Sub Two]
+        _sub_two
+    end
+    _one
+end
+
+%% here, either the first or the second one
+sub_one --> sub_two
+_one --> b
       </div>
 
   <script src="./mermaid.js"></script>

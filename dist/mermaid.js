@@ -49035,7 +49035,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.7.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.7.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false | sed '1i---\\\\nsort: 3\\\\ntitle: Configurations\\\\n---\\\\n' > docs/getting-started/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -49975,7 +49975,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parentCluster) {
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Graph in recursive render:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), parentCluster);
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Graph in recursive render: XXX', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), parentCluster);
   var dir = graph.graph().rankdir;
   _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Dir in recursive render - dir:', dir);
 
@@ -49985,7 +49985,7 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
   if (!graph.nodes()) {
     _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('No nodes found for', graph);
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Recursive render', graph.nodes());
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Recursive render XXX', graph.nodes());
   }
 
   if (graph.edges().length > 0) {
@@ -50005,12 +50005,16 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
     if (typeof parentCluster !== 'undefined') {
       var data = JSON.parse(JSON.stringify(parentCluster.clusterData)); // data.clusterPositioning = true;
 
-      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Setting data for cluster', data);
+      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Setting data for cluster XXX (', v, ') ', data, parentCluster);
       graph.setNode(parentCluster.id, data);
-      graph.setParent(v, parentCluster.id, data);
+
+      if (!graph.parent(v)) {
+        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Setting parent', v, parentCluster.id);
+        graph.setParent(v, parentCluster.id, data);
+      }
     }
 
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('(Insert) Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
 
     if (node && node.clusterNode) {
       // const children = graph.children(v);
@@ -50023,7 +50027,7 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
       if (graph.children(v).length > 0) {
         // This is a cluster but not to be rendered recusively
         // Render as before
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Cluster - the non recursive path', v, node.id, node, graph);
+        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Cluster - the non recursive path XXX', v, node.id, node, graph);
         _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info(Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph));
         _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][node.id] = {
           id: Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph),
@@ -50057,7 +50061,7 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
   dagre__WEBPACK_IMPORTED_MODULE_0___default.a.layout(graph);
   _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Graph after layout:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // Move the nodes to the correct place
 
-  graph.nodes().forEach(function (v) {
+  Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["sortNodesByHierarchy"])(graph).forEach(function (v) {
     var node = graph.node(v);
     _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
     _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Position ' + v + ': (' + node.x, ',' + node.y, ') width: ', node.width, ' height: ', node.height);
@@ -50093,10 +50097,10 @@ var render = function render(elem, graph, markers, diagramtype, id) {
   Object(_edges__WEBPACK_IMPORTED_MODULE_7__["clear"])();
   Object(_clusters__WEBPACK_IMPORTED_MODULE_6__["clear"])();
   Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clear"])();
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph before:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph at first:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
   Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["adjustClustersAndEdges"])(graph);
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph after:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph ever  after:', graph.graph());
+  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph after:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // log.warn('Graph ever  after:', graphlib.json.write(graph.node('A').graph));
+
   recursiveRender(elem, graph, diagramtype);
 }; // const shapeDefinitions = {};
 // export const addShape = ({ shapeType: fun }) => {
@@ -50500,7 +50504,7 @@ var markers = {
 /*!***********************************************!*\
   !*** ./src/dagre-wrapper/mermaid-graphlib.js ***!
   \***********************************************/
-/*! exports provided: clusterDb, clear, extractDecendants, validate, findNonClusterChild, adjustClustersAndEdges, extractor */
+/*! exports provided: clusterDb, clear, extractDecendants, validate, findNonClusterChild, adjustClustersAndEdges, extractor, sortNodesByHierarchy */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -50512,6 +50516,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findNonClusterChild", function() { return findNonClusterChild; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "adjustClustersAndEdges", function() { return adjustClustersAndEdges; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extractor", function() { return extractor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortNodesByHierarchy", function() { return sortNodesByHierarchy; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
 /* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! graphlib */ "./node_modules/graphlib/index.js");
 /* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_1__);
@@ -50557,14 +50562,14 @@ var edgeInCluster = function edgeInCluster(edge, clusterId) {
 };
 
 var copy = function copy(clusterId, graph, newGraph, rootId) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Copying children of ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Copying children of ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
   var nodes = graph.children(clusterId) || []; // Include cluster node if it is not the root
 
   if (clusterId !== rootId) {
     nodes.push(clusterId);
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
   nodes.forEach(function (node) {
     if (graph.children(node).length > 0) {
       copy(node, graph, newGraph, rootId);
@@ -50573,9 +50578,9 @@ var copy = function copy(clusterId, graph, newGraph, rootId) {
       _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('cp ', node, ' to ', rootId, ' with parent ', clusterId); //,node, data, ' parent is ', clusterId);
 
       newGraph.setNode(node, data);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Setting parent', node, graph.parent(node));
 
       if (rootId !== graph.parent(node)) {
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Setting parent', node, graph.parent(node));
         newGraph.setParent(node, graph.parent(node));
       }
 
@@ -50736,38 +50741,40 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
           var d2 = isDecendant(edge.w, id); // d1 xor d2 - if either d1 is true and d2 is false or the other way around
 
           if (d1 ^ d2) {
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Edge: ', edge, ' leaves cluster ', id);
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Decendants of ', id, ': ', decendants[id]);
+            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Edge: ', edge, ' leaves cluster ', id);
+            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Decendants of XXX ', id, ': ', decendants[id]);
             clusterDb[id].externalConnections = true;
           }
         }
       });
+    } else {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Not a cluster ', id, decendants);
     }
-  });
-  extractor(graph, 0); // For clusters with incoming and/or outgoing edges translate those edges to a real node
+  }); // For clusters with incoming and/or outgoing edges translate those edges to a real node
   // in the cluster inorder to fake the edge
 
   graph.edges().forEach(function (e) {
     var edge = graph.edge(e);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
     var v = e.v;
     var w = e.w; // Check if link is either from or to a cluster
 
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fix XXX', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], ' --- ', clusterDb[e.w]);
 
     if (clusterDb[e.v] || clusterDb[e.w]) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fixing and trixing - removing', e.v, e.w, e.name);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) edge.fromCluster = e.v;
       if (w !== e.w) edge.toCluster = e.w;
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Replacing with', v, w, e.name);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fix Replacing with XXX', v, w, e.name);
       graph.setEdge(v, w, edge, e.name);
     }
   });
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Adjusted Graph', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+  extractor(graph, 0);
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace(clusterDb); // Remove references to extracted cluster
   // graph.edges().forEach(edge => {
   //   if (isDecendant(edge.v, clusterId) || isDecendant(edge.w, clusterId)) {
@@ -50776,7 +50783,7 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
   // });
 };
 var extractor = function extractor(graph, depth) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('extractor - ', depth, graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), graph.children('D'));
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('extractor - ', depth, graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), graph.children('D'));
 
   if (depth > 10) {
     _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error('Bailing out');
@@ -50812,8 +50819,9 @@ var extractor = function extractor(graph, depth) {
     if (!clusterDb[_node]) {
       // Skip if the node is not a cluster
       _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Not a cluster', _node, depth); // break;
-    } else if (!clusterDb[_node].externalConnections && !graph.parent(_node) && graph.children(_node) && graph.children(_node).length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Cluster without external connections, without a parent and with children', _node, depth);
+    } else if (!clusterDb[_node].externalConnections && // !graph.parent(node) &&
+    graph.children(_node) && graph.children(_node).length > 0) {
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Cluster without external connections, without a parent and with children', _node, depth);
       var graphSettings = graph.graph();
       var clusterGraph = new graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.Graph({
         multigraph: true,
@@ -50828,7 +50836,7 @@ var extractor = function extractor(graph, depth) {
       }).setDefaultEdgeLabel(function () {
         return {};
       });
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Old graph before copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Old graph before copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
       copy(_node, graph, clusterGraph, _node);
       graph.setNode(_node, {
         clusterNode: true,
@@ -50837,26 +50845,41 @@ var extractor = function extractor(graph, depth) {
         labelText: clusterDb[_node].labelText,
         graph: clusterGraph
       });
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('New graph after copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(clusterGraph));
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('New graph after copy node: (', _node, ')', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(clusterGraph));
       _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Old graph after copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
     } else {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Cluster ** ', _node, ' **not meeting the criteria !externalConnections:', !clusterDb[_node].externalConnections, ' no parent: ', !graph.parent(_node), ' children ', graph.children(_node) && graph.children(_node).length > 0, graph.children('D'), depth);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Cluster ** ', _node, ' **not meeting the criteria !externalConnections:', !clusterDb[_node].externalConnections, ' no parent: ', !graph.parent(_node), ' children ', graph.children(_node) && graph.children(_node).length > 0, graph.children('D'), depth);
       _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(clusterDb);
     }
   }
 
   nodes = graph.nodes();
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('New list of nodes', nodes);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('New list of nodes', nodes);
 
   for (var _i2 = 0; _i2 < nodes.length; _i2++) {
     var _node2 = nodes[_i2];
     var data = graph.node(_node2);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(' Now next leveö', _node2, data);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn(' Now next level', _node2, data);
 
     if (data.clusterNode) {
       extractor(data.graph, depth + 1);
     }
   }
+};
+
+var sorter = function sorter(graph, nodes) {
+  if (nodes.length === 0) return [];
+  var result = Object.assign(nodes);
+  nodes.forEach(function (node) {
+    var children = graph.children(node);
+    var sorted = sorter(graph, children);
+    result = result.concat(sorted);
+  });
+  return result;
+};
+
+var sortNodesByHierarchy = function sortNodesByHierarchy(graph) {
+  return sorter(graph, graph.children());
 };
 
 /***/ }),
@@ -51902,8 +51925,20 @@ var config = {
      */
     curve: 'linear',
     // Only used in new experimental rendering
-    // repreesents the padding between the labels and the shape
-    padding: 15
+    // represents the padding between the labels and the shape
+    padding: 15,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true
   },
 
   /**
@@ -52316,7 +52351,20 @@ var config = {
      * This might need adjustment to match your locale and preferences
      ***Default value '%Y-%m-%d'**.
      */
-    axisFormat: '%Y-%m-%d'
+    axisFormat: '%Y-%m-%d',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true,
+    useWidth: undefined
   },
 
   /**
@@ -52456,10 +52504,35 @@ var config = {
     rightAngles: false
   },
   class: {
-    arrowMarkerAbsolute: false
+    arrowMarkerAbsolute: false,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true
   },
   git: {
-    arrowMarkerAbsolute: false
+    arrowMarkerAbsolute: false,
+    useWidth: undefined,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true
   },
   state: {
     dividerMargin: 10,
@@ -52479,7 +52552,19 @@ var config = {
     labelHeight: 16,
     edgeLengthFactor: '20',
     compositTitleSize: 35,
-    radius: 5
+    radius: 5,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true
   },
 
   /**
@@ -52565,6 +52650,26 @@ var config = {
      ***Default value: 12 **
      */
     fontSize: 12,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     *
+     ***Notes:**
+     *When this flag is set to true, the diagram width is locked to 100% and
+     *scaled based on available space. If set to false, the diagram reserves its
+     *absolute width.
+     ***Default value: true**.
+     */
+    useMaxWidth: true
+  },
+
+  /**
+   * The object containing configurations specific for pie diagrams
+   */
+  pie: {
+    useWidth: undefined,
 
     /**
      *| Parameter | Description |Type | Required | Values|
@@ -53240,15 +53345,7 @@ var drawOld = function drawOld(text, id) {
   var svgBounds = diagram.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-
-  if (conf.useMaxWidth) {
-    diagram.attr('width', '100%');
-    diagram.attr('style', "max-width: ".concat(width, "px;"));
-  } else {
-    diagram.attr('height', height);
-    diagram.attr('width', width);
-  } // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_9__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Ensure the viewBox includes the whole svgBounds area with extra space for padding
 
   var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
   _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("viewBox ".concat(vBox));
@@ -53322,15 +53419,7 @@ var draw = function draw(text, id) {
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
   _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("new ViewBox 0 0 ".concat(width, " ").concat(height), "translate(".concat(padding - g._label.marginx, ", ").concat(padding - g._label.marginy, ")"));
-
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', "max-width: ".concat(width, "px;"));
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_9__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
   svg.attr('viewBox', "0 0 ".concat(width, " ").concat(height));
   svg.select('g').attr('transform', "translate(".concat(padding - g._label.marginx, ", ").concat(padding - svgBounds.y, ")")); // Index nodes
   // flowDb.indexNodes('subGraph' + i);
@@ -53437,6 +53526,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
 /* harmony import */ var _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _svgDraw__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./svgDraw */ "./src/diagrams/class/svgDraw.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
@@ -53551,15 +53642,7 @@ var draw = function draw(text, id) {
   var svgBounds = diagram.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-
-  if (conf.useMaxWidth) {
-    diagram.attr('width', '100%');
-    diagram.attr('style', "max-width: ".concat(width, "px;"));
-  } else {
-    diagram.attr('height', height);
-    diagram.attr('width', width);
-  } // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_7__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Ensure the viewBox includes the whole svgBounds area with extra space for padding
 
   var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
   _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("viewBox ".concat(vBox));
@@ -55038,6 +55121,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _erMarkers__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./erMarkers */ "./src/diagrams/er/erMarkers.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
@@ -55292,15 +55377,7 @@ var draw = function draw(text, id) {
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', "max-width: ".concat(width, "px;"));
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_8__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
   svg.attr('viewBox', "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height));
 }; // draw
 
@@ -56931,6 +57008,26 @@ var addSubGraph = function addSubGraph(_id, list, _title) {
     title: title.trim(),
     classes: []
   };
+  /**
+   * Deletes an id from all subgraphs
+   */
+
+  var del = function del(_id) {
+    subGraphs.forEach(function (sg) {
+      var pos = sg.nodes.indexOf(_id);
+
+      if (pos >= 0) {
+        console.log(sg.nodes, pos, _id);
+        sg.nodes.splice(pos, 1);
+      }
+    });
+  }; // Removes the members of this subgraph from any other subgraphs, a node only belong to one subgraph
+
+
+  subGraph.nodes.forEach(function (_id) {
+    return del(_id);
+  });
+  console.log(subGraph.nodes);
   subGraphs.push(subGraph);
   subGraphLookup[id] = subGraph;
   return id;
@@ -57619,10 +57716,12 @@ var draw = function draw(text, id) {
   var i = 0;
 
   for (i = subGraphs.length - 1; i >= 0; i--) {
+    // for (let i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i];
     Object(d3__WEBPACK_IMPORTED_MODULE_1__["selectAll"])('cluster').append('text');
 
     for (var j = 0; j < subG.nodes.length; j++) {
+      _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Setting up subgraphs', subG.nodes[j], subG.id);
       g.setParent(subG.nodes[j], subG.id);
     }
   }
@@ -57646,15 +57745,7 @@ var draw = function draw(text, id) {
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
   _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].debug("new ViewBox 0 0 ".concat(width, " ").concat(height), "translate(".concat(padding - g._label.marginx, ", ").concat(padding - g._label.marginy, ")"));
-
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', "max-width: ".concat(width, "px;"));
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_9__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
   svg.attr('viewBox', "0 0 ".concat(width, " ").concat(height));
   svg.select('g').attr('transform', "translate(".concat(padding - g._label.marginx, ", ").concat(padding - svgBounds.y, ")")); // Index nodes
 
@@ -58153,15 +58244,7 @@ var draw = function draw(text, id) {
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', "max-width: ".concat(width, "px;"));
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  } // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_9__["configureSvgSize"])(svg, height, width, conf.useMaxWidth); // Ensure the viewBox includes the whole svgBounds area with extra space for padding
 
   var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
   _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].debug("viewBox ".concat(vBox));
@@ -59975,6 +60058,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _ganttDb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ganttDb */ "./src/diagrams/gantt/ganttDb.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
@@ -60014,8 +60099,7 @@ var draw = function draw(text, id) {
 
   var taskArray = _parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getTasks(); // Set height based on number of tasks
 
-  var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
-  elem.setAttribute('height', '100%'); // Set viewBox
+  var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding; // Set viewBox
 
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
   var svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")); // Set timescale
@@ -60053,11 +60137,7 @@ var draw = function draw(text, id) {
 
   taskArray.sort(taskCompare);
   makeGant(taskArray, w, h);
-
-  if (typeof conf.useWidth !== 'undefined') {
-    elem.setAttribute('width', w);
-  }
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(svg, h, w, conf.useMaxWidth);
   svg.append('text').text(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getTitle()).attr('x', w / 2).attr('y', conf.titleTopMargin).attr('class', 'titleText');
 
   function makeGant(tasks, pageWidth, pageHeight) {
@@ -63986,9 +64066,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_pie__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./parser/pie */ "./src/diagrams/pie/parser/pie.jison");
 /* harmony import */ var _parser_pie__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_parser_pie__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 /**
  * Created by AshishJ on 11-09-2019.
  */
+
 
 
 
@@ -64006,7 +64088,8 @@ var setConf = function setConf(cnf) {
  * @param id
  */
 
-var w;
+var width;
+var height = 450;
 var draw = function draw(txt, id) {
   try {
     var parser = _parser_pie__WEBPACK_IMPORTED_MODULE_2___default.a.parser;
@@ -64017,55 +64100,53 @@ var draw = function draw(txt, id) {
     parser.parse(txt);
     _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Parsed info diagram');
     var elem = document.getElementById(id);
-    w = elem.parentElement.offsetWidth;
+    width = elem.parentElement.offsetWidth;
 
-    if (typeof w === 'undefined') {
-      w = 1200;
+    if (typeof width === 'undefined') {
+      width = 1200;
     }
 
     if (typeof conf.useWidth !== 'undefined') {
-      w = conf.useWidth;
+      width = conf.useWidth;
     }
 
-    var h = 450;
-    elem.setAttribute('height', '100%'); // Set viewBox
+    var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + id);
+    console.log('conf', conf);
+    Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Set viewBox
 
-    elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h); // Fetch the default direction, use TD if none was found
+    elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height); // Fetch the default direction, use TD if none was found
 
-    var width = w; // 450
-
-    var height = 450;
     var margin = 40;
     var legendRectSize = 18;
     var legendSpacing = 4;
     var radius = Math.min(width, height) / 2 - margin;
-    var svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + id).append('svg').attr('width', width).attr('height', height).append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+    var svg = diagram.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
     var data = _pieDb__WEBPACK_IMPORTED_MODULE_1__["default"].getSections();
     var sum = 0;
     Object.keys(data).forEach(function (key) {
       sum += data[key];
-    });
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(data); // set the color scale
+    }); // Set the color scale
 
     var color = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleOrdinal"])().domain(data).range(d3__WEBPACK_IMPORTED_MODULE_0__["schemeSet2"]); // Compute the position of each group on the pie:
 
     var pie = Object(d3__WEBPACK_IMPORTED_MODULE_0__["pie"])().value(function (d) {
       return d.value;
     });
-    var dataReady = pie(Object(d3__WEBPACK_IMPORTED_MODULE_0__["entries"])(data)); // shape helper to build arcs:
+    var dataReady = pie(Object(d3__WEBPACK_IMPORTED_MODULE_0__["entries"])(data)); // Shape helper to build arcs:
 
-    var arcGenerator = Object(d3__WEBPACK_IMPORTED_MODULE_0__["arc"])().innerRadius(0).outerRadius(radius); // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    var arcGenerator = Object(d3__WEBPACK_IMPORTED_MODULE_0__["arc"])().innerRadius(0).outerRadius(radius); // Build the pie chart: each part of the pie is a path that we build using the arc function.
 
     svg.selectAll('mySlices').data(dataReady).enter().append('path').attr('d', arcGenerator).attr('fill', function (d) {
       return color(d.data.key);
-    }).attr('stroke', 'black').style('stroke-width', '2px').style('opacity', 0.7); // Now add the Percentage. Use the centroid method to get the best coordinates
+    }).attr('stroke', 'black').style('stroke-width', '2px').style('opacity', 0.7); // Now add the percentage.
+    // Use the centroid method to get the best coordinates.
 
     svg.selectAll('mySlices').data(dataReady).enter().append('text').text(function (d) {
       return (d.data.value / sum * 100).toFixed(0) + '%';
     }).attr('transform', function (d) {
       return 'translate(' + arcGenerator.centroid(d) + ')';
     }).style('text-anchor', 'middle').attr('class', 'slice').style('font-size', 17);
-    svg.append('text').text(parser.yy.getTitle()).attr('x', 0).attr('y', -(h - 50) / 2).attr('class', 'pieTitleText'); //Add the slegend/annotations for each section
+    svg.append('text').text(parser.yy.getTitle()).attr('x', 0).attr('y', -(height - 50) / 2).attr('class', 'pieTitleText'); // Add the legends/annotations for each section
 
     var legend = svg.selectAll('.legend').data(color.domain()).enter().append('g').attr('class', 'legend').attr('transform', function (d, i) {
       var height = legendRectSize + legendSpacing;
@@ -65994,15 +66075,7 @@ var draw = function draw(text, id) {
     diagram.append('text').text(title).attr('x', (box.stopx - box.startx) / 2 - 2 * conf.diagramMarginX).attr('y', -25);
   }
 
-  if (conf.useMaxWidth) {
-    diagram.attr('height', '100%');
-    diagram.attr('width', '100%');
-    diagram.attr('style', 'max-width:' + width + 'px;'); // diagram.attr('style', 'max-width:100%;');
-  } else {
-    diagram.attr('height', height);
-    diagram.attr('width', width);
-  }
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_7__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth);
   var extraVertForTitle = title ? 40 : 0;
   diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle));
   _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("models:", bounds.models);
@@ -68425,6 +68498,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../dagre-wrapper/index.js */ "./src/dagre-wrapper/index.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
@@ -68643,12 +68718,8 @@ var draw = function draw(text, id) {
   nodeDb = {};
   var parser = _parser_stateDiagram__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
   parser.yy = _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"]; // Parse the graph definition
-  // try {
 
-  parser.parse(text); // } catch (err) {
-  //   logger.error('Parsing failed', err);
-  // }
-  // Fetch the default direction, use TD if none was found
+  parser.parse(text); // Fetch the default direction, use TD if none was found
 
   var dir = _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getDirection();
 
@@ -68681,49 +68752,14 @@ var draw = function draw(text, id) {
 
   var element = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#' + id + ' g');
   Object(_dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_5__["render"])(element, g, ['barb'], 'statediagram', id);
-  var padding = 8; // const svgBounds = svg.node().getBBox();
-  // const width = svgBounds.width + padding * 2;
-  // const height = svgBounds.height + padding * 2;
-  // logger.debug(
-  //   `new ViewBox 0 0 ${width} ${height}`,
-  //   `translate(${padding + g._label.marginx}, ${padding + g._label.marginy})`
-  // );
-  // if (conf.useMaxWidth) {
-  //   svg.attr('width', '100%');
-  //   svg.attr('style', `max-width: ${width}px;`);
-  // } else {
-  //   svg.attr('height', height);
-  //   svg.attr('width', width);
-  // }
-  // svg.attr('viewBox', `0 0 ${width} ${height}`);
-  // svg
-  //   .select('g')
-  //   .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
-
+  var padding = 8;
   var bounds = svg.node().getBBox();
   var width = bounds.width + padding * 2;
-  var height = bounds.height + padding * 2; // diagram.attr('height', '100%');
-  // diagram.attr('style', `width: ${bounds.width * 3 + conf.padding * 2};`);
-  // diagram.attr('height', height);
-  // Zoom in a bit
+  var height = bounds.height + padding * 2; // Zoom in a bit
 
-  svg.attr('width', width * 1.75);
-  svg.attr('class', 'statediagram'); // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
-  // svg.attr(
-  //   'viewBox',
-  //   `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
-  // );
-
+  svg.attr('class', 'statediagram');
   var svgBounds = svg.node().getBBox();
-
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', "max-width: ".concat(width, "px;"));
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  } // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_7__["configureSvgSize"])(svg, height, width * 1.75, conf.useMaxWidth); // Ensure the viewBox includes the whole svgBounds area with extra space for padding
 
   var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
   _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].debug("viewBox ".concat(vBox));
@@ -68776,6 +68812,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_stateDiagram__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _shapes__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./shapes */ "./src/diagrams/state/shapes.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 
 
 
@@ -68783,6 +68820,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
  // import idCache from './id-cache';
+
 
 
 
@@ -68831,17 +68869,10 @@ var draw = function draw(text, id) {
   var padding = conf.padding;
   var bounds = diagram.node().getBBox();
   var width = bounds.width + padding * 2;
-  var height = bounds.height + padding * 2;
+  var height = bounds.height + padding * 2; // zoom in a bit
 
-  if (conf.useMaxWidth) {
-    diagram.attr('width', '100%');
-    diagram.attr('style', "max-width: ".concat(width * 1.75, "px;"));
-  } else {
-    // Zoom in a bit
-    diagram.attr('width', width * 1.75);
-  } // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
-
-
+  var svgWidth = width * 1.75;
+  Object(_utils__WEBPACK_IMPORTED_MODULE_9__["configureSvgSize"])(diagram, height, svgWidth, conf.useMaxWidth);
   diagram.attr('viewBox', "".concat(bounds.x - conf.padding, "  ").concat(bounds.y - conf.padding, " ") + width + ' ' + height);
 };
 
@@ -69224,6 +69255,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_journey__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_parser_journey__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _journeyDb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
 /* harmony import */ var _svgDraw__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./svgDraw */ "./src/diagrams/user-journey/svgDraw.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
@@ -69325,16 +69358,7 @@ var draw = function draw(text, id) {
 
   var height = box.stopy - box.starty + 2 * conf.diagramMarginY;
   var width = LEFT_MARGIN + box.stopx + 2 * conf.diagramMarginX;
-
-  if (conf.useMaxWidth) {
-    diagram.attr('height', '100%');
-    diagram.attr('width', '100%');
-    diagram.attr('style', 'max-width:' + width + 'px;');
-  } else {
-    diagram.attr('height', height);
-    diagram.attr('width', width);
-  } // Draw activity line
-
+  Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Draw activity line
 
   diagram.append('line').attr('x1', LEFT_MARGIN).attr('y1', conf.height * 4) // One section head + one task + margins
   .attr('x2', width - LEFT_MARGIN - 4) // Subtract stroke width so arrow point is retained
@@ -71295,7 +71319,7 @@ var render = function render(id, _txt, cb, container) {
 
       case 'pie':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(cnf.class);
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(cnf.pie);
         _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
@@ -72788,7 +72812,7 @@ var getThemeVariables = function getThemeVariables(userOverrides) {
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, random, assignWithDepth, getTextObj, drawSimpleText, wrapLabel, calculateTextHeight, calculateTextWidth, calculateTextDimensions, default */
+/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, random, assignWithDepth, getTextObj, drawSimpleText, wrapLabel, calculateTextHeight, calculateTextWidth, calculateTextDimensions, calculateSvgSizeAttrs, configureSvgSize, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -72810,6 +72834,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextHeight", function() { return calculateTextHeight; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextWidth", function() { return calculateTextWidth; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextDimensions", function() { return calculateTextDimensions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateSvgSizeAttrs", function() { return calculateSvgSizeAttrs; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "configureSvgSize", function() { return configureSvgSize; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @braintree/sanitize-url */ "./node_modules/@braintree/sanitize-url/index.js");
@@ -73598,12 +73624,59 @@ var calculateTextDimensions = memoize(function (text, config) {
 }, function (text, config) {
   return "".concat(text, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily);
 });
+
+var d3Attrs = function d3Attrs(d3Elem, attrs) {
+  var _iteratorNormalCompletion2 = true;
+  var _didIteratorError2 = false;
+  var _iteratorError2 = undefined;
+
+  try {
+    for (var _iterator2 = attrs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+      var attr = _step2.value;
+      d3Elem.attr(attr[0], attr[1]);
+    }
+  } catch (err) {
+    _didIteratorError2 = true;
+    _iteratorError2 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+        _iterator2.return();
+      }
+    } finally {
+      if (_didIteratorError2) {
+        throw _iteratorError2;
+      }
+    }
+  }
+};
+
+var calculateSvgSizeAttrs = function calculateSvgSizeAttrs(height, width, useMaxWidth) {
+  var attrs = new Map();
+  attrs.set('height', height);
+
+  if (useMaxWidth) {
+    attrs.set('width', '100%');
+    attrs.set('style', "max-width: ".concat(width, "px;"));
+  } else {
+    attrs.set('width', width);
+  }
+
+  return attrs;
+};
+var configureSvgSize = function configureSvgSize(svgElem, height, width, useMaxWidth) {
+  var attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
+  console.log('svgElem', svgElem);
+  d3Attrs(svgElem, attrs);
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
   assignWithDepth: assignWithDepth,
   wrapLabel: wrapLabel,
   calculateTextHeight: calculateTextHeight,
   calculateTextWidth: calculateTextWidth,
   calculateTextDimensions: calculateTextDimensions,
+  calculateSvgSizeAttrs: calculateSvgSizeAttrs,
+  configureSvgSize: configureSvgSize,
   detectInit: detectInit,
   detectDirective: detectDirective,
   detectType: detectType,
