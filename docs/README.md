@@ -213,7 +213,7 @@ Together we could continue the work with things like:
 - Adding more types of diagrams like mindmaps, ert diagrams, etc.
 - Improving existing diagrams
 
-Don't hesitate to contact me if you want to get involved.
+Don't hesitate to contact me if you want to get involved!
 
 ## For contributors
 
