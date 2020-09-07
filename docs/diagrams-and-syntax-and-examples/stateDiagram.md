@@ -8,7 +8,7 @@ sort: 6
 
 Mermaid can render state diagrams. The syntax tries to be compliant with the syntax used in plantUml as this will make it easier for users to share diagrams between mermaid and plantUml.
 
-```markdown
+```
 stateDiagram-v2
     [*] --> Still
     Still --> [*]
@@ -86,7 +86,7 @@ Transitions are path/edges when one state passes into another. This is represent
 
 When you define a transition between two states and the states are not already defined the undefined states are defined with the id from the transition. You can later add descriptions to states defined this way.
 
-```markdown
+```
 stateDiagram-v2
     s1 --> s2
 ```
@@ -98,7 +98,7 @@ stateDiagram-v2
 
 It is possible to add text to a transition. To describe what it represents.
 
-```markdown
+```
 stateDiagram-v2
     s1 --> s2: A transition
 ```
@@ -112,7 +112,7 @@ stateDiagram-v2
 
 There are two special states indicating the start and stop of the diagram. These are written with the [\*] syntax and the direction of the transition to it defines it either as a start or a stop state.
 
-```markdown
+```
 stateDiagram-v2
     [*] --> s1
     s1 --> [*]
@@ -131,7 +131,7 @@ have several internal states. These are called composite states in this terminol
 
 In order to define a composite state you need to use the state keyword followed by and id and the body of the composite state between \{\}. See the example below:
 
-```markdown
+```
 stateDiagram-v2
     [*] --> First
     state First {
@@ -151,7 +151,7 @@ stateDiagram-v2
 
 You can do this in several layers:
 
-```markdown
+```
 stateDiagram-v2
     [*] --> First
 
@@ -190,7 +190,7 @@ stateDiagram-v2
 
 You can also define transitions also between composite states:
 
-```markdown
+```
 stateDiagram-v2
     [*] --> First
     First --> Second
@@ -236,7 +236,7 @@ stateDiagram-v2
 
 It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&lt;join&gt;&gt;.
 
-```markdown
+```
    stateDiagram-v2
     state fork_state <<fork>>
       [*] --> fork_state
@@ -271,7 +271,7 @@ Sometimes nothing says it better then a Post-it note. That is also the case in s
 
 Here you can choose to put the note to the *right of* or to the *left of* a node.
 
-```markdown
+```
     stateDiagram-v2
         State1: The state with a note
         note right of State1
@@ -298,42 +298,42 @@ Here you can choose to put the note to the *right of* or to the *left of* a node
 
 As in plantUml you can specify concurrency using the -- symbol.
 
-```markdown
-    stateDiagram-v2
-        [*] --> Active
+```
+stateDiagram-v2
+    [*] --> Active
 
-        state Active {
-            [*] --> NumLockOff
-            NumLockOff --> NumLockOn : EvNumLockPressed
-            NumLockOn --> NumLockOff : EvNumLockPressed
-            --
-            [*] --> CapsLockOff
-            CapsLockOff --> CapsLockOn : EvCapsLockPressed
-            CapsLockOn --> CapsLockOff : EvCapsLockPressed
-            --
-            [*] --> ScrollLockOff
-            ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
-            ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
-        }
+    state Active {
+        [*] --> NumLockOff
+        NumLockOff --> NumLockOn : EvNumLockPressed
+        NumLockOn --> NumLockOff : EvNumLockPressed
+        --
+        [*] --> CapsLockOff
+        CapsLockOff --> CapsLockOn : EvCapsLockPressed
+        CapsLockOn --> CapsLockOff : EvCapsLockPressed
+        --
+        [*] --> ScrollLockOff
+        ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+        ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+    }
 ```
 
 ```mermaid
-    stateDiagram-v2
-        [*] --> Active
+stateDiagram-v2
+    [*] --> Active
 
-        state Active {
-            [*] --> NumLockOff
-            NumLockOff --> NumLockOn : EvNumLockPressed
-            NumLockOn --> NumLockOff : EvNumLockPressed
-            --
-            [*] --> CapsLockOff
-            CapsLockOff --> CapsLockOn : EvCapsLockPressed
-            CapsLockOn --> CapsLockOff : EvCapsLockPressed
-            --
-            [*] --> ScrollLockOff
-            ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
-            ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
-        }
+    state Active {
+        [*] --> NumLockOff
+        NumLockOff --> NumLockOn : EvNumLockPressed
+        NumLockOn --> NumLockOff : EvNumLockPressed
+        --
+        [*] --> CapsLockOff
+        CapsLockOff --> CapsLockOn : EvCapsLockPressed
+        CapsLockOn --> CapsLockOff : EvCapsLockPressed
+        --
+        [*] --> ScrollLockOff
+        ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+        ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+    }
 ```
 
 ## Comments

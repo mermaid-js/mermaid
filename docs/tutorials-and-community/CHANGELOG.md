@@ -13,13 +13,13 @@ Here is the list of the newest versions in Descending Order, beginning from the 
 
 ## 8.7.0 (2020-08-09)
 
-🔖 [Release Notes](https://github.com/mermaid-js/mermaid/releases/tag/8.7.0) | 
+🔖 [Release Notes](https://github.com/mermaid-js/mermaid/releases/tag/8.7.0) |
 📜 [Full Changelog](https://github.com/mermaid-js/mermaid/compare/8.6.0...8.7.0)
 
 This version brings with it a system for [dynamic and integrated configuration of the diagram themes](./theming.md).
-The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls. 
+The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls.
 
-Themes follow and build upon the Levels of Configuration and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
+Themes follow and build upon the Levels of Configuration and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](../getting-started/8.6.0_docs.md).
 
 **These Theming Configurations, similar to directives, will also be made applicable in the Live-Editor, for easier styling.**
 
@@ -30,12 +30,12 @@ Site-wide themes are still declared via `initialize` by site owners.
 Example of `Initalize` call setting `theme` to `base`:
 
 ```js
-    mermaidAPI.initialize({
-        'securityLevel': 'loose', 'theme': 'base'
-    });
+mermaidAPI.initialize({
+    'securityLevel': 'loose', 'theme': 'base'
+});
 ```
 
-**Notes**: Only site owners can use the `mermaidAPI.initialize` call, to set values. Site-Users will have to use `%%init%%` to modify or create the theme for their diagrams. 
+**Notes**: Only site owners can use the `mermaidAPI.initialize` call, to set values. Site-Users will have to use `%%init%%` to modify or create the theme for their diagrams.
 
 ### Themes at the Local or Current Level
 
@@ -86,7 +86,7 @@ Leaving it empty will set all variable values to default.
 
 🔖 [Release Notes](https://github.com/mermaid-js/mermaid/releases/tag/8.6.0)
 
-[Version 8.6.0](./8.6.0_docs.md) introduces New Configuration Protocols and Directives and a Beta for the [New Mermaid Live-Editor](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
+[Version 8.6.0](../getting-started/8.6.0_docs.md) introduces New Configuration Protocols and Directives and a Beta for the [New Mermaid Live-Editor](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
 
 **With version 8.6.0 comes the release of directives for mermaid, a new system for modifying configurations, with the aim of establishing centralized, sane defaults and simple implementation.**
 
@@ -113,7 +113,7 @@ Version 8.2.0, introduces a security improvement.
 
 A `securityLevel` configuration has to first be cleared, `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality.
 This was introduced in version 8.2 as a security improvement, aimed at preventing malicious use.
- 
+
 ### securityLevel
 
 | Parameter     | Description                       | Type   | Required | Values                    |
@@ -126,17 +126,17 @@ This was introduced in version 8.2 as a security improvement, aimed at preventin
 -   **loose**: tags in text are allowed, click functionality is enabled
 -   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
 
-⚠️ **Note**: This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.	
+⚠️ **Note**: This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
 
 If you are taking resposibility for the diagram source security you can set the `securityLevel` to a value of your choosing.
 By doing this clicks and tags are again allowed.
 
-### To change `securityLevel` with `mermaidAPI.initialize`: 
+### To change `securityLevel` with `mermaidAPI.initialize`:
 
-```javascript	
-    mermaidAPI.initialize({	
-        securityLevel: 'loose'	
-    });	
+```javascript
+    mermaidAPI.initialize({
+        securityLevel: 'loose'
+    });
 ```
 
 **Closed issues:**
@@ -990,4 +990,3 @@ By doing this clicks and tags are again allowed.
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.1.0...0.1.1)
 
 ## [0.1.0](https://github.com/knsv/mermaid/tree/0.1.0) (2014-11-16)
-

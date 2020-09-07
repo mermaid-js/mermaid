@@ -612,7 +612,7 @@ The main styling of the class diagram is done with a preset number of css classe
 
 #### Sample stylesheet
 
-```css
+```scss
 body {
     background: white;
 }

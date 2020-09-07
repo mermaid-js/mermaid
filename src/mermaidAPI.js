@@ -616,9 +616,9 @@ configApi.reset(configApi.getConfig());
 export default mermaidAPI;
 /**
  * ## mermaidAPI configuration defaults
- * <pre>
  *
- * &lt;script>
+ * ```html
+ * <script>
  *   var config = {
  *     theme:'default',
  *     logLevel:'fatal',
@@ -673,6 +673,6 @@ export default mermaidAPI;
  *     }
  *   };
  *   mermaid.initialize(config);
- * &lt;/script>
- *</pre>
+ * </script>
+ * ```
  */

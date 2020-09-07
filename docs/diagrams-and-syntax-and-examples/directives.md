@@ -4,7 +4,7 @@ sort: 10
 
 ## Directives
 
-## Directives were added in [Version 8.6.0](/8.6.0_docs.md). Please Read it for more information.
+## Directives were added in [Version 8.6.0](../getting-started/8.6.0_docs.md). Please Read it for more information.
 
 ## Directives
 With this version, directives are supported. Directives are divided in two sets, by priority. the first set, containing 'init' or 'initialize' directives take priority. While the other set, containing all other kinds of directives are considered only after 'init' and the graph-type declared.

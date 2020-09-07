@@ -609,7 +609,7 @@ click nodeId callback
 
 Examples of tooltip usage below:
 
-```
+```html
 <script>
   var callback = function(){
       alert('A callback was triggered');
@@ -654,7 +654,7 @@ graph LR;
 ```
 
 Beginners tip, a full example using interactive links in a html context:
-```
+```html
 <body>
   <div class="mermaid">
     graph LR;

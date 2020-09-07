@@ -7,9 +7,18 @@ title: Development and Contribution
 
 ## Updating the documentation
 
-Please continue writing documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs).
+Please continue writing documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using GitHub Pages with [jekyll-rtd-theme](https://github.com/rundocs/jekyll-rtd-theme).
 
-We publish documentation using GitHub Pages.
+1. Install a full [Ruby development environment](https://jekyllrb.com/docs/installation/)
+2. Change into docs directory
+```sh
+make
+```
+3. Build the site and make it available on a local server
+```sh
+make server
+```
+4. Browse to [http://localhost:4000/mermaid/](http://localhost:4000/mermaid/)
 
 
 ### Questions and/or suggestions ?
