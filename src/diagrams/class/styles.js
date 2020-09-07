@@ -5,7 +5,10 @@ const getStyles = options =>
   stroke: none;
   font-family: ${options.fontFamily};
   font-size: 10px;
-
+  
+  .title {
+    font-weight: bolder;
+  }
   
 }
 
