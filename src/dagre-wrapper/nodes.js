@@ -5,6 +5,7 @@ import { getConfig } from '../config';
 import intersect from './intersect/index.js';
 import createLabel from './createLabel';
 import note from './shapes/note';
+import { parseMember } from '../diagrams/class/svgDraw';
 
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
@@ -568,27 +569,60 @@ const class_box = (parent, node) => {
   const hasInterface = node.classData.annotations && node.classData.annotations[0];
 
   // 1. Create the labels
+  const interfaceLabelText = node.classData.annotations[0]
+    ? '«' + node.classData.annotations[0] + '»'
+    : '';
   const interfaceLabel = labelContainer
     .node()
-    .appendChild(createLabel(node.classData.annotations[0], node.labelStyle, true, true));
-  const interfaceBBox = interfaceLabel.getBBox();
+    .appendChild(createLabel(interfaceLabelText, node.labelStyle, true, true));
+  let interfaceBBox = interfaceLabel.getBBox();
+  if (getConfig().flowchart.htmlLabels) {
+    const div = interfaceLabel.children[0];
+    const dv = select(interfaceLabel);
+    interfaceBBox = div.getBoundingClientRect();
+    dv.attr('width', interfaceBBox.width);
+    dv.attr('height', interfaceBBox.height);
+  }
   if (node.classData.annotations[0]) {
     maxHeight += interfaceBBox.height + rowPadding;
     maxWidth += interfaceBBox.width;
   }
 
+  let classTitleString = node.classData.id;
+
+  if (node.classData.type !== undefined && node.classData.type !== '') {
+    classTitleString += '<' + node.classData.type + '>';
+  }
   const classTitleLabel = labelContainer
     .node()
-    .appendChild(createLabel(node.labelText, node.labelStyle, true, true));
-  const classTitleBBox = classTitleLabel.getBBox();
+    .appendChild(createLabel(classTitleString, node.labelStyle, true, true));
+  select(classTitleLabel).attr('class', 'classTitle');
+  let classTitleBBox = classTitleLabel.getBBox();
+  if (getConfig().flowchart.htmlLabels) {
+    const div = classTitleLabel.children[0];
+    const dv = select(classTitleLabel);
+    classTitleBBox = div.getBoundingClientRect();
+    dv.attr('width', classTitleBBox.width);
+    dv.attr('height', classTitleBBox.height);
+  }
   maxHeight += classTitleBBox.height + rowPadding;
   if (classTitleBBox.width > maxWidth) {
     maxWidth = classTitleBBox.width;
   }
   const classAttributes = [];
   node.classData.members.forEach(str => {
-    const lbl = labelContainer.node().appendChild(createLabel(str, node.labelStyle, true, true));
-    const bbox = lbl.getBBox();
+    const parsedText = parseMember(str).displayText;
+    const lbl = labelContainer
+      .node()
+      .appendChild(createLabel(parsedText, node.labelStyle, true, true));
+    let bbox = lbl.getBBox();
+    if (getConfig().flowchart.htmlLabels) {
+      const div = lbl.children[0];
+      const dv = select(lbl);
+      bbox = div.getBoundingClientRect();
+      dv.attr('width', bbox.width);
+      dv.attr('height', bbox.height);
+    }
     if (bbox.width > maxWidth) {
       maxWidth = bbox.width;
     }
@@ -596,10 +630,22 @@ const class_box = (parent, node) => {
     classAttributes.push(lbl);
   });
 
+  maxHeight += lineHeight;
+
   const classMethods = [];
   node.classData.methods.forEach(str => {
-    const lbl = labelContainer.node().appendChild(createLabel(str, node.labelStyle, true, true));
-    const bbox = lbl.getBBox();
+    const parsedText = parseMember(str).displayText;
+    const lbl = labelContainer
+      .node()
+      .appendChild(createLabel(parsedText, node.labelStyle, true, true));
+    let bbox = lbl.getBBox();
+    if (getConfig().flowchart.htmlLabels) {
+      const div = lbl.children[0];
+      const dv = select(lbl);
+      bbox = div.getBoundingClientRect();
+      dv.attr('width', bbox.width);
+      dv.attr('height', bbox.height);
+    }
     if (bbox.width > maxWidth) {
       maxWidth = bbox.width;
     }
@@ -614,13 +660,10 @@ const class_box = (parent, node) => {
 
   // position the interface label
   if (hasInterface) {
+    let diffX = (maxWidth - interfaceBBox.width) / 2;
     select(interfaceLabel).attr(
       'transform',
-      'translate( ' +
-        -(maxWidth + node.padding - interfaceBBox.width / 2) / 2 +
-        ', ' +
-        (-1 * maxHeight) / 2 +
-        ')'
+      'translate( ' + ((-1 * maxWidth) / 2 + diffX) + ', ' + (-1 * maxHeight) / 2 + ')'
     );
     verticalPos = interfaceBBox.height + rowPadding;
   }
@@ -657,6 +700,7 @@ const class_box = (parent, node) => {
     verticalPos += classTitleBBox.height + rowPadding;
   });
 
+  verticalPos += lineHeight;
   bottomLine
     .attr('class', 'divider')
     .attr('x1', -maxWidth / 2 - halfPadding)
@@ -674,14 +718,14 @@ const class_box = (parent, node) => {
     verticalPos += classTitleBBox.height + rowPadding;
   });
   //
-  let bbox;
-  if (getConfig().flowchart.htmlLabels) {
-    const div = interfaceLabel.children[0];
-    const dv = select(interfaceLabel);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  }
+  // let bbox;
+  // if (getConfig().flowchart.htmlLabels) {
+  //   const div = interfaceLabel.children[0];
+  //   const dv = select(interfaceLabel);
+  //   bbox = div.getBoundingClientRect();
+  //   dv.attr('width', bbox.width);
+  //   dv.attr('height', bbox.height);
+  // }
   // bbox = labelContainer.getBBox();
 
   // logger.info('Text 2', text2);

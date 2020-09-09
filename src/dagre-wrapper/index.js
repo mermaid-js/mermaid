@@ -128,8 +128,8 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     const edge = graph.edge(e);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
-    const updatedPath = insertEdge(edgePaths, e, edge, clusterDb, diagramtype, graph);
-    positionEdgeLabel(edge, updatedPath);
+    const paths = insertEdge(edgePaths, e, edge, clusterDb, diagramtype, graph);
+    positionEdgeLabel(edge, paths);
   });
 
   return elem;
