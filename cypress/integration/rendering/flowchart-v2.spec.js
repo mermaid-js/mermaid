@@ -139,6 +139,7 @@ describe('Flowchart v2', () => {
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+
   it('51: handle nested subgraphs in reverse order', () => {
     imgSnapshotTest(
       `flowchart LR
@@ -153,4 +154,144 @@ describe('Flowchart v2', () => {
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+
+  it('52: handle nested subgraphs in several levels', () => {
+    imgSnapshotTest(
+      `flowchart TB
+    b-->B
+    a-->c
+    subgraph O
+      A
+    end
+    subgraph B
+      c
+    end
+    subgraph A
+        a
+        b
+        B
+    end
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
+  it('53: handle nested subgraphs with edges in and out', () => {
+    imgSnapshotTest(
+      `flowchart TB
+  internet
+  nat
+  routeur
+  lb1
+  lb2
+  compute1
+  compute2
+  subgraph project
+  routeur
+  nat
+    subgraph subnet1
+      compute1
+      lb1
+    end
+    subgraph subnet2
+      compute2
+      lb2
+    end
+  end
+  internet --> routeur
+  routeur --> subnet1 & subnet2
+  subnet1 & subnet2 --> nat --> internet
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
+  it('54: handle nested subgraphs with outgoing links', () => {
+    imgSnapshotTest(
+      `flowchart TD
+
+subgraph one[One]
+    subgraph sub_one[Sub One]
+        _sub_one
+    end
+end
+
+subgraph two[Two]
+    _two
+end
+
+sub_one --> two
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
+  it('55: handle nested subgraphs with outgoing links 2', () => {
+    imgSnapshotTest(
+      `flowchart TD
+
+subgraph one[One]
+    subgraph sub_one[Sub One]
+        _sub_one
+    end
+    subgraph sub_two[Sub Two]
+        _sub_two
+    end
+    _one
+end
+
+%% here, either the first or the second one
+sub_one --> sub_two
+_one --> b
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
+
+  it('56: handle nested subgraphs with outgoing links 2', () => {
+    imgSnapshotTest(
+      `flowchart TD
+
+subgraph one[One]
+    subgraph sub_one[Sub One]
+        _sub_one
+    end
+    subgraph sub_two[Sub Two]
+        _sub_two
+    end
+    _one
+end
+
+%% here, either the first or the second one
+sub_one --> sub_two
+_one --> b
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
+
+  it('57: handle nested subgraphs with outgoing links 2', () => {
+    imgSnapshotTest(
+      `flowchart TB
+    c1-->a2
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+    one --> two
+    three --> two
+    two --> c2
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
+
 });
