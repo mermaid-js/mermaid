@@ -28,14 +28,15 @@ mermaid seeks to change that. mermaid is a javascript based tool that utilizes a
 **Mermaid definitions**
 
 >These are the instrunctions for how the diagram is to rendered, written in mermaid, which is based on Markdown. These can be found inside `<div>` tags, with the `class=mermaid`.
-```
+
+```html
  <div class="mermaid">
     graph TD
     A[Client] --> B[Load Balancer]
     B --> C[Server01]
     B --> D[Server02]
   </div>
-  ```
+```
 
 **render**
 
@@ -55,7 +56,7 @@ mermaid seeks to change that. mermaid is a javascript based tool that utilizes a
 
 ## The catch-22 of Diagrams and Charts:
 
-**Diagramming and charting is a gigantic waste of developer time, but not having diagrams ruins productivity. **
+**Diagramming and charting is a gigantic waste of developer time, but not having diagrams ruins productivity.**
 
 mermaid solves this by cutting the time, effort and tooling that is required to create diagrams and charts.
 

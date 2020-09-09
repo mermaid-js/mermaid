@@ -47,23 +47,24 @@ This topic explored in greater depth in the [User Guide for Beginners](./n00b-ge
 The easiest way to integrate mermaid on a web page requires three elements:
 
 1. Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.Example:
-
-  `<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>`
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    ```
 
 2. The `mermaidAPI` call, in a separate `script` tag. Example:
-
-  `<script>mermaid.initialize({startOnLoad:true});</script>`
+    ```html
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    ```
 
 3. A graph definition, inside `<div>` tags labeled `class=mermaid`. Example:
-
-```html
-<div class="mermaid">
-     graph LR
-      A --- B
-      B-->C[fa:fa-ban forbidden]
-      B-->D(fa:fa-spinner);
-</div>
-```
+    ```html
+    <div class="mermaid">
+         graph LR
+          A --- B
+          B-->C[fa:fa-ban forbidden]
+          B-->D(fa:fa-spinner);
+    </div>
+    ```
 
 **If these things are in place mermaid starts at the page load event and when fired (when the page has loaded) it will
 locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and transform them to svg charts or diagrams.**
@@ -125,9 +126,9 @@ This changes the default behaviour of mermaid so that after upgrade to 8.2, if t
 ## To chage `securityLevel` with `mermaidAPI.initialize`:
 
 ```javascript
-    mermaidAPI.initialize({
-        securityLevel: 'loose'
-    });
+mermaidAPI.initialize({
+    securityLevel: 'loose'
+});
 ```
 
 
@@ -153,11 +154,13 @@ $(document).ready(function() {
 Not doing so will most likely result in mermaid rendering graphs that have labels out of bounds. The default integration in mermaid uses the window.load event to start rendering.
 
 If your page has other fonts in its body those might be used instead of the mermaid font. Specifying the font in your styling is a workaround for this.
+
+```css
+div.mermaid {
+    font-family: 'trebuchet ms', verdana, arial;
+}
 ```
-    div.mermaid {
-        font-family: 'trebuchet ms', verdana, arial;
-    }
-```
+
 # This likely requires a `script.js` file, separate from the `HTML`.
 
 ### Calling `mermaid.init`
@@ -335,7 +338,7 @@ setting the options in mermaid.
 4. Instantiation of the configuration using the **mermaid.init** call
 
 The list above has two ways too many of doing this. Three are deprecated and will eventually be removed. The list of
-configuration objects are described [in the mermaidAPI documentation](mermaidAPI.html).
+configuration objects are described [in the mermaidAPI documentation](Setup.md).
 
 
 ## Using the `mermaidAPI.initialize`/`mermaid.initialize` call

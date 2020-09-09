@@ -5,7 +5,7 @@ title: Diagram syntax intro
 
 ## Diagram syntax
 
-If you are new to mermaid, read the [Getting Started](n00b-gettingStarted.md) and [Overview](n00b-overview.md) sections, to learn the basics of mermaid.
+If you are new to mermaid, read the [Getting Started](../getting-started/n00b-gettingStarted.md) and [Overview](../overview/n00b-overview.md) sections, to learn the basics of mermaid.
 Video Tutorials can be found at the bottom of the Overview Section.
 
 This section is a list of diagram types supported by mermaid. Below is a list of links to aricles that explain the syntax of the diagrams or charts that 0can be called.
@@ -30,12 +30,4 @@ These definitions can also be entered into the [mermaid live editor](https://mer
 This would then offer
 
 
-- [Flowchart](flowchart.md)
-- [Sequence diagram](sequenceDiagram.md)
-- [Class Diagram](classDiagram.md)
-- [State Diagram](stateDiagram.md)
-- [Gantt](gantt.md)
-- [Pie Chart](pie.md)
-- [Entity Relationship Diagram](entityRelationshipDiagram.md)
-- [User Journey Diagram](user-journey.md)
-- [Directives](directives.md)
+{% include list.liquid %}
