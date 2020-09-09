@@ -6,6 +6,7 @@ import dagre from 'dagre';
 import { getConfig } from '../../config';
 import { logger } from '../../logger';
 import erMarkers from './erMarkers';
+import { configureSvgSize } from '../../utils';
 
 const conf = {};
 
@@ -344,13 +345,7 @@ export const draw = function(text, id) {
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
+  configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 }; // draw

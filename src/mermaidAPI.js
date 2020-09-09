@@ -385,7 +385,7 @@ const render = function(id, _txt, cb, container) {
         break;
       case 'pie':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        pieRenderer.setConf(cnf.class);
+        pieRenderer.setConf(cnf.pie);
         pieRenderer.draw(txt, id, pkg.version);
         break;
       case 'er':
@@ -616,9 +616,9 @@ configApi.reset(configApi.getConfig());
 export default mermaidAPI;
 /**
  * ## mermaidAPI configuration defaults
- * <pre>
  *
- * &lt;script>
+ * ```html
+ * <script>
  *   var config = {
  *     theme:'default',
  *     logLevel:'fatal',
@@ -673,6 +673,6 @@ export default mermaidAPI;
  *     }
  *   };
  *   mermaid.initialize(config);
- * &lt;/script>
- *</pre>
+ * </script>
+ * ```
  */

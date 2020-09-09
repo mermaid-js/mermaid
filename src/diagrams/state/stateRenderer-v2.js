@@ -6,6 +6,7 @@ import { getConfig } from '../../config';
 
 import { render } from '../../dagre-wrapper/index.js';
 import { logger } from '../../logger';
+import { configureSvgSize } from '../../utils';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -211,11 +212,7 @@ export const draw = function(text, id) {
   parser.yy = stateDb;
 
   // Parse the graph definition
-  // try {
   parser.parse(text);
-  // } catch (err) {
-  //   logger.error('Parsing failed', err);
-  // }
 
   // Fetch the default direction, use TD if none was found
   let dir = stateDb.getDirection();
@@ -256,54 +253,18 @@ export const draw = function(text, id) {
   render(element, g, ['barb'], 'statediagram', id);
 
   const padding = 8;
-  // const svgBounds = svg.node().getBBox();
-  // const width = svgBounds.width + padding * 2;
-  // const height = svgBounds.height + padding * 2;
-  // logger.debug(
-  //   `new ViewBox 0 0 ${width} ${height}`,
-  //   `translate(${padding + g._label.marginx}, ${padding + g._label.marginy})`
-  // );
-
-  // if (conf.useMaxWidth) {
-  //   svg.attr('width', '100%');
-  //   svg.attr('style', `max-width: ${width}px;`);
-  // } else {
-  //   svg.attr('height', height);
-  //   svg.attr('width', width);
-  // }
-
-  // svg.attr('viewBox', `0 0 ${width} ${height}`);
-  // svg
-  //   .select('g')
-  //   .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
 
   const bounds = svg.node().getBBox();
 
   const width = bounds.width + padding * 2;
   const height = bounds.height + padding * 2;
 
-  // diagram.attr('height', '100%');
-  // diagram.attr('style', `width: ${bounds.width * 3 + conf.padding * 2};`);
-  // diagram.attr('height', height);
-
   // Zoom in a bit
-  svg.attr('width', width * 1.75);
   svg.attr('class', 'statediagram');
-  // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
-  // svg.attr(
-  //   'viewBox',
-  //   `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
-  // );
 
   const svgBounds = svg.node().getBBox();
 
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
+  configureSvgSize(svg, height, width * 1.75, conf.useMaxWidth);
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;

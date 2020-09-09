@@ -16,7 +16,7 @@
     "build:development": "webpack --progress --colors",
     "build:production": "yarn build:development -p --config webpack.config.prod.babel.js",
     "build": "yarn build:development && yarn build:production",
-    "postbuild": "documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md",
+    "postbuild": "documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false | sed '1i---\\nsort: 3\\ntitle: Configurations\\n---\\n' > docs/getting-started/Setup.md",
     "build:watch": "yarn build --watch",
     "minify": "minify ./dist/mermaid.js > ./dist/mermaid.min.js",
     "release": "yarn build",

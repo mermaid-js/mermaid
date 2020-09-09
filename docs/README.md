@@ -1,7 +1,6 @@
 # mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 
-![banner](./img/header.png)
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/README.md)
+![banner](assets/img/header.png)
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!!**
 
@@ -18,21 +17,21 @@ Diagramming and documentation costs precious developer time and gets outdated qu
 But not having diagrams or docs ruins productivity and hurts organizational learning. <br/>
 Mermaid addresses this problem by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.
 The text definitions for Mermaid diagrams allows for it to be updated easily, it can also be made part of production scripts (and other pieces of code).
-So less time needs be spent on documenting, as a separate and laborious task. <br/>
+So less time needs to be spent on documenting, as a separate and laborious task. <br/>
 
-Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor), visit [Mermaid Overview](./n00b-overview.md) for the video tutorials.
+Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor), visit [Mermaid Overview](overview/n00b-overview.md) for the video tutorials.
 
-Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](./integrations.md).
+Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](overview/integrations.md).
 
-For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](./n00b-overview.md) and [Usage](./usage.md).
+For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](overview/n00b-overview.md) and [Usage](getting-started/usage.md).
 
-🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [Version Log](./docs/versionUpdates.md)
+🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [Version Log](tutorials-and-community/CHANGELOG.md)
 
 > 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/knsv/mermaid/issues/866).
 
 # Diagrams that mermaid can render:
 
-### [Flowchart](https://mermaid-js.github.io/mermaid/#/flowchart)
+### [Flowchart](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/flowchart.html)
 
 ```
 graph TD;
@@ -42,9 +41,9 @@ graph TD;
     C-->D;
 ```
 
-![Flowchart](./img/flow.png)
+![Flowchart](assets/img/flow.png)
 
-### [Sequence diagram](https://mermaid-js.github.io/mermaid/#/sequenceDiagram)
+### [Sequence diagram](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/sequenceDiagram.html)
 
 ```
 sequenceDiagram
@@ -60,9 +59,9 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-![Sequence diagram](./img/sequence.png)
+![Sequence diagram](assets/img/sequence.png)
 
-### [Gantt diagram](https://mermaid-js.github.io/mermaid/#/gantt)
+### [Gantt diagram](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/gantt.html)
 
 ```
 gantt
@@ -77,9 +76,9 @@ Future task               :         des3, after des2, 5d
 Future task2               :         des4, after des3, 5d
 ```
 
-![Gantt diagram](./img/gantt.png)
+![Gantt diagram](assets/img/gantt.png)
 
-### [Class diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/#/classDiagram)
+### [Class diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/classDiagram.html)
 
 ```
 classDiagram
@@ -98,7 +97,7 @@ Class01 : int gorilla
 Class08 <--> C2: Cool label
 ```
 
-![Class diagram](./img/class.png)
+![Class diagram](assets/img/class.png)
 
 ### Git graph - :exclamation: experimental
 
@@ -121,9 +120,9 @@ commit
 merge newbranch
 
 ```
-![Git graph](./img/git.png)
+![Git graph](assets/img/git.png)
 
-### [Entity Relationship Diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram)
+### [Entity Relationship Diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/entityRelationshipDiagram.html)
 
 ```
 erDiagram
@@ -133,9 +132,9 @@ erDiagram
 
 ```
 
-![ER diagram](./img/simple-er.png)
+![ER diagram](assets/img/simple-er.png)
 
-### [User Journey Diagram](https://mermaid-js.github.io/mermaid/#/user-journey)
+### [User Journey Diagram](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/user-journey.html)
 
 ```markdown
 journey
@@ -148,12 +147,12 @@ journey
       Go downstairs: 5: Me
       Sit down: 5: Me
 ```
-![Journey diagram](./img/user-journey.png)
+![Journey diagram](assets/img/user-journey.png)
 
 # Installation
-## In depth guides and examples can be found in [Getting Started](./n00b-gettingStarted.md) and [Usage](./usage.md).
+## In depth guides and examples can be found in [Getting Started](getting-started/n00b-gettingStarted.md) and [Usage](getting-started/usage.md).
 
-## It would also be helpful to learn more about mermaid's [Syntax](./n00b-syntaxReference.md).
+## It would also be helpful to learn more about mermaid's [Syntax](diagrams-and-syntax-and-examples/n00b-syntaxReference.md).
 
 ### CDN
 
@@ -165,42 +164,42 @@ To select a version:
 
 Replace `<version>` with the desired version number.
 
-Alternatively, you can also adjust the version number in the page itself. 
+Alternatively, you can also adjust the version number in the page itself.
 
-Latest Version: https://unpkg.com/browse/mermaid@8.6.0/
+Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/browse/mermaid@8.8.0/)
 
-## Incorporating mermaid to a website 
-To support mermaid on your website, all you have to do is add Mermaid’s JavaScript package 
+## Incorporating mermaid to a website
+To support mermaid on your website, all you have to do is add Mermaid’s JavaScript package
 
 ```
-1.You will need to isntall node v10 or 12, which would have npm
+1.You will need to install node v10 or 12, which would have npm
 
 2. download yarn using npm.
 
 3. enter the following command:
     yarn add mermaid
 
-4. You can then add mermaid as a dev dependency using this command: 
+4. You can then add mermaid as a dev dependency using this command:
     yarn add --dev mermaid
-   
+
 ```
 
 ## To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:
-```
+```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({startOnLoad:true});</script>
 ```
-## doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.
+## Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.
 
-## Examples can be found in [Getting Started](./n00b-gettingStarted.md)
+## Examples can be found in [Getting Started](getting-started/n00b-gettingStarted.md)
 
 # Sibling projects
-- [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
-- [mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
-- [mermaid webpack demo](https://github.com/mermaidjs/mermaid-webpack-demo)
-- [mermaid Parcel demo](https://github.com/mermaidjs/mermaid-parcel-demo)
+- [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor)
+- [Mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
+- [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
+- [Mermaid Parcel Demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 
-## Request for assistance
+## Request for Assistance
 
 Things are piling up and I have a hard time keeping up. To remedy this
 it would be great if we could form a core team of developers to cooperate

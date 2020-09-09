@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { imgSnapshotTest } from '../../helpers/util.js';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Gantt diagram', () => {
   beforeEach(()=>{
@@ -162,5 +162,100 @@ describe('Gantt diagram', () => {
       `,
       {}
     );
+  });
+
+  it('should render a gantt diagram when useMaxWidth is true (default)', () => {
+    renderGraph(
+      `
+    gantt
+      dateFormat  YYYY-MM-DD
+      axisFormat  %d/%m
+      title Adding GANTT diagram to mermaid
+      excludes weekdays 2014-01-10
+
+      section A section
+      Completed task            :done,    des1, 2014-01-06,2014-01-08
+      Active task               :active,  des2, 2014-01-09, 3d
+      Future task               :         des3, after des2, 5d
+      Future task2               :         des4, after des3, 5d
+
+      section Critical tasks
+      Completed task in the critical line :crit, done, 2014-01-06,24h
+      Implement parser and jison :crit, done, after des1, 2d
+      Create tests for parser             :crit, active, 3d
+      Future task in critical line        :crit, 5d
+      Create tests for renderer           :2d
+      Add to mermaid                      :1d
+
+      section Documentation
+      Describe gantt syntax               :active, a1, after des1, 3d
+      Add gantt diagram to demo page      :after a1  , 20h
+      Add another diagram to demo page    :doc1, after a1  , 48h
+
+      section Last section
+      Describe gantt syntax               :after doc1, 3d
+      Add gantt diagram to demo page      : 20h
+      Add another diagram to demo page    : 48h
+      `,
+      { gantt: { useMaxWidth: true } }
+    );
+    cy.get('svg')
+      .should((svg) => {
+        expect(svg).to.have.attr('width', '100%');
+        expect(svg).to.have.attr('height');
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        const height = parseFloat(svg.attr('height'));
+        expect(height).to.be.within(484 * .95, 484 * 1.05);
+        const style = svg.attr('style');
+        expect(style).to.match(/^max-width: [\d.]+px;$/);
+        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+        expect(maxWidthValue).to.be.within(984 * .95, 984 * 1.05);
+      });
+  });
+
+  it('should render a gantt diagram when useMaxWidth is false', () => {
+    renderGraph(
+      `
+    gantt
+      dateFormat  YYYY-MM-DD
+      axisFormat  %d/%m
+      title Adding GANTT diagram to mermaid
+      excludes weekdays 2014-01-10
+
+      section A section
+      Completed task            :done,    des1, 2014-01-06,2014-01-08
+      Active task               :active,  des2, 2014-01-09, 3d
+      Future task               :         des3, after des2, 5d
+      Future task2               :         des4, after des3, 5d
+
+      section Critical tasks
+      Completed task in the critical line :crit, done, 2014-01-06,24h
+      Implement parser and jison :crit, done, after des1, 2d
+      Create tests for parser             :crit, active, 3d
+      Future task in critical line        :crit, 5d
+      Create tests for renderer           :2d
+      Add to mermaid                      :1d
+
+      section Documentation
+      Describe gantt syntax               :active, a1, after des1, 3d
+      Add gantt diagram to demo page      :after a1  , 20h
+      Add another diagram to demo page    :doc1, after a1  , 48h
+
+      section Last section
+      Describe gantt syntax               :after doc1, 3d
+      Add gantt diagram to demo page      : 20h
+      Add another diagram to demo page    : 48h
+      `,
+      { gantt: { useMaxWidth: false } }
+    );
+    cy.get('svg')
+      .should((svg) => {
+        const height = parseFloat(svg.attr('height'));
+        const width = parseFloat(svg.attr('width'));
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(height).to.be.within(484 * .95, 484 * 1.05);
+        expect(width).to.be.within(984 * .95, 984 * 1.05);
+        expect(svg).to.not.have.attr('style');
+      });
   });
 });

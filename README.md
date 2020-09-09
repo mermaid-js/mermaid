@@ -1,7 +1,7 @@
 # mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 
 ![banner](./img/header.png)
-**Edit this Page** [![N|Solid](./docs/img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/README.md)
+**Edit this Page** [![N|Solid](./docs/assets/img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/README.md)
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!!**
 
@@ -20,12 +20,12 @@ Mermaid addresses this problem by cutting the time, effort and tooling that is r
 The text definitions for Mermaid diagrams allows for it to be updated easily, it can also be made part of production scripts (and other pieces of code).
 So less time needs be spent on documenting, as a separate and laborious task. <br/>
 Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor). <br/>
-[Mermaid Overview](./n00b-overview.md) has video tutorials.
-Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md).
+[Tutorials](./docs/getting-started/Tutorials.md) has video tutorials.
+Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/overview/integrations.md).
 
-For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) and [Usage](./usage.md).
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/overview/n00b-overview.md) and [Usage](./docs/getting-started/usage.md).
 
-🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [Changelog](./docs/versionUpdates.md)
+🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [Changelog](./docs/tutorials-and-community/CHANGELOG.md)
 
 <!-- </Main description> -->
 

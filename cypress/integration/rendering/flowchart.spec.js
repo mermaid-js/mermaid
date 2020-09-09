@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 describe('Flowchart', () => {
   it('1: should render a simple flowchart no htmlLabels', () => {
@@ -714,5 +714,66 @@ describe('Flowchart', () => {
       `,
       {  }
     );
+  });
+  it('36: should render escaped without html labels', () => {
+    imgSnapshotTest(
+      `graph TD
+        a["<strong>Haiya</strong>"]-->b
+      `,
+      {htmlLabels: false, flowchart: {htmlLabels: false}}
+    );
+  });
+  it('37: should render non-escaped with html labels', () => {
+    imgSnapshotTest(
+      `graph TD
+        a["<strong>Haiya</strong>"]-->b
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('38: should render a flowchart when useMaxWidth is true (default)', () => {
+    renderGraph(
+      `graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      `,
+      { flowchart: { useMaxWidth: true } }
+    );
+    cy.get('svg')
+      .should((svg) => {
+        expect(svg).to.have.attr('width', '100%');
+        expect(svg).to.have.attr('height');
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        const height = parseFloat(svg.attr('height'));
+        expect(height).to.be.within(446 * .95, 446 * 1.05);
+        const style = svg.attr('style');
+        expect(style).to.match(/^max-width: [\d.]+px;$/);
+        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+        expect(maxWidthValue).to.be.within(300 * .95, 300 * 1.05);
+      });
+  });
+  it('39: should render a flowchart when useMaxWidth is false', () => {
+    renderGraph(
+      `graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      `,
+      { flowchart: { useMaxWidth: false } }
+    );
+    cy.get('svg')
+      .should((svg) => {
+        const height = parseFloat(svg.attr('height'));
+        const width = parseFloat(svg.attr('width'));
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(height).to.be.within(446 * .95, 446 * 1.05);
+        expect(width).to.be.within(300 * .95, 300 * 1.05);
+        expect(svg).to.not.have.attr('style');
+      });
   });
 });

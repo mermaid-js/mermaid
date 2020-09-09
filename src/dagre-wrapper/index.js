@@ -6,7 +6,8 @@ import {
   clear as clearGraphlib,
   clusterDb,
   adjustClustersAndEdges,
-  findNonClusterChild
+  findNonClusterChild,
+  sortNodesByHierarchy
 } from './mermaid-graphlib';
 import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes';
 import { insertCluster, clear as clearClusters } from './clusters';
@@ -14,7 +15,7 @@ import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } f
 import { logger as log } from '../logger';
 
 const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
-  log.info('Graph in recursive render:', graphlib.json.write(graph), parentCluster);
+  log.info('Graph in recursive render: XXX', graphlib.json.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
   log.warn('Dir in recursive render - dir:', dir);
 
@@ -22,7 +23,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   if (!graph.nodes()) {
     log.info('No nodes found for', graph);
   } else {
-    log.info('Recursive render', graph.nodes());
+    log.info('Recursive render XXX', graph.nodes());
   }
   if (graph.edges().length > 0) {
     log.info('Recursive edges', graph.edge(graph.edges()[0]));
@@ -39,11 +40,14 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     if (typeof parentCluster !== 'undefined') {
       const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
       // data.clusterPositioning = true;
-      log.info('Setting data for cluster', data);
+      log.info('Setting data for cluster XXX (', v, ') ', data, parentCluster);
       graph.setNode(parentCluster.id, data);
-      graph.setParent(v, parentCluster.id, data);
+      if (!graph.parent(v)) {
+        log.warn('Setting parent', v, parentCluster.id);
+        graph.setParent(v, parentCluster.id, data);
+      }
     }
-    log.info('(Insert) Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
     if (node && node.clusterNode) {
       // const children = graph.children(v);
       log.info('Cluster identified', v, node, graph.node(v));
@@ -56,7 +60,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
       if (graph.children(v).length > 0) {
         // This is a cluster but not to be rendered recusively
         // Render as before
-        log.info('Cluster - the non recursive path', v, node.id, node, graph);
+        log.info('Cluster - the non recursive path XXX', v, node.id, node, graph);
         log.info(findNonClusterChild(node.id, graph));
         clusterDb[node.id] = { id: findNonClusterChild(node.id, graph), node };
         // insertCluster(clusters, graph.node(v));
@@ -91,7 +95,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   dagre.layout(graph);
   log.info('Graph after layout:', graphlib.json.write(graph));
   // Move the nodes to the correct place
-  graph.nodes().forEach(function(v) {
+  sortNodesByHierarchy(graph).forEach(function(v) {
     const node = graph.node(v);
     log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
     log.info(
@@ -138,10 +142,10 @@ export const render = (elem, graph, markers, diagramtype, id) => {
   clearClusters();
   clearGraphlib();
 
-  log.warn('Graph before:', graphlib.json.write(graph));
+  log.warn('Graph at first:', graphlib.json.write(graph));
   adjustClustersAndEdges(graph);
   log.warn('Graph after:', graphlib.json.write(graph));
-  log.warn('Graph ever  after:', graph.graph());
+  // log.warn('Graph ever  after:', graphlib.json.write(graph.node('A').graph));
   recursiveRender(elem, graph, diagramtype);
 };
 

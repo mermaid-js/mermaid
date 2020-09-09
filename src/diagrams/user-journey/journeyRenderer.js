@@ -2,6 +2,7 @@ import { select } from 'd3';
 import { parser } from './parser/journey';
 import journeyDb from './journeyDb';
 import svgDraw from './svgDraw';
+import { configureSvgSize } from '../../utils';
 
 parser.yy = journeyDb;
 
@@ -118,14 +119,8 @@ export const draw = function(text, id) {
   }
   const height = box.stopy - box.starty + 2 * conf.diagramMarginY;
   const width = LEFT_MARGIN + box.stopx + 2 * conf.diagramMarginX;
-  if (conf.useMaxWidth) {
-    diagram.attr('height', '100%');
-    diagram.attr('width', '100%');
-    diagram.attr('style', 'max-width:' + width + 'px;');
-  } else {
-    diagram.attr('height', height);
-    diagram.attr('width', width);
-  }
+
+  configureSvgSize(diagram, height, width, conf.useMaxWidth);
 
   // Draw activity line
   diagram

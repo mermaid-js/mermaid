@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 context('Sequence diagram', () => {
   it('should render a simple sequence diagram', () => {
@@ -505,7 +505,7 @@ context('Sequence diagram', () => {
     });
   });
   context('directives', () => {
-      it('should overide config with directive settings', () => {
+      it('should override config with directive settings', () => {
       imgSnapshotTest(
         `
         %%{init: { "config": { "mirrorActors": true }}}%%
@@ -517,7 +517,7 @@ context('Sequence diagram', () => {
         { logLevel:0,  sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' } }
       );
     });
-      it('should overide config with directive settings', () => {
+      it('should override config with directive settings', () => {
       imgSnapshotTest(
         `
         %%{init: { "config": { "mirrorActors": false, "wrap": true }}}%%
@@ -528,6 +528,87 @@ context('Sequence diagram', () => {
       `,
         { logLevel:0,  sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
       );
+    });
+  });
+  context('svg size', () => {
+    it('should render a sequence diagram when useMaxWidth is true (default)', () => {
+      renderGraph(
+        `
+      sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John as John<br/>Second Line
+        Alice ->> Bob: Hello Bob, how are you?
+        Bob-->>John: How about you John?
+        Bob--x Alice: I am good thanks!
+        Bob-x John: I am good thanks!
+        Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+        Bob-->Alice: Checking with John...
+        alt either this
+          Alice->>John: Yes
+          else or this
+          Alice->>John: No
+          else or this will happen
+          Alice->John: Maybe
+        end
+        par this happens in parallel
+        Alice -->> Bob: Parallel message 1
+        and
+        Alice -->> John: Parallel message 2
+        end
+      `,
+        { sequence: { useMaxWidth: true } }
+      );
+      cy.get('svg')
+        .should((svg) => {
+          expect(svg).to.have.attr('width', '100%');
+          expect(svg).to.have.attr('height');
+          const height = parseFloat(svg.attr('height'));
+          expect(height).to.eq(920);
+          const style = svg.attr('style');
+          expect(style).to.match(/^max-width: [\d.]+px;$/);
+          const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+          // use within because the absolute value can be slightly different depending on the environment ±5%
+          expect(maxWidthValue).to.be.within(820 * .95, 820 * 1.05);
+        });
+    });
+    it('should render a sequence diagram when useMaxWidth is false', () => {
+      renderGraph(
+        `
+      sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John as John<br/>Second Line
+        Alice ->> Bob: Hello Bob, how are you?
+        Bob-->>John: How about you John?
+        Bob--x Alice: I am good thanks!
+        Bob-x John: I am good thanks!
+        Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+        Bob-->Alice: Checking with John...
+        alt either this
+          Alice->>John: Yes
+          else or this
+          Alice->>John: No
+          else or this will happen
+          Alice->John: Maybe
+        end
+        par this happens in parallel
+        Alice -->> Bob: Parallel message 1
+        and
+        Alice -->> John: Parallel message 2
+        end
+      `,
+        { sequence: { useMaxWidth: false } }
+      );
+      cy.get('svg')
+        .should((svg) => {
+          const height = parseFloat(svg.attr('height'));
+          const width = parseFloat(svg.attr('width'));
+          expect(height).to.eq(920);
+          // use within because the absolute value can be slightly different depending on the environment ±5%
+          expect(width).to.be.within(820 * .95, 820 * 1.05);
+          expect(svg).to.not.have.attr('style');
+        });
     });
   });
 });

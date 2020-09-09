@@ -9,7 +9,7 @@ import { render } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import common from '../common/common';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
+import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -382,11 +382,13 @@ export const draw = function(text, id) {
   logger.info(edges);
   let i = 0;
   for (i = subGraphs.length - 1; i >= 0; i--) {
+    // for (let i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i];
 
     selectAll('cluster').append('text');
 
     for (let j = 0; j < subG.nodes.length; j++) {
+      logger.info('Setting up subgraphs', subG.nodes[j], subG.id);
       g.setParent(subG.nodes[j], subG.id);
     }
   }
@@ -418,13 +420,7 @@ export const draw = function(text, id) {
     `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
   );
 
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
+  configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `0 0 ${width} ${height}`);
   svg
