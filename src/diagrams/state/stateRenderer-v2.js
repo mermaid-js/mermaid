@@ -100,6 +100,7 @@ const setupNode = (g, parent, node, altFlag) => {
       classes: nodeDb[node.id].classes, //classStr,
       style: '', //styles.style,
       id: node.id,
+      domId: 'state-' + node.id + '-' + cnt,
       type: nodeDb[node.id].type,
       padding: 15 //getConfig().flowchart.padding
     };
@@ -113,6 +114,7 @@ const setupNode = (g, parent, node, altFlag) => {
         classes: 'statediagram-note', //classStr,
         style: '', //styles.style,
         id: node.id + '----note',
+        domId: 'state-' + node.id + '----note-' + cnt,
         type: nodeDb[node.id].type,
         padding: 15 //getConfig().flowchart.padding
       };
@@ -123,9 +125,12 @@ const setupNode = (g, parent, node, altFlag) => {
         classes: nodeDb[node.id].classes, //classStr,
         style: '', //styles.style,
         id: node.id + '----parent',
+        domId: 'state-' + node.id + '----parent-' + cnt,
         type: 'group',
         padding: 0 //getConfig().flowchart.padding
       };
+      cnt++;
+
       g.setNode(node.id + '----parent', groupData);
 
       g.setNode(noteData.id, noteData);
@@ -170,6 +175,7 @@ const setupNode = (g, parent, node, altFlag) => {
 };
 let cnt = 0;
 const setupDoc = (g, parent, doc, altFlag) => {
+  cnt = 0;
   logger.trace('items', doc);
   doc.forEach(item => {
     if (item.stmt === 'state' || item.stmt === 'default') {

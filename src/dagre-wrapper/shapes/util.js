@@ -12,7 +12,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', classes)
-    .attr('id', node.id);
+    .attr('id', node.domId || node.id);
 
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'label');

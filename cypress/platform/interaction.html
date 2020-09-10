@@ -5,6 +5,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Mermaid Quick Test Page</title>
   <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+  <style>
+    .mermaid2 {
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <div style="display: flex">
@@ -14,15 +19,16 @@
       click Function clickByFlow "Add a div"
       click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
 </div>
-<div id="FirstLine" class="mermaid">
+<div id="FirstLine" class="mermaid2">
   graph TB
     1Function-->2URL
     click 1Function clickByFlow "Add a div"
     click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
 </div>
 
-<div id="FirstLine" class="mermaid">
+<div id="FirstLine" class="mermaid2">
   classDiagram
+    class Test
     class ShapeLink
     link ShapeLink "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
     class ShapeCallback
@@ -30,15 +36,17 @@
 </div>
 <div id="FirstLine" class="mermaid">
   classDiagram-v2
-    class ShapeLink2
-    link ShapeLink2 "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
-    class ShapeCallback2
-    callback ShapeCallback2 "clickByClass" "This is a tooltip for a callback"
+    class ShapeCallback
+    callback ShapeCallback "clickByClass" "This is a tooltip for a callback"
+</div>
+<div id="FirstLine" class="mermaid">
+  classDiagram-v2
+    class ShapeLink
+    link ShapeLink "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
+</div>
 </div>
 
-</div>
-
-<div class="mermaid">
+<div class="mermaid2">
     gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %d/%m

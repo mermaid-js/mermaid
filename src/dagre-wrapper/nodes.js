@@ -289,7 +289,7 @@ const rectWithTitle = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', classes)
-    .attr('id', node.id);
+    .attr('id', node.domId || node.id);
 
   // Create the title label and insert it after the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -458,7 +458,7 @@ const start = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
-    .attr('id', node.id);
+    .attr('id', node.domId || node.id);
   const circle = shapeSvg.insert('circle', ':first-child');
 
   // center the circle around its coordinate
@@ -481,7 +481,7 @@ const forkJoin = (parent, node, dir) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
-    .attr('id', node.id);
+    .attr('id', node.domId || node.id);
 
   let width = 70;
   let height = 10;
@@ -515,7 +515,7 @@ const end = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
-    .attr('id', node.id);
+    .attr('id', node.domId || node.id);
   const innerCircle = shapeSvg.insert('circle', ':first-child');
   const circle = shapeSvg.insert('circle', ':first-child');
 
@@ -552,10 +552,18 @@ const class_box = (parent, node) => {
     classes = 'node ' + node.classes;
   }
   // Add outer g element
-  const shapeSvg = parent
+  const shapeSvgG = parent
     .insert('g')
     .attr('class', classes)
-    .attr('id', node.id);
+    .attr('id', node.domId || node.id);
+
+  // Add link
+  const shapeSvg = node.link
+    ? shapeSvgG
+        .append('svg:a')
+        .attr('xlink:href', node.link)
+        .attr('target', node.linkTarget || '_blank')
+    : shapeSvgG;
 
   // Create the title label and insert it after the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -823,6 +831,9 @@ let nodeElems = {};
 
 export const insertNode = (elem, node, dir) => {
   nodeElems[node.id] = shapes[node.shape](elem, node, dir);
+  if (node.haveCallback) {
+    nodeElems[node.id].attr('class', nodeElems[node.id].attr('class') + ' clickable');
+  }
 };
 export const setNodeElem = (elem, node) => {
   nodeElems[node.id] = elem;

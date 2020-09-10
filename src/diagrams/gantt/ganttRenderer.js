@@ -301,7 +301,6 @@ export const draw = function(text, id) {
         }
 
         let secNum = 0;
-        console.log(conf);
         for (let i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
             secNum = i % conf.numberSectionStyles;
