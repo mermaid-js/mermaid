@@ -34,7 +34,6 @@ export const addClasses = function(classes, g) {
   logger.info('keys:', keys);
   logger.info(classes);
 
-  let cnt = 0;
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   keys.forEach(function(id) {
     const vertex = classes[id];
@@ -109,8 +108,6 @@ export const addClasses = function(classes, g) {
       type: vertex.type,
       padding: getConfig().flowchart.padding
     });
-
-    cnt++;
 
     logger.info('setNode', {
       labelStyle: styles.labelStyle,
