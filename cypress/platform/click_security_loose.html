@@ -5,6 +5,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Mermaid Quick Test Page</title>
   <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+  <style>
+    .mermaid2 {
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <div style="display: flex">
@@ -16,7 +21,19 @@
 </div>
 <div id="FirstLine" class="mermaid">
   graph TB
-    1Function-->2URL
+    1Function--->2URL
+    click 1Function clickByFlow "Add a div"
+    click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+</div>
+  <div id="FirstLine" class="mermaid">
+    flowchart TB
+      Function-->URL
+      click Function clickByFlow "Add a div"
+      click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+</div>
+<div id="FirstLine" class="mermaid">
+  flowchart TB
+    1Function--->2URL
     click 1Function clickByFlow "Add a div"
     click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
 </div>

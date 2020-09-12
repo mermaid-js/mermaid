@@ -5,8 +5,8 @@ import common from '../common/common';
 import mermaidAPI from '../../mermaidAPI';
 
 // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
-const MERMAID_DOM_ID_PREFIX = '';
-
+const MERMAID_DOM_ID_PREFIX = 'flowchart-';
+let vertexCounter = 0;
 let config = configApi.getConfig();
 let vertices = {};
 let edges = [];
@@ -22,6 +22,20 @@ let funs = [];
 
 export const parseDirective = function(statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
+};
+
+/**
+ * Function to lookup domId from id in the graph definition.
+ * @param id
+ * @public
+ */
+export const lookUpDomId = function(id) {
+  const veritceKeys = Object.keys(vertices);
+  for (let i = 0; i < veritceKeys.length; i++) {
+    if (vertices[veritceKeys[i]].id === id) {
+      return vertices[veritceKeys[i]].domId;
+    }
+  }
 };
 
 /**
@@ -42,11 +56,17 @@ export const addVertex = function(_id, text, type, style, classes) {
     return;
   }
 
-  if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+  // if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
   if (typeof vertices[id] === 'undefined') {
-    vertices[id] = { id: id, styles: [], classes: [] };
+    vertices[id] = {
+      id: id,
+      domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
+      styles: [],
+      classes: []
+    };
   }
+  vertexCounter++;
   if (typeof text !== 'undefined') {
     config = configApi.getConfig();
     txt = common.sanitizeText(text.trim(), config);
@@ -91,8 +111,8 @@ export const addVertex = function(_id, text, type, style, classes) {
 export const addSingleLink = function(_start, _end, type, linktext) {
   let start = _start;
   let end = _end;
-  if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
-  if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
+  // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
+  // if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
   // logger.info('Got edge...', start, end);
 
   const edge = { start: start, end: end, type: undefined, text: '' };
@@ -203,7 +223,7 @@ export const setDirection = function(dir) {
 export const setClass = function(ids, className) {
   ids.split(',').forEach(function(_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+    // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className);
     }
@@ -222,9 +242,9 @@ const setTooltip = function(ids, tooltip) {
   });
 };
 
-const setClickFun = function(_id, functionName) {
-  let id = _id;
-  if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+const setClickFun = function(id, functionName) {
+  let domId = lookUpDomId(id);
+  // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
@@ -232,8 +252,9 @@ const setClickFun = function(_id, functionName) {
     return;
   }
   if (typeof vertices[id] !== 'undefined') {
+    vertices[id].haveCallback = true;
     funs.push(function() {
-      const elem = document.querySelector(`[id="${id}"]`);
+      const elem = document.querySelector(`[id="${domId}"]`);
       if (elem !== null) {
         elem.addEventListener(
           'click',
@@ -254,9 +275,9 @@ const setClickFun = function(_id, functionName) {
  * @param tooltip Tooltip for the clickable element
  */
 export const setLink = function(ids, linkStr, tooltip, target) {
-  ids.split(',').forEach(function(_id) {
-    let id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+  ids.split(',').forEach(function(id) {
+    // let domId = lookUpDomId(id);
+    // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = utils.formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
@@ -638,6 +659,7 @@ export default {
   parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
   addVertex,
+  lookUpDomId,
   addLink,
   updateLinkInterpolate,
   updateLink,

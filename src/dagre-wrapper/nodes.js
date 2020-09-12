@@ -552,18 +552,10 @@ const class_box = (parent, node) => {
     classes = 'node ' + node.classes;
   }
   // Add outer g element
-  const shapeSvgG = parent
+  const shapeSvg = parent
     .insert('g')
     .attr('class', classes)
     .attr('id', node.domId || node.id);
-
-  // Add link
-  const shapeSvg = node.link
-    ? shapeSvgG
-        .append('svg:a')
-        .attr('xlink:href', node.link)
-        .attr('target', node.linkTarget || '_blank')
-    : shapeSvgG;
 
   // Create the title label and insert it after the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -830,7 +822,26 @@ const shapes = {
 let nodeElems = {};
 
 export const insertNode = (elem, node, dir) => {
-  nodeElems[node.id] = shapes[node.shape](elem, node, dir);
+  let newEl;
+  let el;
+
+  // Add link when appropriate
+  if (node.link) {
+    newEl = elem
+      .insert('svg:a')
+      .attr('xlink:href', node.link)
+      .attr('target', node.linkTarget || '_blank');
+    el = shapes[node.shape](newEl, node, dir);
+  } else {
+    el = shapes[node.shape](elem, node, dir);
+    newEl = el;
+  }
+  if (node.tooltip) {
+    el.attr('title', node.tooltip);
+  }
+
+  nodeElems[node.id] = newEl;
+
   if (node.haveCallback) {
     nodeElems[node.id].attr('class', nodeElems[node.id].attr('class') + ' clickable');
   }
