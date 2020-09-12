@@ -29,7 +29,6 @@ export const addVertices = function(vert, g, svgId) {
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  let cnt = 0;
   keys.forEach(function(id) {
     const vertex = vert[id];
 
@@ -166,7 +165,6 @@ export const addVertices = function(vert, g, svgId) {
       type: vertex.type,
       padding: getConfig().flowchart.padding
     });
-    cnt++;
   });
 };
 
