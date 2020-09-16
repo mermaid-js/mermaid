@@ -143,7 +143,7 @@ export const addVertices = function(vert, g, svgId) {
       ry: radious,
       class: classStr,
       style: styles.style,
-      id: vertex.id
+      id: flowDb.lookUpDomId(vertex.id)
     });
   });
 };
@@ -425,10 +425,13 @@ export const draw = function(text, id) {
   // reposition labels
   for (i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i];
-
     if (subG.title !== 'undefined') {
-      const clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
-      const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
+      const clusterRects = document.querySelectorAll(
+        '#' + id + ' [id="' + flowDb.lookUpDomId(subG.id) + '"] rect'
+      );
+      const clusterEl = document.querySelectorAll(
+        '#' + id + ' [id="' + flowDb.lookUpDomId(subG.id) + '"]'
+      );
 
       const xPos = clusterRects[0].x.baseVal.value;
       const yPos = clusterRects[0].y.baseVal.value;
@@ -470,7 +473,7 @@ export const draw = function(text, id) {
     const vertex = vert[key];
 
     if (vertex.link) {
-      const node = select('#' + id + ' [id="' + key + '"]');
+      const node = select('#' + id + ' [id="' + flowDb.lookUpDomId(key) + '"]');
       if (node) {
         const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));

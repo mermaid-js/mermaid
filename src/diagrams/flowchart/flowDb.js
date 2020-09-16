@@ -226,7 +226,7 @@ export const setDirection = function(dir) {
  */
 export const setClass = function(ids, className) {
   ids.split(',').forEach(function(_id) {
-    let id = _id;
+    let id = version === 'gen-1' ? lookUpDomId(_id) : _id;
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className);
@@ -241,7 +241,7 @@ export const setClass = function(ids, className) {
 const setTooltip = function(ids, tooltip) {
   ids.split(',').forEach(function(id) {
     if (typeof tooltip !== 'undefined') {
-      tooltips[id] = common.sanitizeText(tooltip, config);
+      tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = common.sanitizeText(tooltip, config);
     }
   });
 };
@@ -280,8 +280,6 @@ const setClickFun = function(id, functionName) {
  */
 export const setLink = function(ids, linkStr, tooltip, target) {
   ids.split(',').forEach(function(id) {
-    // let domId = lookUpDomId(id);
-    // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = utils.formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
