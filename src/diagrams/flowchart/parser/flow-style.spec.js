@@ -10,6 +10,7 @@ describe('[Style] when parsing', () => {
   beforeEach(function() {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
+    flow.parser.yy.setGen('gen-2');
   });
 
   // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
