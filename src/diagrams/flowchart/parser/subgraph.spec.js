@@ -11,6 +11,7 @@ describe('when parsing subgraphs', function() {
   beforeEach(function() {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
+    flow.parser.yy.setGen('gen-2');
   });
   it('should handle subgraph with tab indentation', function() {
     const res = flow.parser.parse('graph TB\nsubgraph One\n\ta1-->a2\nend');
@@ -85,7 +86,7 @@ describe('when parsing subgraphs', function() {
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(1);
     expect(subgraph.nodes[0]).toBe('A');
-    expect(subgraph.id).toBe('flowchart-1test');
+    expect(subgraph.id).toBe('1test');
   });
 
   it('should handle subgraphs1', function() {
