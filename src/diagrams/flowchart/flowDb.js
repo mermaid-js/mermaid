@@ -3,8 +3,8 @@ import utils from '../../utils';
 import * as configApi from '../../config';
 import common from '../common/common';
 import mermaidAPI from '../../mermaidAPI';
+import { logger } from '../../logger';
 
-// const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
 let config = configApi.getConfig();
@@ -17,6 +17,9 @@ let tooltips = {};
 let subCount = 0;
 let firstGraphFlag = true;
 let direction;
+
+let version; // As in graph
+
 // Functions to be run after graph rendering
 let funs = [];
 
@@ -36,6 +39,7 @@ export const lookUpDomId = function(id) {
       return vertices[veritceKeys[i]].domId;
     }
   }
+  return id;
 };
 
 /**
@@ -383,7 +387,7 @@ funs.push(setupToolTips);
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
-export const clear = function() {
+export const clear = function(ver) {
   vertices = {};
   classes = {};
   edges = [];
@@ -394,6 +398,10 @@ export const clear = function() {
   subCount = 0;
   tooltips = [];
   firstGraphFlag = true;
+  version = ver || 'gen-1';
+};
+export const setGen = ver => {
+  version = ver || 'gen-1';
 };
 /**
  *
@@ -407,6 +415,7 @@ export const defaultStyle = function() {
  * Clears the internal graph db so that a new graph can be parsed.
  */
 export const addSubGraph = function(_id, list, _title) {
+  // logger.warn('addSubgraph', _id, list, _title);
   let id = _id.trim();
   let title = _title;
   if (_id === _title && _title.match(/\s/)) {
@@ -432,12 +441,15 @@ export const addSubGraph = function(_id, list, _title) {
   let nodeList = [];
 
   nodeList = uniq(nodeList.concat.apply(nodeList, list));
-  for (let i = 0; i < nodeList.length; i++) {
-    if (nodeList[i][0].match(/\d/)) nodeList[i] = MERMAID_DOM_ID_PREFIX + nodeList[i];
+  if (version === 'gen-1') {
+    logger.warn('LOOKING UP');
+    for (let i = 0; i < nodeList.length; i++) {
+      nodeList[i] = lookUpDomId(nodeList[i]);
+    }
   }
 
   id = id || 'subGraph' + subCount;
-  if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+  // if (id[0].match(/\d/)) id = lookUpDomId(id);
   title = title || '';
   title = common.sanitizeText(title, config);
   subCount = subCount + 1;
@@ -675,6 +687,7 @@ export default {
   getEdges,
   getClasses,
   clear,
+  setGen,
   defaultStyle,
   addSubGraph,
   getDepthFirstPos,

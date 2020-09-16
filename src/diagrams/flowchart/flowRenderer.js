@@ -133,7 +133,8 @@ export const addVertices = function(vert, g, svgId) {
         _shape = 'rect';
     }
     // Add the node
-    g.setNode(vertex.id, {
+    logger.warn('Adding node', vertex.id, vertex.domId);
+    g.setNode(flowDb.lookUpDomId(vertex.id), {
       labelType: 'svg',
       labelStyle: styles.labelStyle,
       shape: _shape,
@@ -247,7 +248,7 @@ export const addEdges = function(edges, g) {
     edgeData.minlen = edge.length || 1;
 
     // Add the edge to the graph
-    g.setEdge(edge.start, edge.end, edgeData, cnt);
+    g.setEdge(flowDb.lookUpDomId(edge.start), flowDb.lookUpDomId(edge.end), edgeData, cnt);
   });
 };
 
@@ -278,6 +279,7 @@ export const getClasses = function(text) {
 export const draw = function(text, id) {
   logger.info('Drawing flowchart');
   flowDb.clear();
+  flowDb.setGen('gen-1');
   const parser = flow.parser;
   parser.yy = flowDb;
 
@@ -323,6 +325,7 @@ export const draw = function(text, id) {
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition
   const vert = flowDb.getVertices();
+  logger.warn('Get vertices', vert);
 
   const edges = flowDb.getEdges();
 
@@ -333,7 +336,13 @@ export const draw = function(text, id) {
     selectAll('cluster').append('text');
 
     for (let j = 0; j < subG.nodes.length; j++) {
-      g.setParent(subG.nodes[j], subG.id);
+      logger.warn(
+        'Setting subgraph',
+        subG.nodes[j],
+        flowDb.lookUpDomId(subG.nodes[j]),
+        flowDb.lookUpDomId(subG.id)
+      );
+      g.setParent(flowDb.lookUpDomId(subG.nodes[j]), flowDb.lookUpDomId(subG.id));
     }
   }
   addVertices(vert, g, id);
@@ -387,6 +396,8 @@ export const draw = function(text, id) {
   // Set up an SVG group so that we can translate the final graph.
   const svg = select(`[id="${id}"]`);
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+
+  logger.warn(g);
 
   // Run the renderer. This is what draws the final graph.
   const element = select('#' + id + ' g');

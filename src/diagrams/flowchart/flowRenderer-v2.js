@@ -335,6 +335,7 @@ export const getClasses = function(text) {
 export const draw = function(text, id) {
   logger.info('Drawing flowchart');
   flowDb.clear();
+  flowDb.setGen('gen-2');
   const parser = flow.parser;
   parser.yy = flowDb;
 

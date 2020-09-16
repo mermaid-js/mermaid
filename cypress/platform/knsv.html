@@ -23,8 +23,16 @@
     <h1>info below</h1>
     <div class="flex">
       <div class="mermaid" style="width: 50%; height: 400px;">
-      graph TD
-        a["<strong>Haiya</strong>"]-->b
+      graph TB;
+        subgraph "number as labels";
+          1 --> 2
+        end;
+      </div>
+      <div class="mermaid" style="width: 50%; height: 400px;">
+      flowchart TB;
+        subgraph "number as labels";
+          1 --> 2
+        end;
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
         %%{init: { 'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
