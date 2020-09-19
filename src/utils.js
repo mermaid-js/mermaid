@@ -287,6 +287,53 @@ export const runFunc = (functionName, ...params) => {
   obj[fnName](...params);
 };
 
+/**
+ * The callbackFunction is executed in a click event bound to the element
+ * @param _funs The functions of the diagram
+ * @param element The element wich will be the target of the click
+ * @param callbackFunction A function to be executed when clicked on the element
+ */
+export const pushClickCallbackFunction = function (_funs, element, callbackFunction) {
+  _funs.push(function () {
+    if (element !== null) {
+      element.addEventListener('click', function () {
+        callbackFunction();
+      },
+      false
+      );
+    }
+  });
+}
+
+/**
+ * Build the list of argument of the callback function 
+ * If the functionArgs is empty then the id passed in
+ * @param id The default argument of the function
+ * @param functionArgs the definded arguments
+ */
+export const buildCallBackFunctionArgList= function (id, functionArgs) {
+  let argList = [];
+  if (typeof functionArgs === 'string') {
+    /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
+    argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    for (let i = 0; i < argList.length; i++) {
+      let item = argList[i].trim();
+      /* Removes all double quotes at the start and end of an argument */
+      /* This preserves all starting and ending whitespace inside */
+      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+        item = item.substr(1, item.length - 2);
+      }
+      argList[i] = item;
+    }
+  }
+
+  /* if no arguments passed into callback, default to passing in id */
+  if (argList.length === 0) {
+    argList.push(id);
+  }
+  return argList;
+}
+
 const distance = (p1, p2) =>
   p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
 
@@ -812,5 +859,7 @@ export default {
   generateId,
   random,
   memoize,
+  pushClickCallbackFunction,
+  buildCallBackFunctionArgList,
   runFunc
 };
