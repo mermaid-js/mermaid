@@ -293,13 +293,13 @@ export const runFunc = (functionName, ...params) => {
  * @param element The element wich will be the target of the click
  * @param callbackFunction A function to be executed when clicked on the element
  */
-export const pushClickCallbackFunction = function (_funs, element, callbackFunction) {
-  _funs.push(function () {
+export const pushClickCallbackFunction = function(_funs, element, callbackFunction) {
+  _funs.push(function() {
     if (element !== null) {
-      element.addEventListener('click', function () {
+      element.addEventListener('click', function() {
         callbackFunction();
       },
-      false
+        false
       );
     }
   });
@@ -311,7 +311,7 @@ export const pushClickCallbackFunction = function (_funs, element, callbackFunct
  * @param id The default argument of the function
  * @param functionArgs the definded arguments
  */
-export const buildCallBackFunctionArgList= function (id, functionArgs) {
+export const buildCallBackFunctionArgList = function(id, functionArgs) {
   let argList = [];
   if (typeof functionArgs === 'string') {
     /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
@@ -802,11 +802,11 @@ export const calculateTextDimensions = memoize(
 
     let index =
       isNaN(dims[1].height) ||
-      isNaN(dims[1].width) ||
-      isNaN(dims[1].lineHeight) ||
-      (dims[0].height > dims[1].height &&
-        dims[0].width > dims[1].width &&
-        dims[0].lineHeight > dims[1].lineHeight)
+        isNaN(dims[1].width) ||
+        isNaN(dims[1].lineHeight) ||
+        (dims[0].height > dims[1].height &&
+          dims[0].width > dims[1].width &&
+          dims[0].lineHeight > dims[1].lineHeight)
         ? 0
         : 1;
     return dims[index];

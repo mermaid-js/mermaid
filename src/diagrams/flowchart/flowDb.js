@@ -243,7 +243,7 @@ const setClickFun = function(_id, functionName) {
  * @param id The node's id
  * @param callbackFunction A function to be executed when clicked on the node
  */
-const pushFun = function (id, callbackFunction) {
+const pushFun = function(id, callbackFunction) {
   // const elem = d3.select(element).select(`[id="${id}"]`)
   utils.pushClickCallbackFunction(funs, document.querySelector(`[id="${id}"]`), callbackFunction);
 };
