@@ -296,11 +296,10 @@ export const runFunc = (functionName, ...params) => {
 export const pushClickCallbackFunction = function(_funs, element, callbackFunction) {
   _funs.push(function() {
     if (element !== null) {
-      element.addEventListener('click', function() {
-        callbackFunction();
-      },
-        false
-      );
+      element.addEventListener(
+        'click',
+        function() {callbackFunction();},
+        false);
     }
   });
 }
