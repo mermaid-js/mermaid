@@ -297,11 +297,9 @@ export const pushClickCallbackFunction = function(_funs, selectors, callbackFunc
   _funs.push(function() {
     const element = document.querySelector(selectors);
     if (element !== null) {
-      element.addEventListener('click',
-        function() {
-          callbackFunction();
-        }
-      );
+      element.addEventListener('click', function() {
+        callbackFunction();
+      });
     }
   });
 };
