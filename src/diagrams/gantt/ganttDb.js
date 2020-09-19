@@ -514,8 +514,8 @@ const setClickFun = function(id, functionName, functionArgs) {
     let callbackFunction = () => {
       utils.runFunc(functionName, ...argList);
     };
-    pushFun(document.querySelector(`[id="${id}"]`), callbackFunction);
-    pushFun(document.querySelector(`[id="${id}-text"]`), callbackFunction);
+    pushFun(`[id="${id}"]`, callbackFunction);
+    pushFun(`[id="${id}-text"]`, callbackFunction);
   }
 };
 
@@ -524,8 +524,8 @@ const setClickFun = function(id, functionName, functionArgs) {
  * @param element The element
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
-const pushFun = function(element, callbackFunction) {
-  utils.pushClickCallbackFunction(funs, element, callbackFunction);
+const pushFun = function(selectors, callbackFunction) {
+  utils.pushClickCallbackFunction(funs, selectors, callbackFunction);
 };
 
 /**

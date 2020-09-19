@@ -220,7 +220,7 @@ const setClickFunc = function(domId, functionName, tooltip) {
     let callbackFunction = () => {
       utils.runFunc(functionName, elemId);
     };
-    pushFun(document.querySelector(`[id="${elemId}"]`), callbackFunction);
+    pushFun(`[id="${elemId}"]`, callbackFunction);
   }
 };
 
@@ -229,8 +229,8 @@ const setClickFunc = function(domId, functionName, tooltip) {
  * @param element The element
  * @param callbackFunction A function to be executed when clicked on the node
  */
-const pushFun = function(element, callbackFunction) {
-  utils.pushClickCallbackFunction(funs, element, callbackFunction);
+const pushFun = function(selectors, callbackFunction) {
+  utils.pushClickCallbackFunction(funs, selectors, callbackFunction);
 };
 
 export const bindFunctions = function(element) {

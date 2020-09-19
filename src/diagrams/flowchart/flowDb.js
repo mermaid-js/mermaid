@@ -235,17 +235,17 @@ const setClickFun = function(_id, functionName) {
     let callbackFunction = () => {
       utils.runFunc(functionName, id);
     };
-    pushFun(document.querySelector(`[id="${id}"]`), callbackFunction);
+    pushFun(`[id="${id}"]`, callbackFunction);
   }
 };
 
 /**
  * The callbackFunction is executed in a click event bound to the node with the specified id
- * @param element The node
+ * @param selectors The selector of the node
  * @param callbackFunction A function to be executed when clicked on the node
  */
-const pushFun = function(element, callbackFunction) {
-  utils.pushClickCallbackFunction(funs, element, callbackFunction);
+const pushFun = function(selectors, callbackFunction) {
+  utils.pushClickCallbackFunction(funs, selectors, callbackFunction);
 };
 
 /**

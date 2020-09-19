@@ -290,18 +290,18 @@ export const runFunc = (functionName, ...params) => {
 /**
  * The callbackFunction is executed in a click event bound to the element
  * @param _funs The functions of the diagram
- * @param element The element wich will be the target of the click
+ * @param selectors The selector of the element wich will be the target of the click
  * @param callbackFunction A function to be executed when clicked on the element
  */
-export const pushClickCallbackFunction = function(_funs, element, callbackFunction) {
+export const pushClickCallbackFunction = function(_funs, selectors, callbackFunction) {
   _funs.push(function() {
+    const element = document.querySelector(selectors);
     if (element !== null) {
       element.addEventListener(
         'click',
         function() {
           callbackFunction();
-        },
-        false
+        }
       );
     }
   });
