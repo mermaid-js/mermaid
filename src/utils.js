@@ -298,11 +298,14 @@ export const pushClickCallbackFunction = function(_funs, element, callbackFuncti
     if (element !== null) {
       element.addEventListener(
         'click',
-        function() {callbackFunction();},
-        false);
+        function() {
+          callbackFunction();
+        },
+        false
+        );
     }
   });
-}
+};
 
 /**
  * Build the list of argument of the callback function 
@@ -331,7 +334,7 @@ export const buildCallBackFunctionArgList = function(id, functionArgs) {
     argList.push(id);
   }
   return argList;
-}
+};
 
 const distance = (p1, p2) =>
   p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
