@@ -217,20 +217,20 @@ const setClickFunc = function(domId, functionName, tooltip) {
     if (tooltip) {
       classes[id].tooltip = common.sanitizeText(tooltip, config);
     }
-    pushFun(elemId, () => {
+    let callbackFunction = () => {
       utils.runFunc(functionName, elemId);
-    });
+    };
+    pushFun(document.querySelector(`[id="${elemId}"]`), callbackFunction);
   }
 };
 
 /**
  * The callbackFunction is executed in a click event bound to the node with the specified id
- * @param id The node's id
+ * @param element The element
  * @param callbackFunction A function to be executed when clicked on the node
  */
-const pushFun = function(id, callbackFunction) {
-  // const elem = d3.select(element).select(`[id="${id}"]`)
-  utils.pushClickCallbackFunction(funs, document.querySelector(`[id="${id}"]`), callbackFunction);
+const pushFun = function(element, callbackFunction) {
+  utils.pushClickCallbackFunction(funs, element, callbackFunction);
 };
 
 export const bindFunctions = function(element) {

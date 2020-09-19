@@ -232,21 +232,20 @@ const setClickFun = function(_id, functionName) {
     return;
   }
   if (typeof vertices[id] !== 'undefined') {
-    pushFun(id, () => {
+    let callbackFunction = () => {
       utils.runFunc(functionName, id);
-    });
+    };
+    pushFun(document.querySelector(`[id="${id}"]`), callbackFunction);
   }
 };
 
 /**
  * The callbackFunction is executed in a click event bound to the node with the specified id
- * @param id The node's id
+ * @param element The node
  * @param callbackFunction A function to be executed when clicked on the node
  */
-const pushFun = function(id, callbackFunction) {
-  // const elem = d3.select(element).select(`[id="${id}"]`)
-  utils.pushClickCallbackFunction(funs, document.querySelector(`[id="${id}"]`), callbackFunction
-  );
+const pushFun = function(element, callbackFunction) {
+  utils.pushClickCallbackFunction(funs, element, callbackFunction);
 };
 
 /**

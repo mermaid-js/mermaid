@@ -511,26 +511,21 @@ const setClickFun = function(id, functionName, functionArgs) {
   let rawTask = findTaskById(id);
   if (typeof rawTask !== 'undefined') {
     let argList = utils.buildCallBackFunctionArgList(id, functionArgs);
-    pushFun(id, () => {
+    let callbackFunction = () => {
       utils.runFunc(functionName, ...argList);
-    });
+    };
+    pushFun(document.querySelector(`[id="${id}"]`), callbackFunction);
+    pushFun(document.querySelector(`[id="${id}-text"]`), callbackFunction);
   }
 };
 
 /**
  * The callbackFunction is executed in a click event bound to the task with the specified id or the task's assigned text
- * @param id The task's id
+ * @param element The element
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
-const pushFun = function(id, callbackFunction) {
-  // const elem = d3.select(element).select(`[id="${id}"]`)
-  utils.pushClickCallbackFunction(funs, document.querySelector(`[id="${id}"]`),
-    callbackFunction
-    );
-  // const elem = d3.select(element).select(`[id="${id}-text"]`)
-  utils.pushClickCallbackFunction(funs, document.querySelector(`[id="${id}-text"]`),
-    callbackFunction
-    );
+const pushFun = function(element, callbackFunction) {
+  utils.pushClickCallbackFunction(funs, element, callbackFunction);
 };
 
 /**
