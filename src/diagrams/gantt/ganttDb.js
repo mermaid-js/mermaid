@@ -525,7 +525,7 @@ const setClickFun = function(id, functionName, functionArgs) {
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
 const pushFun = function(selectors, callbackFunction) {
-  utils.pushClickCallbackFunction(funs, selectors, callbackFunction);
+  utils.pushClickCallbackFunction(funs, selectors, callbackFunction, true);
 };
 
 /**

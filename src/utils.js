@@ -293,13 +293,23 @@ export const runFunc = (functionName, ...params) => {
  * @param selectors The selector of the element wich will be the target of the click
  * @param callbackFunction A function to be executed when clicked on the element
  */
-export const pushClickCallbackFunction = function(_funs, selectors, callbackFunction) {
+export const pushClickCallbackFunction = function(_funs, selectors, callbackFunction, withOptions) {
   _funs.push(function() {
     const element = document.querySelector(selectors);
     if (element !== null) {
-      element.addEventListener('click', function() {
-        callbackFunction();
-      });
+      if (withOptions) {
+        element.addEventListener('click', function() {
+          callbackFunction();
+        });
+      } else {
+        element.addEventListener(
+          'click',
+          function() {
+            callbackFunction();
+          },
+          false
+        );
+      }
     }
   });
 };

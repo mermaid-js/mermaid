@@ -245,7 +245,7 @@ const setClickFun = function(_id, functionName) {
  * @param callbackFunction A function to be executed when clicked on the node
  */
 const pushFun = function(selectors, callbackFunction) {
-  utils.pushClickCallbackFunction(funs, selectors, callbackFunction);
+  utils.pushClickCallbackFunction(funs, selectors, callbackFunction, false);
 };
 
 /**
