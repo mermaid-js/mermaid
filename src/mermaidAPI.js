@@ -220,7 +220,7 @@ const render = function(id, _txt, cb, container) {
   // console.warn('Render fetching config');
 
   const cnf = configApi.getConfig();
-  console.warn('Render with config after adding new directives', cnf.sequence);
+  // console.warn('Render with config after adding new directives', cnf.sequence);
   // console.warn(
   //   'Render with config after adding new directives',
   //   cnf.fontFamily,
