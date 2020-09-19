@@ -246,7 +246,8 @@ const setClickFun = function(_id, functionName) {
 const pushFun = function(id, callbackFunction) {
   // const elem = d3.select(element).select(`[id="${id}"]`)
   utils.pushClickCallbackFunction(funs, document.querySelector(`[id="${id}"]`),
-    callbackFunction);
+    callbackFunction
+  );
 };
 
 /**

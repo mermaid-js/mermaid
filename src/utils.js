@@ -302,13 +302,13 @@ export const pushClickCallbackFunction = function(_funs, element, callbackFuncti
           callbackFunction();
         },
         false
-        );
+      );
     }
   });
 };
 
 /**
- * Build the list of argument of the callback function 
+ * Build the list of argument of the callback function
  * If the functionArgs is empty then the id passed in
  * @param id The default argument of the function
  * @param functionArgs the definded arguments
@@ -804,11 +804,11 @@ export const calculateTextDimensions = memoize(
 
     let index =
       isNaN(dims[1].height) ||
-        isNaN(dims[1].width) ||
-        isNaN(dims[1].lineHeight) ||
-        (dims[0].height > dims[1].height &&
-          dims[0].width > dims[1].width &&
-          dims[0].lineHeight > dims[1].lineHeight)
+      isNaN(dims[1].width) ||
+      isNaN(dims[1].lineHeight) ||
+      (dims[0].height > dims[1].height &&
+        dims[0].width > dims[1].width &&
+        dims[0].lineHeight > dims[1].lineHeight)
         ? 0
         : 1;
     return dims[index];
