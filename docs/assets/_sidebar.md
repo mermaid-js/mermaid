@@ -21,7 +21,7 @@
   <!-- - [Development and Contribution](development.md)
   - [Mermaid Versions](versionUpdates.md)
   - [Changelog](CHANGELOG.md) -->
-
+  - [Adding Diagrams](newDiagram.md) -->
 
 - Diagrams and Syntax and Examples
 
