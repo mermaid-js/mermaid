@@ -1,44 +1,89 @@
 /* eslint-env jest */
 describe('Interaction', () => {
   describe('Interaction - security level loose', () => {
-    it('should handle a click on a node with a bound function', () => {
+    it('Graph: should handle a click on a node with a bound function', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#Function')
+        .find('g#flowchart-Function-2')
         .click();
 
       cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
     });
-    it('should handle a click on a node with a bound function where the node starts with a number', () => {
+    it('Graph: should handle a click on a node with a bound function where the node starts with a number', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g[id="1Function"]')
+        .find('g[id="flowchart-1Function-6"]')
         .click();
 
       cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
     });
-    it('should handle a click on a node with a bound url', () => {
+    it('Graph: should handle a click on a node with a bound url', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#URL')
+        .find('#flowchart-URL-3')
         .click();
 
       cy.location().should(location => {
         expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
       });
     });
-    it('should handle a click on a node with a bound url where the node starts with a number', () => {
+    it('Graph: should handle a click on a node with a bound url where the node starts with a number', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g[id="2URL"]')
+        .find('g[id="flowchart-2URL-7"]')
+        .click();
+
+      cy.location().should(location => {
+        expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
+      });
+    });
+
+    it('Flowchart-v2: should handle a click on a node with a bound function', () => {
+      const url = 'http://localhost:9000/click_security_loose.html';
+      cy.viewport(1440, 1024);
+      cy.visit(url);
+      cy.get('body')
+        .find('g#flowchart-Function-10')
+        .click();
+
+      cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
+    });
+    it('Flowchart-v2: should handle a click on a node with a bound function where the node starts with a number', () => {
+      const url = 'http://localhost:9000/click_security_loose.html';
+      cy.viewport(1440, 1024);
+      cy.visit(url);
+      cy.get('body')
+        .find('g[id="flowchart-1Function-14"]')
+        .click();
+
+      cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
+    });
+    it('Flowchart-v2: should handle a click on a node with a bound url', () => {
+      const url = 'http://localhost:9000/click_security_loose.html';
+      cy.viewport(1440, 1024);
+      cy.visit(url);
+      cy.get('body')
+        .find('#flowchart-URL-11')
+        .click();
+
+      cy.location().should(location => {
+        expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
+      });
+    });
+    it('Flowchart-v2: should handle a click on a node with a bound url where the node starts with a number', () => {
+      const url = 'http://localhost:9000/click_security_loose.html';
+      cy.viewport(1440, 1024);
+      cy.visit(url);
+      cy.get('body')
+        .find('g[id="flowchart-2URL-15"]')
         .click();
 
       cy.location().should(location => {
@@ -120,7 +165,7 @@ describe('Interaction', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#Function')
+        .find('g#flowchart-Function-2')
         .click();
 
       cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
@@ -130,7 +175,7 @@ describe('Interaction', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g[id="1Function"]')
+        .find('g[id="flowchart-1Function-6"]')
         .click();
 
       cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
@@ -140,7 +185,7 @@ describe('Interaction', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#URL')
+        .find('g#flowchart-URL-3')
         .click();
 
       cy.location().should(location => {
@@ -152,7 +197,7 @@ describe('Interaction', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g[id="2URL"]')
+        .find('g[id="flowchart-2URL-7"]')
         .click();
 
       cy.location().should(location => {
@@ -208,31 +253,31 @@ describe('Interaction', () => {
 
   describe('Interaction - security level other, missspelling', () => {
     it('should handle a click on a node with a bound function', () => {
-      const url = 'http://localhost:9000/click_security_strict.html';
+      const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#Function')
+        .find('g#flowchart-Function-2')
         .click();
 
       cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
     });
     it('should handle a click on a node with a bound function where the node starts with a number', () => {
-      const url = 'http://localhost:9000/click_security_strict.html';
+      const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g[id="1Function"]')
+        .find('g[id="flowchart-1Function-6"]')
         .click();
 
       cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
     });
     it('should handle a click on a node with a bound url', () => {
-      const url = 'http://localhost:9000/click_security_strict.html';
+      const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#URL')
+        .find('g#flowchart-URL-3')
         .click();
 
       cy.location().should(location => {
@@ -241,7 +286,7 @@ describe('Interaction', () => {
     });
 
     it('should handle a click on a task with a bound function', () => {
-      const url = 'http://localhost:9000/click_security_strict.html';
+      const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
@@ -251,7 +296,7 @@ describe('Interaction', () => {
       cy.get('.created-by-gant-click').should('not.have.text', 'Clicked By Gant cl2');
     });
     it('should handle a click on a task with a bound function', () => {
-      const url = 'http://localhost:9000/click_security_strict.html';
+      const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')

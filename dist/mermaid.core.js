@@ -1208,8 +1208,10 @@ __webpack_require__.r(__webpack_exports__);
  // import { calcLabelPosition } from '../utils';
 
 var edgeLabels = {};
+var terminalLabels = {};
 var clear = function clear() {
   edgeLabels = {};
+  terminalLabels = {};
 };
 var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
   // Create the actual text element
@@ -1236,23 +1238,173 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
 
   edge.width = bbox.width;
   edge.height = bbox.height;
+
+  if (edge.startLabelLeft) {
+    // Create the actual text element
+    var startLabelElement = Object(_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(edge.startLabelLeft, edge.labelStyle);
+    var startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
+    var inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
+    inner.node().appendChild(startLabelElement);
+    var slBox = startLabelElement.getBBox();
+    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+
+    if (!terminalLabels[edge.id]) {
+      terminalLabels[edge.id] = {};
+    }
+
+    terminalLabels[edge.id].startLeft = startEdgeLabelLeft;
+  }
+
+  if (edge.startLabelRight) {
+    // Create the actual text element
+    var _startLabelElement = Object(_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(edge.startLabelRight, edge.labelStyle);
+
+    var startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
+
+    var _inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
+
+    startEdgeLabelRight.node().appendChild(_startLabelElement);
+
+    _inner.node().appendChild(_startLabelElement);
+
+    var _slBox = _startLabelElement.getBBox();
+
+    _inner.attr('transform', 'translate(' + -_slBox.width / 2 + ', ' + -_slBox.height / 2 + ')');
+
+    if (!terminalLabels[edge.id]) {
+      terminalLabels[edge.id] = {};
+    }
+
+    terminalLabels[edge.id].startRight = startEdgeLabelRight;
+  }
+
+  if (edge.endLabelLeft) {
+    // Create the actual text element
+    var endLabelElement = Object(_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(edge.endLabelLeft, edge.labelStyle);
+    var endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
+
+    var _inner2 = endEdgeLabelLeft.insert('g').attr('class', 'inner');
+
+    _inner2.node().appendChild(endLabelElement);
+
+    var _slBox2 = endLabelElement.getBBox();
+
+    _inner2.attr('transform', 'translate(' + -_slBox2.width / 2 + ', ' + -_slBox2.height / 2 + ')');
+
+    endEdgeLabelLeft.node().appendChild(endLabelElement);
+
+    if (!terminalLabels[edge.id]) {
+      terminalLabels[edge.id] = {};
+    }
+
+    terminalLabels[edge.id].endLeft = endEdgeLabelLeft;
+  }
+
+  if (edge.endLabelRight) {
+    // Create the actual text element
+    var _endLabelElement = Object(_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(edge.endLabelRight, edge.labelStyle);
+
+    var endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
+
+    var _inner3 = endEdgeLabelRight.insert('g').attr('class', 'inner');
+
+    _inner3.node().appendChild(_endLabelElement);
+
+    var _slBox3 = _endLabelElement.getBBox();
+
+    _inner3.attr('transform', 'translate(' + -_slBox3.width / 2 + ', ' + -_slBox3.height / 2 + ')');
+
+    endEdgeLabelRight.node().appendChild(_endLabelElement);
+
+    if (!terminalLabels[edge.id]) {
+      terminalLabels[edge.id] = {};
+    }
+
+    terminalLabels[edge.id].endRight = endEdgeLabelRight;
+  }
 };
-var positionEdgeLabel = function positionEdgeLabel(edge, points) {
+var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  var path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
 
   if (edge.label) {
     var el = edgeLabels[edge.id];
     var x = edge.x;
     var y = edge.y;
 
-    if (points) {
-      // debugger;
-      var pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcLabelPosition(points);
-      x = pos.x;
-      y = pos.y;
+    if (path) {
+      //   // debugger;
+      var pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcLabelPosition(path);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')'); // x = pos.x;
+      // y = pos.y;
     }
 
     el.attr('transform', 'translate(' + x + ', ' + y + ')');
+  } //let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
+
+
+  if (edge.startLabelLeft) {
+    var _el = terminalLabels[edge.id].startLeft;
+    var _x = edge.x;
+    var _y = edge.y;
+
+    if (path) {
+      // debugger;
+      var _pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_left', path);
+
+      _x = _pos.x;
+      _y = _pos.y;
+    }
+
+    _el.attr('transform', 'translate(' + _x + ', ' + _y + ')');
+  }
+
+  if (edge.startLabelRight) {
+    var _el2 = terminalLabels[edge.id].startRight;
+    var _x2 = edge.x;
+    var _y2 = edge.y;
+
+    if (path) {
+      // debugger;
+      var _pos2 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_right', path);
+
+      _x2 = _pos2.x;
+      _y2 = _pos2.y;
+    }
+
+    _el2.attr('transform', 'translate(' + _x2 + ', ' + _y2 + ')');
+  }
+
+  if (edge.endLabelLeft) {
+    var _el3 = terminalLabels[edge.id].endLeft;
+    var _x3 = edge.x;
+    var _y3 = edge.y;
+
+    if (path) {
+      // debugger;
+      var _pos3 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_left', path);
+
+      _x3 = _pos3.x;
+      _y3 = _pos3.y;
+    }
+
+    _el3.attr('transform', 'translate(' + _x3 + ', ' + _y3 + ')');
+  }
+
+  if (edge.endLabelRight) {
+    var _el4 = terminalLabels[edge.id].endRight;
+    var _x4 = edge.x;
+    var _y4 = edge.y;
+
+    if (path) {
+      // debugger;
+      var _pos4 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_right', path);
+
+      _x4 = _pos4.x;
+      _y4 = _pos4.y;
+    }
+
+    _el4.attr('transform', 'translate(' + _x4 + ', ' + _y4 + ')');
   }
 }; // const getRelationType = function(type) {
 //   switch (type) {
@@ -1560,9 +1712,14 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     default:
   }
 
+  var paths = {};
+
   if (pointsHasChanged) {
-    return points;
+    paths.updatedPath = points;
   }
+
+  paths.originalPath = edge.points;
+  return paths;
 };
 
 /***/ }),
@@ -1709,8 +1866,8 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
   graph.edges().forEach(function (e) {
     var edge = graph.edge(e);
     _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
-    var updatedPath = Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdge"])(edgePaths, e, edge, _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], diagramtype, graph);
-    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["positionEdgeLabel"])(edge, updatedPath);
+    var paths = Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdge"])(edgePaths, e, edge, _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], diagramtype, graph);
+    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["positionEdgeLabel"])(edge, paths);
   });
   return elem;
 };
@@ -2529,8 +2686,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./intersect/index.js */ "./src/dagre-wrapper/intersect/index.js");
 /* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
 /* harmony import */ var _shapes_note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./shapes/note */ "./src/dagre-wrapper/shapes/note.js");
+/* harmony import */ var _diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../diagrams/class/svgDraw */ "./src/diagrams/class/svgDraw.js");
 
  // eslint-disable-line
+
 
 
 
@@ -2858,7 +3017,7 @@ var rectWithTitle = function rectWithTitle(parent, node) {
   } // Add outer g element
 
 
-  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.id); // Create the title label and insert it after the rect
+  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.domId || node.id); // Create the title label and insert it after the rect
 
   var rect = shapeSvg.insert('rect', ':first-child'); // const innerRect = shapeSvg.insert('rect');
 
@@ -3004,7 +3163,7 @@ var subroutine = function subroutine(parent, node) {
 };
 
 var start = function start(parent, node) {
-  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.id);
+  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.domId || node.id);
   var circle = shapeSvg.insert('circle', ':first-child'); // center the circle around its coordinate
 
   circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
@@ -3018,7 +3177,7 @@ var start = function start(parent, node) {
 };
 
 var forkJoin = function forkJoin(parent, node, dir) {
-  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.id);
+  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.domId || node.id);
   var width = 70;
   var height = 10;
 
@@ -3040,7 +3199,7 @@ var forkJoin = function forkJoin(parent, node, dir) {
 };
 
 var end = function end(parent, node) {
-  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.id);
+  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.domId || node.id);
   var innerCircle = shapeSvg.insert('circle', ':first-child');
   var circle = shapeSvg.insert('circle', ':first-child');
   circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
@@ -3067,7 +3226,7 @@ var class_box = function class_box(parent, node) {
   } // Add outer g element
 
 
-  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.id); // Create the title label and insert it after the rect
+  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.domId || node.id); // Create the title label and insert it after the rect
 
   var rect = shapeSvg.insert('rect', ':first-child');
   var topLine = shapeSvg.insert('line');
@@ -3078,16 +3237,45 @@ var class_box = function class_box(parent, node) {
   var verticalPos = 0;
   var hasInterface = node.classData.annotations && node.classData.annotations[0]; // 1. Create the labels
 
-  var interfaceLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(node.classData.annotations[0], node.labelStyle, true, true));
+  var interfaceLabelText = node.classData.annotations[0] ? '«' + node.classData.annotations[0] + '»' : '';
+  var interfaceLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(interfaceLabelText, node.labelStyle, true, true));
   var interfaceBBox = interfaceLabel.getBBox();
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+    var div = interfaceLabel.children[0];
+    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(interfaceLabel);
+    interfaceBBox = div.getBoundingClientRect();
+    dv.attr('width', interfaceBBox.width);
+    dv.attr('height', interfaceBBox.height);
+  }
 
   if (node.classData.annotations[0]) {
     maxHeight += interfaceBBox.height + rowPadding;
     maxWidth += interfaceBBox.width;
   }
 
-  var classTitleLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(node.labelText, node.labelStyle, true, true));
+  var classTitleString = node.classData.id;
+
+  if (node.classData.type !== undefined && node.classData.type !== '') {
+    classTitleString += '<' + node.classData.type + '>';
+  }
+
+  var classTitleLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(classTitleString, node.labelStyle, true, true));
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(classTitleLabel).attr('class', 'classTitle');
   var classTitleBBox = classTitleLabel.getBBox();
+
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+    var _div2 = classTitleLabel.children[0];
+
+    var _dv2 = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(classTitleLabel);
+
+    classTitleBBox = _div2.getBoundingClientRect();
+
+    _dv2.attr('width', classTitleBBox.width);
+
+    _dv2.attr('height', classTitleBBox.height);
+  }
+
   maxHeight += classTitleBBox.height + rowPadding;
 
   if (classTitleBBox.width > maxWidth) {
@@ -3096,8 +3284,21 @@ var class_box = function class_box(parent, node) {
 
   var classAttributes = [];
   node.classData.members.forEach(function (str) {
-    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(str, node.labelStyle, true, true));
+    var parsedText = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str).displayText;
+    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(parsedText, node.labelStyle, true, true));
     var bbox = lbl.getBBox();
+
+    if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+      var _div3 = lbl.children[0];
+
+      var _dv3 = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(lbl);
+
+      bbox = _div3.getBoundingClientRect();
+
+      _dv3.attr('width', bbox.width);
+
+      _dv3.attr('height', bbox.height);
+    }
 
     if (bbox.width > maxWidth) {
       maxWidth = bbox.width;
@@ -3106,10 +3307,24 @@ var class_box = function class_box(parent, node) {
     maxHeight += bbox.height + rowPadding;
     classAttributes.push(lbl);
   });
+  maxHeight += lineHeight;
   var classMethods = [];
   node.classData.methods.forEach(function (str) {
-    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(str, node.labelStyle, true, true));
+    var parsedText = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str).displayText;
+    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(parsedText, node.labelStyle, true, true));
     var bbox = lbl.getBBox();
+
+    if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+      var _div4 = lbl.children[0];
+
+      var _dv4 = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(lbl);
+
+      bbox = _div4.getBoundingClientRect();
+
+      _dv4.attr('width', bbox.width);
+
+      _dv4.attr('height', bbox.height);
+    }
 
     if (bbox.width > maxWidth) {
       maxWidth = bbox.width;
@@ -3122,7 +3337,9 @@ var class_box = function class_box(parent, node) {
   // position the interface label
 
   if (hasInterface) {
-    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(interfaceLabel).attr('transform', 'translate( ' + -(maxWidth + node.padding - interfaceBBox.width / 2) / 2 + ', ' + -1 * maxHeight / 2 + ')');
+    var _diffX = (maxWidth - interfaceBBox.width) / 2;
+
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(interfaceLabel).attr('transform', 'translate( ' + (-1 * maxWidth / 2 + _diffX) + ', ' + -1 * maxHeight / 2 + ')');
     verticalPos = interfaceBBox.height + rowPadding;
   } // Positin the class title label
 
@@ -3136,22 +3353,22 @@ var class_box = function class_box(parent, node) {
     Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(lbl).attr('transform', 'translate( ' + -maxWidth / 2 + ', ' + (-1 * maxHeight / 2 + verticalPos + lineHeight / 2) + ')');
     verticalPos += classTitleBBox.height + rowPadding;
   });
+  verticalPos += lineHeight;
   bottomLine.attr('class', 'divider').attr('x1', -maxWidth / 2 - halfPadding).attr('x2', maxWidth / 2 + halfPadding).attr('y1', -maxHeight / 2 - halfPadding + lineHeight + verticalPos).attr('y2', -maxHeight / 2 - halfPadding + lineHeight + verticalPos);
   verticalPos += lineHeight;
   classMethods.forEach(function (lbl) {
     Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(lbl).attr('transform', 'translate( ' + -maxWidth / 2 + ', ' + (-1 * maxHeight / 2 + verticalPos) + ')');
     verticalPos += classTitleBBox.height + rowPadding;
   }); //
-
-  var bbox;
-
-  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
-    var div = interfaceLabel.children[0];
-    var dv = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(interfaceLabel);
-    bbox = div.getBoundingClientRect();
-    dv.attr('width', bbox.width);
-    dv.attr('height', bbox.height);
-  } // bbox = labelContainer.getBBox();
+  // let bbox;
+  // if (getConfig().flowchart.htmlLabels) {
+  //   const div = interfaceLabel.children[0];
+  //   const dv = select(interfaceLabel);
+  //   bbox = div.getBoundingClientRect();
+  //   dv.attr('width', bbox.width);
+  //   dv.attr('height', bbox.height);
+  // }
+  // bbox = labelContainer.getBBox();
   // logger.info('Text 2', text2);
   // const textRows = text2.slice(1, text2.length);
   // let titleBox = text.getBBox();
@@ -3194,7 +3411,6 @@ var class_box = function class_box(parent, node) {
   //   'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')'
   // );
 
-
   rect.attr('class', 'outer title-state').attr('x', -maxWidth / 2 - halfPadding).attr('y', -(maxHeight / 2) - halfPadding).attr('width', maxWidth + node.padding).attr('height', maxHeight + node.padding); // innerLine
   //   .attr('class', 'divider')
   //   .attr('x1', -bbox.width / 2 - halfPadding)
@@ -3235,7 +3451,26 @@ var shapes = {
 };
 var nodeElems = {};
 var insertNode = function insertNode(elem, node, dir) {
-  nodeElems[node.id] = shapes[node.shape](elem, node, dir);
+  var newEl;
+  var el; // Add link when appropriate
+
+  if (node.link) {
+    newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', node.linkTarget || '_blank');
+    el = shapes[node.shape](newEl, node, dir);
+  } else {
+    el = shapes[node.shape](elem, node, dir);
+    newEl = el;
+  }
+
+  if (node.tooltip) {
+    el.attr('title', node.tooltip);
+  }
+
+  nodeElems[node.id] = newEl;
+
+  if (node.haveCallback) {
+    nodeElems[node.id].attr('class', nodeElems[node.id].attr('class') + ' clickable');
+  }
 };
 var setNodeElem = function setNodeElem(elem, node) {
   nodeElems[node.id] = elem;
@@ -3326,7 +3561,7 @@ var labelHelper = function labelHelper(parent, node, _classes, isNode) {
   } // Add outer g element
 
 
-  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.id); // Create the label and insert it after the rect
+  var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.domId || node.id); // Create the label and insert it after the rect
 
   var label = shapeSvg.insert('g').attr('class', 'label');
   var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_0__["default"])(node.labelText, node.labelStyle, false, isNode)); // Get the size of the label
@@ -4358,7 +4593,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var MERMAID_DOM_ID_PREFIX = 'classid-';
-var config = _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]();
 var relations = [];
 var classes = {};
 var classCounter = 0;
@@ -4521,6 +4755,7 @@ var setCssClass = function setCssClass(ids, className) {
  */
 
 var setLink = function setLink(ids, linkStr, tooltip) {
+  var config = _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]();
   ids.split(',').forEach(function (_id) {
     var id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
@@ -4545,11 +4780,13 @@ var setLink = function setLink(ids, linkStr, tooltip) {
 var setClickEvent = function setClickEvent(ids, functionName, tooltip) {
   ids.split(',').forEach(function (id) {
     setClickFunc(id, functionName, tooltip);
+    classes[id].haveCallback = true;
   });
   setCssClass(ids, 'clickable');
 };
 
 var setClickFunc = function setClickFunc(domId, functionName, tooltip) {
+  var config = _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]();
   var id = domId;
   var elemId = lookUpDomId(id);
 
@@ -4776,6 +5013,9 @@ var addClasses = function addClasses(classes, g) {
       class: classStr,
       style: styles.style,
       id: vertex.id,
+      domId: vertex.domId,
+      haveCallback: vertex.haveCallback,
+      link: vertex.link,
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       padding: Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.padding
@@ -4824,7 +5064,12 @@ var addRelations = function addRelations(relations, g) {
       edgeData.arrowhead = 'normal';
     }
 
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(edgeData, edge); //Set relation arrow types
+    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(edgeData, edge); //Set edge extra labels
+    //edgeData.startLabelLeft = edge.relationTitle1;
+
+    edgeData.startLabelRight = edge.relationTitle1 === 'none' ? '' : edge.relationTitle1;
+    edgeData.endLabelLeft = edge.relationTitle2 === 'none' ? '' : edge.relationTitle2; //edgeData.endLabelRight = edge.relationTitle2;
+    //Set relation arrow types
 
     edgeData.arrowTypeStart = getArrowMarker(edge.relation.type1);
     edgeData.arrowTypeEnd = getArrowMarker(edge.relation.type2);
@@ -6126,7 +6371,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n");
+  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n\n}\n\n.classTitle {\n  font-weight: bolder;\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n.edgeTerminals {\n  font-size: 11px;\n}\n\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -8157,12 +8402,13 @@ function insertPolygonShape(parent, w, h, points) {
 /*!******************************************!*\
   !*** ./src/diagrams/flowchart/flowDb.js ***!
   \******************************************/
-/*! exports provided: parseDirective, addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
+/*! exports provided: parseDirective, lookUpDomId, addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lookUpDomId", function() { return lookUpDomId; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addVertex", function() { return addVertex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addSingleLink", function() { return addSingleLink; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addLink", function() { return addLink; });
@@ -8200,7 +8446,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
  // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 
-var MERMAID_DOM_ID_PREFIX = '';
+var MERMAID_DOM_ID_PREFIX = 'flowchart-';
+var vertexCounter = 0;
 var config = _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]();
 var vertices = {};
 var edges = [];
@@ -8215,6 +8462,21 @@ var direction; // Functions to be run after graph rendering
 var funs = [];
 var parseDirective = function parseDirective(statement, context, type) {
   _mermaidAPI__WEBPACK_IMPORTED_MODULE_4__["default"].parseDirective(this, statement, context, type);
+};
+/**
+ * Function to lookup domId from id in the graph definition.
+ * @param id
+ * @public
+ */
+
+var lookUpDomId = function lookUpDomId(id) {
+  var veritceKeys = Object.keys(vertices);
+
+  for (var i = 0; i < veritceKeys.length; i++) {
+    if (vertices[veritceKeys[i]].id === id) {
+      return vertices[veritceKeys[i]].domId;
+    }
+  }
 };
 /**
  * Function called by parser when a node definition has been found
@@ -8235,17 +8497,19 @@ var addVertex = function addVertex(_id, text, type, style, classes) {
 
   if (id.trim().length === 0) {
     return;
-  }
+  } // if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
-  if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
   if (typeof vertices[id] === 'undefined') {
     vertices[id] = {
       id: id,
+      domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
       styles: [],
       classes: []
     };
   }
+
+  vertexCounter++;
 
   if (typeof text !== 'undefined') {
     config = _config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]();
@@ -8292,9 +8556,9 @@ var addVertex = function addVertex(_id, text, type, style, classes) {
 
 var addSingleLink = function addSingleLink(_start, _end, type, linktext) {
   var start = _start;
-  var end = _end;
-  if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
-  if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end; // logger.info('Got edge...', start, end);
+  var end = _end; // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
+  // if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
+  // logger.info('Got edge...', start, end);
 
   var edge = {
     start: start,
@@ -8418,8 +8682,7 @@ var setDirection = function setDirection(dir) {
 
 var setClass = function setClass(ids, className) {
   ids.split(',').forEach(function (_id) {
-    var id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+    var id = _id; // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className);
@@ -8439,9 +8702,8 @@ var setTooltip = function setTooltip(ids, tooltip) {
   });
 };
 
-var setClickFun = function setClickFun(_id, functionName) {
-  var id = _id;
-  if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+var setClickFun = function setClickFun(id, functionName) {
+  var domId = lookUpDomId(id); // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
   if (_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"]().securityLevel !== 'loose') {
     return;
@@ -8452,8 +8714,9 @@ var setClickFun = function setClickFun(_id, functionName) {
   }
 
   if (typeof vertices[id] !== 'undefined') {
+    vertices[id].haveCallback = true;
     funs.push(function () {
-      var elem = document.querySelector("[id=\"".concat(id, "\"]"));
+      var elem = document.querySelector("[id=\"".concat(domId, "\"]"));
 
       if (elem !== null) {
         elem.addEventListener('click', function () {
@@ -8472,10 +8735,9 @@ var setClickFun = function setClickFun(_id, functionName) {
 
 
 var setLink = function setLink(ids, linkStr, tooltip, target) {
-  ids.split(',').forEach(function (_id) {
-    var id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-
+  ids.split(',').forEach(function (id) {
+    // let domId = lookUpDomId(id);
+    // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
@@ -8898,6 +9160,7 @@ var destructLink = function destructLink(_str, _startStr) {
     return _config__WEBPACK_IMPORTED_MODULE_2__["defaultConfig"].flowchart;
   },
   addVertex: addVertex,
+  lookUpDomId: lookUpDomId,
   addLink: addLink,
   updateLinkInterpolate: updateLinkInterpolate,
   updateLink: updateLink,
@@ -9110,6 +9373,11 @@ var addVertices = function addVertices(vert, g, svgId) {
       class: classStr,
       style: styles.style,
       id: vertex.id,
+      link: vertex.link,
+      linkTarget: vertex.linkTarget,
+      tooltip: _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getTooltip(vertex.id) || '',
+      domId: _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(vertex.id),
+      haveCallback: vertex.haveCallback,
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       padding: Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.padding
@@ -9123,6 +9391,7 @@ var addVertices = function addVertices(vert, g, svgId) {
       class: classStr,
       style: styles.style,
       id: vertex.id,
+      domId: _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(vertex.id),
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       padding: Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.padding
@@ -9368,11 +9637,7 @@ var draw = function draw(text, id) {
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink'); // Run the renderer. This is what draws the final graph.
 
   var element = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#' + id + ' g');
-  Object(_dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_5__["render"])(element, g, ['point', 'circle', 'cross'], 'flowchart', id); // dagre.layout(g);
-
-  element.selectAll('g.node').attr('title', function () {
-    return _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getTooltip(this.id);
-  });
+  Object(_dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_5__["render"])(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
   var padding = conf.diagramPadding;
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
@@ -9382,25 +9647,7 @@ var draw = function draw(text, id) {
   svg.attr('viewBox', "0 0 ".concat(width, " ").concat(height));
   svg.select('g').attr('transform', "translate(".concat(padding - g._label.marginx, ", ").concat(padding - svgBounds.y, ")")); // Index nodes
 
-  _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].indexNodes('subGraph' + i); // // reposition labels
-  // for (i = 0; i < subGraphs.length; i++) {
-  //   subG = subGraphs[i];
-  //   if (subG.title !== 'undefined') {
-  //     const clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
-  //     const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
-  //     const xPos = clusterRects[0].x.baseVal.value;
-  //     const yPos = clusterRects[0].y.baseVal.value;
-  //     const width = clusterRects[0].width.baseVal.value;
-  //     const cluster = d3.select(clusterEl[0]);
-  //     const te = cluster.select('.label');
-  //     te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`);
-  //     te.attr('id', id + 'Text');
-  //     for (let j = 0; j < subG.classes.length; j++) {
-  //       clusterEl[0].classList.add(subG.classes[j]);
-  //     }
-  //   }
-  // }
-  // Add label rects for non html labels
+  _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].indexNodes('subGraph' + i); // Add label rects for non html labels
 
   if (!conf.htmlLabels) {
     var labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
@@ -11922,7 +12169,6 @@ var draw = function draw(text, id) {
       }
 
       var secNum = 0;
-      console.log(conf);
 
       for (var _i3 = 0; _i3 < categories.length; _i3++) {
         if (d.type === categories[_i3]) {
@@ -20241,6 +20487,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
       style: '',
       //styles.style,
       id: node.id,
+      domId: 'state-' + node.id + '-' + cnt,
       type: nodeDb[node.id].type,
       padding: 15 //getConfig().flowchart.padding
 
@@ -20257,6 +20504,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
         style: '',
         //styles.style,
         id: node.id + '----note',
+        domId: 'state-' + node.id + '----note-' + cnt,
         type: nodeDb[node.id].type,
         padding: 15 //getConfig().flowchart.padding
 
@@ -20270,10 +20518,12 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
         style: '',
         //styles.style,
         id: node.id + '----parent',
+        domId: 'state-' + node.id + '----parent-' + cnt,
         type: 'group',
         padding: 0 //getConfig().flowchart.padding
 
       };
+      cnt++;
       g.setNode(node.id + '----parent', groupData);
       g.setNode(noteData.id, noteData);
       g.setNode(node.id, nodeData);
@@ -20319,6 +20569,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 var cnt = 0;
 
 var setupDoc = function setupDoc(g, parent, doc, altFlag) {
+  cnt = 0;
   _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].trace('items', doc);
   doc.forEach(function (item) {
     if (item.stmt === 'state' || item.stmt === 'default') {
@@ -22811,8 +23062,8 @@ var render = function render(id, _txt, cb, container) {
   // console.warn('Render fetching config');
 
 
-  var cnf = _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]();
-  console.warn('Render with config after adding new directives', cnf.sequence); // console.warn(
+  var cnf = _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"](); // console.warn('Render with config after adding new directives', cnf.sequence);
+  // console.warn(
   //   'Render with config after adding new directives',
   //   cnf.fontFamily,
   //   cnf.themeVariables.fontFamily
@@ -23019,6 +23270,7 @@ var render = function render(id, _txt, cb, container) {
         break;
 
       case 'class':
+      case 'classDiagram':
         cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"].bindFunctions);
         break;
 
@@ -23199,9 +23451,9 @@ _config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_
 /* harmony default export */ __webpack_exports__["default"] = (mermaidAPI);
 /**
  * ## mermaidAPI configuration defaults
- * <pre>
  *
- * &lt;script>
+ * ```html
+ * <script>
  *   var config = {
  *     theme:'default',
  *     logLevel:'fatal',
@@ -23256,8 +23508,8 @@ _config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_
  *     }
  *   };
  *   mermaid.initialize(config);
- * &lt;/script>
- *</pre>
+ * </script>
+ * ```
  */
 
 /***/ }),
@@ -24849,6 +25101,8 @@ var calcCardinalityPosition = function calcCardinalityPosition(isRelationTypePre
   var prevPoint;
   var totalDistance = 0; // eslint-disable-line
 
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('our points', points);
+
   if (points[0] !== initialPosition) {
     points = points.reverse();
   }
@@ -24900,6 +25154,88 @@ var calcCardinalityPosition = function calcCardinalityPosition(isRelationTypePre
 
   cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2;
   cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2;
+  return cardinalityPosition;
+};
+/**
+ * position ['start_left', 'start_right', 'end_left', 'end_right']
+ */
+
+
+var calcTerminalLabelPosition = function calcTerminalLabelPosition(terminalMarkerSize, position, _points) {
+  // Todo looking to faster cloning method
+  var points = JSON.parse(JSON.stringify(_points));
+  var prevPoint;
+  var totalDistance = 0; // eslint-disable-line
+
+  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('our points', points);
+
+  if (position !== 'start_left' && position !== 'start_right') {
+    points = points.reverse();
+  }
+
+  points.forEach(function (point) {
+    totalDistance += distance(point, prevPoint);
+    prevPoint = point;
+  }); // Traverse only 25 total distance along points to find cardinality point
+
+  var distanceToCardinalityPoint = 25;
+  var remainingDistance = distanceToCardinalityPoint;
+  var center;
+  prevPoint = undefined;
+  points.forEach(function (point) {
+    if (prevPoint && !center) {
+      var vectorDistance = distance(point, prevPoint);
+
+      if (vectorDistance < remainingDistance) {
+        remainingDistance -= vectorDistance;
+      } else {
+        // The point is remainingDistance from prevPoint in the vector between prevPoint and point
+        // Calculate the coordinates
+        var distanceRatio = remainingDistance / vectorDistance;
+        if (distanceRatio <= 0) center = prevPoint;
+        if (distanceRatio >= 1) center = {
+          x: point.x,
+          y: point.y
+        };
+
+        if (distanceRatio > 0 && distanceRatio < 1) {
+          center = {
+            x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
+            y: (1 - distanceRatio) * prevPoint.y + distanceRatio * point.y
+          };
+        }
+      }
+    }
+
+    prevPoint = point;
+  }); // if relation is present (Arrows will be added), change cardinality point off-set distance (d)
+
+  var d = 10; //Calculate Angle for x and y axis
+
+  var angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
+  var cardinalityPosition = {
+    x: 0,
+    y: 0
+  }; //Calculation cardinality position using angle, center point on the line/curve but pendicular and with offset-distance
+
+  cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2;
+  cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2;
+
+  if (position === 'start_left') {
+    cardinalityPosition.x = Math.sin(angle + Math.PI) * d + (points[0].x + center.x) / 2;
+    cardinalityPosition.y = -Math.cos(angle + Math.PI) * d + (points[0].y + center.y) / 2;
+  }
+
+  if (position === 'end_right') {
+    cardinalityPosition.x = Math.sin(angle - Math.PI) * d + (points[0].x + center.x) / 2 - 5;
+    cardinalityPosition.y = -Math.cos(angle - Math.PI) * d + (points[0].y + center.y) / 2 - 5;
+  }
+
+  if (position === 'end_left') {
+    cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2 - 5;
+    cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2 - 5;
+  }
+
   return cardinalityPosition;
 };
 
@@ -25332,6 +25668,7 @@ var configureSvgSize = function configureSvgSize(svgElem, height, width, useMaxW
   interpolateToCurve: interpolateToCurve,
   calcLabelPosition: calcLabelPosition,
   calcCardinalityPosition: calcCardinalityPosition,
+  calcTerminalLabelPosition: calcTerminalLabelPosition,
   formatUrl: formatUrl,
   getStylesFromArray: getStylesFromArray,
   generateId: generateId,

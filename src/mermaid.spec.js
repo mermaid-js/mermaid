@@ -42,6 +42,7 @@ describe('when using mermaid and ', function() {
     beforeEach(function() {
       flowParser.parser.yy = flowDb;
       flowDb.clear();
+      flowDb.setGen('gen-2');
     });
     it('it should handle edges with text', function() {
       flowParser.parser.parse('graph TD;A-->|text ex|B;');
@@ -50,8 +51,8 @@ describe('when using mermaid and ', function() {
 
       const mockG = {
         setEdge: function(start, end, options) {
-          expect(start).toBe('A');
-          expect(end).toBe('B');
+          expect(start).toContain('flowchart-A-');
+          expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('normal');
           expect(options.label.match('text ex')).toBeTruthy();
         }
@@ -67,8 +68,8 @@ describe('when using mermaid and ', function() {
 
       const mockG = {
         setEdge: function(start, end, options) {
-          expect(start).toBe('A');
-          expect(end).toBe('B');
+          expect(start).toContain('flowchart-A-');
+          expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('normal');
         }
       };
@@ -83,8 +84,8 @@ describe('when using mermaid and ', function() {
 
       const mockG = {
         setEdge: function(start, end, options) {
-          expect(start).toBe('A');
-          expect(end).toBe('B');
+          expect(start).toContain('flowchart-A-');
+          expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
         }
       };
@@ -99,8 +100,8 @@ describe('when using mermaid and ', function() {
 
       const mockG = {
         setEdge: function(start, end, options) {
-          expect(start).toBe('A');
-          expect(end).toBe('B');
+          expect(start).toContain('flowchart-A-');
+          expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
           expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
         }
@@ -115,8 +116,8 @@ describe('when using mermaid and ', function() {
 
       const mockG = {
         setEdge: function(start, end, options) {
-          expect(start).toBe('A');
-          expect(end).toBe('B');
+          expect(start).toContain('flowchart-A-');
+          expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
           expect(options.curve).toBe('basis'); // mocked as string
         }
@@ -133,8 +134,8 @@ describe('when using mermaid and ', function() {
 
       const mockG = {
         setEdge: function(start, end, options) {
-          expect(start).toBe('A');
-          expect(end).toBe('B');
+          expect(start).toContain('flowchart-A-');
+          expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
           expect(options.label.match('the text')).toBeTruthy();
           expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
@@ -151,8 +152,8 @@ describe('when using mermaid and ', function() {
 
       const mockG = {
         setEdge: function(start, end, options) {
-          expect(start).toBe('A');
-          expect(end).toBe('B');
+          expect(start).toContain('flowchart-A-');
+          expect(end).toContain('flowchart-B');
           expect(options.arrowhead).toBe('none');
           expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
         }
@@ -169,8 +170,8 @@ describe('when using mermaid and ', function() {
       const edges = flowParser.parser.yy.getEdges();
       const mockG = {
         setEdge: function(start, end, options) {
-          expect(start).toBe('A');
-          expect(end).toBe('B');
+          expect(start).toContain('flowchart-A-');
+          expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
           expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:blue;');
         }
@@ -184,6 +185,7 @@ describe('when using mermaid and ', function() {
     beforeEach(function() {
       flowParser.parser.yy = flowDb;
       flowDb.clear();
+      flowDb.setGen('gen-2');
     });
     it('it should throw for an invalid definiton', function() {
       expect(() => mermaid.parse('this is not a mermaid diagram definition')).toThrow();

@@ -101,6 +101,9 @@ export const addClasses = function(classes, g) {
       class: classStr,
       style: styles.style,
       id: vertex.id,
+      domId: vertex.domId,
+      haveCallback: vertex.haveCallback,
+      link: vertex.link,
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       padding: getConfig().flowchart.padding

@@ -263,7 +263,7 @@ describe('Class diagram V2', () => {
         int id
         test()
       }
-      link class01 "google.com" "A Tooltip"
+      link Class01 "google.com" "A Tooltip"
       `,
        {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
@@ -285,7 +285,7 @@ describe('Class diagram V2', () => {
         int id
         test()
       }
-      callback class01 "functionCall" "A Tooltip"
+      callback Class01 "functionCall" "A Tooltip"
       `,
        {logLevel : 1, flowchart: { "htmlLabels": false },}
     );

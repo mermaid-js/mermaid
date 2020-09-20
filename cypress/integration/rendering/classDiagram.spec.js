@@ -193,7 +193,7 @@ describe('Class diagram', () => {
         int id
         test()
       }
-      link class01 "google.com" "A Tooltip"
+      link Class01 "google.com" "A Tooltip"
       `,
       {}
     );
@@ -215,7 +215,7 @@ describe('Class diagram', () => {
         int id
         test()
       }
-      callback class01 "functionCall" "A Tooltip"
+      callback Class01 "functionCall" "A Tooltip"
       `,
       {}
     );

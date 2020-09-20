@@ -141,6 +141,11 @@ export const addVertices = function(vert, g, svgId) {
       class: classStr,
       style: styles.style,
       id: vertex.id,
+      link: vertex.link,
+      linkTarget: vertex.linkTarget,
+      tooltip: flowDb.getTooltip(vertex.id) || '',
+      domId: flowDb.lookUpDomId(vertex.id),
+      haveCallback: vertex.haveCallback,
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       padding: getConfig().flowchart.padding
@@ -155,6 +160,7 @@ export const addVertices = function(vert, g, svgId) {
       class: classStr,
       style: styles.style,
       id: vertex.id,
+      domId: flowDb.lookUpDomId(vertex.id),
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       padding: getConfig().flowchart.padding
@@ -329,6 +335,7 @@ export const getClasses = function(text) {
 export const draw = function(text, id) {
   logger.info('Drawing flowchart');
   flowDb.clear();
+  flowDb.setGen('gen-2');
   const parser = flow.parser;
   parser.yy = flowDb;
 
@@ -405,11 +412,6 @@ export const draw = function(text, id) {
   // Run the renderer. This is what draws the final graph.
   const element = select('#' + id + ' g');
   render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
-  // dagre.layout(g);
-
-  element.selectAll('g.node').attr('title', function() {
-    return flowDb.getTooltip(this.id);
-  });
 
   const padding = conf.diagramPadding;
   const svgBounds = svg.node().getBBox();
@@ -429,28 +431,6 @@ export const draw = function(text, id) {
 
   // Index nodes
   flowDb.indexNodes('subGraph' + i);
-
-  // // reposition labels
-  // for (i = 0; i < subGraphs.length; i++) {
-  //   subG = subGraphs[i];
-
-  //   if (subG.title !== 'undefined') {
-  //     const clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
-  //     const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
-
-  //     const xPos = clusterRects[0].x.baseVal.value;
-  //     const yPos = clusterRects[0].y.baseVal.value;
-  //     const width = clusterRects[0].width.baseVal.value;
-  //     const cluster = d3.select(clusterEl[0]);
-  //     const te = cluster.select('.label');
-  //     te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`);
-  //     te.attr('id', id + 'Text');
-
-  //     for (let j = 0; j < subG.classes.length; j++) {
-  //       clusterEl[0].classList.add(subG.classes[j]);
-  //     }
-  //   }
-  // }
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
