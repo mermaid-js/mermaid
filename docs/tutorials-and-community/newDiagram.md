@@ -1,9 +1,9 @@
 ---
 sort: 1
-title: Adding a New Diagram
+title: Adding a New Diagram/Chart 
 ---
 
-# Adding a New Diagram
+# Adding a New Diagram/Chart 📊
 
 
 ### Step 1: Grammar & Parsing
