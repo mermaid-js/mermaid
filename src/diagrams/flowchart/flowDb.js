@@ -226,7 +226,8 @@ export const setDirection = function(dir) {
  */
 export const setClass = function(ids, className) {
   ids.split(',').forEach(function(_id) {
-    let id = version === 'gen-1' ? lookUpDomId(_id) : _id;
+    // let id = version === 'gen-2' ? lookUpDomId(_id) : _id;
+    let id = _id;
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className);

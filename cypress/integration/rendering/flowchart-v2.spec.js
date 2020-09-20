@@ -125,6 +125,26 @@ describe('Flowchart v2', () => {
         expect(svg).to.not.have.attr('style');
       });
   });
+
+  it('V2 - 16: Render Stadium shape', () => {
+    imgSnapshotTest(
+      ` flowchart TD
+      A([stadium shape test])
+      A -->|Get money| B([Go shopping])
+      B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
+      C -->|One| D([Laptop])
+      C -->|Two| E([iPhone])
+      C -->|Three| F([Car<br/>wroom wroom])
+      click A "index.html#link-clicked" "link test"
+      click B testClick "click test"
+      classDef someclass fill:#f96;
+      class A someclass;
+      class C someclass;
+      `,
+      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+    );
+  });
+
   it('50: handle nested subgraphs in reverse order', () => {
     imgSnapshotTest(
       `flowchart LR
