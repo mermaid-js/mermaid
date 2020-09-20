@@ -192,7 +192,6 @@ export const bounds = {
     return this.verticalPos;
   },
   getBounds: function() {
-    console.log('here', this.data);
     return { bounds: this.data, models: this.models };
   }
 };
@@ -503,7 +502,6 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
  */
 export const draw = function(text, id) {
   conf = configApi.getConfig().sequence;
-  console.log('there ', conf);
   parser.yy.clear();
   parser.yy.setWrap(conf.wrap);
   parser.parse(text + '\n');
