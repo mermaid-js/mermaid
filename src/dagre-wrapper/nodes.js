@@ -261,6 +261,7 @@ const rect = (parent, node) => {
 
   rect
     .attr('class', 'basic label-container')
+    .attr('style', node.style)
     .attr('rx', node.rx)
     .attr('ry', node.ry)
     .attr('x', -bbox.width / 2 - halfPadding)
