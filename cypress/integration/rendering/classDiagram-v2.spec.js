@@ -334,7 +334,7 @@ describe('Class diagram V2', () => {
         testArray() bool[]
       }
 
-      cssClass "Class10" exClass
+      cssClass "Class10" exClass2
       `,
        {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
@@ -345,7 +345,7 @@ describe('Class diagram V2', () => {
     imgSnapshotTest(
       `
     classDiagram-v2
-      class Class10:::exClass {
+      class Class10:::exClass2 {
         int[] id
         List~int~ ids
         test(List~int~ ids) List~bool~
@@ -364,7 +364,7 @@ describe('Class diagram V2', () => {
       class Class10
       class Class20
 
-      cssClass "Class10, class20" exClass
+      cssClass "Class10, class20" exClass2
       `,
        {logLevel : 1, flowchart: { "htmlLabels": false },}
     );
