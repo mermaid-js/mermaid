@@ -42,7 +42,10 @@ export const addClasses = function(classes, g) {
      * Variable for storing the classes for the vertex
      * @type {string}
      */
-    let classStr = 'default';
+    let cssClassStr = '';
+    if (vertex.cssClasses.length > 0) {
+      cssClassStr = cssClassStr + ' ' + vertex.cssClasses.join(' ');
+    }
     // if (vertex.classes.length > 0) {
     //   classStr = vertex.classes.join(' ');
     // }
@@ -98,7 +101,7 @@ export const addClasses = function(classes, g) {
       classData: vertex,
       rx: radious,
       ry: radious,
-      class: classStr,
+      class: cssClassStr,
       style: styles.style,
       id: vertex.id,
       domId: vertex.domId,
@@ -115,7 +118,7 @@ export const addClasses = function(classes, g) {
       labelText: vertexText,
       rx: radious,
       ry: radious,
-      class: classStr,
+      class: cssClassStr,
       style: styles.style,
       id: vertex.id,
       width: vertex.type === 'group' ? 500 : undefined,
