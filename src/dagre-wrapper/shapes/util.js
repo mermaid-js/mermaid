@@ -15,7 +15,10 @@ export const labelHelper = (parent, node, _classes, isNode) => {
     .attr('id', node.domId || node.id);
 
   // Create the label and insert it after the rect
-  const label = shapeSvg.insert('g').attr('class', 'label');
+  const label = shapeSvg
+    .insert('g')
+    .attr('class', 'label')
+    .attr('style', node.labelStyle);
 
   const text = label
     .node()
