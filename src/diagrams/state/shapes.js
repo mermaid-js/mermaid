@@ -169,7 +169,6 @@ export const addTitleAndBox = (g, stateDef, altBkg) => {
   //   .attr('class', 'descr-divider');
 
   const graphBox = g.node().getBBox();
-  // console.warn(width / 2, titleWidth / 2, getConfig().state.padding, orgBox);
   // descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
   if (stateDef.doc) {
@@ -328,7 +327,6 @@ const _drawLongText = (_text, x, y, g) => {
         const textBounds = span.node().getBBox();
         tHeight += textBounds.height;
       }
-      // console.warn('textBounds', textBounds);
       textHeight += tHeight;
       span.attr('x', x + getConfig().state.noteMargin);
       span.attr('y', y + textHeight + 1.25 * getConfig().state.noteMargin);
@@ -455,8 +453,6 @@ export const drawEdge = function(elem, path, relation) {
     const { x, y } = utils.calcLabelPosition(path.points);
 
     const rows = common.getRows(relation.title);
-
-    // console.warn(rows);
 
     let titleHeight = 0;
     const titleRows = [];

@@ -44,7 +44,6 @@ export const draw = (txt, id) => {
     }
 
     const diagram = select('#' + id);
-    console.log('conf', conf);
     configureSvgSize(diagram, height, width, conf.useMaxWidth);
 
     // Set viewBox

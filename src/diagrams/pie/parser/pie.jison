@@ -20,7 +20,7 @@
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%\%(?!\{)[^\n]*                                                /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */{ console.log('Crap after close'); }
+[^\}]\%\%[^\n]*                                                 /* skip comments */{ /*console.log('');*/ }
 [\n\r]+                                                         return 'NEWLINE';
 \%\%[^\n]*                                                      /* do nothing */
 [\s]+ 		                                                      /* ignore */
