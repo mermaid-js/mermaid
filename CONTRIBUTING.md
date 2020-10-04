@@ -30,10 +30,11 @@ Less strict here, it is OK to commit directly in the `develop` branch if you are
 
 The documentation is located in the `docs` directory and published using GitHub Pages.
 The documentation site is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.
+Here is a video tutorial: https://www.youtube.com/watch?v=TV88lp7egMw&t=317s
 
 The documentation is written in Markdown, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
-If you want to preview the documentation site on your machine, you need to install `docsify-cli`:
+If you want to preview the documentation site on your machine, you need to install `docsify-cli` on node using the following command:
 
 ```
 $ npm i docsify-cli -g
@@ -47,6 +48,16 @@ $ yarn global add docsify-cli
 
 The above command will install `docsify-cli` globally.
 If the installation is successful, the command `docsify` will be available in your `PATH`.
+
+You will then have to `cd` into the location of the docs you wish to serve. For example:
+```
+$ cd mermaid
+```
+
+You will then have to initialize the docs folder for serving using this command:
+```
+$ docsify init ./docs
+```
 
 You can now run the following command to serve the documentation site:
 
