@@ -19,9 +19,9 @@
 - Contributions and Community
 
   <!-- - [Development and Contribution](development.md)
-  - [Mermaid Versions](versionUpdates.md)
+  - [Adding Diagrams](newDiagram.md)
   - [Changelog](CHANGELOG.md) -->
-  - [Adding Diagrams](newDiagram.md) -->
+  
 
 - Diagrams and Syntax and Examples
 
