@@ -31,16 +31,18 @@ flowchart TD
      subcontainer-child--> subcontainer-sibling
   end
       </div>
-      <div class="mermaid2" style="width: 50%; height: 400px;">
+      <div class="mermaid" style="width: 50%; height: 400px;">
 flowchart TB
-  subgraph container_Beta
-    process_C-->Process_D
-  end
-  subgraph container_Alpha
-    process_A-->process_B
-    process_A-->|messages|process_C
+    b-->B
+    a-->c
+    subgraph B
+      c
     end
-    process_B-->|via_AWSBatch|container_Beta
+    subgraph A
+        a
+        b
+        B
+    end
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
         flowchart TB

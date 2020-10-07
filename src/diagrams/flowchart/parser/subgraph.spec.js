@@ -244,8 +244,9 @@ describe('when parsing subgraphs', function() {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
     b-->B
-    a-->c
+    a
     end
+    a-->c
     subgraph B
       c
     end`);
