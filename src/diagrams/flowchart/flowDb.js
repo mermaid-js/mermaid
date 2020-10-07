@@ -461,14 +461,12 @@ export const addSubGraph = function(_id, list, _title) {
     subGraphs.forEach(sg => {
       const pos = sg.nodes.indexOf(_id);
       if (pos >= 0) {
-        console.log(sg.nodes, pos, _id);
         sg.nodes.splice(pos, 1);
       }
     });
   };
   // Removes the members of this subgraph from any other subgraphs, a node only belong to one subgraph
   subGraph.nodes.forEach(_id => del(_id));
-  console.log(subGraph.nodes);
   subGraphs.push(subGraph);
   subGraphLookup[id] = subGraph;
   return id;

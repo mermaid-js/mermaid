@@ -177,6 +177,5 @@ class Theme {
 export const getThemeVariables = userOverrides => {
   const theme = new Theme();
   theme.calculate(userOverrides);
-  // console.info('Theme(default)', { userOverrides, theme });
   return theme;
 };

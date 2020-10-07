@@ -17,7 +17,6 @@ describe('when parsing pie', function() {
 "ash" : 100
 `);
     const sections = pieDb.getSections();
-    console.log('sections: ', sections);
     const section1 = sections['ash'];
     expect(section1).toBe(100);
   });
@@ -27,7 +26,6 @@ describe('when parsing pie', function() {
 "bat" : 40
 `);
     const sections = pieDb.getSections();
-    console.log('sections: ', sections);
     const section1 = sections['ash'];
     expect(section1).toBe(60);
   });
@@ -38,7 +36,6 @@ describe('when parsing pie', function() {
 "bat" : 40
 `);
     const sections = pieDb.getSections();
-    console.log('sections: ', sections);
     const section1 = sections['ash'];
     expect(section1).toBe(60);
   });
@@ -50,7 +47,6 @@ pie
 "bat" : 40
 `);
     const sections = pieDb.getSections();
-    console.log('sections: ', sections);
     const section1 = sections['ash'];
     expect(section1).toBe(60);
   });
@@ -62,7 +58,6 @@ pie
 `);
     const sections = pieDb.getSections();
     const title = pieDb.getTitle();
-    console.log('sections: ', sections);
     const section1 = sections['ash'];
     expect(section1).toBe(60);
     expect(title).toBe('a 60/40 pie');
@@ -74,7 +69,6 @@ pie
 "bat" : 40
 `);
     const sections = pieDb.getSections();
-    console.log('sections: ', sections);
     const section1 = sections['ash'];
     expect(section1).toBe(60.67);
   });

@@ -43,8 +43,6 @@ describe('Graphlib decorations', () => {
       g.setEdge('a', 'b');
       g.setEdge('C1', 'C2');
 
-      console.log(g.nodes())
-
       expect(validate(g)).toBe(false);
     });
     it('Validate should not detect edges between clusters after adjustment', function () {
@@ -66,7 +64,6 @@ describe('Graphlib decorations', () => {
       g.setEdge('a', 'b');
       g.setEdge('C1', 'C2');
 
-      console.log(g.nodes())
       adjustClustersAndEdges(g);
       logger.info(g.edges())
       expect(validate(g)).toBe(true);
