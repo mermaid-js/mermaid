@@ -9,23 +9,25 @@
 ## About
 
 <!-- <Main description> -->
-Mermaid is a Javascript based diagramming and charting tool that uses Markdown-inspired text definitions and a renderer to create and modify complex diagrams.  The main purpose of Mermaid is to help documentation catch up with development.
+Mermaid simplifies complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. The main purpose of Mermaid is to help Documentation catch up with Development.
 
 > Doc-Rot is a Catch-22 that Mermaid helps to solve.
 
 Diagramming and documentation costs precious developer time and gets outdated quickly.
 But not having diagrams or docs ruins productivity and hurts organizational learning. <br/>
-Mermaid addresses this problem by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.
-The text definitions for Mermaid diagrams allows for it to be updated easily, it can also be made part of production scripts (and other pieces of code).
-So less time needs to be spent on documenting, as a separate and laborious task. <br/>
+Mermaid addresses this Catch-22 by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.
+Mermaid, as a text-based diagramming tool allows for quick and easy updates, it can also be made part of production scripts (and other pieces of code), to make documentation much easier.
+With Mermaid less time needs to be spent on making diagrams, as a separate documentation task. <br/>
 
-Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor), visit [Mermaid Overview](overview/n00b-overview.md) for the video tutorials.
+> Mermaid is a Diagramming tool for everyone. 
+
+Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor), Visit the [Tutorials Page](href='https://github.com/mermaid-js/mermaid/blob/develop/docs/Tutorials.md) for the Live Editor video tutorials.
 
 Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](overview/integrations.md).
 
 For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](overview/n00b-overview.md) and [Usage](getting-started/usage.md).
 
-🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [Version Log](tutorials-and-community/CHANGELOG.md)
+🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/tutorials-and-community/development.md) | 📜 [Version Log](tutorials-and-community/CHANGELOG.md)
 
 > 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/knsv/mermaid/issues/866).
 
