@@ -22,27 +22,34 @@
   <body>
     <h1>info below</h1>
     <div class="flex">
-      <div class="mermaid" style="width: 50%; height: 400px;">
-      graph TB;
-        subgraph "number as labels";
-          1 --> 2
-        end;
+      <div class="mermaid2" style="width: 50%; height: 400px;">
+flowchart TD
+  subgraph  main
+    subgraph subcontainer
+      subcontainer-child
+    end
+     subcontainer-child--> subcontainer-sibling
+  end
       </div>
-      <div class="mermaid" style="width: 50%; height: 400px;">
-      flowchart TB;
-        subgraph "number as labels";
-          1 --> 2
-        end;
+      <div class="mermaid2" style="width: 50%; height: 400px;">
+flowchart TB
+  subgraph container_Beta
+    process_C-->Process_D
+  end
+  subgraph container_Alpha
+    process_A-->process_B
+    process_A-->|messages|process_C
+    end
+    process_B-->|via_AWSBatch|container_Beta
       </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-        %%{init: { 'theme': 'base', 'themeVariables':{ 'primaryColor': '#ff0000'}}}%%
-graph TD
-          A(Start) --> B[/Another/]
-          A[/Another/] --> C[End]
-          subgraph section
-            B
-            C
-          end
+      <div class="mermaid" style="width: 50%; height: 20%;">
+        flowchart TB
+subgraph A
+a -->b
+end
+subgraph B
+b
+end
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
         %%{init: {"fontFamily": "arial2"}}%%
