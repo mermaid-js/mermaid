@@ -9,7 +9,7 @@ import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 // import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { curveLinear } from 'd3';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
+import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 import common from '../common/common';
 
 parser.yy = classDb;
@@ -42,7 +42,10 @@ export const addClasses = function(classes, g) {
      * Variable for storing the classes for the vertex
      * @type {string}
      */
-    let classStr = 'default';
+    let cssClassStr = '';
+    if (vertex.cssClasses.length > 0) {
+      cssClassStr = cssClassStr + ' ' + vertex.cssClasses.join(' ');
+    }
     // if (vertex.classes.length > 0) {
     //   classStr = vertex.classes.join(' ');
     // }
@@ -98,9 +101,12 @@ export const addClasses = function(classes, g) {
       classData: vertex,
       rx: radious,
       ry: radious,
-      class: classStr,
+      class: cssClassStr,
       style: styles.style,
       id: vertex.id,
+      domId: vertex.domId,
+      haveCallback: vertex.haveCallback,
+      link: vertex.link,
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       padding: getConfig().flowchart.padding
@@ -112,7 +118,7 @@ export const addClasses = function(classes, g) {
       labelText: vertexText,
       rx: radious,
       ry: radious,
-      class: classStr,
+      class: cssClassStr,
       style: styles.style,
       id: vertex.id,
       width: vertex.type === 'group' ? 500 : undefined,
@@ -155,6 +161,12 @@ export const addRelations = function(relations, g) {
     }
 
     logger.info(edgeData, edge);
+    //Set edge extra labels
+    //edgeData.startLabelLeft = edge.relationTitle1;
+    edgeData.startLabelRight = edge.relationTitle1 === 'none' ? '' : edge.relationTitle1;
+    edgeData.endLabelLeft = edge.relationTitle2 === 'none' ? '' : edge.relationTitle2;
+    //edgeData.endLabelRight = edge.relationTitle2;
+
     //Set relation arrow types
     edgeData.arrowTypeStart = getArrowMarker(edge.relation.type1);
     edgeData.arrowTypeEnd = getArrowMarker(edge.relation.type2);
@@ -325,13 +337,7 @@ export const drawOld = function(text, id) {
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 
-  if (conf.useMaxWidth) {
-    diagram.attr('width', '100%');
-    diagram.attr('style', `max-width: ${width}px;`);
-  } else {
-    diagram.attr('height', height);
-    diagram.attr('width', width);
-  }
+  configureSvgSize(diagram, height, width, conf.useMaxWidth);
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
@@ -427,13 +433,7 @@ export const draw = function(text, id) {
     `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
   );
 
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
+  configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `0 0 ${width} ${height}`);
   svg

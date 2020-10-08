@@ -10,8 +10,9 @@ describe('when parsing flowcharts', function() {
   beforeEach(function() {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
+    flow.parser.yy.setGen('gen-2');
   });
-
+  
   it('should handle chaining of vertices', function() {
     const res = flow.parser.parse(`
     graph TD

@@ -7,8 +7,6 @@ import mermaidAPI from '../../mermaidAPI';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 
-const config = configApi.getConfig();
-
 let relations = [];
 let classes = {};
 let classCounter = 0;
@@ -176,6 +174,7 @@ export const setCssClass = function(ids, className) {
  * @param tooltip Tooltip for the clickable element
  */
 export const setLink = function(ids, linkStr, tooltip) {
+  const config = configApi.getConfig();
   ids.split(',').forEach(function(_id) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
@@ -199,11 +198,13 @@ export const setLink = function(ids, linkStr, tooltip) {
 export const setClickEvent = function(ids, functionName, tooltip) {
   ids.split(',').forEach(function(id) {
     setClickFunc(id, functionName, tooltip);
+    classes[id].haveCallback = true;
   });
   setCssClass(ids, 'clickable');
 };
 
 const setClickFunc = function(domId, functionName, tooltip) {
+  const config = configApi.getConfig();
   let id = domId;
   let elemId = lookUpDomId(id);
 

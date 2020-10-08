@@ -220,7 +220,7 @@ const render = function(id, _txt, cb, container) {
   // console.warn('Render fetching config');
 
   const cnf = configApi.getConfig();
-  console.warn('Render with config after adding new directives', cnf.sequence);
+  // console.warn('Render with config after adding new directives', cnf.sequence);
   // console.warn(
   //   'Render with config after adding new directives',
   //   cnf.fontFamily,
@@ -385,7 +385,7 @@ const render = function(id, _txt, cb, container) {
         break;
       case 'pie':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        pieRenderer.setConf(cnf.class);
+        pieRenderer.setConf(cnf.pie);
         pieRenderer.draw(txt, id, pkg.version);
         break;
       case 'er':
@@ -437,6 +437,7 @@ const render = function(id, _txt, cb, container) {
         cb(svgCode, ganttDb.bindFunctions);
         break;
       case 'class':
+      case 'classDiagram':
         cb(svgCode, classDb.bindFunctions);
         break;
       default:
@@ -616,9 +617,9 @@ configApi.reset(configApi.getConfig());
 export default mermaidAPI;
 /**
  * ## mermaidAPI configuration defaults
- * <pre>
  *
- * &lt;script>
+ * ```html
+ * <script>
  *   var config = {
  *     theme:'default',
  *     logLevel:'fatal',
@@ -673,6 +674,6 @@ export default mermaidAPI;
  *     }
  *   };
  *   mermaid.initialize(config);
- * &lt;/script>
- *</pre>
+ * </script>
+ * ```
  */

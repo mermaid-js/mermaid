@@ -1,5 +1,6 @@
 import flowDb from '../flowDb';
 import flow from './flow';
+import filter from 'lodash/filter';
 import { setConfig } from '../../../config';
 
 setConfig({
@@ -10,6 +11,7 @@ describe('when parsing subgraphs', function() {
   beforeEach(function() {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
+    flow.parser.yy.setGen('gen-2');
   });
   it('should handle subgraph with tab indentation', function() {
     const res = flow.parser.parse('graph TB\nsubgraph One\n\ta1-->a2\nend');
@@ -237,5 +239,75 @@ describe('when parsing subgraphs', function() {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_point');
+  });
+  it('should handle nested subgraphs 1', function() {
+    const res = flow.parser.parse(`flowchart TB
+    subgraph A
+    b-->B
+    a
+    end
+    a-->c
+    subgraph B
+      c
+    end`);
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(2);
+
+    const subgraphA = filter(subgraphs,o => o.id === 'A')[0];
+    const subgraphB = filter(subgraphs,o => o.id === 'B')[0];
+
+    expect(subgraphB.nodes[0]).toBe('c');
+    expect(subgraphA.nodes).toContain('B');
+    expect(subgraphA.nodes).toContain('b');
+    expect(subgraphA.nodes).toContain('a');
+    expect(subgraphA.nodes).not.toContain('c');
+  });
+  it('should handle nested subgraphs 2', function() {
+    const res = flow.parser.parse(`flowchart TB
+    b-->B
+    a-->c
+    subgraph B
+      c
+    end
+    subgraph A
+        a
+        b
+        B
+    end`);
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(2);
+
+    const subgraphA = filter(subgraphs,o => o.id === 'A')[0];
+    const subgraphB = filter(subgraphs,o => o.id === 'B')[0];
+
+    expect(subgraphB.nodes[0]).toBe('c');
+    expect(subgraphA.nodes).toContain('B');
+    expect(subgraphA.nodes).toContain('b');
+    expect(subgraphA.nodes).toContain('a');
+    expect(subgraphA.nodes).not.toContain('c');
+  });
+  it('should handle nested subgraphs 3', function() {
+    const res = flow.parser.parse(`flowchart TB
+    subgraph B
+      c
+    end
+    a-->c
+    subgraph A
+      b-->B
+      a
+    end`);
+
+    const subgraphs = flow.parser.yy.getSubGraphs();
+    expect(subgraphs.length).toBe(2);
+
+    const subgraphA = filter(subgraphs,o => o.id === 'A')[0];
+    const subgraphB = filter(subgraphs,o => o.id === 'B')[0];
+    expect(subgraphB.nodes[0]).toBe('c');
+    expect(subgraphA.nodes).toContain('B');
+    expect(subgraphA.nodes).toContain('b');
+    expect(subgraphA.nodes).toContain('a');
+    expect(subgraphA.nodes).not.toContain('c');
   });
 });

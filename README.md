@@ -3,7 +3,7 @@
 ![banner](./img/header.png)
 **Edit this Page** [![N|Solid](./docs/assets/img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/README.md)
 
-:trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!!**
+:trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/2019) in the category "The most exciting use of technology"!!!**
 
 **Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project 🙏**
 
@@ -23,7 +23,7 @@ Even non-programmers can create diagrams through the [Mermaid Live Editor](https
 [Tutorials](./docs/getting-started/Tutorials.md) has video tutorials.
 Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/overview/integrations.md).
 
-For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](./docs/overview/n00b-overview.md) and [Usage](./docs/getting-started/usage.md).
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/overview/n00b-overview.md) and [Usage](./docs/getting-started/usage.md).
 
 🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [Changelog](./docs/tutorials-and-community/CHANGELOG.md)
 

@@ -9,6 +9,11 @@ const getStyles = options =>
   .title {
     font-weight: bolder;
   }
+
+}
+
+.classTitle {
+  font-weight: bolder;
 }
 .node rect,
   .node circle,
@@ -109,6 +114,11 @@ g.classGroup line {
   stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
+
+.edgeTerminals {
+  font-size: 11px;
+}
+
 `;
 
 export default getStyles;

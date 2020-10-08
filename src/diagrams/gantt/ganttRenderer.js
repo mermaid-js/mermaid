@@ -11,6 +11,7 @@ import {
 import { parser } from './parser/gantt';
 import common from '../common/common';
 import ganttDb from './ganttDb';
+import { configureSvgSize } from '../../utils';
 
 parser.yy = ganttDb;
 
@@ -53,7 +54,6 @@ export const draw = function(text, id) {
   // Set height based on number of tasks
   const h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
 
-  elem.setAttribute('height', '100%');
   // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
   const svg = select(`[id="${id}"]`);
@@ -97,9 +97,8 @@ export const draw = function(text, id) {
   taskArray.sort(taskCompare);
 
   makeGant(taskArray, w, h);
-  if (typeof conf.useWidth !== 'undefined') {
-    elem.setAttribute('width', w);
-  }
+
+  configureSvgSize(svg, h, w, conf.useMaxWidth);
 
   svg
     .append('text')
@@ -302,7 +301,6 @@ export const draw = function(text, id) {
         }
 
         let secNum = 0;
-        console.log(conf);
         for (let i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
             secNum = i % conf.numberSectionStyles;

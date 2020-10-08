@@ -6,9 +6,11 @@ import utils from '../utils';
 // import { calcLabelPosition } from '../utils';
 
 let edgeLabels = {};
+let terminalLabels = {};
 
 export const clear = () => {
   edgeLabels = {};
+  terminalLabels = {};
 };
 
 export const insertEdgeLabel = (elem, edge) => {
@@ -39,17 +41,129 @@ export const insertEdgeLabel = (elem, edge) => {
   // Update the abstract data of the edge with the new information about its width and height
   edge.width = bbox.width;
   edge.height = bbox.height;
+
+  if (edge.startLabelLeft) {
+    // Create the actual text element
+    const startLabelElement = createLabel(edge.startLabelLeft, edge.labelStyle);
+    const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
+    const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
+    inner.node().appendChild(startLabelElement);
+    const slBox = startLabelElement.getBBox();
+    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+    if (!terminalLabels[edge.id]) {
+      terminalLabels[edge.id] = {};
+    }
+    terminalLabels[edge.id].startLeft = startEdgeLabelLeft;
+  }
+  if (edge.startLabelRight) {
+    // Create the actual text element
+    const startLabelElement = createLabel(edge.startLabelRight, edge.labelStyle);
+    const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
+    const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
+    startEdgeLabelRight.node().appendChild(startLabelElement);
+    inner.node().appendChild(startLabelElement);
+    const slBox = startLabelElement.getBBox();
+    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+
+    if (!terminalLabels[edge.id]) {
+      terminalLabels[edge.id] = {};
+    }
+    terminalLabels[edge.id].startRight = startEdgeLabelRight;
+  }
+  if (edge.endLabelLeft) {
+    // Create the actual text element
+    const endLabelElement = createLabel(edge.endLabelLeft, edge.labelStyle);
+    const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
+    const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
+    inner.node().appendChild(endLabelElement);
+    const slBox = endLabelElement.getBBox();
+    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+
+    endEdgeLabelLeft.node().appendChild(endLabelElement);
+    if (!terminalLabels[edge.id]) {
+      terminalLabels[edge.id] = {};
+    }
+    terminalLabels[edge.id].endLeft = endEdgeLabelLeft;
+  }
+  if (edge.endLabelRight) {
+    // Create the actual text element
+    const endLabelElement = createLabel(edge.endLabelRight, edge.labelStyle);
+    const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
+    const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
+
+    inner.node().appendChild(endLabelElement);
+    const slBox = endLabelElement.getBBox();
+    inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
+
+    endEdgeLabelRight.node().appendChild(endLabelElement);
+    if (!terminalLabels[edge.id]) {
+      terminalLabels[edge.id] = {};
+    }
+    terminalLabels[edge.id].endRight = endEdgeLabelRight;
+  }
 };
 
-export const positionEdgeLabel = (edge, points) => {
+export const positionEdgeLabel = (edge, paths) => {
   logger.info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.label) {
     const el = edgeLabels[edge.id];
     let x = edge.x;
     let y = edge.y;
-    if (points) {
+    if (path) {
+      //   // debugger;
+      const pos = utils.calcLabelPosition(path);
+      logger.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')');
+      // x = pos.x;
+      // y = pos.y;
+    }
+    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+  }
+
+  //let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
+  if (edge.startLabelLeft) {
+    const el = terminalLabels[edge.id].startLeft;
+    let x = edge.x;
+    let y = edge.y;
+    if (path) {
       // debugger;
-      const pos = utils.calcLabelPosition(points);
+      const pos = utils.calcTerminalLabelPosition(0, 'start_left', path);
+      x = pos.x;
+      y = pos.y;
+    }
+    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+  }
+  if (edge.startLabelRight) {
+    const el = terminalLabels[edge.id].startRight;
+    let x = edge.x;
+    let y = edge.y;
+    if (path) {
+      // debugger;
+      const pos = utils.calcTerminalLabelPosition(0, 'start_right', path);
+      x = pos.x;
+      y = pos.y;
+    }
+    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+  }
+  if (edge.endLabelLeft) {
+    const el = terminalLabels[edge.id].endLeft;
+    let x = edge.x;
+    let y = edge.y;
+    if (path) {
+      // debugger;
+      const pos = utils.calcTerminalLabelPosition(0, 'end_left', path);
+      x = pos.x;
+      y = pos.y;
+    }
+    el.attr('transform', 'translate(' + x + ', ' + y + ')');
+  }
+  if (edge.endLabelRight) {
+    const el = terminalLabels[edge.id].endRight;
+    let x = edge.x;
+    let y = edge.y;
+    if (path) {
+      // debugger;
+      const pos = utils.calcTerminalLabelPosition(0, 'end_right', path);
       x = pos.x;
       y = pos.y;
     }
@@ -354,8 +468,10 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
       break;
     default:
   }
-
+  let paths = {};
   if (pointsHasChanged) {
-    return points;
+    paths.updatedPath = points;
   }
+  paths.originalPath = edge.points;
+  return paths;
 };

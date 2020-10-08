@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { imgSnapshotTest } from '../../helpers/util';
+import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 describe('Entity Relationship Diagram', () => {
   it('should render a simple ER diagram', () => {
@@ -100,5 +100,45 @@ describe('Entity Relationship Diagram', () => {
       {logLevel : 1}
     );
     cy.get('svg');
+  });
+
+  it('should render an ER diagrams when useMaxWidth is true (default)', () => {
+    renderGraph(
+      `
+    erDiagram
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ LINE-ITEM : contains
+      `,
+      { er: { useMaxWidth: true } }
+    );
+    cy.get('svg')
+      .should((svg) => {
+        expect(svg).to.have.attr('width', '100%');
+        expect(svg).to.have.attr('height', '465');
+        const style = svg.attr('style');
+        expect(style).to.match(/^max-width: [\d.]+px;$/);
+        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(maxWidthValue).to.be.within(140 * .95, 140 * 1.05);
+      });
+  });
+
+  it('should render an ER when useMaxWidth is false', () => {
+    renderGraph(
+      `
+    erDiagram
+        CUSTOMER ||--o{ ORDER : places
+        ORDER ||--|{ LINE-ITEM : contains
+      `,
+      { er: { useMaxWidth: false } }
+    );
+    cy.get('svg')
+      .should((svg) => {
+        const width = parseFloat(svg.attr('width'));
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(width).to.be.within(140 * .95, 140 * 1.05);
+        expect(svg).to.have.attr('height', '465');
+        expect(svg).to.not.have.attr('style');
+      });
   });
 });

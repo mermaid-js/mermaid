@@ -8,6 +8,7 @@ import { parser } from './parser/stateDiagram';
 // import idCache from './id-cache';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
+import { configureSvgSize } from '../../utils';
 
 parser.yy = stateDb;
 
@@ -75,14 +76,10 @@ export const draw = function(text, id) {
   const width = bounds.width + padding * 2;
   const height = bounds.height + padding * 2;
 
-  if (conf.useMaxWidth) {
-    diagram.attr('width', '100%');
-    diagram.attr('style', `max-width: ${width * 1.75}px;`);
-  } else {
-    // Zoom in a bit
-    diagram.attr('width', width * 1.75);
-  }
-  // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
+  // zoom in a bit
+  const svgWidth = width * 1.75;
+  configureSvgSize(diagram, height, svgWidth, conf.useMaxWidth);
+
   diagram.attr(
     'viewBox',
     `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height

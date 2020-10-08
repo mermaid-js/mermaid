@@ -9,7 +9,7 @@ import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import common from '../common/common';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
+import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 import flowChartShapes from './flowChartShapes';
 
 const conf = {};
@@ -133,7 +133,8 @@ export const addVertices = function(vert, g, svgId) {
         _shape = 'rect';
     }
     // Add the node
-    g.setNode(vertex.id, {
+    logger.warn('Adding node', vertex.id, vertex.domId);
+    g.setNode(flowDb.lookUpDomId(vertex.id), {
       labelType: 'svg',
       labelStyle: styles.labelStyle,
       shape: _shape,
@@ -142,7 +143,7 @@ export const addVertices = function(vert, g, svgId) {
       ry: radious,
       class: classStr,
       style: styles.style,
-      id: vertex.id
+      id: flowDb.lookUpDomId(vertex.id)
     });
   });
 };
@@ -247,7 +248,7 @@ export const addEdges = function(edges, g) {
     edgeData.minlen = edge.length || 1;
 
     // Add the edge to the graph
-    g.setEdge(edge.start, edge.end, edgeData, cnt);
+    g.setEdge(flowDb.lookUpDomId(edge.start), flowDb.lookUpDomId(edge.end), edgeData, cnt);
   });
 };
 
@@ -278,6 +279,7 @@ export const getClasses = function(text) {
 export const draw = function(text, id) {
   logger.info('Drawing flowchart');
   flowDb.clear();
+  flowDb.setGen('gen-1');
   const parser = flow.parser;
   parser.yy = flowDb;
 
@@ -323,6 +325,7 @@ export const draw = function(text, id) {
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition
   const vert = flowDb.getVertices();
+  logger.warn('Get vertices', vert);
 
   const edges = flowDb.getEdges();
 
@@ -333,7 +336,13 @@ export const draw = function(text, id) {
     selectAll('cluster').append('text');
 
     for (let j = 0; j < subG.nodes.length; j++) {
-      g.setParent(subG.nodes[j], subG.id);
+      logger.warn(
+        'Setting subgraph',
+        subG.nodes[j],
+        flowDb.lookUpDomId(subG.nodes[j]),
+        flowDb.lookUpDomId(subG.id)
+      );
+      g.setParent(flowDb.lookUpDomId(subG.nodes[j]), flowDb.lookUpDomId(subG.id));
     }
   }
   addVertices(vert, g, id);
@@ -388,6 +397,8 @@ export const draw = function(text, id) {
   const svg = select(`[id="${id}"]`);
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
+  logger.warn(g);
+
   // Run the renderer. This is what draws the final graph.
   const element = select('#' + id + ' g');
   render(element, g);
@@ -401,13 +412,7 @@ export const draw = function(text, id) {
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
+  configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
@@ -420,10 +425,13 @@ export const draw = function(text, id) {
   // reposition labels
   for (i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i];
-
     if (subG.title !== 'undefined') {
-      const clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
-      const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
+      const clusterRects = document.querySelectorAll(
+        '#' + id + ' [id="' + flowDb.lookUpDomId(subG.id) + '"] rect'
+      );
+      const clusterEl = document.querySelectorAll(
+        '#' + id + ' [id="' + flowDb.lookUpDomId(subG.id) + '"]'
+      );
 
       const xPos = clusterRects[0].x.baseVal.value;
       const yPos = clusterRects[0].y.baseVal.value;
@@ -465,7 +473,7 @@ export const draw = function(text, id) {
     const vertex = vert[key];
 
     if (vertex.link) {
-      const node = select('#' + id + ' [id="' + key + '"]');
+      const node = select('#' + id + ' [id="' + flowDb.lookUpDomId(key) + '"]');
       if (node) {
         const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));

@@ -354,7 +354,7 @@ click taskId href URL
 * callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified..
 
 Beginners tip, a full example using interactive links in an html context:
-```
+```html
 <body>
   <div class="mermaid">
     gantt

@@ -43,7 +43,6 @@ const activationCount = part => {
   let i;
   let count = 0;
   for (i = 0; i < messages.length; i++) {
-    // console.warn(i, messages[i]);
     if (messages[i].type === LINETYPE.ACTIVE_START) {
       if (messages[i].from.actor === part) {
         count++;

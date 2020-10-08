@@ -3,10 +3,10 @@ import utils from '../../utils';
 import * as configApi from '../../config';
 import common from '../common/common';
 import mermaidAPI from '../../mermaidAPI';
+import { logger } from '../../logger';
 
-// const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
-const MERMAID_DOM_ID_PREFIX = '';
-
+const MERMAID_DOM_ID_PREFIX = 'flowchart-';
+let vertexCounter = 0;
 let config = configApi.getConfig();
 let vertices = {};
 let edges = [];
@@ -17,11 +17,29 @@ let tooltips = {};
 let subCount = 0;
 let firstGraphFlag = true;
 let direction;
+
+let version; // As in graph
+
 // Functions to be run after graph rendering
 let funs = [];
 
 export const parseDirective = function(statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
+};
+
+/**
+ * Function to lookup domId from id in the graph definition.
+ * @param id
+ * @public
+ */
+export const lookUpDomId = function(id) {
+  const veritceKeys = Object.keys(vertices);
+  for (let i = 0; i < veritceKeys.length; i++) {
+    if (vertices[veritceKeys[i]].id === id) {
+      return vertices[veritceKeys[i]].domId;
+    }
+  }
+  return id;
 };
 
 /**
@@ -42,11 +60,17 @@ export const addVertex = function(_id, text, type, style, classes) {
     return;
   }
 
-  if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+  // if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
   if (typeof vertices[id] === 'undefined') {
-    vertices[id] = { id: id, styles: [], classes: [] };
+    vertices[id] = {
+      id: id,
+      domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
+      styles: [],
+      classes: []
+    };
   }
+  vertexCounter++;
   if (typeof text !== 'undefined') {
     config = configApi.getConfig();
     txt = common.sanitizeText(text.trim(), config);
@@ -91,8 +115,8 @@ export const addVertex = function(_id, text, type, style, classes) {
 export const addSingleLink = function(_start, _end, type, linktext) {
   let start = _start;
   let end = _end;
-  if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
-  if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
+  // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
+  // if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
   // logger.info('Got edge...', start, end);
 
   const edge = { start: start, end: end, type: undefined, text: '' };
@@ -202,8 +226,9 @@ export const setDirection = function(dir) {
  */
 export const setClass = function(ids, className) {
   ids.split(',').forEach(function(_id) {
+    // let id = version === 'gen-2' ? lookUpDomId(_id) : _id;
     let id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+    // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className);
     }
@@ -217,14 +242,14 @@ export const setClass = function(ids, className) {
 const setTooltip = function(ids, tooltip) {
   ids.split(',').forEach(function(id) {
     if (typeof tooltip !== 'undefined') {
-      tooltips[id] = common.sanitizeText(tooltip, config);
+      tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = common.sanitizeText(tooltip, config);
     }
   });
 };
 
-const setClickFun = function(_id, functionName) {
-  let id = _id;
-  if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+const setClickFun = function(id, functionName) {
+  let domId = lookUpDomId(id);
+  // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
@@ -232,8 +257,9 @@ const setClickFun = function(_id, functionName) {
     return;
   }
   if (typeof vertices[id] !== 'undefined') {
+    vertices[id].haveCallback = true;
     funs.push(function() {
-      const elem = document.querySelector(`[id="${id}"]`);
+      const elem = document.querySelector(`[id="${domId}"]`);
       if (elem !== null) {
         elem.addEventListener(
           'click',
@@ -254,9 +280,7 @@ const setClickFun = function(_id, functionName) {
  * @param tooltip Tooltip for the clickable element
  */
 export const setLink = function(ids, linkStr, tooltip, target) {
-  ids.split(',').forEach(function(_id) {
-    let id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+  ids.split(',').forEach(function(id) {
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = utils.formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
@@ -362,7 +386,7 @@ funs.push(setupToolTips);
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
-export const clear = function() {
+export const clear = function(ver) {
   vertices = {};
   classes = {};
   edges = [];
@@ -373,6 +397,10 @@ export const clear = function() {
   subCount = 0;
   tooltips = [];
   firstGraphFlag = true;
+  version = ver || 'gen-1';
+};
+export const setGen = ver => {
+  version = ver || 'gen-1';
 };
 /**
  *
@@ -411,16 +439,39 @@ export const addSubGraph = function(_id, list, _title) {
   let nodeList = [];
 
   nodeList = uniq(nodeList.concat.apply(nodeList, list));
-  for (let i = 0; i < nodeList.length; i++) {
-    if (nodeList[i][0].match(/\d/)) nodeList[i] = MERMAID_DOM_ID_PREFIX + nodeList[i];
+  if (version === 'gen-1') {
+    logger.warn('LOOKING UP');
+    for (let i = 0; i < nodeList.length; i++) {
+      nodeList[i] = lookUpDomId(nodeList[i]);
+    }
   }
 
   id = id || 'subGraph' + subCount;
-  if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+  // if (id[0].match(/\d/)) id = lookUpDomId(id);
   title = title || '';
   title = common.sanitizeText(title, config);
   subCount = subCount + 1;
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
+
+  console.log('Adding', subGraph.id, subGraph.nodes);
+
+  /**
+   * Deletes an id from all subgraphs
+   */
+  // const del = _id => {
+  //   subGraphs.forEach(sg => {
+  //     const pos = sg.nodes.indexOf(_id);
+  //     if (pos >= 0) {
+  //       sg.nodes.splice(pos, 1);
+  //     }
+  //   });
+  // };
+
+  // // Removes the members of this subgraph from any other subgraphs, a node only belong to one subgraph
+  // subGraph.nodes.forEach(_id => del(_id));
+
+  // Remove the members in the new subgraph if they already belong to another subgraph
+  subGraph.nodes = makeUniq(subGraph, subGraphs).nodes;
   subGraphs.push(subGraph);
   subGraphLookup[id] = subGraph;
   return id;
@@ -618,10 +669,35 @@ const destructLink = (_str, _startStr) => {
   return info;
 };
 
+// Todo optimizer this by caching existing nodes
+const exists = (allSgs, _id) => {
+  let res = false;
+  allSgs.forEach(sg => {
+    const pos = sg.nodes.indexOf(_id);
+    if (pos >= 0) {
+      res = true;
+    }
+  });
+  return res;
+};
+/**
+ * Deletes an id from all subgraphs
+ */
+const makeUniq = (sg, allSubgraphs) => {
+  const res = [];
+  sg.nodes.forEach((_id, pos) => {
+    if (!exists(allSubgraphs, _id)) {
+      res.push(sg.nodes[pos]);
+    }
+  });
+  return { nodes: res };
+};
+
 export default {
   parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
   addVertex,
+  lookUpDomId,
   addLink,
   updateLinkInterpolate,
   updateLink,
@@ -637,6 +713,7 @@ export default {
   getEdges,
   getClasses,
   clear,
+  setGen,
   defaultStyle,
   addSubGraph,
   getDepthFirstPos,
@@ -645,5 +722,7 @@ export default {
   destructLink,
   lex: {
     firstGraph
-  }
+  },
+  exists,
+  makeUniq
 };

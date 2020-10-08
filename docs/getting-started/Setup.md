@@ -146,9 +146,8 @@ mermaidAPI.initialize({
 
 ## mermaidAPI configuration defaults
 
-<pre>
-
-&lt;script>
+```html
+<script>
   var config = {
     theme:'default',
     logLevel:'fatal',
@@ -203,7 +202,7 @@ mermaidAPI.initialize({
     }
   };
   mermaid.initialize(config);
-&lt;/script>
-</pre>
+</script>
+```
 
 [1]: Setup.md?id=render

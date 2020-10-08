@@ -5,6 +5,7 @@ import { select, scaleOrdinal, schemeSet2, pie as d3pie, entries, arc } from 'd3
 import pieData from './pieDb';
 import pieParser from './parser/pie';
 import { logger } from '../../logger';
+import { configureSvgSize } from '../../utils';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -20,7 +21,8 @@ export const setConf = function(cnf) {
  * @param text
  * @param id
  */
-let w;
+let width;
+const height = 450;
 export const draw = (txt, id) => {
   try {
     const parser = pieParser.parser;
@@ -31,34 +33,30 @@ export const draw = (txt, id) => {
     parser.parse(txt);
     logger.debug('Parsed info diagram');
     const elem = document.getElementById(id);
-    w = elem.parentElement.offsetWidth;
+    width = elem.parentElement.offsetWidth;
 
-    if (typeof w === 'undefined') {
-      w = 1200;
+    if (typeof width === 'undefined') {
+      width = 1200;
     }
 
     if (typeof conf.useWidth !== 'undefined') {
-      w = conf.useWidth;
+      width = conf.useWidth;
     }
-    const h = 450;
-    elem.setAttribute('height', '100%');
+
+    const diagram = select('#' + id);
+    configureSvgSize(diagram, height, width, conf.useMaxWidth);
+
     // Set viewBox
-    elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
     // Fetch the default direction, use TD if none was found
-
-    var width = w; // 450
-    var height = 450;
     var margin = 40;
     var legendRectSize = 18;
     var legendSpacing = 4;
 
     var radius = Math.min(width, height) / 2 - margin;
 
-    var svg = select('#' + id)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height)
+    var svg = diagram
       .append('g')
       .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
@@ -67,9 +65,8 @@ export const draw = (txt, id) => {
     Object.keys(data).forEach(function(key) {
       sum += data[key];
     });
-    logger.info(data);
 
-    // set the color scale
+    // Set the color scale
     var color = scaleOrdinal()
       .domain(data)
       .range(schemeSet2);
@@ -80,12 +77,12 @@ export const draw = (txt, id) => {
     });
     var dataReady = pie(entries(data));
 
-    // shape helper to build arcs:
+    // Shape helper to build arcs:
     var arcGenerator = arc()
       .innerRadius(0)
       .outerRadius(radius);
 
-    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    // Build the pie chart: each part of the pie is a path that we build using the arc function.
     svg
       .selectAll('mySlices')
       .data(dataReady)
@@ -99,7 +96,8 @@ export const draw = (txt, id) => {
       .style('stroke-width', '2px')
       .style('opacity', 0.7);
 
-    // Now add the Percentage. Use the centroid method to get the best coordinates
+    // Now add the percentage.
+    // Use the centroid method to get the best coordinates.
     svg
       .selectAll('mySlices')
       .data(dataReady)
@@ -119,10 +117,10 @@ export const draw = (txt, id) => {
       .append('text')
       .text(parser.yy.getTitle())
       .attr('x', 0)
-      .attr('y', -(h - 50) / 2)
+      .attr('y', -(height - 50) / 2)
       .attr('class', 'pieTitleText');
 
-    //Add the slegend/annotations for each section
+    // Add the legends/annotations for each section
     var legend = svg
       .selectAll('.legend')
       .data(color.domain())

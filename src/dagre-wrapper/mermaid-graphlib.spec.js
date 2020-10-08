@@ -1,6 +1,6 @@
 import graphlib from 'graphlib';
 import dagre from 'dagre';
-import { validate, adjustClustersAndEdges, extractDecendants } from './mermaid-graphlib';
+import { validate, adjustClustersAndEdges, extractDecendants, sortNodesByHierarchy } from './mermaid-graphlib';
 import { setLogLevel, logger } from '../logger';
 
 describe('Graphlib decorations', () => {
@@ -43,8 +43,6 @@ describe('Graphlib decorations', () => {
       g.setEdge('a', 'b');
       g.setEdge('C1', 'C2');
 
-      console.log(g.nodes())
-
       expect(validate(g)).toBe(false);
     });
     it('Validate should not detect edges between clusters after adjustment', function () {
@@ -66,7 +64,6 @@ describe('Graphlib decorations', () => {
       g.setEdge('a', 'b');
       g.setEdge('C1', 'C2');
 
-      console.log(g.nodes())
       adjustClustersAndEdges(g);
       logger.info(g.edges())
       expect(validate(g)).toBe(true);
@@ -373,6 +370,31 @@ describe('Graphlib decorations', () => {
   });
 
 });
+  it('adjustClustersAndEdges should handle nesting GLB77', function () {
+    /*
+flowchart TB
+  subgraph A
+    b-->B
+    a-->c
+  end
+  subgraph B
+    c
+  end
+    */
+
+    const exportedGraph = JSON.parse('{"options":{"directed":true,"multigraph":true,"compound":true},"nodes":[{"v":"A","value":{"labelStyle":"","shape":"rect","labelText":"A","rx":0,"ry":0,"class":"default","style":"","id":"A","width":500,"type":"group","padding":15}},{"v":"B","value":{"labelStyle":"","shape":"rect","labelText":"B","rx":0,"ry":0,"class":"default","style":"","id":"B","width":500,"type":"group","padding":15},"parent":"A"},{"v":"b","value":{"labelStyle":"","shape":"rect","labelText":"b","rx":0,"ry":0,"class":"default","style":"","id":"b","padding":15},"parent":"A"},{"v":"c","value":{"labelStyle":"","shape":"rect","labelText":"c","rx":0,"ry":0,"class":"default","style":"","id":"c","padding":15},"parent":"B"},{"v":"a","value":{"labelStyle":"","shape":"rect","labelText":"a","rx":0,"ry":0,"class":"default","style":"","id":"a","padding":15},"parent":"A"}],"edges":[{"v":"b","w":"B","name":"1","value":{"minlen":1,"arrowhead":"normal","arrowTypeStart":"arrow_open","arrowTypeEnd":"arrow_point","thickness":"normal","pattern":"solid","style":"fill:none","labelStyle":"","arrowheadStyle":"fill: #333","labelpos":"c","labelType":"text","label":"","id":"L-b-B","classes":"flowchart-link LS-b LE-B"}},{"v":"a","w":"c","name":"2","value":{"minlen":1,"arrowhead":"normal","arrowTypeStart":"arrow_open","arrowTypeEnd":"arrow_point","thickness":"normal","pattern":"solid","style":"fill:none","labelStyle":"","arrowheadStyle":"fill: #333","labelpos":"c","labelType":"text","label":"","id":"L-a-c","classes":"flowchart-link LS-a LE-c"}}],"value":{"rankdir":"TB","nodesep":50,"ranksep":50,"marginx":8,"marginy":8}}');
+    const gr = graphlib.json.read(exportedGraph)
+
+    logger.info('Graph before', graphlib.json.write(gr))
+    adjustClustersAndEdges(gr);
+    const aGraph = gr.node('A').graph;
+    const bGraph = aGraph.node('B').graph;
+    logger.info('Graph after', graphlib.json.write(aGraph));
+    // logger.trace('Graph after', graphlib.json.write(g))
+    expect(aGraph.parent('c')).toBe('B');
+    expect(aGraph.parent('B')).toBe(undefined);
+  });
+
 });
 describe('extractDecendants', function () {
   let g;
@@ -424,5 +446,59 @@ describe('extractDecendants', function () {
     expect(d1).toEqual(['a']);
     expect(d2).toEqual(['b']);
     expect(d3).toEqual(['c']);
+  });
+});
+describe('sortNodesByHierarchy', function () {
+  let g;
+  beforeEach(function () {
+    setLogLevel(1);
+    g = new graphlib.Graph({
+      multigraph: true,
+      compound: true
+    });
+    g.setGraph({
+      rankdir: 'TB',
+      nodesep: 10,
+      ranksep: 10,
+      marginx: 8,
+      marginy: 8
+    });
+    g.setDefaultEdgeLabel(function () {
+      return {};
+    });
+  });
+  it('it should sort proper en nodes are in reverse order', function () {
+    /*
+  a -->b
+  subgraph B
+  b
+  end
+  subgraph A
+  B
+  end
+    */
+    g.setNode('a', { data: 1 });
+    g.setNode('b', { data: 2 });
+    g.setParent('b', 'B');
+    g.setParent('B', 'A');
+    g.setEdge('a', 'b', '1');
+    expect(sortNodesByHierarchy(g)).toEqual(['a', 'A', 'B', 'b']);
+  });
+    it('it should sort proper en nodes are in correct order', function () {
+    /*
+  a -->b
+  subgraph B
+  b
+  end
+  subgraph A
+  B
+  end
+    */
+    g.setNode('a', { data: 1 });
+    g.setParent('B', 'A');
+    g.setParent('b', 'B');
+    g.setNode('b', { data: 2 });
+    g.setEdge('a', 'b', '1');
+    expect(sortNodesByHierarchy(g)).toEqual(['a', 'A', 'B', 'b']);
   });
 });

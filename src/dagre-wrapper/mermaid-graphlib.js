@@ -52,7 +52,7 @@ const edgeInCluster = (edge, clusterId) => {
 };
 
 const copy = (clusterId, graph, newGraph, rootId) => {
-  log.info(
+  log.warn(
     'Copying children of ',
     clusterId,
     'root',
@@ -68,7 +68,7 @@ const copy = (clusterId, graph, newGraph, rootId) => {
     nodes.push(clusterId);
   }
 
-  log.debug('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
+  log.warn('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
 
   nodes.forEach(node => {
     if (graph.children(node).length > 0) {
@@ -77,8 +77,8 @@ const copy = (clusterId, graph, newGraph, rootId) => {
       const data = graph.node(node);
       log.info('cp ', node, ' to ', rootId, ' with parent ', clusterId); //,node, data, ' parent is ', clusterId);
       newGraph.setNode(node, data);
-      log.debug('Setting parent', node, graph.parent(node));
       if (rootId !== graph.parent(node)) {
+        log.warn('Setting parent', node, graph.parent(node));
         newGraph.setParent(node, graph.parent(node));
       }
 
@@ -245,40 +245,51 @@ export const adjustClustersAndEdges = (graph, depth) => {
 
           // d1 xor d2 - if either d1 is true and d2 is false or the other way around
           if (d1 ^ d2) {
-            log.debug('Edge: ', edge, ' leaves cluster ', id);
-            log.debug('Decendants of ', id, ': ', decendants[id]);
+            log.warn('Edge: ', edge, ' leaves cluster ', id);
+            log.warn('Decendants of XXX ', id, ': ', decendants[id]);
             clusterDb[id].externalConnections = true;
           }
         }
       });
+    } else {
+      log.debug('Not a cluster ', id, decendants);
     }
   });
-
-  extractor(graph, 0);
 
   // For clusters with incoming and/or outgoing edges translate those edges to a real node
   // in the cluster inorder to fake the edge
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e);
-    log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+    log.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    log.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
 
     let v = e.v;
     let w = e.w;
     // Check if link is either from or to a cluster
-    log.trace('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
+    log.warn(
+      'Fix XXX',
+      clusterDb,
+      'ids:',
+      e.v,
+      e.w,
+      'Translateing: ',
+      clusterDb[e.v],
+      ' --- ',
+      clusterDb[e.w]
+    );
     if (clusterDb[e.v] || clusterDb[e.w]) {
-      log.warn('Fixing and trixing - removing', e.v, e.w, e.name);
+      log.warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) edge.fromCluster = e.v;
       if (w !== e.w) edge.toCluster = e.w;
-      log.warn('Replacing with', v, w, e.name);
+      log.warn('Fix Replacing with XXX', v, w, e.name);
       graph.setEdge(v, w, edge, e.name);
     }
   });
   log.warn('Adjusted Graph', graphlib.json.write(graph));
+  extractor(graph, 0);
 
   log.trace(clusterDb);
 
@@ -291,7 +302,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
 };
 
 export const extractor = (graph, depth) => {
-  log.debug('extractor - ', depth, graphlib.json.write(graph), graph.children('D'));
+  log.warn('extractor - ', depth, graphlib.json.write(graph), graph.children('D'));
   if (depth > 10) {
     log.error('Bailing out');
     return;
@@ -336,11 +347,11 @@ export const extractor = (graph, depth) => {
       // break;
     } else if (
       !clusterDb[node].externalConnections &&
-      !graph.parent(node) &&
+      // !graph.parent(node) &&
       graph.children(node) &&
       graph.children(node).length > 0
     ) {
-      log.debug(
+      log.warn(
         'Cluster without external connections, without a parent and with children',
         node,
         depth
@@ -364,7 +375,7 @@ export const extractor = (graph, depth) => {
           return {};
         });
 
-      log.debug('Old graph before copy', graphlib.json.write(graph));
+      log.warn('Old graph before copy', graphlib.json.write(graph));
       copy(node, graph, clusterGraph, node);
       graph.setNode(node, {
         clusterNode: true,
@@ -373,10 +384,10 @@ export const extractor = (graph, depth) => {
         labelText: clusterDb[node].labelText,
         graph: clusterGraph
       });
-      log.debug('New graph after copy', graphlib.json.write(clusterGraph));
+      log.warn('New graph after copy node: (', node, ')', graphlib.json.write(clusterGraph));
       log.debug('Old graph after copy', graphlib.json.write(graph));
     } else {
-      log.debug(
+      log.warn(
         'Cluster ** ',
         node,
         ' **not meeting the criteria !externalConnections:',
@@ -393,13 +404,27 @@ export const extractor = (graph, depth) => {
   }
 
   nodes = graph.nodes();
-  log.debug('New list of nodes', nodes);
+  log.warn('New list of nodes', nodes);
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
     const data = graph.node(node);
-    log.debug(' Now next leveö', node, data);
+    log.warn(' Now next level', node, data);
     if (data.clusterNode) {
       extractor(data.graph, depth + 1);
     }
   }
 };
+
+const sorter = (graph, nodes) => {
+  if (nodes.length === 0) return [];
+  let result = Object.assign(nodes);
+  nodes.forEach(node => {
+    const children = graph.children(node);
+    const sorted = sorter(graph, children);
+    result = result.concat(sorted);
+  });
+
+  return result;
+};
+
+export const sortNodesByHierarchy = graph => sorter(graph, graph.children());

@@ -6,9 +6,9 @@ sort: 2
 
 This page contains a collection of examples of diagrams and charts that can be created through mermaid and its myriad applications.
 
-## If you wish to learn how to support mermaid on your webpage, read the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).
+## If you wish to learn how to support mermaid on your webpage, read the [Beginner's Guide](../getting-started/n00b-gettingStarted.md).
 
-## If you wish to learn about mermaid's syntax, Read the [Diagram Syntax](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference) section.
+## If you wish to learn about mermaid's syntax, Read the [Diagram Syntax](n00b-syntaxReference.md) section.
 
 ## Basic Pie Chart
 
