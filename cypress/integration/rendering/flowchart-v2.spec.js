@@ -101,7 +101,7 @@ describe('Flowchart v2', () => {
         const style = svg.attr('style');
         expect(style).to.match(/^max-width: [\d.]+px;$/);
         const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-        expect(maxWidthValue).to.be.within(300 * .95, 300 * 1.05);
+        expect(maxWidthValue).to.be.within(300 * .95-1, 300 * 1.05);
       });
   });
   it('8: should render a flowchart when useMaxWidth is false', () => {
@@ -121,7 +121,7 @@ describe('Flowchart v2', () => {
         const width = parseFloat(svg.attr('width'));
         // use within because the absolute value can be slightly different depending on the environment ±5%
         expect(height).to.be.within(446 * .95, 446 * 1.05);
-        expect(width).to.be.within(300 * .95, 300 * 1.05);
+        expect(width).to.be.within(300 * .95-1, 300 * 1.05);
         expect(svg).to.not.have.attr('style');
       });
   });
@@ -229,18 +229,12 @@ describe('Flowchart v2', () => {
   it('54: handle nested subgraphs with outgoing links', () => {
     imgSnapshotTest(
       `flowchart TD
-
-subgraph one[One]
-    subgraph sub_one[Sub One]
-        _sub_one
+  subgraph  main
+    subgraph subcontainer
+      subcontainer-child
     end
-end
-
-subgraph two[Two]
-    _two
-end
-
-sub_one --> two
+     subcontainer-child--> subcontainer-sibling
+  end
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
@@ -269,23 +263,30 @@ _one --> b
   });
 
 
-  it('56: handle nested subgraphs with outgoing links 2', () => {
+  it('56: handle nested subgraphs with outgoing links 3', () => {
     imgSnapshotTest(
-      `flowchart TD
-
-subgraph one[One]
-    subgraph sub_one[Sub One]
-        _sub_one
+      `flowchart TB
+  subgraph container_Beta
+    process_C-->Process_D
+  end
+  subgraph container_Alpha
+    process_A-->process_B
+    process_A-->|messages|process_C
     end
-    subgraph sub_two[Sub Two]
-        _sub_two
-    end
-    _one
+    process_B-->|via_AWSBatch|container_Beta
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('57: handle nested subgraphs with outgoing links 4', () => {
+    imgSnapshotTest(
+      `flowchart LR
+subgraph A
+a -->b
 end
-
-%% here, either the first or the second one
-sub_one --> sub_two
-_one --> b
+subgraph B
+b
+end
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );

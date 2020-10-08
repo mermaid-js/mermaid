@@ -414,7 +414,6 @@ export const defaultStyle = function() {
  * Clears the internal graph db so that a new graph can be parsed.
  */
 export const addSubGraph = function(_id, list, _title) {
-  // logger.warn('addSubgraph', _id, list, _title);
   let id = _id.trim();
   let title = _title;
   if (_id === _title && _title.match(/\s/)) {
@@ -454,19 +453,25 @@ export const addSubGraph = function(_id, list, _title) {
   subCount = subCount + 1;
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
 
+  console.log('Adding', subGraph.id, subGraph.nodes);
+
   /**
    * Deletes an id from all subgraphs
    */
-  const del = _id => {
-    subGraphs.forEach(sg => {
-      const pos = sg.nodes.indexOf(_id);
-      if (pos >= 0) {
-        sg.nodes.splice(pos, 1);
-      }
-    });
-  };
-  // Removes the members of this subgraph from any other subgraphs, a node only belong to one subgraph
-  subGraph.nodes.forEach(_id => del(_id));
+  // const del = _id => {
+  //   subGraphs.forEach(sg => {
+  //     const pos = sg.nodes.indexOf(_id);
+  //     if (pos >= 0) {
+  //       sg.nodes.splice(pos, 1);
+  //     }
+  //   });
+  // };
+
+  // // Removes the members of this subgraph from any other subgraphs, a node only belong to one subgraph
+  // subGraph.nodes.forEach(_id => del(_id));
+
+  // Remove the members in the new subgraph if they already belong to another subgraph
+  subGraph.nodes = makeUniq(subGraph, subGraphs).nodes;
   subGraphs.push(subGraph);
   subGraphLookup[id] = subGraph;
   return id;
@@ -664,6 +669,30 @@ const destructLink = (_str, _startStr) => {
   return info;
 };
 
+// Todo optimizer this by caching existing nodes
+const exists = (allSgs, _id) => {
+  let res = false;
+  allSgs.forEach(sg => {
+    const pos = sg.nodes.indexOf(_id);
+    if (pos >= 0) {
+      res = true;
+    }
+  });
+  return res;
+};
+/**
+ * Deletes an id from all subgraphs
+ */
+const makeUniq = (sg, allSubgraphs) => {
+  const res = [];
+  sg.nodes.forEach((_id, pos) => {
+    if (!exists(allSubgraphs, _id)) {
+      res.push(sg.nodes[pos]);
+    }
+  });
+  return { nodes: res };
+};
+
 export default {
   parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
@@ -693,5 +722,7 @@ export default {
   destructLink,
   lex: {
     firstGraph
-  }
+  },
+  exists,
+  makeUniq
 };
