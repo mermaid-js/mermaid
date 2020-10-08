@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.8.1",
+  "version": "8.8.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -28,7 +28,7 @@
     "dev": "webpack-dev-server --config webpack.config.e2e.js",
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
-    "prepublishOnly": "yarn build && yarn test && yarn e2e",
+    "prepublishOnly": "yarn build && yarn test",
     "prepare": "yarn build"
   },
   "repository": {
