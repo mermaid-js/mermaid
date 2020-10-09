@@ -1,8 +1,8 @@
 # Tutorials
 
-This is  list of publicly available Tutorials in Mermaid. This is intended as a basic introduction for the use of the Live Editor and HTML with mermaid.  
+This is  list of publicly available Tutorials for using Mermaid.JS . This is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.  
 
-For the purposes, the Live-Editor is capable of taking care of all diagramming needs, and these are the most common use cases for it.
+For most purposes, you can use the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor), to quickly and easily render a diagram. 
 
 
 ## Live-Editor Tutorials
