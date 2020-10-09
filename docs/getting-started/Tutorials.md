@@ -8,17 +8,14 @@ For the purposes, the Live-Editor is capable of taking care of all diagramming n
 ## Live-Editor Tutorials
 The definitions that can be generated the Live-Editor are also backwards-compatible as of version 8.7.0.
 
-https://www.youtube.com/watch?v=SQ9QmuTHuSI&t=438s
+[GitLab Unfiltered:How to Create Mermaid Diagrams](https://www.youtube.com/watch?v=SQ9QmuTHuSI&t=438s)
 
-https://www.youtube.com/watch?v=5RQqht3NNSE
+[GitLab Unfiltered:Emilie adds a mermaid diagram to the handbook](https://www.youtube.com/watch?v=5RQqht3NNSE)
 
-https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s
+[World of Zero:I Learn How To Build Flowcharts and Signal Diagram's in Mermaid.JS](https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s)
 
-https://www.youtube.com/watch?v=9HZzKkAqrX8
+[Eddie Jaoude:Can you code your diagrams?](https://www.youtube.com/watch?v=9HZzKkAqrX8)
 
-https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s
-
-https://www.youtube.com/watch?v=9HZzKkAqrX8
 
 ## Mermaid with HTML:
 Examples are provided in [Gettting Started](n00b-gettingStarted.md)
