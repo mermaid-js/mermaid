@@ -7,7 +7,7 @@ title: Use-Cases and Integrations
 
 The following list is a compilation of different integrations and plugins that allow the rendering of mermaid definitions
 
-They also serve as proof of concept, for the variety of things that cen be built with mermaid.
+They also serve as proof of concept, for the variety of things that can be built with mermaid.
 
 
 ## Productivity

@@ -10,7 +10,7 @@ title: Gantt
  ## A note to users
  Gantt Charts will record each scheduled task as one continuous bar that extends from the left to the right. The x axis represents time and the y records the different tasks and the order in which they are to be completed.   
 
- It is important to remember that when a date, day, or collection of dates specific to a task are "excluded", the Gantt Chart will accomodate those changes by extending an equal number of day, towards the right, not by creating a gap inside the task.
+ It is important to remember that when a date, day, or collection of dates specific to a task are "excluded", the Gantt Chart will accommodate those changes by extending an equal number of day, towards the right, not by creating a gap inside the task.
  As shown here ![](https://raw.githubusercontent.com/NeilCuzon/mermaid/develop/docs/img/Gantt-excluded-days-within.png)
 
  However, if the excluded dates are between two tasks that are set to start consecutively, the excluded dates will be skipped graphically and left blank, and the following task will begin after the end of the excluded dates.   
@@ -107,7 +107,7 @@ gantt
     Add another diagram to demo page    :48h
 ```
 
-It is possible to set multiple depenendenies separated by space:
+It is possible to set multiple dependencies separated by space:
 ```
     gantt
         apple :a, 2017-07-20, 1w
@@ -339,7 +339,7 @@ mermaid.ganttConfig = {
 Param | Descriotion | Default value
 --- | --- | ---
 mirrorActor|Turns on/off the rendering of actors below the diagram as well as above it|false
-bottomMarginAdj|Adjusts how far down the graph ended. Wide borders styles with css could generate unwantewd clipping which is why this config param exists.|1
+bottomMarginAdj|Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists.|1
 
 ## Interaction
 
