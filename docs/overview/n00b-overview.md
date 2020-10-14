@@ -26,7 +26,7 @@ mermaid seeks to change that. mermaid is a javascript based tool that utilizes a
 
 **Mermaid definitions**
 
->These are the instrunctions for how the diagram is to rendered, written in mermaid, which is based on Markdown. These can be found inside `<div>` tags, with the `class=mermaid`.
+>These are the instructions for how the diagram is to rendered, written in mermaid, which is based on Markdown. These can be found inside `<div>` tags, with the `class=mermaid`.
 
 ```html
  <div class="mermaid">
@@ -44,7 +44,7 @@ mermaid seeks to change that. mermaid is a javascript based tool that utilizes a
 
 **Nodes**
 
->These are the boxes that contain text or otherwise discrete pieces of each diagram, separated generally by arrows, except for Gantt Charts and User Journey Diagrams. They will be refered to often in the instructions. For Diagram Specific Syntax and Instructions, refer to
+>These are the boxes that contain text or otherwise discrete pieces of each diagram, separated generally by arrows, except for Gantt Charts and User Journey Diagrams. They will be referred to often in the instructions. For Diagram Specific Syntax and Instructions, refer to
 
 ## Advantages of Using Mermaid
 
@@ -68,7 +68,7 @@ Being based on markdown, mermaid can be used, not only by accomplished front-end
 In fact one can pick up the syntax for it quite easily from the examples given and there are many tutorials in the internet.
 
 ## Mermaid is for everyone.
-Video [Tutorials](./Tutorials.md) are also available for the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
+Video [Tutorials](./getting-started/Tutorials.md) are also available for the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
 
 For information on how to use mermaid, click [here](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).
 Alternatively, you could also view the [integrations and uses](https://mermaid-js.github.io/mermaid/#/./integrations), to see how mermaid is used.
