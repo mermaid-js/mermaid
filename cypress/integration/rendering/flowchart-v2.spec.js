@@ -346,5 +346,15 @@ flowchart TD
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+  it('61: fontawesome icons in edge labels', () => {
+    imgSnapshotTest(
+      `
+      flowchart TD
+        C -->|fa:fa-car Car| F[fa:fa-car Car]
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
 
 });

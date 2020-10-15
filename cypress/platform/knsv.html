@@ -22,7 +22,7 @@
   <body>
     <h1>info below</h1>
     <div class="flex">
-      <div class="mermaid" style="width: 50%; height: 400px;">
+      <div class="mermaid2" style="width: 50%; height: 400px;">
 graph TD
   A[Christmas] ==> D
   A[Christmas] -->|Get money| B(Go shopping)
@@ -38,7 +38,7 @@ graph TD
   class T TestSub
   linkStyle 0,1 color:orange, stroke: orange;
       </div>
-      <div class="mermaid" style="width: 50%; height: 400px;">
+      <div class="mermaid2" style="width: 50%; height: 400px;">
 flowchart TD
   A[Christmas] ==> D
   A[Christmas] -->|Get money| B(Go shopping)
@@ -55,14 +55,13 @@ flowchart TD
   class T TestSub
   linkStyle 0,1 color:orange, stroke: orange;
       </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-        flowchart TB
-subgraph A
-a -->b
-end
-subgraph B
-b
-end
+      <div class="mermaid" style="width: 50%; height: 20%;">
+graph TD
+  C -->|fa:fa-car Car| F[fa:fa-car Car]
+      </div>
+      <div class="mermaid" style="width: 50%; height: 20%;">
+flowchart TD
+  C -->|fa:fa-car Car| F[fa:fa-car Car]
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
         %%{init: {"fontFamily": "arial2"}}%%
