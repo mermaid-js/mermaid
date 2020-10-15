@@ -10,7 +10,7 @@ const rect = (parent, node) => {
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
-    .attr('class', 'cluster')
+    .attr('class', 'cluster' + (node.class ? ' ' + node.class : ''))
     .attr('id', node.id);
 
   // add the rect
