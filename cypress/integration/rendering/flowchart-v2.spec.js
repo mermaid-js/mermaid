@@ -324,5 +324,27 @@ end
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+  it('59: handle styling of subgraphs and links', () => {
+    imgSnapshotTest(
+      `
+flowchart TD
+  A[Christmas] ==> D
+  A[Christmas] -->|Get money| B(Go shopping)
+  A[Christmas] ==> C
+  subgraph T ["Test"]
+    A
+    B
+    C
+  end
+
+  classDef Test fill:#F84E68,stroke:#333,color:white;
+  class A,T Test
+  classDef TestSub fill:green;
+  class T TestSub
+  linkStyle 0,1 color:orange, stroke: orange;
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
 
 });
