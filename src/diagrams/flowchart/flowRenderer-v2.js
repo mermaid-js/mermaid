@@ -193,7 +193,7 @@ export const addEdges = function(edges, g) {
     var linkNameStart = 'LS-' + edge.start;
     var linkNameEnd = 'LE-' + edge.end;
 
-    const edgeData = {};
+    const edgeData = { style: '', labelStyle: '' };
     edgeData.minlen = edge.length || 1;
     //edgeData.id = 'id' + cnt;
 
@@ -227,45 +227,40 @@ export const addEdges = function(edges, g) {
         break;
     }
 
-    // logger.info('apa', edgeData, edge);
-    // edgeData.arrowTypeStart = edge.arrowTypeStart;
-    // edgeData.arrowTypeStart = edge.arrowTypeStart;
-    // edgeData.arrowType = edgeData.arrowTypeEnd;
-    // logger.info('apa', edgeData, edge);
-
     let style = '';
     let labelStyle = '';
 
+    switch (edge.stroke) {
+      case 'normal':
+        style = 'fill:none;';
+        if (typeof defaultStyle !== 'undefined') {
+          style = defaultStyle;
+        }
+        if (typeof defaultLabelStyle !== 'undefined') {
+          labelStyle = defaultLabelStyle;
+        }
+        edgeData.thickness = 'normal';
+        edgeData.pattern = 'solid';
+        break;
+      case 'dotted':
+        edgeData.thickness = 'normal';
+        edgeData.pattern = 'dotted';
+        edgeData.style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
+        break;
+      case 'thick':
+        edgeData.thickness = 'thick';
+        edgeData.pattern = 'solid';
+        edgeData.style = 'stroke-width: 3.5px;fill:none;';
+        break;
+    }
     if (typeof edge.style !== 'undefined') {
       const styles = getStylesFromArray(edge.style);
       style = styles.style;
       labelStyle = styles.labelStyle;
-    } else {
-      switch (edge.stroke) {
-        case 'normal':
-          style = 'fill:none';
-          if (typeof defaultStyle !== 'undefined') {
-            style = defaultStyle;
-          }
-          if (typeof defaultLabelStyle !== 'undefined') {
-            labelStyle = defaultLabelStyle;
-          }
-          edgeData.thickness = 'normal';
-          edgeData.pattern = 'solid';
-          break;
-        case 'dotted':
-          edgeData.thickness = 'normal';
-          edgeData.pattern = 'dotted';
-          break;
-        case 'thick':
-          edgeData.thickness = 'thick';
-          edgeData.pattern = 'solid';
-          break;
-      }
     }
 
-    edgeData.style = style;
-    edgeData.labelStyle = labelStyle;
+    edgeData.style = edgeData.style += style;
+    edgeData.labelStyle = edgeData.labelStyle += labelStyle;
 
     if (typeof edge.interpolate !== 'undefined') {
       edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
@@ -282,21 +277,21 @@ export const addEdges = function(edges, g) {
     } else {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
-
-      if (getConfig().flowchart.htmlLabels && false) { // eslint-disable-line
-        edgeData.labelType = 'html';
-        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
-      } else {
-        edgeData.labelType = 'text';
-        edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
-
-        if (typeof edge.style === 'undefined') {
-          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
-        }
-
-        edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
-      }
     }
+    // if (getConfig().flowchart.htmlLabels && false) {
+    //   // eslint-disable-line
+    //   edgeData.labelType = 'html';
+    //   edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
+    // } else {
+    edgeData.labelType = 'text';
+    edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
+
+    if (typeof edge.style === 'undefined') {
+      edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
+    }
+
+    edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
+    // }
 
     edgeData.id = linkId;
     edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
