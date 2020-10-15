@@ -231,7 +231,7 @@ To specify the visibility of a class member (i.e. any attribute or method), thes
 - `#` Protected
 - `~` Package/Internal
 
-> _note_ you can also include additional _classifers_ to a method definition by adding the following notations to the end of the method, i.e.: after the `()`:
+> _note_ you can also include additional _classifiers_ to a method definition by adding the following notations to the end of the method, i.e.: after the `()`:
 
 > - `*` Abstract e.g.: `someAbstractMethod()*`
 > - `$` Static e.g.: `someStaticMethod()$`
@@ -349,7 +349,7 @@ The different cardinality options are :
 - `0..n` zero to n {where n>1}
 - `1..n` one to n {where n>1}
 
-Cardinality can be easily defined by placing cardinality text within qoutes `"` before(optional) and after(optional) a given arrow.
+Cardinality can be easily defined by placing cardinality text within quotes `"` before(optional) and after(optional) a given arrow.
 
 ```
 [classA] "cardinality1" [Arrow] "cardinality2" [ClassB]:LabelText
@@ -606,7 +606,7 @@ The main styling of the class diagram is done with a preset number of css classe
 | g.classGroup line  | Styles for class diagram line                                     |
 | .classLabel .box   | Styles for class label box                                        |
 | .classLabel .label | Styles for class label text                                       |
-| composition        | Styles for componsition arrow head and arrow line                 |
+| composition        | Styles for composition arrow head and arrow line                  |
 | aggregation        | Styles for aggregation arrow head and arrow line(dashed or solid) |
 | dependency         | Styles for dependency arrow head and arrow line                   |
 
