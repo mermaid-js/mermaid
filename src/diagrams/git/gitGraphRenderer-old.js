@@ -1,21 +1,36 @@
 import { curveBasis, line, select } from 'd3';
 
-// import db from './gitGraphAst';
-import * as db from './mockDb';
+import db from './gitGraphAst';
 import gitGraphParser from './parser/gitGraph';
 import { logger } from '../../logger';
 import { interpolateToCurve } from '../../utils';
-import { getConfig } from '../../config';
-/* eslint-disable */
 
 let allCommitsDict = {};
 let branchNum;
-// let apiConfig = {};
-// export const setConf = function(c) {
-//   apiConfig = c;
-// };
+let config = {
+  nodeSpacing: 150,
+  nodeFillColor: 'yellow',
+  nodeStrokeWidth: 2,
+  nodeStrokeColor: 'grey',
+  lineStrokeWidth: 4,
+  branchOffset: 50,
+  lineColor: 'grey',
+  leftMargin: 50,
+  branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
+  nodeRadius: 10,
+  nodeLabel: {
+    width: 75,
+    height: 100,
+    x: -25,
+    y: 0
+  }
+};
+let apiConfig = {};
+export const setConf = function(c) {
+  apiConfig = c;
+};
+
 function svgCreateDefs(svg) {
-  const config = getConfig().gitGraph;
   svg
     .append('defs')
     .append('g')
@@ -38,7 +53,6 @@ function svgCreateDefs(svg) {
 }
 
 function svgDrawLine(svg, points, colorIdx, interpolate) {
-  const config = getConfig().gitGraph;
   const curve = interpolateToCurve(interpolate, curveBasis);
   const color = config.branchColors[colorIdx % config.branchColors.length];
   const lineGen = line()
@@ -73,7 +87,6 @@ function getElementCoords(element, coords) {
 }
 
 function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
-  const config = getConfig().gitGraph;
   logger.debug('svgDrawLineForCommits: ', fromId, toId);
   const fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'));
   const toBbox = getElementCoords(svg.select('#node-' + toId + ' circle'));
@@ -184,88 +197,87 @@ function cloneNode(svg, selector) {
     .cloneNode(true);
 }
 
-// function renderCommitHistory(svg, commitid, branches, direction) {
-//   const config = getConfig().gitGraph;
-//   let commit;
-//   const numCommits = Object.keys(allCommitsDict).length;
-//   if (typeof commitid === 'string') {
-//     do {
-//       commit = allCommitsDict[commitid];
-//       logger.debug('in renderCommitHistory', commit.id, commit.seq);
-//       if (svg.select('#node-' + commitid).size() > 0) {
-//         return;
-//       }
-//       svg
-//         .append(function() {
-//           return cloneNode(svg, '#def-commit');
-//         })
-//         .attr('class', 'commit')
-//         .attr('id', function() {
-//           return 'node-' + commit.id;
-//         })
-//         .attr('transform', function() {
-//           switch (direction) {
-//             case 'LR':
-//               return (
-//                 'translate(' +
-//                 (commit.seq * config.nodeSpacing + config.leftMargin) +
-//                 ', ' +
-//                 branchNum * config.branchOffset +
-//                 ')'
-//               );
-//             case 'BT':
-//               return (
-//                 'translate(' +
-//                 (branchNum * config.branchOffset + config.leftMargin) +
-//                 ', ' +
-//                 (numCommits - commit.seq) * config.nodeSpacing +
-//                 ')'
-//               );
-//           }
-//         })
-//         .attr('fill', config.nodeFillColor)
-//         .attr('stroke', config.nodeStrokeColor)
-//         .attr('stroke-width', config.nodeStrokeWidth);
+function renderCommitHistory(svg, commitid, branches, direction) {
+  let commit;
+  const numCommits = Object.keys(allCommitsDict).length;
+  if (typeof commitid === 'string') {
+    do {
+      commit = allCommitsDict[commitid];
+      logger.debug('in renderCommitHistory', commit.id, commit.seq);
+      if (svg.select('#node-' + commitid).size() > 0) {
+        return;
+      }
+      svg
+        .append(function() {
+          return cloneNode(svg, '#def-commit');
+        })
+        .attr('class', 'commit')
+        .attr('id', function() {
+          return 'node-' + commit.id;
+        })
+        .attr('transform', function() {
+          switch (direction) {
+            case 'LR':
+              return (
+                'translate(' +
+                (commit.seq * config.nodeSpacing + config.leftMargin) +
+                ', ' +
+                branchNum * config.branchOffset +
+                ')'
+              );
+            case 'BT':
+              return (
+                'translate(' +
+                (branchNum * config.branchOffset + config.leftMargin) +
+                ', ' +
+                (numCommits - commit.seq) * config.nodeSpacing +
+                ')'
+              );
+          }
+        })
+        .attr('fill', config.nodeFillColor)
+        .attr('stroke', config.nodeStrokeColor)
+        .attr('stroke-width', config.nodeStrokeWidth);
 
-//       let branch;
-//       for (let branchName in branches) {
-//         if (branches[branchName].commit === commit) {
-//           branch = branches[branchName];
-//           break;
-//         }
-//       }
-//       if (branch) {
-//         logger.debug('found branch ', branch.name);
-//         svg
-//           .select('#node-' + commit.id + ' p')
-//           .append('xhtml:span')
-//           .attr('class', 'branch-label')
-//           .text(branch.name + ', ');
-//       }
-//       svg
-//         .select('#node-' + commit.id + ' p')
-//         .append('xhtml:span')
-//         .attr('class', 'commit-id')
-//         .text(commit.id);
-//       if (commit.message !== '' && direction === 'BT') {
-//         svg
-//           .select('#node-' + commit.id + ' p')
-//           .append('xhtml:span')
-//           .attr('class', 'commit-msg')
-//           .text(', ' + commit.message);
-//       }
-//       commitid = commit.parent;
-//     } while (commitid && allCommitsDict[commitid]);
-//   }
+      let branch;
+      for (let branchName in branches) {
+        if (branches[branchName].commit === commit) {
+          branch = branches[branchName];
+          break;
+        }
+      }
+      if (branch) {
+        logger.debug('found branch ', branch.name);
+        svg
+          .select('#node-' + commit.id + ' p')
+          .append('xhtml:span')
+          .attr('class', 'branch-label')
+          .text(branch.name + ', ');
+      }
+      svg
+        .select('#node-' + commit.id + ' p')
+        .append('xhtml:span')
+        .attr('class', 'commit-id')
+        .text(commit.id);
+      if (commit.message !== '' && direction === 'BT') {
+        svg
+          .select('#node-' + commit.id + ' p')
+          .append('xhtml:span')
+          .attr('class', 'commit-msg')
+          .text(', ' + commit.message);
+      }
+      commitid = commit.parent;
+    } while (commitid && allCommitsDict[commitid]);
+  }
 
-//   if (Array.isArray(commitid)) {
-//     logger.debug('found merge commmit', commitid);
-//     renderCommitHistory(svg, commitid[0], branches, direction);
-//     branchNum++;
-//     renderCommitHistory(svg, commitid[1], branches, direction);
-//     branchNum--;
-//   }
-// }
+  if (Array.isArray(commitid)) {
+    logger.debug('found merge commmit', commitid);
+    renderCommitHistory(svg, commitid[0], branches, direction);
+    branchNum++;
+    renderCommitHistory(svg, commitid[1], branches, direction);
+    branchNum--;
+  }
+}
 
 function renderLines(svg, commit, direction, branchColor) {
   branchColor = branchColor || 0;
@@ -285,42 +297,45 @@ function renderLines(svg, commit, direction, branchColor) {
 }
 
 export const draw = function(txt, id, ver) {
-  const config = getConfig().gitGraph;
+  try {
+    const parser = gitGraphParser.parser;
+    parser.yy = db;
+    parser.yy.clear();
 
-  // try {
-  const parser = gitGraphParser.parser;
-  parser.yy = db;
-  parser.yy.clear();
+    logger.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
+    // Parse the graph definition
+    parser.parse(txt + '\n');
 
-  logger.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
-  // // Parse the graph definition
-  // parser.parse(txt + '\n');
-
-  // config = Object.assign(config, apiConfig, db.getOptions());
-  logger.debug('effective options', config);
-  const direction = db.getDirection();
-  allCommitsDict = db.getCommits();
-  const branches = db.getBranchesAsObjArray();
-
-  const svg = select(`[id="${id}"]`);
-  svgCreateDefs(svg);
-  branchNum = 1;
-  for (let branch in branches) {
-    const v = branches[branch];
-    // renderCommitHistory(svg, v.commit.id, branches, direction);
-    renderLines(svg, v.commit, direction);
-    branchNum++;
+    config = Object.assign(config, apiConfig, db.getOptions());
+    logger.debug('effective options', config);
+    const direction = db.getDirection();
+    allCommitsDict = db.getCommits();
+    const branches = db.getBranchesAsObjArray();
+    if (direction === 'BT') {
+      config.nodeLabel.x = branches.length * config.branchOffset;
+      config.nodeLabel.width = '100%';
+      config.nodeLabel.y = -1 * 2 * config.nodeRadius;
+    }
+    const svg = select(`[id="${id}"]`);
+    svgCreateDefs(svg);
+    branchNum = 1;
+    for (let branch in branches) {
+      const v = branches[branch];
+      renderCommitHistory(svg, v.commit.id, branches, direction);
+      renderLines(svg, v.commit, direction);
+      branchNum++;
+    }
+    svg.attr('height', function() {
+      if (direction === 'BT') return Object.keys(allCommitsDict).length * config.nodeSpacing;
+      return (branches.length + 1) * config.branchOffset;
+    });
+  } catch (e) {
+    logger.error('Error while rendering gitgraph');
+    logger.error(e.message);
   }
-  svg.attr('height', function() {
-    if (direction === 'BT') return Object.keys(allCommitsDict).length * config.nodeSpacing;
-    return (branches.length + 1) * config.branchOffset;
-  });
-  // } catch (e) {
-  //   logger.error('Error while rendering gitgraph');
-  //   logger.error(e.message);
-  // }
 };
 
 export default {
+  setConf,
   draw
 };

@@ -916,6 +916,24 @@ const config = {
      ***Default value: true**.
      */
     useMaxWidth: true
+  },
+  gitGraph: {
+    nodeSpacing: 150,
+    nodeFillColor: 'yellow',
+    nodeStrokeWidth: 2,
+    nodeStrokeColor: 'grey',
+    lineStrokeWidth: 4,
+    branchOffset: 50,
+    lineColor: 'grey',
+    leftMargin: 50,
+    branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
+    nodeRadius: 10,
+    nodeLabel: {
+      width: 75,
+      height: 100,
+      x: -25,
+      y: 0
+    }
   }
 };
 
