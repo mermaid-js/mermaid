@@ -18,10 +18,10 @@
 
 - Contributions and Community
 
-  <!-- - [Development and Contribution](development.md)
-  - [Mermaid Versions](versionUpdates.md)
-  - [Changelog](CHANGELOG.md) -->
-  - [Adding Diagrams](newDiagram.md) -->
+  <!-- - [Development and Contribution](development.md)-->
+  <!-- - [Adding Diagrams](newDiagram.md)-->
+  <!-- - [Changelog](CHANGELOG.md) -->
+  
 
 - Diagrams and Syntax and Examples
 

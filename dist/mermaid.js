@@ -49035,7 +49035,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.7.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false | sed '1i---\\\\nsort: 3\\\\ntitle: Configurations\\\\n---\\\\n' > docs/getting-started/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.8.2\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false | sed '1i---\\\\nsort: 3\\\\ntitle: Configurations\\\\n---\\\\n' > docs/getting-started/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -51371,7 +51371,7 @@ var rect = function rect(parent, node) {
   _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Classes = ', node.classes); // add the rect
 
   var rect = shapeSvg.insert('rect', ':first-child');
-  rect.attr('class', 'basic label-container').attr('rx', node.rx).attr('ry', node.ry).attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
+  rect.attr('class', 'basic label-container').attr('style', node.style).attr('rx', node.rx).attr('ry', node.ry).attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
   Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, rect);
 
   node.intersect = function (point) {
@@ -51841,6 +51841,10 @@ var insertNode = function insertNode(elem, node, dir) {
     el.attr('title', node.tooltip);
   }
 
+  if (node.class) {
+    el.attr('class', 'node default ' + node.class);
+  }
+
   nodeElems[node.id] = newEl;
 
   if (node.haveCallback) {
@@ -51937,7 +51941,7 @@ var labelHelper = function labelHelper(parent, node, _classes, isNode) {
 
   var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.domId || node.id); // Create the label and insert it after the rect
 
-  var label = shapeSvg.insert('g').attr('class', 'label');
+  var label = shapeSvg.insert('g').attr('class', 'label').attr('style', node.labelStyle);
   var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_0__["default"])(node.labelText, node.labelStyle, false, isNode)); // Get the size of the label
 
   var bbox = text.getBBox();
@@ -53327,9 +53331,14 @@ var addClasses = function addClasses(classes, g) {
      * @type {string}
      */
 
-    var classStr = 'default'; // if (vertex.classes.length > 0) {
+    var cssClassStr = '';
+
+    if (vertex.cssClasses.length > 0) {
+      cssClassStr = cssClassStr + ' ' + vertex.cssClasses.join(' ');
+    } // if (vertex.classes.length > 0) {
     //   classStr = vertex.classes.join(' ');
     // }
+
 
     var styles = {
       labelStyle: ''
@@ -53382,7 +53391,7 @@ var addClasses = function addClasses(classes, g) {
       classData: vertex,
       rx: radious,
       ry: radious,
-      class: classStr,
+      class: cssClassStr,
       style: styles.style,
       id: vertex.id,
       domId: vertex.domId,
@@ -53398,7 +53407,7 @@ var addClasses = function addClasses(classes, g) {
       labelText: vertexText,
       rx: radious,
       ry: radious,
-      class: classStr,
+      class: cssClassStr,
       style: styles.style,
       id: vertex.id,
       width: vertex.type === 'group' ? 500 : undefined,
@@ -56771,7 +56780,7 @@ function insertPolygonShape(parent, w, h, points) {
 /*!******************************************!*\
   !*** ./src/diagrams/flowchart/flowDb.js ***!
   \******************************************/
-/*! exports provided: parseDirective, lookUpDomId, addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
+/*! exports provided: parseDirective, lookUpDomId, addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, setGen, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56795,6 +56804,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getEdges", function() { return getEdges; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getClasses", function() { return getClasses; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setGen", function() { return setGen; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultStyle", function() { return defaultStyle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addSubGraph", function() { return addSubGraph; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDepthFirstPos", function() { return getDepthFirstPos; });
@@ -56806,13 +56816,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 
 
 
 
- // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
+
 
 var MERMAID_DOM_ID_PREFIX = 'flowchart-';
 var vertexCounter = 0;
@@ -56825,7 +56836,9 @@ var subGraphLookup = {};
 var tooltips = {};
 var subCount = 0;
 var firstGraphFlag = true;
-var direction; // Functions to be run after graph rendering
+var direction;
+var version; // As in graph
+// Functions to be run after graph rendering
 
 var funs = [];
 var parseDirective = function parseDirective(statement, context, type) {
@@ -56845,6 +56858,8 @@ var lookUpDomId = function lookUpDomId(id) {
       return vertices[veritceKeys[i]].domId;
     }
   }
+
+  return id;
 };
 /**
  * Function called by parser when a node definition has been found
@@ -57050,6 +57065,7 @@ var setDirection = function setDirection(dir) {
 
 var setClass = function setClass(ids, className) {
   ids.split(',').forEach(function (_id) {
+    // let id = version === 'gen-2' ? lookUpDomId(_id) : _id;
     var id = _id; // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
     if (typeof vertices[id] !== 'undefined') {
@@ -57065,7 +57081,7 @@ var setClass = function setClass(ids, className) {
 var setTooltip = function setTooltip(ids, tooltip) {
   ids.split(',').forEach(function (id) {
     if (typeof tooltip !== 'undefined') {
-      tooltips[id] = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(tooltip, config);
+      tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(tooltip, config);
     }
   });
 };
@@ -57104,8 +57120,6 @@ var setClickFun = function setClickFun(id, functionName) {
 
 var setLink = function setLink(ids, linkStr, tooltip, target) {
   ids.split(',').forEach(function (id) {
-    // let domId = lookUpDomId(id);
-    // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
@@ -57197,7 +57211,7 @@ funs.push(setupToolTips);
  * Clears the internal graph db so that a new graph can be parsed.
  */
 
-var clear = function clear() {
+var clear = function clear(ver) {
   vertices = {};
   classes = {};
   edges = [];
@@ -57208,6 +57222,10 @@ var clear = function clear() {
   subCount = 0;
   tooltips = [];
   firstGraphFlag = true;
+  version = ver || 'gen-1';
+};
+var setGen = function setGen(ver) {
+  version = ver || 'gen-1';
 };
 /**
  *
@@ -57255,12 +57273,16 @@ var addSubGraph = function addSubGraph(_id, list, _title) {
   var nodeList = [];
   nodeList = uniq(nodeList.concat.apply(nodeList, list));
 
-  for (var i = 0; i < nodeList.length; i++) {
-    if (nodeList[i][0].match(/\d/)) nodeList[i] = MERMAID_DOM_ID_PREFIX + nodeList[i];
+  if (version === 'gen-1') {
+    _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].warn('LOOKING UP');
+
+    for (var i = 0; i < nodeList.length; i++) {
+      nodeList[i] = lookUpDomId(nodeList[i]);
+    }
   }
 
-  id = id || 'subGraph' + subCount;
-  if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+  id = id || 'subGraph' + subCount; // if (id[0].match(/\d/)) id = lookUpDomId(id);
+
   title = title || '';
   title = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(title, config);
   subCount = subCount + 1;
@@ -57270,26 +57292,23 @@ var addSubGraph = function addSubGraph(_id, list, _title) {
     title: title.trim(),
     classes: []
   };
+  console.log('Adding', subGraph.id, subGraph.nodes);
   /**
    * Deletes an id from all subgraphs
    */
+  // const del = _id => {
+  //   subGraphs.forEach(sg => {
+  //     const pos = sg.nodes.indexOf(_id);
+  //     if (pos >= 0) {
+  //       sg.nodes.splice(pos, 1);
+  //     }
+  //   });
+  // };
+  // // Removes the members of this subgraph from any other subgraphs, a node only belong to one subgraph
+  // subGraph.nodes.forEach(_id => del(_id));
+  // Remove the members in the new subgraph if they already belong to another subgraph
 
-  var del = function del(_id) {
-    subGraphs.forEach(function (sg) {
-      var pos = sg.nodes.indexOf(_id);
-
-      if (pos >= 0) {
-        console.log(sg.nodes, pos, _id);
-        sg.nodes.splice(pos, 1);
-      }
-    });
-  }; // Removes the members of this subgraph from any other subgraphs, a node only belong to one subgraph
-
-
-  subGraph.nodes.forEach(function (_id) {
-    return del(_id);
-  });
-  console.log(subGraph.nodes);
+  subGraph.nodes = makeUniq(subGraph, subGraphs).nodes;
   subGraphs.push(subGraph);
   subGraphLookup[id] = subGraph;
   return id;
@@ -57520,6 +57539,35 @@ var destructLink = function destructLink(_str, _startStr) {
   }
 
   return info;
+}; // Todo optimizer this by caching existing nodes
+
+
+var exists = function exists(allSgs, _id) {
+  var res = false;
+  allSgs.forEach(function (sg) {
+    var pos = sg.nodes.indexOf(_id);
+
+    if (pos >= 0) {
+      res = true;
+    }
+  });
+  return res;
+};
+/**
+ * Deletes an id from all subgraphs
+ */
+
+
+var makeUniq = function makeUniq(sg, allSubgraphs) {
+  var res = [];
+  sg.nodes.forEach(function (_id, pos) {
+    if (!exists(allSubgraphs, _id)) {
+      res.push(sg.nodes[pos]);
+    }
+  });
+  return {
+    nodes: res
+  };
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -57544,6 +57592,7 @@ var destructLink = function destructLink(_str, _startStr) {
   getEdges: getEdges,
   getClasses: getClasses,
   clear: clear,
+  setGen: setGen,
   defaultStyle: defaultStyle,
   addSubGraph: addSubGraph,
   getDepthFirstPos: getDepthFirstPos,
@@ -57552,7 +57601,9 @@ var destructLink = function destructLink(_str, _startStr) {
   destructLink: destructLink,
   lex: {
     firstGraph: firstGraph
-  }
+  },
+  exists: exists,
+  makeUniq: makeUniq
 });
 
 /***/ }),
@@ -57937,6 +57988,7 @@ var getClasses = function getClasses(text) {
 var draw = function draw(text, id) {
   _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Drawing flowchart');
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
+  _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].setGen('gen-2');
   var parser = _parser_flow__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
   parser.yy = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"]; // Parse the graph definition
   // try {
@@ -58260,7 +58312,8 @@ var addVertices = function addVertices(vert, g, svgId) {
     } // Add the node
 
 
-    g.setNode(vertex.id, {
+    _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].warn('Adding node', vertex.id, vertex.domId);
+    g.setNode(_flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(vertex.id), {
       labelType: 'svg',
       labelStyle: styles.labelStyle,
       shape: _shape,
@@ -58269,7 +58322,7 @@ var addVertices = function addVertices(vert, g, svgId) {
       ry: radious,
       class: classStr,
       style: styles.style,
-      id: vertex.id
+      id: _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(vertex.id)
     });
   });
 };
@@ -58374,7 +58427,7 @@ var addEdges = function addEdges(edges, g) {
     edgeData.class = linkNameStart + ' ' + linkNameEnd;
     edgeData.minlen = edge.length || 1; // Add the edge to the graph
 
-    g.setEdge(edge.start, edge.end, edgeData, cnt);
+    g.setEdge(_flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(edge.start), _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(edge.end), edgeData, cnt);
   });
 };
 /**
@@ -58405,6 +58458,7 @@ var getClasses = function getClasses(text) {
 var draw = function draw(text, id) {
   _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Drawing flowchart');
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
+  _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].setGen('gen-1');
   var parser = _parser_flow__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
   parser.yy = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"]; // Parse the graph definition
   // try {
@@ -58446,6 +58500,7 @@ var draw = function draw(text, id) {
 
 
   var vert = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getVertices();
+  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].warn('Get vertices', vert);
   var edges = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getEdges();
   var i = 0;
 
@@ -58454,7 +58509,8 @@ var draw = function draw(text, id) {
     Object(d3__WEBPACK_IMPORTED_MODULE_1__["selectAll"])('cluster').append('text');
 
     for (var j = 0; j < subG.nodes.length; j++) {
-      g.setParent(subG.nodes[j], subG.id);
+      _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].warn('Setting subgraph', subG.nodes[j], _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.nodes[j]), _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.id));
+      g.setParent(_flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.nodes[j]), _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.id));
     }
   }
 
@@ -58480,7 +58536,8 @@ var draw = function draw(text, id) {
 
 
   var svg = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])("[id=\"".concat(id, "\"]"));
-  svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink'); // Run the renderer. This is what draws the final graph.
+  svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].warn(g); // Run the renderer. This is what draws the final graph.
 
   var element = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#' + id + ' g');
   render(element, g);
@@ -58503,8 +58560,8 @@ var draw = function draw(text, id) {
     subG = subGraphs[i];
 
     if (subG.title !== 'undefined') {
-      var clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
-      var clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
+      var clusterRects = document.querySelectorAll('#' + id + ' [id="' + _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.id) + '"] rect');
+      var clusterEl = document.querySelectorAll('#' + id + ' [id="' + _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.id) + '"]');
       var xPos = clusterRects[0].x.baseVal.value;
       var yPos = clusterRects[0].y.baseVal.value;
       var _width = clusterRects[0].width.baseVal.value;
@@ -58544,7 +58601,7 @@ var draw = function draw(text, id) {
     var vertex = vert[key];
 
     if (vertex.link) {
-      var node = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#' + id + ' [id="' + key + '"]');
+      var node = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#' + id + ' [id="' + _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(key) + '"]');
 
       if (node) {
         var link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
@@ -64159,7 +64216,7 @@ case 4:return 24;
 break;
 case 5:/* skip comments */
 break;
-case 6:/* skip comments */{ console.log('Crap after close'); }
+case 6:/* skip comments */{ /*console.log('');*/ }
 break;
 case 7:return 19;
 break;
@@ -64357,7 +64414,6 @@ var draw = function draw(txt, id) {
     }
 
     var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + id);
-    console.log('conf', conf);
     Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Set viewBox
 
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height); // Fetch the default direction, use TD if none was found
@@ -65367,7 +65423,6 @@ var activationCount = function activationCount(part) {
   var count = 0;
 
   for (i = 0; i < messages.length; i++) {
-    // console.warn(i, messages[i]);
     if (messages[i].type === LINETYPE.ACTIVE_START) {
       if (messages[i].from.actor === part) {
         count++;
@@ -65875,7 +65930,6 @@ var bounds = {
     return this.verticalPos;
   },
   getBounds: function getBounds() {
-    console.log('here', this.data);
     return {
       bounds: this.data,
       models: this.models
@@ -66147,7 +66201,6 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 
 var draw = function draw(text, id) {
   conf = _config__WEBPACK_IMPORTED_MODULE_6__["getConfig"]().sequence;
-  console.log('there ', conf);
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.clear();
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.setWrap(conf.wrap);
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].parse(text + '\n');
@@ -68103,8 +68156,7 @@ var addTitleAndBox = function addTitleAndBox(g, stateDef, altBkg) {
   //   .attr('y2', lineY)
   //   .attr('class', 'descr-divider');
 
-  var graphBox = g.node().getBBox(); // console.warn(width / 2, titleWidth / 2, getConfig().state.padding, orgBox);
-  // descrLine.attr('x2', graphBox.width + getConfig().state.padding);
+  var graphBox = g.node().getBBox(); // descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
   if (stateDef.doc) {// cnsole.warn(
     //   stateDef.id,
@@ -68216,8 +68268,7 @@ var _drawLongText = function _drawLongText(_text, x, y, g) {
         if (tHeight === 0) {
           var textBounds = span.node().getBBox();
           tHeight += textBounds.height;
-        } // console.warn('textBounds', textBounds);
-
+        }
 
         textHeight += tHeight;
         span.attr('x', x + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.noteMargin);
@@ -68341,8 +68392,7 @@ var drawEdge = function drawEdge(elem, path, relation) {
         x = _utils$calcLabelPosit.x,
         y = _utils$calcLabelPosit.y;
 
-    var rows = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].getRows(relation.title); // console.warn(rows);
-
+    var rows = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].getRows(relation.title);
     var titleHeight = 0;
     var titleRows = [];
     var maxWidth = 0;
@@ -72371,10 +72421,6 @@ function () {
 var getThemeVariables = function getThemeVariables(userOverrides) {
   var theme = new Theme();
   theme.calculate(userOverrides);
-  console.info('Theme(dark)', {
-    userOverrides: userOverrides,
-    theme: theme
-  });
   return theme;
 };
 
@@ -72600,8 +72646,7 @@ function () {
 
 var getThemeVariables = function getThemeVariables(userOverrides) {
   var theme = new Theme();
-  theme.calculate(userOverrides); // console.info('Theme(default)', { userOverrides, theme });
-
+  theme.calculate(userOverrides);
   return theme;
 };
 
@@ -72797,10 +72842,6 @@ function () {
 var getThemeVariables = function getThemeVariables(userOverrides) {
   var theme = new Theme();
   theme.calculate(userOverrides);
-  console.info('Theme(forest)', {
-    userOverrides: userOverrides,
-    theme: theme
-  });
   return theme;
 };
 
@@ -72869,8 +72910,7 @@ function () {
 
     this.tertiaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
       h: -160
-    }); // console.log('primary color', this.primaryColor, 'tertiary - color', this.tertiaryColor);
-
+    });
     this.primaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.primaryColor, this.darkMode);
     this.secondaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
     this.tertiaryBorderColor = Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode); // this.noteBorderColor = mkBorder(this.noteBkgColor, this.darkMode);
@@ -73051,10 +73091,6 @@ function () {
 var getThemeVariables = function getThemeVariables(userOverrides) {
   var theme = new Theme();
   theme.calculate(userOverrides);
-  console.info('Theme(neutral)', {
-    userOverrides: userOverrides,
-    theme: theme
-  });
   return theme;
 };
 
@@ -74002,7 +74038,6 @@ var calculateSvgSizeAttrs = function calculateSvgSizeAttrs(height, width, useMax
 };
 var configureSvgSize = function configureSvgSize(svgElem, height, width, useMaxWidth) {
   var attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
-  console.log('svgElem', svgElem);
   d3Attrs(svgElem, attrs);
 };
 /* harmony default export */ __webpack_exports__["default"] = ({

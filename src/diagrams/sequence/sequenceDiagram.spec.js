@@ -942,7 +942,6 @@ describe('when rendering a sequenceDiagram APA', function() {
       wrap: false,
       mirrorActors: false
     };
-    console.warn('Set site config');
     configApi.setSiteConfig({ logLevel: 5, sequence: conf });
   });
   let conf;
@@ -1249,7 +1248,6 @@ Bob->>Alice: Fine!`;
     const { bounds, models } = renderer.bounds.getBounds();
     const msgs = parser.yy.getMessages();
     const mermaid = mermaidAPI.getConfig();
-    console.log(mermaid)
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
     expect(mermaid.theme).toBe('dark');

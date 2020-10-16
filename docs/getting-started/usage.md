@@ -17,14 +17,14 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 ## Using mermaid
 
-For the majority of beginners, using the live editor or suppoting mermaid on a webpage would cover their uses for mermaid.
+For the majority of beginners, using the live editor or supporting mermaid on a webpage would cover their uses for mermaid.
 
 ## Installing and Hosting mermaid on a webpage
 
 ### Using the npm package
 
 ```
-1.You will need to insall node v10 or 12, which would have npm.
+1.You will need to install node v10 or 12, which would have npm.
 
 2. download yarn using npm.
 
@@ -121,9 +121,9 @@ Mermaid can load multiple diagrams, in the same page.
 This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
 ```
 
-**If you are taking resposibility for the diagram source security you can set the `securityLevel` to a value of your choosing . By doing this clicks and tags are allowed.**
+**If you are taking responsibility for the diagram source security you can set the `securityLevel` to a value of your choosing . By doing this clicks and tags are allowed.**
 
-## To chage `securityLevel` with `mermaidAPI.initialize`:
+## To change `securityLevel` with `mermaidAPI.initialize`:
 
 ```javascript
 mermaidAPI.initialize({
@@ -198,7 +198,7 @@ mermaid fully supports webpack. Here is a [working demo](https://github.com/merm
 
 ## API usage
 
-The main idea of the API is to be able to call a render function with the graph defintion as a string. The render function
+The main idea of the API is to be able to call a render function with the graph definition as a string. The render function
 will render the graph and call a callback with the resulting svg code. With this approach it is up to the site creator to
 fetch the graph definition from the site (perhaps from a textarea), render it and place the graph somewhere in the site.
 

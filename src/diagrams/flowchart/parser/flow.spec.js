@@ -121,7 +121,6 @@ describe('when parsing ', function() {
 
     const res = flow.parser.parse(statement);
     const vertices = flow.parser.yy.getVertices();
-    console.log(vertices);
     const classes = flow.parser.yy.getClasses();
     expect(vertices['node1TB'].id).toBe('node1TB');
   });
@@ -132,7 +131,6 @@ describe('when parsing ', function() {
     statement = statement + 'graph TD;A--x|text including URL space|B;';
     const res = flow.parser.parse(statement);
     const vertices = flow.parser.yy.getVertices();
-    console.log(vertices);
     const classes = flow.parser.yy.getClasses();
     expect(vertices['A'].id).toBe('A');
   });
@@ -142,7 +140,6 @@ describe('when parsing ', function() {
     statement = statement + 'graph TB;subgraph "number as labels";1;end;';
     const res = flow.parser.parse(statement);
     const vertices = flow.parser.yy.getVertices();
-    console.log(vertices);
     const classes = flow.parser.yy.getClasses();
     expect(vertices['1'].id).toBe('1');
   });

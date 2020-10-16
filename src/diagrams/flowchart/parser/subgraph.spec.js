@@ -244,8 +244,9 @@ describe('when parsing subgraphs', function() {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
     b-->B
-    a-->c
+    a
     end
+    a-->c
     subgraph B
       c
     end`);
@@ -288,7 +289,6 @@ describe('when parsing subgraphs', function() {
     expect(subgraphA.nodes).not.toContain('c');
   });
   it('should handle nested subgraphs 3', function() {
-    console.log('#3');
     const res = flow.parser.parse(`flowchart TB
     subgraph B
       c
@@ -304,7 +304,6 @@ describe('when parsing subgraphs', function() {
 
     const subgraphA = filter(subgraphs,o => o.id === 'A')[0];
     const subgraphB = filter(subgraphs,o => o.id === 'B')[0];
-    console.log(subgraphB.nodes)
     expect(subgraphB.nodes[0]).toBe('c');
     expect(subgraphA.nodes).toContain('B');
     expect(subgraphA.nodes).toContain('b');

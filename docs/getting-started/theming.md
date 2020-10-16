@@ -108,7 +108,7 @@ Leaving it empty will set all variable values to default.
 
 Color definitions have certain interactions in mermaid, this is in order to ensure visibility for diagrams. mermaid will adjust some variables automatically, when colors are changed in order to compensate and maintain readability.
 
-**The Default Value Column** to the right of the Variable coloumn will denote the Variable paired/associated with the Variable on the left and the nature of this pairing or association. If it for instance says primaryColor it means that it gets primaryColor as default value. If it says "based on primaryColor" it means that it is calculated/ derived from primaryColor. This calculation can be primary color inversion, a change of hue, darkening or lightening by 10%, etc.
+**The Default Value Column** to the right of the Variable column will denote the Variable paired/associated with the Variable on the left and the nature of this pairing or association. If it for instance says primaryColor it means that it gets primaryColor as default value. If it says "based on primaryColor" it means that it is calculated/ derived from primaryColor. This calculation can be primary color inversion, a change of hue, darkening or lightening by 10%, etc.
 
 You can create your own themes, by changing any of the given variables below. If you are using a dark background, set dark mode to true to adjust the colors. It is possible to override the calculations using the variable names below, with `%%init%%` if you wish to style it differently.
 
@@ -129,14 +129,14 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 | secondaryColor       | based on primaryColor          | *    |                                                                                                                                  |
 | tertiaryColor        | based on primaryColor          | *    |                                                                                                                                  |
 | primaryBorderColor   | based on primaryColor          | *    | Color to be used as border in nodes using primaryColor                                                                           |
-| primaryTextColor     | based on darkMode #ddd/#333    | *    | Color to be used as text color in nodesusing primaryColor                                                                        |
+| primaryTextColor     | based on darkMode #ddd/#333    | *    | Color to be used as text color in nodes using primaryColor                                                                        |
 | secondaryBorderColor | based on secondaryColor        | *    | Color to be used as border in nodes using secondaryColor                                                                         |
-| secondaryTextColor   | based on secondaryColor        | *    | Color to be used as text color in nodesusing secondaryColor                                                                      |
+| secondaryTextColor   | based on secondaryColor        | *    | Color to be used as text color in nodes using secondaryColor                                                                      |
 | tertiaryBorderColor  | based on tertiaryColor         | *    | Color to be used as border in nodes using tertiaryColor                                                                          |
-| tertiaryTextColor    | based on tertiaryColor         | *    | Color to be used as text color in nodesusing tertiaryColor                                                                       |
+| tertiaryTextColor    | based on tertiaryColor         | *    | Color to be used as text color in nodes using tertiaryColor                                                                       |
 | noteBkgColor         | #fff5ad                        |      | Color used as background in notes                                                                                                |
-| noteTextColor        | #333                           |      | Text color in note rectangless.                                                                                                        |
-| noteBorderColor      | based on noteBkgColor          | *    | Border color in note rectangless.                                                                                                      |
+| noteTextColor        | #333                           |      | Text color in note rectangles.                                                                                                        |
+| noteBorderColor      | based on noteBkgColor          | *    | Border color in note rectangles.                                                                                                      |
 | lineColor            | based on background            | *    |                                                                                                                                  |
 | textColor            | based on primaryTextColor      | *    | Text in diagram over the background for instance text on labels and on signals in sequence diagram or the title in gantt diagram |
 | mainBkg              | based on primaryColor          | *    | Background in flowchart objects like rects/circles, class diagram classes, sequence diagram  etc                                 |
@@ -247,7 +247,7 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 **This got a bit too dark and bit too colorful. With some easy steps this can be fixed:
 
 * Make the primary color a little lighter
-* set the teriary color to a redish shade as well
+* set the tertiary color to a reddish shade as well
 * make the edge label background differ from the subgraph by setting the edgeLabelBackground
 
 
@@ -336,7 +336,23 @@ In the following examples, the directive `init` is used, with the `theme` being 
 
 ### Flowchart (beta)
 ```
-mermaid
+%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+        flowchart TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[Another]
+          C ==>|One| D[Laptop]
+          C x--x|Two| E[iPhone]
+          C o--o|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+```mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         flowchart TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -355,10 +371,26 @@ mermaid
 ```
 
 ### Sequence diagram
-
+```
+%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+        sequenceDiagram
+          autonumber
+          par Action 1
+            Alice->>John: Hello John, how are you?
+          and Action 2
+            Alice->>Bob: Hello Bob, how are you?
+          end
+          Alice->>+John: Hello John, how are you?
+          Alice->>+John: John, can you hear me?
+          John-->>-Alice: Hi Alice, I can hear you!
+          Note right of John: John is perceptive
+          John-->>-Alice: I feel great!
+              loop Every minute
+                John-->Alice: Great!
+            end
+```
 ```mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
-
         sequenceDiagram
           autonumber
           par Action 1
@@ -376,8 +408,32 @@ mermaid
             end
 ```
 
-### class diagram
+### Class diagram
+```
+%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 
+classDiagram
+	Animal "1" <|-- Duck
+	Animal <|-- Fish
+	Animal <--o Zebra
+	Animal : +int age
+	Animal : +String gender
+	Animal: +isMammal()
+	Animal: +mate()
+	class Duck{
+		+String beakColor
+		+swim()
+		+quack()
+	}
+	class Fish{
+		-int sizeInFeet
+		-canEat()
+	}
+	class Zebra{
+		+bool is_wild
+		+run()
+	}
+```
 ```mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 
@@ -468,7 +524,6 @@ gantt
 
 ### State diagram
 ```
-mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
       stateDiagram
         [*] --> Active

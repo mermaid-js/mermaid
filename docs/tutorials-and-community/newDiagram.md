@@ -1,5 +1,5 @@
 ---
-sort: 1
+sort: 2
 title: Adding a New Diagram/Chart 
 ---
 

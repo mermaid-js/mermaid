@@ -139,7 +139,7 @@ graph LR
     id1((This is the text in the circle))
 ```
 
-### A node in an asymetric shape
+### A node in an asymmetric shape
 
 ```
 graph LR
@@ -356,7 +356,7 @@ graph LR
    a --> b & c--> d
 ```
 
-You can then describe dependencies in a very expressive way. Like the onliner below:
+You can then describe dependencies in a very expressive way. Like the oneliner below:
 ```
 graph TB
     A & B--> C & D
@@ -493,7 +493,7 @@ graph LR
 
 ### Entity codes to escape characters
 
-It is possible to escape characters using the syntax examplified here.
+It is possible to escape characters using the syntax exemplified here.
 
 ```
     graph LR
@@ -541,7 +541,7 @@ graph TB
     end
  ```
 
- You can also set an excplicit id for the subgraph.
+ You can also set an explicit id for the subgraph.
 
 ```
 graph TB
@@ -808,7 +808,7 @@ If a class is named default it will be assigned to all classes without specific 
 
 It is possible to add icons from fontawesome.
 
-The icons are acessed via the syntax fa:#icon class name#.
+The icons are accessed via the syntax fa:#icon class name#.
 
 ```
 graph TD
