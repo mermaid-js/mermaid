@@ -19,6 +19,16 @@ const getStyles = options =>
   .branch5 { stroke: ${options.fillType5}; }
   .branch6 { stroke: ${options.fillType6}; }
   .branch7 { stroke: ${options.fillType7}; }
+  .label0  { fill: ${options.fillType0}; }
+  .label1  { fill: ${options.fillType1}; }
+  .label2  { fill: ${options.fillType2}; }
+  .label3  { fill: ${options.fillType3}; }
+  .label4  { fill: ${options.fillType4}; }
+  .label5  { fill: ${options.fillType5}; }
+  .label6  { fill: ${options.fillType6}; }
+  .label7  { fill: ${options.fillType7}; }
+  .branchLabel  { }
+  }
 `;
 
 export default getStyles;

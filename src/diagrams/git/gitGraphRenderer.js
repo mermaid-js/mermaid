@@ -1,10 +1,10 @@
 /* eslint-disable */
 import { curveBasis, line, select } from 'd3';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
+import { logger } from '../../logger'; // eslint-disable-line
 // import db from './gitGraphAst';
 import * as db from './mockDb';
 import gitGraphParser from './parser/gitGraph';
-import { logger } from '../../logger';
 import { getConfig } from '../../config';
 /* eslint-disable */
 
@@ -37,6 +37,30 @@ function svgCreateDefs(svg) {
     .html('');
 }
 
+const drawText = (txt) => {
+  const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    // svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
+    let rows = [];
+    if (typeof txt === 'string') {
+      rows = txt.split(/\\n|\n|<br\s*\/?>/gi);
+    } else if (Array.isArray(txt)) {
+      rows = txt;
+    } else {
+      rows = [];
+    }
+
+    for (let j = 0; j < rows.length; j++) {
+      const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+      tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+      tspan.setAttribute('dy', '1em');
+      tspan.setAttribute('x', '0');
+      tspan.setAttribute('class', 'row');
+      tspan.textContent = rows[j].trim();
+      svgLabel.appendChild(tspan);
+  }
+  return svgLabel;
+}
+
 const drawBranches = (svg, branches) => {
   const g = svg.append('g')
   let pos = 0;
@@ -47,6 +71,28 @@ const drawBranches = (svg, branches) => {
       line.attr('x2', 500);
       line.attr('y2', pos);
       line.attr('class', 'branch branch'+index)
+
+      // Create the actual text element
+      const labelElement = drawText(branch.name);
+      // Create outer g, edgeLabel, this will be positioned after graph layout
+      const bkg = g.insert('rect');
+      const branchLabel = g.insert('g').attr('class', 'branchLabel');
+
+      // Create inner g, label, this will be positioned now for centering the text
+      const label = branchLabel.insert('g').attr('class', 'label');
+      label.node().appendChild(labelElement);
+      let bbox = labelElement.getBBox();
+      logger.info(bbox);
+      bkg.attr('class', 'branchLabelBkg label' + index)
+        .attr('rx', 4)
+        .attr('ry', 4)
+        .attr('x', -bbox.width -4)
+        .attr('y', -bbox.height / 2 +8 )
+        .attr('width', bbox.width + 18)
+        .attr('height', bbox.height + 4);
+
+      label.attr('transform', 'translate(' + (-bbox.width -14) + ', ' + (pos - bbox.height/2-1) + ')');
+      bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - bbox.height/2) + ')');
       pos += 50;
     })
 }
