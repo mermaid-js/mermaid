@@ -51,7 +51,7 @@ If it is not in the documentation, it's like it never happened. Wouldn't that be
 
 The docs are located in the `docs` folder and are written in MarkDown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation: 
 
-**All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/assets/_sidebar.md). Click edit it to see them. 
+**All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/assets/_sidebar.md). Click edit it to see them.**
 
 The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from **Master** Branch. 
 
