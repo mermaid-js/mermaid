@@ -53,7 +53,7 @@ The docs are located in the `docs` folder and are written in MarkDown. Just pick
 
 **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/assets/_sidebar.md). Click edit it to see them. 
 
-The contents of http://mermaid-js.github.io/mermaid/ are based on the docs from **Master** Branch. 
+The contents of [http://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from **Master** Branch. 
 
 ## How to Contribute to Docs
 
