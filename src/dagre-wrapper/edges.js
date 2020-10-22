@@ -235,7 +235,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     r = (R * q) / Q;
     const res = {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
-      y: outsidePoint.y + q
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - q
     };
     logger.warn(`topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
 
