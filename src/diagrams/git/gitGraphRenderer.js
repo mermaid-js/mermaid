@@ -1,10 +1,9 @@
 import { curveBasis, line, select } from 'd3';
-
+import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 // import db from './gitGraphAst';
 import * as db from './mockDb';
 import gitGraphParser from './parser/gitGraph';
 import { logger } from '../../logger';
-import { interpolateToCurve } from '../../utils';
 import { getConfig } from '../../config';
 /* eslint-disable */
 
@@ -37,251 +36,18 @@ function svgCreateDefs(svg) {
     .html('');
 }
 
-function svgDrawLine(svg, points, colorIdx, interpolate) {
-  const config = getConfig().gitGraph;
-  const curve = interpolateToCurve(interpolate, curveBasis);
-  const color = config.branchColors[colorIdx % config.branchColors.length];
-  const lineGen = line()
-    .x(function(d) {
-      return Math.round(d.x);
+const drawBranches = (svg, branches) => {
+  const g = svg.append('g')
+  let pos = 0;
+    branches.forEach((branch, index) => {
+      const line = g.append('line');
+      line.attr('x1', 0);
+      line.attr('y1', pos);
+      line.attr('x2', 500);
+      line.attr('y2', pos);
+      line.attr('class', 'branch branch'+index)
+      pos += 50;
     })
-    .y(function(d) {
-      return Math.round(d.y);
-    })
-    .curve(curve);
-
-  svg
-    .append('svg:path')
-    .attr('d', lineGen(points))
-    .style('stroke', color)
-    .style('stroke-width', config.lineStrokeWidth)
-    .style('fill', 'none');
-}
-
-// Pass in the element and its pre-transform coords
-function getElementCoords(element, coords) {
-  coords = coords || element.node().getBBox();
-  const ctm = element.node().getCTM();
-  const xn = ctm.e + coords.x * ctm.a;
-  const yn = ctm.f + coords.y * ctm.d;
-  return {
-    left: xn,
-    top: yn,
-    width: coords.width,
-    height: coords.height
-  };
-}
-
-function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
-  const config = getConfig().gitGraph;
-  logger.debug('svgDrawLineForCommits: ', fromId, toId);
-  const fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'));
-  const toBbox = getElementCoords(svg.select('#node-' + toId + ' circle'));
-  switch (direction) {
-    case 'LR':
-      // (toBbox)
-      //  +--------
-      //          + (fromBbox)
-      if (fromBbox.left - toBbox.left > config.nodeSpacing) {
-        const lineStart = {
-          x: fromBbox.left - config.nodeSpacing,
-          y: toBbox.top + toBbox.height / 2
-        };
-        const lineEnd = { x: toBbox.left + toBbox.width, y: toBbox.top + toBbox.height / 2 };
-        svgDrawLine(svg, [lineStart, lineEnd], color, 'linear');
-        svgDrawLine(
-          svg,
-          [
-            { x: fromBbox.left, y: fromBbox.top + fromBbox.height / 2 },
-            { x: fromBbox.left - config.nodeSpacing / 2, y: fromBbox.top + fromBbox.height / 2 },
-            { x: fromBbox.left - config.nodeSpacing / 2, y: lineStart.y },
-            lineStart
-          ],
-          color
-        );
-      } else {
-        svgDrawLine(
-          svg,
-          [
-            {
-              x: fromBbox.left,
-              y: fromBbox.top + fromBbox.height / 2
-            },
-            {
-              x: fromBbox.left - config.nodeSpacing / 2,
-              y: fromBbox.top + fromBbox.height / 2
-            },
-            {
-              x: fromBbox.left - config.nodeSpacing / 2,
-              y: toBbox.top + toBbox.height / 2
-            },
-            {
-              x: toBbox.left + toBbox.width,
-              y: toBbox.top + toBbox.height / 2
-            }
-          ],
-          color
-        );
-      }
-      break;
-    case 'BT':
-      //      +           (fromBbox)
-      //      |
-      //      |
-      //              +   (toBbox)
-      if (toBbox.top - fromBbox.top > config.nodeSpacing) {
-        const lineStart = {
-          x: toBbox.left + toBbox.width / 2,
-          y: fromBbox.top + fromBbox.height + config.nodeSpacing
-        };
-        const lineEnd = { x: toBbox.left + toBbox.width / 2, y: toBbox.top };
-        svgDrawLine(svg, [lineStart, lineEnd], color, 'linear');
-        svgDrawLine(
-          svg,
-          [
-            { x: fromBbox.left + fromBbox.width / 2, y: fromBbox.top + fromBbox.height },
-            {
-              x: fromBbox.left + fromBbox.width / 2,
-              y: fromBbox.top + fromBbox.height + config.nodeSpacing / 2
-            },
-            { x: toBbox.left + toBbox.width / 2, y: lineStart.y - config.nodeSpacing / 2 },
-            lineStart
-          ],
-          color
-        );
-      } else {
-        svgDrawLine(
-          svg,
-          [
-            {
-              x: fromBbox.left + fromBbox.width / 2,
-              y: fromBbox.top + fromBbox.height
-            },
-            {
-              x: fromBbox.left + fromBbox.width / 2,
-              y: fromBbox.top + config.nodeSpacing / 2
-            },
-            {
-              x: toBbox.left + toBbox.width / 2,
-              y: toBbox.top - config.nodeSpacing / 2
-            },
-            {
-              x: toBbox.left + toBbox.width / 2,
-              y: toBbox.top
-            }
-          ],
-          color
-        );
-      }
-      break;
-  }
-}
-
-function cloneNode(svg, selector) {
-  return svg
-    .select(selector)
-    .node()
-    .cloneNode(true);
-}
-
-// function renderCommitHistory(svg, commitid, branches, direction) {
-//   const config = getConfig().gitGraph;
-//   let commit;
-//   const numCommits = Object.keys(allCommitsDict).length;
-//   if (typeof commitid === 'string') {
-//     do {
-//       commit = allCommitsDict[commitid];
-//       logger.debug('in renderCommitHistory', commit.id, commit.seq);
-//       if (svg.select('#node-' + commitid).size() > 0) {
-//         return;
-//       }
-//       svg
-//         .append(function() {
-//           return cloneNode(svg, '#def-commit');
-//         })
-//         .attr('class', 'commit')
-//         .attr('id', function() {
-//           return 'node-' + commit.id;
-//         })
-//         .attr('transform', function() {
-//           switch (direction) {
-//             case 'LR':
-//               return (
-//                 'translate(' +
-//                 (commit.seq * config.nodeSpacing + config.leftMargin) +
-//                 ', ' +
-//                 branchNum * config.branchOffset +
-//                 ')'
-//               );
-//             case 'BT':
-//               return (
-//                 'translate(' +
-//                 (branchNum * config.branchOffset + config.leftMargin) +
-//                 ', ' +
-//                 (numCommits - commit.seq) * config.nodeSpacing +
-//                 ')'
-//               );
-//           }
-//         })
-//         .attr('fill', config.nodeFillColor)
-//         .attr('stroke', config.nodeStrokeColor)
-//         .attr('stroke-width', config.nodeStrokeWidth);
-
-//       let branch;
-//       for (let branchName in branches) {
-//         if (branches[branchName].commit === commit) {
-//           branch = branches[branchName];
-//           break;
-//         }
-//       }
-//       if (branch) {
-//         logger.debug('found branch ', branch.name);
-//         svg
-//           .select('#node-' + commit.id + ' p')
-//           .append('xhtml:span')
-//           .attr('class', 'branch-label')
-//           .text(branch.name + ', ');
-//       }
-//       svg
-//         .select('#node-' + commit.id + ' p')
-//         .append('xhtml:span')
-//         .attr('class', 'commit-id')
-//         .text(commit.id);
-//       if (commit.message !== '' && direction === 'BT') {
-//         svg
-//           .select('#node-' + commit.id + ' p')
-//           .append('xhtml:span')
-//           .attr('class', 'commit-msg')
-//           .text(', ' + commit.message);
-//       }
-//       commitid = commit.parent;
-//     } while (commitid && allCommitsDict[commitid]);
-//   }
-
-//   if (Array.isArray(commitid)) {
-//     logger.debug('found merge commmit', commitid);
-//     renderCommitHistory(svg, commitid[0], branches, direction);
-//     branchNum++;
-//     renderCommitHistory(svg, commitid[1], branches, direction);
-//     branchNum--;
-//   }
-// }
-
-function renderLines(svg, commit, direction, branchColor) {
-  branchColor = branchColor || 0;
-  while (commit.seq > 0 && !commit.lineDrawn) {
-    if (typeof commit.parent === 'string') {
-      svgDrawLineForCommits(svg, commit.id, commit.parent, direction, branchColor);
-      commit.lineDrawn = true;
-      commit = allCommitsDict[commit.parent];
-    } else if (Array.isArray(commit.parent)) {
-      svgDrawLineForCommits(svg, commit.id, commit.parent[0], direction, branchColor);
-      svgDrawLineForCommits(svg, commit.id, commit.parent[1], direction, branchColor + 1);
-      renderLines(svg, allCommitsDict[commit.parent[1]], direction, branchColor + 1);
-      commit.lineDrawn = true;
-      commit = allCommitsDict[commit.parent[0]];
-    }
-  }
 }
 
 export const draw = function(txt, id, ver) {
@@ -297,28 +63,25 @@ export const draw = function(txt, id, ver) {
   // parser.parse(txt + '\n');
 
   // config = Object.assign(config, apiConfig, db.getOptions());
-  logger.debug('effective options', config);
   const direction = db.getDirection();
   allCommitsDict = db.getCommits();
   const branches = db.getBranchesAsObjArray();
+  logger.debug('effective options', config, branches);
 
-  const svg = select(`[id="${id}"]`);
-  svgCreateDefs(svg);
-  branchNum = 1;
-  for (let branch in branches) {
-    const v = branches[branch];
-    // renderCommitHistory(svg, v.commit.id, branches, direction);
-    renderLines(svg, v.commit, direction);
-    branchNum++;
-  }
-  svg.attr('height', function() {
-    if (direction === 'BT') return Object.keys(allCommitsDict).length * config.nodeSpacing;
-    return (branches.length + 1) * config.branchOffset;
-  });
-  // } catch (e) {
-  //   logger.error('Error while rendering gitgraph');
-  //   logger.error(e.message);
-  // }
+  const diagram = select(`[id="${id}"]`);
+  svgCreateDefs(diagram);
+
+  drawBranches(diagram, branches);
+
+  const padding = config.diagramPadding;
+  const svgBounds = diagram.node().getBBox();
+  const width = svgBounds.width + padding * 2;
+  const height = svgBounds.height + padding * 2;
+
+  configureSvgSize(diagram, height, width, config.useMaxWidth);
+  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
+  logger.debug(`viewBox ${vBox}`);
+  diagram.attr('viewBox', vBox);
 };
 
 export default {

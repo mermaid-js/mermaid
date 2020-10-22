@@ -918,6 +918,7 @@ const config = {
     useMaxWidth: true
   },
   gitGraph: {
+    diagramPadding: 8,
     nodeSpacing: 150,
     nodeFillColor: 'yellow',
     nodeStrokeWidth: 2,
