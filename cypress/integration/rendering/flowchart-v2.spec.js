@@ -313,6 +313,22 @@ end
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+  it('57.x: handle nested subgraphs with outgoing links 5', () => {
+    imgSnapshotTest(
+      `%% this does not produce the desired result
+flowchart TB
+  subgraph container_Beta
+    process_C-->Process_D
+  end
+  subgraph container_Alpha
+    process_A-->process_B
+    process_B-->|via_AWSBatch|container_Beta
+    process_A-->|messages|process_C
+  end
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
   it('58: handle styling with style expressions', () => {
     imgSnapshotTest(
       `
