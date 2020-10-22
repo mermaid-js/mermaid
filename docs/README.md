@@ -196,8 +196,8 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 ## Examples can be found in [Getting Started](getting-started/n00b-gettingStarted.md)
 
 # Sibling projects
-- [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor)
-- [Mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
+- [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
+- [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
 - [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
 - [Mermaid Parcel Demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 

@@ -14,7 +14,7 @@ Here are a few things to know to get you started on the right path.
 
 **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/assets/_sidebar.md)**
  
-**Note:You will have to edit the document to see its contents. Commits and PR's should be directed to the develop branch.**
+**Note: You will have to edit the document to see its contents. Commits and PR's should be directed to the develop branch.**
 
 ## Branching
 
@@ -51,9 +51,9 @@ If it is not in the documentation, it's like it never happened. Wouldn't that be
 
 The docs are located in the `docs` folder and are written in MarkDown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation: 
 
-**All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/assets/_sidebar.md). Click edit it to see them. 
+**All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/assets/_sidebar.md). Click edit it to see them.**
 
-The contents of http://mermaid-js.github.io/mermaid/ are based on the docs from **Master** Branch. 
+The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from **Master** Branch. 
 
 ## How to Contribute to Docs
 
@@ -121,7 +121,7 @@ Finally, if it is not in the documentation, no one will know about it and then *
 
 The docs are located in the docs folder and are ofc written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the _navbar.md.
 
-The changes in master is reflected in http://mermaid-js.github.io/mermaid/ once released the updates are commited to https://mermaid-js.github.io/#/
+The changes in master is reflected in [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) once released the updates are commited to [https://mermaid-js.github.io/#/](https://mermaid-js.github.io/mermaid/#/).
 
 ### Questions and/or suggestions ?
 After logging in at [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
