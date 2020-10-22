@@ -121,7 +121,7 @@ Finally, if it is not in the documentation, no one will know about it and then *
 
 The docs are located in the docs folder and are ofc written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the _navbar.md.
 
-The changes in master is reflected in http://mermaid-js.github.io/mermaid/ once released the updates are commited to https://mermaid-js.github.io/#/
+The changes in master is reflected in [http://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) once released the updates are commited to https://mermaid-js.github.io/#/
 
 ### Questions and/or suggestions ?
 After logging in at [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
