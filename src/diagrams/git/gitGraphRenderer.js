@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { curveBasis, line, select } from 'd3';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 // import db from './gitGraphAst';
