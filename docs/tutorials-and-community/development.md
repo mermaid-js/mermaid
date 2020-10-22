@@ -14,7 +14,7 @@ Here are a few things to know to get you started on the right path.
 
 **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/assets/_sidebar.md)**
  
-**Note:You will have to edit the document to see its contents. Commits and PR's should be directed to the develop branch.**
+**Note: You will have to edit the document to see its contents. Commits and PR's should be directed to the develop branch.**
 
 ## Branching
 
