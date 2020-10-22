@@ -13,12 +13,18 @@
 
 %%
 
-(\r?\n)+                               return 'NL';
+(\r?\n)+                               /*{console.log('New line');return 'NL';}*/ return 'NL';
 \s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
 \%%[^\n]*                              /* skip comments */
 "gitGraph"                             return 'GG';
 "commit"                               return 'COMMIT';
+"id:"                                  return 'COMMIT_ID';
+"type:"                                return 'COMMIT_TYPE';
+"NORMAL"                               return 'NORMAL';
+"REVERSE"                              return 'REVERSE';
+"HIGHLIGHT"                            return 'HIGHLIGHT';                       
+"tag:"                                 return 'COMMIT_TAG';
 "branch"                               return 'BRANCH';
 "merge"                                return 'MERGE';
 "reset"                                return 'RESET';
@@ -69,18 +75,33 @@ line
     ;
 
 statement
-    : COMMIT commit_arg {yy.commit($2)}
+    : commitStatement
     | BRANCH ID {yy.branch($2)}
     | CHECKOUT ID {yy.checkout($2)}
     | MERGE ID {yy.merge($2)}
     | RESET reset_arg {yy.reset($2)}
     ;
-
+commitStatement
+    : COMMIT commit_arg {yy.commit($2)}
+    | COMMIT COMMIT_ID STR {yy.commit('',$3,yy.commitType.NORMAL,'')}
+    | COMMIT COMMIT_TYPE commitType {yy.commit('','',$3,'')}
+    | COMMIT COMMIT_TAG STR {yy.commit('','',yy.commitType.NORMAL,$3)}
+    | COMMIT COMMIT_TAG STR COMMIT_TYPE commitType {yy.commit('','',$5,$3)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_TAG STR  {yy.commit('','',$3,$5)}
+    | COMMIT COMMIT_ID STR COMMIT_TYPE commitType {yy.commit('',$3,$5,'')}
+    | COMMIT COMMIT_ID STR COMMIT_TAG STR {yy.commit('',$3,yy.commitType.NORMAL,$5)}
+    | COMMIT COMMIT_ID STR COMMIT_TYPE commitType COMMIT_TAG STR {yy.commit('',$3,$5,$7)}
+    | COMMIT COMMIT_ID STR COMMIT_TAG STR COMMIT_TYPE commitType  {yy.commit('',$3,$7,$5)}
+    ;
 commit_arg
     : /* empty */ {$$ = ""}
     | STR {$$=$1}
     ;
-
+commitType
+    : NORMAL { $$=yy.commitType.NORMAL;}
+    | REVERSE   { $$=yy.commitType.REVERSE;}
+    | HIGHLIGHT { $$=yy.commitType.HIGHLIGHT;}
+    ;    
 reset_arg
     : 'HEAD' reset_parents{$$ = $1+ ":" + $2 }
     | ID reset_parents{$$ = $1+ ":"  + yy.count; yy.count = 0}

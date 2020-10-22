@@ -68,11 +68,13 @@ export const getOptions = function() {
   return options;
 };
 
-export const commit = function(msg) {
+export const commit = function(msg, id, type, tag) {
   const commit = {
-    id: getId(),
+    id: id ? id : getId(),
     message: msg,
     seq: seq++,
+    type: type ? type : commitType.NORMAL,
+    tag: tag ? tag : '',
     parent: head == null ? null : head.id
   };
   head = commit;
@@ -227,6 +229,12 @@ export const getHead = function() {
   return head;
 };
 
+export const commitType = {
+  NORMAL: 0,
+  REVERSE: 1,
+  HIGHLIGHT: 2
+};
+
 export default {
   setDirection,
   setOptions,
@@ -244,5 +252,6 @@ export default {
   getCommitsArray,
   getCurrentBranch,
   getDirection,
-  getHead
+  getHead,
+  commitType
 };
