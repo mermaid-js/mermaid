@@ -122,13 +122,13 @@ This was introduced in version 8.2 as a security improvement, aimed at preventin
 
 **Notes:**
 
--   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+-   **strict**: (**default**) tags in text are encoded, click functionality is disabled
 -   **loose**: tags in text are allowed, click functionality is enabled
 -   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
 
 ⚠️ **Note**: This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
 
-If you are taking resposibility for the diagram source security you can set the `securityLevel` to a value of your choosing.
+If you are taking responsibility for the diagram source security you can set the `securityLevel` to a value of your choosing.
 By doing this clicks and tags are again allowed.
 
 ### To change `securityLevel` with `mermaidAPI.initialize`:
@@ -245,7 +245,7 @@ By doing this clicks and tags are again allowed.
 - issue when using sphinxcontrib-mermaid extension for sphinx [\#507](https://github.com/knsv/mermaid/issues/507)
 - layout of docs page looks broken [\#504](https://github.com/knsv/mermaid/issues/504)
 - Problem showing graph with php on localhost [\#502](https://github.com/knsv/mermaid/issues/502)
-- logLevel's option doesnt work at 7.0.0 [\#501](https://github.com/knsv/mermaid/issues/501)
+- logLevel's option doesn't work at 7.0.0 [\#501](https://github.com/knsv/mermaid/issues/501)
 - How do I get the log for a render or parse attempt? [\#500](https://github.com/knsv/mermaid/issues/500)
 - Mermaid neutral style style to built in latest release [\#499](https://github.com/knsv/mermaid/issues/499)
 - Any plans for adding a typescript definition file? [\#495](https://github.com/knsv/mermaid/issues/495)
@@ -278,7 +278,7 @@ By doing this clicks and tags are again allowed.
 - Linkstyle stroke does not work [\#410](https://github.com/knsv/mermaid/issues/410)
 - flowchart id's with dots in them .. break links  [\#408](https://github.com/knsv/mermaid/issues/408)
 - Flowchart: Link text beginning with lowercase 'o' causes flowchart to break [\#407](https://github.com/knsv/mermaid/issues/407)
-- Some chinese character will case Safari no responding. [\#405](https://github.com/knsv/mermaid/issues/405)
+- Some Chinese character will case Safari no responding. [\#405](https://github.com/knsv/mermaid/issues/405)
 - Cannot center-justify text in nodes? [\#397](https://github.com/knsv/mermaid/issues/397)
 - Edge labels should have white background in live editor [\#396](https://github.com/knsv/mermaid/issues/396)
 - Live editor does not support activate/deactivate [\#394](https://github.com/knsv/mermaid/issues/394)
@@ -316,12 +316,12 @@ By doing this clicks and tags are again allowed.
 - CSS clash [\#292](https://github.com/knsv/mermaid/issues/292)
 - Mermaid does not work in Chrome 48 [\#281](https://github.com/knsv/mermaid/issues/281)
 - circle and ellipse cannot change color by classDef [\#271](https://github.com/knsv/mermaid/issues/271)
-- npm run watch doesn’t work due missing dependencies [\#266](https://github.com/knsv/mermaid/issues/266)
+- npm run watch doesn't work due missing dependencies [\#266](https://github.com/knsv/mermaid/issues/266)
 - label out of node  [\#262](https://github.com/knsv/mermaid/issues/262)
 - IE11 Support issue [\#261](https://github.com/knsv/mermaid/issues/261)
 - mermaid without browser [\#260](https://github.com/knsv/mermaid/issues/260)
 - Insufficient capacity of gantt diagrams [\#226](https://github.com/knsv/mermaid/issues/226)
-- some WARN about installion [\#222](https://github.com/knsv/mermaid/issues/222)
+- some WARN about installation [\#222](https://github.com/knsv/mermaid/issues/222)
 - Live editor offline access [\#217](https://github.com/knsv/mermaid/issues/217)
 - suggest: code highlight mode config for editors [\#212](https://github.com/knsv/mermaid/issues/212)
 - Uncaught RangeError: Maximum call stack size exceeded [\#189](https://github.com/knsv/mermaid/issues/189)
@@ -457,7 +457,7 @@ By doing this clicks and tags are again allowed.
 - Fix spelling [\#447](https://github.com/knsv/mermaid/pull/447) ([jawn](https://github.com/jawn))
 - added tests and fix cli css style selector lowercase problem [\#445](https://github.com/knsv/mermaid/pull/445) ([whyzdev](https://github.com/whyzdev))
 - Update d3.js [\#441](https://github.com/knsv/mermaid/pull/441) ([hetz](https://github.com/hetz))
-- adde tests to reproduce \#434 in flowchart [\#439](https://github.com/knsv/mermaid/pull/439) ([whyzdev](https://github.com/whyzdev))
+- added tests to reproduce \#434 in flowchart [\#439](https://github.com/knsv/mermaid/pull/439) ([whyzdev](https://github.com/whyzdev))
 - Code Climate config [\#437](https://github.com/knsv/mermaid/pull/437) ([larkinscott](https://github.com/larkinscott))
 - fix gantt and sequence digram cli cfg [\#435](https://github.com/knsv/mermaid/pull/435) ([whyzdev](https://github.com/whyzdev))
 - fix gantt chart cli configuration broken [\#433](https://github.com/knsv/mermaid/pull/433) ([whyzdev](https://github.com/whyzdev))
@@ -485,7 +485,7 @@ By doing this clicks and tags are again allowed.
 
 - Docs css: code hard to read [\#324](https://github.com/knsv/mermaid/issues/324)
 - About Markpad integration [\#323](https://github.com/knsv/mermaid/issues/323)
-- How to link backwords in flowchat? [\#321](https://github.com/knsv/mermaid/issues/321)
+- How to link backwards in flowchart? [\#321](https://github.com/knsv/mermaid/issues/321)
 - Help with editor [\#310](https://github.com/knsv/mermaid/issues/310)
 - +1 [\#293](https://github.com/knsv/mermaid/issues/293)
 - Basic chart does not render on Chome, but does in Firefox [\#290](https://github.com/knsv/mermaid/issues/290)
@@ -897,7 +897,7 @@ By doing this clicks and tags are again allowed.
 - Class based styling [\#62](https://github.com/knsv/mermaid/pull/62) ([bjowes](https://github.com/bjowes))
 - Fix typos [\#60](https://github.com/knsv/mermaid/pull/60) ([sublimino](https://github.com/sublimino))
 - Included .DS\_Store in gitignore [\#57](https://github.com/knsv/mermaid/pull/57) ([alvynmcq](https://github.com/alvynmcq))
-- Improves readablity discussed in issue \#38 [\#56](https://github.com/knsv/mermaid/pull/56) ([vijay40](https://github.com/vijay40))
+- Improves readability discussed in issue \#38 [\#56](https://github.com/knsv/mermaid/pull/56) ([vijay40](https://github.com/vijay40))
 - Added a linting task for gulp [\#43](https://github.com/knsv/mermaid/pull/43) ([serv](https://github.com/serv))
 
 ## [0.2.15](https://github.com/knsv/mermaid/tree/0.2.15) (2014-12-05)

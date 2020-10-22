@@ -21,7 +21,7 @@ With Mermaid less time needs to be spent on making diagrams, as a separate docum
 
 > Mermaid is a Diagramming tool for everyone. 
 
-Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor), Visit the [Tutorials Page](href='https://github.com/mermaid-js/mermaid/blob/develop/docs/Tutorials.md) for the Live Editor video tutorials.
+Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](https://github.com/mermaid-js/mermaid/blob/develop/docs/getting-started/Tutorials.md) for the Live Editor video tutorials.
 
 Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](overview/integrations.md).
 
@@ -196,8 +196,8 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 ## Examples can be found in [Getting Started](getting-started/n00b-gettingStarted.md)
 
 # Sibling projects
-- [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor)
-- [Mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
+- [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
+- [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
 - [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
 - [Mermaid Parcel Demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 

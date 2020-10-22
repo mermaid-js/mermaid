@@ -30,7 +30,7 @@ Drawing a pie chart is really simple in mermaid.
 - Followed by `title` keyword and its value in string to give a title to the pie-chart. This is ***OPTIONAL***
 - Followed by dataSet
     - `label` for a section in the pie diagram within `" "` quotes.
-    - Followed by `:` semi-colon as separator
+    - Followed by `:` colon as separator
     - Followed by `positive numeric value` (supported upto two decimal places)
 
 [pie]
