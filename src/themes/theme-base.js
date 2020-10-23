@@ -63,10 +63,8 @@ class Theme {
     this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
     this.defaultLinkColor = this.defaultLinkColor || this.lineColor;
     this.titleColor = this.titleColor || this.tertiaryTextColor;
-    this.edgeLabelBackground =
-      this.edgeLabelBackground || this.darkMode
-        ? darken(this.secondaryColor, 30)
-        : this.secondaryColor;
+    this.edgeLabelBackground = this.edgeLabelBackground || 
+        (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
     /* Sequence Diagram variables */
 
