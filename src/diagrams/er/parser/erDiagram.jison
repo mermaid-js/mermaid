@@ -27,7 +27,7 @@ o\{                       return 'ZERO_OR_MORE';
 \-\-                      return 'IDENTIFYING';
 \.\-                      return 'NON_IDENTIFYING';
 \-\.                      return 'NON_IDENTIFYING';
-[A-Za-z][A-Za-z0-9\-]*    return 'ALPHANUM';
+[A-Za-z][A-Za-z0-9\-_]*    return 'ALPHANUM';
 .                         return yytext[0];
 <<EOF>>                   return 'EOF';
 
@@ -67,6 +67,7 @@ statement
           yy.addRelationship($1, $5, $3, $2);
           /*console.log($1 + $2 + $3 + ':' + $5);*/
       }
+    | entityName { yy.addEntity($1); }
     ;
 
 entityName
