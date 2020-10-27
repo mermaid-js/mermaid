@@ -1,6 +1,6 @@
 # mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 
-![banner](assets/img/header.png)
+![banner](img/header.png)
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!!**
 
@@ -43,7 +43,7 @@ graph TD;
     C-->D;
 ```
 
-![Flowchart](assets/img/flow.png)
+![Flowchart](img/flow.png)
 
 ### [Sequence diagram](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/sequenceDiagram.html)
 
@@ -61,7 +61,7 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-![Sequence diagram](assets/img/sequence.png)
+![Sequence diagram](img/sequence.png)
 
 ### [Gantt diagram](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/gantt.html)
 
@@ -78,7 +78,7 @@ Future task               :         des3, after des2, 5d
 Future task2               :         des4, after des3, 5d
 ```
 
-![Gantt diagram](assets/img/gantt.png)
+![Gantt diagram](img/gantt.png)
 
 ### [Class diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/classDiagram.html)
 
@@ -99,7 +99,7 @@ Class01 : int gorilla
 Class08 <--> C2: Cool label
 ```
 
-![Class diagram](assets/img/class.png)
+![Class diagram](img/class.png)
 
 ### Git graph - :exclamation: experimental
 
@@ -122,7 +122,7 @@ commit
 merge newbranch
 
 ```
-![Git graph](assets/img/git.png)
+![Git graph](img/git.png)
 
 ### [Entity Relationship Diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/entityRelationshipDiagram.html)
 
@@ -134,7 +134,7 @@ erDiagram
 
 ```
 
-![ER diagram](assets/img/simple-er.png)
+![ER diagram](img/simple-er.png)
 
 ### [User Journey Diagram](https://mermaid-js.github.io/mermaid/diagrams-and-syntax-and-examples/user-journey.html)
 
@@ -149,7 +149,7 @@ journey
       Go downstairs: 5: Me
       Sit down: 5: Me
 ```
-![Journey diagram](assets/img/user-journey.png)
+![Journey diagram](img/user-journey.png)
 
 # Installation
 ## In depth guides and examples can be found in [Getting Started](getting-started/n00b-gettingStarted.md) and [Usage](getting-started/usage.md).
