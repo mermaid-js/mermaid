@@ -1,5 +1,8 @@
 ## Diagram syntax
 
+
+**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-syntaxReference.md)
+
 If you are new to mermaid, read the [Getting Started](../getting-started/n00b-gettingStarted.md) and [Overview](../overview/n00b-overview.md) sections, to learn the basics of mermaid.
 Video Tutorials can be found at the bottom of the Overview Section.
 
