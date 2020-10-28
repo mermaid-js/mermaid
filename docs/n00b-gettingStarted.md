@@ -1,5 +1,7 @@
 # A basic mermaid User-Guide for Beginners
 
+**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-gettingStarted.md)
+
 Creating diagrams and charts using mermaid code is simple.
 The code is turned into a diagram in the web page with the use of a mermaid renderer.
 
