@@ -1,5 +1,7 @@
 # Directives
 
+**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/directives.md)
+
 ## Directives were added in [Version 8.6.0](../getting-started/8.6.0_docs.md). Please Read it for more information.
 
 ## Directives
