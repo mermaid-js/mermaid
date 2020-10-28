@@ -1,5 +1,7 @@
 # Development 🙌
 
+**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md)
+
 
 So you want to help? That's great!
 
