@@ -1,5 +1,7 @@
 # Usage
 
+**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
+
 mermaid is a javascript tool that makes use of a markdown based syntax to render customizable diagrams and charts, for greater speed and ease.
 
 mermaid was made to help Documentation catch up with Development, in quickly changing projects.
