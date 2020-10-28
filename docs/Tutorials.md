@@ -1,6 +1,7 @@
 # Tutorials
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/Tutorials.md)
+
 This is  list of publicly available Tutorials for using Mermaid.JS . This is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.  
 
 For most purposes, you can use the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor), to quickly and easily render a diagram. 
