@@ -33,7 +33,7 @@ o\{                             return 'ZERO_OR_MORE';
 \-\-                            return 'IDENTIFYING';
 \.\-                            return 'NON_IDENTIFYING';
 \-\.                            return 'NON_IDENTIFYING';
-[A-Za-z][A-Za-z0-9\-]*          return 'ALPHANUM';
+[A-Za-z][A-Za-z0-9\-_]*         return 'ALPHANUM';
 .                               return yytext[0];
 <<EOF>>                         return 'EOF';
 
