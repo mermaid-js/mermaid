@@ -27,12 +27,25 @@ export const parseDirective = function(statement, context, type) {
 
 const addEntity = function(name) {
   if (typeof entities[name] === 'undefined') {
-    entities[name] = name;
-    logger.debug('Added new entity :', name);
+    entities[name] = { attributes: [] };
+    logger.info('Added new entity :', name);
   }
+
+  return entities[name];
 };
 
 const getEntities = () => entities;
+
+const addAttributes = function(entityName, attribs) {
+  let entity = addEntity(entityName); // May do nothing (if entity has already been added)
+
+  // Process attribs in reverse order due to effect of recursive construction (last attribute is first)
+  let i;
+  for (i = attribs.length - 1; i >= 0; i--) {
+    entity.attributes.push(attribs[i]);
+    logger.debug('Added attribute ', attribs[i].attributeName);
+  }
+};
 
 /**
  * Add a relationship
@@ -76,6 +89,7 @@ export default {
   parseDirective,
   getConfig: () => configApi.getConfig().er,
   addEntity,
+  addAttributes,
   getEntities,
   addRelationship,
   getRelationships,

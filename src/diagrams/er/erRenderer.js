@@ -23,6 +23,154 @@ export const setConf = function(cnf) {
 };
 
 /**
+ * Draw attributes for an entity
+ * @param groupNode the svg group node for the entity
+ * @param entityTextNode the svg node for the entity label text
+ * @param attributes an array of attributes defined for the entity (each attribute has a type and a name)
+ * @return the bounding box of the entity, after attributes have been added
+ */
+const drawAttributes = (groupNode, entityTextNode, attributes) => {
+  const heightPadding = conf.entityPadding / 3; // Padding internal to attribute boxes
+  const widthPadding = conf.entityPadding / 3; // Ditto
+  const attrFontSize = conf.fontSize * 0.8;
+  const labelBBox = entityTextNode.node().getBBox();
+  const attributeNodes = []; // Intermediate storage for attribute nodes created so that we can do a second pass
+  let maxTypeWidth = 0;
+  let maxNameWidth = 0;
+  let cumulativeHeight = labelBBox.height + heightPadding * 2;
+  let attrNum = 1;
+
+  attributes.forEach(item => {
+    const attrPrefix = `${entityTextNode.node().id}-attr-${attrNum}`;
+
+    // Add a text node for the attribute type
+    const typeNode = groupNode
+      .append('text')
+      .attr('class', 'er entityLabel')
+      .attr('id', `${attrPrefix}-type`)
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('dominant-baseline', 'middle')
+      .attr('text-anchor', 'left')
+      .attr(
+        'style',
+        'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
+      )
+      .text(item.attributeType);
+
+    // Add a text node for the attribute name
+    const nameNode = groupNode
+      .append('text')
+      .attr('class', 'er entityLabel')
+      .attr('id', `${attrPrefix}-name`)
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('dominant-baseline', 'middle')
+      .attr('text-anchor', 'left')
+      .attr(
+        'style',
+        'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
+      )
+      .text(item.attributeName);
+
+    // Keep a reference to the nodes so that we can iterate through them later
+    attributeNodes.push({ tn: typeNode, nn: nameNode });
+
+    const typeBBox = typeNode.node().getBBox();
+    const nameBBox = nameNode.node().getBBox();
+
+    maxTypeWidth = Math.max(maxTypeWidth, typeBBox.width);
+    maxNameWidth = Math.max(maxNameWidth, nameBBox.width);
+
+    cumulativeHeight += Math.max(typeBBox.height, nameBBox.height) + heightPadding * 2;
+    attrNum += 1;
+  });
+
+  // Calculate the new bounding box of the overall entity, now that attributes have been added
+  const bBox = {
+    width: Math.max(
+      conf.minEntityWidth,
+      Math.max(labelBBox.width + widthPadding * 2, maxTypeWidth + maxNameWidth + widthPadding * 4)
+    ),
+    height:
+      attributes.length > 0 ? cumulativeHeight : Math.max(conf.minEntityHeight, cumulativeHeight)
+  };
+
+  // There might be some spare width for padding out attributes if the entity name is very long
+  const spareWidth = Math.max(0, bBox.width - (maxTypeWidth + maxNameWidth) - widthPadding * 4);
+
+  if (attributes.length > 0) {
+    // Position the entity label near the top of the entity bounding box
+    entityTextNode.attr(
+      'transform',
+      'translate(' + bBox.width / 2 + ',' + (heightPadding + labelBBox.height / 2) + ')'
+    );
+
+    // Add rectangular boxes for the attribute types/names
+    let heightOffset = labelBBox.height + heightPadding * 2; // Start at the bottom of the entity label
+    let attribStyle = 'attributeBox1'; // We will flip the style on alternate rows to achieve a banded effect
+
+    attributeNodes.forEach(nodePair => {
+      // Calculate the alignment y co-ordinate for the type/name of the attribute
+      const alignY =
+        heightOffset +
+        heightPadding +
+        Math.max(nodePair.tn.node().getBBox().height, nodePair.nn.node().getBBox().height) / 2;
+
+      // Position the type of the attribute
+      nodePair.tn.attr('transform', 'translate(' + widthPadding + ',' + alignY + ')');
+
+      // Insert a rectangle for the type
+      const typeRect = groupNode
+        .insert('rect', '#' + nodePair.tn.node().id)
+        .attr('class', `er ${attribStyle}`)
+        .attr('fill', conf.fill)
+        .attr('fill-opacity', '100%')
+        .attr('stroke', conf.stroke)
+        .attr('x', 0)
+        .attr('y', heightOffset)
+        .attr('width', maxTypeWidth + widthPadding * 2 + spareWidth / 2)
+        .attr('height', nodePair.tn.node().getBBox().height + heightPadding * 2);
+
+      // Position the name of the attribute
+      nodePair.nn.attr(
+        'transform',
+        'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'
+      );
+
+      // Insert a rectangle for the name
+      groupNode
+        .insert('rect', '#' + nodePair.nn.node().id)
+        .attr('class', `er ${attribStyle}`)
+        .attr('fill', conf.fill)
+        .attr('fill-opacity', '100%')
+        .attr('stroke', conf.stroke)
+        .attr('x', `${typeRect.attr('x') + typeRect.attr('width')}`)
+        //.attr('x', maxTypeWidth + (widthPadding * 2))
+        .attr('y', heightOffset)
+        .attr('width', maxNameWidth + widthPadding * 2 + spareWidth / 2)
+        .attr('height', nodePair.nn.node().getBBox().height + heightPadding * 2);
+
+      // Increment the height offset to move to the next row
+      heightOffset +=
+        Math.max(nodePair.tn.node().getBBox().height, nodePair.nn.node().getBBox().height) +
+        heightPadding * 2;
+
+      // Flip the attribute style for row banding
+      attribStyle = attribStyle == 'attributeBox1' ? 'attributeBox2' : 'attributeBox1';
+    });
+  } else {
+    // Ensure the entity box is a decent size without any attributes
+    bBox.height = Math.max(conf.minEntityHeight, cumulativeHeight);
+
+    // Position the entity label in the middle of the box
+    entityTextNode.attr('transform', 'translate(' + bBox.width / 2 + ',' + bBox.height / 2 + ')');
+  }
+
+  return bBox;
+};
+
+/**
  * Use D3 to construct the svg elements for the entities
  * @param svgNode the svg node that contains the diagram
  * @param entities The entities to be drawn
@@ -56,13 +204,11 @@ const drawEntities = function(svgNode, entities, graph) {
       )
       .text(id);
 
-    // Calculate the width and height of the entity
-    const textBBox = textNode.node().getBBox();
-    const entityWidth = Math.max(conf.minEntityWidth, textBBox.width + conf.entityPadding * 2);
-    const entityHeight = Math.max(conf.minEntityHeight, textBBox.height + conf.entityPadding * 2);
-
-    // Make sure the text gets centred relative to the entity box
-    textNode.attr('transform', 'translate(' + entityWidth / 2 + ',' + entityHeight / 2 + ')');
+    const { width: entityWidth, height: entityHeight } = drawAttributes(
+      groupNode,
+      textNode,
+      entities[id].attributes
+    );
 
     // Draw the rectangle - insert it before the text so that the text is not obscured
     const rectNode = groupNode

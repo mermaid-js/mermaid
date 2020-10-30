@@ -5,6 +5,16 @@ const getStyles = options =>
     stroke: ${options.nodeBorder};
   }
 
+  .attributeBox1 {
+    fill: #ffffff;
+    stroke: ${options.nodeBorder};
+  }
+
+  .attributeBox2 {
+    fill: #f2f2f2;
+    stroke: ${options.nodeBorder};
+  }
+
   .relationshipLabelBox {
     fill: ${options.tertiaryColor};
     opacity: 0.7;

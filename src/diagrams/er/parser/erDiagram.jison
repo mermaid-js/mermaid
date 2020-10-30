@@ -1,7 +1,7 @@
 %lex
 
 %options case-insensitive
-%x open_directive type_directive arg_directive
+%x open_directive type_directive arg_directive block
 
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
@@ -11,25 +11,31 @@
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
-[\n]+                     return 'NEWLINE';
-\s+                       /* skip whitespace */
-[\s]+                     return 'SPACE';
-\"[^"]*\"                 return 'WORD';
-"erDiagram"               return 'ER_DIAGRAM';
-\|o                       return 'ZERO_OR_ONE';
-\}o                       return 'ZERO_OR_MORE';
-\}\|                      return 'ONE_OR_MORE';
-\|\|                      return 'ONLY_ONE';
-o\|                       return 'ZERO_OR_ONE';
-o\{                       return 'ZERO_OR_MORE';
-\|\{                      return 'ONE_OR_MORE';
-\.\.                      return 'NON_IDENTIFYING';
-\-\-                      return 'IDENTIFYING';
-\.\-                      return 'NON_IDENTIFYING';
-\-\.                      return 'NON_IDENTIFYING';
-[A-Za-z][A-Za-z0-9\-]*    return 'ALPHANUM';
-.                         return yytext[0];
-<<EOF>>                   return 'EOF';
+[\n]+                           return 'NEWLINE';
+\s+                             /* skip whitespace */
+[\s]+                           return 'SPACE';
+\"[^"]*\"                       return 'WORD';
+"erDiagram"                     return 'ER_DIAGRAM';
+"{"                             { this.begin("block"); return 'BLOCK_START'; }
+<block>\s+                      /* skip whitespace in block */
+<block>[A-Za-z][A-Za-z0-9\-_]+  { return 'ATTRIBUTE_WORD'; }
+<block>[\n]+                    /* nothing */
+<block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
+<block>.                        return yytext[0];
+\|o                             return 'ZERO_OR_ONE';
+\}o                             return 'ZERO_OR_MORE';
+\}\|                            return 'ONE_OR_MORE';
+\|\|                            return 'ONLY_ONE';
+o\|                             return 'ZERO_OR_ONE';
+o\{                             return 'ZERO_OR_MORE';
+\|\{                            return 'ONE_OR_MORE';
+\.\.                            return 'NON_IDENTIFYING';
+\-\-                            return 'IDENTIFYING';
+\.\-                            return 'NON_IDENTIFYING';
+\-\.                            return 'NON_IDENTIFYING';
+[A-Za-z][A-Za-z0-9\-]*          return 'ALPHANUM';
+.                               return yytext[0];
+<<EOF>>                         return 'EOF';
 
 /lex
 
@@ -67,10 +73,35 @@ statement
           yy.addRelationship($1, $5, $3, $2);
           /*console.log($1 + $2 + $3 + ':' + $5);*/
       }
+    | entityName BLOCK_START attributes BLOCK_STOP
+      {
+          /* console.log('detected block'); */
+          yy.addEntity($1);
+          yy.addAttributes($1, $3);
+          /* console.log('handled block'); */
+      }
+    | entityName { yy.addEntity($1); }
     ;
 
 entityName
     : 'ALPHANUM' { $$ = $1; /*console.log('Entity: ' + $1);*/ }
+    ;
+
+attributes
+    : attribute { $$ = [$1]; }
+    | attribute attributes { $2.push($1); $$=$2; }
+    ;
+
+attribute
+    : attributeType attributeName { $$ = { attributeType: $1, attributeName: $2 }; }
+    ;
+
+attributeType
+    : ATTRIBUTE_WORD { $$=$1; }
+    ;
+
+attributeName
+    : ATTRIBUTE_WORD { $$=$1; }
     ;
 
 relSpec
