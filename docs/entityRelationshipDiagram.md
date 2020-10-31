@@ -3,7 +3,7 @@
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/entityRelationshipDiagram.md
 > An entity–relationship model (or ER model) describes interrelated things of interest in a specific domain of knowledge. A basic ER model is composed of entity types (which classify the things of interest) and specifies relationships that can exist between entities (instances of those entity types). Wikipedia.
 
-Note that practitioners of ER modelling almost always refer to *entity types* simply as *entities*.  For example the CUSTOMER entity type would be referred to simply as the CUSTOMER entity.  This is so common it would be inadvisable to do anything else, but technically an entity is an abstract *instance* of an entity type, and this is what an ER diagram shows - abstract instances, and the relationships between them.  This is why entities are always named using singular nouns.
+Note that practitioners of ER modelling almost always refer to *entity types* simply as *entities*.  For example the `CUSTOMER` entity *type* would be referred to simply as the `CUSTOMER` entity.  This is so common it would be inadvisable to do anything else, but technically an entity is an abstract *instance* of an entity type, and this is what an ER diagram shows - abstract instances, and the relationships between them.  This is why entities are always named using singular nouns.
 
 Mermaid can render ER diagrams
 
@@ -27,23 +27,23 @@ Relationships between entities are represented by lines with end markers represe
 
 ## Status
 
-ER diagrams are a new feature in Mermaid and are **experimental**.  There are likely to be a few bugs and constraints, and enhancements will be made in due course.  Currently you can only define entities and relationships, but not attributes.
+ER diagrams are a relatively new feature in Mermaid, so there are likely to be a few bugs and constraints, and enhancements will be made in due course.  Currently you can only define entities and relationships, but not attributes.  Inclusion of attributes is now actively being worked on.
 
 ## Syntax
 
 ### Entities and Relationships
 
-Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to label the relationship.  Each statement consists of the following parts, all of which are mandatory:
+Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to label the relationship.  Each statement consists of the following parts:
 
 ```markdown
-    <first-entity> <relationship> <second-entity> : <relationship-label>
+    <first-entity> [<relationship> <second-entity> : <relationship-label>]
 ```
 
 Where:
 
-- `first-entity` is the name of an entity.  Names must begin with an alphabetic character and may also contain digits and hyphens
+- `first-entity` is the name of an entity.  Names must begin with an alphabetic character and may also contain digits, hyphens, and underscores.
 - `relationship` describes the way that both entities inter-relate.  See below.
-- `second-entity` is the name of the other entity
+- `second-entity` is the name of the other entity.
 - `relationship-label` describes the relationship from the perspective of the first entity.
 
 For example:
@@ -53,6 +53,8 @@ For example:
 ```
 
 This statement can be read as *a property contains one or more rooms, and a room is part of one and only one property*. You can see that the label here is from the first entity's perspective: a property contains a room, but a room does not contain a property.  When considered from the perspective of the second entity, the equivalent label is usually very easy to infer. (Some ER diagrams label relationships from both perspectives, but this is not supported here, and is usually superfluous).
+
+Only the `first-entity` part of a statement is mandatory.  This makes it possible to show an entity with no relationships, which can be useful during iterative construction of diagrams.  If any other parts of a statement are specified, then all parts are mandatory.
 
 ### Relationship Syntax
 
@@ -66,10 +68,10 @@ Cardinality is a property that describes how many elements of another entity can
 
 | Value (left) | Value (right) | Meaning                                                |
 |:------------:|:-------------:|--------------------------------------------------------|
-|     `\|o`    |       `o\|`   | Zero or one                                            |
-|     `\|\|`   |       `\|\|`  | Exactly one                                            |
-|     `}o`     |       `o{`    | Zero or more (no upper limit)                          |
-|     `}\|`    |       `\|{`   | One or more (no upper limit)                           |
+|     `|o`     |      `o|`     | Zero or one                                            |
+|     `||`     |      `||`     | Exactly one                                            |
+|     `}o`     |      `o{`     | Zero or more (no upper limit)                          |
+|     `}|`     |      `|{`     | One or more (no upper limit)                           |
 
 ### Identification
 
