@@ -23,13 +23,13 @@ With Mermaid less time needs to be spent on making diagrams, as a separate docum
 
 > Mermaid is a Diagramming tool for everyone. 
 
-Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](https://github.com/mermaid-js/mermaid/blob/develop/docs/getting-started/Tutorials.md) for the Live Editor video tutorials.
+Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](https://github.com/mermaid-js/mermaid/blob/develop/docs/Tutorials.md) for the Live Editor video tutorials.
 
 Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](./integrations.md).
 
 For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](./n00b-overview.md) and [Usage](./usage.md).
 
-🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/tutorials-and-community/development.md) | 📜 [Version Log](./CHANGELOG.md)
+🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md) | 📜 [Version Log](./CHANGELOG.md)
 
 > 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/knsv/mermaid/issues/866).
 
