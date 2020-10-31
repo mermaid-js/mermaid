@@ -154,9 +154,10 @@ journey
 ![Journey diagram](img/user-journey.png)
 
 # Installation
-## In depth guides and examples can be found in [Getting Started](getting-started/n00b-gettingStarted.md) and [Usage](getting-started/usage.md).
 
-## It would also be helpful to learn more about mermaid's [Syntax](diagrams-and-syntax-and-examples/n00b-syntaxReference.md).
+**In depth guides and examples can be found in [Getting Started](docs/n00b-gettingStarted.md) and [Usage](docs/usage.md).**
+
+**It would also be helpful to learn more about mermaid's [Syntax](docs/n00b-syntaxReference.md).**
 
 ### CDN
 
@@ -195,7 +196,7 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 ```
 ## Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.
 
-## Examples can be found in [Getting Started](getting-started/n00b-gettingStarted.md)
+## Examples can be found in [Getting Started](docs/n00b-gettingStarted.md)
 
 # Sibling projects
 - [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
