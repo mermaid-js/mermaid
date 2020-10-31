@@ -173,7 +173,7 @@ Alternatively, you can also adjust the version number in the page itself.
 
 Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/browse/mermaid@8.8.0/)
 
-## Incorporating mermaid to a website
+## Mermaid on a website
 To support mermaid on your website, all you have to do is add Mermaid’s JavaScript package
 
 ```
