@@ -27,7 +27,7 @@ Even non-programmers can create diagrams through the [Mermaid Live Editor](https
 
 Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](./integrations.md).
 
-For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](overview/n00b-overview.md) and [Usage](getting-started/usage.md).
+For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](./n00b-overview.md) and [Usage](./usage.md).
 
 🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/tutorials-and-community/development.md) | 📜 [Version Log](tutorials-and-community/CHANGELOG.md)
 
@@ -155,9 +155,9 @@ journey
 
 # Installation
 
-**In depth guides and examples can be found in [Getting Started](/n00b-gettingStarted.md) and [Usage](/usage.md).**
+**In depth guides and examples can be found in [Getting Started](./n00b-gettingStarted.md) and [Usage](./usage.md).**
 
-**It would also be helpful to learn more about mermaid's [Syntax](/n00b-syntaxReference.md).**
+**It would also be helpful to learn more about mermaid's [Syntax](./n00b-syntaxReference.md).**
 
 ### CDN
 
@@ -196,7 +196,7 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 ```
 ## Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.
 
-## Examples can be found in [Getting Started](docs/n00b-gettingStarted.md)
+## Examples can be found in [Getting Started](./n00b-gettingStarted.md)
 
 # Sibling projects
 - [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
