@@ -25,7 +25,7 @@ With Mermaid less time needs to be spent on making diagrams, as a separate docum
 
 Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](https://github.com/mermaid-js/mermaid/blob/develop/docs/getting-started/Tutorials.md) for the Live Editor video tutorials.
 
-Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](overview/integrations.md).
+Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](./integrations.md).
 
 For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](overview/n00b-overview.md) and [Usage](getting-started/usage.md).
 
