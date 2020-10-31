@@ -14,6 +14,25 @@ describe('when parsing ER diagram it...', function() {
     erDiagram.parser.yy.clear();
   });
 
+  it ('should allow stand-alone entities with no relationships', function() {
+    const line1 = 'ISLAND';
+    const line2 = 'MAINLAND';
+    erDiagram.parser.parse(`erDiagram\n${line1}\n${line2}`);
+
+    expect(Object.keys(erDb.getEntities()).length).toBe(2);
+    expect (erDb.getRelationships().length).toBe(0);
+  });
+
+  it ('should allow hyphens and underscores in entity names', function() {
+    const line1 = 'DUCK-BILLED-PLATYPUS';
+    const line2 = 'CHARACTER_SET';
+    erDiagram.parser.parse(`erDiagram\n${line1}\n${line2}`);
+
+    const entities = erDb.getEntities();
+    expect (entities["DUCK-BILLED-PLATYPUS"]).toBe('DUCK-BILLED-PLATYPUS');
+    expect (entities.CHARACTER_SET).toBe('CHARACTER_SET');
+  });
+
   it('should associate two entities correctly', function() {
     erDiagram.parser.parse('erDiagram\nCAR ||--o{ DRIVER : "insured for"');
     const entities = erDb.getEntities();
