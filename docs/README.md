@@ -155,9 +155,9 @@ journey
 
 # Installation
 
-**In depth guides and examples can be found in [Getting Started](docs/n00b-gettingStarted.md) and [Usage](docs/usage.md).**
+**In depth guides and examples can be found in [Getting Started](/n00b-gettingStarted.md) and [Usage](/usage.md).**
 
-**It would also be helpful to learn more about mermaid's [Syntax](docs/n00b-syntaxReference.md).**
+**It would also be helpful to learn more about mermaid's [Syntax](/n00b-syntaxReference.md).**
 
 ### CDN
 
