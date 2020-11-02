@@ -161,18 +161,14 @@ graph LR
 ```
 
 ### A hexagon node
-{% raw %}
 ```
 graph LR
     id1{{This is the text in the box}}
 ```
-{% endraw %}
 
 ```mermaid
-{% raw %}
 graph LR
     id1{{This is the text in the box}}
-{% endraw %}
 ```
 
 ### Parallelogram

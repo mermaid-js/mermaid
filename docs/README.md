@@ -23,13 +23,13 @@ With Mermaid less time needs to be spent on making diagrams, as a separate docum
 
 > Mermaid is a Diagramming tool for everyone. 
 
-Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](https://github.com/mermaid-js/mermaid/blob/develop/docs/getting-started/Tutorials.md) for the Live Editor video tutorials.
+Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](https://github.com/mermaid-js/mermaid/blob/develop/docs/Tutorials.md) for the Live Editor video tutorials.
 
-Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](overview/integrations.md).
+Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](./integrations.md).
 
-For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](overview/n00b-overview.md) and [Usage](getting-started/usage.md).
+For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Beginner's Guide](./n00b-overview.md) and [Usage](./usage.md).
 
-🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/tutorials-and-community/development.md) | 📜 [Version Log](tutorials-and-community/CHANGELOG.md)
+🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md) | 📜 [Version Log](./CHANGELOG.md)
 
 > 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/knsv/mermaid/issues/866).
 
@@ -154,9 +154,10 @@ journey
 ![Journey diagram](img/user-journey.png)
 
 # Installation
-## In depth guides and examples can be found in [Getting Started](getting-started/n00b-gettingStarted.md) and [Usage](getting-started/usage.md).
 
-## It would also be helpful to learn more about mermaid's [Syntax](diagrams-and-syntax-and-examples/n00b-syntaxReference.md).
+**In depth guides and examples can be found in [Getting Started](./n00b-gettingStarted.md) and [Usage](./usage.md).**
+
+**It would also be helpful to learn more about mermaid's [Syntax](./n00b-syntaxReference.md).**
 
 ### CDN
 
@@ -172,7 +173,7 @@ Alternatively, you can also adjust the version number in the page itself.
 
 Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/browse/mermaid@8.8.0/)
 
-## Incorporating mermaid to a website
+## Mermaid on a website
 To support mermaid on your website, all you have to do is add Mermaid’s JavaScript package
 
 ```
@@ -188,14 +189,14 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 
 ```
 
-## To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:
+**To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:**
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({startOnLoad:true});</script>
 ```
-## Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.
+**Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.**
 
-## Examples can be found in [Getting Started](getting-started/n00b-gettingStarted.md)
+## Examples can be found in [Getting Started](./n00b-gettingStarted.md)
 
 # Sibling projects
 - [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
