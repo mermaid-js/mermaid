@@ -5,12 +5,12 @@ const getStyles = options =>
     stroke: ${options.nodeBorder};
   }
 
-  .attributeBox1 {
+  .attributeBoxOdd {
     fill: #ffffff;
     stroke: ${options.nodeBorder};
   }
 
-  .attributeBox2 {
+  .attributeBoxEven {
     fill: #f2f2f2;
     stroke: ${options.nodeBorder};
   }

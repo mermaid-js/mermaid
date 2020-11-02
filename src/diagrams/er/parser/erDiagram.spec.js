@@ -33,6 +33,85 @@ describe('when parsing ER diagram it...', function() {
     expect(entities.hasOwnProperty('CHARACTER_SET')).toBe(true);
   });
 
+  it('should allow an entity with a single attribute to be defined', function() {
+    const entity = 'BOOK';
+    const attribute = 'string title';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(1);
+  });
+
+  it('should allow an entity with multiple attributes to be defined', function() {
+    const entity = 'BOOK';
+    const attribute1 = 'string title';
+    const attribute2 = 'string author';
+    const attribute3 = 'float price';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`);
+    const entities = erDb.getEntities();
+    expect(entities[entity].attributes.length).toBe(3);
+  });
+
+  it('should allow attribute definitions to be split into multiple blocks', function() {
+    const entity = 'BOOK';
+    const attribute1 = 'string title';
+    const attribute2 = 'string author';
+    const attribute3 = 'float price';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n}\n${entity} {\n${attribute2}\n${attribute3}\n}`);
+    const entities = erDb.getEntities();
+    expect(entities[entity].attributes.length).toBe(3);
+  });
+
+  it('should allow an empty attribute block', function() {
+    const entity = 'BOOK';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {}`);
+    const entities = erDb.getEntities();
+    expect(entities.hasOwnProperty('BOOK')).toBe(true);
+    expect(entities[entity].attributes.length).toBe(0);
+  });
+
+  it('should allow an attribute block to start immediately after the entity name', function() {
+    const entity = 'BOOK';
+
+    erDiagram.parser.parse(`erDiagram\n${entity}{}`);
+    const entities = erDb.getEntities();
+    expect(entities.hasOwnProperty('BOOK')).toBe(true);
+    expect(entities[entity].attributes.length).toBe(0);
+  });
+
+  it('should allow an attribute block to be separated from the entity name by spaces', function() {
+    const entity = 'BOOK';
+
+    erDiagram.parser.parse(`erDiagram\n${entity}         {}`);
+    const entities = erDb.getEntities();
+    expect(entities.hasOwnProperty('BOOK')).toBe(true);
+    expect(entities[entity].attributes.length).toBe(0);
+  });
+
+  it('should allow whitespace before and after attribute definitions', function() {
+    const entity = 'BOOK';
+    const attribute = 'string title';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n  \n\n  ${attribute}\n\n  \n}`);
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(1);
+  });
+
+  it('should allow no whitespace before and after attribute definitions', function() {
+    const entity = 'BOOK';
+    const attribute = 'string title';
+
+    erDiagram.parser.parse(`erDiagram\n${entity}{${attribute}}`);
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(1);
+  });
+
   it('should associate two entities correctly', function() {
     erDiagram.parser.parse('erDiagram\nCAR ||--o{ DRIVER : "insured for"');
     const entities = erDb.getEntities();

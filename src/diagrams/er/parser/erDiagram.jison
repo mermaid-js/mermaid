@@ -80,6 +80,7 @@ statement
           yy.addAttributes($1, $3);
           /* console.log('handled block'); */
       }
+    | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); }
     | entityName { yy.addEntity($1); }
     ;
 

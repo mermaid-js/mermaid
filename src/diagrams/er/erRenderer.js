@@ -108,7 +108,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
     // Add rectangular boxes for the attribute types/names
     let heightOffset = labelBBox.height + heightPadding * 2; // Start at the bottom of the entity label
-    let attribStyle = 'attributeBox1'; // We will flip the style on alternate rows to achieve a banded effect
+    let attribStyle = 'attributeBoxOdd'; // We will flip the style on alternate rows to achieve a banded effect
 
     attributeNodes.forEach(nodePair => {
       // Calculate the alignment y co-ordinate for the type/name of the attribute
@@ -157,7 +157,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         heightPadding * 2;
 
       // Flip the attribute style for row banding
-      attribStyle = attribStyle == 'attributeBox1' ? 'attributeBox2' : 'attributeBox1';
+      attribStyle = attribStyle == 'attributeBoxOdd' ? 'attributeBoxEven' : 'attributeBoxOdd';
     });
   } else {
     // Ensure the entity box is a decent size without any attributes
