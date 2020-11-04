@@ -213,7 +213,7 @@ More info in: https://github.com/mbostock/d3/wiki/Time-Formatting
 
 ## Comments
 
-Comments can be entered within a gantt chart, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
+Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
 ```
 gantt
@@ -231,7 +231,7 @@ gantt
 
 ## Styling
 
-Styling of the a gantt diagram is done by defining a number of css classes.  During rendering these classes are extracted from the
+Styling of the a gantt diagram is done by defining a number of css classes. During rendering, these classes are extracted from the file located at src/themes/sequence.scss
 
 ### Classes used
 
@@ -316,7 +316,7 @@ todayMarker off
 
 ## Configuration
 
-Is it possible to adjust the margins for rendering the gantt diagram.
+It is possible to adjust the margins for rendering the gantt diagram.
 
 This is done by defining the `ganttConfig` part of the configuration object.
 How to use the CLI is described in the [mermaidCLI](mermaidCLI.html) page.
@@ -333,7 +333,7 @@ mermaid.ganttConfig = {
 }
 ```
 
-### Possible configration params:
+### Possible configuration params:
 
 Param | Descriotion | Default value
 --- | --- | ---
@@ -342,7 +342,7 @@ bottomMarginAdj|Adjusts how far down the graph ended. Wide borders styles with c
 
 ## Interaction
 
-It is possible to bind a click event to a task, the click can lead to either a javascript callback or to a link which will be opened in the current browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+It is possible to bind a click event to a task. The click can lead to either a javascript callback or to a link which will be opened in the current browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 ```
 click taskId call callback(arguments)
@@ -350,7 +350,7 @@ click taskId href URL
 ```
 
 * taskId is the id of the task
-* callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified..
+* callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified.
 
 Beginners tip, a full example using interactive links in an html context:
 ```html
