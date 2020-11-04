@@ -200,7 +200,7 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 ```
 **Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.**
 
-## Examples can be found in [Other examples](/examples)
+## Examples can be found in [Getting Started](./n00b-gettingStarted.md)
 
 # Sibling projects
 - [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)

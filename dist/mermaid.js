@@ -49035,7 +49035,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.8.2\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false | sed '1i---\\\\nsort: 3\\\\ntitle: Configurations\\\\n---\\\\n' > docs/getting-started/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.8.3\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"babel-eslint\":\"^10.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -49274,7 +49274,7 @@ __webpack_require__.r(__webpack_exports__);
 var rect = function rect(parent, node) {
   _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Creating subgraph rect for ', node.id, node); // Add outer g element
 
-  var shapeSvg = parent.insert('g').attr('class', 'cluster').attr('id', node.id); // add the rect
+  var shapeSvg = parent.insert('g').attr('class', 'cluster' + (node.class ? ' ' + node.class : '')).attr('id', node.id); // add the rect
 
   var rect = shapeSvg.insert('rect', ':first-child'); // Create the label and insert it after the rect
 
@@ -49515,7 +49515,8 @@ var createLabel = function createLabel(_vertexText, style, isTitle, isNode) {
       isNode: isNode,
       label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, function (s) {
         return "<i class='".concat(s.replace(':', ' '), "'></i>");
-      })
+      }),
+      labelStyle: style.replace('fill:', 'color:')
     };
     var vertexNode = addHtmlLabel(node); // vertexNode.parentNode.removeChild(vertexNode);
 
@@ -49842,7 +49843,7 @@ var intersection = function intersection(node, outsidePoint, insidePoint) {
     r = R * q / Q;
     var res = {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
-      y: outsidePoint.y + q
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - q
     };
     _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
     return res;
@@ -49994,7 +49995,7 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
       break;
   }
 
-  var svgPath = elem.append('path').attr('d', lineFunction(lineData)).attr('id', edge.id).attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '')); // DEBUG code, adds a red circle at each edge coordinate
+  var svgPath = elem.append('path').attr('d', lineFunction(lineData)).attr('id', edge.id).attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : '')).attr('style', edge.style); // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach(point => {
   //   elem
   //     .append('circle')
@@ -55728,7 +55729,7 @@ var parser = {trace: function trace () { },
 yy: {},
 symbols_: {"error":2,"start":3,"ER_DIAGRAM":4,"document":5,"EOF":6,"directive":7,"line":8,"SPACE":9,"statement":10,"NEWLINE":11,"openDirective":12,"typeDirective":13,"closeDirective":14,":":15,"argDirective":16,"entityName":17,"relSpec":18,"role":19,"ALPHANUM":20,"cardinality":21,"relType":22,"ZERO_OR_ONE":23,"ZERO_OR_MORE":24,"ONE_OR_MORE":25,"ONLY_ONE":26,"NON_IDENTIFYING":27,"IDENTIFYING":28,"WORD":29,"open_directive":30,"type_directive":31,"arg_directive":32,"close_directive":33,"$accept":0,"$end":1},
 terminals_: {2:"error",4:"ER_DIAGRAM",6:"EOF",9:"SPACE",11:"NEWLINE",15:":",20:"ALPHANUM",23:"ZERO_OR_ONE",24:"ZERO_OR_MORE",25:"ONE_OR_MORE",26:"ONLY_ONE",27:"NON_IDENTIFYING",28:"IDENTIFYING",29:"WORD",30:"open_directive",31:"type_directive",32:"arg_directive",33:"close_directive"},
-productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,5],[17,1],[18,3],[21,1],[21,1],[21,1],[21,1],[22,1],[22,1],[19,1],[19,1],[12,1],[13,1],[16,1],[14,1]],
+productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,5],[10,1],[17,1],[18,3],[21,1],[21,1],[21,1],[21,1],[22,1],[22,1],[19,1],[19,1],[12,1],[13,1],[16,1],[14,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -55758,54 +55759,57 @@ case 12:
       
 break;
 case 13:
- this.$ = $$[$0]; /*console.log('Entity: ' + $$[$0]);*/ 
+ yy.addEntity($$[$0]); 
 break;
 case 14:
+ this.$ = $$[$0]; /*console.log('Entity: ' + $$[$0]);*/ 
+break;
+case 15:
 
         this.$ = { cardA: $$[$0], relType: $$[$0-1], cardB: $$[$0-2] };
         /*console.log('relSpec: ' + $$[$0] + $$[$0-1] + $$[$0-2]);*/
       
 break;
-case 15:
+case 16:
  this.$ = yy.Cardinality.ZERO_OR_ONE; 
 break;
-case 16:
+case 17:
  this.$ = yy.Cardinality.ZERO_OR_MORE; 
 break;
-case 17:
+case 18:
  this.$ = yy.Cardinality.ONE_OR_MORE; 
 break;
-case 18:
+case 19:
  this.$ = yy.Cardinality.ONLY_ONE; 
 break;
-case 19:
+case 20:
  this.$ = yy.Identification.NON_IDENTIFYING;  
 break;
-case 20:
+case 21:
  this.$ = yy.Identification.IDENTIFYING; 
 break;
-case 21:
+case 22:
  this.$ = $$[$0].replace(/"/g, ''); 
 break;
-case 22:
+case 23:
  this.$ = $$[$0]; 
 break;
-case 23:
+case 24:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 24:
+case 25:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 25:
+case 26:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 26:
+case 27:
  yy.parseDirective('}%%', 'close_directive', 'er'); 
 break;
 }
 },
-table: [{3:1,4:$V0,7:3,12:4,30:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,30:$V1},{13:8,31:[1,9]},{31:[2,23]},{6:[1,10],7:15,8:11,9:[1,12],10:13,11:[1,14],12:4,17:16,20:$V3,30:$V1},{1:[2,2]},{14:18,15:[1,19],33:$V4},o([15,33],[2,24]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:15,10:21,12:4,17:16,20:$V3,30:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),{18:22,21:23,23:$V5,24:$V6,25:$V7,26:$V8},o([15,23,24,25,26],[2,13]),{11:[1,28]},{16:29,32:[1,30]},{11:[2,26]},o($V2,[2,5]),{17:31,20:$V3},{22:32,27:[1,33],28:[1,34]},o($V9,[2,15]),o($V9,[2,16]),o($V9,[2,17]),o($V9,[2,18]),o($Va,[2,9]),{14:35,33:$V4},{33:[2,25]},{15:[1,36]},{21:37,23:$V5,24:$V6,25:$V7,26:$V8},o($Vb,[2,19]),o($Vb,[2,20]),{11:[1,38]},{19:39,20:[1,41],29:[1,40]},{20:[2,14]},o($Va,[2,10]),o($V2,[2,12]),o($V2,[2,21]),o($V2,[2,22])],
-defaultActions: {5:[2,23],7:[2,2],20:[2,26],30:[2,25],37:[2,14]},
+table: [{3:1,4:$V0,7:3,12:4,30:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,30:$V1},{13:8,31:[1,9]},{31:[2,24]},{6:[1,10],7:15,8:11,9:[1,12],10:13,11:[1,14],12:4,17:16,20:$V3,30:$V1},{1:[2,2]},{14:18,15:[1,19],33:$V4},o([15,33],[2,25]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:15,10:21,12:4,17:16,20:$V3,30:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),o($V2,[2,13],{18:22,21:23,23:$V5,24:$V6,25:$V7,26:$V8}),o([6,9,11,15,20,23,24,25,26,30],[2,14]),{11:[1,28]},{16:29,32:[1,30]},{11:[2,27]},o($V2,[2,5]),{17:31,20:$V3},{22:32,27:[1,33],28:[1,34]},o($V9,[2,16]),o($V9,[2,17]),o($V9,[2,18]),o($V9,[2,19]),o($Va,[2,9]),{14:35,33:$V4},{33:[2,26]},{15:[1,36]},{21:37,23:$V5,24:$V6,25:$V7,26:$V8},o($Vb,[2,20]),o($Vb,[2,21]),{11:[1,38]},{19:39,20:[1,41],29:[1,40]},{20:[2,15]},o($Va,[2,10]),o($V2,[2,12]),o($V2,[2,22]),o($V2,[2,23])],
+defaultActions: {5:[2,24],7:[2,2],20:[2,27],30:[2,26],37:[2,15]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -56338,7 +56342,7 @@ case 25:return 6;
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-]*)/i,/^(?:.)/i,/^(?:$)/i],
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-_]*)/i,/^(?:.)/i,/^(?:$)/i],
 conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],"inclusive":true}}
 });
 return lexer;
@@ -57839,7 +57843,10 @@ var addEdges = function addEdges(edges, g) {
     var linkId = 'L-' + edge.start + '-' + edge.end;
     var linkNameStart = 'LS-' + edge.start;
     var linkNameEnd = 'LE-' + edge.end;
-    var edgeData = {};
+    var edgeData = {
+      style: '',
+      labelStyle: ''
+    };
     edgeData.minlen = edge.length || 1; //edgeData.id = 'id' + cnt;
     // Set link type for rendering
 
@@ -57875,51 +57882,48 @@ var addEdges = function addEdges(edges, g) {
       case 'arrow_circle':
         edgeData.arrowTypeEnd = 'arrow_circle';
         break;
-    } // logger.info('apa', edgeData, edge);
-    // edgeData.arrowTypeStart = edge.arrowTypeStart;
-    // edgeData.arrowTypeStart = edge.arrowTypeStart;
-    // edgeData.arrowType = edgeData.arrowTypeEnd;
-    // logger.info('apa', edgeData, edge);
-
+    }
 
     var style = '';
     var labelStyle = '';
+
+    switch (edge.stroke) {
+      case 'normal':
+        style = 'fill:none;';
+
+        if (typeof defaultStyle !== 'undefined') {
+          style = defaultStyle;
+        }
+
+        if (typeof defaultLabelStyle !== 'undefined') {
+          labelStyle = defaultLabelStyle;
+        }
+
+        edgeData.thickness = 'normal';
+        edgeData.pattern = 'solid';
+        break;
+
+      case 'dotted':
+        edgeData.thickness = 'normal';
+        edgeData.pattern = 'dotted';
+        edgeData.style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
+        break;
+
+      case 'thick':
+        edgeData.thickness = 'thick';
+        edgeData.pattern = 'solid';
+        edgeData.style = 'stroke-width: 3.5px;fill:none;';
+        break;
+    }
 
     if (typeof edge.style !== 'undefined') {
       var styles = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["getStylesFromArray"])(edge.style);
       style = styles.style;
       labelStyle = styles.labelStyle;
-    } else {
-      switch (edge.stroke) {
-        case 'normal':
-          style = 'fill:none';
-
-          if (typeof defaultStyle !== 'undefined') {
-            style = defaultStyle;
-          }
-
-          if (typeof defaultLabelStyle !== 'undefined') {
-            labelStyle = defaultLabelStyle;
-          }
-
-          edgeData.thickness = 'normal';
-          edgeData.pattern = 'solid';
-          break;
-
-        case 'dotted':
-          edgeData.thickness = 'normal';
-          edgeData.pattern = 'dotted';
-          break;
-
-        case 'thick':
-          edgeData.thickness = 'thick';
-          edgeData.pattern = 'solid';
-          break;
-      }
     }
 
-    edgeData.style = style;
-    edgeData.labelStyle = labelStyle;
+    edgeData.style = edgeData.style += style;
+    edgeData.labelStyle = edgeData.labelStyle += labelStyle;
 
     if (typeof edge.interpolate !== 'undefined') {
       edgeData.curve = Object(_utils__WEBPACK_IMPORTED_MODULE_9__["interpolateToCurve"])(edge.interpolate, d3__WEBPACK_IMPORTED_MODULE_1__["curveLinear"]);
@@ -57936,22 +57940,21 @@ var addEdges = function addEdges(edges, g) {
     } else {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
+    } // if (getConfig().flowchart.htmlLabels && false) {
+    //   // eslint-disable-line
+    //   edgeData.labelType = 'html';
+    //   edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
+    // } else {
 
-      if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels && false) {
-        // eslint-disable-line
-        edgeData.labelType = 'html';
-        edgeData.label = "<span id=\"L-".concat(linkId, "\" class=\"edgeLabel L-").concat(linkNameStart, "' L-").concat(linkNameEnd, "\">").concat(edge.text, "</span>");
-      } else {
-        edgeData.labelType = 'text';
-        edgeData.label = edge.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_8__["default"].lineBreakRegex, '\n');
 
-        if (typeof edge.style === 'undefined') {
-          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
-        }
+    edgeData.labelType = 'text';
+    edgeData.label = edge.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_8__["default"].lineBreakRegex, '\n');
 
-        edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
-      }
+    if (typeof edge.style === 'undefined') {
+      edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';
     }
+
+    edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:'); // }
 
     edgeData.id = linkId;
     edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd; // Add the edge to the graph
@@ -58410,7 +58413,9 @@ var addEdges = function addEdges(edges, g) {
 
       if (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels) {
         edgeData.labelType = 'html';
-        edgeData.label = "<span id=\"L-".concat(linkId, "\" class=\"edgeLabel L-").concat(linkNameStart, "' L-").concat(linkNameEnd, "\">").concat(edge.text, "</span>");
+        edgeData.label = "<span id=\"L-".concat(linkId, "\" class=\"edgeLabel L-").concat(linkNameStart, "' L-").concat(linkNameEnd, "\">").concat(edge.text.replace(/fa[lrsb]?:fa-[\w-]+/g, function (s) {
+          return "<i class='".concat(s.replace(':', ' '), "'></i>");
+        }), "</span>");
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_8__["default"].lineBreakRegex, '\n');
@@ -72104,7 +72109,7 @@ function () {
       this.clusterBorder = this.clusterBorder || this.tertiaryBorderColor;
       this.defaultLinkColor = this.defaultLinkColor || this.lineColor;
       this.titleColor = this.titleColor || this.tertiaryTextColor;
-      this.edgeLabelBackground = this.edgeLabelBackground || this.darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 30) : this.secondaryColor;
+      this.edgeLabelBackground = this.edgeLabelBackground || (this.darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 30) : this.secondaryColor);
       this.nodeTextColor = this.nodeTextColor || this.primaryTextColor;
       /* Sequence Diagram variables */
       // this.actorBorder = lighten(this.border1, 0.5);
