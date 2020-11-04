@@ -25,9 +25,49 @@ Entity names are often capitalised, although there is no accepted standard on th
 
 Relationships between entities are represented by lines with end markers representing cardinality.  Mermaid uses the most popular crow's foot notation. The crow's foot intuitively conveys the possibility of many instances of the entity that it connects to.
 
-## Status
+ER diagrams can be used for various purposes, ranging from abstract logical models devoid of any implementation details, through to physical models of relational database tables.  It can be useful to include attribute definitions on ER diagrams to aid comprehension of the purpose and meaning of entities.  These do not necessarily need to be exhaustive; often a small subset of attributes is enough.  Mermaid allows to be defined in terms of their *type* and *name*.
 
-ER diagrams are a relatively new feature in Mermaid, so there are likely to be a few bugs and constraints, and enhancements will be made in due course.  Currently you can only define entities and relationships, but not attributes.  Inclusion of attributes is now actively being worked on.
+```markdown
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER ||--|{ LINE-ITEM : contains
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    LINE-ITEM {
+        string productCode
+        int quantity
+        float pricePerUnit
+    }
+```
+
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string custNumber
+        string sector
+    }
+    ORDER ||--|{ LINE-ITEM : contains
+    ORDER {
+        int orderNumber
+        string deliveryAddress
+    }
+    LINE-ITEM {
+        string productCode
+        int quantity
+        float pricePerUnit
+    }
+```
+
+When including attributes on ER diagrams, you must decide whether to include foreign keys as attributes.  This probably depends on how closely you are trying to represent relational table structures.  If your diagram is a *logical* model which is not meant to imply a relational implementation, then it is better to leave these out because the associative relationships already convey the way that entities are associated.  For example, a JSON data structure can implement a one-to-many relationship without the need for foreign key properties, using arrays.  Similarly an object-oriented programming language may use pointers or references to collections.  Even for models that are intended for relational implementation, you might decide that inclusion of foreign key attributes duplicates information already portrayed by the relationships, and does not add meaning to entities.  Ultimately, it's your choice.
 
 ## Syntax
 
@@ -82,6 +122,43 @@ Relationships may be classified as either *identifying* or *non-identifying* and
     PERSON ||--o{ NAMED-DRIVER : is
 ```
 
+### Attributes
+
+Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`.  For example:
+
+```markdown
+    CAR ||--o{ NAMED-DRIVER : allows
+    CAR {
+        string registrationNumber
+        string make
+        string model
+    }
+    PERSON ||--o{ NAMED-DRIVER : is
+    PERSON {
+        string firstName
+        string lastName
+        int age
+    }
+```
+The attributes are rendered inside the entity boxes:
+
+```mermaid
+    CAR ||--o{ NAMED-DRIVER : allows
+    CAR {
+        string registrationNumber
+        string make
+        string model
+    }
+    PERSON ||--o{ NAMED-DRIVER : is
+    PERSON {
+        string firstName
+        string lastName
+        int age
+    }
+```
+
+The `type` and `name` values must begin with an alphabetic character and may contain digits, hyphens or underscores.  Other than that, there are no restrictions, and there is no implicit set of valid data types.
+
 ### Other Things
 
 - If you want the relationship label to be more than one word, you must use double quotes around the phrase
@@ -93,10 +170,10 @@ Relationships may be classified as either *identifying* or *non-identifying* and
 
 For simple color customization:
 
-| Name     | Used as                                                 |
-| :------- | :------------------------------------------------------ |
-| `fill`   | Background color of an entity                           |
-| `stroke` | Border color of an entity, line color of a relationship |
+| Name     | Used as                                                              |
+| :------- | :------------------------------------------------------------------- |
+| `fill`   | Background color of an entity or attribute                           |
+| `stroke` | Border color of an entity or attribute, line color of a relationship |
 
 ### Classes used
 
@@ -104,6 +181,8 @@ The following CSS class selectors are available for richer styling:
 
 | Selector                   | Description                                           |
 | :------------------------- | :---------------------------------------------------- |
+| `.er.attributeBoxEven`     | The box containing attributes on even-numbered rows   |
+| `.er.attributeBoxOdd`      | The box containing attributes on odd-numbered rows    |
 | `.er.entityBox`            | The box representing an entity                        |
 | `.er.entityLabel`          | The label for an entity                               |
 | `.er.relationshipLabel`    | The label for a relationship                          |
