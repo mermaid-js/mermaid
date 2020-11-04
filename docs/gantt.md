@@ -231,7 +231,7 @@ gantt
 
 ## Styling
 
-Styling of the a gantt diagram is done by defining a number of css classes. During rendering these classes are extracted from the
+Styling of the a gantt diagram is done by defining a number of css classes.
 
 ### Classes used
 
