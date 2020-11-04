@@ -4,9 +4,9 @@
 
 This page contains a collection of examples of diagrams and charts that can be created through mermaid and its myriad applications.
 
-## If you wish to learn how to support mermaid on your webpage, read the [Beginner's Guide](../getting-started/n00b-gettingStarted.md).
+**If you wish to learn how to support mermaid on your webpage, read the [Beginner's Guide](/usage?id=usage).**
 
-## If you wish to learn about mermaid's syntax, Read the [Diagram Syntax](n00b-syntaxReference.md) section.
+**If you wish to learn about mermaid's syntax, Read the [Diagram Syntax](/flowchart?id=flowcharts-basic-syntax) section.**
 
 ## Basic Pie Chart
 
@@ -125,7 +125,7 @@ graph TB
 ```
 
 
-## Loops, alt and opt
+## SequenceDiagram: Loops, alt and opt
 
 ```
 sequenceDiagram
@@ -159,7 +159,7 @@ sequenceDiagram
 ```
 
 
-## Message to self in loop
+## SequenceDiagram: Message to self in loop
 
 ```
 sequenceDiagram
