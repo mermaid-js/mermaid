@@ -20,7 +20,7 @@ Doc-Rot is quite quick on diagrams makes, after a change is made,  it quite hard
 
 mermaid seeks to change that. mermaid is a javascript based tool that utilizes a markdown inspired syntax to generate documentation, which is actually quicker, less complicated and more convenient than most traditional diagramming software. This is a relatively straightforward solution to a major hurdle in software teams.  
 
-# :blue_book: Definition of Terms/ Dictionary
+# Definition of Terms/ Dictionary
 
 **Mermaid definitions**
 
