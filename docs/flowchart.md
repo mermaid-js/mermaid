@@ -373,7 +373,7 @@ graph TB
 
 ### Beta: New arrow types
 
-When using flowchart instead of graph there is the are new types of arrows supported as per below:
+When using flowchart instead of graph there are new types of arrows supported as per below:
 
 ```
 flowchart LR
