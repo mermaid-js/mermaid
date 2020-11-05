@@ -22,7 +22,7 @@
   - [Tutorials](Tutorials.md)
   - [API-Usage](usage.md)
   - [Configurations](Setup.md)
-  - [Directives](8.6.0_docs.md)
+  - [Directives](directives.md)
   - [Theming](theming.md)
   - [mermaid CLI](mermaidCLI.md)
   - [Advanced usage](n00b-advanced.md)
@@ -34,6 +34,5 @@
 - Contributions and Community 🙌
 
   - [Development and Contribution ](development.md)
-  - [Mermaid Versions](versionUpdates.md)
   - [Changelog](CHANGELOG.md)
   - [Adding Diagrams ](newDiagram.md)

@@ -2,10 +2,8 @@
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/directives.md)
 
-## Directives were added in [Version 8.6.0](../getting-started/8.6.0_docs.md). Please Read it for more information.
-
 ## Directives
-With this version, directives are supported. Directives are divided in two sets, by priority. the first set, containing 'init' or 'initialize' directives take priority. While the other set, containing all other kinds of directives are considered only after 'init' and the graph-type declared.
+Directives gives a diagram author the possibility to update the diagram configuration from the diagram text. Directives are divided in two sets by priority. The first set, containing 'init' or 'initialize' directives take priority. While the other set, containing all other kinds of directives are considered only after 'init' and the graph-type declared.
 
 #### Init
 
