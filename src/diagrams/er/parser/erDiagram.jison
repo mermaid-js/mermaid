@@ -18,7 +18,7 @@
 "erDiagram"                     return 'ER_DIAGRAM';
 "{"                             { this.begin("block"); return 'BLOCK_START'; }
 <block>\s+                      /* skip whitespace in block */
-<block>[A-Za-z][A-Za-z0-9\-_]+  { return 'ATTRIBUTE_WORD'; }
+<block>[A-Za-z][A-Za-z0-9\-_]*  { return 'ATTRIBUTE_WORD'; }
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
