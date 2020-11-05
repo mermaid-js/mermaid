@@ -12,7 +12,7 @@ They also detail how diagrams can be defined, or described in the manner with wh
 
 **The benefits of text based diagramming are its speed and modifiability. mermaid allows for easy maintenance and modification of diagrams. This means your diagrams will always be up to date and closely follow your code and improve your documentation.**
 
-## mermaid tag:
+## mermaid tag
 These Diagram Definitions can be entered within a \<div class=mermaid> tag.
 like so :
 ```html
