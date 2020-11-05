@@ -141,4 +141,21 @@ describe('Entity Relationship Diagram', () => {
         expect(svg).to.not.have.attr('style');
       });
   });
+
+  it('should render entities that have no relationships', () => {
+    renderGraph(
+      `
+    erDiagram
+        DEAD_PARROT
+        HERMIT
+        RECLUSE
+        SOCIALITE }o--o{ SOCIALITE : "interacts with"
+        RECLUSE }o--o{ SOCIALITE : avoids
+      `,
+      { er: { useMaxWidth: false } }
+    );
+    cy.get('svg');
+  });
+
+
 });

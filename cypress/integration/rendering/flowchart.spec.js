@@ -787,5 +787,14 @@ describe('Flowchart', () => {
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+  it('61: fontawesome icons in edge labels', () => {
+    imgSnapshotTest(
+      `
+graph TD
+  C -->|fa:fa-car Car| F[fa:fa-car Car]
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
 
 });

@@ -313,6 +313,22 @@ end
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+  it('57.x: handle nested subgraphs with outgoing links 5', () => {
+    imgSnapshotTest(
+      `%% this does not produce the desired result
+flowchart TB
+  subgraph container_Beta
+    process_C-->Process_D
+  end
+  subgraph container_Alpha
+    process_A-->process_B
+    process_B-->|via_AWSBatch|container_Beta
+    process_A-->|messages|process_C
+  end
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
   it('58: handle styling with style expressions', () => {
     imgSnapshotTest(
       `
@@ -324,5 +340,37 @@ end
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+  it('59: handle styling of subgraphs and links', () => {
+    imgSnapshotTest(
+      `
+flowchart TD
+  A[Christmas] ==> D
+  A[Christmas] -->|Get money| B(Go shopping)
+  A[Christmas] ==> C
+  subgraph T ["Test"]
+    A
+    B
+    C
+  end
+
+  classDef Test fill:#F84E68,stroke:#333,color:white;
+  class A,T Test
+  classDef TestSub fill:green;
+  class T TestSub
+  linkStyle 0,1 color:orange, stroke: orange;
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('61: fontawesome icons in edge labels', () => {
+    imgSnapshotTest(
+      `
+      flowchart TD
+        C -->|fa:fa-car Car| F[fa:fa-car Car]
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
 
 });
