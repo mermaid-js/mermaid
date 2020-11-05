@@ -32,7 +32,7 @@ export const setConf = function(cnf) {
 const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const heightPadding = conf.entityPadding / 3; // Padding internal to attribute boxes
   const widthPadding = conf.entityPadding / 3; // Ditto
-  const attrFontSize = conf.fontSize * 0.8;
+  const attrFontSize = conf.fontSize * 0.85;
   const labelBBox = entityTextNode.node().getBBox();
   const attributeNodes = []; // Intermediate storage for attribute nodes created so that we can do a second pass
   let maxTypeWidth = 0;
@@ -90,10 +90,15 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const bBox = {
     width: Math.max(
       conf.minEntityWidth,
-      Math.max(labelBBox.width + widthPadding * 2, maxTypeWidth + maxNameWidth + widthPadding * 4)
+      Math.max(
+        labelBBox.width + conf.entityPadding * 2,
+        maxTypeWidth + maxNameWidth + widthPadding * 4
+      )
     ),
     height:
-      attributes.length > 0 ? cumulativeHeight : Math.max(conf.minEntityHeight, cumulativeHeight)
+      attributes.length > 0
+        ? cumulativeHeight
+        : Math.max(conf.minEntityHeight, labelBBox.height + conf.entityPadding * 2)
   };
 
   // There might be some spare width for padding out attributes if the entity name is very long
