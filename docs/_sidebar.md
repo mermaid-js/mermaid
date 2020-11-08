@@ -1,6 +1,6 @@
 - Introduction 📊
 
-  - [About mermaid](Readme.md)
+  - [About mermaid](README.md)
   - [Simple start to write diagrams](n00b-gettingStarted.md)
   - [Overview for Beginners](n00b-overview.md)
 
