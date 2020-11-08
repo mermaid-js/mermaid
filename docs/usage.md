@@ -2,9 +2,9 @@
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
 
-mermaid is a javascript tool that makes use of a markdown based syntax to render customizable diagrams and charts, for greater speed and ease.
+Mermaid is a Javascript tool that makes use of a markdown based syntax to render customizable diagrams, charts and visualizations.
 
-mermaid was made to help Documentation catch up with Development, in quickly changing projects.
+Diagrams can be re-rendered/modified by modifying their descriptions. 
 
 ### CDN
 
@@ -14,11 +14,13 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 ## Using mermaid
 
-For the majority of beginners, using the live editor or supporting mermaid on a webpage would cover their uses for mermaid.
+For the majority of users, Using the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the Mermaid API(./Setup.md).
 
-## Installing and Hosting mermaid on a webpage
+We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor. 
 
-### Using the npm package
+## Installing and Hosting Mermaid on a Webpage
+
+**Using the npm package**
 
 ```
 1.You will need to install node v10 or 12, which would have npm.
@@ -64,7 +66,7 @@ The easiest way to integrate mermaid on a web page requires three elements:
     ```
 
 **If these things are in place mermaid starts at the page load event and when fired (when the page has loaded) it will
-locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and transform them to svg charts or diagrams.**
+locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and return svg charts or diagrams according to their definitions.**
 
 ## Simple full example:
 
