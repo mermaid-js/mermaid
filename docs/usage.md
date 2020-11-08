@@ -14,7 +14,7 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 ## Using mermaid
 
-For the majority of users, Using the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the Mermaid API(./Setup.md).
+For the majority of users, Using the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](./Setup.md).
 
 We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor. 
 
