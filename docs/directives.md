@@ -3,7 +3,7 @@
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/directives.md)
 
 ## Directives
-Directives gives a diagram author the capability to alter the appearance of a diagram configuration. 
+Directives gives a diagram author the capability to alter the appearance of a diagram before rendering by changing the applied configuration. 
 
 Directives are divided in two sets by priority. The first set, containing 'init' or 'initialize' directives take priority. While the other set, containing all other kinds of directives are parsed and factored into the rendering, only after 'init' and the desired graph-type  are declared.
 
