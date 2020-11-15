@@ -332,9 +332,9 @@ Mermaid takes a number of options which lets you tweak the rendering of the diag
 setting the options in mermaid.
 
 1. Instantiation of the configuration using the initialize call
-2. *Using the global mermaid object* - deprecated
-3. *using the global mermaid_config object* - deprecated
-4. Instantiation of the configuration using the **mermaid.init** call
+2. *Using the global mermaid object* - **Deprecated**
+3. *using the global mermaid_config object* - **Deprecated**
+4. Instantiation of the configuration using the **mermaid.init** call- **Deprecated**
 
 The list above has two ways too many of doing this. Three are deprecated and will eventually be removed. The list of
 configuration objects are described [in the mermaidAPI documentation](Setup.md).
@@ -363,6 +363,7 @@ on what kind of integration you use.
 This is the preferred way of configuring mermaid.
 ```
 
+### The following methods are deprecated and are kept only for backwards compatibility.
 
 ## Using the mermaid object
 
