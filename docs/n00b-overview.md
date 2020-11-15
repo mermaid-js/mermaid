@@ -1,9 +1,6 @@
 # Overview for Beginners
 
-
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-overview.md)
-
-## Explaining with a Diagram 	
+## Explaining with a Diagram
 
 A picture is worth a thousand words, a good diagram would be worth more. There is no disputing that they are indeed very useful. Yet very few people use them, even fewer still do so for documentation. Mainly because it takes too much time that could be used for more important functions.
 
@@ -18,7 +15,7 @@ In an environment of constantly changing information , diagrams/charts are both 
 
 Doc-Rot is quite quick on diagrams makes, after a change is made,  it quite hard to rationalize taking hours in a desktop application, to produce a diagram that you would need to recreate again the following week in order to account for updates and changes in the app you are documenting. Yet that is often the reality for diagrams and charts and the people who make them.
 
-mermaid seeks to change that. mermaid is a javascript based tool that utilizes a markdown inspired syntax to generate documentation, which is actually quicker, less complicated and more convenient than most traditional diagramming software. This is a relatively straightforward solution to a major hurdle in software teams.  
+mermaid seeks to change that. mermaid is a javascript based tool that utilizes a markdown inspired syntax to generate documentation, which is actually quicker, less complicated and more convenient than most traditional diagramming software. This is a relatively straightforward solution to a major hurdle in software teams.
 
 # :blue_book: Definition of Terms/ Dictionary
 
