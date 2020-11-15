@@ -1,7 +1,5 @@
 # A basic mermaid User-Guide for Beginners
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-gettingStarted.md)
-
 Creating diagrams and charts using mermaid code is simple.
 The code is turned into a diagram in the web page with the use of a mermaid renderer.
 
@@ -75,7 +73,7 @@ When the mermaid plugin is installed on a Confluence server, one can insert a me
 ![Flowchart](../img/n00b-Confluence4.png)
 
 ---
-## The following are two ways of hosting mermaid on a webpage.  
+## The following are two ways of hosting mermaid on a webpage.
 **This is covered in greater detail in the [Usage section](usage.md)**
 
 ## 3. Using the Mermaid API: The quick and dirty way of deploying mermaid
@@ -199,7 +197,7 @@ This method is similar to 3, if only a little more involved. The difference may 
 8. Add the graph and diagram definitions as you would in number 3.
     a. be mindful of the `div` tags.
 
-9. Save, load/edit your HTML file to your liking.  
+9. Save, load/edit your HTML file to your liking.
 
 
 **Note** placing the HTML file on the same folder the `mermaid` file you've downloaded is a good practice and allows you to shorten the address on the `src` section.

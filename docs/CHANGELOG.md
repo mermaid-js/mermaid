@@ -1,7 +1,5 @@
 # Change Log
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/CHANGELOG.md)
-
 Here is the list of the newest versions in Descending Order, beginning from the latest version.
 
 ## Unreleased
