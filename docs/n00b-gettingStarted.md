@@ -11,7 +11,7 @@ This then renders a diagram based on that code in SVG, alternatively it
 Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot.
 
 ## For beginners, there are four relatively easy ways you can use mermaid:
-1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/). For some popular video tutorials on the live editor go to [Overview](../overview/n00b-overview.md).
+1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/). For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
 2. Using one of the many [mermaid plugins](../overview/integrations.md).
 3. Hosting mermaid on a webpage, with an absolute link.
 4. Downloading mermaid and hosting it on your Web Page.
@@ -43,42 +43,11 @@ The `Mermaid configuration` is for controlling mermaid behaviour. An easy introd
 
 ## 2. Using mermaid plugins:
 
-Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer. An extensive list can be found [here](../overview/integrations.md).
+Thanks to the growing popularity of mermaid, many plugins already allow the generation of mermaid diagrams from within popular applications. An extensive list of applications the support mermaid plugins can be found [here](./integrations.md).
 
-One example in the list is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
-
-When the mermaid plugin is installed on a Confluence server, one can insert a mermaid object into any Confluence page.
-### Here is a step by step process for using the mermaid-Confluence plugin:
-
----
-
-- In a Confluence page, Add Other macros.
-
-![Flowchart](../img/n00b-Confluence1.png)
-
----
-
-- Search for mermaid.
-
-![Flowchart](../img/n00b-Confluence2.png)
-
----
-
-- The mermaid object appears. Paste your mermaid code into it.
-
-![Flowchart](../img/n00b-Confluence3.png)
-
----
-
-- Save the page and the diagram appears.
-
-![Flowchart](../img/n00b-Confluence4.png)
-
----
-## The following are two ways of hosting mermaid on a webpage.  
 **This is covered in greater detail in the [Usage section](usage.md)**
 
-## 3. Using the Mermaid API: The quick and dirty way of deploying mermaid
+## 3. Deploying mermaid on the Browser
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
@@ -98,8 +67,6 @@ c. The `mermaid.initialize()` API call to start the rendering process.
 
 
 ## This is what needs to go into the html file (and all of them are important), for the mermaidAPI to render the diagrams:
-
-
 
 ### a. A reference to the address of the `mermaid.js` or the `mermaid.min.js` file has to be contained in a `<script src>` tag like so:
 
