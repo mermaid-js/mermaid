@@ -18,7 +18,7 @@ For the majority of users, Using the [Live Editor](https://mermaid-js.github.io/
 
 We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor. 
 
-## Installing and Hosting Mermaid on a Webpage
+**Installing and Hosting Mermaid on a Webpage**
 
 **Using the npm package**
 
@@ -37,11 +37,9 @@ We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermai
     as is shown in the example below
 ```
 
-## Hosting mermaid on a web page.
+**Hosting mermaid on a web page.**
 
-```note
-This topic explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
-```
+>Note:This topic explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
 
 The easiest way to integrate mermaid on a web page requires three elements:
 
@@ -66,7 +64,7 @@ The easiest way to integrate mermaid on a web page requires three elements:
     ```
 
 **If these things are in place mermaid starts at the page load event and when fired (when the page has loaded) it will
-locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and return svg charts or diagrams according to their definitions.**
+locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and return svg charts or diagrams with their corresponding definitions.**
 
 ## Simple full example:
 
@@ -94,7 +92,7 @@ An id attribute is also added to mermaid tags without one.
 
 Mermaid can load multiple diagrams, in the same page.
 
-### Try it out, save this code as HTML and load it using any browser.(Except Internet Explorer, please don't use Internet Explorer.)
+> Try it out, save this code as HTML and load it using any browser.(Except Internet Explorer, please don't use Internet Explorer.)
 
 
 ## To enable click event and tags in nodes
@@ -122,7 +120,7 @@ This changes the default behaviour of mermaid so that after upgrade to 8.2, if t
 
 **If you are taking responsibility for the diagram source security you can set the `securityLevel` to a value of your choosing . By doing this clicks and tags are allowed.**
 
-## To change `securityLevel` with `mermaidAPI.initialize`:
+**To change `securityLevel` with `mermaidAPI.initialize`:**
 
 ```javascript
 mermaidAPI.initialize({
@@ -159,8 +157,6 @@ div.mermaid {
     font-family: 'trebuchet ms', verdana, arial;
 }
 ```
-
-# This likely requires a `script.js` file, separate from the `HTML`.
 
 ### Calling `mermaid.init`
 
