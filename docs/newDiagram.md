@@ -1,8 +1,5 @@
 # Adding a New Diagram/Chart 📊
 
-
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/newDiagram.md)
-
 ### Step 1: Grammar & Parsing
 
 

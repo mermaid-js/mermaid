@@ -1,7 +1,5 @@
 # Pie chart diagrams
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/pie.md)
-
 > A pie chart (or a circle chart) is a circular statistical graphic, which is divided into slices to illustrate numerical proportion. In a pie chart, the arc length of each slice (and consequently its central angle and area), is proportional to the quantity it represents. While it is named for its resemblance to a pie which has been sliced, there are variations on the way it can be presented. The earliest known pie chart is generally credited to William Playfair's Statistical Breviary of 1801
 -Wikipedia
 
@@ -31,11 +29,11 @@ Drawing a pie chart is really simple in mermaid.
     - Followed by `positive numeric value` (supported upto two decimal places)
 
 [pie]
-     [title] [titlevalue]  (OPTIONAL)  
-      "[datakey1]" : [dataValue1]  
-      "[datakey2]" : [dataValue2]  
-      "[datakey3]" : [dataValue3]  
-      .  
+     [title] [titlevalue]  (OPTIONAL)
+      "[datakey1]" : [dataValue1]
+      "[datakey2]" : [dataValue2]
+      "[datakey3]" : [dataValue3]
+      .
       .
 
 ## Example

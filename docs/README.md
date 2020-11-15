@@ -2,8 +2,6 @@
 
 ![banner](img/header.png)
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/README.md)
-
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!!**
 
 **Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project 🙏**
@@ -21,7 +19,7 @@ Mermaid addresses this Catch-22 by cutting the time, effort and tooling that is 
 Mermaid, as a text-based diagramming tool allows for quick and easy updates, it can also be made part of production scripts (and other pieces of code), to make documentation much easier.
 With Mermaid less time needs to be spent on making diagrams, as a separate documentation task. <br/>
 
-> Mermaid is a Diagramming tool for everyone. 
+> Mermaid is a Diagramming tool for everyone.
 
 Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](https://github.com/mermaid-js/mermaid/blob/develop/docs/Tutorials.md) for the Live Editor video tutorials.
 
@@ -199,6 +197,7 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 ## Examples can be found in [Getting Started](./n00b-gettingStarted.md)
 
 # Sibling projects
+
 - [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
 - [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
 - [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
