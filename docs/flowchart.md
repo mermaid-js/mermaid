@@ -1,6 +1,6 @@
 # Flowcharts - Basic Syntax
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/flowchart.md)
+**Edit this Page** [![N|Solid](.img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/flowchart.md)
 
 ## Graph
 
