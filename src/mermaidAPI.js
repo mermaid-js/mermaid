@@ -1,8 +1,7 @@
 /**
- * 
  *Edit this Page[![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js) 
  *
- *This is the api to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
+ *This is the API to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
  *
  * 
  * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
