@@ -30,15 +30,17 @@ In the `Code` section one can write or edit raw mermaid code, and instantly `Pre
 
 For some popular video tutorials on the live editor go to [Overview](/overview/n00b-overview.md).
 
-![Flowchart](/img/n00b-liveEditor.png)
+![Flowchart](./img/DiagramDefinition.png)
 
 **Notes:**
 
 You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation.
 
-![Flowchart](/img/liveEditorOptions.png)
+![Flowchart](./img/DownloadChoices.png)
 
-The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
+The `Mermaid configuration` is for configuring the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
+
+![Flowchart](./img/Configuration.png)
 
 
 ## 2. Using mermaid plugins:
@@ -63,7 +65,7 @@ a. A reference for fetching the online mermaid renderer, which is written in Jav
 
 b. The mermaid code for the diagram we want to create.
 
-c. The `mermaid.initialize()` API call to start the rendering process.
+c. The `mermaid.initialize()` call to start the rendering process.
 
 
 ## This is what needs to go into the html file (and all of them are important), for the mermaidAPI to render the diagrams:
