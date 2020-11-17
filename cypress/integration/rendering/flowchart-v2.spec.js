@@ -371,6 +371,38 @@ flowchart TD
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+  it('62: should render styled subgraphs', () => {
+    imgSnapshotTest(
+      `
+      flowchart TB
+      A
+      B
+      subgraph foo[Foo SubGraph]
+        C
+        D
+      end
+      subgraph bar[Bar SubGraph]
+        E
+        F
+      end
+      G
 
+      A-->B
+      B-->C
+      C-->D
+      B-->D
+      D-->E
+      E-->A
+      E-->F
+      F-->D
+      F-->G
+      B-->G
+      G-->D
 
+      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
+      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
 });

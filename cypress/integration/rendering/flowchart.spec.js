@@ -234,8 +234,8 @@ describe('Flowchart', () => {
       B-->G
       G-->D
 
-      style foo fill:#F99,stroke-width:2px,stroke:#F0F
-      style bar fill:#999,stroke-width:10px,stroke:#0F0
+      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
+      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
       `,
        { fontFamily: 'courier' }
     );
