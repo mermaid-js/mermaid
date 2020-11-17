@@ -360,7 +360,7 @@ graph TB
 ```
 If you describe the same diagram using the the basic syntax, it will take four lines. A
 word of warning, one could go overboard with this making the graph harder to read in
-markdown form. The Swedish word `lagom` comes to mind. It means, not to much and not to little.
+markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
 ```
 graph TB
