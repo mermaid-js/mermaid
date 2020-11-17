@@ -31,7 +31,7 @@ class Theme {
     // this.secondaryColor = '#dfdfde';
     // this.tertiaryColor = '#CCCCFF';
 
-    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
     // this.updateColors();
   }
