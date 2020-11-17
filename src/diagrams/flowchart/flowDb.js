@@ -453,7 +453,7 @@ export const addSubGraph = function(_id, list, _title) {
   subCount = subCount + 1;
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
 
-  console.log('Adding', subGraph.id, subGraph.nodes);
+  logger.info('Adding', subGraph.id, subGraph.nodes);
 
   /**
    * Deletes an id from all subgraphs
