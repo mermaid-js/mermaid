@@ -121,6 +121,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [MarkdownMermaid](https://github.com/sebastienwarin/mkdocs-mermaid-plugin)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
+- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (Native support in theme)
 
 ## Chrome Extensions
 
