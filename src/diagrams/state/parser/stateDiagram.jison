@@ -79,7 +79,7 @@
 <FLOATING_NOTE_ID>[^\n]*         {this.popState();/*console.log('Floating note ID', yytext);*/return "ID";}
 <NOTE_ID>\s*[^:\n\s\-]+                { this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yytext);*/return 'ID';}
 <NOTE_TEXT>\s*":"[^:\n;]+       { this.popState();/*console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.substr(2).trim();return 'NOTE_TEXT';}
-<NOTE_TEXT>\s*[^:;]+"end note"       { this.popState();/*console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim();return 'NOTE_TEXT';}
+<NOTE_TEXT>[\s\S]*?"end note"       { this.popState();/*console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim();return 'NOTE_TEXT';}
 
 "stateDiagram"\s+                   { /*console.log('Got state diagram', yytext,'#');*/return 'SD'; }
 "stateDiagram-v2"\s+                   { /*console.log('Got state diagram', yytext,'#');*/return 'SD'; }
