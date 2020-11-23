@@ -120,6 +120,21 @@ const config = {
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
 
   /**
+   * This option controls if the generated ids of nodes in the SVG are generated randomly or based on a seed.
+   * If set to false, the IDs are generated based on the current date and thus are not deterministic. This is the default behaviour.
+   *
+   *## Notes**: This matters if your files are checked into sourcecontrol e.g. git and should not change unless content is changed.
+   ***Default value: false**
+   */
+  deterministicIds: false,
+
+  /**
+   * This option is the optional seed for deterministic ids. if set to undefined but deterministicIds is true, a simple number iterator is used.
+   * You can set this attribute to base the seed on a static string.
+   */
+  deterministicIDSeed: undefined,
+
+  /**
    * The object containing configurations specific for flowcharts
    */
   flowchart: {

@@ -4,8 +4,8 @@
  */
 // import { decode } from 'he';
 import decode from 'entity-decode/browser';
-import mermaidAPI from './mermaidAPI';
 import { logger } from './logger';
+import mermaidAPI from './mermaidAPI';
 import utils from './utils';
 
 /**
@@ -78,6 +78,8 @@ const init = function() {
     mermaidAPI.updateSiteConfig({ gantt: mermaid.ganttConfig });
   }
 
+  const nextId = utils.initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed);
+
   let txt;
 
   for (let i = 0; i < nodes.length; i++) {
@@ -90,7 +92,7 @@ const init = function() {
       continue;
     }
 
-    const id = `mermaid-${Date.now()}`;
+    const id = `mermaid-${nextId()}`;
 
     // Fetch the graph definition including tags
     txt = element.innerHTML;
