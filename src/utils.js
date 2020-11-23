@@ -791,12 +791,16 @@ export const configureSvgSize = function(svgElem, height, width, useMaxWidth) {
 };
 
 export const initIdGeneratior = function(deterministic, seed) {
-  if (!deterministic) return () => Date.now();
-  const iterator = function() {
-    return this.count++;
-  };
-  iterator.seed = seed ? seed.length : 0;
-  return iterator;
+  if (!deterministic) return { next: () => Date.now() };
+  class iterator {
+    constructor() {
+      return (this.count = seed ? seed.length : 0);
+    }
+    next() {
+      return this.count++;
+    }
+  }
+  return new iterator();
 };
 
 export default {
@@ -820,5 +824,6 @@ export default {
   generateId,
   random,
   memoize,
-  runFunc
+  runFunc,
+  initIdGeneratior
 };
