@@ -34,3 +34,35 @@ https://codepen.io/janzeteachesit/pen/OWWZKN
 ## Mermaid with Text Area
 
 https://codepen.io/Ryuno-Ki/pen/LNxwgR
+
+## Python Integration with mermaid-js
+Here's an example of python integration with mermaid-js which uses the mermaid.ink service. 
+This is also working with colab and jupyter lab notebooks.
+
+```python
+import base64
+
+graphbytes = graph.encode("ascii")
+
+graph = """
+graph LR;
+    A--> B & C & D;
+    B--> A & E;
+    C--> A & E;
+    D--> A & E;
+    E--> B & C & D;
+"""
+
+base64_bytes = base64.b64encode(graphbytes)
+base64_string = base64_bytes.decode("ascii")
+
+import requests, io
+from PIL import Image
+import matplotlib.pyplot as plt
+
+img = Image.open(io.BytesIO(requests.get('https://mermaid.ink/img/' + base64_string).content))
+plt.imshow(img)
+```
+**Output**
+
+![image](img/python-mermaid-integration.png)
