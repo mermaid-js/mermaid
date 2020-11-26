@@ -2,11 +2,11 @@
 
 **Mermaid lets you represent diagrams using text and code.** This simplifies maintianing complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. The main purpose of Mermaid is to help Documentation catch up with Development.
 
-Many editors, wikis and other tools have mermaid integrations already making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](./n00b-GettingStarted.md).
+Many editors, wikis and other tools have mermaid integrations already making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](/n00b-gettingStarted).
 
 ![banner](img/header.png)
 
-:trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!!**
+**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/README.md)
 
 [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 
@@ -36,7 +36,7 @@ For a more detailed introduction to Mermaid and some of it's more basic uses, lo
 **Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project 🙏**
 
 
-# Diagrams that mermaid can render:
+# Diagrams that mermaid can render
 
 ### [Flowchart](/flowchart?id=flowcharts-basic-syntax)
 
@@ -85,7 +85,7 @@ Future task2               :         des4, after des3, 5d
 
 ![Gantt diagram](img/gantt.png)
 
-### [Class diagram - :exclamation: experimental](/classDiagram)
+### [Class diagram](/classDiagram)
 
 ```
 classDiagram
@@ -176,7 +176,7 @@ Alternatively, you can also adjust the version number in the page itself.
 
 Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/browse/mermaid@8.8.0/)
 
-## Mermaid on a website
+## Deploying Mermaid
 To support mermaid on your website, all you have to do is add Mermaid’s JavaScript package
 
 ```
@@ -199,7 +199,7 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 ```
 **Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.**
 
-## Examples can be found in [Other examples](/examples)
+ **Examples can be found in** [Other examples](/examples)
 
 # Sibling projects
 

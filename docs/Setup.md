@@ -5,7 +5,7 @@
 This is the api to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
 
 The core of this api is the [**render**][1] function which, given a graph
-definition as text, renders the graph/diagram and returns an svg element for the graph.
+definition, renders a graph/diagram and returns it as an svg element.
 
 It is is then up to the user of the API to make use of the svg, either insert it somewhere in the page or do something completely different.
 
@@ -111,9 +111,15 @@ Note: modifies options in-place
 
 -   `conf`  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
-## render
+## mermaid.API Functions
 
-Function that renders an svg with a graph from a chart definition. Usage example below.
+- `mermaidAPI.initialize` is a call to the mermaid API, that targets `config` and changes the before the diagram is rendered.
+
+**Notes**: `Config` is a variable that contains various configurable elements that can alter how the rendered SVG Diagram/Chart will look like.
+
+- `mermaidAPI.render` is function that renders a graph/diagram in svg format, from a chart definition inside `<div>` tags. 
+
+Usage example below.
 
 ```js
 mermaidAPI.initialize({
@@ -127,7 +133,6 @@ mermaidAPI.initialize({
      mermaidAPI.render('id1',graphDefinition,cb);
  });
 ```
-
 ### Parameters
 
 -   `id`  the id of the element to be rendered
@@ -137,9 +142,8 @@ mermaidAPI.initialize({
     provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
     completed.
 
-## 
 
-## mermaidAPI configuration defaults
+## mermaidAPI config Default Values:
 
 ```html
 <script>

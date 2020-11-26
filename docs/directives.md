@@ -1,9 +1,11 @@
 # Directives
 
-## Directives were added in [Version 8.6.0](../getting-started/8.6.0_docs.md). Please Read it for more information.
+**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/directives.md)
 
 ## Directives
-With this version, directives are supported. Directives are divided in two sets, by priority. the first set, containing 'init' or 'initialize' directives take priority. While the other set, containing all other kinds of directives are considered only after 'init' and the graph-type declared.
+Directives gives a diagram author the capability to alter the appearance of a diagram before rendering by changing the applied configuration. 
+
+Directives are divided in two sets by priority. The first set, containing 'init' or 'initialize' directives take priority. While the other set, containing all other kinds of directives are parsed and factored into the rendering, only after 'init' and the desired graph-type  are declared.
 
 #### Init
 
@@ -16,18 +18,19 @@ With this version, directives are supported. Directives are divided in two sets,
 
 init would be an argument-directive: %%{init: { **insert argument here**}}%%
 
-The json object that is passed as {**argument** } must be valid, quoted json or it will be ignored.
+The json object that is passed as {**argument** } must be valid key value pairs and encased in quotation marks or it will be ignored.
+Valid Key Value pairs can be found in config. 
 
-The init/initialize directive is parsed early in the flow, enough to be able to re-initialize mermaid with a new configuration object. Example:
+The init/initialize directive is parsed earlier in the flow, this allows the incorporation of `%%init%%` directives into the mermaid diagram that is being rendered. Example:
 ```
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
 graph >
 A-->B
 ```
 
-will set the `logLevel` to `debug` and the `theme` to `dark` for a flowchart diagram.
+will set the `logLevel` to `debug` and the `theme` to `dark` for a flowchart diagram, changing the appearance of the diagram itself. 
 
-Note: 'init' or 'initialize' are both acceptable as init directives. Also note that init directives are coalesced. This means:
+Note: 'init' or 'initialize' are both acceptable as init directives. Also note that `%%init%%` and `%%initialize%%` directives will be grouped together after they are parsed. This means:
 
 ```
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
@@ -35,7 +38,7 @@ Note: 'init' or 'initialize' are both acceptable as init directives. Also note t
 ...
 ```
 
-will result an init object looking like this:
+parsing the above generates the `%%init%%` object below, combining the two directives and carrying over the last value given for `loglevel`:
 
 ```
 {
@@ -45,7 +48,7 @@ will result an init object looking like this:
 }
 ```
 
-to be sent to `mermaid.initialize(...)`
+This will then be sent to `mermaid.initialize(...)` for rendering.
 
 
 #### Other directives

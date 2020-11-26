@@ -17,7 +17,7 @@ The definitions that can be generated the Live-Editor are also backwards-compati
 [Eddie Jaoude: Can you code your diagrams?](https://www.youtube.com/watch?v=9HZzKkAqrX8)
 
 
-## Mermaid with HTML:
+## Mermaid with HTML
 Examples are provided in [Gettting Started](n00b-gettingStarted.md)
 
 **CodePen Examples:**
@@ -29,6 +29,6 @@ https://codepen.io/tdkn/pen/vZxQzd
 https://codepen.io/janzeteachesit/pen/OWWZKN
 
 
-## Mermaid with Text Area:
+## Mermaid with Text Area
 
 https://codepen.io/Ryuno-Ki/pen/LNxwgR

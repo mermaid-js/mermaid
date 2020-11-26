@@ -1,8 +1,10 @@
 # Usage
 
-mermaid is a javascript tool that makes use of a markdown based syntax to render customizable diagrams and charts, for greater speed and ease.
+**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
 
-mermaid was made to help Documentation catch up with Development, in quickly changing projects.
+Mermaid is a Javascript tool that makes use of a markdown based syntax to render customizable diagrams, charts and visualizations.
+
+Diagrams can be re-rendered/modified by modifying their descriptions. 
 
 ### CDN
 
@@ -12,11 +14,13 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 ## Using mermaid
 
-For the majority of beginners, using the live editor or supporting mermaid on a webpage would cover their uses for mermaid.
+For the majority of users, Using the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](./Setup.md).
 
-## Installing and Hosting mermaid on a webpage
+We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor. 
 
-### Using the npm package
+**Installing and Hosting Mermaid on a Webpage**
+
+**Using the npm package**
 
 ```
 1.You will need to install node v10 or 12, which would have npm.
@@ -33,11 +37,9 @@ For the majority of beginners, using the live editor or supporting mermaid on a 
     as is shown in the example below
 ```
 
-## Hosting mermaid on a web page.
+**Hosting mermaid on a web page.**
 
-```note
-This topic explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
-```
+>Note:This topic explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
 
 The easiest way to integrate mermaid on a web page requires three elements:
 
@@ -62,7 +64,7 @@ The easiest way to integrate mermaid on a web page requires three elements:
     ```
 
 **If these things are in place mermaid starts at the page load event and when fired (when the page has loaded) it will
-locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and transform them to svg charts or diagrams.**
+locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and return svg charts or diagrams with their corresponding definitions.**
 
 ## Simple full example:
 
@@ -90,7 +92,7 @@ An id attribute is also added to mermaid tags without one.
 
 Mermaid can load multiple diagrams, in the same page.
 
-### Try it out, save this code as HTML and load it using any browser.(Except Internet Explorer, please don't use Internet Explorer.)
+> Try it out, save this code as HTML and load it using any browser.(Except Internet Explorer, please don't use Internet Explorer.)
 
 
 ## To enable click event and tags in nodes
@@ -118,7 +120,7 @@ This changes the default behaviour of mermaid so that after upgrade to 8.2, if t
 
 **If you are taking responsibility for the diagram source security you can set the `securityLevel` to a value of your choosing . By doing this clicks and tags are allowed.**
 
-## To change `securityLevel` with `mermaidAPI.initialize`:
+**To change `securityLevel` with `mermaidAPI.initialize`:**
 
 ```javascript
 mermaidAPI.initialize({
@@ -155,8 +157,6 @@ div.mermaid {
     font-family: 'trebuchet ms', verdana, arial;
 }
 ```
-
-# This likely requires a `script.js` file, separate from the `HTML`.
 
 ### Calling `mermaid.init`
 
@@ -328,9 +328,9 @@ Mermaid takes a number of options which lets you tweak the rendering of the diag
 setting the options in mermaid.
 
 1. Instantiation of the configuration using the initialize call
-2. *Using the global mermaid object* - deprecated
-3. *using the global mermaid_config object* - deprecated
-4. Instantiation of the configuration using the **mermaid.init** call
+2. *Using the global mermaid object* - **Deprecated**
+3. *using the global mermaid_config object* - **Deprecated**
+4. Instantiation of the configuration using the **mermaid.init** call- **Deprecated**
 
 The list above has two ways too many of doing this. Three are deprecated and will eventually be removed. The list of
 configuration objects are described [in the mermaidAPI documentation](Setup.md).
@@ -359,6 +359,7 @@ on what kind of integration you use.
 This is the preferred way of configuring mermaid.
 ```
 
+### The following methods are deprecated and are kept only for backwards compatibility.
 
 ## Using the mermaid object
 
