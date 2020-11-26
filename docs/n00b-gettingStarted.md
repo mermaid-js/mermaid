@@ -1,7 +1,5 @@
 # A basic mermaid User-Guide for Beginners
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-gettingStarted.md)
-
 Creating diagrams and charts using mermaid code is simple.
 The code is turned into a diagram in the web page with the use of a mermaid renderer.
 
@@ -11,7 +9,7 @@ This then renders a diagram based on that code in SVG, alternatively it
 Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot.
 
 ## For beginners, there are four relatively easy ways you can use mermaid:
-1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/). For some popular video tutorials on the live editor go to [Overview](../overview/n00b-overview.md).
+1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/). For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
 2. Using one of the many [mermaid plugins](../overview/integrations.md).
 3. Hosting mermaid on a webpage, with an absolute link.
 4. Downloading mermaid and hosting it on your Web Page.
@@ -30,55 +28,26 @@ In the `Code` section one can write or edit raw mermaid code, and instantly `Pre
 
 For some popular video tutorials on the live editor go to [Overview](/overview/n00b-overview.md).
 
-![Flowchart](/img/n00b-liveEditor.png)
+![Flowchart](./img/DiagramDefinition.png)
 
 **Notes:**
 
 You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation.
 
-![Flowchart](/img/liveEditorOptions.png)
+![Flowchart](./img/DownloadChoices.png)
 
-The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
+The `Mermaid configuration` is for configuring the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
+
+![Flowchart](./img/Configuration.png)
 
 
 ## 2. Using mermaid plugins:
 
-Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer. An extensive list can be found [here](../overview/integrations.md).
+Thanks to the growing popularity of mermaid, many plugins already allow the generation of mermaid diagrams from within popular applications. An extensive list of applications the support mermaid plugins can be found [here](./integrations.md).
 
-One example in the list is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
-
-When the mermaid plugin is installed on a Confluence server, one can insert a mermaid object into any Confluence page.
-### Here is a step by step process for using the mermaid-Confluence plugin:
-
----
-
-- In a Confluence page, Add Other macros.
-
-![Flowchart](../img/n00b-Confluence1.png)
-
----
-
-- Search for mermaid.
-
-![Flowchart](../img/n00b-Confluence2.png)
-
----
-
-- The mermaid object appears. Paste your mermaid code into it.
-
-![Flowchart](../img/n00b-Confluence3.png)
-
----
-
-- Save the page and the diagram appears.
-
-![Flowchart](../img/n00b-Confluence4.png)
-
----
-## The following are two ways of hosting mermaid on a webpage.  
 **This is covered in greater detail in the [Usage section](usage.md)**
 
-## 3. Using the Mermaid API: The quick and dirty way of deploying mermaid
+## 3. Deploying mermaid on the Browser
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
@@ -94,12 +63,10 @@ a. A reference for fetching the online mermaid renderer, which is written in Jav
 
 b. The mermaid code for the diagram we want to create.
 
-c. The `mermaid.initialize()` API call to start the rendering process.
+c. The `mermaid.initialize()` call to start the rendering process.
 
 
 ## This is what needs to go into the html file (and all of them are important), for the mermaidAPI to render the diagrams:
-
-
 
 ### a. A reference to the address of the `mermaid.js` or the `mermaid.min.js` file has to be contained in a `<script src>` tag like so:
 
@@ -199,7 +166,7 @@ This method is similar to 3, if only a little more involved. The difference may 
 8. Add the graph and diagram definitions as you would in number 3.
     a. be mindful of the `div` tags.
 
-9. Save, load/edit your HTML file to your liking.  
+9. Save, load/edit your HTML file to your liking.
 
 
 **Note** placing the HTML file on the same folder the `mermaid` file you've downloaded is a good practice and allows you to shorten the address on the `src` section.

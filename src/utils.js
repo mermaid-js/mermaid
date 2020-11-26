@@ -1,3 +1,4 @@
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import {
   curveBasis,
   curveBasisClosed,
@@ -12,9 +13,8 @@ import {
   curveStepBefore,
   select
 } from 'd3';
-import { logger } from './logger';
-import { sanitizeUrl } from '@braintree/sanitize-url';
 import common from './diagrams/common/common';
+import { logger } from './logger';
 // import cryptoRandomString from 'crypto-random-string';
 
 // Effectively an enum of the supported curve types, accessible by name
@@ -790,6 +790,19 @@ export const configureSvgSize = function(svgElem, height, width, useMaxWidth) {
   d3Attrs(svgElem, attrs);
 };
 
+export const initIdGeneratior = function(deterministic, seed) {
+  if (!deterministic) return { next: () => Date.now() };
+  class iterator {
+    constructor() {
+      return (this.count = seed ? seed.length : 0);
+    }
+    next() {
+      return this.count++;
+    }
+  }
+  return new iterator();
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -811,5 +824,6 @@ export default {
   generateId,
   random,
   memoize,
-  runFunc
+  runFunc,
+  initIdGeneratior
 };

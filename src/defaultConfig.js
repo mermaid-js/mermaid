@@ -57,11 +57,11 @@ const config = {
   /**
    *| Parameter | Description |Type | Required | Values|
    *| --- | --- | --- | --- | --- |
-   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
+   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Trebuchet MS, Verdana, Arial, Sans-Serif |
    *
    ***notes: Default value is \\"trebuchet ms\\".
    */
-  fontFamily: '"trebuchet ms", verdana, arial;',
+  fontFamily: '"trebuchet ms", verdana, arial, sans-serif;',
 
   /**
    *| Parameter | Description |Type | Required | Values|
@@ -118,6 +118,21 @@ const config = {
    * overriding a site's default security.
    */
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
+
+  /**
+   * This option controls if the generated ids of nodes in the SVG are generated randomly or based on a seed.
+   * If set to false, the IDs are generated based on the current date and thus are not deterministic. This is the default behaviour.
+   *
+   *## Notes**: This matters if your files are checked into sourcecontrol e.g. git and should not change unless content is changed.
+   ***Default value: false**
+   */
+  deterministicIds: false,
+
+  /**
+   * This option is the optional seed for deterministic ids. if set to undefined but deterministicIds is true, a simple number iterator is used.
+   * You can set this attribute to base the seed on a static string.
+   */
+  deterministicIDSeed: undefined,
 
   /**
    * The object containing configurations specific for flowcharts
@@ -391,12 +406,12 @@ const config = {
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
-     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
+     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial, sans-serif |
      *
      ***Notes:**
      ***Default value: trebuchet ms **.
      */
-    noteFontFamily: '"trebuchet ms", verdana, arial',
+    noteFontFamily: '"trebuchet ms", verdana, arial, sans-serif',
     /**
      * This sets the font weight of the note's description
      * **Default value 400.
@@ -423,12 +438,12 @@ const config = {
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
-     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
+     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, arial, sans-serif |
      *
      ***Notes:**
-     ***Default value:"trebuchet ms**.
+     ***Default value: "trebuchet ms**.
      */
-    messageFontFamily: '"trebuchet ms", verdana, arial',
+    messageFontFamily: '"trebuchet ms", verdana, arial, sans-serif',
     /**
      * This sets the font weight of the message's description
      * **Default value 400.

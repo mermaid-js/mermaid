@@ -1,7 +1,5 @@
 # Integrations
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/integrations.md)
-
 The following list is a compilation of different integrations and plugins that allow the rendering of mermaid definitions
 
 They also serve as proof of concept, for the variety of things that can be built with mermaid.
@@ -123,6 +121,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [MarkdownMermaid](https://github.com/sebastienwarin/mkdocs-mermaid-plugin)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
+- [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (Native support in theme)
 
 ## Chrome Extensions
 

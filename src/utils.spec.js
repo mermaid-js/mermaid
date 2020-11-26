@@ -253,3 +253,34 @@ describe('when calculating SVG size', function() {
     expect(attrs.get('width')).toEqual(200);
   });
 });
+
+describe('when initializing the id generator', function () {
+  it('should return a random number generator based on Date', function (done) {
+    const idGenerator = utils.initIdGeneratior(false)
+    expect(typeof idGenerator.next).toEqual('function')
+    const lastId = idGenerator.next()
+    setTimeout(() => {
+      expect(idGenerator.next() > lastId).toBe(true)
+      done()
+    }, 5)
+  });
+
+  it('should return a non random number generator', function () {
+    const idGenerator = utils.initIdGeneratior(true)
+    expect(typeof idGenerator.next).toEqual('function')
+    const start = 0
+    const lastId = idGenerator.next()
+    expect(start).toEqual(lastId)
+    expect(idGenerator.next()).toEqual(lastId +1)
+  });
+
+  it('should return a non random number generator based on seed', function () {
+    const idGenerator = utils.initIdGeneratior(true, 'thisIsASeed')
+    expect(typeof idGenerator.next).toEqual('function')
+    const start = 11
+    const lastId = idGenerator.next()
+    expect(start).toEqual(lastId)
+    expect(idGenerator.next()).toEqual(lastId +1)
+  });
+
+})

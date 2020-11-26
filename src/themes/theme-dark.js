@@ -24,7 +24,7 @@ class Theme {
     this.border1 = '#81B1DB';
     this.border2 = rgba(255, 255, 255, 0.25);
     this.arrowheadColor = 'calculated';
-    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
     this.labelBackground = '#181818';
     this.textColor = '#ccc';

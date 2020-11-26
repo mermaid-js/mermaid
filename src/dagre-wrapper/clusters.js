@@ -40,6 +40,7 @@ const rect = (parent, node) => {
   log.trace('Data ', node, JSON.stringify(node));
   // center the rect around its coordinate
   rect
+    .attr('style', node.style)
     .attr('rx', node.rx)
     .attr('ry', node.ry)
     .attr('x', node.x - node.width / 2 - halfPadding)
@@ -53,7 +54,7 @@ const rect = (parent, node) => {
     'translate(' +
       (node.x - bbox.width / 2) +
       ', ' +
-      (node.y - node.height / 2 - node.padding / 3 + 3) +
+      (node.y - node.height / 2 + node.padding / 3) +
       ')'
   );
 
