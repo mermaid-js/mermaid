@@ -336,7 +336,6 @@ Multiplicity notations are placed near the ends of an association.
 
 The different cardinality options are :
 
-- `0..1` Zero or one
 - `1` Only 1
 - `0..1` Zero or One
 - `1..*` One or more
