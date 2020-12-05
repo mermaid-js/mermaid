@@ -1,7 +1,5 @@
 # Examples
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/examples.md)
-
 This page contains a collection of examples of diagrams and charts that can be created through mermaid and its myriad applications.
 
 **If you wish to learn how to support mermaid on your webpage, read the [Beginner's Guide](/usage?id=usage).**

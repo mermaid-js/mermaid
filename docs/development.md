@@ -1,8 +1,5 @@
 # Development 🙌
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md)
-
-
 So you want to help? That's great!
 
 ![Image of happy people jumping with excitement](https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif)
@@ -10,18 +7,18 @@ So you want to help? That's great!
 Here are a few things to know to get you started on the right path.
 
 **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**
- 
+
 **Note: You will have to edit the document to see its contents. Commits and PR's should be directed to the develop branch.**
 
 ## Branching
 
-Going forward we will use a **Git Flow** inspired approach to branching. So development is done in the `develop` branch. 
+Going forward we will use a **Git Flow** inspired approach to branching. So development is done in the `develop` branch.
 
 Once development is done we branch a release branch from develop for testing.
 
 Once the release happens we merge the release branch to master and kill the release branch.
 
-This means... **you should branch off your pull request from develop** and direct all Pull Requests to it.   
+This means... **you should branch off your pull request from develop** and direct all Pull Requests to it.
 
 ## Contributing Code
 
@@ -31,7 +28,7 @@ We make all changes via pull requests. As we have many pull requests from develo
 * Smaller low-risk changes like dependecies, documentation etc can be merged by active collaborators
 * documentation (updates to the docs folder are enocouraged and also allowed via direct commits)
 
-When you commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and text that describes the issue. 
+When you commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and text that describes the issue.
 
 
 **One example:**
@@ -46,17 +43,17 @@ When you commit code, create a branch, let it start with the type like feature o
 ## Contributing to documentation
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the `docs` folder and are written in MarkDown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation: 
+The docs are located in the `docs` folder and are written in MarkDown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation:
 
 **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md). Click edit it to see them.**
 
-The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from **Master** Branch. 
+The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from **Master** Branch.
 
 ## How to Contribute to Docs
 
 We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
 
-The documentation is located in the `docs` directory and organized according to relevant subfolder. 
+The documentation is located in the `docs` directory and organized according to relevant subfolder.
 
 We encourage contributions to the documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using GitHub Pages with [jekyll-rtd-theme](https://github.com/rundocs/jekyll-rtd-theme).
 

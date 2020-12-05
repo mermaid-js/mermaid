@@ -157,5 +157,33 @@ describe('Entity Relationship Diagram', () => {
     cy.get('svg');
   });
 
+  it('should render entities with and without attributes', () => {
+    renderGraph(
+      `
+    erDiagram
+        BOOK { string title }
+        AUTHOR }|..|{ BOOK : writes
+        BOOK { float price }
+      `,
+      { logLevel : 1 }
+    );
+    cy.get('svg');
+  });
+
+  it('should render entities and attributes with big and small entity names', () => {
+    renderGraph(
+      `
+    erDiagram
+        PRIVATE_FINANCIAL_INSTITUTION { 
+          string name
+          int    turnover
+        }
+        PRIVATE_FINANCIAL_INSTITUTION ||..|{ EMPLOYEE : employs
+        EMPLOYEE { bool officer_of_firm }
+      `,
+      { logLevel : 1 }
+    );
+    cy.get('svg');
+  });
 
 });

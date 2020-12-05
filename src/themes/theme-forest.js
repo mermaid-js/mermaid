@@ -13,7 +13,7 @@ class Theme {
     this.border1 = '#13540c';
     this.border2 = '#6eaa49';
     this.arrowheadColor = 'green';
-    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
 
     this.tertiaryColor = lighten('#cde498', 10);
