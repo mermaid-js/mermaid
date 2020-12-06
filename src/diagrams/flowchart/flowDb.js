@@ -250,7 +250,7 @@ const setTooltip = function(ids, tooltip) {
 const setClickFun = function(id, functionName, functionArgs) {
   let domId = lookUpDomId(id);
   // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-  if (config.securityLevel !== 'loose') {
+  if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
   if (typeof functionName === 'undefined') {

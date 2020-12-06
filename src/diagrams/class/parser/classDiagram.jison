@@ -243,10 +243,10 @@ lineType
     ;
 
 clickStatement
-    : CALLBACK className STR        {$$ = $1;yy.setClickEvent($2, $3);}
-    | CALLBACK className STR STR    {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4)}
-    | LINK className STR            {$$ = $1;yy.setLink($2, $3);}
-    | LINK className STR STR        {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4)}
+    : CALLBACK className STR        {$$ = $1;yy.setClickEvent($2, $3, undefined);}
+    | CALLBACK className STR STR    {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | LINK className STR            {$$ = $1;yy.setLink($2, $3, undefined);}
+    | LINK className STR STR        {$$ = $1;yy.setLink($2, $3, $4);}
     ;
 
 cssClassStatement

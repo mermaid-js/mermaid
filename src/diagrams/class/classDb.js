@@ -7,7 +7,6 @@ import mermaidAPI from '../../mermaidAPI';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 
-let config = configApi.getConfig();
 let relations = [];
 let classes = {};
 let classCounter = 0;
@@ -172,13 +171,19 @@ export const setCssClass = function(ids, className) {
  * Called by parser when a link is found. Adds the URL to the vertex data.
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
+ * @param tooltip Tooltip for the clickable element
  */
-export const setLink = function(ids, linkStr) {
+export const setLink = function(ids, linkStr, tooltip) {
+  const config = configApi.getConfig();
   ids.split(',').forEach(function(_id) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof classes[id] !== 'undefined') {
       classes[id].link = utils.formatUrl(linkStr, config);
+
+      if (tooltip) {
+        classes[id].tooltip = common.sanitizeText(tooltip, config);
+      }
     }
   });
   setCssClass(ids, 'clickable');
@@ -188,28 +193,18 @@ export const setLink = function(ids, linkStr) {
  * Called by parser when a click definition is found. Registers an event handler.
  * @param ids Comma separated list of ids
  * @param functionName Function to be called on click
+ * @param tooltip Tooltip for the clickable element
  */
-export const setClickEvent = function(ids, functionName) {
+export const setClickEvent = function(ids, functionName, tooltip) {
   ids.split(',').forEach(function(id) {
-    setClickFunc(id, functionName);
+    setClickFunc(id, functionName, tooltip);
     classes[id].haveCallback = true;
   });
   setCssClass(ids, 'clickable');
 };
 
-/**
- * Called by parser when a tooltip is found for a click definition
- * @param tooltip Tooltip for the clickable element
- */
-export const setTooltip = function(ids, tooltip) {
-  ids.split(',').forEach(function(id) {
-    if (typeof tooltip !== 'undefined') {
-      classes[id].tooltip = common.sanitizeText(tooltip, config);
-    }
-  });
-};
-
-const setClickFunc = function(domId, functionName) {
+const setClickFunc = function(domId, functionName, tooltip) {
+  const config = configApi.getConfig();
   let id = domId;
   let elemId = lookUpDomId(id);
 
@@ -220,6 +215,10 @@ const setClickFunc = function(domId, functionName) {
     return;
   }
   if (typeof classes[id] !== 'undefined') {
+    if (tooltip) {
+      classes[id].tooltip = common.sanitizeText(tooltip, config);
+    }
+
     funs.push(function() {
       const elem = document.querySelector(`[id="${elemId}"]`);
       if (elem !== null) {
@@ -298,7 +297,7 @@ funs.push(setupToolTips);
 
 export default {
   parseDirective,
-  getConfig: () => config.class,
+  getConfig: () => configApi.getConfig().class,
   addClass,
   bindFunctions,
   clear,
@@ -315,6 +314,5 @@ export default {
   setClickEvent,
   setCssClass,
   setLink,
-  setTooltip,
   lookUpDomId
 };
