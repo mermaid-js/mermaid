@@ -25,7 +25,7 @@ describe('[Interactions] when parsing', () => {
   it('it should be possible to use click to a callback with toolip', function() {
     spyOn(flowDb, 'setClickEvent');
     spyOn(flowDb, 'setTooltip');
-    const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback "tooltip"');
+    const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback() "tooltip"');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
