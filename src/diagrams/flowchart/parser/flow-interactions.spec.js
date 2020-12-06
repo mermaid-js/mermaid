@@ -36,7 +36,7 @@ describe('[Interactions] when parsing', () => {
 
   it('should handle interaction - click to a link', function() {
     spyOn(flowDb, 'setLink');
-    const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html"');
+    const res = flow.parser.parse('graph TD\nA-->B\nclick A href "click.html"');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
@@ -47,7 +47,7 @@ describe('[Interactions] when parsing', () => {
   it('should handle interaction - click to a link with tooltip', function() {
     spyOn(flowDb, 'setLink');
     spyOn(flowDb, 'setTooltip');
-    const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" "tooltip"');
+    const res = flow.parser.parse('graph TD\nA-->B\nclick A href "click.html" "tooltip"');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
@@ -58,7 +58,7 @@ describe('[Interactions] when parsing', () => {
 
   it('should handle interaction - click to a link with target', function() {
     spyOn(flowDb, 'setLink');
-    const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" _blank');
+    const res = flow.parser.parse('graph TD\nA-->B\nclick A href "click.html" _blank');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
@@ -69,7 +69,7 @@ describe('[Interactions] when parsing', () => {
   it('should handle interaction - click to a link with tooltip and target', function() {
     spyOn(flowDb, 'setLink');
     spyOn(flowDb, 'setTooltip');
-    const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" "tooltip" _blank');
+    const res = flow.parser.parse('graph TD\nA-->B\nclick A href "click.html" "tooltip" _blank');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
