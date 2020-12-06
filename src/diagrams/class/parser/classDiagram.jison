@@ -6,7 +6,15 @@
 
 /* lexical grammar */
 %lex
-%x string generic struct open_directive type_directive arg_directive
+%x string
+%x generic
+%x struct
+%x href
+%x callbackname
+%x callbackargs
+%x open_directive
+%x type_directive
+%x arg_directive
 
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
@@ -29,8 +37,7 @@
 
 "class"               return 'CLASS';
 "cssClass"            return 'CSSCLASS';
-"callback"            return 'CALLBACK';
-"link"                return 'LINK';
+"click"               return 'CLICK';
 "<<"                  return 'ANNOTATION_START';
 ">>"                  return 'ANNOTATION_END';
 [~]                   this.begin("generic");
@@ -40,6 +47,30 @@
 <string>["]           this.popState();
 <string>[^"]*         return "STR";
 
+/*
+---interactivity command---
+'href' adds a link to the specified task. 'href' can only be specified when the
+line was introduced with 'click'.
+'href "<link>"' attaches the specified link to the node that was specified by 'click'.
+*/
+"href"[\s]+["]          this.begin("href");
+<href>["]               this.popState();
+<href>[^"]*             return 'HREF';
+
+/*
+---interactivity command---
+'call' adds a callback to the specified task. 'call' can only be specified when
+the line was introduced with 'click'.
+'call <callbackname>(<args>)' attaches the function 'callbackname' with the specified
+arguments to the task that was specified by 'click'.
+Function arguments are optional: 'call <callbackname>()' simply executes 'callbackname' without any arguments.
+*/
+"call"[\s]+             this.begin("callbackname");
+<callbackname>\([\s]*\) this.popState();
+<callbackname>\(        this.popState(); this.begin("callbackargs");
+<callbackname>[^(]*     return 'CALLBACKNAME';
+<callbackargs>\)        this.popState();
+<callbackargs>[^)]*     return 'CALLBACKARGS';
 
 \s*\<\|               return 'EXTENSION';
 \s*\|\>               return 'EXTENSION';
@@ -243,10 +274,12 @@ lineType
     ;
 
 clickStatement
-    : CALLBACK className STR        {$$ = $1;yy.setClickEvent($2, $3, undefined);}
-    | CALLBACK className STR STR    {$$ = $1;yy.setClickEvent($2, $3, $4);}
-    | LINK className STR            {$$ = $1;yy.setLink($2, $3, undefined);}
-    | LINK className STR STR        {$$ = $1;yy.setLink($2, $3, $4);}
+    : CLICK className CALLBACKNAME                     {$$ = $1;yy.setClickEvent($2, $3);}
+    | CLICK className CALLBACKNAME STR                 {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
+    | CLICK className CALLBACKNAME CALLBACKARGS        {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | CLICK className CALLBACKNAME CALLBACKARGS STR    {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setTooltip($2, $5);}
+    | CLICK className HREF                             {$$ = $1;yy.setLink($2, $3);}
+    | CLICK className HREF STR                         {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
     ;
 
 cssClassStatement
