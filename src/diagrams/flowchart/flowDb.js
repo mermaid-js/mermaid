@@ -72,6 +72,7 @@ export const addVertex = function(_id, text, type, style, classes) {
   }
   vertexCounter++;
   if (typeof text !== 'undefined') {
+    config = configApi.getConfig();
     txt = common.sanitizeText(text.trim(), config);
 
     // strip quotes if string starts and ends with a quote
