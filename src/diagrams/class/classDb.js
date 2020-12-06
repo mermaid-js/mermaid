@@ -167,7 +167,11 @@ export const setCssClass = function(ids, className) {
   });
 };
 
-
+/**
+ * Called by parser when a tooltip is found, e.g. a clickable element.
+ * @param ids Comma separated list of ids
+ * @param tooltip Tooltip to add
+ */
 const setTooltip = function(ids, tooltip) {
   const config = configApi.getConfig();
   ids.split(',').forEach(function(id) {
@@ -203,13 +207,13 @@ export const setLink = function(ids, linkStr) {
  */
 export const setClickEvent = function(ids, functionName, functionArgs) {
   ids.split(',').forEach(function(id) {
-    setClickFunc(id, functionName, tooltip);
+    setClickFunc(id, functionName, functionArgs);
     classes[id].haveCallback = true;
   });
   setCssClass(ids, 'clickable');
 };
 
-const setClickFunc = function(domId, functionName, tooltip) {
+const setClickFunc = function(domId, functionName, functionArgs) {
   const config = configApi.getConfig();
   let id = domId;
   let elemId = lookUpDomId(id);
