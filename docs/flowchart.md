@@ -594,7 +594,7 @@ flowchart TB
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 ```
-click nodeId call callback
+click nodeId call callback()
 ```
 
 * nodeId is the id of the node
@@ -613,7 +613,7 @@ Examples of tooltip usage below:
 ```
 graph LR;
     A-->B;
-    click A call callback "Tooltip for a callback"
+    click A call callback() "Tooltip for a callback"
     click B href "http://www.github.com" "This is a tooltip for a link"
 ```
 
@@ -622,7 +622,7 @@ The tooltip text is surrounded in double quotes. The styles of the tooltip are s
 ```mermaid
 graph LR
     A-->B;
-    click A call callback "Tooltip"
+    click A call callback() "Tooltip"
     click B href "http://www.github.com" "This is a link"
 ```
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
@@ -652,7 +652,7 @@ Beginners tip, a full example using interactive links in a html context:
   <div class="mermaid">
     graph LR;
         A-->B;
-        click A call callback "Tooltip"
+        click A call callback() "Tooltip"
         click B href "http://www.github.com" "This is a link"
   </div>
 
