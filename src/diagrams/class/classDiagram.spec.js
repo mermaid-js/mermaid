@@ -676,7 +676,7 @@ foo()
     it('should associate callback with tooltip', function () {
       spyOn(classDb, 'setClickEvent');
       spyOn(classDb, 'setTooltip');
-      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 functionCall() "A tooltip"';
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 call functionCall() "A tooltip"';
       parser.parse(str);
 
       expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
