@@ -72,7 +72,6 @@ export const addVertex = function(_id, text, type, style, classes) {
   }
   vertexCounter++;
   if (typeof text !== 'undefined') {
-    config = configApi.getConfig();
     txt = common.sanitizeText(text.trim(), config);
 
     // strip quotes if string starts and ends with a quote
@@ -250,7 +249,7 @@ const setTooltip = function(ids, tooltip) {
 const setClickFun = function(id, functionName, functionArgs) {
   let domId = lookUpDomId(id);
   // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-  if (configApi.getConfig().securityLevel !== 'loose') {
+  if (config.securityLevel !== 'loose') {
     return;
   }
   if (typeof functionName === 'undefined') {

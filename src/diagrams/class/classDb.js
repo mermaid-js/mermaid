@@ -7,6 +7,7 @@ import mermaidAPI from '../../mermaidAPI';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 
+let config = configApi.getConfig();
 let relations = [];
 let classes = {};
 let classCounter = 0;
@@ -173,7 +174,6 @@ export const setCssClass = function(ids, className) {
  * @param linkStr URL to create a link for
  */
 export const setLink = function(ids, linkStr) {
-  const config = configApi.getConfig();
   ids.split(',').forEach(function(_id) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
@@ -210,7 +210,6 @@ export const setTooltip = function(ids, tooltip) {
 };
 
 const setClickFunc = function(domId, functionName) {
-  const config = configApi.getConfig();
   let id = domId;
   let elemId = lookUpDomId(id);
 
@@ -299,7 +298,7 @@ funs.push(setupToolTips);
 
 export default {
   parseDirective,
-  getConfig: () => configApi.getConfig().class,
+  getConfig: () => config.class,
   addClass,
   bindFunctions,
   clear,
