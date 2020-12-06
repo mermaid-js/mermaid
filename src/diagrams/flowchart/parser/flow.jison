@@ -451,6 +451,7 @@ classStatement:CLASS SPACE alphaNum SPACE alphaNum
 
 clickStatement
     : CLICK CALLBACKNAME                          {$$ = $1;yy.setClickEvent($1, $2);}
+    | CLICK CALLBACKNAME SPACE STR                {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4)}
     | CLICK CALLBACKNAME CALLBACKARGS             {$$ = $1;yy.setClickEvent($1, $2, $3);}
     | CLICK CALLBACKNAME CALLBACKARGS SPACE STR   {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setTooltip($1, $5)}
     | CLICK HREF                                  {$$ = $1;yy.setLink($1, $2);}
