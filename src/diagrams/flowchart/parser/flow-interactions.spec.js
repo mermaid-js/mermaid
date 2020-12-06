@@ -31,7 +31,7 @@ describe('[Interactions] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
-    expect(flowDb.setTooltip).toHaveBeenCalledWith('tooltip');
+    expect(flowDb.setTooltip).toHaveBeenCalledWith('A','tooltip');
   });
 
   it('should handle interaction - click to a link', function() {
@@ -53,7 +53,7 @@ describe('[Interactions] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html');
-    expect(flowDb.setTooltip).toHaveBeenCalledWith('tooltip');
+    expect(flowDb.setTooltip).toHaveBeenCalledWith('A','tooltip');
   });
 
   it('should handle interaction - click to a link with target', function() {
@@ -75,6 +75,6 @@ describe('[Interactions] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
-    expect(flowDb.setTooltip).toHaveBeenCalledWith('tooltip');
+    expect(flowDb.setTooltip).toHaveBeenCalledWith('A','tooltip');
   });
 });
