@@ -124,7 +124,7 @@ that id.
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
 "^"                   return 'UP';
-"\|"                   return 'SEP';
+"\|"                  return 'SEP';
 "v"                   return 'DOWN';
 [A-Za-z]+             return 'ALPHA';
 "\\]"                 return 'TRAPEND';
@@ -450,24 +450,13 @@ classStatement:CLASS SPACE alphaNum SPACE alphaNum
     ;
 
 clickStatement
-    : CLICK CALLBACKNAME                                                {$$ = $1;yy.setClickEvent($1, $2);}
-    | CLICK CALLBACKNAME CALLBACKARGS                                   {$$ = $1;yy.setClickEvent($1, $2, $3);}
-    | CLICK CALLBACKNAME CALLBACKARGS HREF                              {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setLink($1,$4);}
-    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR                         {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setTooltip($1, $4)}
-    | CLICK CALLBACKNAME CALLBACKARGS HREF SPACE STR                    {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setLink($1,$4);yy.setTooltip($1, $6)}
-    | CLICK CALLBACKNAME CALLBACKARGS HREF SPACE LINK_TARGET            {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setLink($1,$4, $6)}
-    | CLICK CALLBACKNAME CALLBACKARGS HREF SPACE STR SPACE LINK_TARGET  {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setLink($1,$4, $8);yy.setTooltip($1, $6)}
-    | CLICK CALLBACKNAME HREF                                           {$$ = $1;yy.setClickEvent($1, $2);yy.setLink($1,$3);}
-    | CLICK CALLBACKNAME SPACE STR                                      {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4)}
-    | CLICK CALLBACKNAME HREF SPACE STR                                 {$$ = $1;yy.setClickEvent($1, $2);yy.setLink($1,$3);yy.setTooltip($1, $5)}
-    | CLICK CALLBACKNAME HREF SPACE LINK_TARGET                         {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setLink($1,$4, $5)}
-    | CLICK CALLBACKNAME HREF SPACE STR SPACE LINK_TARGET               {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setLink($1,$4, $7);yy.setTooltip($1, $5)}
-    | CLICK HREF                                                        {$$ = $1;yy.setLink($1, $2);}
-    | CLICK HREF CALLBACKNAME                                           {$$ = $1;yy.setClickEvent($1, $3);yy.setLink($1,$2);}
-    | CLICK HREF CALLBACKNAME CALLBACKARGS                              {$$ = $1;yy.setClickEvent($1, $3, $4);yy.setLink($1,$2);}
-    | CLICK HREF SPACE STR                                              {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4)}
-    | CLICK HREF SPACE LINK_TARGET                                      {$$ = $1;yy.setLink($1, $2, $4);}
-    | CLICK HREF SPACE STR SPACE LINK_TARGET                            {$$ = $1;yy.setLink($1, $2, $7);yy.setTooltip($1, $4)}
+    : CLICK CALLBACKNAME                          {$$ = $1;yy.setClickEvent($1, $2);}
+    | CLICK CALLBACKNAME CALLBACKARGS             {$$ = $1;yy.setClickEvent($1, $2, $3);}
+    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR   {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setTooltip($1, $5)}
+    | CLICK HREF                                  {$$ = $1;yy.setLink($1, $2);}
+    | CLICK HREF SPACE STR                        {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4)}
+    | CLICK HREF SPACE LINK_TARGET                {$$ = $1;yy.setLink($1, $2, $4);}
+    | CLICK HREF SPACE STR SPACE LINK_TARGET      {$$ = $1;yy.setLink($1, $2, $7);yy.setTooltip($1, $4)}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
