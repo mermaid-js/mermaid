@@ -14,22 +14,24 @@ describe('[Interactions] when parsing', () => {
 
   it('it should be possible to use click to a callback', function() {
     spyOn(flowDb, 'setClickEvent');
-    const res = flow.parser.parse('graph TD\nA-->B\nclick A callback');
+    const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback()');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', undefined);
+    expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
   });
 
   it('it should be possible to use click to a callback with toolip', function() {
     spyOn(flowDb, 'setClickEvent');
-    const res = flow.parser.parse('graph TD\nA-->B\nclick A callback "tooltip"');
+    spyOn(flowDb, 'setTooltip');
+    const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback() "tooltip"');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', 'tooltip');
+    expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
+    expect(flowDb.setTooltip).toHaveBeenCalledWith('tooltip');
   });
 
   it('should handle interaction - click to a link', function() {
@@ -39,17 +41,19 @@ describe('[Interactions] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', undefined, undefined);
+    expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html');
   });
 
   it('should handle interaction - click to a link with tooltip', function() {
     spyOn(flowDb, 'setLink');
+    spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" "tooltip"');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', 'tooltip', undefined);
+    expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html');
+    expect(flowDb.setTooltip).toHaveBeenCalledWith('tooltip');
   });
 
   it('should handle interaction - click to a link with target', function() {
@@ -59,16 +63,18 @@ describe('[Interactions] when parsing', () => {
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', undefined, '_blank');
+    expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
   });
 
   it('should handle interaction - click to a link with tooltip and target', function() {
     spyOn(flowDb, 'setLink');
+    spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" "tooltip" _blank');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
 
-    expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', 'tooltip', '_blank');
+    expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
+    expect(flowDb.setTooltip).toHaveBeenCalledWith('tooltip');
   });
 });
