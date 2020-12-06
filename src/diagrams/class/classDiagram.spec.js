@@ -662,15 +662,17 @@ foo()
       const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'callback Class1 "functionCall"';
       parser.parse(str);
 
-      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall', undefined);
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
     });
 
     it('should associate callback with tooltip', function () {
       spyOn(classDb, 'setClickEvent');
+      spyOn(classDb, 'setTooltip');
       const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'callback Class1 "functionCall" "A tooltip"';
       parser.parse(str);
 
-      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall', 'A tooltip');
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1','A tooltip');
     });
   });
 });
