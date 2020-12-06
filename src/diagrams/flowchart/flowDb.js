@@ -257,27 +257,24 @@ const setClickFun = function(id, functionName, functionArgs) {
     return;
   }
   let argList = [];
-    if (typeof functionArgs === 'string') {
-      /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
-      argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-      for (let i = 0; i < argList.length; i++) {
-        let item = argList[i].trim();
-        /* Removes all double quotes at the start and end of an argument */
-        /* This preserves all starting and ending whitespace inside */
-        if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
-          item = item.substr(1, item.length - 2);
-
-
-
-        }
-        argList[i] = item;
+  if (typeof functionArgs === 'string') {
+    /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
+    argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    for (let i = 0; i < argList.length; i++) {
+      let item = argList[i].trim();
+      /* Removes all double quotes at the start and end of an argument */
+      /* This preserves all starting and ending whitespace inside */
+      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+        item = item.substr(1, item.length - 2);
       }
+      argList[i] = item;
     }
+  }
 
-    /* if no arguments passed into callback, default to passing in id */
-    if (argList.length === 0) {
-      argList.push(id);
-    }
+  /* if no arguments passed into callback, default to passing in id */
+  if (argList.length === 0) {
+    argList.push(id);
+  }
 
   if (typeof vertices[id] !== 'undefined') {
     vertices[id].haveCallback = true;
@@ -724,6 +721,7 @@ export default {
   addClass,
   setDirection,
   setClass,
+  setTooltip,
   getTooltip,
   setClickEvent,
   setLink,
