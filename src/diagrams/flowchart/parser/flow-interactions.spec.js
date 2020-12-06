@@ -25,7 +25,7 @@ describe('[Interactions] when parsing', () => {
   it('it should be possible to use click to a callback with toolip', function() {
     spyOn(flowDb, 'setClickEvent');
     spyOn(flowDb, 'setTooltip');
-    const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback() "tooltip"');
+    const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback "tooltip"');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
@@ -33,6 +33,16 @@ describe('[Interactions] when parsing', () => {
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A','tooltip');
   });
+
+  it('it should be possible to use click to a callback with an arbitrary number of args', function() {
+      spyOn(flowDb, 'setClickEvent');
+      const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback("test0", test1, test2)');
+
+      const vert = flow.parser.yy.getVertices();
+      const edges = flow.parser.yy.getEdges();
+
+      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback','"test0", test1, test2');
+    });
 
   it('should handle interaction - click to a link', function() {
     spyOn(flowDb, 'setLink');
@@ -77,4 +87,5 @@ describe('[Interactions] when parsing', () => {
     expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', '_blank');
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A','tooltip');
   });
+
 });
