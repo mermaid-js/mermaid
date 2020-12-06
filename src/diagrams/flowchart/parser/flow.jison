@@ -457,7 +457,7 @@ clickStatement
     | CLICK HREF                                  {$$ = $1;yy.setLink($1, $2);}
     | CLICK HREF SPACE STR                        {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4)}
     | CLICK HREF SPACE LINK_TARGET                {$$ = $1;yy.setLink($1, $2, $4);}
-    | CLICK HREF SPACE STR SPACE LINK_TARGET      {$$ = $1;yy.setLink($1, $2, $7);yy.setTooltip($1, $4)}
+    | CLICK HREF SPACE STR SPACE LINK_TARGET      {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4)}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
