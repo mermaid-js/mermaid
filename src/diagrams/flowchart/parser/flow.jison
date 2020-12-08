@@ -38,7 +38,7 @@
 
 /*
 ---interactivity command---
-'href' adds a link to the specified task. 'href' can only be specified when the
+'href' adds a link to the specified node. 'href' can only be specified when the
 line was introduced with 'click'.
 'href "<link>"' attaches the specified link to the node that was specified by 'click'.
 */
@@ -48,10 +48,10 @@ line was introduced with 'click'.
 
 /*
 ---interactivity command---
-'call' adds a callback to the specified task. 'call' can only be specified when
+'call' adds a callback to the specified node. 'call' can only be specified when
 the line was introduced with 'click'.
 'call <callbackname>(<args>)' attaches the function 'callbackname' with the specified
-arguments to the task that was specified by 'click'.
+arguments to the node that was specified by 'click'.
 Function arguments are optional: 'call <callbackname>()' simply executes 'callbackname' without any arguments.
 */
 "call"[\s]+             this.begin("callbackname");
