@@ -1,6 +1,6 @@
 # About Mermaid
 
-**Mermaid lets you represent diagrams using text and code.** This simplifies maintianing complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. The main purpose of Mermaid is to help Documentation catch up with Development.
+**Mermaid lets you represent diagrams using text and code.** This simplifies maintaining complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. The main purpose of Mermaid is to help Documentation catch up with Development.
 
 Many editors, wikis and other tools have mermaid integrations already making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](/n00b-gettingStarted).
 
