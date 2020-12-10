@@ -281,20 +281,20 @@ lineType
     ;
 
 clickStatement
-    : CALLBACK className STR                           {$$ = $1;yy.setClickEvent($2, $3);}
-    | CALLBACK className STR STR                       {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
-    | LINK className STR                               {$$ = $1;yy.setLink($2, $3);}
-    | LINK className STR SPACE LINK_TARGET             {$$ = $1;yy.setLink($2, $3,$5);}
-    | LINK className STR STR                           {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
-    | LINK className STR STR SPACE LINK_TARGET         {$$ = $1;yy.setLink($2, $3, $6);yy.setTooltip($2, $4);}
-    | CLICK className CALLBACK_NAME                    {$$ = $1;yy.setClickEvent($2, $3);}
-    | CLICK className CALLBACK_NAME STR                {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
-    | CLICK className CALLBACK_NAME CALLBACK_ARGS      {$$ = $1;yy.setClickEvent($2, $3, $4);}
-    | CLICK className CALLBACK_NAME CALLBACK_ARGS STR  {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setTooltip($2, $5);}
-    | CLICK className HREF                             {$$ = $1;yy.setLink($2, $3);}
-    | CLICK className HREF SPACE LINK_TARGET           {$$ = $1;yy.setLink($2, $3, $5);}
-    | CLICK className HREF STR                         {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
-    | CLICK className HREF STR SPACE LINK_TARGET       {$$ = $1;yy.setLink($2, $3, $6);yy.setTooltip($2, $4);}
+    : CALLBACK className STR                            {$$ = $1;yy.setClickEvent($2, $3);}
+    | CALLBACK className STR STR                        {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
+    | LINK className STR                                {$$ = $1;yy.setLink($2, $3);}
+    | LINK className STR LINK_TARGET                    {$$ = $1;yy.setLink($2, $3,$4);}
+    | LINK className STR STR                            {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
+    | LINK className STR STR LINK_TARGET                {$$ = $1;yy.setLink($2, $3, $5);yy.setTooltip($2, $4);}
+    | CLICK className CALLBACK_NAME                     {$$ = $1;yy.setClickEvent($2, $3);}
+    | CLICK className CALLBACK_NAME STR                 {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
+    | CLICK className CALLBACK_NAME CALLBACK_ARGS       {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | CLICK className CALLBACK_NAME CALLBACK_ARGS STR   {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setTooltip($2, $5);}
+    | CLICK className HREF                              {$$ = $1;yy.setLink($2, $3);}
+    | CLICK className HREF LINK_TARGET                  {$$ = $1;yy.setLink($2, $3, $4);}
+    | CLICK className HREF STR                          {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
+    | CLICK className HREF STR LINK_TARGET              {$$ = $1;yy.setLink($2, $3, $5);yy.setTooltip($2, $4);}
     ;
 
 cssClassStatement
