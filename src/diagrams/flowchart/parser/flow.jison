@@ -463,7 +463,7 @@ clickStatement
     | CLICK STR                                    {$$ = $1;yy.setLink($1, $2);}
     | CLICK STR SPACE STR                          {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
     | CLICK STR SPACE LINK_TARGET                  {$$ = $1;yy.setLink($1, $2, $4);}
-    | CLICK STR SPACE STR SPACE LINK_TARGET        {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $6);}
+    | CLICK STR SPACE STR SPACE LINK_TARGET        {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
