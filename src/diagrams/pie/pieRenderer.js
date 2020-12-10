@@ -100,7 +100,7 @@ export const draw = (txt, id) => {
     // Use the centroid method to get the best coordinates.
     svg
       .selectAll('mySlices')
-      .data(dataReady)
+      .data(dataReady.filter(value => value.data.value !== 0))
       .enter()
       .append('text')
       .text(function(d) {
