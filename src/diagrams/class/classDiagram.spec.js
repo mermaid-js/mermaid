@@ -739,6 +739,17 @@ foo()
           expect(testClass.cssClasses[0]).toBe('clickable');
         });
 
+    it('should associate click and href link appropriately', function () {
+      spyOn(classDb, 'setLink');
+      spyOn(classDb, 'setTooltip');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 href "google.com" "A tooltip" _self';
+      parser.parse(str);
+
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
+    });
+
+
     it('should associate callback appropriately', function () {
       spyOn(classDb, 'setClickEvent');
       const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'callback Class1 "functionCall"';
