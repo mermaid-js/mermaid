@@ -195,11 +195,10 @@ export const setLink = function(ids, linkStr, target) {
     if (typeof classes[id] !== 'undefined') {
       classes[id].link = utils.formatUrl(linkStr, config);
       if (typeof target === 'string') {
-        classes[id].linkTarget = target
-      }else{
-        classes[id].linkTarget ='_blank'
+        classes[id].linkTarget = target;
+      } else {
+        classes[id].linkTarget = '_blank' ;
       }
-
     }
   });
   setCssClass(ids, 'clickable');
