@@ -197,7 +197,7 @@ export const setLink = function(ids, linkStr, target) {
       if (typeof target === 'string') {
         classes[id].linkTarget = target;
       } else {
-        classes[id].linkTarget = '_blank' ;
+        classes[id].linkTarget = '_blank';
       }
     }
   });
