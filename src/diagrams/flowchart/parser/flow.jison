@@ -458,12 +458,12 @@ clickStatement
     | CLICK HREF SPACE STR                         {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
     | CLICK HREF SPACE LINK_TARGET                 {$$ = $1;yy.setLink($1, $2, $4);}
     | CLICK HREF SPACE STR SPACE LINK_TARGET       {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
-    | CLICK SPACE alphaNum                         {$$ = $1;yy.setClickEvent($1, $3);}
-    | CLICK SPACE alphaNum SPACE STR               {$$ = $1;yy.setClickEvent($1, $3);yy.setTooltip($1, $5);}
-    | CLICK SPACE STR                              {$$ = $1;yy.setLink($1, $3);}
-    | CLICK SPACE STR SPACE STR                    {$$ = $1;yy.setLink($1, $3);yy.setTooltip($1, $5);}
-    | CLICK SPACE STR SPACE LINK_TARGET            {$$ = $1;yy.setLink($1, $3, $5);}
-    | CLICK SPACE STR SPACE STR SPACE LINK_TARGET  {$$ = $1;yy.setLink($1, $3, $7);yy.setTooltip($1, $5);}
+    | CLICK alphaNum                               {$$ = $1;yy.setClickEvent($1, $2);}
+    | CLICK alphaNum SPACE STR                     {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
+    | CLICK STR                                    {$$ = $1;yy.setLink($1, $2);}
+    | CLICK STR SPACE STR                          {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
+    | CLICK STR SPACE LINK_TARGET                  {$$ = $1;yy.setLink($1, $2, $4);}
+    | CLICK STR SPACE STR SPACE LINK_TARGET        {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $6);}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
