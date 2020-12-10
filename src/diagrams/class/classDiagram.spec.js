@@ -749,6 +749,15 @@ foo()
       expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
     });
 
+    it('should associate link appropriately', function () {
+      spyOn(classDb, 'setLink');
+      spyOn(classDb, 'setTooltip');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'link Class1 "google.com" "A tooltip" _self';
+      parser.parse(str);
+
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
+    });
 
     it('should associate callback appropriately', function () {
       spyOn(classDb, 'setClickEvent');
