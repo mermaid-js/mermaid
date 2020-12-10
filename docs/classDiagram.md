@@ -450,11 +450,13 @@ It is possible to bind a click event to a node, the click can lead to either a j
 You would define these actions on a separate line after all classes have been declared.
 
 ```
+action className "reference" "tooltip"
 click className call callback() "tooltip"
 click className href "url" "tooltip"
 ```
-
+- _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
 - _className_ is the id of the node that the action will be associated with
+- _reference_ is either the url link, or the function name for callback.
 - (_optional_) tooltip is a string to be displayed when hovering over element (note: The styles of the tooltip are set by the class .mermaidTooltip.)
 - note: callback function will be called with the nodeId as parameter.
 
@@ -465,7 +467,9 @@ _URL Link:_
 ```
 classDiagram
 class Shape
-click Shape href "http://www.github.com" "This is a tooltip for a link"
+link Shape "http://www.github.com" "This is a tooltip for a link"
+class Shape2
+click Shape2 href "http://www.github.com" "This is a tooltip for a link"
 ```
 
 _Callback:_
@@ -473,7 +477,9 @@ _Callback:_
 ```
 classDiagram
 class Shape
-click Shape call callbackFunction() "This is a tooltip for a callback"
+callback Shape "callbackFunction" "This is a tooltip for a callback"
+class Shape2
+click Shape2 call callbackFunction() "This is a tooltip for a callback"
 ```
 
 ```
@@ -488,8 +494,12 @@ click Shape call callbackFunction() "This is a tooltip for a callback"
 classDiagram
     class Class01
     class Class02
-    click Class01 call callbackFunction() "Callback tooltip"
-    click Class02 href "http://www.github.com" "This is a link"
+    callback Class01 "callbackFunction" "Callback tooltip"
+    link Class02 "http://www.github.com" "This is a link"
+    class Class03
+    class Class04
+    click Class03 call callbackFunction() "Callback tooltip"
+    click Class04 href "http://www.github.com" "This is a link"
 ```
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
@@ -521,8 +531,8 @@ Beginners tip, a full example using interactive links in an html context:
       +run()
       }
 
-      click Duck call callback() "Tooltip"
-      click Zebra href "http://www.github.com" "This is a link"
+      callback Duck callback "Tooltip"
+      link Zebra "http://www.github.com" "This is a link"
   </div>
 
   <script>

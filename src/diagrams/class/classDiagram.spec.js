@@ -338,10 +338,25 @@ foo()
         'test()\n' +
         'foo()\n' +
         '}\n' +
-        'click Class01 href "google.com" ';
+        'link Class01 "google.com" ';
 
       parser.parse(str);
     });
+
+    it('should handle click statement with click and href link', function () {
+          const str =
+            'classDiagram\n' +
+            'class Class1 {\n' +
+            '%% Comment Class01 <|-- Class02\n' +
+            'int : test\n' +
+            'string : foo\n' +
+            'test()\n' +
+            'foo()\n' +
+            '}\n' +
+            'click Class01 href "google.com" ';
+
+          parser.parse(str);
+        });
 
     it('should handle click statement with link and tooltip', function () {
       const str =
@@ -353,10 +368,26 @@ foo()
         'test()\n' +
         'foo()\n' +
         '}\n' +
-        'click Class01 href "google.com" "A Tooltip" ';
+        'link Class01 "google.com" "A Tooltip" ';
 
       parser.parse(str);
     });
+
+
+    it('should handle click statement with click and href link and tooltip', function () {
+          const str =
+            'classDiagram\n' +
+            'class Class1 {\n' +
+            '%% Comment Class01 <|-- Class02\n' +
+            'int : test\n' +
+            'string : foo\n' +
+            'test()\n' +
+            'foo()\n' +
+            '}\n' +
+            'click Class01 href "google.com" "A Tooltip" ';
+
+          parser.parse(str);
+        });
 
     it('should handle click statement with callback', function () {
       const str =
@@ -368,10 +399,25 @@ foo()
         'test()\n' +
         'foo()\n' +
         '}\n' +
-        'click Class01 call functionCall() ';
+        'callback Class01 "functionCall" ';
 
       parser.parse(str);
     });
+
+    it('should handle click statement with click and call callback', function () {
+          const str =
+            'classDiagram\n' +
+            'class Class1 {\n' +
+            '%% Comment Class01 <|-- Class02\n' +
+            'int : test\n' +
+            'string : foo\n' +
+            'test()\n' +
+            'foo()\n' +
+            '}\n' +
+            'click Class01 call functionCall() ';
+
+          parser.parse(str);
+        });
 
     it('should handle click statement with callback and tooltip', function () {
       const str =
@@ -383,10 +429,25 @@ foo()
         'test()\n' +
         'foo()\n' +
         '}\n' +
-        'click Class01 call functionCall() "A Tooltip" ';
+        'callback Class01 "functionCall" "A Tooltip" ';
 
       parser.parse(str);
     });
+
+    it('should handle click statement with click and call callback and tooltip', function () {
+          const str =
+            'classDiagram\n' +
+            'class Class1 {\n' +
+            '%% Comment Class01 <|-- Class02\n' +
+            'int : test\n' +
+            'string : foo\n' +
+            'test()\n' +
+            'foo()\n' +
+            '}\n' +
+            'click Class01 call functionCall() "A Tooltip" ';
+
+          parser.parse(str);
+        });
 
     it('should handle dashed relation definition of different types and directions', function () {
       const str =
@@ -637,6 +698,16 @@ foo()
     });
 
     it('should associate link and css appropriately', function () {
+          const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'link Class1 "google.com"';
+          parser.parse(str);
+
+          const testClass = parser.yy.getClass('Class1');
+          expect(testClass.link).toBe('about:blank');//('google.com'); security needs to be set to 'loose' for this to work right
+          expect(testClass.cssClasses.length).toBe(1);
+          expect(testClass.cssClasses[0]).toBe('clickable');
+        });
+
+    it('should associate click and href link and css appropriately', function () {
       const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 href "google.com"';
       parser.parse(str);
 
@@ -647,7 +718,7 @@ foo()
     });
 
     it('should associate link with tooltip', function () {
-      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 href "google.com" "A tooltip"';
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'link Class1 "google.com" "A tooltip"';
       parser.parse(str);
 
       const testClass = parser.yy.getClass('Class1');
@@ -657,7 +728,27 @@ foo()
       expect(testClass.cssClasses[0]).toBe('clickable');
     });
 
+    it('should associate click and href link with tooltip', function () {
+          const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 href "google.com" "A tooltip"';
+          parser.parse(str);
+
+          const testClass = parser.yy.getClass('Class1');
+          expect(testClass.link).toBe('about:blank');//('google.com'); security needs to be set to 'loose' for this to work right
+          expect(testClass.tooltip).toBe('A tooltip');
+          expect(testClass.cssClasses.length).toBe(1);
+          expect(testClass.cssClasses[0]).toBe('clickable');
+        });
+
     it('should associate callback appropriately', function () {
+      spyOn(classDb, 'setClickEvent');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'callback Class1 "functionCall"';
+      parser.parse(str);
+
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+    });
+
+
+    it('should associate click and call callback appropriately', function () {
       spyOn(classDb, 'setClickEvent');
       const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 call functionCall()';
       parser.parse(str);

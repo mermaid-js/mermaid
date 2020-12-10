@@ -10,8 +10,8 @@
 %x generic
 %x struct
 %x href
-%x callbackname
-%x callbackargs
+%x callback_name
+%x callback_args
 %x open_directive
 %x type_directive
 %x arg_directive
@@ -37,6 +37,8 @@
 
 "class"               return 'CLASS';
 "cssClass"            return 'CSSCLASS';
+"callback"            return 'CALLBACK';
+"link"                return 'LINK';
 "click"               return 'CLICK';
 "<<"                  return 'ANNOTATION_START';
 ">>"                  return 'ANNOTATION_END';
@@ -61,16 +63,21 @@ line was introduced with 'click'.
 ---interactivity command---
 'call' adds a callback to the specified node. 'call' can only be specified when
 the line was introduced with 'click'.
-'call <callbackname>(<args>)' attaches the function 'callbackname' with the specified
+'call <callback_name>(<callback_args>)' attaches the function 'callback_name' with the specified
 arguments to the node that was specified by 'click'.
-Function arguments are optional: 'call <callbackname>()' simply executes 'callbackname' without any arguments.
+Function arguments are optional: 'call <callback_name>()' simply executes 'callback_name' without any arguments.
 */
-"call"[\s]+             this.begin("callbackname");
-<callbackname>\([\s]*\) this.popState();
-<callbackname>\(        this.popState(); this.begin("callbackargs");
-<callbackname>[^(]*     return 'CALLBACKNAME';
-<callbackargs>\)        this.popState();
-<callbackargs>[^)]*     return 'CALLBACKARGS';
+"call"[\s]+              this.begin("callback_name");
+<callback_name>\([\s]*\) this.popState();
+<callback_name>\(        this.popState(); this.begin("callback_args");
+<callback_name>[^(]*     return 'CALLBACK_NAME';
+<callback_args>\)        this.popState();
+<callback_args>[^)]*     return 'CALLBACK_ARGS';
+
+"_self"               return 'LINK_TARGET';
+"_blank"              return 'LINK_TARGET';
+"_parent"             return 'LINK_TARGET';
+"_top"                return 'LINK_TARGET';
 
 \s*\<\|               return 'EXTENSION';
 \s*\|\>               return 'EXTENSION';
@@ -274,12 +281,20 @@ lineType
     ;
 
 clickStatement
-    : CLICK className CALLBACKNAME                     {$$ = $1;yy.setClickEvent($2, $3);}
-    | CLICK className CALLBACKNAME STR                 {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
-    | CLICK className CALLBACKNAME CALLBACKARGS        {$$ = $1;yy.setClickEvent($2, $3, $4);}
-    | CLICK className CALLBACKNAME CALLBACKARGS STR    {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setTooltip($2, $5);}
+    : CALLBACK className STR                           {$$ = $1;yy.setClickEvent($2, $3);}
+    | CALLBACK className STR STR                       {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
+    | LINK className STR                               {$$ = $1;yy.setLink($2, $3);}
+    | LINK className STR SPACE LINK_TARGET             {$$ = $1;yy.setLink($2, $3,$5);}
+    | LINK className STR STR                           {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
+    | LINK className STR STR SPACE LINK_TARGET         {$$ = $1;yy.setLink($2, $3, $6);yy.setTooltip($2, $4);}
+    | CLICK className CALLBACK_NAME                    {$$ = $1;yy.setClickEvent($2, $3);}
+    | CLICK className CALLBACK_NAME STR                {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
+    | CLICK className CALLBACK_NAME CALLBACK_ARGS      {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | CLICK className CALLBACK_NAME CALLBACK_ARGS STR  {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setTooltip($2, $5);}
     | CLICK className HREF                             {$$ = $1;yy.setLink($2, $3);}
+    | CLICK className HREF SPACE LINK_TARGET           {$$ = $1;yy.setLink($2, $3, $5);}
     | CLICK className HREF STR                         {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
+    | CLICK className HREF STR SPACE LINK_TARGET       {$$ = $1;yy.setLink($2, $3, $6);yy.setTooltip($2, $4);}
     ;
 
 cssClassStatement

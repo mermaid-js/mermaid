@@ -185,15 +185,21 @@ const setTooltip = function(ids, tooltip) {
  * Called by parser when a link is found. Adds the URL to the vertex data.
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
- * @param tooltip Tooltip for the clickable element
+ * @param target Target of the link, _blank by default as originally defined in the svgDraw.js file
  */
-export const setLink = function(ids, linkStr) {
+export const setLink = function(ids, linkStr, target) {
   const config = configApi.getConfig();
   ids.split(',').forEach(function(_id) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof classes[id] !== 'undefined') {
       classes[id].link = utils.formatUrl(linkStr, config);
+      if (typeof target === 'string') {
+        classes[id].linkTarget = target
+      }else{
+        classes[id].linkTarget ='_blank'
+      }
+
     }
   });
   setCssClass(ids, 'clickable');
