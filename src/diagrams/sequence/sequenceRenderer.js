@@ -969,7 +969,6 @@ const buildMessageModel = function(msg, actors) {
   const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
   const allBounds = fromBounds.concat(toBounds);
   const boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
-  const msgDims = utils.calculateTextDimensions(msg.message, messageFont(conf));
   if (msg.wrap && msg.message) {
     msg.message = utils.wrapLabel(
       msg.message,
@@ -977,6 +976,8 @@ const buildMessageModel = function(msg, actors) {
       messageFont(conf)
     );
   }
+  const msgDims = utils.calculateTextDimensions(msg.message, messageFont(conf));
+
   return {
     width: Math.max(
       msg.wrap ? 0 : msgDims.width + 2 * conf.wrapPadding,
