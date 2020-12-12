@@ -431,7 +431,7 @@ const render = function(id, _txt, cb, container) {
   svgCode = decodeEntities(svgCode);
 
   // Fix for when the br tag is used
-  svgCode = svgCode.replaceAll('<br>', '<br/>');
+  svgCode = svgCode.replace(/<br>/g, '<br/>');
 
   if (typeof cb !== 'undefined') {
     switch (graphType) {
