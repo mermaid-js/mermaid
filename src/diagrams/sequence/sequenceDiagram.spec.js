@@ -442,6 +442,87 @@ note right of 1: multiline<br \t/>text
     expect(messages[6].message).toBe('multiline<br \t/>text');
     expect(messages[7].message).toBe('multiline<br \t/>text');
   });
+  it('it should handle notes and messages without wrap specified', function () {
+    const str = `
+sequenceDiagram
+participant 1
+participant 2
+participant 3
+participant 4
+1->>2: single-line text
+note right of 2: single-line text
+2->>3:nowrap: single-line text
+note right of 3:nowrap: single-line text
+3->>4: multiline<br/>text
+note right of 4: multiline<br/>text
+4->>1:nowrap: multiline<br/>text
+note right of 1:nowrap: multiline<br/>text
+`;
+
+    mermaidAPI.parse(str);
+
+    const messages = parser.yy.getMessages();
+    expect(messages[0].message).toBe('single-line text');
+    expect(messages[1].message).toBe('single-line text');
+    expect(messages[2].message).toBe('single-line text');
+    expect(messages[3].message).toBe('single-line text');
+    expect(messages[4].message).toBe('multiline<br/>text');
+    expect(messages[5].message).toBe('multiline<br/>text');
+    expect(messages[6].message).toBe('multiline<br/>text');
+    expect(messages[7].message).toBe('multiline<br/>text');
+
+    // wrap indicates whether wrap is specified
+    expect(messages[0].wrap).toBe(false);
+    expect(messages[1].wrap).toBe(false);
+    expect(messages[2].wrap).toBe(false);
+    expect(messages[3].wrap).toBe(false);
+    expect(messages[4].wrap).toBe(false);
+    expect(messages[5].wrap).toBe(false);
+    expect(messages[6].wrap).toBe(false);
+    expect(messages[7].wrap).toBe(false);
+  })
+  it('it should handle notes and messages with wrap specified', function () {
+    const str = `
+sequenceDiagram
+participant 1
+participant 2
+participant 3
+participant 4
+1->>2:wrap: single-line text
+note right of 2:wrap: single-line text
+2->>3:wrap: multiline<br/>text
+note right of 3:wrap: multiline<br/>text
+`;
+
+    mermaidAPI.parse(str);
+
+    const messages = parser.yy.getMessages();
+    expect(messages[0].message).toBe('single-line text');
+    expect(messages[1].message).toBe('single-line text');
+    expect(messages[2].message).toBe('multiline<br/>text');
+    expect(messages[3].message).toBe('multiline<br/>text');
+    expect(messages[0].wrap).toBe(true);
+    expect(messages[1].wrap).toBe(true);
+    expect(messages[2].wrap).toBe(true);
+    expect(messages[3].wrap).toBe(true);
+  })
+  it('it should handle notes and messages with nowrap or line breaks', function () {
+    const str = `
+sequenceDiagram
+participant 1
+participant 2
+1->>2: single-line text
+note right of 2: single-line text
+`;
+
+    mermaidAPI.parse(str);
+
+    const messages = parser.yy.getMessages();
+    expect(messages[0].message).toBe('single-line text');
+    expect(messages[1].message).toBe('single-line text');
+    expect(messages[0].wrap).toBe(false);
+    expect(messages[1].wrap).toBe(false);
+  })
   it('it should handle notes over a single actor', function() {
     const str = `
 sequenceDiagram
