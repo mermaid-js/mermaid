@@ -226,7 +226,6 @@ const drawNote = function(elem, noteModel) {
   textObj.anchor = conf.noteAlign;
   textObj.textMargin = conf.noteMargin;
   textObj.valign = conf.noteAlign;
-  textObj.wrap = true;
 
   let textElem = drawText(g, textObj);
 
@@ -272,7 +271,7 @@ const actorFont = cnf => {
  */
 const drawMessage = function(g, msgModel) {
   bounds.bumpVerticalPos(10);
-  const { startx, stopx, starty, message, type, sequenceIndex, wrap } = msgModel;
+  const { startx, stopx, starty, message, type, sequenceIndex } = msgModel;
   const lines = common.splitBreaks(message).length;
   let textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const lineHeight = textDims.height / lines;
@@ -293,7 +292,6 @@ const drawMessage = function(g, msgModel) {
   textObj.valign = conf.messageAlign;
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
-  textObj.wrap = wrap;
 
   drawText(g, textObj);
 

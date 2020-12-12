@@ -21,9 +21,7 @@ export const drawRect = function(elem, rectData) {
 export const drawText = function(elem, textData) {
   let prevTextHeight = 0,
     textHeight = 0;
-  const lines = textData.wrap
-    ? textData.text.split(common.lineBreakRegex)
-    : [textData.text.replace(common.lineBreakRegex, ' ')];
+  const lines = textData.text.split(common.lineBreakRegex);
 
   let textElems = [];
   let dy = 0;
