@@ -1,6 +1,5 @@
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
-import common from '../common/common';
 import { logger } from '../../logger';
 
 let prevActor = undefined;
@@ -138,9 +137,7 @@ export const parseMessage = function(str) {
   const message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap:
-      _str.match(/^[:]?(?:no)?wrap:/) === null
-        ? common.hasBreaks(_str) || undefined
-        : _str.match(/^[:]?wrap:/) !== null
+      _str.match(/^[:]?wrap:/) !== null
         ? true
         : _str.match(/^[:]?nowrap:/) !== null
         ? false
