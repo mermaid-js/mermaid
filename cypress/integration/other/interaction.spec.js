@@ -11,15 +11,25 @@ describe('Interaction', () => {
 
       cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
     });
-    it('Graph: should handle a click on a node with a bound function where the node starts with a number', () => {
+    it('Graph: should handle a click on a node with a bound function with args', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g[id="flowchart-1Function-6"]')
+        .find('g#flowchart-FunctionArg-18')
         .click();
 
-      cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
+      cy.get('.created-by-click-2').should('have.text', 'Clicked By Flow: ARGUMENT');
+    });
+    it('Flowchart: should handle a click on a node with a bound function where the node starts with a number', () => {
+      const url = 'http://localhost:9000/click_security_loose.html';
+      cy.viewport(1440, 1024);
+      cy.visit(url);
+      cy.get('body')
+        .find('g[id="flowchart-FunctionArg-22"]')
+        .click();
+
+      cy.get('.created-by-click-2').should('have.text', 'Clicked By Flow: ARGUMENT');
     });
     it('Graph: should handle a click on a node with a bound url', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
