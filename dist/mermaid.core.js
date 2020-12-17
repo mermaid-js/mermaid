@@ -17226,9 +17226,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "apply", function() { return apply; });
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 
 
 
@@ -17376,9 +17374,9 @@ var parseMessage = function parseMessage(str) {
 
   var message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
-    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].hasBreaks(_str) || undefined : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : undefined
+    wrap: _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : undefined
   };
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('parseMessage:', message);
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('parseMessage:', message);
   return message;
 };
 var LINETYPE = {
@@ -17818,7 +17816,6 @@ var drawNote = function drawNote(elem, noteModel) {
   textObj.anchor = conf.noteAlign;
   textObj.textMargin = conf.noteMargin;
   textObj.valign = conf.noteAlign;
-  textObj.wrap = true;
   var textElem = Object(_svgDraw__WEBPACK_IMPORTED_MODULE_1__["drawText"])(g, textObj);
   var textHeight = Math.round(textElem.map(function (te) {
     return (te._groups || te)[0][0].getBBox().height;
@@ -17871,8 +17868,7 @@ var drawMessage = function drawMessage(g, msgModel) {
       starty = msgModel.starty,
       message = msgModel.message,
       type = msgModel.type,
-      sequenceIndex = msgModel.sequenceIndex,
-      wrap = msgModel.wrap;
+      sequenceIndex = msgModel.sequenceIndex;
   var lines = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].splitBreaks(message).length;
   var textDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(message, messageFont(conf));
   var lineHeight = textDims.height / lines;
@@ -17892,7 +17888,6 @@ var drawMessage = function drawMessage(g, msgModel) {
   textObj.valign = conf.messageAlign;
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
-  textObj.wrap = wrap;
   Object(_svgDraw__WEBPACK_IMPORTED_MODULE_1__["drawText"])(g, textObj);
   var totalOffset = textDims.height - 10;
   var textWidth = textDims.width;
@@ -18408,12 +18403,12 @@ var buildMessageModel = function buildMessageModel(msg, actors) {
   var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
   var allBounds = fromBounds.concat(toBounds);
   var boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
-  var msgDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(msg.message, messageFont(conf));
 
   if (msg.wrap && msg.message) {
     msg.message = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width), messageFont(conf));
   }
 
+  var msgDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(msg.message, messageFont(conf));
   return {
     width: Math.max(msg.wrap ? 0 : msgDims.width + 2 * conf.wrapPadding, boundedWidth + 2 * conf.wrapPadding, conf.width),
     height: 0,
@@ -18605,7 +18600,7 @@ var drawRect = function drawRect(elem, rectData) {
 var drawText = function drawText(elem, textData) {
   var prevTextHeight = 0,
       textHeight = 0;
-  var lines = textData.wrap ? textData.text.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex) : [textData.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex, ' ')];
+  var lines = textData.text.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
   var textElems = [];
   var dy = 0;
 

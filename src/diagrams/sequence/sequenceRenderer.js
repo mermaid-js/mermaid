@@ -226,7 +226,6 @@ const drawNote = function(elem, noteModel) {
   textObj.anchor = conf.noteAlign;
   textObj.textMargin = conf.noteMargin;
   textObj.valign = conf.noteAlign;
-  textObj.wrap = true;
 
   let textElem = drawText(g, textObj);
 
@@ -272,7 +271,7 @@ const actorFont = cnf => {
  */
 const drawMessage = function(g, msgModel) {
   bounds.bumpVerticalPos(10);
-  const { startx, stopx, starty, message, type, sequenceIndex, wrap } = msgModel;
+  const { startx, stopx, starty, message, type, sequenceIndex } = msgModel;
   const lines = common.splitBreaks(message).length;
   let textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const lineHeight = textDims.height / lines;
@@ -293,7 +292,6 @@ const drawMessage = function(g, msgModel) {
   textObj.valign = conf.messageAlign;
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
-  textObj.wrap = wrap;
 
   drawText(g, textObj);
 
@@ -971,7 +969,6 @@ const buildMessageModel = function(msg, actors) {
   const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
   const allBounds = fromBounds.concat(toBounds);
   const boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
-  const msgDims = utils.calculateTextDimensions(msg.message, messageFont(conf));
   if (msg.wrap && msg.message) {
     msg.message = utils.wrapLabel(
       msg.message,
@@ -979,6 +976,8 @@ const buildMessageModel = function(msg, actors) {
       messageFont(conf)
     );
   }
+  const msgDims = utils.calculateTextDimensions(msg.message, messageFont(conf));
+
   return {
     width: Math.max(
       msg.wrap ? 0 : msgDims.width + 2 * conf.wrapPadding,
