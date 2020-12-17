@@ -343,6 +343,21 @@ foo()
       parser.parse(str);
     });
 
+    it('should handle click statement with click and href link', function () {
+          const str =
+            'classDiagram\n' +
+            'class Class1 {\n' +
+            '%% Comment Class01 <|-- Class02\n' +
+            'int : test\n' +
+            'string : foo\n' +
+            'test()\n' +
+            'foo()\n' +
+            '}\n' +
+            'click Class01 href "google.com" ';
+
+          parser.parse(str);
+        });
+
     it('should handle click statement with link and tooltip', function () {
       const str =
         'classDiagram\n' +
@@ -357,6 +372,22 @@ foo()
 
       parser.parse(str);
     });
+
+
+    it('should handle click statement with click and href link and tooltip', function () {
+          const str =
+            'classDiagram\n' +
+            'class Class1 {\n' +
+            '%% Comment Class01 <|-- Class02\n' +
+            'int : test\n' +
+            'string : foo\n' +
+            'test()\n' +
+            'foo()\n' +
+            '}\n' +
+            'click Class01 href "google.com" "A Tooltip" ';
+
+          parser.parse(str);
+        });
 
     it('should handle click statement with callback', function () {
       const str =
@@ -373,6 +404,21 @@ foo()
       parser.parse(str);
     });
 
+    it('should handle click statement with click and call callback', function () {
+          const str =
+            'classDiagram\n' +
+            'class Class1 {\n' +
+            '%% Comment Class01 <|-- Class02\n' +
+            'int : test\n' +
+            'string : foo\n' +
+            'test()\n' +
+            'foo()\n' +
+            '}\n' +
+            'click Class01 call functionCall() ';
+
+          parser.parse(str);
+        });
+
     it('should handle click statement with callback and tooltip', function () {
       const str =
         'classDiagram\n' +
@@ -387,6 +433,21 @@ foo()
 
       parser.parse(str);
     });
+
+    it('should handle click statement with click and call callback and tooltip', function () {
+          const str =
+            'classDiagram\n' +
+            'class Class1 {\n' +
+            '%% Comment Class01 <|-- Class02\n' +
+            'int : test\n' +
+            'string : foo\n' +
+            'test()\n' +
+            'foo()\n' +
+            '}\n' +
+            'click Class01 call functionCall() "A Tooltip" ';
+
+          parser.parse(str);
+        });
 
     it('should handle dashed relation definition of different types and directions', function () {
       const str =
@@ -637,7 +698,17 @@ foo()
     });
 
     it('should associate link and css appropriately', function () {
-      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'link Class1 "google.com"';
+          const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'link Class1 "google.com"';
+          parser.parse(str);
+
+          const testClass = parser.yy.getClass('Class1');
+          expect(testClass.link).toBe('about:blank');//('google.com'); security needs to be set to 'loose' for this to work right
+          expect(testClass.cssClasses.length).toBe(1);
+          expect(testClass.cssClasses[0]).toBe('clickable');
+        });
+
+    it('should associate click and href link and css appropriately', function () {
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 href "google.com"';
       parser.parse(str);
 
       const testClass = parser.yy.getClass('Class1');
@@ -657,20 +728,86 @@ foo()
       expect(testClass.cssClasses[0]).toBe('clickable');
     });
 
+    it('should associate click and href link with tooltip', function () {
+          const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 href "google.com" "A tooltip"';
+          parser.parse(str);
+
+          const testClass = parser.yy.getClass('Class1');
+          expect(testClass.link).toBe('about:blank');//('google.com'); security needs to be set to 'loose' for this to work right
+          expect(testClass.tooltip).toBe('A tooltip');
+          expect(testClass.cssClasses.length).toBe(1);
+          expect(testClass.cssClasses[0]).toBe('clickable');
+        });
+
+    it('should associate click and href link with tooltip and target appropriately', function () {
+      spyOn(classDb, 'setLink');
+      spyOn(classDb, 'setTooltip');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 href "google.com" "A tooltip" _self';
+      parser.parse(str);
+
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
+    });
+
+    it('should associate click and href link appropriately', function () {
+      spyOn(classDb, 'setLink');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 href "google.com"';
+      parser.parse(str);
+
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com');
+    });
+
+    it('should associate click and href link with target appropriately', function () {
+      spyOn(classDb, 'setLink');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 href "google.com" _self';
+      parser.parse(str);
+
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
+    });
+
+    it('should associate link appropriately', function () {
+      spyOn(classDb, 'setLink');
+      spyOn(classDb, 'setTooltip');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'link Class1 "google.com" "A tooltip" _self';
+      parser.parse(str);
+
+      expect(classDb.setLink).toHaveBeenCalledWith('Class1', 'google.com', '_self');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
+    });
+
     it('should associate callback appropriately', function () {
       spyOn(classDb, 'setClickEvent');
       const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'callback Class1 "functionCall"';
       parser.parse(str);
 
-      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall', undefined);
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+    });
+
+
+    it('should associate click and call callback appropriately', function () {
+      spyOn(classDb, 'setClickEvent');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 call functionCall()';
+      parser.parse(str);
+
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+    });
+
+    it('should associate callback appropriately with an arbitrary number of args', function () {
+      spyOn(classDb, 'setClickEvent');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 call functionCall("test0", test1, test2)';
+      parser.parse(str);
+
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall','"test0", test1, test2');
     });
 
     it('should associate callback with tooltip', function () {
       spyOn(classDb, 'setClickEvent');
-      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'callback Class1 "functionCall" "A tooltip"';
+      spyOn(classDb, 'setTooltip');
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'click Class1 call functionCall() "A tooltip"';
       parser.parse(str);
 
-      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall', 'A tooltip');
+      expect(classDb.setClickEvent).toHaveBeenCalledWith('Class1', 'functionCall');
+      expect(classDb.setTooltip).toHaveBeenCalledWith('Class1', 'A tooltip');
     });
   });
 });
