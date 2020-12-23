@@ -4,7 +4,7 @@ Creating diagrams and charts using mermaid code is simple.
 The code is turned into a diagram in the web page with the use of a mermaid renderer.
 
 The mermaid renderer is a piece of javascript that parses mermaid definitions, when called.
-This then renders a diagram based on that code in SVG, alternatively it
+This then renders a diagram based on that code in SVG.
 
 Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot.
 
