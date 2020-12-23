@@ -117,7 +117,7 @@ Cardinality is a property that describes how many elements of another entity can
 
 Relationships may be classified as either *identifying* or *non-identifying* and these are rendered with either solid or dashed lines respectively. This is relevant when one of the entities in question can not have independent existence without the other.  For example a firm that insures people to drive cars might need to store data on `NAMED-DRIVER`s. In modelling this we might start out by observing that a `CAR` can be driven by many `PERSON` instances, and a `PERSON` can drive many `CAR`s - both entities can exist without the other, so this is a non-identifying relationship that we might specify in Mermaid as: `PERSON }|..|{ CAR : "driver"`.  Note the two dots in the middle of the relationship that will result in a dashed line being drawn between the two entities.  But when this many-to-many relationship is resolved into two one-to-many relationships, we observe that a `NAMED-DRIVER` cannot exist without both a `PERSON` and a `CAR` - the relationships become identifying and would be specified using hyphens, which translate to a solid line:
 
-```markdown
+```
     CAR ||--o{ NAMED-DRIVER : allows
     PERSON ||--o{ NAMED-DRIVER : is
 ```
@@ -126,7 +126,23 @@ Relationships may be classified as either *identifying* or *non-identifying* and
 
 Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`.  For example:
 
-```markdown
+```
+erDiagram
+    CAR ||--o{ NAMED-DRIVER : allows}
+    CAR {
+        string registrationNumber
+        string make
+        string model
+    }
+    PERSON ||--o{ NAMED-DRIVER : is
+    PERSON {
+        string firstName
+        string lastName
+        int age
+    }
+```
+```mermaid
+erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
         string registrationNumber
@@ -142,7 +158,23 @@ Attributes can be defined for entities by specifying the entity name followed by
 ```
 The attributes are rendered inside the entity boxes:
 
+```
+erDiagram
+    CAR ||--o{ NAMED-DRIVER : allows
+    CAR {
+        string registrationNumber
+        string make
+        string model
+    }
+    PERSON ||--o{ NAMED-DRIVER : is
+    PERSON {
+        string firstName
+        string lastName
+        int age
+    }
+```
 ```mermaid
+erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
         string registrationNumber
