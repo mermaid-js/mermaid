@@ -56,13 +56,15 @@
 "autonumber" 			                                        return 'autonumber';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
-[^\+\->:\n,;]+((?!(\-x|\-\-x))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
+[^\+\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"                                                           return 'SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
 "->"                                                            return 'SOLID_OPEN_ARROW';
 "-->"                                                           return 'DOTTED_OPEN_ARROW';
 \-[x]                                                           return 'SOLID_CROSS';
 \-\-[x]                                                         return 'DOTTED_CROSS';
+\-[\)]                                                           return 'SOLID_POINT';
+\-\-[\)]                                                         return 'DOTTED_POINT';
 ":"(?:(?:no)?wrap:)?[^#\n;]+                                    return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
@@ -206,6 +208,8 @@ signaltype
 	| DOTTED_ARROW      { $$ = yy.LINETYPE.DOTTED; }
 	| SOLID_CROSS       { $$ = yy.LINETYPE.SOLID_CROSS; }
 	| DOTTED_CROSS      { $$ = yy.LINETYPE.DOTTED_CROSS; }
+	| SOLID_POINT { $$ = yy.LINETYPE.SOLID_POINT; }
+	| DOTTED_POINT { $$ = yy.LINETYPE.DOTTED_POINT; }
 	;
 
 text2
