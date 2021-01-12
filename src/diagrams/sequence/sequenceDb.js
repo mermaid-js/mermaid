@@ -168,7 +168,9 @@ export const LINETYPE = {
   PAR_AND: 20,
   PAR_END: 21,
   RECT_START: 22,
-  RECT_END: 23
+  RECT_END: 23,
+  SOLID_POINT: 24,
+  DOTTED_POINT: 25
 };
 
 export const ARROWTYPE = {

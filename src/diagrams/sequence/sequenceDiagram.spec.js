@@ -161,6 +161,36 @@ Alice--xBob:Hello Bob, how are you?`;
     expect(messages.length).toBe(1);
     expect(messages[0].type).toBe(parser.yy.LINETYPE.DOTTED_CROSS);
   });
+  it('it should handle in sync messages', function() {
+    const str = `
+sequenceDiagram
+Alice-)Bob:Hello Bob, how are you?`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+    expect(actors.Alice.description).toBe('Alice');
+    expect(actors.Bob.description).toBe('Bob');
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(1);
+    expect(messages[0].type).toBe(parser.yy.LINETYPE.SOLID_POINT);
+  });
+  it('it should handle in sync dotted messages', function() {
+    const str = `
+sequenceDiagram
+Alice--)Bob:Hello Bob, how are you?`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+    expect(actors.Alice.description).toBe('Alice');
+    expect(actors.Bob.description).toBe('Bob');
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(1);
+    expect(messages[0].type).toBe(parser.yy.LINETYPE.DOTTED_POINT);
+  });
   it('it should handle in arrow messages', function() {
     const str = `
 sequenceDiagram

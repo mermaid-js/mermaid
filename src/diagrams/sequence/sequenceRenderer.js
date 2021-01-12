@@ -360,6 +360,7 @@ const drawMessage = function(g, msgModel) {
   if (
     type === parser.yy.LINETYPE.DOTTED ||
     type === parser.yy.LINETYPE.DOTTED_CROSS ||
+    type === parser.yy.LINETYPE.DOTTED_POINT ||
     type === parser.yy.LINETYPE.DOTTED_OPEN
   ) {
     line.style('stroke-dasharray', '3, 3');
@@ -385,6 +386,9 @@ const drawMessage = function(g, msgModel) {
   line.style('fill', 'none'); // remove any fill colour
   if (type === parser.yy.LINETYPE.SOLID || type === parser.yy.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
+  }
+  if (type === parser.yy.LINETYPE.SOLID_POINT || type === parser.yy.LINETYPE.DOTTED_POINT) {
+    line.attr('marker-end', 'url(' + url + '#filled-head)');
   }
 
   if (type === parser.yy.LINETYPE.SOLID_CROSS || type === parser.yy.LINETYPE.DOTTED_CROSS) {
@@ -523,6 +527,7 @@ export const draw = function(text, id) {
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram);
   svgDraw.insertArrowCrossHead(diagram);
+  svgDraw.insertArrowFilledHead(diagram);
   svgDraw.insertSequenceNumber(diagram);
 
   function activeEnd(msg, verticalPos) {
@@ -667,7 +672,9 @@ export const draw = function(text, id) {
         parser.yy.LINETYPE.SOLID,
         parser.yy.LINETYPE.DOTTED,
         parser.yy.LINETYPE.SOLID_CROSS,
-        parser.yy.LINETYPE.DOTTED_CROSS
+        parser.yy.LINETYPE.DOTTED_CROSS,
+        parser.yy.LINETYPE.SOLID_POINT,
+        parser.yy.LINETYPE.DOTTED_POINT
       ].includes(msg.type)
     ) {
       sequenceIndex++;
@@ -955,7 +962,9 @@ const buildMessageModel = function(msg, actors) {
       parser.yy.LINETYPE.SOLID,
       parser.yy.LINETYPE.DOTTED,
       parser.yy.LINETYPE.SOLID_CROSS,
-      parser.yy.LINETYPE.DOTTED_CROSS
+      parser.yy.LINETYPE.DOTTED_CROSS,
+      parser.yy.LINETYPE.SOLID_POINT,
+      parser.yy.LINETYPE.DOTTED_POINT
     ].includes(msg.type)
   ) {
     process = true;

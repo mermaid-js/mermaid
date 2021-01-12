@@ -373,13 +373,30 @@ export const insertArrowHead = function(elem) {
     .append('defs')
     .append('marker')
     .attr('id', 'arrowhead')
-    .attr('refX', 5)
-    .attr('refY', 2)
-    .attr('markerWidth', 6)
-    .attr('markerHeight', 4)
+    .attr('refX', 9)
+    .attr('refY', 5)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 12)
+    .attr('markerHeight', 12)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 0,0 V 4 L6,2 Z'); // this is actual shape for arrowhead
+    .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
+};
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ */
+export const insertArrowFilledHead = function(elem) {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', 'filled-head')
+    .attr('refX', 18)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 28)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
 /**
  * Setup node number. The result is appended to the svg.
@@ -554,6 +571,7 @@ export default {
   drawLoop,
   drawBackgroundRect,
   insertArrowHead,
+  insertArrowFilledHead,
   insertSequenceNumber,
   insertArrowCrossHead,
   getTextObj,
