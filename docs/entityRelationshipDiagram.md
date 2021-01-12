@@ -128,7 +128,7 @@ Attributes can be defined for entities by specifying the entity name followed by
 
 ```
 erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows}
+    CAR ||--o{ NAMED-DRIVER : allows
     CAR {
         string registrationNumber
         string make
