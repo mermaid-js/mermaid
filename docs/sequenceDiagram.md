@@ -9,12 +9,14 @@ Mermaid can render sequence diagrams.
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
+    Alice-)John: See you later!
 ```
 
 ```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
+    Alice-)John: See you later!
 ```
 
 ```note
@@ -84,8 +86,10 @@ There are six types of arrows currently supported:
 | -->  | Dotted line without arrow                   |
 | ->>  | Solid line with arrowhead                   |
 | -->> | Dotted line with arrowhead                  |
-| -x   | Solid line with a cross at the end (async)  |
-| --x  | Dotted line with a cross at the end (async) |
+| -x   | Solid line with a cross at the end          |
+| --x  | Dotted line with a cross at the end         |
+| -x   | Solid line with an open arrow at the end (async)  |
+| --x  | Dotted line with an open arrow at the end (async) |
 
 ## Activations
 
