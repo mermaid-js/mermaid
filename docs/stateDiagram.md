@@ -308,8 +308,8 @@ stateDiagram-v2
         CapsLockOn --> CapsLockOff : EvCapsLockPressed
         --
         [*] --> ScrollLockOff
-        ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
-        ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+        ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
+        ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
     }
 ```
 
@@ -327,8 +327,8 @@ stateDiagram-v2
         CapsLockOn --> CapsLockOff : EvCapsLockPressed
         --
         [*] --> ScrollLockOff
-        ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
-        ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+        ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
+        ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
     }
 ```
 
