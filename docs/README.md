@@ -1,8 +1,8 @@
 # About Mermaid
 
-**Mermaid lets you represent diagrams using text and code.** This simplifies maintaining complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. The main purpose of Mermaid is to help Documentation catch up with Development.
+**Mermaid lets you create diagrams using text and code.** This simplifies the maintenance of complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. If you are familiar with markdown you should have no problem learning mermaid's syntax.
 
-Many editors, wikis and other tools have mermaid integrations already making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](/n00b-gettingStarted).
+The main purpose of Mermaid is to help Documentation catch up with Development.
 
 ![banner](img/header.png)
 
@@ -14,14 +14,16 @@ Many editors, wikis and other tools have mermaid integrations already making it 
 > Doc-Rot is a Catch-22 that Mermaid helps to solve.
 
 Diagramming and documentation costs precious developer time and gets outdated quickly.
-But not having diagrams or docs ruins productivity and hurts organizational learning. <br/>
+But not having diagrams or docs ruins productivity and hurts organizational learning. 
+
 Mermaid addresses this Catch-22 by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.
 Mermaid, as a text-based diagramming tool allows for quick and easy updates, it can also be made part of production scripts (and other pieces of code), to make documentation much easier.
-With Mermaid less time needs to be spent on making diagrams, as a separate documentation task. <br/>
 
 > Mermaid is a Diagramming tool for everyone.
 
 Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](./Tutorials.md) for the Live Editor video tutorials.
+
+Many editors, wikis and other tools also have mermaid integrations and plugins, making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](/n00b-gettingStarted).
 
 Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](./integrations.md).
 
