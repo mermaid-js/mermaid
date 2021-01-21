@@ -1,7 +1,8 @@
 # About Mermaid
 
-**Mermaid lets you create diagrams using text and code.** This simplifies the maintenance of complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. If you are familiar with markdown you should have no problem learning mermaid's syntax.
+**Mermaid lets you create diagrams using text and code.** This simplifies the maintenance of complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. 
 
+If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](./n00b-syntaxReference.md).
 The main purpose of Mermaid is to help Documentation catch up with Development.
 
 ![banner](img/header.png)
@@ -23,7 +24,7 @@ Mermaid, as a text-based diagramming tool allows for quick and easy updates, it 
 
 Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](./Tutorials.md) for the Live Editor video tutorials.
 
-Many editors, wikis and other tools also have mermaid integrations and plugins, making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](/n00b-gettingStarted).
+Many editors, wikis and other tools also have mermaid integrations and plugins, making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](./n00b-gettingStarted.md).
 
 Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](./integrations.md).
 
