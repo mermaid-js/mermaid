@@ -95,7 +95,38 @@
     Add gantt diagram to demo page      : 20h
     Add another diagram to demo page    : 48h
       </div>
+  <div style="display: flex">
+    <div id="FirstLine" class="mermaid">
+      graph TB
+        FunctionArg-->URL
+        click FunctionArg call clickByFlowArg(ARGUMENT) "Add a div"
+        click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+    </div>
+    <div id="FirstLine" class="mermaid">
+      flowchart TB
+        FunctionArg-->URL
+        click FunctionArg call clickByFlowArg(ARGUMENT) "Add a div"
+        click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+    </div>
+    
+    <div id="FirstLine" class="mermaid">
+      classDiagram
+      class ShapeLink
+      link ShapeLink "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
+      class ShapeCallback
+      click ShapeCallback call clickByClass(123) "This is a tooltip for a callback"
+    </div>
 
+    <div id="FirstLine" class="mermaid">
+      classDiagram-v2
+        class ShapeLink2
+        link ShapeLink2 "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
+        class ShapeCallback2
+        click ShapeCallback2 call clickByClass(123) "This is a tooltip for a callback"
+    </div>
+    
+  </div>
+    
   <script src="./mermaid.js"></script>
   <script>
   function clickByFlow(elemName) {
@@ -103,6 +134,14 @@
     div.className = 'created-by-click'
     div.style = 'padding: 20px; background: green; color: white;'
     div.innerText = 'Clicked By Flow'
+
+    document.getElementsByTagName('body')[0].appendChild(div)
+  }
+  function clickByFlowArg(argument) {
+    const div = document.createElement('div')
+    div.className = 'created-by-click-2'
+    div.style = 'padding: 20px; background: green; color: white;'
+    div.innerText = 'Clicked By Flow: ' + argument
 
     document.getElementsByTagName('body')[0].appendChild(div)
   }
@@ -117,11 +156,11 @@
 
     document.getElementsByTagName('body')[0].appendChild(div)
   }
-  function clickByClass() {
+  function clickByClass(arg) {
     const div = document.createElement('div')
     div.className = 'created-by-class-click'
     div.style = 'padding: 20px; background: purple; color: white;'
-    div.innerText = 'Clicked By Class'
+    div.innerText = 'Clicked By Class' + (arg?arg:'')
 
     document.getElementsByTagName('body')[0].appendChild(div)
   }

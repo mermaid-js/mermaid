@@ -349,7 +349,7 @@ graph LR
    a --> b & c--> d
 ```
 
-You can then describe dependencies in a very expressive way. Like the oneliner below:
+You can then describe dependencies in a very expressive way. Like the one-liner below:
 ```
 graph TB
     A & B--> C & D
@@ -595,6 +595,7 @@ It is possible to bind a click event to a node, the click can lead to either a j
 
 ```
 click nodeId callback
+click nodeId call callback()
 ```
 
 * nodeId is the id of the node
@@ -613,8 +614,12 @@ Examples of tooltip usage below:
 ```
 graph LR;
     A-->B;
+    B-->C;
+    C-->D;
     click A callback "Tooltip for a callback"
     click B "http://www.github.com" "This is a tooltip for a link"
+    click A call callback() "Tooltip for a callback"
+    click B href "http://www.github.com" "This is a tooltip for a link"
 ```
 
 The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.
@@ -622,8 +627,12 @@ The tooltip text is surrounded in double quotes. The styles of the tooltip are s
 ```mermaid
 graph LR
     A-->B;
+    B-->C;
+    C-->D;
     click A callback "Tooltip"
     click B "http://www.github.com" "This is a link"
+    click C call callback() "Tooltip"
+    click D href "http://www.github.com" "This is a link"
 ```
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
@@ -634,16 +643,24 @@ Links are opened in the same browser tab/window by default. It is possible to ch
 graph LR;
     A-->B;
     B-->C;
+    C-->D;
+    D-->E;
     click A "http://www.github.com" _blank
     click B "http://www.github.com" "Open this in a new tab" _blank
+    click C href "http://www.github.com" _blank
+    click D href "http://www.github.com" "Open this in a new tab" _blank
 ```
 
 ```mermaid
 graph LR;
     A-->B;
     B-->C;
+    C-->D;
+    D-->E;
     click A "http://www.github.com" _blank
     click B "http://www.github.com" "Open this in a new tab" _blank
+    click C href "http://www.github.com" _blank
+    click D href "http://www.github.com" "Open this in a new tab" _blank
 ```
 
 Beginners tip, a full example using interactive links in a html context:
@@ -652,8 +669,12 @@ Beginners tip, a full example using interactive links in a html context:
   <div class="mermaid">
     graph LR;
         A-->B;
+        B-->C;
+        C-->D;
         click A callback "Tooltip"
         click B "http://www.github.com" "This is a link"
+        click C call callback() "Tooltip"
+        click D href "http://www.github.com" "This is a link"
   </div>
 
   <script>

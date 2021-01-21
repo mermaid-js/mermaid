@@ -1,4 +1,4 @@
-# Usage
+ # Usage
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
 
@@ -105,7 +105,7 @@ Mermaid can load multiple diagrams, in the same page.
 
 | Parameter     | Description                       | Type   | Required | Values                    |
 | ------------- | --------------------------------- | ------ | -------- | ------------------------- |
-| securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose, antiscript |
+| securityLevel | Level of trust for parsed diagram | String | Required | Strict, Loose, antiscript |
 
 \*\*Notes:
 

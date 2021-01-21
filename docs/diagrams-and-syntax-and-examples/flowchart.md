@@ -139,7 +139,7 @@ graph LR
     id1((This is the text in the circle))
 ```
 
-### A node in an asymetric shape
+### A node in an asymmetric shape
 
 ```
 graph LR
@@ -493,7 +493,7 @@ graph LR
 
 ### Entity codes to escape characters
 
-It is possible to escape characters using the syntax examplified here.
+It is possible to escape characters using the syntax exemplified here.
 
 ```
     graph LR
@@ -541,7 +541,7 @@ graph TB
     end
  ```
 
- You can also set an excplicit id for the subgraph.
+ You can also set an explicit id for the subgraph.
 
 ```
 graph TB
@@ -602,6 +602,7 @@ It is possible to bind a click event to a node, the click can lead to either a j
 
 ```
 click nodeId callback
+click nodeId call callback()
 ```
 
 * nodeId is the id of the node
@@ -620,8 +621,12 @@ Examples of tooltip usage below:
 ```
 graph LR;
     A-->B;
+    B-->C;
+    C-->D;
     click A callback "Tooltip for a callback"
     click B "http://www.github.com" "This is a tooltip for a link"
+    click A call callback() "Tooltip for a callback"
+    click B href "http://www.github.com" "This is a tooltip for a link"
 ```
 
 The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.
@@ -629,8 +634,12 @@ The tooltip text is surrounded in double quotes. The styles of the tooltip are s
 ```mermaid
 graph LR
     A-->B;
+    B-->C;
+    C-->D;
     click A callback "Tooltip"
     click B "http://www.github.com" "This is a link"
+    click C call callback() "Tooltip"
+    click D href "http://www.github.com" "This is a link"
 ```
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
@@ -641,16 +650,24 @@ Links are opened in the same browser tab/window by default. It is possible to ch
 graph LR;
     A-->B;
     B-->C;
+    C-->D;
+    D-->E;
     click A "http://www.github.com" _blank
     click B "http://www.github.com" "Open this in a new tab" _blank
+    click C href "http://www.github.com" _blank
+    click D href "http://www.github.com" "Open this in a new tab" _blank
 ```
 
 ```mermaid
 graph LR;
     A-->B;
     B-->C;
+    C-->D;
+    D-->E;
     click A "http://www.github.com" _blank
     click B "http://www.github.com" "Open this in a new tab" _blank
+    click C href "http://www.github.com" _blank
+    click D href "http://www.github.com" "Open this in a new tab" _blank
 ```
 
 Beginners tip, a full example using interactive links in a html context:
@@ -659,8 +676,12 @@ Beginners tip, a full example using interactive links in a html context:
   <div class="mermaid">
     graph LR;
         A-->B;
+        B-->C;
+        C-->D;
         click A callback "Tooltip"
         click B "http://www.github.com" "This is a link"
+        click C call callback() "Tooltip"
+        click D href "http://www.github.com" "This is a link"
   </div>
 
   <script>
@@ -808,7 +829,7 @@ If a class is named default it will be assigned to all classes without specific 
 
 It is possible to add icons from fontawesome.
 
-The icons are acessed via the syntax fa:#icon class name#.
+The icons are accessed via the syntax fa:#icon class name#.
 
 ```
 graph TD

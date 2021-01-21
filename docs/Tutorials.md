@@ -39,8 +39,9 @@ This is also working with colab and jupyter lab notebooks.
 
 ```python
 import base64
-
-graphbytes = graph.encode("ascii")
+import requests, io
+from PIL import Image
+import matplotlib.pyplot as plt
 
 graph = """
 graph LR;
@@ -51,16 +52,13 @@ graph LR;
     E--> B & C & D;
 """
 
+graphbytes = graph.encode("ascii")
 base64_bytes = base64.b64encode(graphbytes)
 base64_string = base64_bytes.decode("ascii")
-
-import requests, io
-from PIL import Image
-import matplotlib.pyplot as plt
-
 img = Image.open(io.BytesIO(requests.get('https://mermaid.ink/img/' + base64_string).content))
 plt.imshow(img)
 ```
+
 **Output**
 
 ![image](img/python-mermaid-integration.png)

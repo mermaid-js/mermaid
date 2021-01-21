@@ -168,21 +168,36 @@ export const setCssClass = function(ids, className) {
 };
 
 /**
+ * Called by parser when a tooltip is found, e.g. a clickable element.
+ * @param ids Comma separated list of ids
+ * @param tooltip Tooltip to add
+ */
+const setTooltip = function(ids, tooltip) {
+  const config = configApi.getConfig();
+  ids.split(',').forEach(function(id) {
+    if (typeof tooltip !== 'undefined') {
+      classes[id].tooltip = common.sanitizeText(tooltip, config);
+    }
+  });
+};
+
+/**
  * Called by parser when a link is found. Adds the URL to the vertex data.
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
- * @param tooltip Tooltip for the clickable element
+ * @param target Target of the link, _blank by default as originally defined in the svgDraw.js file
  */
-export const setLink = function(ids, linkStr, tooltip) {
+export const setLink = function(ids, linkStr, target) {
   const config = configApi.getConfig();
   ids.split(',').forEach(function(_id) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof classes[id] !== 'undefined') {
       classes[id].link = utils.formatUrl(linkStr, config);
-
-      if (tooltip) {
-        classes[id].tooltip = common.sanitizeText(tooltip, config);
+      if (typeof target === 'string') {
+        classes[id].linkTarget = target;
+      } else {
+        classes[id].linkTarget = '_blank';
       }
     }
   });
@@ -193,17 +208,17 @@ export const setLink = function(ids, linkStr, tooltip) {
  * Called by parser when a click definition is found. Registers an event handler.
  * @param ids Comma separated list of ids
  * @param functionName Function to be called on click
- * @param tooltip Tooltip for the clickable element
+ * @param functionArgs Function args the function should be called with
  */
-export const setClickEvent = function(ids, functionName, tooltip) {
+export const setClickEvent = function(ids, functionName, functionArgs) {
   ids.split(',').forEach(function(id) {
-    setClickFunc(id, functionName, tooltip);
+    setClickFunc(id, functionName, functionArgs);
     classes[id].haveCallback = true;
   });
   setCssClass(ids, 'clickable');
 };
 
-const setClickFunc = function(domId, functionName, tooltip) {
+const setClickFunc = function(domId, functionName, functionArgs) {
   const config = configApi.getConfig();
   let id = domId;
   let elemId = lookUpDomId(id);
@@ -215,8 +230,24 @@ const setClickFunc = function(domId, functionName, tooltip) {
     return;
   }
   if (typeof classes[id] !== 'undefined') {
-    if (tooltip) {
-      classes[id].tooltip = common.sanitizeText(tooltip, config);
+    let argList = [];
+    if (typeof functionArgs === 'string') {
+      /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
+      argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+      for (let i = 0; i < argList.length; i++) {
+        let item = argList[i].trim();
+        /* Removes all double quotes at the start and end of an argument */
+        /* This preserves all starting and ending whitespace inside */
+        if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+          item = item.substr(1, item.length - 2);
+        }
+        argList[i] = item;
+      }
+    }
+
+    /* if no arguments passed into callback, default to passing in id */
+    if (argList.length === 0) {
+      argList.push(elemId);
     }
 
     funs.push(function() {
@@ -225,7 +256,7 @@ const setClickFunc = function(domId, functionName, tooltip) {
         elem.addEventListener(
           'click',
           function() {
-            utils.runFunc(functionName, elemId);
+            utils.runFunc(functionName, ...argList);
           },
           false
         );
@@ -314,5 +345,6 @@ export default {
   setClickEvent,
   setCssClass,
   setLink,
+  setTooltip,
   lookUpDomId
 };

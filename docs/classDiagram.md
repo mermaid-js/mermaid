@@ -451,12 +451,14 @@ You would define these actions on a separate line after all classes have been de
 
 ```
 action className "reference" "tooltip"
+click className call callback() "tooltip"
+click className href "url" "tooltip"
 ```
-
 - _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
 - _className_ is the id of the node that the action will be associated with
-- _reference_ is either the url link, or the function name for callback. (note: callback function will be called with the nodeId as parameter).
+- _reference_ is either the url link, or the function name for callback.
 - (_optional_) tooltip is a string to be displayed when hovering over element (note: The styles of the tooltip are set by the class .mermaidTooltip.)
+- note: callback function will be called with the nodeId as parameter.
 
 ### Examples
 
@@ -466,6 +468,8 @@ _URL Link:_
 classDiagram
 class Shape
 link Shape "http://www.github.com" "This is a tooltip for a link"
+class Shape2
+click Shape2 href "http://www.github.com" "This is a tooltip for a link"
 ```
 
 _Callback:_
@@ -474,6 +478,8 @@ _Callback:_
 classDiagram
 class Shape
 callback Shape "callbackFunction" "This is a tooltip for a callback"
+class Shape2
+click Shape2 call callbackFunction() "This is a tooltip for a callback"
 ```
 
 ```
@@ -490,6 +496,10 @@ classDiagram
     class Class02
     callback Class01 "callbackFunction" "Callback tooltip"
     link Class02 "http://www.github.com" "This is a link"
+    class Class03
+    class Class04
+    click Class03 call callbackFunction() "Callback tooltip"
+    click Class04 href "http://www.github.com" "This is a link"
 ```
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
@@ -522,7 +532,7 @@ Beginners tip, a full example using interactive links in an html context:
       }
 
       callback Duck callback "Tooltip"
-      click Zebra "http://www.github.com" "This is a link"
+      link Zebra "http://www.github.com" "This is a link"
   </div>
 
   <script>

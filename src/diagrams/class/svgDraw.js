@@ -167,7 +167,7 @@ export const drawClass = function(elem, classDef, conf) {
     title = g
       .append('svg:a')
       .attr('xlink:href', classDef.link)
-      .attr('target', '_blank')
+      .attr('target', classDef.linkTarget)
       .append('text')
       .attr('y', conf.textHeight + conf.padding)
       .attr('x', 0);

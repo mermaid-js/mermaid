@@ -247,7 +247,7 @@ const setTooltip = function(ids, tooltip) {
   });
 };
 
-const setClickFun = function(id, functionName) {
+const setClickFun = function(id, functionName, functionArgs) {
   let domId = lookUpDomId(id);
   // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   if (configApi.getConfig().securityLevel !== 'loose') {
@@ -256,6 +256,26 @@ const setClickFun = function(id, functionName) {
   if (typeof functionName === 'undefined') {
     return;
   }
+  let argList = [];
+  if (typeof functionArgs === 'string') {
+    /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
+    argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    for (let i = 0; i < argList.length; i++) {
+      let item = argList[i].trim();
+      /* Removes all double quotes at the start and end of an argument */
+      /* This preserves all starting and ending whitespace inside */
+      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+        item = item.substr(1, item.length - 2);
+      }
+      argList[i] = item;
+    }
+  }
+
+  /* if no arguments passed into callback, default to passing in id */
+  if (argList.length === 0) {
+    argList.push(id);
+  }
+
   if (typeof vertices[id] !== 'undefined') {
     vertices[id].haveCallback = true;
     funs.push(function() {
@@ -264,7 +284,7 @@ const setClickFun = function(id, functionName) {
         elem.addEventListener(
           'click',
           function() {
-            utils.runFunc(functionName, id);
+            utils.runFunc(functionName, ...argList);
           },
           false
         );
@@ -277,16 +297,14 @@ const setClickFun = function(id, functionName) {
  * Called by parser when a link is found. Adds the URL to the vertex data.
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
- * @param tooltip Tooltip for the clickable element
  */
-export const setLink = function(ids, linkStr, tooltip, target) {
+export const setLink = function(ids, linkStr, target) {
   ids.split(',').forEach(function(id) {
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = utils.formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
     }
   });
-  setTooltip(ids, tooltip);
   setClass(ids, 'clickable');
 };
 export const getTooltip = function(id) {
@@ -299,11 +317,10 @@ export const getTooltip = function(id) {
  * @param functionName Function to be called on click
  * @param tooltip Tooltip for the clickable element
  */
-export const setClickEvent = function(ids, functionName, tooltip) {
+export const setClickEvent = function(ids, functionName, functionArgs) {
   ids.split(',').forEach(function(id) {
-    setClickFun(id, functionName);
+    setClickFun(id, functionName, functionArgs);
   });
-  setTooltip(ids, tooltip);
   setClass(ids, 'clickable');
 };
 
@@ -704,6 +721,7 @@ export default {
   addClass,
   setDirection,
   setClass,
+  setTooltip,
   getTooltip,
   setClickEvent,
   setLink,

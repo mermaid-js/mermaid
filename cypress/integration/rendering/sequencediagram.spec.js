@@ -52,6 +52,26 @@ context('Sequence diagram', () => {
       {}
     );
   });
+  it('should handle line breaks and wrap annotations', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      participant John as John<br/>Second Line
+      Alice ->> Bob: Hello Bob, how are you?
+      Bob-->>John: How about you John?
+      Note right of John: John thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+      Bob-->Alice: Checking with John...
+      Note over John:wrap: John looks like he's still thinking, so Bob prods him a bit.
+      Bob-x John: Hey John -<br/>we're still waiting to know<br/>how you're doing
+      Note over John:nowrap: John's trying hard not to break his train of thought.
+      Bob-x John:wrap: John! Are you still debating about how you're doing? How long does it take??
+      Note over John: After a few more moments, John<br/>finally snaps out of it.
+    `,
+      {}
+    );
+  })
   it('should render loops with a slight margin', () => {
     imgSnapshotTest(
       `
