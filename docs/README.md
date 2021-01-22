@@ -2,7 +2,7 @@
 
 **Mermaid lets you create diagrams using text and code.** This simplifies the maintenance of complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. 
 
-If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](./n00b-syntaxReference.md).
+>If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](./n00b-syntaxReference.md).
 
 
 ![banner](img/header.png)
@@ -176,12 +176,10 @@ To select a version:
 
 Replace `<version>` with the desired version number.
 
-Alternatively, you can also adjust the version number in the page itself.
-
 Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/browse/mermaid@8.8.0/)
 
 ## Deploying Mermaid
-To support mermaid on your website, all you have to do is add Mermaid’s JavaScript package
+To Deploy Mermaid:
 
 ```
 1.You will need to install node v10 or 12, which would have npm
@@ -195,13 +193,15 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
     yarn add --dev mermaid
 
 ```
+## [Mermaid API](./Setup.md):
 
 **To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:**
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({startOnLoad:true});</script>
 ```
-**Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.**
+**Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitons and render them into svg charts.**
 
  **Examples can be found in** [Other examples](/examples)
 
