@@ -6,6 +6,7 @@
 
 - Diagram Syntax 📊
 
+  - [Diagram syntax intro](n00b-syntaxReference.md)
   - [Flowchart](flowchart.md)
   - [Sequence diagram](sequenceDiagram.md)
   - [Class Diagram](classDiagram.md)
@@ -18,7 +19,6 @@
 
 - Adding mermaid✒️
 
-  - [Diagram syntax intro](n00b-syntaxReference.md)
   - [Tutorials](Tutorials.md)
   - [API-Usage](usage.md)
   - [Configuration handling in Mermaid API](Setup.md)
