@@ -98,7 +98,7 @@ The easiest way to make a custom theme is to start with the base theme, and just
 ```
 
 
-**Notes:
+**Notes:**
 Leaving it empty will set all variable values to default.
 
 ## Color and Color Calculation:
