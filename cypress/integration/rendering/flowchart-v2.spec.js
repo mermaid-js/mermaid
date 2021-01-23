@@ -404,5 +404,20 @@ flowchart TD
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
+  it('63: title on subgraphs should be themable', () => {
+    imgSnapshotTest(
+      `
+      %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
+      flowchart LR
+      subgraph A
+          a --> b
+      end
+      subgraph B
+          i -->f
+      end
+      A --> B
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
   });
 });

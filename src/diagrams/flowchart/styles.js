@@ -55,8 +55,9 @@ const getStyles = options =>
     stroke-width: 1px;
   }
 
-  .cluster text {
+  .cluster text,span {
     fill: ${options.titleColor};
+    color: ${options.titleColor};
   }
 
   div.mermaidTooltip {
