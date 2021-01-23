@@ -434,6 +434,7 @@ flowchart TD
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
+  });
   it('63: title on subgraphs should be themable', () => {
     imgSnapshotTest(
       `
