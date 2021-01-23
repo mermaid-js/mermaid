@@ -55,8 +55,11 @@ const getStyles = options =>
     stroke-width: 1px;
   }
 
-  .cluster text,span {
+  .cluster text {
     fill: ${options.titleColor};
+  }
+
+  .cluster span {
     color: ${options.titleColor};
   }
 
