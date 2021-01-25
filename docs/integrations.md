@@ -108,6 +108,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Mermaid Preview](https://s3.amazonaws.com/extend.brackets/alanhohn.mermaid-preview/alanhohn.mermaid-preview-1.0.2.zip)
 - [Iodide](https://github.com/iodide-project/iodide)
   - [iodide-mermaid-plugin](https://github.com/iodide-project/iodide-mermaid-plugin)
+- [Google docs](https://docs.google.com/)
+  - [Mermaid plugin for google docs](https://workspace.google.com/marketplace/app/mermaid/636321283856)
 
 ## Document Generation
 
