@@ -6,7 +6,7 @@ When mermaid starts configuration is extracted to a configuration to be used for
 * Overrides on the site level, set is set by the initialize call and will  be applied for all diagrams in the site/app. The term for this is the **siteConfig**.
 * Directives - diagram authors can update select configuration parameters directly int he diagram code via directives and these are applied to the render config.
 
-**The render config** is configration that is used when rendering by applying these configurations.
+**The render config** is configuration that is used when rendering by applying these configurations.
 
 ## Theme configuration
 
