@@ -53,7 +53,7 @@ const hexagon = (parent, node) => {
   updateNodeBounds(node, hex);
 
   node.intersect = function(point) {
-    return intersect.polygon(node, point);
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
@@ -74,10 +74,12 @@ const rect_left_inv_arrow = (parent, node) => {
 
   const el = insertPolygonShape(shapeSvg, w, h, points);
   el.attr('style', node.style);
-  updateNodeBounds(node, el);
+
+  node.width = w + h;
+  node.height = h;
 
   node.intersect = function(point) {
-    return intersect.polygon(node, point);
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
@@ -100,7 +102,7 @@ const lean_right = (parent, node) => {
   updateNodeBounds(node, el);
 
   node.intersect = function(point) {
-    return intersect.polygon(node, point);
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
@@ -123,7 +125,7 @@ const lean_left = (parent, node) => {
   updateNodeBounds(node, el);
 
   node.intersect = function(point) {
-    return intersect.polygon(node, point);
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
@@ -146,7 +148,7 @@ const trapezoid = (parent, node) => {
   updateNodeBounds(node, el);
 
   node.intersect = function(point) {
-    return intersect.polygon(node, point);
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
@@ -169,7 +171,7 @@ const inv_trapezoid = (parent, node) => {
   updateNodeBounds(node, el);
 
   node.intersect = function(point) {
-    return intersect.polygon(node, point);
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
@@ -193,7 +195,7 @@ const rect_right_inv_arrow = (parent, node) => {
   updateNodeBounds(node, el);
 
   node.intersect = function(point) {
-    return intersect.polygon(node, point);
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
@@ -470,7 +472,7 @@ const subroutine = (parent, node) => {
   updateNodeBounds(node, el);
 
   node.intersect = function(point) {
-    return intersect.polygon(node, point);
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
