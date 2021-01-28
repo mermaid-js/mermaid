@@ -14,7 +14,7 @@
 
 ## About
 
-<!-- <Main description>  -->
+<!-- <Main description>   -->
 Mermaid is a Javascript based diagramming and charting tool that uses Markdown-inspired text definitions and a renderer to create and modify complex diagrams.  The main purpose of Mermaid is to help documentation catch up with development.
 
 > Doc-Rot is a Catch-22 that Mermaid helps to solve.
