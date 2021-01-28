@@ -65,7 +65,15 @@ function addHtmlLabel(node) {
 
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  div.html('<span class="' + labelClass + '">' + label + '</span>');
+  div.html(
+    '<span class="' +
+      labelClass +
+      '" ' +
+      (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
+      '>' +
+      label +
+      '</span>'
+  );
 
   applyStyle(div, node.labelStyle);
   div.style('display', 'inline-block');

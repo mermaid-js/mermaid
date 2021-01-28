@@ -58,7 +58,7 @@ flowchart TD
   class T TestSub
   linkStyle 0,1 color:orange, stroke: orange;
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid2" style="width: 50%; height: 20%;">
  sequenceDiagram
 	  Actor1 -) Actor2:Async
 	  Actor1 --) Actor2:Async dotted
@@ -69,7 +69,7 @@ flowchart TD
 flowchart TD
   C -->|fa:fa-car Car| F[fa:fa-car Car]
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid2" style="width: 50%; height: 20%;">
 %%{init: { 'logLevel': 0, 'theme': 'forest'} }%%
 graph TD
           A(Start) --> B[/Another/]
@@ -79,7 +79,7 @@ graph TD
             C
           end
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid2" style="width: 50%; height: 20%;">
 %%{init: {'theme': 'base' }}%%
 %%{init2: { 'logLevel': 0, 'theme': 'forest'} }%%
 flowchart TD
@@ -95,7 +95,7 @@ flowchart TD
       C ======> E5
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
-    graph TB
+    flowchart TB
       A
       B
       subgraph foo[Foo SubGraph]
@@ -121,6 +121,13 @@ flowchart TD
       G-->D
 
       style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
+      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
+      </div>
+      <div class="mermaid" style="width: 50%; height: 20%;">
+    flowchart TB
+      subgraph bar[Bar]
+        F
+      end
       style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
