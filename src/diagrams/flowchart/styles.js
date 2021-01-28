@@ -69,6 +69,9 @@ const getStyles = options =>
   .cluster span {
     color: ${options.titleColor};
   }
+  // .cluster div {
+  //   color: ${options.titleColor};
+  // }
 
   div.mermaidTooltip {
     position: absolute;

@@ -223,12 +223,6 @@ const render = function(id, _txt, cb, container) {
   // console.warn('Render fetching config');
 
   const cnf = configApi.getConfig();
-  // console.warn('Render with config after adding new directives', cnf.sequence);
-  // console.warn(
-  //   'Render with config after adding new directives',
-  //   cnf.fontFamily,
-  //   cnf.themeVariables.fontFamily
-  // );
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -577,7 +571,7 @@ function initialize(options) {
     }
   }
   // Set default options
-  configApi.setSiteConfigDelta(options);
+  configApi.saveConfigFromInitilize(options);
 
   if (options && options.theme && theme[options.theme]) {
     // Todo merge with user options
