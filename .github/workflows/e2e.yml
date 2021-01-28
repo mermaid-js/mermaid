@@ -1,4 +1,4 @@
-name: Build
+name: E2E
 
 on: [push, pull_request]
 
