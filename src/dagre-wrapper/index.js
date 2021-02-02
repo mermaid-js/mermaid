@@ -81,7 +81,16 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     logger.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
 
     // Check if link is either from or to a cluster
-    logger.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
+    logger.info(
+      'Fix',
+      clusterDb,
+      'ids:',
+      e.v,
+      e.w,
+      'Translateing: ',
+      clusterDb[e.v],
+      clusterDb[e.w]
+    );
     insertEdgeLabel(edgeLabels, edge);
   });
 
