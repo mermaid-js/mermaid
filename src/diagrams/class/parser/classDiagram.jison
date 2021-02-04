@@ -7,6 +7,7 @@
 /* lexical grammar */
 %lex
 %x string
+%x bqstring
 %x generic
 %x struct
 %x href
@@ -48,6 +49,10 @@
 ["]                   this.begin("string");
 <string>["]           this.popState();
 <string>[^"]*         return "STR";
+
+[`]                   this.begin("bqstring");
+<bqstring>[`]         this.popState();
+<bqstring>[^`]+       return "BQUOTE_STR";
 
 /*
 ---interactivity command---
@@ -214,10 +219,15 @@ statements
     ;
 
 className
-    : alphaNumToken { $$=$1; }
+    : 
+    | alphaNumToken { $$=$1; }
+    | classLiteralName { $$=$1; }
     | alphaNumToken className { $$=$1+$2; }
+    | classLiteralName className { $$=$1+$2; }
     | alphaNumToken GENERICTYPE className { $$=$1+'~'+$2+$3; }
+    | classLiteralName GENERICTYPE className { $$=$1+'~'+$2+$3; }
     | alphaNumToken GENERICTYPE { $$=$1+'~'+$2; }
+    | classLiteralName GENERICTYPE { $$=$1+'~'+$2; }
     ;
 
 statement
@@ -308,5 +318,7 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
 alphaNumToken  : UNICODE_TEXT | NUM | ALPHA;
+
+classLiteralName : BQUOTE_STR;
 
 %%
