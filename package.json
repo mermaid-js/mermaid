@@ -82,7 +82,7 @@
     "jest": "^24.9.0",
     "jison": "^0.4.18",
     "moment": "^2.23.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^5.0.0",
     "prettier": "^1.18.2",
     "puppeteer": "^1.17.0",
     "sass-loader": "^7.1.0",
