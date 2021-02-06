@@ -1,11 +1,11 @@
 import intersectRect from './intersect/intersect-rect';
-import { logger } from '../logger';
+import { log } from '../logger';
 import createLabel from './createLabel';
 import { select } from 'd3';
 import { getConfig } from '../config';
 
 const rect = (parent, node) => {
-  logger.trace('Creating subgraph rect for ', node.id, node);
+  log.trace('Creating subgraph rect for ', node.id, node);
 
   // Add outer g element
   const shapeSvg = parent
@@ -37,7 +37,7 @@ const rect = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
-  logger.trace('Data ', node, JSON.stringify(node));
+  log.trace('Data ', node, JSON.stringify(node));
   // center the rect around its coordinate
   rect
     .attr('style', node.style)
@@ -208,7 +208,7 @@ const shapes = { rect, roundedWithTitle, noteGroup, divider };
 let clusterElems = {};
 
 export const insertCluster = (elem, node) => {
-  logger.trace('Inserting cluster');
+  log.trace('Inserting cluster');
   const shape = node.shape || 'rect';
   clusterElems[node.id] = shapes[shape](elem, node);
 };
@@ -225,7 +225,7 @@ export const clear = () => {
 };
 
 export const positionCluster = node => {
-  logger.info('Position cluster');
+  log.info('Position cluster');
   const el = clusterElems[node.id];
 
   el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');

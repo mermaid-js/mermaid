@@ -1,4 +1,4 @@
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import { generateId } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
@@ -12,7 +12,7 @@ export const parseDirective = function(statement, context, type) {
 };
 
 const setRootDoc = o => {
-  logger.info('Setting root doc', o);
+  log.info('Setting root doc', o);
   // rootDoc = { id: 'root', doc: o };
   rootDoc = o;
 };
@@ -81,10 +81,10 @@ const extract = _doc => {
   // if (!doc) {
   //   doc = root;
   // }
-  logger.info(doc);
+  log.info(doc);
   clear();
 
-  logger.info('Extract', doc);
+  log.info('Extract', doc);
 
   doc.forEach(item => {
     if (item.stmt === 'state') {
@@ -139,7 +139,7 @@ export const addState = function(id, type, doc, descr, note) {
     }
   }
   if (descr) {
-    logger.info('Adding state ', id, descr);
+    log.info('Adding state ', id, descr);
     if (typeof descr === 'string') addDescription(id, descr.trim());
 
     if (typeof descr === 'object') {
@@ -171,7 +171,7 @@ export const getStates = function() {
   return currentDocument.states;
 };
 export const logDocuments = function() {
-  logger.info('Documents = ', documents);
+  log.info('Documents = ', documents);
 };
 export const getRelations = function() {
   return currentDocument.relations;

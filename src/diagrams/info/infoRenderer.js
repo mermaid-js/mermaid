@@ -4,7 +4,7 @@
 import { select } from 'd3';
 import db from './infoDb';
 import infoParser from './parser/info';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -24,10 +24,10 @@ export const draw = (txt, id, ver) => {
   try {
     const parser = infoParser.parser;
     parser.yy = db;
-    logger.debug('Renering info diagram\n' + txt);
+    log.debug('Renering info diagram\n' + txt);
     // Parse the graph definition
     parser.parse(txt);
-    logger.debug('Parsed info diagram');
+    log.debug('Parsed info diagram');
     // Fetch the default direction, use TD if none was found
     const svg = select('#' + id);
 
@@ -45,8 +45,8 @@ export const draw = (txt, id, ver) => {
     svg.attr('width', 400);
     // svg.attr('viewBox', '0 0 300 150');
   } catch (e) {
-    logger.error('Error while rendering info diagram');
-    logger.error(e.message);
+    log.error('Error while rendering info diagram');
+    log.error(e.message);
   }
 };
 

@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { logger } from '../logger'; // eslint-disable-line
+import { log } from '../logger'; // eslint-disable-line
 import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util';
 import { getConfig } from '../config';
 import intersect from './intersect/index.js';
@@ -20,12 +20,12 @@ const question = (parent, node) => {
     { x: 0, y: -s / 2 }
   ];
 
-  logger.info('Question main (Circle)');
+  log.info('Question main (Circle)');
 
   const questionElem = insertPolygonShape(shapeSvg, s, s, points);
   updateNodeBounds(node, questionElem);
   node.intersect = function(point) {
-    logger.warn('Intersect called');
+    log.warn('Intersect called');
     return intersect.polygon(node, points, point);
   };
 
@@ -255,7 +255,7 @@ const cylinder = (parent, node) => {
 const rect = (parent, node) => {
   const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes, true);
 
-  logger.trace('Classes = ', node.classes);
+  log.trace('Classes = ', node.classes);
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
@@ -300,7 +300,7 @@ const rectWithTitle = (parent, node) => {
   const label = shapeSvg.insert('g').attr('class', 'label');
 
   const text2 = node.labelText.flat();
-  logger.info('Label text', text2[0]);
+  log.info('Label text', text2[0]);
 
   const text = label.node().appendChild(createLabel(text2[0], node.labelStyle, true, true));
   let bbox;
@@ -311,7 +311,7 @@ const rectWithTitle = (parent, node) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
-  logger.info('Text 2', text2);
+  log.info('Text 2', text2);
   const textRows = text2.slice(1, text2.length);
   let titleBox = text.getBBox();
   const descr = label
@@ -326,7 +326,7 @@ const rectWithTitle = (parent, node) => {
     dv.attr('height', bbox.height);
   }
   // bbox = label.getBBox();
-  // logger.info(descr);
+  // log.info(descr);
   const halfPadding = node.padding / 2;
   select(descr).attr(
     'transform',
@@ -416,12 +416,12 @@ const circle = (parent, node) => {
     .attr('width', bbox.width + node.padding)
     .attr('height', bbox.height + node.padding);
 
-  logger.info('Circle main');
+  log.info('Circle main');
 
   updateNodeBounds(node, circle);
 
   node.intersect = function(point) {
-    logger.info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
+    log.info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
     return intersect.circle(node, bbox.width / 2 + halfPadding, point);
   };
 
@@ -729,7 +729,7 @@ const class_box = (parent, node) => {
   // }
   // bbox = labelContainer.getBBox();
 
-  // logger.info('Text 2', text2);
+  // log.info('Text 2', text2);
   // const textRows = text2.slice(1, text2.length);
   // let titleBox = text.getBBox();
   // const descr = label
@@ -744,7 +744,7 @@ const class_box = (parent, node) => {
   //   dv.attr('height', bbox.height);
   // }
   // // bbox = label.getBBox();
-  // // logger.info(descr);
+  // // log.info(descr);
   // select(descr).attr(
   //   'transform',
   //   'translate( ' +
@@ -859,7 +859,7 @@ export const clear = () => {
 
 export const positionNode = node => {
   const el = nodeElems[node.id];
-  logger.trace(
+  log.trace(
     'Transforming node',
     node,
     'translate(' + (node.x - node.width / 2 - 5) + ', ' + (node.y - node.height / 2 - 5) + ')'

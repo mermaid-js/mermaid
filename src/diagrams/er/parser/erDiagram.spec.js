@@ -1,7 +1,7 @@
 import erDb from '../erDb';
 import erDiagram from './erDiagram';
 import { setConfig } from '../../../config';
-import logger from '../../../logger';
+import log from '../../../logger';
 
 setConfig({
   securityLevel: 'strict'

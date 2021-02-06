@@ -1,7 +1,7 @@
 /**
  *
  */
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 
@@ -15,7 +15,7 @@ export const parseDirective = function(statement, context, type) {
 const addSection = function(id, value) {
   if (typeof sections[id] === 'undefined') {
     sections[id] = value;
-    logger.debug('Added new section :', id);
+    log.debug('Added new section :', id);
   }
 };
 const getSections = () => sections;

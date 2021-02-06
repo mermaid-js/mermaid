@@ -1,4 +1,4 @@
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import { random } from '../../utils';
 let commits = {};
 let head = null;
@@ -12,12 +12,12 @@ function getId() {
 }
 
 function isfastforwardable(currentCommit, otherCommit) {
-  logger.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
+  log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
   while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit) {
     // only if other branch has more commits
     if (otherCommit.parent == null) break;
     if (Array.isArray(otherCommit.parent)) {
-      logger.debug('In merge commit:', otherCommit.parent);
+      log.debug('In merge commit:', otherCommit.parent);
       return (
         isfastforwardable(currentCommit, commits[otherCommit.parent[0]]) ||
         isfastforwardable(currentCommit, commits[otherCommit.parent[1]])
@@ -26,7 +26,7 @@ function isfastforwardable(currentCommit, otherCommit) {
       otherCommit = commits[otherCommit.parent];
     }
   }
-  logger.debug(currentCommit.id, otherCommit.id);
+  log.debug(currentCommit.id, otherCommit.id);
   return currentCommit.id === otherCommit.id;
 }
 
@@ -54,13 +54,13 @@ export const setDirection = function(dir) {
 };
 let options = {};
 export const setOptions = function(rawOptString) {
-  logger.debug('options str', rawOptString);
+  log.debug('options str', rawOptString);
   rawOptString = rawOptString && rawOptString.trim();
   rawOptString = rawOptString || '{}';
   try {
     options = JSON.parse(rawOptString);
   } catch (e) {
-    logger.error('error while parsing gitGraph options', e.message);
+    log.error('error while parsing gitGraph options', e.message);
   }
 };
 
@@ -78,19 +78,19 @@ export const commit = function(msg) {
   head = commit;
   commits[commit.id] = commit;
   branches[curBranch] = commit.id;
-  logger.debug('in pushCommit ' + commit.id);
+  log.debug('in pushCommit ' + commit.id);
 };
 
 export const branch = function(name) {
   branches[name] = head != null ? head.id : null;
-  logger.debug('in createBranch');
+  log.debug('in createBranch');
 };
 
 export const merge = function(otherBranch) {
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
   if (isReachableFrom(currentCommit, otherCommit)) {
-    logger.debug('Already merged');
+    log.debug('Already merged');
     return;
   }
   if (isfastforwardable(currentCommit, otherCommit)) {
@@ -108,29 +108,29 @@ export const merge = function(otherBranch) {
     commits[commit.id] = commit;
     branches[curBranch] = commit.id;
   }
-  logger.debug(branches);
-  logger.debug('in mergeBranch');
+  log.debug(branches);
+  log.debug('in mergeBranch');
 };
 
 export const checkout = function(branch) {
-  logger.debug('in checkout');
+  log.debug('in checkout');
   curBranch = branch;
   const id = branches[curBranch];
   head = commits[id];
 };
 
 export const reset = function(commitRef) {
-  logger.debug('in reset', commitRef);
+  log.debug('in reset', commitRef);
   const ref = commitRef.split(':')[0];
   let parentCount = parseInt(commitRef.split(':')[1]);
   let commit = ref === 'HEAD' ? head : commits[branches[ref]];
-  logger.debug(commit, parentCount);
+  log.debug(commit, parentCount);
   while (parentCount > 0) {
     commit = commits[commit.parent];
     parentCount--;
     if (!commit) {
       const err = 'Critical error - unique parent commit not found during reset';
-      logger.error(err);
+      log.error(err);
       throw err;
     }
   }
@@ -164,7 +164,7 @@ function prettyPrintCommitHistory(commitArr) {
   for (let branch in branches) {
     if (branches[branch] === commit.id) label.push(branch);
   }
-  logger.debug(label.join(' '));
+  log.debug(label.join(' '));
   if (Array.isArray(commit.parent)) {
     const newCommit = commits[commit.parent[0]];
     upsert(commitArr, commit, newCommit);
@@ -180,7 +180,7 @@ function prettyPrintCommitHistory(commitArr) {
 }
 
 export const prettyPrint = function() {
-  logger.debug(commits);
+  log.debug(commits);
   const node = getCommitsArray()[0];
   prettyPrintCommitHistory([node]);
 };
@@ -212,7 +212,7 @@ export const getCommitsArray = function() {
     return commits[key];
   });
   commitArr.forEach(function(o) {
-    logger.debug(o.id);
+    log.debug(o.id);
   });
   commitArr.sort((a, b) => b.seq - a.seq);
   return commitArr;

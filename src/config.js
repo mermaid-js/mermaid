@@ -1,5 +1,5 @@
 import { assignWithDepth } from './utils';
-import { logger } from './logger';
+import { log } from './logger';
 import theme from './themes';
 import config from './defaultConfig';
 
@@ -144,7 +144,7 @@ export const sanitize = options => {
     if (typeof options[siteConfig.secure[key]] !== 'undefined') {
       // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
-      logger.debug(
+      log.debug(
         `Denied attempt to modify a secure key ${siteConfig.secure[key]}`,
         options[siteConfig.secure[key]]
       );

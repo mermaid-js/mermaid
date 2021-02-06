@@ -1,6 +1,6 @@
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 
 let prevActor = undefined;
 let actors = {};
@@ -143,7 +143,7 @@ export const parseMessage = function(str) {
         ? false
         : undefined
   };
-  logger.debug('parseMessage:', message);
+  log.debug('parseMessage:', message);
   return message;
 };
 

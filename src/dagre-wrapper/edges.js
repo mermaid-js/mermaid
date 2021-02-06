@@ -1,4 +1,4 @@
-import { logger } from '../logger'; // eslint-disable-line
+import { log } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
@@ -104,7 +104,7 @@ export const insertEdgeLabel = (elem, edge) => {
 };
 
 export const positionEdgeLabel = (edge, paths) => {
-  logger.info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  log.info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.label) {
     const el = edgeLabels[edge.id];
@@ -113,7 +113,7 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
-      logger.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')');
+      log.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')');
       // x = pos.x;
       // y = pos.y;
     }
@@ -185,7 +185,7 @@ export const positionEdgeLabel = (edge, paths) => {
 // };
 
 const outsideNode = (node, point) => {
-  // logger.warn('Checking bounds ', node, point);
+  // log.warn('Checking bounds ', node, point);
   const x = node.x;
   const y = node.y;
   const dx = Math.abs(point.x - x);
@@ -199,7 +199,7 @@ const outsideNode = (node, point) => {
 };
 
 export const intersection = (node, outsidePoint, insidePoint) => {
-  logger.warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
+  log.warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
   const x = node.x;
   const y = node.y;
 
@@ -221,7 +221,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     outsidePoint.y === edges.y1 ||
     outsidePoint.y === edges.y2
   ) {
-    logger.warn('calc equals on edge');
+    log.warn('calc equals on edge');
     return outsidePoint;
   }
 
@@ -237,7 +237,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
       y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - q
     };
-    logger.warn(`topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
+    log.warn(`topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
 
     return res;
   } else {
@@ -252,7 +252,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
       r = x - w - outsidePoint.x;
     }
     let q = (q = (Q * r) / R);
-    logger.warn(`sides calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, {
+    log.warn(`sides calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
       y: insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q
     });
@@ -274,7 +274,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
-    logger.info(
+    log.info(
       'Last point',
       points[points.length - 1],
       head,
@@ -283,8 +283,8 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     points.push(head.intersect(points[points.length - 1]));
   }
   if (edge.toCluster) {
-    logger.trace('edge', edge);
-    logger.trace('to cluster', clusterDb[edge.toCluster]);
+    log.trace('edge', edge);
+    log.trace('to cluster', clusterDb[edge.toCluster]);
     points = [];
     let lastPointOutside;
     let isInside = false;
@@ -292,7 +292,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
       const node = clusterDb[edge.toCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        logger.trace('inside', edge.toCluster, point, lastPointOutside);
+        log.trace('inside', edge.toCluster, point, lastPointOutside);
 
         // First point inside the rect
         const inter = intersection(node, lastPointOutside, point);
@@ -305,7 +305,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
         if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
           points.push(inter);
         } else {
-          logger.warn('no intersect', inter, points);
+          log.warn('no intersect', inter, points);
         }
         isInside = true;
       } else {
@@ -317,8 +317,8 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   }
 
   if (edge.fromCluster) {
-    logger.trace('edge', edge);
-    logger.warn('from cluster', clusterDb[edge.fromCluster]);
+    log.trace('edge', edge);
+    log.warn('from cluster', clusterDb[edge.fromCluster]);
     const updatedPoints = [];
     let lastPointOutside;
     let isInside = false;
@@ -327,17 +327,17 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
       const node = clusterDb[edge.fromCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        logger.warn('inside', edge.fromCluster, point, node);
+        log.warn('inside', edge.fromCluster, point, node);
 
         // First point inside the rect
         const insterection = intersection(node, lastPointOutside, point);
-        // logger.trace('intersect', intersection(node, lastPointOutside, point));
+        // log.trace('intersect', intersection(node, lastPointOutside, point));
         updatedPoints.unshift(insterection);
         // points.push(insterection);
         isInside = true;
       } else {
         // at the outside
-        logger.trace('Outside point', point);
+        log.trace('Outside point', point);
         if (!isInside) updatedPoints.unshift(point);
       }
       lastPointOutside = point;
@@ -412,8 +412,8 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }
-  logger.info('arrowTypeStart', edge.arrowTypeStart);
-  logger.info('arrowTypeEnd', edge.arrowTypeEnd);
+  log.info('arrowTypeStart', edge.arrowTypeStart);
+  log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
   switch (edge.arrowTypeStart) {
     case 'arrow_cross':

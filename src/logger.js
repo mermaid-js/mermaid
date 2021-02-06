@@ -1,5 +1,5 @@
 import moment from 'moment-mini';
-//
+
 export const LEVELS = {
   debug: 1,
   info: 2,
@@ -8,7 +8,7 @@ export const LEVELS = {
   fatal: 5
 };
 
-export const logger = {
+export const log = {
   debug: () => {},
   info: () => {},
   warn: () => {},
@@ -23,35 +23,34 @@ export const setLogLevel = function(level = 'fatal') {
       level = LEVELS[level];
     }
   }
-  logger.trace = () => {};
-  logger.debug = () => {};
-  logger.info = () => {};
-  logger.warn = () => {};
-  logger.error = () => {};
-  logger.fatal = () => {};
+  log.trace = () => {};
+  log.debug = () => {};
+  log.info = () => {};
+  log.warn = () => {};
+  log.error = () => {};
+  log.fatal = () => {};
   if (level <= LEVELS.fatal) {
-    logger.fatal = console.error
+    log.fatal = console.error
       ? console.error.bind(console, format('FATAL'), 'color: orange')
       : console.log.bind(console, '\x1b[35m', format('FATAL'));
   }
   if (level <= LEVELS.error) {
-    logger.error = console.error
+    log.error = console.error
       ? console.error.bind(console, format('ERROR'), 'color: orange')
       : console.log.bind(console, '\x1b[31m', format('ERROR'));
   }
   if (level <= LEVELS.warn) {
-    logger.warn = console.warn
+    log.warn = console.warn
       ? console.warn.bind(console, format('WARN'), 'color: orange')
       : console.log.bind(console, `\x1b[33m`, format('WARN'));
   }
   if (level <= LEVELS.info) {
-    logger.info = console.info
-      ? // ? console.info.bind(console, '\x1b[34m', format('INFO'), 'color: blue')
-        console.info.bind(console, format('INFO'), 'color: lightblue')
+    log.info = console.info // ? console.info.bind(console, '\x1b[34m', format('INFO'), 'color: blue')
+      ? console.info.bind(console, format('INFO'), 'color: lightblue')
       : console.log.bind(console, '\x1b[34m', format('INFO'));
   }
   if (level <= LEVELS.debug) {
-    logger.debug = console.debug
+    log.debug = console.debug
       ? console.debug.bind(console, format('DEBUG'), 'color: lightgreen')
       : console.log.bind(console, '\x1b[32m', format('DEBUG'));
   }
