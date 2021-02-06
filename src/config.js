@@ -8,7 +8,7 @@ import config from './defaultConfig';
 export const defaultConfig = Object.freeze(config);
 
 let siteConfig = assignWithDepth({}, defaultConfig);
-let siteConfigDelta;
+let configFromInitialize;
 let directives = [];
 let currentConfig = assignWithDepth({}, defaultConfig);
 
@@ -30,19 +30,13 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
   if (sumOfDirectives.theme) {
+    const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
-      siteConfigDelta.themeVariables || {},
+      tmpConfigFromInitialize.themeVariables || {},
       sumOfDirectives.themeVariables
     );
     cfg.themeVariables = theme[cfg.theme].getThemeVariables(themeVariables);
   }
-
-  // if (cfg.theme && theme[cfg.theme]) {
-  //   let tVars = assignWithDepth({}, cfg.themeVariables);
-  //   tVars = assignWithDepth(tVars, themeVariables);
-  //   const variables = theme[cfg.theme].getThemeVariables(tVars);
-  //   cfg.themeVariables = variables;
-  // }
 
   currentConfig = cfg;
   return cfg;
@@ -73,9 +67,10 @@ export const setSiteConfig = conf => {
   return siteConfig;
 };
 
-export const setSiteConfigDelta = conf => {
-  siteConfigDelta = assignWithDepth({}, conf);
+export const saveConfigFromInitilize = conf => {
+  configFromInitialize = assignWithDepth({}, conf);
 };
+
 export const updateSiteConfig = conf => {
   siteConfig = assignWithDepth(siteConfig, conf);
   updateCurrentConfig(siteConfig, directives);

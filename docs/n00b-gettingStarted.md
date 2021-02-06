@@ -26,7 +26,7 @@ In the `Code` section one can write or edit raw mermaid code, and instantly `Pre
 
 **This is a great way to learn how to define a mermaid diagram.**
 
-For some popular video tutorials on the live editor go to [Overview](/overview/n00b-overview.md).
+For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
 
 ![Flowchart](./img/DiagramDefinition.png)
 

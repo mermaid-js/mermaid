@@ -1,8 +1,9 @@
 # About Mermaid
 
-**Mermaid lets you represent diagrams using text and code.** This simplifies maintaining complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. The main purpose of Mermaid is to help Documentation catch up with Development.
+**Mermaid lets you create diagrams using text and code.** This simplifies the maintenance of complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. 
 
-Many editors, wikis and other tools have mermaid integrations already making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](/n00b-gettingStarted).
+>If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](./n00b-syntaxReference.md).
+
 
 ![banner](img/header.png)
 
@@ -11,17 +12,20 @@ Many editors, wikis and other tools have mermaid integrations already making it 
 [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 
 <!-- <Main description> -->
-> Doc-Rot is a Catch-22 that Mermaid helps to solve.
+The main purpose of Mermaid is to help Documentation catch up with Development.
+> Documentation-Rot is a Catch-22 that Mermaid helps to solve.
 
-Diagramming and documentation costs precious developer time and gets outdated quickly.
-But not having diagrams or docs ruins productivity and hurts organizational learning. <br/>
+Diagramming and Documentation costs precious developer time and gets outdated quickly.
+But not having diagrams or docs ruins productivity and hurts organizational learning. 
+
 Mermaid addresses this Catch-22 by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.
 Mermaid, as a text-based diagramming tool allows for quick and easy updates, it can also be made part of production scripts (and other pieces of code), to make documentation much easier.
-With Mermaid less time needs to be spent on making diagrams, as a separate documentation task. <br/>
 
 > Mermaid is a Diagramming tool for everyone.
 
 Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor), Visit the [Tutorials Page](./Tutorials.md) for the Live Editor video tutorials.
+
+Many editors, wikis and other tools also have mermaid integrations and plugins, making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](./n00b-gettingStarted.md).
 
 Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](./integrations.md).
 
@@ -172,12 +176,10 @@ To select a version:
 
 Replace `<version>` with the desired version number.
 
-Alternatively, you can also adjust the version number in the page itself.
-
 Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/browse/mermaid@8.8.0/)
 
 ## Deploying Mermaid
-To support mermaid on your website, all you have to do is add Mermaid’s JavaScript package
+To Deploy Mermaid:
 
 ```
 1.You will need to install node v10 or 12, which would have npm
@@ -191,13 +193,15 @@ To support mermaid on your website, all you have to do is add Mermaid’s JavaSc
     yarn add --dev mermaid
 
 ```
+## [Mermaid API](./Setup.md):
 
 **To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:**
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({startOnLoad:true});</script>
 ```
-**Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.**
+**Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitons and render them into svg charts.**
 
  **Examples can be found in** [Other examples](/examples)
 
