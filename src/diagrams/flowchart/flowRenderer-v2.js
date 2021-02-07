@@ -7,7 +7,7 @@ import { getConfig } from '../../config';
 
 import { render } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import common from '../common/common';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 
@@ -151,7 +151,7 @@ export const addVertices = function(vert, g, svgId) {
       padding: getConfig().flowchart.padding
     });
 
-    logger.info('setNode', {
+    log.info('setNode', {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
@@ -306,7 +306,7 @@ export const addEdges = function(edges, g) {
  * @returns {object} classDef styles
  */
 export const getClasses = function(text) {
-  logger.info('Extracting classes');
+  log.info('Extracting classes');
   flowDb.clear();
   const parser = flow.parser;
   parser.yy = flowDb;
@@ -328,7 +328,7 @@ export const getClasses = function(text) {
  */
 
 export const draw = function(text, id) {
-  logger.info('Drawing flowchart');
+  log.info('Drawing flowchart');
   flowDb.clear();
   flowDb.setGen('gen-2');
   const parser = flow.parser;
@@ -338,7 +338,7 @@ export const draw = function(text, id) {
   // try {
   parser.parse(text);
   // } catch (err) {
-  // logger.debug('Parsing failed');
+  // log.debug('Parsing failed');
   // }
 
   // Fetch the default direction, use TD if none was found
@@ -369,10 +369,10 @@ export const draw = function(text, id) {
 
   let subG;
   const subGraphs = flowDb.getSubGraphs();
-  logger.info('Subgraphs - ', subGraphs);
+  log.info('Subgraphs - ', subGraphs);
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
-    logger.info('Subgraph - ', subG);
+    log.info('Subgraph - ', subG);
     flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
   }
 
@@ -381,7 +381,7 @@ export const draw = function(text, id) {
 
   const edges = flowDb.getEdges();
 
-  logger.info(edges);
+  log.info(edges);
   let i = 0;
   for (i = subGraphs.length - 1; i >= 0; i--) {
     // for (let i = 0; i < subGraphs.length; i++) {
@@ -390,7 +390,7 @@ export const draw = function(text, id) {
     selectAll('cluster').append('text');
 
     for (let j = 0; j < subG.nodes.length; j++) {
-      logger.info('Setting up subgraphs', subG.nodes[j], subG.id);
+      log.info('Setting up subgraphs', subG.nodes[j], subG.id);
       g.setParent(subG.nodes[j], subG.id);
     }
   }
@@ -412,7 +412,7 @@ export const draw = function(text, id) {
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
-  logger.debug(
+  log.debug(
     `new ViewBox 0 0 ${width} ${height}`,
     `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
   );

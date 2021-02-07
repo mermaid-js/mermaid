@@ -4,7 +4,7 @@
 import { select, scaleOrdinal, schemeSet2, pie as d3pie, entries, arc } from 'd3';
 import pieData from './pieDb';
 import pieParser from './parser/pie';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 
 const conf = {};
@@ -27,11 +27,11 @@ export const draw = (txt, id) => {
   try {
     const parser = pieParser.parser;
     parser.yy = pieData;
-    logger.debug('Rendering info diagram\n' + txt);
+    log.debug('Rendering info diagram\n' + txt);
     // Parse the Pie Chart definition
     parser.yy.clear();
     parser.parse(txt);
-    logger.debug('Parsed info diagram');
+    log.debug('Parsed info diagram');
     const elem = document.getElementById(id);
     width = elem.parentElement.offsetWidth;
 
@@ -150,8 +150,8 @@ export const draw = (txt, id) => {
         return d;
       });
   } catch (e) {
-    logger.error('Error while rendering info diagram');
-    logger.error(e);
+    log.error('Error while rendering info diagram');
+    log.error(e);
   }
 };
 

@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import stateDb from './stateDb';
 import common from '../common/common';
 import { parser } from './parser/stateDiagram';
@@ -47,7 +47,7 @@ export const draw = function(text, id) {
   conf = getConfig().state;
   parser.yy.clear();
   parser.parse(text);
-  logger.debug('Rendering diagram ' + text);
+  log.debug('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
   const diagram = select(`[id='${id}']`);
@@ -210,11 +210,11 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
     }
   }
 
-  logger.debug('Count=', graph.nodeCount(), graph);
+  log.debug('Count=', graph.nodeCount(), graph);
   let cnt = 0;
   relations.forEach(function(relation) {
     cnt++;
-    logger.debug('Setting edge', relation);
+    log.debug('Setting edge', relation);
     graph.setEdge(
       relation.id1,
       relation.id2,
@@ -230,12 +230,12 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
 
   dagre.layout(graph);
 
-  logger.debug('Graph after layout', graph.nodes());
+  log.debug('Graph after layout', graph.nodes());
   const svgElem = diagram.node();
 
   graph.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
-      logger.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      log.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
       select('#' + svgElem.id + ' #' + v).attr(
         'transform',
         'translate(' +
@@ -266,7 +266,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
         divider.setAttribute('x2', pWidth - pShift - 8);
       });
     } else {
-      logger.debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      log.debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     }
   });
 
@@ -274,7 +274,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
 
   graph.edges().forEach(function(e) {
     if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
-      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+      log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
       drawEdge(diagram, graph.edge(e), graph.edge(e).relation);
     }
   });
@@ -291,7 +291,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
   stateInfo.width = stateBox.width + 2 * conf.padding;
   stateInfo.height = stateBox.height + 2 * conf.padding;
 
-  logger.debug('Doc rendered', stateInfo, graph);
+  log.debug('Doc rendered', stateInfo, graph);
   return stateInfo;
 };
 

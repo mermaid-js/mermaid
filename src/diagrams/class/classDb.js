@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import * as configApi from '../../config';
 import common from '../common/common';
 import utils from '../../utils';
@@ -87,7 +87,7 @@ export const getRelations = function() {
 };
 
 export const addRelation = function(relation) {
-  logger.debug('Adding relation: ' + JSON.stringify(relation));
+  log.debug('Adding relation: ' + JSON.stringify(relation));
   addClass(relation.id1);
   addClass(relation.id2);
 

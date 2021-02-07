@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import classDb, { lookUpDomId } from './classDb';
 import { parser } from './parser/classDiagram';
 import svgDraw from './svgDraw';
@@ -31,8 +31,8 @@ const conf = {
 export const addClasses = function(classes, g) {
   // const svg = select(`[id="${svgId}"]`);
   const keys = Object.keys(classes);
-  logger.info('keys:', keys);
-  logger.info(classes);
+  log.info('keys:', keys);
+  log.info(classes);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   keys.forEach(function(id) {
@@ -112,7 +112,7 @@ export const addClasses = function(classes, g) {
       padding: getConfig().flowchart.padding
     });
 
-    logger.info('setNode', {
+    log.info('setNode', {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
@@ -160,7 +160,7 @@ export const addRelations = function(relations, g) {
       edgeData.arrowhead = 'normal';
     }
 
-    logger.info(edgeData, edge);
+    log.info(edgeData, edge);
     //Set edge extra labels
     //edgeData.startLabelLeft = edge.relationTitle1;
     edgeData.startLabelRight = edge.relationTitle1 === 'none' ? '' : edge.relationTitle1;
@@ -257,7 +257,7 @@ export const drawOld = function(text, id) {
   parser.yy.clear();
   parser.parse(text);
 
-  logger.info('Rendering diagram ' + text);
+  log.info('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
   const diagram = select(`[id='${id}']`);
@@ -279,8 +279,8 @@ export const drawOld = function(text, id) {
   });
 
   const classes = classDb.getClasses();
-  logger.info('classes:');
-  logger.info(classes);
+  log.info('classes:');
+  log.info(classes);
   const keys = Object.keys(classes);
   for (let i = 0; i < keys.length; i++) {
     const classDef = classes[keys[i]];
@@ -292,13 +292,13 @@ export const drawOld = function(text, id) {
     // our nodes.
     g.setNode(node.id, node);
 
-    logger.info('Org height: ' + node.height);
+    log.info('Org height: ' + node.height);
   }
 
   const relations = classDb.getRelations();
-  logger.info('relations:', relations);
+  log.info('relations:', relations);
   relations.forEach(function(relation) {
-    logger.info(
+    log.info(
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
     );
     g.setEdge(
@@ -314,7 +314,7 @@ export const drawOld = function(text, id) {
   dagre.layout(g);
   g.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
-      logger.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
+      log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       select('#' + lookUpDomId(v)).attr(
         'transform',
         'translate(' +
@@ -328,7 +328,7 @@ export const drawOld = function(text, id) {
 
   g.edges().forEach(function(e) {
     if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
-      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
+      log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
       svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
     }
   });
@@ -341,12 +341,12 @@ export const drawOld = function(text, id) {
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
-  logger.debug(`viewBox ${vBox}`);
+  log.debug(`viewBox ${vBox}`);
   diagram.attr('viewBox', vBox);
 };
 
 export const draw = function(text, id) {
-  logger.info('Drawing class');
+  log.info('Drawing class');
   classDb.clear();
   // const parser = classDb.parser;
   // parser.yy = classDb;
@@ -355,14 +355,14 @@ export const draw = function(text, id) {
   // try {
   parser.parse(text);
   // } catch (err) {
-  // logger.debug('Parsing failed');
+  // log.debug('Parsing failed');
   // }
 
   // Fetch the default direction, use TD if none was found
   let dir = 'TD';
 
   const conf = getConfig().flowchart;
-  logger.info('config:', conf);
+  log.info('config:', conf);
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
 
@@ -384,10 +384,10 @@ export const draw = function(text, id) {
 
   // let subG;
   // const subGraphs = flowDb.getSubGraphs();
-  // logger.info('Subgraphs - ', subGraphs);
+  // log.info('Subgraphs - ', subGraphs);
   // for (let i = subGraphs.length - 1; i >= 0; i--) {
   //   subG = subGraphs[i];
-  //   logger.info('Subgraph - ', subG);
+  //   log.info('Subgraph - ', subG);
   //   flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
   // }
 
@@ -395,7 +395,7 @@ export const draw = function(text, id) {
   const classes = classDb.getClasses();
   const relations = classDb.getRelations();
 
-  logger.info(relations);
+  log.info(relations);
   // let i = 0;
   // for (i = subGraphs.length - 1; i >= 0; i--) {
   //   subG = subGraphs[i];
@@ -428,7 +428,7 @@ export const draw = function(text, id) {
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
-  logger.debug(
+  log.debug(
     `new ViewBox 0 0 ${width} ${height}`,
     `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
   );

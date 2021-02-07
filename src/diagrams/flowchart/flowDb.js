@@ -3,7 +3,7 @@ import utils from '../../utils';
 import * as configApi from '../../config';
 import common from '../common/common';
 import mermaidAPI from '../../mermaidAPI';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -117,7 +117,7 @@ export const addSingleLink = function(_start, _end, type, linktext) {
   let end = _end;
   // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
   // if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
-  // logger.info('Got edge...', start, end);
+  // log.info('Got edge...', start, end);
 
   const edge = { start: start, end: end, type: undefined, text: '' };
   linktext = type.text;
@@ -457,7 +457,7 @@ export const addSubGraph = function(_id, list, _title) {
 
   nodeList = uniq(nodeList.concat.apply(nodeList, list));
   if (version === 'gen-1') {
-    logger.warn('LOOKING UP');
+    log.warn('LOOKING UP');
     for (let i = 0; i < nodeList.length; i++) {
       nodeList[i] = lookUpDomId(nodeList[i]);
     }
@@ -470,7 +470,7 @@ export const addSubGraph = function(_id, list, _title) {
   subCount = subCount + 1;
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
 
-  logger.info('Adding', subGraph.id, subGraph.nodes);
+  log.info('Adding', subGraph.id, subGraph.nodes);
 
   /**
    * Deletes an id from all subgraphs

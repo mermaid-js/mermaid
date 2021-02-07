@@ -1,6 +1,6 @@
 import { select, selectAll } from 'd3';
 import svgDraw, { drawText } from './svgDraw';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
 import sequenceDb from './sequenceDb';
@@ -491,7 +491,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
     const textDims = utils.calculateTextDimensions(msg.message, textConf);
     const totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
     heightAdjust = postMargin + totalOffset;
-    logger.debug(`${totalOffset} - ${msg.message}`);
+    log.debug(`${totalOffset} - ${msg.message}`);
   }
   addLoopFn(msg);
   bounds.bumpVerticalPos(heightAdjust);
@@ -508,7 +508,7 @@ export const draw = function(text, id) {
   parser.yy.setWrap(conf.wrap);
   parser.parse(text + '\n');
   bounds.init();
-  logger.debug(`C:${JSON.stringify(conf, null, 2)}`);
+  log.debug(`C:${JSON.stringify(conf, null, 2)}`);
 
   const diagram = select(`[id="${id}"]`);
 
@@ -661,7 +661,7 @@ export const draw = function(text, id) {
           drawMessage(diagram, msgModel);
           bounds.models.addMessage(msgModel);
         } catch (e) {
-          logger.error('error while drawing message', e);
+          log.error('error while drawing message', e);
         }
     }
     // Increment sequence counter if msg.type is a line (and not another event like activation or note, etc)
@@ -690,7 +690,7 @@ export const draw = function(text, id) {
   const { bounds: box } = bounds.getBounds();
 
   // Adjust line height of actor lines now that the height of the diagram is known
-  logger.debug('For line height fix Querying: #' + id + ' .actor-line');
+  log.debug('For line height fix Querying: #' + id + ' .actor-line');
   const actorLines = selectAll('#' + id + ' .actor-line');
   actorLines.attr('y2', box.stopy);
 
@@ -723,7 +723,7 @@ export const draw = function(text, id) {
       ' ' +
       (height + extraVertForTitle)
   );
-  logger.debug(`models:`, bounds.models);
+  log.debug(`models:`, bounds.models);
 };
 
 /**
@@ -827,7 +827,7 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
     }
   });
 
-  logger.debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
+  log.debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
 };
 
@@ -947,7 +947,7 @@ const buildNoteModel = function(msg, actors) {
       noteFont(conf)
     );
   }
-  logger.debug(
+  log.debug(
     `NM:[${noteModel.startx},${noteModel.stopx},${noteModel.starty},${noteModel.stopy}:${noteModel.width},${noteModel.height}=${msg.message}]`
   );
   return noteModel;
@@ -1104,7 +1104,7 @@ const calculateLoopBounds = function(messages, actors) {
     }
   });
   bounds.activations = [];
-  logger.debug('Loop type widths:', loops);
+  log.debug('Loop type widths:', loops);
   return loops;
 };
 

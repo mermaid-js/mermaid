@@ -25,7 +25,7 @@ import pkg from '../package.json';
 // //   configApi.getSiteConfig,
 // //   configApi.defaultConfig
 // // }
-import { logger, setLogLevel } from './logger';
+import { log, setLogLevel } from './logger';
 import utils, { assignWithDepth } from './utils';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import flowRendererV2 from './diagrams/flowchart/flowRenderer-v2';
@@ -69,12 +69,12 @@ function parse(text) {
   const graphInit = utils.detectInit(text);
   if (graphInit) {
     reinitialize(graphInit);
-    logger.debug('reinit ', graphInit);
+    log.debug('reinit ', graphInit);
   }
   const graphType = utils.detectType(text);
   let parser;
 
-  logger.debug('Type ' + graphType);
+  log.debug('Type ' + graphType);
   switch (graphType) {
     case 'git':
       parser = gitGraphParser;
@@ -115,22 +115,22 @@ function parse(text) {
       parser.parser.yy = stateDb;
       break;
     case 'info':
-      logger.debug('info info info');
+      log.debug('info info info');
       parser = infoParser;
       parser.parser.yy = infoDb;
       break;
     case 'pie':
-      logger.debug('pie');
+      log.debug('pie');
       parser = pieParser;
       parser.parser.yy = pieDb;
       break;
     case 'er':
-      logger.debug('er');
+      log.debug('er');
       parser = erParser;
       parser.parser.yy = erDb;
       break;
     case 'journey':
-      logger.debug('Journey');
+      log.debug('Journey');
       parser = journeyParser;
       parser.parser.yy = journeyDb;
       break;
@@ -299,7 +299,7 @@ const render = function(id, _txt, cb, container) {
     }
   }
 
-  // logger.warn(cnf.themeVariables);
+  // log.warn(cnf.themeVariables);
 
   const stylis = new Stylis();
   const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
@@ -417,7 +417,7 @@ const render = function(id, _txt, cb, container) {
 
   // Fix for when the base tag is used
   let svgCode = select('#d' + id).node().innerHTML;
-  logger.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
   if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
@@ -444,7 +444,7 @@ const render = function(id, _txt, cb, container) {
         cb(svgCode);
     }
   } else {
-    logger.debug('CB = undefined!');
+    log.debug('CB = undefined!');
   }
 
   const node = select('#d' + id).node();
@@ -480,15 +480,15 @@ const parseDirective = function(p, statement, context, type) {
       }
     }
   } catch (error) {
-    logger.error(
+    log.error(
       `Error while rendering sequenceDiagram directive: ${statement} jison context: ${context}`
     );
-    logger.error(error.message);
+    log.error(error.message);
   }
 };
 
 const handleDirective = function(p, directive, type) {
-  logger.debug(`Directive type=${directive.type} with args:`, directive.args);
+  log.debug(`Directive type=${directive.type} with args:`, directive.args);
   switch (directive.type) {
     case 'init':
     case 'initialize': {
@@ -513,7 +513,7 @@ const handleDirective = function(p, directive, type) {
       }
       break;
     default:
-      logger.warn(
+      log.warn(
         `Unhandled directive: source: '%%{${directive.type}: ${JSON.stringify(
           directive.args ? directive.args : {}
         )}}%%`,
@@ -554,7 +554,7 @@ function reinitialize() {
   //   typeof options === 'object' ? configApi.setConfig(options) : configApi.getSiteConfig();
   // updateRendererConfigs(config);
   // setLogLevel(config.logLevel);
-  // logger.debug('mermaidAPI.reinitialize: ', config);
+  // log.debug('mermaidAPI.reinitialize: ', config);
 }
 
 function initialize(options) {
@@ -585,7 +585,7 @@ function initialize(options) {
 
   updateRendererConfigs(config);
   setLogLevel(config.logLevel);
-  // logger.debug('mermaidAPI.initialize: ', config);
+  // log.debug('mermaidAPI.initialize: ', config);
 }
 
 const mermaidAPI = Object.freeze({

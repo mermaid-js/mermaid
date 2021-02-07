@@ -4,7 +4,7 @@ import stateDb from './stateDb';
 import utils from '../../utils';
 import common from '../common/common';
 import { getConfig } from '../../config';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 
 // let conf;
 
@@ -471,12 +471,12 @@ export const drawEdge = function(elem, path, relation) {
       maxWidth = Math.max(maxWidth, boundstmp.width);
       minX = Math.min(minX, boundstmp.x);
 
-      logger.info(boundstmp.x, x, y + titleHeight);
+      log.info(boundstmp.x, x, y + titleHeight);
 
       if (titleHeight === 0) {
         const titleBox = title.node().getBBox();
         titleHeight = titleBox.height;
-        logger.info('Title height', titleHeight, y);
+        log.info('Title height', titleHeight, y);
       }
       titleRows.push(title);
     }
@@ -499,7 +499,7 @@ export const drawEdge = function(elem, path, relation) {
       .attr('width', maxWidth + getConfig().state.padding)
       .attr('height', boxHeight + getConfig().state.padding);
 
-    logger.info(bounds);
+    log.info(bounds);
 
     //label.attr('transform', '0 -' + (bounds.y / 2));
 

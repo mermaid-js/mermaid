@@ -12,7 +12,7 @@ import {
 import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes';
 import { insertCluster, clear as clearClusters } from './clusters';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges';
-import { logger as log } from '../logger';
+import { log } from '../logger';
 
 const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   log.info('Graph in recursive render: XXX', graphlib.json.write(graph), parentCluster);

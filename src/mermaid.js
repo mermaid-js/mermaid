@@ -4,7 +4,7 @@
  */
 // import { decode } from 'he';
 import decode from 'entity-decode/browser';
-import { logger } from './logger';
+import { log } from './logger';
 import mermaidAPI from './mermaidAPI';
 import utils from './utils';
 
@@ -48,14 +48,14 @@ const init = function() {
   let callback;
   if (typeof arguments[arguments.length - 1] === 'function') {
     callback = arguments[arguments.length - 1];
-    logger.debug('Callback function found');
+    log.debug('Callback function found');
   } else {
     if (typeof conf.mermaid !== 'undefined') {
       if (typeof conf.mermaid.callback === 'function') {
         callback = conf.mermaid.callback;
-        logger.debug('Callback function found');
+        log.debug('Callback function found');
       } else {
-        logger.debug('No Callback function found');
+        log.debug('No Callback function found');
       }
     }
   }
@@ -68,9 +68,9 @@ const init = function() {
       ? [nodes]
       : nodes; // Last case  - sequence config was passed pick next
 
-  logger.debug('Start On Load before: ' + mermaid.startOnLoad);
+  log.debug('Start On Load before: ' + mermaid.startOnLoad);
   if (typeof mermaid.startOnLoad !== 'undefined') {
-    logger.debug('Start On Load inner: ' + mermaid.startOnLoad);
+    log.debug('Start On Load inner: ' + mermaid.startOnLoad);
     mermaidAPI.updateSiteConfig({ startOnLoad: mermaid.startOnLoad });
   }
 
@@ -104,7 +104,7 @@ const init = function() {
 
     const init = utils.detectInit(txt);
     if (init) {
-      logger.debug('Detected early reinit: ', init);
+      log.debug('Detected early reinit: ', init);
     }
 
     try {
@@ -121,8 +121,8 @@ const init = function() {
         element
       );
     } catch (e) {
-      logger.warn('Syntax Error rendering');
-      logger.warn(e);
+      log.warn('Syntax Error rendering');
+      log.warn(e);
       if (this.parseError) {
         this.parseError(e);
       }
@@ -160,7 +160,7 @@ const contentLoaded = function() {
     }
   } else {
     if (typeof mermaid.startOnLoad === 'undefined') {
-      logger.debug('In start, no config');
+      log.debug('In start, no config');
       config = mermaidAPI.getConfig();
       if (config.startOnLoad) {
         mermaid.init();

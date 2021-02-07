@@ -1,5 +1,5 @@
 import intersectRect from './intersect/intersect-rect';
-import { logger as log } from '../logger'; // eslint-disable-line
+import { log } from '../logger';
 import createLabel from './createLabel';
 import { select } from 'd3';
 import { getConfig } from '../config';

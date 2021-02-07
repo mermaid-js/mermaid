@@ -1,13 +1,13 @@
 /**
  * Created by knut on 15-01-14.
  */
-import { logger } from '../../logger';
+import { log } from '../../logger';
 
 var message = '';
 var info = false;
 
 export const setMessage = txt => {
-  logger.debug('Setting message to: ' + txt);
+  log.debug('Setting message to: ' + txt);
   message = txt;
 };
 

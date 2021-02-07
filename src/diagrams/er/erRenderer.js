@@ -4,7 +4,7 @@ import erDb from './erDb';
 import erParser from './parser/erDiagram';
 import dagre from 'dagre';
 import { getConfig } from '../../config';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../utils';
 
@@ -414,7 +414,7 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
  * @param id the unique id of the DOM node that contains the diagram
  */
 export const draw = function(text, id) {
-  logger.info('Drawing ER diagram');
+  log.info('Drawing ER diagram');
   erDb.clear();
   const parser = erParser.parser;
   parser.yy = erDb;
@@ -423,7 +423,7 @@ export const draw = function(text, id) {
   try {
     parser.parse(text);
   } catch (err) {
-    logger.debug('Parsing failed');
+    log.debug('Parsing failed');
   }
 
   // Get a reference to the svg node that contains the text

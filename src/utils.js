@@ -14,7 +14,7 @@ import {
   select
 } from 'd3';
 import common from './diagrams/common/common';
-import { logger } from './logger';
+import { log } from './logger';
 // import cryptoRandomString from 'crypto-random-string';
 
 // Effectively an enum of the supported curve types, accessible by name
@@ -120,7 +120,7 @@ export const detectDirective = function(text, type = null) {
       .trim()
       .replace(commentWithoutDirectives, '')
       .replace(/'/gm, '"');
-    logger.debug(
+    log.debug(
       `Detecting diagram directive${type !== null ? ' type:' + type : ''} based on the text:${text}`
     );
     let match,
@@ -146,7 +146,7 @@ export const detectDirective = function(text, type = null) {
 
     return result.length === 1 ? result[0] : result;
   } catch (error) {
-    logger.error(
+    log.error(
       `ERROR: ${error.message} - Unable to parse directive${
         type !== null ? ' type:' + type : ''
       } based on the text:${text}`
@@ -176,7 +176,7 @@ export const detectDirective = function(text, type = null) {
  */
 export const detectType = function(text) {
   text = text.replace(directive, '').replace(anyComment, '\n');
-  logger.debug('Detecting diagram type based on the text ' + text);
+  log.debug('Detecting diagram type based on the text ' + text);
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';
   }
@@ -334,7 +334,7 @@ const calcLabelPosition = points => {
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
   let prevPoint;
   let totalDistance = 0; // eslint-disable-line
-  logger.info('our points', points);
+  log.info('our points', points);
   if (points[0] !== initialPosition) {
     points = points.reverse();
   }
@@ -389,7 +389,7 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   let points = JSON.parse(JSON.stringify(_points));
   let prevPoint;
   let totalDistance = 0; // eslint-disable-line
-  logger.info('our points', points);
+  log.info('our points', points);
   if (position !== 'start_left' && position !== 'start_right') {
     points = points.reverse();
   }

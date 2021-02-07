@@ -2,7 +2,7 @@ import { curveBasis, line, select } from 'd3';
 
 import db from './gitGraphAst';
 import gitGraphParser from './parser/gitGraph';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import { interpolateToCurve } from '../../utils';
 
 let allCommitsDict = {};
@@ -87,7 +87,7 @@ function getElementCoords(element, coords) {
 }
 
 function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
-  logger.debug('svgDrawLineForCommits: ', fromId, toId);
+  log.debug('svgDrawLineForCommits: ', fromId, toId);
   const fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'));
   const toBbox = getElementCoords(svg.select('#node-' + toId + ' circle'));
   switch (direction) {
@@ -203,7 +203,7 @@ function renderCommitHistory(svg, commitid, branches, direction) {
   if (typeof commitid === 'string') {
     do {
       commit = allCommitsDict[commitid];
-      logger.debug('in renderCommitHistory', commit.id, commit.seq);
+      log.debug('in renderCommitHistory', commit.id, commit.seq);
       if (svg.select('#node-' + commitid).size() > 0) {
         return;
       }
@@ -247,7 +247,7 @@ function renderCommitHistory(svg, commitid, branches, direction) {
         }
       }
       if (branch) {
-        logger.debug('found branch ', branch.name);
+        log.debug('found branch ', branch.name);
         svg
           .select('#node-' + commit.id + ' p')
           .append('xhtml:span')
@@ -271,7 +271,7 @@ function renderCommitHistory(svg, commitid, branches, direction) {
   }
 
   if (Array.isArray(commitid)) {
-    logger.debug('found merge commmit', commitid);
+    log.debug('found merge commmit', commitid);
     renderCommitHistory(svg, commitid[0], branches, direction);
     branchNum++;
     renderCommitHistory(svg, commitid[1], branches, direction);
@@ -302,12 +302,12 @@ export const draw = function(txt, id, ver) {
     parser.yy = db;
     parser.yy.clear();
 
-    logger.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
+    log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
     // Parse the graph definition
     parser.parse(txt + '\n');
 
     config = Object.assign(config, apiConfig, db.getOptions());
-    logger.debug('effective options', config);
+    log.debug('effective options', config);
     const direction = db.getDirection();
     allCommitsDict = db.getCommits();
     const branches = db.getBranchesAsObjArray();
@@ -330,8 +330,8 @@ export const draw = function(txt, id, ver) {
       return (branches.length + 1) * config.branchOffset;
     });
   } catch (e) {
-    logger.error('Error while rendering gitgraph');
-    logger.error(e.message);
+    log.error('Error while rendering gitgraph');
+    log.error(e.message);
   }
 };
 
