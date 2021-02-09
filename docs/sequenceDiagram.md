@@ -347,6 +347,23 @@ sequenceDiagram
     John-->>Alice: Great!
 ```
 
+## Entity codes to escape characters
+
+It is possible to escape characters using the syntax exemplified here.
+
+```
+sequenceDiagram
+    A->>B: I #9829; you!
+    B->>A: I #9829; you #infin; times more!
+```
+```mermaid
+sequenceDiagram
+    A->>B: I #9829; you!
+    B->>A: I #9829; you #infin; times more!
+```
+
+Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
+
 ## sequenceNumbers
 
 It is possible to get a sequence number attached to each arrow in a sequence diagram. This can be configured when adding mermaid to the website as shown below:
