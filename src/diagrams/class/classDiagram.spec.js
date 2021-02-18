@@ -8,30 +8,10 @@ describe('class diagram, ', function () {
       parser.yy = classDb;
     });
 
-    it('should handle backquoted class names', function() {
-      const str =
-        'classDiagram\n' +
-        'class `Car`';
-
-      parser.parse(str);
-    });
-
     it('should handle relation definitions', function () {
       const str =
         'classDiagram\n' +
         'Class01 <|-- Class02\n' +
-        'Class03 *-- Class04\n' +
-        'Class05 o-- Class06\n' +
-        'Class07 .. Class08\n' +
-        'Class09 -- Class1';
-
-      parser.parse(str);
-    });
-
-    it('should handle backquoted relation definitions', function () {
-      const str =
-        'classDiagram\n' +
-        '`Class01` <|-- Class02\n' +
         'Class03 *-- Class04\n' +
         'Class05 o-- Class06\n' +
         'Class07 .. Class08\n' +
@@ -87,17 +67,6 @@ describe('class diagram, ', function () {
       parser.parse(str);
     });
 
-    it('should handle generic class with a literal name', function() {
-      const str =
-        'classDiagram\n' +
-        'class `Car`~T~\n' +
-        'Driver -- `Car` : drives >\n' +
-        '`Car` *-- Wheel : have 4 >\n' +
-        '`Car` -- Person : < owns';
-
-      parser.parse(str);
-    });
-
     it('should break when another `{`is encountered before closing the first one while defining generic class with brackets', function() {
       const str =
         'classDiagram\n' +
@@ -144,22 +113,6 @@ describe('class diagram, ', function () {
       const str =
         'classDiagram\n' +
         'class Dummy_Class~T~ {\n' +
-        'String data\n' +
-        '  void methods()\n' +
-        '}\n' +
-        '\n' +
-        'class Flight {\n' +
-        '   flightNumber : Integer\n' +
-        '   departureTime : Date\n' +
-        '}';
-
-        parser.parse(str);
-    });
-
-    it('should handle generic class with brackets and a literal name', function() {
-      const str =
-        'classDiagram\n' +
-        'class `Dummy_Class`~T~ {\n' +
         'String data\n' +
         '  void methods()\n' +
         '}\n' +
