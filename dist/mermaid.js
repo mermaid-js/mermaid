@@ -49035,7 +49035,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.9.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.9.1\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -49195,7 +49195,7 @@ var sanitize = function sanitize(options) {
     if (typeof options[siteConfig.secure[key]] !== 'undefined') {
       // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
-      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
+      _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
       delete options[siteConfig.secure[key]];
     }
   });
@@ -49260,14 +49260,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../config */ "./src/config.js");
 
- // eslint-disable-line
 
 
 
 
 
 var rect = function rect(parent, node) {
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Creating subgraph rect for ', node.id, node); // Add outer g element
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].trace('Creating subgraph rect for ', node.id, node); // Add outer g element
 
   var shapeSvg = parent.insert('g').attr('class', 'cluster' + (node.class ? ' ' + node.class : '')).attr('id', node.id); // add the rect
 
@@ -49288,7 +49287,7 @@ var rect = function rect(parent, node) {
 
   var padding = 0 * node.padding;
   var halfPadding = padding / 2;
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Data ', node, JSON.stringify(node)); // center the rect around its coordinate
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].trace('Data ', node, JSON.stringify(node)); // center the rect around its coordinate
 
   rect.attr('style', node.style).attr('rx', node.rx).attr('ry', node.ry).attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', node.width + padding).attr('height', node.height + padding); // Center the label
 
@@ -49395,7 +49394,7 @@ var shapes = {
 };
 var clusterElems = {};
 var insertCluster = function insertCluster(elem, node) {
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Inserting cluster');
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].trace('Inserting cluster');
   var shape = node.shape || 'rect';
   clusterElems[node.id] = shapes[shape](elem, node);
 };
@@ -49410,7 +49409,7 @@ var clear = function clear() {
   clusterElems = {};
 };
 var positionCluster = function positionCluster(node) {
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Position cluster');
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Position cluster');
   var el = clusterElems[node.id];
   el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };
@@ -49490,7 +49489,7 @@ function addHtmlLabel(node) {
   var div = fo.append('xhtml:div');
   var label = node.label;
   var labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  div.html('<span class="' + labelClass + '">' + label + '</span>');
+  div.html('<span class="' + labelClass + '" ' + (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') + '>' + label + '</span>');
   applyStyle(div, node.labelStyle);
   div.style('display', 'inline-block'); // Fix for firefox
 
@@ -49505,7 +49504,7 @@ var createLabel = function createLabel(_vertexText, style, isTitle, isNode) {
   if (Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])().flowchart.htmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');
-    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('vertexText' + vertexText);
+    _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('vertexText' + vertexText);
     var node = {
       isNode: isNode,
       label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, function (s) {
@@ -49696,7 +49695,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
   }
 };
 var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
   var path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
 
   if (edge.label) {
@@ -49707,7 +49706,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
     if (path) {
       //   // debugger;
       var pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcLabelPosition(path);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')'); // x = pos.x;
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')'); // x = pos.x;
       // y = pos.y;
     }
 
@@ -49792,7 +49791,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
 // };
 
 var outsideNode = function outsideNode(node, point) {
-  // logger.warn('Checking bounds ', node, point);
+  // log.warn('Checking bounds ', node, point);
   var x = node.x;
   var y = node.y;
   var dx = Math.abs(point.x - x);
@@ -49808,7 +49807,7 @@ var outsideNode = function outsideNode(node, point) {
 };
 
 var intersection = function intersection(node, outsidePoint, insidePoint) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
   var x = node.x;
   var y = node.y;
   var dx = Math.abs(x - insidePoint.x);
@@ -49823,7 +49822,7 @@ var intersection = function intersection(node, outsidePoint, insidePoint) {
   };
 
   if (outsidePoint.x === edges.x1 || outsidePoint.x === edges.x2 || outsidePoint.y === edges.y1 || outsidePoint.y === edges.y2) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('calc equals on edge');
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('calc equals on edge');
     return outsidePoint;
   }
 
@@ -49840,7 +49839,7 @@ var intersection = function intersection(node, outsidePoint, insidePoint) {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
       y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - q
     };
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
     return res;
   } else {
     // Intersection onn sides of rect
@@ -49856,7 +49855,7 @@ var intersection = function intersection(node, outsidePoint, insidePoint) {
 
     var _q = _q = Q * r / R;
 
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("sides calc, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("sides calc, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
       y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
     });
@@ -49876,13 +49875,13 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Last point', points[points.length - 1], head, head.intersect(points[points.length - 1]));
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Last point', points[points.length - 1], head, head.intersect(points[points.length - 1]));
     points.push(head.intersect(points[points.length - 1]));
   }
 
   if (edge.toCluster) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('to cluster', clusterDb[edge.toCluster]);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('edge', edge);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('to cluster', clusterDb[edge.toCluster]);
     points = [];
     var lastPointOutside;
     var isInside = false;
@@ -49890,7 +49889,7 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
       var node = clusterDb[edge.toCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('inside', edge.toCluster, point, lastPointOutside); // First point inside the rect
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('inside', edge.toCluster, point, lastPointOutside); // First point inside the rect
 
         var inter = intersection(node, lastPointOutside, point);
         var pointPresent = false;
@@ -49903,7 +49902,7 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
         })) {
           points.push(inter);
         } else {
-          _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('no intersect', inter, points);
+          _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('no intersect', inter, points);
         }
 
         isInside = true;
@@ -49917,8 +49916,8 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
   }
 
   if (edge.fromCluster) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('from cluster', clusterDb[edge.fromCluster]);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('edge', edge);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('from cluster', clusterDb[edge.fromCluster]);
     var updatedPoints = [];
 
     var _lastPointOutside;
@@ -49930,16 +49929,16 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
       var node = clusterDb[edge.fromCluster].node;
 
       if (!outsideNode(node, point) && !_isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('inside', edge.fromCluster, point, node); // First point inside the rect
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('inside', edge.fromCluster, point, node); // First point inside the rect
 
-        var insterection = intersection(node, _lastPointOutside, point); // logger.trace('intersect', intersection(node, lastPointOutside, point));
+        var insterection = intersection(node, _lastPointOutside, point); // log.trace('intersect', intersection(node, lastPointOutside, point));
 
         updatedPoints.unshift(insterection); // points.push(insterection);
 
         _isInside = true;
       } else {
         // at the outside
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Outside point', point);
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('Outside point', point);
         if (!_isInside) updatedPoints.unshift(point);
       }
 
@@ -50009,8 +50008,8 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     url = url.replace(/\)/g, '\\)');
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('arrowTypeStart', edge.arrowTypeStart);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('arrowTypeEnd', edge.arrowTypeEnd);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('arrowTypeStart', edge.arrowTypeStart);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('arrowTypeEnd', edge.arrowTypeEnd);
 
   switch (edge.arrowTypeStart) {
     case 'arrow_cross':
@@ -50128,21 +50127,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parentCluster) {
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Graph in recursive render: XXX', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), parentCluster);
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Graph in recursive render: XXX', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), parentCluster);
   var dir = graph.graph().rankdir;
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Dir in recursive render - dir:', dir);
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].warn('Dir in recursive render - dir:', dir);
 
   var elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
 
 
   if (!graph.nodes()) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('No nodes found for', graph);
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('No nodes found for', graph);
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Recursive render XXX', graph.nodes());
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Recursive render XXX', graph.nodes());
   }
 
   if (graph.edges().length > 0) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Recursive edges', graph.edge(graph.edges()[0]));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Recursive edges', graph.edge(graph.edges()[0]));
   }
 
   var clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
@@ -50158,36 +50157,36 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
     if (typeof parentCluster !== 'undefined') {
       var data = JSON.parse(JSON.stringify(parentCluster.clusterData)); // data.clusterPositioning = true;
 
-      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Setting data for cluster XXX (', v, ') ', data, parentCluster);
+      _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Setting data for cluster XXX (', v, ') ', data, parentCluster);
       graph.setNode(parentCluster.id, data);
 
       if (!graph.parent(v)) {
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Setting parent', v, parentCluster.id);
+        _logger__WEBPACK_IMPORTED_MODULE_8__["log"].warn('Setting parent', v, parentCluster.id);
         graph.setParent(v, parentCluster.id, data);
       }
     }
 
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
 
     if (node && node.clusterNode) {
       // const children = graph.children(v);
-      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Cluster identified', v, node, graph.node(v));
+      _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Cluster identified', v, node, graph.node(v));
       var newEl = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
       Object(_shapes_util__WEBPACK_IMPORTED_MODULE_3__["updateNodeBounds"])(node, newEl);
       Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["setNodeElem"])(newEl, node);
-      _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Recursive render complete', newEl, node);
+      _logger__WEBPACK_IMPORTED_MODULE_8__["log"].warn('Recursive render complete', newEl, node);
     } else {
       if (graph.children(v).length > 0) {
         // This is a cluster but not to be rendered recusively
         // Render as before
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Cluster - the non recursive path XXX', v, node.id, node, graph);
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info(Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph));
+        _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Cluster - the non recursive path XXX', v, node.id, node, graph);
+        _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info(Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph));
         _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][node.id] = {
           id: Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["findNonClusterChild"])(node.id, graph),
           node: node
         }; // insertCluster(clusters, graph.node(v));
       } else {
-        _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Node - the non recursive path', v, node.id, node);
+        _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Node - the non recursive path', v, node.id, node);
         Object(_nodes__WEBPACK_IMPORTED_MODULE_5__["insertNode"])(nodes, graph.node(v), dir);
       }
     }
@@ -50198,26 +50197,26 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
 
   graph.edges().forEach(function (e) {
     var edge = graph.edge(e.v, e.w, e.name);
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e))); // Check if link is either from or to a cluster
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e))); // Check if link is either from or to a cluster
 
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Fix', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], 'ids:', e.v, e.w, 'Translateing: ', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.v], _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.w]);
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Fix', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], 'ids:', e.v, e.w, 'Translateing: ', _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.v], _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"][e.w]);
     Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdgeLabel"])(edgeLabels, edge);
   });
   graph.edges().forEach(function (e) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
   });
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('#############################################');
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('###                Layout                 ###');
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('#############################################');
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info(graph);
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('#############################################');
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('###                Layout                 ###');
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('#############################################');
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info(graph);
   dagre__WEBPACK_IMPORTED_MODULE_0___default.a.layout(graph);
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Graph after layout:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // Move the nodes to the correct place
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Graph after layout:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // Move the nodes to the correct place
 
   Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["sortNodesByHierarchy"])(graph).forEach(function (v) {
     var node = graph.node(v);
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Position ' + v + ': (' + node.x, ',' + node.y, ') width: ', node.width, ' height: ', node.height);
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Position ' + v + ': (' + node.x, ',' + node.y, ') width: ', node.width, ' height: ', node.height);
 
     if (node && node.clusterNode) {
       // clusterDb[node.id].node = node;
@@ -50237,7 +50236,7 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
 
   graph.edges().forEach(function (e) {
     var edge = graph.edge(e);
-    _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
     var paths = Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdge"])(edgePaths, e, edge, _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], diagramtype, graph);
     Object(_edges__WEBPACK_IMPORTED_MODULE_7__["positionEdgeLabel"])(edge, paths);
   });
@@ -50250,9 +50249,9 @@ var render = function render(elem, graph, markers, diagramtype, id) {
   Object(_edges__WEBPACK_IMPORTED_MODULE_7__["clear"])();
   Object(_clusters__WEBPACK_IMPORTED_MODULE_6__["clear"])();
   Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clear"])();
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph at first:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].warn('Graph at first:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
   Object(_mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["adjustClustersAndEdges"])(graph);
-  _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].warn('Graph after:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // log.warn('Graph ever  after:', graphlib.json.write(graph.node('A').graph));
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].warn('Graph after:', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph)); // log.warn('Graph ever  after:', graphlib.json.write(graph.node('A').graph));
 
   recursiveRender(elem, graph, diagramtype);
 }; // const shapeDefinitions = {};
@@ -50597,7 +50596,7 @@ var insertMarkers = function insertMarkers(elem, markerArray, type, id) {
 };
 
 var extension = function extension(elem, type, id) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Making markers for ', id);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('Making markers for ', id);
   elem.append('defs').append('marker').attr('id', type + '-extensionStart').attr('class', 'marker extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 1,7 L18,13 V 1 Z');
   elem.append('defs').append('marker').attr('id', type + '-extensionEnd').attr('class', 'marker extension ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 };
@@ -50689,24 +50688,24 @@ var clear = function clear() {
 
 var isDecendant = function isDecendant(id, ancenstorId) {
   // if (id === ancenstorId) return true;
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('In isDecendant', ancenstorId, ' ', id, ' = ', decendants[ancenstorId].indexOf(id) >= 0);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('In isDecendant', ancenstorId, ' ', id, ' = ', decendants[ancenstorId].indexOf(id) >= 0);
   if (decendants[ancenstorId].indexOf(id) >= 0) return true;
   return false;
 };
 
 var edgeInCluster = function edgeInCluster(edge, clusterId) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Decendants of ', clusterId, ' is ', decendants[clusterId]);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Edge is ', edge); // Edges to/from the cluster is not in the cluster, they are in the parent
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Decendants of ', clusterId, ' is ', decendants[clusterId]);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Edge is ', edge); // Edges to/from the cluster is not in the cluster, they are in the parent
 
   if (edge.v === clusterId) return false;
   if (edge.w === clusterId) return false;
 
   if (!decendants[clusterId]) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Tilt, ', clusterId, ',not in decendants');
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Tilt, ', clusterId, ',not in decendants');
     return false;
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Here ');
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Here ');
   if (decendants[clusterId].indexOf(edge.v) >= 0) return true;
   if (isDecendant(edge.v, clusterId)) return true;
   if (isDecendant(edge.w, clusterId)) return true;
@@ -50715,59 +50714,59 @@ var edgeInCluster = function edgeInCluster(edge, clusterId) {
 };
 
 var copy = function copy(clusterId, graph, newGraph, rootId) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Copying children of ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Copying children of ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
   var nodes = graph.children(clusterId) || []; // Include cluster node if it is not the root
 
   if (clusterId !== rootId) {
     nodes.push(clusterId);
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
   nodes.forEach(function (node) {
     if (graph.children(node).length > 0) {
       copy(node, graph, newGraph, rootId);
     } else {
       var data = graph.node(node);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('cp ', node, ' to ', rootId, ' with parent ', clusterId); //,node, data, ' parent is ', clusterId);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('cp ', node, ' to ', rootId, ' with parent ', clusterId); //,node, data, ' parent is ', clusterId);
 
       newGraph.setNode(node, data);
 
       if (rootId !== graph.parent(node)) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Setting parent', node, graph.parent(node));
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Setting parent', node, graph.parent(node));
         newGraph.setParent(node, graph.parent(node));
       }
 
       if (clusterId !== rootId && node !== clusterId) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Setting parent', node, clusterId);
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Setting parent', node, clusterId);
         newGraph.setParent(node, clusterId);
       } else {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('In copy ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Not Setting parent for node=', node, 'cluster!==rootId', clusterId !== rootId, 'node!==clusterId', node !== clusterId);
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('In copy ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Not Setting parent for node=', node, 'cluster!==rootId', clusterId !== rootId, 'node!==clusterId', node !== clusterId);
       }
 
       var edges = graph.edges(node);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Copying Edges', edges);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Copying Edges', edges);
       edges.forEach(function (edge) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Edge', edge);
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Edge', edge);
         var data = graph.edge(edge.v, edge.w, edge.name);
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Edge data', data, rootId);
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Edge data', data, rootId);
 
         try {
           // Do not copy edges in and out of the root cluster, they belong to the parent graph
           if (edgeInCluster(edge, rootId)) {
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Copying as ', edge.v, edge.w, data, edge.name);
+            _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Copying as ', edge.v, edge.w, data, edge.name);
             newGraph.setEdge(edge.v, edge.w, data, edge.name);
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('newGraph edges ', newGraph.edges(), newGraph.edge(newGraph.edges()[0]));
+            _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('newGraph edges ', newGraph.edges(), newGraph.edge(newGraph.edges()[0]));
           } else {
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Skipping copy of edge ', edge.v, '-->', edge.w, ' rootId: ', rootId, ' clusterId:', clusterId);
+            _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Skipping copy of edge ', edge.v, '-->', edge.w, ' rootId: ', rootId, ' clusterId:', clusterId);
           }
         } catch (e) {
-          _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error(e);
+          _logger__WEBPACK_IMPORTED_MODULE_0__["log"].error(e);
         }
       });
     }
 
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Removing node', node);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Removing node', node);
     graph.removeNode(node);
   });
 };
@@ -50792,16 +50791,16 @@ var extractDecendants = function extractDecendants(id, graph) {
 
 var validate = function validate(graph) {
   var edges = graph.edges();
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Edges: ', edges);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('Edges: ', edges);
 
   for (var i = 0; i < edges.length; i++) {
     if (graph.children(edges[i].v).length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('The node ', edges[i].v, ' is part of and edge even though it has children');
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('The node ', edges[i].v, ' is part of and edge even though it has children');
       return false;
     }
 
     if (graph.children(edges[i].w).length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('The node ', edges[i].w, ' is part of and edge even though it has children');
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('The node ', edges[i].w, ' is part of and edge even though it has children');
       return false;
     }
   }
@@ -50816,14 +50815,14 @@ var validate = function validate(graph) {
 
 var findNonClusterChild = function findNonClusterChild(id, graph) {
   // const node = graph.node(id);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching', id); // const children = graph.children(id).reverse();
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('Searching', id); // const children = graph.children(id).reverse();
 
   var children = graph.children(id); //.reverse();
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching children of id ', id, children);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('Searching children of id ', id, children);
 
   if (children.length < 1) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('This is a valid node', id);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('This is a valid node', id);
     return id;
   }
 
@@ -50831,7 +50830,7 @@ var findNonClusterChild = function findNonClusterChild(id, graph) {
     var _id = findNonClusterChild(children[i], graph);
 
     if (_id) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Found replacement for', id, ' => ', _id);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('Found replacement for', id, ' => ', _id);
       return _id;
     }
   }
@@ -50857,10 +50856,10 @@ var getAnchorId = function getAnchorId(id) {
 
 var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
   if (!graph || depth > 10) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Opting out, no graph ');
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Opting out, no graph ');
     return;
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Opting in, graph ');
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Opting in, graph ');
   } // Go through the nodes and for each cluster found, save a replacment node, this can be used when
   // faking a link to a cluster
 
@@ -50869,7 +50868,7 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
     var children = graph.children(id);
 
     if (children.length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Cluster identified', id, ' Replacement id in edges: ', findNonClusterChild(id, graph));
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Cluster identified', id, ' Replacement id in edges: ', findNonClusterChild(id, graph));
       decendants[id] = extractDecendants(id, graph);
       clusterDb[id] = {
         id: findNonClusterChild(id, graph),
@@ -50883,7 +50882,7 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
     var edges = graph.edges();
 
     if (children.length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Cluster identified', id, decendants);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Cluster identified', id, decendants);
       edges.forEach(function (edge) {
         // log.debug('Edge, decendants: ', edge, decendants[id]);
         // Check if any edge leaves the cluster (not the actual cluster, thats a link from the box)
@@ -50894,41 +50893,41 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
           var d2 = isDecendant(edge.w, id); // d1 xor d2 - if either d1 is true and d2 is false or the other way around
 
           if (d1 ^ d2) {
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Edge: ', edge, ' leaves cluster ', id);
-            _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Decendants of XXX ', id, ': ', decendants[id]);
+            _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Edge: ', edge, ' leaves cluster ', id);
+            _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Decendants of XXX ', id, ': ', decendants[id]);
             clusterDb[id].externalConnections = true;
           }
         }
       });
     } else {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Not a cluster ', id, decendants);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Not a cluster ', id, decendants);
     }
   }); // For clusters with incoming and/or outgoing edges translate those edges to a real node
   // in the cluster inorder to fake the edge
 
   graph.edges().forEach(function (e) {
     var edge = graph.edge(e);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
     var v = e.v;
     var w = e.w; // Check if link is either from or to a cluster
 
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fix XXX', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], ' --- ', clusterDb[e.w]);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Fix XXX', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], ' --- ', clusterDb[e.w]);
 
     if (clusterDb[e.v] || clusterDb[e.w]) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) edge.fromCluster = e.v;
       if (w !== e.w) edge.toCluster = e.w;
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fix Replacing with XXX', v, w, e.name);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Fix Replacing with XXX', v, w, e.name);
       graph.setEdge(v, w, edge, e.name);
     }
   });
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Adjusted Graph', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Adjusted Graph', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
   extractor(graph, 0);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace(clusterDb); // Remove references to extracted cluster
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace(clusterDb); // Remove references to extracted cluster
   // graph.edges().forEach(edge => {
   //   if (isDecendant(edge.v, clusterId) || isDecendant(edge.w, clusterId)) {
   //     graph.removeEdge(edge);
@@ -50936,10 +50935,10 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
   // });
 };
 var extractor = function extractor(graph, depth) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('extractor - ', depth, graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), graph.children('D'));
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('extractor - ', depth, graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), graph.children('D'));
 
   if (depth > 10) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error('Bailing out');
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].error('Bailing out');
     return;
   } // For clusters without incoming and/or outgoing edges, create a new cluster-node
   // containing the nodes and edges in the custer in a new graph
@@ -50956,25 +50955,25 @@ var extractor = function extractor(graph, depth) {
   }
 
   if (!hasChildren) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Done, no node has children', graph.nodes());
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Done, no node has children', graph.nodes());
     return;
   } // const clusters = Object.keys(clusterDb);
   // clusters.forEach(clusterId => {
 
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Nodes = ', nodes, depth);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Nodes = ', nodes, depth);
 
   for (var _i = 0; _i < nodes.length; _i++) {
     var _node = nodes[_i];
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Extracting node', _node, clusterDb, clusterDb[_node] && !clusterDb[_node].externalConnections, !graph.parent(_node), graph.node(_node), graph.children('D'), ' Depth ', depth); // Note that the node might have been removed after the Object.keys call so better check
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Extracting node', _node, clusterDb, clusterDb[_node] && !clusterDb[_node].externalConnections, !graph.parent(_node), graph.node(_node), graph.children('D'), ' Depth ', depth); // Note that the node might have been removed after the Object.keys call so better check
     // that it still is in the game
 
     if (!clusterDb[_node]) {
       // Skip if the node is not a cluster
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Not a cluster', _node, depth); // break;
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Not a cluster', _node, depth); // break;
     } else if (!clusterDb[_node].externalConnections && // !graph.parent(node) &&
     graph.children(_node) && graph.children(_node).length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Cluster without external connections, without a parent and with children', _node, depth);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Cluster without external connections, without a parent and with children', _node, depth);
       var graphSettings = graph.graph();
       var clusterGraph = new graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.Graph({
         multigraph: true,
@@ -50989,7 +50988,7 @@ var extractor = function extractor(graph, depth) {
       }).setDefaultEdgeLabel(function () {
         return {};
       });
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Old graph before copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Old graph before copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
       copy(_node, graph, clusterGraph, _node);
       graph.setNode(_node, {
         clusterNode: true,
@@ -50998,21 +50997,21 @@ var extractor = function extractor(graph, depth) {
         labelText: clusterDb[_node].labelText,
         graph: clusterGraph
       });
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('New graph after copy node: (', _node, ')', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(clusterGraph));
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Old graph after copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('New graph after copy node: (', _node, ')', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(clusterGraph));
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Old graph after copy', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
     } else {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Cluster ** ', _node, ' **not meeting the criteria !externalConnections:', !clusterDb[_node].externalConnections, ' no parent: ', !graph.parent(_node), ' children ', graph.children(_node) && graph.children(_node).length > 0, graph.children('D'), depth);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(clusterDb);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Cluster ** ', _node, ' **not meeting the criteria !externalConnections:', !clusterDb[_node].externalConnections, ' no parent: ', !graph.parent(_node), ' children ', graph.children(_node) && graph.children(_node).length > 0, graph.children('D'), depth);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug(clusterDb);
     }
   }
 
   nodes = graph.nodes();
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('New list of nodes', nodes);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('New list of nodes', nodes);
 
   for (var _i2 = 0; _i2 < nodes.length; _i2++) {
     var _node2 = nodes[_i2];
     var data = graph.node(_node2);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn(' Now next level', _node2, data);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn(' Now next level', _node2, data);
 
     if (data.clusterNode) {
       extractor(data.graph, depth + 1);
@@ -51089,12 +51088,13 @@ var question = function question(parent, node) {
     x: 0,
     y: -s / 2
   }];
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Question main (Circle)');
   var questionElem = Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["insertPolygonShape"])(shapeSvg, s, s, points);
   questionElem.attr('style', node.style);
   Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, questionElem);
 
   node.intersect = function (point) {
-    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].warn('Intersect called');
+    _logger__WEBPACK_IMPORTED_MODULE_1__["log"].warn('Intersect called');
     return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, points, point);
   };
 
@@ -51372,7 +51372,7 @@ var rect = function rect(parent, node) {
       bbox = _labelHelper10.bbox,
       halfPadding = _labelHelper10.halfPadding;
 
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Classes = ', node.classes); // add the rect
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].trace('Classes = ', node.classes); // add the rect
 
   var rect = shapeSvg.insert('rect', ':first-child');
   rect.attr('class', 'basic label-container').attr('style', node.style).attr('rx', node.rx).attr('ry', node.ry).attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
@@ -51403,7 +51403,7 @@ var rectWithTitle = function rectWithTitle(parent, node) {
   var innerLine = shapeSvg.insert('line');
   var label = shapeSvg.insert('g').attr('class', 'label');
   var text2 = node.labelText.flat();
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Label text', text2[0]);
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Label text', text2[0]);
   var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(text2[0], node.labelStyle, true, true));
   var bbox;
 
@@ -51415,7 +51415,7 @@ var rectWithTitle = function rectWithTitle(parent, node) {
     dv.attr('height', bbox.height);
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Text 2', text2);
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Text 2', text2);
   var textRows = text2.slice(1, text2.length);
   var titleBox = text.getBBox();
   var descr = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(textRows.join('<br/>'), node.labelStyle, true, true));
@@ -51431,7 +51431,7 @@ var rectWithTitle = function rectWithTitle(parent, node) {
 
     _dv.attr('height', bbox.height);
   } // bbox = label.getBBox();
-  // logger.info(descr);
+  // log.info(descr);
 
 
   var halfPadding = node.padding / 2;
@@ -51482,11 +51482,11 @@ var circle = function circle(parent, node) {
   var circle = shapeSvg.insert('circle', ':first-child'); // center the circle around its coordinate
 
   circle.attr('style', node.style).attr('rx', node.rx).attr('ry', node.ry).attr('r', bbox.width / 2 + halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Circle main');
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Circle main');
   Object(_shapes_util__WEBPACK_IMPORTED_MODULE_2__["updateNodeBounds"])(node, circle);
 
   node.intersect = function (point) {
-    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
+    _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
     return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].circle(node, bbox.width / 2 + halfPadding, point);
   };
 
@@ -51749,7 +51749,7 @@ var class_box = function class_box(parent, node) {
   //   dv.attr('height', bbox.height);
   // }
   // bbox = labelContainer.getBBox();
-  // logger.info('Text 2', text2);
+  // log.info('Text 2', text2);
   // const textRows = text2.slice(1, text2.length);
   // let titleBox = text.getBBox();
   // const descr = label
@@ -51763,7 +51763,7 @@ var class_box = function class_box(parent, node) {
   //   dv.attr('height', bbox.height);
   // }
   // // bbox = label.getBBox();
-  // // logger.info(descr);
+  // // log.info(descr);
   // select(descr).attr(
   //   'transform',
   //   'translate( ' +
@@ -51864,7 +51864,7 @@ var clear = function clear() {
 };
 var positionNode = function positionNode(node) {
   var el = nodeElems[node.id];
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].trace('Transforming node', node, 'translate(' + (node.x - node.width / 2 - 5) + ', ' + (node.y - node.height / 2 - 5) + ')');
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].trace('Transforming node', node, 'translate(' + (node.x - node.width / 2 - 5) + ', ' + (node.y - node.height / 2 - 5) + ')');
   var padding = 8;
 
   if (node.clusterNode) {
@@ -51899,7 +51899,7 @@ var note = function note(parent, node) {
       bbox = _labelHelper.bbox,
       halfPadding = _labelHelper.halfPadding;
 
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].info('Classes = ', node.classes); // add the rect
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Classes = ', node.classes); // add the rect
 
   var rect = shapeSvg.insert('rect', ':first-child');
   rect.attr('rx', node.rx).attr('ry', node.ry).attr('x', -bbox.width / 2 - halfPadding).attr('y', -bbox.height / 2 - halfPadding).attr('width', bbox.width + node.padding).attr('height', bbox.height + node.padding);
@@ -53074,7 +53074,7 @@ var getRelations = function getRelations() {
   return relations;
 };
 var addRelation = function addRelation(relation) {
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Adding relation: ' + JSON.stringify(relation));
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug('Adding relation: ' + JSON.stringify(relation));
   addClass(relation.id1);
   addClass(relation.id2);
   relation.id1 = splitClassNameAndType(relation.id1).className;
@@ -53389,8 +53389,8 @@ var conf = {
 var addClasses = function addClasses(classes, g) {
   // const svg = select(`[id="${svgId}"]`);
   var keys = Object.keys(classes);
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('keys:', keys);
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(classes); // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('keys:', keys);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info(classes); // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
 
   keys.forEach(function (id) {
     var vertex = classes[id];
@@ -53469,7 +53469,7 @@ var addClasses = function addClasses(classes, g) {
       type: vertex.type,
       padding: Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.padding
     });
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('setNode', {
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('setNode', {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
@@ -53513,7 +53513,7 @@ var addRelations = function addRelations(relations, g) {
       edgeData.arrowhead = 'normal';
     }
 
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(edgeData, edge); //Set edge extra labels
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info(edgeData, edge); //Set edge extra labels
     //edgeData.startLabelLeft = edge.relationTitle1;
 
     edgeData.startLabelRight = edge.relationTitle1 === 'none' ? '' : edge.relationTitle1;
@@ -53611,7 +53611,7 @@ var drawOld = function drawOld(text, id) {
   idCache = {};
   _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].yy.clear();
   _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].parse(text);
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Rendering diagram ' + text); // Fetch the default direction, use TD if none was found
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('Rendering diagram ' + text); // Fetch the default direction, use TD if none was found
 
   var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id='".concat(id, "']")); // insertMarkers(diagram);
   // Layout graph, Create a new directed graph
@@ -53628,8 +53628,8 @@ var drawOld = function drawOld(text, id) {
     return {};
   });
   var classes = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getClasses();
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('classes:');
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(classes);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('classes:');
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info(classes);
   var keys = Object.keys(classes);
 
   for (var i = 0; i < keys.length; i++) {
@@ -53640,13 +53640,13 @@ var drawOld = function drawOld(text, id) {
     // our nodes.
 
     g.setNode(node.id, node);
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Org height: ' + node.height);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('Org height: ' + node.height);
   }
 
   var relations = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getRelations();
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('relations:', relations);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('relations:', relations);
   relations.forEach(function (relation) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation));
     g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {
       relation: relation
     }, relation.title || 'DEFAULT');
@@ -53654,13 +53654,13 @@ var drawOld = function drawOld(text, id) {
   dagre__WEBPACK_IMPORTED_MODULE_1___default.a.layout(g);
   g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + Object(_classDb__WEBPACK_IMPORTED_MODULE_4__["lookUpDomId"])(v)).attr('transform', 'translate(' + (g.node(v).x - g.node(v).width / 2) + ',' + (g.node(v).y - g.node(v).height / 2) + ' )');
     }
   });
   g.edges().forEach(function (e) {
     if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
       _svgDraw__WEBPACK_IMPORTED_MODULE_6__["default"].drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
     }
   });
@@ -53670,24 +53670,24 @@ var drawOld = function drawOld(text, id) {
   Object(_utils__WEBPACK_IMPORTED_MODULE_9__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Ensure the viewBox includes the whole svgBounds area with extra space for padding
 
   var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("viewBox ".concat(vBox));
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug("viewBox ".concat(vBox));
   diagram.attr('viewBox', vBox);
 };
 var draw = function draw(text, id) {
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Drawing class');
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('Drawing class');
   _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].clear(); // const parser = classDb.parser;
   // parser.yy = classDb;
   // Parse the graph definition
   // try {
 
   _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].parse(text); // } catch (err) {
-  // logger.debug('Parsing failed');
+  // log.debug('Parsing failed');
   // }
   // Fetch the default direction, use TD if none was found
 
   var dir = 'TD';
   var conf = Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart;
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('config:', conf);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('config:', conf);
   var nodeSpacing = conf.nodeSpacing || 50;
   var rankSpacing = conf.rankSpacing || 50; // Create the input mermaid.graph
 
@@ -53704,17 +53704,17 @@ var draw = function draw(text, id) {
     return {};
   }); // let subG;
   // const subGraphs = flowDb.getSubGraphs();
-  // logger.info('Subgraphs - ', subGraphs);
+  // log.info('Subgraphs - ', subGraphs);
   // for (let i = subGraphs.length - 1; i >= 0; i--) {
   //   subG = subGraphs[i];
-  //   logger.info('Subgraph - ', subG);
+  //   log.info('Subgraph - ', subG);
   //   flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
   // }
   // Fetch the verices/nodes and edges/links from the parsed graph definition
 
   var classes = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getClasses();
   var relations = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getRelations();
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info(relations); // let i = 0;
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info(relations); // let i = 0;
   // for (i = subGraphs.length - 1; i >= 0; i--) {
   //   subG = subGraphs[i];
   //   selectAll('cluster').append('text');
@@ -53740,7 +53740,7 @@ var draw = function draw(text, id) {
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("new ViewBox 0 0 ".concat(width, " ").concat(height), "translate(".concat(padding - g._label.marginx, ", ").concat(padding - g._label.marginy, ")"));
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug("new ViewBox 0 0 ".concat(width, " ").concat(height), "translate(".concat(padding - g._label.marginx, ", ").concat(padding - g._label.marginy, ")"));
   Object(_utils__WEBPACK_IMPORTED_MODULE_9__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
   svg.attr('viewBox', "0 0 ".concat(width, " ").concat(height));
   svg.select('g').attr('transform', "translate(".concat(padding - g._label.marginx, ", ").concat(padding - svgBounds.y, ")")); // Index nodes
@@ -53910,7 +53910,7 @@ var draw = function draw(text, id) {
   idCache = {};
   _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].yy.clear();
   _parser_classDiagram__WEBPACK_IMPORTED_MODULE_5__["parser"].parse(text);
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Rendering diagram ' + text); // Fetch the default direction, use TD if none was found
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('Rendering diagram ' + text); // Fetch the default direction, use TD if none was found
 
   var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id='".concat(id, "']"));
   diagram.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
@@ -53938,12 +53938,12 @@ var draw = function draw(text, id) {
     // our nodes.
 
     g.setNode(node.id, node);
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Org height: ' + node.height);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('Org height: ' + node.height);
   }
 
   var relations = _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getRelations();
   relations.forEach(function (relation) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation));
     g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {
       relation: relation
     }, relation.title || 'DEFAULT');
@@ -53951,13 +53951,13 @@ var draw = function draw(text, id) {
   dagre__WEBPACK_IMPORTED_MODULE_1___default.a.layout(g);
   g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + Object(_classDb__WEBPACK_IMPORTED_MODULE_4__["lookUpDomId"])(v)).attr('transform', 'translate(' + (g.node(v).x - g.node(v).width / 2) + ',' + (g.node(v).y - g.node(v).height / 2) + ' )');
     }
   });
   g.edges().forEach(function (e) {
     if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
       _svgDraw__WEBPACK_IMPORTED_MODULE_6__["default"].drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
     }
   });
@@ -53967,7 +53967,7 @@ var draw = function draw(text, id) {
   Object(_utils__WEBPACK_IMPORTED_MODULE_7__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Ensure the viewBox includes the whole svgBounds area with extra space for padding
 
   var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("viewBox ".concat(vBox));
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug("viewBox ".concat(vBox));
   diagram.attr('viewBox', vBox);
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -54951,8 +54951,8 @@ var drawEdge = function drawEdge(elem, path, relation, conf) {
   if (l % 2 !== 0 && l > 1) {
     var cardinality_1_point = _utils__WEBPACK_IMPORTED_MODULE_2__["default"].calcCardinalityPosition(relation.relation.type1 !== 'none', path.points, path.points[0]);
     var cardinality_2_point = _utils__WEBPACK_IMPORTED_MODULE_2__["default"].calcCardinalityPosition(relation.relation.type2 !== 'none', path.points, path.points[l - 1]);
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('cardinality_1_point ' + JSON.stringify(cardinality_1_point));
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('cardinality_2_point ' + JSON.stringify(cardinality_2_point));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('cardinality_1_point ' + JSON.stringify(cardinality_1_point));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('cardinality_2_point ' + JSON.stringify(cardinality_2_point));
     p1_card_x = cardinality_1_point.x;
     p1_card_y = cardinality_1_point.y;
     p2_card_x = cardinality_2_point.x;
@@ -54967,7 +54967,7 @@ var drawEdge = function drawEdge(elem, path, relation, conf) {
     g.insert('rect', ':first-child').attr('class', 'box').attr('x', bounds.x - conf.padding / 2).attr('y', bounds.y - conf.padding / 2).attr('width', bounds.width + conf.padding).attr('height', bounds.height + conf.padding);
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Rendering relation ' + JSON.stringify(relation));
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('Rendering relation ' + JSON.stringify(relation));
 
   if (typeof relation.relationTitle1 !== 'undefined' && relation.relationTitle1 !== 'none') {
     var _g = elem.append('g').attr('class', 'cardinality');
@@ -54984,7 +54984,7 @@ var drawEdge = function drawEdge(elem, path, relation, conf) {
   edgeCount++;
 };
 var drawClass = function drawClass(elem, classDef, conf) {
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('Rendering class ' + classDef);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('Rendering class ' + classDef);
   var id = classDef.id;
   var classInfo = {
     id: id,
@@ -55351,7 +55351,7 @@ var addEntity = function addEntity(name) {
     entities[name] = {
       attributes: []
     };
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Added new entity :', name);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Added new entity :', name);
   }
 
   return entities[name];
@@ -55369,7 +55369,7 @@ var addAttributes = function addAttributes(entityName, attribs) {
 
   for (i = attribs.length - 1; i >= 0; i--) {
     entity.attributes.push(attribs[i]);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Added attribute ', attribs[i].attributeName);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Added attribute ', attribs[i].attributeName);
   }
 };
 /**
@@ -55389,7 +55389,7 @@ var addRelationship = function addRelationship(entA, rolA, entB, rSpec) {
     relSpec: rSpec
   };
   relationships.push(rel);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Added new relationship :', rel);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Added new relationship :', rel);
 };
 
 var getRelationships = function getRelationships() {
@@ -55773,7 +55773,7 @@ var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g
 
 
 var draw = function draw(text, id) {
-  _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info('Drawing ER diagram');
+  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Drawing ER diagram');
   _erDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
   var parser = _parser_erDiagram__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
   parser.yy = _erDb__WEBPACK_IMPORTED_MODULE_2__["default"]; // Parse the text to populate erDb
@@ -55781,7 +55781,7 @@ var draw = function draw(text, id) {
   try {
     parser.parse(text);
   } catch (err) {
-    _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].debug('Parsing failed');
+    _logger__WEBPACK_IMPORTED_MODULE_6__["log"].debug('Parsing failed');
   } // Get a reference to the svg node that contains the text
 
 
@@ -57196,7 +57196,7 @@ var addSingleLink = function addSingleLink(_start, _end, type, linktext) {
   var start = _start;
   var end = _end; // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
   // if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
-  // logger.info('Got edge...', start, end);
+  // log.info('Got edge...', start, end);
 
   var edge = {
     start: start,
@@ -57552,7 +57552,7 @@ var addSubGraph = function addSubGraph(_id, list, _title) {
   nodeList = uniq(nodeList.concat.apply(nodeList, list));
 
   if (version === 'gen-1') {
-    _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].warn('LOOKING UP');
+    _logger__WEBPACK_IMPORTED_MODULE_5__["log"].warn('LOOKING UP');
 
     for (var i = 0; i < nodeList.length; i++) {
       nodeList[i] = lookUpDomId(nodeList[i]);
@@ -57570,7 +57570,7 @@ var addSubGraph = function addSubGraph(_id, list, _title) {
     title: title.trim(),
     classes: []
   };
-  _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].info('Adding', subGraph.id, subGraph.nodes);
+  _logger__WEBPACK_IMPORTED_MODULE_5__["log"].info('Adding', subGraph.id, subGraph.nodes);
   /**
    * Deletes an id from all subgraphs
    */
@@ -58079,7 +58079,7 @@ var addVertices = function addVertices(vert, g, svgId) {
       type: vertex.type,
       padding: Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.padding
     });
-    _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('setNode', {
+    _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('setNode', {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
@@ -58243,7 +58243,7 @@ var addEdges = function addEdges(edges, g) {
  */
 
 var getClasses = function getClasses(text) {
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Extracting classes');
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('Extracting classes');
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
   var parser = _parser_flow__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
   parser.yy = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"];
@@ -58264,7 +58264,7 @@ var getClasses = function getClasses(text) {
  */
 
 var draw = function draw(text, id) {
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Drawing flowchart');
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('Drawing flowchart');
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].setGen('gen-2');
   var parser = _parser_flow__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
@@ -58272,7 +58272,7 @@ var draw = function draw(text, id) {
   // try {
 
   parser.parse(text); // } catch (err) {
-  // logger.debug('Parsing failed');
+  // log.debug('Parsing failed');
   // }
   // Fetch the default direction, use TD if none was found
 
@@ -58300,18 +58300,18 @@ var draw = function draw(text, id) {
   });
   var subG;
   var subGraphs = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getSubGraphs();
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Subgraphs - ', subGraphs);
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('Subgraphs - ', subGraphs);
 
   for (var _i = subGraphs.length - 1; _i >= 0; _i--) {
     subG = subGraphs[_i];
-    _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Subgraph - ', subG);
+    _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('Subgraph - ', subG);
     _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
   } // Fetch the verices/nodes and edges/links from the parsed graph definition
 
 
   var vert = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getVertices();
   var edges = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getEdges();
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info(edges);
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info(edges);
   var i = 0;
 
   for (i = subGraphs.length - 1; i >= 0; i--) {
@@ -58320,7 +58320,7 @@ var draw = function draw(text, id) {
     Object(d3__WEBPACK_IMPORTED_MODULE_1__["selectAll"])('cluster').append('text');
 
     for (var j = 0; j < subG.nodes.length; j++) {
-      _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Setting up subgraphs', subG.nodes[j], subG.id);
+      _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('Setting up subgraphs', subG.nodes[j], subG.id);
       g.setParent(subG.nodes[j], subG.id);
     }
   }
@@ -58339,7 +58339,7 @@ var draw = function draw(text, id) {
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].debug("new ViewBox 0 0 ".concat(width, " ").concat(height), "translate(".concat(padding - g._label.marginx, ", ").concat(padding - g._label.marginy, ")"));
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].debug("new ViewBox 0 0 ".concat(width, " ").concat(height), "translate(".concat(padding - g._label.marginx, ", ").concat(padding - g._label.marginy, ")"));
   Object(_utils__WEBPACK_IMPORTED_MODULE_9__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
   svg.attr('viewBox', "0 0 ".concat(width, " ").concat(height));
   svg.select('g').attr('transform', "translate(".concat(padding - g._label.marginx, ", ").concat(padding - svgBounds.y, ")")); // Index nodes
@@ -58590,7 +58590,7 @@ var addVertices = function addVertices(vert, g, svgId) {
     } // Add the node
 
 
-    _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].warn('Adding node', vertex.id, vertex.domId);
+    _logger__WEBPACK_IMPORTED_MODULE_7__["log"].warn('Adding node', vertex.id, vertex.domId);
     g.setNode(_flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(vertex.id), {
       labelType: 'svg',
       labelStyle: styles.labelStyle,
@@ -58716,7 +58716,7 @@ var addEdges = function addEdges(edges, g) {
  */
 
 var getClasses = function getClasses(text) {
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Extracting classes');
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('Extracting classes');
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
 
   try {
@@ -58736,7 +58736,7 @@ var getClasses = function getClasses(text) {
  */
 
 var draw = function draw(text, id) {
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].info('Drawing flowchart');
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('Drawing flowchart');
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].setGen('gen-1');
   var parser = _parser_flow__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
@@ -58744,7 +58744,7 @@ var draw = function draw(text, id) {
   // try {
 
   parser.parse(text); // } catch (err) {
-  // logger.debug('Parsing failed');
+  // log.debug('Parsing failed');
   // }
   // Fetch the default direction, use TD if none was found
 
@@ -58780,7 +58780,7 @@ var draw = function draw(text, id) {
 
 
   var vert = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getVertices();
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].warn('Get vertices', vert);
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].warn('Get vertices', vert);
   var edges = _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].getEdges();
   var i = 0;
 
@@ -58789,7 +58789,7 @@ var draw = function draw(text, id) {
     Object(d3__WEBPACK_IMPORTED_MODULE_1__["selectAll"])('cluster').append('text');
 
     for (var j = 0; j < subG.nodes.length; j++) {
-      _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].warn('Setting subgraph', subG.nodes[j], _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.nodes[j]), _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.id));
+      _logger__WEBPACK_IMPORTED_MODULE_7__["log"].warn('Setting subgraph', subG.nodes[j], _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.nodes[j]), _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.id));
       g.setParent(_flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.nodes[j]), _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].lookUpDomId(subG.id));
     }
   }
@@ -58817,7 +58817,7 @@ var draw = function draw(text, id) {
 
   var svg = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])("[id=\"".concat(id, "\"]"));
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].warn(g); // Run the renderer. This is what draws the final graph.
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].warn(g); // Run the renderer. This is what draws the final graph.
 
   var element = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#' + id + ' g');
   render(element, g);
@@ -58831,7 +58831,7 @@ var draw = function draw(text, id) {
   Object(_utils__WEBPACK_IMPORTED_MODULE_9__["configureSvgSize"])(svg, height, width, conf.useMaxWidth); // Ensure the viewBox includes the whole svgBounds area with extra space for padding
 
   var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
-  _logger__WEBPACK_IMPORTED_MODULE_7__["logger"].debug("viewBox ".concat(vBox));
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].debug("viewBox ".concat(vBox));
   svg.attr('viewBox', vBox); // Index nodes
 
   _flowDb__WEBPACK_IMPORTED_MODULE_2__["default"].indexNodes('subGraph' + i); // reposition labels
@@ -60181,8 +60181,8 @@ var getStartDate = function getStartDate(prevTime, dateFormat, str) {
   if (mDate.isValid()) {
     return mDate.toDate();
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Invalid date:' + str);
-    _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('With date format:' + dateFormat.trim());
+    _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug('Invalid date:' + str);
+    _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug('With date format:' + dateFormat.trim());
   } // Default date - now
 
 
@@ -61884,21 +61884,21 @@ function getId() {
 }
 
 function isfastforwardable(currentCommit, otherCommit) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
 
   while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit) {
     // only if other branch has more commits
     if (otherCommit.parent == null) break;
 
     if (Array.isArray(otherCommit.parent)) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('In merge commit:', otherCommit.parent);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('In merge commit:', otherCommit.parent);
       return isfastforwardable(currentCommit, commits[otherCommit.parent[0]]) || isfastforwardable(currentCommit, commits[otherCommit.parent[1]]);
     } else {
       otherCommit = commits[otherCommit.parent];
     }
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(currentCommit.id, otherCommit.id);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug(currentCommit.id, otherCommit.id);
   return currentCommit.id === otherCommit.id;
 }
 
@@ -61928,14 +61928,14 @@ var setDirection = function setDirection(dir) {
 };
 var options = {};
 var setOptions = function setOptions(rawOptString) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('options str', rawOptString);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('options str', rawOptString);
   rawOptString = rawOptString && rawOptString.trim();
   rawOptString = rawOptString || '{}';
 
   try {
     options = JSON.parse(rawOptString);
   } catch (e) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error('error while parsing gitGraph options', e.message);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].error('error while parsing gitGraph options', e.message);
   }
 };
 var getOptions = function getOptions() {
@@ -61951,18 +61951,18 @@ var commit = function commit(msg) {
   head = commit;
   commits[commit.id] = commit;
   branches[curBranch] = commit.id;
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('in pushCommit ' + commit.id);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('in pushCommit ' + commit.id);
 };
 var branch = function branch(name) {
   branches[name] = head != null ? head.id : null;
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('in createBranch');
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('in createBranch');
 };
 var merge = function merge(otherBranch) {
   var currentCommit = commits[branches[curBranch]];
   var otherCommit = commits[branches[otherBranch]];
 
   if (isReachableFrom(currentCommit, otherCommit)) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Already merged');
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Already merged');
     return;
   }
 
@@ -61982,21 +61982,21 @@ var merge = function merge(otherBranch) {
     branches[curBranch] = _commit.id;
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(branches);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('in mergeBranch');
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug(branches);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('in mergeBranch');
 };
 var checkout = function checkout(branch) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('in checkout');
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('in checkout');
   curBranch = branch;
   var id = branches[curBranch];
   head = commits[id];
 };
 var reset = function reset(commitRef) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('in reset', commitRef);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('in reset', commitRef);
   var ref = commitRef.split(':')[0];
   var parentCount = parseInt(commitRef.split(':')[1]);
   var commit = ref === 'HEAD' ? head : commits[branches[ref]];
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(commit, parentCount);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug(commit, parentCount);
 
   while (parentCount > 0) {
     commit = commits[commit.parent];
@@ -62004,7 +62004,7 @@ var reset = function reset(commitRef) {
 
     if (!commit) {
       var err = 'Critical error - unique parent commit not found during reset';
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error(err);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].error(err);
       throw err;
     }
   }
@@ -62042,7 +62042,7 @@ function prettyPrintCommitHistory(commitArr) {
     if (branches[_branch] === commit.id) label.push(_branch);
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(label.join(' '));
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug(label.join(' '));
 
   if (Array.isArray(commit.parent)) {
     var newCommit = commits[commit.parent[0]];
@@ -62062,7 +62062,7 @@ function prettyPrintCommitHistory(commitArr) {
 }
 
 var prettyPrint = function prettyPrint() {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(commits);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug(commits);
   var node = getCommitsArray()[0];
   prettyPrintCommitHistory([node]);
 };
@@ -62098,7 +62098,7 @@ var getCommitsArray = function getCommitsArray() {
     return commits[key];
   });
   commitArr.forEach(function (o) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug(o.id);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug(o.id);
   });
   commitArr.sort(function (a, b) {
     return b.seq - a.seq;
@@ -62214,7 +62214,7 @@ function getElementCoords(element, coords) {
 }
 
 function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('svgDrawLineForCommits: ', fromId, toId);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('svgDrawLineForCommits: ', fromId, toId);
   var fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'));
   var toBbox = getElementCoords(svg.select('#node-' + toId + ' circle'));
 
@@ -62317,7 +62317,7 @@ function renderCommitHistory(svg, commitid, branches, direction) {
   if (typeof commitid === 'string') {
     do {
       commit = allCommitsDict[commitid];
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('in renderCommitHistory', commit.id, commit.seq);
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('in renderCommitHistory', commit.id, commit.seq);
 
       if (svg.select('#node-' + commitid).size() > 0) {
         return;
@@ -62346,7 +62346,7 @@ function renderCommitHistory(svg, commitid, branches, direction) {
       }
 
       if (branch) {
-        _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('found branch ', branch.name);
+        _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('found branch ', branch.name);
         svg.select('#node-' + commit.id + ' p').append('xhtml:span').attr('class', 'branch-label').text(branch.name + ', ');
       }
 
@@ -62361,7 +62361,7 @@ function renderCommitHistory(svg, commitid, branches, direction) {
   }
 
   if (Array.isArray(commitid)) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('found merge commmit', commitid);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('found merge commmit', commitid);
     renderCommitHistory(svg, commitid[0], branches, direction);
     branchNum++;
     renderCommitHistory(svg, commitid[1], branches, direction);
@@ -62392,11 +62392,11 @@ var draw = function draw(txt, id, ver) {
     var parser = _parser_gitGraph__WEBPACK_IMPORTED_MODULE_2___default.a.parser;
     parser.yy = _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"];
     parser.yy.clear();
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('in gitgraph renderer', txt + '\n', 'id:', id, ver); // Parse the graph definition
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('in gitgraph renderer', txt + '\n', 'id:', id, ver); // Parse the graph definition
 
     parser.parse(txt + '\n');
     config = Object.assign(config, apiConfig, _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"].getOptions());
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('effective options', config);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('effective options', config);
     var direction = _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"].getDirection();
     allCommitsDict = _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"].getCommits();
     var branches = _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"].getBranchesAsObjArray();
@@ -62423,8 +62423,8 @@ var draw = function draw(txt, id, ver) {
       return (branches.length + 1) * config.branchOffset;
     });
   } catch (e) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error('Error while rendering gitgraph');
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(e.message);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error('Error while rendering gitgraph');
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error(e.message);
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -63179,7 +63179,7 @@ __webpack_require__.r(__webpack_exports__);
 var message = '';
 var info = false;
 var setMessage = function setMessage(txt) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Setting message to: ' + txt);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Setting message to: ' + txt);
   message = txt;
 };
 var getMessage = function getMessage() {
@@ -63244,10 +63244,10 @@ var draw = function draw(txt, id, ver) {
   try {
     var parser = _parser_info__WEBPACK_IMPORTED_MODULE_2___default.a.parser;
     parser.yy = _infoDb__WEBPACK_IMPORTED_MODULE_1__["default"];
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Renering info diagram\n' + txt); // Parse the graph definition
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Renering info diagram\n' + txt); // Parse the graph definition
 
     parser.parse(txt);
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Parsed info diagram'); // Fetch the default direction, use TD if none was found
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Parsed info diagram'); // Fetch the default direction, use TD if none was found
 
     var svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + id);
     var g = svg.append('g');
@@ -63256,8 +63256,8 @@ var draw = function draw(txt, id, ver) {
     svg.attr('height', 100);
     svg.attr('width', 400); // svg.attr('viewBox', '0 0 300 150');
   } catch (e) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error('Error while rendering info diagram');
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(e.message);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error('Error while rendering info diagram');
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error(e.message);
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -64612,7 +64612,7 @@ var parseDirective = function parseDirective(statement, context, type) {
 var addSection = function addSection(id, value) {
   if (typeof sections[id] === 'undefined') {
     sections[id] = value;
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Added new section :', id);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('Added new section :', id);
   }
 };
 
@@ -64705,11 +64705,11 @@ var draw = function draw(txt, id) {
   try {
     var parser = _parser_pie__WEBPACK_IMPORTED_MODULE_2___default.a.parser;
     parser.yy = _pieDb__WEBPACK_IMPORTED_MODULE_1__["default"];
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Rendering info diagram\n' + txt); // Parse the Pie Chart definition
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Rendering info diagram\n' + txt); // Parse the Pie Chart definition
 
     parser.yy.clear();
     parser.parse(txt);
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Parsed info diagram');
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Parsed info diagram');
     var elem = document.getElementById(id);
     width = elem.parentElement.offsetWidth;
 
@@ -64772,8 +64772,8 @@ var draw = function draw(txt, id) {
       return d;
     });
   } catch (e) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error('Error while rendering info diagram');
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(e);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error('Error while rendering info diagram');
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error(e);
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -65612,24 +65612,20 @@ case 40:return 53;
 break;
 case 41:return 54;
 break;
-case 42:return 55;
+case 42:return 57;
 break;
-case 43:return 56;
+case 43:return 46;
 break;
-case 44:return 57;
+case 44:return 47;
 break;
-case 45:return 46;
+case 45:return 5;
 break;
-case 46:return 47;
-break;
-case 47:return 5;
-break;
-case 48:return 'INVALID';
+case 46:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x|-\)|--\)))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?:-[\)])/i,/^(?:--[\)])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,12],"inclusive":false},"ALIAS":{"rules":[7,8,13,14],"inclusive":false},"LINE":{"rules":[7,8,22],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,12],"inclusive":false},"ALIAS":{"rules":[7,8,13,14],"inclusive":false},"LINE":{"rules":[7,8,22],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46],"inclusive":true}}
 });
 return lexer;
 })();
@@ -65845,7 +65841,7 @@ var parseMessage = function parseMessage(str) {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap: _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : undefined
   };
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('parseMessage:', message);
+  _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug('parseMessage:', message);
   return message;
 };
 var LINETYPE = {
@@ -66507,7 +66503,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
     var textDims = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(msg.message, textConf);
     var totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
     heightAdjust = postMargin + totalOffset;
-    _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("".concat(totalOffset, " - ").concat(msg.message));
+    _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug("".concat(totalOffset, " - ").concat(msg.message));
   }
 
   addLoopFn(msg);
@@ -66526,7 +66522,7 @@ var draw = function draw(text, id) {
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.setWrap(conf.wrap);
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].parse(text + '\n');
   bounds.init();
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("C:".concat(JSON.stringify(conf, null, 2)));
+  _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug("C:".concat(JSON.stringify(conf, null, 2)));
   var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")); // Fetch data from the parsing
 
   var actors = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getActors();
@@ -66660,7 +66656,7 @@ var draw = function draw(text, id) {
           drawMessage(diagram, msgModel);
           bounds.models.addMessage(msgModel);
         } catch (e) {
-          _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].error('error while drawing message', e);
+          _logger__WEBPACK_IMPORTED_MODULE_2__["log"].error('error while drawing message', e);
         }
 
     } // Increment sequence counter if msg.type is a line (and not another event like activation or note, etc)
@@ -66681,7 +66677,7 @@ var draw = function draw(text, id) {
       box = _bounds$getBounds.bounds; // Adjust line height of actor lines now that the height of the diagram is known
 
 
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('For line height fix Querying: #' + id + ' .actor-line');
+  _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug('For line height fix Querying: #' + id + ' .actor-line');
   var actorLines = Object(d3__WEBPACK_IMPORTED_MODULE_0__["selectAll"])('#' + id + ' .actor-line');
   actorLines.attr('y2', box.stopy);
   var height = box.stopy - box.starty + 2 * conf.diagramMarginY;
@@ -66699,7 +66695,7 @@ var draw = function draw(text, id) {
   Object(_utils__WEBPACK_IMPORTED_MODULE_7__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth);
   var extraVertForTitle = title ? 40 : 0;
   diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle));
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("models:", bounds.models);
+  _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug("models:", bounds.models);
 };
 /**
  * Retrieves the max message width of each actor, supports signals (messages, loops)
@@ -66772,7 +66768,7 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
       }
     }
   });
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
+  _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
 };
 /**
@@ -66857,7 +66853,7 @@ var buildNoteModel = function buildNoteModel(msg, actors) {
     noteModel.message = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].wrapLabel(msg.message, noteModel.width - 2 * conf.wrapPadding, noteFont(conf));
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("NM:[".concat(noteModel.startx, ",").concat(noteModel.stopx, ",").concat(noteModel.starty, ",").concat(noteModel.stopy, ":").concat(noteModel.width, ",").concat(noteModel.height, "=").concat(msg.message, "]"));
+  _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug("NM:[".concat(noteModel.startx, ",").concat(noteModel.stopx, ",").concat(noteModel.starty, ",").concat(noteModel.stopy, ":").concat(noteModel.width, ",").concat(noteModel.height, "=").concat(msg.message, "]"));
   return noteModel;
 };
 
@@ -67001,7 +66997,7 @@ var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
     }
   });
   bounds.activations = [];
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Loop type widths:', loops);
+  _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug('Loop type widths:', loops);
   return loops;
 };
 
@@ -68734,12 +68730,12 @@ var drawEdge = function drawEdge(elem, path, relation) {
       var boundstmp = title.node().getBBox();
       maxWidth = Math.max(maxWidth, boundstmp.width);
       minX = Math.min(minX, boundstmp.x);
-      _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info(boundstmp.x, x, y + titleHeight);
+      _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info(boundstmp.x, x, y + titleHeight);
 
       if (titleHeight === 0) {
         var titleBox = title.node().getBBox();
         titleHeight = titleBox.height;
-        _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info('Title height', titleHeight, y);
+        _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Title height', titleHeight, y);
       }
 
       titleRows.push(title);
@@ -68757,7 +68753,7 @@ var drawEdge = function drawEdge(elem, path, relation) {
 
     var bounds = label.node().getBBox();
     label.insert('rect', ':first-child').attr('class', 'box').attr('x', x - maxWidth / 2 - Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding / 2).attr('y', y - boxHeight / 2 - Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding / 2 - 3.5).attr('width', maxWidth + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding).attr('height', boxHeight + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().state.padding);
-    _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info(bounds); //label.attr('transform', '0 -' + (bounds.y / 2));
+    _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info(bounds); //label.attr('transform', '0 -' + (bounds.y / 2));
     // Debug points
     // path.points.forEach(point => {
     //   g.append('circle')
@@ -68821,7 +68817,7 @@ var parseDirective = function parseDirective(statement, context, type) {
 };
 
 var setRootDoc = function setRootDoc(o) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Setting root doc', o); // rootDoc = { id: 'root', doc: o };
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Setting root doc', o); // rootDoc = { id: 'root', doc: o };
 
   rootDoc = o;
 };
@@ -68906,9 +68902,9 @@ var extract = function extract(_doc) {
   // }
 
 
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info(doc);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info(doc);
   clear();
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Extract', doc);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Extract', doc);
   doc.forEach(function (item) {
     if (item.stmt === 'state') {
       addState(item.id, item.type, item.doc, item.description, item.note);
@@ -68964,7 +68960,7 @@ var addState = function addState(id, type, doc, descr, note) {
   }
 
   if (descr) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Adding state ', id, descr);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Adding state ', id, descr);
     if (typeof descr === 'string') addDescription(id, descr.trim());
 
     if (_typeof(descr) === 'object') {
@@ -68994,7 +68990,7 @@ var getStates = function getStates() {
   return currentDocument.states;
 };
 var logDocuments = function logDocuments() {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Documents = ', documents);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Documents = ', documents);
 };
 var getRelations = function getRelations() {
   return currentDocument.relations;
@@ -69149,7 +69145,7 @@ var nodeDb = {};
  */
 
 var getClasses = function getClasses(text) {
-  _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].trace('Extracting classes');
+  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].trace('Extracting classes');
   _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
   var parser = _parser_stateDiagram__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
   parser.yy = _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"]; // Parse the graph definition
@@ -69212,7 +69208,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 
 
     if (!nodeDb[node.id].type && node.doc) {
-      _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info('Setting cluser for ', node.id);
+      _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Setting cluser for ', node.id);
       nodeDb[node.id].type = 'group';
       nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
       nodeDb[node.id].classes = nodeDb[node.id].classes + ' ' + (altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster');
@@ -69295,13 +69291,13 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 
   if (parent) {
     if (parent.id !== 'root') {
-      _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info('Setting node ', node.id, ' to be child of its parent ', parent.id);
+      _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Setting node ', node.id, ' to be child of its parent ', parent.id);
       g.setParent(node.id, parent.id);
     }
   }
 
   if (node.doc) {
-    _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info('Adding nodes children ');
+    _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Adding nodes children ');
     setupDoc(g, node, node.doc, !altFlag);
   }
 };
@@ -69310,7 +69306,7 @@ var cnt = 0;
 
 var setupDoc = function setupDoc(g, parent, doc, altFlag) {
   cnt = 0;
-  _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].trace('items', doc);
+  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].trace('items', doc);
   doc.forEach(function (item) {
     if (item.stmt === 'state' || item.stmt === 'default') {
       setupNode(g, parent, item, altFlag);
@@ -69345,7 +69341,7 @@ var setupDoc = function setupDoc(g, parent, doc, altFlag) {
 
 
 var draw = function draw(text, id) {
-  _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info('Drawing state diagram (v2)', id);
+  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Drawing state diagram (v2)', id);
   _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].clear();
   nodeDb = {};
   var parser = _parser_stateDiagram__WEBPACK_IMPORTED_MODULE_3___default.a.parser;
@@ -69375,9 +69371,9 @@ var draw = function draw(text, id) {
   }).setDefaultEdgeLabel(function () {
     return {};
   });
-  _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
+  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
   _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].extract(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
-  _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].info(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
+  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
   setupNode(g, undefined, _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2(), true); // Set up an SVG group so that we can translate the final graph.
 
   var svg = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])("[id=\"".concat(id, "\"]")); // Run the renderer. This is what draws the final graph.
@@ -69394,7 +69390,7 @@ var draw = function draw(text, id) {
   Object(_utils__WEBPACK_IMPORTED_MODULE_7__["configureSvgSize"])(svg, height, width * 1.75, conf.useMaxWidth); // Ensure the viewBox includes the whole svgBounds area with extra space for padding
 
   var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
-  _logger__WEBPACK_IMPORTED_MODULE_6__["logger"].debug("viewBox ".concat(vBox));
+  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].debug("viewBox ".concat(vBox));
   svg.attr('viewBox', vBox); // Add label rects for non html labels
 
   if (!conf.htmlLabels) {
@@ -69480,7 +69476,7 @@ var draw = function draw(text, id) {
   conf = Object(_config__WEBPACK_IMPORTED_MODULE_8__["getConfig"])().state;
   _parser_stateDiagram__WEBPACK_IMPORTED_MODULE_6__["parser"].yy.clear();
   _parser_stateDiagram__WEBPACK_IMPORTED_MODULE_6__["parser"].parse(text);
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Rendering diagram ' + text); // Fetch the default direction, use TD if none was found
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Rendering diagram ' + text); // Fetch the default direction, use TD if none was found
 
   var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id='".concat(id, "']"));
   insertMarkers(diagram); // Layout graph, Create a new directed graph
@@ -69627,11 +69623,11 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
     }
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Count=', graph.nodeCount(), graph);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Count=', graph.nodeCount(), graph);
   var cnt = 0;
   relations.forEach(function (relation) {
     cnt++;
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Setting edge', relation);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Setting edge', relation);
     graph.setEdge(relation.id1, relation.id2, {
       relation: relation,
       width: getLabelWidth(relation.title),
@@ -69640,11 +69636,11 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
     }, 'id' + cnt);
   });
   dagre__WEBPACK_IMPORTED_MODULE_1___default.a.layout(graph);
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Graph after layout', graph.nodes());
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Graph after layout', graph.nodes());
   var svgElem = diagram.node();
   graph.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
       Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + svgElem.id + ' #' + v).attr('transform', 'translate(' + (graph.node(v).x - graph.node(v).width / 2) + ',' + (graph.node(v).y + (transformationLog[v] ? transformationLog[v].y : 0) - graph.node(v).height / 2) + ' )');
       Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + svgElem.id + ' #' + v).attr('data-x-shift', graph.node(v).x - graph.node(v).width / 2);
       var dividers = document.querySelectorAll('#' + svgElem.id + ' #' + v + ' .divider');
@@ -69666,13 +69662,13 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
         divider.setAttribute('x2', pWidth - pShift - 8);
       });
     } else {
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     }
   });
   var stateBox = svgElem.getBBox();
   graph.edges().forEach(function (e) {
     if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
       Object(_shapes__WEBPACK_IMPORTED_MODULE_7__["drawEdge"])(diagram, graph.edge(e), graph.edge(e).relation);
     }
   });
@@ -69685,7 +69681,7 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
   };
   stateInfo.width = stateBox.width + 2 * conf.padding;
   stateInfo.height = stateBox.height + 2 * conf.padding;
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Doc rendered', stateInfo, graph);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Doc rendered', stateInfo, graph);
   return stateInfo;
 };
 
@@ -71171,7 +71167,7 @@ var setConf = function setConf(cnf) {
 
 var draw = function draw(id, ver) {
   try {
-    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Renering svg for syntax error\n');
+    _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug('Renering svg for syntax error\n');
     var svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + id);
     var g = svg.append('g');
     g.append('path').attr('class', 'error-icon').attr('d', 'm411.313,123.313c6.25-6.25 6.25-16.375 0-22.625s-16.375-6.25-22.625,0l-32,32-9.375,9.375-20.688-20.688c-12.484-12.5-32.766-12.5-45.25,0l-16,16c-1.261,1.261-2.304,2.648-3.31,4.051-21.739-8.561-45.324-13.426-70.065-13.426-105.867,0-192,86.133-192,192s86.133,192 192,192 192-86.133 192-192c0-24.741-4.864-48.327-13.426-70.065 1.402-1.007 2.79-2.049 4.051-3.31l16-16c12.5-12.492 12.5-32.758 0-45.25l-20.688-20.688 9.375-9.375 32.001-31.999zm-219.313,100.687c-52.938,0-96,43.063-96,96 0,8.836-7.164,16-16,16s-16-7.164-16-16c0-70.578 57.422-128 128-128 8.836,0 16,7.164 16,16s-7.164,16-16,16z');
@@ -71188,8 +71184,8 @@ var draw = function draw(id, ver) {
     svg.attr('width', 400);
     svg.attr('viewBox', '768 0 512 512');
   } catch (e) {
-    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].error('Error while rendering info diagram');
-    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].error(e.message);
+    _logger__WEBPACK_IMPORTED_MODULE_1__["log"].error('Error while rendering info diagram');
+    _logger__WEBPACK_IMPORTED_MODULE_1__["log"].error(e.message);
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -71203,17 +71199,16 @@ var draw = function draw(id, ver) {
 /*!***********************!*\
   !*** ./src/logger.js ***!
   \***********************/
-/*! exports provided: LEVELS, logger, setLogLevel */
+/*! exports provided: LEVELS, log, setLogLevel */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LEVELS", function() { return LEVELS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logger", function() { return logger; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "log", function() { return log; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setLogLevel", function() { return setLogLevel; });
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment-mini */ "./node_modules/moment-mini/moment.min.js");
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment_mini__WEBPACK_IMPORTED_MODULE_0__);
- //
 
 var LEVELS = {
   debug: 1,
@@ -71222,7 +71217,7 @@ var LEVELS = {
   error: 4,
   fatal: 5
 };
-var logger = {
+var log = {
   debug: function debug() {},
   info: function info() {},
   warn: function warn() {},
@@ -71240,37 +71235,37 @@ var setLogLevel = function setLogLevel() {
     }
   }
 
-  logger.trace = function () {};
+  log.trace = function () {};
 
-  logger.debug = function () {};
+  log.debug = function () {};
 
-  logger.info = function () {};
+  log.info = function () {};
 
-  logger.warn = function () {};
+  log.warn = function () {};
 
-  logger.error = function () {};
+  log.error = function () {};
 
-  logger.fatal = function () {};
+  log.fatal = function () {};
 
   if (level <= LEVELS.fatal) {
-    logger.fatal = console.error ? console.error.bind(console, format('FATAL'), 'color: orange') : console.log.bind(console, '\x1b[35m', format('FATAL'));
+    log.fatal = console.error ? console.error.bind(console, format('FATAL'), 'color: orange') : console.log.bind(console, '\x1b[35m', format('FATAL'));
   }
 
   if (level <= LEVELS.error) {
-    logger.error = console.error ? console.error.bind(console, format('ERROR'), 'color: orange') : console.log.bind(console, '\x1b[31m', format('ERROR'));
+    log.error = console.error ? console.error.bind(console, format('ERROR'), 'color: orange') : console.log.bind(console, '\x1b[31m', format('ERROR'));
   }
 
   if (level <= LEVELS.warn) {
-    logger.warn = console.warn ? console.warn.bind(console, format('WARN'), 'color: orange') : console.log.bind(console, "\x1B[33m", format('WARN'));
+    log.warn = console.warn ? console.warn.bind(console, format('WARN'), 'color: orange') : console.log.bind(console, "\x1B[33m", format('WARN'));
   }
 
   if (level <= LEVELS.info) {
-    logger.info = console.info ? // ? console.info.bind(console, '\x1b[34m', format('INFO'), 'color: blue')
-    console.info.bind(console, format('INFO'), 'color: lightblue') : console.log.bind(console, '\x1b[34m', format('INFO'));
+    log.info = console.info // ? console.info.bind(console, '\x1b[34m', format('INFO'), 'color: blue')
+    ? console.info.bind(console, format('INFO'), 'color: lightblue') : console.log.bind(console, '\x1b[34m', format('INFO'));
   }
 
   if (level <= LEVELS.debug) {
-    logger.debug = console.debug ? console.debug.bind(console, format('DEBUG'), 'color: lightgreen') : console.log.bind(console, '\x1b[32m', format('DEBUG'));
+    log.debug = console.debug ? console.debug.bind(console, format('DEBUG'), 'color: lightgreen') : console.log.bind(console, '\x1b[32m', format('DEBUG'));
   }
 };
 
@@ -71348,24 +71343,24 @@ var init = function init() {
 
   if (typeof arguments[arguments.length - 1] === 'function') {
     callback = arguments[arguments.length - 1];
-    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Callback function found');
+    _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug('Callback function found');
   } else {
     if (typeof conf.mermaid !== 'undefined') {
       if (typeof conf.mermaid.callback === 'function') {
         callback = conf.mermaid.callback;
-        _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Callback function found');
+        _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug('Callback function found');
       } else {
-        _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('No Callback function found');
+        _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug('No Callback function found');
       }
     }
   }
 
   nodes = nodes === undefined ? document.querySelectorAll('.mermaid') : typeof nodes === 'string' ? document.querySelectorAll(nodes) : nodes instanceof window.Node ? [nodes] : nodes; // Last case  - sequence config was passed pick next
 
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Start On Load before: ' + mermaid.startOnLoad);
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug('Start On Load before: ' + mermaid.startOnLoad);
 
   if (typeof mermaid.startOnLoad !== 'undefined') {
-    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Start On Load inner: ' + mermaid.startOnLoad);
+    _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug('Start On Load inner: ' + mermaid.startOnLoad);
     _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__["default"].updateSiteConfig({
       startOnLoad: mermaid.startOnLoad
     });
@@ -71398,7 +71393,7 @@ var init = function init() {
     var init = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].detectInit(txt);
 
     if (init) {
-      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Detected early reinit: ', init);
+      _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug('Detected early reinit: ', init);
     }
 
     try {
@@ -71412,8 +71407,8 @@ var init = function init() {
         if (bindFunctions) bindFunctions(element);
       }, element);
     } catch (e) {
-      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].warn('Syntax Error rendering');
-      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].warn(e);
+      _logger__WEBPACK_IMPORTED_MODULE_1__["log"].warn('Syntax Error rendering');
+      _logger__WEBPACK_IMPORTED_MODULE_1__["log"].warn(e);
 
       if (_this.parseError) {
         _this.parseError(e);
@@ -71461,7 +71456,7 @@ var contentLoaded = function contentLoaded() {
     }
   } else {
     if (typeof mermaid.startOnLoad === 'undefined') {
-      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('In start, no config');
+      _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug('In start, no config');
       config = _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__["default"].getConfig();
 
       if (config.startOnLoad) {
@@ -71633,12 +71628,12 @@ function parse(text) {
 
   if (graphInit) {
     reinitialize(graphInit);
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('reinit ', graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('reinit ', graphInit);
   }
 
   var graphType = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectType(text);
   var parser;
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Type ' + graphType);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Type ' + graphType);
 
   switch (graphType) {
     case 'git':
@@ -71689,25 +71684,25 @@ function parse(text) {
       break;
 
     case 'info':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('info info info');
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('info info info');
       parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default.a;
       parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__["default"];
       break;
 
     case 'pie':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('pie');
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('pie');
       parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default.a;
       parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__["default"];
       break;
 
     case 'er':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('er');
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('er');
       parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default.a;
       parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__["default"];
       break;
 
     case 'journey':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Journey');
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Journey');
       parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default.a;
       parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__["default"];
       break;
@@ -71859,7 +71854,7 @@ var render = function render(id, _txt, cb, container) {
         userStyles += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
       }
     }
-  } // logger.warn(cnf.themeVariables);
+  } // log.warn(cnf.themeVariables);
 
 
   var stylis = new stylis__WEBPACK_IMPORTED_MODULE_0___default.a();
@@ -71982,7 +71977,7 @@ var render = function render(id, _txt, cb, container) {
   // Fix for when the base tag is used
 
   var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().innerHTML;
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
 
   if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -72012,7 +72007,7 @@ var render = function render(id, _txt, cb, container) {
         cb(svgCode);
     }
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('CB = undefined!');
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('CB = undefined!');
   }
 
   var node = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
@@ -72051,13 +72046,13 @@ var parseDirective = function parseDirective(p, statement, context, type) {
       }
     }
   } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error(error.message);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error(error.message);
   }
 };
 
 var handleDirective = function handleDirective(p, directive, type) {
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
 
   switch (directive.type) {
     case 'init':
@@ -72087,7 +72082,7 @@ var handleDirective = function handleDirective(p, directive, type) {
       break;
 
     default:
-      _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
       break;
   }
 };
@@ -72124,7 +72119,7 @@ function reinitialize() {// `mermaidAPI.reinitialize: v${pkg.version}`,
   //   typeof options === 'object' ? configApi.setConfig(options) : configApi.getSiteConfig();
   // updateRendererConfigs(config);
   // setLogLevel(config.logLevel);
-  // logger.debug('mermaidAPI.reinitialize: ', config);
+  // log.debug('mermaidAPI.reinitialize: ', config);
 }
 
 function initialize(options) {
@@ -72156,7 +72151,7 @@ function initialize(options) {
 
   var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_39__["setSiteConfig"](options) : _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
   updateRendererConfigs(config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(config.logLevel); // logger.debug('mermaidAPI.initialize: ', config);
+  Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(config.logLevel); // log.debug('mermaidAPI.initialize: ', config);
 }
 
 var mermaidAPI = Object.freeze({
@@ -73589,7 +73584,7 @@ var detectDirective = function detectDirective(text) {
   try {
     var commentWithoutDirectives = new RegExp("[%]{2}(?![{]".concat(directiveWithoutOpen.source, ")(?=[}][%]{2}).*\n"), 'ig');
     text = text.trim().replace(commentWithoutDirectives, '').replace(/'/gm, '"');
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug("Detecting diagram directive".concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug("Detecting diagram directive".concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
     var match,
         result = [];
 
@@ -73619,7 +73614,7 @@ var detectDirective = function detectDirective(text) {
 
     return result.length === 1 ? result[0] : result;
   } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].error("ERROR: ".concat(error.message, " - Unable to parse directive").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("ERROR: ".concat(error.message, " - Unable to parse directive").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
     return {
       type: null,
       args: null
@@ -73648,7 +73643,7 @@ var detectDirective = function detectDirective(text) {
 
 var detectType = function detectType(text) {
   text = text.replace(directive, '').replace(anyComment, '\n');
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('Detecting diagram type based on the text ' + text);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Detecting diagram type based on the text ' + text);
 
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';
@@ -73827,7 +73822,7 @@ var calcCardinalityPosition = function calcCardinalityPosition(isRelationTypePre
   var prevPoint;
   var totalDistance = 0; // eslint-disable-line
 
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('our points', points);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('our points', points);
 
   if (points[0] !== initialPosition) {
     points = points.reverse();
@@ -73893,7 +73888,7 @@ var calcTerminalLabelPosition = function calcTerminalLabelPosition(terminalMarke
   var prevPoint;
   var totalDistance = 0; // eslint-disable-line
 
-  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].info('our points', points);
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('our points', points);
 
   if (position !== 'start_left' && position !== 'start_right') {
     points = points.reverse();
