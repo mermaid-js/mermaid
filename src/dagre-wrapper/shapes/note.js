@@ -1,11 +1,11 @@
 import { updateNodeBounds, labelHelper } from './util';
-import { logger } from '../../logger'; // eslint-disable-line
+import { log } from '../../logger'; // eslint-disable-line
 import intersect from '../intersect/index.js';
 
 const note = (parent, node) => {
   const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes, true);
 
-  logger.info('Classes = ', node.classes);
+  log.info('Classes = ', node.classes);
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 

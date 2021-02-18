@@ -1,6 +1,6 @@
 import moment from 'moment-mini';
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import * as configApi from '../../config';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
@@ -186,8 +186,8 @@ const getStartDate = function(prevTime, dateFormat, str) {
   if (mDate.isValid()) {
     return mDate.toDate();
   } else {
-    logger.debug('Invalid date:' + str);
-    logger.debug('With date format:' + dateFormat.trim());
+    log.debug('Invalid date:' + str);
+    log.debug('With date format:' + dateFormat.trim());
   }
 
   // Default date - now

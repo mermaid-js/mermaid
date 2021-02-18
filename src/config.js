@@ -1,5 +1,5 @@
 import { assignWithDepth } from './utils';
-import { logger } from './logger';
+import { log } from './logger';
 import theme from './themes';
 import config from './defaultConfig';
 
@@ -8,7 +8,7 @@ import config from './defaultConfig';
 export const defaultConfig = Object.freeze(config);
 
 let siteConfig = assignWithDepth({}, defaultConfig);
-let siteConfigDelta;
+let configFromInitialize;
 let directives = [];
 let currentConfig = assignWithDepth({}, defaultConfig);
 
@@ -30,19 +30,13 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
   if (sumOfDirectives.theme) {
+    const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
-      siteConfigDelta.themeVariables || {},
+      tmpConfigFromInitialize.themeVariables || {},
       sumOfDirectives.themeVariables
     );
     cfg.themeVariables = theme[cfg.theme].getThemeVariables(themeVariables);
   }
-
-  // if (cfg.theme && theme[cfg.theme]) {
-  //   let tVars = assignWithDepth({}, cfg.themeVariables);
-  //   tVars = assignWithDepth(tVars, themeVariables);
-  //   const variables = theme[cfg.theme].getThemeVariables(tVars);
-  //   cfg.themeVariables = variables;
-  // }
 
   currentConfig = cfg;
   return cfg;
@@ -73,9 +67,10 @@ export const setSiteConfig = conf => {
   return siteConfig;
 };
 
-export const setSiteConfigDelta = conf => {
-  siteConfigDelta = assignWithDepth({}, conf);
+export const saveConfigFromInitilize = conf => {
+  configFromInitialize = assignWithDepth({}, conf);
 };
+
 export const updateSiteConfig = conf => {
   siteConfig = assignWithDepth(siteConfig, conf);
   updateCurrentConfig(siteConfig, directives);
@@ -144,7 +139,7 @@ export const sanitize = options => {
     if (typeof options[siteConfig.secure[key]] !== 'undefined') {
       // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
-      logger.debug(
+      log.debug(
         `Denied attempt to modify a secure key ${siteConfig.secure[key]}`,
         options[siteConfig.secure[key]]
       );

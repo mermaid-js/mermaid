@@ -2,7 +2,7 @@
  * Created by knut on 14-12-11.
  */
 import { select } from 'd3';
-import { logger } from './logger';
+import { log } from './logger';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -20,7 +20,7 @@ export const setConf = function(cnf) {
  */
 export const draw = (id, ver) => {
   try {
-    logger.debug('Renering svg for syntax error\n');
+    log.debug('Renering svg for syntax error\n');
 
     const svg = select('#' + id);
 
@@ -87,8 +87,8 @@ export const draw = (id, ver) => {
     svg.attr('width', 400);
     svg.attr('viewBox', '768 0 512 512');
   } catch (e) {
-    logger.error('Error while rendering info diagram');
-    logger.error(e.message);
+    log.error('Error while rendering info diagram');
+    log.error(e.message);
   }
 };
 

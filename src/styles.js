@@ -65,6 +65,7 @@ const getStyles = (type, userStyles, options) => {
 
   .marker {
     fill: ${options.lineColor};
+    stroke: ${options.lineColor};
   }
   .marker.cross {
     stroke: ${options.lineColor};

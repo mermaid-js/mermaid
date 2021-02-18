@@ -5,10 +5,9 @@
 ## Directives
 Directives gives a diagram author the capability to alter the appearance of a diagram before rendering by changing the applied configuration. 
 
-Directives are divided in two sets by priority. The first set, containing 'init' or 'initialize' directives take priority. While the other set, containing all other kinds of directives are parsed and factored into the rendering, only after 'init' and the desired graph-type  are declared.
+Directives are divided into two sets or orders, by priority in parsing. The first set, containing 'init' or 'initialize' directives are loaded ahead of any other directive. While the other set, containing all other kinds of directives are parsed and factored into the rendering, only after 'init' and the desired graph-type are declared.
 
-#### Init
-
+### Init
 
 | Parameter | Description |Type | Required | Values|
 | --- | --- | --- | --- | --- |
@@ -51,9 +50,9 @@ parsing the above generates the `%%init%%` object below, combining the two direc
 This will then be sent to `mermaid.initialize(...)` for rendering.
 
 
-#### Other directives
+### Other directives
 
-In this category are any directives that follow the graph type declaration. Essentially, these directives will not be processed early in the flow like the init directive. Each individual graph type will handle these directives. As an example:
+In this category are any directives that come after the graph type declaration. Essentially, these directives will only be processed after the init directive. Each individual graph type will handle these directives. As an example:
 
 ```
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
@@ -65,16 +64,19 @@ Bob->>Alice: Hi Alice
 ## Chronology
 This will set the `logLevel` to `debug` and `theme` to `dark` for a sequence diagram. Then, during processing, the config for the sequence diagram is set by the `config` directive. This directive is handled in the `sequenceDb.js`. In this example, the fontFamily, fontSize, and fontWeight are all set for this sequence diagram.
 
+### Wrapping
+
+## Wrap
+
+| Parameter | Description |Type | Required | Values|
+| --- | --- | --- | --- | --- |
+| wrap | a callable text-wrap function| Directive| Optional | %%{wrap}%%|
+
+
 #### Backwards Compatibility
 
 Init directives and any other non-multiline directives should be backwards compatible, because they will be treated as comments in prior versions of mermaid-js.
 
 Multiline directives, however, will pose an issue and will render an error. This is unavoidable.
 
-### Wrapping
 
-# Wrap
-
-| Parameter | Description |Type | Required | Values|
-| --- | --- | --- | --- | --- |
-| wrap | a callable text-wrap function| Directive| Optional | %%{wrap}%%|

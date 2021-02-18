@@ -3,9 +3,16 @@ const getStyles = options =>
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};
   }
+  .cluster-label text {
+    fill: ${options.titleColor};
+  }
+  .cluster-label span {
+    color: ${options.titleColor};
+  }
 
-  .label text {
+  .label text,span {
     fill: ${options.nodeTextColor || options.textColor};
+    color: ${options.nodeTextColor || options.textColor};
   }
 
   .node rect,
@@ -55,10 +62,16 @@ const getStyles = options =>
     stroke-width: 1px;
   }
 
-  .cluster text,span {
+  .cluster text {
     fill: ${options.titleColor};
+  }
+
+  .cluster span {
     color: ${options.titleColor};
   }
+  // .cluster div {
+  //   color: ${options.titleColor};
+  // }
 
   div.mermaidTooltip {
     position: absolute;

@@ -16,7 +16,7 @@ sequenceDiagram
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
-    Alice-)John: See you later!
+    Alice--)John: See you later!
 ```
 
 ```note
@@ -87,9 +87,9 @@ There are six types of arrows currently supported:
 | ->>  | Solid line with arrowhead                   |
 | -->> | Dotted line with arrowhead                  |
 | -x   | Solid line with a cross at the end          |
-| --x  | Dotted line with a cross at the end         |
-| -x   | Solid line with an open arrow at the end (async)  |
-| --x  | Dotted line with an open arrow at the end (async) |
+| --x  | Dotted line with a cross at the end.        |
+| -)   | Solid line with an open arrowat the end (async)  |
+| --)  | Dotted line with a open arrow at the end (async) |
 
 ## Activations
 
@@ -346,6 +346,23 @@ sequenceDiagram
     %% this is a comment
     John-->>Alice: Great!
 ```
+
+## Entity codes to escape characters
+
+It is possible to escape characters using the syntax exemplified here.
+
+```
+sequenceDiagram
+    A->>B: I #9829; you!
+    B->>A: I #9829; you #infin; times more!
+```
+```mermaid
+sequenceDiagram
+    A->>B: I #9829; you!
+    B->>A: I #9829; you #infin; times more!
+```
+
+Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
 
 ## sequenceNumbers
 

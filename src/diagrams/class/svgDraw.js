@@ -1,7 +1,7 @@
 import { line, curveBasis } from 'd3';
 import { lookUpDomId, relationType } from './classDb';
 import utils from '../../utils';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 
 let edgeCount = 0;
 export const drawEdge = function(elem, path, relation, conf) {
@@ -88,8 +88,8 @@ export const drawEdge = function(elem, path, relation, conf) {
       path.points[l - 1]
     );
 
-    logger.debug('cardinality_1_point ' + JSON.stringify(cardinality_1_point));
-    logger.debug('cardinality_2_point ' + JSON.stringify(cardinality_2_point));
+    log.debug('cardinality_1_point ' + JSON.stringify(cardinality_1_point));
+    log.debug('cardinality_2_point ' + JSON.stringify(cardinality_2_point));
 
     p1_card_x = cardinality_1_point.x;
     p1_card_y = cardinality_1_point.y;
@@ -119,7 +119,7 @@ export const drawEdge = function(elem, path, relation, conf) {
       .attr('height', bounds.height + conf.padding);
   }
 
-  logger.info('Rendering relation ' + JSON.stringify(relation));
+  log.info('Rendering relation ' + JSON.stringify(relation));
   if (typeof relation.relationTitle1 !== 'undefined' && relation.relationTitle1 !== 'none') {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
@@ -145,7 +145,7 @@ export const drawEdge = function(elem, path, relation, conf) {
 };
 
 export const drawClass = function(elem, classDef, conf) {
-  logger.info('Rendering class ' + classDef);
+  log.info('Rendering class ' + classDef);
 
   const id = classDef.id;
   const classInfo = {

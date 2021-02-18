@@ -5,7 +5,7 @@ import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
 
 import { render } from '../../dagre-wrapper/index.js';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 
 const conf = {};
@@ -23,7 +23,7 @@ let nodeDb = {};
  * @returns {object} classDef styles
  */
 export const getClasses = function(text) {
-  logger.trace('Extracting classes');
+  log.trace('Extracting classes');
   stateDb.clear();
   const parser = state.parser;
   parser.yy = stateDb;
@@ -84,7 +84,7 @@ const setupNode = (g, parent, node, altFlag) => {
 
     // group
     if (!nodeDb[node.id].type && node.doc) {
-      logger.info('Setting cluser for ', node.id);
+      log.info('Setting cluser for ', node.id);
       nodeDb[node.id].type = 'group';
       nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
       nodeDb[node.id].classes =
@@ -164,19 +164,19 @@ const setupNode = (g, parent, node, altFlag) => {
 
   if (parent) {
     if (parent.id !== 'root') {
-      logger.info('Setting node ', node.id, ' to be child of its parent ', parent.id);
+      log.info('Setting node ', node.id, ' to be child of its parent ', parent.id);
       g.setParent(node.id, parent.id);
     }
   }
   if (node.doc) {
-    logger.info('Adding nodes children ');
+    log.info('Adding nodes children ');
     setupDoc(g, node, node.doc, !altFlag);
   }
 };
 let cnt = 0;
 const setupDoc = (g, parent, doc, altFlag) => {
   cnt = 0;
-  logger.trace('items', doc);
+  log.trace('items', doc);
   doc.forEach(item => {
     if (item.stmt === 'state' || item.stmt === 'default') {
       setupNode(g, parent, item, altFlag);
@@ -211,7 +211,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
  * @param id
  */
 export const draw = function(text, id) {
-  logger.info('Drawing state diagram (v2)', id);
+  log.info('Drawing state diagram (v2)', id);
   stateDb.clear();
   nodeDb = {};
   const parser = state.parser;
@@ -246,9 +246,9 @@ export const draw = function(text, id) {
       return {};
     });
 
-  logger.info(stateDb.getRootDocV2());
+  log.info(stateDb.getRootDocV2());
   stateDb.extract(stateDb.getRootDocV2());
-  logger.info(stateDb.getRootDocV2());
+  log.info(stateDb.getRootDocV2());
   setupNode(g, undefined, stateDb.getRootDocV2(), true);
 
   // Set up an SVG group so that we can translate the final graph.
@@ -274,7 +274,7 @@ export const draw = function(text, id) {
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
-  logger.debug(`viewBox ${vBox}`);
+  log.debug(`viewBox ${vBox}`);
   svg.attr('viewBox', vBox);
 
   // Add label rects for non html labels

@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { logger } from '../logger'; // eslint-disable-line
+import { log } from '../logger'; // eslint-disable-line
 // let vertexNode;
 // if (getConfig().flowchart.htmlLabels) {
 //   // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
@@ -65,7 +65,15 @@ function addHtmlLabel(node) {
 
   const label = node.label;
   const labelClass = node.isNode ? 'nodeLabel' : 'edgeLabel';
-  div.html('<span class="' + labelClass + '">' + label + '</span>');
+  div.html(
+    '<span class="' +
+      labelClass +
+      '" ' +
+      (node.labelStyle ? 'style="' + node.labelStyle + '"' : '') +
+      '>' +
+      label +
+      '</span>'
+  );
 
   applyStyle(div, node.labelStyle);
   div.style('display', 'inline-block');
@@ -80,7 +88,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
   if (getConfig().flowchart.htmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');
-    logger.info('vertexText' + vertexText);
+    log.info('vertexText' + vertexText);
     const node = {
       isNode,
       label: vertexText.replace(

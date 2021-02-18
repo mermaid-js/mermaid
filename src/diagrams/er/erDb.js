@@ -1,7 +1,7 @@
 /**
  *
  */
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 
@@ -28,7 +28,7 @@ export const parseDirective = function(statement, context, type) {
 const addEntity = function(name) {
   if (typeof entities[name] === 'undefined') {
     entities[name] = { attributes: [] };
-    logger.info('Added new entity :', name);
+    log.info('Added new entity :', name);
   }
 
   return entities[name];
@@ -43,7 +43,7 @@ const addAttributes = function(entityName, attribs) {
   let i;
   for (i = attribs.length - 1; i >= 0; i--) {
     entity.attributes.push(attribs[i]);
-    logger.debug('Added attribute ', attribs[i].attributeName);
+    log.debug('Added attribute ', attribs[i].attributeName);
   }
 };
 
@@ -63,7 +63,7 @@ const addRelationship = function(entA, rolA, entB, rSpec) {
   };
 
   relationships.push(rel);
-  logger.debug('Added new relationship :', rel);
+  log.debug('Added new relationship :', rel);
 };
 
 const getRelationships = () => relationships;

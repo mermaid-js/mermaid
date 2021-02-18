@@ -7,7 +7,7 @@ import { getConfig } from '../../config';
 
 import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import common from '../common/common';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 import flowChartShapes from './flowChartShapes';
@@ -133,7 +133,7 @@ export const addVertices = function(vert, g, svgId) {
         _shape = 'rect';
     }
     // Add the node
-    logger.warn('Adding node', vertex.id, vertex.domId);
+    log.warn('Adding node', vertex.id, vertex.domId);
     g.setNode(flowDb.lookUpDomId(vertex.id), {
       labelType: 'svg',
       labelStyle: styles.labelStyle,
@@ -260,7 +260,7 @@ export const addEdges = function(edges, g) {
  * @returns {object} classDef styles
  */
 export const getClasses = function(text) {
-  logger.info('Extracting classes');
+  log.info('Extracting classes');
   flowDb.clear();
   try {
     const parser = flow.parser;
@@ -280,7 +280,7 @@ export const getClasses = function(text) {
  * @param id
  */
 export const draw = function(text, id) {
-  logger.info('Drawing flowchart');
+  log.info('Drawing flowchart');
   flowDb.clear();
   flowDb.setGen('gen-1');
   const parser = flow.parser;
@@ -290,7 +290,7 @@ export const draw = function(text, id) {
   // try {
   parser.parse(text);
   // } catch (err) {
-  // logger.debug('Parsing failed');
+  // log.debug('Parsing failed');
   // }
 
   // Fetch the default direction, use TD if none was found
@@ -328,7 +328,7 @@ export const draw = function(text, id) {
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition
   const vert = flowDb.getVertices();
-  logger.warn('Get vertices', vert);
+  log.warn('Get vertices', vert);
 
   const edges = flowDb.getEdges();
 
@@ -339,7 +339,7 @@ export const draw = function(text, id) {
     selectAll('cluster').append('text');
 
     for (let j = 0; j < subG.nodes.length; j++) {
-      logger.warn(
+      log.warn(
         'Setting subgraph',
         subG.nodes[j],
         flowDb.lookUpDomId(subG.nodes[j]),
@@ -400,7 +400,7 @@ export const draw = function(text, id) {
   const svg = select(`[id="${id}"]`);
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
-  logger.warn(g);
+  log.warn(g);
 
   // Run the renderer. This is what draws the final graph.
   const element = select('#' + id + ' g');
@@ -419,7 +419,7 @@ export const draw = function(text, id) {
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
-  logger.debug(`viewBox ${vBox}`);
+  log.debug(`viewBox ${vBox}`);
   svg.attr('viewBox', vBox);
 
   // Index nodes

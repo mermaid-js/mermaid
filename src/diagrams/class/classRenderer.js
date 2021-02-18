@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import classDb, { lookUpDomId } from './classDb';
 import { parser } from './parser/classDiagram';
 import svgDraw from './svgDraw';
@@ -154,7 +154,7 @@ export const draw = function(text, id) {
   parser.yy.clear();
   parser.parse(text);
 
-  logger.info('Rendering diagram ' + text);
+  log.info('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
   const diagram = select(`[id='${id}']`);
@@ -189,12 +189,12 @@ export const draw = function(text, id) {
     // our nodes.
     g.setNode(node.id, node);
 
-    logger.info('Org height: ' + node.height);
+    log.info('Org height: ' + node.height);
   }
 
   const relations = classDb.getRelations();
   relations.forEach(function(relation) {
-    logger.info(
+    log.info(
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
     );
     g.setEdge(
@@ -210,7 +210,7 @@ export const draw = function(text, id) {
   dagre.layout(g);
   g.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
-      logger.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
+      log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       select('#' + lookUpDomId(v)).attr(
         'transform',
         'translate(' +
@@ -224,7 +224,7 @@ export const draw = function(text, id) {
 
   g.edges().forEach(function(e) {
     if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
-      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
+      log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
       svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
     }
   });
@@ -237,7 +237,7 @@ export const draw = function(text, id) {
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
-  logger.debug(`viewBox ${vBox}`);
+  log.debug(`viewBox ${vBox}`);
   diagram.attr('viewBox', vBox);
 };
 

@@ -1,7 +1,7 @@
 /**
  * Decorates with functions required by mermaids dagre-wrapper.
  */
-import { logger as log } from '../logger';
+import { log } from '../logger';
 import graphlib from 'graphlib';
 
 export let clusterDb = {};
