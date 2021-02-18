@@ -497,6 +497,8 @@ It is possible to escape characters using the syntax exemplified here.
         A["A double quote:#quot;"] -->B["A dec char:#9829;"]
 ```
 
+Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
+
 ## Subgraphs
 
 ```
