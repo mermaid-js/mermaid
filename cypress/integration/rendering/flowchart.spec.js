@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
-describe('Flowchart', () => {
+describe('Graph', () => {
   it('1: should render a simple flowchart no htmlLabels', () => {
     imgSnapshotTest(
       `graph TD
@@ -796,8 +796,6 @@ describe('Flowchart', () => {
       E[(red text)] -->|default style| F((blue text))
       G>red text] -->|default style| H{blue text}
       I{{red text}} -->|default style| J[/blue text/]
-      K[\red text\] -->|default style| L[/blue text\]
-      M[\red text/] -->|default style| N[blue text]
       linkStyle default color:Sienna;
       style A stroke:#ff0000,fill:#ffcccc,color:#ff0000
       style B stroke:#0000ff,fill:#ccccff,color:#0000ff
@@ -809,10 +807,6 @@ describe('Flowchart', () => {
       style H stroke:#0000ff,fill:#ccccff,color:#0000ff
       style I stroke:#ff0000,fill:#ffcccc,color:#ff0000
       style J stroke:#0000ff,fill:#ccccff,color:#0000ff
-      style K stroke:#ff0000,fill:#ffcccc,color:#ff0000
-      style L stroke:#0000ff,fill:#ccccff,color:#0000ff
-      style M stroke:#ff0000,fill:#ffcccc,color:#ff0000
-      style N stroke:#0000ff,fill:#ccccff,color:#0000ff
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
@@ -822,6 +816,68 @@ describe('Flowchart', () => {
       `
 graph TD
   C -->|fa:fa-car Car| F[fa:fa-car Car]
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('62: fontawesome icons in edge labels', () => {
+    imgSnapshotTest(
+      `
+    graph TB
+      subgraph bar[Bar]
+        F
+      end
+      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('63: fontawesome icons in edge labels', () => {
+    imgSnapshotTest(
+      `
+    graph TB
+      A
+      B
+      subgraph foo[Foo SubGraph]
+        C
+        D
+      end
+      subgraph bar[Bar SubGraph]
+        E
+        F
+      end
+      G
+
+      A-->B
+      B-->C
+      C-->D
+      B-->D
+      D-->E
+      E-->A
+      E-->F
+      F-->D
+      F-->G
+      B-->G
+      G-->D
+
+      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
+      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('64: fontawesome icons in edge labels', () => {
+    imgSnapshotTest(
+      `
+    %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
+    flowchart LR
+    subgraph A
+        a --> b
+    end
+    subgraph B
+        i -->f
+    end
+    A --> B
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
