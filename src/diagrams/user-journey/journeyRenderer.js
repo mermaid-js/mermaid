@@ -2,11 +2,12 @@ import { select } from 'd3';
 import { parser } from './parser/journey';
 import journeyDb from './journeyDb';
 import svgDraw from './svgDraw';
+import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 
 parser.yy = journeyDb;
 
-const conf = {
+const conf2 = {
   leftMargin: 150,
   diagramMarginX: 50,
   diagramMarginY: 20,
@@ -16,11 +17,12 @@ const conf = {
   width: 150,
   // Height of task boxes
   height: 50,
-  taskFontSize: 14,
-  taskFontFamily: '"Open-Sans", "sans-serif"',
   // Margin around loop boxes
   boxMargin: 10,
   boxTextMargin: 5,
+
+  taskFontSize: 14,
+  taskFontFamily: '"Open-Sans", "sans-serif"',
   noteMargin: 10,
   // Space between messages
   messageMargin: 35,
@@ -53,6 +55,7 @@ export const setConf = function(cnf) {
 const actors = {};
 
 function drawActorLegend(diagram) {
+  const conf = getConfig().journey;
   // Draw the actors
   let yPos = 60;
   Object.keys(actors).forEach(person => {
@@ -79,9 +82,10 @@ function drawActorLegend(diagram) {
     yPos += 20;
   });
 }
-
-const LEFT_MARGIN = conf.leftMargin;
+const conf = getConfig().journey;
+const LEFT_MARGIN = getConfig().journey.leftMargin;
 export const draw = function(text, id) {
+  const conf = getConfig().journey;
   parser.yy.clear();
   parser.parse(text + '\n');
 
@@ -166,6 +170,7 @@ export const bounds = {
     }
   },
   updateBounds: function(startx, starty, stopx, stopy) {
+    const conf = getConfig().journey;
     const _self = this;
     let cnt = 0;
     function updateFn(type) {
@@ -221,6 +226,7 @@ const fills = conf.sectionFills;
 const textColours = conf.sectionColours;
 
 export const drawTasks = function(diagram, tasks, verticalPos) {
+  const conf = getConfig().journey;
   let lastSection = '';
   const sectionVHeight = conf.height * 2 + conf.diagramMarginY;
   const taskPos = verticalPos + sectionVHeight;
