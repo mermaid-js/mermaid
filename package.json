@@ -27,7 +27,7 @@
     "e2e-upd": "yarn lint && jest e2e -u --config e2e/jest.config.js",
     "dev": "webpack-dev-server --config webpack.config.e2e.js",
     "test": "yarn lint && jest src/.*",
-    "test:watch": "jest --watch src",
+    "test:watch": "jest --watch src/diagrams/requirement/*",
     "prepublishOnly": "yarn build && yarn test",
     "prepare": "yarn build"
   },

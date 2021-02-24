@@ -74,11 +74,28 @@ const placeholderToBreak = s => {
   return s.replace(/#br#/g, '<br/>');
 };
 
+const getUrl = useAbsolute => {
+  let url = '';
+  if (useAbsolute) {
+    url =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
+  }
+
+  return url;
+};
+
 export default {
   getRows,
   sanitizeText,
   hasBreaks,
   splitBreaks,
   lineBreakRegex,
-  removeScript
+  removeScript,
+  getUrl
 };

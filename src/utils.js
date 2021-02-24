@@ -147,9 +147,8 @@ export const detectDirective = function(text, type = null) {
     return result.length === 1 ? result[0] : result;
   } catch (error) {
     log.error(
-      `ERROR: ${error.message} - Unable to parse directive${
-        type !== null ? ' type:' + type : ''
-      } based on the text:${text}`
+      `ERROR: ${error.message} - Unable to parse directive
+      ${type !== null ? ' type:' + type : ''} based on the text:${text}`
     );
     return { type: null, args: null };
   }
@@ -219,6 +218,10 @@ export const detectType = function(text) {
 
   if (text.match(/^\s*journey/)) {
     return 'journey';
+  }
+
+  if (text.match(/^\s*requirement/) || text.match(/^\s*requirementDiagram/)) {
+    return 'requirement';
   }
 
   return 'flowchart';
