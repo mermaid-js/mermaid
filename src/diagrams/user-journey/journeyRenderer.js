@@ -178,7 +178,6 @@ export const bounds = {
         cnt++;
         // The loop sequenceItems is a stack so the biggest margins in the beginning of the sequenceItems
         const n = _self.sequenceItems.length - cnt + 1;
-
         _self.updateVal(item, 'starty', starty - n * conf.boxMargin, Math.min);
         _self.updateVal(item, 'stopy', stopy + n * conf.boxMargin, Math.max);
 

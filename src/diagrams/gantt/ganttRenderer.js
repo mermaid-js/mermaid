@@ -11,11 +11,12 @@ import {
 import { parser } from './parser/gantt';
 import common from '../common/common';
 import ganttDb from './ganttDb';
+import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 
 parser.yy = ganttDb;
 
-const conf = {
+const conf2 = {
   titleTopMargin: 25,
   barHeight: 20,
   barGap: 4,
@@ -26,15 +27,15 @@ const conf = {
   fontSize: 11,
   fontFamily: '"Open-Sans", "sans-serif"'
 };
-export const setConf = function(cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function(key) {
-    conf[key] = cnf[key];
-  });
+export const setConf = function() {
+  // const keys = Object.keys(cnf);
+  // keys.forEach(function(key) {
+  //   conf[key] = cnf[key];
+  // });
 };
 let w;
 export const draw = function(text, id) {
+  const conf = getConfig().gantt;
   parser.yy.clear();
   parser.parse(text);
 
@@ -412,6 +413,8 @@ export const draw = function(text, id) {
           return (d[1] * theGap) / 2 + theTopPad;
         }
       })
+      .attr('font-size', conf.sectionFontSize)
+      .attr('font-size', conf.sectionFontSize)
       .attr('class', function(d) {
         for (let i = 0; i < categories.length; i++) {
           if (d[0] === categories[i]) {

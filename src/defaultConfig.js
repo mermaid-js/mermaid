@@ -537,7 +537,7 @@ const config = {
      ***Default value 50**.
      */
     topPadding: 50,
-
+    rightPadding: 75,
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
@@ -567,6 +567,15 @@ const config = {
      ***Default value 11**.
      */
     fontSize: 11,
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| sectionFontSize | Font size for secions| Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 11**.
+     */
+    sectionFontSize: 11,
 
     /**
      *| Parameter | Description |Type | Required | Values|
