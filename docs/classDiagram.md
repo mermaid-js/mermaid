@@ -141,7 +141,7 @@ There are two ways to define the members of a class, and regardless of whichever
 class BankAccount{
     +String owner
     +BigDecimal balance
-    +deposit(amount) bool
+    +deposit(amount)
     +withdrawl(amount)
 }
 ```
@@ -151,8 +151,8 @@ class BankAccount{
     class BankAccount{
         +String owner
         +BigDecimal balance
-        +deposit(amount) bool
-        +withdrawl(amount) int
+        +deposit(amount)
+        +withdrawl(amount)
 }
 ```
 
