@@ -679,24 +679,26 @@
     end note
   </div>
 
+  <hr />
+
   <div class="mermaid">
     requirementDiagram
 
-    requirement test_req {
+    requirement An Example {
     id: 1
     text: the test text.
     risk: high
     verifymethod: test
     }
 
-    functionalRequirement test_req2 {
+    functionalRequirement Random Name {
     id: 1.1
     text: the second test text.
     risk: low
     verifymethod: inspection
     }
 
-    performanceRequirement test_req3 {
+    performanceRequirement Something Else {
     id: 1.2
     text: the third test text.
     risk: medium
@@ -739,14 +741,14 @@
     }
 
 
-    test_entity - satisfies -> test_req2
-    test_req - traces -> test_req2
-    test_req - contains -> test_req3
-    test_req3 - contains -> test_req4
+    test_entity - satisfies -> Random Name
+    An Example - traces -> Random Name
+    An Example - contains -> Something Else
+    Something Else - contains -> test_req4
     test_req4 - derives -> test_req5
     test_req5 - refines -> test_req6
     test_entity3 - verifies -> test_req5
-    test_req <- copies - test_entity2 </div>
+    An Example <- copies - test_entity2 </div>
   </div>
 
   <h1 id="link-clicked">Anchor for "link-clicked" test</h1>

@@ -7,7 +7,7 @@ import { configureSvgSize } from '../../utils';
 import common from '../common/common';
 import { parser } from './parser/requirementDiagram';
 import requirementDb from './requirementDb';
-import { insertLineEndings, ReqMarkers } from './requirementMarkers';
+import markers from './requirementMarkers';
 
 const conf = {};
 let relCnt = 0;
@@ -44,7 +44,7 @@ const newTitleNode = (parentNode, id, txts) => {
     .attr('class', 'req reqLabel reqTitle')
     .attr('id', id)
     .attr('x', x)
-    .attr('y', 0)
+    .attr('y', conf.rect_padding)
     .attr('dominant-baseline', 'hanging')
     .attr(
       'style',
@@ -58,7 +58,7 @@ const newTitleNode = (parentNode, id, txts) => {
         .append('tspan')
         .attr('text-anchor', 'middle')
         .attr('x', conf.rect_min_width / 2)
-        .attr('dy', conf.rect_padding)
+        .attr('dy', 0)
         .text(textStr);
     } else {
       title
@@ -171,7 +171,7 @@ const addEdgeLabel = (parentNode, svgPath, conf, txt) => {
 
 const drawRelationshipFromLayout = function(svg, rel, g, insert) {
   // Find the edge relating to this relationship
-  const edge = g.edge(rel.src, rel.dst);
+  const edge = g.edge(elementString(rel.src), elementString(rel.dst));
 
   // Get a function that will generate the line path
   const lineFunction = line()
@@ -202,7 +202,7 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
       'url(' +
         common.getUrl(conf.arrowMarkerAbsolute) +
         '#' +
-        ReqMarkers.ARROW +
+        markers.ReqMarkers.ARROW +
         '_line_ending' +
         ')'
     );
@@ -216,6 +216,9 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
 export const drawReqs = (reqs, graph, svgNode) => {
   Object.keys(reqs).forEach(reqName => {
     let req = reqs[reqName];
+    reqName = elementString(reqName);
+    console.log('reqName: ', reqName);
+    log.info('Added new requirement: ', reqName);
 
     const groupNode = svgNode.append('g').attr('id', reqName);
     const textId = 'req-' + reqName;
@@ -259,7 +262,7 @@ export const drawReqs = (reqs, graph, svgNode) => {
 export const drawElements = (els, graph, svgNode) => {
   Object.keys(els).forEach(elName => {
     let el = els[elName];
-    const id = elName.replace(/\./g, '_');
+    const id = elementString(elName);
 
     const groupNode = svgNode.append('g').attr('id', id);
     const textId = 'element-' + id;
@@ -294,7 +297,9 @@ export const drawElements = (els, graph, svgNode) => {
 
 const addRelationships = (relationships, g) => {
   relationships.forEach(function(r) {
-    g.setEdge(r.src, r.dst, { relationship: r });
+    let src = elementString(r.src);
+    let dst = elementString(r.dst);
+    g.setEdge(src, dst, { relationship: r });
   });
   return relationships;
 };
@@ -318,13 +323,16 @@ const adjustEntities = function(svgNode, graph) {
   return;
 };
 
+const elementString = str => {
+  return str.replace(/\s/g, '').replace(/\./g, '_');
+};
+
 export const draw = (text, id) => {
-  log.info('Drawing requirements!');
   parser.yy = requirementDb;
   parser.parse(text);
 
   const svg = select(`[id='${id}']`);
-  insertLineEndings(svg, conf);
+  markers.insertLineEndings(svg, conf);
 
   const g = new graphlib.Graph({
     multigraph: false,

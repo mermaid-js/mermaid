@@ -1,4 +1,4 @@
-import configApi from '../../config';
+import * as configApi from '../../config';
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 
