@@ -943,6 +943,36 @@ const config = {
      ***Default value: true**.
      */
     useMaxWidth: true
+  },
+
+  /**
+   * The object containing configurations specific for req diagrams
+   */
+  requirement: {
+    useWidth: undefined,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     *
+     ***Notes:**
+     *When this flag is set to true, the diagram width is locked to 100% and
+     *scaled based on available space. If set to false, the diagram reserves its
+     *absolute width.
+     ***Default value: true**.
+     */
+    useMaxWidth: true,
+
+    rect_fill: '#f9f9f9',
+    text_color: '#333',
+    rect_border_size: '0.5px',
+    rect_border_color: '#bbb',
+    rect_min_width: 200,
+    rect_min_height: 200,
+    fontSize: 14,
+    rect_padding: 10,
+    line_height: 20
   }
 };
 

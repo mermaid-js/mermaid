@@ -90,15 +90,32 @@ flowchart TD
       C <-...-> E4
       C ======> E5
       </div>
-      <div class="mermaid2" style="width: 50%; height: 21%;">
+      <div class="mermaid" style="width: 50%; height: 21%;">
 flowchart LR
-subgraph A
-    a --> b
-end
-subgraph B
-    i -->f
-end
-A --> B
+A[red text] -->|default style| B(blue text)
+C([red text]) -->|default style| D[[blue text]]
+E[(red text)] -->|default style| F((blue text))
+G>red text] -->|default style| H{blue text}
+I{{red text}} -->|default style| J[/blue text/]
+K[
+ed text] -->|default style| L[/blue text]
+M[
+ed text/] -->|default style| N[blue text]
+linkStyle default color:Sienna;
+style A stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style B stroke:#0000ff,fill:#ccccff,color:#0000ff
+style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style D stroke:#0000ff,fill:#ccccff,color:#0000ff
+style E stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style F stroke:#0000ff,fill:#ccccff,color:#0000ff
+style G stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style H stroke:#0000ff,fill:#ccccff,color:#0000ff
+style I stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style J stroke:#0000ff,fill:#ccccff,color:#0000ff
+style K stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style L stroke:#0000ff,fill:#ccccff,color:#0000ff
+style M stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style N stroke:#0000ff,fill:#ccccff,color:#0000ff
       </div>
 
 
