@@ -7,43 +7,6 @@ import { configureSvgSize } from '../../utils';
 
 parser.yy = journeyDb;
 
-const conf2 = {
-  leftMargin: 150,
-  diagramMarginX: 50,
-  diagramMarginY: 20,
-  // Margin between tasks
-  taskMargin: 50,
-  // Width of task boxes
-  width: 150,
-  // Height of task boxes
-  height: 50,
-  // Margin around loop boxes
-  boxMargin: 10,
-  boxTextMargin: 5,
-
-  taskFontSize: 14,
-  taskFontFamily: '"Open-Sans", "sans-serif"',
-  noteMargin: 10,
-  // Space between messages
-  messageMargin: 35,
-  // Multiline message alignment
-  messageAlign: 'center',
-  // Depending on css styling this might need adjustment
-  // Projects the edge of the diagram downwards
-  bottomMarginAdj: 1,
-
-  // width of activation box
-  activationWidth: 10,
-
-  // text placement as: tspan | fo | old only text as before
-  textPlacement: 'fo',
-
-  actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
-
-  sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
-  sectionColours: ['#fff']
-};
-
 export const setConf = function(cnf) {
   const keys = Object.keys(cnf);
 
