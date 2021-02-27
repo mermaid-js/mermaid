@@ -15,18 +15,6 @@ import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 
 parser.yy = ganttDb;
-
-const conf2 = {
-  titleTopMargin: 25,
-  barHeight: 20,
-  barGap: 4,
-  topPadding: 50,
-  rightPadding: 75,
-  leftPadding: 75,
-  gridLineStartPadding: 35,
-  fontSize: 11,
-  fontFamily: '"Open-Sans", "sans-serif"'
-};
 export const setConf = function() {
   // const keys = Object.keys(cnf);
   // keys.forEach(function(key) {
