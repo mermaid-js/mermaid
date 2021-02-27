@@ -537,7 +537,7 @@ const config = {
      ***Default value 50**.
      */
     topPadding: 50,
-
+    rightPadding: 75,
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
@@ -567,17 +567,15 @@ const config = {
      ***Default value 11**.
      */
     fontSize: 11,
-
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
-     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
+     *| sectionFontSize | Font size for secions| Integer | Required | Any Positive Value |
      *
      ***Notes:**
-     *
-     ***Default value '"Open-Sans", "sans-serif"'**.
+     ***Default value 11**.
      */
-    fontFamily: '"Open-Sans", "sans-serif"',
+    sectionFontSize: 11,
 
     /**
      *| Parameter | Description |Type | Required | Values|
@@ -638,7 +636,7 @@ const config = {
      ***Notes:**
      ***Default value 10**..
      */
-    diagramMarginY: 20,
+    diagramMarginY: 10,
 
     /**
      *| Parameter | Description |Type | Required | Values|
