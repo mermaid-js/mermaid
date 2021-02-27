@@ -2,45 +2,10 @@ import { select } from 'd3';
 import { parser } from './parser/journey';
 import journeyDb from './journeyDb';
 import svgDraw from './svgDraw';
+import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 
 parser.yy = journeyDb;
-
-const conf = {
-  leftMargin: 150,
-  diagramMarginX: 50,
-  diagramMarginY: 20,
-  // Margin between tasks
-  taskMargin: 50,
-  // Width of task boxes
-  width: 150,
-  // Height of task boxes
-  height: 50,
-  taskFontSize: 14,
-  taskFontFamily: '"Open-Sans", "sans-serif"',
-  // Margin around loop boxes
-  boxMargin: 10,
-  boxTextMargin: 5,
-  noteMargin: 10,
-  // Space between messages
-  messageMargin: 35,
-  // Multiline message alignment
-  messageAlign: 'center',
-  // Depending on css styling this might need adjustment
-  // Projects the edge of the diagram downwards
-  bottomMarginAdj: 1,
-
-  // width of activation box
-  activationWidth: 10,
-
-  // text placement as: tspan | fo | old only text as before
-  textPlacement: 'fo',
-
-  actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
-
-  sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
-  sectionColours: ['#fff']
-};
 
 export const setConf = function(cnf) {
   const keys = Object.keys(cnf);
@@ -53,6 +18,7 @@ export const setConf = function(cnf) {
 const actors = {};
 
 function drawActorLegend(diagram) {
+  const conf = getConfig().journey;
   // Draw the actors
   let yPos = 60;
   Object.keys(actors).forEach(person => {
@@ -79,9 +45,10 @@ function drawActorLegend(diagram) {
     yPos += 20;
   });
 }
-
-const LEFT_MARGIN = conf.leftMargin;
+const conf = getConfig().journey;
+const LEFT_MARGIN = getConfig().journey.leftMargin;
 export const draw = function(text, id) {
+  const conf = getConfig().journey;
   parser.yy.clear();
   parser.parse(text + '\n');
 
@@ -166,6 +133,7 @@ export const bounds = {
     }
   },
   updateBounds: function(startx, starty, stopx, stopy) {
+    const conf = getConfig().journey;
     const _self = this;
     let cnt = 0;
     function updateFn(type) {
@@ -221,6 +189,7 @@ const fills = conf.sectionFills;
 const textColours = conf.sectionColours;
 
 export const drawTasks = function(diagram, tasks, verticalPos) {
+  const conf = getConfig().journey;
   let lastSection = '';
   const sectionVHeight = conf.height * 2 + conf.diagramMarginY;
   const taskPos = verticalPos + sectionVHeight;

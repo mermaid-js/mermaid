@@ -638,7 +638,7 @@ const config = {
      ***Notes:**
      ***Default value 10**..
      */
-    diagramMarginY: 10,
+    diagramMarginY: 20,
 
     /**
      *| Parameter | Description |Type | Required | Values|
@@ -648,7 +648,7 @@ const config = {
      ***Notes:**
      ***Default value 50**.
      */
-    actorMargin: 50,
+    leftMargin: 150,
 
     /**
      *| Parameter | Description |Type | Required | Values|
@@ -668,7 +668,7 @@ const config = {
      ***Notes:**
      ***Default value 65**.
      */
-    height: 65,
+    height: 50,
 
     /**
      *| Parameter | Description |Type | Required | Values|
@@ -750,7 +750,19 @@ const config = {
      ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
      ***Default value false**.
      */
-    rightAngles: false
+    rightAngles: false,
+    taskFontSize: 14,
+    taskFontFamily: '"Open-Sans", "sans-serif"',
+    taskMargin: 50,
+    // width of activation box
+    activationWidth: 10,
+
+    // text placement as: tspan | fo | old only text as before
+    textPlacement: 'fo',
+    actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
+
+    sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
+    sectionColours: ['#fff']
   },
   class: {
     arrowMarkerAbsolute: false,
