@@ -79,7 +79,7 @@ export const drawDescrState = (g, stateDef) => {
     .attr('y', getConfig().state.textHeight + 1.3 * getConfig().state.padding)
     .attr('font-size', getConfig().state.fontSize)
     .attr('class', 'state-title')
-    .text(stateDef.id);
+    .text(stateDef.descriptions[0]);
 
   const titleBox = title.node().getBBox();
   const titleHeight = titleBox.height;
@@ -94,8 +94,7 @@ export const drawDescrState = (g, stateDef) => {
         getConfig().state.dividerMargin +
         getConfig().state.textHeight
     )
-    .attr('class', 'state-description')
-    .text(stateDef.descriptions[0]);
+    .attr('class', 'state-description');
 
   let isFirst = true;
   let isSecond = true;
