@@ -636,7 +636,7 @@ const config = {
      ***Notes:**
      ***Default value 10**..
      */
-    diagramMarginY: 20,
+    diagramMarginY: 10,
 
     /**
      *| Parameter | Description |Type | Required | Values|
