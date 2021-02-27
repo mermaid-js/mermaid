@@ -362,7 +362,7 @@ flowchart TD
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
-  it('60: handle styling for all node shapes', () => {
+  it('60: handle styling for all node shapes - v2', () => {
     imgSnapshotTest(
       `
       flowchart LR
@@ -371,8 +371,8 @@ flowchart TD
       E[(red text)] -->|default style| F((blue text))
       G>red text] -->|default style| H{blue text}
       I{{red text}} -->|default style| J[/blue text/]
-      K[\red text\] -->|default style| L[/blue text\]
-      M[\red text/] -->|default style| N[blue text]
+      K[\ red text\] -->|default style| L[/blue text\]
+      M[\ red text/] -->|default style| N[blue text]
       linkStyle default color:Sienna;
       style A stroke:#ff0000,fill:#ffcccc,color:#ff0000
       style B stroke:#0000ff,fill:#ccccff,color:#0000ff

@@ -49035,7 +49035,11 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
+<<<<<<< HEAD
 module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.9.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src/diagrams/requirement/*\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+=======
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.9.1\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+>>>>>>> master
 
 /***/ }),
 
@@ -72979,12 +72983,20 @@ function parse(text) {
 
   if (graphInit) {
     reinitialize(graphInit);
+<<<<<<< HEAD
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('reinit ', graphInit);
+=======
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('reinit ', graphInit);
+>>>>>>> master
   }
 
   var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(text);
   var parser;
+<<<<<<< HEAD
   _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('Type ' + graphType);
+=======
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Type ' + graphType);
+>>>>>>> master
 
   switch (graphType) {
     case 'git':
@@ -73035,6 +73047,7 @@ function parse(text) {
       break;
 
     case 'info':
+<<<<<<< HEAD
       _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('info info info');
       parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_23___default.a;
       parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_21__["default"];
@@ -73055,6 +73068,28 @@ function parse(text) {
     case 'journey':
       _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('Journey');
       parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_39___default.a;
+=======
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('info info info');
+      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default.a;
+      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__["default"];
+      break;
+
+    case 'pie':
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('pie');
+      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default.a;
+      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__["default"];
+      break;
+
+    case 'er':
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('er');
+      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default.a;
+      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__["default"];
+      break;
+
+    case 'journey':
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Journey');
+      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default.a;
+>>>>>>> master
       parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__["default"];
       break;
 
@@ -73340,8 +73375,13 @@ var render = function render(id, _txt, cb, container) {
   // }
   // Fix for when the base tag is used
 
+<<<<<<< HEAD
   var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node().innerHTML;
   _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+=======
+  var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().innerHTML;
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+>>>>>>> master
 
   if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -73371,7 +73411,11 @@ var render = function render(id, _txt, cb, container) {
         cb(svgCode);
     }
   } else {
+<<<<<<< HEAD
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('CB = undefined!');
+=======
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('CB = undefined!');
+>>>>>>> master
   }
 
   var node = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
@@ -73410,13 +73454,22 @@ var parseDirective = function parseDirective(p, statement, context, type) {
       }
     }
   } catch (error) {
+<<<<<<< HEAD
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].error(error.message);
+=======
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error(error.message);
+>>>>>>> master
   }
 };
 
 var handleDirective = function handleDirective(p, directive, type) {
+<<<<<<< HEAD
   _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
+=======
+  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
+>>>>>>> master
 
   switch (directive.type) {
     case 'init':
@@ -73446,7 +73499,11 @@ var handleDirective = function handleDirective(p, directive, type) {
       break;
 
     default:
+<<<<<<< HEAD
       _logger__WEBPACK_IMPORTED_MODULE_41__["log"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+=======
+      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+>>>>>>> master
       break;
   }
 };
@@ -73516,7 +73573,11 @@ function initialize(options) {
 
   var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"](options) : _config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"]();
   updateRendererConfigs(config);
+<<<<<<< HEAD
   Object(_logger__WEBPACK_IMPORTED_MODULE_41__["setLogLevel"])(config.logLevel); // log.debug('mermaidAPI.initialize: ', config);
+=======
+  Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(config.logLevel); // log.debug('mermaidAPI.initialize: ', config);
+>>>>>>> master
 }
 
 var mermaidAPI = Object.freeze({
@@ -74982,7 +75043,11 @@ var detectDirective = function detectDirective(text) {
 
     return result.length === 1 ? result[0] : result;
   } catch (error) {
+<<<<<<< HEAD
     _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("ERROR: ".concat(error.message, " - Unable to parse directive\n      ").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
+=======
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("ERROR: ".concat(error.message, " - Unable to parse directive").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
+>>>>>>> master
     return {
       type: null,
       args: null
