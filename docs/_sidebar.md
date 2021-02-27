@@ -15,6 +15,7 @@
   - [User Journey](user-journey.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
+  - [Requirement Diagram](requirementDiagram.md)
   - [Other Examples](examples.md)
 
 - Adding mermaid✒️

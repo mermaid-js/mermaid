@@ -190,6 +190,9 @@ export const draw = function(text, id) {
       })
       .attr('height', theBarHeight)
       .attr('transform-origin', function(d, i) {
+        // Ignore the incoming i value and use our order instead
+        i = d.order;
+
         return (
           (
             timeScale(d.startTime) +
