@@ -30304,7 +30304,7 @@ function addHtmlLabel(root, node) {
   var client = div.node().getBoundingClientRect();
   fo
     .attr("width", client.width)
-    .attr("height", client.height); 
+    .attr("height", client.height);
 
   return fo;
 }
@@ -49035,11 +49035,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-<<<<<<< HEAD
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.9.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src/diagrams/requirement/*\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
-=======
 module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.9.1\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
->>>>>>> master
 
 /***/ }),
 
@@ -54091,12 +54087,12 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,6],$V2=[1,14],$V3=[2,14],$V4=[1,25],$V5=[1,28],$V6=[1,26],$V7=[1,27],$V8=[1,29],$V9=[1,30],$Va=[1,31],$Vb=[1,32],$Vc=[1,35],$Vd=[1,36],$Ve=[1,37],$Vf=[1,38],$Vg=[10,19],$Vh=[1,50],$Vi=[1,51],$Vj=[1,52],$Vk=[1,53],$Vl=[1,54],$Vm=[1,55],$Vn=[10,19,26,33,34,42,45,46,47,48,49,50,55,57],$Vo=[10,19,24,26,33,34,38,42,45,46,47,48,49,50,55,57,72,73,74,75],$Vp=[10,13,17,19],$Vq=[10,19,26],$Vr=[10,19,26,42,72,73,74,75],$Vs=[10,19,26,42,49,50,72,73,74,75],$Vt=[10,19,26,42,45,46,47,48,72,73,74,75],$Vu=[1,90];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,6],$V2=[1,14],$V3=[1,25],$V4=[1,28],$V5=[1,26],$V6=[1,27],$V7=[1,29],$V8=[1,30],$V9=[1,31],$Va=[1,32],$Vb=[1,34],$Vc=[1,35],$Vd=[1,36],$Ve=[10,19],$Vf=[1,48],$Vg=[1,49],$Vh=[1,50],$Vi=[1,51],$Vj=[1,52],$Vk=[1,53],$Vl=[10,19,25,32,33,41,44,45,46,47,48,49,54,56],$Vm=[10,19,23,25,32,33,37,41,44,45,46,47,48,49,54,56,71,72,73],$Vn=[10,13,17,19],$Vo=[41,71,72,73],$Vp=[41,48,49,71,72,73],$Vq=[41,44,45,46,47,71,72,73],$Vr=[10,19,25],$Vs=[1,85];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"graphConfig":6,"openDirective":7,"typeDirective":8,"closeDirective":9,"NEWLINE":10,":":11,"argDirective":12,"open_directive":13,"type_directive":14,"arg_directive":15,"close_directive":16,"CLASS_DIAGRAM":17,"statements":18,"EOF":19,"statement":20,"className":21,"alphaNumToken":22,"classLiteralName":23,"GENERICTYPE":24,"relationStatement":25,"LABEL":26,"classStatement":27,"methodStatement":28,"annotationStatement":29,"clickStatement":30,"cssClassStatement":31,"CLASS":32,"STYLE_SEPARATOR":33,"STRUCT_START":34,"members":35,"STRUCT_STOP":36,"ANNOTATION_START":37,"ANNOTATION_END":38,"MEMBER":39,"SEPARATOR":40,"relation":41,"STR":42,"relationType":43,"lineType":44,"AGGREGATION":45,"EXTENSION":46,"COMPOSITION":47,"DEPENDENCY":48,"LINE":49,"DOTTED_LINE":50,"CALLBACK":51,"LINK":52,"LINK_TARGET":53,"CLICK":54,"CALLBACK_NAME":55,"CALLBACK_ARGS":56,"HREF":57,"CSSCLASS":58,"commentToken":59,"textToken":60,"graphCodeTokens":61,"textNoTagsToken":62,"TAGSTART":63,"TAGEND":64,"==":65,"--":66,"PCT":67,"DEFAULT":68,"SPACE":69,"MINUS":70,"keywords":71,"UNICODE_TEXT":72,"NUM":73,"ALPHA":74,"BQUOTE_STR":75,"$accept":0,"$end":1},
-terminals_: {2:"error",10:"NEWLINE",11:":",13:"open_directive",14:"type_directive",15:"arg_directive",16:"close_directive",17:"CLASS_DIAGRAM",19:"EOF",24:"GENERICTYPE",26:"LABEL",32:"CLASS",33:"STYLE_SEPARATOR",34:"STRUCT_START",36:"STRUCT_STOP",37:"ANNOTATION_START",38:"ANNOTATION_END",39:"MEMBER",40:"SEPARATOR",42:"STR",45:"AGGREGATION",46:"EXTENSION",47:"COMPOSITION",48:"DEPENDENCY",49:"LINE",50:"DOTTED_LINE",51:"CALLBACK",52:"LINK",53:"LINK_TARGET",54:"CLICK",55:"CALLBACK_NAME",56:"CALLBACK_ARGS",57:"HREF",58:"CSSCLASS",61:"graphCodeTokens",63:"TAGSTART",64:"TAGEND",65:"==",66:"--",67:"PCT",68:"DEFAULT",69:"SPACE",70:"MINUS",71:"keywords",72:"UNICODE_TEXT",73:"NUM",74:"ALPHA",75:"BQUOTE_STR"},
-productions_: [0,[3,1],[3,2],[4,1],[5,4],[5,6],[7,1],[8,1],[12,1],[9,1],[6,4],[18,1],[18,2],[18,3],[21,0],[21,1],[21,1],[21,2],[21,2],[21,3],[21,3],[21,2],[21,2],[20,1],[20,2],[20,1],[20,1],[20,1],[20,1],[20,1],[20,1],[27,2],[27,4],[27,5],[27,7],[29,4],[35,1],[35,2],[28,1],[28,2],[28,1],[28,1],[25,3],[25,4],[25,4],[25,5],[41,3],[41,2],[41,2],[41,1],[43,1],[43,1],[43,1],[43,1],[44,1],[44,1],[30,3],[30,4],[30,3],[30,4],[30,4],[30,5],[30,3],[30,4],[30,4],[30,5],[30,3],[30,4],[30,4],[30,5],[31,3],[59,1],[59,1],[60,1],[60,1],[60,1],[60,1],[60,1],[60,1],[60,1],[62,1],[62,1],[62,1],[62,1],[22,1],[22,1],[22,1],[23,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"graphConfig":6,"openDirective":7,"typeDirective":8,"closeDirective":9,"NEWLINE":10,":":11,"argDirective":12,"open_directive":13,"type_directive":14,"arg_directive":15,"close_directive":16,"CLASS_DIAGRAM":17,"statements":18,"EOF":19,"statement":20,"className":21,"alphaNumToken":22,"GENERICTYPE":23,"relationStatement":24,"LABEL":25,"classStatement":26,"methodStatement":27,"annotationStatement":28,"clickStatement":29,"cssClassStatement":30,"CLASS":31,"STYLE_SEPARATOR":32,"STRUCT_START":33,"members":34,"STRUCT_STOP":35,"ANNOTATION_START":36,"ANNOTATION_END":37,"MEMBER":38,"SEPARATOR":39,"relation":40,"STR":41,"relationType":42,"lineType":43,"AGGREGATION":44,"EXTENSION":45,"COMPOSITION":46,"DEPENDENCY":47,"LINE":48,"DOTTED_LINE":49,"CALLBACK":50,"LINK":51,"LINK_TARGET":52,"CLICK":53,"CALLBACK_NAME":54,"CALLBACK_ARGS":55,"HREF":56,"CSSCLASS":57,"commentToken":58,"textToken":59,"graphCodeTokens":60,"textNoTagsToken":61,"TAGSTART":62,"TAGEND":63,"==":64,"--":65,"PCT":66,"DEFAULT":67,"SPACE":68,"MINUS":69,"keywords":70,"UNICODE_TEXT":71,"NUM":72,"ALPHA":73,"$accept":0,"$end":1},
+terminals_: {2:"error",10:"NEWLINE",11:":",13:"open_directive",14:"type_directive",15:"arg_directive",16:"close_directive",17:"CLASS_DIAGRAM",19:"EOF",23:"GENERICTYPE",25:"LABEL",31:"CLASS",32:"STYLE_SEPARATOR",33:"STRUCT_START",35:"STRUCT_STOP",36:"ANNOTATION_START",37:"ANNOTATION_END",38:"MEMBER",39:"SEPARATOR",41:"STR",44:"AGGREGATION",45:"EXTENSION",46:"COMPOSITION",47:"DEPENDENCY",48:"LINE",49:"DOTTED_LINE",50:"CALLBACK",51:"LINK",52:"LINK_TARGET",53:"CLICK",54:"CALLBACK_NAME",55:"CALLBACK_ARGS",56:"HREF",57:"CSSCLASS",60:"graphCodeTokens",62:"TAGSTART",63:"TAGEND",64:"==",65:"--",66:"PCT",67:"DEFAULT",68:"SPACE",69:"MINUS",70:"keywords",71:"UNICODE_TEXT",72:"NUM",73:"ALPHA"},
+productions_: [0,[3,1],[3,2],[4,1],[5,4],[5,6],[7,1],[8,1],[12,1],[9,1],[6,4],[18,1],[18,2],[18,3],[21,1],[21,2],[21,3],[21,2],[20,1],[20,2],[20,1],[20,1],[20,1],[20,1],[20,1],[20,1],[26,2],[26,4],[26,5],[26,7],[28,4],[34,1],[34,2],[27,1],[27,2],[27,1],[27,1],[24,3],[24,4],[24,4],[24,5],[40,3],[40,2],[40,2],[40,1],[42,1],[42,1],[42,1],[42,1],[43,1],[43,1],[29,3],[29,4],[29,3],[29,4],[29,4],[29,5],[29,3],[29,4],[29,4],[29,5],[29,3],[29,4],[29,4],[29,5],[30,3],[58,1],[58,1],[59,1],[59,1],[59,1],[59,1],[59,1],[59,1],[59,1],[61,1],[61,1],[61,1],[61,1],[22,1],[22,1],[22,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -54114,133 +54110,133 @@ break;
 case 9:
  yy.parseDirective('}%%', 'close_directive', 'class'); 
 break;
-case 15: case 16:
+case 14:
  this.$=$$[$0]; 
 break;
-case 17: case 18:
+case 15:
  this.$=$$[$0-1]+$$[$0]; 
 break;
-case 19: case 20:
+case 16:
  this.$=$$[$0-2]+'~'+$$[$0-1]+$$[$0]; 
 break;
-case 21: case 22:
+case 17:
  this.$=$$[$0-1]+'~'+$$[$0]; 
 break;
-case 23:
+case 18:
  yy.addRelation($$[$0]); 
 break;
-case 24:
+case 19:
  $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
 break;
-case 31:
+case 26:
 yy.addClass($$[$0]);
 break;
-case 32:
+case 27:
 yy.addClass($$[$0-2]);yy.setCssClass($$[$0-2], $$[$0]);
 break;
-case 33:
+case 28:
 /*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
 break;
-case 34:
+case 29:
 yy.addClass($$[$0-5]);yy.setCssClass($$[$0-5], $$[$0-3]);yy.addMembers($$[$0-5],$$[$0-1]);
 break;
-case 35:
+case 30:
  yy.addAnnotation($$[$0],$$[$0-2]); 
 break;
-case 36:
+case 31:
  this.$ = [$$[$0]]; 
 break;
-case 37:
+case 32:
  $$[$0].push($$[$0-1]);this.$=$$[$0];
 break;
-case 38:
+case 33:
 /*console.log('Rel found',$$[$0]);*/
 break;
-case 39:
+case 34:
 yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
 break;
-case 40:
+case 35:
 /*console.warn('Member',$$[$0]);*/
 break;
-case 41:
+case 36:
 /*console.log('sep found',$$[$0]);*/
 break;
-case 42:
+case 37:
  this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
 break;
-case 43:
+case 38:
  this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
 break;
-case 44:
+case 39:
  this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
 break;
-case 45:
+case 40:
  this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
-case 46:
+case 41:
  this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
 break;
-case 47:
+case 42:
  this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
 break;
-case 48:
+case 43:
  this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
 break;
-case 49:
+case 44:
  this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
 break;
-case 50:
+case 45:
  this.$=yy.relationType.AGGREGATION;
 break;
-case 51:
+case 46:
  this.$=yy.relationType.EXTENSION;
 break;
-case 52:
+case 47:
  this.$=yy.relationType.COMPOSITION;
 break;
-case 53:
+case 48:
  this.$=yy.relationType.DEPENDENCY;
 break;
-case 54:
+case 49:
 this.$=yy.lineType.LINE;
 break;
-case 55:
+case 50:
 this.$=yy.lineType.DOTTED_LINE;
 break;
-case 56: case 62:
+case 51: case 57:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0]);
 break;
-case 57: case 63:
+case 52: case 58:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-2], $$[$0]);
 break;
-case 58: case 66:
+case 53: case 61:
 this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 59:
+case 54:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1],$$[$0]);
 break;
-case 60: case 68:
+case 55: case 63:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-2], $$[$0]);
 break;
-case 61: case 69:
+case 56: case 64:
 this.$ = $$[$0-4];yy.setLink($$[$0-3], $$[$0-2], $$[$0]);yy.setTooltip($$[$0-3], $$[$0-1]);
 break;
-case 64:
+case 59:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 65:
+case 60:
 this.$ = $$[$0-4];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-3], $$[$0]);
 break;
-case 67:
+case 62:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 70:
+case 65:
 yy.setCssClass($$[$0-1], $$[$0]);
 break;
 }
 },
-table: [{3:1,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[3]},{1:[2,1]},{3:8,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[2,3]},{8:9,14:[1,10]},{10:[1,11]},{14:[2,6]},{1:[2,2]},{9:12,11:[1,13],16:$V2},o([11,16],[2,7]),o([10,19,26,42,45,46,47,48,49,50],$V3,{7:5,18:15,20:16,25:17,27:18,28:19,29:20,30:21,31:22,5:23,21:24,22:33,23:34,13:$V0,32:$V4,37:$V5,39:$V6,40:$V7,51:$V8,52:$V9,54:$Va,58:$Vb,72:$Vc,73:$Vd,74:$Ve,75:$Vf}),{10:[1,39]},{12:40,15:[1,41]},{10:[2,9]},{19:[1,42]},{10:[1,43],19:[2,11]},o($Vg,[2,23],{26:[1,44]}),o($Vg,[2,25]),o($Vg,[2,26]),o($Vg,[2,27]),o($Vg,[2,28]),o($Vg,[2,29]),o($Vg,[2,30]),o($Vg,[2,38],{41:45,43:48,44:49,26:[1,47],42:[1,46],45:$Vh,46:$Vi,47:$Vj,48:$Vk,49:$Vl,50:$Vm}),o([10,19,33,34],$V3,{22:33,23:34,21:56,72:$Vc,73:$Vd,74:$Ve,75:$Vf}),o($Vg,[2,40]),o($Vg,[2,41]),{22:57,72:$Vc,73:$Vd,74:$Ve},{21:58,22:33,23:34,42:$V3,72:$Vc,73:$Vd,74:$Ve,75:$Vf},{21:59,22:33,23:34,42:$V3,72:$Vc,73:$Vd,74:$Ve,75:$Vf},o([55,57],$V3,{22:33,23:34,21:60,72:$Vc,73:$Vd,74:$Ve,75:$Vf}),{42:[1,61]},o($Vn,[2,15],{22:33,23:34,21:62,24:[1,63],72:$Vc,73:$Vd,74:$Ve,75:$Vf}),o($Vn,[2,16],{22:33,23:34,21:64,24:[1,65],72:$Vc,73:$Vd,74:$Ve,75:$Vf}),o($Vo,[2,84]),o($Vo,[2,85]),o($Vo,[2,86]),o([10,19,24,26,33,34,42,45,46,47,48,49,50,55,57,72,73,74,75],[2,87]),o($Vp,[2,4]),{9:66,16:$V2},{16:[2,8]},{1:[2,10]},o([10,26,42,45,46,47,48,49,50],$V3,{7:5,20:16,25:17,27:18,28:19,29:20,30:21,31:22,5:23,21:24,22:33,23:34,18:67,13:$V0,19:[2,12],32:$V4,37:$V5,39:$V6,40:$V7,51:$V8,52:$V9,54:$Va,58:$Vb,72:$Vc,73:$Vd,74:$Ve,75:$Vf}),o($Vg,[2,24]),o($Vq,$V3,{22:33,23:34,21:68,42:[1,69],72:$Vc,73:$Vd,74:$Ve,75:$Vf}),{41:70,43:48,44:49,45:$Vh,46:$Vi,47:$Vj,48:$Vk,49:$Vl,50:$Vm},o($Vg,[2,39]),{44:71,49:$Vl,50:$Vm},o($Vr,[2,49],{43:72,45:$Vh,46:$Vi,47:$Vj,48:$Vk}),o($Vs,[2,50]),o($Vs,[2,51]),o($Vs,[2,52]),o($Vs,[2,53]),o($Vt,[2,54]),o($Vt,[2,55]),o($Vg,[2,31],{33:[1,73],34:[1,74]}),{38:[1,75]},{42:[1,76]},{42:[1,77]},{55:[1,78],57:[1,79]},{22:80,72:$Vc,73:$Vd,74:$Ve},o($Vn,[2,17]),o($Vn,[2,21],{22:33,23:34,21:81,72:$Vc,73:$Vd,74:$Ve,75:$Vf}),o($Vn,[2,18]),o($Vn,[2,22],{22:33,23:34,21:82,72:$Vc,73:$Vd,74:$Ve,75:$Vf}),{10:[1,83]},{19:[2,13]},o($Vq,[2,42]),o($Vq,$V3,{22:33,23:34,21:84,72:$Vc,73:$Vd,74:$Ve,75:$Vf}),o($Vq,$V3,{22:33,23:34,21:85,42:[1,86],72:$Vc,73:$Vd,74:$Ve,75:$Vf}),o($Vr,[2,48],{43:87,45:$Vh,46:$Vi,47:$Vj,48:$Vk}),o($Vr,[2,47]),{22:88,72:$Vc,73:$Vd,74:$Ve},{35:89,39:$Vu},o($Vg,$V3,{22:33,23:34,21:91,72:$Vc,73:$Vd,74:$Ve,75:$Vf}),o($Vg,[2,56],{42:[1,92]}),o($Vg,[2,58],{42:[1,94],53:[1,93]}),o($Vg,[2,62],{42:[1,95],56:[1,96]}),o($Vg,[2,66],{42:[1,98],53:[1,97]}),o($Vg,[2,70]),o($Vn,[2,19]),o($Vn,[2,20]),o($Vp,[2,5]),o($Vq,[2,44]),o($Vq,[2,43]),o($Vq,$V3,{22:33,23:34,21:99,72:$Vc,73:$Vd,74:$Ve,75:$Vf}),o($Vr,[2,46]),o($Vg,[2,32],{34:[1,100]}),{36:[1,101]},{35:102,36:[2,36],39:$Vu},o($Vg,[2,35]),o($Vg,[2,57]),o($Vg,[2,59]),o($Vg,[2,60],{53:[1,103]}),o($Vg,[2,63]),o($Vg,[2,64],{42:[1,104]}),o($Vg,[2,67]),o($Vg,[2,68],{53:[1,105]}),o($Vq,[2,45]),{35:106,39:$Vu},o($Vg,[2,33]),{36:[2,37]},o($Vg,[2,61]),o($Vg,[2,65]),o($Vg,[2,69]),{36:[1,107]},o($Vg,[2,34])],
-defaultActions: {2:[2,1],4:[2,3],7:[2,6],8:[2,2],14:[2,9],41:[2,8],42:[2,10],67:[2,13],102:[2,37]},
+table: [{3:1,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[3]},{1:[2,1]},{3:8,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[2,3]},{8:9,14:[1,10]},{10:[1,11]},{14:[2,6]},{1:[2,2]},{9:12,11:[1,13],16:$V2},o([11,16],[2,7]),{5:23,7:5,13:$V0,18:15,20:16,21:24,22:33,24:17,26:18,27:19,28:20,29:21,30:22,31:$V3,36:$V4,38:$V5,39:$V6,50:$V7,51:$V8,53:$V9,57:$Va,71:$Vb,72:$Vc,73:$Vd},{10:[1,37]},{12:38,15:[1,39]},{10:[2,9]},{19:[1,40]},{10:[1,41],19:[2,11]},o($Ve,[2,18],{25:[1,42]}),o($Ve,[2,20]),o($Ve,[2,21]),o($Ve,[2,22]),o($Ve,[2,23]),o($Ve,[2,24]),o($Ve,[2,25]),o($Ve,[2,33],{40:43,42:46,43:47,25:[1,45],41:[1,44],44:$Vf,45:$Vg,46:$Vh,47:$Vi,48:$Vj,49:$Vk}),{21:54,22:33,71:$Vb,72:$Vc,73:$Vd},o($Ve,[2,35]),o($Ve,[2,36]),{22:55,71:$Vb,72:$Vc,73:$Vd},{21:56,22:33,71:$Vb,72:$Vc,73:$Vd},{21:57,22:33,71:$Vb,72:$Vc,73:$Vd},{21:58,22:33,71:$Vb,72:$Vc,73:$Vd},{41:[1,59]},o($Vl,[2,14],{22:33,21:60,23:[1,61],71:$Vb,72:$Vc,73:$Vd}),o($Vm,[2,79]),o($Vm,[2,80]),o($Vm,[2,81]),o($Vn,[2,4]),{9:62,16:$V2},{16:[2,8]},{1:[2,10]},{5:23,7:5,13:$V0,18:63,19:[2,12],20:16,21:24,22:33,24:17,26:18,27:19,28:20,29:21,30:22,31:$V3,36:$V4,38:$V5,39:$V6,50:$V7,51:$V8,53:$V9,57:$Va,71:$Vb,72:$Vc,73:$Vd},o($Ve,[2,19]),{21:64,22:33,41:[1,65],71:$Vb,72:$Vc,73:$Vd},{40:66,42:46,43:47,44:$Vf,45:$Vg,46:$Vh,47:$Vi,48:$Vj,49:$Vk},o($Ve,[2,34]),{43:67,48:$Vj,49:$Vk},o($Vo,[2,44],{42:68,44:$Vf,45:$Vg,46:$Vh,47:$Vi}),o($Vp,[2,45]),o($Vp,[2,46]),o($Vp,[2,47]),o($Vp,[2,48]),o($Vq,[2,49]),o($Vq,[2,50]),o($Ve,[2,26],{32:[1,69],33:[1,70]}),{37:[1,71]},{41:[1,72]},{41:[1,73]},{54:[1,74],56:[1,75]},{22:76,71:$Vb,72:$Vc,73:$Vd},o($Vl,[2,15]),o($Vl,[2,17],{22:33,21:77,71:$Vb,72:$Vc,73:$Vd}),{10:[1,78]},{19:[2,13]},o($Vr,[2,37]),{21:79,22:33,71:$Vb,72:$Vc,73:$Vd},{21:80,22:33,41:[1,81],71:$Vb,72:$Vc,73:$Vd},o($Vo,[2,43],{42:82,44:$Vf,45:$Vg,46:$Vh,47:$Vi}),o($Vo,[2,42]),{22:83,71:$Vb,72:$Vc,73:$Vd},{34:84,38:$Vs},{21:86,22:33,71:$Vb,72:$Vc,73:$Vd},o($Ve,[2,51],{41:[1,87]}),o($Ve,[2,53],{41:[1,89],52:[1,88]}),o($Ve,[2,57],{41:[1,90],55:[1,91]}),o($Ve,[2,61],{41:[1,93],52:[1,92]}),o($Ve,[2,65]),o($Vl,[2,16]),o($Vn,[2,5]),o($Vr,[2,39]),o($Vr,[2,38]),{21:94,22:33,71:$Vb,72:$Vc,73:$Vd},o($Vo,[2,41]),o($Ve,[2,27],{33:[1,95]}),{35:[1,96]},{34:97,35:[2,31],38:$Vs},o($Ve,[2,30]),o($Ve,[2,52]),o($Ve,[2,54]),o($Ve,[2,55],{52:[1,98]}),o($Ve,[2,58]),o($Ve,[2,59],{41:[1,99]}),o($Ve,[2,62]),o($Ve,[2,63],{52:[1,100]}),o($Vr,[2,40]),{34:101,38:$Vs},o($Ve,[2,28]),{35:[2,32]},o($Ve,[2,56]),o($Ve,[2,60]),o($Ve,[2,64]),{35:[1,102]},o($Ve,[2,29])],
+defaultActions: {2:[2,1],4:[2,3],7:[2,6],8:[2,2],14:[2,9],39:[2,8],40:[2,10],63:[2,13],97:[2,32]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -54741,31 +54737,31 @@ case 9:return 17;
 break;
 case 10:return 17;
 break;
-case 11: this.begin("struct"); /*console.log('Starting struct');*/ return 34;
+case 11: this.begin("struct"); /*console.log('Starting struct');*/ return 33;
 break;
 case 12:return "EOF_IN_STRUCT";
 break;
 case 13:return "OPEN_IN_STRUCT";
 break;
-case 14: /*console.log('Ending struct');*/this.popState(); return 36;
+case 14: /*console.log('Ending struct');*/this.popState(); return 35;
 break;
 case 15:/* nothing */
 break;
 case 16: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
 break;
-case 17:return 32;
+case 17:return 31;
 break;
-case 18:return 58;
+case 18:return 57;
 break;
-case 19:return 51;
+case 19:return 50;
 break;
-case 20:return 52;
+case 20:return 51;
 break;
-case 21:return 54;
+case 21:return 53;
 break;
-case 22:return 37;
+case 22:return 36;
 break;
-case 23:return 38;
+case 23:return 37;
 break;
 case 24:this.begin("generic");
 break;
@@ -54779,86 +54775,80 @@ case 28:this.popState();
 break;
 case 29:return "STR";
 break;
-case 30:this.begin("bqstring");
+case 30:this.begin("href");
 break;
 case 31:this.popState();
 break;
-case 32:return "BQUOTE_STR";
+case 32:return 56;
 break;
-case 33:this.begin("href");
+case 33:this.begin("callback_name");
 break;
 case 34:this.popState();
 break;
-case 35:return 57;
+case 35:this.popState(); this.begin("callback_args");
 break;
-case 36:this.begin("callback_name");
+case 36:return 54;
 break;
 case 37:this.popState();
 break;
-case 38:this.popState(); this.begin("callback_args");
+case 38:return 55;
 break;
-case 39:return 55;
+case 39:return 52;
 break;
-case 40:this.popState();
+case 40:return 52;
 break;
-case 41:return 56;
+case 41:return 52;
 break;
-case 42:return 53;
+case 42:return 52;
 break;
-case 43:return 53;
+case 43:return 45;
 break;
-case 44:return 53;
+case 44:return 45;
 break;
-case 45:return 53;
+case 45:return 47;
 break;
-case 46:return 46;
+case 46:return 47;
 break;
 case 47:return 46;
 break;
-case 48:return 48;
+case 48:return 44;
 break;
 case 49:return 48;
 break;
-case 50:return 47;
+case 50:return 49;
 break;
-case 51:return 45;
+case 51:return 25;
 break;
-case 52:return 49;
+case 52:return 32;
 break;
-case 53:return 50;
+case 53:return 69;
 break;
-case 54:return 26;
+case 54:return 'DOT';
 break;
-case 55:return 33;
+case 55:return 'PLUS';
 break;
-case 56:return 70;
+case 56:return 66;
 break;
-case 57:return 'DOT';
+case 57:return 'EQUALS';
 break;
-case 58:return 'PLUS';
+case 58:return 'EQUALS';
 break;
-case 59:return 67;
+case 59:return 73;
 break;
-case 60:return 'EQUALS';
+case 60:return 'PUNCTUATION';
 break;
-case 61:return 'EQUALS';
+case 61:return 72;
 break;
-case 62:return 74;
+case 62:return 71;
 break;
-case 63:return 'PUNCTUATION';
+case 63:return 68;
 break;
-case 64:return 73;
-break;
-case 65:return 72;
-break;
-case 66:return 69;
-break;
-case 67:return 19;
+case 64:return 19;
 break;
 }
 },
-rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n?)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:cssClass\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:click\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:[`])/,/^(?:[`])/,/^(?:[^`]+)/,/^(?:href[\s]+["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:call[\s]+)/,/^(?:\([\s]*\))/,/^(?:\()/,/^(?:[^(]*)/,/^(?:\))/,/^(?:[^)]*)/,/^(?:_self\b)/,/^(?:_blank\b)/,/^(?:_parent\b)/,/^(?:_top\b)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::{1}[^:\n;]+)/,/^(?::{3})/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
-conditions: {"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callback_args":{"rules":[40,41],"inclusive":false},"callback_name":{"rules":[37,38,39],"inclusive":false},"href":{"rules":[34,35],"inclusive":false},"struct":{"rules":[12,13,14,15,16],"inclusive":false},"generic":{"rules":[25,26],"inclusive":false},"bqstring":{"rules":[31,32],"inclusive":false},"string":{"rules":[28,29],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,17,18,19,20,21,22,23,24,27,30,33,36,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n?)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:cssClass\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:click\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:href[\s]+["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:call[\s]+)/,/^(?:\([\s]*\))/,/^(?:\()/,/^(?:[^(]*)/,/^(?:\))/,/^(?:[^)]*)/,/^(?:_self\b)/,/^(?:_blank\b)/,/^(?:_parent\b)/,/^(?:_top\b)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::{1}[^:\n;]+)/,/^(?::{3})/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
+conditions: {"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callback_args":{"rules":[37,38],"inclusive":false},"callback_name":{"rules":[34,35,36],"inclusive":false},"href":{"rules":[31,32],"inclusive":false},"struct":{"rules":[12,13,14,15,16],"inclusive":false},"generic":{"rules":[25,26],"inclusive":false},"string":{"rules":[28,29],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,17,18,19,20,21,22,23,24,27,30,33,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64],"inclusive":true}}
 });
 return lexer;
 })();
@@ -60854,6 +60844,8 @@ var draw = function draw(text, id) {
 
       return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
     }).attr('height', theBarHeight).attr('transform-origin', function (d, i) {
+      // Ignore the incoming i value and use our order instead
+      i = d.order;
       return (timeScale(d.startTime) + theSidePad + 0.5 * (timeScale(d.endTime) - timeScale(d.startTime))).toString() + 'px ' + (i * theGap + theTopPad + 0.5 * theBarHeight).toString() + 'px';
     }).attr('class', function (d) {
       var res = 'task';
@@ -72983,20 +72975,12 @@ function parse(text) {
 
   if (graphInit) {
     reinitialize(graphInit);
-<<<<<<< HEAD
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('reinit ', graphInit);
-=======
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('reinit ', graphInit);
->>>>>>> master
   }
 
   var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(text);
   var parser;
-<<<<<<< HEAD
   _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('Type ' + graphType);
-=======
-  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Type ' + graphType);
->>>>>>> master
 
   switch (graphType) {
     case 'git':
@@ -73047,7 +73031,6 @@ function parse(text) {
       break;
 
     case 'info':
-<<<<<<< HEAD
       _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('info info info');
       parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_23___default.a;
       parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_21__["default"];
@@ -73068,28 +73051,6 @@ function parse(text) {
     case 'journey':
       _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('Journey');
       parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_39___default.a;
-=======
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('info info info');
-      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default.a;
-      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__["default"];
-      break;
-
-    case 'pie':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('pie');
-      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default.a;
-      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__["default"];
-      break;
-
-    case 'er':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('er');
-      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default.a;
-      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__["default"];
-      break;
-
-    case 'journey':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Journey');
-      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default.a;
->>>>>>> master
       parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__["default"];
       break;
 
@@ -73375,13 +73336,8 @@ var render = function render(id, _txt, cb, container) {
   // }
   // Fix for when the base tag is used
 
-<<<<<<< HEAD
   var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node().innerHTML;
   _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
-=======
-  var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().innerHTML;
-  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
->>>>>>> master
 
   if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -73411,11 +73367,7 @@ var render = function render(id, _txt, cb, container) {
         cb(svgCode);
     }
   } else {
-<<<<<<< HEAD
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('CB = undefined!');
-=======
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('CB = undefined!');
->>>>>>> master
   }
 
   var node = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
@@ -73454,22 +73406,13 @@ var parseDirective = function parseDirective(p, statement, context, type) {
       }
     }
   } catch (error) {
-<<<<<<< HEAD
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].error(error.message);
-=======
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error(error.message);
->>>>>>> master
   }
 };
 
 var handleDirective = function handleDirective(p, directive, type) {
-<<<<<<< HEAD
   _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
-=======
-  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
->>>>>>> master
 
   switch (directive.type) {
     case 'init':
@@ -73499,11 +73442,7 @@ var handleDirective = function handleDirective(p, directive, type) {
       break;
 
     default:
-<<<<<<< HEAD
       _logger__WEBPACK_IMPORTED_MODULE_41__["log"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
-=======
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
->>>>>>> master
       break;
   }
 };
@@ -73573,11 +73512,7 @@ function initialize(options) {
 
   var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"](options) : _config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"]();
   updateRendererConfigs(config);
-<<<<<<< HEAD
   Object(_logger__WEBPACK_IMPORTED_MODULE_41__["setLogLevel"])(config.logLevel); // log.debug('mermaidAPI.initialize: ', config);
-=======
-  Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(config.logLevel); // log.debug('mermaidAPI.initialize: ', config);
->>>>>>> master
 }
 
 var mermaidAPI = Object.freeze({
@@ -75043,11 +74978,7 @@ var detectDirective = function detectDirective(text) {
 
     return result.length === 1 ? result[0] : result;
   } catch (error) {
-<<<<<<< HEAD
     _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("ERROR: ".concat(error.message, " - Unable to parse directive\n      ").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
-=======
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("ERROR: ".concat(error.message, " - Unable to parse directive").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
->>>>>>> master
     return {
       type: null,
       args: null
