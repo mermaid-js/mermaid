@@ -580,17 +580,6 @@ const config = {
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
-     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
-     *
-     ***Notes:**
-     *
-     ***Default value '"Open-Sans", "sans-serif"'**.
-     */
-    fontFamily: '"Open-Sans", "sans-serif"',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
      *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
      *
      ***Notes:**
