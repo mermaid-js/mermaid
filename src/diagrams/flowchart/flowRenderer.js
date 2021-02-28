@@ -1,5 +1,5 @@
 import graphlib from 'graphlib';
-import { select, curveLinear, selectAll } from 'd3';
+import { select, curveLinear, curveNatural, selectAll } from 'd3';
 
 import flowDb from './flowDb';
 import flow from './parser/flow';
