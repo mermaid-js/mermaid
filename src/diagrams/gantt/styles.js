@@ -42,8 +42,8 @@ const getStyles = options =>
 
   .sectionTitle {
     text-anchor: start;
-    font-size: 11px;
-    text-height: 14px;
+    // font-size: ${options.ganttFontSize};
+    // text-height: 14px;
     font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
 
@@ -90,14 +90,14 @@ const getStyles = options =>
     font-family: var(--mermaid-font-family);
   }
 
-  .taskText:not([font-size]) {
-    font-size: 11px;
-  }
+  // .taskText:not([font-size]) {
+  //   font-size: ${options.ganttFontSize};
+  // }
 
   .taskTextOutsideRight {
     fill: ${options.taskTextDarkColor};
     text-anchor: start;
-    font-size: 11px;
+    // font-size: ${options.ganttFontSize};
     font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
 
@@ -106,7 +106,7 @@ const getStyles = options =>
   .taskTextOutsideLeft {
     fill: ${options.taskTextDarkColor};
     text-anchor: end;
-    font-size: 11px;
+    // font-size: ${options.ganttFontSize};
   }
 
   /* Special case clickable */

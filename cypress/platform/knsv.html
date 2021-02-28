@@ -25,21 +25,17 @@
   <body>
     <h1>info below</h1>
     <div class="flex">
-      <div class="mermaid2" style="width: 50%; height: 400px;">
-graph TD
-  A[Christmas] ==> D
-  A[Christmas] -->|Get money| B(Go shopping)
-  A[Christmas] ==> C
-  subgraph T ["Test"]
-    A
-    B
-    C
-  end
-  classDef Test fill:#F84E68,stroke:#333,color:white;
-  class A,T Test
-  classDef TestSub fill:green;
-  class T TestSub
-  linkStyle 0,1 color:orange, stroke: orange;
+      <div class="mermaid" style="width: 100%; height: 400px;">
+%%{init: { "logLevel": 1, "er": {"fontSize":18 }} }%%
+      erDiagram
+        CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+        CUSTOMER ||--o{ ORDER : places
+        CUSTOMER ||--o{ INVOICE : "liable for"
+        DELIVERY-ADDRESS ||--o{ ORDER : receives
+        INVOICE ||--|{ ORDER : covers
+        ORDER ||--|{ ORDER-ITEM : includes
+        PRODUCT-CATEGORY ||--|{ PRODUCT : contains
+        PRODUCT ||--o{ ORDER-ITEM : "ordered in"
       </div>
       <div class="mermaid2" style="width: 50%; height: 400px;">
 flowchart TD
@@ -134,16 +130,15 @@ style N stroke:#0000ff,fill:#ccccff,color:#0000ff
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'cardinal', htmlLabels: true },
+        flowchart: { nodeSpacing: 10, curve: 'cardinal', htmlLabels: true },
         htmlLabels: true,
         // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorFontFamily: 'courier',actorMargin: 50, showSequenceNumbers: true },
+        sequence: { actorFontFamily: 'courier',actorMargin: 50, showSequenceNumbers: false },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         fontFamily: '"arial", sans-serif',
         fontFamily: 'courier',
         curve: 'cardinal',
         securityLevel: 'loose',
-        sequence:{mirrorActors:false}
       });
       function callback(){alert('It worked');}
     </script>
