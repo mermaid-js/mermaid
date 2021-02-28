@@ -184,9 +184,9 @@ const config = {
      *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
      *
      ***Notes:
-     *Default Vaue: Linear**
+     *Default Vaue: monotoneX**
      */
-    curve: 'linear',
+    curve: 'monotoneX',
     // Only used in new experimental rendering
     // represents the padding between the labels and the shape
     padding: 15,
