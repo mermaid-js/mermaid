@@ -30,9 +30,10 @@ For some popular video tutorials on the live editor go to [Overview](./n00b-over
 
 ![Flowchart](./img/DiagramDefinition.png)
 
-**Notes:**
+**Saving a Diagram:**
+Downloading the image may be a ideal for a majority uses. 
 
-You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation.
+The Links and the markdown code can be referenced to display the diagram.
 
 ![Flowchart](./img/DownloadChoices.png)
 
