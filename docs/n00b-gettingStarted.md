@@ -35,9 +35,9 @@ Downloading the image may be a ideal for a majority uses.
 
 The Links and the markdown code can be referenced to display the diagram.
 
-![Flowchart](./img/DownloadChoices.png)
+![Flowchart](./img/Live-Editor-Choices.png.png)
 
-The `Mermaid configuration` is for configuring the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
+*The Mermaid configuration* is for configuring the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
 
 ![Flowchart](./img/Configuration.png)
 
