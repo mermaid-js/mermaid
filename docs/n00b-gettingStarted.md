@@ -1,16 +1,18 @@
 # A basic mermaid User-Guide for Beginners
 
 Creating diagrams and charts using mermaid code is simple.
-The code is turned into a diagram in the web page with the use of a mermaid renderer.
+mermaid allows you to dynamically code and modify diagrams.
+when called, mermaid renders code definitions into a diagram in SVG format.
 
-The mermaid renderer is a piece of javascript that parses mermaid definitions, when called.
-This then renders a diagram based on that code in SVG.
+>The live editor is enough for most general uses of mermaid
+## Absolute beginners are recommended to view the video tutorials on the Live Editor at the [Overview](./n00b-overview.md)page.
 
-Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot.
 
 ## For beginners, there are four relatively easy ways you can use mermaid:
-1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/). For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
-2. Using one of the many [mermaid plugins](../overview/integrations.md).
+1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
+    - Learning the [Syntax](./n00b-syntaxReference) would be helpful.
+    - The Live Editor opens on a [Flowchart](./flowchart)
+2. Using one of the many [mermaid plugins](./integrations.md).
 3. Hosting mermaid on a webpage, with an absolute link.
 4. Downloading mermaid and hosting it on your Web Page.
 
