@@ -5,7 +5,7 @@ mermaid allows you to dynamically code and modify diagrams.
 when called, mermaid renders code definitions into a diagram in SVG format.
 
 >The live editor is enough for most general uses of mermaid
-## Absolute beginners are recommended to view the video tutorials on the Live Editor at the [Overview](./n00b-overview.md)page.
+## Absolute beginners are recommended to view the video tutorials on the Live Editor at the[Tutorials](./Tutorials.md)page.
 
 
 ## For beginners, there are four relatively easy ways you can use mermaid:
