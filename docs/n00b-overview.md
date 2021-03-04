@@ -2,7 +2,7 @@
 
 ## Explaining with a Diagram
 
-A picture is worth a thousand words, a good diagram would be worth more. There is no disputing that they are indeed very useful. Yet very few people use them, even fewer still do so for documentation. Mainly because it takes too much time that could be used for more important functions.
+A picture is worth a thousand words, a good diagram is certainly worth more. Yet very few people use them, even fewer still do so for documentation. Maybe, because it takes too much time. 
 
 
 ## Creating and Maintaining Diagrams
