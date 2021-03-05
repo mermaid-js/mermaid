@@ -237,11 +237,9 @@ Class | Description
 ---                   | ---
 grid.tick             | Styling for the Grid Lines 
 grid.path             | Styling for the Grid's borders
-#tag                  | 
-#tag: before          | 
 .taskText             | Task Text Styling
-.taskTextOutsideRight  | 
-.taskTextOutsideLeft   | 
+.taskTextOutsideRight | Styling for Task Text that exceeds the activity bar towards the right. 
+.taskTextOutsideLeft  | Styling for Task Text that exceeds the activity bar, towards the left.
 todayMarker           | Toggle and Styling for the "Today Marker"
 
 
