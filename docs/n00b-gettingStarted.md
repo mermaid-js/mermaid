@@ -5,13 +5,12 @@ mermaid allows you to dynamically code and modify diagrams.
 when called, mermaid renders code definitions into a diagram in SVG format.
 
 >The live editor is enough for most general uses of mermaid
-## Absolute beginners are recommended to view the video tutorials on the Live Editor at the[Tutorials](./Tutorials.md)page.
+## Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md)on the Live Editor, to gain a better understanding of mermaid.
 
 
 ## For beginners, there are four relatively easy ways you can use mermaid:
-1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
+1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).
     - Learning the [Syntax](./n00b-syntaxReference) would be helpful.
-    - The Live Editor opens on a [Flowchart](./flowchart.md)
 2. Using one of the many [mermaid plugins](./integrations.md).
 3. Hosting mermaid on a webpage, with an absolute link.
 4. Downloading mermaid and hosting it on your Web Page.
@@ -28,7 +27,7 @@ In the `Code` section one can write or edit raw mermaid code, and instantly `Pre
 
 **This is a great way to learn how to define a mermaid diagram.**
 
-For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
+The Live Editor opens on a [Flowchart](./flowchart.md).
 
 ![Flowchart](./img/DiagramDefinition.png)
 
@@ -38,6 +37,8 @@ Downloading the image may be a ideal for a majority uses.
 The Links and the markdown code can be referenced to display the diagram.
 
 ![Flowchart](./img/Live-Editor-Choices.png)
+
+**Configuration**
 
 *The Mermaid configuration* is for configuring the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
 
