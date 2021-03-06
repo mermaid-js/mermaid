@@ -60,7 +60,7 @@ theme , the CSS style sheet
 | --------- | --------------- | ------ | -------- | ---------------------------------------------------- |
 | Theme     | Built in Themes | String | Optional | Values include, default, forest, dark, neutral, null |
 
-**Notes:**To disable any pre-defined mermaid theme, use "null".
+**Notes:** To disable any pre-defined mermaid theme, use "null".
 
 <pre>
  "theme": "forest",
@@ -73,7 +73,7 @@ theme , the CSS style sheet
 | ---------- | ------------------------------------------------------ | ------ | -------- | ---------------------------------------- |
 | fontFamily | specifies the font to be used in the rendered diagrams | String | Required | Trebuchet MS, Verdana, Arial, Sans-Serif |
 
-\*\*notes: Default value is \\"trebuchet ms\\".
+**Default value is \\"trebuchet ms\\".
 
 ## logLevel
 
@@ -81,7 +81,7 @@ theme , the CSS style sheet
 | --------- | ----------------------------------------------------- | ------ | -------- | ------------- |
 | logLevel  | This option decides the amount of logging to be used. | String | Required | 1, 2, 3, 4, 5 |
 
-**Notes:**
+**Values:**
 
 -   debug: 1.
 -   info: 2.
@@ -95,7 +95,7 @@ theme , the CSS style sheet
 | ------------- | --------------------------------- | ------ | -------- | ------------------------- |
 | securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose, antiscript |
 
-\*\*Notes:
+**Values:
 
 -   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
 -   **loose**: tags in text are allowed, click functionality is enabled
@@ -116,7 +116,7 @@ theme , the CSS style sheet
 | ------------------- | ---------------------------------------------------------------------------- | ------- | -------- | ----------- |
 | arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required | True, False |
 
-## Notes\*\*: This matters if you are using base tag settings.
+**Notes : This matters if you are using base tag settings.**
 
 **Default value: false**.
 
@@ -151,7 +151,7 @@ The object containing configurations specific for flowcharts
 | -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
 | diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
 
-**Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+**Notes: The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels**
 **Default value: 8**.
 
 ### htmlLabels
@@ -207,7 +207,7 @@ The object containing configurations specific for sequence diagrams
 
 ### activationWidth
 
-widt of the activation rect
+Width of the activation rect
 **Default value 10**.
 
 ### diagramMarginX
@@ -398,7 +398,7 @@ This sets the font weight of the actor's description
 ### noteFontWeight
 
 This sets the font weight of the note's description
-\*\*Default value 400.
+**Default value 400.
 
 ### noteAlign
 
@@ -407,7 +407,7 @@ This sets the font weight of the note's description
 | noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right |
 
 **Notes:**
-**Default value center**.
+**Default value: center**.
 
 ### messageFontSize
 
@@ -557,8 +557,8 @@ This might need adjustment to match your locale and preferences
 | ----------- | ----------- | ------- | -------- | ----------- |
 | useMaxWidth | See notes   | Boolean | 4        | True, False |
 
-**Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-available space if not the absolute space required is used.
+**Notes: when this flag is set the height and width is set to 100% and is then scaling with the
+available space if not the absolute space required is used.**
 
 **Default value true**.
 
@@ -662,7 +662,7 @@ Space between messages.
 | --------------- | ------------------------------------------- | ------- | -------- | ------------------ |
 | bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4        | Any Positive Value |
 
-**Notes:**Depending on css styling this might need adjustment.
+**Notes: Depending on css styling this might need adjustment.**
 **Default value 1**.
 
 ### useMaxWidth
@@ -682,7 +682,7 @@ available space if not the absolute space required is used.
 | ----------- | ---------------------------------- | ---- | -------- | ----------- |
 | rightAngles | Curved Arrows become Right Angles, | 3    | 4        | True, False |
 
-**Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
+**Notes:This will display arrows that start and begin at the same node as right angles, rather than a curves**
 **Default value false**.
 
 ## useMaxWidth
@@ -691,34 +691,13 @@ available space if not the absolute space required is used.
 | ----------- | ----------- | ------- | -------- | ----------- |
 | useMaxWidth | See notes   | Boolean | 4        | True, False |
 
-**Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-available space if not the absolute space required is used.
+**Notes: when this flag is set, the height and width is set to 100% and is then scaling with the
+available space if not the absolute space required is used.**
 
 **Default value true**.
 
-## useMaxWidth
 
-| Parameter   | Description | Type    | Required | Values      |
-| ----------- | ----------- | ------- | -------- | ----------- |
-| useMaxWidth | See notes   | Boolean | 4        | True, False |
-
-**Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-available space if not the absolute space required is used.
-
-**Default value true**.
-
-## useMaxWidth
-
-| Parameter   | Description | Type    | Required | Values      |
-| ----------- | ----------- | ------- | -------- | ----------- |
-| useMaxWidth | See notes   | Boolean | 4        | True, False |
-
-**Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-available space if not the absolute space required is used.
-
-**Default value true**.
-
-## er
+## ER Diagrams
 
 The object containing configurations specific for entity relationship diagrams
 
@@ -757,7 +736,7 @@ T = top, B = bottom, L = left, and R = right.
 | --------------- | ------------------------------------ | ------- | -------- | ------------------ |
 | minEntityHeight | The minimum height of an entity box, | Integer | 4        | Any Positive Value |
 
-**Notes:**expressed in pixels
+**Notes: expressed in pixels**
 **Default value: 75 **
 
 ### entityPadding
@@ -766,7 +745,7 @@ T = top, B = bottom, L = left, and R = right.
 | ------------- | ------------------------------------------------------------ | ------- | -------- | ------------------ |
 | entityPadding | minimum internal padding betweentext in box and  box borders | Integer | 4        | Any Positive Value |
 
-**Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+**Notes: The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.**
 **Default value: 15 **
 
 ### stroke
@@ -792,7 +771,7 @@ T = top, B = bottom, L = left, and R = right.
 | --------- | ------------------- | ------- | -------- | ------------------ |
 | fontSize  | Font Size in pixels | Integer |          | Any Positive Value |
 
-**Notes:**Font size (expressed as an integer representing a number of pixels)
+**Notes: Font size (expressed as an integer representing a number of pixels)**  
 **Default value: 12 **
 
 ### useMaxWidth
