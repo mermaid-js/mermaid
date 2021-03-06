@@ -375,7 +375,7 @@ This will display arrows that start and begin at the same node as right angles, 
 ### actorFontWeight
 
 This sets the font weight of the actor's description
-\*\*Default value 400.
+Default value 400.
 
 ### noteFontSize
 
@@ -430,27 +430,27 @@ This sets the font weight of the note's description
 ### messageFontWeight
 
 This sets the font weight of the message's description
-\*\*Default value 400.
+Default value 400.
 
 ### wrap
 
 This sets the auto-wrap state for the diagram
-\*\*Default value false.
+Default value false.
 
 ### wrapPadding
 
 This sets the auto-wrap padding for the diagram (sides only)
-\*\*Default value 10.
+Default value 10.
 
 ### labelBoxWidth
 
 This sets the width of the loop-box (loop, alt, opt, par)
-\*\*Default value 50.
+Default value 50.
 
 ### labelBoxHeight
 
 This sets the height of the loop-box (loop, alt, opt, par)
-\*\*Default value 20.
+Default value 20.
 
 ## gantt
 
@@ -654,7 +654,7 @@ Space between messages.
 | ------------ | --------------------------- | ---- | -------- | ------------------- |
 | messageAlign | Multiline message alignment | 3    | 4        | left, center, right |
 
-**Notes:**default:center\*\*
+**Notes:** default:center
 
 ### bottomMarginAdj
 
