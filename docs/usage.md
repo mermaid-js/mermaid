@@ -95,7 +95,7 @@ Mermaid can load multiple diagrams, in the same page.
 > Try it out, save this code as HTML and load it using any browser.(Except Internet Explorer, please don't use Internet Explorer.)
 
 
-## To enable click event and tags in nodes
+## Enabling Click Event and Tags in Nodes
 
  A `securityLevel` configuration has to first be cleared, `securityLevel` sets the level of trust for the parsed diagrams and limits click functionality. This was introduce in version 8.2 as a security improvement, aimed at preventing malicious use.
 
@@ -107,7 +107,7 @@ Mermaid can load multiple diagrams, in the same page.
 | ------------- | --------------------------------- | ------ | -------- | ------------------------- |
 | securityLevel | Level of trust for parsed diagram | String | Required | Strict, Loose, antiscript |
 
-\*\*Notes:
+Values:
 
 -   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
 -   **loose**: tags in text are allowed, click functionality is enabled
@@ -115,12 +115,12 @@ Mermaid can load multiple diagrams, in the same page.
 
 
 ```note
-This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
+This changes the default behaviour of mermaid so that after upgrade to 8.2,unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
 ```
 
-**If you are taking responsibility for the diagram source security you can set the `securityLevel` to a value of your choosing . By doing this clicks and tags are allowed.**
+**If you are taking responsibility for the diagram source security you can set the `securityLevel` to a value of your choosing . This allows clicks and tags are allowed.**
 
-**To change `securityLevel` with `mermaidAPI.initialize`:**
+**To change `securityLevel`, you have to call `mermaidAPI.initialize`:**
 
 ```javascript
 mermaidAPI.initialize({
