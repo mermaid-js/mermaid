@@ -88,7 +88,7 @@ There are six types of arrows currently supported:
 | -->> | Dotted line with arrowhead                  |
 | -x   | Solid line with a cross at the end          |
 | --x  | Dotted line with a cross at the end.        |
-| -)   | Solid line with an open arrowat the end (async)  |
+| -)   | Solid line with an open arrow at the end (async)  |
 | --)  | Dotted line with a open arrow at the end (async) |
 
 ## Activations
