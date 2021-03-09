@@ -63,8 +63,8 @@ The easiest way to integrate mermaid on a web page requires three elements:
     </div>
     ```
 
-**If these things are in place mermaid starts at the page load event and when fired (when the page has loaded) it will
-locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and return svg charts or diagrams with their corresponding definitions.**
+**Following these directions, mermaid starts at page load and (when the page has loaded) it will
+locate the graph definitions inside the `div` tags with `class="mermaid"` and return diagrams in SVG form, following given definitions.**
 
 ## Simple full example:
 
