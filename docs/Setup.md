@@ -52,9 +52,8 @@ A summary of all options and their defaults is found [here][5]. A description of
 
 ## theme
 
-theme , the CSS style sheet
+Theme , the CSS style sheet
 
-theme , the CSS style sheet
 
 | Parameter | Description     | Type   | Required | Values                                               |
 | --------- | --------------- | ------ | -------- | ---------------------------------------------------- |
