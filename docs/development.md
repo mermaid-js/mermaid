@@ -8,17 +8,18 @@ Here are a few things to know to get you started on the right path.
 
 **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**
 
-**Note: You will have to edit the document to see its contents. Commits and PR's should be directed to the develop branch.**
+**Note: Commits and Pull Requests should be directed to the develop branch.**
 
 ## Branching
 
-Going forward we will use a **Git Flow** inspired approach to branching. So development is done in the `develop` branch.
+Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/) inspired approach to branching. So development is done in the `develop` branch.
 
 Once development is done we branch a release branch from develop for testing.
 
-Once the release happens we merge the release branch to master and kill the release branch.
+Once the release happens we merge the release branch with master and kill the release branch.
 
 This means... **you should branch off your pull request from develop** and direct all Pull Requests to it.
+
 
 ## Contributing Code
 
