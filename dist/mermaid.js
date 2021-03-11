@@ -49954,11 +49954,21 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     return !Number.isNaN(p.y);
   }); // This is the accessor function we talked about above
 
+  var curve; // Currently only flowcharts get the curve from the settings, perhaps this should
+  // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
+  // have not been thought through
+
+  if (diagramType === 'graph' || diagramType === 'flowchart') {
+    curve = edge.curve || d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"];
+  } else {
+    curve = d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"];
+  }
+
   var lineFunction = Object(d3__WEBPACK_IMPORTED_MODULE_2__["line"])().x(function (d) {
     return d.x;
   }).y(function (d) {
     return d.y;
-  }).curve(d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"]); // Contruct stroke classes based on properties
+  }).curve(curve); // Contruct stroke classes based on properties
 
   var strokeClasses;
 
@@ -52180,9 +52190,9 @@ var config = {
      *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
      *
      ***Notes:
-     *Default Vaue: Linear**
+     *Default Vaue: monotoneX**
      */
-    curve: 'linear',
+    curve: 'natural',
     // Only used in new experimental rendering
     // represents the padding between the labels and the shape
     padding: 15,
@@ -52548,6 +52558,7 @@ var config = {
      ***Default value 50**.
      */
     topPadding: 50,
+    rightPadding: 75,
 
     /**
      *| Parameter | Description |Type | Required | Values|
@@ -52582,13 +52593,12 @@ var config = {
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
-     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
+     *| sectionFontSize | Font size for secions| Integer | Required | Any Positive Value |
      *
      ***Notes:**
-     *
-     ***Default value '"Open-Sans", "sans-serif"'**.
+     ***Default value 11**.
      */
-    fontFamily: '"Open-Sans", "sans-serif"',
+    sectionFontSize: 11,
 
     /**
      *| Parameter | Description |Type | Required | Values|
@@ -52658,7 +52668,7 @@ var config = {
      ***Notes:**
      ***Default value 50**.
      */
-    actorMargin: 50,
+    leftMargin: 150,
 
     /**
      *| Parameter | Description |Type | Required | Values|
@@ -52678,7 +52688,7 @@ var config = {
      ***Notes:**
      ***Default value 65**.
      */
-    height: 65,
+    height: 50,
 
     /**
      *| Parameter | Description |Type | Required | Values|
@@ -52760,7 +52770,17 @@ var config = {
      ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
      ***Default value false**.
      */
-    rightAngles: false
+    rightAngles: false,
+    taskFontSize: 14,
+    taskFontFamily: '"Open-Sans", "sans-serif"',
+    taskMargin: 50,
+    // width of activation box
+    activationWidth: 10,
+    // text placement as: tspan | fo | old only text as before
+    textPlacement: 'fo',
+    actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
+    sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
+    sectionColours: ['#fff']
   },
   class: {
     arrowMarkerAbsolute: false,
@@ -60712,32 +60732,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _ganttDb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ganttDb */ "./src/diagrams/gantt/ganttDb.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
 
 
 _parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy = _ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"];
-var conf = {
-  titleTopMargin: 25,
-  barHeight: 20,
-  barGap: 4,
-  topPadding: 50,
-  rightPadding: 75,
-  leftPadding: 75,
-  gridLineStartPadding: 35,
-  fontSize: 11,
-  fontFamily: '"Open-Sans", "sans-serif"'
-};
-var setConf = function setConf(cnf) {
-  var keys = Object.keys(cnf);
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
+var setConf = function setConf() {// const keys = Object.keys(cnf);
+  // keys.forEach(function(key) {
+  //   conf[key] = cnf[key];
+  // });
 };
 var w;
 var draw = function draw(text, id) {
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().gantt;
   _parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.clear();
   _parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].parse(text);
   var elem = document.getElementById(id);
@@ -60791,7 +60802,7 @@ var draw = function draw(text, id) {
 
   taskArray.sort(taskCompare);
   makeGant(taskArray, w, h);
-  Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(svg, h, w, conf.useMaxWidth);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_5__["configureSvgSize"])(svg, h, w, conf.useMaxWidth);
   svg.append('text').text(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getTitle()).attr('x', w / 2).attr('y', conf.titleTopMargin).attr('class', 'titleText');
 
   function makeGant(tasks, pageWidth, pageHeight) {
@@ -61028,7 +61039,7 @@ var draw = function draw(text, id) {
       } else {
         return d[1] * theGap / 2 + theTopPad;
       }
-    }).attr('class', function (d) {
+    }).attr('font-size', conf.sectionFontSize).attr('font-size', conf.sectionFontSize).attr('class', function (d) {
       for (var _i5 = 0; _i5 < categories.length; _i5++) {
         if (d[0] === categories[_i5]) {
           return 'sectionTitle sectionTitle' + _i5 % conf.numberSectionStyles;
@@ -61875,7 +61886,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    font-size: 11px;\n    text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .taskText:not([font-size]) {\n    font-size: 11px;\n  }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    font-size: 11px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    font-size: 11px;\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n");
+  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    // text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  // .taskText:not([font-size]) {\n  //   font-size: ").concat(options.ganttFontSize, ";\n  // }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    // font-size: ").concat(options.ganttFontSize, ";\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -71223,44 +71234,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_journey__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_parser_journey__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _journeyDb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
 /* harmony import */ var _svgDraw__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./svgDraw */ "./src/diagrams/user-journey/svgDraw.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
 
 
 _parser_journey__WEBPACK_IMPORTED_MODULE_1__["parser"].yy = _journeyDb__WEBPACK_IMPORTED_MODULE_2__["default"];
-var conf = {
-  leftMargin: 150,
-  diagramMarginX: 50,
-  diagramMarginY: 20,
-  // Margin between tasks
-  taskMargin: 50,
-  // Width of task boxes
-  width: 150,
-  // Height of task boxes
-  height: 50,
-  taskFontSize: 14,
-  taskFontFamily: '"Open-Sans", "sans-serif"',
-  // Margin around loop boxes
-  boxMargin: 10,
-  boxTextMargin: 5,
-  noteMargin: 10,
-  // Space between messages
-  messageMargin: 35,
-  // Multiline message alignment
-  messageAlign: 'center',
-  // Depending on css styling this might need adjustment
-  // Projects the edge of the diagram downwards
-  bottomMarginAdj: 1,
-  // width of activation box
-  activationWidth: 10,
-  // text placement as: tspan | fo | old only text as before
-  textPlacement: 'fo',
-  actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
-  sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
-  sectionColours: ['#fff']
-};
 var setConf = function setConf(cnf) {
   var keys = Object.keys(cnf);
   keys.forEach(function (key) {
@@ -71270,7 +71252,8 @@ var setConf = function setConf(cnf) {
 var actors = {};
 
 function drawActorLegend(diagram) {
-  // Draw the actors
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey; // Draw the actors
+
   var yPos = 60;
   Object.keys(actors).forEach(function (person) {
     var colour = actors[person];
@@ -71294,8 +71277,10 @@ function drawActorLegend(diagram) {
   });
 }
 
-var LEFT_MARGIN = conf.leftMargin;
+var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey;
+var LEFT_MARGIN = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey.leftMargin;
 var draw = function draw(text, id) {
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey;
   _parser_journey__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.clear();
   _parser_journey__WEBPACK_IMPORTED_MODULE_1__["parser"].parse(text + '\n');
   bounds.init();
@@ -71326,7 +71311,7 @@ var draw = function draw(text, id) {
 
   var height = box.stopy - box.starty + 2 * conf.diagramMarginY;
   var width = LEFT_MARGIN + box.stopx + 2 * conf.diagramMarginX;
-  Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Draw activity line
+  Object(_utils__WEBPACK_IMPORTED_MODULE_5__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Draw activity line
 
   diagram.append('line').attr('x1', LEFT_MARGIN).attr('y1', conf.height * 4) // One section head + one task + margins
   .attr('x2', width - LEFT_MARGIN - 4) // Subtract stroke width so arrow point is retained
@@ -71362,6 +71347,8 @@ var bounds = {
     }
   },
   updateBounds: function updateBounds(startx, starty, stopx, stopy) {
+    var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey;
+
     var _self = this;
 
     var cnt = 0;
@@ -71423,6 +71410,7 @@ var bounds = {
 var fills = conf.sectionFills;
 var textColours = conf.sectionColours;
 var drawTasks = function drawTasks(diagram, tasks, verticalPos) {
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey;
   var lastSection = '';
   var sectionVHeight = conf.height * 2 + conf.diagramMarginY;
   var taskPos = verticalPos + sectionVHeight;
@@ -74594,7 +74582,7 @@ function () {
     _classCallCheck(this, Theme);
 
     this.primaryColor = '#eee';
-    this.contrast = '#26a';
+    this.contrast = '#707070';
     this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
     this.background = '#ffffff'; // this.secondaryColor = adjust(this.primaryColor, { h: 120 });
 
