@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <script src="/e2e.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .malware {
+        position: fixed;
+        bottom:0;
+        left:0;
+        right:0;
+        height: 150px;
+        background: red;
+        color: black;
+        display: flex;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: monospace;
+        font-size: 72px;
+      }
+    </style>
+    <script>
+      function xssAttack(){
+        const div = document.createElement('div')
+        div.id = 'the-malware'
+        div.className = 'malware'
+        div.innerHTML = 'XSS Succeeded'
+        document.getElementsByTagName('body')[0].appendChild(div);
+        throw new Error('XSS Succeded');
+      }
+    </script>
+  </head>
+  <body>
+    <div class="mermaid">
+      %%{init: { '__proto__': {'polluted': 'asdf'}} }%%
+      graph LR
+          A --> B
+    </div>
+    <script src="./mermaid.js"></script>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        useMaxWidth: true,
+      });
+      var cnt = 0;
+      var a;
+      var handler = setInterval(() => {
+        cnt++;
+        a = {};
+        if(typeof a.polluted !== 'undefined') {
+          xssAttack();
+          clearInterval(handler);
+        }
+        if(cnt>20) {
+          clearInterval(handler);
+        }
+      }, 100);
+    </script>
+  </body>
+</html>
