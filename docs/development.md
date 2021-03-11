@@ -55,21 +55,7 @@ We are a little less strict here, it is OK to commit directly in the `develop` b
 
 The documentation is located in the `docs` directory and organized according to relevant subfolder.
 
-We encourage contributions to the documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using GitHub Pages with [jekyll-rtd-theme](https://github.com/rundocs/jekyll-rtd-theme).
-
-## Preview
-If you want to preview the documentation site on your machine, you will need to install  [Ruby development environment](https://jekyllrb.com/docs/installation/):
-
-1. Install a full [Ruby development environment](https://jekyllrb.com/docs/installation/)
-2. Change into docs directory
-```sh
-make
-```
-3. Build the site and make it available on a local server
-```sh
-make server
-```
-4. Browse to [http://localhost:4000/mermaid/](http://localhost:4000/mermaid/)
+We encourage contributions to the documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw)
 
 ### **Add unit tests for the parsing part**
 
