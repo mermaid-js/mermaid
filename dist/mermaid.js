@@ -49063,6 +49063,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 /* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
 /* harmony import */ var _defaultConfig__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./defaultConfig */ "./src/defaultConfig.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
 
 
@@ -49191,12 +49193,32 @@ var getConfig = function getConfig() {
  */
 
 var sanitize = function sanitize(options) {
+  // Checking that options are not in the list of excluded options
   Object.keys(siteConfig.secure).forEach(function (key) {
     if (typeof options[siteConfig.secure[key]] !== 'undefined') {
       // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
       _logger__WEBPACK_IMPORTED_MODULE_1__["log"].debug("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
       delete options[siteConfig.secure[key]];
+    }
+  }); // Check that there no attempts of prototype pollution
+
+  Object.keys(options).forEach(function (key) {
+    if (key.indexOf('__') === 0) {
+      delete options[key];
+    }
+  }); // Check that there no attempts of xss, there should be no tags at all in the directive
+  // blocking data urls as base64 urls can contain svgs with inline script tags
+
+  Object.keys(options).forEach(function (key) {
+    if (typeof options[key] === 'string') {
+      if (options[key].indexOf('<') > -1 || options[key].indexOf('>') > -1 || options[key].indexOf('url(data:') > -1) {
+        delete options[key];
+      }
+    }
+
+    if (_typeof(options[key]) === 'object') {
+      sanitize(options[key]);
     }
   });
 };
