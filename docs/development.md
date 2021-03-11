@@ -6,7 +6,7 @@ So you want to help? That's great!
 
 Here are a few things to know to get you started on the right path.
 
-**All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**
+**The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**
 
 **Note: You will have to edit the document to see its contents. Commits and PR's should be directed to the develop branch.**
 
@@ -45,7 +45,7 @@ If it is not in the documentation, it's like it never happened. Wouldn't that be
 
 The docs are located in the `docs` folder and are written in MarkDown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation:
 
-**All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md). Click edit it to see them.**
+**All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md). **
 
 The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from **Master** Branch.
 
@@ -55,21 +55,8 @@ We are a little less strict here, it is OK to commit directly in the `develop` b
 
 The documentation is located in the `docs` directory and organized according to relevant subfolder.
 
-We encourage contributions to the documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using GitHub Pages with [jekyll-rtd-theme](https://github.com/rundocs/jekyll-rtd-theme).
+We encourage contributions to the documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
 
-## Preview
-If you want to preview the documentation site on your machine, you will need to install  [Ruby development environment](https://jekyllrb.com/docs/installation/):
-
-1. Install a full [Ruby development environment](https://jekyllrb.com/docs/installation/)
-2. Change into docs directory
-```sh
-make
-```
-3. Build the site and make it available on a local server
-```sh
-make server
-```
-4. Browse to [http://localhost:4000/mermaid/](http://localhost:4000/mermaid/)
 
 ### **Add unit tests for the parsing part**
 
@@ -109,13 +96,13 @@ This is what a rendering test looks like:
   ```
 
 
-### **Docs or it Didn't Happen**
+### **Docs or it didn't happen**
 
 Finally, if it is not in the documentation, no one will know about it and then **no one will use it**. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the docs folder and are ofc written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the _navbar.md.
+The docs are located in the docs folder and are written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the [sidebar](/.sidebar.md).
 
-The changes in master is reflected in [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) once released the updates are commited to [https://mermaid-js.github.io/#/](https://mermaid-js.github.io/mermaid/#/).
+The changes in master is reflected in the  [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released,  the updates are commited to [https://mermaid-js.github.io/#/](https://mermaid-js.github.io/mermaid/#/).
 
 ### Questions and/or suggestions ?
 After logging in at [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
@@ -123,14 +110,14 @@ After logging in at [GitHub.com](https://www.github.com), open or append to an i
 ### How to contribute a suggestion
 Markdown is used to format the text, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
-If you want to use an editor on your own computer, you may follow these steps:
+To Edit on your Computer:
 * Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs) directory on the develop branch.
 * Create a fork of the develop branch.
 * Make changes or add new documentation.
 * Commit changes to your fork and push it to GitHub.
 * Create a pull request of your fork.
 
-If you don't have such editor on your computer, you may follow these steps:
+To Edit Docs on GitHub:
 * Login at [GitHub.com](https://www.github.com).
 * Navigate to [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs).
 * To edit a file, click the pencil icon at the top-right of the file contents panel.
