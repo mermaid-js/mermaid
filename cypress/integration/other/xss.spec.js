@@ -52,7 +52,6 @@ describe('XSS', () => {
     cy.visit('http://localhost:9000/xss2.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
-
   })
 
 })

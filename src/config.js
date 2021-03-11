@@ -135,6 +135,7 @@ export const getConfig = () => {
  * @param options - the potential setConfig parameter
  */
 export const sanitize = options => {
+  // Checking that options are not in the list of excluded options
   Object.keys(siteConfig.secure).forEach(key => {
     if (typeof options[siteConfig.secure[key]] !== 'undefined') {
       // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
@@ -144,6 +145,29 @@ export const sanitize = options => {
         options[siteConfig.secure[key]]
       );
       delete options[siteConfig.secure[key]];
+    }
+  });
+
+  // Check that there no attempts of prototype pollution
+  Object.keys(options).forEach(key => {
+    if (key.indexOf('__') === 0) {
+      delete options[key];
+    }
+  });
+  // Check that there no attempts of xss, there should be no tags at all in the directive
+  // blocking data urls as base64 urls can contain svgs with inline script tags
+  Object.keys(options).forEach(key => {
+    if (typeof options[key] === 'string') {
+      if (
+        options[key].indexOf('<') > -1 ||
+        options[key].indexOf('>') > -1 ||
+        options[key].indexOf('url(data:') > -1
+      ) {
+        delete options[key];
+      }
+    }
+    if (typeof options[key] === 'object') {
+      sanitize(options[key]);
     }
   });
 };
