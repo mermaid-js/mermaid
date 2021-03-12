@@ -51,15 +51,15 @@ Thanks to the growing popularity of mermaid, many plugins already allow the gene
 
 **This is covered in greater detail in the [Usage section](usage.md)**
 
-## 3. Deploying mermaid on the Browser
+## 3. Deploying mermaid with Inline JavaScript
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
 We do not need to install anything on the server, apart from a program (like Notepad++) that can generate an html file, which is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
 
-So if you want to really simplify things when testing this out, don't use a web server at all but just create an HTML file locally and drag it into your browser window. The browser will do the work of rendering the mermaid diagrams according to the descriptions you've given!
+Just create an HTML file locally and open it using a desired browser.
 
-### Note that all this is written in the html `<body>` section of the web page.
+###  Written in the html `<body>` section of the web page.
 
 When writing the html file, we give the web browser three instructions inside the html code:
 
@@ -70,9 +70,9 @@ b. The mermaid code for the diagram we want to create.
 c. The `mermaid.initialize()` call to start the rendering process.
 
 
-## This is what needs to go into the html file (and all of them are important), for the mermaidAPI to render the diagrams:
+## Three requirements for the mermaidAPI to render a diagram:
 
-### a. A reference to the address of the `mermaid.js` or the `mermaid.min.js` file has to be contained in a `<script src>` tag like so:
+### a. A reference to the external CDN in a `<script src>` tag:
 
 ```html
 <body>
@@ -80,7 +80,7 @@ c. The `mermaid.initialize()` call to start the rendering process.
 </body>
 ```
 
-### b. The embedded mermaid diagram definition needs to be contained inside a `<div>` tag that signifies that it is a mermaid diagram:
+### b. The embedded mermaid diagram definition inside a `<div class="mermaid">`:
 
 ```html
 <body>
@@ -95,9 +95,11 @@ c. The `mermaid.initialize()` call to start the rendering process.
 ```
 **Notes**: every mermaid chart/graph/diagram definition, has to have separate `<div>` tags.
 
-### c. The `mermaid.initialize()` API call
+### c. The `mermaid.initialize()` call.
 
-`mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and starts to render them one by one. It is called this way:
+`mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and render. Example:
+**Values:**
+startOnLoad:true
 
 ```html
 <body>
@@ -107,8 +109,7 @@ c. The `mermaid.initialize()` call to start the rendering process.
 **Notes**: It is good practice to keep the `mermaid.initialize()` API call right next the `mermaid.min.js` `script` tag.
 `startOnLoad` is a parameter that can optionally be changed to false, this would then prevent mermaid from immediately rendering upon loading.
 
-### If the three steps mentioned are followed you will end up with something like this:
-
+### Here is a full working example of the mermaidAPI being called through HTML:
 
 ```html
 <html>
@@ -135,12 +136,9 @@ c. The `mermaid.initialize()` call to start the rendering process.
 </html>
 ```
 
-**Notes**: This has to be saved in an `HTML` file and opened with a browser.
 
 ---
-## 4. Calling mermaid from a relative link.
-
-This method is similar to 3, if only a little more involved. The difference may be very subtle even, but it offers its own advantages, mainly in speed.
+## 4. Adding mermaid as a dependency.
 
 1. install node v10 or 12, which would have npm
 
@@ -149,32 +147,10 @@ This method is similar to 3, if only a little more involved. The difference may 
 
 3. After yarn installs, enter the following command:
     yarn add mermaid
-
-4. After downloading mermaid, you can then open the mermaid file you’ve downloaded and go to the `dist` folder.
-
-5. Find the `mermaid.min.js` file,
-    a. select the file.
-    b. press the shift key and right click on it
-    c. select copy as path from the options.
-
-6. Paste it within the `script` tag as the `src`.
-```html
-<script src="Paste the mermaid.min.js file address here"></script>
-<script>mermaid.initialize({startOnLoad:true});</script>
-```
-7. It should look something like this
-```html
-<script src="C:\Users\myPC\mermaid\dist\mermaid.js"></script>
-<script>mermaid.initialize({startOnLoad:true});</script>
-```
-8. Add the graph and diagram definitions as you would in number 3.
-    a. be mindful of the `div` tags.
-
-9. Save, load/edit your HTML file to your liking.
-
-
-**Note** placing the HTML file on the same folder the `mermaid` file you've downloaded is a good practice and allows you to shorten the address on the `src` section.
-
+    
+4. To add Mermaid as a Dev Dependency
+    yarn add --dev mermaid
+    
 **As seen here, in this full example:**
 ```html
 <html lang="en">
