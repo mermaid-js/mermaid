@@ -5,17 +5,19 @@ mermaid allows you to dynamically code and modify diagrams.
 when called, mermaid renders code definitions into a diagram in SVG format.
 
 >The live editor is enough for most general uses of mermaid
-## Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md)on the Live Editor, to gain a better understanding of mermaid.
+## Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md) on the Live Editor, to gain a better understanding of mermaid.
 
 
-## For beginners, there are four relatively easy ways you can use mermaid:
+## For beginners, there are Four ways you can use mermaid:
 1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).
     - Learning the [Syntax](./n00b-syntaxReference) would be helpful.
 2. Using one of the many [mermaid plugins](./integrations.md).
 3. Hosting mermaid on a webpage, with an absolute link.
 4. Downloading mermaid and hosting it on your Web Page.
 
-**Notes**: More in depth information can be found on [Usage](./usage.md).
+**Note: It is our recommendation that you review all approaches, and choose the one that is best for your project.**
+
+>More in depth information can be found on [Usage](./usage.md).
 
 # Following any of these examples, you can get started with creating your own diagrams using mermaid code.
 
@@ -55,7 +57,7 @@ Thanks to the growing popularity of mermaid, many plugins already allow the gene
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
-We do not need to install anything on the server, apart from a program (like Notepad++) that can generate an html file, which is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
+You will need a text editting tool like Notepad++, t can generate an html file. It is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
 
 Just create an HTML file locally and open it using a desired browser.
 
@@ -72,7 +74,7 @@ c. The `mermaid.initialize()` call to start the rendering process.
 
 ## Three requirements for the mermaidAPI to render a diagram:
 
-### a. A reference to the external CDN in a `<script src>` tag:
+### a. A reference to the external CDN in a `<script src>` tag, or a reference to mermaid.js as a separate file.:
 
 ```html
 <body>
@@ -98,18 +100,21 @@ c. The `mermaid.initialize()` call to start the rendering process.
 ### c. The `mermaid.initialize()` call.
 
 `mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and render. Example:
-**Values:**
-startOnLoad:true
+
+| Parameter | Description     | Type   | Values                                               |
+| --------- | --------------- | ------ | ---------------------------------------------------- |
+|startOnLoad| Toggle for Rendering upon loading | Boolean | true, false                       |
 
 ```html
 <body>
   <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 ```
-**Notes**: It is good practice to keep the `mermaid.initialize()` API call right next the `mermaid.min.js` `script` tag.
-`startOnLoad` is a parameter that can optionally be changed to false, this would then prevent mermaid from immediately rendering upon loading.
+**Notes**:You can place `mermaid.initialize()` inside of `mermaid.min.js` or `mermaid.js`, for brevity. 
 
-### Here is a full working example of the mermaidAPI being called through HTML:
+
+
+### Here is a full working example of the mermaidAPI being called through the CDN:
 
 ```html
 <html>
@@ -135,23 +140,8 @@ startOnLoad:true
   </body>
 </html>
 ```
-
-
----
-## 4. Adding mermaid as a dependency.
-
-1. install node v10 or 12, which would have npm
-
-2. download yarn using npm by entering the command below:
-    npm install -g yarn
-
-3. After yarn installs, enter the following command:
-    yarn add mermaid
-    
-4. To add Mermaid as a Dev Dependency
-    yarn add --dev mermaid
-    
-**As seen here, in this full example:**
+**Another full example:**
+In this example mermaid.js is referenced as a separate JavaScript file, in an example Path. 
 ```html
 <html lang="en">
 <head>
@@ -170,21 +160,33 @@ startOnLoad:true
      B --> C[Server1]
      B --> D[Server2]
   </div>
-  <script src="C:\Users\MyPC\mermaid\dist\mermaid.js"></script>
+  <script src="The\Path\In\Your\PC\mermaid.js"></script>
   <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 </html>
 ```
 
 
+---
+## 4. Adding mermaid as a dependency.
+
+1. install node v10 or 12, which would have npm
+
+2. download yarn using npm by entering the command below:
+    npm install -g yarn
+
+3. After yarn installs, enter the following command:
+    yarn add mermaid
+    
+4. To add Mermaid as a Dev Dependency
+    yarn add --dev mermaid
+    
+
+
+
 
 **Three additional comments from Knut Sveidqvist, creator of mermaid:**
-- In early versions of mermaid, the `<script src>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it directly in `<body>` as seen above. However, older parts of the documentation frequently reflects the previous way which still works.
+- In early versions of mermaid, the `<script src>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflects the previous way which still works.
 
-- We initialize the mermaid rendering with `mermaid.initialize()` directly in the html code. In principle this could be done through placing `mermaid.initialize()` inside of `mermaid.min.js`. We would then eliminate the need for this explicit line in the html. However, there are use cases where we do want to separate the two steps. Sometimes we want full control over when we start looking for `<div>`tags inside the web page with `mermaid.initialize()`, for example when we think that all `<div>` tags may not have been loaded by the time `mermaid.min.js` runs.
+- We initialize the mermaid rendering with `mermaid.initialize()` directly in the html code.In principle this could be done through placing `mermaid.initialize()` inside of `mermaid.min.js`. We would then eliminate the need for this explicit line in the html. However, there are use cases where we do want to separate the two steps. Sometimes we want full control over when we start looking for `<div>`tags inside the web page with `mermaid.initialize()`, for example when we think that all `<div>` tags may not have been loaded by the time `mermaid.min.js` runs.
 
-- In the third method, `mermaid.min.js` is called using an absolute path. Even worse, the example includes the mermaid version number which of course will change as time goes by. However, the example makes it easy to understand what is going on - even though it is perhaps doomed in a way we do not want in a production environment. When going from testing mermaid out to getting serious with it, I would suggest one of the following approaches for calling `mermaid.min.js`:
-
-  1. If you do not enter a specific version, you automatically get the latest one.
-  2. If you really need a specific version, hard code it (this is rare but it happens).
-  3. If you need to know the current mermaid version, replace a mermaid code block with the word `info` and the version will be returned like [this](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiaW5mb1xuXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ==)
