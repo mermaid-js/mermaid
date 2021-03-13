@@ -1,4 +1,4 @@
-# A basic mermaid User-Guide for Beginners
+# A Mermaid User-Guide for Beginners
 
 Creating diagrams and charts using mermaid code is simple.
 mermaid allows you to dynamically code and modify diagrams.
@@ -29,14 +29,12 @@ In the `Code` section one can write or edit raw mermaid code, and instantly `Pre
 
 **This is a great way to learn how to define a mermaid diagram.**
 
-The Live Editor opens on a [Flowchart](./flowchart.md).
+The Live Editor opens on a [Flowchart](./flowchart.md), one of the many charts that mermaid can render. 
 
 ![Flowchart](./img/DiagramDefinition.png)
 
 **Saving a Diagram:**
-Downloading the image may be a ideal for a majority uses. 
-
-The Links and the markdown code can be referenced to display the diagram.
+Downloading the image is recommended. he Links and markdown code can be referenced to display the diagram.
 
 ![Flowchart](./img/Live-Editor-Choices.png)
 
@@ -110,8 +108,8 @@ c. The `mermaid.initialize()` call to start the rendering process.
   <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 ```
-**Notes**:You can place `mermaid.initialize()` inside of `mermaid.min.js` or `mermaid.js`, for brevity. 
-
+**Notes**:
+Mermaid rendering is initalized with `mermaid.initialize()`.You can place `mermaid.initialize()` inside of `mermaid.min.js` for brevity. However, not doin so lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`, such as when you think that noy all `<div>` tags may not have been loaded when `mermaid.min.js` runs.
 
 
 ### Here is a full working example of the mermaidAPI being called through the CDN:
@@ -140,8 +138,8 @@ c. The `mermaid.initialize()` call to start the rendering process.
   </body>
 </html>
 ```
-**Another full example:**
-In this example mermaid.js is referenced as a separate JavaScript file, in an example Path. 
+**Another Option:**
+In this example mermaid.js is referenced in `src` as a separate JavaScript file, in an example Path. 
 ```html
 <html lang="en">
 <head>
@@ -183,10 +181,5 @@ In this example mermaid.js is referenced as a separate JavaScript file, in an ex
     
 
 
-
-
-**Three additional comments from Knut Sveidqvist, creator of mermaid:**
+**Comments from Knut Sveidqvist, creator of mermaid:**
 - In early versions of mermaid, the `<script src>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflects the previous way which still works.
-
-- We initialize the mermaid rendering with `mermaid.initialize()` directly in the html code.In principle this could be done through placing `mermaid.initialize()` inside of `mermaid.min.js`. We would then eliminate the need for this explicit line in the html. However, there are use cases where we do want to separate the two steps. Sometimes we want full control over when we start looking for `<div>`tags inside the web page with `mermaid.initialize()`, for example when we think that all `<div>` tags may not have been loaded by the time `mermaid.min.js` runs.
-
