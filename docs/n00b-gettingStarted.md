@@ -55,7 +55,7 @@ Thanks to the growing popularity of mermaid, many plugins already allow the gene
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
-You will need a text editting tool like Notepad++, t can generate an html file. It is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
+You will need a text editting tool like Notepad++, to generate an html file. It is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
 
 Just create an HTML file locally and open it using a desired browser.
 
