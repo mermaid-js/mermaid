@@ -11,7 +11,7 @@ when called, mermaid renders code definitions into a diagram in SVG format.
 ## For beginners, there are Four ways you can use mermaid:
 1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).
     - Learning the [Syntax](./n00b-syntaxReference) would be helpful.
-2. Using one of the many [mermaid plugins](./integrations.md).
+2. Using [mermaid plugins](./integrations.md) with programs you are familiar with.
 3. Hosting mermaid on a webpage, with an absolute link.
 4. Downloading mermaid and hosting it on your Web Page.
 
