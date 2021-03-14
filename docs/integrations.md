@@ -1,6 +1,6 @@
 # Integrations
 
-The following list is a compilation of different integrations and plugins that allow the rendering of mermaid definitions
+The following list is a compilation of different integrations and plugins that allow the rendering of mermaid definitions within other applications. 
 
 They also serve as proof of concept, for the variety of things that can be built with mermaid.
 
