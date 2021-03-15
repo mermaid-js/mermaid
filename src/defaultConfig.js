@@ -186,7 +186,7 @@ const config = {
      ***Notes:
      *Default Vaue: monotoneX**
      */
-    curve: 'natural',
+    curve: 'basis',
     // Only used in new experimental rendering
     // represents the padding between the labels and the shape
     padding: 15,
