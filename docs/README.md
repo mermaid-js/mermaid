@@ -1,6 +1,6 @@
 # About Mermaid
 
-**Mermaid lets you create diagrams using text and code.** This simplifies the maintenance of complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. 
+**Mermaid lets you create diagrams using text and code.** This simplifies the maintenance of complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. An alternative to Visio and other Diagramming tools.
 
 >If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](./n00b-syntaxReference.md).
 
