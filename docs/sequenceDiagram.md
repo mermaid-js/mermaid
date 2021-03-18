@@ -364,6 +364,8 @@ sequenceDiagram
 
 Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
 
+Because semicolons can be used instead of line breaks to define the markup, you need to use `#59;` to include a semicolon in message text.
+
 ## sequenceNumbers
 
 It is possible to get a sequence number attached to each arrow in a sequence diagram. This can be configured when adding mermaid to the website as shown below:
