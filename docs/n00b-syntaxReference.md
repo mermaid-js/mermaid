@@ -1,6 +1,6 @@
 ## Diagram syntax
 
-If you are new to mermaid, read the [Getting Started](../getting-started/n00b-gettingStarted.md) and [Overview](../overview/n00b-overview.md) sections, to learn the basics of mermaid.
+If you are new to mermaid, read the [Getting Started](n00b-gettingStarted.md) and [Overview](n00b-overview.md) sections, to learn the basics of mermaid.
 Video Tutorials can be found at the bottom of the Overview Section.
 
 This section is a list of diagram types supported by mermaid. Below is a list of links to articles that explain the syntax of the diagrams or charts that can be called.
@@ -27,12 +27,12 @@ This would then offer you the following choices to download the diagram:
 
 ![Flowchart](./img/DownloadChoices.png)
 
-**Note:** Copying the markdown will allow you to link to your unique diagram from anywhere online. 
+**Note:** Copying the markdown will allow you to link to your unique diagram from anywhere online.
 
 ## Directives:
-[Directives](./directives.md) gives a diagram author the capability to alter the appearance of a diagram before rendering, by changing some of the applied configurations and can alter the font style, color and other aesthetic aspects of the diagram. 
+[Directives](./directives.md) gives a diagram author the capability to alter the appearance of a diagram before rendering, by changing some of the applied configurations and can alter the font style, color and other aesthetic aspects of the diagram.
 
 ## Theme Creation:
-Mermaid allows [Customized Themes](./theming.md) for websites and even individual diagrams.This is done using directives and can be very helpful, not only for styling but for simplifying more complex diagrams. 
+Mermaid allows [Customized Themes](./theming.md) for websites and even individual diagrams.This is done using directives and can be very helpful, not only for styling but for simplifying more complex diagrams.
 
 
