@@ -109,7 +109,7 @@ Mermaid can load multiple diagrams, in the same page.
 
 Values:
 
--   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+-   **strict**: (**default**) tags in text are encoded, click functionality is disabled
 -   **loose**: tags in text are allowed, click functionality is enabled
 -   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
 
