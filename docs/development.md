@@ -100,7 +100,7 @@ This is what a rendering test looks like:
   });
 ```
 
-### Questions and/or suggestions?
+### Any Questions or Suggestions?
 
 After logging in at [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
 
