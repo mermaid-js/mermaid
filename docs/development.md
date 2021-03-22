@@ -1,4 +1,4 @@
-# Development 🙌
+# Development and Contribution 🙌
 
 So you want to help? That's great!
 
@@ -12,72 +12,72 @@ Here are a few things to know to get you started on the right path.
 
 ## Branching
 
-Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/) inspired approach to branching. So development is done in the `develop` branch.
+Mermaid uses a [Git Flow](https://guides.github.com/introduction/flow/)–inspired approach to branching. So development is done in the `develop` branch.
 
-Once development is done we branch a release branch from develop for testing.
+Once development is done we branch a `release` branch from `develop` for testing.
 
-Once the release happens we merge the release branch with master and kill the release branch.
+Once the release happens we merge the `release` branch with `master` and kill the `release` branch.
 
-This means... **you should branch off your pull request from develop** and direct all Pull Requests to it.
-
+This means that **you should branch off your pull request from develop** and direct all Pull Requests to it.
 
 ## Contributing Code
 
-We make all changes via pull requests. As we have many pull requests from developers new to mermaid, we have put in place a process, wherein *knsv, Knut Sveidqvist* is the primary reviewer of changes and merging pull requests. It is as follows:
+We make all changes via Pull Requests. As we have many Pull Requests from developers new to mermaid, we have put in place a process, wherein *knsv, Knut Sveidqvist* is the primary reviewer of changes and merging pull requests. The process is as follows:
 
 * Large changes reviewed by knsv or other developer asked to review by knsv
-* Smaller low-risk changes like dependecies, documentation etc can be merged by active collaborators
-* documentation (updates to the docs folder are enocouraged and also allowed via direct commits)
+* Smaller, low-risk changes like dependecies, documentation, etc. can be merged by active collaborators
+* Documentation (updates to the docs folder are enocouraged and also allowed via direct commits)
 
-When you commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and text that describes the issue.
+When you commit code, create a branch with the following naming convention:
 
+Start with the type, such as **feature** or **bug**, followed by the issue number for reference, and a text that describes the issue.
 
 **One example:**
 
 `feature/945_state_diagrams`
 
-**Another:**
+**Another example:**
 
 `bug/123_nasty_bug_branch`
 
+## Contributing to Documentation
 
-## Contributing to documentation
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the `docs` folder and are written in MarkDown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation:
+The docs are located in the `docs` folder and are written in Markdown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via the **[sidebar](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**.
 
-**All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md). **
+> **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**.
 
-The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from **Master** Branch.
+The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from the `master` branch. Updates commited to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
 
-## How to Contribute to Docs
+## How to Contribute to Documentation
 
 We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
 
 The documentation is located in the `docs` directory and organized according to relevant subfolder.
 
-<<<<<<< HEAD
-We encourage contributions to the documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw)
-=======
 We encourage contributions to the documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
 
->>>>>>> master
+### Add Unit Tests for Parsing
 
-### **Add unit tests for the parsing part**
+This is important so that, if someone that does not know about this great feature suggests a change to the grammar, they get notified early on when that change breaks the parser. Another important aspect is that, without proper parsing, tests refactoring is pretty much impossible.
 
-This is important so that, if someone else does a change to the grammar that does not know about this great feature, gets notified early on when that change breaks the parser. Another important aspect is that without proper parsing tests refactoring is pretty much impossible.
+### Add E2E Tests
 
-### **Add e2e tests**
+This tests the rendering and visual apearance of the diagrams. This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
 
-This tests the rendering and visual apearance of the diagram. This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
+To start working with the e2e tests:
 
-To start working with the e2e tests, run `yarn dev` to start the dev server, after that start cypress by running `cypress open` in the mermaid folder. (Make sure you have path to cypress in order, the binary is located in node_modules/.bin).
+1. Run `yarn dev` to start the dev server
+2. Start **Cypress** by running `cypress open` in the **mermaid** folder.  
+(Make sure you have path to Cypress in order, the binary is located in `node_modules/.bin`).
 
-The rendering tests are very straightforward to create. There is a function imgSnapshotTest. This function takes a diagram in text form, the mermaid options and renders that diagram in cypress.
+The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
 
-When running in ci it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag for review it if it differs.
+When running in CI it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag for review it if it differs.
 
 This is what a rendering test looks like:
+
 ```
   it('should render forks and joins', () => {
     imgSnapshotTest(
@@ -98,43 +98,37 @@ This is what a rendering test looks like:
     );
     cy.get('svg');
   });
-  ```
+```
 
+### Questions and/or suggestions?
 
-### **Docs or it didn't happen**
-
-Finally, if it is not in the documentation, no one will know about it and then **no one will use it**. Wouldn't that be sad? With all the effort that was put into the feature?
-
-The docs are located in the docs folder and are written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the [sidebar](/.sidebar.md).
-
-The changes in master is reflected in the  [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released,  the updates are commited to [https://mermaid-js.github.io/#/](https://mermaid-js.github.io/mermaid/#/).
-
-### Questions and/or suggestions ?
 After logging in at [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
 
-### How to contribute a suggestion
+### How to Contribute a Suggestion
+
 Markdown is used to format the text, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
-To Edit on your Computer:
-* Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs) directory on the develop branch.
-* Create a fork of the develop branch.
-* Make changes or add new documentation.
-* Commit changes to your fork and push it to GitHub.
-* Create a pull request of your fork.
+To edit Docs on your computer:
 
-To Edit Docs on GitHub:
-* Login at [GitHub.com](https://www.github.com).
-* Navigate to [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs).
-* To edit a file, click the pencil icon at the top-right of the file contents panel.
-* Describe what you changed in the "Propose file change" section, located at the bottom of the page.
-* Submit your changes by clicking the button "Propose file change" at the bottom (by automatic creation of a fork and a new branch).
-* Create a pull request of your newly forked branch, by clicking the green "Create pull request" button.
+1. Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs) directory in the `develop` branch.
+2. Create a fork of the develop branch.
+3. Make changes or add new documentation.
+4. Commit changes to your fork and push it to GitHub.
+5. Create a Pull Request of your fork.
 
-## Last words
+To edit Docs on GitHub:
 
-Don't get daunted if it is hard in the beginning. We have a great community with only encouraging words. So if you get stuck, ask for help and hints in the slack forum. If you want to show off something good, show it off there.
+1. Login to [GitHub.com](https://www.github.com).
+2. Navigate to [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs).
+3. To edit a file, click the pencil icon at the top-right of the file contents panel.
+4. Describe what you changed in the **Propose file change** section, located at the bottom of the page.
+5. Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
+6. Create a Pull Request of your newly forked branch by clicking the green **Create Pull Request** button.
 
-[Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
+## Last Words
 
+Don't get daunted if it is hard in the beginning. We have a great community with only encouraging words. So, if you get stuck, ask for help and hints in the Slack forum. If you want to show off something good, show it off there.
+
+[Join our Slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
 
 ![Image of superhero wishing you good luck](https://media.giphy.com/media/l49JHz7kJvl6MCj3G/giphy.gif)
