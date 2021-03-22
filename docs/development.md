@@ -26,7 +26,7 @@ We make all changes via Pull Requests. As we have many Pull Requests from develo
 
 * Large changes reviewed by knsv or other developer asked to review by knsv
 * Smaller, low-risk changes like dependecies, documentation, etc. can be merged by active collaborators
-* Documentation (updates to the docs folder are enocouraged and also allowed via direct commits)
+* Documentation (we encourage updates to the docs folder; you can submit them via direct commits)
 
 When you commit code, create a branch with the following naming convention:
 
