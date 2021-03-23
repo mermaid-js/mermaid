@@ -6,6 +6,7 @@ import {
   scaleLinear,
   interpolateHcl,
   axisBottom,
+  axisTop,
   timeFormat
 } from 'd3';
 import { parser } from './parser/gantt';
@@ -363,6 +364,22 @@ export const draw = function(text, id) {
       .attr('class', 'grid')
       .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
       .call(bottomXAxis)
+      .selectAll('text')
+      .style('text-anchor', 'middle')
+      .attr('fill', '#000')
+      .attr('stroke', 'none')
+      .attr('font-size', 10)
+      .attr('dy', '1em');
+
+    let topXAxis = axisTop(timeScale)
+      .tickSize(-h + theTopPad + conf.gridLineStartPadding)
+      .tickFormat(timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+
+    svg
+      .append('g')
+      .attr('class', 'grid')
+      .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
+      .call(topXAxis)
       .selectAll('text')
       .style('text-anchor', 'middle')
       .attr('fill', '#000')
