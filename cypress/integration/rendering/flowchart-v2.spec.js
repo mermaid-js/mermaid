@@ -450,6 +450,7 @@ flowchart TD
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
+  });
   it('65: text-color from classes', () => {
     imgSnapshotTest(
       `

@@ -881,7 +881,8 @@ graph TD
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
-      it('65: text-color from classes', () => {
+  });
+  it('65: text-color from classes', () => {
     imgSnapshotTest(
       `
       flowchart LR
@@ -891,7 +892,5 @@ graph TD
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
-
   });
-
 });
