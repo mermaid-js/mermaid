@@ -316,6 +316,12 @@ const render = function(id, _txt, cb, container) {
         userStyles += `\n.${className} polygon { ${classes[className].styles.join(
           ' !important; '
         )} !important; }`;
+        userStyles += `\n.${className} ellipse { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
+        userStyles += `\n.${className} circle { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
         if (classes[className].textStyles) {
           userStyles += `\n.${className} tspan { ${classes[className].textStyles.join(
             ' !important; '
