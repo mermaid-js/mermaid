@@ -298,19 +298,20 @@ const render = function(id, _txt, cb, container) {
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     const classes = flowRenderer.getClasses(txt);
     for (const className in classes) {
-      userStyles += `\n.${className} > * { ${classes[className].styles.join(
-        ' !important; '
-      )} !important; }`;
-      userStyles += `\n.${className} span { ${classes[className].styles.join(
-        ' !important; '
-      )} !important; }`;
-      userStyles += `\n.${className} tspan { ${classes[className].styles.join(
-        ' !important; '
-      )} !important; }`;
-      if (classes[className].textStyles) {
-        userStyles += `\n.${className} tspan { ${classes[className].textStyles.join(
+      if (cnf.htmlLabels) {
+        userStyles += `\n.${className} span { ${classes[className].styles.join(
           ' !important; '
         )} !important; }`;
+      } else {
+        console.log('classes[className].styles', classes[className].styles, cnf.htmlLabels);
+        userStyles += `\n.${className} rect { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
+        if (classes[className].textStyles) {
+          userStyles += `\n.${className} tspan { ${classes[className].textStyles.join(
+            ' !important; '
+          )} !important; }`;
+        }
       }
     }
   }
