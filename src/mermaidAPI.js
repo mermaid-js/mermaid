@@ -301,6 +301,12 @@ const render = function(id, _txt, cb, container) {
       userStyles += `\n.${className} > * { ${classes[className].styles.join(
         ' !important; '
       )} !important; }`;
+      userStyles += `\n.${className} span { ${classes[className].styles.join(
+        ' !important; '
+      )} !important; }`;
+      userStyles += `\n.${className} tspan { ${classes[className].styles.join(
+        ' !important; '
+      )} !important; }`;
       if (classes[className].textStyles) {
         userStyles += `\n.${className} tspan { ${classes[className].textStyles.join(
           ' !important; '

@@ -450,5 +450,15 @@ flowchart TD
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
+  it('65: text-color from classes', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+        classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
+        Lorem --> Ipsum --> Dolor
+        class Lorem,Dolor dark
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
   });
 });
