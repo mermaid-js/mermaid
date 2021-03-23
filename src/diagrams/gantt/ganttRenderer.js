@@ -354,7 +354,7 @@ export const draw = function(text, id) {
   }
 
   function makeGrid(theSidePad, theTopPad, w, h) {
-    let xAxis = axisBottom(timeScale)
+    let bottomXAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
@@ -362,7 +362,7 @@ export const draw = function(text, id) {
       .append('g')
       .attr('class', 'grid')
       .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
-      .call(xAxis)
+      .call(bottomXAxis)
       .selectAll('text')
       .style('text-anchor', 'middle')
       .attr('fill', '#000')
