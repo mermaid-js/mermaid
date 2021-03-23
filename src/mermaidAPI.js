@@ -307,6 +307,9 @@ const render = function(id, _txt, cb, container) {
         )} !important; }`;
       } else {
         // console.log('classes[className].styles', classes[className].styles, cnf.htmlLabels);
+        userStyles += `\n.${className} path { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
         userStyles += `\n.${className} rect { ${classes[className].styles.join(
           ' !important; '
         )} !important; }`;
