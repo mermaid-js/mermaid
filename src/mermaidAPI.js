@@ -313,6 +313,9 @@ const render = function(id, _txt, cb, container) {
         userStyles += `\n.${className} rect { ${classes[className].styles.join(
           ' !important; '
         )} !important; }`;
+        userStyles += `\n.${className} polygon { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
         if (classes[className].textStyles) {
           userStyles += `\n.${className} tspan { ${classes[className].textStyles.join(
             ' !important; '
