@@ -613,6 +613,18 @@ const config = {
      */
     useMaxWidth: true,
 
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| topAxis | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set date labels will be added to the
+top of the chart
+     *
+     ***Default value false**.
+     */
+    topAxis: false,
+
     useWidth: undefined
   },
 
