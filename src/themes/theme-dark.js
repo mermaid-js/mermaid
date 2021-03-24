@@ -109,8 +109,9 @@ class Theme {
     this.labelBoxBorderColor = this.actorBorder;
     this.labelTextColor = this.mainContrastColor;
     this.loopTextColor = this.mainContrastColor;
-    this.noteBorderColor = this.border2;
-    this.noteTextColor = this.mainBkg;
+    this.noteBorderColor = this.secondaryBorderColor;
+    this.noteBkgColor = this.secondBkg;
+    this.noteTextColor = this.secondaryTextColor;
     this.activationBorderColor = this.border1;
     this.activationBkgColor = this.secondBkg;
 
