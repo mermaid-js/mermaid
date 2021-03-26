@@ -179,18 +179,12 @@ Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/brow
 ## Deploying Mermaid
 To Deploy Mermaid:
 
-```
-1.You will need to install node v10 or 12, which would have npm
-
-2. download yarn using npm.
-
-3. enter the following command:
-    yarn add mermaid
-
+1. You will need to install node v10 or 12, which would have npm
+2. Download yarn using npm
+3. Enter the following command: `yarn add mermaid`
 4. You can then add mermaid as a dev dependency using this command:
-    yarn add --dev mermaid
+    `yarn add --dev mermaid`
 
-```
 ## [Mermaid API](./Setup.md):
 
 **To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:**
