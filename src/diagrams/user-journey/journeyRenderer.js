@@ -71,7 +71,7 @@ export const draw = function(text, id) {
 
   drawActorLegend(diagram);
   bounds.insert(0, 0, LEFT_MARGIN, Object.keys(actors).length * 50);
-
+  console.log(bounds);
   drawTasks(diagram, tasks, 0);
 
   const box = bounds.getBounds();
@@ -103,6 +103,7 @@ export const draw = function(text, id) {
   const extraVertForTitle = title ? 70 : 0;
   diagram.attr('viewBox', `${box.startx} -25 ${width} ${height + extraVertForTitle}`);
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
+  diagram.attr('height', height + extraVertForTitle + 25);
 };
 
 export const bounds = {
