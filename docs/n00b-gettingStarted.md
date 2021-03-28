@@ -1,8 +1,6 @@
 # A Mermaid User-Guide for Beginners
 
 Creating diagrams and charts using mermaid code is simple.
-mermaid allows you to dynamically code and modify diagrams.
-when called, mermaid renders code definitions into a diagram in SVG format.
 
 >The live editor is enough for most general uses of mermaid
 ## Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md) on the Live Editor, to gain a better understanding of mermaid.
@@ -19,22 +17,18 @@ when called, mermaid renders code definitions into a diagram in SVG format.
 
 >More in depth information can be found on [Usage](./usage.md).
 
-# Following any of these examples, you can get started with creating your own diagrams using mermaid code.
+## 1. Using [The mermaid live editor](https://mermaidjs.github.io/mermaid-live-editor).
 
-## 1. The mermaid live editor:
-
- A great way to get started with mermaid is to visit [The mermaid live editor](https://mermaidjs.github.io/mermaid-live-editor).
+![Flowchart](./img/Live-Editor-Usage.png)
 
 In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
-
-**This is a great way to learn how to define a mermaid diagram.**
 
 The Live Editor opens on a [Flowchart](./flowchart.md), one of the many charts that mermaid can render. 
 
 ![Flowchart](./img/DiagramDefinition.png)
 
 **Saving a Diagram:**
-Downloading the image is recommended. he Links and markdown code can be referenced to display the diagram.
+Downloading the image is recommended. 
 
 ![Flowchart](./img/Live-Editor-Choices.png)
 
@@ -47,7 +41,7 @@ Downloading the image is recommended. he Links and markdown code can be referenc
 
 ## 2. Using mermaid plugins:
 
-Thanks to the growing popularity of mermaid, many plugins already allow the generation of mermaid diagrams from within popular applications. An extensive list of applications the support mermaid plugins can be found [here](./integrations.md).
+Using plug-ins you can generate mermaid diagrams from within popular applications, the same way that you would use the Live Editor. Here's a list of [Mermaid Plugins](./integrations.md).
 
 **This is covered in greater detail in the [Usage section](usage.md)**
 
@@ -98,19 +92,20 @@ c. The `mermaid.initialize()` call to start the rendering process.
 ### c. The `mermaid.initialize()` call.
 
 `mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and render. Example:
-
-| Parameter | Description     | Type   | Values                                               |
-| --------- | --------------- | ------ | ---------------------------------------------------- |
-|startOnLoad| Toggle for Rendering upon loading | Boolean | true, false                       |
-
 ```html
 <body>
   <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 ```
-**Notes**:
-Mermaid rendering is initalized with `mermaid.initialize()`.You can place `mermaid.initialize()` inside of `mermaid.min.js` for brevity. However, not doin so lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`, such as when you think that noy all `<div>` tags may not have been loaded when `mermaid.min.js` runs.
 
+**Notes**:
+Mermaid rendering is initalized with `mermaid.initialize()`.You can place `mermaid.initialize()` inside of `mermaid.min.js` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`, such as when you think that noy all `<div>` tags may not have been loaded when `mermaid.min.js` runs.
+
+`startOnLoad` is one of the parameters that can be defined by `mermaid.initialize()`
+
+| Parameter | Description     | Type   | Values                                               |
+| --------- | --------------- | ------ | ---------------------------------------------------- |
+|startOnLoad| Toggle for Rendering upon loading | Boolean | true, false                       |
 
 ### Here is a full working example of the mermaidAPI being called through the CDN:
 
@@ -158,7 +153,7 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
      B --> C[Server1]
      B --> D[Server2]
   </div>
-  <script src="The\Path\In\Your\PC\mermaid.js"></script>
+  <script src="The\Path\In\Your\Package\mermaid.js"></script>
   <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 </html>
