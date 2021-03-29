@@ -25,9 +25,9 @@ This would then offer you the following choices to download the diagram:
 **Note:** Copying the markdown will allow you to link to your unique diagram from anywhere online.
 
 ## Directives:
-[Directives](./directives.md) gives a diagram author the capability to alter the appearance of a diagram before rendering, by changing some of the applied configurations and can alter the font style, color and other aesthetic aspects of the diagram.
+[Directives](./directives.md) allows the limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram.
 
 ## Theme Creation:
-Mermaid allows [Customized Themes](./theming.md) for websites and even individual diagrams.This is done using directives and can be very helpful, not only for styling but for simplifying more complex diagrams.
+Mermaid allows you to change [Themes](./theming.md). This is also done using [Directives](./directives.md).
 
 
