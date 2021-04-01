@@ -379,7 +379,7 @@ export const draw = function(text, id) {
       svg
         .append('g')
         .attr('class', 'grid')
-        .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
+        .attr('transform', 'translate(' + theSidePad + ', ' + theTopPad + ')')
         .call(topXAxis)
         .selectAll('text')
         .style('text-anchor', 'middle')
