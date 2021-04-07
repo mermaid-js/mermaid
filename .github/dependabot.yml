@@ -1,0 +1,8 @@
+version: 2
+
+updates:
+- package-ecosystem: javascript
+  directory: /
+  target-branch: develop
+  schedule:
+    interval: daily
