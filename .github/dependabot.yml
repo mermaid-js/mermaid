@@ -1,7 +1,7 @@
 version: 2
 
 updates:
-- package-ecosystem: javascript
+- package-ecosystem: npm
   directory: /
   target-branch: develop
   schedule:
