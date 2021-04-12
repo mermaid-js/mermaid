@@ -78,7 +78,7 @@ const init = function() {
     mermaidAPI.updateSiteConfig({ gantt: mermaid.ganttConfig });
   }
 
-  const idGeneratior = utils.initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed);
+  const idGeneratior = new utils.initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt;
 
