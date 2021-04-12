@@ -794,11 +794,11 @@ export const configureSvgSize = function(svgElem, height, width, useMaxWidth) {
 };
 
 export const initIdGeneratior = class iterator {
-  constructor (deterministic, seed) {
+  constructor(deterministic, seed) {
     this.deterministic = deterministic;
     this.seed = seed;
 
-    this.count = seed ? seed.length : 0
+    this.count = seed ? seed.length : 0;
   }
 
   next() {
