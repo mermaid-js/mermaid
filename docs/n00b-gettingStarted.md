@@ -23,12 +23,10 @@ Creating diagrams and charts using mermaid code is simple.
 
 In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
 
-The Live Editor opens on a [Flowchart](./flowchart.md), one of the many charts that mermaid can render. 
-
 ![Flowchart](./img/DiagramDefinition.png)
 
 **Saving a Diagram:**
-Downloading the image is recommended. 
+You may choose any of the methods below, to save it 
 
 ![Flowchart](./img/Live-Editor-Choices.png)
 
