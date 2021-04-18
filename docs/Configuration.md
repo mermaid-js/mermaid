@@ -1,7 +1,9 @@
-The second half of Mermaid is the configuration of one or all diagrams.
+# Configuration
 
-This section will briefly introduce the different methods of configuring of the behavior and apperances of Mermaid Diagrams. 
-The Following are the most commonly used methods and are all generally tied to the [Deployment]() methods. 
+Configuration is the second half of Mermaid for one or for many diagrams.
+
+This section will briefly introduce the different methods of configuring of the behaviors and apperances of Mermaid Diagrams. 
+The Following are the most commonly used methods, and are all tied to the [Deployment](./n00b-gettingStarted.md) methods. 
 
 1. Configuration Section in the [Live Editor](./Live-Editor). 
 
