@@ -1,6 +1,6 @@
 # Overview for Beginners
 
-## Explaining with a Diagram
+**Explaining with a Diagram**
 
 A picture is worth a thousand words, a good diagram is certainly worth more. 
 
@@ -20,7 +20,7 @@ This is a relatively straightforward solution to a major hurdle in software team
 
 # Definition of Terms/ Dictionary
 
-**Mermaid definitions**
+**Mermaid text definitions can be saved for later reuse and editing.**
 
 >These are the Mermaid diagram deffinitions inside `<div>` tags, with the `class=mermaid`.
 
