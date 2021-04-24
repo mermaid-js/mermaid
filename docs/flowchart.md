@@ -742,7 +742,7 @@ graph LR
 
 #### Classes
 
-More convenient then defining the style every time is to define a class of styles and attach this class to the nodes that
+More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
 should have a different look.
 
 a class definition looks like the example below:
