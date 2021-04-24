@@ -3,6 +3,7 @@ import theme from './themes';
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
  *
  * ## **What follows are config instructions for older versions**
+ *
  * These are the default options which can be overridden with the initialization call like so:
  *
  * **Example 1:**
@@ -38,7 +39,7 @@ const config = {
   /**
    * theme , the CSS style sheet
    *
-   * | Parameter | Description |Type | Required | Values|
+   * | Parameter | Description | Type | Required | Values |
    * | --- | --- | --- | --- | --- |
    * | theme | Built in Themes | string | Optional | 'default', 'forest', 'dark', 'neutral', 'null'|
    *
@@ -56,16 +57,17 @@ const config = {
   maxTextSize: 50000,
 
   /**
-   * | Parameter | Description |Type | Required | Values|
+   * | Parameter | Description | Type | Required | Values |
    * | --- | --- | --- | --- | --- |
-   * | fontFamily | specifies the font to be used in the rendered diagrams| string | Required | 'Trebuchet MS', 'Verdana', 'Arial', 'Sans-Serif' |
+   * | fontFamily | specifies the font to be used in the rendered diagrams| string | Required | Any Posiable CSS FontFamily |
    *
-   * **Notes:** Default value is 'trebuchet ms'.
+   * **Notes:**
+   * Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
    */
   fontFamily: '"trebuchet ms", verdana, arial, sans-serif;',
 
   /**
-   * | Parameter | Description |Type | Required | Values|
+   * | Parameter | Description | Type | Required | Values |
    * | --- | --- | --- | --- | --- |
    * | logLevel |This option decides the amount of logging to be used.| string \| number | Required | 1, 2, 3, 4, 5 |
    *
@@ -81,7 +83,7 @@ const config = {
   logLevel: 5,
 
   /**
-   * | Parameter | Description |Type | Required | Values|
+   * | Parameter | Description | Type | Required | Values |
    * | --- | --- | --- | --- | --- |
    * | securitylevel | Level of trust for parsed diagram|string | Required | 'strict', 'loose', 'antiscript' |
    *
@@ -94,7 +96,7 @@ const config = {
   securityLevel: 'strict',
 
   /**
-   * | Parameter | Description |Type | Required | Values|
+   * | Parameter | Description | Type | Required | Values |
    * | --- | --- | --- | --- | --- |
    * | startOnLoad | Dictates whether mermaind starts on Page load | boolean | Required | true, false |
    *
@@ -175,7 +177,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | nodeSpacing | Defines the spacing between nodes on the same level | Integer | Required | Any positive Numbers |
+     * | nodeSpacing | Defines the spacing between nodes on the same level | Integer | Required | Any positive Number |
      *
      * **Notes:**
      *
@@ -188,7 +190,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | rankSpacing | Defines the spacing between nodes on different levels | Integer | Required | Any Positive Numbers |
+     * | rankSpacing | Defines the spacing between nodes on different levels | Integer | Required | Any Positive Number |
      *
      * **Notes**:
      *
@@ -244,16 +246,16 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+     * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
      *
      * **Notes:** Default value: 50
      */
     diagramMarginX: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
+     *| Parameter | Description | Type | Required | Values |
      *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
+     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Value |
      *
      * **Notes:** Default value: 10
      */
@@ -302,7 +304,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value|
+     * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
      *
      * **Notes:**
      * Default value: 5
@@ -411,7 +413,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | actorFontFamily |This sets the font family of the actor's description | string | Required | Open-Sans, Sans-Serif |
+     * | actorFontFamily |This sets the font family of the actor's description | string | Required | Any Posiable CSS FontFamily |
      *
      * **Notes:**
      * Default value: "'Open-Sans", "sans-serif"'
@@ -439,7 +441,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | noteFontFamily| This sets the font family of actor-attached notes. | string | Required | Any Positive Value |
+     * | noteFontFamily| This sets the font family of actor-attached notes. | string | Required | Any Posiable CSS FontFamily |
      *
      * **Notes:**
      * Default value: ''"trebuchet ms", verdana, arial, sans-serif'
@@ -477,7 +479,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | messageFontFamily | This sets the font family of actor messages | string | Required | Any Positive Value |
+     * | messageFontFamily | This sets the font family of actor messages | string | Required | Any Posiable CSS FontFamily |
      *
      * **Notes:**
      * Default value: '"trebuchet ms", verdana, arial, sans-serif'
