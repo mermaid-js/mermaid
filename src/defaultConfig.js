@@ -942,7 +942,7 @@ const config = {
      *
      * T = top, B = bottom, L = left, and R = right.
      *
-     * Default value: 'TB'.
+     * Default value: 'TB'
      */
     layoutDirection: 'TB',
 

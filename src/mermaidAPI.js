@@ -678,7 +678,7 @@ export default mermaidAPI;
  *     flowchart:{
  *       diagramPadding:8,
  *       htmlLabels:true,
- *       curve:'linear',
+ *       curve:'basis',
  *     },
  *     sequence:{
  *       diagramMarginX:50,
