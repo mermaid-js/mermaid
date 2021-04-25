@@ -259,7 +259,7 @@ describe('Gantt diagram', () => {
       });
   });
     it('should render a gantt diagram with data labels at the top when topAxis is true', () => {
-    renderGraph(
+    imgSnapshotTest(
       `
     gantt
       dateFormat  YYYY-MM-DD
