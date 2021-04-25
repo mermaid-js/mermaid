@@ -4,7 +4,7 @@
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/2019) in the category "The most exciting use of technology"!!!**
 
-**Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project 🙏**
+**Thanks to all involved, people committing pull requests, people answering questions! 🙏**
 
 ## About
 
