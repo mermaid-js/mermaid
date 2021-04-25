@@ -68,6 +68,7 @@ that id.
 "gantt"                 return 'gantt';
 "dateFormat"\s[^#\n;]+  return 'dateFormat';
 "inclusiveEndDates"     return 'inclusiveEndDates';
+"topAxis"               return 'topAxis';
 "axisFormat"\s[^#\n;]+  return 'axisFormat';
 "excludes"\s[^#\n;]+    return 'excludes';
 "todayMarker"\s[^\n;]+  return 'todayMarker';
@@ -108,6 +109,7 @@ line
 statement
   : dateFormat {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
   | inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
+  | topAxis {yy.TopAxis();$$=$1.substr(8);}
   | axisFormat {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
   | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}

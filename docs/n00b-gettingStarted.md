@@ -3,10 +3,10 @@
 Creating diagrams and charts using mermaid code is simple.
 
 >The live editor is enough for most general uses of mermaid
-## Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md) on the Live Editor, to gain a better understanding of mermaid.
+**Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md) on the Live Editor, to gain a better understanding of mermaid.**
 
 
-## For beginners, there are Four ways you can use mermaid:
+## Four ways of using mermaid:
 1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).
     - Learning the [Syntax](./n00b-syntaxReference) would be helpful.
 2. Using [mermaid plugins](./integrations.md) with programs you are familiar with.
@@ -17,18 +17,16 @@ Creating diagrams and charts using mermaid code is simple.
 
 >More in depth information can be found on [Usage](./usage.md).
 
-## 1. Using [The mermaid live editor](https://mermaidjs.github.io/mermaid-live-editor).
+## 1. Using [The Live Editor](https://mermaidjs.github.io/mermaid-live-editor).
 
 ![Flowchart](./img/Live-Editor-Usage.png)
 
 In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
 
-The Live Editor opens on a [Flowchart](./flowchart.md), one of the many charts that mermaid can render. 
-
 ![Flowchart](./img/DiagramDefinition.png)
 
 **Saving a Diagram:**
-Downloading the image is recommended. 
+You may choose any of the methods below, to save it 
 
 ![Flowchart](./img/Live-Editor-Choices.png)
 
@@ -39,13 +37,13 @@ Downloading the image is recommended.
 ![Flowchart](./img/Configuration.png)
 
 
-## 2. Using mermaid plugins:
+## 2. Using Mermaid Plugins:
 
 Using plug-ins you can generate mermaid diagrams from within popular applications, the same way that you would use the Live Editor. Here's a list of [Mermaid Plugins](./integrations.md).
 
 **This is covered in greater detail in the [Usage section](usage.md)**
 
-## 3. Deploying mermaid with Inline JavaScript
+## 3. Mermaid with Inline JavaScript
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
@@ -64,9 +62,9 @@ b. The mermaid code for the diagram we want to create.
 c. The `mermaid.initialize()` call to start the rendering process.
 
 
-## Three requirements for the mermaidAPI to render a diagram:
+## Requirements for mermaidAPI to render a diagram:
 
-### a. A reference to the external CDN in a `<script src>` tag, or a reference to mermaid.js as a separate file.:
+**a. A reference to the external CDN in a `<script src>` tag, or a reference to mermaid.js as a separate file.:**
 
 ```html
 <body>
@@ -74,7 +72,7 @@ c. The `mermaid.initialize()` call to start the rendering process.
 </body>
 ```
 
-### b. The embedded mermaid diagram definition inside a `<div class="mermaid">`:
+**b. The embedded mermaid diagram definition inside a `<div class="mermaid">`:**
 
 ```html
 <body>
@@ -89,7 +87,7 @@ c. The `mermaid.initialize()` call to start the rendering process.
 ```
 **Notes**: every mermaid chart/graph/diagram definition, has to have separate `<div>` tags.
 
-### c. The `mermaid.initialize()` call.
+**c. The `mermaid.initialize()` call.**
 
 `mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and render. Example:
 ```html
@@ -107,7 +105,7 @@ Mermaid rendering is initalized with `mermaid.initialize()`.You can place `merma
 | --------- | --------------- | ------ | ---------------------------------------------------- |
 |startOnLoad| Toggle for Rendering upon loading | Boolean | true, false                       |
 
-### Here is a full working example of the mermaidAPI being called through the CDN:
+**Here is a full working example of the mermaidAPI being called through the CDN:**
 
 ```html
 <html>
@@ -161,7 +159,7 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
 
 
 ---
-## 4. Adding mermaid as a dependency.
+## 4. Adding Mermaid as a dependency.
 
 1. install node v10 or 12, which would have npm
 

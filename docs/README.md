@@ -40,7 +40,7 @@ For a more detailed introduction to Mermaid and some of it's more basic uses, lo
 **Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project 🙏**
 
 
-# Diagrams that mermaid can render
+# Diagram Types
 
 ### [Flowchart](/flowchart?id=flowcharts-basic-syntax)
 

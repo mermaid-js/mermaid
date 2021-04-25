@@ -793,17 +793,19 @@ export const configureSvgSize = function(svgElem, height, width, useMaxWidth) {
   d3Attrs(svgElem, attrs);
 };
 
-export const initIdGeneratior = function(deterministic, seed) {
-  if (!deterministic) return { next: () => Date.now() };
-  class iterator {
-    constructor() {
-      return (this.count = seed ? seed.length : 0);
-    }
-    next() {
-      return this.count++;
-    }
+export const initIdGeneratior = class iterator {
+  constructor(deterministic, seed) {
+    this.deterministic = deterministic;
+    this.seed = seed;
+
+    this.count = seed ? seed.length : 0;
   }
-  return new iterator();
+
+  next() {
+    if (!this.deterministic) return Date.now();
+
+    return this.count++;
+  }
 };
 
 export default {
