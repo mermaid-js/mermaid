@@ -461,7 +461,7 @@ classDiagram
 ### Gantt
 ```
 gantt
-       dateFormat                :YYYY-MM-DD
+       dateFormat                YYYY-MM-DD
        title                     Adding GANTT diagram functionality to mermaid
        excludes                  :excludes the named dates/days from being included in a charted task..
        section A section
@@ -491,7 +491,7 @@ gantt
 
 ```mermaid
 gantt
-       dateFormat                :YYYY-MM-DD
+       dateFormat                YYYY-MM-DD
        title                     Adding GANTT diagram functionality to mermaid
        excludes                  :excludes the named dates/days from being included in a charted task..
        section A section
