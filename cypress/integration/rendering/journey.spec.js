@@ -54,7 +54,7 @@ section Checkout from website
   });
 
   it('should render a user journey diagram when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `journey
 title E-Commerce
 section Order from website
@@ -64,13 +64,5 @@ section Checkout from website
     `,
       { journey: { useMaxWidth: false } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        const height = parseFloat(svg.attr('height'));
-        const width = parseFloat(svg.attr('width'));
-        expect(height).to.eq(565);
-        expect(width).to.eq(700);
-        expect(svg).to.not.have.attr('style');
-      });
   });
 });
