@@ -377,8 +377,8 @@ export const draw = function(text, id) {
         .style('text-anchor', 'middle')
         .attr('fill', '#000')
         .attr('stroke', 'none')
-        .attr('font-size', 10)
-        .attr('dy', '1em');
+        .attr('font-size', 10);
+      // .attr('dy', '1em');
     }
   }
 
