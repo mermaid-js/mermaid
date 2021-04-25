@@ -6,35 +6,25 @@ import {
   scaleLinear,
   interpolateHcl,
   axisBottom,
+  axisTop,
   timeFormat
 } from 'd3';
 import { parser } from './parser/gantt';
 import common from '../common/common';
 import ganttDb from './ganttDb';
+import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 
 parser.yy = ganttDb;
-
-const conf = {
-  titleTopMargin: 25,
-  barHeight: 20,
-  barGap: 4,
-  topPadding: 50,
-  rightPadding: 75,
-  leftPadding: 75,
-  gridLineStartPadding: 35,
-  fontSize: 11,
-  fontFamily: '"Open-Sans", "sans-serif"'
-};
-export const setConf = function(cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function(key) {
-    conf[key] = cnf[key];
-  });
+export const setConf = function() {
+  // const keys = Object.keys(cnf);
+  // keys.forEach(function(key) {
+  //   conf[key] = cnf[key];
+  // });
 };
 let w;
 export const draw = function(text, id) {
+  const conf = getConfig().gantt;
   parser.yy.clear();
   parser.parse(text);
 
@@ -189,6 +179,9 @@ export const draw = function(text, id) {
       })
       .attr('height', theBarHeight)
       .attr('transform-origin', function(d, i) {
+        // Ignore the incoming i value and use our order instead
+        i = d.order;
+
         return (
           (
             timeScale(d.startTime) +
@@ -354,7 +347,7 @@ export const draw = function(text, id) {
   }
 
   function makeGrid(theSidePad, theTopPad, w, h) {
-    let xAxis = axisBottom(timeScale)
+    let bottomXAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
@@ -362,13 +355,31 @@ export const draw = function(text, id) {
       .append('g')
       .attr('class', 'grid')
       .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
-      .call(xAxis)
+      .call(bottomXAxis)
       .selectAll('text')
       .style('text-anchor', 'middle')
       .attr('fill', '#000')
       .attr('stroke', 'none')
       .attr('font-size', 10)
       .attr('dy', '1em');
+
+    if (ganttDb.topAxisEnabled() || conf.topAxis) {
+      let topXAxis = axisTop(timeScale)
+        .tickSize(-h + theTopPad + conf.gridLineStartPadding)
+        .tickFormat(timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+
+      svg
+        .append('g')
+        .attr('class', 'grid')
+        .attr('transform', 'translate(' + theSidePad + ', ' + theTopPad + ')')
+        .call(topXAxis)
+        .selectAll('text')
+        .style('text-anchor', 'middle')
+        .attr('fill', '#000')
+        .attr('stroke', 'none')
+        .attr('font-size', 10);
+      // .attr('dy', '1em');
+    }
   }
 
   function vertLabels(theGap, theTopPad) {
@@ -412,6 +423,8 @@ export const draw = function(text, id) {
           return (d[1] * theGap) / 2 + theTopPad;
         }
       })
+      .attr('font-size', conf.sectionFontSize)
+      .attr('font-size', conf.sectionFontSize)
       .attr('class', function(d) {
         for (let i = 0; i < categories.length; i++) {
           if (d[0] === categories[i]) {

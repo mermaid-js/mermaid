@@ -1,6 +1,6 @@
 # Flowcharts - Basic Syntax
 
-**Edit this Page** [![N|Solid](.img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/flowchart.md)
+**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/flowchart.md)
 
 ## Graph
 
@@ -742,7 +742,7 @@ graph LR
 
 #### Classes
 
-More convenient then defining the style every time is to define a class of styles and attach this class to the nodes that
+More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
 should have a different look.
 
 a class definition looks like the example below:
@@ -846,7 +846,7 @@ graph TD
 
 * In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
 
-* A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduce to improve readability.
+* A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduced to improve readability.
 
 Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
 

@@ -656,7 +656,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.9.2\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.9.3\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -1600,11 +1600,21 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     return !Number.isNaN(p.y);
   }); // This is the accessor function we talked about above
 
+  var curve; // Currently only flowcharts get the curve from the settings, perhaps this should
+  // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
+  // have not been thought through
+
+  if (diagramType === 'graph' || diagramType === 'flowchart') {
+    curve = edge.curve || d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"];
+  } else {
+    curve = d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"];
+  }
+
   var lineFunction = Object(d3__WEBPACK_IMPORTED_MODULE_2__["line"])().x(function (d) {
     return d.x;
   }).y(function (d) {
     return d.y;
-  }).curve(d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"]); // Contruct stroke classes based on properties
+  }).curve(curve); // Contruct stroke classes based on properties
 
   var strokeClasses;
 
@@ -3645,7 +3655,9 @@ __webpack_require__.r(__webpack_exports__);
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
  *
  * ## **What follows are config instructions for older versions**
+ *
  * These are the default options which can be overridden with the initialization call like so:
+ *
  * **Example 1:**
  * <pre>
  * mermaid.initialize({
@@ -3677,15 +3689,15 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 var config = {
-  /** theme , the CSS style sheet
-   *
+  /**
    * theme , the CSS style sheet
    *
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | theme | Built in Themes | string | Optional | 'default', 'forest', 'dark', 'neutral', 'null'|
    *
-   ***Notes:**To disable any pre-defined mermaid theme, use "null".
+   * **Notes:** To disable any pre-defined mermaid theme, use "null".
+   *
    * <pre>
    *  "theme": "forest",
    *  "themeCSS": ".node rect { fill: red; }"
@@ -3699,59 +3711,64 @@ var config = {
   maxTextSize: 50000,
 
   /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Trebuchet MS, Verdana, Arial, Sans-Serif |
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | fontFamily | specifies the font to be used in the rendered diagrams| string | Required | Any Posiable CSS FontFamily |
    *
-   ***notes: Default value is \\"trebuchet ms\\".
+   * **Notes:**
+   * Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
    */
   fontFamily: '"trebuchet ms", verdana, arial, sans-serif;',
 
   /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | logLevel |This option decides the amount of logging to be used.| string \| number | Required | 1, 2, 3, 4, 5 |
    *
    *
-   ***Notes:**
-   *-   debug: 1.
-   *-   info: 2.
-   *-   warn: 3.
-   *-   error: 4.
-   *-   fatal: 5(default).
+   * **Notes:**
+   *
+   * - debug: 1
+   * - info: 2
+   * - warn: 3
+   * - error: 4
+   * - fatal: 5 (default)
    */
   logLevel: 5,
 
   /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose, antiscript |
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | securitylevel | Level of trust for parsed diagram|string | Required | 'strict', 'loose', 'antiscript' |
    *
-   ***Notes:
-   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
-   *-   **loose**: tags in text are allowed, click functionality is enabled
-   *-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
+   * **Notes**:
+   *
+   * - **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   * - **loose**: tags in text are allowed, click functionality is enabled
+   * - **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
    */
   securityLevel: 'strict',
 
   /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | startOnLoad | Dictates whether mermaind starts on Page load | boolean | Required | true, false |
    *
-   ***Notes:**
-   ***Default value: true**
+   * **Notes:** Default value: true
    */
   startOnLoad: true,
 
   /**
-   *| Parameter | Description |Type | Required |Values|
-   *| --- | --- | --- | --- | --- |
-   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
+   * | Parameter | Description |Type | Required |Values|
+   * | --- | --- | --- | --- | --- |
+   * | arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | boolean | Required | true, false |
    *
    *
-   *## Notes**: This matters if you are using base tag settings.
-   ***Default value: false**.
+   * **Notes**:
+   *
+   * This matters if you are using base tag settings.
+   *
+   * Default value: false
    */
   arrowMarkerAbsolute: false,
 
@@ -3760,6 +3777,9 @@ var config = {
    * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
    * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
+    * **Notes**:
+   *
+   * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
 
@@ -3767,8 +3787,11 @@ var config = {
    * This option controls if the generated ids of nodes in the SVG are generated randomly or based on a seed.
    * If set to false, the IDs are generated based on the current date and thus are not deterministic. This is the default behaviour.
    *
-   *## Notes**: This matters if your files are checked into sourcecontrol e.g. git and should not change unless content is changed.
-   ***Default value: false**
+   * **Notes**:
+   *
+   * This matters if your files are checked into sourcecontrol e.g. git and should not change unless content is changed.
+   *
+   * Default value: false
    */
   deterministicIds: false,
 
@@ -3783,67 +3806,78 @@ var config = {
    */
   flowchart: {
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramPadding | Amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
      *
-     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
-     ***Default value: 8**.
+     * **Notes:**
+     *
+     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     *
+     * Default value: 8
      */
     diagramPadding: 8,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | boolean| Required | true, false |
      *
-     ***Notes: Default value: true**.
+     * **Notes:** Default value: true.
      */
     htmlLabels: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | nodeSpacing | Defines the spacing between nodes on the same level | Integer | Required | Any positive Number |
      *
-     ***Notes:
-     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
-     ***Default value 50**.
+     * **Notes:**
+     *
+     * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
+     *
+     * Default value: 50
      */
     nodeSpacing: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | rankSpacing | Defines the spacing between nodes on different levels | Integer | Required | Any Positive Number |
      *
-     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
-     ***Default value 50**.
+     * **Notes**:
+     *
+     * pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+     *
+     * Default value 50
      */
     rankSpacing: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | curve | Defines how mermaid renders curves for flowcharts. | string | Required | 'basis', 'linear', 'cardinal'|
      *
-     ***Notes:
-     *Default Vaue: Linear**
+     * **Notes:**
+     *
+     * Default Vaue: 'basis'
      */
-    curve: 'linear',
+    curve: 'basis',
     // Only used in new experimental rendering
     // represents the padding between the labels and the shape
     padding: 15,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -3853,174 +3887,176 @@ var config = {
    */
   sequence: {
     /**
-     * widt of the activation rect
-     * **Default value 10**.
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | activationWidth | Width of the activation rect | Integer | Required | Any Positive Value |
+     *
+     *
+     * **Notes:** Default value :10
      */
     activationWidth: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:** Default value: 50
      */
     diagramMarginX: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
+     *| Parameter | Description | Type | Required | Values |
      *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
+     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 10**.
+     * **Notes:** Default value: 10
      */
     diagramMarginY: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:**
+     * Default value: 50
      */
     actorMargin: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | width | Width of actor boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 150**.
+     * **Notes:**
+     * Default value: 150
      */
     width: 150,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | height | Height of actor boxes | Integer | Required | Any Positive Value|
      *
-     ***Notes:**
-     ***Default value 65**..
+     * **Notes:**
+     * Default value: 65
      */
     height: 65,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     *
-     ***Default value 10**.
+     * **Notes:**
+     * Default value: 10
      */
     boxMargin: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     *
-     ***Default value 5**.
+     * **Notes:**
+     * Default value: 5
      */
     boxTextMargin: 5,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteMargin | margin around notes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     *
-     ***Default value 10**.
+     * **Notes:**
+     * Default value: 10
      */
     noteMargin: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageMargin | Space between messages | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     *
-     *Space between messages.
-     ***Default value 35**.
+     * **Notes:**
+     * Default value: 35
      */
     messageMargin: 35,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageAlign | Multiline message alignment | string | Required | 'left', 'center', 'right' |
      *
-     ***Notes:**center **default**
+     * **Notes:**
+     * Default value: 'center'
      */
     messageAlign: 'center',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | mirrorActors | Mirror actors under diagram | boolean | Required | true, false |
      *
-     ***Notes:**
-     *
-     ***Default value true**.
+     * **Notes:**
+     * Default value: true
      */
     mirrorActors: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | Required | Any Positive Value |
      *
-     ***Notes:**Depending on css styling this might need adjustment.
-     ***Default value 1**.
+     * **Notes:**
+     *
+     * Depending on css styling this might need adjustment.
+     *
+     * Default value: 1
      */
     bottomMarginAdj: 1,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See Notes | boolean | Required | true, false |
      *
-     ***Notes:**
-     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
-     *available space. If set to false, the absolute space required is used.
-     ***Default value: True**.
+     * **Notes:**
+     * When this flag is set to true, the height and width is set to 100% and is then scaling with the
+     * available space. If set to false, the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | rightAngles | display curve arrows as right angles | boolean | Required | true, false |
      *
-     ***Notes:**
+     * **Notes:**
      *
-     *This will display arrows that start and begin at the same node as right angles, rather than a curve
-     ***Default value false**.
+     * This will display arrows that start and begin at the same node as right angles, rather than a curve
+     *
+     * Default value: false
      */
     rightAngles: false,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | showSequenceNumbers | This will show the node numbers | boolean | Required | true, false |
      *
-     ***Notes:**
-     ***Default value false**.
+     * **Notes:**
+     * Default value: false
      */
     showSequenceNumbers: false,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
      *
      ***Notes:**
      ***Default value 14**..
@@ -4028,104 +4064,118 @@ var config = {
     actorFontSize: 14,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | actorFontFamily |This sets the font family of the actor's description | string | Required | Any Posiable CSS FontFamily |
      *
-     ***Notes:**
-     ***Default value "Open-Sans", "sans-serif"**.
+     * **Notes:**
+     * Default value: "'Open-Sans", "sans-serif"'
      */
     actorFontFamily: '"Open-Sans", "sans-serif"',
 
     /**
      * This sets the font weight of the actor's description
-     * **Default value 400.
+     *
+     * **Notes:**
+     * Default value: 400.
      */
     actorFontWeight: 400,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteFontSize | This sets the font size of actor-attached notes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 14**..
+     * **Notes:**
+     * Default value: 14
      */
     noteFontSize: 14,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial, sans-serif |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteFontFamily| This sets the font family of actor-attached notes. | string | Required | Any Posiable CSS FontFamily |
      *
-     ***Notes:**
-     ***Default value: trebuchet ms **.
+     * **Notes:**
+     * Default value: ''"trebuchet ms", verdana, arial, sans-serif'
      */
     noteFontFamily: '"trebuchet ms", verdana, arial, sans-serif',
 
     /**
      * This sets the font weight of the note's description
-     * **Default value 400.
+     *
+     * **Notes:**
+     * Default value: 400
      */
     noteFontWeight: 400,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteAlign | This sets the text alignment of actor-attached notes | string | required | 'left', 'center', 'right'|
      *
-     ***Notes:**
-     ***Default value center**.
+     * **Notes:**
+     * Default value: 'center'
      */
     noteAlign: 'center',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageFontSize | This sets the font size of actor messages | Integer | Required | Any Positive Number |
      *
-     ***Notes:**
-     ***Default value 16**.
+     * **Notes:**
+     * Default value: 16
      */
     messageFontSize: 16,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, arial, sans-serif |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageFontFamily | This sets the font family of actor messages | string | Required | Any Posiable CSS FontFamily |
      *
-     ***Notes:**
-     ***Default value: "trebuchet ms**.
+     * **Notes:**
+     * Default value: '"trebuchet ms", verdana, arial, sans-serif'
      */
     messageFontFamily: '"trebuchet ms", verdana, arial, sans-serif',
 
     /**
      * This sets the font weight of the message's description
-     * **Default value 400.
+     *
+     * **Notes:**
+     * Default value: 400.
      */
     messageFontWeight: 400,
 
     /**
      * This sets the auto-wrap state for the diagram
-     * **Default value false.
+     *
+     * **Notes:**
+     * Default value: false.
      */
     wrap: false,
 
     /**
      * This sets the auto-wrap padding for the diagram (sides only)
-     * **Default value 10.
+     *
+     * **Notes:**
+     * Default value: 0.
      */
     wrapPadding: 10,
 
     /**
      * This sets the width of the loop-box (loop, alt, opt, par)
-     * **Default value 50.
+     *
+     * **Notes:**
+     * Default value: 50.
      */
     labelBoxWidth: 50,
 
     /**
      * This sets the height of the loop-box (loop, alt, opt, par)
-     * **Default value 20.
+     *
+     * **Notes:**
+     * Default value: 20.
      */
     labelBoxHeight: 20,
     messageFont: function messageFont() {
@@ -4152,125 +4202,149 @@ var config = {
   },
 
   /**
-   * The object containing configurations specific for gantt diagrams*
+   * The object containing configurations specific for gantt diagrams
    */
   gantt: {
     /**
-     *### titleTopMargin
+     * ### titleTopMargin
      *
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 25**.
+     * **Notes:**
+     * Default value: 25
      */
     titleTopMargin: 25,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 20**.
+     * **Notes:**
+     * Default value: 20
      */
     barHeight: 20,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | barGap | The margin between the different activities in the gantt diagram | Integer | Optional | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 4**.
+     * **Notes:**
+     * Default value: 4
      */
     barGap: 4,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:**
+     * Default value: 50
      */
     topPadding: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | rightPadding | The space allocated for the section name to the right of the activities | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 75**.
+     * **Notes:**
+     * Default value: 75
+     */
+    rightPadding: 75,
+
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | leftPadding | The space allocated for the section name to the left of the activities | Integer | Required | Any Positive Value |
+     *
+     * **Notes:**
+     * Default value: 75
      */
     leftPadding: 75,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | gridLineStartPadding | Vertical starting position of the grid lines | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 35**.
+     * **Notes:**
+     * Default value: 35
      */
     gridLineStartPadding: 35,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontSize | Font size| Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | fontSize | Font size | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 11**.
+     * **Notes:**
+     * Default value: 11
      */
     fontSize: 11,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | sectionFontSize | Font size for secions| Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     *
-     ***Default value '"Open-Sans", "sans-serif"'**.
+     * **Notes:**
+     * Default value: 11
      */
-    fontFamily: '"Open-Sans", "sans-serif"',
+    sectionFontSize: 11,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 4**.
+     * **Notes:**
+     * Default value: 4
      */
     numberSectionStyles: 4,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | axisFormat | Datetime format of the axis | 3 | Required | Date in yy-mm-dd |
      *
-     ***Notes:**
+     * **Notes:**
      *
      * This might need adjustment to match your locale and preferences
-     ***Default value '%Y-%m-%d'**.
+     *
+     * Default value: '%Y-%m-%d'.
      */
     axisFormat: '%Y-%m-%d',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| topAxis | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:** when this flag is set date labels will be added to the
+    top of the chart
+     *
+     ***Default value false**.
+     */
+    topAxis: false,
     useWidth: undefined
   },
 
@@ -4279,149 +4353,172 @@ var config = {
    */
   journey: {
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:**
+     * Default value: 50
      */
     diagramMarginX: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramMarginY | Margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 10**..
+     * **Notes:**
+     * Default value: 10
      */
     diagramMarginY: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:**
+     * Default value: 50
      */
-    actorMargin: 50,
+    leftMargin: 150,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | width | Width of actor boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 150**.
+     * **Notes:**
+     * Default value: 150
      */
     width: 150,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | height | Height of actor boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 65**.
+     * **Notes:**
+     * Default value: 65
      */
-    height: 65,
+    height: 50,
 
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
      *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 10**.
+     * **Notes:**
+     * Default value: 10
      */
     boxMargin: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
+     * **Notes:**
+     * Default value: 5
      */
     boxTextMargin: 5,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteMargin | Margin around notes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 10**.
+     * **Notes:**
+     * Default value: 10
      */
     noteMargin: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageMargin |Space between messages. | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
+     * **Notes:**
      *
-     *Space between messages.
-     ***Default value 35**.
+     * Space between messages.
+     *
+     * Default value: 35
      */
     messageMargin: 35,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageAlign | Multiline message alignment | 3 | 4 | 'left', 'center', 'right' |
      *
-     ***Notes:**default:center**
+     * **Notes:**
+     * Default value: 'center'
      */
     messageAlign: 'center',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | 4 | Any Positive Value |
      *
-     ***Notes:**Depending on css styling this might need adjustment.
-     ***Default value 1**.
+     * **Notes:**
+     *
+     * Depending on css styling this might need adjustment.
+     *
+     * Default value: 1
      */
     bottomMarginAdj: 1,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | rightAngles | Curved Arrows become Right Angles | 3 | 4 | true, false |
      *
-     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
-     ***Default value false**.
+     * **Notes:**
+     *
+     * This will display arrows that start and begin at the same node as right angles, rather than a curves
+     *
+     * Default value: false
      */
-    rightAngles: false
+    rightAngles: false,
+    taskFontSize: 14,
+    taskFontFamily: '"Open-Sans", "sans-serif"',
+    taskMargin: 50,
+    // width of activation box
+    activationWidth: 10,
+    // text placement as: tspan | fo | old only text as before
+    textPlacement: 'fo',
+    actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
+    sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
+    sectionColours: ['#fff']
   },
   class: {
     arrowMarkerAbsolute: false,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -4430,14 +4527,16 @@ var config = {
     useWidth: undefined,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -4462,14 +4561,16 @@ var config = {
     radius: 5,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -4479,95 +4580,112 @@ var config = {
    */
   er: {
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramPadding | Amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
      *
-     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
-     ***Default value: 20**.
+     * **Notes:**
+     *
+     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     *
+     * Default value: 20
      */
     diagramPadding: 20,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | layoutDirection | Directional bias for layout of entities. | string | Required | "TB", "BT", "LR", "RL" |
      *
-     ***Notes:**
-     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     * **Notes:**
+     *
+     * 'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     *
      * T = top, B = bottom, L = left, and R = right.
-     ***Default value: TB **.
+     *
+     * Default value: 'TB'
      */
     layoutDirection: 'TB',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | minEntityWidth | The mimimum width of an entity box | Integer | Required | Any Positive Value  |
      *
-     ***Notes:**expressed in pixels
-     ***Default value: 100**.
+     * **Notes:**
+     * Expressed in pixels.
+     * Default value: 100
      */
     minEntityWidth: 100,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | minEntityHeight| The minimum height of an entity box | Integer | 4 | Any Positive Value |
      *
-     ***Notes:**expressed in pixels
-     ***Default value: 75 **
+     * **Notes:**
+     * Expressed in pixels
+     * Default value: 75
      */
     minEntityHeight: 75,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | entityPadding | Minimum internal padding betweentext in box and box borders | Integer | 4 | Any Positive Value |
      *
-     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
-     ***Default value: 15 **
+     * **Notes:**
+     *
+     * The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+     *
+     * Default value: 15
      */
     entityPadding: 15,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
-     ***Default value: gray **
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | stroke | Stroke color of box edges and lines | string | 4 | Any recognized color |
+     *
+     * **Notes:**
+     * Default value: 'gray'
      */
     stroke: 'gray',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | fill | Fill color of entity boxes | string | 4 | Any recognized color |
      *
-     ***Notes:**
-     ***Default value:'honeydew'**
+     * **Notes:**
+     * Default value: 'honeydew'
      */
     fill: 'honeydew',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | fontSize | Font Size in pixels | Integer |  | Any Positive Value |
      *
-     ***Notes:**Font size (expressed as an integer representing a number of pixels)
-     ***Default value: 12 **
+     * **Notes:**
+     *
+     * Font size (expressed as an integer representing a number of pixels)
+     * Default value: 12
      */
     fontSize: 12,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See Notes | boolean | Required | true, false |
      *
-     ***Notes:**
-     *When this flag is set to true, the diagram width is locked to 100% and
-     *scaled based on available space. If set to false, the diagram reserves its
-     *absolute width.
-     ***Default value: true**.
+     * **Notes:**
+     *
+     * When this flag is set to true, the diagram width is locked to 100% and
+     * scaled based on available space. If set to false, the diagram reserves its
+     * absolute width.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -4579,17 +4697,50 @@ var config = {
     useWidth: undefined,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See Notes | boolean | Required | true, false |
      *
-     ***Notes:**
-     *When this flag is set to true, the diagram width is locked to 100% and
-     *scaled based on available space. If set to false, the diagram reserves its
-     *absolute width.
-     ***Default value: true**.
+     * **Notes:**
+     *
+     * When this flag is set to true, the diagram width is locked to 100% and
+     * scaled based on available space. If set to false, the diagram reserves its
+     * absolute width.
+     *
+     * Default value: true
      */
     useMaxWidth: true
+  },
+
+  /**
+   * The object containing configurations specific for req diagrams
+   */
+  requirement: {
+    useWidth: undefined,
+
+    /**
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See Notes | boolean | Required | true, false |
+     *
+     * **Notes:**
+     *
+     * When this flag is set to true, the diagram width is locked to 100% and
+     * scaled based on available space. If set to false, the diagram reserves its
+     * absolute width.
+     *
+     * Default value: true
+     */
+    useMaxWidth: true,
+    rect_fill: '#f9f9f9',
+    text_color: '#333',
+    rect_border_size: '0.5px',
+    rect_border_color: '#bbb',
+    rect_min_width: 200,
+    rect_min_height: 200,
+    fontSize: 14,
+    rect_padding: 10,
+    line_height: 20
   }
 };
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
@@ -5709,12 +5860,12 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,6],$V2=[1,14],$V3=[1,25],$V4=[1,28],$V5=[1,26],$V6=[1,27],$V7=[1,29],$V8=[1,30],$V9=[1,31],$Va=[1,32],$Vb=[1,34],$Vc=[1,35],$Vd=[1,36],$Ve=[10,19],$Vf=[1,48],$Vg=[1,49],$Vh=[1,50],$Vi=[1,51],$Vj=[1,52],$Vk=[1,53],$Vl=[10,19,25,32,33,41,44,45,46,47,48,49,54,56],$Vm=[10,19,23,25,32,33,37,41,44,45,46,47,48,49,54,56,71,72,73],$Vn=[10,13,17,19],$Vo=[41,71,72,73],$Vp=[41,48,49,71,72,73],$Vq=[41,44,45,46,47,71,72,73],$Vr=[10,19,25],$Vs=[1,85];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,6],$V2=[1,14],$V3=[1,25],$V4=[1,28],$V5=[1,26],$V6=[1,27],$V7=[1,29],$V8=[1,30],$V9=[1,31],$Va=[1,32],$Vb=[1,35],$Vc=[1,36],$Vd=[1,37],$Ve=[1,38],$Vf=[10,19],$Vg=[1,50],$Vh=[1,51],$Vi=[1,52],$Vj=[1,53],$Vk=[1,54],$Vl=[1,55],$Vm=[10,19,26,33,34,42,45,46,47,48,49,50,55,57],$Vn=[10,19,24,26,33,34,38,42,45,46,47,48,49,50,55,57,72,73,74,75],$Vo=[10,13,17,19],$Vp=[42,72,73,74,75],$Vq=[42,49,50,72,73,74,75],$Vr=[42,45,46,47,48,72,73,74,75],$Vs=[10,19,26],$Vt=[1,87];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"graphConfig":6,"openDirective":7,"typeDirective":8,"closeDirective":9,"NEWLINE":10,":":11,"argDirective":12,"open_directive":13,"type_directive":14,"arg_directive":15,"close_directive":16,"CLASS_DIAGRAM":17,"statements":18,"EOF":19,"statement":20,"className":21,"alphaNumToken":22,"GENERICTYPE":23,"relationStatement":24,"LABEL":25,"classStatement":26,"methodStatement":27,"annotationStatement":28,"clickStatement":29,"cssClassStatement":30,"CLASS":31,"STYLE_SEPARATOR":32,"STRUCT_START":33,"members":34,"STRUCT_STOP":35,"ANNOTATION_START":36,"ANNOTATION_END":37,"MEMBER":38,"SEPARATOR":39,"relation":40,"STR":41,"relationType":42,"lineType":43,"AGGREGATION":44,"EXTENSION":45,"COMPOSITION":46,"DEPENDENCY":47,"LINE":48,"DOTTED_LINE":49,"CALLBACK":50,"LINK":51,"LINK_TARGET":52,"CLICK":53,"CALLBACK_NAME":54,"CALLBACK_ARGS":55,"HREF":56,"CSSCLASS":57,"commentToken":58,"textToken":59,"graphCodeTokens":60,"textNoTagsToken":61,"TAGSTART":62,"TAGEND":63,"==":64,"--":65,"PCT":66,"DEFAULT":67,"SPACE":68,"MINUS":69,"keywords":70,"UNICODE_TEXT":71,"NUM":72,"ALPHA":73,"$accept":0,"$end":1},
-terminals_: {2:"error",10:"NEWLINE",11:":",13:"open_directive",14:"type_directive",15:"arg_directive",16:"close_directive",17:"CLASS_DIAGRAM",19:"EOF",23:"GENERICTYPE",25:"LABEL",31:"CLASS",32:"STYLE_SEPARATOR",33:"STRUCT_START",35:"STRUCT_STOP",36:"ANNOTATION_START",37:"ANNOTATION_END",38:"MEMBER",39:"SEPARATOR",41:"STR",44:"AGGREGATION",45:"EXTENSION",46:"COMPOSITION",47:"DEPENDENCY",48:"LINE",49:"DOTTED_LINE",50:"CALLBACK",51:"LINK",52:"LINK_TARGET",53:"CLICK",54:"CALLBACK_NAME",55:"CALLBACK_ARGS",56:"HREF",57:"CSSCLASS",60:"graphCodeTokens",62:"TAGSTART",63:"TAGEND",64:"==",65:"--",66:"PCT",67:"DEFAULT",68:"SPACE",69:"MINUS",70:"keywords",71:"UNICODE_TEXT",72:"NUM",73:"ALPHA"},
-productions_: [0,[3,1],[3,2],[4,1],[5,4],[5,6],[7,1],[8,1],[12,1],[9,1],[6,4],[18,1],[18,2],[18,3],[21,1],[21,2],[21,3],[21,2],[20,1],[20,2],[20,1],[20,1],[20,1],[20,1],[20,1],[20,1],[26,2],[26,4],[26,5],[26,7],[28,4],[34,1],[34,2],[27,1],[27,2],[27,1],[27,1],[24,3],[24,4],[24,4],[24,5],[40,3],[40,2],[40,2],[40,1],[42,1],[42,1],[42,1],[42,1],[43,1],[43,1],[29,3],[29,4],[29,3],[29,4],[29,4],[29,5],[29,3],[29,4],[29,4],[29,5],[29,3],[29,4],[29,4],[29,5],[30,3],[58,1],[58,1],[59,1],[59,1],[59,1],[59,1],[59,1],[59,1],[59,1],[61,1],[61,1],[61,1],[61,1],[22,1],[22,1],[22,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"graphConfig":6,"openDirective":7,"typeDirective":8,"closeDirective":9,"NEWLINE":10,":":11,"argDirective":12,"open_directive":13,"type_directive":14,"arg_directive":15,"close_directive":16,"CLASS_DIAGRAM":17,"statements":18,"EOF":19,"statement":20,"className":21,"alphaNumToken":22,"classLiteralName":23,"GENERICTYPE":24,"relationStatement":25,"LABEL":26,"classStatement":27,"methodStatement":28,"annotationStatement":29,"clickStatement":30,"cssClassStatement":31,"CLASS":32,"STYLE_SEPARATOR":33,"STRUCT_START":34,"members":35,"STRUCT_STOP":36,"ANNOTATION_START":37,"ANNOTATION_END":38,"MEMBER":39,"SEPARATOR":40,"relation":41,"STR":42,"relationType":43,"lineType":44,"AGGREGATION":45,"EXTENSION":46,"COMPOSITION":47,"DEPENDENCY":48,"LINE":49,"DOTTED_LINE":50,"CALLBACK":51,"LINK":52,"LINK_TARGET":53,"CLICK":54,"CALLBACK_NAME":55,"CALLBACK_ARGS":56,"HREF":57,"CSSCLASS":58,"commentToken":59,"textToken":60,"graphCodeTokens":61,"textNoTagsToken":62,"TAGSTART":63,"TAGEND":64,"==":65,"--":66,"PCT":67,"DEFAULT":68,"SPACE":69,"MINUS":70,"keywords":71,"UNICODE_TEXT":72,"NUM":73,"ALPHA":74,"BQUOTE_STR":75,"$accept":0,"$end":1},
+terminals_: {2:"error",10:"NEWLINE",11:":",13:"open_directive",14:"type_directive",15:"arg_directive",16:"close_directive",17:"CLASS_DIAGRAM",19:"EOF",24:"GENERICTYPE",26:"LABEL",32:"CLASS",33:"STYLE_SEPARATOR",34:"STRUCT_START",36:"STRUCT_STOP",37:"ANNOTATION_START",38:"ANNOTATION_END",39:"MEMBER",40:"SEPARATOR",42:"STR",45:"AGGREGATION",46:"EXTENSION",47:"COMPOSITION",48:"DEPENDENCY",49:"LINE",50:"DOTTED_LINE",51:"CALLBACK",52:"LINK",53:"LINK_TARGET",54:"CLICK",55:"CALLBACK_NAME",56:"CALLBACK_ARGS",57:"HREF",58:"CSSCLASS",61:"graphCodeTokens",63:"TAGSTART",64:"TAGEND",65:"==",66:"--",67:"PCT",68:"DEFAULT",69:"SPACE",70:"MINUS",71:"keywords",72:"UNICODE_TEXT",73:"NUM",74:"ALPHA",75:"BQUOTE_STR"},
+productions_: [0,[3,1],[3,2],[4,1],[5,4],[5,6],[7,1],[8,1],[12,1],[9,1],[6,4],[18,1],[18,2],[18,3],[21,1],[21,1],[21,2],[21,2],[21,2],[20,1],[20,2],[20,1],[20,1],[20,1],[20,1],[20,1],[20,1],[27,2],[27,4],[27,5],[27,7],[29,4],[35,1],[35,2],[28,1],[28,2],[28,1],[28,1],[25,3],[25,4],[25,4],[25,5],[41,3],[41,2],[41,2],[41,1],[43,1],[43,1],[43,1],[43,1],[44,1],[44,1],[30,3],[30,4],[30,3],[30,4],[30,4],[30,5],[30,3],[30,4],[30,4],[30,5],[30,3],[30,4],[30,4],[30,5],[31,3],[59,1],[59,1],[60,1],[60,1],[60,1],[60,1],[60,1],[60,1],[60,1],[62,1],[62,1],[62,1],[62,1],[22,1],[22,1],[22,1],[23,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -5732,133 +5883,130 @@ break;
 case 9:
  yy.parseDirective('}%%', 'close_directive', 'class'); 
 break;
-case 14:
+case 14: case 15:
  this.$=$$[$0]; 
 break;
-case 15:
+case 16:
  this.$=$$[$0-1]+$$[$0]; 
 break;
-case 16:
- this.$=$$[$0-2]+'~'+$$[$0-1]+$$[$0]; 
-break;
-case 17:
+case 17: case 18:
  this.$=$$[$0-1]+'~'+$$[$0]; 
 break;
-case 18:
+case 19:
  yy.addRelation($$[$0]); 
 break;
-case 19:
+case 20:
  $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
 break;
-case 26:
+case 27:
 yy.addClass($$[$0]);
 break;
-case 27:
+case 28:
 yy.addClass($$[$0-2]);yy.setCssClass($$[$0-2], $$[$0]);
 break;
-case 28:
+case 29:
 /*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
 break;
-case 29:
+case 30:
 yy.addClass($$[$0-5]);yy.setCssClass($$[$0-5], $$[$0-3]);yy.addMembers($$[$0-5],$$[$0-1]);
 break;
-case 30:
+case 31:
  yy.addAnnotation($$[$0],$$[$0-2]); 
 break;
-case 31:
+case 32:
  this.$ = [$$[$0]]; 
 break;
-case 32:
+case 33:
  $$[$0].push($$[$0-1]);this.$=$$[$0];
 break;
-case 33:
+case 34:
 /*console.log('Rel found',$$[$0]);*/
 break;
-case 34:
+case 35:
 yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
 break;
-case 35:
+case 36:
 /*console.warn('Member',$$[$0]);*/
 break;
-case 36:
+case 37:
 /*console.log('sep found',$$[$0]);*/
 break;
-case 37:
+case 38:
  this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
 break;
-case 38:
+case 39:
  this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
 break;
-case 39:
+case 40:
  this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
 break;
-case 40:
+case 41:
  this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
-case 41:
+case 42:
  this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
 break;
-case 42:
+case 43:
  this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
 break;
-case 43:
+case 44:
  this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
 break;
-case 44:
+case 45:
  this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
 break;
-case 45:
+case 46:
  this.$=yy.relationType.AGGREGATION;
 break;
-case 46:
+case 47:
  this.$=yy.relationType.EXTENSION;
 break;
-case 47:
+case 48:
  this.$=yy.relationType.COMPOSITION;
 break;
-case 48:
+case 49:
  this.$=yy.relationType.DEPENDENCY;
 break;
-case 49:
+case 50:
 this.$=yy.lineType.LINE;
 break;
-case 50:
+case 51:
 this.$=yy.lineType.DOTTED_LINE;
 break;
-case 51: case 57:
+case 52: case 58:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0]);
 break;
-case 52: case 58:
+case 53: case 59:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-2], $$[$0]);
 break;
-case 53: case 61:
+case 54: case 62:
 this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 54:
+case 55:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1],$$[$0]);
 break;
-case 55: case 63:
+case 56: case 64:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-2], $$[$0]);
 break;
-case 56: case 64:
+case 57: case 65:
 this.$ = $$[$0-4];yy.setLink($$[$0-3], $$[$0-2], $$[$0]);yy.setTooltip($$[$0-3], $$[$0-1]);
 break;
-case 59:
+case 60:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 60:
+case 61:
 this.$ = $$[$0-4];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-3], $$[$0]);
 break;
-case 62:
+case 63:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 65:
+case 66:
 yy.setCssClass($$[$0-1], $$[$0]);
 break;
 }
 },
-table: [{3:1,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[3]},{1:[2,1]},{3:8,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[2,3]},{8:9,14:[1,10]},{10:[1,11]},{14:[2,6]},{1:[2,2]},{9:12,11:[1,13],16:$V2},o([11,16],[2,7]),{5:23,7:5,13:$V0,18:15,20:16,21:24,22:33,24:17,26:18,27:19,28:20,29:21,30:22,31:$V3,36:$V4,38:$V5,39:$V6,50:$V7,51:$V8,53:$V9,57:$Va,71:$Vb,72:$Vc,73:$Vd},{10:[1,37]},{12:38,15:[1,39]},{10:[2,9]},{19:[1,40]},{10:[1,41],19:[2,11]},o($Ve,[2,18],{25:[1,42]}),o($Ve,[2,20]),o($Ve,[2,21]),o($Ve,[2,22]),o($Ve,[2,23]),o($Ve,[2,24]),o($Ve,[2,25]),o($Ve,[2,33],{40:43,42:46,43:47,25:[1,45],41:[1,44],44:$Vf,45:$Vg,46:$Vh,47:$Vi,48:$Vj,49:$Vk}),{21:54,22:33,71:$Vb,72:$Vc,73:$Vd},o($Ve,[2,35]),o($Ve,[2,36]),{22:55,71:$Vb,72:$Vc,73:$Vd},{21:56,22:33,71:$Vb,72:$Vc,73:$Vd},{21:57,22:33,71:$Vb,72:$Vc,73:$Vd},{21:58,22:33,71:$Vb,72:$Vc,73:$Vd},{41:[1,59]},o($Vl,[2,14],{22:33,21:60,23:[1,61],71:$Vb,72:$Vc,73:$Vd}),o($Vm,[2,79]),o($Vm,[2,80]),o($Vm,[2,81]),o($Vn,[2,4]),{9:62,16:$V2},{16:[2,8]},{1:[2,10]},{5:23,7:5,13:$V0,18:63,19:[2,12],20:16,21:24,22:33,24:17,26:18,27:19,28:20,29:21,30:22,31:$V3,36:$V4,38:$V5,39:$V6,50:$V7,51:$V8,53:$V9,57:$Va,71:$Vb,72:$Vc,73:$Vd},o($Ve,[2,19]),{21:64,22:33,41:[1,65],71:$Vb,72:$Vc,73:$Vd},{40:66,42:46,43:47,44:$Vf,45:$Vg,46:$Vh,47:$Vi,48:$Vj,49:$Vk},o($Ve,[2,34]),{43:67,48:$Vj,49:$Vk},o($Vo,[2,44],{42:68,44:$Vf,45:$Vg,46:$Vh,47:$Vi}),o($Vp,[2,45]),o($Vp,[2,46]),o($Vp,[2,47]),o($Vp,[2,48]),o($Vq,[2,49]),o($Vq,[2,50]),o($Ve,[2,26],{32:[1,69],33:[1,70]}),{37:[1,71]},{41:[1,72]},{41:[1,73]},{54:[1,74],56:[1,75]},{22:76,71:$Vb,72:$Vc,73:$Vd},o($Vl,[2,15]),o($Vl,[2,17],{22:33,21:77,71:$Vb,72:$Vc,73:$Vd}),{10:[1,78]},{19:[2,13]},o($Vr,[2,37]),{21:79,22:33,71:$Vb,72:$Vc,73:$Vd},{21:80,22:33,41:[1,81],71:$Vb,72:$Vc,73:$Vd},o($Vo,[2,43],{42:82,44:$Vf,45:$Vg,46:$Vh,47:$Vi}),o($Vo,[2,42]),{22:83,71:$Vb,72:$Vc,73:$Vd},{34:84,38:$Vs},{21:86,22:33,71:$Vb,72:$Vc,73:$Vd},o($Ve,[2,51],{41:[1,87]}),o($Ve,[2,53],{41:[1,89],52:[1,88]}),o($Ve,[2,57],{41:[1,90],55:[1,91]}),o($Ve,[2,61],{41:[1,93],52:[1,92]}),o($Ve,[2,65]),o($Vl,[2,16]),o($Vn,[2,5]),o($Vr,[2,39]),o($Vr,[2,38]),{21:94,22:33,71:$Vb,72:$Vc,73:$Vd},o($Vo,[2,41]),o($Ve,[2,27],{33:[1,95]}),{35:[1,96]},{34:97,35:[2,31],38:$Vs},o($Ve,[2,30]),o($Ve,[2,52]),o($Ve,[2,54]),o($Ve,[2,55],{52:[1,98]}),o($Ve,[2,58]),o($Ve,[2,59],{41:[1,99]}),o($Ve,[2,62]),o($Ve,[2,63],{52:[1,100]}),o($Vr,[2,40]),{34:101,38:$Vs},o($Ve,[2,28]),{35:[2,32]},o($Ve,[2,56]),o($Ve,[2,60]),o($Ve,[2,64]),{35:[1,102]},o($Ve,[2,29])],
-defaultActions: {2:[2,1],4:[2,3],7:[2,6],8:[2,2],14:[2,9],39:[2,8],40:[2,10],63:[2,13],97:[2,32]},
+table: [{3:1,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[3]},{1:[2,1]},{3:8,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[2,3]},{8:9,14:[1,10]},{10:[1,11]},{14:[2,6]},{1:[2,2]},{9:12,11:[1,13],16:$V2},o([11,16],[2,7]),{5:23,7:5,13:$V0,18:15,20:16,21:24,22:33,23:34,25:17,27:18,28:19,29:20,30:21,31:22,32:$V3,37:$V4,39:$V5,40:$V6,51:$V7,52:$V8,54:$V9,58:$Va,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{10:[1,39]},{12:40,15:[1,41]},{10:[2,9]},{19:[1,42]},{10:[1,43],19:[2,11]},o($Vf,[2,19],{26:[1,44]}),o($Vf,[2,21]),o($Vf,[2,22]),o($Vf,[2,23]),o($Vf,[2,24]),o($Vf,[2,25]),o($Vf,[2,26]),o($Vf,[2,34],{41:45,43:48,44:49,26:[1,47],42:[1,46],45:$Vg,46:$Vh,47:$Vi,48:$Vj,49:$Vk,50:$Vl}),{21:56,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vf,[2,36]),o($Vf,[2,37]),{22:57,72:$Vb,73:$Vc,74:$Vd},{21:58,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{21:59,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{21:60,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{42:[1,61]},o($Vm,[2,14],{22:33,23:34,21:62,24:[1,63],72:$Vb,73:$Vc,74:$Vd,75:$Ve}),o($Vm,[2,15],{24:[1,64]}),o($Vn,[2,80]),o($Vn,[2,81]),o($Vn,[2,82]),o([10,19,24,26,33,34,42,45,46,47,48,49,50,55,57],[2,83]),o($Vo,[2,4]),{9:65,16:$V2},{16:[2,8]},{1:[2,10]},{5:23,7:5,13:$V0,18:66,19:[2,12],20:16,21:24,22:33,23:34,25:17,27:18,28:19,29:20,30:21,31:22,32:$V3,37:$V4,39:$V5,40:$V6,51:$V7,52:$V8,54:$V9,58:$Va,72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vf,[2,20]),{21:67,22:33,23:34,42:[1,68],72:$Vb,73:$Vc,74:$Vd,75:$Ve},{41:69,43:48,44:49,45:$Vg,46:$Vh,47:$Vi,48:$Vj,49:$Vk,50:$Vl},o($Vf,[2,35]),{44:70,49:$Vk,50:$Vl},o($Vp,[2,45],{43:71,45:$Vg,46:$Vh,47:$Vi,48:$Vj}),o($Vq,[2,46]),o($Vq,[2,47]),o($Vq,[2,48]),o($Vq,[2,49]),o($Vr,[2,50]),o($Vr,[2,51]),o($Vf,[2,27],{33:[1,72],34:[1,73]}),{38:[1,74]},{42:[1,75]},{42:[1,76]},{55:[1,77],57:[1,78]},{22:79,72:$Vb,73:$Vc,74:$Vd},o($Vm,[2,16]),o($Vm,[2,17]),o($Vm,[2,18]),{10:[1,80]},{19:[2,13]},o($Vs,[2,38]),{21:81,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{21:82,22:33,23:34,42:[1,83],72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vp,[2,44],{43:84,45:$Vg,46:$Vh,47:$Vi,48:$Vj}),o($Vp,[2,43]),{22:85,72:$Vb,73:$Vc,74:$Vd},{35:86,39:$Vt},{21:88,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vf,[2,52],{42:[1,89]}),o($Vf,[2,54],{42:[1,91],53:[1,90]}),o($Vf,[2,58],{42:[1,92],56:[1,93]}),o($Vf,[2,62],{42:[1,95],53:[1,94]}),o($Vf,[2,66]),o($Vo,[2,5]),o($Vs,[2,40]),o($Vs,[2,39]),{21:96,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vp,[2,42]),o($Vf,[2,28],{34:[1,97]}),{36:[1,98]},{35:99,36:[2,32],39:$Vt},o($Vf,[2,31]),o($Vf,[2,53]),o($Vf,[2,55]),o($Vf,[2,56],{53:[1,100]}),o($Vf,[2,59]),o($Vf,[2,60],{42:[1,101]}),o($Vf,[2,63]),o($Vf,[2,64],{53:[1,102]}),o($Vs,[2,41]),{35:103,39:$Vt},o($Vf,[2,29]),{36:[2,33]},o($Vf,[2,57]),o($Vf,[2,61]),o($Vf,[2,65]),{36:[1,104]},o($Vf,[2,30])],
+defaultActions: {2:[2,1],4:[2,3],7:[2,6],8:[2,2],14:[2,9],41:[2,8],42:[2,10],66:[2,13],99:[2,33]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -6359,31 +6507,31 @@ case 9:return 17;
 break;
 case 10:return 17;
 break;
-case 11: this.begin("struct"); /*console.log('Starting struct');*/ return 33;
+case 11: this.begin("struct"); /*console.log('Starting struct');*/ return 34;
 break;
 case 12:return "EOF_IN_STRUCT";
 break;
 case 13:return "OPEN_IN_STRUCT";
 break;
-case 14: /*console.log('Ending struct');*/this.popState(); return 35;
+case 14: /*console.log('Ending struct');*/this.popState(); return 36;
 break;
 case 15:/* nothing */
 break;
 case 16: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
 break;
-case 17:return 31;
+case 17:return 32;
 break;
-case 18:return 57;
+case 18:return 58;
 break;
-case 19:return 50;
+case 19:return 51;
 break;
-case 20:return 51;
+case 20:return 52;
 break;
-case 21:return 53;
+case 21:return 54;
 break;
-case 22:return 36;
+case 22:return 37;
 break;
-case 23:return 37;
+case 23:return 38;
 break;
 case 24:this.begin("generic");
 break;
@@ -6397,80 +6545,86 @@ case 28:this.popState();
 break;
 case 29:return "STR";
 break;
-case 30:this.begin("href");
+case 30:this.begin("bqstring");
 break;
 case 31:this.popState();
 break;
-case 32:return 56;
+case 32:return "BQUOTE_STR";
 break;
-case 33:this.begin("callback_name");
+case 33:this.begin("href");
 break;
 case 34:this.popState();
 break;
-case 35:this.popState(); this.begin("callback_args");
+case 35:return 57;
 break;
-case 36:return 54;
+case 36:this.begin("callback_name");
 break;
 case 37:this.popState();
 break;
-case 38:return 55;
+case 38:this.popState(); this.begin("callback_args");
 break;
-case 39:return 52;
+case 39:return 55;
 break;
-case 40:return 52;
+case 40:this.popState();
 break;
-case 41:return 52;
+case 41:return 56;
 break;
-case 42:return 52;
+case 42:return 53;
 break;
-case 43:return 45;
+case 43:return 53;
 break;
-case 44:return 45;
+case 44:return 53;
 break;
-case 45:return 47;
+case 45:return 53;
 break;
-case 46:return 47;
+case 46:return 46;
 break;
 case 47:return 46;
 break;
-case 48:return 44;
+case 48:return 48;
 break;
 case 49:return 48;
 break;
-case 50:return 49;
+case 50:return 47;
 break;
-case 51:return 25;
+case 51:return 45;
 break;
-case 52:return 32;
+case 52:return 49;
 break;
-case 53:return 69;
+case 53:return 50;
 break;
-case 54:return 'DOT';
+case 54:return 26;
 break;
-case 55:return 'PLUS';
+case 55:return 33;
 break;
-case 56:return 66;
+case 56:return 70;
 break;
-case 57:return 'EQUALS';
+case 57:return 'DOT';
 break;
-case 58:return 'EQUALS';
+case 58:return 'PLUS';
 break;
-case 59:return 73;
+case 59:return 67;
 break;
-case 60:return 'PUNCTUATION';
+case 60:return 'EQUALS';
 break;
-case 61:return 72;
+case 61:return 'EQUALS';
 break;
-case 62:return 71;
+case 62:return 74;
 break;
-case 63:return 68;
+case 63:return 'PUNCTUATION';
 break;
-case 64:return 19;
+case 64:return 73;
+break;
+case 65:return 72;
+break;
+case 66:return 69;
+break;
+case 67:return 19;
 break;
 }
 },
-rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n?)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:cssClass\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:click\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:href[\s]+["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:call[\s]+)/,/^(?:\([\s]*\))/,/^(?:\()/,/^(?:[^(]*)/,/^(?:\))/,/^(?:[^)]*)/,/^(?:_self\b)/,/^(?:_blank\b)/,/^(?:_parent\b)/,/^(?:_top\b)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::{1}[^:\n;]+)/,/^(?::{3})/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
-conditions: {"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callback_args":{"rules":[37,38],"inclusive":false},"callback_name":{"rules":[34,35,36],"inclusive":false},"href":{"rules":[31,32],"inclusive":false},"struct":{"rules":[12,13,14,15,16],"inclusive":false},"generic":{"rules":[25,26],"inclusive":false},"string":{"rules":[28,29],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,17,18,19,20,21,22,23,24,27,30,33,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n?)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:cssClass\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:click\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:[`])/,/^(?:[`])/,/^(?:[^`]+)/,/^(?:href[\s]+["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:call[\s]+)/,/^(?:\([\s]*\))/,/^(?:\()/,/^(?:[^(]*)/,/^(?:\))/,/^(?:[^)]*)/,/^(?:_self\b)/,/^(?:_blank\b)/,/^(?:_parent\b)/,/^(?:_top\b)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::{1}[^:\n;]+)/,/^(?::{3})/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
+conditions: {"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callback_args":{"rules":[40,41],"inclusive":false},"callback_name":{"rules":[37,38,39],"inclusive":false},"href":{"rules":[34,35],"inclusive":false},"struct":{"rules":[12,13,14,15,16],"inclusive":false},"generic":{"rules":[25,26],"inclusive":false},"bqstring":{"rules":[31,32],"inclusive":false},"string":{"rules":[28,29],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,17,18,19,20,21,22,23,24,27,30,33,36,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67],"inclusive":true}}
 });
 return lexer;
 })();
@@ -6951,13 +7105,26 @@ var placeholderToBreak = function placeholderToBreak(s) {
   return s.replace(/#br#/g, '<br/>');
 };
 
+var getUrl = function getUrl(useAbsolute) {
+  var url = '';
+
+  if (useAbsolute) {
+    url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
+  }
+
+  return url;
+};
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   getRows: getRows,
   sanitizeText: sanitizeText,
   hasBreaks: hasBreaks,
   splitBreaks: splitBreaks,
   lineBreakRegex: lineBreakRegex,
-  removeScript: removeScript
+  removeScript: removeScript,
+  getUrl: getUrl
 });
 
 /***/ }),
@@ -11615,7 +11782,7 @@ var getStyles = function getStyles(options) {
 /*!***************************************!*\
   !*** ./src/diagrams/gantt/ganttDb.js ***!
   \***************************************/
-/*! exports provided: parseDirective, clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
+/*! exports provided: parseDirective, clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, enableTopAxis, topAxisEnabled, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11629,6 +11796,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDateFormat", function() { return setDateFormat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableInclusiveEndDates", function() { return enableInclusiveEndDates; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "endDatesAreInclusive", function() { return endDatesAreInclusive; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableTopAxis", function() { return enableTopAxis; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "topAxisEnabled", function() { return topAxisEnabled; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDateFormat", function() { return getDateFormat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setExcludes", function() { return setExcludes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getExcludes", function() { return getExcludes; });
@@ -11676,7 +11845,8 @@ var tasks = [];
 var currentSection = '';
 var tags = ['active', 'done', 'crit', 'milestone'];
 var funs = [];
-var inclusiveEndDates = false; // The serial order of the task in the script
+var inclusiveEndDates = false;
+var topAxis = false; // The serial order of the task in the script
 
 var lastOrder = 0;
 var parseDirective = function parseDirective(statement, context, type) {
@@ -11697,6 +11867,7 @@ var clear = function clear() {
   todayMarker = '';
   excludes = [];
   inclusiveEndDates = false;
+  topAxis = false;
   lastOrder = 0;
 };
 var setAxisFormat = function setAxisFormat(txt) {
@@ -11719,6 +11890,12 @@ var enableInclusiveEndDates = function enableInclusiveEndDates() {
 };
 var endDatesAreInclusive = function endDatesAreInclusive() {
   return inclusiveEndDates;
+};
+var enableTopAxis = function enableTopAxis() {
+  topAxis = true;
+};
+var topAxisEnabled = function topAxisEnabled() {
+  return topAxis;
 };
 var getDateFormat = function getDateFormat() {
   return dateFormat;
@@ -12270,6 +12447,8 @@ var bindFunctions = function bindFunctions(element) {
   getDateFormat: getDateFormat,
   enableInclusiveEndDates: enableInclusiveEndDates,
   endDatesAreInclusive: endDatesAreInclusive,
+  enableTopAxis: enableTopAxis,
+  topAxisEnabled: topAxisEnabled,
   setAxisFormat: setAxisFormat,
   getAxisFormat: getAxisFormat,
   setTodayMarker: setTodayMarker,
@@ -12327,32 +12506,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _ganttDb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ganttDb */ "./src/diagrams/gantt/ganttDb.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
 
 
 _parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy = _ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"];
-var conf = {
-  titleTopMargin: 25,
-  barHeight: 20,
-  barGap: 4,
-  topPadding: 50,
-  rightPadding: 75,
-  leftPadding: 75,
-  gridLineStartPadding: 35,
-  fontSize: 11,
-  fontFamily: '"Open-Sans", "sans-serif"'
-};
-var setConf = function setConf(cnf) {
-  var keys = Object.keys(cnf);
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
+var setConf = function setConf() {// const keys = Object.keys(cnf);
+  // keys.forEach(function(key) {
+  //   conf[key] = cnf[key];
+  // });
 };
 var w;
 var draw = function draw(text, id) {
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().gantt;
   _parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.clear();
   _parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].parse(text);
   var elem = document.getElementById(id);
@@ -12406,7 +12576,7 @@ var draw = function draw(text, id) {
 
   taskArray.sort(taskCompare);
   makeGant(taskArray, w, h);
-  Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(svg, h, w, conf.useMaxWidth);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_5__["configureSvgSize"])(svg, h, w, conf.useMaxWidth);
   svg.append('text').text(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getTitle()).attr('x', w / 2).attr('y', conf.titleTopMargin).attr('class', 'titleText');
 
   function makeGant(tasks, pageWidth, pageHeight) {
@@ -12459,6 +12629,8 @@ var draw = function draw(text, id) {
 
       return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
     }).attr('height', theBarHeight).attr('transform-origin', function (d, i) {
+      // Ignore the incoming i value and use our order instead
+      i = d.order;
       return (timeScale(d.startTime) + theSidePad + 0.5 * (timeScale(d.endTime) - timeScale(d.startTime))).toString() + 'px ' + (i * theGap + theTopPad + 0.5 * theBarHeight).toString() + 'px';
     }).attr('class', function (d) {
       var res = 'task';
@@ -12603,8 +12775,13 @@ var draw = function draw(text, id) {
   }
 
   function makeGrid(theSidePad, theTopPad, w, h) {
-    var xAxis = Object(d3__WEBPACK_IMPORTED_MODULE_0__["axisBottom"])(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat(Object(d3__WEBPACK_IMPORTED_MODULE_0__["timeFormat"])(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
-    svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')').call(xAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10).attr('dy', '1em');
+    var bottomXAxis = Object(d3__WEBPACK_IMPORTED_MODULE_0__["axisBottom"])(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat(Object(d3__WEBPACK_IMPORTED_MODULE_0__["timeFormat"])(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+    svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')').call(bottomXAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10).attr('dy', '1em');
+
+    if (_ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"].topAxisEnabled() || conf.topAxis) {
+      var topXAxis = Object(d3__WEBPACK_IMPORTED_MODULE_0__["axisTop"])(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat(Object(d3__WEBPACK_IMPORTED_MODULE_0__["timeFormat"])(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+      svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + theTopPad + ')').call(topXAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10); // .attr('dy', '1em');
+    }
   }
 
   function vertLabels(theGap, theTopPad) {
@@ -12641,7 +12818,7 @@ var draw = function draw(text, id) {
       } else {
         return d[1] * theGap / 2 + theTopPad;
       }
-    }).attr('class', function (d) {
+    }).attr('font-size', conf.sectionFontSize).attr('font-size', conf.sectionFontSize).attr('class', function (d) {
       for (var _i5 = 0; _i5 < categories.length; _i5++) {
         if (d[0] === categories[_i5]) {
           return 'sectionTitle sectionTitle' + _i5 % conf.numberSectionStyles;
@@ -12792,12 +12969,12 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,20,27,32],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,23],$Vb=[1,25],$Vc=[1,28],$Vd=[5,7,9,11,12,13,14,15,16,17,18,20,27,32];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,19,21,28,33],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,24],$Vc=[1,26],$Vd=[1,29],$Ve=[5,7,9,11,12,13,14,15,16,17,18,19,21,28,33];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"axisFormat":14,"excludes":15,"todayMarker":16,"title":17,"section":18,"clickStatement":19,"taskTxt":20,"taskData":21,"openDirective":22,"typeDirective":23,"closeDirective":24,":":25,"argDirective":26,"click":27,"callbackname":28,"callbackargs":29,"href":30,"clickStatementDebug":31,"open_directive":32,"type_directive":33,"arg_directive":34,"close_directive":35,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"axisFormat",15:"excludes",16:"todayMarker",17:"title",18:"section",20:"taskTxt",21:"taskData",25:":",27:"click",28:"callbackname",29:"callbackargs",30:"href",32:"open_directive",33:"type_directive",34:"arg_directive",35:"close_directive"},
-productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[19,2],[19,3],[19,3],[19,4],[19,3],[19,4],[19,2],[31,2],[31,3],[31,3],[31,4],[31,3],[31,4],[31,2],[22,1],[23,1],[26,1],[24,1]],
+symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"topAxis":14,"axisFormat":15,"excludes":16,"todayMarker":17,"title":18,"section":19,"clickStatement":20,"taskTxt":21,"taskData":22,"openDirective":23,"typeDirective":24,"closeDirective":25,":":26,"argDirective":27,"click":28,"callbackname":29,"callbackargs":30,"href":31,"clickStatementDebug":32,"open_directive":33,"type_directive":34,"arg_directive":35,"close_directive":36,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"topAxis",15:"axisFormat",16:"excludes",17:"todayMarker",18:"title",19:"section",21:"taskTxt",22:"taskData",26:":",28:"click",29:"callbackname",30:"callbackargs",31:"href",33:"open_directive",34:"type_directive",35:"arg_directive",36:"close_directive"},
+productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[20,2],[20,3],[20,3],[20,4],[20,3],[20,4],[20,2],[32,2],[32,3],[32,3],[32,4],[32,3],[32,4],[32,2],[23,1],[24,1],[27,1],[25,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -12825,69 +13002,72 @@ case 10:
 yy.enableInclusiveEndDates();this.$=$$[$0].substr(18);
 break;
 case 11:
-yy.setAxisFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
+yy.TopAxis();this.$=$$[$0].substr(8);
 break;
 case 12:
-yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
+yy.setAxisFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
 case 13:
-yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
+yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
 break;
 case 14:
-yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
 break;
 case 15:
+yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+break;
+case 16:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
-case 17:
+case 18:
 yy.addTask($$[$0-1],$$[$0]);this.$='task';
 break;
-case 21:
+case 22:
 this.$ = $$[$0-1];yy.setClickEvent($$[$0-1], $$[$0], null);
 break;
-case 22:
+case 23:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 23:
+case 24:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], null);yy.setLink($$[$0-2],$$[$0]);
 break;
-case 24:
+case 25:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setLink($$[$0-3],$$[$0]);
 break;
-case 25:
+case 26:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0], null);yy.setLink($$[$0-2],$$[$0-1]);
 break;
-case 26:
+case 27:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-1], $$[$0]);yy.setLink($$[$0-3],$$[$0-2]);
 break;
-case 27:
+case 28:
 this.$ = $$[$0-1];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 28: case 34:
+case 29: case 35:
 this.$=$$[$0-1] + ' ' + $$[$0];
 break;
-case 29: case 30: case 32:
+case 30: case 31: case 33:
 this.$=$$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 31: case 33:
+case 32: case 34:
 this.$=$$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 35:
+case 36:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 36:
+case 37:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 37:
+case 38:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 38:
+case 39:
  yy.parseDirective('}%%', 'close_directive', 'gantt'); 
 break;
 }
 },
-table: [{3:1,4:2,5:$V0,22:4,32:$V1},{1:[3]},{3:6,4:2,5:$V0,22:4,32:$V1},o($V2,[2,3],{6:7}),{23:8,33:[1,9]},{33:[2,35]},{1:[2,1]},{4:24,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:22,20:$Va,22:4,27:$Vb,32:$V1},{24:26,25:[1,27],35:$Vc},o([25,35],[2,36]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:24,10:29,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:22,20:$Va,22:4,27:$Vb,32:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),{21:[1,30]},o($V2,[2,18]),{28:[1,31],30:[1,32]},{11:[1,33]},{26:34,34:[1,35]},{11:[2,38]},o($V2,[2,5]),o($V2,[2,17]),o($V2,[2,21],{29:[1,36],30:[1,37]}),o($V2,[2,27],{28:[1,38]}),o($Vd,[2,19]),{24:39,35:$Vc},{35:[2,37]},o($V2,[2,22],{30:[1,40]}),o($V2,[2,23]),o($V2,[2,25],{29:[1,41]}),{11:[1,42]},o($V2,[2,24]),o($V2,[2,26]),o($Vd,[2,20])],
-defaultActions: {5:[2,35],6:[2,1],28:[2,38],35:[2,37]},
+table: [{3:1,4:2,5:$V0,23:4,33:$V1},{1:[3]},{3:6,4:2,5:$V0,23:4,33:$V1},o($V2,[2,3],{6:7}),{24:8,34:[1,9]},{34:[2,36]},{1:[2,1]},{4:25,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:23,21:$Vb,23:4,28:$Vc,33:$V1},{25:27,26:[1,28],36:$Vd},o([26,36],[2,37]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:25,10:30,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:23,21:$Vb,23:4,28:$Vc,33:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),o($V2,[2,17]),{22:[1,31]},o($V2,[2,19]),{29:[1,32],31:[1,33]},{11:[1,34]},{27:35,35:[1,36]},{11:[2,39]},o($V2,[2,5]),o($V2,[2,18]),o($V2,[2,22],{30:[1,37],31:[1,38]}),o($V2,[2,28],{29:[1,39]}),o($Ve,[2,20]),{25:40,36:$Vd},{36:[2,38]},o($V2,[2,23],{31:[1,41]}),o($V2,[2,24]),o($V2,[2,26],{30:[1,42]}),{11:[1,43]},o($V2,[2,25]),o($V2,[2,27]),o($Ve,[2,21])],
+defaultActions: {5:[2,36],6:[2,1],29:[2,39],36:[2,38]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -13366,15 +13546,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 32; 
+case 0: this.begin('open_directive'); return 33; 
 break;
-case 1: this.begin('type_directive'); return 33; 
+case 1: this.begin('type_directive'); return 34; 
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 25; 
+case 2: this.popState(); this.begin('arg_directive'); return 26; 
 break;
-case 3: this.popState(); this.popState(); return 35; 
+case 3: this.popState(); this.popState(); return 36; 
 break;
-case 4:return 34;
+case 4:return 35;
 break;
 case 5:/* skip comments */
 break;
@@ -13394,7 +13574,7 @@ case 12:this.begin("href");
 break;
 case 13:this.popState();
 break;
-case 14:return 30;
+case 14:return 31;
 break;
 case 15:this.begin("callbackname");
 break;
@@ -13402,17 +13582,17 @@ case 16:this.popState();
 break;
 case 17:this.popState(); this.begin("callbackargs");
 break;
-case 18:return 28;
+case 18:return 29;
 break;
 case 19:this.popState();
 break;
-case 20:return 29;
+case 20:return 30;
 break;
 case 21:this.begin("click");
 break;
 case 22:this.popState();
 break;
-case 23:return 27;
+case 23:return 28;
 break;
 case 24:return 5;
 break;
@@ -13426,26 +13606,28 @@ case 28:return 15;
 break;
 case 29:return 16;
 break;
-case 30:return 'date';
+case 30:return 17;
 break;
-case 31:return 17;
+case 31:return 'date';
 break;
 case 32:return 18;
 break;
-case 33:return 20;
+case 33:return 19;
 break;
 case 34:return 21;
 break;
-case 35:return 25;
+case 35:return 22;
 break;
-case 36:return 7;
+case 36:return 26;
 break;
-case 37:return 'INVALID';
+case 37:return 7;
+break;
+case 38:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:topAxis\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],"inclusive":true}}
 });
 return lexer;
 })();
@@ -13488,7 +13670,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    font-size: 11px;\n    text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .taskText:not([font-size]) {\n    font-size: 11px;\n  }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    font-size: 11px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    font-size: 11px;\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n");
+  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    // text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  // .taskText:not([font-size]) {\n  //   font-size: ").concat(options.ganttFontSize, ";\n  // }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    // font-size: ").concat(options.ganttFontSize, ";\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -16454,6 +16636,1299 @@ var draw = function draw(txt, id) {
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
   return ".pieTitleText {\n    text-anchor: middle;\n    font-size: 25px;\n    fill: ".concat(options.taskTextDarkColor, ";\n    font-family: ").concat(options.fontFamily, ";\n  }\n  .slice {\n    font-family: ").concat(options.fontFamily, ";\n    fill: ").concat(options.textColor, ";\n    // fill: white;\n  }\n  .legend text {\n    fill: ").concat(options.taskTextDarkColor, ";\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 17px;\n  }\n");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getStyles);
+
+/***/ }),
+
+/***/ "./src/diagrams/requirement/parser/requirementDiagram.jison":
+/*!******************************************************************!*\
+  !*** ./src/diagrams/requirement/parser/requirementDiagram.jison ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process, module) {/* parser generated by jison 0.4.18 */
+/*
+  Returns a Parser object of the following structure:
+
+  Parser: {
+    yy: {}
+  }
+
+  Parser.prototype: {
+    yy: {},
+    trace: function(),
+    symbols_: {associative list: name ==> number},
+    terminals_: {associative list: number ==> name},
+    productions_: [...],
+    performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, $$, _$),
+    table: [...],
+    defaultActions: {...},
+    parseError: function(str, hash),
+    parse: function(input),
+
+    lexer: {
+        EOF: 1,
+        parseError: function(str, hash),
+        setInput: function(input),
+        input: function(),
+        unput: function(str),
+        more: function(),
+        less: function(n),
+        pastInput: function(),
+        upcomingInput: function(),
+        showPosition: function(),
+        test_match: function(regex_match_array, rule_index),
+        next: function(),
+        lex: function(),
+        begin: function(condition),
+        popState: function(),
+        _currentRules: function(),
+        topState: function(),
+        pushState: function(condition),
+
+        options: {
+            ranges: boolean           (optional: true ==> token location info will include a .range[] member)
+            flex: boolean             (optional: true ==> flex-like lexing behaviour where the rules are tested exhaustively to find the longest match)
+            backtrack_lexer: boolean  (optional: true ==> lexer regexes are tested in order and for each matching regex the action code is invoked; the lexer terminates the scan when a token is returned by the action code)
+        },
+
+        performAction: function(yy, yy_, $avoiding_name_collisions, YY_START),
+        rules: [...],
+        conditions: {associative list: name ==> set},
+    }
+  }
+
+
+  token location info (@$, _$, etc.): {
+    first_line: n,
+    last_line: n,
+    first_column: n,
+    last_column: n,
+    range: [start_number, end_number]       (where the numbers are indexes into the input string, regular zero-based)
+  }
+
+
+  the parseError function receives a 'hash' object with these members for lexer and parser errors: {
+    text:        (matched text)
+    token:       (the produced terminal token, if any)
+    line:        (yylineno)
+  }
+  while parser (grammar) errors will also provide these members, i.e. parser errors deliver a superset of attributes: {
+    loc:         (yylloc)
+    expected:    (string describing the set of expected tokens)
+    recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
+  }
+*/
+var parser = (function(){
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[1,14],$V3=[2,9],$V4=[1,18],$V5=[1,19],$V6=[1,20],$V7=[1,21],$V8=[1,22],$V9=[1,23],$Va=[1,16],$Vb=[1,24],$Vc=[1,25],$Vd=[1,28],$Ve=[66,67],$Vf=[6,8,35,36,37,38,39,40,48,55,57,66,67],$Vg=[5,14],$Vh=[1,47],$Vi=[1,48],$Vj=[1,49],$Vk=[1,50],$Vl=[1,51],$Vm=[1,52],$Vn=[1,53],$Vo=[57,58],$Vp=[1,65],$Vq=[1,61],$Vr=[1,62],$Vs=[1,63],$Vt=[1,64],$Vu=[1,66],$Vv=[1,70],$Vw=[1,71],$Vx=[1,68],$Vy=[1,69],$Vz=[6,8,35,36,37,38,39,40,48,66,67];
+var parser = {trace: function trace () { },
+yy: {},
+symbols_: {"error":2,"start":3,"directive":4,"RD":5,"NEWLINE":6,"diagram":7,"EOF":8,"openDirective":9,"typeDirective":10,"closeDirective":11,":":12,"argDirective":13,"open_directive":14,"type_directive":15,"arg_directive":16,"close_directive":17,"requirementDef":18,"elementDef":19,"relationshipDef":20,"requirementType":21,"requirementName":22,"STRUCT_START":23,"requirementBody":24,"ID":25,"COLONSEP":26,"id":27,"TEXT":28,"text":29,"RISK":30,"riskLevel":31,"VERIFYMTHD":32,"verifyType":33,"STRUCT_STOP":34,"REQUIREMENT":35,"FUNCTIONAL_REQUIREMENT":36,"INTERFACE_REQUIREMENT":37,"PERFORMANCE_REQUIREMENT":38,"PHYSICAL_REQUIREMENT":39,"DESIGN_CONSTRAINT":40,"LOW_RISK":41,"MED_RISK":42,"HIGH_RISK":43,"VERIFY_ANALYSIS":44,"VERIFY_DEMONSTRATION":45,"VERIFY_INSPECTION":46,"VERIFY_TEST":47,"ELEMENT":48,"elementName":49,"elementBody":50,"TYPE":51,"type":52,"DOCREF":53,"ref":54,"END_ARROW_L":55,"relationship":56,"LINE":57,"END_ARROW_R":58,"CONTAINS":59,"COPIES":60,"DERIVES":61,"SATISFIES":62,"VERIFIES":63,"REFINES":64,"TRACES":65,"unqString":66,"qString":67,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"RD",6:"NEWLINE",8:"EOF",12:":",14:"open_directive",15:"type_directive",16:"arg_directive",17:"close_directive",23:"STRUCT_START",25:"ID",26:"COLONSEP",28:"TEXT",30:"RISK",32:"VERIFYMTHD",34:"STRUCT_STOP",35:"REQUIREMENT",36:"FUNCTIONAL_REQUIREMENT",37:"INTERFACE_REQUIREMENT",38:"PERFORMANCE_REQUIREMENT",39:"PHYSICAL_REQUIREMENT",40:"DESIGN_CONSTRAINT",41:"LOW_RISK",42:"MED_RISK",43:"HIGH_RISK",44:"VERIFY_ANALYSIS",45:"VERIFY_DEMONSTRATION",46:"VERIFY_INSPECTION",47:"VERIFY_TEST",48:"ELEMENT",51:"TYPE",53:"DOCREF",55:"END_ARROW_L",57:"LINE",58:"END_ARROW_R",59:"CONTAINS",60:"COPIES",61:"DERIVES",62:"SATISFIES",63:"VERIFIES",64:"REFINES",65:"TRACES",66:"unqString",67:"qString"},
+productions_: [0,[3,2],[3,4],[4,3],[4,5],[9,1],[10,1],[13,1],[11,1],[7,0],[7,2],[7,2],[7,2],[7,2],[18,5],[24,5],[24,5],[24,5],[24,5],[24,2],[24,1],[21,1],[21,1],[21,1],[21,1],[21,1],[21,1],[31,1],[31,1],[31,1],[33,1],[33,1],[33,1],[33,1],[19,5],[50,5],[50,5],[50,2],[50,1],[20,5],[20,5],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[22,1],[22,1],[27,1],[27,1],[29,1],[29,1],[49,1],[49,1],[52,1],[52,1],[54,1],[54,1]],
+performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
+/* this == yyval */
+
+var $0 = $$.length - 1;
+switch (yystate) {
+case 5:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 6:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 7:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 8:
+ yy.parseDirective('}%%', 'close_directive', 'pie'); 
+break;
+case 9:
+ this.$ = [] 
+break;
+case 14:
+ yy.addRequirement($$[$0-3], $$[$0-4]) 
+break;
+case 15:
+ yy.setNewReqId($$[$0-2]); 
+break;
+case 16:
+ yy.setNewReqText($$[$0-2]); 
+break;
+case 17:
+ yy.setNewReqRisk($$[$0-2]); 
+break;
+case 18:
+ yy.setNewReqVerifyMethod($$[$0-2]); 
+break;
+case 21:
+ this.$=yy.RequirementType.REQUIREMENT;
+break;
+case 22:
+ this.$=yy.RequirementType.FUNCTIONAL_REQUIREMENT;
+break;
+case 23:
+ this.$=yy.RequirementType.INTERFACE_REQUIREMENT;
+break;
+case 24:
+ this.$=yy.RequirementType.PERFORMANCE_REQUIREMENT;
+break;
+case 25:
+ this.$=yy.RequirementType.PHYSICAL_REQUIREMENT;
+break;
+case 26:
+ this.$=yy.RequirementType.DESIGN_CONSTRAINT;
+break;
+case 27:
+ this.$=yy.RiskLevel.LOW_RISK;
+break;
+case 28:
+ this.$=yy.RiskLevel.MED_RISK;
+break;
+case 29:
+ this.$=yy.RiskLevel.HIGH_RISK;
+break;
+case 30:
+ this.$=yy.VerifyType.VERIFY_ANALYSIS;
+break;
+case 31:
+ this.$=yy.VerifyType.VERIFY_DEMONSTRATION;
+break;
+case 32:
+ this.$=yy.VerifyType.VERIFY_INSPECTION;
+break;
+case 33:
+ this.$=yy.VerifyType.VERIFY_TEST;
+break;
+case 34:
+ yy.addElement($$[$0-3]) 
+break;
+case 35:
+ yy.setNewElementType($$[$0-2]); 
+break;
+case 36:
+ yy.setNewElementDocRef($$[$0-2]); 
+break;
+case 39:
+  yy.addRelationship($$[$0-2], $$[$0], $$[$0-4]) 
+break;
+case 40:
+ yy.addRelationship($$[$0-2], $$[$0-4], $$[$0]) 
+break;
+case 41:
+ this.$=yy.Relationships.CONTAINS;
+break;
+case 42:
+ this.$=yy.Relationships.COPIES;
+break;
+case 43:
+ this.$=yy.Relationships.DERIVES;
+break;
+case 44:
+ this.$=yy.Relationships.SATISFIES;
+break;
+case 45:
+ this.$=yy.Relationships.VERIFIES;
+break;
+case 46:
+ this.$=yy.Relationships.REFINES;
+break;
+case 47:
+ this.$=yy.Relationships.TRACES;
+break;
+}
+},
+table: [{3:1,4:2,5:$V0,9:4,14:$V1},{1:[3]},{3:6,4:2,5:$V0,9:4,14:$V1},{6:[1,7]},{10:8,15:[1,9]},{15:[2,5]},{1:[2,1]},{6:$V2,7:10,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{11:26,12:[1,27],17:$Vd},o([12,17],[2,6]),{8:[1,29]},{6:$V2,7:30,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{6:$V2,7:31,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{6:$V2,7:32,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{6:$V2,7:33,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{22:34,66:[1,35],67:[1,36]},{49:37,66:[1,38],67:[1,39]},{55:[1,40],57:[1,41]},o($Ve,[2,21]),o($Ve,[2,22]),o($Ve,[2,23]),o($Ve,[2,24]),o($Ve,[2,25]),o($Ve,[2,26]),o($Vf,[2,50]),o($Vf,[2,51]),o($Vg,[2,3]),{13:42,16:[1,43]},o($Vg,[2,8]),{1:[2,2]},{8:[2,10]},{8:[2,11]},{8:[2,12]},{8:[2,13]},{23:[1,44]},{23:[2,48]},{23:[2,49]},{23:[1,45]},{23:[2,54]},{23:[2,55]},{56:46,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{56:54,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{11:55,17:$Vd},{17:[2,7]},{6:[1,56]},{6:[1,57]},{57:[1,58]},o($Vo,[2,41]),o($Vo,[2,42]),o($Vo,[2,43]),o($Vo,[2,44]),o($Vo,[2,45]),o($Vo,[2,46]),o($Vo,[2,47]),{58:[1,59]},o($Vg,[2,4]),{6:$Vp,24:60,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vv,34:$Vw,50:67,51:$Vx,53:$Vy},{27:72,66:$Vb,67:$Vc},{27:73,66:$Vb,67:$Vc},o($Vz,[2,14]),{26:[1,74]},{26:[1,75]},{26:[1,76]},{26:[1,77]},{6:$Vp,24:78,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},o($Vz,[2,20]),o($Vz,[2,34]),{26:[1,79]},{26:[1,80]},{6:$Vv,34:$Vw,50:81,51:$Vx,53:$Vy},o($Vz,[2,38]),o($Vz,[2,39]),o($Vz,[2,40]),{27:82,66:$Vb,67:$Vc},{29:83,66:[1,84],67:[1,85]},{31:86,41:[1,87],42:[1,88],43:[1,89]},{33:90,44:[1,91],45:[1,92],46:[1,93],47:[1,94]},o($Vz,[2,19]),{52:95,66:[1,96],67:[1,97]},{54:98,66:[1,99],67:[1,100]},o($Vz,[2,37]),{6:[1,101]},{6:[1,102]},{6:[2,52]},{6:[2,53]},{6:[1,103]},{6:[2,27]},{6:[2,28]},{6:[2,29]},{6:[1,104]},{6:[2,30]},{6:[2,31]},{6:[2,32]},{6:[2,33]},{6:[1,105]},{6:[2,56]},{6:[2,57]},{6:[1,106]},{6:[2,58]},{6:[2,59]},{6:$Vp,24:107,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vp,24:108,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vp,24:109,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vp,24:110,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vv,34:$Vw,50:111,51:$Vx,53:$Vy},{6:$Vv,34:$Vw,50:112,51:$Vx,53:$Vy},o($Vz,[2,15]),o($Vz,[2,16]),o($Vz,[2,17]),o($Vz,[2,18]),o($Vz,[2,35]),o($Vz,[2,36])],
+defaultActions: {5:[2,5],6:[2,1],29:[2,2],30:[2,10],31:[2,11],32:[2,12],33:[2,13],35:[2,48],36:[2,49],38:[2,54],39:[2,55],43:[2,7],84:[2,52],85:[2,53],87:[2,27],88:[2,28],89:[2,29],91:[2,30],92:[2,31],93:[2,32],94:[2,33],96:[2,56],97:[2,57],99:[2,58],100:[2,59]},
+parseError: function parseError (str, hash) {
+    if (hash.recoverable) {
+        this.trace(str);
+    } else {
+        var error = new Error(str);
+        error.hash = hash;
+        throw error;
+    }
+},
+parse: function parse(input) {
+    var self = this, stack = [0], tstack = [], vstack = [null], lstack = [], table = this.table, yytext = '', yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
+    var args = lstack.slice.call(arguments, 1);
+    var lexer = Object.create(this.lexer);
+    var sharedState = { yy: {} };
+    for (var k in this.yy) {
+        if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
+            sharedState.yy[k] = this.yy[k];
+        }
+    }
+    lexer.setInput(input, sharedState.yy);
+    sharedState.yy.lexer = lexer;
+    sharedState.yy.parser = this;
+    if (typeof lexer.yylloc == 'undefined') {
+        lexer.yylloc = {};
+    }
+    var yyloc = lexer.yylloc;
+    lstack.push(yyloc);
+    var ranges = lexer.options && lexer.options.ranges;
+    if (typeof sharedState.yy.parseError === 'function') {
+        this.parseError = sharedState.yy.parseError;
+    } else {
+        this.parseError = Object.getPrototypeOf(this).parseError;
+    }
+    function popStack(n) {
+        stack.length = stack.length - 2 * n;
+        vstack.length = vstack.length - n;
+        lstack.length = lstack.length - n;
+    }
+            function lex() {
+            var token;
+            token = tstack.pop() || lexer.lex() || EOF;
+            if (typeof token !== 'number') {
+                if (token instanceof Array) {
+                    tstack = token;
+                    token = tstack.pop();
+                }
+                token = self.symbols_[token] || token;
+            }
+            return token;
+        }
+    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
+    while (true) {
+        state = stack[stack.length - 1];
+        if (this.defaultActions[state]) {
+            action = this.defaultActions[state];
+        } else {
+            if (symbol === null || typeof symbol == 'undefined') {
+                symbol = lex();
+            }
+            action = table[state] && table[state][symbol];
+        }
+        if (typeof action === 'undefined' || !action.length || !action[0]) {
+            var errStr = '';
+            expected = [];
+            for (p in table[state]) {
+                if (this.terminals_[p] && p > TERROR) {
+                    expected.push('\'' + this.terminals_[p] + '\'');
+                }
+            }
+            if (lexer.showPosition) {
+                errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+            } else {
+                errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+            }
+            this.parseError(errStr, {
+                text: lexer.match,
+                token: this.terminals_[symbol] || symbol,
+                line: lexer.yylineno,
+                loc: yyloc,
+                expected: expected
+            });
+        }
+        if (action[0] instanceof Array && action.length > 1) {
+            throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
+        }
+        switch (action[0]) {
+        case 1:
+            stack.push(symbol);
+            vstack.push(lexer.yytext);
+            lstack.push(lexer.yylloc);
+            stack.push(action[1]);
+            symbol = null;
+            if (!preErrorSymbol) {
+                yyleng = lexer.yyleng;
+                yytext = lexer.yytext;
+                yylineno = lexer.yylineno;
+                yyloc = lexer.yylloc;
+                if (recovering > 0) {
+                    recovering--;
+                }
+            } else {
+                symbol = preErrorSymbol;
+                preErrorSymbol = null;
+            }
+            break;
+        case 2:
+            len = this.productions_[action[1]][1];
+            yyval.$ = vstack[vstack.length - len];
+            yyval._$ = {
+                first_line: lstack[lstack.length - (len || 1)].first_line,
+                last_line: lstack[lstack.length - 1].last_line,
+                first_column: lstack[lstack.length - (len || 1)].first_column,
+                last_column: lstack[lstack.length - 1].last_column
+            };
+            if (ranges) {
+                yyval._$.range = [
+                    lstack[lstack.length - (len || 1)].range[0],
+                    lstack[lstack.length - 1].range[1]
+                ];
+            }
+            r = this.performAction.apply(yyval, [
+                yytext,
+                yyleng,
+                yylineno,
+                sharedState.yy,
+                action[1],
+                vstack,
+                lstack
+            ].concat(args));
+            if (typeof r !== 'undefined') {
+                return r;
+            }
+            if (len) {
+                stack = stack.slice(0, -1 * len * 2);
+                vstack = vstack.slice(0, -1 * len);
+                lstack = lstack.slice(0, -1 * len);
+            }
+            stack.push(this.productions_[action[1]][0]);
+            vstack.push(yyval.$);
+            lstack.push(yyval._$);
+            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
+            stack.push(newState);
+            break;
+        case 3:
+            return true;
+        }
+    }
+    return true;
+}};
+
+/* generated by jison-lex 0.3.4 */
+var lexer = (function(){
+var lexer = ({
+
+EOF:1,
+
+parseError:function parseError(str, hash) {
+        if (this.yy.parser) {
+            this.yy.parser.parseError(str, hash);
+        } else {
+            throw new Error(str);
+        }
+    },
+
+// resets the lexer, sets new input
+setInput:function (input, yy) {
+        this.yy = yy || this.yy || {};
+        this._input = input;
+        this._more = this._backtrack = this.done = false;
+        this.yylineno = this.yyleng = 0;
+        this.yytext = this.matched = this.match = '';
+        this.conditionStack = ['INITIAL'];
+        this.yylloc = {
+            first_line: 1,
+            first_column: 0,
+            last_line: 1,
+            last_column: 0
+        };
+        if (this.options.ranges) {
+            this.yylloc.range = [0,0];
+        }
+        this.offset = 0;
+        return this;
+    },
+
+// consumes and returns one char from the input
+input:function () {
+        var ch = this._input[0];
+        this.yytext += ch;
+        this.yyleng++;
+        this.offset++;
+        this.match += ch;
+        this.matched += ch;
+        var lines = ch.match(/(?:\r\n?|\n).*/g);
+        if (lines) {
+            this.yylineno++;
+            this.yylloc.last_line++;
+        } else {
+            this.yylloc.last_column++;
+        }
+        if (this.options.ranges) {
+            this.yylloc.range[1]++;
+        }
+
+        this._input = this._input.slice(1);
+        return ch;
+    },
+
+// unshifts one char (or a string) into the input
+unput:function (ch) {
+        var len = ch.length;
+        var lines = ch.split(/(?:\r\n?|\n)/g);
+
+        this._input = ch + this._input;
+        this.yytext = this.yytext.substr(0, this.yytext.length - len);
+        //this.yyleng -= len;
+        this.offset -= len;
+        var oldLines = this.match.split(/(?:\r\n?|\n)/g);
+        this.match = this.match.substr(0, this.match.length - 1);
+        this.matched = this.matched.substr(0, this.matched.length - 1);
+
+        if (lines.length - 1) {
+            this.yylineno -= lines.length - 1;
+        }
+        var r = this.yylloc.range;
+
+        this.yylloc = {
+            first_line: this.yylloc.first_line,
+            last_line: this.yylineno + 1,
+            first_column: this.yylloc.first_column,
+            last_column: lines ?
+                (lines.length === oldLines.length ? this.yylloc.first_column : 0)
+                 + oldLines[oldLines.length - lines.length].length - lines[0].length :
+              this.yylloc.first_column - len
+        };
+
+        if (this.options.ranges) {
+            this.yylloc.range = [r[0], r[0] + this.yyleng - len];
+        }
+        this.yyleng = this.yytext.length;
+        return this;
+    },
+
+// When called from action, caches matched text and appends it on next action
+more:function () {
+        this._more = true;
+        return this;
+    },
+
+// When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
+reject:function () {
+        if (this.options.backtrack_lexer) {
+            this._backtrack = true;
+        } else {
+            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
+                text: "",
+                token: null,
+                line: this.yylineno
+            });
+
+        }
+        return this;
+    },
+
+// retain first n characters of the match
+less:function (n) {
+        this.unput(this.match.slice(n));
+    },
+
+// displays already matched input, i.e. for error messages
+pastInput:function () {
+        var past = this.matched.substr(0, this.matched.length - this.match.length);
+        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
+    },
+
+// displays upcoming input, i.e. for error messages
+upcomingInput:function () {
+        var next = this.match;
+        if (next.length < 20) {
+            next += this._input.substr(0, 20-next.length);
+        }
+        return (next.substr(0,20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
+    },
+
+// displays the character position where the lexing error occurred, i.e. for error messages
+showPosition:function () {
+        var pre = this.pastInput();
+        var c = new Array(pre.length + 1).join("-");
+        return pre + this.upcomingInput() + "\n" + c + "^";
+    },
+
+// test the lexed token: return FALSE when not a match, otherwise return token
+test_match:function(match, indexed_rule) {
+        var token,
+            lines,
+            backup;
+
+        if (this.options.backtrack_lexer) {
+            // save context
+            backup = {
+                yylineno: this.yylineno,
+                yylloc: {
+                    first_line: this.yylloc.first_line,
+                    last_line: this.last_line,
+                    first_column: this.yylloc.first_column,
+                    last_column: this.yylloc.last_column
+                },
+                yytext: this.yytext,
+                match: this.match,
+                matches: this.matches,
+                matched: this.matched,
+                yyleng: this.yyleng,
+                offset: this.offset,
+                _more: this._more,
+                _input: this._input,
+                yy: this.yy,
+                conditionStack: this.conditionStack.slice(0),
+                done: this.done
+            };
+            if (this.options.ranges) {
+                backup.yylloc.range = this.yylloc.range.slice(0);
+            }
+        }
+
+        lines = match[0].match(/(?:\r\n?|\n).*/g);
+        if (lines) {
+            this.yylineno += lines.length;
+        }
+        this.yylloc = {
+            first_line: this.yylloc.last_line,
+            last_line: this.yylineno + 1,
+            first_column: this.yylloc.last_column,
+            last_column: lines ?
+                         lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length :
+                         this.yylloc.last_column + match[0].length
+        };
+        this.yytext += match[0];
+        this.match += match[0];
+        this.matches = match;
+        this.yyleng = this.yytext.length;
+        if (this.options.ranges) {
+            this.yylloc.range = [this.offset, this.offset += this.yyleng];
+        }
+        this._more = false;
+        this._backtrack = false;
+        this._input = this._input.slice(match[0].length);
+        this.matched += match[0];
+        token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
+        if (this.done && this._input) {
+            this.done = false;
+        }
+        if (token) {
+            return token;
+        } else if (this._backtrack) {
+            // recover context
+            for (var k in backup) {
+                this[k] = backup[k];
+            }
+            return false; // rule action called reject() implying the next rule should be tested instead.
+        }
+        return false;
+    },
+
+// return next match in input
+next:function () {
+        if (this.done) {
+            return this.EOF;
+        }
+        if (!this._input) {
+            this.done = true;
+        }
+
+        var token,
+            match,
+            tempMatch,
+            index;
+        if (!this._more) {
+            this.yytext = '';
+            this.match = '';
+        }
+        var rules = this._currentRules();
+        for (var i = 0; i < rules.length; i++) {
+            tempMatch = this._input.match(this.rules[rules[i]]);
+            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                match = tempMatch;
+                index = i;
+                if (this.options.backtrack_lexer) {
+                    token = this.test_match(tempMatch, rules[i]);
+                    if (token !== false) {
+                        return token;
+                    } else if (this._backtrack) {
+                        match = false;
+                        continue; // rule action called reject() implying a rule MISmatch.
+                    } else {
+                        // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                        return false;
+                    }
+                } else if (!this.options.flex) {
+                    break;
+                }
+            }
+        }
+        if (match) {
+            token = this.test_match(match, rules[index]);
+            if (token !== false) {
+                return token;
+            }
+            // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+            return false;
+        }
+        if (this._input === "") {
+            return this.EOF;
+        } else {
+            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
+                text: "",
+                token: null,
+                line: this.yylineno
+            });
+        }
+    },
+
+// return next match that has a token
+lex:function lex () {
+        var r = this.next();
+        if (r) {
+            return r;
+        } else {
+            return this.lex();
+        }
+    },
+
+// activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
+begin:function begin (condition) {
+        this.conditionStack.push(condition);
+    },
+
+// pop the previously active lexer condition state off the condition stack
+popState:function popState () {
+        var n = this.conditionStack.length - 1;
+        if (n > 0) {
+            return this.conditionStack.pop();
+        } else {
+            return this.conditionStack[0];
+        }
+    },
+
+// produce the lexer rule set which is active for the currently active lexer condition state
+_currentRules:function _currentRules () {
+        if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
+            return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
+        } else {
+            return this.conditions["INITIAL"].rules;
+        }
+    },
+
+// return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
+topState:function topState (n) {
+        n = this.conditionStack.length - 1 - Math.abs(n || 0);
+        if (n >= 0) {
+            return this.conditionStack[n];
+        } else {
+            return "INITIAL";
+        }
+    },
+
+// alias for begin(condition)
+pushState:function pushState (condition) {
+        this.begin(condition);
+    },
+
+// return the number of states currently on the stack
+stateStackSize:function stateStackSize() {
+        return this.conditionStack.length;
+    },
+options: {"case-insensitive":true},
+performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
+var YYSTATE=YY_START;
+switch($avoiding_name_collisions) {
+case 0: this.begin('open_directive'); return 14; 
+break;
+case 1: this.begin('type_directive'); return 15; 
+break;
+case 2: this.popState(); this.begin('arg_directive'); return 12; 
+break;
+case 3: this.popState(); this.popState(); return 17; 
+break;
+case 4:return 16;
+break;
+case 5:return 6;
+break;
+case 6:/* skip all whitespace */
+break;
+case 7:/* skip comments */
+break;
+case 8:/* skip comments */
+break;
+case 9:return 8;
+break;
+case 10:return 5;
+break;
+case 11:return 23;
+break;
+case 12:return 34;
+break;
+case 13:return 26;
+break;
+case 14:return 25;
+break;
+case 15:return 28;
+break;
+case 16:return 30;
+break;
+case 17:return 32;
+break;
+case 18:return 35;
+break;
+case 19:return 36;
+break;
+case 20:return 37;
+break;
+case 21:return 38;
+break;
+case 22:return 39;
+break;
+case 23:return 40;
+break;
+case 24:return 41;
+break;
+case 25:return 42;
+break;
+case 26:return 43;
+break;
+case 27:return 44;
+break;
+case 28:return 45;
+break;
+case 29:return 46;
+break;
+case 30:return 47;
+break;
+case 31:return 48;
+break;
+case 32:return 59;
+break;
+case 33:return 60;
+break;
+case 34:return 61;
+break;
+case 35:return 62;
+break;
+case 36:return 63;
+break;
+case 37:return 64;
+break;
+case 38:return 65;
+break;
+case 39:return 51;
+break;
+case 40:return 53;
+break;
+case 41:return 55;
+break;
+case 42:return 58;
+break;
+case 43:return 57;
+break;
+case 44: this.begin("string"); 
+break;
+case 45: this.popState(); 
+break;
+case 46: return "qString"; 
+break;
+case 47: yy_.yytext = yy_.yytext.trim(); return 66;
+break;
+}
+},
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:$)/i,/^(?:requirementDiagram\b)/i,/^(?:\{)/i,/^(?:\})/i,/^(?::)/i,/^(?:id\b)/i,/^(?:text\b)/i,/^(?:risk\b)/i,/^(?:verifyMethod\b)/i,/^(?:requirement\b)/i,/^(?:functionalRequirement\b)/i,/^(?:interfaceRequirement\b)/i,/^(?:performanceRequirement\b)/i,/^(?:physicalRequirement\b)/i,/^(?:designConstraint\b)/i,/^(?:low\b)/i,/^(?:medium\b)/i,/^(?:high\b)/i,/^(?:analysis\b)/i,/^(?:demonstration\b)/i,/^(?:inspection\b)/i,/^(?:test\b)/i,/^(?:element\b)/i,/^(?:contains\b)/i,/^(?:copies\b)/i,/^(?:derives\b)/i,/^(?:satisfies\b)/i,/^(?:verifies\b)/i,/^(?:refines\b)/i,/^(?:traces\b)/i,/^(?:type\b)/i,/^(?:docref\b)/i,/^(?:<-)/i,/^(?:->)/i,/^(?:-)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[\w][^\r\n\{\<\>\-\=]*)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"unqString":{"rules":[],"inclusive":false},"token":{"rules":[],"inclusive":false},"string":{"rules":[45,46],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,47],"inclusive":true}}
+});
+return lexer;
+})();
+parser.lexer = lexer;
+function Parser () {
+  this.yy = {};
+}
+Parser.prototype = parser;parser.Parser = Parser;
+return new Parser;
+})();
+
+
+if (true) {
+exports.parser = parser;
+exports.Parser = parser.Parser;
+exports.parse = function () { return parser.parse.apply(parser, arguments); };
+exports.main = function commonjsMain (args) {
+    if (!args[1]) {
+        console.log('Usage: '+args[0]+' FILE');
+        process.exit(1);
+    }
+    var source = __webpack_require__(/*! fs */ "./node_modules/node-libs-browser/mock/empty.js").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    return exports.parser.parse(source);
+};
+if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
+  exports.main(process.argv.slice(1));
+}
+}
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/process/browser.js */ "./node_modules/process/browser.js"), __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ "./node_modules/webpack/buildin/module.js")(module)))
+
+/***/ }),
+
+/***/ "./src/diagrams/requirement/requirementDb.js":
+/*!***************************************************!*\
+  !*** ./src/diagrams/requirement/requirementDb.js ***!
+  \***************************************************/
+/*! exports provided: parseDirective, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDirective", function() { return parseDirective; });
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+
+
+
+var relations = [];
+var latestRequirement = {};
+var requirements = {};
+var latestElement = {};
+var elements = {};
+var RequirementType = {
+  REQUIREMENT: 'Requirement',
+  FUNCTIONAL_REQUIREMENT: 'Functional Requirement',
+  INTERFACE_REQUIREMENT: 'Interface Requirement',
+  PERFORMANCE_REQUIREMENT: 'Performance Requirement',
+  PHYSICAL_REQUIREMENT: 'Physical Requirement',
+  DESIGN_CONSTRAINT: 'Design Constraint'
+};
+var RiskLevel = {
+  LOW_RISK: 'Low',
+  MED_RISK: 'Medium',
+  HIGH_RISK: 'High'
+};
+var VerifyType = {
+  VERIFY_ANALYSIS: 'Analysis',
+  VERIFY_DEMONSTRATION: 'Demonstration',
+  VERIFY_INSPECTION: 'Inspection',
+  VERIFY_TEST: 'Test'
+};
+var Relationships = {
+  CONTAINS: 'contains',
+  COPIES: 'copies',
+  DERIVES: 'derives',
+  SATISFIES: 'satisfies',
+  VERIFIES: 'verifies',
+  REFINES: 'refines',
+  TRACES: 'traces'
+};
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__["default"].parseDirective(this, statement, context, type);
+};
+
+var addRequirement = function addRequirement(name, type) {
+  if (typeof requirements[name] === 'undefined') {
+    requirements[name] = {
+      name: name,
+      type: type,
+      id: latestRequirement.id,
+      text: latestRequirement.text,
+      risk: latestRequirement.risk,
+      verifyMethod: latestRequirement.verifyMethod
+    };
+  }
+
+  latestRequirement = {};
+  return requirements[name];
+};
+
+var getRequirements = function getRequirements() {
+  return requirements;
+};
+
+var setNewReqId = function setNewReqId(id) {
+  if (typeof latestRequirement != 'undefined') {
+    latestRequirement.id = id;
+  }
+};
+
+var setNewReqText = function setNewReqText(text) {
+  if (typeof latestRequirement != 'undefined') {
+    latestRequirement.text = text;
+  }
+};
+
+var setNewReqRisk = function setNewReqRisk(risk) {
+  if (typeof latestRequirement != 'undefined') {
+    latestRequirement.risk = risk;
+  }
+};
+
+var setNewReqVerifyMethod = function setNewReqVerifyMethod(verifyMethod) {
+  if (typeof latestRequirement != 'undefined') {
+    latestRequirement.verifyMethod = verifyMethod;
+  }
+};
+
+var addElement = function addElement(name) {
+  if (typeof elements[name] === 'undefined') {
+    elements[name] = {
+      name: name,
+      type: latestElement.type,
+      docRef: latestElement.docRef
+    };
+    _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Added new requirement: ', name);
+  }
+
+  latestElement = {};
+  return elements[name];
+};
+
+var getElements = function getElements() {
+  return elements;
+};
+
+var setNewElementType = function setNewElementType(type) {
+  if (typeof latestElement != 'undefined') {
+    latestElement.type = type;
+  }
+};
+
+var setNewElementDocRef = function setNewElementDocRef(docRef) {
+  if (typeof latestElement != 'undefined') {
+    latestElement.docRef = docRef;
+  }
+};
+
+var addRelationship = function addRelationship(type, src, dst) {
+  relations.push({
+    type: type,
+    src: src,
+    dst: dst
+  });
+};
+
+var getRelationships = function getRelationships() {
+  return relations;
+};
+
+var clear = function clear() {
+  relations = [];
+  latestRequirement = {};
+  requirements = {};
+  latestElement = {};
+  elements = {};
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  RequirementType: RequirementType,
+  RiskLevel: RiskLevel,
+  VerifyType: VerifyType,
+  Relationships: Relationships,
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_0__["getConfig"]().req;
+  },
+  addRequirement: addRequirement,
+  getRequirements: getRequirements,
+  setNewReqId: setNewReqId,
+  setNewReqText: setNewReqText,
+  setNewReqRisk: setNewReqRisk,
+  setNewReqVerifyMethod: setNewReqVerifyMethod,
+  addElement: addElement,
+  getElements: getElements,
+  setNewElementType: setNewElementType,
+  setNewElementDocRef: setNewElementDocRef,
+  addRelationship: addRelationship,
+  getRelationships: getRelationships,
+  clear: clear
+});
+
+/***/ }),
+
+/***/ "./src/diagrams/requirement/requirementMarkers.js":
+/*!********************************************************!*\
+  !*** ./src/diagrams/requirement/requirementMarkers.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var ReqMarkers = {
+  CONTAINS: 'contains',
+  ARROW: 'arrow'
+};
+
+var insertLineEndings = function insertLineEndings(parentNode, conf) {
+  var containsNode = parentNode.append('defs').append('marker').attr('id', ReqMarkers.CONTAINS + '_line_ending').attr('refX', 0).attr('refY', conf.line_height / 2).attr('markerWidth', conf.line_height).attr('markerHeight', conf.line_height).attr('orient', 'auto').append('g');
+  containsNode.append('circle').attr('cx', conf.line_height / 2).attr('cy', conf.line_height / 2).attr('r', conf.line_height / 2).attr('stroke', conf.rect_border_color).attr('stroke-width', 1).attr('fill', 'none');
+  containsNode.append('line').attr('x1', 0).attr('x2', conf.line_height).attr('y1', conf.line_height / 2).attr('y2', conf.line_height / 2).attr('stroke', conf.rect_border_color).attr('stroke-width', 1);
+  containsNode.append('line').attr('y1', 0).attr('y2', conf.line_height).attr('x1', conf.line_height / 2).attr('x2', conf.line_height / 2).attr('stroke', conf.rect_border_color).attr('stroke-width', 1);
+  parentNode.append('defs').append('marker').attr('id', ReqMarkers.ARROW + '_line_ending').attr('refX', conf.line_height).attr('refY', 0.5 * conf.line_height).attr('markerWidth', conf.line_height).attr('markerHeight', conf.line_height).attr('orient', 'auto').append('path').attr('d', "M0,0 \n      L".concat(conf.line_height, ",").concat(conf.line_height / 2, " \n      M").concat(conf.line_height, ",").concat(conf.line_height / 2, " \n      L0,").concat(conf.line_height)).attr('stroke-width', 1).attr('stroke', conf.rect_border_color);
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  ReqMarkers: ReqMarkers,
+  insertLineEndings: insertLineEndings
+});
+
+/***/ }),
+
+/***/ "./src/diagrams/requirement/requirementRenderer.js":
+/*!*********************************************************!*\
+  !*** ./src/diagrams/requirement/requirementRenderer.js ***!
+  \*********************************************************/
+/*! exports provided: setConf, drawReqs, drawElements, draw, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConf", function() { return setConf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawReqs", function() { return drawReqs; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawElements", function() { return drawElements; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "draw", function() { return draw; });
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dagre */ "dagre");
+/* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dagre__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! graphlib */ "graphlib");
+/* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./parser/requirementDiagram */ "./src/diagrams/requirement/parser/requirementDiagram.jison");
+/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _requirementDb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./requirementDb */ "./src/diagrams/requirement/requirementDb.js");
+/* harmony import */ var _requirementMarkers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./requirementMarkers */ "./src/diagrams/requirement/requirementMarkers.js");
+
+
+
+
+
+
+
+
+
+
+var conf = {};
+var relCnt = 0;
+var setConf = function setConf(cnf) {
+  if (typeof cnf === 'undefined') {
+    return;
+  }
+
+  var keys = Object.keys(cnf);
+
+  for (var i = 0; i < keys.length; i++) {
+    conf[keys[i]] = cnf[keys[i]];
+  }
+};
+
+var newRectNode = function newRectNode(parentNode, id) {
+  return parentNode.insert('rect', '#' + id).attr('class', 'req reqBox').attr('fill', conf.rect_fill).attr('fill-opacity', '100%').attr('stroke', conf.rect_border_color).attr('stroke-size', conf.rect_border_size).attr('x', 0).attr('y', 0).attr('width', conf.rect_min_width + 'px').attr('height', conf.rect_min_height + 'px');
+};
+
+var newTitleNode = function newTitleNode(parentNode, id, txts) {
+  var x = conf.rect_min_width / 2;
+  var title = parentNode.append('text').attr('class', 'req reqLabel reqTitle').attr('id', id).attr('x', x).attr('y', conf.rect_padding).attr('dominant-baseline', 'hanging').attr('style', 'font-family: ' + _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().fontFamily + '; font-size: ' + conf.fontSize + 'px');
+  var i = 0;
+  txts.forEach(function (textStr) {
+    if (i == 0) {
+      title.append('tspan').attr('text-anchor', 'middle').attr('x', conf.rect_min_width / 2).attr('dy', 0).text(textStr);
+    } else {
+      title.append('tspan').attr('text-anchor', 'middle').attr('x', conf.rect_min_width / 2).attr('dy', conf.line_height * 0.75).text(textStr);
+    }
+
+    i++;
+  });
+  var yPadding = 1.5 * conf.rect_padding;
+  var linePadding = i * conf.line_height * 0.75;
+  var totalY = yPadding + linePadding;
+  parentNode.append('line').attr('x1', '0').attr('x2', conf.rect_min_width).attr('y1', totalY).attr('y2', totalY).attr('style', "stroke: ".concat(conf.rect_border_color, "; stroke-width: 1"));
+  return {
+    titleNode: title,
+    y: totalY
+  };
+};
+
+var newBodyNode = function newBodyNode(parentNode, id, txts, yStart) {
+  var body = parentNode.append('text').attr('class', 'req reqLabel').attr('id', id).attr('x', conf.rect_padding).attr('y', yStart).attr('dominant-baseline', 'hanging').attr('style', 'font-family: ' + _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().fontFamily + '; font-size: ' + conf.fontSize + 'px');
+  var currentRow = 0;
+  var charLimit = 30;
+  var wrappedTxts = [];
+  txts.forEach(function (textStr) {
+    var currentTextLen = textStr.length;
+
+    while (currentTextLen > charLimit && currentRow < 3) {
+      var firstPart = textStr.substring(0, charLimit);
+      textStr = textStr.substring(charLimit, textStr.length);
+      currentTextLen = textStr.length;
+      wrappedTxts[wrappedTxts.length] = firstPart;
+      currentRow++;
+    }
+
+    if (currentRow == 3) {
+      var lastStr = wrappedTxts[wrappedTxts.length - 1];
+      wrappedTxts[wrappedTxts.length - 1] = lastStr.substring(0, lastStr.length - 4) + '...';
+    } else {
+      wrappedTxts[wrappedTxts.length] = textStr;
+    }
+
+    currentRow = 0;
+  });
+  wrappedTxts.forEach(function (textStr) {
+    body.append('tspan').attr('x', conf.rect_padding).attr('dy', conf.line_height).text(textStr);
+  });
+  return body;
+};
+
+var addEdgeLabel = function addEdgeLabel(parentNode, svgPath, conf, txt) {
+  // Find the half-way point
+  var len = svgPath.node().getTotalLength();
+  var labelPoint = svgPath.node().getPointAtLength(len * 0.5); // Append a text node containing the label
+
+  var labelId = 'rel' + relCnt;
+  relCnt++;
+  var labelNode = parentNode.append('text').attr('class', 'er relationshipLabel').attr('id', labelId).attr('x', labelPoint.x).attr('y', labelPoint.y).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('style', 'font-family: ' + conf.fontFamily + '; font-size: ' + conf.fontSize + 'px').text(txt); // Figure out how big the opaque 'container' rectangle needs to be
+
+  var labelBBox = labelNode.node().getBBox(); // Insert the opaque rectangle before the text label
+
+  parentNode.insert('rect', '#' + labelId).attr('class', 'req reqLabelBox').attr('x', labelPoint.x - labelBBox.width / 2).attr('y', labelPoint.y - labelBBox.height / 2).attr('width', labelBBox.width).attr('height', labelBBox.height).attr('fill', 'white').attr('fill-opacity', '85%');
+};
+
+var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g, insert) {
+  // Find the edge relating to this relationship
+  var edge = g.edge(elementString(rel.src), elementString(rel.dst)); // Get a function that will generate the line path
+
+  var lineFunction = Object(d3__WEBPACK_IMPORTED_MODULE_0__["line"])().x(function (d) {
+    return d.x;
+  }).y(function (d) {
+    return d.y;
+  }); // Insert the line at the right place
+
+  var svgPath = svg.insert('path', '#' + insert).attr('class', 'er relationshipLine').attr('d', lineFunction(edge.points)).attr('stroke', conf.rect_border_color).attr('fill', 'none');
+
+  if (rel.type == _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].Relationships.CONTAINS) {
+    svgPath.attr('marker-start', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_6__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + rel.type + '_line_ending' + ')');
+  } else {
+    svgPath.attr('stroke-dasharray', '10,7');
+    svgPath.attr('marker-end', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_6__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + _requirementMarkers__WEBPACK_IMPORTED_MODULE_9__["default"].ReqMarkers.ARROW + '_line_ending' + ')');
+  }
+
+  addEdgeLabel(svg, svgPath, conf, "<<".concat(rel.type, ">>"));
+  return;
+};
+
+var drawReqs = function drawReqs(reqs, graph, svgNode) {
+  Object.keys(reqs).forEach(function (reqName) {
+    var req = reqs[reqName];
+    reqName = elementString(reqName);
+    console.log('reqName: ', reqName);
+    _logger__WEBPACK_IMPORTED_MODULE_4__["log"].info('Added new requirement: ', reqName);
+    var groupNode = svgNode.append('g').attr('id', reqName);
+    var textId = 'req-' + reqName;
+    var rectNode = newRectNode(groupNode, textId);
+    var nodes = [];
+    var titleNodeInfo = newTitleNode(groupNode, reqName + '_title', ["<<".concat(req.type, ">>"), "".concat(req.name)]);
+    nodes.push(titleNodeInfo.titleNode);
+    var bodyNode = newBodyNode(groupNode, reqName + '_body', ["Id: ".concat(req.id), "Text: ".concat(req.text), "Risk: ".concat(req.risk), "Verification: ".concat(req.verifyMethod)], titleNodeInfo.y);
+    nodes.push(bodyNode);
+    var rectBBox = rectNode.node().getBBox(); // Add the entity to the graph
+
+    graph.setNode(reqName, {
+      width: rectBBox.width,
+      height: rectBBox.height,
+      shape: 'rect',
+      id: reqName
+    });
+  });
+};
+var drawElements = function drawElements(els, graph, svgNode) {
+  Object.keys(els).forEach(function (elName) {
+    var el = els[elName];
+    var id = elementString(elName);
+    var groupNode = svgNode.append('g').attr('id', id);
+    var textId = 'element-' + id;
+    var rectNode = newRectNode(groupNode, textId);
+    var nodes = [];
+    var titleNodeInfo = newTitleNode(groupNode, textId + '_title', ["<<Element>>", "".concat(elName)]);
+    nodes.push(titleNodeInfo.titleNode);
+    var bodyNode = newBodyNode(groupNode, textId + '_body', ["Type: ".concat(el.type || 'Not Specified'), "Doc Ref: ".concat(el.docref || 'None')], titleNodeInfo.y);
+    nodes.push(bodyNode);
+    var rectBBox = rectNode.node().getBBox(); // Add the entity to the graph
+
+    graph.setNode(id, {
+      width: rectBBox.width,
+      height: rectBBox.height,
+      shape: 'rect',
+      id: id
+    });
+  });
+};
+
+var addRelationships = function addRelationships(relationships, g) {
+  relationships.forEach(function (r) {
+    var src = elementString(r.src);
+    var dst = elementString(r.dst);
+    g.setEdge(src, dst, {
+      relationship: r
+    });
+  });
+  return relationships;
+};
+
+var adjustEntities = function adjustEntities(svgNode, graph) {
+  graph.nodes().forEach(function (v) {
+    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
+      svgNode.select('#' + v);
+      svgNode.select('#' + v).attr('transform', 'translate(' + (graph.node(v).x - graph.node(v).width / 2) + ',' + (graph.node(v).y - graph.node(v).height / 2) + ' )');
+    }
+  });
+  return;
+};
+
+var elementString = function elementString(str) {
+  return str.replace(/\s/g, '').replace(/\./g, '_');
+};
+
+var draw = function draw(text, id) {
+  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__["parser"].yy = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"];
+  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__["parser"].parse(text);
+  var svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id='".concat(id, "']"));
+  _requirementMarkers__WEBPACK_IMPORTED_MODULE_9__["default"].insertLineEndings(svg, conf);
+  var g = new graphlib__WEBPACK_IMPORTED_MODULE_2___default.a.Graph({
+    multigraph: false,
+    compound: false,
+    directed: true
+  }).setGraph({
+    rankdir: conf.layoutDirection,
+    marginx: 20,
+    marginy: 20,
+    nodesep: 100,
+    edgesep: 100,
+    ranksep: 100
+  }).setDefaultEdgeLabel(function () {
+    return {};
+  });
+  var requirements = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].getRequirements();
+  var elements = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].getElements();
+  var relationships = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].getRelationships();
+  drawReqs(requirements, g, svg);
+  drawElements(elements, g, svg);
+  addRelationships(relationships, g);
+  dagre__WEBPACK_IMPORTED_MODULE_1___default.a.layout(g);
+  adjustEntities(svg, g);
+  relationships.forEach(function (rel) {
+    drawRelationshipFromLayout(svg, rel, g, id);
+  }); // svg.attr('height', '500px');
+
+  var padding = conf.rect_padding;
+  var svgBounds = svg.node().getBBox();
+  var width = svgBounds.width + padding * 2;
+  var height = svgBounds.height + padding * 2;
+  Object(_utils__WEBPACK_IMPORTED_MODULE_5__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
+  svg.attr('viewBox', "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height));
+};
+/* harmony default export */ __webpack_exports__["default"] = ({
+  setConf: setConf,
+  draw: draw
+});
+
+/***/ }),
+
+/***/ "./src/diagrams/requirement/styles.js":
+/*!********************************************!*\
+  !*** ./src/diagrams/requirement/styles.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var getStyles = function getStyles() {
+  return "";
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -21552,44 +23027,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_journey__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_parser_journey__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _journeyDb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
 /* harmony import */ var _svgDraw__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./svgDraw */ "./src/diagrams/user-journey/svgDraw.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+
 
 
 
 
 
 _parser_journey__WEBPACK_IMPORTED_MODULE_1__["parser"].yy = _journeyDb__WEBPACK_IMPORTED_MODULE_2__["default"];
-var conf = {
-  leftMargin: 150,
-  diagramMarginX: 50,
-  diagramMarginY: 20,
-  // Margin between tasks
-  taskMargin: 50,
-  // Width of task boxes
-  width: 150,
-  // Height of task boxes
-  height: 50,
-  taskFontSize: 14,
-  taskFontFamily: '"Open-Sans", "sans-serif"',
-  // Margin around loop boxes
-  boxMargin: 10,
-  boxTextMargin: 5,
-  noteMargin: 10,
-  // Space between messages
-  messageMargin: 35,
-  // Multiline message alignment
-  messageAlign: 'center',
-  // Depending on css styling this might need adjustment
-  // Projects the edge of the diagram downwards
-  bottomMarginAdj: 1,
-  // width of activation box
-  activationWidth: 10,
-  // text placement as: tspan | fo | old only text as before
-  textPlacement: 'fo',
-  actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
-  sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
-  sectionColours: ['#fff']
-};
 var setConf = function setConf(cnf) {
   var keys = Object.keys(cnf);
   keys.forEach(function (key) {
@@ -21599,7 +23045,8 @@ var setConf = function setConf(cnf) {
 var actors = {};
 
 function drawActorLegend(diagram) {
-  // Draw the actors
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey; // Draw the actors
+
   var yPos = 60;
   Object.keys(actors).forEach(function (person) {
     var colour = actors[person];
@@ -21623,8 +23070,10 @@ function drawActorLegend(diagram) {
   });
 }
 
-var LEFT_MARGIN = conf.leftMargin;
+var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey;
+var LEFT_MARGIN = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey.leftMargin;
 var draw = function draw(text, id) {
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey;
   _parser_journey__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.clear();
   _parser_journey__WEBPACK_IMPORTED_MODULE_1__["parser"].parse(text + '\n');
   bounds.init();
@@ -21646,6 +23095,7 @@ var draw = function draw(text, id) {
   });
   drawActorLegend(diagram);
   bounds.insert(0, 0, LEFT_MARGIN, Object.keys(actors).length * 50);
+  console.log(bounds);
   drawTasks(diagram, tasks, 0);
   var box = bounds.getBounds();
 
@@ -21655,7 +23105,7 @@ var draw = function draw(text, id) {
 
   var height = box.stopy - box.starty + 2 * conf.diagramMarginY;
   var width = LEFT_MARGIN + box.stopx + 2 * conf.diagramMarginX;
-  Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Draw activity line
+  Object(_utils__WEBPACK_IMPORTED_MODULE_5__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Draw activity line
 
   diagram.append('line').attr('x1', LEFT_MARGIN).attr('y1', conf.height * 4) // One section head + one task + margins
   .attr('x2', width - LEFT_MARGIN - 4) // Subtract stroke width so arrow point is retained
@@ -21663,6 +23113,7 @@ var draw = function draw(text, id) {
   var extraVertForTitle = title ? 70 : 0;
   diagram.attr('viewBox', "".concat(box.startx, " -25 ").concat(width, " ").concat(height + extraVertForTitle));
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
+  diagram.attr('height', height + extraVertForTitle + 25);
 };
 var bounds = {
   data: {
@@ -21691,6 +23142,8 @@ var bounds = {
     }
   },
   updateBounds: function updateBounds(startx, starty, stopx, stopy) {
+    var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey;
+
     var _self = this;
 
     var cnt = 0;
@@ -21752,6 +23205,7 @@ var bounds = {
 var fills = conf.sectionFills;
 var textColours = conf.sectionColours;
 var drawTasks = function drawTasks(diagram, tasks, verticalPos) {
+  var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().journey;
   var lastSection = '';
   var sectionVHeight = conf.height * 2 + conf.diagramMarginY;
   var taskPos = verticalPos + sectionVHeight;
@@ -23044,7 +24498,7 @@ var init = function init() {
     });
   }
 
-  var nextId = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed).next;
+  var idGeneratior = new _utils__WEBPACK_IMPORTED_MODULE_3__["default"].initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed);
   var txt;
 
   var _loop = function _loop(i) {
@@ -23057,7 +24511,7 @@ var init = function init() {
       return "continue";
     }
 
-    var id = "mermaid-".concat(nextId()); // Fetch the graph definition including tags
+    var id = "mermaid-".concat(idGeneratior.next()); // Fetch the graph definition including tags
 
     txt = element.innerHTML; // transforms the html to pure text
 
@@ -23172,61 +24626,65 @@ var mermaid = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "encodeEntities", function() { return encodeEntities; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "decodeEntities", function() { return decodeEntities; });
-/* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! stylis */ "stylis");
-/* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(stylis__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "d3");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! stylis */ "stylis");
+/* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(stylis__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _package_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../package.json */ "./package.json");
 var _package_json__WEBPACK_IMPORTED_MODULE_2___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../package.json */ "./package.json", 1);
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
-/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
-/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
-/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
-/* harmony import */ var _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/class/classRenderer-v2 */ "./src/diagrams/class/classRenderer-v2.js");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
-/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
-/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
-/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24__);
-/* harmony import */ var _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/git/gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
-/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
-/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28__);
-/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
-/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31__);
-/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
-/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34__);
-/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__);
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./config */ "./src/config.js");
+/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
+/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
+/* harmony import */ var _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/class/classRenderer-v2 */ "./src/diagrams/class/classRenderer-v2.js");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
+/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
+/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/git/gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
+/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_20__);
+/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
+/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_23__);
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_24__);
+/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
+/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
+/* harmony import */ var _diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./diagrams/requirement/parser/requirementDiagram */ "./src/diagrams/requirement/parser/requirementDiagram.jison");
+/* harmony import */ var _diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(_diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_27__);
+/* harmony import */ var _diagrams_requirement_requirementDb__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./diagrams/requirement/requirementDb */ "./src/diagrams/requirement/requirementDb.js");
+/* harmony import */ var _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./diagrams/requirement/requirementRenderer */ "./src/diagrams/requirement/requirementRenderer.js");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_30___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_30__);
+/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
+/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_33___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_33__);
+/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
+/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
+/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
 /* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
 /* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./config */ "./src/config.js");
-/* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
-/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_39___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_39__);
+/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -23246,6 +24704,44 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  */
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  // import * as configApi from './config';
 // // , {
 // //   setConfig,
@@ -23261,123 +24757,96 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function parse(text) {
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectInit(text);
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectInit(text);
 
   if (graphInit) {
     reinitialize(graphInit);
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('reinit ', graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('reinit ', graphInit);
   }
 
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectType(text);
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(text);
   var parser;
-  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Type ' + graphType);
+  _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('Type ' + graphType);
 
   switch (graphType) {
     case 'git':
-      parser = _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24___default.a;
-      parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_25__["default"];
+      parser = _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_20___default.a;
+      parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_18__["default"];
       break;
 
     case 'flowchart':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].clear();
-      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7___default.a;
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_11__["default"].clear();
+      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_14___default.a;
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_11__["default"];
       break;
 
     case 'flowchart-v2':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].clear();
-      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_7___default.a;
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_11__["default"].clear();
+      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_14___default.a;
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_11__["default"];
       break;
 
     case 'sequence':
-      parser = _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10___default.a;
-      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_11__["default"];
+      parser = _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_30___default.a;
+      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_31__["default"];
       break;
 
     case 'gantt':
-      parser = _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_13___default.a;
-      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_14__["default"];
+      parser = _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_17___default.a;
+      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__["default"];
       break;
 
     case 'class':
-      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default.a;
-      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"];
+      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_7___default.a;
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_4__["default"];
       break;
 
     case 'classDiagram':
-      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default.a;
-      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"];
+      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_7___default.a;
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_4__["default"];
       break;
 
     case 'state':
-      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default.a;
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__["default"];
+      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_33___default.a;
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_34__["default"];
       break;
 
     case 'stateDiagram':
-      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default.a;
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__["default"];
+      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_33___default.a;
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_34__["default"];
       break;
 
     case 'info':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('info info info');
-      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default.a;
-      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('info info info');
+      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_23___default.a;
+      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_21__["default"];
       break;
 
     case 'pie':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('pie');
-      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default.a;
-      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('pie');
+      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_24___default.a;
+      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_25__["default"];
       break;
 
     case 'er':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('er');
-      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default.a;
-      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('er');
+      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_10___default.a;
+      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_8__["default"];
       break;
 
     case 'journey':
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Journey');
-      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default.a;
+      _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('Journey');
+      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_39___default.a;
       parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__["default"];
+      break;
+
+    case 'requirement':
+    case 'requirementDiagram':
+      console.log('RequirementDiagram');
+      _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('RequirementDiagram');
+      parser = _diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_27___default.a;
+      parser.parser.yy = _diagrams_requirement_requirementDb__WEBPACK_IMPORTED_MODULE_28__["default"];
       break;
   }
 
@@ -23454,12 +24923,12 @@ var decodeEntities = function decodeEntities(text) {
  */
 
 var render = function render(id, _txt, cb, container) {
-  _config__WEBPACK_IMPORTED_MODULE_39__["reset"]();
+  _config__WEBPACK_IMPORTED_MODULE_3__["reset"]();
   var txt = _txt;
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectInit(txt);
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectInit(txt);
 
   if (graphInit) {
-    _config__WEBPACK_IMPORTED_MODULE_39__["addDirective"](graphInit);
+    _config__WEBPACK_IMPORTED_MODULE_3__["addDirective"](graphInit);
   } // else {
   //   configApi.reset();
   //   const siteConfig = configApi.getSiteConfig();
@@ -23468,7 +24937,7 @@ var render = function render(id, _txt, cb, container) {
   // console.warn('Render fetching config');
 
 
-  var cnf = _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"](); // Check the maximum allowed text size
+  var cnf = _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"](); // Check the maximum allowed text size
 
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -23476,7 +24945,7 @@ var render = function render(id, _txt, cb, container) {
 
   if (typeof container !== 'undefined') {
     container.innerHTML = '';
-    Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])(container).append('div').attr('id', 'd' + id).attr('style', 'font-family: ' + cnf.fontFamily).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(container).append('div').attr('id', 'd' + id).attr('style', 'font-family: ' + cnf.fontFamily).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
   } else {
     var existingSvg = document.getElementById(id);
 
@@ -23490,13 +24959,13 @@ var render = function render(id, _txt, cb, container) {
       _element.remove();
     }
 
-    Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
   }
 
   window.txt = txt;
   txt = encodeEntities(txt);
-  var element = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectType(txt); // insert inline style into svg
+  var element = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(txt); // insert inline style into svg
 
   var svg = element.firstChild;
   var firstChild = svg.firstChild;
@@ -23518,20 +24987,30 @@ var render = function render(id, _txt, cb, container) {
 
 
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].getClasses(txt);
+    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].getClasses(txt);
 
     for (var className in classes) {
-      userStyles += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+      if (cnf.htmlLabels || cnf.flowchart.htmlLabels) {
+        userStyles += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " span { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+      } else {
+        // console.log('classes[className].styles', classes[className].styles, cnf.htmlLabels);
+        userStyles += "\n.".concat(className, " path { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " rect { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " polygon { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " ellipse { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " circle { ").concat(classes[className].styles.join(' !important; '), " !important; }");
 
-      if (classes[className].textStyles) {
-        userStyles += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
+        if (classes[className].textStyles) {
+          userStyles += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
+        }
       }
     }
   } // log.warn(cnf.themeVariables);
 
 
-  var stylis = new stylis__WEBPACK_IMPORTED_MODULE_0___default.a();
-  var rules = stylis("#".concat(id), Object(_styles__WEBPACK_IMPORTED_MODULE_40__["default"])(graphType, userStyles, cnf.themeVariables));
+  var stylis = new stylis__WEBPACK_IMPORTED_MODULE_1___default.a();
+  var rules = stylis("#".concat(id), Object(_styles__WEBPACK_IMPORTED_MODULE_42__["default"])(graphType, userStyles, cnf.themeVariables));
   var style1 = document.createElement('style');
   style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild); // Verify that the generated svgs are ok before removing this
@@ -23549,20 +25028,20 @@ var render = function render(id, _txt, cb, container) {
     switch (graphType) {
       case 'git':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(cnf.git);
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].draw(txt, id, false);
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(cnf.git);
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart-v2':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_13__["default"].draw(txt, id, false);
         break;
 
       case 'sequence':
@@ -23570,74 +25049,79 @@ var render = function render(id, _txt, cb, container) {
 
         if (cnf.sequenceDiagram) {
           // backwards compatibility
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
           console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.');
         } else {
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(cnf.sequence);
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf(cnf.sequence);
         }
 
-        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].draw(txt, id);
+        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].draw(txt, id);
         break;
 
       case 'gantt':
         cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(cnf.gantt);
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].draw(txt, id);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(cnf.gantt);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].draw(txt, id);
         break;
 
       case 'class':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__["default"].setConf(cnf.class);
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__["default"].draw(txt, id);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].draw(txt, id);
         break;
 
       case 'classDiagram':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(cnf.class);
-        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_16__["default"].draw(txt, id);
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].draw(txt, id);
         break;
 
       case 'state':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(cnf.state);
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].draw(txt, id);
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].draw(txt, id);
         break;
 
       case 'stateDiagram':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(cnf.state);
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].draw(txt, id);
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__["default"].draw(txt, id);
         break;
 
       case 'info':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(cnf.class);
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_22__["default"].setConf(cnf.class);
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_22__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'pie':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(cnf.pie);
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(cnf.pie);
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'er':
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(cnf.er);
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(cnf.er);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'journey':
         _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(cnf.journey);
         _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
+
+      case 'requirement':
+        _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_29__["default"].setConf(cnf.requirement);
+        _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_29__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+        break;
     }
   } catch (e) {
     // errorRenderer.setConf(cnf.class);
-    _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
+    _errorRenderer__WEBPACK_IMPORTED_MODULE_40__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
     throw e;
   }
 
-  Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // if (cnf.arrowMarkerAbsolute) {
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // if (cnf.arrowMarkerAbsolute) {
   //   url =
   //     window.location.protocol +
   //     '//' +
@@ -23649,8 +25133,8 @@ var render = function render(id, _txt, cb, container) {
   // }
   // Fix for when the base tag is used
 
-  var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().innerHTML;
-  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node().innerHTML;
+  _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
 
   if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -23664,29 +25148,29 @@ var render = function render(id, _txt, cb, container) {
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
-        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].bindFunctions);
+        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_11__["default"].bindFunctions);
         break;
 
       case 'gantt':
-        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_14__["default"].bindFunctions);
+        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__["default"].bindFunctions);
         break;
 
       case 'class':
       case 'classDiagram':
-        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"].bindFunctions);
+        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_4__["default"].bindFunctions);
         break;
 
       default:
         cb(svgCode);
     }
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('CB = undefined!');
+    _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('CB = undefined!');
   }
 
-  var node = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
+  var node = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
 
   if (node !== null && typeof node.remove === 'function') {
-    Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().remove();
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node().remove();
   }
 
   return svgCode;
@@ -23719,13 +25203,13 @@ var parseDirective = function parseDirective(p, statement, context, type) {
       }
     }
   } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error(error.message);
+    _logger__WEBPACK_IMPORTED_MODULE_41__["log"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
+    _logger__WEBPACK_IMPORTED_MODULE_41__["log"].error(error.message);
   }
 };
 
 var handleDirective = function handleDirective(p, directive, type) {
-  _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
+  _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
 
   switch (directive.type) {
     case 'init':
@@ -23742,7 +25226,7 @@ var handleDirective = function handleDirective(p, directive, type) {
           }
         });
         reinitialize(directive.args);
-        _config__WEBPACK_IMPORTED_MODULE_39__["addDirective"](directive.args);
+        _config__WEBPACK_IMPORTED_MODULE_3__["addDirective"](directive.args);
         break;
       }
 
@@ -23755,30 +25239,31 @@ var handleDirective = function handleDirective(p, directive, type) {
       break;
 
     default:
-      _logger__WEBPACK_IMPORTED_MODULE_3__["log"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+      _logger__WEBPACK_IMPORTED_MODULE_41__["log"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
       break;
   }
 };
 
 function updateRendererConfigs(conf) {
-  _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(conf.git);
-  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(conf.flowchart);
-  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(conf.flowchart);
+  _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(conf.git);
+  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(conf.flowchart);
+  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(conf.flowchart);
 
   if (typeof conf['sequenceDiagram'] !== 'undefined') {
-    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_4__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
+    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_44__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
   }
 
-  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(conf.sequence);
-  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(conf.gantt);
-  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_15__["default"].setConf(conf.class);
-  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(conf.state);
-  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(conf.state);
-  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(conf.class);
-  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(conf.class);
-  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(conf.er);
+  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf(conf.sequence);
+  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(conf.gantt);
+  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(conf.class);
+  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(conf.state);
+  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(conf.state);
+  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_22__["default"].setConf(conf.class);
+  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(conf.class);
+  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(conf.er);
   _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(conf.journey);
-  _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.class);
+  _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_29__["default"].setConf(conf.requirement);
+  _errorRenderer__WEBPACK_IMPORTED_MODULE_40__["default"].setConf(conf.class);
 }
 
 function reinitialize() {// `mermaidAPI.reinitialize: v${pkg.version}`,
@@ -23813,18 +25298,18 @@ function initialize(options) {
   } // Set default options
 
 
-  _config__WEBPACK_IMPORTED_MODULE_39__["saveConfigFromInitilize"](options);
+  _config__WEBPACK_IMPORTED_MODULE_3__["saveConfigFromInitilize"](options);
 
-  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme]) {
+  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_43__["default"][options.theme]) {
     // Todo merge with user options
-    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"][options.theme].getThemeVariables(options.themeVariables);
+    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_43__["default"][options.theme].getThemeVariables(options.themeVariables);
   } else {
-    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_41__["default"].default.getThemeVariables(options.themeVariables);
+    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_43__["default"].default.getThemeVariables(options.themeVariables);
   }
 
-  var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_39__["setSiteConfig"](options) : _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"]();
+  var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"](options) : _config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"]();
   updateRendererConfigs(config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(config.logLevel); // log.debug('mermaidAPI.initialize: ', config);
+  Object(_logger__WEBPACK_IMPORTED_MODULE_41__["setLogLevel"])(config.logLevel); // log.debug('mermaidAPI.initialize: ', config);
 }
 
 var mermaidAPI = Object.freeze({
@@ -23833,23 +25318,23 @@ var mermaidAPI = Object.freeze({
   parseDirective: parseDirective,
   initialize: initialize,
   reinitialize: reinitialize,
-  getConfig: _config__WEBPACK_IMPORTED_MODULE_39__["getConfig"],
-  setConfig: _config__WEBPACK_IMPORTED_MODULE_39__["setConfig"],
-  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_39__["getSiteConfig"],
-  updateSiteConfig: _config__WEBPACK_IMPORTED_MODULE_39__["updateSiteConfig"],
+  getConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"],
+  setConfig: _config__WEBPACK_IMPORTED_MODULE_3__["setConfig"],
+  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"],
+  updateSiteConfig: _config__WEBPACK_IMPORTED_MODULE_3__["updateSiteConfig"],
   reset: function reset() {
     // console.warn('reset');
-    _config__WEBPACK_IMPORTED_MODULE_39__["reset"](); // const siteConfig = configApi.getSiteConfig();
+    _config__WEBPACK_IMPORTED_MODULE_3__["reset"](); // const siteConfig = configApi.getSiteConfig();
     // updateRendererConfigs(siteConfig);
   },
   globalReset: function globalReset() {
-    _config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_39__["defaultConfig"]);
-    updateRendererConfigs(_config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]());
+    _config__WEBPACK_IMPORTED_MODULE_3__["reset"](_config__WEBPACK_IMPORTED_MODULE_3__["defaultConfig"]);
+    updateRendererConfigs(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]());
   },
-  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_39__["defaultConfig"]
+  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_3__["defaultConfig"]
 });
-Object(_logger__WEBPACK_IMPORTED_MODULE_3__["setLogLevel"])(_config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]().logLevel);
-_config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_39__["getConfig"]());
+Object(_logger__WEBPACK_IMPORTED_MODULE_41__["setLogLevel"])(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().logLevel);
+_config__WEBPACK_IMPORTED_MODULE_3__["reset"](_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]());
 /* harmony default export */ __webpack_exports__["default"] = (mermaidAPI);
 /**
  * ## mermaidAPI configuration defaults
@@ -23877,7 +25362,7 @@ _config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_
  *     flowchart:{
  *       diagramPadding:8,
  *       htmlLabels:true,
- *       curve:'linear',
+ *       curve:'basis',
  *     },
  *     sequence:{
  *       diagramMarginX:50,
@@ -23907,6 +25392,7 @@ _config__WEBPACK_IMPORTED_MODULE_39__["reset"](_config__WEBPACK_IMPORTED_MODULE_
  *       fontFamily:'"Open-Sans", "sans-serif"',
  *       numberSectionStyles:4,
  *       axisFormat:'%Y-%m-%d',
+ *       topAxis:false,
  *     }
  *   };
  *   mermaid.initialize(config);
@@ -23933,9 +25419,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _diagrams_git_styles__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./diagrams/git/styles */ "./src/diagrams/git/styles.js");
 /* harmony import */ var _diagrams_info_styles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diagrams/info/styles */ "./src/diagrams/info/styles.js");
 /* harmony import */ var _diagrams_pie_styles__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/pie/styles */ "./src/diagrams/pie/styles.js");
-/* harmony import */ var _diagrams_sequence_styles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/sequence/styles */ "./src/diagrams/sequence/styles.js");
-/* harmony import */ var _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/state/styles */ "./src/diagrams/state/styles.js");
-/* harmony import */ var _diagrams_user_journey_styles__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/user-journey/styles */ "./src/diagrams/user-journey/styles.js");
+/* harmony import */ var _diagrams_requirement_styles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/requirement/styles */ "./src/diagrams/requirement/styles.js");
+/* harmony import */ var _diagrams_sequence_styles__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/sequence/styles */ "./src/diagrams/sequence/styles.js");
+/* harmony import */ var _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/state/styles */ "./src/diagrams/state/styles.js");
+/* harmony import */ var _diagrams_user_journey_styles__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/user-journey/styles */ "./src/diagrams/user-journey/styles.js");
+
 
 
 
@@ -23949,18 +25437,19 @@ __webpack_require__.r(__webpack_exports__);
 var themes = {
   flowchart: _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_2__["default"],
   'flowchart-v2': _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_2__["default"],
-  sequence: _diagrams_sequence_styles__WEBPACK_IMPORTED_MODULE_7__["default"],
+  sequence: _diagrams_sequence_styles__WEBPACK_IMPORTED_MODULE_8__["default"],
   gantt: _diagrams_gantt_styles__WEBPACK_IMPORTED_MODULE_3__["default"],
   classDiagram: _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__["default"],
   'classDiagram-v2': _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__["default"],
   class: _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__["default"],
-  stateDiagram: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_8__["default"],
-  state: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_8__["default"],
+  stateDiagram: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_9__["default"],
+  state: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_9__["default"],
   git: _diagrams_git_styles__WEBPACK_IMPORTED_MODULE_4__["default"],
   info: _diagrams_info_styles__WEBPACK_IMPORTED_MODULE_5__["default"],
   pie: _diagrams_pie_styles__WEBPACK_IMPORTED_MODULE_6__["default"],
   er: _diagrams_er_styles__WEBPACK_IMPORTED_MODULE_1__["default"],
-  journey: _diagrams_user_journey_styles__WEBPACK_IMPORTED_MODULE_9__["default"]
+  journey: _diagrams_user_journey_styles__WEBPACK_IMPORTED_MODULE_10__["default"],
+  requirement: _diagrams_requirement_styles__WEBPACK_IMPORTED_MODULE_7__["default"]
 };
 var calcThemeVariables = function calcThemeVariables(theme, userOverRides) {
   return theme.calcColors(userOverRides);
@@ -24347,8 +25836,9 @@ function () {
       this.labelBoxBorderColor = this.actorBorder;
       this.labelTextColor = this.mainContrastColor;
       this.loopTextColor = this.mainContrastColor;
-      this.noteBorderColor = this.border2;
-      this.noteTextColor = this.mainBkg;
+      this.noteBorderColor = this.secondaryBorderColor;
+      this.noteBkgColor = this.secondBkg;
+      this.noteTextColor = this.secondaryTextColor;
       this.activationBorderColor = this.border1;
       this.activationBkgColor = this.secondBkg;
       /* Gantt chart variables */
@@ -24903,7 +26393,7 @@ function () {
     _classCallCheck(this, Theme);
 
     this.primaryColor = '#eee';
-    this.contrast = '#26a';
+    this.contrast = '#707070';
     this.secondaryColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
     this.background = '#ffffff'; // this.secondaryColor = adjust(this.primaryColor, { h: 120 });
 
@@ -25288,7 +26778,7 @@ var detectDirective = function detectDirective(text) {
 
     return result.length === 1 ? result[0] : result;
   } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("ERROR: ".concat(error.message, " - Unable to parse directive").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error("ERROR: ".concat(error.message, " - Unable to parse directive\n      ").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
     return {
       type: null,
       args: null
@@ -25365,6 +26855,10 @@ var detectType = function detectType(text) {
 
   if (text.match(/^\s*journey/)) {
     return 'journey';
+  }
+
+  if (text.match(/^\s*requirement/) || text.match(/^\s*requirementDiagram/)) {
+    return 'requirement';
   }
 
   return 'flowchart';
@@ -26047,34 +27541,27 @@ var configureSvgSize = function configureSvgSize(svgElem, height, width, useMaxW
   var attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
   d3Attrs(svgElem, attrs);
 };
-var initIdGeneratior = function initIdGeneratior(deterministic, seed) {
-  if (!deterministic) return {
-    next: function next() {
-      return Date.now();
+var initIdGeneratior =
+/*#__PURE__*/
+function () {
+  function iterator(deterministic, seed) {
+    _classCallCheck(this, iterator);
+
+    this.deterministic = deterministic;
+    this.seed = seed;
+    this.count = seed ? seed.length : 0;
+  }
+
+  _createClass(iterator, [{
+    key: "next",
+    value: function next() {
+      if (!this.deterministic) return Date.now();
+      return this.count++;
     }
-  };
+  }]);
 
-  var iterator =
-  /*#__PURE__*/
-  function () {
-    function iterator() {
-      _classCallCheck(this, iterator);
-
-      return this.count = seed ? seed.length : 0;
-    }
-
-    _createClass(iterator, [{
-      key: "next",
-      value: function next() {
-        return this.count++;
-      }
-    }]);
-
-    return iterator;
-  }();
-
-  return new iterator();
-};
+  return iterator;
+}();
 /* harmony default export */ __webpack_exports__["default"] = ({
   assignWithDepth: assignWithDepth,
   wrapLabel: wrapLabel,

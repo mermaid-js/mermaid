@@ -350,6 +350,15 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   const lineData = points.filter(p => !Number.isNaN(p.y));
 
   // This is the accessor function we talked about above
+  let curve;
+  // Currently only flowcharts get the curve from the settings, perhaps this should
+  // be expanded to a common setting? Restricting it for now in order not to cause side-effects that
+  // have not been thought through
+  if (diagramType === 'graph' || diagramType === 'flowchart') {
+    curve = edge.curve || curveBasis;
+  } else {
+    curve = curveBasis;
+  }
   const lineFunction = line()
     .x(function(d) {
       return d.x;
@@ -357,7 +366,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     .y(function(d) {
       return d.y;
     })
-    .curve(curveBasis);
+    .curve(curve);
 
   // Contruct stroke classes based on properties
   let strokeClasses;

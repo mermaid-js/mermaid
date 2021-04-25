@@ -1,6 +1,8 @@
 # About Mermaid
 
-**Mermaid lets you create diagrams using text and code.** This simplifies the maintenance of complex diagrams. It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. 
+**Mermaid lets you create diagrams and visualizations using text and code.**
+
+It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. 
 
 >If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](./n00b-syntaxReference.md).
 
@@ -12,7 +14,7 @@
 [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 
 <!-- <Main description> -->
-The main purpose of Mermaid is to help Documentation catch up with Development.
+The main purpose of Mermaid is to help with Visualizing Documentation, and helping it catch up with Development.
 > Documentation-Rot is a Catch-22 that Mermaid helps to solve.
 
 Diagramming and Documentation costs precious developer time and gets outdated quickly.
@@ -27,11 +29,9 @@ Even non-programmers can create diagrams through the [Mermaid Live Editor](https
 
 Many editors, wikis and other tools also have mermaid integrations and plugins, making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](./n00b-gettingStarted.md).
 
-Want to see what can be built with mermaid, or what applications already support it? Read the [Integrations and Usages for Mermaid](./integrations.md).
-
 For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Overview for Beginners](./n00b-overview.md) and [Usage](./usage.md).
 
-🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md) | 📜 [Version Log](./CHANGELOG.md)
+🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md) | 📜 [Version Log](./CHANGELOG.md) | 🔌 [Plug-Ins](./integrations.md)
 
 > 🖖 Keep a steady pulse: mermaid needs more Collaborators, [Read More](https://github.com/knsv/mermaid/issues/866).
 
@@ -40,7 +40,7 @@ For a more detailed introduction to Mermaid and some of it's more basic uses, lo
 **Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project 🙏**
 
 
-# Diagrams that mermaid can render
+# Diagram Types
 
 ### [Flowchart](/flowchart?id=flowcharts-basic-syntax)
 
@@ -181,18 +181,12 @@ Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/brow
 ## Deploying Mermaid
 To Deploy Mermaid:
 
-```
-1.You will need to install node v10 or 12, which would have npm
-
-2. download yarn using npm.
-
-3. enter the following command:
-    yarn add mermaid
-
+1. You will need to install node v10 or 12, which would have npm
+2. Download yarn using npm
+3. Enter the following command: `yarn add mermaid`
 4. You can then add mermaid as a dev dependency using this command:
-    yarn add --dev mermaid
+    `yarn add --dev mermaid`
 
-```
 ## [Mermaid API](./Setup.md):
 
 **To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:**

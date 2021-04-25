@@ -78,7 +78,7 @@ const init = function() {
     mermaidAPI.updateSiteConfig({ gantt: mermaid.ganttConfig });
   }
 
-  const nextId = utils.initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed).next;
+  const idGeneratior = new utils.initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt;
 
@@ -92,7 +92,7 @@ const init = function() {
       continue;
     }
 
-    const id = `mermaid-${nextId()}`;
+    const id = `mermaid-${idGeneratior.next()}`;
 
     // Fetch the graph definition including tags
     txt = element.innerHTML;

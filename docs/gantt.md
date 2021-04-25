@@ -6,12 +6,12 @@
  Gantt Charts will record each scheduled task as one continuous bar that extends from the left to the right. The x axis represents time and the y records the different tasks and the order in which they are to be completed.
 
 
- It is important to remember that when a date, day, or collection of dates specific to a task are "excluded", the Gantt Chart will accomodate those changes by extending an equal number of day, towards the right, not by creating a gap inside the task.
- As shown here ![](https://raw.githubusercontent.com/NeilCuzon/mermaid/develop/docs/img/Gantt-excluded-days-within.png)
+ It is important to remember that when a date, day, or collection of dates specific to a task are "excluded", the Gantt Chart will accomodate those changes by extending an equal number of days, towards the right, not by creating a gap inside the task.
+ As shown here ![](.img/Gantt-excluded-days-within.png)
 
 
  However, if the excluded dates are between two tasks that are set to start consecutively, the excluded dates will be skipped graphically and left blank, and the following task will begin after the end of the excluded dates.
- As shown here ![](https://raw.githubusercontent.com/NeilCuzon/mermaid/develop/docs/img/Gantt-long-weekend-look.png)
+ As shown here ![](.img/Gantt-long-weekend-look.png)
 
  A Gantt chart is useful for tracking the amount of time it would take before a project is finished, but it can also be used to graphically represent "non-working days", with a few tweaks.
 
@@ -229,24 +229,19 @@ gantt
 
 ## Styling
 
-Styling of the a gantt diagram is done by defining a number of css classes. During rendering, these classes are extracted from the file located at src/themes/sequence.scss
+Styling of the a gantt diagram is done by defining a number of css classes. During rendering, these classes are extracted from the file located at src/themes/gantt.scss
 
 ### Classes used
 
 Class | Description
----          | ---
-actor        | Style for the actor box at the top of the diagram.
-text.actor   | Styles for text in the actor box at the top of the diagram.
-actor-line   | The vertical line for an actor.
-messageLine0 | Styles for the solid message line.
-messageLine1 | Styles for the dotted message line.
-messageText  | Defines styles for the text on the message arrows.
-labelBox     | Defines styles label to left in a loop.
-labelText    | Styles for the text in label for loops.
-loopText     | Styles for the text in the loop box.
-loopLine     | Defines styles for the lines in the loop box.
-note         | Styles for the note box.
-noteText     | Styles for the text on in the note boxes.
+---                   | ---
+grid.tick             | Styling for the Grid Lines 
+grid.path             | Styling for the Grid's borders
+.taskText             | Task Text Styling
+.taskTextOutsideRight | Styling for Task Text that exceeds the activity bar towards the right. 
+.taskTextOutsideLeft  | Styling for Task Text that exceeds the activity bar, towards the left.
+todayMarker           | Toggle and Styling for the "Today Marker"
+
 
 ### Sample stylesheet
 
@@ -333,7 +328,7 @@ mermaid.ganttConfig = {
 
 ### Possible configuration params:
 
-Param | Descriotion | Default value
+Param | Description | Default value
 --- | --- | ---
 mirrorActor|Turns on/off the rendering of actors below the diagram as well as above it|false
 bottomMarginAdj|Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists.|1

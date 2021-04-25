@@ -16,6 +16,7 @@ let currentSection = '';
 const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
+let topAxis = false;
 
 // The serial order of the task in the script
 let lastOrder = 0;
@@ -39,6 +40,7 @@ export const clear = function() {
   todayMarker = '';
   excludes = [];
   inclusiveEndDates = false;
+  topAxis = false;
   lastOrder = 0;
 };
 
@@ -68,6 +70,14 @@ export const enableInclusiveEndDates = function() {
 
 export const endDatesAreInclusive = function() {
   return inclusiveEndDates;
+};
+
+export const enableTopAxis = function() {
+  topAxis = true;
+};
+
+export const topAxisEnabled = function() {
+  return topAxis;
 };
 
 export const getDateFormat = function() {
@@ -594,6 +604,8 @@ export default {
   getDateFormat,
   enableInclusiveEndDates,
   endDatesAreInclusive,
+  enableTopAxis,
+  topAxisEnabled,
   setAxisFormat,
   getAxisFormat,
   setTodayMarker,

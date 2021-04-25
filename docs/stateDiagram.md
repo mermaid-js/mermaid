@@ -125,7 +125,7 @@ stateDiagram-v2
 In a real world use of state diagrams you often end up with diagrams that are multi-dimensional as one state can
 have several internal states. These are called composite states in this terminology.
 
-In order to define a composite state you need to use the state keyword followed by and id and the body of the composite state between \{\}. See the example below:
+In order to define a composite state you need to use the state keyword followed by an id and the body of the composite state between \{\}. See the example below:
 
 ```
 stateDiagram-v2

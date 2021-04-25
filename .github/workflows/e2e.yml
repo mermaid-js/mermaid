@@ -9,7 +9,7 @@ jobs:
       matrix:
         node-version: [12.x]
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2.3.4
 
     - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
@@ -20,7 +20,7 @@ jobs:
       run: npm i yarn --global
 
     - name: Cache Node Modules
-      uses: actions/cache@v1
+      uses: actions/cache@v2.1.5
       with:
         path: .cache
         key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}

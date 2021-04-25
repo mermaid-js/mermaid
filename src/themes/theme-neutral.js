@@ -7,7 +7,7 @@ import { mkBorder } from './theme-helpers';
 class Theme {
   constructor() {
     this.primaryColor = '#eee';
-    this.contrast = '#26a';
+    this.contrast = '#707070';
     this.secondaryColor = lighten(this.contrast, 55);
     this.background = '#ffffff';
 

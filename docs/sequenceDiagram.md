@@ -88,7 +88,7 @@ There are six types of arrows currently supported:
 | -->> | Dotted line with arrowhead                  |
 | -x   | Solid line with a cross at the end          |
 | --x  | Dotted line with a cross at the end.        |
-| -)   | Solid line with an open arrowat the end (async)  |
+| -)   | Solid line with an open arrow at the end (async)  |
 | --)  | Dotted line with a open arrow at the end (async) |
 
 ## Activations
@@ -363,6 +363,8 @@ sequenceDiagram
 ```
 
 Numbers given are base 10, so `#` can be encoded as `#35;`. It is also supported to use HTML character names.
+
+Because semicolons can be used instead of line breaks to define the markup, you need to use `#59;` to include a semicolon in message text.
 
 ## sequenceNumbers
 
