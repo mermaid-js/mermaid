@@ -6,6 +6,7 @@ import {
   scaleLinear,
   interpolateHcl,
   axisBottom,
+  axisTop,
   timeFormat
 } from 'd3';
 import { parser } from './parser/gantt';
@@ -346,7 +347,7 @@ export const draw = function(text, id) {
   }
 
   function makeGrid(theSidePad, theTopPad, w, h) {
-    let xAxis = axisBottom(timeScale)
+    let bottomXAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
       .tickFormat(timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
@@ -354,13 +355,31 @@ export const draw = function(text, id) {
       .append('g')
       .attr('class', 'grid')
       .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
-      .call(xAxis)
+      .call(bottomXAxis)
       .selectAll('text')
       .style('text-anchor', 'middle')
       .attr('fill', '#000')
       .attr('stroke', 'none')
       .attr('font-size', 10)
       .attr('dy', '1em');
+
+    if (ganttDb.topAxisEnabled() || conf.topAxis) {
+      let topXAxis = axisTop(timeScale)
+        .tickSize(-h + theTopPad + conf.gridLineStartPadding)
+        .tickFormat(timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+
+      svg
+        .append('g')
+        .attr('class', 'grid')
+        .attr('transform', 'translate(' + theSidePad + ', ' + theTopPad + ')')
+        .call(topXAxis)
+        .selectAll('text')
+        .style('text-anchor', 'middle')
+        .attr('fill', '#000')
+        .attr('stroke', 'none')
+        .attr('font-size', 10)
+        .attr('dy', '1em');
+    }
   }
 
   function vertLabels(theGap, theTopPad) {

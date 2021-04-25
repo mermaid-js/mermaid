@@ -708,6 +708,7 @@ export default mermaidAPI;
  *       fontFamily:'"Open-Sans", "sans-serif"',
  *       numberSectionStyles:4,
  *       axisFormat:'%Y-%m-%d',
+ *       topAxis:false,
  *     }
  *   };
  *   mermaid.initialize(config);
