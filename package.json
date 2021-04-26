@@ -77,7 +77,7 @@
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-prettier": "^3.1.0",
-    "husky": "^1.2.1",
+    "husky": "^6.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.9.0",
     "jison": "^0.4.18",
