@@ -120,6 +120,15 @@ class Theme {
     this.fillType5 = adjust(this.secondaryColor, { h: -64 });
     this.fillType6 = adjust(this.primaryColor, { h: 128 });
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
+
+    /* requirement-diagram */
+    this.requirementBackground = this.requirementBackground || this.primaryColor;
+    this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+    this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+    this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+    this.relationColor = this.relationColor || this.lineColor;
+    this.relationLabelBackground = this.relationLabelBackground || this.edgeLabelBackground;
+    this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

@@ -12,18 +12,19 @@
         /* background: rgb(221, 208, 208); */
         /* background:#333; */
         font-family: 'Arial';
+        /* font-size: 18px !important; */
         }
       h1 { color: grey;}
       .mermaid2 {
         display: none;
       }
       .mermaid svg {
-        font-size: 12px !important;
+        /* font-size: 18px !important; */
       }
     </style>
   </head>
   <body>
-    <h1>info below</h1>
+    <div>info below</div>
     <div class="flex">
       <div class="mermaid2" style="width: 100%; height: 400px;">
 %%{init: { "logLevel": 1, "er": {"fontSize":18 }} }%%
@@ -53,22 +54,51 @@ flowchart TD
   classDef TestSub fill:green;
   class T TestSub
   linkStyle 0,1 color:orange, stroke: orange;
+</div>
+      <div class="mermaid" style="width: 100%; height: 20%;">
+graph TD
+  C --text fyra fem -->F[text ett två tre]
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
-%%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
-flowchart LR
-subgraph A
-    a --> b
-end
-subgraph B
-    i -->f
-end
-A --> B      </div>
+
+<div class="mermaid" style="width: 100%; height: 20%;">
+  requirementDiagram
+  requirement test_req {
+    id: 1
+    text: the test text.
+    risk: high
+    verifymethod: test
+    }
+
+    functionalRequirement test_req2 {
+    id: 1.1
+    text: the second test text.
+    risk: low
+    verifymethod: inspection
+    }
+
+    performanceRequirement test_req3 {
+    id: 1.2
+    text: the third test text.
+    risk: medium
+    verifymethod: demonstration
+    }
+
+    element test_entity {
+    type: simulation
+    }
+
+    element test_entity2 {
+    type: word doc
+    docRef: reqs/test_entity
+    }
+
+
+    test_entity - satisfies -> test_req2
+    test_req - traces -> test_req2
+    test_req - contains -> test_req3
+    test_req <- copies - test_entity2
+  </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
-flowchart TD
-  C -->|fa:fa-car Car| F[fa:fa-car Car]
-      </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
 flowchart LR
   classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
   Lorem --> Ipsum --> Dolor
@@ -124,9 +154,8 @@ style N stroke:#0000ff,fill:#ccccff,color:#0000ff
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        // theme: 'forest',
-        // themeVariables:{primaryColor: '#ff0000'},
-        // arrowMarkerAbsolute: true,
+        theme: 'neutral',
+        arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
         flowchart: { nodeSpacing: 10, curve: 'cardinal', htmlLabels: true },
@@ -134,10 +163,12 @@ style N stroke:#0000ff,fill:#ccccff,color:#0000ff
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorFontFamily: 'courier',actorMargin: 50, showSequenceNumbers: false },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
-        fontFamily: '"arial", sans-serif',
-        fontFamily: 'courier',
+        // fontFamily: '"times", sans-serif',
+        // fontFamily: 'courier',
+        fontSize: 18,
         curve: 'cardinal',
         securityLevel: 'loose',
+        // themeVariables: {relationLabelColor: 'red'}
       });
       function callback(){alert('It worked');}
     </script>

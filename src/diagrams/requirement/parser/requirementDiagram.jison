@@ -84,7 +84,8 @@
 %% /* language grammar */
 
 start
-  : directive start
+  : directive NEWLINE start
+  | directive start
   | RD NEWLINE diagram EOF;
 
 directive
@@ -108,36 +109,37 @@ diagram
   | requirementDef diagram
   | elementDef diagram
   | relationshipDef diagram
+  | directive diagram
   | NEWLINE diagram;
 
 requirementDef
-  : requirementType requirementName STRUCT_START NEWLINE requirementBody  
+  : requirementType requirementName STRUCT_START NEWLINE requirementBody
     { yy.addRequirement($2, $1) };
 
 requirementBody
-  : ID COLONSEP id NEWLINE requirementBody 
+  : ID COLONSEP id NEWLINE requirementBody
     { yy.setNewReqId($3); }
-  | TEXT COLONSEP text NEWLINE requirementBody 
+  | TEXT COLONSEP text NEWLINE requirementBody
     { yy.setNewReqText($3); }
-  | RISK COLONSEP riskLevel NEWLINE requirementBody 
+  | RISK COLONSEP riskLevel NEWLINE requirementBody
     { yy.setNewReqRisk($3); }
-  | VERIFYMTHD COLONSEP verifyType NEWLINE requirementBody 
+  | VERIFYMTHD COLONSEP verifyType NEWLINE requirementBody
     { yy.setNewReqVerifyMethod($3); }
   | NEWLINE requirementBody
   | STRUCT_STOP;
 
 requirementType
-  : REQUIREMENT 
+  : REQUIREMENT
     { $$=yy.RequirementType.REQUIREMENT;}
-  | FUNCTIONAL_REQUIREMENT 
+  | FUNCTIONAL_REQUIREMENT
     { $$=yy.RequirementType.FUNCTIONAL_REQUIREMENT;}
-  | INTERFACE_REQUIREMENT 
+  | INTERFACE_REQUIREMENT
     { $$=yy.RequirementType.INTERFACE_REQUIREMENT;}
-  | PERFORMANCE_REQUIREMENT 
+  | PERFORMANCE_REQUIREMENT
     { $$=yy.RequirementType.PERFORMANCE_REQUIREMENT;}
-  | PHYSICAL_REQUIREMENT 
+  | PHYSICAL_REQUIREMENT
     { $$=yy.RequirementType.PHYSICAL_REQUIREMENT;}
-  | DESIGN_CONSTRAINT 
+  | DESIGN_CONSTRAINT
     { $$=yy.RequirementType.DESIGN_CONSTRAINT;};
 
 riskLevel
@@ -146,29 +148,29 @@ riskLevel
   | HIGH_RISK { $$=yy.RiskLevel.HIGH_RISK;};
 
 verifyType
-  : VERIFY_ANALYSIS 
+  : VERIFY_ANALYSIS
     { $$=yy.VerifyType.VERIFY_ANALYSIS;}
-  | VERIFY_DEMONSTRATION 
+  | VERIFY_DEMONSTRATION
     { $$=yy.VerifyType.VERIFY_DEMONSTRATION;}
-  | VERIFY_INSPECTION 
+  | VERIFY_INSPECTION
     { $$=yy.VerifyType.VERIFY_INSPECTION;}
-  | VERIFY_TEST 
+  | VERIFY_TEST
     { $$=yy.VerifyType.VERIFY_TEST;};
 
 elementDef
-  : ELEMENT elementName STRUCT_START NEWLINE elementBody  
+  : ELEMENT elementName STRUCT_START NEWLINE elementBody
     { yy.addElement($2) };
 
 elementBody
-  : TYPE COLONSEP type NEWLINE elementBody 
+  : TYPE COLONSEP type NEWLINE elementBody
     { yy.setNewElementType($3); }
-  | DOCREF COLONSEP ref NEWLINE elementBody 
+  | DOCREF COLONSEP ref NEWLINE elementBody
     { yy.setNewElementDocRef($3); }
   | NEWLINE elementBody
   | STRUCT_STOP;
 
 relationshipDef
-  : id END_ARROW_L relationship LINE id 
+  : id END_ARROW_L relationship LINE id
     {  yy.addRelationship($3, $5, $1) }
   | id LINE relationship END_ARROW_R id
      { yy.addRelationship($3, $1, $5) };

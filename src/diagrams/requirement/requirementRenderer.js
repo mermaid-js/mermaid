@@ -1,7 +1,7 @@
 import { line, select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
-import * as configApi from '../../config';
+// import * as configApi from '../../config';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 import common from '../common/common';
@@ -26,10 +26,6 @@ const newRectNode = (parentNode, id) => {
   return parentNode
     .insert('rect', '#' + id)
     .attr('class', 'req reqBox')
-    .attr('fill', conf.rect_fill)
-    .attr('fill-opacity', '100%')
-    .attr('stroke', conf.rect_border_color)
-    .attr('stroke-size', conf.rect_border_size)
     .attr('x', 0)
     .attr('y', 0)
     .attr('width', conf.rect_min_width + 'px')
@@ -45,12 +41,11 @@ const newTitleNode = (parentNode, id, txts) => {
     .attr('id', id)
     .attr('x', x)
     .attr('y', conf.rect_padding)
-    .attr('dominant-baseline', 'hanging')
-    .attr(
-      'style',
-      'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
-    );
-
+    .attr('dominant-baseline', 'hanging');
+  // .attr(
+  //   'style',
+  //   'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+  // )
   let i = 0;
   txts.forEach(textStr => {
     if (i == 0) {
@@ -77,11 +72,11 @@ const newTitleNode = (parentNode, id, txts) => {
 
   parentNode
     .append('line')
+    .attr('class', 'req-title-line')
     .attr('x1', '0')
     .attr('x2', conf.rect_min_width)
     .attr('y1', totalY)
-    .attr('y2', totalY)
-    .attr('style', `stroke: ${conf.rect_border_color}; stroke-width: 1`);
+    .attr('y2', totalY);
 
   return {
     titleNode: title,
@@ -96,11 +91,11 @@ const newBodyNode = (parentNode, id, txts, yStart) => {
     .attr('id', id)
     .attr('x', conf.rect_padding)
     .attr('y', yStart)
-    .attr('dominant-baseline', 'hanging')
-    .attr(
-      'style',
-      'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
-    );
+    .attr('dominant-baseline', 'hanging');
+  // .attr(
+  //   'style',
+  //   'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+  // );
 
   let currentRow = 0;
   const charLimit = 30;
@@ -145,13 +140,13 @@ const addEdgeLabel = (parentNode, svgPath, conf, txt) => {
 
   const labelNode = parentNode
     .append('text')
-    .attr('class', 'er relationshipLabel')
+    .attr('class', 'req relationshipLabel')
     .attr('id', labelId)
     .attr('x', labelPoint.x)
     .attr('y', labelPoint.y)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .attr('style', 'font-family: ' + conf.fontFamily + '; font-size: ' + conf.fontSize + 'px')
+    // .attr('style', 'font-family: ' + conf.fontFamily + '; font-size: ' + conf.fontSize + 'px')
     .text(txt);
 
   // Figure out how big the opaque 'container' rectangle needs to be
@@ -187,7 +182,6 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
     .insert('path', '#' + insert)
     .attr('class', 'er relationshipLine')
     .attr('d', lineFunction(edge.points))
-    .attr('stroke', conf.rect_border_color)
     .attr('fill', 'none');
 
   if (rel.type == requirementDb.Relationships.CONTAINS) {
