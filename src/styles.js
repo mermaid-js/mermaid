@@ -81,8 +81,6 @@ const getStyles = (type, userStyles, options) => {
   ${themes[type](options)}
 
   ${userStyles}
-
-  ${type} { fill: apa;}
 `;
 };
 

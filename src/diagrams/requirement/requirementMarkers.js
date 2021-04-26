@@ -20,8 +20,8 @@ const insertLineEndings = (parentNode, conf) => {
     .attr('cx', conf.line_height / 2)
     .attr('cy', conf.line_height / 2)
     .attr('r', conf.line_height / 2)
-    .attr('stroke', conf.rect_border_color)
-    .attr('stroke-width', 1)
+    // .attr('stroke', conf.rect_border_color)
+    // .attr('stroke-width', 1)
     .attr('fill', 'none');
 
   containsNode
@@ -30,7 +30,7 @@ const insertLineEndings = (parentNode, conf) => {
     .attr('x2', conf.line_height)
     .attr('y1', conf.line_height / 2)
     .attr('y2', conf.line_height / 2)
-    .attr('stroke', conf.rect_border_color)
+    // .attr('stroke', conf.rect_border_color)
     .attr('stroke-width', 1);
 
   containsNode
@@ -39,7 +39,7 @@ const insertLineEndings = (parentNode, conf) => {
     .attr('y2', conf.line_height)
     .attr('x1', conf.line_height / 2)
     .attr('x2', conf.line_height / 2)
-    .attr('stroke', conf.rect_border_color)
+    // .attr('stroke', conf.rect_border_color)
     .attr('stroke-width', 1);
 
   parentNode
@@ -54,13 +54,13 @@ const insertLineEndings = (parentNode, conf) => {
     .append('path')
     .attr(
       'd',
-      `M0,0 
-      L${conf.line_height},${conf.line_height / 2} 
-      M${conf.line_height},${conf.line_height / 2} 
+      `M0,0
+      L${conf.line_height},${conf.line_height / 2}
+      M${conf.line_height},${conf.line_height / 2}
       L0,${conf.line_height}`
     )
-    .attr('stroke-width', 1)
-    .attr('stroke', conf.rect_border_color);
+    .attr('stroke-width', 1);
+  // .attr('stroke', conf.rect_border_color);
 };
 
 export default {
