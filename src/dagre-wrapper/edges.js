@@ -1,6 +1,7 @@
 import { log } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
-import { line, curveBasis, curveLinear, select } from 'd3';
+// import { line, curveBasis, curveLinear, select } from 'd3';
+import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
 import utils from '../utils';
 // import { calcLabelPosition } from '../utils';
@@ -299,7 +300,7 @@ const cutPathAtIntersect = (_points, boundryNode) => {
   let isInside = false;
   _points.forEach(point => {
     // const node = clusterDb[edge.toCluster].node;
-    log.warn('abc88 checking point', point, boundryNode);
+    log.info('abc88 checking point', point, boundryNode);
 
     // check if point is inside the boundry rect
     if (!outsideNode(boundryNode, point) && !isInside) {
@@ -341,6 +342,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   const tail = graph.node(e.v);
   var head = graph.node(e.w);
 
+  log.info('abc88 InsertEdge: ', edge);
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
@@ -353,8 +355,8 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     points.push(head.intersect(points[points.length - 1]));
   }
   if (edge.toCluster) {
-    log.warn('to cluster abc88', clusterDb[edge.toCluster]);
-    points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node).reverse();
+    log.info('to cluster abc88', clusterDb[edge.toCluster]);
+    points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node);
     // log.trace('edge', edge);
     // points = [];
     // let lastPointOutside; // = edge.points[0];
@@ -390,8 +392,8 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   }
 
   if (edge.fromCluster) {
-    log.warn('from cluster abc88', clusterDb[edge.fromCluster]);
-    points = cutPathAtIntersect(points, clusterDb[edge.fromCluster].node).reverse();
+    log.info('from cluster abc88', clusterDb[edge.fromCluster]);
+    points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse();
     // log.warn('edge', edge);
     // log.warn('from cluster', clusterDb[edge.fromCluster], points);
     // const updatedPoints = [];
@@ -447,7 +449,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   } else {
     curve = curveBasis;
   }
-  curve = curveLinear;
+  // curve = curveLinear;
   const lineFunction = line()
     .x(function(d) {
       return d.x;
@@ -489,15 +491,15 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     .attr('style', edge.style);
 
   // DEBUG code, adds a red circle at each edge coordinate
-  edge.points.forEach(point => {
-    elem
-      .append('circle')
-      .style('stroke', 'red')
-      .style('fill', 'red')
-      .attr('r', 1)
-      .attr('cx', point.x)
-      .attr('cy', point.y);
-  });
+  // edge.points.forEach(point => {
+  //   elem
+  //     .append('circle')
+  //     .style('stroke', 'red')
+  //     .style('fill', 'red')
+  //     .attr('r', 1)
+  //     .attr('cx', point.x)
+  //     .attr('cy', point.y);
+  // });
 
   let url = '';
   if (getConfig().state.arrowMarkerAbsolute) {
