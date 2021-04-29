@@ -17,7 +17,7 @@ Creating diagrams and charts using mermaid code is simple.
 
 >More in depth information can be found on [Usage](./usage.md).
 
-## 1. Using [The Live Editor](https://mermaidjs.github.io/mermaid-live-editor).
+## 1. Using  [The Live Editor](https://mermaidjs.github.io/mermaid-live-editor).
 
 ![Flowchart](./img/Live-Editor-Usage.png)
 
