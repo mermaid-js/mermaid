@@ -52029,7 +52029,9 @@ __webpack_require__.r(__webpack_exports__);
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
  *
  * ## **What follows are config instructions for older versions**
+ *
  * These are the default options which can be overridden with the initialization call like so:
+ *
  * **Example 1:**
  * <pre>
  * mermaid.initialize({
@@ -52061,15 +52063,15 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 var config = {
-  /** theme , the CSS style sheet
-   *
+  /**
    * theme , the CSS style sheet
    *
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | theme | Built in Themes | string | Optional | 'default', 'forest', 'dark', 'neutral', 'null'|
    *
-   ***Notes:**To disable any pre-defined mermaid theme, use "null".
+   * **Notes:** To disable any pre-defined mermaid theme, use "null".
+   *
    * <pre>
    *  "theme": "forest",
    *  "themeCSS": ".node rect { fill: red; }"
@@ -52083,59 +52085,64 @@ var config = {
   maxTextSize: 50000,
 
   /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Trebuchet MS, Verdana, Arial, Sans-Serif |
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | fontFamily | specifies the font to be used in the rendered diagrams| string | Required | Any Posiable CSS FontFamily |
    *
-   ***notes: Default value is \\"trebuchet ms\\".
+   * **Notes:**
+   * Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
    */
   fontFamily: '"trebuchet ms", verdana, arial, sans-serif;',
 
   /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | logLevel |This option decides the amount of logging to be used.| string \| number | Required | 1, 2, 3, 4, 5 |
    *
    *
-   ***Notes:**
-   *-   debug: 1.
-   *-   info: 2.
-   *-   warn: 3.
-   *-   error: 4.
-   *-   fatal: 5(default).
+   * **Notes:**
+   *
+   * - debug: 1
+   * - info: 2
+   * - warn: 3
+   * - error: 4
+   * - fatal: 5 (default)
    */
   logLevel: 5,
 
   /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose, antiscript |
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | securitylevel | Level of trust for parsed diagram|string | Required | 'strict', 'loose', 'antiscript' |
    *
-   ***Notes:
-   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
-   *-   **loose**: tags in text are allowed, click functionality is enabled
-   *-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
+   * **Notes**:
+   *
+   * - **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   * - **loose**: tags in text are allowed, click functionality is enabled
+   * - **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
    */
   securityLevel: 'strict',
 
   /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
+   * | Parameter | Description | Type | Required | Values |
+   * | --- | --- | --- | --- | --- |
+   * | startOnLoad | Dictates whether mermaind starts on Page load | boolean | Required | true, false |
    *
-   ***Notes:**
-   ***Default value: true**
+   * **Notes:** Default value: true
    */
   startOnLoad: true,
 
   /**
-   *| Parameter | Description |Type | Required |Values|
-   *| --- | --- | --- | --- | --- |
-   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
+   * | Parameter | Description |Type | Required |Values|
+   * | --- | --- | --- | --- | --- |
+   * | arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | boolean | Required | true, false |
    *
    *
-   *## Notes**: This matters if you are using base tag settings.
-   ***Default value: false**.
+   * **Notes**:
+   *
+   * This matters if you are using base tag settings.
+   *
+   * Default value: false
    */
   arrowMarkerAbsolute: false,
 
@@ -52144,6 +52151,9 @@ var config = {
    * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
    * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
+    * **Notes**:
+   *
+   * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
 
@@ -52151,8 +52161,11 @@ var config = {
    * This option controls if the generated ids of nodes in the SVG are generated randomly or based on a seed.
    * If set to false, the IDs are generated based on the current date and thus are not deterministic. This is the default behaviour.
    *
-   *## Notes**: This matters if your files are checked into sourcecontrol e.g. git and should not change unless content is changed.
-   ***Default value: false**
+   * **Notes**:
+   *
+   * This matters if your files are checked into sourcecontrol e.g. git and should not change unless content is changed.
+   *
+   * Default value: false
    */
   deterministicIds: false,
 
@@ -52167,67 +52180,78 @@ var config = {
    */
   flowchart: {
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramPadding | Amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
      *
-     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
-     ***Default value: 8**.
+     * **Notes:**
+     *
+     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     *
+     * Default value: 8
      */
     diagramPadding: 8,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | boolean| Required | true, false |
      *
-     ***Notes: Default value: true**.
+     * **Notes:** Default value: true.
      */
     htmlLabels: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | nodeSpacing | Defines the spacing between nodes on the same level | Integer | Required | Any positive Number |
      *
-     ***Notes:
-     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
-     ***Default value 50**.
+     * **Notes:**
+     *
+     * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
+     *
+     * Default value: 50
      */
     nodeSpacing: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | rankSpacing | Defines the spacing between nodes on different levels | Integer | Required | Any Positive Number |
      *
-     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
-     ***Default value 50**.
+     * **Notes**:
+     *
+     * pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+     *
+     * Default value 50
      */
     rankSpacing: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | curve | Defines how mermaid renders curves for flowcharts. | string | Required | 'basis', 'linear', 'cardinal'|
      *
-     ***Notes:
-     *Default Vaue: monotoneX**
+     * **Notes:**
+     *
+     * Default Vaue: 'basis'
      */
-    curve: 'natural',
+    curve: 'basis',
     // Only used in new experimental rendering
     // represents the padding between the labels and the shape
     padding: 15,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -52237,174 +52261,176 @@ var config = {
    */
   sequence: {
     /**
-     * widt of the activation rect
-     * **Default value 10**.
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | activationWidth | Width of the activation rect | Integer | Required | Any Positive Value |
+     *
+     *
+     * **Notes:** Default value :10
      */
     activationWidth: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:** Default value: 50
      */
     diagramMarginX: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
+     *| Parameter | Description | Type | Required | Values |
      *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
+     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 10**.
+     * **Notes:** Default value: 10
      */
     diagramMarginY: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:**
+     * Default value: 50
      */
     actorMargin: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | width | Width of actor boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 150**.
+     * **Notes:**
+     * Default value: 150
      */
     width: 150,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | height | Height of actor boxes | Integer | Required | Any Positive Value|
      *
-     ***Notes:**
-     ***Default value 65**..
+     * **Notes:**
+     * Default value: 65
      */
     height: 65,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     *
-     ***Default value 10**.
+     * **Notes:**
+     * Default value: 10
      */
     boxMargin: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     *
-     ***Default value 5**.
+     * **Notes:**
+     * Default value: 5
      */
     boxTextMargin: 5,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteMargin | margin around notes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     *
-     ***Default value 10**.
+     * **Notes:**
+     * Default value: 10
      */
     noteMargin: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageMargin | Space between messages | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     *
-     *Space between messages.
-     ***Default value 35**.
+     * **Notes:**
+     * Default value: 35
      */
     messageMargin: 35,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageAlign | Multiline message alignment | string | Required | 'left', 'center', 'right' |
      *
-     ***Notes:**center **default**
+     * **Notes:**
+     * Default value: 'center'
      */
     messageAlign: 'center',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | mirrorActors | Mirror actors under diagram | boolean | Required | true, false |
      *
-     ***Notes:**
-     *
-     ***Default value true**.
+     * **Notes:**
+     * Default value: true
      */
     mirrorActors: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | Required | Any Positive Value |
      *
-     ***Notes:**Depending on css styling this might need adjustment.
-     ***Default value 1**.
+     * **Notes:**
+     *
+     * Depending on css styling this might need adjustment.
+     *
+     * Default value: 1
      */
     bottomMarginAdj: 1,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See Notes | boolean | Required | true, false |
      *
-     ***Notes:**
-     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
-     *available space. If set to false, the absolute space required is used.
-     ***Default value: True**.
+     * **Notes:**
+     * When this flag is set to true, the height and width is set to 100% and is then scaling with the
+     * available space. If set to false, the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | rightAngles | display curve arrows as right angles | boolean | Required | true, false |
      *
-     ***Notes:**
+     * **Notes:**
      *
-     *This will display arrows that start and begin at the same node as right angles, rather than a curve
-     ***Default value false**.
+     * This will display arrows that start and begin at the same node as right angles, rather than a curve
+     *
+     * Default value: false
      */
     rightAngles: false,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | showSequenceNumbers | This will show the node numbers | boolean | Required | true, false |
      *
-     ***Notes:**
-     ***Default value false**.
+     * **Notes:**
+     * Default value: false
      */
     showSequenceNumbers: false,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
      *
      ***Notes:**
      ***Default value 14**..
@@ -52412,104 +52438,118 @@ var config = {
     actorFontSize: 14,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | actorFontFamily |This sets the font family of the actor's description | string | Required | Any Posiable CSS FontFamily |
      *
-     ***Notes:**
-     ***Default value "Open-Sans", "sans-serif"**.
+     * **Notes:**
+     * Default value: "'Open-Sans", "sans-serif"'
      */
     actorFontFamily: '"Open-Sans", "sans-serif"',
 
     /**
      * This sets the font weight of the actor's description
-     * **Default value 400.
+     *
+     * **Notes:**
+     * Default value: 400.
      */
     actorFontWeight: 400,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteFontSize | This sets the font size of actor-attached notes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 14**..
+     * **Notes:**
+     * Default value: 14
      */
     noteFontSize: 14,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial, sans-serif |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteFontFamily| This sets the font family of actor-attached notes. | string | Required | Any Posiable CSS FontFamily |
      *
-     ***Notes:**
-     ***Default value: trebuchet ms **.
+     * **Notes:**
+     * Default value: ''"trebuchet ms", verdana, arial, sans-serif'
      */
     noteFontFamily: '"trebuchet ms", verdana, arial, sans-serif',
 
     /**
      * This sets the font weight of the note's description
-     * **Default value 400.
+     *
+     * **Notes:**
+     * Default value: 400
      */
     noteFontWeight: 400,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteAlign | This sets the text alignment of actor-attached notes | string | required | 'left', 'center', 'right'|
      *
-     ***Notes:**
-     ***Default value center**.
+     * **Notes:**
+     * Default value: 'center'
      */
     noteAlign: 'center',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageFontSize | This sets the font size of actor messages | Integer | Required | Any Positive Number |
      *
-     ***Notes:**
-     ***Default value 16**.
+     * **Notes:**
+     * Default value: 16
      */
     messageFontSize: 16,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, arial, sans-serif |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageFontFamily | This sets the font family of actor messages | string | Required | Any Posiable CSS FontFamily |
      *
-     ***Notes:**
-     ***Default value: "trebuchet ms**.
+     * **Notes:**
+     * Default value: '"trebuchet ms", verdana, arial, sans-serif'
      */
     messageFontFamily: '"trebuchet ms", verdana, arial, sans-serif',
 
     /**
      * This sets the font weight of the message's description
-     * **Default value 400.
+     *
+     * **Notes:**
+     * Default value: 400.
      */
     messageFontWeight: 400,
 
     /**
      * This sets the auto-wrap state for the diagram
-     * **Default value false.
+     *
+     * **Notes:**
+     * Default value: false.
      */
     wrap: false,
 
     /**
      * This sets the auto-wrap padding for the diagram (sides only)
-     * **Default value 10.
+     *
+     * **Notes:**
+     * Default value: 0.
      */
     wrapPadding: 10,
 
     /**
      * This sets the width of the loop-box (loop, alt, opt, par)
-     * **Default value 50.
+     *
+     * **Notes:**
+     * Default value: 50.
      */
     labelBoxWidth: 50,
 
     /**
      * This sets the height of the loop-box (loop, alt, opt, par)
-     * **Default value 20.
+     *
+     * **Notes:**
+     * Default value: 20.
      */
     labelBoxHeight: 20,
     messageFont: function messageFont() {
@@ -52536,125 +52576,149 @@ var config = {
   },
 
   /**
-   * The object containing configurations specific for gantt diagrams*
+   * The object containing configurations specific for gantt diagrams
    */
   gantt: {
     /**
-     *### titleTopMargin
+     * ### titleTopMargin
      *
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 25**.
+     * **Notes:**
+     * Default value: 25
      */
     titleTopMargin: 25,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 20**.
+     * **Notes:**
+     * Default value: 20
      */
     barHeight: 20,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | barGap | The margin between the different activities in the gantt diagram | Integer | Optional | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 4**.
+     * **Notes:**
+     * Default value: 4
      */
     barGap: 4,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:**
+     * Default value: 50
      */
     topPadding: 50,
+
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | rightPadding | The space allocated for the section name to the right of the activities | Integer | Required | Any Positive Value |
+     *
+     * **Notes:**
+     * Default value: 75
+     */
     rightPadding: 75,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | leftPadding | The space allocated for the section name to the left of the activities | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 75**.
+     * **Notes:**
+     * Default value: 75
      */
     leftPadding: 75,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | gridLineStartPadding | Vertical starting position of the grid lines | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 35**.
+     * **Notes:**
+     * Default value: 35
      */
     gridLineStartPadding: 35,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontSize | Font size| Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | fontSize | Font size | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 11**.
+     * **Notes:**
+     * Default value: 11
      */
     fontSize: 11,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| sectionFontSize | Font size for secions| Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | sectionFontSize | Font size for secions| Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 11**.
+     * **Notes:**
+     * Default value: 11
      */
     sectionFontSize: 11,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 4**.
+     * **Notes:**
+     * Default value: 4
      */
     numberSectionStyles: 4,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | axisFormat | Datetime format of the axis | 3 | Required | Date in yy-mm-dd |
      *
-     ***Notes:**
+     * **Notes:**
      *
      * This might need adjustment to match your locale and preferences
-     ***Default value '%Y-%m-%d'**.
+     *
+     * Default value: '%Y-%m-%d'.
      */
     axisFormat: '%Y-%m-%d',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| topAxis | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:** when this flag is set date labels will be added to the
+    top of the chart
+     *
+     ***Default value false**.
+     */
+    topAxis: false,
     useWidth: undefined
   },
 
@@ -52663,52 +52727,52 @@ var config = {
    */
   journey: {
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:**
+     * Default value: 50
      */
     diagramMarginX: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramMarginY | Margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 10**..
+     * **Notes:**
+     * Default value: 10
      */
     diagramMarginY: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 50**.
+     * **Notes:**
+     * Default value: 50
      */
     leftMargin: 150,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | width | Width of actor boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 150**.
+     * **Notes:**
+     * Default value: 150
      */
     width: 150,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | height | Height of actor boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 65**.
+     * **Notes:**
+     * Default value: 65
      */
     height: 50,
 
@@ -52717,80 +52781,91 @@ var config = {
      *| --- | --- | --- | --- | --- |
      *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 10**.
+     * **Notes:**
+     * Default value: 10
      */
     boxMargin: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
+     * **Notes:**
+     * Default value: 5
      */
     boxTextMargin: 5,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | noteMargin | Margin around notes | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 10**.
+     * **Notes:**
+     * Default value: 10
      */
     noteMargin: 10,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageMargin |Space between messages. | Integer | Required | Any Positive Value |
      *
-     ***Notes:**
+     * **Notes:**
      *
-     *Space between messages.
-     ***Default value 35**.
+     * Space between messages.
+     *
+     * Default value: 35
      */
     messageMargin: 35,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | messageAlign | Multiline message alignment | 3 | 4 | 'left', 'center', 'right' |
      *
-     ***Notes:**default:center**
+     * **Notes:**
+     * Default value: 'center'
      */
     messageAlign: 'center',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | 4 | Any Positive Value |
      *
-     ***Notes:**Depending on css styling this might need adjustment.
-     ***Default value 1**.
+     * **Notes:**
+     *
+     * Depending on css styling this might need adjustment.
+     *
+     * Default value: 1
      */
     bottomMarginAdj: 1,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | rightAngles | Curved Arrows become Right Angles | 3 | 4 | true, false |
      *
-     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
-     ***Default value false**.
+     * **Notes:**
+     *
+     * This will display arrows that start and begin at the same node as right angles, rather than a curves
+     *
+     * Default value: false
      */
     rightAngles: false,
     taskFontSize: 14,
@@ -52808,14 +52883,16 @@ var config = {
     arrowMarkerAbsolute: false,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -52824,14 +52901,16 @@ var config = {
     useWidth: undefined,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -52856,14 +52935,16 @@ var config = {
     radius: 5,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See notes | boolean | 4 | true, false |
      *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
+     * **Notes:**
      *
-     ***Default value true**.
+     * When this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -52873,95 +52954,112 @@ var config = {
    */
   er: {
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | diagramPadding | Amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
      *
-     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
-     ***Default value: 20**.
+     * **Notes:**
+     *
+     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     *
+     * Default value: 20
      */
     diagramPadding: 20,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | layoutDirection | Directional bias for layout of entities. | string | Required | "TB", "BT", "LR", "RL" |
      *
-     ***Notes:**
-     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     * **Notes:**
+     *
+     * 'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     *
      * T = top, B = bottom, L = left, and R = right.
-     ***Default value: TB **.
+     *
+     * Default value: 'TB'
      */
     layoutDirection: 'TB',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | minEntityWidth | The mimimum width of an entity box | Integer | Required | Any Positive Value  |
      *
-     ***Notes:**expressed in pixels
-     ***Default value: 100**.
+     * **Notes:**
+     * Expressed in pixels.
+     * Default value: 100
      */
     minEntityWidth: 100,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | minEntityHeight| The minimum height of an entity box | Integer | 4 | Any Positive Value |
      *
-     ***Notes:**expressed in pixels
-     ***Default value: 75 **
+     * **Notes:**
+     * Expressed in pixels
+     * Default value: 75
      */
     minEntityHeight: 75,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | entityPadding | Minimum internal padding betweentext in box and box borders | Integer | 4 | Any Positive Value |
      *
-     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
-     ***Default value: 15 **
+     * **Notes:**
+     *
+     * The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+     *
+     * Default value: 15
      */
     entityPadding: 15,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
-     ***Default value: gray **
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | stroke | Stroke color of box edges and lines | string | 4 | Any recognized color |
+     *
+     * **Notes:**
+     * Default value: 'gray'
      */
     stroke: 'gray',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | fill | Fill color of entity boxes | string | 4 | Any recognized color |
      *
-     ***Notes:**
-     ***Default value:'honeydew'**
+     * **Notes:**
+     * Default value: 'honeydew'
      */
     fill: 'honeydew',
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | fontSize | Font Size in pixels | Integer |  | Any Positive Value |
      *
-     ***Notes:**Font size (expressed as an integer representing a number of pixels)
-     ***Default value: 12 **
+     * **Notes:**
+     *
+     * Font size (expressed as an integer representing a number of pixels)
+     * Default value: 12
      */
     fontSize: 12,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See Notes | boolean | Required | true, false |
      *
-     ***Notes:**
-     *When this flag is set to true, the diagram width is locked to 100% and
-     *scaled based on available space. If set to false, the diagram reserves its
-     *absolute width.
-     ***Default value: true**.
+     * **Notes:**
+     *
+     * When this flag is set to true, the diagram width is locked to 100% and
+     * scaled based on available space. If set to false, the diagram reserves its
+     * absolute width.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -52973,15 +53071,17 @@ var config = {
     useWidth: undefined,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See Notes | boolean | Required | true, false |
      *
-     ***Notes:**
-     *When this flag is set to true, the diagram width is locked to 100% and
-     *scaled based on available space. If set to false, the diagram reserves its
-     *absolute width.
-     ***Default value: true**.
+     * **Notes:**
+     *
+     * When this flag is set to true, the diagram width is locked to 100% and
+     * scaled based on available space. If set to false, the diagram reserves its
+     * absolute width.
+     *
+     * Default value: true
      */
     useMaxWidth: true
   },
@@ -52993,15 +53093,17 @@ var config = {
     useWidth: undefined,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     * | Parameter | Description | Type | Required | Values |
+     * | --- | --- | --- | --- | --- |
+     * | useMaxWidth | See Notes | boolean | Required | true, false |
      *
-     ***Notes:**
-     *When this flag is set to true, the diagram width is locked to 100% and
-     *scaled based on available space. If set to false, the diagram reserves its
-     *absolute width.
-     ***Default value: true**.
+     * **Notes:**
+     *
+     * When this flag is set to true, the diagram width is locked to 100% and
+     * scaled based on available space. If set to false, the diagram reserves its
+     * absolute width.
+     *
+     * Default value: true
      */
     useMaxWidth: true,
     rect_fill: '#f9f9f9',
@@ -60046,7 +60148,7 @@ var getStyles = function getStyles(options) {
 /*!***************************************!*\
   !*** ./src/diagrams/gantt/ganttDb.js ***!
   \***************************************/
-/*! exports provided: parseDirective, clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
+/*! exports provided: parseDirective, clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, enableTopAxis, topAxisEnabled, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -60060,6 +60162,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setDateFormat", function() { return setDateFormat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableInclusiveEndDates", function() { return enableInclusiveEndDates; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "endDatesAreInclusive", function() { return endDatesAreInclusive; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableTopAxis", function() { return enableTopAxis; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "topAxisEnabled", function() { return topAxisEnabled; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDateFormat", function() { return getDateFormat; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setExcludes", function() { return setExcludes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getExcludes", function() { return getExcludes; });
@@ -60107,7 +60211,8 @@ var tasks = [];
 var currentSection = '';
 var tags = ['active', 'done', 'crit', 'milestone'];
 var funs = [];
-var inclusiveEndDates = false; // The serial order of the task in the script
+var inclusiveEndDates = false;
+var topAxis = false; // The serial order of the task in the script
 
 var lastOrder = 0;
 var parseDirective = function parseDirective(statement, context, type) {
@@ -60128,6 +60233,7 @@ var clear = function clear() {
   todayMarker = '';
   excludes = [];
   inclusiveEndDates = false;
+  topAxis = false;
   lastOrder = 0;
 };
 var setAxisFormat = function setAxisFormat(txt) {
@@ -60150,6 +60256,12 @@ var enableInclusiveEndDates = function enableInclusiveEndDates() {
 };
 var endDatesAreInclusive = function endDatesAreInclusive() {
   return inclusiveEndDates;
+};
+var enableTopAxis = function enableTopAxis() {
+  topAxis = true;
+};
+var topAxisEnabled = function topAxisEnabled() {
+  return topAxis;
 };
 var getDateFormat = function getDateFormat() {
   return dateFormat;
@@ -60701,6 +60813,8 @@ var bindFunctions = function bindFunctions(element) {
   getDateFormat: getDateFormat,
   enableInclusiveEndDates: enableInclusiveEndDates,
   endDatesAreInclusive: endDatesAreInclusive,
+  enableTopAxis: enableTopAxis,
+  topAxisEnabled: topAxisEnabled,
   setAxisFormat: setAxisFormat,
   getAxisFormat: getAxisFormat,
   setTodayMarker: setTodayMarker,
@@ -61026,8 +61140,13 @@ var draw = function draw(text, id) {
   }
 
   function makeGrid(theSidePad, theTopPad, w, h) {
-    var xAxis = Object(d3__WEBPACK_IMPORTED_MODULE_0__["axisBottom"])(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat(Object(d3__WEBPACK_IMPORTED_MODULE_0__["timeFormat"])(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
-    svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')').call(xAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10).attr('dy', '1em');
+    var bottomXAxis = Object(d3__WEBPACK_IMPORTED_MODULE_0__["axisBottom"])(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat(Object(d3__WEBPACK_IMPORTED_MODULE_0__["timeFormat"])(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+    svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')').call(bottomXAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10).attr('dy', '1em');
+
+    if (_ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"].topAxisEnabled() || conf.topAxis) {
+      var topXAxis = Object(d3__WEBPACK_IMPORTED_MODULE_0__["axisTop"])(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat(Object(d3__WEBPACK_IMPORTED_MODULE_0__["timeFormat"])(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__["parser"].yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+      svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + theTopPad + ')').call(topXAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10); // .attr('dy', '1em');
+    }
   }
 
   function vertLabels(theGap, theTopPad) {
@@ -61215,12 +61334,12 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,20,27,32],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,23],$Vb=[1,25],$Vc=[1,28],$Vd=[5,7,9,11,12,13,14,15,16,17,18,20,27,32];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,19,21,28,33],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,24],$Vc=[1,26],$Vd=[1,29],$Ve=[5,7,9,11,12,13,14,15,16,17,18,19,21,28,33];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"axisFormat":14,"excludes":15,"todayMarker":16,"title":17,"section":18,"clickStatement":19,"taskTxt":20,"taskData":21,"openDirective":22,"typeDirective":23,"closeDirective":24,":":25,"argDirective":26,"click":27,"callbackname":28,"callbackargs":29,"href":30,"clickStatementDebug":31,"open_directive":32,"type_directive":33,"arg_directive":34,"close_directive":35,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"axisFormat",15:"excludes",16:"todayMarker",17:"title",18:"section",20:"taskTxt",21:"taskData",25:":",27:"click",28:"callbackname",29:"callbackargs",30:"href",32:"open_directive",33:"type_directive",34:"arg_directive",35:"close_directive"},
-productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[19,2],[19,3],[19,3],[19,4],[19,3],[19,4],[19,2],[31,2],[31,3],[31,3],[31,4],[31,3],[31,4],[31,2],[22,1],[23,1],[26,1],[24,1]],
+symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"topAxis":14,"axisFormat":15,"excludes":16,"todayMarker":17,"title":18,"section":19,"clickStatement":20,"taskTxt":21,"taskData":22,"openDirective":23,"typeDirective":24,"closeDirective":25,":":26,"argDirective":27,"click":28,"callbackname":29,"callbackargs":30,"href":31,"clickStatementDebug":32,"open_directive":33,"type_directive":34,"arg_directive":35,"close_directive":36,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"topAxis",15:"axisFormat",16:"excludes",17:"todayMarker",18:"title",19:"section",21:"taskTxt",22:"taskData",26:":",28:"click",29:"callbackname",30:"callbackargs",31:"href",33:"open_directive",34:"type_directive",35:"arg_directive",36:"close_directive"},
+productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[20,2],[20,3],[20,3],[20,4],[20,3],[20,4],[20,2],[32,2],[32,3],[32,3],[32,4],[32,3],[32,4],[32,2],[23,1],[24,1],[27,1],[25,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -61248,69 +61367,72 @@ case 10:
 yy.enableInclusiveEndDates();this.$=$$[$0].substr(18);
 break;
 case 11:
-yy.setAxisFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
+yy.TopAxis();this.$=$$[$0].substr(8);
 break;
 case 12:
-yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
+yy.setAxisFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
 case 13:
-yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
+yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
 break;
 case 14:
-yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
 break;
 case 15:
+yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+break;
+case 16:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
-case 17:
+case 18:
 yy.addTask($$[$0-1],$$[$0]);this.$='task';
 break;
-case 21:
+case 22:
 this.$ = $$[$0-1];yy.setClickEvent($$[$0-1], $$[$0], null);
 break;
-case 22:
+case 23:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 23:
+case 24:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], null);yy.setLink($$[$0-2],$$[$0]);
 break;
-case 24:
+case 25:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setLink($$[$0-3],$$[$0]);
 break;
-case 25:
+case 26:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0], null);yy.setLink($$[$0-2],$$[$0-1]);
 break;
-case 26:
+case 27:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-1], $$[$0]);yy.setLink($$[$0-3],$$[$0-2]);
 break;
-case 27:
+case 28:
 this.$ = $$[$0-1];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 28: case 34:
+case 29: case 35:
 this.$=$$[$0-1] + ' ' + $$[$0];
 break;
-case 29: case 30: case 32:
+case 30: case 31: case 33:
 this.$=$$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 31: case 33:
+case 32: case 34:
 this.$=$$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 35:
+case 36:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 36:
+case 37:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 37:
+case 38:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 38:
+case 39:
  yy.parseDirective('}%%', 'close_directive', 'gantt'); 
 break;
 }
 },
-table: [{3:1,4:2,5:$V0,22:4,32:$V1},{1:[3]},{3:6,4:2,5:$V0,22:4,32:$V1},o($V2,[2,3],{6:7}),{23:8,33:[1,9]},{33:[2,35]},{1:[2,1]},{4:24,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:22,20:$Va,22:4,27:$Vb,32:$V1},{24:26,25:[1,27],35:$Vc},o([25,35],[2,36]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:24,10:29,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:22,20:$Va,22:4,27:$Vb,32:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),{21:[1,30]},o($V2,[2,18]),{28:[1,31],30:[1,32]},{11:[1,33]},{26:34,34:[1,35]},{11:[2,38]},o($V2,[2,5]),o($V2,[2,17]),o($V2,[2,21],{29:[1,36],30:[1,37]}),o($V2,[2,27],{28:[1,38]}),o($Vd,[2,19]),{24:39,35:$Vc},{35:[2,37]},o($V2,[2,22],{30:[1,40]}),o($V2,[2,23]),o($V2,[2,25],{29:[1,41]}),{11:[1,42]},o($V2,[2,24]),o($V2,[2,26]),o($Vd,[2,20])],
-defaultActions: {5:[2,35],6:[2,1],28:[2,38],35:[2,37]},
+table: [{3:1,4:2,5:$V0,23:4,33:$V1},{1:[3]},{3:6,4:2,5:$V0,23:4,33:$V1},o($V2,[2,3],{6:7}),{24:8,34:[1,9]},{34:[2,36]},{1:[2,1]},{4:25,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:23,21:$Vb,23:4,28:$Vc,33:$V1},{25:27,26:[1,28],36:$Vd},o([26,36],[2,37]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:25,10:30,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:23,21:$Vb,23:4,28:$Vc,33:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),o($V2,[2,17]),{22:[1,31]},o($V2,[2,19]),{29:[1,32],31:[1,33]},{11:[1,34]},{27:35,35:[1,36]},{11:[2,39]},o($V2,[2,5]),o($V2,[2,18]),o($V2,[2,22],{30:[1,37],31:[1,38]}),o($V2,[2,28],{29:[1,39]}),o($Ve,[2,20]),{25:40,36:$Vd},{36:[2,38]},o($V2,[2,23],{31:[1,41]}),o($V2,[2,24]),o($V2,[2,26],{30:[1,42]}),{11:[1,43]},o($V2,[2,25]),o($V2,[2,27]),o($Ve,[2,21])],
+defaultActions: {5:[2,36],6:[2,1],29:[2,39],36:[2,38]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -61789,15 +61911,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 32; 
+case 0: this.begin('open_directive'); return 33; 
 break;
-case 1: this.begin('type_directive'); return 33; 
+case 1: this.begin('type_directive'); return 34; 
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 25; 
+case 2: this.popState(); this.begin('arg_directive'); return 26; 
 break;
-case 3: this.popState(); this.popState(); return 35; 
+case 3: this.popState(); this.popState(); return 36; 
 break;
-case 4:return 34;
+case 4:return 35;
 break;
 case 5:/* skip comments */
 break;
@@ -61817,7 +61939,7 @@ case 12:this.begin("href");
 break;
 case 13:this.popState();
 break;
-case 14:return 30;
+case 14:return 31;
 break;
 case 15:this.begin("callbackname");
 break;
@@ -61825,17 +61947,17 @@ case 16:this.popState();
 break;
 case 17:this.popState(); this.begin("callbackargs");
 break;
-case 18:return 28;
+case 18:return 29;
 break;
 case 19:this.popState();
 break;
-case 20:return 29;
+case 20:return 30;
 break;
 case 21:this.begin("click");
 break;
 case 22:this.popState();
 break;
-case 23:return 27;
+case 23:return 28;
 break;
 case 24:return 5;
 break;
@@ -61849,26 +61971,28 @@ case 28:return 15;
 break;
 case 29:return 16;
 break;
-case 30:return 'date';
+case 30:return 17;
 break;
-case 31:return 17;
+case 31:return 'date';
 break;
 case 32:return 18;
 break;
-case 33:return 20;
+case 33:return 19;
 break;
 case 34:return 21;
 break;
-case 35:return 25;
+case 35:return 22;
 break;
-case 36:return 7;
+case 36:return 26;
 break;
-case 37:return 'INVALID';
+case 37:return 7;
+break;
+case 38:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:topAxis\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],"inclusive":true}}
 });
 return lexer;
 })();
@@ -64961,126 +65085,126 @@ var getStyles = function getStyles(options) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[1,14],$V3=[2,9],$V4=[1,18],$V5=[1,19],$V6=[1,20],$V7=[1,21],$V8=[1,22],$V9=[1,23],$Va=[1,16],$Vb=[1,24],$Vc=[1,25],$Vd=[1,28],$Ve=[66,67],$Vf=[6,8,35,36,37,38,39,40,48,55,57,66,67],$Vg=[5,14],$Vh=[1,47],$Vi=[1,48],$Vj=[1,49],$Vk=[1,50],$Vl=[1,51],$Vm=[1,52],$Vn=[1,53],$Vo=[57,58],$Vp=[1,65],$Vq=[1,61],$Vr=[1,62],$Vs=[1,63],$Vt=[1,64],$Vu=[1,66],$Vv=[1,70],$Vw=[1,71],$Vx=[1,68],$Vy=[1,69],$Vz=[6,8,35,36,37,38,39,40,48,66,67];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[1,17],$V3=[2,10],$V4=[1,21],$V5=[1,22],$V6=[1,23],$V7=[1,24],$V8=[1,25],$V9=[1,26],$Va=[1,19],$Vb=[1,27],$Vc=[1,28],$Vd=[1,31],$Ve=[66,67],$Vf=[5,8,14,35,36,37,38,39,40,48,55,57,66,67],$Vg=[5,6,8,14,35,36,37,38,39,40,48,66,67],$Vh=[1,51],$Vi=[1,52],$Vj=[1,53],$Vk=[1,54],$Vl=[1,55],$Vm=[1,56],$Vn=[1,57],$Vo=[57,58],$Vp=[1,69],$Vq=[1,65],$Vr=[1,66],$Vs=[1,67],$Vt=[1,68],$Vu=[1,70],$Vv=[1,74],$Vw=[1,75],$Vx=[1,72],$Vy=[1,73],$Vz=[5,8,14,35,36,37,38,39,40,48,66,67];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"directive":4,"RD":5,"NEWLINE":6,"diagram":7,"EOF":8,"openDirective":9,"typeDirective":10,"closeDirective":11,":":12,"argDirective":13,"open_directive":14,"type_directive":15,"arg_directive":16,"close_directive":17,"requirementDef":18,"elementDef":19,"relationshipDef":20,"requirementType":21,"requirementName":22,"STRUCT_START":23,"requirementBody":24,"ID":25,"COLONSEP":26,"id":27,"TEXT":28,"text":29,"RISK":30,"riskLevel":31,"VERIFYMTHD":32,"verifyType":33,"STRUCT_STOP":34,"REQUIREMENT":35,"FUNCTIONAL_REQUIREMENT":36,"INTERFACE_REQUIREMENT":37,"PERFORMANCE_REQUIREMENT":38,"PHYSICAL_REQUIREMENT":39,"DESIGN_CONSTRAINT":40,"LOW_RISK":41,"MED_RISK":42,"HIGH_RISK":43,"VERIFY_ANALYSIS":44,"VERIFY_DEMONSTRATION":45,"VERIFY_INSPECTION":46,"VERIFY_TEST":47,"ELEMENT":48,"elementName":49,"elementBody":50,"TYPE":51,"type":52,"DOCREF":53,"ref":54,"END_ARROW_L":55,"relationship":56,"LINE":57,"END_ARROW_R":58,"CONTAINS":59,"COPIES":60,"DERIVES":61,"SATISFIES":62,"VERIFIES":63,"REFINES":64,"TRACES":65,"unqString":66,"qString":67,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"RD",6:"NEWLINE",8:"EOF",12:":",14:"open_directive",15:"type_directive",16:"arg_directive",17:"close_directive",23:"STRUCT_START",25:"ID",26:"COLONSEP",28:"TEXT",30:"RISK",32:"VERIFYMTHD",34:"STRUCT_STOP",35:"REQUIREMENT",36:"FUNCTIONAL_REQUIREMENT",37:"INTERFACE_REQUIREMENT",38:"PERFORMANCE_REQUIREMENT",39:"PHYSICAL_REQUIREMENT",40:"DESIGN_CONSTRAINT",41:"LOW_RISK",42:"MED_RISK",43:"HIGH_RISK",44:"VERIFY_ANALYSIS",45:"VERIFY_DEMONSTRATION",46:"VERIFY_INSPECTION",47:"VERIFY_TEST",48:"ELEMENT",51:"TYPE",53:"DOCREF",55:"END_ARROW_L",57:"LINE",58:"END_ARROW_R",59:"CONTAINS",60:"COPIES",61:"DERIVES",62:"SATISFIES",63:"VERIFIES",64:"REFINES",65:"TRACES",66:"unqString",67:"qString"},
-productions_: [0,[3,2],[3,4],[4,3],[4,5],[9,1],[10,1],[13,1],[11,1],[7,0],[7,2],[7,2],[7,2],[7,2],[18,5],[24,5],[24,5],[24,5],[24,5],[24,2],[24,1],[21,1],[21,1],[21,1],[21,1],[21,1],[21,1],[31,1],[31,1],[31,1],[33,1],[33,1],[33,1],[33,1],[19,5],[50,5],[50,5],[50,2],[50,1],[20,5],[20,5],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[22,1],[22,1],[27,1],[27,1],[29,1],[29,1],[49,1],[49,1],[52,1],[52,1],[54,1],[54,1]],
+symbols_: {"error":2,"start":3,"directive":4,"NEWLINE":5,"RD":6,"diagram":7,"EOF":8,"openDirective":9,"typeDirective":10,"closeDirective":11,":":12,"argDirective":13,"open_directive":14,"type_directive":15,"arg_directive":16,"close_directive":17,"requirementDef":18,"elementDef":19,"relationshipDef":20,"requirementType":21,"requirementName":22,"STRUCT_START":23,"requirementBody":24,"ID":25,"COLONSEP":26,"id":27,"TEXT":28,"text":29,"RISK":30,"riskLevel":31,"VERIFYMTHD":32,"verifyType":33,"STRUCT_STOP":34,"REQUIREMENT":35,"FUNCTIONAL_REQUIREMENT":36,"INTERFACE_REQUIREMENT":37,"PERFORMANCE_REQUIREMENT":38,"PHYSICAL_REQUIREMENT":39,"DESIGN_CONSTRAINT":40,"LOW_RISK":41,"MED_RISK":42,"HIGH_RISK":43,"VERIFY_ANALYSIS":44,"VERIFY_DEMONSTRATION":45,"VERIFY_INSPECTION":46,"VERIFY_TEST":47,"ELEMENT":48,"elementName":49,"elementBody":50,"TYPE":51,"type":52,"DOCREF":53,"ref":54,"END_ARROW_L":55,"relationship":56,"LINE":57,"END_ARROW_R":58,"CONTAINS":59,"COPIES":60,"DERIVES":61,"SATISFIES":62,"VERIFIES":63,"REFINES":64,"TRACES":65,"unqString":66,"qString":67,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"NEWLINE",6:"RD",8:"EOF",12:":",14:"open_directive",15:"type_directive",16:"arg_directive",17:"close_directive",23:"STRUCT_START",25:"ID",26:"COLONSEP",28:"TEXT",30:"RISK",32:"VERIFYMTHD",34:"STRUCT_STOP",35:"REQUIREMENT",36:"FUNCTIONAL_REQUIREMENT",37:"INTERFACE_REQUIREMENT",38:"PERFORMANCE_REQUIREMENT",39:"PHYSICAL_REQUIREMENT",40:"DESIGN_CONSTRAINT",41:"LOW_RISK",42:"MED_RISK",43:"HIGH_RISK",44:"VERIFY_ANALYSIS",45:"VERIFY_DEMONSTRATION",46:"VERIFY_INSPECTION",47:"VERIFY_TEST",48:"ELEMENT",51:"TYPE",53:"DOCREF",55:"END_ARROW_L",57:"LINE",58:"END_ARROW_R",59:"CONTAINS",60:"COPIES",61:"DERIVES",62:"SATISFIES",63:"VERIFIES",64:"REFINES",65:"TRACES",66:"unqString",67:"qString"},
+productions_: [0,[3,3],[3,2],[3,4],[4,3],[4,5],[9,1],[10,1],[13,1],[11,1],[7,0],[7,2],[7,2],[7,2],[7,2],[7,2],[18,5],[24,5],[24,5],[24,5],[24,5],[24,2],[24,1],[21,1],[21,1],[21,1],[21,1],[21,1],[21,1],[31,1],[31,1],[31,1],[33,1],[33,1],[33,1],[33,1],[19,5],[50,5],[50,5],[50,2],[50,1],[20,5],[20,5],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[22,1],[22,1],[27,1],[27,1],[29,1],[29,1],[49,1],[49,1],[52,1],[52,1],[54,1],[54,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 5:
+case 6:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 6:
+case 7:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 7:
+case 8:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 8:
+case 9:
  yy.parseDirective('}%%', 'close_directive', 'pie'); 
 break;
-case 9:
+case 10:
  this.$ = [] 
 break;
-case 14:
+case 16:
  yy.addRequirement($$[$0-3], $$[$0-4]) 
 break;
-case 15:
+case 17:
  yy.setNewReqId($$[$0-2]); 
 break;
-case 16:
+case 18:
  yy.setNewReqText($$[$0-2]); 
 break;
-case 17:
+case 19:
  yy.setNewReqRisk($$[$0-2]); 
 break;
-case 18:
+case 20:
  yy.setNewReqVerifyMethod($$[$0-2]); 
 break;
-case 21:
+case 23:
  this.$=yy.RequirementType.REQUIREMENT;
 break;
-case 22:
+case 24:
  this.$=yy.RequirementType.FUNCTIONAL_REQUIREMENT;
 break;
-case 23:
+case 25:
  this.$=yy.RequirementType.INTERFACE_REQUIREMENT;
 break;
-case 24:
+case 26:
  this.$=yy.RequirementType.PERFORMANCE_REQUIREMENT;
 break;
-case 25:
+case 27:
  this.$=yy.RequirementType.PHYSICAL_REQUIREMENT;
 break;
-case 26:
+case 28:
  this.$=yy.RequirementType.DESIGN_CONSTRAINT;
 break;
-case 27:
+case 29:
  this.$=yy.RiskLevel.LOW_RISK;
 break;
-case 28:
+case 30:
  this.$=yy.RiskLevel.MED_RISK;
 break;
-case 29:
+case 31:
  this.$=yy.RiskLevel.HIGH_RISK;
 break;
-case 30:
+case 32:
  this.$=yy.VerifyType.VERIFY_ANALYSIS;
 break;
-case 31:
+case 33:
  this.$=yy.VerifyType.VERIFY_DEMONSTRATION;
 break;
-case 32:
+case 34:
  this.$=yy.VerifyType.VERIFY_INSPECTION;
 break;
-case 33:
+case 35:
  this.$=yy.VerifyType.VERIFY_TEST;
 break;
-case 34:
+case 36:
  yy.addElement($$[$0-3]) 
 break;
-case 35:
+case 37:
  yy.setNewElementType($$[$0-2]); 
 break;
-case 36:
+case 38:
  yy.setNewElementDocRef($$[$0-2]); 
 break;
-case 39:
+case 41:
   yy.addRelationship($$[$0-2], $$[$0], $$[$0-4]) 
 break;
-case 40:
+case 42:
  yy.addRelationship($$[$0-2], $$[$0-4], $$[$0]) 
 break;
-case 41:
+case 43:
  this.$=yy.Relationships.CONTAINS;
 break;
-case 42:
+case 44:
  this.$=yy.Relationships.COPIES;
 break;
-case 43:
+case 45:
  this.$=yy.Relationships.DERIVES;
 break;
-case 44:
+case 46:
  this.$=yy.Relationships.SATISFIES;
 break;
-case 45:
+case 47:
  this.$=yy.Relationships.VERIFIES;
 break;
-case 46:
+case 48:
  this.$=yy.Relationships.REFINES;
 break;
-case 47:
+case 49:
  this.$=yy.Relationships.TRACES;
 break;
 }
 },
-table: [{3:1,4:2,5:$V0,9:4,14:$V1},{1:[3]},{3:6,4:2,5:$V0,9:4,14:$V1},{6:[1,7]},{10:8,15:[1,9]},{15:[2,5]},{1:[2,1]},{6:$V2,7:10,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{11:26,12:[1,27],17:$Vd},o([12,17],[2,6]),{8:[1,29]},{6:$V2,7:30,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{6:$V2,7:31,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{6:$V2,7:32,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{6:$V2,7:33,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{22:34,66:[1,35],67:[1,36]},{49:37,66:[1,38],67:[1,39]},{55:[1,40],57:[1,41]},o($Ve,[2,21]),o($Ve,[2,22]),o($Ve,[2,23]),o($Ve,[2,24]),o($Ve,[2,25]),o($Ve,[2,26]),o($Vf,[2,50]),o($Vf,[2,51]),o($Vg,[2,3]),{13:42,16:[1,43]},o($Vg,[2,8]),{1:[2,2]},{8:[2,10]},{8:[2,11]},{8:[2,12]},{8:[2,13]},{23:[1,44]},{23:[2,48]},{23:[2,49]},{23:[1,45]},{23:[2,54]},{23:[2,55]},{56:46,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{56:54,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{11:55,17:$Vd},{17:[2,7]},{6:[1,56]},{6:[1,57]},{57:[1,58]},o($Vo,[2,41]),o($Vo,[2,42]),o($Vo,[2,43]),o($Vo,[2,44]),o($Vo,[2,45]),o($Vo,[2,46]),o($Vo,[2,47]),{58:[1,59]},o($Vg,[2,4]),{6:$Vp,24:60,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vv,34:$Vw,50:67,51:$Vx,53:$Vy},{27:72,66:$Vb,67:$Vc},{27:73,66:$Vb,67:$Vc},o($Vz,[2,14]),{26:[1,74]},{26:[1,75]},{26:[1,76]},{26:[1,77]},{6:$Vp,24:78,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},o($Vz,[2,20]),o($Vz,[2,34]),{26:[1,79]},{26:[1,80]},{6:$Vv,34:$Vw,50:81,51:$Vx,53:$Vy},o($Vz,[2,38]),o($Vz,[2,39]),o($Vz,[2,40]),{27:82,66:$Vb,67:$Vc},{29:83,66:[1,84],67:[1,85]},{31:86,41:[1,87],42:[1,88],43:[1,89]},{33:90,44:[1,91],45:[1,92],46:[1,93],47:[1,94]},o($Vz,[2,19]),{52:95,66:[1,96],67:[1,97]},{54:98,66:[1,99],67:[1,100]},o($Vz,[2,37]),{6:[1,101]},{6:[1,102]},{6:[2,52]},{6:[2,53]},{6:[1,103]},{6:[2,27]},{6:[2,28]},{6:[2,29]},{6:[1,104]},{6:[2,30]},{6:[2,31]},{6:[2,32]},{6:[2,33]},{6:[1,105]},{6:[2,56]},{6:[2,57]},{6:[1,106]},{6:[2,58]},{6:[2,59]},{6:$Vp,24:107,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vp,24:108,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vp,24:109,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vp,24:110,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vv,34:$Vw,50:111,51:$Vx,53:$Vy},{6:$Vv,34:$Vw,50:112,51:$Vx,53:$Vy},o($Vz,[2,15]),o($Vz,[2,16]),o($Vz,[2,17]),o($Vz,[2,18]),o($Vz,[2,35]),o($Vz,[2,36])],
-defaultActions: {5:[2,5],6:[2,1],29:[2,2],30:[2,10],31:[2,11],32:[2,12],33:[2,13],35:[2,48],36:[2,49],38:[2,54],39:[2,55],43:[2,7],84:[2,52],85:[2,53],87:[2,27],88:[2,28],89:[2,29],91:[2,30],92:[2,31],93:[2,32],94:[2,33],96:[2,56],97:[2,57],99:[2,58],100:[2,59]},
+table: [{3:1,4:2,6:$V0,9:4,14:$V1},{1:[3]},{3:7,4:2,5:[1,6],6:$V0,9:4,14:$V1},{5:[1,8]},{10:9,15:[1,10]},{15:[2,6]},{3:11,4:2,6:$V0,9:4,14:$V1},{1:[2,2]},{4:16,5:$V2,7:12,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{11:29,12:[1,30],17:$Vd},o([12,17],[2,7]),{1:[2,1]},{8:[1,32]},{4:16,5:$V2,7:33,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{4:16,5:$V2,7:34,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{4:16,5:$V2,7:35,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{4:16,5:$V2,7:36,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{4:16,5:$V2,7:37,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{22:38,66:[1,39],67:[1,40]},{49:41,66:[1,42],67:[1,43]},{55:[1,44],57:[1,45]},o($Ve,[2,23]),o($Ve,[2,24]),o($Ve,[2,25]),o($Ve,[2,26]),o($Ve,[2,27]),o($Ve,[2,28]),o($Vf,[2,52]),o($Vf,[2,53]),o($Vg,[2,4]),{13:46,16:[1,47]},o($Vg,[2,9]),{1:[2,3]},{8:[2,11]},{8:[2,12]},{8:[2,13]},{8:[2,14]},{8:[2,15]},{23:[1,48]},{23:[2,50]},{23:[2,51]},{23:[1,49]},{23:[2,56]},{23:[2,57]},{56:50,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{56:58,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{11:59,17:$Vd},{17:[2,8]},{5:[1,60]},{5:[1,61]},{57:[1,62]},o($Vo,[2,43]),o($Vo,[2,44]),o($Vo,[2,45]),o($Vo,[2,46]),o($Vo,[2,47]),o($Vo,[2,48]),o($Vo,[2,49]),{58:[1,63]},o($Vg,[2,5]),{5:$Vp,24:64,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vv,34:$Vw,50:71,51:$Vx,53:$Vy},{27:76,66:$Vb,67:$Vc},{27:77,66:$Vb,67:$Vc},o($Vz,[2,16]),{26:[1,78]},{26:[1,79]},{26:[1,80]},{26:[1,81]},{5:$Vp,24:82,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},o($Vz,[2,22]),o($Vz,[2,36]),{26:[1,83]},{26:[1,84]},{5:$Vv,34:$Vw,50:85,51:$Vx,53:$Vy},o($Vz,[2,40]),o($Vz,[2,41]),o($Vz,[2,42]),{27:86,66:$Vb,67:$Vc},{29:87,66:[1,88],67:[1,89]},{31:90,41:[1,91],42:[1,92],43:[1,93]},{33:94,44:[1,95],45:[1,96],46:[1,97],47:[1,98]},o($Vz,[2,21]),{52:99,66:[1,100],67:[1,101]},{54:102,66:[1,103],67:[1,104]},o($Vz,[2,39]),{5:[1,105]},{5:[1,106]},{5:[2,54]},{5:[2,55]},{5:[1,107]},{5:[2,29]},{5:[2,30]},{5:[2,31]},{5:[1,108]},{5:[2,32]},{5:[2,33]},{5:[2,34]},{5:[2,35]},{5:[1,109]},{5:[2,58]},{5:[2,59]},{5:[1,110]},{5:[2,60]},{5:[2,61]},{5:$Vp,24:111,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vp,24:112,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vp,24:113,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vp,24:114,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vv,34:$Vw,50:115,51:$Vx,53:$Vy},{5:$Vv,34:$Vw,50:116,51:$Vx,53:$Vy},o($Vz,[2,17]),o($Vz,[2,18]),o($Vz,[2,19]),o($Vz,[2,20]),o($Vz,[2,37]),o($Vz,[2,38])],
+defaultActions: {5:[2,6],7:[2,2],11:[2,1],32:[2,3],33:[2,11],34:[2,12],35:[2,13],36:[2,14],37:[2,15],39:[2,50],40:[2,51],42:[2,56],43:[2,57],47:[2,8],88:[2,54],89:[2,55],91:[2,29],92:[2,30],93:[2,31],95:[2,32],96:[2,33],97:[2,34],98:[2,35],100:[2,58],101:[2,59],103:[2,60],104:[2,61]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -65569,7 +65693,7 @@ case 3: this.popState(); this.popState(); return 17;
 break;
 case 4:return 16;
 break;
-case 5:return 6;
+case 5:return 5;
 break;
 case 6:/* skip all whitespace */
 break;
@@ -65579,7 +65703,7 @@ case 8:/* skip comments */
 break;
 case 9:return 8;
 break;
-case 10:return 5;
+case 10:return 6;
 break;
 case 11:return 23;
 break;
@@ -65880,10 +66004,14 @@ var ReqMarkers = {
 
 var insertLineEndings = function insertLineEndings(parentNode, conf) {
   var containsNode = parentNode.append('defs').append('marker').attr('id', ReqMarkers.CONTAINS + '_line_ending').attr('refX', 0).attr('refY', conf.line_height / 2).attr('markerWidth', conf.line_height).attr('markerHeight', conf.line_height).attr('orient', 'auto').append('g');
-  containsNode.append('circle').attr('cx', conf.line_height / 2).attr('cy', conf.line_height / 2).attr('r', conf.line_height / 2).attr('stroke', conf.rect_border_color).attr('stroke-width', 1).attr('fill', 'none');
-  containsNode.append('line').attr('x1', 0).attr('x2', conf.line_height).attr('y1', conf.line_height / 2).attr('y2', conf.line_height / 2).attr('stroke', conf.rect_border_color).attr('stroke-width', 1);
-  containsNode.append('line').attr('y1', 0).attr('y2', conf.line_height).attr('x1', conf.line_height / 2).attr('x2', conf.line_height / 2).attr('stroke', conf.rect_border_color).attr('stroke-width', 1);
-  parentNode.append('defs').append('marker').attr('id', ReqMarkers.ARROW + '_line_ending').attr('refX', conf.line_height).attr('refY', 0.5 * conf.line_height).attr('markerWidth', conf.line_height).attr('markerHeight', conf.line_height).attr('orient', 'auto').append('path').attr('d', "M0,0 \n      L".concat(conf.line_height, ",").concat(conf.line_height / 2, " \n      M").concat(conf.line_height, ",").concat(conf.line_height / 2, " \n      L0,").concat(conf.line_height)).attr('stroke-width', 1).attr('stroke', conf.rect_border_color);
+  containsNode.append('circle').attr('cx', conf.line_height / 2).attr('cy', conf.line_height / 2).attr('r', conf.line_height / 2) // .attr('stroke', conf.rect_border_color)
+  // .attr('stroke-width', 1)
+  .attr('fill', 'none');
+  containsNode.append('line').attr('x1', 0).attr('x2', conf.line_height).attr('y1', conf.line_height / 2).attr('y2', conf.line_height / 2) // .attr('stroke', conf.rect_border_color)
+  .attr('stroke-width', 1);
+  containsNode.append('line').attr('y1', 0).attr('y2', conf.line_height).attr('x1', conf.line_height / 2).attr('x2', conf.line_height / 2) // .attr('stroke', conf.rect_border_color)
+  .attr('stroke-width', 1);
+  parentNode.append('defs').append('marker').attr('id', ReqMarkers.ARROW + '_line_ending').attr('refX', conf.line_height).attr('refY', 0.5 * conf.line_height).attr('markerWidth', conf.line_height).attr('markerHeight', conf.line_height).attr('orient', 'auto').append('path').attr('d', "M0,0\n      L".concat(conf.line_height, ",").concat(conf.line_height / 2, "\n      M").concat(conf.line_height, ",").concat(conf.line_height / 2, "\n      L0,").concat(conf.line_height)).attr('stroke-width', 1); // .attr('stroke', conf.rect_border_color);
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -65911,17 +66039,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dagre__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! graphlib */ "./node_modules/graphlib/index.js");
 /* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
-/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./parser/requirementDiagram */ "./src/diagrams/requirement/parser/requirementDiagram.jison");
-/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _requirementDb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./requirementDb */ "./src/diagrams/requirement/requirementDb.js");
-/* harmony import */ var _requirementMarkers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./requirementMarkers */ "./src/diagrams/requirement/requirementMarkers.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./parser/requirementDiagram */ "./src/diagrams/requirement/parser/requirementDiagram.jison");
+/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _requirementDb__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./requirementDb */ "./src/diagrams/requirement/requirementDb.js");
+/* harmony import */ var _requirementMarkers__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./requirementMarkers */ "./src/diagrams/requirement/requirementMarkers.js");
 
 
-
+ // import * as configApi from '../../config';
 
 
 
@@ -65944,12 +66071,16 @@ var setConf = function setConf(cnf) {
 };
 
 var newRectNode = function newRectNode(parentNode, id) {
-  return parentNode.insert('rect', '#' + id).attr('class', 'req reqBox').attr('fill', conf.rect_fill).attr('fill-opacity', '100%').attr('stroke', conf.rect_border_color).attr('stroke-size', conf.rect_border_size).attr('x', 0).attr('y', 0).attr('width', conf.rect_min_width + 'px').attr('height', conf.rect_min_height + 'px');
+  return parentNode.insert('rect', '#' + id).attr('class', 'req reqBox').attr('x', 0).attr('y', 0).attr('width', conf.rect_min_width + 'px').attr('height', conf.rect_min_height + 'px');
 };
 
 var newTitleNode = function newTitleNode(parentNode, id, txts) {
   var x = conf.rect_min_width / 2;
-  var title = parentNode.append('text').attr('class', 'req reqLabel reqTitle').attr('id', id).attr('x', x).attr('y', conf.rect_padding).attr('dominant-baseline', 'hanging').attr('style', 'font-family: ' + _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().fontFamily + '; font-size: ' + conf.fontSize + 'px');
+  var title = parentNode.append('text').attr('class', 'req reqLabel reqTitle').attr('id', id).attr('x', x).attr('y', conf.rect_padding).attr('dominant-baseline', 'hanging'); // .attr(
+  //   'style',
+  //   'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+  // )
+
   var i = 0;
   txts.forEach(function (textStr) {
     if (i == 0) {
@@ -65963,7 +66094,7 @@ var newTitleNode = function newTitleNode(parentNode, id, txts) {
   var yPadding = 1.5 * conf.rect_padding;
   var linePadding = i * conf.line_height * 0.75;
   var totalY = yPadding + linePadding;
-  parentNode.append('line').attr('x1', '0').attr('x2', conf.rect_min_width).attr('y1', totalY).attr('y2', totalY).attr('style', "stroke: ".concat(conf.rect_border_color, "; stroke-width: 1"));
+  parentNode.append('line').attr('class', 'req-title-line').attr('x1', '0').attr('x2', conf.rect_min_width).attr('y1', totalY).attr('y2', totalY);
   return {
     titleNode: title,
     y: totalY
@@ -65971,7 +66102,11 @@ var newTitleNode = function newTitleNode(parentNode, id, txts) {
 };
 
 var newBodyNode = function newBodyNode(parentNode, id, txts, yStart) {
-  var body = parentNode.append('text').attr('class', 'req reqLabel').attr('id', id).attr('x', conf.rect_padding).attr('y', yStart).attr('dominant-baseline', 'hanging').attr('style', 'font-family: ' + _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().fontFamily + '; font-size: ' + conf.fontSize + 'px');
+  var body = parentNode.append('text').attr('class', 'req reqLabel').attr('id', id).attr('x', conf.rect_padding).attr('y', yStart).attr('dominant-baseline', 'hanging'); // .attr(
+  //   'style',
+  //   'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+  // );
+
   var currentRow = 0;
   var charLimit = 30;
   var wrappedTxts = [];
@@ -66008,7 +66143,8 @@ var addEdgeLabel = function addEdgeLabel(parentNode, svgPath, conf, txt) {
 
   var labelId = 'rel' + relCnt;
   relCnt++;
-  var labelNode = parentNode.append('text').attr('class', 'er relationshipLabel').attr('id', labelId).attr('x', labelPoint.x).attr('y', labelPoint.y).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('style', 'font-family: ' + conf.fontFamily + '; font-size: ' + conf.fontSize + 'px').text(txt); // Figure out how big the opaque 'container' rectangle needs to be
+  var labelNode = parentNode.append('text').attr('class', 'req relationshipLabel').attr('id', labelId).attr('x', labelPoint.x).attr('y', labelPoint.y).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle') // .attr('style', 'font-family: ' + conf.fontFamily + '; font-size: ' + conf.fontSize + 'px')
+  .text(txt); // Figure out how big the opaque 'container' rectangle needs to be
 
   var labelBBox = labelNode.node().getBBox(); // Insert the opaque rectangle before the text label
 
@@ -66025,13 +66161,13 @@ var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g
     return d.y;
   }); // Insert the line at the right place
 
-  var svgPath = svg.insert('path', '#' + insert).attr('class', 'er relationshipLine').attr('d', lineFunction(edge.points)).attr('stroke', conf.rect_border_color).attr('fill', 'none');
+  var svgPath = svg.insert('path', '#' + insert).attr('class', 'er relationshipLine').attr('d', lineFunction(edge.points)).attr('fill', 'none');
 
-  if (rel.type == _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].Relationships.CONTAINS) {
-    svgPath.attr('marker-start', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_6__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + rel.type + '_line_ending' + ')');
+  if (rel.type == _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"].Relationships.CONTAINS) {
+    svgPath.attr('marker-start', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_5__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + rel.type + '_line_ending' + ')');
   } else {
     svgPath.attr('stroke-dasharray', '10,7');
-    svgPath.attr('marker-end', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_6__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + _requirementMarkers__WEBPACK_IMPORTED_MODULE_9__["default"].ReqMarkers.ARROW + '_line_ending' + ')');
+    svgPath.attr('marker-end', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_5__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + _requirementMarkers__WEBPACK_IMPORTED_MODULE_8__["default"].ReqMarkers.ARROW + '_line_ending' + ')');
   }
 
   addEdgeLabel(svg, svgPath, conf, "<<".concat(rel.type, ">>"));
@@ -66043,7 +66179,7 @@ var drawReqs = function drawReqs(reqs, graph, svgNode) {
     var req = reqs[reqName];
     reqName = elementString(reqName);
     console.log('reqName: ', reqName);
-    _logger__WEBPACK_IMPORTED_MODULE_4__["log"].info('Added new requirement: ', reqName);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('Added new requirement: ', reqName);
     var groupNode = svgNode.append('g').attr('id', reqName);
     var textId = 'req-' + reqName;
     var rectNode = newRectNode(groupNode, textId);
@@ -66111,10 +66247,10 @@ var elementString = function elementString(str) {
 };
 
 var draw = function draw(text, id) {
-  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__["parser"].yy = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"];
-  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__["parser"].parse(text);
+  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6__["parser"].yy = _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"];
+  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6__["parser"].parse(text);
   var svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id='".concat(id, "']"));
-  _requirementMarkers__WEBPACK_IMPORTED_MODULE_9__["default"].insertLineEndings(svg, conf);
+  _requirementMarkers__WEBPACK_IMPORTED_MODULE_8__["default"].insertLineEndings(svg, conf);
   var g = new graphlib__WEBPACK_IMPORTED_MODULE_2___default.a.Graph({
     multigraph: false,
     compound: false,
@@ -66129,9 +66265,9 @@ var draw = function draw(text, id) {
   }).setDefaultEdgeLabel(function () {
     return {};
   });
-  var requirements = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].getRequirements();
-  var elements = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].getElements();
-  var relationships = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].getRelationships();
+  var requirements = _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"].getRequirements();
+  var elements = _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"].getElements();
+  var relationships = _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"].getRelationships();
   drawReqs(requirements, g, svg);
   drawElements(elements, g, svg);
   addRelationships(relationships, g);
@@ -66145,7 +66281,7 @@ var draw = function draw(text, id) {
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-  Object(_utils__WEBPACK_IMPORTED_MODULE_5__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
   svg.attr('viewBox', "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height));
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -66164,9 +66300,10 @@ var draw = function draw(text, id) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var getStyles = function getStyles() {
-  return "";
-};
+var getStyles = function getStyles(options) {
+  return "\n\n  marker {\n    fill: ".concat(options.relationColor, ";\n    stroke: ").concat(options.relationColor, ";\n  }\n\n  marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  .reqBox {\n    fill: ").concat(options.requirementBackground, ";\n    fill-opacity: 100%;\n    stroke: ").concat(options.requirementBorderColor, ";\n    stroke-size: ").concat(options.requirementBorderSize, ";\n  }\n  .reqLabelBox {\n    fill: ").concat(options.relationLabelBackground, ";\n    fill-opacity: 100%;\n  }\n\n  .req-title-line {\n    stroke: ").concat(options.requirementBorderColor, ";\n    stroke-width: 1;\n  }\n  .relationshipLine {\n    stroke: ").concat(options.relationColor, ";\n    stroke-width: 1;\n  }\n  .relationshipLabel {\n    fill: ").concat(options.relationLabelColor, ";\n  }\n\n");
+}; // fill', conf.rect_fill)
+
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
@@ -71327,6 +71464,7 @@ var draw = function draw(text, id) {
   });
   drawActorLegend(diagram);
   bounds.insert(0, 0, LEFT_MARGIN, Object.keys(actors).length * 50);
+  console.log(bounds);
   drawTasks(diagram, tasks, 0);
   var box = bounds.getBounds();
 
@@ -71344,6 +71482,7 @@ var draw = function draw(text, id) {
   var extraVertForTitle = title ? 70 : 0;
   diagram.attr('viewBox', "".concat(box.startx, " -25 ").concat(width, " ").concat(height + extraVertForTitle));
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
+  diagram.attr('height', height + extraVertForTitle + 25);
 };
 var bounds = {
   data: {
@@ -72725,7 +72864,7 @@ var init = function init() {
     });
   }
 
-  var nextId = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed).next;
+  var idGeneratior = new _utils__WEBPACK_IMPORTED_MODULE_3__["default"].initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed);
   var txt;
 
   var _loop = function _loop(i) {
@@ -72738,7 +72877,7 @@ var init = function init() {
       return "continue";
     }
 
-    var id = "mermaid-".concat(nextId()); // Fetch the graph definition including tags
+    var id = "mermaid-".concat(idGeneratior.next()); // Fetch the graph definition including tags
 
     txt = element.innerHTML; // transforms the html to pure text
 
@@ -73216,10 +73355,20 @@ var render = function render(id, _txt, cb, container) {
     var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].getClasses(txt);
 
     for (var className in classes) {
-      userStyles += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+      if (cnf.htmlLabels || cnf.flowchart.htmlLabels) {
+        userStyles += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " span { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+      } else {
+        // console.log('classes[className].styles', classes[className].styles, cnf.htmlLabels);
+        userStyles += "\n.".concat(className, " path { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " rect { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " polygon { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " ellipse { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " circle { ").concat(classes[className].styles.join(' !important; '), " !important; }");
 
-      if (classes[className].textStyles) {
-        userStyles += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
+        if (classes[className].textStyles) {
+          userStyles += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
+        }
       }
     }
   } // log.warn(cnf.themeVariables);
@@ -73578,7 +73727,7 @@ _config__WEBPACK_IMPORTED_MODULE_3__["reset"](_config__WEBPACK_IMPORTED_MODULE_3
  *     flowchart:{
  *       diagramPadding:8,
  *       htmlLabels:true,
- *       curve:'linear',
+ *       curve:'basis',
  *     },
  *     sequence:{
  *       diagramMarginX:50,
@@ -73608,6 +73757,7 @@ _config__WEBPACK_IMPORTED_MODULE_3__["reset"](_config__WEBPACK_IMPORTED_MODULE_3
  *       fontFamily:'"Open-Sans", "sans-serif"',
  *       numberSectionStyles:4,
  *       axisFormat:'%Y-%m-%d',
+ *       topAxis:false,
  *     }
  *   };
  *   mermaid.initialize(config);
@@ -73672,7 +73822,7 @@ var calcThemeVariables = function calcThemeVariables(theme, userOverRides) {
 
 var getStyles = function getStyles(type, userStyles, options) {
   //console.warn('options in styles: ', options);
-  return " {\n    font-family: ".concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n    fill: ").concat(options.textColor, "\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ").concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n    stroke: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  ").concat(themes[type](options), "\n\n  ").concat(userStyles, "\n\n  ").concat(type, " { fill: apa;}\n");
+  return " {\n    font-family: ".concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n    fill: ").concat(options.textColor, "\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ").concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n    stroke: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  ").concat(themes[type](options), "\n\n  ").concat(userStyles, "\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -73878,6 +74028,15 @@ function () {
       this.fillType7 = this.fillType7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || (this.darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 30) : this.secondaryColor);
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -74051,8 +74210,9 @@ function () {
       this.labelBoxBorderColor = this.actorBorder;
       this.labelTextColor = this.mainContrastColor;
       this.loopTextColor = this.mainContrastColor;
-      this.noteBorderColor = this.border2;
-      this.noteTextColor = this.mainBkg;
+      this.noteBorderColor = this.secondaryBorderColor;
+      this.noteBkgColor = this.secondBkg;
+      this.noteTextColor = this.secondaryTextColor;
       this.activationBorderColor = this.border1;
       this.activationBkgColor = this.secondBkg;
       /* Gantt chart variables */
@@ -74092,6 +74252,15 @@ function () {
       /* class */
 
       this.classText = this.primaryTextColor;
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || (this.darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 30) : this.secondaryColor);
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -74318,6 +74487,15 @@ function () {
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || this.labelBackground;
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -74513,6 +74691,15 @@ function () {
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || this.edgeLabelBackground;
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -74762,6 +74949,15 @@ function () {
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || this.edgeLabelBackground;
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -75754,34 +75950,27 @@ var configureSvgSize = function configureSvgSize(svgElem, height, width, useMaxW
   var attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
   d3Attrs(svgElem, attrs);
 };
-var initIdGeneratior = function initIdGeneratior(deterministic, seed) {
-  if (!deterministic) return {
-    next: function next() {
-      return Date.now();
+var initIdGeneratior =
+/*#__PURE__*/
+function () {
+  function iterator(deterministic, seed) {
+    _classCallCheck(this, iterator);
+
+    this.deterministic = deterministic;
+    this.seed = seed;
+    this.count = seed ? seed.length : 0;
+  }
+
+  _createClass(iterator, [{
+    key: "next",
+    value: function next() {
+      if (!this.deterministic) return Date.now();
+      return this.count++;
     }
-  };
+  }]);
 
-  var iterator =
-  /*#__PURE__*/
-  function () {
-    function iterator() {
-      _classCallCheck(this, iterator);
-
-      return this.count = seed ? seed.length : 0;
-    }
-
-    _createClass(iterator, [{
-      key: "next",
-      value: function next() {
-        return this.count++;
-      }
-    }]);
-
-    return iterator;
-  }();
-
-  return new iterator();
-};
+  return iterator;
+}();
 /* harmony default export */ __webpack_exports__["default"] = ({
   assignWithDepth: assignWithDepth,
   wrapLabel: wrapLabel,

@@ -175,7 +175,7 @@ const setupNode = (g, parent, node, altFlag) => {
 };
 let cnt = 0;
 const setupDoc = (g, parent, doc, altFlag) => {
-  cnt = 0;
+  // cnt = 0;
   log.trace('items', doc);
   doc.forEach(item => {
     if (item.stmt === 'state' || item.stmt === 'default') {

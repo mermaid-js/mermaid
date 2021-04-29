@@ -68,11 +68,12 @@ theme , the CSS style sheet
 
 ## fontFamily
 
-| Parameter  | Description                                            | Type   | Required | Values                                           |
-| ---------- | ------------------------------------------------------ | ------ | -------- | ------------------------------------------------ |
-| fontFamily | specifies the font to be used in the rendered diagrams | string | Required | 'Trebuchet MS', 'Verdana', 'Arial', 'Sans-Serif' |
+| Parameter  | Description                                            | Type   | Required | Values                      |
+| ---------- | ------------------------------------------------------ | ------ | -------- | --------------------------- |
+| fontFamily | specifies the font to be used in the rendered diagrams | string | Required | Any Posiable CSS FontFamily |
 
-**Notes:** Default value is 'trebuchet ms'.
+**Notes:**
+Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
 
 ## logLevel
 
@@ -173,9 +174,9 @@ Default value: 8
 
 ### nodeSpacing
 
-| Parameter   | Description                                         | Type    | Required | Values               |
-| ----------- | --------------------------------------------------- | ------- | -------- | -------------------- |
-| nodeSpacing | Defines the spacing between nodes on the same level | Integer | Required | Any positive Numbers |
+| Parameter   | Description                                         | Type    | Required | Values              |
+| ----------- | --------------------------------------------------- | ------- | -------- | ------------------- |
+| nodeSpacing | Defines the spacing between nodes on the same level | Integer | Required | Any positive Number |
 
 **Notes:**
 
@@ -185,9 +186,9 @@ Default value: 50
 
 ### rankSpacing
 
-| Parameter   | Description                                           | Type    | Required | Values               |
-| ----------- | ----------------------------------------------------- | ------- | -------- | -------------------- |
-| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required | Any Positive Numbers |
+| Parameter   | Description                                           | Type    | Required | Values              |
+| ----------- | ----------------------------------------------------- | ------- | -------- | ------------------- |
+| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required | Any Positive Number |
 
 **Notes**:
 
@@ -232,17 +233,17 @@ The object containing configurations specific for sequence diagrams
 
 ### diagramMarginX
 
-| Parameter      | Description                                          | Type    | Required | Values              |
-| -------------- | ---------------------------------------------------- | ------- | -------- | ------------------- |
-| diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+| Parameter      | Description                                          | Type    | Required | Values             |
+| -------------- | ---------------------------------------------------- | ------- | -------- | ------------------ |
+| diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
 
 **Notes:** Default value: 50
 
 ### diagramMarginY
 
-| Parameter      | Description                                       | Type    | Required | Values              |
-| -------------- | ------------------------------------------------- | ------- | -------- | ------------------- |
-| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values |
+| Parameter      | Description                                       | Type    | Required | Values             |
+| -------------- | ------------------------------------------------- | ------- | -------- | ------------------ |
+| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Value |
 
 **Notes:** Default value: 10
 
@@ -383,9 +384,9 @@ Default value: false
 
 ### actorFontFamily
 
-| Parameter       | Description                                          | Type   | Required | Values                |
-| --------------- | ---------------------------------------------------- | ------ | -------- | --------------------- |
-| actorFontFamily | This sets the font family of the actor's description | string | Required | Open-Sans, Sans-Serif |
+| Parameter       | Description                                          | Type   | Required | Values                      |
+| --------------- | ---------------------------------------------------- | ------ | -------- | --------------------------- |
+| actorFontFamily | This sets the font family of the actor's description | string | Required | Any Posiable CSS FontFamily |
 
 **Notes:**
 Default value: "'Open-Sans", "sans-serif"'
@@ -408,9 +409,9 @@ Default value: 14
 
 ### noteFontFamily
 
-| Parameter      | Description                                        | Type   | Required | Values             |
-| -------------- | -------------------------------------------------- | ------ | -------- | ------------------ |
-| noteFontFamily | This sets the font family of actor-attached notes. | string | Required | Any Positive Value |
+| Parameter      | Description                                        | Type   | Required | Values                      |
+| -------------- | -------------------------------------------------- | ------ | -------- | --------------------------- |
+| noteFontFamily | This sets the font family of actor-attached notes. | string | Required | Any Posiable CSS FontFamily |
 
 **Notes:**
 Default value: ''"trebuchet ms", verdana, arial, sans-serif'
@@ -442,9 +443,9 @@ Default value: 16
 
 ### messageFontFamily
 
-| Parameter         | Description                                 | Type   | Required | Values             |
-| ----------------- | ------------------------------------------- | ------ | -------- | ------------------ |
-| messageFontFamily | This sets the font family of actor messages | string | Required | Any Positive Value |
+| Parameter         | Description                                 | Type   | Required | Values                      |
+| ----------------- | ------------------------------------------- | ------ | -------- | --------------------------- |
+| messageFontFamily | This sets the font family of actor messages | string | Required | Any Posiable CSS FontFamily |
 
 **Notes:**
 Default value: '"trebuchet ms", verdana, arial, sans-serif'
@@ -604,6 +605,17 @@ When this flag is set the height and width is set to 100% and is then scaling wi
 available space if not the absolute space required is used.
 
 Default value: true
+
+### topAxis
+
+| Parameter | Description | Type    | Required | Values      |
+| --------- | ----------- | ------- | -------- | ----------- |
+| topAxis   | See notes   | Boolean | 4        | True, False |
+
+**Notes:** when this flag is set date labels will be added to the
+top of the chart
+
+**Default value false**.
 
 ## journey
 
@@ -806,7 +818,7 @@ Default value: 20
 
 T = top, B = bottom, L = left, and R = right.
 
-Default value: 'TB'.
+Default value: 'TB'
 
 ### minEntityWidth
 
@@ -1072,7 +1084,7 @@ mermaidAPI.initialize({
     flowchart:{
       diagramPadding:8,
       htmlLabels:true,
-      curve:'linear',
+      curve:'basis',
     },
     sequence:{
       diagramMarginX:50,
@@ -1102,6 +1114,7 @@ mermaidAPI.initialize({
       fontFamily:'"Open-Sans", "sans-serif"',
       numberSectionStyles:4,
       axisFormat:'%Y-%m-%d',
+      topAxis:false,
     }
   };
   mermaid.initialize(config);
