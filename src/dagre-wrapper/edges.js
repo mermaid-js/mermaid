@@ -105,7 +105,7 @@ export const insertEdgeLabel = (elem, edge) => {
 };
 
 export const positionEdgeLabel = (edge, paths) => {
-  log.info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  log.info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.label) {
     const el = edgeLabels[edge.id];
@@ -114,7 +114,7 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
-      log.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')');
+      log.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ') abc78');
       // x = pos.x;
       // y = pos.y;
     }

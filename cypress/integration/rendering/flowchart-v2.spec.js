@@ -598,4 +598,16 @@ flowchart RL
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+    it('74: Handle labels for multiple edges from and to the same couple of nodes', () => {
+    imgSnapshotTest(
+      `
+flowchart RL
+    subgraph one
+      a1 -- l1 --> a2
+      a1 -- l2 --> a2
+    end
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
 });

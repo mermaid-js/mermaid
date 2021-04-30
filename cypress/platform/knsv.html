@@ -56,16 +56,11 @@ flowchart TD
   linkStyle 0,1 color:orange, stroke: orange;
 </div>
       <div class="mermaid" style="width: 100%; height: 20%;">
-flowchart TB
+flowchart RL
     subgraph two
-    b1
+    a1 -- l1 --> a2
+    a1 -- l2 --> a2
     end
-    subgraph three
-    c2
-    end
-
-    three --> two
-    two --> c2
       </div>
 <div class="mermaid2" style="width: 100%; height: 20%;">
 flowchart TB
