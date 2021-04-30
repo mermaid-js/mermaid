@@ -130,18 +130,18 @@ They also serve as proof of concept, for the variety of things that can be built
 ## Browser Extensions
 
 ## Browser Extensions
-| Name | Chrome Web Store | Firefox Add-ons | Safari App Store | Edge | Source/Repository | 
+| Name | Chrome Web Store | Firefox Add-ons | Opera | Edge | Source/Repository | 
 | -- | -- | -- | -- | -- | -- |
 | GitHub + Mermaid | [🎡🔗](https://chrome.google.com/webstore/detail/github-%20-mermaid/goiiopgdnkogdbjmncgedmgpoajilohe) | [🦊🔗](https://addons.mozilla.org/firefox/addon/github-mermaid/) | - | - |  [🐙🔗](https://github.com/BackMarket/github-mermaid-extension)
 | Mermaid Diagrams | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil) | - | - | - | - |
 |Mermaid Markdown | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-markdown/mboeoikjijmjcjgpccghbcoegikliijg) | - | - | - | - |
 | Monkeys | [🎡🔗](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | - | - | - | - |
 | Asciidoctor Live Preview | [🎡🔗](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia) | - | - | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/asciidoctorjs-live-previ/pefkelkanablhjdekgdahplkccnbdggd?hl=en-US) | -|
-| Chrome Diagrammer| [🎡🔗](https://chrome.google.com/webstore/detail/chrome-diagrammer/bkpbgjmkomfoakfklcjeoegkklgjnnpk) | - |- | - | - |
 | Diagram Tab| -| - | - | - | [🐙🔗](https://github.com/khafast/diagramtab)  |
-| Markdown Diagrams| - | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-diagrams/) | - | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/markdown-diagrams/hceenoomhhdkjjijnmlclkpenkapfihe) | - |
-| Markdown Viewer| - | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/) | - | - | - |
-
+| Markdown Diagrams| - | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-diagrams/) | [🔴🔗](https://addons.opera.com/en/extensions/details/markdown-diagrams/) | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/markdown-diagrams/hceenoomhhdkjjijnmlclkpenkapfihe) | [🐙🔗](https://github.com/marcozaccari/markdown-diagrams-browser-extension/tree/master/doc/examples) |
+| Markdown Viewer| - | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/) | - | - | [🐙🔗](https://github.com/simov/markdown-viewer)|
+| Extensions for Mermaid| - | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/) | [🔴🔗](https://addons.opera.com/en/extensions/details/extensions-for-mermaid/)| - | [🐙🔗](https://github.com/Stefan-S/mermaid-extension) |
+| Chrome Diagrammer| [🎡🔗](https://chrome.google.com/webstore/detail/chrome-diagrammer/bkpbgjmkomfoakfklcjeoegkklgjnnpk) | - |- | - | - |
 - [Mermaid Diagrams](https://chrome.google.com/webstore/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil)
 - [GitHub + Mermaid](https://chrome.google.com/webstore/detail/github-%2B-mermaid/goiiopgdnkogdbjmncgedmgpoajilohe)
 - [Mermaid Markdown](https://chrome.google.com/webstore/detail/mermaid-markdown/mboeoikjijmjcjgpccghbcoegikliijg)
