@@ -49595,6 +49595,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
  // eslint-disable-line
 
+ // import { line, curveBasis, curveLinear, select } from 'd3';
 
 
 
@@ -49717,7 +49718,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
   }
 };
 var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
   var path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
 
   if (edge.label) {
@@ -49728,7 +49729,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
     if (path) {
       //   // debugger;
       var pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcLabelPosition(path);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')'); // x = pos.x;
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ') abc78'); // x = pos.x;
       // y = pos.y;
     }
 
@@ -49738,66 +49739,66 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
 
   if (edge.startLabelLeft) {
     var _el = terminalLabels[edge.id].startLeft;
-    var _x = edge.x;
-    var _y = edge.y;
-
-    if (path) {
-      // debugger;
-      var _pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_left', path);
-
-      _x = _pos.x;
-      _y = _pos.y;
-    }
-
-    _el.attr('transform', 'translate(' + _x + ', ' + _y + ')');
-  }
-
-  if (edge.startLabelRight) {
-    var _el2 = terminalLabels[edge.id].startRight;
     var _x2 = edge.x;
     var _y2 = edge.y;
 
     if (path) {
       // debugger;
-      var _pos2 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_right', path);
+      var _pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_left', path);
 
-      _x2 = _pos2.x;
-      _y2 = _pos2.y;
+      _x2 = _pos.x;
+      _y2 = _pos.y;
     }
 
-    _el2.attr('transform', 'translate(' + _x2 + ', ' + _y2 + ')');
+    _el.attr('transform', 'translate(' + _x2 + ', ' + _y2 + ')');
   }
 
-  if (edge.endLabelLeft) {
-    var _el3 = terminalLabels[edge.id].endLeft;
+  if (edge.startLabelRight) {
+    var _el2 = terminalLabels[edge.id].startRight;
     var _x3 = edge.x;
     var _y3 = edge.y;
 
     if (path) {
       // debugger;
-      var _pos3 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_left', path);
+      var _pos2 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_right', path);
 
-      _x3 = _pos3.x;
-      _y3 = _pos3.y;
+      _x3 = _pos2.x;
+      _y3 = _pos2.y;
     }
 
-    _el3.attr('transform', 'translate(' + _x3 + ', ' + _y3 + ')');
+    _el2.attr('transform', 'translate(' + _x3 + ', ' + _y3 + ')');
   }
 
-  if (edge.endLabelRight) {
-    var _el4 = terminalLabels[edge.id].endRight;
+  if (edge.endLabelLeft) {
+    var _el3 = terminalLabels[edge.id].endLeft;
     var _x4 = edge.x;
     var _y4 = edge.y;
 
     if (path) {
       // debugger;
-      var _pos4 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_right', path);
+      var _pos3 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_left', path);
 
-      _x4 = _pos4.x;
-      _y4 = _pos4.y;
+      _x4 = _pos3.x;
+      _y4 = _pos3.y;
     }
 
-    _el4.attr('transform', 'translate(' + _x4 + ', ' + _y4 + ')');
+    _el3.attr('transform', 'translate(' + _x4 + ', ' + _y4 + ')');
+  }
+
+  if (edge.endLabelRight) {
+    var _el4 = terminalLabels[edge.id].endRight;
+    var _x5 = edge.x;
+    var _y5 = edge.y;
+
+    if (path) {
+      // debugger;
+      var _pos4 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_right', path);
+
+      _x5 = _pos4.x;
+      _y5 = _pos4.y;
+    }
+
+    _el4.attr('transform', 'translate(' + _x5 + ', ' + _y5 + ')');
   }
 }; // const getRelationType = function(type) {
 //   switch (type) {
@@ -49829,24 +49830,28 @@ var outsideNode = function outsideNode(node, point) {
 };
 
 var intersection = function intersection(node, outsidePoint, insidePoint) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("intersection calc abc89:\n  outsidePoint: ".concat(JSON.stringify(outsidePoint), "\n  insidePoint : ").concat(JSON.stringify(insidePoint), "\n  node        : x:").concat(node.x, " y:").concat(node.y, " w:").concat(node.width, " h:").concat(node.height));
   var x = node.x;
   var y = node.y;
-  var dx = Math.abs(x - insidePoint.x);
+  var dx = Math.abs(x - insidePoint.x); // const dy = Math.abs(y - insidePoint.y);
+
   var w = node.width / 2;
   var r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-  var h = node.height / 2;
-  var edges = {
-    x1: x - w,
-    x2: x + w,
-    y1: y - h,
-    y2: y + h
-  };
-
-  if (outsidePoint.x === edges.x1 || outsidePoint.x === edges.x2 || outsidePoint.y === edges.y1 || outsidePoint.y === edges.y2) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('calc equals on edge');
-    return outsidePoint;
-  }
+  var h = node.height / 2; // const edges = {
+  //   x1: x - w,
+  //   x2: x + w,
+  //   y1: y - h,
+  //   y2: y + h
+  // };
+  // if (
+  //   outsidePoint.x === edges.x1 ||
+  //   outsidePoint.x === edges.x2 ||
+  //   outsidePoint.y === edges.y1 ||
+  //   outsidePoint.y === edges.y2
+  // ) {
+  //   log.warn('abc89 calc equals on edge', outsidePoint, edges);
+  //   return outsidePoint;
+  // }
 
   var Q = Math.abs(outsidePoint.y - insidePoint.y);
   var R = Math.abs(outsidePoint.x - insidePoint.x); // log.warn();
@@ -49858,16 +49863,27 @@ var intersection = function intersection(node, outsidePoint, insidePoint) {
     var q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = R * q / Q;
     var res = {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - q
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q
     };
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
+
+    if (r === 0) {
+      res.x = outsidePoint.x;
+      res.y = outsidePoint.y;
+    }
+
+    if (R === 0) {
+      res.x = outsidePoint.x;
+    }
+
+    if (Q === 0) {
+      res.y = outsidePoint.y;
+    }
+
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("abc89 topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
     return res;
   } else {
     // Intersection onn sides of rect
-    // q = (Q * r) / R;
-    // q = 2;
-    // r = (R * q) / Q;
     if (insidePoint.x < outsidePoint.x) {
       r = outsidePoint.x - w - x;
     } else {
@@ -49875,24 +49891,99 @@ var intersection = function intersection(node, outsidePoint, insidePoint) {
       r = x - w - outsidePoint.x;
     }
 
-    var _q = _q = Q * r / R;
+    var _q = Q * r / R; //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
+    // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
 
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("sides calc, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
+
+    var _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r; // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
+
+
+    var _y = insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q;
+
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("sides calc abc89, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
+      _x: _x,
+      _y: _y
     });
+
+    if (r === 0) {
+      _x = outsidePoint.x;
+      _y = outsidePoint.y;
+    }
+
+    if (R === 0) {
+      _x = outsidePoint.x;
+    }
+
+    if (Q === 0) {
+      _y = outsidePoint.y;
+    }
+
     return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
+      x: _x,
+      y: _y
     };
   }
+};
+/**
+ * This function will page a path and node where the last point(s) in the path is inside the node
+ * and return an update path ending by the border of the node.
+ * @param {*} points
+ * @param {*} boundryNode
+ * @returns
+ */
+
+var cutPathAtIntersect = function cutPathAtIntersect(_points, boundryNode) {
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 cutPathAtIntersect', _points, boundryNode);
+  var points = [];
+  var lastPointOutside = _points[0];
+  var isInside = false;
+
+  _points.forEach(function (point) {
+    // const node = clusterDb[edge.toCluster].node;
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('abc88 checking point', point, boundryNode); // check if point is inside the boundry rect
+
+    if (!outsideNode(boundryNode, point) && !isInside) {
+      // First point inside the rect found
+      // Calc the intersection coord between the point anf the last opint ouside the rect
+      var inter = intersection(boundryNode, lastPointOutside, point);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 inside', point, lastPointOutside, inter);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 intersection', inter); // // Check case where the intersection is the same as the last point
+
+      var pointPresent = false;
+      points.forEach(function (p) {
+        pointPresent = pointPresent || p.x === inter.x && p.y === inter.y;
+      }); // // if (!pointPresent) {
+
+      if (!points.find(function (e) {
+        return e.x === inter.x && e.y === inter.y;
+      })) {
+        points.push(inter);
+      } else {
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 no intersect', inter, points);
+      } // points.push(inter);
+
+
+      isInside = true;
+    } else {
+      // Outside
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 outside', point, lastPointOutside);
+      lastPointOutside = point; // points.push(point);
+
+      if (!isInside) points.push(point);
+    }
+  });
+
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 returning points', points);
+  return points;
 }; //(edgePaths, e, edge, clusterDb, diagramtype, graph)
+
 
 var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, graph) {
   var points = edge.points;
   var pointsHasChanged = false;
   var tail = graph.node(e.v);
   var head = graph.node(e.w);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('abc88 InsertEdge: ', edge);
 
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
@@ -49902,72 +49993,79 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
   }
 
   if (edge.toCluster) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('to cluster', clusterDb[edge.toCluster]);
-    points = [];
-    var lastPointOutside;
-    var isInside = false;
-    edge.points.forEach(function (point) {
-      var node = clusterDb[edge.toCluster].node;
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('to cluster abc88', clusterDb[edge.toCluster]);
+    points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node); // log.trace('edge', edge);
+    // points = [];
+    // let lastPointOutside; // = edge.points[0];
+    // let isInside = false;
+    // edge.points.forEach(point => {
+    //   const node = clusterDb[edge.toCluster].node;
+    //   log.warn('checking from', edge.fromCluster, point, node);
+    //   if (!outsideNode(node, point) && !isInside) {
+    //     log.trace('inside', edge.toCluster, point, lastPointOutside);
+    //     // First point inside the rect
+    //     const inter = intersection(node, lastPointOutside, point);
+    //     let pointPresent = false;
+    //     points.forEach(p => {
+    //       pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+    //     });
+    //     // if (!pointPresent) {
+    //     if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+    //       points.push(inter);
+    //     } else {
+    //       log.warn('no intersect', inter, points);
+    //     }
+    //     isInside = true;
+    // } else {
+    //   // outtside
+    //   lastPointOutside = point;
+    //   if (!isInside) points.push(point);
+    // }
+    // });
 
-      if (!outsideNode(node, point) && !isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('inside', edge.toCluster, point, lastPointOutside); // First point inside the rect
-
-        var inter = intersection(node, lastPointOutside, point);
-        var pointPresent = false;
-        points.forEach(function (p) {
-          pointPresent = pointPresent || p.x === inter.x && p.y === inter.y;
-        }); // if (!pointPresent) {
-
-        if (!points.find(function (e) {
-          return e.x === inter.x && e.y === inter.y;
-        })) {
-          points.push(inter);
-        } else {
-          _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('no intersect', inter, points);
-        }
-
-        isInside = true;
-      } else {
-        if (!isInside) points.push(point);
-      }
-
-      lastPointOutside = point;
-    });
     pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('from cluster', clusterDb[edge.fromCluster]);
-    var updatedPoints = [];
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('from cluster abc88', clusterDb[edge.fromCluster]);
+    points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse(); // log.warn('edge', edge);
+    // log.warn('from cluster', clusterDb[edge.fromCluster], points);
+    // const updatedPoints = [];
+    // let lastPointOutside = edge.points[edge.points.length - 1];
+    // let isInside = false;
+    // for (let i = points.length - 1; i >= 0; i--) {
+    //   const point = points[i];
+    //   const node = clusterDb[edge.fromCluster].node;
+    //   log.warn('checking to', edge.fromCluster, point, node);
+    //   if (!outsideNode(node, point) && !isInside) {
+    //     log.warn('inside', edge.fromCluster, point, node);
+    //     // First point inside the rect
+    //     const inter = intersection(node, lastPointOutside, point);
+    //     log.warn('intersect', intersection(node, lastPointOutside, point));
+    //     let pointPresent = false;
+    //     points.forEach(p => {
+    //       pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+    //     });
+    //     // if (!pointPresent) {
+    //     if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+    //       updatedPoints.unshift(inter);
+    //       log.warn('Adding point -updated = ', updatedPoints);
+    //     } else {
+    //       log.warn('no intersect', inter, points);
+    //     }
+    //     // points.push(insterection);
+    //     isInside = true;
+    //   } else {
+    //     // at the outside
+    //     // if (!isInside) updatedPoints.unshift(point);
+    //     updatedPoints.unshift(point);
+    //     log.warn('Outside point', point, updatedPoints);
+    //   }
+    //   lastPointOutside = point;
+    // }
+    // points = updatedPoints;
+    // points = edge.points;
 
-    var _lastPointOutside;
-
-    var _isInside = false;
-
-    for (var i = points.length - 1; i >= 0; i--) {
-      var point = points[i];
-      var node = clusterDb[edge.fromCluster].node;
-
-      if (!outsideNode(node, point) && !_isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('inside', edge.fromCluster, point, node); // First point inside the rect
-
-        var insterection = intersection(node, _lastPointOutside, point); // log.trace('intersect', intersection(node, lastPointOutside, point));
-
-        updatedPoints.unshift(insterection); // points.push(insterection);
-
-        _isInside = true;
-      } else {
-        // at the outside
-        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('Outside point', point);
-        if (!_isInside) updatedPoints.unshift(point);
-      }
-
-      _lastPointOutside = point;
-    }
-
-    points = updatedPoints;
     pointsHasChanged = true;
   } // The data for our line
 
@@ -49984,7 +50082,8 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     curve = edge.curve || d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"];
   } else {
     curve = d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"];
-  }
+  } // curve = curveLinear;
+
 
   var lineFunction = Object(d3__WEBPACK_IMPORTED_MODULE_2__["line"])().x(function (d) {
     return d.x;
@@ -51011,7 +51110,7 @@ var extractor = function extractor(graph, depth) {
         multigraph: true,
         compound: true
       }).setGraph({
-        rankdir: graphSettings.rankdir === 'TB' ? 'LR' : 'TB',
+        rankdir: graphSettings.rankdir === 'TB' ? 'TB' : 'LR',
         // Todo: set proper spacing
         nodesep: 50,
         ranksep: 50,
@@ -58291,7 +58390,9 @@ var addVertices = function addVertices(vert, g, svgId) {
  */
 
 var addEdges = function addEdges(edges, g) {
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('abc78 edges = ', edges);
   var cnt = 0;
+  var linkIdCnt = {};
   var defaultStyle;
   var defaultLabelStyle;
 
@@ -58304,7 +58405,18 @@ var addEdges = function addEdges(edges, g) {
   edges.forEach(function (edge) {
     cnt++; // Identify Link
 
-    var linkId = 'L-' + edge.start + '-' + edge.end;
+    var linkIdBase = 'L-' + edge.start + '-' + edge.end; // count the links from+to the same node to give unique id
+
+    if (typeof linkIdCnt[linkIdBase] === 'undefined') {
+      linkIdCnt[linkIdBase] = 0;
+      _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+    } else {
+      linkIdCnt[linkIdBase]++;
+      _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+    }
+
+    var linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
+    _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
     var linkNameStart = 'LS-' + edge.start;
     var linkNameEnd = 'LE-' + edge.end;
     var edgeData = {
@@ -70818,7 +70930,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 var cnt = 0;
 
 var setupDoc = function setupDoc(g, parent, doc, altFlag) {
-  cnt = 0;
+  // cnt = 0;
   _logger__WEBPACK_IMPORTED_MODULE_6__["log"].trace('items', doc);
   doc.forEach(function (item) {
     if (item.stmt === 'state' || item.stmt === 'default') {

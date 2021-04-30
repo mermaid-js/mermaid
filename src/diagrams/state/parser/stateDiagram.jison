@@ -53,16 +53,16 @@
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
 
-<INITIAL,struct>"state"\s+            { this.pushState('STATE'); }
+<INITIAL,struct>"state"\s+            { console.log('Starting STATE');this.pushState('STATE'); }
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
 <STATE>.*"[[fork]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
-<STATE>["]                   this.begin("STATE_STRING");
+<STATE>["]                   { console.log('Starting STATE_STRING');this.begin("STATE_STRING");}
 <STATE>\s*"as"\s+         {this.popState();this.pushState('STATE_ID');return "AS";}
 <STATE_ID>[^\n\{]*         {this.popState();/* console.log('STATE_ID', yytext);*/return "ID";}
 <STATE_STRING>["]              this.popState();
-<STATE_STRING>[^"]*         { /*console.log('Long description:', yytext);*/return "STATE_DESCR";}
+<STATE_STRING>[^"]*         { console.log('Long description:', yytext);return "STATE_DESCR";}
 <STATE>[^\n\s\{]+      {/*console.log('COMPOSIT_STATE', yytext);*/return 'COMPOSIT_STATE';}
 <STATE>\n      {this.popState();}
 <INITIAL,STATE>\{               {this.popState();this.pushState('struct'); /*console.log('begin struct', yytext);*/return 'STRUCT_START';}

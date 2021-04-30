@@ -96,7 +96,10 @@ const setupNode = (g, parent, node, altFlag) => {
     const nodeData = {
       labelStyle: '',
       shape: nodeDb[node.id].shape,
-      labelText: nodeDb[node.id].description,
+      labelText:
+        typeof nodeDb[node.id].description === 'object'
+          ? nodeDb[node.id].description[0]
+          : nodeDb[node.id].description,
       classes: nodeDb[node.id].classes, //classStr,
       style: '', //styles.style,
       id: node.id,
