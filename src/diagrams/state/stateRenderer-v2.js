@@ -96,13 +96,14 @@ const setupNode = (g, parent, node, altFlag) => {
     const nodeData = {
       labelStyle: '',
       shape: nodeDb[node.id].shape,
-      labelText:
-        typeof nodeDb[node.id].description === 'object'
-          ? nodeDb[node.id].description[0]
-          : nodeDb[node.id].description,
+      labelText: nodeDb[node.id].description,
+      // typeof nodeDb[node.id].description === 'object'
+      //   ? nodeDb[node.id].description[0]
+      //   : nodeDb[node.id].description,
       classes: nodeDb[node.id].classes, //classStr,
       style: '', //styles.style,
       id: node.id,
+      dir: altFlag ? 'LR' : 'TB',
       domId: 'state-' + node.id + '-' + cnt,
       type: nodeDb[node.id].type,
       padding: 15 //getConfig().flowchart.padding
@@ -167,12 +168,12 @@ const setupNode = (g, parent, node, altFlag) => {
 
   if (parent) {
     if (parent.id !== 'root') {
-      log.info('Setting node ', node.id, ' to be child of its parent ', parent.id);
+      log.trace('Setting node ', node.id, ' to be child of its parent ', parent.id);
       g.setParent(node.id, parent.id);
     }
   }
   if (node.doc) {
-    log.info('Adding nodes children ');
+    log.trace('Adding nodes children ');
     setupDoc(g, node, node.doc, !altFlag);
   }
 };

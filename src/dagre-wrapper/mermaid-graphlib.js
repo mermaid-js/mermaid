@@ -17,7 +17,7 @@ export const clear = () => {
 const isDecendant = (id, ancenstorId) => {
   // if (id === ancenstorId) return true;
 
-  log.debug(
+  log.trace(
     'In isDecendant',
     ancenstorId,
     ' ',
@@ -354,17 +354,25 @@ export const extractor = (graph, depth) => {
       log.warn(
         'Cluster without external connections, without a parent and with children',
         node,
-        depth
+        depth,
+        clusterDb[node].clusterData.dir
       );
 
       const graphSettings = graph.graph();
+      let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
+      if (clusterDb[node]) {
+        if (clusterDb[node].clusterData && clusterDb[node].clusterData.dir) {
+          dir = clusterDb[node].clusterData.dir;
+          log.warn('Fixing dir', clusterDb[node].clusterData.dir, dir);
+        }
+      }
 
       const clusterGraph = new graphlib.Graph({
         multigraph: true,
         compound: true
       })
         .setGraph({
-          rankdir: graphSettings.rankdir === 'TB' ? 'LR' : 'TB', // Todo: set proper spacing
+          rankdir: dir, // Todo: set proper spacing
           nodesep: 50,
           ranksep: 50,
           marginx: 8,
