@@ -354,6 +354,25 @@ describe('State diagram', () => {
       }
     );
   });
+  it('v2 handle transition from one state in a composite state to a composite state', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+  state S1 {
+    sub1 -->sub2
+  }
+
+  state S2 {
+    sub4
+  }
+  S1 --> S2
+  sub1 --> sub4
+    `,
+      {
+        logLevel: 0, fontFamily: 'courier',
+      }
+    );
+  });
   it('v2 should render a state diagram when useMaxWidth is true (default)', () => {
     renderGraph(
       `

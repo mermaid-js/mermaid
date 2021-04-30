@@ -55,28 +55,28 @@ flowchart TD
   class T TestSub
   linkStyle 0,1 color:orange, stroke: orange;
 </div>
-      <div class="mermaid" style="width: 100%; height: 20%;">
-flowchart RL
-    subgraph two
-    a1 -- l1 --> a2
-    a1 -- l2 --> a2
-    end
+      <div class="mermaid2" style="width: 100%; height: 20%;">
+flowchart TD
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
       </div>
-<div class="mermaid2" style="width: 100%; height: 20%;">
-flowchart TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
-    one --> two
-    three --> two
-    two --> c2
+<div class="mermaid" style="width: 100%; height: 20%;">
+stateDiagram-v2
+  state S1 {
+    sub1 -->sub2
+  }
+
+  state S2 {
+    sub4
+  }
+  S1 --> S2
+  sub1 --> sub4
 </div>
       <div class="mermaid2" style="width: 100%; height: 20%;">
 stateDiagram-v2
@@ -196,7 +196,7 @@ style N stroke:#0000ff,fill:#ccccff,color:#0000ff
         // fontFamily: '"times", sans-serif',
         // fontFamily: 'courier',
         fontSize: 18,
-        curve: 'cardinal',
+        curve: 'basis',
         securityLevel: 'loose',
         // themeVariables: {relationLabelColor: 'red'}
       });
