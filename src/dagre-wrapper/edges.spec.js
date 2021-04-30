@@ -32,33 +32,33 @@ describe('Graphlib decorations', () => {
 
     });
     it('case 3 - intersection on otop of box outside point greater then inside point', function () {
-      const o = {x: 157.21875, y: 38.83361558001693};
-      const i = {x: 104.1328125, y: 105};
+      const o = {x: 157, y: 39};
+      const i = {x: 104, y: 105};
       const node2 = {
-        width: 211.96875,
-        x: 113.984375,
-        y: 164.25,
-        height: 176.5
+        width: 212,
+        x: 114,
+        y: 164,
+        height: 176
       }
       const int = intersection(node2, o, i);
-            expect(int.x).toBeCloseTo(127.39979619565217)
-      // expect(int.y).toBeCloseTo(76)
-      expect(int.y).toBeCloseTo(67.833)
+            expect(int.x).toBeCloseTo(133.71)
+      expect(int.y).toBeCloseTo(76)
+      // expect(int.y).toBeCloseTo(67.833)
 
     });
         it('case 4 - intersection on top of box inside point greater then inside point', function () {
-          const o = {x: 144.65625, y: 38.83361558001693};
-          const i = {x: 197.7421875, y: 105};
+          const o = {x: 144, y: 38};
+          const i = {x: 198, y: 105};
           const node2 = {
-            width: 211.96875,
-            x: 113.984375,
-            y: 164.25,
-            height: 176.5
+            width: 212,
+            x: 114,
+            y: 164,
+            height: 176
           }
           const int = intersection(node2, o, i);
-                expect(int.x).toBeCloseTo(167.9232336956522)
-          // expect(int.y).toBeCloseTo(76)
-      expect(int.y).toBeCloseTo(67.833)
+                expect(int.x).toBeCloseTo(174.626 )
+          expect(int.y).toBeCloseTo(76)
+      // expect(int.y).toBeCloseTo(67.833)
 
         });
   });

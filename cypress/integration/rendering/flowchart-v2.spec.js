@@ -462,4 +462,140 @@ flowchart TD
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+  it('66: More nested subgraph cases (TB)', () => {
+    imgSnapshotTest(
+      `
+flowchart TB
+    subgraph two
+    b1
+    end
+    subgraph three
+    c2
+    end
+
+    three --> two
+    two --> c2
+
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('67: More nested subgraph cases (RL)', () => {
+    imgSnapshotTest(
+      `
+flowchart RL
+    subgraph two
+    b1
+    end
+    subgraph three
+    c2
+    end
+
+    three --> two
+    two --> c2
+
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('68: More nested subgraph cases (BT)', () => {
+    imgSnapshotTest(
+      `
+flowchart BT
+    subgraph two
+    b1
+    end
+    subgraph three
+    c2
+    end
+
+    three --> two
+    two --> c2
+
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('69: More nested subgraph cases (LR)', () => {
+    imgSnapshotTest(
+      `
+flowchart LR
+    subgraph two
+    b1
+    end
+    subgraph three
+    c2
+    end
+
+    three --> two
+    two --> c2
+
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('70: Handle nested subgraph cases (TB) link out and link between subgraphs', () => {
+    imgSnapshotTest(
+      `
+flowchart TB
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('71: Handle nested subgraph cases (RL) link out and link between subgraphs', () => {
+    imgSnapshotTest(
+      `
+flowchart RL
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('72: Handle nested subgraph cases (BT) link out and link between subgraphs', () => {
+    imgSnapshotTest(
+      `
+flowchart BT
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+  it('74: Handle nested subgraph cases (RL) link out and link between subgraphs', () => {
+    imgSnapshotTest(
+      `
+flowchart RL
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
 });

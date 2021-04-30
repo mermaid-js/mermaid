@@ -239,8 +239,8 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = (R * q) / Q;
     const res = {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y + Q - q
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q
     };
 
     if (r === 0) {
