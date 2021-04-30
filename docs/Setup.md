@@ -219,6 +219,21 @@ available space if not the absolute space required is used.
 
 Default value: true
 
+### defaultRenderer
+
+| Parameter       | Description | Type    | Required | Values                  |
+| --------------- | ----------- | ------- | -------- | ----------------------- |
+| defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+
+**Notes:**
+
+Decides which rendering engine that is to be used for the rendering. Legal values are:
+
+-   dagre-d3
+-   dagre-wrapper - wrapper for dagre implemented in mermaid
+
+Default value: 'dagre-d3'
+
 ## sequence
 
 The object containing configurations specific for sequence diagrams
@@ -764,6 +779,21 @@ available space if not the absolute space required is used.
 
 Default value: true
 
+## defaultRenderer
+
+| Parameter       | Description | Type    | Required | Values                  |
+| --------------- | ----------- | ------- | -------- | ----------------------- |
+| defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+
+**Notes:**
+
+Decides which rendering engine that is to be used for the rendering. Legal values are:
+
+-   dagre-d3
+-   dagre-wrapper - wrapper for dagre implemented in mermaid
+
+Default value: 'dagre-d3'
+
 ## useMaxWidth
 
 | Parameter   | Description | Type    | Required | Values      |
@@ -789,6 +819,21 @@ When this flag is set the height and width is set to 100% and is then scaling wi
 available space if not the absolute space required is used.
 
 Default value: true
+
+## defaultRenderer
+
+| Parameter       | Description | Type    | Required | Values                  |
+| --------------- | ----------- | ------- | -------- | ----------------------- |
+| defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+
+**Notes:**
+
+Decides which rendering engine that is to be used for the rendering. Legal values are:
+
+-   dagre-d3
+-   dagre-wrapper - wrapper for dagre implemented in mermaid
+
+Default value: 'dagre-d3'
 
 ## er
 

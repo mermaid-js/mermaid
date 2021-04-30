@@ -17,7 +17,7 @@ import { log } from '../logger';
 const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   log.info('Graph in recursive render: XXX', graphlib.json.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
-  log.warn('Dir in recursive render - dir:', dir);
+  log.trace('Dir in recursive render - dir:', dir);
 
   const elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
   if (!graph.nodes()) {
@@ -26,7 +26,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     log.info('Recursive render XXX', graph.nodes());
   }
   if (graph.edges().length > 0) {
-    log.info('Recursive edges', graph.edge(graph.edges()[0]));
+    log.trace('Recursive edges', graph.edge(graph.edges()[0]));
   }
   const clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
@@ -43,7 +43,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
       log.info('Setting data for cluster XXX (', v, ') ', data, parentCluster);
       graph.setNode(parentCluster.id, data);
       if (!graph.parent(v)) {
-        log.warn('Setting parent', v, parentCluster.id);
+        log.trace('Setting parent', v, parentCluster.id);
         graph.setParent(v, parentCluster.id, data);
       }
     }

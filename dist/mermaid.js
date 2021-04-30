@@ -51188,6 +51188,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
 /* harmony import */ var _shapes_note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./shapes/note */ "./src/dagre-wrapper/shapes/note.js");
 /* harmony import */ var _diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../diagrams/class/svgDraw */ "./src/diagrams/class/svgDraw.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
  // eslint-disable-line
 
@@ -51533,9 +51535,10 @@ var rectWithTitle = function rectWithTitle(parent, node) {
 
   var innerLine = shapeSvg.insert('line');
   var label = shapeSvg.insert('g').attr('class', 'label');
-  var text2 = node.labelText.flat();
-  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Label text', text2[0]);
-  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(text2[0], node.labelStyle, true, true));
+  var text2prim = node.labelText.flat ? node.labelText.flat() : node.labelText;
+  var text2 = _typeof(text2prim) === 'object' ? text2prim[0] : text2prim;
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Label text', text2);
+  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(text2, node.labelStyle, true, true));
   var bbox;
 
   if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
@@ -51549,7 +51552,7 @@ var rectWithTitle = function rectWithTitle(parent, node) {
   _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Text 2', text2);
   var textRows = text2.slice(1, text2.length);
   var titleBox = text.getBBox();
-  var descr = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(textRows.join('<br/>'), node.labelStyle, true, true));
+  var descr = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(textRows.join ? textRows.join('<br/>') : textRows, node.labelStyle, true, true));
 
   if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
     var _div = descr.children[0];
@@ -52352,7 +52355,22 @@ var config = {
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     *
+     * **Notes:**
+     *
+     * Decides which rendering engine that is to be used for the rendering. Legal values are:
+     * * dagre-d3
+     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     *
+     * Default value: 'dagre-d3'
+     */
+    defaultRenderer: 'dagre-d3'
   },
 
   /**
@@ -52993,7 +53011,22 @@ var config = {
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     *
+     * **Notes:**
+     *
+     * Decides which rendering engine that is to be used for the rendering. Legal values are:
+     * * dagre-d3
+     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     *
+     * Default value: 'dagre-d3'
+     */
+    defaultRenderer: 'dagre-d3'
   },
   git: {
     arrowMarkerAbsolute: false,
@@ -53045,7 +53078,22 @@ var config = {
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     *
+     * **Notes:**
+     *
+     * Decides which rendering engine that is to be used for the rendering. Legal values are:
+     * * dagre-d3
+     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     *
+     * Default value: 'dagre-d3'
+     */
+    defaultRenderer: 'dagre-d3'
   },
 
   /**
@@ -69867,7 +69915,7 @@ case 13:return 16;
 break;
 case 14:this.popState();
 break;
-case 15: this.pushState('STATE'); 
+case 15: console.log('Starting STATE');this.pushState('STATE'); 
 break;
 case 16:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
 break;
@@ -69877,7 +69925,7 @@ case 18:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn(
 break;
 case 19:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
 break;
-case 20:this.begin("STATE_STRING");
+case 20: console.log('Starting STATE_STRING');this.begin("STATE_STRING");
 break;
 case 21:this.popState();this.pushState('STATE_ID');return "AS";
 break;
@@ -69885,7 +69933,7 @@ case 22:this.popState();/* console.log('STATE_ID', yy_.yytext);*/return "ID";
 break;
 case 23:this.popState();
 break;
-case 24: /*console.log('Long description:', yy_.yytext);*/return "STATE_DESCR";
+case 24: console.log('Long description:', yy_.yytext);return "STATE_DESCR";
 break;
 case 25:/*console.log('COMPOSIT_STATE', yy_.yytext);*/return 17;
 break;
@@ -70747,6 +70795,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../dagre-wrapper/index.js */ "./src/dagre-wrapper/index.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
 
 
@@ -70842,7 +70892,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
     var nodeData = {
       labelStyle: '',
       shape: nodeDb[node.id].shape,
-      labelText: nodeDb[node.id].description,
+      labelText: _typeof(nodeDb[node.id].description) === 'object' ? nodeDb[node.id].description[0] : nodeDb[node.id].description,
       classes: nodeDb[node.id].classes,
       //classStr,
       style: '',
@@ -73236,13 +73286,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 function parse(text) {
   var graphInit = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectInit(text);
+  var cnf = _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]();
 
   if (graphInit) {
     reinitialize(graphInit);
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('reinit ', graphInit);
   }
 
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(text);
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(text, cnf);
   var parser;
   _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('Type ' + graphType);
 
@@ -73442,7 +73493,7 @@ var render = function render(id, _txt, cb, container) {
   window.txt = txt;
   txt = encodeEntities(txt);
   var element = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(txt); // insert inline style into svg
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(txt, cnf); // insert inline style into svg
 
   var svg = element.firstChild;
   var firstChild = svg.firstChild;
@@ -73722,6 +73773,7 @@ var handleDirective = function handleDirective(p, directive, type) {
 };
 
 function updateRendererConfigs(conf) {
+  // Todo remove, all diagrams should get config on demoand from the config object, no need for this
   _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(conf.git);
   _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(conf.flowchart);
   _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(conf.flowchart);
@@ -75343,7 +75395,7 @@ var detectType = function detectType(text) {
   }
 
   if (text.match(/^\s*classDiagram/)) {
-    return 'class';
+    if (cnf && cnf.class && cnf.class) return 'class';
   }
 
   if (text.match(/^\s*stateDiagram-v2/)) {
