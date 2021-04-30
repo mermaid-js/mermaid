@@ -226,7 +226,22 @@ const config = {
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     *
+     * **Notes:**
+     *
+     * Decides which rendering engine that is to be used for the rendering. Legal values are:
+     * * dagre-d3
+     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     *
+     * Default value: 'dagre-d3'
+     */
+    defaultRenderer: 'dagre-d3'
   },
 
   /**
@@ -871,7 +886,21 @@ top of the chart
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     *
+     * **Notes:**
+     *
+     * Decides which rendering engine that is to be used for the rendering. Legal values are:
+     * * dagre-d3
+     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     *
+     * Default value: 'dagre-d3'
+     */
+    defaultRenderer: 'dagre-d3'
   },
   git: {
     arrowMarkerAbsolute: false,
@@ -923,7 +952,21 @@ top of the chart
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     *
+     * **Notes:**
+     *
+     * Decides which rendering engine that is to be used for the rendering. Legal values are:
+     * * dagre-d3
+     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     *
+     * Default value: 'dagre-d3'
+     */
+    defaultRenderer: 'dagre-d3'
   },
 
   /**

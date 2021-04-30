@@ -65,7 +65,7 @@ const anyComment = /\s*%%.*\n/gm;
  * @param {string} text The text defining the graph
  * @returns {object} the json object representing the init passed to mermaid.initialize()
  */
-export const detectInit = function(text) {
+export const detectInit = function(text, cnf) {
   let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
   if (Array.isArray(inits)) {
@@ -75,7 +75,7 @@ export const detectInit = function(text) {
     results = inits.args;
   }
   if (results) {
-    let type = detectType(text);
+    let type = detectType(text, cnf);
     ['config'].forEach(prop => {
       if (typeof results[prop] !== 'undefined') {
         if (type === 'flowchart-v2') {
@@ -173,7 +173,7 @@ export const detectDirective = function(text, type = null) {
  * @param {string} text The text defining the graph
  * @returns {string} A graph definition key
  */
-export const detectType = function(text) {
+export const detectType = function(text, cnf) {
   text = text.replace(directive, '').replace(anyComment, '\n');
   log.debug('Detecting diagram type based on the text ' + text);
   if (text.match(/^\s*sequenceDiagram/)) {
@@ -187,6 +187,7 @@ export const detectType = function(text) {
     return 'classDiagram';
   }
   if (text.match(/^\s*classDiagram/)) {
+    if (cnf && cnf.class && cnf.class.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
     return 'class';
   }
 
@@ -195,6 +196,7 @@ export const detectType = function(text) {
   }
 
   if (text.match(/^\s*stateDiagram/)) {
+    if (cnf && cnf.class && cnf.state.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
     return 'state';
   }
 
@@ -223,6 +225,8 @@ export const detectType = function(text) {
   if (text.match(/^\s*requirement/) || text.match(/^\s*requirementDiagram/)) {
     return 'requirement';
   }
+  if (cnf && cnf.flowchart && cnf.flowchart.defaultRenderer === 'dagre-wrapper')
+    return 'flowchart-v2';
 
   return 'flowchart';
 };

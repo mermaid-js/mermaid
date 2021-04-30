@@ -102,8 +102,8 @@ stateDiagram-v2
 
 
       </div>
-<div class="mermaid" style="width: 100%; height: 20%;">
-stateDiagram-v2
+<div class="mermaid2" style="width: 100%; height: 20%;">
+state
 state "Not Shooting State" as NotShooting {
   state "Idle mode" as Idle
   state "Configuring mode" as Configuring
@@ -113,8 +113,8 @@ state "Not Shooting State" as NotShooting {
 }
 
 </div>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
-stateDiagram-v2
+      <div class="mermaid" style="width: 100%; height: 20%;">
+stateDiagram
 state S1 {
 sub1 -->sub2
 }
@@ -233,7 +233,9 @@ style N stroke:#0000ff,fill:#ccccff,color:#0000ff
         state:{
           nodeSpacing: 50,
           rankSpacing: 50,
+          defaultRenderer: 'dagre-wrapper',
         },
+
         fontSize: 18,
         curve: 'cardinal',
         securityLevel: 'loose',

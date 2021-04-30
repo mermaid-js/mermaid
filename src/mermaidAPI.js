@@ -69,12 +69,13 @@ import theme from './themes';
 import utils, { assignWithDepth } from './utils';
 
 function parse(text) {
-  const graphInit = utils.detectInit(text);
+  const cnf = configApi.getConfig();
+  const graphInit = utils.detectInit(text, cnf);
   if (graphInit) {
     reinitialize(graphInit);
     log.debug('reinit ', graphInit);
   }
-  const graphType = utils.detectType(text);
+  const graphType = utils.detectType(text, cnf);
   let parser;
 
   log.debug('Type ' + graphType);
@@ -232,7 +233,7 @@ const render = function(id, _txt, cb, container) {
   // }
   // console.warn('Render fetching config');
 
-  const cnf = configApi.getConfig();
+  let cnf = configApi.getConfig();
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -274,7 +275,7 @@ const render = function(id, _txt, cb, container) {
   txt = encodeEntities(txt);
 
   const element = select('#d' + id).node();
-  const graphType = utils.detectType(txt);
+  const graphType = utils.detectType(txt, cnf);
 
   // insert inline style into svg
   const svg = element.firstChild;
@@ -560,6 +561,7 @@ const handleDirective = function(p, directive, type) {
 };
 
 function updateRendererConfigs(conf) {
+  // Todo remove, all diagrams should get config on demoand from the config object, no need for this
   gitGraphRenderer.setConf(conf.git);
   flowRenderer.setConf(conf.flowchart);
   flowRendererV2.setConf(conf.flowchart);
