@@ -354,8 +354,7 @@ export const extractor = (graph, depth) => {
       log.warn(
         'Cluster without external connections, without a parent and with children',
         node,
-        depth,
-        clusterDb[node].clusterData.dir
+        depth
       );
 
       const graphSettings = graph.graph();
