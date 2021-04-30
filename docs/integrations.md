@@ -127,18 +127,29 @@ They also serve as proof of concept, for the variety of things that can be built
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
 - [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (Native support in theme)
 
-## Chrome Extensions
+## Browser Extensions
 
+## Browser Extensions
+| Name | Chrome Web Store | Firefox Add-ons | Safari App Store | Edge | Source/Repository | 
+| -- | -- | -- | -- | -- | -- |
+| GitHub + Mermaid | [🎡🔗](https://chrome.google.com/webstore/detail/github-%20-mermaid/goiiopgdnkogdbjmncgedmgpoajilohe) | [🦊🔗](https://addons.mozilla.org/firefox/addon/github-mermaid/) | - | - |  [🐙🔗](https://github.com/BackMarket/github-mermaid-extension)
+| Mermaid Diagrams | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil) | - | - | - | - |
+|Mermaid Markdown | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-markdown/mboeoikjijmjcjgpccghbcoegikliijg) | - | - | - | - |
+| Monkeys | [🎡🔗](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | -) | - | - | - |
+| Asciidoctor Live Preview | [🎡🔗](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia) | - | - | [🌀](https://microsoftedge.microsoft.com/addons/detail/asciidoctorjs-live-previ/pefkelkanablhjdekgdahplkccnbdggd?hl=en-US) | -|
+| Chrome Diagrammer| [🎡🔗](https://chrome.google.com/webstore/detail/chrome-diagrammer/bkpbgjmkomfoakfklcjeoegkklgjnnpk) | - |- | - | - |
+| Diagram Tab| -| - | - | - | [🐙🔗](https://github.com/khafast/diagramtab)  |
+| Markdown Diagrams| - | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-diagrams/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search) | - | [🌀](https://microsoftedge.microsoft.com/addons/detail/markdown-diagrams/hceenoomhhdkjjijnmlclkpenkapfihe) | - |
+| Markdown Viewer| - | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/) | - | [🌀](https://microsoftedge.microsoft.com/addons/detail/markdown-diagrams/hceenoomhhdkjjijnmlclkpenkapfihe) | - |
 - [Mermaid Diagrams](https://chrome.google.com/webstore/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil)
 - [GitHub + Mermaid](https://chrome.google.com/webstore/detail/github-%2B-mermaid/goiiopgdnkogdbjmncgedmgpoajilohe)
 - [Mermaid Markdown](https://chrome.google.com/webstore/detail/mermaid-markdown/mboeoikjijmjcjgpccghbcoegikliijg)
 - [Monkeys](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi)
-- [Asciidoctor Live Preview](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia) __works in the new IE as well__
+- [Asciidoctor Live Preview](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia) __works in the 
 - [Chrome Diagrammer](https://chrome.google.com/webstore/detail/chrome-diagrammer/bkpbgjmkomfoakfklcjeoegkklgjnnpk)
 - [Diagram Tab](https://github.com/khafast/diagramtab)
 
 ## Other
-
 - [Jekyll](https://jekyllrb.com/)
   - [jekyll-mermaid](https://rubygems.org/gems/jekyll-mermaid)
   - [jekyll-mermaid-diagrams](https://github.com/fuzhibo/jekyll-mermaid-diagrams)
