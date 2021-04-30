@@ -319,10 +319,12 @@ const rectWithTitle = (parent, node) => {
 
   const label = shapeSvg.insert('g').attr('class', 'label');
 
-  const text2 = node.labelText.flat();
-  log.info('Label text', text2[0]);
+  const text2prim = node.labelText.flat ? node.labelText.flat() : node.labelText;
+  const text2 = typeof text2prim === 'object' ? text2prim[0] : text2prim;
 
-  const text = label.node().appendChild(createLabel(text2[0], node.labelStyle, true, true));
+  log.info('Label text', text2);
+
+  const text = label.node().appendChild(createLabel(text2, node.labelStyle, true, true));
   let bbox;
   if (getConfig().flowchart.htmlLabels) {
     const div = text.children[0];
@@ -336,7 +338,9 @@ const rectWithTitle = (parent, node) => {
   let titleBox = text.getBBox();
   const descr = label
     .node()
-    .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true, true));
+    .appendChild(
+      createLabel(textRows.join ? textRows.join('<br/>') : textRows, node.labelStyle, true, true)
+    );
 
   if (getConfig().flowchart.htmlLabels) {
     const div = descr.children[0];

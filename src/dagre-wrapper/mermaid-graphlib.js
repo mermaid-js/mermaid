@@ -364,7 +364,7 @@ export const extractor = (graph, depth) => {
         compound: true
       })
         .setGraph({
-          rankdir: graphSettings.rankdir === 'TB' ? 'LR' : 'TB',
+          rankdir: graphSettings.rankdir === 'TB' ? 'TB' : 'LR',
           // Todo: set proper spacing
           nodesep: 50,
           ranksep: 50,
