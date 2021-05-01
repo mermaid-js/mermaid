@@ -329,6 +329,24 @@ describe('State diagram', () => {
       }
     );
   });
+  it('v2 it should be possibel to use a choice', () => {
+    imgSnapshotTest(
+      `
+  stateDiagram-v2
+    [*] --> Off
+    Off --> On
+    state MyChoice [[choice]]
+    On --> MyChoice
+    MyChoice --> Washing
+    MyChoice --> Drying
+    Washing --> Finished
+    Finished --> [*]
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
   it('v2 Simplest composite state', () => {
     imgSnapshotTest(
       `

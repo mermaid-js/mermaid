@@ -1073,6 +1073,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../config */ "./src/config.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
  // eslint-disable-line
 // let vertexNode;
@@ -1145,6 +1147,7 @@ function addHtmlLabel(node) {
 
 var createLabel = function createLabel(_vertexText, style, isTitle, isNode) {
   var vertexText = _vertexText || '';
+  if (_typeof(vertexText) === 'object') vertexText = vertexText[0];
 
   if (Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])().flowchart.htmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
@@ -1884,7 +1887,7 @@ __webpack_require__.r(__webpack_exports__);
 var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parentCluster) {
   _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Graph in recursive render: XXX', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), parentCluster);
   var dir = graph.graph().rankdir;
-  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].warn('Dir in recursive render - dir:', dir);
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].trace('Dir in recursive render - dir:', dir);
 
   var elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
 
@@ -1896,7 +1899,7 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
   }
 
   if (graph.edges().length > 0) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Recursive edges', graph.edge(graph.edges()[0]));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].trace('Recursive edges', graph.edge(graph.edges()[0]));
   }
 
   var clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
@@ -1916,7 +1919,7 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
       graph.setNode(parentCluster.id, data);
 
       if (!graph.parent(v)) {
-        _logger__WEBPACK_IMPORTED_MODULE_8__["log"].warn('Setting parent', v, parentCluster.id);
+        _logger__WEBPACK_IMPORTED_MODULE_8__["log"].trace('Setting parent', v, parentCluster.id);
         graph.setParent(v, parentCluster.id, data);
       }
     }
@@ -2443,7 +2446,7 @@ var clear = function clear() {
 
 var isDecendant = function isDecendant(id, ancenstorId) {
   // if (id === ancenstorId) return true;
-  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('In isDecendant', ancenstorId, ' ', id, ' = ', decendants[ancenstorId].indexOf(id) >= 0);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('In isDecendant', ancenstorId, ' ', id, ' = ', decendants[ancenstorId].indexOf(id) >= 0);
   if (decendants[ancenstorId].indexOf(id) >= 0) return true;
   return false;
 };
@@ -2730,11 +2733,20 @@ var extractor = function extractor(graph, depth) {
     graph.children(_node) && graph.children(_node).length > 0) {
       _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Cluster without external connections, without a parent and with children', _node, depth);
       var graphSettings = graph.graph();
+      var dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
+
+      if (clusterDb[_node]) {
+        if (clusterDb[_node].clusterData && clusterDb[_node].clusterData.dir) {
+          dir = clusterDb[_node].clusterData.dir;
+          _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Fixing dir', clusterDb[_node].clusterData.dir, dir);
+        }
+      }
+
       var clusterGraph = new graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.Graph({
         multigraph: true,
         compound: true
       }).setGraph({
-        rankdir: graphSettings.rankdir === 'TB' ? 'TB' : 'LR',
+        rankdir: dir,
         // Todo: set proper spacing
         nodesep: 50,
         ranksep: 50,
@@ -2854,6 +2866,37 @@ var question = function question(parent, node) {
   node.intersect = function (point) {
     _logger__WEBPACK_IMPORTED_MODULE_1__["log"].warn('Intersect called');
     return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, points, point);
+  };
+
+  return shapeSvg;
+};
+
+var choice = function choice(parent, node) {
+  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.domId || node.id);
+  var s = 28;
+  var points = [{
+    x: 0,
+    y: s / 2
+  }, {
+    x: s / 2,
+    y: 0
+  }, {
+    x: 0,
+    y: -s / 2
+  }, {
+    x: -s / 2,
+    y: 0
+  }];
+  var choice = shapeSvg.insert('polygon', ':first-child').attr('points', points.map(function (d) {
+    return d.x + ',' + d.y;
+  }).join(' ')); // center the circle around its coordinate
+
+  choice.attr('class', 'state-start').attr('r', 7).attr('width', 28).attr('height', 28);
+  node.width = 28;
+  node.height = 28;
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].circle(node, 14, point);
   };
 
   return shapeSvg;
@@ -3160,10 +3203,18 @@ var rectWithTitle = function rectWithTitle(parent, node) {
 
   var innerLine = shapeSvg.insert('line');
   var label = shapeSvg.insert('g').attr('class', 'label');
-  var text2prim = node.labelText.flat ? node.labelText.flat() : node.labelText;
-  var text2 = _typeof(text2prim) === 'object' ? text2prim[0] : text2prim;
-  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Label text', text2);
-  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(text2, node.labelStyle, true, true));
+  var text2 = node.labelText.flat ? node.labelText.flat() : node.labelText; // const text2 = typeof text2prim === 'object' ? text2prim[0] : text2prim;
+
+  var title = '';
+
+  if (_typeof(text2) === 'object') {
+    title = text2[0];
+  } else {
+    title = text2;
+  }
+
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Label text abc79', title, text2, _typeof(text2) === 'object');
+  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(title, node.labelStyle, true, true));
   var bbox;
 
   if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
@@ -3570,6 +3621,7 @@ var shapes = {
   question: question,
   rect: rect,
   rectWithTitle: rectWithTitle,
+  choice: choice,
   circle: circle,
   stadium: stadium,
   hexagon: hexagon,
@@ -20932,12 +20984,12 @@ var size = function size() {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,28],$Vc=[1,23],$Vd=[1,24],$Ve=[1,25],$Vf=[1,26],$Vg=[1,29],$Vh=[1,32],$Vi=[1,4,5,14,15,17,19,20,22,23,24,25,26,36,39],$Vj=[1,4,5,12,13,14,15,17,19,20,22,23,24,25,26,36,39],$Vk=[1,4,5,7,14,15,17,19,20,22,23,24,25,26,36,39],$Vl=[4,5,14,15,17,19,20,22,23,24,25,26,36,39];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,29],$Vc=[1,23],$Vd=[1,24],$Ve=[1,25],$Vf=[1,26],$Vg=[1,27],$Vh=[1,30],$Vi=[1,33],$Vj=[1,4,5,14,15,17,19,20,22,23,24,25,26,27,37,40],$Vk=[1,4,5,12,13,14,15,17,19,20,22,23,24,25,26,27,37,40],$Vl=[1,4,5,7,14,15,17,19,20,22,23,24,25,26,27,37,40],$Vm=[4,5,14,15,17,19,20,22,23,24,25,26,27,37,40];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"idStatement":11,"DESCR":12,"-->":13,"HIDE_EMPTY":14,"scale":15,"WIDTH":16,"COMPOSIT_STATE":17,"STRUCT_START":18,"STRUCT_STOP":19,"STATE_DESCR":20,"AS":21,"ID":22,"FORK":23,"JOIN":24,"CONCURRENT":25,"note":26,"notePosition":27,"NOTE_TEXT":28,"openDirective":29,"typeDirective":30,"closeDirective":31,":":32,"argDirective":33,"eol":34,";":35,"EDGE_STATE":36,"left_of":37,"right_of":38,"open_directive":39,"type_directive":40,"arg_directive":41,"close_directive":42,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NL",7:"SD",12:"DESCR",13:"-->",14:"HIDE_EMPTY",15:"scale",16:"WIDTH",17:"COMPOSIT_STATE",18:"STRUCT_START",19:"STRUCT_STOP",20:"STATE_DESCR",21:"AS",22:"ID",23:"FORK",24:"JOIN",25:"CONCURRENT",26:"note",28:"NOTE_TEXT",32:":",35:";",36:"EDGE_STATE",37:"left_of",38:"right_of",39:"open_directive",40:"type_directive",41:"arg_directive",42:"close_directive"},
-productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[10,1],[10,2],[10,3],[10,4],[10,1],[10,2],[10,1],[10,4],[10,3],[10,6],[10,1],[10,1],[10,1],[10,4],[10,4],[10,1],[6,3],[6,5],[34,1],[34,1],[11,1],[11,1],[27,1],[27,1],[29,1],[30,1],[33,1],[31,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"idStatement":11,"DESCR":12,"-->":13,"HIDE_EMPTY":14,"scale":15,"WIDTH":16,"COMPOSIT_STATE":17,"STRUCT_START":18,"STRUCT_STOP":19,"STATE_DESCR":20,"AS":21,"ID":22,"FORK":23,"JOIN":24,"CHOICE":25,"CONCURRENT":26,"note":27,"notePosition":28,"NOTE_TEXT":29,"openDirective":30,"typeDirective":31,"closeDirective":32,":":33,"argDirective":34,"eol":35,";":36,"EDGE_STATE":37,"left_of":38,"right_of":39,"open_directive":40,"type_directive":41,"arg_directive":42,"close_directive":43,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NL",7:"SD",12:"DESCR",13:"-->",14:"HIDE_EMPTY",15:"scale",16:"WIDTH",17:"COMPOSIT_STATE",18:"STRUCT_START",19:"STRUCT_STOP",20:"STATE_DESCR",21:"AS",22:"ID",23:"FORK",24:"JOIN",25:"CHOICE",26:"CONCURRENT",27:"note",29:"NOTE_TEXT",33:":",36:";",37:"EDGE_STATE",38:"left_of",39:"right_of",40:"open_directive",41:"type_directive",42:"arg_directive",43:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[10,1],[10,2],[10,3],[10,4],[10,1],[10,2],[10,1],[10,4],[10,3],[10,6],[10,1],[10,1],[10,1],[10,1],[10,4],[10,4],[10,1],[6,3],[6,5],[35,1],[35,1],[11,1],[11,1],[28,1],[28,1],[30,1],[31,1],[34,1],[32,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -21019,34 +21071,39 @@ case 21:
 break;
 case 22:
 
-        this.$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
+        this.$={ stmt: 'state', id: $$[$0], type: 'choice' }
     
 break;
 case 23:
+
+        this.$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
+    
+break;
+case 24:
 
         /*console.warn('got NOTE, position: ', $$[$0-2].trim(), 'id = ', $$[$0-1].trim(), 'note: ', $$[$0]);*/
         this.$={ stmt: 'state', id: $$[$0-1].trim(), note:{position: $$[$0-2].trim(), text: $$[$0].trim()}};
     
 break;
-case 30: case 31:
+case 31: case 32:
 this.$=$$[$0];
 break;
-case 34:
+case 35:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 35:
+case 36:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 36:
+case 37:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 37:
+case 38:
  yy.parseDirective('}%%', 'close_directive', 'state'); 
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},o([1,4,5,14,15,17,20,22,23,24,25,26,36,39],$V4,{8:11}),{30:12,40:[1,13]},{40:[2,34]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},{31:30,32:[1,31],42:$Vh},o([32,42],[2,35]),o($Vi,[2,6]),{6:27,10:33,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,8]),o($Vi,[2,9]),o($Vi,[2,10],{12:[1,34],13:[1,35]}),o($Vi,[2,14]),{16:[1,36]},o($Vi,[2,16],{18:[1,37]}),{21:[1,38]},o($Vi,[2,20]),o($Vi,[2,21]),o($Vi,[2,22]),{27:39,28:[1,40],37:[1,41],38:[1,42]},o($Vi,[2,25]),o($Vj,[2,30]),o($Vj,[2,31]),o($Vk,[2,26]),{33:43,41:[1,44]},o($Vk,[2,37]),o($Vi,[2,7]),o($Vi,[2,11]),{11:45,22:$Vb,36:$Vg},o($Vi,[2,15]),o($Vl,$V4,{8:46}),{22:[1,47]},{22:[1,48]},{21:[1,49]},{22:[2,32]},{22:[2,33]},{31:50,42:$Vh},{42:[2,36]},o($Vi,[2,12],{12:[1,51]}),{4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,52],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,18],{18:[1,53]}),{28:[1,54]},{22:[1,55]},o($Vk,[2,27]),o($Vi,[2,13]),o($Vi,[2,17]),o($Vl,$V4,{8:56}),o($Vi,[2,23]),o($Vi,[2,24]),{4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,57],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,19])],
-defaultActions: {7:[2,34],8:[2,1],9:[2,2],10:[2,3],41:[2,32],42:[2,33],44:[2,36]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,30:6,40:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,30:6,40:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,30:6,40:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,30:6,40:$V3},o([1,4,5,14,15,17,20,22,23,24,25,26,27,37,40],$V4,{8:11}),{31:12,41:[1,13]},{41:[2,35]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:28,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,27:$Vg,30:6,37:$Vh,40:$V3},{32:31,33:[1,32],43:$Vi},o([33,43],[2,36]),o($Vj,[2,6]),{6:28,10:34,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,27:$Vg,30:6,37:$Vh,40:$V3},o($Vj,[2,8]),o($Vj,[2,9]),o($Vj,[2,10],{12:[1,35],13:[1,36]}),o($Vj,[2,14]),{16:[1,37]},o($Vj,[2,16],{18:[1,38]}),{21:[1,39]},o($Vj,[2,20]),o($Vj,[2,21]),o($Vj,[2,22]),o($Vj,[2,23]),{28:40,29:[1,41],38:[1,42],39:[1,43]},o($Vj,[2,26]),o($Vk,[2,31]),o($Vk,[2,32]),o($Vl,[2,27]),{34:44,42:[1,45]},o($Vl,[2,38]),o($Vj,[2,7]),o($Vj,[2,11]),{11:46,22:$Vb,37:$Vh},o($Vj,[2,15]),o($Vm,$V4,{8:47}),{22:[1,48]},{22:[1,49]},{21:[1,50]},{22:[2,33]},{22:[2,34]},{32:51,43:$Vi},{43:[2,37]},o($Vj,[2,12],{12:[1,52]}),{4:$V5,5:$V6,6:28,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,53],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,27:$Vg,30:6,37:$Vh,40:$V3},o($Vj,[2,18],{18:[1,54]}),{29:[1,55]},{22:[1,56]},o($Vl,[2,28]),o($Vj,[2,13]),o($Vj,[2,17]),o($Vm,$V4,{8:57}),o($Vj,[2,24]),o($Vj,[2,25]),{4:$V5,5:$V6,6:28,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,58],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,27:$Vg,30:6,37:$Vh,40:$V3},o($Vj,[2,19])],
+defaultActions: {7:[2,35],8:[2,1],9:[2,2],10:[2,3],42:[2,33],43:[2,34],45:[2,37]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -21525,15 +21582,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 39; 
+case 0: this.begin('open_directive'); return 40; 
 break;
-case 1: this.begin('type_directive'); return 40; 
+case 1: this.begin('type_directive'); return 41; 
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 32; 
+case 2: this.popState(); this.begin('arg_directive'); return 33; 
 break;
-case 3: this.popState(); this.popState(); return 42; 
+case 3: this.popState(); this.popState(); return 43; 
 break;
-case 4:return 41;
+case 4:return 42;
 break;
 case 5:/* skip comments */
 break;
@@ -21561,76 +21618,80 @@ case 16:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim(); /*console.warn
 break;
 case 17:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
 break;
-case 18:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
+case 18:this.popState();yy_.yytext=yy_.yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 25;
 break;
-case 19:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
+case 19:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
 break;
-case 20: console.log('Starting STATE_STRING');this.begin("STATE_STRING");
+case 20:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
 break;
-case 21:this.popState();this.pushState('STATE_ID');return "AS";
+case 21:this.popState();yy_.yytext=yy_.yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 25;
 break;
-case 22:this.popState();/* console.log('STATE_ID', yy_.yytext);*/return "ID";
+case 22: console.log('Starting STATE_STRING');this.begin("STATE_STRING");
 break;
-case 23:this.popState();
+case 23:this.popState();this.pushState('STATE_ID');return "AS";
 break;
-case 24: console.log('Long description:', yy_.yytext);return "STATE_DESCR";
+case 24:this.popState();/* console.log('STATE_ID', yy_.yytext);*/return "ID";
 break;
-case 25:/*console.log('COMPOSIT_STATE', yy_.yytext);*/return 17;
+case 25:this.popState();
 break;
-case 26:this.popState();
+case 26: console.log('Long description:', yy_.yytext);return "STATE_DESCR";
 break;
-case 27:this.popState();this.pushState('struct'); /*console.log('begin struct', yy_.yytext);*/return 18;
+case 27:/*console.log('COMPOSIT_STATE', yy_.yytext);*/return 17;
 break;
-case 28: /*console.log('Ending struct');*/ this.popState(); return 19;
+case 28:this.popState();
 break;
-case 29:/* nothing */
+case 29:this.popState();this.pushState('struct'); /*console.log('begin struct', yy_.yytext);*/return 18;
 break;
-case 30: this.begin('NOTE'); return 26; 
+case 30: /*console.log('Ending struct');*/ this.popState(); return 19;
 break;
-case 31: this.popState();this.pushState('NOTE_ID');return 37;
+case 31:/* nothing */
 break;
-case 32: this.popState();this.pushState('NOTE_ID');return 38;
+case 32: this.begin('NOTE'); return 27; 
 break;
-case 33: this.popState();this.pushState('FLOATING_NOTE');
+case 33: this.popState();this.pushState('NOTE_ID');return 38;
 break;
-case 34:this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";
+case 34: this.popState();this.pushState('NOTE_ID');return 39;
 break;
-case 35:/**/
+case 35: this.popState();this.pushState('FLOATING_NOTE');
 break;
-case 36: /*console.log('Floating note text: ', yy_.yytext);*/return "NOTE_TEXT";
+case 36:this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";
 break;
-case 37:this.popState();/*console.log('Floating note ID', yy_.yytext);*/return "ID";
+case 37:/**/
 break;
-case 38: this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yy_.yytext);*/return 22;
+case 38: /*console.log('Floating note text: ', yy_.yytext);*/return "NOTE_TEXT";
 break;
-case 39: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.substr(2).trim();return 28;
+case 39:this.popState();/*console.log('Floating note ID', yy_.yytext);*/return "ID";
 break;
-case 40: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.slice(0,-8).trim();return 28;
+case 40: this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yy_.yytext);*/return 22;
 break;
-case 41: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
+case 41: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.substr(2).trim();return 29;
 break;
-case 42: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
+case 42: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.slice(0,-8).trim();return 29;
 break;
-case 43: /*console.log('HIDE_EMPTY', yy_.yytext,'#');*/return 14; 
+case 43: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
 break;
-case 44: /*console.log('EDGE_STATE=',yy_.yytext);*/ return 36;
+case 44: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
 break;
-case 45: /*console.log('=>ID=',yy_.yytext);*/ return 22;
+case 45: /*console.log('HIDE_EMPTY', yy_.yytext,'#');*/return 14; 
 break;
-case 46: yy_.yytext = yy_.yytext.trim(); /*console.log('Descr = ', yy_.yytext);*/ return 12; 
+case 46: /*console.log('EDGE_STATE=',yy_.yytext);*/ return 37;
 break;
-case 47:return 13;
+case 47: /*console.log('=>ID=',yy_.yytext);*/ return 22;
 break;
-case 48:return 25;
+case 48: yy_.yytext = yy_.yytext.trim(); /*console.log('Descr = ', yy_.yytext);*/ return 12; 
 break;
-case 49:return 5;
+case 49:return 13;
 break;
-case 50:return 'INVALID';
+case 50:return 26;
+break;
+case 51:return 5;
+break;
+case 52:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:[\s]+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:scale\s+)/i,/^(?:\d+)/i,/^(?:\s+width\b)/i,/^(?:state\s+)/i,/^(?:.*<<fork>>)/i,/^(?:.*<<join>>)/i,/^(?:.*\[\[fork\]\])/i,/^(?:.*\[\[join\]\])/i,/^(?:["])/i,/^(?:\s*as\s+)/i,/^(?:[^\n\{]*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n\s\{]+)/i,/^(?:\n)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:[\n])/i,/^(?:note\s+)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:")/i,/^(?:\s*as\s*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n]*)/i,/^(?:\s*[^:\n\s\-]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:[\s\S]*?end note\b)/i,/^(?:stateDiagram\s+)/i,/^(?:stateDiagram-v2\s+)/i,/^(?:hide empty description\b)/i,/^(?:\[\*\])/i,/^(?:[^:\n\s\-\{]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:-->)/i,/^(?:--)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"LINE":{"rules":[9,10],"inclusive":false},"close_directive":{"rules":[9,10],"inclusive":false},"arg_directive":{"rules":[3,4,9,10],"inclusive":false},"type_directive":{"rules":[2,3,9,10],"inclusive":false},"open_directive":{"rules":[1,9,10],"inclusive":false},"struct":{"rules":[9,10,15,28,29,30,44,45,46,47,48],"inclusive":false},"FLOATING_NOTE_ID":{"rules":[37],"inclusive":false},"FLOATING_NOTE":{"rules":[34,35,36],"inclusive":false},"NOTE_TEXT":{"rules":[39,40],"inclusive":false},"NOTE_ID":{"rules":[38],"inclusive":false},"NOTE":{"rules":[31,32,33],"inclusive":false},"SCALE":{"rules":[13,14],"inclusive":false},"ALIAS":{"rules":[],"inclusive":false},"STATE_ID":{"rules":[22],"inclusive":false},"STATE_STRING":{"rules":[23,24],"inclusive":false},"FORK_STATE":{"rules":[],"inclusive":false},"STATE":{"rules":[9,10,16,17,18,19,20,21,25,26,27],"inclusive":false},"ID":{"rules":[9,10],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,10,11,12,15,27,30,41,42,43,44,45,46,47,49,50],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:[\s]+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:scale\s+)/i,/^(?:\d+)/i,/^(?:\s+width\b)/i,/^(?:state\s+)/i,/^(?:.*<<fork>>)/i,/^(?:.*<<join>>)/i,/^(?:.*<<choice>>)/i,/^(?:.*\[\[fork\]\])/i,/^(?:.*\[\[join\]\])/i,/^(?:.*\[\[choice\]\])/i,/^(?:["])/i,/^(?:\s*as\s+)/i,/^(?:[^\n\{]*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n\s\{]+)/i,/^(?:\n)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:[\n])/i,/^(?:note\s+)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:")/i,/^(?:\s*as\s*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n]*)/i,/^(?:\s*[^:\n\s\-]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:[\s\S]*?end note\b)/i,/^(?:stateDiagram\s+)/i,/^(?:stateDiagram-v2\s+)/i,/^(?:hide empty description\b)/i,/^(?:\[\*\])/i,/^(?:[^:\n\s\-\{]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:-->)/i,/^(?:--)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"LINE":{"rules":[9,10],"inclusive":false},"close_directive":{"rules":[9,10],"inclusive":false},"arg_directive":{"rules":[3,4,9,10],"inclusive":false},"type_directive":{"rules":[2,3,9,10],"inclusive":false},"open_directive":{"rules":[1,9,10],"inclusive":false},"struct":{"rules":[9,10,15,30,31,32,46,47,48,49,50],"inclusive":false},"FLOATING_NOTE_ID":{"rules":[39],"inclusive":false},"FLOATING_NOTE":{"rules":[36,37,38],"inclusive":false},"NOTE_TEXT":{"rules":[41,42],"inclusive":false},"NOTE_ID":{"rules":[40],"inclusive":false},"NOTE":{"rules":[33,34,35],"inclusive":false},"SCALE":{"rules":[13,14],"inclusive":false},"ALIAS":{"rules":[],"inclusive":false},"STATE_ID":{"rules":[24],"inclusive":false},"STATE_STRING":{"rules":[25,26],"inclusive":false},"FORK_STATE":{"rules":[],"inclusive":false},"STATE":{"rules":[9,10,16,17,18,19,20,21,22,23,27,28,29],"inclusive":false},"ID":{"rules":[9,10],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,10,11,12,15,29,32,43,44,45,46,47,48,49,51,52],"inclusive":true}}
 });
 return lexer;
 })();
@@ -22437,8 +22498,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../dagre-wrapper/index.js */ "./src/dagre-wrapper/index.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 
 
 
@@ -22534,12 +22593,16 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
     var nodeData = {
       labelStyle: '',
       shape: nodeDb[node.id].shape,
-      labelText: _typeof(nodeDb[node.id].description) === 'object' ? nodeDb[node.id].description[0] : nodeDb[node.id].description,
+      labelText: nodeDb[node.id].description,
+      // typeof nodeDb[node.id].description === 'object'
+      //   ? nodeDb[node.id].description[0]
+      //   : nodeDb[node.id].description,
       classes: nodeDb[node.id].classes,
       //classStr,
       style: '',
       //styles.style,
       id: node.id,
+      dir: altFlag ? 'LR' : 'TB',
       domId: 'state-' + node.id + '-' + cnt,
       type: nodeDb[node.id].type,
       padding: 15 //getConfig().flowchart.padding
@@ -22608,13 +22671,13 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 
   if (parent) {
     if (parent.id !== 'root') {
-      _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Setting node ', node.id, ' to be child of its parent ', parent.id);
+      _logger__WEBPACK_IMPORTED_MODULE_6__["log"].trace('Setting node ', node.id, ' to be child of its parent ', parent.id);
       g.setParent(node.id, parent.id);
     }
   }
 
   if (node.doc) {
-    _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Adding nodes children ');
+    _logger__WEBPACK_IMPORTED_MODULE_6__["log"].trace('Adding nodes children ');
     setupDoc(g, node, node.doc, !altFlag);
   }
 };
@@ -23020,7 +23083,7 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.tertiaryColor, ";\n  opacity: 0.5;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.tertiaryTextColor, ";\n}\n.label div .edgeLabel {\n  color: ").concat(options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n}\n\n.node circle.state-start {\n  fill: ").concat(options.lineColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n.end-state-inner {\n  fill: ").concat(options.background, ";\n  // stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
+  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.tertiaryColor, ";\n  opacity: 0.5;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.tertiaryTextColor, ";\n}\n.label div .edgeLabel {\n  color: ").concat(options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n}\n\n.node circle.state-start {\n  fill: ").concat(options.lineColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n.end-state-inner {\n  fill: ").concat(options.background, ";\n  // stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n.node polygon {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -24933,8 +24996,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 function parse(text) {
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectInit(text);
   var cnf = _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]();
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectInit(text, cnf);
 
   if (graphInit) {
     reinitialize(graphInit);
@@ -26913,7 +26976,7 @@ var anyComment = /\s*%%.*\n/gm;
  * @returns {object} the json object representing the init passed to mermaid.initialize()
  */
 
-var detectInit = function detectInit(text) {
+var detectInit = function detectInit(text, cnf) {
   var inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   var results = {};
 
@@ -26927,7 +26990,7 @@ var detectInit = function detectInit(text) {
   }
 
   if (results) {
-    var type = detectType(text);
+    var type = detectType(text, cnf);
     ['config'].forEach(function (prop) {
       if (typeof results[prop] !== 'undefined') {
         if (type === 'flowchart-v2') {
@@ -27027,7 +27090,7 @@ var detectDirective = function detectDirective(text) {
  * @returns {string} A graph definition key
  */
 
-var detectType = function detectType(text) {
+var detectType = function detectType(text, cnf) {
   text = text.replace(directive, '').replace(anyComment, '\n');
   _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Detecting diagram type based on the text ' + text);
 
@@ -27044,7 +27107,8 @@ var detectType = function detectType(text) {
   }
 
   if (text.match(/^\s*classDiagram/)) {
-    if (cnf && cnf.class && cnf.class) return 'class';
+    if (cnf && cnf.class && cnf.class.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
+    return 'class';
   }
 
   if (text.match(/^\s*stateDiagram-v2/)) {
@@ -27052,6 +27116,7 @@ var detectType = function detectType(text) {
   }
 
   if (text.match(/^\s*stateDiagram/)) {
+    if (cnf && cnf.class && cnf.state.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
     return 'state';
   }
 
@@ -27083,6 +27148,7 @@ var detectType = function detectType(text) {
     return 'requirement';
   }
 
+  if (cnf && cnf.flowchart && cnf.flowchart.defaultRenderer === 'dagre-wrapper') return 'flowchart-v2';
   return 'flowchart';
 };
 

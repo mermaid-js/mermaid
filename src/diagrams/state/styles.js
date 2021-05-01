@@ -96,6 +96,11 @@ g.stateGroup line {
   stroke: ${options.nodeBorder};
   stroke-width: 1px;
 }
+.node polygon {
+  fill: ${options.mainBkg};
+  stroke: ${options.nodeBorder};
+  stroke-width: 1px;
+}
 #statediagram-barbEnd {
   fill: ${options.lineColor};
 }
