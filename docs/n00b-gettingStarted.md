@@ -1,15 +1,16 @@
 # A Mermaid User-Guide for Beginners
+Mermaid has two halves, One half is concerned with Deployment and the is concerned with Configuration of values. 
 
-This section talks about the ways of deploying mermaid. The next section will talk about the other half, which is configuration of values that dictate how diagrams are rendered.
+This section talks about the deployment of Mermaid. Learning the [Syntax](./n00b-syntaxReference.md) ahead of time would be helpful.
 
->Generally the live editor is enough for most general uses of mermaid.
+>Generally the live editor is enough for most general uses of mermaid, and is a good place to test out your syntax. 
 
 **Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md) on the Live Editor, to gain a better understanding of mermaid.**
 
 
+
 ## Four ways of using mermaid:
-1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).
-    - Learning the [Syntax](./n00b-syntaxReference) would be helpful.
+1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).  
 2. Using [mermaid plugins](./integrations.md) with programs you are familiar with.
 3. Calling the Mermaid Javascript API.
 4. Deploying Mermaid as a dependency.
@@ -37,6 +38,7 @@ You may choose any of the methods below, to save it
 
 ![Flowchart](./img/Configuration.png)
 
+There are some Syntax,
 
 ## 2. Using Mermaid Plugins:
 
