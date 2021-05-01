@@ -2,6 +2,41 @@
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/flowchart.md)
 
+All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact. 
+
+It can also accomodate different arrow types, multi directional arrows, and linking to and from subgraphs.
+
+> **Important note** Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).**
+Node 
+### A node (default)
+
+```
+graph LR
+    id
+```
+
+```mermaid
+graph LR
+    id
+```
+
+> **Note** The id is what is displayed in the box.
+
+### A node with text
+
+It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
+found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The
+one previously defined will be used when rendering the box.
+
+```
+graph LR
+    id1[This is the text in the box]
+```
+```mermaid
+graph LR
+    id1[This is the text in the box]
+```
+
 ## Graph
 
 This statement declares the direction of the Flowchart.
@@ -38,48 +73,7 @@ Possible FlowChart orientations are:
 * RL - right to left
 * LR - left to right
 
-
-
-## Flowcharts
-
-This renders a flowchart that allows for features such as: more arrow types, multi directional arrows, and linking to and from subgraphs.
-
-Apart from the graph type, the syntax is the same. This is currently experimental but when the beta period is over, both the graph and flowchart keywords will render in the new way. This means it is ok to start beta testing flowcharts.
-
-> **Important note** Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).**
-
-## Nodes & shapes
-
-### A node (default)
-
-```
-graph LR
-    id
-```
-
-```mermaid
-graph LR
-    id
-```
-
-> **Note** The id is what is displayed in the box.
-
-### A node with text
-
-It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
-found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The
-one previously defined will be used when rendering the box.
-
-```
-graph LR
-    id1[This is the text in the box]
-```
-```mermaid
-graph LR
-    id1[This is the text in the box]
-```
-
-## Node Shapes
+## Node shapes
 
 ### A node with round edges
 
