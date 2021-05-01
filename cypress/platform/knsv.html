@@ -56,51 +56,16 @@ flowchart TD
   linkStyle 0,1 color:orange, stroke: orange;
 </div>
       <div class="mermaid" style="width: 100%; height: 20%;">
+%% The width of composite states does not grow with the title
 stateDiagram-v2
     [*] --> Off
     Off --> On
-    On --> Select
-    Select --> Washing
+    state MyChoice [[choice]]
+    On --> MyChoice
+    MyChoice --> Washing
+    MyChoice --> Drying
     Washing --> Finished
     Finished --> [*]
-    state Select
-    {
-      [*] --> Prg1
-      Prg1 --> [*]
-      [*] --> Prg2
-      Prg2 --> [*]
-      [*] --> Prg3
-      Prg3 --> [*]
-    }
-
-    state Washing {
-      state Using_Prg1 {
-        [*] --> P1Step1
-        P1Step1 --> P1Step2
-        P1Step2 --> P1Step3
-        P1Step3 --> [*]
-      }
-      state Using_Prg2 {
-        [*] --> P2Step1
-        P2Step1 --> P2Step2
-        P2Step2 --> P2Step3
-        P2Step3 --> [*]
-      }
-
-      state Using_Prg3 {
-        [*] --> Step1
-        Step1 --> Step2
-        Step2 --> [*]
-      }
-      [*] --> Using_Prg1
-      [*] --> Using_Prg2
-      [*] --> Using_Prg3
-      Using_Prg1 --> [*]
-      Using_Prg2 --> [*]
-      Using_Prg3 --> [*]
-    }
-
-
       </div>
 <div class="mermaid2" style="width: 100%; height: 20%;">
 stateDiagram-v2

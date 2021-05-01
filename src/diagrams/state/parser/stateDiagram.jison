@@ -56,8 +56,10 @@
 <INITIAL,struct>"state"\s+            { console.log('Starting STATE');this.pushState('STATE'); }
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
+<STATE>.*"<<choice>>"                   {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
 <STATE>.*"[[fork]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
+<STATE>.*"[[choice]]"                   {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
 <STATE>["]                   { console.log('Starting STATE_STRING');this.begin("STATE_STRING");}
 <STATE>\s*"as"\s+         {this.popState();this.pushState('STATE_ID');return "AS";}
 <STATE_ID>[^\n\{]*         {this.popState();/* console.log('STATE_ID', yytext);*/return "ID";}
@@ -167,6 +169,9 @@ statement
     }
     | JOIN {
         $$={ stmt: 'state', id: $1, type: 'join' }
+    }
+    | CHOICE {
+        $$={ stmt: 'state', id: $1, type: 'choice' }
     }
     | CONCURRENT {
         $$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
