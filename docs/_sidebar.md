@@ -2,11 +2,9 @@
 
   - [About mermaid](README.md)
   - [Simple start to write diagrams](n00b-gettingStarted.md)
-  - [Overview for Beginners](n00b-overview.md)
+  - [Syntax and Configuration](n00b-syntaxReference.md)
 
 - Diagram Syntax 📊
-
-  - [Diagram syntax intro](n00b-syntaxReference.md)
   - [Flowchart](flowchart.md)
   - [Sequence diagram](sequenceDiagram.md)
   - [Class Diagram](classDiagram.md)
@@ -33,7 +31,7 @@
   - [FAQ](faq.md)
 
 - Contributions and Community 🙌
-
+  - [Overview for Beginners](n00b-overview.md)
   - [Development and Contribution ](development.md)
   - [Changelog](CHANGELOG.md)
   - [Adding Diagrams ](newDiagram.md)
