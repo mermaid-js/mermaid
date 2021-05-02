@@ -55,7 +55,7 @@ flowchart TD
   class T TestSub
   linkStyle 0,1 color:orange, stroke: orange;
 </div>
-      <div class="mermaid" style="width: 100%; height: 20%;">
+      <div class="mermaid2" style="width: 100%; height: 20%;">
 %% The width of composite states does not grow with the title
 stateDiagram-v2
     [*] --> Off
@@ -67,15 +67,10 @@ stateDiagram-v2
     Washing --> Finished
     Finished --> [*]
       </div>
-<div class="mermaid2" style="width: 100%; height: 20%;">
+<div class="mermaid" style="width: 100%; height: 20%;">
 stateDiagram-v2
-state "Not Shooting State" as NotShooting {
-  state "Configuring mode" as Configuring
-  [*] --> Idle
-  Idle : this is a string
-  Idle : this is another string
-  Idle --> Configuring : EvConfig
-  Configuring --> Idle : EvConfig
+state "Long state name" as NotShooting {
+  a-->b
 }
 
 </div>

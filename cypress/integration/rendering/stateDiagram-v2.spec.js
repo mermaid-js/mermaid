@@ -347,6 +347,19 @@ describe('State diagram', () => {
       }
     );
   });
+  it('v2 width of compond state should grow with title if title is wider', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+  state "Long state name" as NotShooting {
+    a-->b
+  }
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
   it('v2 Simplest composite state', () => {
     imgSnapshotTest(
       `
