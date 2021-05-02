@@ -2,13 +2,15 @@
 
 This is  list of publicly available Tutorials for using Mermaid.JS . This is intended as a basic introduction for the use of the Live Editor for generating diagrams, and deploying Mermaid.JS through HTML.
 
-**Note that these tutorials might display an older interface, but the usage of the live-editor will largely be the same. 
+**Note that these tutorials might display an older interface, but the usage of the live-editor will largely be the same.**
 
 For most purposes, you can use the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor), to quickly and easily render a diagram.
 
 
 ## Live-Editor Tutorials
 The definitions that can be generated the Live-Editor are also backwards-compatible as of version 8.7.0.
+
+[Chris Chinchilla: Hands on - Text-based diagrams with Mermaid](https://www.youtube.com/watch?v=4_LdV1cs2sA)
 
 [GitLab Unfiltered: How to Create Mermaid Diagrams](https://www.youtube.com/watch?v=SQ9QmuTHuSI&t=438s)
 
