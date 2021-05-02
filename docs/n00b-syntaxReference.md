@@ -16,9 +16,8 @@ to save diagrams, there are a couple of ways,we recommend saving the diagram's d
  `%%{ }%%` These are 
 | Diagram Breakers  | Reason |Solution|
 | ---               | ---    |---|
-|  **Comments**         |  ||
-|[`%%{``}%%`](https://github.com/mermaid-js/mermaid/issues/1968) |  Similar to [Directives](./directives.md) confuses the renderer.|To comment, just use `%%`||
-|           |  Similar to [Directives](./directives.md) confuses the renderer.| 
+|  **Comments**     |        |   |
+|[`%%{``}%%`](https://github.com/mermaid-js/mermaid/issues/1968) |  Similar to [Directives](./directives.md) confuses the renderer.|To comment, just use `%%`|
 |  **Flow-Charts**      |  ||
 |'end'              |  The word "End" can cause Flowcharts and Sequence diagrams to break |wrap them in quotation marks to prevent breakage|
 | [Nodes inside Nodes](https://mermaid-js.github.io/mermaid/#/flowchart?id=special-characters-that-break-syntax)|  Mermaid gets confused with nested shapes | wrap them in quotation marks to prevent breaking graph LR|
