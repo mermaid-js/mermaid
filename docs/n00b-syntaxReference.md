@@ -28,7 +28,8 @@ Now, that you've seen what you should not add to your diagrams, you can play aro
 
 # Configuration
 
-Configuration is the third part of Mermaid, after deployment and syntax. 
+Configuration is the third part of Mermaid, after deployment and syntax. It deals with the different ways that Mermaid can be customized across different deployments. 
+
 If you are interested in altering and customizing your Mermaid Diagrams, you will find the methods and values available for [Configuration](./Setup.md) here. It includes themes
 This section will introduce the different methods of configuring of the behaviors and apperances of Mermaid Diagrams. 
 The Following are the most commonly used methods, and are all tied to Mermaid [Deployment](./n00b-gettingStarted.md) methods. 
@@ -36,7 +37,7 @@ The Following are the most commonly used methods, and are all tied to Mermaid [D
 ### Configuration Section in the [Live Editor](./Live-Editor.md). 
 Here you can edit certain values to change the behavior and appearance of the diagram. 
 
-### The [initialize()](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted?id=_3-calling-the-javascript-api) call, for when Mermaid is called via an API, or through a <script> tag. 
+### [The initialize() call](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted?id=_3-calling-the-javascript-api), for when Mermaid is called via an API, or through a <script> tag. 
 
 
 ### [Directives](./directives.md),
