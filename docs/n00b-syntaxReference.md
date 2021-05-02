@@ -1,10 +1,12 @@
 # Diagram Syntax
-Syntax is the next part of Mermaid. Syntax, together with Deployment and Configuration constitute the whole of Mermaid. 
+Mermaid's syntax is used to create diagrams.
+
+Diagram Syntax is the next part of Mermaid. Syntax, together with Deployment and Configuration constitute the whole of Mermaid. 
 
 Mermaid's Syntax is not too tricky and there are thorough guides for each type of Diagram. However, it requires some precision to render them correctly. 
-The [Getting Started](./n00b-gettingStarted.md) section can also provide some practical examples of mermaid syntax. The next section will also 
+Use the next section for reference. Adittionally, the [Getting Started](./n00b-gettingStarted.md) section can also provide some practical examples of mermaid syntax.
 
-Mermaid's syntax is used mainly to create and modify diagrams. 
+
 to save diagrams, there are a couple of ways,we recommend saving the diagram's definition along with the diagram itself, to make the diagram easy to edit. 
  
 
