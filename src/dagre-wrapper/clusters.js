@@ -136,18 +136,20 @@ const roundedWithTitle = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
+  const width = node.width > bbox.width ? node.width : bbox.width + node.padding;
+
   // center the rect around its coordinate
   rect
     .attr('class', 'outer')
-    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('x', node.x - width / 2 - halfPadding)
     .attr('y', node.y - node.height / 2 - halfPadding)
-    .attr('width', node.width + padding)
+    .attr('width', width + padding)
     .attr('height', node.height + padding);
   innerRect
     .attr('class', 'inner')
-    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('x', node.x - width / 2 - halfPadding)
     .attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1)
-    .attr('width', node.width + padding)
+    .attr('width', width + padding)
     .attr('height', node.height + padding - bbox.height - 3);
 
   // Center the label
