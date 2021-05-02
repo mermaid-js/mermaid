@@ -1,7 +1,7 @@
 - Introduction 📊
 
-  - [About mermaid](README.md)
-  - [Simple start to write diagrams](n00b-gettingStarted.md)
+  - [About Mermaid](README.md)
+  - [Deployment](n00b-gettingStarted.md)
   - [Syntax and Configuration](n00b-syntaxReference.md)
 
 - Diagram Syntax 📊
