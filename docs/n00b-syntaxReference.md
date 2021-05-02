@@ -39,7 +39,8 @@ The Following are the most commonly used methods, and are all tied to Mermaid [D
 ### Configuration Section in the [Live Editor](./Live-Editor.md). 
 Here you can edit certain values to change the behavior and appearance of the diagram. 
 
-### [The initialize() call](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted?id=_3-calling-the-javascript-api), for when Mermaid is called via an API, or through a `<script>` tag. 
+### [The initialize() call](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted?id=_3-calling-the-javascript-api), 
+Used when Mermaid is called via an API, or through a `<script>` tag. 
 
 
 ### [Directives](./directives.md),
