@@ -23,7 +23,9 @@ This section talks about the deployment of Mermaid. Learning the [Syntax](./n00b
 
 ![Flowchart](./img/Live-Editor-Usage.png)
 
-In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
+In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it. 
+
+**We recommend that you save your diagram code, in order to make it available for edits and modifications further down the line.**
 
 ![Flowchart](./img/DiagramDefinition.png)
 
