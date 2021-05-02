@@ -13,10 +13,8 @@ to save diagrams, there are a couple of ways,we recommend saving the diagram's d
 ## Diagram Breaking
 
  One should beware the use of some words or symbols that can break diagrams, and using avoid them. Often these words or symbols only affect specific types of diagrams. The table below will continuously be updated.
- 
 
 
- `%%{ }%%` These are 
 | Diagram Breakers  | Reason |Solution|
 | ---               | ---    |---|
 |  **Comments**     |        |   |
