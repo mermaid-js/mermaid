@@ -143,13 +143,6 @@ They also serve as proof of concept, for the variety of things that can be built
 |Mermaid Markdown | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-markdown/mboeoikjijmjcjgpccghbcoegikliijg) | - | - | - | - |
 | Monkeys | [🎡🔗](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | - | - | - | - |
 
-- [Mermaid Diagrams](https://chrome.google.com/webstore/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil)
-- [GitHub + Mermaid](https://chrome.google.com/webstore/detail/github-%2B-mermaid/goiiopgdnkogdbjmncgedmgpoajilohe)
-- [Mermaid Markdown](https://chrome.google.com/webstore/detail/mermaid-markdown/mboeoikjijmjcjgpccghbcoegikliijg)
-- [Monkeys](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi)
-- [Asciidoctor Live Preview](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia) __works in the 
-- [Chrome Diagrammer](https://chrome.google.com/webstore/detail/chrome-diagrammer/bkpbgjmkomfoakfklcjeoegkklgjnnpk)
-- [Diagram Tab](https://github.com/khafast/diagramtab)
 
 ## Other
 - [Jekyll](https://jekyllrb.com/)
