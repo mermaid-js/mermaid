@@ -18,7 +18,6 @@ const getStyles = options => `
     fill: ${options.requirementBackground};
     fill-opacity: 100%;
     stroke: ${options.requirementBorderColor};
-    stroke-size: ${options.requirementBorderSize};
     stroke-width: ${options.requirementBorderSize};
   }
   .reqLabelBox {
