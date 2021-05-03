@@ -271,7 +271,7 @@ export const drawElements = (els, graph, svgNode) => {
     let bodyNode = newBodyNode(
       groupNode,
       textId + '_body',
-      [`Type: ${el.type || 'Not Specified'}`, `Doc Ref: ${el.docref || 'None'}`],
+      [`Type: ${el.type || 'Not Specified'}`, `Doc Ref: ${el.docRef || 'None'}`],
       titleNodeInfo.y
     );
 
