@@ -1,18 +1,16 @@
 # Diagram Syntax
-Mermaid's syntax is used to create diagrams.
+Mermaid's syntax is used to create diagrams.The next section dives deep into the syntax of each type, 
 
-Diagram Syntax is the next part of Mermaid. Syntax, together with Deployment and Configuration constitute the whole of Mermaid. 
+Syntax, together with Deployment and Configuration constitute the whole of Mermaid. 
 
-Mermaid's Syntax is not too tricky and there are thorough guides for each type of Diagram. However, it requires some precision to render them correctly. 
-Use the next section for reference. Adittionally, the [Getting Started](./n00b-gettingStarted.md) section can also provide some practical examples of mermaid syntax.
+Use the next section for reference and the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor) as apractice area. Adittionally, the [Getting Started](./n00b-gettingStarted.md) section can also provide some practical examples of mermaid syntax.
 
-
-to save diagrams, there are a couple of ways,we recommend saving the diagram's definition along with the diagram itself, to make the diagram easy to edit. 
+You'll find that Mermaid's Syntax is not too tricky and it can be learned in a day. 
  
 
 ## Diagram Breaking
 
- One should beware the use of some words or symbols that can break diagrams, and using avoid them. Often these words or symbols only affect specific types of diagrams. The table below will continuously be updated.
+ One should beware the use of some words or symbols that can break diagrams. These words or symbols are few and often only affect specific types of diagrams. The table below will continuously be updated.
 
 
 | Diagram Breakers  | Reason |Solution|
