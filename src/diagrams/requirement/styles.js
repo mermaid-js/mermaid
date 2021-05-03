@@ -31,7 +31,7 @@ const getStyles = options => `
 
   .req-title-line {
     stroke: ${options.requirementBorderColor};
-    stroke-width: 1;
+    stroke-width: ${options.requirementBorderSize};
   }
   .relationshipLine {
     stroke: ${options.relationColor};
