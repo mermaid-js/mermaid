@@ -1,9 +1,9 @@
 # A Mermaid User-Guide for Beginners
-Mermaid has two halves, One half is concerned with Deployment and the is concerned with Configuration of values. 
+Mermaid is composed of three parts, Deployment, Syntax and Configuration. 
 
-This section talks about the deployment of Mermaid. Learning the [Syntax](./n00b-syntaxReference.md) ahead of time would be helpful.
+This section talks about the different ways to deploy Mermaid. Learning the [Syntax](./n00b-syntaxReference.md) ahead of time would be more helpful to the beginner. 
 
->Generally the live editor is enough for most general uses of mermaid, and is a good place to test out your syntax. 
+>Generally the live editor is enough for most general uses of mermaid, and is a good place to start learning. 
 
 **Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md) on the Live Editor, to gain a better understanding of mermaid.**
 
