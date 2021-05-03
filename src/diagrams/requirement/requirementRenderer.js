@@ -323,6 +323,7 @@ const elementString = str => {
 
 export const draw = (text, id) => {
   parser.yy = requirementDb;
+  parser.yy.clear();
   parser.parse(text);
 
   const svg = select(`[id='${id}']`);
