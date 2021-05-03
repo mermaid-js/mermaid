@@ -21,26 +21,25 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 
 ## 1. Using [The Live Editor](https://mermaidjs.github.io/mermaid-live-editor).
 
-![Flowchart](./img/Live-Editor-Usage.png)
+![EditingProcess](./img/Editing-process.png )
 
 In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it. 
 
-**We recommend that you save your diagram code, in order to make it available for edits and modifications further down the line.**
+The `Configuration` Section is for changing the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
 
-![Flowchart](./img/DiagramDefinition.png)
 
-**Saving a Diagram:**
+![Code,Config and Preview](./img/Code-Preview-Config.png)
+
+### Saving a Diagram:
 You may choose any of the methods below, to save it 
+
+**We recommend that you save your diagram code on top of any method you choose, in order to make edits and modifications further down the line.**
 
 ![Flowchart](./img/Live-Editor-Choices.png)
 
-**Configuration**
+### Editing your diagrams
+Editing is as easy as pasting your **Diagram code**, into the `code` section of the `Live Editor`. 
 
-*The Configuration Section* is for changing the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
-
-![Flowchart](./img/Configuration.png)
-
-There are some Syntax,
 
 ## 2. Using Mermaid Plugins:
 
