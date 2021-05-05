@@ -1,20 +1,14 @@
 /**
  * Created by AshishJ on 11-09-2019.
  */
-import { select, scaleOrdinal, schemeSet2, pie as d3pie, entries, arc } from 'd3';
+import { select, scaleOrdinal, pie as d3pie, entries, arc } from 'd3';
 import pieData from './pieDb';
 import pieParser from './parser/pie';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
+import * as configApi from '../../config';
 
-const conf = {};
-export const setConf = function(cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function(key) {
-    conf[key] = cnf[key];
-  });
-};
+let conf = configApi.getConfig();
 
 /**
  * Draws a Pie Chart with the data given in text.
@@ -25,6 +19,7 @@ let width;
 const height = 450;
 export const draw = (txt, id) => {
   try {
+    conf = configApi.getConfig();
     const parser = pieParser.parser;
     parser.yy = pieData;
     log.debug('Rendering info diagram\n' + txt);
@@ -66,10 +61,26 @@ export const draw = (txt, id) => {
       sum += data[key];
     });
 
+    const themeVariables = conf.themeVariables;
+    var myGeneratedColors = [
+      themeVariables.pie1,
+      themeVariables.pie2,
+      themeVariables.pie3,
+      themeVariables.pie4,
+      themeVariables.pie5,
+      themeVariables.pie6,
+      themeVariables.pie7,
+      themeVariables.pie8,
+      themeVariables.pie9,
+      themeVariables.pie10,
+      themeVariables.pie11,
+      themeVariables.pie12
+    ];
+
     // Set the color scale
     var color = scaleOrdinal()
       .domain(data)
-      .range(schemeSet2);
+      .range(myGeneratedColors);
 
     // Compute the position of each group on the pie:
     var pie = d3pie().value(function(d) {
@@ -156,6 +167,5 @@ export const draw = (txt, id) => {
 };
 
 export default {
-  setConf,
   draw
 };
