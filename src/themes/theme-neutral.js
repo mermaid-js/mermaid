@@ -153,7 +153,7 @@ class Theme {
     this.stateBkg = this.stateBkg || this.mainBkg;
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
-    this.altBackground = this.altBackground || '#e0e0e0';
+    this.altBackground = this.altBackground || '#f4f4f4';
     this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;
     this.stateBorder = this.stateBorder || '#000';
 
