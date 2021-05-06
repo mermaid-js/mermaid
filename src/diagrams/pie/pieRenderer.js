@@ -34,12 +34,12 @@ export const draw = (txt, id) => {
       width = 1200;
     }
 
-    if (typeof conf.useWidth !== 'undefined') {
+    if (typeof conf.pie.useWidth !== 'undefined') {
       width = conf.useWidth;
     }
 
     const diagram = select('#' + id);
-    configureSvgSize(diagram, height, width, conf.useMaxWidth);
+    configureSvgSize(diagram, height, width, conf.pie.useMaxWidth);
 
     // Set viewBox
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
