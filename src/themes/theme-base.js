@@ -111,7 +111,7 @@ class Theme {
 
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
-    this.transitionLabelColor = this.labelColor || this.textColor;
+    this.transitionLabelColor = this.transitionLabelColor || this.textColor;
     /* The color of the text tables of the tstates*/
     this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
 

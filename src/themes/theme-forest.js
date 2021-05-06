@@ -110,7 +110,7 @@ class Theme {
 
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
-    this.transitionLabelColor = this.labelColor || this.textColor;
+    this.transitionLabelColor = this.transitionLabelColor || this.textColor;
     this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
 
     this.stateBkg = this.stateBkg || this.mainBkg;
