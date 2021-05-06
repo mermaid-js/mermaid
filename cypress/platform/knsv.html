@@ -68,13 +68,36 @@ stateDiagram-v2
     Finished --> [*]
       </div>
 <div class="mermaid" style="width: 100%; height: 20%;">
-stateDiagram-v2
-state "Long state name" as NotShooting {
-  a-->b
+    %%{init:{
+"themeVariables": {
+    "transitionColor":"red",
+    "labelColor":"yellow",
+    "transitionLabelColor":"blue",
+    "stateBkg":"green",
+    "compositeBackground":"pink",
+    "altBackground":"purple",
+    "clusterTitleBackground":"blue",
+    "compositeBorder":"red"
+}}}%%
+stateDiagram
+    state CompositeState {
+        state AnotherCompositeState {
+        AnotherState --> YetANotherState:a label
+    }
 }
 
 </div>
       <div class="mermaid2" style="width: 100%; height: 20%;">
+    %%{init:{
+"themeVariables": {
+    "transitionColor":"red",
+    "labelColor":"yellow",
+    "transitionLabelColor":"blue",
+    "stateBkg":"green",
+    "compositeBackground":"pink",
+    "altBackground":"purple",
+    "clusterTitleBackground":"blue"
+}}}%%
 stateDiagram-v2
     [*] --> Off
     Off --> On
@@ -214,7 +237,7 @@ style N stroke:#0000ff,fill:#ccccff,color:#0000ff
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'neutral',
+        theme: 'base',
         arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,

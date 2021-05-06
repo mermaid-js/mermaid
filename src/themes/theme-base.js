@@ -108,10 +108,18 @@ class Theme {
     this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
 
     /* state colors */
-    this.labelColor = this.labelColor || this.primaryTextColor;
+    this.transitionColor = this.transitionColor || this.lineColor;
+    this.transitionLabelColor = this.labelColor || this.textColor;
+    this.labelColor = this.labelColor || this.textColor || this.primaryTextColor;
+    this.stateBkg = this.stateBkg || this.mainBkg;
+    this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
     this.altBackground = this.altBackground || this.tertiaryColor;
+    this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;
+    this.compositeBorder = this.compositeBorder || this.nodeBorder;
+
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
     this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+    this.transitionColor = this.transitionColor || this.lineColor;
 
     /* class */
     this.classText = this.classText || this.textColor;
