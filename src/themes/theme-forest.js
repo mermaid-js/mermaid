@@ -109,6 +109,20 @@ class Theme {
     this.activeTaskBkgColor = this.mainBkg;
 
     /* state colors */
+    this.transitionColor = this.transitionColor || this.lineColor;
+    this.transitionLabelColor = this.labelColor || this.textColor;
+    this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+
+    this.stateBkg = this.stateBkg || this.mainBkg;
+    this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+    this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+    this.altBackground = this.altBackground || '#f0f0f0';
+    this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;
+    this.compositeBorder = this.compositeBorder || this.nodeBorder;
+
+    this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+    this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+    this.transitionColor = this.transitionColor || this.lineColor;
     /* class */
     this.classText = this.primaryTextColor;
     /* journey */

@@ -49,6 +49,8 @@ class Theme {
     this.tertiaryBorderColor =
       this.tertiaryBorderColor || mkBorder(this.tertiaryColor, this.darkMode);
     this.noteBorderColor = this.noteBorderColor || mkBorder(this.noteBkgColor, this.darkMode);
+    this.noteBkgColor = this.noteBkgColor || '#fff5ad';
+    this.noteTextColor = this.noteTextColor || '#333';
 
     this.secondaryTextColor = this.secondaryTextColor || invert(this.secondaryColor);
     this.tertiaryTextColor = this.tertiaryTextColor || invert(this.tertiaryColor);
@@ -110,8 +112,11 @@ class Theme {
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.labelColor || this.textColor;
-    this.labelColor = this.labelColor || this.textColor || this.primaryTextColor;
+    /* The color of the text tables of the tstates*/
+    this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+
     this.stateBkg = this.stateBkg || this.mainBkg;
+    this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
     this.altBackground = this.altBackground || this.tertiaryColor;
     this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;

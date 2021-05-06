@@ -127,8 +127,18 @@ class Theme {
     this.taskTextDarkColor = this.darkTextColor;
 
     /* state colors */
-    this.labelColor = this.textColor;
-    this.altBackground = lighten(this.background, 20);
+    this.transitionColor = this.transitionColor || this.lineColor;
+    this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+    this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+    this.stateBkg = this.stateBkg || this.mainBkg;
+    this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+    this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+    this.altBackground = this.altBackground || '#555';
+    this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;
+    this.compositeBorder = this.compositeBorder || this.nodeBorder;
+
+    this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+    this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
 
     this.fillType0 = this.primaryColor;
     this.fillType1 = this.secondaryColor;

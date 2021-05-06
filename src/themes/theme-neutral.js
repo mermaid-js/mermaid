@@ -24,7 +24,7 @@ class Theme {
     this.lineColor = invert(this.background);
     this.textColor = invert(this.background);
 
-    this.altBackground = lighten(this.contrast, 55);
+    // this.altBackground = lighten(this.contrast, 55);
     this.mainBkg = '#eee';
     this.secondBkg = 'calculated';
     this.lineColor = '#666';
@@ -119,9 +119,9 @@ class Theme {
     this.labelBoxBorderColor = this.actorBorder;
     this.labelTextColor = this.text;
     this.loopTextColor = this.text;
-    this.noteBorderColor = darken(this.note, 60);
-    this.noteBkgColor = this.note;
-    this.noteTextColor = this.actorTextColor;
+    this.noteBorderColor = '#999';
+    this.noteBkgColor = '#666';
+    this.noteTextColor = '#fff';
 
     /* Gantt chart variables */
 
@@ -146,6 +146,20 @@ class Theme {
     this.todayLineColor = this.critBkgColor;
 
     /* state colors */
+    this.transitionColor = this.transitionColor || '#000';
+    this.transitionLabelColor = this.labelColor || this.textColor;
+    this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+
+    this.stateBkg = this.stateBkg || this.mainBkg;
+    this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+    this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+    this.altBackground = this.altBackground || '#e0e0e0';
+    this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;
+    this.stateBorder = this.stateBorder || '#000';
+
+    this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+    this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+
     /* class */
     this.classText = this.primaryTextColor;
     /* journey */

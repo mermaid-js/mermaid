@@ -17,7 +17,7 @@ g.stateGroup text {
 }
 g.stateGroup .state-title {
   font-weight: bolder;
-  fill: ${options.labelColor};
+  fill: ${options.stateLabelColor};
 }
 
 g.stateGroup rect {
@@ -65,7 +65,7 @@ g.stateGroup line {
 }
 
 .edgeLabel .label rect {
-  fill: ${options.tertiaryColor};
+  fill: ${options.labelBackgroundColor};
   opacity: 0.5;
 }
 .edgeLabel .label text {
@@ -76,7 +76,7 @@ g.stateGroup line {
 }
 
 .stateLabel text {
-  fill: ${options.labelColor};
+  fill: ${options.stateLabelColor};
   font-size: 10px;
   font-weight: bold;
 }
@@ -98,7 +98,7 @@ g.stateGroup line {
 
 .node rect {
   fill: ${options.stateBkg || options.mainBkg};
-  stroke: ${options.nodeBorder};
+  stroke: ${options.stateBorder || options.nodeBorder};
   stroke-width: 1px;
 }
 .node polygon {
@@ -112,12 +112,12 @@ g.stateGroup line {
 
 .statediagram-cluster rect {
   fill: ${options.clusterTitleBackground};
-  stroke: ${options.compositeBorder || options.nodeBorder};
+  stroke: ${options.stateBorder || options.nodeBorder};
   stroke-width: 1px;
 }
 
 .cluster-label, .nodeLabel {
-  color: ${options.labelColor};
+  color: ${options.stateLabelColor};
 }
 
 .statediagram-cluster rect.outer {
@@ -125,7 +125,7 @@ g.stateGroup line {
   ry: 5px;
 }
 .statediagram-state .divider {
-  stroke: ${options.nodeBorder};
+  stroke: ${options.stateBorder || options.nodeBorder};
 }
 
 .statediagram-state .title-state {
