@@ -993,10 +993,11 @@ var roundedWithTitle = function roundedWithTitle(parent, node) {
 
   bbox = text.getBBox();
   var padding = 0 * node.padding;
-  var halfPadding = padding / 2; // center the rect around its coordinate
+  var halfPadding = padding / 2;
+  var width = node.width > bbox.width ? node.width : bbox.width + node.padding; // center the rect around its coordinate
 
-  rect.attr('class', 'outer').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', node.width + padding).attr('height', node.height + padding);
-  innerRect.attr('class', 'inner').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1).attr('width', node.width + padding).attr('height', node.height + padding - bbox.height - 3); // Center the label
+  rect.attr('class', 'outer').attr('x', node.x - width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', width + padding).attr('height', node.height + padding);
+  innerRect.attr('class', 'inner').attr('x', node.x - width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1).attr('width', width + padding).attr('height', node.height + padding - bbox.height - 3); // Center the label
 
   label.attr('transform', 'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2 - node.padding / 3 + (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels ? 5 : 3)) + ')');
   var rectBox = rect.node().getBBox();
@@ -3931,7 +3932,7 @@ var config = {
    * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
    * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
-    * **Notes**:
+     * **Notes**:
    *
    * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
@@ -16718,12 +16719,11 @@ var clear = function clear() {
 /*!*****************************************!*\
   !*** ./src/diagrams/pie/pieRenderer.js ***!
   \*****************************************/
-/*! exports provided: setConf, draw, default */
+/*! exports provided: draw, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConf", function() { return setConf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "draw", function() { return draw; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
@@ -16732,6 +16732,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_pie__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_parser_pie__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /**
  * Created by AshishJ on 11-09-2019.
  */
@@ -16740,13 +16741,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var conf = {};
-var setConf = function setConf(cnf) {
-  var keys = Object.keys(cnf);
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
-};
+
+var conf = _config__WEBPACK_IMPORTED_MODULE_5__["getConfig"]();
 /**
  * Draws a Pie Chart with the data given in text.
  * @param text
@@ -16757,6 +16753,7 @@ var width;
 var height = 450;
 var draw = function draw(txt, id) {
   try {
+    conf = _config__WEBPACK_IMPORTED_MODULE_5__["getConfig"]();
     var parser = _parser_pie__WEBPACK_IMPORTED_MODULE_2___default.a.parser;
     parser.yy = _pieDb__WEBPACK_IMPORTED_MODULE_1__["default"];
     _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Rendering info diagram\n' + txt); // Parse the Pie Chart definition
@@ -16789,9 +16786,11 @@ var draw = function draw(txt, id) {
     var sum = 0;
     Object.keys(data).forEach(function (key) {
       sum += data[key];
-    }); // Set the color scale
+    });
+    var themeVariables = conf.themeVariables;
+    var myGeneratedColors = [themeVariables.pie1, themeVariables.pie2, themeVariables.pie3, themeVariables.pie4, themeVariables.pie5, themeVariables.pie6, themeVariables.pie7, themeVariables.pie8, themeVariables.pie9, themeVariables.pie10, themeVariables.pie11, themeVariables.pie12]; // Set the color scale
 
-    var color = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleOrdinal"])().domain(data).range(d3__WEBPACK_IMPORTED_MODULE_0__["schemeSet2"]); // Compute the position of each group on the pie:
+    var color = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleOrdinal"])().domain(data).range(myGeneratedColors); // Compute the position of each group on the pie:
 
     var pie = Object(d3__WEBPACK_IMPORTED_MODULE_0__["pie"])().value(function (d) {
       return d.value;
@@ -16831,7 +16830,6 @@ var draw = function draw(txt, id) {
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
-  setConf: setConf,
   draw: draw
 });
 
@@ -25334,8 +25332,8 @@ var render = function render(id, _txt, cb, container) {
         break;
 
       case 'pie':
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(cnf.pie);
+        //cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        //pieRenderer.setConf(cnf.pie);
         _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
@@ -25498,8 +25496,8 @@ function updateRendererConfigs(conf) {
   _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(conf.class);
   _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(conf.state);
   _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(conf.state);
-  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_22__["default"].setConf(conf.class);
-  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(conf.class);
+  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_22__["default"].setConf(conf.class); // pieRenderer.setConf(conf.class);
+
   _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(conf.er);
   _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(conf.journey);
   _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_29__["default"].setConf(conf.requirement);
@@ -25903,6 +25901,44 @@ function () {
       this.fillType7 = this.fillType7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* pie */
+
+      this.pie1 = this.pie1 || this.primaryColor;
+      this.pie2 = this.pie2 || this.secondaryColor;
+      this.pie3 = this.pie3 || this.tertiaryColor;
+      this.pie4 = this.pie4 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        l: -10
+      });
+      this.pie5 = this.pie5 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        l: -10
+      });
+      this.pie6 = this.pie6 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.tertiaryColor, {
+        l: -10
+      });
+      this.pie7 = this.pie7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -10
+      });
+      this.pie8 = this.pie8 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -10
+      });
+      this.pie9 = this.pie9 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: 0
+      });
+      this.pie10 = this.pie10 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -20
+      });
+      this.pie11 = this.pie11 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -20
+      });
+      this.pie12 = this.pie12 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: -10
+      });
       /* requirement-diagram */
 
       this.requirementBackground = this.requirementBackground || this.primaryColor;
@@ -26124,6 +26160,32 @@ function () {
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* pie */
+      // this.pie1 = this.pie1 || this.primaryColor;
+      // this.pie2 = this.pie2 || this.secondaryColor;
+      // this.pie3 = this.pie3 || this.tertiaryColor;
+      // this.pie4 = this.pie4 || adjust(this.primaryColor, { l: -10 });
+      // this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
+      // this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
+      // this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
+      // this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
+      // this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
+      // this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
+      // this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
+      // this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
+
+      this.pie1 = this.pie1 || '#0b0000';
+      this.pie2 = this.pie2 || '#4d1037';
+      this.pie3 = this.pie3 || '#3f5258';
+      this.pie4 = this.pie4 || '#4f2f1b';
+      this.pie5 = this.pie5 || '#6e0a0a';
+      this.pie6 = this.pie6 || '#3b0048';
+      this.pie7 = this.pie7 || '#995a01';
+      this.pie8 = this.pie8 || '#154706';
+      this.pie9 = this.pie9 || '#161722';
+      this.pie10 = this.pie10 || '#00296f';
+      this.pie11 = this.pie11 || '#01629c';
+      this.pie12 = this.pie12 || '#010029';
       /* class */
 
       this.classText = this.primaryTextColor;
@@ -26362,6 +26424,46 @@ function () {
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* pie */
+
+      this.pie1 = this.pie1 || this.primaryColor;
+      this.pie2 = this.pie2 || this.secondaryColor;
+      this.pie3 = this.pie3 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.tertiaryColor, {
+        l: -40
+      });
+      this.pie4 = this.pie4 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        l: -10
+      });
+      this.pie5 = this.pie5 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        l: -30
+      });
+      this.pie6 = this.pie6 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.tertiaryColor, {
+        l: -20
+      });
+      this.pie7 = this.pie7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -20
+      });
+      this.pie8 = this.pie8 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -40
+      });
+      this.pie9 = this.pie9 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: -40
+      });
+      this.pie10 = this.pie10 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -40
+      });
+      this.pie11 = this.pie11 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -90,
+        l: -40
+      });
+      this.pie12 = this.pie12 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: -30
+      });
       /* requirement-diagram */
 
       this.requirementBackground = this.requirementBackground || this.primaryColor;
@@ -26565,6 +26667,45 @@ function () {
       });
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
+      });
+      /* pie */
+
+      this.pie1 = this.pie1 || this.primaryColor;
+      this.pie2 = this.pie2 || this.secondaryColor;
+      this.pie3 = this.pie3 || this.tertiaryColor;
+      this.pie4 = this.pie4 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        l: -30
+      });
+      this.pie5 = this.pie5 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        l: -30
+      });
+      this.pie6 = this.pie6 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.tertiaryColor, {
+        h: +40,
+        l: -40
+      });
+      this.pie7 = this.pie7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -10
+      });
+      this.pie8 = this.pie8 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -10
+      });
+      this.pie9 = this.pie9 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: 0
+      });
+      this.pie10 = this.pie10 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -50
+      });
+      this.pie11 = this.pie11 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -50
+      });
+      this.pie12 = this.pie12 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: -50
       });
       /* requirement-diagram */
 
@@ -26823,7 +26964,32 @@ function () {
       });
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
-      });
+      }); // /* pie */
+
+      this.pie1 = this.pie1 || '#F4F4F4';
+      this.pie2 = this.pie2 || '#555';
+      this.pie3 = this.pie3 || '#BBB';
+      this.pie4 = this.pie4 || '#777';
+      this.pie5 = this.pie5 || '#999';
+      this.pie6 = this.pie6 || '#DDD';
+      this.pie7 = this.pie7 || '#FFF';
+      this.pie8 = this.pie8 || '#DDD';
+      this.pie9 = this.pie9 || '#BBB';
+      this.pie10 = this.pie10 || '#999';
+      this.pie11 = this.pie11 || '#777';
+      this.pie12 = this.pie12 || '#555'; // this.pie1 = this.pie1 || '#212529';
+      // this.pie2 = this.pie2 || '#343A40';
+      // this.pie3 = this.pie3 || '#495057';
+      // this.pie4 = this.pie4 || '#6C757D';
+      // this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
+      // this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
+      // this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
+      // this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
+      // this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
+      // this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
+      // this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
+      // this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
+
       /* requirement-diagram */
 
       this.requirementBackground = this.requirementBackground || this.primaryColor;

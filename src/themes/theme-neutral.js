@@ -157,6 +157,34 @@ class Theme {
     this.fillType5 = adjust(this.secondaryColor, { h: -64 });
     this.fillType6 = adjust(this.primaryColor, { h: 128 });
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
+
+    // /* pie */
+    this.pie1 = this.pie1 || '#F4F4F4';
+    this.pie2 = this.pie2 || '#555';
+    this.pie3 = this.pie3 || '#BBB';
+    this.pie4 = this.pie4 || '#777';
+    this.pie5 = this.pie5 || '#999';
+    this.pie6 = this.pie6 || '#DDD';
+    this.pie7 = this.pie7 || '#FFF';
+    this.pie8 = this.pie8 || '#DDD';
+    this.pie9 = this.pie9 || '#BBB';
+    this.pie10 = this.pie10 || '#999';
+    this.pie11 = this.pie11 || '#777';
+    this.pie12 = this.pie12 || '#555';
+
+    // this.pie1 = this.pie1 || '#212529';
+    // this.pie2 = this.pie2 || '#343A40';
+    // this.pie3 = this.pie3 || '#495057';
+    // this.pie4 = this.pie4 || '#6C757D';
+    // this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
+    // this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
+    // this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
+    // this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
+    // this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
+    // this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
+    // this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
+    // this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
+
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;
     this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;

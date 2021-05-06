@@ -1,4 +1,4 @@
-- Introduction 📊
+- Introduction 📔 
 
   - [About mermaid](README.md)
   - [Simple start to write diagrams](n00b-gettingStarted.md)
@@ -18,7 +18,7 @@
   - [Requirement Diagram](requirementDiagram.md)
   - [Other Examples](examples.md)
 
-- Adding mermaid✒️
+- Deployment and Configuration⚙️
 
   - [Tutorials](Tutorials.md)
   - [API-Usage](usage.md)
