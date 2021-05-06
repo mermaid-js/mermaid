@@ -139,6 +139,20 @@ class Theme {
     this.taskTextOutsideColor = this.taskTextDarkColor;
 
     /* state colors */
+    this.transitionColor = this.transitionColor || this.lineColor;
+    this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+    this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+
+    this.stateBkg = this.stateBkg || this.mainBkg;
+    this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+    this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+    this.altBackground = this.altBackground || '#f0f0f0';
+    this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;
+    this.compositeBorder = this.compositeBorder || this.nodeBorder;
+
+    this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+    this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+    this.transitionColor = this.transitionColor || this.lineColor;
     /* class */
     this.classText = this.primaryTextColor;
     /* journey */
@@ -150,6 +164,20 @@ class Theme {
     this.fillType5 = adjust(this.secondaryColor, { h: -64 });
     this.fillType6 = adjust(this.primaryColor, { h: 128 });
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
+
+    /* pie */
+    this.pie1 = this.pie1 || this.primaryColor;
+    this.pie2 = this.pie2 || this.secondaryColor;
+    this.pie3 = this.pie3 || adjust(this.tertiaryColor, { l: -40 });
+    this.pie4 = this.pie4 || adjust(this.primaryColor, { l: -10 });
+    this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -30 });
+    this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -20 });
+    this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -20 });
+    this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -40 });
+    this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: -40 });
+    this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -40 });
+    this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -90, l: -40 });
+    this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -30 });
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;

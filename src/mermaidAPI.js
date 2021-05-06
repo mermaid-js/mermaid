@@ -414,8 +414,8 @@ const render = function(id, _txt, cb, container) {
         infoRenderer.draw(txt, id, pkg.version);
         break;
       case 'pie':
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        pieRenderer.setConf(cnf.pie);
+        //cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        //pieRenderer.setConf(cnf.pie);
         pieRenderer.draw(txt, id, pkg.version);
         break;
       case 'er':
@@ -574,7 +574,7 @@ function updateRendererConfigs(conf) {
   stateRenderer.setConf(conf.state);
   stateRendererV2.setConf(conf.state);
   infoRenderer.setConf(conf.class);
-  pieRenderer.setConf(conf.class);
+  // pieRenderer.setConf(conf.class);
   erRenderer.setConf(conf.er);
   journeyRenderer.setConf(conf.journey);
   requirementRenderer.setConf(conf.requirement);

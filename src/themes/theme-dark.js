@@ -127,8 +127,18 @@ class Theme {
     this.taskTextDarkColor = this.darkTextColor;
 
     /* state colors */
-    this.labelColor = this.textColor;
-    this.altBackground = lighten(this.background, 20);
+    this.transitionColor = this.transitionColor || this.lineColor;
+    this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+    this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+    this.stateBkg = this.stateBkg || this.mainBkg;
+    this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+    this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+    this.altBackground = this.altBackground || '#555';
+    this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;
+    this.compositeBorder = this.compositeBorder || this.nodeBorder;
+
+    this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+    this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
 
     this.fillType0 = this.primaryColor;
     this.fillType1 = this.secondaryColor;
@@ -138,6 +148,34 @@ class Theme {
     this.fillType5 = adjust(this.secondaryColor, { h: -64 });
     this.fillType6 = adjust(this.primaryColor, { h: 128 });
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
+
+    /* pie */
+    // this.pie1 = this.pie1 || this.primaryColor;
+    // this.pie2 = this.pie2 || this.secondaryColor;
+    // this.pie3 = this.pie3 || this.tertiaryColor;
+    // this.pie4 = this.pie4 || adjust(this.primaryColor, { l: -10 });
+    // this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
+    // this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
+    // this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
+    // this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
+    // this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
+    // this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
+    // this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
+    // this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
+
+    this.pie1 = this.pie1 || '#0b0000';
+    this.pie2 = this.pie2 || '#4d1037';
+    this.pie3 = this.pie3 || '#3f5258';
+    this.pie4 = this.pie4 || '#4f2f1b';
+    this.pie5 = this.pie5 || '#6e0a0a';
+    this.pie6 = this.pie6 || '#3b0048';
+    this.pie7 = this.pie7 || '#995a01';
+    this.pie8 = this.pie8 || '#154706';
+    this.pie9 = this.pie9 || '#161722';
+    this.pie10 = this.pie10 || '#00296f';
+    this.pie11 = this.pie11 || '#01629c';
+    this.pie12 = this.pie12 || '#010029';
+
     /* class */
     this.classText = this.primaryTextColor;
 

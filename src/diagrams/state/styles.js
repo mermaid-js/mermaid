@@ -1,5 +1,10 @@
 const getStyles = options =>
-  `g.stateGroup text {
+  `
+defs #statediagram-barbEnd {
+    fill: ${options.transitionColor};
+    stroke: ${options.transitionColor};
+  }
+g.stateGroup text {
   fill: ${options.nodeBorder};
   stroke: none;
   font-size: 10px;
@@ -12,7 +17,7 @@ g.stateGroup text {
 }
 g.stateGroup .state-title {
   font-weight: bolder;
-  fill: ${options.labelColor};
+  fill: ${options.stateLabelColor};
 }
 
 g.stateGroup rect {
@@ -26,7 +31,7 @@ g.stateGroup line {
 }
 
 .transition {
-  stroke: ${options.lineColor};
+  stroke: ${options.transitionColor};
   stroke-width: 1;
   fill: none;
 }
@@ -46,7 +51,7 @@ g.stateGroup line {
   fill: ${options.noteBkgColor};
 
   text {
-    fill: black;
+    fill: ${options.noteTextColor};
     stroke: none;
     font-size: 10px;
   }
@@ -60,18 +65,18 @@ g.stateGroup line {
 }
 
 .edgeLabel .label rect {
-  fill: ${options.tertiaryColor};
+  fill: ${options.labelBackgroundColor};
   opacity: 0.5;
 }
 .edgeLabel .label text {
-  fill: ${options.tertiaryTextColor};
+  fill: ${options.transitionLabelColor || options.tertiaryTextColor};
 }
 .label div .edgeLabel {
-  color: ${options.tertiaryTextColor};
+  color: ${options.transitionLabelColor || options.tertiaryTextColor};
 }
 
 .stateLabel text {
-  fill: ${options.labelColor};
+  fill: ${options.stateLabelColor};
   font-size: 10px;
   font-weight: bold;
 }
@@ -86,14 +91,14 @@ g.stateGroup line {
   stroke-width: 1.5
 }
 .end-state-inner {
-  fill: ${options.background};
+  fill: ${options.compositeBackground || options.background};
   // stroke: ${options.background};
   stroke-width: 1.5
 }
 
 .node rect {
-  fill: ${options.mainBkg};
-  stroke: ${options.nodeBorder};
+  fill: ${options.stateBkg || options.mainBkg};
+  stroke: ${options.stateBorder || options.nodeBorder};
   stroke-width: 1px;
 }
 .node polygon {
@@ -106,13 +111,13 @@ g.stateGroup line {
 }
 
 .statediagram-cluster rect {
-  fill: ${options.mainBkg};
-  stroke: ${options.nodeBorder};
+  fill: ${options.clusterTitleBackground};
+  stroke: ${options.stateBorder || options.nodeBorder};
   stroke-width: 1px;
 }
 
 .cluster-label, .nodeLabel {
-  color: ${options.textColor};
+  color: ${options.stateLabelColor};
 }
 
 .statediagram-cluster rect.outer {
@@ -120,7 +125,7 @@ g.stateGroup line {
   ry: 5px;
 }
 .statediagram-state .divider {
-  stroke: ${options.nodeBorder};
+  stroke: ${options.stateBorder || options.nodeBorder};
 }
 
 .statediagram-state .title-state {
@@ -128,10 +133,10 @@ g.stateGroup line {
   ry: 5px;
 }
 .statediagram-cluster.statediagram-cluster .inner {
-  fill: ${options.background};
+  fill: ${options.compositeBackground || options.background};
 }
 .statediagram-cluster.statediagram-cluster-alt .inner {
-  fill: #e0e0e0;
+  fill: ${options.altBackground ? options.altBackground : '#efefef'};
 }
 
 .statediagram-cluster .inner {
@@ -173,6 +178,9 @@ g.stateGroup line {
 
 .statediagram-note .nodeLabel {
   color: ${options.noteTextColor};
+}
+.statediagram .edgeLabel {
+  color: red; // ${options.noteTextColor};
 }
 
 #dependencyStart, #dependencyEnd {
