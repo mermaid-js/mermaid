@@ -51,7 +51,7 @@ g.stateGroup line {
   fill: ${options.noteBkgColor};
 
   text {
-    fill: black;
+    fill: ${options.noteTextColor};
     stroke: none;
     font-size: 10px;
   }
