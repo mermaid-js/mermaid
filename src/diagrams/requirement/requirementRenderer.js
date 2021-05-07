@@ -271,7 +271,7 @@ export const drawElements = (els, graph, svgNode) => {
     let bodyNode = newBodyNode(
       groupNode,
       textId + '_body',
-      [`Type: ${el.type || 'Not Specified'}`, `Doc Ref: ${el.docref || 'None'}`],
+      [`Type: ${el.type || 'Not Specified'}`, `Doc Ref: ${el.docRef || 'None'}`],
       titleNodeInfo.y
     );
 
@@ -323,6 +323,7 @@ const elementString = str => {
 
 export const draw = (text, id) => {
   parser.yy = requirementDb;
+  parser.yy.clear();
   parser.parse(text);
 
   const svg = select(`[id='${id}']`);

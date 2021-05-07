@@ -18,7 +18,11 @@ const getStyles = options => `
     fill: ${options.requirementBackground};
     fill-opacity: 100%;
     stroke: ${options.requirementBorderColor};
-    stroke-size: ${options.requirementBorderSize};
+    stroke-width: ${options.requirementBorderSize};
+  }
+  
+  .reqTitle, .reqLabel{
+    fill:  ${options.requirementTextColor};
   }
   .reqLabelBox {
     fill: ${options.relationLabelBackground};
@@ -27,7 +31,7 @@ const getStyles = options => `
 
   .req-title-line {
     stroke: ${options.requirementBorderColor};
-    stroke-width: 1;
+    stroke-width: ${options.requirementBorderSize};
   }
   .relationshipLine {
     stroke: ${options.relationColor};
