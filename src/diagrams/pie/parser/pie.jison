@@ -30,6 +30,7 @@ title                                                           { this.begin("ti
 <string>["]                                                     { this.popState(); }
 <string>[^"]*                                                   { return "txt"; }
 "pie"		                                                        return 'PIE';
+"showData"                                                      return 'showData';
 ":"[\s]*[\d]+(?:\.[\d]+)?                                       return "value";
 <<EOF>>                                                         return 'EOF';
 
@@ -44,6 +45,7 @@ start
   : eol start
   | directive start
 	| PIE document
+  | PIE showData document {yy.setShowData(true);}
 	;
 
 document

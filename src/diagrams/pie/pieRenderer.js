@@ -34,8 +34,11 @@ export const draw = (txt, id) => {
       width = 1200;
     }
 
-    if (typeof conf.pie.useWidth !== 'undefined') {
+    if (typeof conf.useWidth !== 'undefined') {
       width = conf.useWidth;
+    }
+    if (typeof conf.pie.useWidth !== 'undefined') {
+      width = conf.pie.useWidth;
     }
 
     const diagram = select('#' + id);
@@ -103,9 +106,7 @@ export const draw = (txt, id) => {
       .attr('fill', function(d) {
         return color(d.data.key);
       })
-      .attr('stroke', 'black')
-      .style('stroke-width', '2px')
-      .style('opacity', 0.7);
+      .attr('class', 'pieCircle');
 
     // Now add the percentage.
     // Use the centroid method to get the best coordinates.
@@ -121,8 +122,7 @@ export const draw = (txt, id) => {
         return 'translate(' + arcGenerator.centroid(d) + ')';
       })
       .style('text-anchor', 'middle')
-      .attr('class', 'slice')
-      .style('font-size', 17);
+      .attr('class', 'slice');
 
     svg
       .append('text')
@@ -154,11 +154,16 @@ export const draw = (txt, id) => {
       .style('stroke', color);
 
     legend
+      .data(dataReady.filter(value => value.data.value !== 0))
       .append('text')
       .attr('x', legendRectSize + legendSpacing)
       .attr('y', legendRectSize - legendSpacing)
       .text(function(d) {
-        return d;
+        if (parser.yy.getShowData() || conf.showData || conf.pie.showData) {
+          return d.data.key + ' [' + d.data.value + ']';
+        } else {
+          return d.data.key;
+        }
       });
   } catch (e) {
     log.error('Error while rendering info diagram');
