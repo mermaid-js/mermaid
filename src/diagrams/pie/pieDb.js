@@ -7,6 +7,7 @@ import * as configApi from '../../config';
 
 let sections = {};
 let title = '';
+let showData = false;
 
 export const parseDirective = function(statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
@@ -24,6 +25,14 @@ const setTitle = function(txt) {
   title = txt;
 };
 
+const setShowData = function(toggle) {
+  showData = toggle;
+};
+
+const getShowData = function() {
+  return showData;
+};
+
 const getTitle = function() {
   return title;
 };
@@ -39,6 +48,7 @@ const cleanupValue = function(value) {
 const clear = function() {
   sections = {};
   title = '';
+  showData = false;
 };
 // export const parseError = (err, hash) => {
 //   global.mermaidAPI.parseError(err, hash)
@@ -52,6 +62,8 @@ export default {
   cleanupValue,
   clear,
   setTitle,
-  getTitle
+  getTitle,
+  setShowData,
+  getShowData
   // parseError
 };

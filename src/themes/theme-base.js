@@ -152,6 +152,15 @@ class Theme {
     this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
     this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
     this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
+    this.pieTitleTextSize = this.pieTitleTextSize || '25px';
+    this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+    this.pieSectionTextSize = this.pieSectionTextSize || '17px';
+    this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+    this.pieLegendTextSize = this.pieLegendTextSize || '17px';
+    this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+    this.pieStrokeColor = this.pieStrokeColor || 'black';
+    this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+    this.pieOpacity = this.pieOpacity || '0.7';
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;

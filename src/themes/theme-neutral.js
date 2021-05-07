@@ -185,6 +185,15 @@ class Theme {
     this.pie10 = this.pie10 || '#999';
     this.pie11 = this.pie11 || '#777';
     this.pie12 = this.pie12 || '#555';
+    this.pieTitleTextSize = this.pieTitleTextSize || '25px';
+    this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+    this.pieSectionTextSize = this.pieSectionTextSize || '17px';
+    this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+    this.pieLegendTextSize = this.pieLegendTextSize || '17px';
+    this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+    this.pieStrokeColor = this.pieStrokeColor || 'black';
+    this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+    this.pieOpacity = this.pieOpacity || '0.7';
 
     // this.pie1 = this.pie1 || '#212529';
     // this.pie2 = this.pie2 || '#343A40';

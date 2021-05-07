@@ -150,19 +150,6 @@ class Theme {
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
 
     /* pie */
-    // this.pie1 = this.pie1 || this.primaryColor;
-    // this.pie2 = this.pie2 || this.secondaryColor;
-    // this.pie3 = this.pie3 || this.tertiaryColor;
-    // this.pie4 = this.pie4 || adjust(this.primaryColor, { l: -10 });
-    // this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
-    // this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
-    // this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
-    // this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
-    // this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
-    // this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
-    // this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
-    // this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
-
     this.pie1 = this.pie1 || '#0b0000';
     this.pie2 = this.pie2 || '#4d1037';
     this.pie3 = this.pie3 || '#3f5258';
@@ -175,6 +162,15 @@ class Theme {
     this.pie10 = this.pie10 || '#00296f';
     this.pie11 = this.pie11 || '#01629c';
     this.pie12 = this.pie12 || '#010029';
+    this.pieTitleTextSize = this.pieTitleTextSize || '25px';
+    this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+    this.pieSectionTextSize = this.pieSectionTextSize || '17px';
+    this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+    this.pieLegendTextSize = this.pieLegendTextSize || '17px';
+    this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+    this.pieStrokeColor = this.pieStrokeColor || 'black';
+    this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+    this.pieOpacity = this.pieOpacity || '0.7';
 
     /* class */
     this.classText = this.primaryTextColor;
