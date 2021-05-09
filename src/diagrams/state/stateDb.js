@@ -67,6 +67,7 @@ const docTranslator = (parent, node, first) => {
 const getRootDocV2 = () => {
   docTranslator({ id: 'root' }, { id: 'root', doc: rootDoc }, true);
   return { id: 'root', doc: rootDoc };
+  // Here
 };
 
 const extract = _doc => {
@@ -230,7 +231,11 @@ let classes = [];
 
 const getClasses = () => classes;
 
-const getDirection = () => 'TB';
+let direction = 'TB';
+const getDirection = () => direction;
+const setDirection = dir => {
+  direction = dir;
+};
 
 export const relationType = {
   AGGREGATION: 0,
@@ -253,6 +258,7 @@ export default {
   getDirection,
   addRelation,
   getDividerId,
+  setDirection,
   // addDescription,
   cleanupLabel,
   lineType,

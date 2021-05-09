@@ -3932,7 +3932,7 @@ var config = {
    * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
    * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
-     * **Notes**:
+    * **Notes**:
    *
    * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
@@ -16768,12 +16768,12 @@ var draw = function draw(txt, id) {
       width = 1200;
     }
 
-    if (typeof conf.useWidth !== 'undefined') {
+    if (typeof conf.pie.useWidth !== 'undefined') {
       width = conf.useWidth;
     }
 
     var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + id);
-    Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Set viewBox
+    Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(diagram, height, width, conf.pie.useMaxWidth); // Set viewBox
 
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height); // Fetch the default direction, use TD if none was found
 
@@ -23081,7 +23081,7 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.tertiaryColor, ";\n  opacity: 0.5;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.tertiaryTextColor, ";\n}\n.label div .edgeLabel {\n  color: ").concat(options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n}\n\n.node circle.state-start {\n  fill: ").concat(options.lineColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n.end-state-inner {\n  fill: ").concat(options.background, ";\n  // stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n.node polygon {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
+  return "\ndefs #statediagram-barbEnd {\n    fill: ".concat(options.transitionColor, ";\n    stroke: ").concat(options.transitionColor, ";\n  }\ng.stateGroup text {\n  fill: ").concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.stateLabelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.transitionColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: ").concat(options.noteTextColor, ";\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.labelBackgroundColor, ";\n  opacity: 0.5;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.transitionLabelColor || options.tertiaryTextColor, ";\n}\n.label div .edgeLabel {\n  color: ").concat(options.transitionLabelColor || options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.stateLabelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n}\n\n.node circle.state-start {\n  fill: ").concat(options.lineColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n.end-state-inner {\n  fill: ").concat(options.compositeBackground || options.background, ";\n  // stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.stateBkg || options.mainBkg, ";\n  stroke: ").concat(options.stateBorder || options.nodeBorder, ";\n  stroke-width: 1px;\n}\n.node polygon {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.compositeTitleBackground, ";\n  stroke: ").concat(options.stateBorder || options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.stateLabelColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.stateBorder || options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.compositeBackground || options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n.statediagram .edgeLabel {\n  color: red; // ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -25817,6 +25817,8 @@ function () {
       this.secondaryBorderColor = this.secondaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
       this.tertiaryBorderColor = this.tertiaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode);
       this.noteBorderColor = this.noteBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.noteBkgColor, this.darkMode);
+      this.noteBkgColor = this.noteBkgColor || '#fff5ad';
+      this.noteTextColor = this.noteTextColor || '#333';
       this.secondaryTextColor = this.secondaryTextColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
       this.tertiaryTextColor = this.tertiaryTextColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
       this.lineColor = this.lineColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
@@ -25872,10 +25874,20 @@ function () {
       this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
       /* state colors */
 
-      this.labelColor = this.labelColor || this.primaryTextColor;
+      this.transitionColor = this.transitionColor || this.lineColor;
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      /* The color of the text tables of the tstates*/
+
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
       this.altBackground = this.altBackground || this.tertiaryColor;
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.compositeBorder = this.compositeBorder || this.nodeBorder;
       this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
       this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+      this.transitionColor = this.transitionColor || this.lineColor;
       /* class */
 
       this.classText = this.classText || this.textColor;
@@ -26138,8 +26150,17 @@ function () {
       this.taskTextDarkColor = this.darkTextColor;
       /* state colors */
 
-      this.labelColor = this.textColor;
-      this.altBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.background, 20);
+      this.transitionColor = this.transitionColor || this.lineColor;
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+      this.altBackground = this.altBackground || '#555';
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.compositeBorder = this.compositeBorder || this.nodeBorder;
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
       this.fillType0 = this.primaryColor;
       this.fillType1 = this.secondaryColor;
       this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
@@ -26399,6 +26420,18 @@ function () {
       this.taskTextOutsideColor = this.taskTextDarkColor;
       /* state colors */
 
+      this.transitionColor = this.transitionColor || this.lineColor;
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+      this.altBackground = this.altBackground || '#f0f0f0';
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.compositeBorder = this.compositeBorder || this.nodeBorder;
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+      this.transitionColor = this.transitionColor || this.lineColor;
       /* class */
 
       this.classText = this.primaryTextColor;
@@ -26643,6 +26676,18 @@ function () {
       this.activeTaskBkgColor = this.mainBkg;
       /* state colors */
 
+      this.transitionColor = this.transitionColor || this.lineColor;
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+      this.altBackground = this.altBackground || '#f0f0f0';
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.compositeBorder = this.compositeBorder || this.nodeBorder;
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+      this.transitionColor = this.transitionColor || this.lineColor;
       /* class */
 
       this.classText = this.primaryTextColor;
@@ -26825,8 +26870,8 @@ function () {
     this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
     this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
     this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
-    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
-    this.altBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background); // this.altBackground = lighten(this.contrast, 55);
+
     this.mainBkg = '#eee';
     this.secondBkg = 'calculated';
     this.lineColor = '#666';
@@ -26918,9 +26963,9 @@ function () {
       this.labelBoxBorderColor = this.actorBorder;
       this.labelTextColor = this.text;
       this.loopTextColor = this.text;
-      this.noteBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.note, 60);
-      this.noteBkgColor = this.note;
-      this.noteTextColor = this.actorTextColor;
+      this.noteBorderColor = '#999';
+      this.noteBkgColor = '#666';
+      this.noteTextColor = '#fff';
       /* Gantt chart variables */
 
       this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 30);
@@ -26940,6 +26985,17 @@ function () {
       this.todayLineColor = this.critBkgColor;
       /* state colors */
 
+      this.transitionColor = this.transitionColor || '#000';
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+      this.altBackground = this.altBackground || '#f4f4f4';
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.stateBorder = this.stateBorder || '#000';
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
       /* class */
 
       this.classText = this.primaryTextColor;
