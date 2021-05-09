@@ -117,7 +117,7 @@ const setupNode = (g, parent, node, altFlag) => {
         labelText: node.note.text,
         classes: 'statediagram-note', //classStr,
         style: '', //styles.style,
-        id: node.id + '----note',
+        id: node.id + '----note-' + cnt,
         domId: 'state-' + node.id + '----note-' + cnt,
         type: nodeDb[node.id].type,
         padding: 15 //getConfig().flowchart.padding

@@ -10,7 +10,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        background:#333;
+        /* background:#333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
         }
@@ -28,39 +28,12 @@
     <div class="flex">
 
 <div class="mermaid" style="width: 100%; height: 20%;">
-    %%{init:{
-"themeVariables": {
-    "transitionColor":"red",
-    "labelColor":"yellow",
-    "transitionLabelColor":"blue",
-    "stateBkg":"green",
-    "compositeBackground":"pink",
-    "altBackground":"purple",
-    "clusterTitleBackground":"blue",
-    "stateBorder":"red",
-    "noteBorderColor":"#522",
-    "noteBkgColor":"#522",
-    "noteTextColor":"white"
-}}}%%
-    %%{int:{
-"themeVariables": {
-    "altBackground":"purple"
-}}}%%
-stateDiagram-v2
-  state CompositeState {
-    state AnotherCompositeState {
-      AnotherState --> YetANotherState:a label
-    }
-    --
+stateDiagram
     MyState
-  }
-  note left of CompositeState
-    Important information! You can write
-    notes.
-  end note
-
+    note left of MyState : I am a leftie
+    note right of MyState : I am a rightie
 </div>
-<div class="mermaid" style="width: 100%; height: 20%;">
+<div class="mermaid2" style="width: 100%; height: 20%;">
     %%{int:{
 "themeVariables": {
     "transitionColor":"red",
@@ -80,7 +53,7 @@ stateDiagram
 }
 
 </div>
-<div class="mermaid" style="width: 100%; height: 20%;">
+<div class="mermaid2" style="width: 100%; height: 20%;">
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
     Alice->>+John: John, can you hear me?
@@ -94,7 +67,7 @@ sequenceDiagram
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'neutral',
+        theme: 'default',
         arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
@@ -108,7 +81,7 @@ sequenceDiagram
         state:{
           nodeSpacing: 50,
           rankSpacing: 50,
-          // defaultRenderer: 'dagre-wrapper',
+          defaultRenderer: 'dagre-wrapper',
         },
 
         fontSize: 18,
