@@ -170,7 +170,7 @@ statement
     }
     | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP
     {
-         /*console.warn('Adding document for state with id zxzx', $3, $4, yy.getDirection());*/ yy.addDocument($3);
+         // console.warn('Adding document for state with id zxzx', $3, $4, yy.getDirection()); yy.addDocument($3);
          $$={ stmt: 'state', id: $3, type: 'default', description: $1, doc: $5 }
     }
     | FORK {
@@ -187,7 +187,7 @@ statement
     }
     | note notePosition ID NOTE_TEXT
     {
-        /*console.warn('got NOTE, position: ', $2.trim(), 'id = ', $3.trim(), 'note: ', $4);*/
+        /* console.warn('got NOTE, position: ', $2.trim(), 'id = ', $3.trim(), 'note: ', $4);*/
         $$={ stmt: 'state', id: $3.trim(), note:{position: $2.trim(), text: $4.trim()}};
     }
     | note NOTE_TEXT AS ID
