@@ -398,6 +398,26 @@ stateDiagram-v2
       }
     );
   });
+  it('v2 should handle different rendering directions in composite states', () => {
+    imgSnapshotTest(
+      `
+stateDiagram
+  direction LR
+  state A {
+    direction BT
+    a --> b
+  }
+  state C {
+    direction RL
+    c --> d
+  }
+  A --> C
+    `,
+      {
+        logLevel: 0, fontFamily: 'courier',
+      }
+    );
+  });
   it('v2 handle transition from one state in a composite state to a composite state', () => {
     imgSnapshotTest(
       `

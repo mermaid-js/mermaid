@@ -85,7 +85,6 @@ const setupNode = (g, parent, node, altFlag) => {
     // group
     if (!nodeDb[node.id].type && node.doc) {
       log.info('Setting cluster for ', node.id, getDir(node));
-      console.info('Setting cluster for ', node.id, getDir(node));
       nodeDb[node.id].type = 'group';
       nodeDb[node.id].dir = getDir(node);
       nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
@@ -220,9 +219,6 @@ const getDir = (nodes, defaultDir) => {
       }
     }
   }
-  if(nodes.id==='A') {
-    console.log('nodes.id',nodes.id, dir)
-  }
   return dir;
 };
 /**
@@ -232,7 +228,6 @@ const getDir = (nodes, defaultDir) => {
  */
 export const draw = function(text, id) {
   log.info('Drawing state diagram (v2)', id);
-  console.info('Drawing state diagram (v2)', id);
   stateDb.clear();
   nodeDb = {};
   const parser = state.parser;
@@ -254,7 +249,6 @@ export const draw = function(text, id) {
   log.info(stateDb.getRootDocV2());
   stateDb.extract(stateDb.getRootDocV2());
   log.info(stateDb.getRootDocV2());
-  console.info(stateDb.getRootDocV2());
 
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
@@ -272,9 +266,7 @@ export const draw = function(text, id) {
       return {};
     });
 
-  console.info('Setup node')
   setupNode(g, undefined, stateDb.getRootDocV2(), true);
-  console.info('Setup node done')
 
   // Set up an SVG group so that we can translate the final graph.
   const svg = select(`[id="${id}"]`);
