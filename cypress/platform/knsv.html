@@ -10,7 +10,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background:#333; */
+        background:#333;
         font-family: 'Arial';
         /* font-size: 18px !important; */
         }
@@ -28,7 +28,7 @@
     <div class="flex">
 
 <div class="mermaid" style="width: 100%; height: 20%;">
-    %%{int:{
+    %%{init:{
 "themeVariables": {
     "transitionColor":"red",
     "labelColor":"yellow",
@@ -37,7 +37,7 @@
     "compositeBackground":"pink",
     "altBackground":"purple",
     "clusterTitleBackground":"blue",
-    "compositeBorder":"red",
+    "stateBorder":"red",
     "noteBorderColor":"#522",
     "noteBkgColor":"#522",
     "noteTextColor":"white"
@@ -52,7 +52,7 @@ stateDiagram-v2
       AnotherState --> YetANotherState:a label
     }
     --
-    SSTAte
+    MyState
   }
   note left of CompositeState
     Important information! You can write

@@ -154,7 +154,7 @@ class Theme {
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
     this.altBackground = this.altBackground || '#f4f4f4';
-    this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;
+    this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
     this.stateBorder = this.stateBorder || '#000';
 
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;

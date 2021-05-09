@@ -119,7 +119,7 @@ class Theme {
     this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
     this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
     this.altBackground = this.altBackground || this.tertiaryColor;
-    this.clusterTitleBackground = this.clusterTitleBackground || this.mainBkg;
+    this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
 
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;

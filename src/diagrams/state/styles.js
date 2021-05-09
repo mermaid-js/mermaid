@@ -111,7 +111,7 @@ g.stateGroup line {
 }
 
 .statediagram-cluster rect {
-  fill: ${options.clusterTitleBackground};
+  fill: ${options.compositeTitleBackground};
   stroke: ${options.stateBorder || options.nodeBorder};
   stroke-width: 1px;
 }
