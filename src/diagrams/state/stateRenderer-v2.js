@@ -84,8 +84,9 @@ const setupNode = (g, parent, node, altFlag) => {
 
     // group
     if (!nodeDb[node.id].type && node.doc) {
-      log.info('Setting cluser for ', node.id);
+      log.info('Setting cluster for ', node.id, getDir(node));
       nodeDb[node.id].type = 'group';
+      nodeDb[node.id].dir = getDir(node);
       nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
       nodeDb[node.id].classes =
         nodeDb[node.id].classes +
@@ -103,7 +104,7 @@ const setupNode = (g, parent, node, altFlag) => {
       classes: nodeDb[node.id].classes, //classStr,
       style: '', //styles.style,
       id: node.id,
-      dir: altFlag ? 'LR' : 'TB',
+      dir: nodeDb[node.id].dir,
       domId: 'state-' + node.id + '-' + cnt,
       type: nodeDb[node.id].type,
       padding: 15 //getConfig().flowchart.padding
@@ -208,7 +209,18 @@ const setupDoc = (g, parent, doc, altFlag) => {
     }
   });
 };
-
+const getDir = (nodes, defaultDir) => {
+  let dir = defaultDir || 'TB';
+  if (nodes.doc) {
+    for (let i = 0; i < nodes.doc.length; i++) {
+      const node = nodes.doc[i];
+      if (node.stmt === 'dir') {
+        dir = node.value;
+      }
+    }
+  }
+  return dir;
+};
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
@@ -234,13 +246,17 @@ export const draw = function(text, id) {
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
 
+  log.info(stateDb.getRootDocV2());
+  stateDb.extract(stateDb.getRootDocV2());
+  log.info(stateDb.getRootDocV2());
+
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
     multigraph: true,
     compound: true
   })
     .setGraph({
-      rankdir: 'TB',
+      rankdir: getDir(stateDb.getRootDocV2()),
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
@@ -250,9 +266,6 @@ export const draw = function(text, id) {
       return {};
     });
 
-  log.info(stateDb.getRootDocV2());
-  stateDb.extract(stateDb.getRootDocV2());
-  log.info(stateDb.getRootDocV2());
   setupNode(g, undefined, stateDb.getRootDocV2(), true);
 
   // Set up an SVG group so that we can translate the final graph.
