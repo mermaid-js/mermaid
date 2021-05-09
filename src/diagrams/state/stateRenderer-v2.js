@@ -210,7 +210,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
   });
 };
 const getDir = (nodes, defaultDir) => {
-  let dir = defaultDir || 'BT';
+  let dir = defaultDir || 'TB';
   if (nodes.doc) {
     for (let i = 0; i < nodes.doc.length; i++) {
       const node = nodes.doc[i];
