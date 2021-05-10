@@ -49035,7 +49035,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.9.3\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.10.1\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -49371,10 +49371,11 @@ var roundedWithTitle = function roundedWithTitle(parent, node) {
 
   bbox = text.getBBox();
   var padding = 0 * node.padding;
-  var halfPadding = padding / 2; // center the rect around its coordinate
+  var halfPadding = padding / 2;
+  var width = node.width > bbox.width ? node.width : bbox.width + node.padding; // center the rect around its coordinate
 
-  rect.attr('class', 'outer').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', node.width + padding).attr('height', node.height + padding);
-  innerRect.attr('class', 'inner').attr('x', node.x - node.width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1).attr('width', node.width + padding).attr('height', node.height + padding - bbox.height - 3); // Center the label
+  rect.attr('class', 'outer').attr('x', node.x - width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding).attr('width', width + padding).attr('height', node.height + padding);
+  innerRect.attr('class', 'inner').attr('x', node.x - width / 2 - halfPadding).attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1).attr('width', width + padding).attr('height', node.height + padding - bbox.height - 3); // Center the label
 
   label.attr('transform', 'translate(' + (node.x - bbox.width / 2) + ', ' + (node.y - node.height / 2 - node.padding / 3 + (Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().flowchart.htmlLabels ? 5 : 3)) + ')');
   var rectBox = rect.node().getBBox();
@@ -49450,6 +49451,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../config */ "./src/config.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
  // eslint-disable-line
 // let vertexNode;
@@ -49522,6 +49525,7 @@ function addHtmlLabel(node) {
 
 var createLabel = function createLabel(_vertexText, style, isTitle, isNode) {
   var vertexText = _vertexText || '';
+  if (_typeof(vertexText) === 'object') vertexText = vertexText[0];
 
   if (Object(_config__WEBPACK_IMPORTED_MODULE_2__["getConfig"])().flowchart.htmlLabels) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
@@ -49595,6 +49599,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
  // eslint-disable-line
 
+ // import { line, curveBasis, curveLinear, select } from 'd3';
 
 
 
@@ -49717,7 +49722,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
   }
 };
 var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
   var path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
 
   if (edge.label) {
@@ -49728,7 +49733,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
     if (path) {
       //   // debugger;
       var pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcLabelPosition(path);
-      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')'); // x = pos.x;
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ') abc78'); // x = pos.x;
       // y = pos.y;
     }
 
@@ -49738,66 +49743,66 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
 
   if (edge.startLabelLeft) {
     var _el = terminalLabels[edge.id].startLeft;
-    var _x = edge.x;
-    var _y = edge.y;
-
-    if (path) {
-      // debugger;
-      var _pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_left', path);
-
-      _x = _pos.x;
-      _y = _pos.y;
-    }
-
-    _el.attr('transform', 'translate(' + _x + ', ' + _y + ')');
-  }
-
-  if (edge.startLabelRight) {
-    var _el2 = terminalLabels[edge.id].startRight;
     var _x2 = edge.x;
     var _y2 = edge.y;
 
     if (path) {
       // debugger;
-      var _pos2 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_right', path);
+      var _pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_left', path);
 
-      _x2 = _pos2.x;
-      _y2 = _pos2.y;
+      _x2 = _pos.x;
+      _y2 = _pos.y;
     }
 
-    _el2.attr('transform', 'translate(' + _x2 + ', ' + _y2 + ')');
+    _el.attr('transform', 'translate(' + _x2 + ', ' + _y2 + ')');
   }
 
-  if (edge.endLabelLeft) {
-    var _el3 = terminalLabels[edge.id].endLeft;
+  if (edge.startLabelRight) {
+    var _el2 = terminalLabels[edge.id].startRight;
     var _x3 = edge.x;
     var _y3 = edge.y;
 
     if (path) {
       // debugger;
-      var _pos3 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_left', path);
+      var _pos2 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_right', path);
 
-      _x3 = _pos3.x;
-      _y3 = _pos3.y;
+      _x3 = _pos2.x;
+      _y3 = _pos2.y;
     }
 
-    _el3.attr('transform', 'translate(' + _x3 + ', ' + _y3 + ')');
+    _el2.attr('transform', 'translate(' + _x3 + ', ' + _y3 + ')');
   }
 
-  if (edge.endLabelRight) {
-    var _el4 = terminalLabels[edge.id].endRight;
+  if (edge.endLabelLeft) {
+    var _el3 = terminalLabels[edge.id].endLeft;
     var _x4 = edge.x;
     var _y4 = edge.y;
 
     if (path) {
       // debugger;
-      var _pos4 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_right', path);
+      var _pos3 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_left', path);
 
-      _x4 = _pos4.x;
-      _y4 = _pos4.y;
+      _x4 = _pos3.x;
+      _y4 = _pos3.y;
     }
 
-    _el4.attr('transform', 'translate(' + _x4 + ', ' + _y4 + ')');
+    _el3.attr('transform', 'translate(' + _x4 + ', ' + _y4 + ')');
+  }
+
+  if (edge.endLabelRight) {
+    var _el4 = terminalLabels[edge.id].endRight;
+    var _x5 = edge.x;
+    var _y5 = edge.y;
+
+    if (path) {
+      // debugger;
+      var _pos4 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_right', path);
+
+      _x5 = _pos4.x;
+      _y5 = _pos4.y;
+    }
+
+    _el4.attr('transform', 'translate(' + _x5 + ', ' + _y5 + ')');
   }
 }; // const getRelationType = function(type) {
 //   switch (type) {
@@ -49829,24 +49834,28 @@ var outsideNode = function outsideNode(node, point) {
 };
 
 var intersection = function intersection(node, outsidePoint, insidePoint) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("intersection calc abc89:\n  outsidePoint: ".concat(JSON.stringify(outsidePoint), "\n  insidePoint : ").concat(JSON.stringify(insidePoint), "\n  node        : x:").concat(node.x, " y:").concat(node.y, " w:").concat(node.width, " h:").concat(node.height));
   var x = node.x;
   var y = node.y;
-  var dx = Math.abs(x - insidePoint.x);
+  var dx = Math.abs(x - insidePoint.x); // const dy = Math.abs(y - insidePoint.y);
+
   var w = node.width / 2;
   var r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-  var h = node.height / 2;
-  var edges = {
-    x1: x - w,
-    x2: x + w,
-    y1: y - h,
-    y2: y + h
-  };
-
-  if (outsidePoint.x === edges.x1 || outsidePoint.x === edges.x2 || outsidePoint.y === edges.y1 || outsidePoint.y === edges.y2) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('calc equals on edge');
-    return outsidePoint;
-  }
+  var h = node.height / 2; // const edges = {
+  //   x1: x - w,
+  //   x2: x + w,
+  //   y1: y - h,
+  //   y2: y + h
+  // };
+  // if (
+  //   outsidePoint.x === edges.x1 ||
+  //   outsidePoint.x === edges.x2 ||
+  //   outsidePoint.y === edges.y1 ||
+  //   outsidePoint.y === edges.y2
+  // ) {
+  //   log.warn('abc89 calc equals on edge', outsidePoint, edges);
+  //   return outsidePoint;
+  // }
 
   var Q = Math.abs(outsidePoint.y - insidePoint.y);
   var R = Math.abs(outsidePoint.x - insidePoint.x); // log.warn();
@@ -49858,16 +49867,27 @@ var intersection = function intersection(node, outsidePoint, insidePoint) {
     var q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = R * q / Q;
     var res = {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - q
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q
     };
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
+
+    if (r === 0) {
+      res.x = outsidePoint.x;
+      res.y = outsidePoint.y;
+    }
+
+    if (R === 0) {
+      res.x = outsidePoint.x;
+    }
+
+    if (Q === 0) {
+      res.y = outsidePoint.y;
+    }
+
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("abc89 topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
     return res;
   } else {
     // Intersection onn sides of rect
-    // q = (Q * r) / R;
-    // q = 2;
-    // r = (R * q) / Q;
     if (insidePoint.x < outsidePoint.x) {
       r = outsidePoint.x - w - x;
     } else {
@@ -49875,24 +49895,99 @@ var intersection = function intersection(node, outsidePoint, insidePoint) {
       r = x - w - outsidePoint.x;
     }
 
-    var _q = _q = Q * r / R;
+    var _q = Q * r / R; //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
+    // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
 
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("sides calc, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
+
+    var _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r; // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
+
+
+    var _y = insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q;
+
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn("sides calc abc89, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
+      _x: _x,
+      _y: _y
     });
+
+    if (r === 0) {
+      _x = outsidePoint.x;
+      _y = outsidePoint.y;
+    }
+
+    if (R === 0) {
+      _x = outsidePoint.x;
+    }
+
+    if (Q === 0) {
+      _y = outsidePoint.y;
+    }
+
     return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
+      x: _x,
+      y: _y
     };
   }
+};
+/**
+ * This function will page a path and node where the last point(s) in the path is inside the node
+ * and return an update path ending by the border of the node.
+ * @param {*} points
+ * @param {*} boundryNode
+ * @returns
+ */
+
+var cutPathAtIntersect = function cutPathAtIntersect(_points, boundryNode) {
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 cutPathAtIntersect', _points, boundryNode);
+  var points = [];
+  var lastPointOutside = _points[0];
+  var isInside = false;
+
+  _points.forEach(function (point) {
+    // const node = clusterDb[edge.toCluster].node;
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('abc88 checking point', point, boundryNode); // check if point is inside the boundry rect
+
+    if (!outsideNode(boundryNode, point) && !isInside) {
+      // First point inside the rect found
+      // Calc the intersection coord between the point anf the last opint ouside the rect
+      var inter = intersection(boundryNode, lastPointOutside, point);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 inside', point, lastPointOutside, inter);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 intersection', inter); // // Check case where the intersection is the same as the last point
+
+      var pointPresent = false;
+      points.forEach(function (p) {
+        pointPresent = pointPresent || p.x === inter.x && p.y === inter.y;
+      }); // // if (!pointPresent) {
+
+      if (!points.find(function (e) {
+        return e.x === inter.x && e.y === inter.y;
+      })) {
+        points.push(inter);
+      } else {
+        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 no intersect', inter, points);
+      } // points.push(inter);
+
+
+      isInside = true;
+    } else {
+      // Outside
+      _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 outside', point, lastPointOutside);
+      lastPointOutside = point; // points.push(point);
+
+      if (!isInside) points.push(point);
+    }
+  });
+
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('abc88 returning points', points);
+  return points;
 }; //(edgePaths, e, edge, clusterDb, diagramtype, graph)
+
 
 var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, graph) {
   var points = edge.points;
   var pointsHasChanged = false;
   var tail = graph.node(e.v);
   var head = graph.node(e.w);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('abc88 InsertEdge: ', edge);
 
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
@@ -49902,72 +49997,79 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
   }
 
   if (edge.toCluster) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('to cluster', clusterDb[edge.toCluster]);
-    points = [];
-    var lastPointOutside;
-    var isInside = false;
-    edge.points.forEach(function (point) {
-      var node = clusterDb[edge.toCluster].node;
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('to cluster abc88', clusterDb[edge.toCluster]);
+    points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node); // log.trace('edge', edge);
+    // points = [];
+    // let lastPointOutside; // = edge.points[0];
+    // let isInside = false;
+    // edge.points.forEach(point => {
+    //   const node = clusterDb[edge.toCluster].node;
+    //   log.warn('checking from', edge.fromCluster, point, node);
+    //   if (!outsideNode(node, point) && !isInside) {
+    //     log.trace('inside', edge.toCluster, point, lastPointOutside);
+    //     // First point inside the rect
+    //     const inter = intersection(node, lastPointOutside, point);
+    //     let pointPresent = false;
+    //     points.forEach(p => {
+    //       pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+    //     });
+    //     // if (!pointPresent) {
+    //     if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+    //       points.push(inter);
+    //     } else {
+    //       log.warn('no intersect', inter, points);
+    //     }
+    //     isInside = true;
+    // } else {
+    //   // outtside
+    //   lastPointOutside = point;
+    //   if (!isInside) points.push(point);
+    // }
+    // });
 
-      if (!outsideNode(node, point) && !isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('inside', edge.toCluster, point, lastPointOutside); // First point inside the rect
-
-        var inter = intersection(node, lastPointOutside, point);
-        var pointPresent = false;
-        points.forEach(function (p) {
-          pointPresent = pointPresent || p.x === inter.x && p.y === inter.y;
-        }); // if (!pointPresent) {
-
-        if (!points.find(function (e) {
-          return e.x === inter.x && e.y === inter.y;
-        })) {
-          points.push(inter);
-        } else {
-          _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('no intersect', inter, points);
-        }
-
-        isInside = true;
-      } else {
-        if (!isInside) points.push(point);
-      }
-
-      lastPointOutside = point;
-    });
     pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('from cluster', clusterDb[edge.fromCluster]);
-    var updatedPoints = [];
+    _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('from cluster abc88', clusterDb[edge.fromCluster]);
+    points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse(); // log.warn('edge', edge);
+    // log.warn('from cluster', clusterDb[edge.fromCluster], points);
+    // const updatedPoints = [];
+    // let lastPointOutside = edge.points[edge.points.length - 1];
+    // let isInside = false;
+    // for (let i = points.length - 1; i >= 0; i--) {
+    //   const point = points[i];
+    //   const node = clusterDb[edge.fromCluster].node;
+    //   log.warn('checking to', edge.fromCluster, point, node);
+    //   if (!outsideNode(node, point) && !isInside) {
+    //     log.warn('inside', edge.fromCluster, point, node);
+    //     // First point inside the rect
+    //     const inter = intersection(node, lastPointOutside, point);
+    //     log.warn('intersect', intersection(node, lastPointOutside, point));
+    //     let pointPresent = false;
+    //     points.forEach(p => {
+    //       pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+    //     });
+    //     // if (!pointPresent) {
+    //     if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+    //       updatedPoints.unshift(inter);
+    //       log.warn('Adding point -updated = ', updatedPoints);
+    //     } else {
+    //       log.warn('no intersect', inter, points);
+    //     }
+    //     // points.push(insterection);
+    //     isInside = true;
+    //   } else {
+    //     // at the outside
+    //     // if (!isInside) updatedPoints.unshift(point);
+    //     updatedPoints.unshift(point);
+    //     log.warn('Outside point', point, updatedPoints);
+    //   }
+    //   lastPointOutside = point;
+    // }
+    // points = updatedPoints;
+    // points = edge.points;
 
-    var _lastPointOutside;
-
-    var _isInside = false;
-
-    for (var i = points.length - 1; i >= 0; i--) {
-      var point = points[i];
-      var node = clusterDb[edge.fromCluster].node;
-
-      if (!outsideNode(node, point) && !_isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('inside', edge.fromCluster, point, node); // First point inside the rect
-
-        var insterection = intersection(node, _lastPointOutside, point); // log.trace('intersect', intersection(node, lastPointOutside, point));
-
-        updatedPoints.unshift(insterection); // points.push(insterection);
-
-        _isInside = true;
-      } else {
-        // at the outside
-        _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('Outside point', point);
-        if (!_isInside) updatedPoints.unshift(point);
-      }
-
-      _lastPointOutside = point;
-    }
-
-    points = updatedPoints;
     pointsHasChanged = true;
   } // The data for our line
 
@@ -49984,7 +50086,8 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     curve = edge.curve || d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"];
   } else {
     curve = d3__WEBPACK_IMPORTED_MODULE_2__["curveBasis"];
-  }
+  } // curve = curveLinear;
+
 
   var lineFunction = Object(d3__WEBPACK_IMPORTED_MODULE_2__["line"])().x(function (d) {
     return d.x;
@@ -50161,7 +50264,7 @@ __webpack_require__.r(__webpack_exports__);
 var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parentCluster) {
   _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Graph in recursive render: XXX', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph), parentCluster);
   var dir = graph.graph().rankdir;
-  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].warn('Dir in recursive render - dir:', dir);
+  _logger__WEBPACK_IMPORTED_MODULE_8__["log"].trace('Dir in recursive render - dir:', dir);
 
   var elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
 
@@ -50173,7 +50276,7 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
   }
 
   if (graph.edges().length > 0) {
-    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].info('Recursive edges', graph.edge(graph.edges()[0]));
+    _logger__WEBPACK_IMPORTED_MODULE_8__["log"].trace('Recursive edges', graph.edge(graph.edges()[0]));
   }
 
   var clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
@@ -50193,7 +50296,7 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
       graph.setNode(parentCluster.id, data);
 
       if (!graph.parent(v)) {
-        _logger__WEBPACK_IMPORTED_MODULE_8__["log"].warn('Setting parent', v, parentCluster.id);
+        _logger__WEBPACK_IMPORTED_MODULE_8__["log"].trace('Setting parent', v, parentCluster.id);
         graph.setParent(v, parentCluster.id, data);
       }
     }
@@ -50720,7 +50823,7 @@ var clear = function clear() {
 
 var isDecendant = function isDecendant(id, ancenstorId) {
   // if (id === ancenstorId) return true;
-  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].debug('In isDecendant', ancenstorId, ' ', id, ' = ', decendants[ancenstorId].indexOf(id) >= 0);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["log"].trace('In isDecendant', ancenstorId, ' ', id, ' = ', decendants[ancenstorId].indexOf(id) >= 0);
   if (decendants[ancenstorId].indexOf(id) >= 0) return true;
   return false;
 };
@@ -51007,11 +51110,20 @@ var extractor = function extractor(graph, depth) {
     graph.children(_node) && graph.children(_node).length > 0) {
       _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Cluster without external connections, without a parent and with children', _node, depth);
       var graphSettings = graph.graph();
+      var dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
+
+      if (clusterDb[_node]) {
+        if (clusterDb[_node].clusterData && clusterDb[_node].clusterData.dir) {
+          dir = clusterDb[_node].clusterData.dir;
+          _logger__WEBPACK_IMPORTED_MODULE_0__["log"].warn('Fixing dir', clusterDb[_node].clusterData.dir, dir);
+        }
+      }
+
       var clusterGraph = new graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.Graph({
         multigraph: true,
         compound: true
       }).setGraph({
-        rankdir: graphSettings.rankdir === 'TB' ? 'LR' : 'TB',
+        rankdir: dir,
         // Todo: set proper spacing
         nodesep: 50,
         ranksep: 50,
@@ -51089,6 +51201,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
 /* harmony import */ var _shapes_note__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./shapes/note */ "./src/dagre-wrapper/shapes/note.js");
 /* harmony import */ var _diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../diagrams/class/svgDraw */ "./src/diagrams/class/svgDraw.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
  // eslint-disable-line
 
@@ -51128,6 +51242,37 @@ var question = function question(parent, node) {
   node.intersect = function (point) {
     _logger__WEBPACK_IMPORTED_MODULE_1__["log"].warn('Intersect called');
     return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].polygon(node, points, point);
+  };
+
+  return shapeSvg;
+};
+
+var choice = function choice(parent, node) {
+  var shapeSvg = parent.insert('g').attr('class', 'node default').attr('id', node.domId || node.id);
+  var s = 28;
+  var points = [{
+    x: 0,
+    y: s / 2
+  }, {
+    x: s / 2,
+    y: 0
+  }, {
+    x: 0,
+    y: -s / 2
+  }, {
+    x: -s / 2,
+    y: 0
+  }];
+  var choice = shapeSvg.insert('polygon', ':first-child').attr('points', points.map(function (d) {
+    return d.x + ',' + d.y;
+  }).join(' ')); // center the circle around its coordinate
+
+  choice.attr('class', 'state-start').attr('r', 7).attr('width', 28).attr('height', 28);
+  node.width = 28;
+  node.height = 28;
+
+  node.intersect = function (point) {
+    return _intersect_index_js__WEBPACK_IMPORTED_MODULE_4__["default"].circle(node, 14, point);
   };
 
   return shapeSvg;
@@ -51434,9 +51579,18 @@ var rectWithTitle = function rectWithTitle(parent, node) {
 
   var innerLine = shapeSvg.insert('line');
   var label = shapeSvg.insert('g').attr('class', 'label');
-  var text2 = node.labelText.flat();
-  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Label text', text2[0]);
-  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(text2[0], node.labelStyle, true, true));
+  var text2 = node.labelText.flat ? node.labelText.flat() : node.labelText; // const text2 = typeof text2prim === 'object' ? text2prim[0] : text2prim;
+
+  var title = '';
+
+  if (_typeof(text2) === 'object') {
+    title = text2[0];
+  } else {
+    title = text2;
+  }
+
+  _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Label text abc79', title, text2, _typeof(text2) === 'object');
+  var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(title, node.labelStyle, true, true));
   var bbox;
 
   if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
@@ -51450,7 +51604,7 @@ var rectWithTitle = function rectWithTitle(parent, node) {
   _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Text 2', text2);
   var textRows = text2.slice(1, text2.length);
   var titleBox = text.getBBox();
-  var descr = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(textRows.join('<br/>'), node.labelStyle, true, true));
+  var descr = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(textRows.join ? textRows.join('<br/>') : textRows, node.labelStyle, true, true));
 
   if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
     var _div = descr.children[0];
@@ -51843,6 +51997,7 @@ var shapes = {
   question: question,
   rect: rect,
   rectWithTitle: rectWithTitle,
+  choice: choice,
   circle: circle,
   stadium: stadium,
   hexagon: hexagon,
@@ -52253,7 +52408,22 @@ var config = {
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     *
+     * **Notes:**
+     *
+     * Decides which rendering engine that is to be used for the rendering. Legal values are:
+     * * dagre-d3
+     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     *
+     * Default value: 'dagre-d3'
+     */
+    defaultRenderer: 'dagre-d3'
   },
 
   /**
@@ -52894,7 +53064,22 @@ var config = {
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     *
+     * **Notes:**
+     *
+     * Decides which rendering engine that is to be used for the rendering. Legal values are:
+     * * dagre-d3
+     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     *
+     * Default value: 'dagre-d3'
+     */
+    defaultRenderer: 'dagre-d3'
   },
   git: {
     arrowMarkerAbsolute: false,
@@ -52946,7 +53131,22 @@ var config = {
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+
+    /**
+     * | Parameter | Description | Type | Required | Values|
+     * | --- | --- | --- | --- | --- |
+     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     *
+     * **Notes:**
+     *
+     * Decides which rendering engine that is to be used for the rendering. Legal values are:
+     * * dagre-d3
+     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     *
+     * Default value: 'dagre-d3'
+     */
+    defaultRenderer: 'dagre-d3'
   },
 
   /**
@@ -58291,7 +58491,9 @@ var addVertices = function addVertices(vert, g, svgId) {
  */
 
 var addEdges = function addEdges(edges, g) {
+  _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('abc78 edges = ', edges);
   var cnt = 0;
+  var linkIdCnt = {};
   var defaultStyle;
   var defaultLabelStyle;
 
@@ -58304,7 +58506,18 @@ var addEdges = function addEdges(edges, g) {
   edges.forEach(function (edge) {
     cnt++; // Identify Link
 
-    var linkId = 'L-' + edge.start + '-' + edge.end;
+    var linkIdBase = 'L-' + edge.start + '-' + edge.end; // count the links from+to the same node to give unique id
+
+    if (typeof linkIdCnt[linkIdBase] === 'undefined') {
+      linkIdCnt[linkIdBase] = 0;
+      _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+    } else {
+      linkIdCnt[linkIdBase]++;
+      _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+    }
+
+    var linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
+    _logger__WEBPACK_IMPORTED_MODULE_7__["log"].info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
     var linkNameStart = 'LS-' + edge.start;
     var linkNameEnd = 'LE-' + edge.end;
     var edgeData = {
@@ -64202,42 +64415,45 @@ var getStyles = function getStyles() {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,5],$V2=[1,6],$V3=[1,7],$V4=[1,9],$V5=[1,10,12,19,20,21,22],$V6=[1,6,10,12,19,20,21,22],$V7=[19,20,21],$V8=[1,22],$V9=[6,19,20,21,22];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,5],$V2=[1,6],$V3=[1,7],$V4=[1,9],$V5=[1,11,13,20,21,22,23],$V6=[2,5],$V7=[1,6,11,13,20,21,22,23],$V8=[20,21,22],$V9=[2,8],$Va=[1,18],$Vb=[1,19],$Vc=[1,24],$Vd=[6,20,21,22,23];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"eol":4,"directive":5,"PIE":6,"document":7,"line":8,"statement":9,"txt":10,"value":11,"title":12,"title_value":13,"openDirective":14,"typeDirective":15,"closeDirective":16,":":17,"argDirective":18,"NEWLINE":19,";":20,"EOF":21,"open_directive":22,"type_directive":23,"arg_directive":24,"close_directive":25,"$accept":0,"$end":1},
-terminals_: {2:"error",6:"PIE",10:"txt",11:"value",12:"title",13:"title_value",17:":",19:"NEWLINE",20:";",21:"EOF",22:"open_directive",23:"type_directive",24:"arg_directive",25:"close_directive"},
-productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[9,0],[9,2],[9,2],[9,1],[5,3],[5,5],[4,1],[4,1],[4,1],[14,1],[15,1],[18,1],[16,1]],
+symbols_: {"error":2,"start":3,"eol":4,"directive":5,"PIE":6,"document":7,"showData":8,"line":9,"statement":10,"txt":11,"value":12,"title":13,"title_value":14,"openDirective":15,"typeDirective":16,"closeDirective":17,":":18,"argDirective":19,"NEWLINE":20,";":21,"EOF":22,"open_directive":23,"type_directive":24,"arg_directive":25,"close_directive":26,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"PIE",8:"showData",11:"txt",12:"value",13:"title",14:"title_value",18:":",20:"NEWLINE",21:";",22:"EOF",23:"open_directive",24:"type_directive",25:"arg_directive",26:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,3],[7,0],[7,2],[9,2],[10,0],[10,2],[10,2],[10,1],[5,3],[5,5],[4,1],[4,1],[4,1],[15,1],[16,1],[19,1],[17,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 6:
+case 4:
+yy.setShowData(true);
+break;
+case 7:
  this.$ = $$[$0-1] 
 break;
-case 8:
+case 9:
  yy.addSection($$[$0-1],yy.cleanupValue($$[$0])); 
 break;
-case 9:
+case 10:
  this.$=$$[$0].trim();yy.setTitle(this.$); 
 break;
-case 16:
+case 17:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 17:
+case 18:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 18:
+case 19:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 19:
+case 20:
  yy.parseDirective('}%%', 'close_directive', 'pie'); 
 break;
 }
 },
-table: [{3:1,4:2,5:3,6:$V0,14:8,19:$V1,20:$V2,21:$V3,22:$V4},{1:[3]},{3:10,4:2,5:3,6:$V0,14:8,19:$V1,20:$V2,21:$V3,22:$V4},{3:11,4:2,5:3,6:$V0,14:8,19:$V1,20:$V2,21:$V3,22:$V4},o($V5,[2,4],{7:12}),o($V6,[2,13]),o($V6,[2,14]),o($V6,[2,15]),{15:13,23:[1,14]},{23:[2,16]},{1:[2,1]},{1:[2,2]},o($V7,[2,7],{14:8,8:15,9:16,5:19,1:[2,3],10:[1,17],12:[1,18],22:$V4}),{16:20,17:[1,21],25:$V8},o([17,25],[2,17]),o($V5,[2,5]),{4:23,19:$V1,20:$V2,21:$V3},{11:[1,24]},{13:[1,25]},o($V7,[2,10]),o($V9,[2,11]),{18:26,24:[1,27]},o($V9,[2,19]),o($V5,[2,6]),o($V7,[2,8]),o($V7,[2,9]),{16:28,25:$V8},{25:[2,18]},o($V9,[2,12])],
-defaultActions: {9:[2,16],10:[2,1],11:[2,2],27:[2,18]},
+table: [{3:1,4:2,5:3,6:$V0,15:8,20:$V1,21:$V2,22:$V3,23:$V4},{1:[3]},{3:10,4:2,5:3,6:$V0,15:8,20:$V1,21:$V2,22:$V3,23:$V4},{3:11,4:2,5:3,6:$V0,15:8,20:$V1,21:$V2,22:$V3,23:$V4},o($V5,$V6,{7:12,8:[1,13]}),o($V7,[2,14]),o($V7,[2,15]),o($V7,[2,16]),{16:14,24:[1,15]},{24:[2,17]},{1:[2,1]},{1:[2,2]},o($V8,$V9,{15:8,9:16,10:17,5:20,1:[2,3],11:$Va,13:$Vb,23:$V4}),o($V5,$V6,{7:21}),{17:22,18:[1,23],26:$Vc},o([18,26],[2,18]),o($V5,[2,6]),{4:25,20:$V1,21:$V2,22:$V3},{12:[1,26]},{14:[1,27]},o($V8,[2,11]),o($V8,$V9,{15:8,9:16,10:17,5:20,1:[2,4],11:$Va,13:$Vb,23:$V4}),o($Vd,[2,12]),{19:28,25:[1,29]},o($Vd,[2,20]),o($V5,[2,7]),o($V8,[2,9]),o($V8,[2,10]),{17:30,26:$Vc},{26:[2,19]},o($Vd,[2,13])],
+defaultActions: {9:[2,17],10:[2,1],11:[2,2],29:[2,19]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -64716,27 +64932,27 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 22; 
+case 0: this.begin('open_directive'); return 23; 
 break;
-case 1: this.begin('type_directive'); return 23; 
+case 1: this.begin('type_directive'); return 24; 
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 17; 
+case 2: this.popState(); this.begin('arg_directive'); return 18; 
 break;
-case 3: this.popState(); this.popState(); return 25; 
+case 3: this.popState(); this.popState(); return 26; 
 break;
-case 4:return 24;
+case 4:return 25;
 break;
 case 5:/* skip comments */
 break;
 case 6:/* skip comments */{ /*console.log('');*/ }
 break;
-case 7:return 19;
+case 7:return 20;
 break;
 case 8:/* do nothing */
 break;
 case 9:/* ignore */
 break;
-case 10: this.begin("title");return 12; 
+case 10: this.begin("title");return 13; 
 break;
 case 11: this.popState(); return "title_value"; 
 break;
@@ -64748,14 +64964,16 @@ case 14: return "txt";
 break;
 case 15:return 6;
 break;
-case 16:return "value";
+case 16:return 8;
 break;
-case 17:return 21;
+case 17:return "value";
+break;
+case 18:return 22;
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n\r]+)/i,/^(?:%%[^\n]*)/i,/^(?:[\s]+)/i,/^(?:title\b)/i,/^(?:(?!\n||)*[^\n]*)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:pie\b)/i,/^(?::[\s]*[\d]+(?:\.[\d]+)?)/i,/^(?:$)/i],
-conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"title":{"rules":[11],"inclusive":false},"string":{"rules":[13,14],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,12,15,16,17],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n\r]+)/i,/^(?:%%[^\n]*)/i,/^(?:[\s]+)/i,/^(?:title\b)/i,/^(?:(?!\n||)*[^\n]*)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:pie\b)/i,/^(?:showData\b)/i,/^(?::[\s]*[\d]+(?:\.[\d]+)?)/i,/^(?:$)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"title":{"rules":[11],"inclusive":false},"string":{"rules":[13,14],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,12,15,16,17,18],"inclusive":true}}
 });
 return lexer;
 })();
@@ -64809,6 +65027,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var sections = {};
 var title = '';
+var showData = false;
 var parseDirective = function parseDirective(statement, context, type) {
   _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parseDirective(this, statement, context, type);
 };
@@ -64828,6 +65047,14 @@ var setTitle = function setTitle(txt) {
   title = txt;
 };
 
+var setShowData = function setShowData(toggle) {
+  showData = toggle;
+};
+
+var getShowData = function getShowData() {
+  return showData;
+};
+
 var getTitle = function getTitle() {
   return title;
 };
@@ -64844,6 +65071,7 @@ var cleanupValue = function cleanupValue(value) {
 var clear = function clear() {
   sections = {};
   title = '';
+  showData = false;
 }; // export const parseError = (err, hash) => {
 //   global.mermaidAPI.parseError(err, hash)
 // }
@@ -64859,7 +65087,9 @@ var clear = function clear() {
   cleanupValue: cleanupValue,
   clear: clear,
   setTitle: setTitle,
-  getTitle: getTitle // parseError
+  getTitle: getTitle,
+  setShowData: setShowData,
+  getShowData: getShowData // parseError
 
 });
 
@@ -64869,12 +65099,11 @@ var clear = function clear() {
 /*!*****************************************!*\
   !*** ./src/diagrams/pie/pieRenderer.js ***!
   \*****************************************/
-/*! exports provided: setConf, draw, default */
+/*! exports provided: draw, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConf", function() { return setConf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "draw", function() { return draw; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _pieDb__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pieDb */ "./src/diagrams/pie/pieDb.js");
@@ -64882,6 +65111,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_pie__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_parser_pie__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /**
  * Created by AshishJ on 11-09-2019.
  */
@@ -64890,13 +65120,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var conf = {};
-var setConf = function setConf(cnf) {
-  var keys = Object.keys(cnf);
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
-};
+
+var conf = _config__WEBPACK_IMPORTED_MODULE_5__["getConfig"]();
 /**
  * Draws a Pie Chart with the data given in text.
  * @param text
@@ -64907,6 +65132,7 @@ var width;
 var height = 450;
 var draw = function draw(txt, id) {
   try {
+    conf = _config__WEBPACK_IMPORTED_MODULE_5__["getConfig"]();
     var parser = _parser_pie__WEBPACK_IMPORTED_MODULE_2___default.a.parser;
     parser.yy = _pieDb__WEBPACK_IMPORTED_MODULE_1__["default"];
     _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Rendering info diagram\n' + txt); // Parse the Pie Chart definition
@@ -64925,8 +65151,12 @@ var draw = function draw(txt, id) {
       width = conf.useWidth;
     }
 
+    if (typeof conf.pie.useWidth !== 'undefined') {
+      width = conf.pie.useWidth;
+    }
+
     var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#' + id);
-    Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(diagram, height, width, conf.useMaxWidth); // Set viewBox
+    Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(diagram, height, width, conf.pie.useMaxWidth); // Set viewBox
 
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height); // Fetch the default direction, use TD if none was found
 
@@ -64939,9 +65169,11 @@ var draw = function draw(txt, id) {
     var sum = 0;
     Object.keys(data).forEach(function (key) {
       sum += data[key];
-    }); // Set the color scale
+    });
+    var themeVariables = conf.themeVariables;
+    var myGeneratedColors = [themeVariables.pie1, themeVariables.pie2, themeVariables.pie3, themeVariables.pie4, themeVariables.pie5, themeVariables.pie6, themeVariables.pie7, themeVariables.pie8, themeVariables.pie9, themeVariables.pie10, themeVariables.pie11, themeVariables.pie12]; // Set the color scale
 
-    var color = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleOrdinal"])().domain(data).range(d3__WEBPACK_IMPORTED_MODULE_0__["schemeSet2"]); // Compute the position of each group on the pie:
+    var color = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleOrdinal"])().domain(data).range(myGeneratedColors); // Compute the position of each group on the pie:
 
     var pie = Object(d3__WEBPACK_IMPORTED_MODULE_0__["pie"])().value(function (d) {
       return d.value;
@@ -64952,7 +65184,7 @@ var draw = function draw(txt, id) {
 
     svg.selectAll('mySlices').data(dataReady).enter().append('path').attr('d', arcGenerator).attr('fill', function (d) {
       return color(d.data.key);
-    }).attr('stroke', 'black').style('stroke-width', '2px').style('opacity', 0.7); // Now add the percentage.
+    }).attr('class', 'pieCircle'); // Now add the percentage.
     // Use the centroid method to get the best coordinates.
 
     svg.selectAll('mySlices').data(dataReady.filter(function (value) {
@@ -64961,7 +65193,7 @@ var draw = function draw(txt, id) {
       return (d.data.value / sum * 100).toFixed(0) + '%';
     }).attr('transform', function (d) {
       return 'translate(' + arcGenerator.centroid(d) + ')';
-    }).style('text-anchor', 'middle').attr('class', 'slice').style('font-size', 17);
+    }).style('text-anchor', 'middle').attr('class', 'slice');
     svg.append('text').text(parser.yy.getTitle()).attr('x', 0).attr('y', -(height - 50) / 2).attr('class', 'pieTitleText'); // Add the legends/annotations for each section
 
     var legend = svg.selectAll('.legend').data(color.domain()).enter().append('g').attr('class', 'legend').attr('transform', function (d, i) {
@@ -64972,8 +65204,14 @@ var draw = function draw(txt, id) {
       return 'translate(' + horz + ',' + vert + ')';
     });
     legend.append('rect').attr('width', legendRectSize).attr('height', legendRectSize).style('fill', color).style('stroke', color);
-    legend.append('text').attr('x', legendRectSize + legendSpacing).attr('y', legendRectSize - legendSpacing).text(function (d) {
-      return d;
+    legend.data(dataReady.filter(function (value) {
+      return value.data.value !== 0;
+    })).append('text').attr('x', legendRectSize + legendSpacing).attr('y', legendRectSize - legendSpacing).text(function (d) {
+      if (parser.yy.getShowData() || conf.showData || conf.pie.showData) {
+        return d.data.key + ' [' + d.data.value + ']';
+      } else {
+        return d.data.key;
+      }
     });
   } catch (e) {
     _logger__WEBPACK_IMPORTED_MODULE_3__["log"].error('Error while rendering info diagram');
@@ -64981,7 +65219,6 @@ var draw = function draw(txt, id) {
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
-  setConf: setConf,
   draw: draw
 });
 
@@ -64997,7 +65234,7 @@ var draw = function draw(txt, id) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return ".pieTitleText {\n    text-anchor: middle;\n    font-size: 25px;\n    fill: ".concat(options.taskTextDarkColor, ";\n    font-family: ").concat(options.fontFamily, ";\n  }\n  .slice {\n    font-family: ").concat(options.fontFamily, ";\n    fill: ").concat(options.textColor, ";\n    // fill: white;\n  }\n  .legend text {\n    fill: ").concat(options.taskTextDarkColor, ";\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 17px;\n  }\n");
+  return "\n  .pieCircle{\n    stroke: ".concat(options.pieStrokeColor, ";\n    stroke-width : ").concat(options.pieStrokeWidth, ";\n    opacity : ").concat(options.pieOpacity, ";\n  }\n  .pieTitleText {\n    text-anchor: middle;\n    font-size: ").concat(options.pieTitleTextSize, ";\n    fill: ").concat(options.pieTitleTextColor, ";\n    font-family: ").concat(options.fontFamily, ";\n  }\n  .slice {\n    font-family: ").concat(options.fontFamily, ";\n    fill: ").concat(options.pieSectionTextColor, ";\n    font-size:").concat(options.pieSectionTextSize, ";\n    // fill: white;\n  }\n  .legend text {\n    fill: ").concat(options.pieLegendTextColor, ";\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.pieLegendTextSize, ";\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -65085,126 +65322,126 @@ var getStyles = function getStyles(options) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[1,14],$V3=[2,9],$V4=[1,18],$V5=[1,19],$V6=[1,20],$V7=[1,21],$V8=[1,22],$V9=[1,23],$Va=[1,16],$Vb=[1,24],$Vc=[1,25],$Vd=[1,28],$Ve=[66,67],$Vf=[6,8,35,36,37,38,39,40,48,55,57,66,67],$Vg=[5,14],$Vh=[1,47],$Vi=[1,48],$Vj=[1,49],$Vk=[1,50],$Vl=[1,51],$Vm=[1,52],$Vn=[1,53],$Vo=[57,58],$Vp=[1,65],$Vq=[1,61],$Vr=[1,62],$Vs=[1,63],$Vt=[1,64],$Vu=[1,66],$Vv=[1,70],$Vw=[1,71],$Vx=[1,68],$Vy=[1,69],$Vz=[6,8,35,36,37,38,39,40,48,66,67];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[1,17],$V3=[2,10],$V4=[1,21],$V5=[1,22],$V6=[1,23],$V7=[1,24],$V8=[1,25],$V9=[1,26],$Va=[1,19],$Vb=[1,27],$Vc=[1,28],$Vd=[1,31],$Ve=[66,67],$Vf=[5,8,14,35,36,37,38,39,40,48,55,57,66,67],$Vg=[5,6,8,14,35,36,37,38,39,40,48,66,67],$Vh=[1,51],$Vi=[1,52],$Vj=[1,53],$Vk=[1,54],$Vl=[1,55],$Vm=[1,56],$Vn=[1,57],$Vo=[57,58],$Vp=[1,69],$Vq=[1,65],$Vr=[1,66],$Vs=[1,67],$Vt=[1,68],$Vu=[1,70],$Vv=[1,74],$Vw=[1,75],$Vx=[1,72],$Vy=[1,73],$Vz=[5,8,14,35,36,37,38,39,40,48,66,67];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"directive":4,"RD":5,"NEWLINE":6,"diagram":7,"EOF":8,"openDirective":9,"typeDirective":10,"closeDirective":11,":":12,"argDirective":13,"open_directive":14,"type_directive":15,"arg_directive":16,"close_directive":17,"requirementDef":18,"elementDef":19,"relationshipDef":20,"requirementType":21,"requirementName":22,"STRUCT_START":23,"requirementBody":24,"ID":25,"COLONSEP":26,"id":27,"TEXT":28,"text":29,"RISK":30,"riskLevel":31,"VERIFYMTHD":32,"verifyType":33,"STRUCT_STOP":34,"REQUIREMENT":35,"FUNCTIONAL_REQUIREMENT":36,"INTERFACE_REQUIREMENT":37,"PERFORMANCE_REQUIREMENT":38,"PHYSICAL_REQUIREMENT":39,"DESIGN_CONSTRAINT":40,"LOW_RISK":41,"MED_RISK":42,"HIGH_RISK":43,"VERIFY_ANALYSIS":44,"VERIFY_DEMONSTRATION":45,"VERIFY_INSPECTION":46,"VERIFY_TEST":47,"ELEMENT":48,"elementName":49,"elementBody":50,"TYPE":51,"type":52,"DOCREF":53,"ref":54,"END_ARROW_L":55,"relationship":56,"LINE":57,"END_ARROW_R":58,"CONTAINS":59,"COPIES":60,"DERIVES":61,"SATISFIES":62,"VERIFIES":63,"REFINES":64,"TRACES":65,"unqString":66,"qString":67,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"RD",6:"NEWLINE",8:"EOF",12:":",14:"open_directive",15:"type_directive",16:"arg_directive",17:"close_directive",23:"STRUCT_START",25:"ID",26:"COLONSEP",28:"TEXT",30:"RISK",32:"VERIFYMTHD",34:"STRUCT_STOP",35:"REQUIREMENT",36:"FUNCTIONAL_REQUIREMENT",37:"INTERFACE_REQUIREMENT",38:"PERFORMANCE_REQUIREMENT",39:"PHYSICAL_REQUIREMENT",40:"DESIGN_CONSTRAINT",41:"LOW_RISK",42:"MED_RISK",43:"HIGH_RISK",44:"VERIFY_ANALYSIS",45:"VERIFY_DEMONSTRATION",46:"VERIFY_INSPECTION",47:"VERIFY_TEST",48:"ELEMENT",51:"TYPE",53:"DOCREF",55:"END_ARROW_L",57:"LINE",58:"END_ARROW_R",59:"CONTAINS",60:"COPIES",61:"DERIVES",62:"SATISFIES",63:"VERIFIES",64:"REFINES",65:"TRACES",66:"unqString",67:"qString"},
-productions_: [0,[3,2],[3,4],[4,3],[4,5],[9,1],[10,1],[13,1],[11,1],[7,0],[7,2],[7,2],[7,2],[7,2],[18,5],[24,5],[24,5],[24,5],[24,5],[24,2],[24,1],[21,1],[21,1],[21,1],[21,1],[21,1],[21,1],[31,1],[31,1],[31,1],[33,1],[33,1],[33,1],[33,1],[19,5],[50,5],[50,5],[50,2],[50,1],[20,5],[20,5],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[22,1],[22,1],[27,1],[27,1],[29,1],[29,1],[49,1],[49,1],[52,1],[52,1],[54,1],[54,1]],
+symbols_: {"error":2,"start":3,"directive":4,"NEWLINE":5,"RD":6,"diagram":7,"EOF":8,"openDirective":9,"typeDirective":10,"closeDirective":11,":":12,"argDirective":13,"open_directive":14,"type_directive":15,"arg_directive":16,"close_directive":17,"requirementDef":18,"elementDef":19,"relationshipDef":20,"requirementType":21,"requirementName":22,"STRUCT_START":23,"requirementBody":24,"ID":25,"COLONSEP":26,"id":27,"TEXT":28,"text":29,"RISK":30,"riskLevel":31,"VERIFYMTHD":32,"verifyType":33,"STRUCT_STOP":34,"REQUIREMENT":35,"FUNCTIONAL_REQUIREMENT":36,"INTERFACE_REQUIREMENT":37,"PERFORMANCE_REQUIREMENT":38,"PHYSICAL_REQUIREMENT":39,"DESIGN_CONSTRAINT":40,"LOW_RISK":41,"MED_RISK":42,"HIGH_RISK":43,"VERIFY_ANALYSIS":44,"VERIFY_DEMONSTRATION":45,"VERIFY_INSPECTION":46,"VERIFY_TEST":47,"ELEMENT":48,"elementName":49,"elementBody":50,"TYPE":51,"type":52,"DOCREF":53,"ref":54,"END_ARROW_L":55,"relationship":56,"LINE":57,"END_ARROW_R":58,"CONTAINS":59,"COPIES":60,"DERIVES":61,"SATISFIES":62,"VERIFIES":63,"REFINES":64,"TRACES":65,"unqString":66,"qString":67,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"NEWLINE",6:"RD",8:"EOF",12:":",14:"open_directive",15:"type_directive",16:"arg_directive",17:"close_directive",23:"STRUCT_START",25:"ID",26:"COLONSEP",28:"TEXT",30:"RISK",32:"VERIFYMTHD",34:"STRUCT_STOP",35:"REQUIREMENT",36:"FUNCTIONAL_REQUIREMENT",37:"INTERFACE_REQUIREMENT",38:"PERFORMANCE_REQUIREMENT",39:"PHYSICAL_REQUIREMENT",40:"DESIGN_CONSTRAINT",41:"LOW_RISK",42:"MED_RISK",43:"HIGH_RISK",44:"VERIFY_ANALYSIS",45:"VERIFY_DEMONSTRATION",46:"VERIFY_INSPECTION",47:"VERIFY_TEST",48:"ELEMENT",51:"TYPE",53:"DOCREF",55:"END_ARROW_L",57:"LINE",58:"END_ARROW_R",59:"CONTAINS",60:"COPIES",61:"DERIVES",62:"SATISFIES",63:"VERIFIES",64:"REFINES",65:"TRACES",66:"unqString",67:"qString"},
+productions_: [0,[3,3],[3,2],[3,4],[4,3],[4,5],[9,1],[10,1],[13,1],[11,1],[7,0],[7,2],[7,2],[7,2],[7,2],[7,2],[18,5],[24,5],[24,5],[24,5],[24,5],[24,2],[24,1],[21,1],[21,1],[21,1],[21,1],[21,1],[21,1],[31,1],[31,1],[31,1],[33,1],[33,1],[33,1],[33,1],[19,5],[50,5],[50,5],[50,2],[50,1],[20,5],[20,5],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[22,1],[22,1],[27,1],[27,1],[29,1],[29,1],[49,1],[49,1],[52,1],[52,1],[54,1],[54,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 5:
+case 6:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 6:
+case 7:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 7:
+case 8:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 8:
+case 9:
  yy.parseDirective('}%%', 'close_directive', 'pie'); 
 break;
-case 9:
+case 10:
  this.$ = [] 
 break;
-case 14:
+case 16:
  yy.addRequirement($$[$0-3], $$[$0-4]) 
 break;
-case 15:
+case 17:
  yy.setNewReqId($$[$0-2]); 
 break;
-case 16:
+case 18:
  yy.setNewReqText($$[$0-2]); 
 break;
-case 17:
+case 19:
  yy.setNewReqRisk($$[$0-2]); 
 break;
-case 18:
+case 20:
  yy.setNewReqVerifyMethod($$[$0-2]); 
 break;
-case 21:
+case 23:
  this.$=yy.RequirementType.REQUIREMENT;
 break;
-case 22:
+case 24:
  this.$=yy.RequirementType.FUNCTIONAL_REQUIREMENT;
 break;
-case 23:
+case 25:
  this.$=yy.RequirementType.INTERFACE_REQUIREMENT;
 break;
-case 24:
+case 26:
  this.$=yy.RequirementType.PERFORMANCE_REQUIREMENT;
 break;
-case 25:
+case 27:
  this.$=yy.RequirementType.PHYSICAL_REQUIREMENT;
 break;
-case 26:
+case 28:
  this.$=yy.RequirementType.DESIGN_CONSTRAINT;
 break;
-case 27:
+case 29:
  this.$=yy.RiskLevel.LOW_RISK;
 break;
-case 28:
+case 30:
  this.$=yy.RiskLevel.MED_RISK;
 break;
-case 29:
+case 31:
  this.$=yy.RiskLevel.HIGH_RISK;
 break;
-case 30:
+case 32:
  this.$=yy.VerifyType.VERIFY_ANALYSIS;
 break;
-case 31:
+case 33:
  this.$=yy.VerifyType.VERIFY_DEMONSTRATION;
 break;
-case 32:
+case 34:
  this.$=yy.VerifyType.VERIFY_INSPECTION;
 break;
-case 33:
+case 35:
  this.$=yy.VerifyType.VERIFY_TEST;
 break;
-case 34:
+case 36:
  yy.addElement($$[$0-3]) 
 break;
-case 35:
+case 37:
  yy.setNewElementType($$[$0-2]); 
 break;
-case 36:
+case 38:
  yy.setNewElementDocRef($$[$0-2]); 
 break;
-case 39:
+case 41:
   yy.addRelationship($$[$0-2], $$[$0], $$[$0-4]) 
 break;
-case 40:
+case 42:
  yy.addRelationship($$[$0-2], $$[$0-4], $$[$0]) 
 break;
-case 41:
+case 43:
  this.$=yy.Relationships.CONTAINS;
 break;
-case 42:
+case 44:
  this.$=yy.Relationships.COPIES;
 break;
-case 43:
+case 45:
  this.$=yy.Relationships.DERIVES;
 break;
-case 44:
+case 46:
  this.$=yy.Relationships.SATISFIES;
 break;
-case 45:
+case 47:
  this.$=yy.Relationships.VERIFIES;
 break;
-case 46:
+case 48:
  this.$=yy.Relationships.REFINES;
 break;
-case 47:
+case 49:
  this.$=yy.Relationships.TRACES;
 break;
 }
 },
-table: [{3:1,4:2,5:$V0,9:4,14:$V1},{1:[3]},{3:6,4:2,5:$V0,9:4,14:$V1},{6:[1,7]},{10:8,15:[1,9]},{15:[2,5]},{1:[2,1]},{6:$V2,7:10,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{11:26,12:[1,27],17:$Vd},o([12,17],[2,6]),{8:[1,29]},{6:$V2,7:30,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{6:$V2,7:31,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{6:$V2,7:32,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{6:$V2,7:33,8:$V3,18:11,19:12,20:13,21:15,27:17,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{22:34,66:[1,35],67:[1,36]},{49:37,66:[1,38],67:[1,39]},{55:[1,40],57:[1,41]},o($Ve,[2,21]),o($Ve,[2,22]),o($Ve,[2,23]),o($Ve,[2,24]),o($Ve,[2,25]),o($Ve,[2,26]),o($Vf,[2,50]),o($Vf,[2,51]),o($Vg,[2,3]),{13:42,16:[1,43]},o($Vg,[2,8]),{1:[2,2]},{8:[2,10]},{8:[2,11]},{8:[2,12]},{8:[2,13]},{23:[1,44]},{23:[2,48]},{23:[2,49]},{23:[1,45]},{23:[2,54]},{23:[2,55]},{56:46,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{56:54,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{11:55,17:$Vd},{17:[2,7]},{6:[1,56]},{6:[1,57]},{57:[1,58]},o($Vo,[2,41]),o($Vo,[2,42]),o($Vo,[2,43]),o($Vo,[2,44]),o($Vo,[2,45]),o($Vo,[2,46]),o($Vo,[2,47]),{58:[1,59]},o($Vg,[2,4]),{6:$Vp,24:60,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vv,34:$Vw,50:67,51:$Vx,53:$Vy},{27:72,66:$Vb,67:$Vc},{27:73,66:$Vb,67:$Vc},o($Vz,[2,14]),{26:[1,74]},{26:[1,75]},{26:[1,76]},{26:[1,77]},{6:$Vp,24:78,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},o($Vz,[2,20]),o($Vz,[2,34]),{26:[1,79]},{26:[1,80]},{6:$Vv,34:$Vw,50:81,51:$Vx,53:$Vy},o($Vz,[2,38]),o($Vz,[2,39]),o($Vz,[2,40]),{27:82,66:$Vb,67:$Vc},{29:83,66:[1,84],67:[1,85]},{31:86,41:[1,87],42:[1,88],43:[1,89]},{33:90,44:[1,91],45:[1,92],46:[1,93],47:[1,94]},o($Vz,[2,19]),{52:95,66:[1,96],67:[1,97]},{54:98,66:[1,99],67:[1,100]},o($Vz,[2,37]),{6:[1,101]},{6:[1,102]},{6:[2,52]},{6:[2,53]},{6:[1,103]},{6:[2,27]},{6:[2,28]},{6:[2,29]},{6:[1,104]},{6:[2,30]},{6:[2,31]},{6:[2,32]},{6:[2,33]},{6:[1,105]},{6:[2,56]},{6:[2,57]},{6:[1,106]},{6:[2,58]},{6:[2,59]},{6:$Vp,24:107,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vp,24:108,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vp,24:109,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vp,24:110,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{6:$Vv,34:$Vw,50:111,51:$Vx,53:$Vy},{6:$Vv,34:$Vw,50:112,51:$Vx,53:$Vy},o($Vz,[2,15]),o($Vz,[2,16]),o($Vz,[2,17]),o($Vz,[2,18]),o($Vz,[2,35]),o($Vz,[2,36])],
-defaultActions: {5:[2,5],6:[2,1],29:[2,2],30:[2,10],31:[2,11],32:[2,12],33:[2,13],35:[2,48],36:[2,49],38:[2,54],39:[2,55],43:[2,7],84:[2,52],85:[2,53],87:[2,27],88:[2,28],89:[2,29],91:[2,30],92:[2,31],93:[2,32],94:[2,33],96:[2,56],97:[2,57],99:[2,58],100:[2,59]},
+table: [{3:1,4:2,6:$V0,9:4,14:$V1},{1:[3]},{3:7,4:2,5:[1,6],6:$V0,9:4,14:$V1},{5:[1,8]},{10:9,15:[1,10]},{15:[2,6]},{3:11,4:2,6:$V0,9:4,14:$V1},{1:[2,2]},{4:16,5:$V2,7:12,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{11:29,12:[1,30],17:$Vd},o([12,17],[2,7]),{1:[2,1]},{8:[1,32]},{4:16,5:$V2,7:33,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{4:16,5:$V2,7:34,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{4:16,5:$V2,7:35,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{4:16,5:$V2,7:36,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{4:16,5:$V2,7:37,8:$V3,9:4,14:$V1,18:13,19:14,20:15,21:18,27:20,35:$V4,36:$V5,37:$V6,38:$V7,39:$V8,40:$V9,48:$Va,66:$Vb,67:$Vc},{22:38,66:[1,39],67:[1,40]},{49:41,66:[1,42],67:[1,43]},{55:[1,44],57:[1,45]},o($Ve,[2,23]),o($Ve,[2,24]),o($Ve,[2,25]),o($Ve,[2,26]),o($Ve,[2,27]),o($Ve,[2,28]),o($Vf,[2,52]),o($Vf,[2,53]),o($Vg,[2,4]),{13:46,16:[1,47]},o($Vg,[2,9]),{1:[2,3]},{8:[2,11]},{8:[2,12]},{8:[2,13]},{8:[2,14]},{8:[2,15]},{23:[1,48]},{23:[2,50]},{23:[2,51]},{23:[1,49]},{23:[2,56]},{23:[2,57]},{56:50,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{56:58,59:$Vh,60:$Vi,61:$Vj,62:$Vk,63:$Vl,64:$Vm,65:$Vn},{11:59,17:$Vd},{17:[2,8]},{5:[1,60]},{5:[1,61]},{57:[1,62]},o($Vo,[2,43]),o($Vo,[2,44]),o($Vo,[2,45]),o($Vo,[2,46]),o($Vo,[2,47]),o($Vo,[2,48]),o($Vo,[2,49]),{58:[1,63]},o($Vg,[2,5]),{5:$Vp,24:64,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vv,34:$Vw,50:71,51:$Vx,53:$Vy},{27:76,66:$Vb,67:$Vc},{27:77,66:$Vb,67:$Vc},o($Vz,[2,16]),{26:[1,78]},{26:[1,79]},{26:[1,80]},{26:[1,81]},{5:$Vp,24:82,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},o($Vz,[2,22]),o($Vz,[2,36]),{26:[1,83]},{26:[1,84]},{5:$Vv,34:$Vw,50:85,51:$Vx,53:$Vy},o($Vz,[2,40]),o($Vz,[2,41]),o($Vz,[2,42]),{27:86,66:$Vb,67:$Vc},{29:87,66:[1,88],67:[1,89]},{31:90,41:[1,91],42:[1,92],43:[1,93]},{33:94,44:[1,95],45:[1,96],46:[1,97],47:[1,98]},o($Vz,[2,21]),{52:99,66:[1,100],67:[1,101]},{54:102,66:[1,103],67:[1,104]},o($Vz,[2,39]),{5:[1,105]},{5:[1,106]},{5:[2,54]},{5:[2,55]},{5:[1,107]},{5:[2,29]},{5:[2,30]},{5:[2,31]},{5:[1,108]},{5:[2,32]},{5:[2,33]},{5:[2,34]},{5:[2,35]},{5:[1,109]},{5:[2,58]},{5:[2,59]},{5:[1,110]},{5:[2,60]},{5:[2,61]},{5:$Vp,24:111,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vp,24:112,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vp,24:113,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vp,24:114,25:$Vq,28:$Vr,30:$Vs,32:$Vt,34:$Vu},{5:$Vv,34:$Vw,50:115,51:$Vx,53:$Vy},{5:$Vv,34:$Vw,50:116,51:$Vx,53:$Vy},o($Vz,[2,17]),o($Vz,[2,18]),o($Vz,[2,19]),o($Vz,[2,20]),o($Vz,[2,37]),o($Vz,[2,38])],
+defaultActions: {5:[2,6],7:[2,2],11:[2,1],32:[2,3],33:[2,11],34:[2,12],35:[2,13],36:[2,14],37:[2,15],39:[2,50],40:[2,51],42:[2,56],43:[2,57],47:[2,8],88:[2,54],89:[2,55],91:[2,29],92:[2,30],93:[2,31],95:[2,32],96:[2,33],97:[2,34],98:[2,35],100:[2,58],101:[2,59],103:[2,60],104:[2,61]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -65693,7 +65930,7 @@ case 3: this.popState(); this.popState(); return 17;
 break;
 case 4:return 16;
 break;
-case 5:return 6;
+case 5:return 5;
 break;
 case 6:/* skip all whitespace */
 break;
@@ -65703,7 +65940,7 @@ case 8:/* skip comments */
 break;
 case 9:return 8;
 break;
-case 10:return 5;
+case 10:return 6;
 break;
 case 11:return 23;
 break;
@@ -66004,10 +66241,14 @@ var ReqMarkers = {
 
 var insertLineEndings = function insertLineEndings(parentNode, conf) {
   var containsNode = parentNode.append('defs').append('marker').attr('id', ReqMarkers.CONTAINS + '_line_ending').attr('refX', 0).attr('refY', conf.line_height / 2).attr('markerWidth', conf.line_height).attr('markerHeight', conf.line_height).attr('orient', 'auto').append('g');
-  containsNode.append('circle').attr('cx', conf.line_height / 2).attr('cy', conf.line_height / 2).attr('r', conf.line_height / 2).attr('stroke', conf.rect_border_color).attr('stroke-width', 1).attr('fill', 'none');
-  containsNode.append('line').attr('x1', 0).attr('x2', conf.line_height).attr('y1', conf.line_height / 2).attr('y2', conf.line_height / 2).attr('stroke', conf.rect_border_color).attr('stroke-width', 1);
-  containsNode.append('line').attr('y1', 0).attr('y2', conf.line_height).attr('x1', conf.line_height / 2).attr('x2', conf.line_height / 2).attr('stroke', conf.rect_border_color).attr('stroke-width', 1);
-  parentNode.append('defs').append('marker').attr('id', ReqMarkers.ARROW + '_line_ending').attr('refX', conf.line_height).attr('refY', 0.5 * conf.line_height).attr('markerWidth', conf.line_height).attr('markerHeight', conf.line_height).attr('orient', 'auto').append('path').attr('d', "M0,0 \n      L".concat(conf.line_height, ",").concat(conf.line_height / 2, " \n      M").concat(conf.line_height, ",").concat(conf.line_height / 2, " \n      L0,").concat(conf.line_height)).attr('stroke-width', 1).attr('stroke', conf.rect_border_color);
+  containsNode.append('circle').attr('cx', conf.line_height / 2).attr('cy', conf.line_height / 2).attr('r', conf.line_height / 2) // .attr('stroke', conf.rect_border_color)
+  // .attr('stroke-width', 1)
+  .attr('fill', 'none');
+  containsNode.append('line').attr('x1', 0).attr('x2', conf.line_height).attr('y1', conf.line_height / 2).attr('y2', conf.line_height / 2) // .attr('stroke', conf.rect_border_color)
+  .attr('stroke-width', 1);
+  containsNode.append('line').attr('y1', 0).attr('y2', conf.line_height).attr('x1', conf.line_height / 2).attr('x2', conf.line_height / 2) // .attr('stroke', conf.rect_border_color)
+  .attr('stroke-width', 1);
+  parentNode.append('defs').append('marker').attr('id', ReqMarkers.ARROW + '_line_ending').attr('refX', conf.line_height).attr('refY', 0.5 * conf.line_height).attr('markerWidth', conf.line_height).attr('markerHeight', conf.line_height).attr('orient', 'auto').append('path').attr('d', "M0,0\n      L".concat(conf.line_height, ",").concat(conf.line_height / 2, "\n      M").concat(conf.line_height, ",").concat(conf.line_height / 2, "\n      L0,").concat(conf.line_height)).attr('stroke-width', 1); // .attr('stroke', conf.rect_border_color);
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -66035,17 +66276,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dagre__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dagre__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! graphlib */ "./node_modules/graphlib/index.js");
 /* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
-/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./parser/requirementDiagram */ "./src/diagrams/requirement/parser/requirementDiagram.jison");
-/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _requirementDb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./requirementDb */ "./src/diagrams/requirement/requirementDb.js");
-/* harmony import */ var _requirementMarkers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./requirementMarkers */ "./src/diagrams/requirement/requirementMarkers.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./parser/requirementDiagram */ "./src/diagrams/requirement/parser/requirementDiagram.jison");
+/* harmony import */ var _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _requirementDb__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./requirementDb */ "./src/diagrams/requirement/requirementDb.js");
+/* harmony import */ var _requirementMarkers__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./requirementMarkers */ "./src/diagrams/requirement/requirementMarkers.js");
 
 
-
+ // import * as configApi from '../../config';
 
 
 
@@ -66068,12 +66308,16 @@ var setConf = function setConf(cnf) {
 };
 
 var newRectNode = function newRectNode(parentNode, id) {
-  return parentNode.insert('rect', '#' + id).attr('class', 'req reqBox').attr('fill', conf.rect_fill).attr('fill-opacity', '100%').attr('stroke', conf.rect_border_color).attr('stroke-size', conf.rect_border_size).attr('x', 0).attr('y', 0).attr('width', conf.rect_min_width + 'px').attr('height', conf.rect_min_height + 'px');
+  return parentNode.insert('rect', '#' + id).attr('class', 'req reqBox').attr('x', 0).attr('y', 0).attr('width', conf.rect_min_width + 'px').attr('height', conf.rect_min_height + 'px');
 };
 
 var newTitleNode = function newTitleNode(parentNode, id, txts) {
   var x = conf.rect_min_width / 2;
-  var title = parentNode.append('text').attr('class', 'req reqLabel reqTitle').attr('id', id).attr('x', x).attr('y', conf.rect_padding).attr('dominant-baseline', 'hanging').attr('style', 'font-family: ' + _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().fontFamily + '; font-size: ' + conf.fontSize + 'px');
+  var title = parentNode.append('text').attr('class', 'req reqLabel reqTitle').attr('id', id).attr('x', x).attr('y', conf.rect_padding).attr('dominant-baseline', 'hanging'); // .attr(
+  //   'style',
+  //   'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+  // )
+
   var i = 0;
   txts.forEach(function (textStr) {
     if (i == 0) {
@@ -66087,7 +66331,7 @@ var newTitleNode = function newTitleNode(parentNode, id, txts) {
   var yPadding = 1.5 * conf.rect_padding;
   var linePadding = i * conf.line_height * 0.75;
   var totalY = yPadding + linePadding;
-  parentNode.append('line').attr('x1', '0').attr('x2', conf.rect_min_width).attr('y1', totalY).attr('y2', totalY).attr('style', "stroke: ".concat(conf.rect_border_color, "; stroke-width: 1"));
+  parentNode.append('line').attr('class', 'req-title-line').attr('x1', '0').attr('x2', conf.rect_min_width).attr('y1', totalY).attr('y2', totalY);
   return {
     titleNode: title,
     y: totalY
@@ -66095,7 +66339,11 @@ var newTitleNode = function newTitleNode(parentNode, id, txts) {
 };
 
 var newBodyNode = function newBodyNode(parentNode, id, txts, yStart) {
-  var body = parentNode.append('text').attr('class', 'req reqLabel').attr('id', id).attr('x', conf.rect_padding).attr('y', yStart).attr('dominant-baseline', 'hanging').attr('style', 'font-family: ' + _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().fontFamily + '; font-size: ' + conf.fontSize + 'px');
+  var body = parentNode.append('text').attr('class', 'req reqLabel').attr('id', id).attr('x', conf.rect_padding).attr('y', yStart).attr('dominant-baseline', 'hanging'); // .attr(
+  //   'style',
+  //   'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+  // );
+
   var currentRow = 0;
   var charLimit = 30;
   var wrappedTxts = [];
@@ -66132,7 +66380,8 @@ var addEdgeLabel = function addEdgeLabel(parentNode, svgPath, conf, txt) {
 
   var labelId = 'rel' + relCnt;
   relCnt++;
-  var labelNode = parentNode.append('text').attr('class', 'er relationshipLabel').attr('id', labelId).attr('x', labelPoint.x).attr('y', labelPoint.y).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle').attr('style', 'font-family: ' + conf.fontFamily + '; font-size: ' + conf.fontSize + 'px').text(txt); // Figure out how big the opaque 'container' rectangle needs to be
+  var labelNode = parentNode.append('text').attr('class', 'req relationshipLabel').attr('id', labelId).attr('x', labelPoint.x).attr('y', labelPoint.y).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle') // .attr('style', 'font-family: ' + conf.fontFamily + '; font-size: ' + conf.fontSize + 'px')
+  .text(txt); // Figure out how big the opaque 'container' rectangle needs to be
 
   var labelBBox = labelNode.node().getBBox(); // Insert the opaque rectangle before the text label
 
@@ -66149,13 +66398,13 @@ var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g
     return d.y;
   }); // Insert the line at the right place
 
-  var svgPath = svg.insert('path', '#' + insert).attr('class', 'er relationshipLine').attr('d', lineFunction(edge.points)).attr('stroke', conf.rect_border_color).attr('fill', 'none');
+  var svgPath = svg.insert('path', '#' + insert).attr('class', 'er relationshipLine').attr('d', lineFunction(edge.points)).attr('fill', 'none');
 
-  if (rel.type == _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].Relationships.CONTAINS) {
-    svgPath.attr('marker-start', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_6__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + rel.type + '_line_ending' + ')');
+  if (rel.type == _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"].Relationships.CONTAINS) {
+    svgPath.attr('marker-start', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_5__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + rel.type + '_line_ending' + ')');
   } else {
     svgPath.attr('stroke-dasharray', '10,7');
-    svgPath.attr('marker-end', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_6__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + _requirementMarkers__WEBPACK_IMPORTED_MODULE_9__["default"].ReqMarkers.ARROW + '_line_ending' + ')');
+    svgPath.attr('marker-end', 'url(' + _common_common__WEBPACK_IMPORTED_MODULE_5__["default"].getUrl(conf.arrowMarkerAbsolute) + '#' + _requirementMarkers__WEBPACK_IMPORTED_MODULE_8__["default"].ReqMarkers.ARROW + '_line_ending' + ')');
   }
 
   addEdgeLabel(svg, svgPath, conf, "<<".concat(rel.type, ">>"));
@@ -66166,8 +66415,7 @@ var drawReqs = function drawReqs(reqs, graph, svgNode) {
   Object.keys(reqs).forEach(function (reqName) {
     var req = reqs[reqName];
     reqName = elementString(reqName);
-    console.log('reqName: ', reqName);
-    _logger__WEBPACK_IMPORTED_MODULE_4__["log"].info('Added new requirement: ', reqName);
+    _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('Added new requirement: ', reqName);
     var groupNode = svgNode.append('g').attr('id', reqName);
     var textId = 'req-' + reqName;
     var rectNode = newRectNode(groupNode, textId);
@@ -66196,7 +66444,7 @@ var drawElements = function drawElements(els, graph, svgNode) {
     var nodes = [];
     var titleNodeInfo = newTitleNode(groupNode, textId + '_title', ["<<Element>>", "".concat(elName)]);
     nodes.push(titleNodeInfo.titleNode);
-    var bodyNode = newBodyNode(groupNode, textId + '_body', ["Type: ".concat(el.type || 'Not Specified'), "Doc Ref: ".concat(el.docref || 'None')], titleNodeInfo.y);
+    var bodyNode = newBodyNode(groupNode, textId + '_body', ["Type: ".concat(el.type || 'Not Specified'), "Doc Ref: ".concat(el.docRef || 'None')], titleNodeInfo.y);
     nodes.push(bodyNode);
     var rectBBox = rectNode.node().getBBox(); // Add the entity to the graph
 
@@ -66235,10 +66483,11 @@ var elementString = function elementString(str) {
 };
 
 var draw = function draw(text, id) {
-  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__["parser"].yy = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"];
-  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_7__["parser"].parse(text);
+  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6__["parser"].yy = _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"];
+  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6__["parser"].yy.clear();
+  _parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_6__["parser"].parse(text);
   var svg = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id='".concat(id, "']"));
-  _requirementMarkers__WEBPACK_IMPORTED_MODULE_9__["default"].insertLineEndings(svg, conf);
+  _requirementMarkers__WEBPACK_IMPORTED_MODULE_8__["default"].insertLineEndings(svg, conf);
   var g = new graphlib__WEBPACK_IMPORTED_MODULE_2___default.a.Graph({
     multigraph: false,
     compound: false,
@@ -66253,9 +66502,9 @@ var draw = function draw(text, id) {
   }).setDefaultEdgeLabel(function () {
     return {};
   });
-  var requirements = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].getRequirements();
-  var elements = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].getElements();
-  var relationships = _requirementDb__WEBPACK_IMPORTED_MODULE_8__["default"].getRelationships();
+  var requirements = _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"].getRequirements();
+  var elements = _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"].getElements();
+  var relationships = _requirementDb__WEBPACK_IMPORTED_MODULE_7__["default"].getRelationships();
   drawReqs(requirements, g, svg);
   drawElements(elements, g, svg);
   addRelationships(relationships, g);
@@ -66269,7 +66518,7 @@ var draw = function draw(text, id) {
   var svgBounds = svg.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-  Object(_utils__WEBPACK_IMPORTED_MODULE_5__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_4__["configureSvgSize"])(svg, height, width, conf.useMaxWidth);
   svg.attr('viewBox', "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height));
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -66288,9 +66537,10 @@ var draw = function draw(text, id) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var getStyles = function getStyles() {
-  return "";
-};
+var getStyles = function getStyles(options) {
+  return "\n\n  marker {\n    fill: ".concat(options.relationColor, ";\n    stroke: ").concat(options.relationColor, ";\n  }\n\n  marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  .reqBox {\n    fill: ").concat(options.requirementBackground, ";\n    fill-opacity: 100%;\n    stroke: ").concat(options.requirementBorderColor, ";\n    stroke-width: ").concat(options.requirementBorderSize, ";\n  }\n  \n  .reqTitle, .reqLabel{\n    fill:  ").concat(options.requirementTextColor, ";\n  }\n  .reqLabelBox {\n    fill: ").concat(options.relationLabelBackground, ";\n    fill-opacity: 100%;\n  }\n\n  .req-title-line {\n    stroke: ").concat(options.requirementBorderColor, ";\n    stroke-width: ").concat(options.requirementBorderSize, ";\n  }\n  .relationshipLine {\n    stroke: ").concat(options.relationColor, ";\n    stroke-width: 1;\n  }\n  .relationshipLabel {\n    fill: ").concat(options.relationLabelColor, ";\n  }\n\n");
+}; // fill', conf.rect_fill)
+
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
@@ -69119,12 +69369,12 @@ var size = function size() {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,28],$Vc=[1,23],$Vd=[1,24],$Ve=[1,25],$Vf=[1,26],$Vg=[1,29],$Vh=[1,32],$Vi=[1,4,5,14,15,17,19,20,22,23,24,25,26,36,39],$Vj=[1,4,5,12,13,14,15,17,19,20,22,23,24,25,26,36,39],$Vk=[1,4,5,7,14,15,17,19,20,22,23,24,25,26,36,39],$Vl=[4,5,14,15,17,19,20,22,23,24,25,26,36,39];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,30],$Vc=[1,23],$Vd=[1,24],$Ve=[1,25],$Vf=[1,26],$Vg=[1,27],$Vh=[1,32],$Vi=[1,33],$Vj=[1,34],$Vk=[1,35],$Vl=[1,31],$Vm=[1,38],$Vn=[1,4,5,14,15,17,19,20,22,23,24,25,26,27,36,37,38,39,42,45],$Vo=[1,4,5,12,13,14,15,17,19,20,22,23,24,25,26,27,36,37,38,39,42,45],$Vp=[1,4,5,7,14,15,17,19,20,22,23,24,25,26,27,36,37,38,39,42,45],$Vq=[4,5,14,15,17,19,20,22,23,24,25,26,27,36,37,38,39,42,45];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"idStatement":11,"DESCR":12,"-->":13,"HIDE_EMPTY":14,"scale":15,"WIDTH":16,"COMPOSIT_STATE":17,"STRUCT_START":18,"STRUCT_STOP":19,"STATE_DESCR":20,"AS":21,"ID":22,"FORK":23,"JOIN":24,"CONCURRENT":25,"note":26,"notePosition":27,"NOTE_TEXT":28,"openDirective":29,"typeDirective":30,"closeDirective":31,":":32,"argDirective":33,"eol":34,";":35,"EDGE_STATE":36,"left_of":37,"right_of":38,"open_directive":39,"type_directive":40,"arg_directive":41,"close_directive":42,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NL",7:"SD",12:"DESCR",13:"-->",14:"HIDE_EMPTY",15:"scale",16:"WIDTH",17:"COMPOSIT_STATE",18:"STRUCT_START",19:"STRUCT_STOP",20:"STATE_DESCR",21:"AS",22:"ID",23:"FORK",24:"JOIN",25:"CONCURRENT",26:"note",28:"NOTE_TEXT",32:":",35:";",36:"EDGE_STATE",37:"left_of",38:"right_of",39:"open_directive",40:"type_directive",41:"arg_directive",42:"close_directive"},
-productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[10,1],[10,2],[10,3],[10,4],[10,1],[10,2],[10,1],[10,4],[10,3],[10,6],[10,1],[10,1],[10,1],[10,4],[10,4],[10,1],[6,3],[6,5],[34,1],[34,1],[11,1],[11,1],[27,1],[27,1],[29,1],[30,1],[33,1],[31,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"idStatement":11,"DESCR":12,"-->":13,"HIDE_EMPTY":14,"scale":15,"WIDTH":16,"COMPOSIT_STATE":17,"STRUCT_START":18,"STRUCT_STOP":19,"STATE_DESCR":20,"AS":21,"ID":22,"FORK":23,"JOIN":24,"CHOICE":25,"CONCURRENT":26,"note":27,"notePosition":28,"NOTE_TEXT":29,"direction":30,"openDirective":31,"typeDirective":32,"closeDirective":33,":":34,"argDirective":35,"direction_tb":36,"direction_bt":37,"direction_rl":38,"direction_lr":39,"eol":40,";":41,"EDGE_STATE":42,"left_of":43,"right_of":44,"open_directive":45,"type_directive":46,"arg_directive":47,"close_directive":48,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NL",7:"SD",12:"DESCR",13:"-->",14:"HIDE_EMPTY",15:"scale",16:"WIDTH",17:"COMPOSIT_STATE",18:"STRUCT_START",19:"STRUCT_STOP",20:"STATE_DESCR",21:"AS",22:"ID",23:"FORK",24:"JOIN",25:"CHOICE",26:"CONCURRENT",27:"note",29:"NOTE_TEXT",34:":",36:"direction_tb",37:"direction_bt",38:"direction_rl",39:"direction_lr",41:";",42:"EDGE_STATE",43:"left_of",44:"right_of",45:"open_directive",46:"type_directive",47:"arg_directive",48:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[10,1],[10,2],[10,3],[10,4],[10,1],[10,2],[10,1],[10,4],[10,3],[10,6],[10,1],[10,1],[10,1],[10,1],[10,4],[10,4],[10,1],[10,1],[6,3],[6,5],[30,1],[30,1],[30,1],[30,1],[40,1],[40,1],[11,1],[11,1],[28,1],[28,1],[31,1],[32,1],[35,1],[33,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -69170,7 +69420,6 @@ case 13:
 break;
 case 17:
 
-
         /* console.warn('Adding document for state without id ', $$[$0-3]);*/
         this.$={ stmt: 'state', id: $$[$0-3], type: 'default', description: '', doc: $$[$0-1] }
     
@@ -69190,7 +69439,7 @@ case 18:
 break;
 case 19:
 
-         //console.warn('Adding document for state with id ', $$[$0-3], $$[$0-2]); yy.addDocument($$[$0-3]);
+         // console.warn('Adding document for state with id zxzx', $$[$0-3], $$[$0-2], yy.getDirection()); yy.addDocument($$[$0-3]);
          this.$={ stmt: 'state', id: $$[$0-3], type: 'default', description: $$[$0-5], doc: $$[$0-1] }
     
 break;
@@ -69206,34 +69455,51 @@ case 21:
 break;
 case 22:
 
-        this.$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
+        this.$={ stmt: 'state', id: $$[$0], type: 'choice' }
     
 break;
 case 23:
 
-        /*console.warn('got NOTE, position: ', $$[$0-2].trim(), 'id = ', $$[$0-1].trim(), 'note: ', $$[$0]);*/
+        this.$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
+    
+break;
+case 24:
+
+        /* console.warn('got NOTE, position: ', $$[$0-2].trim(), 'id = ', $$[$0-1].trim(), 'note: ', $$[$0]);*/
         this.$={ stmt: 'state', id: $$[$0-1].trim(), note:{position: $$[$0-2].trim(), text: $$[$0].trim()}};
     
 break;
-case 30: case 31:
+case 30:
+ yy.setDirection('TB');this.$={stmt:'dir', value:'TB'};
+break;
+case 31:
+ yy.setDirection('BT');this.$={stmt:'dir', value:'BT'};
+break;
+case 32:
+ yy.setDirection('RL'); this.$={stmt:'dir', value:'RL'};
+break;
+case 33:
+ yy.setDirection('LR');this.$={stmt:'dir', value:'LR'};
+break;
+case 36: case 37:
 this.$=$$[$0];
 break;
-case 34:
+case 40:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 35:
+case 41:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 36:
+case 42:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 37:
+case 43:
  yy.parseDirective('}%%', 'close_directive', 'state'); 
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,29:6,39:$V3},o([1,4,5,14,15,17,20,22,23,24,25,26,36,39],$V4,{8:11}),{30:12,40:[1,13]},{40:[2,34]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},{31:30,32:[1,31],42:$Vh},o([32,42],[2,35]),o($Vi,[2,6]),{6:27,10:33,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,8]),o($Vi,[2,9]),o($Vi,[2,10],{12:[1,34],13:[1,35]}),o($Vi,[2,14]),{16:[1,36]},o($Vi,[2,16],{18:[1,37]}),{21:[1,38]},o($Vi,[2,20]),o($Vi,[2,21]),o($Vi,[2,22]),{27:39,28:[1,40],37:[1,41],38:[1,42]},o($Vi,[2,25]),o($Vj,[2,30]),o($Vj,[2,31]),o($Vk,[2,26]),{33:43,41:[1,44]},o($Vk,[2,37]),o($Vi,[2,7]),o($Vi,[2,11]),{11:45,22:$Vb,36:$Vg},o($Vi,[2,15]),o($Vl,$V4,{8:46}),{22:[1,47]},{22:[1,48]},{21:[1,49]},{22:[2,32]},{22:[2,33]},{31:50,42:$Vh},{42:[2,36]},o($Vi,[2,12],{12:[1,51]}),{4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,52],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,18],{18:[1,53]}),{28:[1,54]},{22:[1,55]},o($Vk,[2,27]),o($Vi,[2,13]),o($Vi,[2,17]),o($Vl,$V4,{8:56}),o($Vi,[2,23]),o($Vi,[2,24]),{4:$V5,5:$V6,6:27,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,57],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,29:6,36:$Vg,39:$V3},o($Vi,[2,19])],
-defaultActions: {7:[2,34],8:[2,1],9:[2,2],10:[2,3],41:[2,32],42:[2,33],44:[2,36]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,31:6,45:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,31:6,45:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,31:6,45:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,31:6,45:$V3},o([1,4,5,14,15,17,20,22,23,24,25,26,27,36,37,38,39,42,45],$V4,{8:11}),{32:12,46:[1,13]},{46:[2,40]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:28,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,27:$Vg,30:29,31:6,36:$Vh,37:$Vi,38:$Vj,39:$Vk,42:$Vl,45:$V3},{33:36,34:[1,37],48:$Vm},o([34,48],[2,41]),o($Vn,[2,6]),{6:28,10:39,11:18,14:$V7,15:$V8,17:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,27:$Vg,30:29,31:6,36:$Vh,37:$Vi,38:$Vj,39:$Vk,42:$Vl,45:$V3},o($Vn,[2,8]),o($Vn,[2,9]),o($Vn,[2,10],{12:[1,40],13:[1,41]}),o($Vn,[2,14]),{16:[1,42]},o($Vn,[2,16],{18:[1,43]}),{21:[1,44]},o($Vn,[2,20]),o($Vn,[2,21]),o($Vn,[2,22]),o($Vn,[2,23]),{28:45,29:[1,46],43:[1,47],44:[1,48]},o($Vn,[2,26]),o($Vn,[2,27]),o($Vo,[2,36]),o($Vo,[2,37]),o($Vn,[2,30]),o($Vn,[2,31]),o($Vn,[2,32]),o($Vn,[2,33]),o($Vp,[2,28]),{35:49,47:[1,50]},o($Vp,[2,43]),o($Vn,[2,7]),o($Vn,[2,11]),{11:51,22:$Vb,42:$Vl},o($Vn,[2,15]),o($Vq,$V4,{8:52}),{22:[1,53]},{22:[1,54]},{21:[1,55]},{22:[2,38]},{22:[2,39]},{33:56,48:$Vm},{48:[2,42]},o($Vn,[2,12],{12:[1,57]}),{4:$V5,5:$V6,6:28,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,58],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,27:$Vg,30:29,31:6,36:$Vh,37:$Vi,38:$Vj,39:$Vk,42:$Vl,45:$V3},o($Vn,[2,18],{18:[1,59]}),{29:[1,60]},{22:[1,61]},o($Vp,[2,29]),o($Vn,[2,13]),o($Vn,[2,17]),o($Vq,$V4,{8:62}),o($Vn,[2,24]),o($Vn,[2,25]),{4:$V5,5:$V6,6:28,9:14,10:16,11:18,14:$V7,15:$V8,17:$V9,19:[1,63],20:$Va,22:$Vb,23:$Vc,24:$Vd,25:$Ve,26:$Vf,27:$Vg,30:29,31:6,36:$Vh,37:$Vi,38:$Vj,39:$Vk,42:$Vl,45:$V3},o($Vn,[2,19])],
+defaultActions: {7:[2,40],8:[2,1],9:[2,2],10:[2,3],47:[2,38],48:[2,39],50:[2,42]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -69712,112 +69978,132 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 39; 
+case 0:return 36;
 break;
-case 1: this.begin('type_directive'); return 40; 
+case 1:return 37;
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 32; 
+case 2:return 38;
 break;
-case 3: this.popState(); this.popState(); return 42; 
+case 3:return 39;
 break;
-case 4:return 41;
+case 4: this.begin('open_directive'); return 45; 
 break;
-case 5:/* skip comments */
+case 5: this.begin('type_directive'); return 46; 
 break;
-case 6:/* skip comments */{ console.log('Crap after close'); }
+case 6: this.popState(); this.begin('arg_directive'); return 34; 
 break;
-case 7:return 5;
+case 7: this.popState(); this.popState(); return 48; 
 break;
-case 8:/* skip all whitespace */
+case 8:return 47;
 break;
-case 9:/* skip same-line whitespace */
+case 9:/* skip comments */
 break;
-case 10:/* skip comments */
+case 10:/* skip comments */{ /*console.log('Crap after close');*/ }
 break;
-case 11:/* skip comments */
+case 11:return 5;
 break;
-case 12: this.pushState('SCALE'); /* console.log('Got scale', yy_.yytext);*/ return 15; 
+case 12:/* skip all whitespace */
 break;
-case 13:return 16;
+case 13:/* skip same-line whitespace */
 break;
-case 14:this.popState();
+case 14:/* skip comments */
 break;
-case 15: this.pushState('STATE'); 
+case 15:/* skip comments */
 break;
-case 16:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
+case 16: this.pushState('SCALE'); /* console.log('Got scale', yy_.yytext);*/ return 15; 
 break;
-case 17:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
+case 17:return 16;
 break;
-case 18:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
+case 18:this.popState();
 break;
-case 19:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
+case 19: /*console.log('Starting STATE zxzx'+yy.getDirection());*/this.pushState('STATE'); 
 break;
-case 20:this.begin("STATE_STRING");
+case 20:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
 break;
-case 21:this.popState();this.pushState('STATE_ID');return "AS";
+case 21:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
 break;
-case 22:this.popState();/* console.log('STATE_ID', yy_.yytext);*/return "ID";
+case 22:this.popState();yy_.yytext=yy_.yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 25;
 break;
-case 23:this.popState();
+case 23:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yy_.yytext);*/return 23;
 break;
-case 24: /*console.log('Long description:', yy_.yytext);*/return "STATE_DESCR";
+case 24:this.popState();yy_.yytext=yy_.yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 24;
 break;
-case 25:/*console.log('COMPOSIT_STATE', yy_.yytext);*/return 17;
+case 25:this.popState();yy_.yytext=yy_.yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yy_.yytext);*/return 25;
 break;
-case 26:this.popState();
+case 26: return 36;
 break;
-case 27:this.popState();this.pushState('struct'); /*console.log('begin struct', yy_.yytext);*/return 18;
+case 27: return 37;
 break;
-case 28: /*console.log('Ending struct');*/ this.popState(); return 19;
+case 28: return 38;
 break;
-case 29:/* nothing */
+case 29: return 39;
 break;
-case 30: this.begin('NOTE'); return 26; 
+case 30: /*console.log('Starting STATE_STRING zxzx');*/this.begin("STATE_STRING");
 break;
-case 31: this.popState();this.pushState('NOTE_ID');return 37;
+case 31:this.popState();this.pushState('STATE_ID');return "AS";
 break;
-case 32: this.popState();this.pushState('NOTE_ID');return 38;
+case 32:this.popState();/* console.log('STATE_ID', yy_.yytext);*/return "ID";
 break;
-case 33: this.popState();this.pushState('FLOATING_NOTE');
+case 33:this.popState();
 break;
-case 34:this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";
+case 34: /*console.log('Long description:', yy_.yytext);*/return "STATE_DESCR";
 break;
-case 35:/**/
+case 35:/*console.log('COMPOSIT_STATE', yy_.yytext);*/return 17;
 break;
-case 36: /*console.log('Floating note text: ', yy_.yytext);*/return "NOTE_TEXT";
+case 36:this.popState();
 break;
-case 37:this.popState();/*console.log('Floating note ID', yy_.yytext);*/return "ID";
+case 37:this.popState();this.pushState('struct'); /*console.log('begin struct', yy_.yytext);*/return 18;
 break;
-case 38: this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yy_.yytext);*/return 22;
+case 38: /*console.log('Ending struct');*/ this.popState(); return 19;
 break;
-case 39: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.substr(2).trim();return 28;
+case 39:/* nothing */
 break;
-case 40: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.slice(0,-8).trim();return 28;
+case 40: this.begin('NOTE'); return 27; 
 break;
-case 41: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
+case 41: this.popState();this.pushState('NOTE_ID');return 43;
 break;
-case 42: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
+case 42: this.popState();this.pushState('NOTE_ID');return 44;
 break;
-case 43: /*console.log('HIDE_EMPTY', yy_.yytext,'#');*/return 14; 
+case 43: this.popState();this.pushState('FLOATING_NOTE');
 break;
-case 44: /*console.log('EDGE_STATE=',yy_.yytext);*/ return 36;
+case 44:this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";
 break;
-case 45: /*console.log('=>ID=',yy_.yytext);*/ return 22;
+case 45:/**/
 break;
-case 46: yy_.yytext = yy_.yytext.trim(); /*console.log('Descr = ', yy_.yytext);*/ return 12; 
+case 46: /*console.log('Floating note text: ', yy_.yytext);*/return "NOTE_TEXT";
 break;
-case 47:return 13;
+case 47:this.popState();/*console.log('Floating note ID', yy_.yytext);*/return "ID";
 break;
-case 48:return 25;
+case 48: this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yy_.yytext);*/return 22;
 break;
-case 49:return 5;
+case 49: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.substr(2).trim();return 29;
 break;
-case 50:return 'INVALID';
+case 50: this.popState();/*console.log('Got NOTE_TEXT for note',yy_.yytext);*/yy_.yytext = yy_.yytext.slice(0,-8).trim();return 29;
+break;
+case 51: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
+break;
+case 52: /*console.log('Got state diagram', yy_.yytext,'#');*/return 7; 
+break;
+case 53: /*console.log('HIDE_EMPTY', yy_.yytext,'#');*/return 14; 
+break;
+case 54: /*console.log('EDGE_STATE=',yy_.yytext);*/ return 42;
+break;
+case 55: /*console.log('=>ID=',yy_.yytext);*/ return 22;
+break;
+case 56: yy_.yytext = yy_.yytext.trim(); /*console.log('Descr = ', yy_.yytext);*/ return 12; 
+break;
+case 57:return 13;
+break;
+case 58:return 26;
+break;
+case 59:return 5;
+break;
+case 60:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:[\s]+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:scale\s+)/i,/^(?:\d+)/i,/^(?:\s+width\b)/i,/^(?:state\s+)/i,/^(?:.*<<fork>>)/i,/^(?:.*<<join>>)/i,/^(?:.*\[\[fork\]\])/i,/^(?:.*\[\[join\]\])/i,/^(?:["])/i,/^(?:\s*as\s+)/i,/^(?:[^\n\{]*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n\s\{]+)/i,/^(?:\n)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:[\n])/i,/^(?:note\s+)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:")/i,/^(?:\s*as\s*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n]*)/i,/^(?:\s*[^:\n\s\-]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:[\s\S]*?end note\b)/i,/^(?:stateDiagram\s+)/i,/^(?:stateDiagram-v2\s+)/i,/^(?:hide empty description\b)/i,/^(?:\[\*\])/i,/^(?:[^:\n\s\-\{]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:-->)/i,/^(?:--)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"LINE":{"rules":[9,10],"inclusive":false},"close_directive":{"rules":[9,10],"inclusive":false},"arg_directive":{"rules":[3,4,9,10],"inclusive":false},"type_directive":{"rules":[2,3,9,10],"inclusive":false},"open_directive":{"rules":[1,9,10],"inclusive":false},"struct":{"rules":[9,10,15,28,29,30,44,45,46,47,48],"inclusive":false},"FLOATING_NOTE_ID":{"rules":[37],"inclusive":false},"FLOATING_NOTE":{"rules":[34,35,36],"inclusive":false},"NOTE_TEXT":{"rules":[39,40],"inclusive":false},"NOTE_ID":{"rules":[38],"inclusive":false},"NOTE":{"rules":[31,32,33],"inclusive":false},"SCALE":{"rules":[13,14],"inclusive":false},"ALIAS":{"rules":[],"inclusive":false},"STATE_ID":{"rules":[22],"inclusive":false},"STATE_STRING":{"rules":[23,24],"inclusive":false},"FORK_STATE":{"rules":[],"inclusive":false},"STATE":{"rules":[9,10,16,17,18,19,20,21,25,26,27],"inclusive":false},"ID":{"rules":[9,10],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,10,11,12,15,27,30,41,42,43,44,45,46,47,49,50],"inclusive":true}}
+rules: [/^(?:.*direction\s+TB[^\n]*)/i,/^(?:.*direction\s+BT[^\n]*)/i,/^(?:.*direction\s+RL[^\n]*)/i,/^(?:.*direction\s+LR[^\n]*)/i,/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:[\s]+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:scale\s+)/i,/^(?:\d+)/i,/^(?:\s+width\b)/i,/^(?:state\s+)/i,/^(?:.*<<fork>>)/i,/^(?:.*<<join>>)/i,/^(?:.*<<choice>>)/i,/^(?:.*\[\[fork\]\])/i,/^(?:.*\[\[join\]\])/i,/^(?:.*\[\[choice\]\])/i,/^(?:.*direction\s+TB[^\n]*)/i,/^(?:.*direction\s+BT[^\n]*)/i,/^(?:.*direction\s+RL[^\n]*)/i,/^(?:.*direction\s+LR[^\n]*)/i,/^(?:["])/i,/^(?:\s*as\s+)/i,/^(?:[^\n\{]*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n\s\{]+)/i,/^(?:\n)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:[\n])/i,/^(?:note\s+)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:")/i,/^(?:\s*as\s*)/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[^\n]*)/i,/^(?:\s*[^:\n\s\-]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:[\s\S]*?end note\b)/i,/^(?:stateDiagram\s+)/i,/^(?:stateDiagram-v2\s+)/i,/^(?:hide empty description\b)/i,/^(?:\[\*\])/i,/^(?:[^:\n\s\-\{]+)/i,/^(?:\s*:[^:\n;]+)/i,/^(?:-->)/i,/^(?:--)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"LINE":{"rules":[13,14],"inclusive":false},"close_directive":{"rules":[13,14],"inclusive":false},"arg_directive":{"rules":[7,8,13,14],"inclusive":false},"type_directive":{"rules":[6,7,13,14],"inclusive":false},"open_directive":{"rules":[5,13,14],"inclusive":false},"struct":{"rules":[13,14,19,26,27,28,29,38,39,40,54,55,56,57,58],"inclusive":false},"FLOATING_NOTE_ID":{"rules":[47],"inclusive":false},"FLOATING_NOTE":{"rules":[44,45,46],"inclusive":false},"NOTE_TEXT":{"rules":[49,50],"inclusive":false},"NOTE_ID":{"rules":[48],"inclusive":false},"NOTE":{"rules":[41,42,43],"inclusive":false},"SCALE":{"rules":[17,18],"inclusive":false},"ALIAS":{"rules":[],"inclusive":false},"STATE_ID":{"rules":[32],"inclusive":false},"STATE_STRING":{"rules":[33,34],"inclusive":false},"FORK_STATE":{"rules":[],"inclusive":false},"STATE":{"rules":[13,14,20,21,22,23,24,25,30,31,35,36,37],"inclusive":false},"ID":{"rules":[13,14],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,9,10,11,12,14,15,16,19,37,40,51,52,53,54,55,56,57,59,60],"inclusive":true}}
 });
 return lexer;
 })();
@@ -70385,7 +70671,7 @@ var getRootDocV2 = function getRootDocV2() {
   return {
     id: 'root',
     doc: rootDoc
-  };
+  }; // Here
 };
 
 var extract = function extract(_doc) {
@@ -70557,8 +70843,14 @@ var getClasses = function getClasses() {
   return classes;
 };
 
+var direction = 'TB';
+
 var getDirection = function getDirection() {
-  return 'TB';
+  return direction;
+};
+
+var setDirection = function setDirection(dir) {
+  direction = dir;
 };
 
 var relationType = {
@@ -70586,6 +70878,7 @@ var trimColon = function trimColon(str) {
   getDirection: getDirection,
   addRelation: addRelation,
   getDividerId: getDividerId,
+  setDirection: setDirection,
   // addDescription,
   cleanupLabel: cleanupLabel,
   lineType: lineType,
@@ -70708,8 +71001,9 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 
 
     if (!nodeDb[node.id].type && node.doc) {
-      _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Setting cluser for ', node.id);
+      _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Setting cluster for ', node.id, getDir(node));
       nodeDb[node.id].type = 'group';
+      nodeDb[node.id].dir = getDir(node);
       nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
       nodeDb[node.id].classes = nodeDb[node.id].classes + ' ' + (altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster');
     }
@@ -70718,11 +71012,15 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
       labelStyle: '',
       shape: nodeDb[node.id].shape,
       labelText: nodeDb[node.id].description,
+      // typeof nodeDb[node.id].description === 'object'
+      //   ? nodeDb[node.id].description[0]
+      //   : nodeDb[node.id].description,
       classes: nodeDb[node.id].classes,
       //classStr,
       style: '',
       //styles.style,
       id: node.id,
+      dir: nodeDb[node.id].dir,
       domId: 'state-' + node.id + '-' + cnt,
       type: nodeDb[node.id].type,
       padding: 15 //getConfig().flowchart.padding
@@ -70739,7 +71037,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
         //classStr,
         style: '',
         //styles.style,
-        id: node.id + '----note',
+        id: node.id + '----note-' + cnt,
         domId: 'state-' + node.id + '----note-' + cnt,
         type: nodeDb[node.id].type,
         padding: 15 //getConfig().flowchart.padding
@@ -70791,13 +71089,13 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 
   if (parent) {
     if (parent.id !== 'root') {
-      _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Setting node ', node.id, ' to be child of its parent ', parent.id);
+      _logger__WEBPACK_IMPORTED_MODULE_6__["log"].trace('Setting node ', node.id, ' to be child of its parent ', parent.id);
       g.setParent(node.id, parent.id);
     }
   }
 
   if (node.doc) {
-    _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info('Adding nodes children ');
+    _logger__WEBPACK_IMPORTED_MODULE_6__["log"].trace('Adding nodes children ');
     setupDoc(g, node, node.doc, !altFlag);
   }
 };
@@ -70805,7 +71103,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 var cnt = 0;
 
 var setupDoc = function setupDoc(g, parent, doc, altFlag) {
-  cnt = 0;
+  // cnt = 0;
   _logger__WEBPACK_IMPORTED_MODULE_6__["log"].trace('items', doc);
   doc.forEach(function (item) {
     if (item.stmt === 'state' || item.stmt === 'default') {
@@ -70833,6 +71131,22 @@ var setupDoc = function setupDoc(g, parent, doc, altFlag) {
     }
   });
 };
+
+var getDir = function getDir(nodes, defaultDir) {
+  var dir = defaultDir || 'TB';
+
+  if (nodes.doc) {
+    for (var i = 0; i < nodes.doc.length; i++) {
+      var node = nodes.doc[i];
+
+      if (node.stmt === 'dir') {
+        dir = node.value;
+      }
+    }
+  }
+
+  return dir;
+};
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
@@ -70857,13 +71171,16 @@ var draw = function draw(text, id) {
 
   var conf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().state;
   var nodeSpacing = conf.nodeSpacing || 50;
-  var rankSpacing = conf.rankSpacing || 50; // Create the input mermaid.graph
+  var rankSpacing = conf.rankSpacing || 50;
+  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
+  _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].extract(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
+  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2()); // Create the input mermaid.graph
 
   var g = new graphlib__WEBPACK_IMPORTED_MODULE_0___default.a.Graph({
     multigraph: true,
     compound: true
   }).setGraph({
-    rankdir: 'TB',
+    rankdir: getDir(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2()),
     nodesep: nodeSpacing,
     ranksep: rankSpacing,
     marginx: 8,
@@ -70871,9 +71188,6 @@ var draw = function draw(text, id) {
   }).setDefaultEdgeLabel(function () {
     return {};
   });
-  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
-  _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].extract(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
-  _logger__WEBPACK_IMPORTED_MODULE_6__["log"].info(_stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2());
   setupNode(g, undefined, _stateDb__WEBPACK_IMPORTED_MODULE_2__["default"].getRootDocV2(), true); // Set up an SVG group so that we can translate the final graph.
 
   var svg = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])("[id=\"".concat(id, "\"]")); // Run the renderer. This is what draws the final graph.
@@ -71202,7 +71516,7 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.tertiaryColor, ";\n  opacity: 0.5;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.tertiaryTextColor, ";\n}\n.label div .edgeLabel {\n  color: ").concat(options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n}\n\n.node circle.state-start {\n  fill: ").concat(options.lineColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n.end-state-inner {\n  fill: ").concat(options.background, ";\n  // stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.textColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
+  return "\ndefs #statediagram-barbEnd {\n    fill: ".concat(options.transitionColor, ";\n    stroke: ").concat(options.transitionColor, ";\n  }\ng.stateGroup text {\n  fill: ").concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n}\ng.stateGroup text {\n  fill: ").concat(options.textColor, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.stateLabelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.transitionColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: ").concat(options.background, ";\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: ").concat(options.noteTextColor, ";\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.edgeLabel .label rect {\n  fill: ").concat(options.labelBackgroundColor, ";\n  opacity: 0.5;\n}\n.edgeLabel .label text {\n  fill: ").concat(options.transitionLabelColor || options.tertiaryTextColor, ";\n}\n.label div .edgeLabel {\n  color: ").concat(options.transitionLabelColor || options.tertiaryTextColor, ";\n}\n\n.stateLabel text {\n  fill: ").concat(options.stateLabelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n}\n\n.node circle.state-start {\n  fill: ").concat(options.lineColor, ";\n  stroke: black;\n}\n.node circle.state-end {\n  fill: ").concat(options.primaryBorderColor, ";\n  stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n.end-state-inner {\n  fill: ").concat(options.compositeBackground || options.background, ";\n  // stroke: ").concat(options.background, ";\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.stateBkg || options.mainBkg, ";\n  stroke: ").concat(options.stateBorder || options.nodeBorder, ";\n  stroke-width: 1px;\n}\n.node polygon {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.stateBorder || options.nodeBorder, ";;\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.lineColor, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.compositeTitleBackground, ";\n  stroke: ").concat(options.stateBorder || options.nodeBorder, ";\n  stroke-width: 1px;\n}\n\n.cluster-label, .nodeLabel {\n  color: ").concat(options.stateLabelColor, ";\n}\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.stateBorder || options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: ").concat(options.compositeBackground || options.background, ";\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: ").concat(options.altBackground ? options.altBackground : '#efefef', ";\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n.statediagram-note text {\n  fill: ").concat(options.noteTextColor, ";\n}\n\n.statediagram-note .nodeLabel {\n  color: ").concat(options.noteTextColor, ";\n}\n.statediagram .edgeLabel {\n  color: red; // ").concat(options.noteTextColor, ";\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.lineColor, ";\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n}\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -73110,14 +73424,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 function parse(text) {
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectInit(text);
+  var cnf = _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]();
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectInit(text, cnf);
 
   if (graphInit) {
     reinitialize(graphInit);
     _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('reinit ', graphInit);
   }
 
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(text);
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(text, cnf);
   var parser;
   _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('Type ' + graphType);
 
@@ -73195,7 +73510,6 @@ function parse(text) {
 
     case 'requirement':
     case 'requirementDiagram':
-      console.log('RequirementDiagram');
       _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('RequirementDiagram');
       parser = _diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_27___default.a;
       parser.parser.yy = _diagrams_requirement_requirementDb__WEBPACK_IMPORTED_MODULE_28__["default"];
@@ -73317,7 +73631,7 @@ var render = function render(id, _txt, cb, container) {
   window.txt = txt;
   txt = encodeEntities(txt);
   var element = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(txt); // insert inline style into svg
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_44__["default"].detectType(txt, cnf); // insert inline style into svg
 
   var svg = element.firstChild;
   var firstChild = svg.firstChild;
@@ -73447,8 +73761,8 @@ var render = function render(id, _txt, cb, container) {
         break;
 
       case 'pie':
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(cnf.pie);
+        //cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        //pieRenderer.setConf(cnf.pie);
         _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
@@ -73597,6 +73911,7 @@ var handleDirective = function handleDirective(p, directive, type) {
 };
 
 function updateRendererConfigs(conf) {
+  // Todo remove, all diagrams should get config on demoand from the config object, no need for this
   _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(conf.git);
   _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_12__["default"].setConf(conf.flowchart);
   _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(conf.flowchart);
@@ -73610,8 +73925,8 @@ function updateRendererConfigs(conf) {
   _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_5__["default"].setConf(conf.class);
   _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(conf.state);
   _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(conf.state);
-  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_22__["default"].setConf(conf.class);
-  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(conf.class);
+  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_22__["default"].setConf(conf.class); // pieRenderer.setConf(conf.class);
+
   _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_9__["default"].setConf(conf.er);
   _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(conf.journey);
   _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_29__["default"].setConf(conf.requirement);
@@ -73809,7 +74124,7 @@ var calcThemeVariables = function calcThemeVariables(theme, userOverRides) {
 
 var getStyles = function getStyles(type, userStyles, options) {
   //console.warn('options in styles: ', options);
-  return " {\n    font-family: ".concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n    fill: ").concat(options.textColor, "\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ").concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n    stroke: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  ").concat(themes[type](options), "\n\n  ").concat(userStyles, "\n\n  ").concat(type, " { fill: apa;}\n");
+  return " {\n    font-family: ".concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n    fill: ").concat(options.textColor, "\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ").concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n    stroke: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  ").concat(themes[type](options), "\n\n  ").concat(userStyles, "\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -73931,6 +74246,8 @@ function () {
       this.secondaryBorderColor = this.secondaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.secondaryColor, this.darkMode);
       this.tertiaryBorderColor = this.tertiaryBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.tertiaryColor, this.darkMode);
       this.noteBorderColor = this.noteBorderColor || Object(_theme_helpers__WEBPACK_IMPORTED_MODULE_1__["mkBorder"])(this.noteBkgColor, this.darkMode);
+      this.noteBkgColor = this.noteBkgColor || '#fff5ad';
+      this.noteTextColor = this.noteTextColor || '#333';
       this.secondaryTextColor = this.secondaryTextColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
       this.tertiaryTextColor = this.tertiaryTextColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
       this.lineColor = this.lineColor || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
@@ -73986,10 +74303,20 @@ function () {
       this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
       /* state colors */
 
-      this.labelColor = this.labelColor || this.primaryTextColor;
+      this.transitionColor = this.transitionColor || this.lineColor;
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      /* The color of the text tables of the tstates*/
+
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
       this.altBackground = this.altBackground || this.tertiaryColor;
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.compositeBorder = this.compositeBorder || this.nodeBorder;
       this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
       this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+      this.transitionColor = this.transitionColor || this.lineColor;
       /* class */
 
       this.classText = this.classText || this.textColor;
@@ -74015,6 +74342,62 @@ function () {
       this.fillType7 = this.fillType7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* pie */
+
+      this.pie1 = this.pie1 || this.primaryColor;
+      this.pie2 = this.pie2 || this.secondaryColor;
+      this.pie3 = this.pie3 || this.tertiaryColor;
+      this.pie4 = this.pie4 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        l: -10
+      });
+      this.pie5 = this.pie5 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        l: -10
+      });
+      this.pie6 = this.pie6 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.tertiaryColor, {
+        l: -10
+      });
+      this.pie7 = this.pie7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -10
+      });
+      this.pie8 = this.pie8 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -10
+      });
+      this.pie9 = this.pie9 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: 0
+      });
+      this.pie10 = this.pie10 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -20
+      });
+      this.pie11 = this.pie11 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -20
+      });
+      this.pie12 = this.pie12 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: -10
+      });
+      this.pieTitleTextSize = this.pieTitleTextSize || '25px';
+      this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+      this.pieSectionTextSize = this.pieSectionTextSize || '17px';
+      this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+      this.pieLegendTextSize = this.pieLegendTextSize || '17px';
+      this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+      this.pieStrokeColor = this.pieStrokeColor || 'black';
+      this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+      this.pieOpacity = this.pieOpacity || '0.7';
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || (this.darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 30) : this.secondaryColor);
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -74205,8 +74588,17 @@ function () {
       this.taskTextDarkColor = this.darkTextColor;
       /* state colors */
 
-      this.labelColor = this.textColor;
-      this.altBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.background, 20);
+      this.transitionColor = this.transitionColor || this.lineColor;
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+      this.altBackground = this.altBackground || '#555';
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.compositeBorder = this.compositeBorder || this.nodeBorder;
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
       this.fillType0 = this.primaryColor;
       this.fillType1 = this.secondaryColor;
       this.fillType2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
@@ -74227,9 +74619,41 @@ function () {
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* pie */
+
+      this.pie1 = this.pie1 || '#0b0000';
+      this.pie2 = this.pie2 || '#4d1037';
+      this.pie3 = this.pie3 || '#3f5258';
+      this.pie4 = this.pie4 || '#4f2f1b';
+      this.pie5 = this.pie5 || '#6e0a0a';
+      this.pie6 = this.pie6 || '#3b0048';
+      this.pie7 = this.pie7 || '#995a01';
+      this.pie8 = this.pie8 || '#154706';
+      this.pie9 = this.pie9 || '#161722';
+      this.pie10 = this.pie10 || '#00296f';
+      this.pie11 = this.pie11 || '#01629c';
+      this.pie12 = this.pie12 || '#010029';
+      this.pieTitleTextSize = this.pieTitleTextSize || '25px';
+      this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+      this.pieSectionTextSize = this.pieSectionTextSize || '17px';
+      this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+      this.pieLegendTextSize = this.pieLegendTextSize || '17px';
+      this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+      this.pieStrokeColor = this.pieStrokeColor || 'black';
+      this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+      this.pieOpacity = this.pieOpacity || '0.7';
       /* class */
 
       this.classText = this.primaryTextColor;
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || (this.darkMode ? Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.secondaryColor, 30) : this.secondaryColor);
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -74431,6 +74855,18 @@ function () {
       this.taskTextOutsideColor = this.taskTextDarkColor;
       /* state colors */
 
+      this.transitionColor = this.transitionColor || this.lineColor;
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+      this.altBackground = this.altBackground || '#f0f0f0';
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.compositeBorder = this.compositeBorder || this.nodeBorder;
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+      this.transitionColor = this.transitionColor || this.lineColor;
       /* class */
 
       this.classText = this.primaryTextColor;
@@ -74456,6 +74892,64 @@ function () {
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* pie */
+
+      this.pie1 = this.pie1 || this.primaryColor;
+      this.pie2 = this.pie2 || this.secondaryColor;
+      this.pie3 = this.pie3 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.tertiaryColor, {
+        l: -40
+      });
+      this.pie4 = this.pie4 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        l: -10
+      });
+      this.pie5 = this.pie5 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        l: -30
+      });
+      this.pie6 = this.pie6 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.tertiaryColor, {
+        l: -20
+      });
+      this.pie7 = this.pie7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -20
+      });
+      this.pie8 = this.pie8 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -40
+      });
+      this.pie9 = this.pie9 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: -40
+      });
+      this.pie10 = this.pie10 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -40
+      });
+      this.pie11 = this.pie11 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -90,
+        l: -40
+      });
+      this.pie12 = this.pie12 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: -30
+      });
+      this.pieTitleTextSize = this.pieTitleTextSize || '25px';
+      this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+      this.pieSectionTextSize = this.pieSectionTextSize || '17px';
+      this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+      this.pieLegendTextSize = this.pieLegendTextSize || '17px';
+      this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+      this.pieStrokeColor = this.pieStrokeColor || 'black';
+      this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+      this.pieOpacity = this.pieOpacity || '0.7';
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || this.labelBackground;
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -74626,6 +75120,18 @@ function () {
       this.activeTaskBkgColor = this.mainBkg;
       /* state colors */
 
+      this.transitionColor = this.transitionColor || this.lineColor;
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+      this.altBackground = this.altBackground || '#f0f0f0';
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.compositeBorder = this.compositeBorder || this.nodeBorder;
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+      this.transitionColor = this.transitionColor || this.lineColor;
       /* class */
 
       this.classText = this.primaryTextColor;
@@ -74651,6 +75157,63 @@ function () {
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
       });
+      /* pie */
+
+      this.pie1 = this.pie1 || this.primaryColor;
+      this.pie2 = this.pie2 || this.secondaryColor;
+      this.pie3 = this.pie3 || this.tertiaryColor;
+      this.pie4 = this.pie4 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        l: -30
+      });
+      this.pie5 = this.pie5 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
+        l: -30
+      });
+      this.pie6 = this.pie6 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.tertiaryColor, {
+        h: +40,
+        l: -40
+      });
+      this.pie7 = this.pie7 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -10
+      });
+      this.pie8 = this.pie8 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -10
+      });
+      this.pie9 = this.pie9 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: 0
+      });
+      this.pie10 = this.pie10 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: +60,
+        l: -50
+      });
+      this.pie11 = this.pie11 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: -60,
+        l: -50
+      });
+      this.pie12 = this.pie12 || Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.primaryColor, {
+        h: 120,
+        l: -50
+      });
+      this.pieTitleTextSize = this.pieTitleTextSize || '25px';
+      this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+      this.pieSectionTextSize = this.pieSectionTextSize || '17px';
+      this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+      this.pieLegendTextSize = this.pieLegendTextSize || '17px';
+      this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+      this.pieStrokeColor = this.pieStrokeColor || 'black';
+      this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+      this.pieOpacity = this.pieOpacity || '0.7';
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || this.edgeLabelBackground;
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -74760,8 +75323,8 @@ function () {
     this.secondaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.secondaryColor);
     this.tertiaryTextColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.tertiaryColor);
     this.lineColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
-    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background);
-    this.altBackground = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
+    this.textColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["invert"])(this.background); // this.altBackground = lighten(this.contrast, 55);
+
     this.mainBkg = '#eee';
     this.secondBkg = 'calculated';
     this.lineColor = '#666';
@@ -74853,9 +75416,9 @@ function () {
       this.labelBoxBorderColor = this.actorBorder;
       this.labelTextColor = this.text;
       this.loopTextColor = this.text;
-      this.noteBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.note, 60);
-      this.noteBkgColor = this.note;
-      this.noteTextColor = this.actorTextColor;
+      this.noteBorderColor = '#999';
+      this.noteBkgColor = '#666';
+      this.noteTextColor = '#fff';
       /* Gantt chart variables */
 
       this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 30);
@@ -74875,6 +75438,17 @@ function () {
       this.todayLineColor = this.critBkgColor;
       /* state colors */
 
+      this.transitionColor = this.transitionColor || '#000';
+      this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+      this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+      this.stateBkg = this.stateBkg || this.mainBkg;
+      this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+      this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
+      this.altBackground = this.altBackground || '#f4f4f4';
+      this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+      this.stateBorder = this.stateBorder || '#000';
+      this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
+      this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
       /* class */
 
       this.classText = this.primaryTextColor;
@@ -74899,7 +75473,50 @@ function () {
       });
       this.fillType7 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["adjust"])(this.secondaryColor, {
         h: 128
-      });
+      }); // /* pie */
+
+      this.pie1 = this.pie1 || '#F4F4F4';
+      this.pie2 = this.pie2 || '#555';
+      this.pie3 = this.pie3 || '#BBB';
+      this.pie4 = this.pie4 || '#777';
+      this.pie5 = this.pie5 || '#999';
+      this.pie6 = this.pie6 || '#DDD';
+      this.pie7 = this.pie7 || '#FFF';
+      this.pie8 = this.pie8 || '#DDD';
+      this.pie9 = this.pie9 || '#BBB';
+      this.pie10 = this.pie10 || '#999';
+      this.pie11 = this.pie11 || '#777';
+      this.pie12 = this.pie12 || '#555';
+      this.pieTitleTextSize = this.pieTitleTextSize || '25px';
+      this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+      this.pieSectionTextSize = this.pieSectionTextSize || '17px';
+      this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+      this.pieLegendTextSize = this.pieLegendTextSize || '17px';
+      this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+      this.pieStrokeColor = this.pieStrokeColor || 'black';
+      this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+      this.pieOpacity = this.pieOpacity || '0.7'; // this.pie1 = this.pie1 || '#212529';
+      // this.pie2 = this.pie2 || '#343A40';
+      // this.pie3 = this.pie3 || '#495057';
+      // this.pie4 = this.pie4 || '#6C757D';
+      // this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
+      // this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
+      // this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
+      // this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
+      // this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
+      // this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
+      // this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
+      // this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
+
+      /* requirement-diagram */
+
+      this.requirementBackground = this.requirementBackground || this.primaryColor;
+      this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+      this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+      this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+      this.relationColor = this.relationColor || this.lineColor;
+      this.relationLabelBackground = this.relationLabelBackground || this.edgeLabelBackground;
+      this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
     }
   }, {
     key: "calculate",
@@ -75042,7 +75659,7 @@ var anyComment = /\s*%%.*\n/gm;
  * @returns {object} the json object representing the init passed to mermaid.initialize()
  */
 
-var detectInit = function detectInit(text) {
+var detectInit = function detectInit(text, cnf) {
   var inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   var results = {};
 
@@ -75056,7 +75673,7 @@ var detectInit = function detectInit(text) {
   }
 
   if (results) {
-    var type = detectType(text);
+    var type = detectType(text, cnf);
     ['config'].forEach(function (prop) {
       if (typeof results[prop] !== 'undefined') {
         if (type === 'flowchart-v2') {
@@ -75156,7 +75773,7 @@ var detectDirective = function detectDirective(text) {
  * @returns {string} A graph definition key
  */
 
-var detectType = function detectType(text) {
+var detectType = function detectType(text, cnf) {
   text = text.replace(directive, '').replace(anyComment, '\n');
   _logger__WEBPACK_IMPORTED_MODULE_3__["log"].debug('Detecting diagram type based on the text ' + text);
 
@@ -75173,6 +75790,7 @@ var detectType = function detectType(text) {
   }
 
   if (text.match(/^\s*classDiagram/)) {
+    if (cnf && cnf.class && cnf.class.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
     return 'class';
   }
 
@@ -75181,6 +75799,7 @@ var detectType = function detectType(text) {
   }
 
   if (text.match(/^\s*stateDiagram/)) {
+    if (cnf && cnf.class && cnf.state.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
     return 'state';
   }
 
@@ -75212,6 +75831,7 @@ var detectType = function detectType(text) {
     return 'requirement';
   }
 
+  if (cnf && cnf.flowchart && cnf.flowchart.defaultRenderer === 'dagre-wrapper') return 'flowchart-v2';
   return 'flowchart';
 };
 

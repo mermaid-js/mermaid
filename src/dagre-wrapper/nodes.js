@@ -34,6 +34,44 @@ const question = (parent, node) => {
   return shapeSvg;
 };
 
+const choice = (parent, node) => {
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'node default')
+    .attr('id', node.domId || node.id);
+
+  const s = 28;
+  const points = [
+    { x: 0, y: s / 2 },
+    { x: s / 2, y: 0 },
+    { x: 0, y: -s / 2 },
+    { x: -s / 2, y: 0 }
+  ];
+
+  const choice = shapeSvg.insert('polygon', ':first-child').attr(
+    'points',
+    points
+      .map(function(d) {
+        return d.x + ',' + d.y;
+      })
+      .join(' ')
+  );
+  // center the circle around its coordinate
+  choice
+    .attr('class', 'state-start')
+    .attr('r', 7)
+    .attr('width', 28)
+    .attr('height', 28);
+  node.width = 28;
+  node.height = 28;
+
+  node.intersect = function(point) {
+    return intersect.circle(node, 14, point);
+  };
+
+  return shapeSvg;
+};
+
 const hexagon = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
@@ -319,10 +357,18 @@ const rectWithTitle = (parent, node) => {
 
   const label = shapeSvg.insert('g').attr('class', 'label');
 
-  const text2 = node.labelText.flat();
-  log.info('Label text', text2[0]);
+  const text2 = node.labelText.flat ? node.labelText.flat() : node.labelText;
+  // const text2 = typeof text2prim === 'object' ? text2prim[0] : text2prim;
 
-  const text = label.node().appendChild(createLabel(text2[0], node.labelStyle, true, true));
+  let title = '';
+  if (typeof text2 === 'object') {
+    title = text2[0];
+  } else {
+    title = text2;
+  }
+  log.info('Label text abc79', title, text2, typeof text2 === 'object');
+
+  const text = label.node().appendChild(createLabel(title, node.labelStyle, true, true));
   let bbox;
   if (getConfig().flowchart.htmlLabels) {
     const div = text.children[0];
@@ -336,7 +382,9 @@ const rectWithTitle = (parent, node) => {
   let titleBox = text.getBBox();
   const descr = label
     .node()
-    .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true, true));
+    .appendChild(
+      createLabel(textRows.join ? textRows.join('<br/>') : textRows, node.labelStyle, true, true)
+    );
 
   if (getConfig().flowchart.htmlLabels) {
     const div = descr.children[0];
@@ -826,6 +874,7 @@ const shapes = {
   question,
   rect,
   rectWithTitle,
+  choice,
   circle,
   stadium,
   hexagon,

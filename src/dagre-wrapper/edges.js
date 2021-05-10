@@ -1,5 +1,6 @@
 import { log } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
+// import { line, curveBasis, curveLinear, select } from 'd3';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
 import utils from '../utils';
@@ -104,7 +105,7 @@ export const insertEdgeLabel = (elem, edge) => {
 };
 
 export const positionEdgeLabel = (edge, paths) => {
-  log.info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  log.info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
   let path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
   if (edge.label) {
     const el = edgeLabels[edge.id];
@@ -113,7 +114,7 @@ export const positionEdgeLabel = (edge, paths) => {
     if (path) {
       //   // debugger;
       const pos = utils.calcLabelPosition(path);
-      log.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ')');
+      log.info('Moving label from (', x, ',', y, ') to (', pos.x, ',', pos.y, ') abc78');
       // x = pos.x;
       // y = pos.y;
     }
@@ -199,31 +200,35 @@ const outsideNode = (node, point) => {
 };
 
 export const intersection = (node, outsidePoint, insidePoint) => {
-  log.warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
+  log.warn(`intersection calc abc89:
+  outsidePoint: ${JSON.stringify(outsidePoint)}
+  insidePoint : ${JSON.stringify(insidePoint)}
+  node        : x:${node.x} y:${node.y} w:${node.width} h:${node.height}`);
   const x = node.x;
   const y = node.y;
 
   const dx = Math.abs(x - insidePoint.x);
+  // const dy = Math.abs(y - insidePoint.y);
   const w = node.width / 2;
   let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
   const h = node.height / 2;
 
-  const edges = {
-    x1: x - w,
-    x2: x + w,
-    y1: y - h,
-    y2: y + h
-  };
+  // const edges = {
+  //   x1: x - w,
+  //   x2: x + w,
+  //   y1: y - h,
+  //   y2: y + h
+  // };
 
-  if (
-    outsidePoint.x === edges.x1 ||
-    outsidePoint.x === edges.x2 ||
-    outsidePoint.y === edges.y1 ||
-    outsidePoint.y === edges.y2
-  ) {
-    log.warn('calc equals on edge');
-    return outsidePoint;
-  }
+  // if (
+  //   outsidePoint.x === edges.x1 ||
+  //   outsidePoint.x === edges.x2 ||
+  //   outsidePoint.y === edges.y1 ||
+  //   outsidePoint.y === edges.y2
+  // ) {
+  //   log.warn('abc89 calc equals on edge', outsidePoint, edges);
+  //   return outsidePoint;
+  // }
 
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
@@ -234,34 +239,100 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = (R * q) / Q;
     const res = {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - q
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q
     };
-    log.warn(`topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
+
+    if (r === 0) {
+      res.x = outsidePoint.x;
+      res.y = outsidePoint.y;
+    }
+    if (R === 0) {
+      res.x = outsidePoint.x;
+    }
+    if (Q === 0) {
+      res.y = outsidePoint.y;
+    }
+
+    log.warn(`abc89 topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
 
     return res;
   } else {
     // Intersection onn sides of rect
-    // q = (Q * r) / R;
-    // q = 2;
-    // r = (R * q) / Q;
     if (insidePoint.x < outsidePoint.x) {
       r = outsidePoint.x - w - x;
     } else {
       // r = outsidePoint.x - w - x;
       r = x - w - outsidePoint.x;
     }
-    let q = (q = (Q * r) / R);
-    log.warn(`sides calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q
-    });
+    let q = (Q * r) / R;
+    //  OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w;
+    // OK let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
+    let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - R + r;
+    // let _x = insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : outsidePoint.x + r;
+    let _y = insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q;
+    log.warn(`sides calc abc89, Q ${Q}, q ${q}, R ${R}, r ${r}`, { _x, _y });
+    if (r === 0) {
+      _x = outsidePoint.x;
+      _y = outsidePoint.y;
+    }
+    if (R === 0) {
+      _x = outsidePoint.x;
+    }
+    if (Q === 0) {
+      _y = outsidePoint.y;
+    }
 
-    return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q
-    };
+    return { x: _x, y: _y };
   }
+};
+/**
+ * This function will page a path and node where the last point(s) in the path is inside the node
+ * and return an update path ending by the border of the node.
+ * @param {*} points
+ * @param {*} boundryNode
+ * @returns
+ */
+const cutPathAtIntersect = (_points, boundryNode) => {
+  log.warn('abc88 cutPathAtIntersect', _points, boundryNode);
+  let points = [];
+  let lastPointOutside = _points[0];
+  let isInside = false;
+  _points.forEach(point => {
+    // const node = clusterDb[edge.toCluster].node;
+    log.info('abc88 checking point', point, boundryNode);
+
+    // check if point is inside the boundry rect
+    if (!outsideNode(boundryNode, point) && !isInside) {
+      // First point inside the rect found
+      // Calc the intersection coord between the point anf the last opint ouside the rect
+      const inter = intersection(boundryNode, lastPointOutside, point);
+      log.warn('abc88 inside', point, lastPointOutside, inter);
+      log.warn('abc88 intersection', inter);
+
+      // // Check case where the intersection is the same as the last point
+      let pointPresent = false;
+      points.forEach(p => {
+        pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+      });
+      // // if (!pointPresent) {
+      if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+        points.push(inter);
+      } else {
+        log.warn('abc88 no intersect', inter, points);
+      }
+      // points.push(inter);
+      isInside = true;
+    } else {
+      // Outside
+      log.warn('abc88 outside', point, lastPointOutside);
+      lastPointOutside = point;
+      // points.push(point);
+      if (!isInside) points.push(point);
+    }
+  });
+  log.warn('abc88 returning points', points);
+  return points;
 };
 
 //(edgePaths, e, edge, clusterDb, diagramtype, graph)
@@ -271,6 +342,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   const tail = graph.node(e.v);
   var head = graph.node(e.w);
 
+  log.info('abc88 InsertEdge: ', edge);
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
     points.unshift(tail.intersect(points[0]));
@@ -283,66 +355,84 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     points.push(head.intersect(points[points.length - 1]));
   }
   if (edge.toCluster) {
-    log.trace('edge', edge);
-    log.trace('to cluster', clusterDb[edge.toCluster]);
-    points = [];
-    let lastPointOutside;
-    let isInside = false;
-    edge.points.forEach(point => {
-      const node = clusterDb[edge.toCluster].node;
+    log.info('to cluster abc88', clusterDb[edge.toCluster]);
+    points = cutPathAtIntersect(edge.points, clusterDb[edge.toCluster].node);
+    // log.trace('edge', edge);
+    // points = [];
+    // let lastPointOutside; // = edge.points[0];
+    // let isInside = false;
+    // edge.points.forEach(point => {
+    //   const node = clusterDb[edge.toCluster].node;
+    //   log.warn('checking from', edge.fromCluster, point, node);
 
-      if (!outsideNode(node, point) && !isInside) {
-        log.trace('inside', edge.toCluster, point, lastPointOutside);
+    //   if (!outsideNode(node, point) && !isInside) {
+    //     log.trace('inside', edge.toCluster, point, lastPointOutside);
 
-        // First point inside the rect
-        const inter = intersection(node, lastPointOutside, point);
+    //     // First point inside the rect
+    //     const inter = intersection(node, lastPointOutside, point);
 
-        let pointPresent = false;
-        points.forEach(p => {
-          pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
-        });
-        // if (!pointPresent) {
-        if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
-          points.push(inter);
-        } else {
-          log.warn('no intersect', inter, points);
-        }
-        isInside = true;
-      } else {
-        if (!isInside) points.push(point);
-      }
-      lastPointOutside = point;
-    });
+    //     let pointPresent = false;
+    //     points.forEach(p => {
+    //       pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+    //     });
+    //     // if (!pointPresent) {
+    //     if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+    //       points.push(inter);
+    //     } else {
+    //       log.warn('no intersect', inter, points);
+    //     }
+    //     isInside = true;
+    // } else {
+    //   // outtside
+    //   lastPointOutside = point;
+    //   if (!isInside) points.push(point);
+    // }
+    // });
     pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
-    log.trace('edge', edge);
-    log.warn('from cluster', clusterDb[edge.fromCluster]);
-    const updatedPoints = [];
-    let lastPointOutside;
-    let isInside = false;
-    for (let i = points.length - 1; i >= 0; i--) {
-      const point = points[i];
-      const node = clusterDb[edge.fromCluster].node;
+    log.info('from cluster abc88', clusterDb[edge.fromCluster]);
+    points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse();
+    // log.warn('edge', edge);
+    // log.warn('from cluster', clusterDb[edge.fromCluster], points);
+    // const updatedPoints = [];
+    // let lastPointOutside = edge.points[edge.points.length - 1];
+    // let isInside = false;
+    // for (let i = points.length - 1; i >= 0; i--) {
+    //   const point = points[i];
+    //   const node = clusterDb[edge.fromCluster].node;
+    //   log.warn('checking to', edge.fromCluster, point, node);
 
-      if (!outsideNode(node, point) && !isInside) {
-        log.warn('inside', edge.fromCluster, point, node);
+    //   if (!outsideNode(node, point) && !isInside) {
+    //     log.warn('inside', edge.fromCluster, point, node);
 
-        // First point inside the rect
-        const insterection = intersection(node, lastPointOutside, point);
-        // log.trace('intersect', intersection(node, lastPointOutside, point));
-        updatedPoints.unshift(insterection);
-        // points.push(insterection);
-        isInside = true;
-      } else {
-        // at the outside
-        log.trace('Outside point', point);
-        if (!isInside) updatedPoints.unshift(point);
-      }
-      lastPointOutside = point;
-    }
-    points = updatedPoints;
+    //     // First point inside the rect
+    //     const inter = intersection(node, lastPointOutside, point);
+    //     log.warn('intersect', intersection(node, lastPointOutside, point));
+    //     let pointPresent = false;
+    //     points.forEach(p => {
+    //       pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+    //     });
+    //     // if (!pointPresent) {
+    //     if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+    //       updatedPoints.unshift(inter);
+    //       log.warn('Adding point -updated = ', updatedPoints);
+    //     } else {
+    //       log.warn('no intersect', inter, points);
+    //     }
+    //     // points.push(insterection);
+    //     isInside = true;
+    //   } else {
+    //     // at the outside
+    //     // if (!isInside) updatedPoints.unshift(point);
+    //     updatedPoints.unshift(point);
+    //     log.warn('Outside point', point, updatedPoints);
+    //   }
+    //   lastPointOutside = point;
+    // }
+    // points = updatedPoints;
+    // points = edge.points;
     pointsHasChanged = true;
   }
 
@@ -359,6 +449,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   } else {
     curve = curveBasis;
   }
+  // curve = curveLinear;
   const lineFunction = line()
     .x(function(d) {
       return d.x;

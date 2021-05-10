@@ -329,6 +329,37 @@ describe('State diagram', () => {
       }
     );
   });
+  it('v2 it should be possibel to use a choice', () => {
+    imgSnapshotTest(
+      `
+  stateDiagram-v2
+    [*] --> Off
+    Off --> On
+    state MyChoice [[choice]]
+    On --> MyChoice
+    MyChoice --> Washing
+    MyChoice --> Drying
+    Washing --> Finished
+    Finished --> [*]
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
+  it('v2 width of compond state should grow with title if title is wider', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+  state "Long state name" as NotShooting {
+    a-->b
+  }
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
   it('v2 Simplest composite state', () => {
     imgSnapshotTest(
       `
@@ -348,6 +379,58 @@ describe('State diagram', () => {
       stateDiagram-v2
         a --> b: Start
         a --> b: Stop
+    `,
+      {
+        logLevel: 0, fontFamily: 'courier',
+      }
+    );
+  });
+  it('v2 should handle multiple notes added to one state', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+    MyState
+    note left of MyState : I am a leftie
+    note right of MyState : I am a rightie
+    `,
+      {
+        logLevel: 0, fontFamily: 'courier',
+      }
+    );
+  });
+  it('v2 should handle different rendering directions in composite states', () => {
+    imgSnapshotTest(
+      `
+stateDiagram
+  direction LR
+  state A {
+    direction BT
+    a --> b
+  }
+  state C {
+    direction RL
+    c --> d
+  }
+  A --> C
+    `,
+      {
+        logLevel: 0, fontFamily: 'courier',
+      }
+    );
+  });
+  it('v2 handle transition from one state in a composite state to a composite state', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+  state S1 {
+    sub1 -->sub2
+  }
+
+  state S2 {
+    sub4
+  }
+  S1 --> S2
+  sub1 --> sub4
     `,
       {
         logLevel: 0, fontFamily: 'courier',

@@ -174,7 +174,9 @@ export const addVertices = function(vert, g, svgId) {
  * @param {Object} g The graph object
  */
 export const addEdges = function(edges, g) {
+  log.info('abc78 edges = ', edges);
   let cnt = 0;
+  let linkIdCnt = {};
 
   let defaultStyle;
   let defaultLabelStyle;
@@ -189,7 +191,17 @@ export const addEdges = function(edges, g) {
     cnt++;
 
     // Identify Link
-    var linkId = 'L-' + edge.start + '-' + edge.end;
+    var linkIdBase = 'L-' + edge.start + '-' + edge.end;
+    // count the links from+to the same node to give unique id
+    if (typeof linkIdCnt[linkIdBase] === 'undefined') {
+      linkIdCnt[linkIdBase] = 0;
+      log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+    } else {
+      linkIdCnt[linkIdBase]++;
+      log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+    }
+    let linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
+    log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
     var linkNameStart = 'LS-' + edge.start;
     var linkNameEnd = 'LE-' + edge.end;
 
