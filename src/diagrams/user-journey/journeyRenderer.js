@@ -71,7 +71,6 @@ export const draw = function(text, id) {
 
   drawActorLegend(diagram);
   bounds.insert(0, 0, LEFT_MARGIN, Object.keys(actors).length * 50);
-  console.log(bounds);
   drawTasks(diagram, tasks, 0);
 
   const box = bounds.getBounds();

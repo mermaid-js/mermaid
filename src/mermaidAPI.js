@@ -140,7 +140,6 @@ function parse(text) {
       break;
     case 'requirement':
     case 'requirementDiagram':
-      console.log('RequirementDiagram');
       log.debug('RequirementDiagram');
       parser = requirementParser;
       parser.parser.yy = requirementDb;
