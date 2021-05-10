@@ -103,7 +103,7 @@ g.stateGroup line {
 }
 .node polygon {
   fill: ${options.mainBkg};
-  stroke: ${options.nodeBorder};
+  stroke: ${options.stateBorder || options.nodeBorder};;
   stroke-width: 1px;
 }
 #statediagram-barbEnd {
