@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2.3.4
-    - uses: fregante/setup-git-user@v1
+    - uses: fregante/setup-git-user@v1.0.1
 
     - name: Setup Node.js
       uses: actions/setup-node@v1
