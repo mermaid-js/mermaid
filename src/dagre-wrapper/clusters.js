@@ -136,7 +136,11 @@ const roundedWithTitle = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
-  const width = node.width > bbox.width ? node.width : bbox.width + node.padding;
+  const width =
+    node.width > bbox.width + node.padding ? node.width + node.padding : bbox.width + node.padding;
+  if (node.width <= bbox.width + node.padding) {
+    node.diff = (bbox.width - node.width) / 2;
+  }
 
   // center the rect around its coordinate
   rect
@@ -163,7 +167,6 @@ const roundedWithTitle = (parent, node) => {
   );
 
   const rectBox = rect.node().getBBox();
-  node.width = rectBox.width;
   node.height = rectBox.height;
 
   node.intersect = function(point) {
@@ -227,7 +230,7 @@ export const clear = () => {
 };
 
 export const positionCluster = node => {
-  log.info('Position cluster');
+  log.info('Position cluster (' + node.id + ', ' + node.x + ', ' + node.y + ')');
   const el = clusterElems[node.id];
 
   el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');

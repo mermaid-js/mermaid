@@ -50,12 +50,15 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
     if (node && node.clusterNode) {
       // const children = graph.children(v);
-      log.info('Cluster identified', v, node, graph.node(v));
-      const newEl = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
+      log.info('Cluster identified', v, node.width, graph.node(v));
+      const o = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
+      const newEl = o.elem;
       updateNodeBounds(node, newEl);
+      node.diff = o.diff || 0;
+      log.info('Node nounds ', v, node, node.width, node.x, node.y);
       setNodeElem(newEl, node);
 
-      log.warn('Recursive render complete', newEl, node);
+      log.warn('Recursive render complete ', newEl, node);
     } else {
       if (graph.children(v).length > 0) {
         // This is a cluster but not to be rendered recusively
@@ -95,6 +98,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   dagre.layout(graph);
   log.info('Graph after layout:', graphlib.json.write(graph));
   // Move the nodes to the correct place
+  let diff = 0;
   sortNodesByHierarchy(graph).forEach(function(v) {
     const node = graph.node(v);
     log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
@@ -132,7 +136,14 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     positionEdgeLabel(edge, paths);
   });
 
-  return elem;
+  graph.nodes().forEach(function(v) {
+    const n = graph.node(v);
+    log.info(v, n.type, n.diff);
+    if (n.type === 'group') {
+      diff = n.diff;
+    }
+  });
+  return { elem, diff };
 };
 
 export const render = (elem, graph, markers, diagramtype, id) => {
