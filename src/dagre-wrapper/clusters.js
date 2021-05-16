@@ -37,7 +37,7 @@ const rect = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
-  const width = node.width <= bbox.width + padding ? bbox.width + padding : node.width + padding;
+  const width = node.width <= bbox.width + padding ? bbox.width + padding : node.width;
   if (node.width <= bbox.width + padding) {
     node.diff = (bbox.width - node.width) / 2;
   } else {
@@ -143,8 +143,7 @@ const roundedWithTitle = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
-  const width =
-    node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width + node.padding;
+  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
   if (node.width <= bbox.width + node.padding) {
     node.diff = (bbox.width + node.padding - node.width) / 2;
   }

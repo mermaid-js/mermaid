@@ -28,13 +28,26 @@
     <div class="flex">
 
 <div class="mermaid" style="width: 100%; height: 20%;">
+stateDiagram-v2
+  state S1 {
+    sub1 -->sub2
+  }
+
+  state S2 {
+    sub4
+  }
+  S1 --> S2
+  sub1 --> sub4
+
+</div>
+<div class="mermaid3" style="width: 100%; height: 20%;">
 stateDiagram
   state CompositeState {
       YourState123456789012345123456789123456789012345123456789123456789012345123456789123456789012345123456789 --> MyState:a label
     }
 
 </div>
-<div class="mermaid" style="width: 100%; height: 20%;">
+<div class="mermaid3" style="width: 100%; height: 20%;">
 flowchart
 subgraph CompositeState
   subgraph AnotherCompositeStateCompositeStateCompositeStateCompositeState
@@ -43,7 +56,7 @@ subgraph CompositeState
 
 end
 </div>
-<div class="mermaid" style="width: 100%; height: 20%;">
+<div class="mermaid3" style="width: 100%; height: 20%;">
 stateDiagram-v2
   state CompositeState {
     state AnotherCompositeState1234567890 {
@@ -52,7 +65,7 @@ stateDiagram-v2
   }
 
 </div>
-<div class="mermaid" style="width: 100%; height: 20%;">
+<div class="mermaid3" style="width: 100%; height: 20%;">
     %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
     flowchart LR
 
