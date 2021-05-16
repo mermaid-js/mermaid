@@ -55,7 +55,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
       const newEl = o.elem;
       updateNodeBounds(node, newEl);
       node.diff = o.diff || 0;
-      log.info('Node nounds ', v, node, node.width, node.x, node.y);
+      log.info('Node bounds (abc123)', v, node, node.width, node.x, node.y);
       setNodeElem(newEl, node);
 
       log.warn('Recursive render complete ', newEl, node);

@@ -37,15 +37,22 @@ const rect = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
+  const width = node.width <= bbox.width + padding ? bbox.width + padding : node.width + padding;
+  if (node.width <= bbox.width + padding) {
+    node.diff = (bbox.width - node.width) / 2;
+  } else {
+    node.diff = -node.padding / 2;
+  }
+
   log.trace('Data ', node, JSON.stringify(node));
   // center the rect around its coordinate
   rect
     .attr('style', node.style)
     .attr('rx', node.rx)
     .attr('ry', node.ry)
-    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('x', node.x - width / 2)
     .attr('y', node.y - node.height / 2 - halfPadding)
-    .attr('width', node.width + padding)
+    .attr('width', width)
     .attr('height', node.height + padding);
 
   // Center the label
@@ -137,9 +144,9 @@ const roundedWithTitle = (parent, node) => {
   const halfPadding = padding / 2;
 
   const width =
-    node.width > bbox.width + node.padding ? node.width + node.padding : bbox.width + node.padding;
+    node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width + node.padding;
   if (node.width <= bbox.width + node.padding) {
-    node.diff = (bbox.width - node.width) / 2;
+    node.diff = (bbox.width + node.padding - node.width) / 2;
   }
 
   // center the rect around its coordinate
