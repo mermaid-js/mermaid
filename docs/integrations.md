@@ -112,6 +112,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [iodide-mermaid-plugin](https://github.com/iodide-project/iodide-mermaid-plugin)
 - [Google docs](https://docs.google.com/)
   - [Mermaid plugin for google docs](https://workspace.google.com/marketplace/app/mermaid/636321283856)
+- [Podlite](https://github.com/zag/podlite-desktop)
+  - [Named block =Diagram](https://github.com/zag/podlite/tree/main/packages/podlite-diagrams)
 
 ## Document Generation
 
