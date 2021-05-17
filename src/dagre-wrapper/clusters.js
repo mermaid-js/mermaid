@@ -146,6 +146,8 @@ const roundedWithTitle = (parent, node) => {
   const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
   if (node.width <= bbox.width + node.padding) {
     node.diff = (bbox.width + node.padding - node.width) / 2;
+  } else {
+    node.diff = -node.padding / 2;
   }
 
   // center the rect around its coordinate
