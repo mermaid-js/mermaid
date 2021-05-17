@@ -2,7 +2,7 @@
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/requirementDiagram.md)
 
-> A Requirement diagram provides a visualization for requirements and their connections, to each other and other documented elements. The modeling specs follow those defined by SysML v1.6. 
+> A Requirement diagram provides a visualization for requirements and their connections, to each other and other documented elements. The modeling specs follow those defined by SysML v1.6.
 
 Rendering requirements is straightforward.
 
@@ -64,8 +64,8 @@ Type, risk, and method are enumerations defined in SysML.
 
 | Keyword | Options |
 | Type | requirement, functionalRequirement, interfaceRequirement, performanceRequirement, physicalRequirement, designConstraint |
-| Risk | Low, Medium, High | 
-| VerifcationMethod | Analysis, Inspection, Test, Demonstration | 
+| Risk | Low, Medium, High |
+| VerifcationMethod | Analysis, Inspection, Test, Demonstration |
 
 ### Element
 An element definition contains an element name, type, and document reference. These three are all user defined. The element feature is intended to be lightweight but allow requirements to be connected to portions of other documents.
@@ -87,7 +87,7 @@ Each follows the definition format of
 {name of source} - <type> -> {name of destination}
 ```
 
-or 
+or
 
 ```
 {name of destination} <- <type> - {name of source}
@@ -169,5 +169,5 @@ This example uses all features of the diagram.
     test_req4 - derives -> test_req5
     test_req5 - refines -> test_req6
     test_entity3 - verifies -> test_req5
-    test_req <- copies - test_entity2 </div>
+    test_req <- copies - test_entity2
 ```

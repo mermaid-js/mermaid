@@ -15,7 +15,7 @@
         /* font-size: 18px !important; */
         }
       h1 { color: grey;}
-      .mermaid2 {
+      .mermaid2,.mermaid3 {
         display: none;
       }
       .mermaid svg {
@@ -28,46 +28,52 @@
     <div class="flex">
 
 <div class="mermaid" style="width: 100%; height: 20%;">
-stateDiagram
-  direction LR
-  state A {
-    direction BT
-    a --> b
+stateDiagram-v2
+  state S1 {
+    sub1 -->sub2
   }
-  state C {
-    direction RL
-    c --> d
+
+  state S2 {
+    sub4
   }
-  A --> C
-</div>
-<div class="mermaid2" style="width: 100%; height: 20%;">
-    %%{int:{
-"themeVariables": {
-    "transitionColor":"red",
-    "labelColor":"yellow",
-    "transitionLabelColor":"blue",
-    "stateBkg":"green",
-    "compositeBackground":"pink",
-    "altBackground":"purple",
-    "clusterTitleBackground":"blue",
-    "compositeBorder":"red"
-}}}%%
-stateDiagram
-    state CompositeState {
-        state AnotherCompositeState {
-        AnotherState --> YetANotherState:a label
-    }
-}
+  S1 --> S2
+  sub1 --> sub4
 
 </div>
-<div class="mermaid2" style="width: 100%; height: 20%;">
-sequenceDiagram
-    Alice->>+John: Hello John, how are you?
-    Alice->>+John: John, can you hear me?
-    John-->>-Alice: Hi Alice, I can hear you!
-    John-->>-Alice: I feel great!
-    note right of John: Hello note reader
+<div class="mermaid3" style="width: 100%; height: 20%;">
+stateDiagram
+  state CompositeState {
+      YourState123456789012345123456789123456789012345123456789123456789012345123456789123456789012345123456789 --> MyState:a label
+    }
+
 </div>
+<div class="mermaid3" style="width: 100%; height: 20%;">
+flowchart
+subgraph CompositeState
+  subgraph AnotherCompositeStateCompositeStateCompositeStateCompositeState
+      YourState --a label--> MyState
+  end
+
+end
+</div>
+<div class="mermaid3" style="width: 100%; height: 20%;">
+stateDiagram-v2
+  state CompositeState {
+    state AnotherCompositeState1234567890 {
+      YourState
+    }
+  }
+
+</div>
+<div class="mermaid3" style="width: 100%; height: 20%;">
+    %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
+    flowchart LR
+
+    subgraph B1
+        i -->f
+    end
+    A --> B1 --> B --> B1
+  </div>
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
@@ -77,7 +83,7 @@ sequenceDiagram
         theme: 'default',
         arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
-        logLevel: 5,
+        logLevel: 2,
         flowchart: { nodeSpacing: 10, curve: 'cardinal', htmlLabels: true },
         htmlLabels: true,
         // gantt: { axisFormat: '%m/%d/%Y' },

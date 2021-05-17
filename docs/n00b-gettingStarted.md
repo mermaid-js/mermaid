@@ -1,17 +1,17 @@
 # A Mermaid User-Guide for Beginners
+Mermaid is composed of three parts, Deployment, Syntax and Configuration. 
 
-Creating diagrams and charts using mermaid code is simple.
+This section talks about the different ways to deploy Mermaid. Learning the [Syntax](./n00b-syntaxReference.md) ahead of time would be more helpful to the beginner. 
 
->The live editor is enough for most general uses of mermaid
+>Generally the live editor is enough for most general uses of mermaid, and is a good place to start learning. 
+
 **Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md) on the Live Editor, to gain a better understanding of mermaid.**
 
-
 ## Four ways of using mermaid:
-1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).
-    - Learning the [Syntax](./n00b-syntaxReference) would be helpful.
+1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).  
 2. Using [mermaid plugins](./integrations.md) with programs you are familiar with.
-3. Hosting mermaid on a webpage, with an absolute link.
-4. Downloading mermaid and hosting it on your Web Page.
+3. Calling the Mermaid Javascript API.
+4. Deploying Mermaid as a dependency.
 
 **Note: It is our recommendation that you review all approaches, and choose the one that is best for your project.**
 
@@ -19,22 +19,24 @@ Creating diagrams and charts using mermaid code is simple.
 
 ## 1. Using [The Live Editor](https://mermaidjs.github.io/mermaid-live-editor).
 
-![Flowchart](./img/Live-Editor-Usage.png)
+![EditingProcess](./img/Editing-process.png )
 
-In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
+In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it. 
 
-![Flowchart](./img/DiagramDefinition.png)
+The `Configuration` Section is for changing the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
 
-**Saving a Diagram:**
+
+![Code,Config and Preview](./img/Code-Preview-Config.png)
+
+### Saving a Diagram:
 You may choose any of the methods below, to save it 
+
+**We recommend that you save your diagram code on top of any method you choose, in order to make edits and modifications further down the line.**
 
 ![Flowchart](./img/Live-Editor-Choices.png)
 
-**Configuration**
-
-*The Mermaid configuration* is for configuring the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
-
-![Flowchart](./img/Configuration.png)
+### Editing your diagrams
+Editing is as easy as pasting your **Diagram code**, into the `code` section of the `Live Editor`. 
 
 
 ## 2. Using Mermaid Plugins:
@@ -43,26 +45,25 @@ Using plug-ins you can generate mermaid diagrams from within popular application
 
 **This is covered in greater detail in the [Usage section](usage.md)**
 
-## 3. Mermaid with Inline JavaScript
+## 3. Calling the Javascript API
 
-This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
+This method can be used with any common web server. Apache, IIS, nginx, node express, you are free to choose.
 
-You will need a text editting tool like Notepad++, to generate an html file. It is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
+You will also need a text editting tool like Notepad++, to generate an html file. It is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
 
-Just create an HTML file locally and open it using a desired browser.
+The API works by pulling rendering instructions from a source from `mermaid.js` to render diagrams in the page. 
 
-###  Written in the html `<body>` section of the web page.
+
+###  Requirements for the Mermaid API.
 
 When writing the html file, we give the web browser three instructions inside the html code:
 
-a. A reference for fetching the online mermaid renderer, which is written in Javascript.
+a. A reference for fetching the online mermaid renderer, through the `mermaid.js` or `mermaid.min.js`.
 
 b. The mermaid code for the diagram we want to create.
 
-c. The `mermaid.initialize()` call to start the rendering process.
+c. The `mermaid.initialize()` call, which can dictate the appreance of diagrams and also start the rendering process .
 
-
-## Requirements for mermaidAPI to render a diagram:
 
 **a. A reference to the external CDN in a `<script src>` tag, or a reference to mermaid.js as a separate file.:**
 
@@ -89,7 +90,7 @@ c. The `mermaid.initialize()` call to start the rendering process.
 
 **c. The `mermaid.initialize()` call.**
 
-`mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and render. Example:
+`mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and renders them into diagrams. Example:
 ```html
 <body>
   <script>mermaid.initialize({startOnLoad:true});</script>
@@ -104,6 +105,8 @@ Mermaid rendering is initalized with `mermaid.initialize()`.You can place `merma
 | Parameter | Description     | Type   | Values                                               |
 | --------- | --------------- | ------ | ---------------------------------------------------- |
 |startOnLoad| Toggle for Rendering upon loading | Boolean | true, false                       |
+
+### Working Examples 
 
 **Here is a full working example of the mermaidAPI being called through the CDN:**
 

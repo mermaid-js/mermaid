@@ -211,7 +211,6 @@ export const drawReqs = (reqs, graph, svgNode) => {
   Object.keys(reqs).forEach(reqName => {
     let req = reqs[reqName];
     reqName = elementString(reqName);
-    console.log('reqName: ', reqName);
     log.info('Added new requirement: ', reqName);
 
     const groupNode = svgNode.append('g').attr('id', reqName);
