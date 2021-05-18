@@ -27,7 +27,7 @@
     <div>info below</div>
     <div class="flex">
 
-<div class="mermaid" style="width: 100%; height: 20%;">
+<div class="mermaid3" style="width: 100%; height: 20%;">
 stateDiagram-v2
   state S1 {
     sub1 -->sub2
@@ -65,14 +65,23 @@ stateDiagram-v2
   }
 
 </div>
-<div class="mermaid3" style="width: 100%; height: 20%;">
+<div class="mermaid" style="width: 100%; height: 20%;">
     %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
     flowchart LR
 
-    subgraph B1
-        i -->f
+    subgraph TOP
+      direction TB
+      subgraph B1
+          direction RL
+          i1 -->f1
+      end
+      subgraph B2
+          direction BT
+          i2 -->f2
+      end
     end
-    A --> B1 --> B --> B1
+    A --> TOP --> B
+    B1 --> B2
   </div>
   <script src="./mermaid.js"></script>
     <script>

@@ -147,6 +147,7 @@ export const addVertices = function(vert, g, svgId) {
       domId: flowDb.lookUpDomId(vertex.id),
       haveCallback: vertex.haveCallback,
       width: vertex.type === 'group' ? 500 : undefined,
+      dir: vertex.dir,
       type: vertex.type,
       padding: getConfig().flowchart.padding
     });
@@ -163,6 +164,7 @@ export const addVertices = function(vert, g, svgId) {
       domId: flowDb.lookUpDomId(vertex.id),
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
+      dir: vertex.dir,
       padding: getConfig().flowchart.padding
     });
   });
@@ -385,7 +387,7 @@ export const draw = function(text, id) {
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
     log.info('Subgraph - ', subG);
-    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
+    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
   }
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition
