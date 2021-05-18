@@ -15,7 +15,7 @@ describe('when parsing directions', function() {
   });
 
 
-  fit('should use default direction from top level', function() {
+  it('should use default direction from top level', function() {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
       a --> b
@@ -28,9 +28,9 @@ describe('when parsing directions', function() {
     expect(subgraph.nodes[0]).toBe('b');
     expect(subgraph.nodes[1]).toBe('a');
     expect(subgraph.id).toBe('A');
-    expect(subgraph.dir).toBe('TB');
+    expect(subgraph.dir).toBe(undefined);
   });
-  fit('should handle a subgraph with a direction', function() {
+  it('should handle a subgraph with a direction', function() {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
       direction BT
@@ -46,7 +46,7 @@ describe('when parsing directions', function() {
     expect(subgraph.id).toBe('A');
     expect(subgraph.dir).toBe('BT');
   });
-  fit('should use the last defined direction', function() {
+  it('should use the last defined direction', function() {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
       direction BT
@@ -64,7 +64,7 @@ describe('when parsing directions', function() {
     expect(subgraph.dir).toBe('RL');
   });
 
-  fit('should handle nested subgraphs 1', function() {
+  it('should handle nested subgraphs 1', function() {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
       direction RL
