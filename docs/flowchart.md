@@ -2,12 +2,12 @@
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/flowchart.md)
 
-All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact. 
+All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact.
 
 It can also accomodate different arrow types, multi directional arrows, and linking to and from subgraphs.
 
 > **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).**
-Node 
+Node
 ### A node (default)
 
 ```
@@ -583,6 +583,45 @@ flowchart TB
     one --> two
     three --> two
     two --> c2
+ ```
+
+ ## Direction in subgraphs
+
+With the graphtype flowcharts you can use the direction state4ment to set the direction which the subgraph will render like in this example.
+
+```
+flowchart LR
+  subgraph TOP
+    direction TB
+    subgraph B1
+        direction RL
+        i1 -->f1
+    end
+    subgraph B2
+        direction BT
+        i2 -->f2
+    end
+  end
+  A --> TOP --> B
+  B1 --> B2
+ ```
+
+```mermaid
+flowchart LR
+
+      subgraph TOP
+        direction TB
+        subgraph B1
+            direction RL
+            i1 -->f1
+        end
+        subgraph B2
+            direction BT
+            i2 -->f2
+        end
+      end
+      A --> TOP --> B
+      B1 --> B2
  ```
 
 ## Interaction

@@ -92,6 +92,12 @@ that id.
 <dir>\s*">"              {   this.popState();  return 'DIR'; }
 <dir>\s*"^"              {   this.popState();  return 'DIR'; }
 <dir>\s*"v"              {   this.popState();  return 'DIR'; }
+
+.*direction\s+TB[^\n]*                                      return 'direction_tb';
+.*direction\s+BT[^\n]*                                      return 'direction_bt';
+.*direction\s+RL[^\n]*                                      return 'direction_rl';
+.*direction\s+LR[^\n]*                                      return 'direction_lr';
+
 [0-9]+                { return 'NUM';}
 \#                    return 'BRKT';
 ":::"                 return 'STYLE_SEPARATOR';
@@ -327,6 +333,7 @@ statement
     // {$$=yy.addSubGraph($3,$5,$3);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$3,undefined);}
+    | direction
     ;
 
 separator: NEWLINE | SEMI | EOF ;
@@ -535,6 +542,17 @@ alphaNumStatement
         {$$='v';}
     | MINUS
         {$$='-';}
+    ;
+
+direction
+    : direction_tb
+    { $$={stmt:'dir', value:'TB'};}
+    | direction_bt
+    { $$={stmt:'dir', value:'BT'};}
+    | direction_rl
+    { $$={stmt:'dir', value:'RL'};}
+    | direction_lr
+    { $$={stmt:'dir', value:'LR'};}
     ;
 
 alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;

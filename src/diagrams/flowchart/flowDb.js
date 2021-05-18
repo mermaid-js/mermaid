@@ -50,7 +50,7 @@ export const lookUpDomId = function(id) {
  * @param style
  * @param classes
  */
-export const addVertex = function(_id, text, type, style, classes) {
+export const addVertex = function(_id, text, type, style, classes, dir) {
   let txt;
   let id = _id;
   if (typeof id === 'undefined') {
@@ -102,6 +102,9 @@ export const addVertex = function(_id, text, type, style, classes) {
         vertices[id].classes.push(s);
       });
     }
+  }
+  if (typeof dir !== 'undefined') {
+    vertices[id].dir = dir;
   }
 };
 
@@ -431,6 +434,7 @@ export const defaultStyle = function() {
  * Clears the internal graph db so that a new graph can be parsed.
  */
 export const addSubGraph = function(_id, list, _title) {
+  // console.log('addSubGraph', _id, list, _title);
   let id = _id.trim();
   let title = _title;
   if (_id === _title && _title.match(/\s/)) {
@@ -440,8 +444,13 @@ export const addSubGraph = function(_id, list, _title) {
     const prims = { boolean: {}, number: {}, string: {} };
     const objs = [];
 
-    return a.filter(function(item) {
+    let dir; //  = unbdefined; direction.trim();
+    const nodeList = a.filter(function(item) {
       const type = typeof item;
+      if (item.stmt && item.stmt === 'dir') {
+        dir = item.value;
+        return false;
+      }
       if (item.trim() === '') {
         return false;
       }
@@ -451,11 +460,13 @@ export const addSubGraph = function(_id, list, _title) {
         return objs.indexOf(item) >= 0 ? false : objs.push(item);
       }
     });
+    return { nodeList, dir };
   }
 
   let nodeList = [];
 
-  nodeList = uniq(nodeList.concat.apply(nodeList, list));
+  const { nodeList: nl, dir } = uniq(nodeList.concat.apply(nodeList, list));
+  nodeList = nl;
   if (version === 'gen-1') {
     log.warn('LOOKING UP');
     for (let i = 0; i < nodeList.length; i++) {
@@ -468,9 +479,9 @@ export const addSubGraph = function(_id, list, _title) {
   title = title || '';
   title = common.sanitizeText(title, config);
   subCount = subCount + 1;
-  const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
+  const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [], dir };
 
-  log.info('Adding', subGraph.id, subGraph.nodes);
+  log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
   /**
    * Deletes an id from all subgraphs
