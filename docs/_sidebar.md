@@ -20,7 +20,7 @@
 
   - [Tutorials](Tutorials.md)
   - [API-Usage](usage.md)
-  - [Configuration handling in Mermaid API](Setup.md)
+  - [Mermaid API Configuration](Setup.md)
   - [Directives](directives.md)
   - [Theming](theming.md)
   - [mermaid CLI](mermaidCLI.md)
