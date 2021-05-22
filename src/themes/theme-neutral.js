@@ -156,6 +156,7 @@ class Theme {
     this.altBackground = this.altBackground || '#f4f4f4';
     this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
     this.stateBorder = this.stateBorder || '#000';
+    this.innerEndBackground = this.primaryBorderColor;
 
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
     this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;

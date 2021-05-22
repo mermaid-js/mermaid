@@ -119,6 +119,7 @@ class Theme {
     this.altBackground = this.altBackground || '#f0f0f0';
     this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
+    this.innerEndBackground = this.primaryBorderColor;
 
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
     this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
