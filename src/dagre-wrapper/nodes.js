@@ -567,8 +567,6 @@ const forkJoin = (parent, node, dir) => {
 
   const shape = shapeSvg
     .append('rect')
-    .style('stroke', 'black')
-    .style('fill', 'black')
     .attr('x', (-1 * width) / 2)
     .attr('y', (-1 * height) / 2)
     .attr('width', width)
