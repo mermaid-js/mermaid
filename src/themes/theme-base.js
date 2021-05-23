@@ -121,7 +121,7 @@ class Theme {
     this.altBackground = this.altBackground || this.tertiaryColor;
     this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
-    this.innerEndBackground = this.primaryBorderColor;
+    this.innerEndBackground = this.nodeBorder;
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
     this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
     this.transitionColor = this.transitionColor || this.lineColor;
