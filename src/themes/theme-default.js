@@ -150,6 +150,7 @@ class Theme {
     this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
     this.compositeBorder = this.compositeBorder || this.nodeBorder;
     this.innerEndBackground = this.primaryBorderColor;
+    this.specialStateColor = this.lineColor;
 
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
     this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;

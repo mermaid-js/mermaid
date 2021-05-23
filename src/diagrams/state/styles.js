@@ -82,17 +82,17 @@ g.stateGroup line {
 }
 
 .node circle.state-start {
-  fill: ${options.stateBorder || options.lineColor};
-  stroke: ${options.stateBorder || options.lineColor};
+  fill: ${options.specialStateColor};
+  stroke: ${options.specialStateColor};
 }
 
 .node .fork-join {
-  fill: ${options.stateBorder};
-  stroke: ${options.stateBorder};
+  fill: ${options.specialStateColor};
+  stroke: ${options.specialStateColor};
 }
 
 .node circle.state-end {
-  fill: ${options.innerEndBackground || options.primaryBorderColor};
+  fill: ${options.innerEndBackground};
   stroke: ${options.background};
   stroke-width: 1.5
 }
