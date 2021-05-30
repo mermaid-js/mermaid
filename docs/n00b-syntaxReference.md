@@ -1,16 +1,46 @@
 # Diagram Syntax
-Mermaid's syntax is used to create diagrams.The next section dives deep into the syntax of each type, 
+Mermaid's syntax is used to create diagrams. You'll find that it is not too tricky and can be learned in a day. The next sections dive deep into the syntax of each diagram type.  
 
 Syntax, together with Deployment and Configuration constitute the whole of Mermaid. 
 
-Use the next section for reference and the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor) as apractice area. Adittionally, the [Getting Started](./n00b-gettingStarted.md) section can also provide some practical examples of mermaid syntax.
+Diagram Examples can be found in the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor), it is also a great practice area.
 
-You'll find that Mermaid's Syntax is not too tricky and it can be learned in a day. 
+## Syntax Structure
+One would notice that all **Diagrams definitions begin** with a declaration of the **diagram type**, followed by the definitions of the diagram and its contents. This declaration notifies the parser which kind of diagram the code is supposed to generate. 
+
+**Example** :  The code below is for an Entity Relationship Diagram, specified by the `erDiagram` declaration. What follows is the definition of the different `Entities` represented in it.
+
+```
+erDiagram
+          CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+          CUSTOMER ||--o{ ORDER : places
+          CUSTOMER ||--o{ INVOICE : "liable for"
+          DELIVERY-ADDRESS ||--o{ ORDER : receives
+          INVOICE ||--|{ ORDER : covers
+          ORDER ||--|{ ORDER-ITEM : includes
+          PRODUCT-CATEGORY ||--|{ PRODUCT : contains
+          PRODUCT ||--o{ ORDER-ITEM : "ordered in"
+```
+```mermaid
+erDiagram
+          CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+          CUSTOMER ||--o{ ORDER : places
+          CUSTOMER ||--o{ INVOICE : "liable for"
+          DELIVERY-ADDRESS ||--o{ ORDER : receives
+          INVOICE ||--|{ ORDER : covers
+          ORDER ||--|{ ORDER-ITEM : includes
+          PRODUCT-CATEGORY ||--|{ PRODUCT : contains
+          PRODUCT ||--o{ ORDER-ITEM : "ordered in"
+```
+
+
+The [Getting Started](./n00b-gettingStarted.md) section can also provide some practical examples of mermaid syntax.
+
  
 
 ## Diagram Breaking
 
- One should beware the use of some words or symbols that can break diagrams. These words or symbols are few and often only affect specific types of diagrams. The table below will continuously be updated.
+One should **beware the use of some words or symbols** that can break diagrams. These words or symbols are few and often only affect specific types of diagrams. The table below will continuously be updated.
 
 
 | Diagram Breakers  | Reason |Solution|
