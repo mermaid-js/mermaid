@@ -1,7 +1,8 @@
 import { select } from 'd3';
 import { log } from '../logger'; // eslint-disable-line
+import { evaluate } from '../diagrams/common/common';
 // let vertexNode;
-// if (getConfig().flowchart.htmlLabels) {
+// if (evaluate(getConfig().flowchart.htmlLabels)) {
 //   // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
 //   const node = {
 //     label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, s => `<i class='${s.replace(':', ' ')}'></i>`)
@@ -86,7 +87,7 @@ function addHtmlLabel(node) {
 const createLabel = (_vertexText, style, isTitle, isNode) => {
   let vertexText = _vertexText || '';
   if (typeof vertexText === 'object') vertexText = vertexText[0];
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');
     log.info('vertexText' + vertexText);

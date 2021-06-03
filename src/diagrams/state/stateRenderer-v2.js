@@ -3,7 +3,7 @@ import { select } from 'd3';
 import stateDb from './stateDb';
 import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
-
+import { evaluate } from '../common/common';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
@@ -295,7 +295,7 @@ export const draw = function(text, id) {
   svg.attr('viewBox', vBox);
 
   // Add label rects for non html labels
-  if (!conf.htmlLabels) {
+  if (!evaluate(conf.htmlLabels)) {
     const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];

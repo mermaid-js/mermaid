@@ -3,6 +3,7 @@ import { log } from '../logger';
 import createLabel from './createLabel';
 import { select } from 'd3';
 import { getConfig } from '../config';
+import { evaluate } from '../diagrams/common/common';
 
 const rect = (parent, node) => {
   log.trace('Creating subgraph rect for ', node.id, node);
@@ -26,7 +27,7 @@ const rect = (parent, node) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -132,7 +133,7 @@ const roundedWithTitle = (parent, node) => {
 
   // Get the size of the label
   let bbox = text.getBBox();
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -170,7 +171,10 @@ const roundedWithTitle = (parent, node) => {
     'translate(' +
       (node.x - bbox.width / 2) +
       ', ' +
-      (node.y - node.height / 2 - node.padding / 3 + (getConfig().flowchart.htmlLabels ? 5 : 3)) +
+      (node.y -
+        node.height / 2 -
+        node.padding / 3 +
+        (evaluate(getConfig().flowchart.htmlLabels) ? 5 : 3)) +
       ')'
   );
 

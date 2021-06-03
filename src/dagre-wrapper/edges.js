@@ -4,7 +4,7 @@ import createLabel from './createLabel';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
 import utils from '../utils';
-// import { calcLabelPosition } from '../utils';
+import { evaluate } from '../diagrams/common/common';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -27,7 +27,7 @@ export const insertEdgeLabel = (elem, edge) => {
 
   // Center the label
   let bbox = labelElement.getBBox();
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = labelElement.children[0];
     const dv = select(labelElement);
     bbox = div.getBoundingClientRect();

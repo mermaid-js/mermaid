@@ -90,6 +90,8 @@ const getUrl = useAbsolute => {
   return url;
 };
 
+export const evaluate = val => (val === 'false' || val === false ? false : true);
+
 export default {
   getRows,
   sanitizeText,
@@ -97,5 +99,6 @@ export default {
   splitBreaks,
   lineBreakRegex,
   removeScript,
-  getUrl
+  getUrl,
+  evaluate
 };
