@@ -295,22 +295,22 @@ export const draw = function(text, id) {
   svg.attr('viewBox', vBox);
 
   // Add label rects for non html labels
-  if (!evaluate(conf.htmlLabels)) {
-    const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
-    for (let k = 0; k < labels.length; k++) {
-      const label = labels[k];
+  // if (!evaluate(conf.htmlLabels) || true) {
+  const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
+  for (let k = 0; k < labels.length; k++) {
+    const label = labels[k];
 
-      // Get dimensions of label
-      const dim = label.getBBox();
+    // Get dimensions of label
+    const dim = label.getBBox();
 
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('rx', 0);
-      rect.setAttribute('ry', 0);
-      rect.setAttribute('width', dim.width);
-      rect.setAttribute('height', dim.height);
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('rx', 0);
+    rect.setAttribute('ry', 0);
+    rect.setAttribute('width', dim.width);
+    rect.setAttribute('height', dim.height);
 
-      label.insertBefore(rect, label.firstChild);
-    }
+    label.insertBefore(rect, label.firstChild);
+    // }
   }
 };
 
