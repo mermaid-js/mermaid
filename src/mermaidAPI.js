@@ -54,7 +54,6 @@ import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import errorRenderer from './errorRenderer';
-import { evaluate } from './diagrams/common/common';
 // import * as configApi from './config';
 // // , {
 // //   setConfig,
@@ -298,7 +297,7 @@ const render = function(id, _txt, cb, container) {
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     const classes = flowRenderer.getClasses(txt);
-    const htmlLabels = evaluate(cnf.htmlLabels) || evaluate(cnf.flowchart.htmlLabels);
+    const htmlLabels = cnf.htmlLabels || cnf.flowchart.htmlLabels;
     for (const className in classes) {
       if (htmlLabels) {
         userStyles += `\n.${className} > * { ${classes[className].styles.join(
