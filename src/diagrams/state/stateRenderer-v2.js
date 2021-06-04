@@ -3,7 +3,7 @@ import { select } from 'd3';
 import stateDb from './stateDb';
 import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
-import { evaluate } from '../common/common';
+// import { evaluate } from '../common/common';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
