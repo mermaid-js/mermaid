@@ -297,8 +297,9 @@ const render = function(id, _txt, cb, container) {
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     const classes = flowRenderer.getClasses(txt);
+    const htmlLabels = cnf.htmlLabels || cnf.flowchart.htmlLabels;
     for (const className in classes) {
-      if (cnf.htmlLabels || cnf.flowchart.htmlLabels) {
+      if (htmlLabels) {
         userStyles += `\n.${className} > * { ${classes[className].styles.join(
           ' !important; '
         )} !important; }`;
@@ -306,7 +307,6 @@ const render = function(id, _txt, cb, container) {
           ' !important; '
         )} !important; }`;
       } else {
-        // console.log('classes[className].styles', classes[className].styles, cnf.htmlLabels);
         userStyles += `\n.${className} path { ${classes[className].styles.join(
           ' !important; '
         )} !important; }`;

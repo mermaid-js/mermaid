@@ -3,7 +3,7 @@ import { select } from 'd3';
 import stateDb from './stateDb';
 import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
-
+// import { evaluate } from '../common/common';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
@@ -295,22 +295,22 @@ export const draw = function(text, id) {
   svg.attr('viewBox', vBox);
 
   // Add label rects for non html labels
-  if (!conf.htmlLabels) {
-    const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
-    for (let k = 0; k < labels.length; k++) {
-      const label = labels[k];
+  // if (!evaluate(conf.htmlLabels) || true) {
+  const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
+  for (let k = 0; k < labels.length; k++) {
+    const label = labels[k];
 
-      // Get dimensions of label
-      const dim = label.getBBox();
+    // Get dimensions of label
+    const dim = label.getBBox();
 
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('rx', 0);
-      rect.setAttribute('ry', 0);
-      rect.setAttribute('width', dim.width);
-      rect.setAttribute('height', dim.height);
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('rx', 0);
+    rect.setAttribute('ry', 0);
+    rect.setAttribute('width', dim.width);
+    rect.setAttribute('height', dim.height);
 
-      label.insertBefore(rect, label.firstChild);
-    }
+    label.insertBefore(rect, label.firstChild);
+    // }
   }
 };
 
