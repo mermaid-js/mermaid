@@ -401,7 +401,7 @@ stateDiagram-v2
   it('v2 should handle different rendering directions in composite states', () => {
     imgSnapshotTest(
       `
-stateDiagram
+stateDiagram-v2
   direction LR
   state A {
     direction BT

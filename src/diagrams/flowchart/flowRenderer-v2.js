@@ -8,7 +8,7 @@ import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { log } from '../../logger';
-import common from '../common/common';
+import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 
 const conf = {};
@@ -48,7 +48,7 @@ export const addVertices = function(vert, g, svgId) {
 
     // We create a SVG label, either by delegating to addHtmlLabel or manually
     let vertexNode;
-    if (getConfig().flowchart.htmlLabels) {
+    if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
         label: vertexText.replace(
@@ -147,6 +147,7 @@ export const addVertices = function(vert, g, svgId) {
       domId: flowDb.lookUpDomId(vertex.id),
       haveCallback: vertex.haveCallback,
       width: vertex.type === 'group' ? 500 : undefined,
+      dir: vertex.dir,
       type: vertex.type,
       padding: getConfig().flowchart.padding
     });
@@ -163,6 +164,7 @@ export const addVertices = function(vert, g, svgId) {
       domId: flowDb.lookUpDomId(vertex.id),
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
+      dir: vertex.dir,
       padding: getConfig().flowchart.padding
     });
   });
@@ -290,7 +292,7 @@ export const addEdges = function(edges, g) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
     }
-    // if (getConfig().flowchart.htmlLabels && false) {
+    // if (evaluate(getConfig().flowchart.htmlLabels) && false) {
     //   // eslint-disable-line
     //   edgeData.labelType = 'html';
     //   edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
@@ -385,7 +387,7 @@ export const draw = function(text, id) {
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
     log.info('Subgraph - ', subG);
-    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
+    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
   }
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition

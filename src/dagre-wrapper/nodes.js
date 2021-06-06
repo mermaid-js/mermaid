@@ -6,6 +6,7 @@ import intersect from './intersect/index.js';
 import createLabel from './createLabel';
 import note from './shapes/note';
 import { parseMember } from '../diagrams/class/svgDraw';
+import { evaluate } from '../diagrams/common/common';
 
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
@@ -370,7 +371,7 @@ const rectWithTitle = (parent, node) => {
 
   const text = label.node().appendChild(createLabel(title, node.labelStyle, true, true));
   let bbox;
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -386,7 +387,7 @@ const rectWithTitle = (parent, node) => {
       createLabel(textRows.join ? textRows.join('<br/>') : textRows, node.labelStyle, true, true)
     );
 
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = descr.children[0];
     const dv = select(descr);
     bbox = div.getBoundingClientRect();
@@ -567,8 +568,6 @@ const forkJoin = (parent, node, dir) => {
 
   const shape = shapeSvg
     .append('rect')
-    .style('stroke', 'black')
-    .style('fill', 'black')
     .attr('x', (-1 * width) / 2)
     .attr('y', (-1 * height) / 2)
     .attr('width', width)
@@ -650,7 +649,7 @@ const class_box = (parent, node) => {
     .node()
     .appendChild(createLabel(interfaceLabelText, node.labelStyle, true, true));
   let interfaceBBox = interfaceLabel.getBBox();
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = interfaceLabel.children[0];
     const dv = select(interfaceLabel);
     interfaceBBox = div.getBoundingClientRect();
@@ -672,7 +671,7 @@ const class_box = (parent, node) => {
     .appendChild(createLabel(classTitleString, node.labelStyle, true, true));
   select(classTitleLabel).attr('class', 'classTitle');
   let classTitleBBox = classTitleLabel.getBBox();
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = classTitleLabel.children[0];
     const dv = select(classTitleLabel);
     classTitleBBox = div.getBoundingClientRect();
@@ -690,7 +689,7 @@ const class_box = (parent, node) => {
       .node()
       .appendChild(createLabel(parsedText, node.labelStyle, true, true));
     let bbox = lbl.getBBox();
-    if (getConfig().flowchart.htmlLabels) {
+    if (evaluate(getConfig().flowchart.htmlLabels)) {
       const div = lbl.children[0];
       const dv = select(lbl);
       bbox = div.getBoundingClientRect();
@@ -713,7 +712,7 @@ const class_box = (parent, node) => {
       .node()
       .appendChild(createLabel(parsedText, node.labelStyle, true, true));
     let bbox = lbl.getBBox();
-    if (getConfig().flowchart.htmlLabels) {
+    if (evaluate(getConfig().flowchart.htmlLabels)) {
       const div = lbl.children[0];
       const dv = select(lbl);
       bbox = div.getBoundingClientRect();
@@ -793,7 +792,7 @@ const class_box = (parent, node) => {
   });
   //
   // let bbox;
-  // if (getConfig().flowchart.htmlLabels) {
+  // if (evaluate(getConfig().flowchart.htmlLabels)) {
   //   const div = interfaceLabel.children[0];
   //   const dv = select(interfaceLabel);
   //   bbox = div.getBoundingClientRect();
@@ -809,7 +808,7 @@ const class_box = (parent, node) => {
   //   .node()
   //   .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true, true));
 
-  // if (getConfig().flowchart.htmlLabels) {
+  // if (evaluate(getConfig().flowchart.htmlLabels)) {
   //   const div = descr.children[0];
   //   const dv = select(descr);
   //   bbox = div.getBoundingClientRect();

@@ -371,25 +371,25 @@ flowchart TD
       E[(red text)] -->|default style| F((blue text))
       G>red text] -->|default style| H{blue text}
       I{{red text}} -->|default style| J[/blue text/]
-      K[\ red text\] -->|default style| L[/blue text\]
-      M[\ red text/] -->|default style| N[blue text]
+      K[\\ red text\\] -->|default style| L[/blue text\\]
+      M[\\ red text/] -->|default style| N[blue text];
       linkStyle default color:Sienna;
-      style A stroke:#ff0000,fill:#ffcccc,color:#ff0000
-      style B stroke:#0000ff,fill:#ccccff,color:#0000ff
-      style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
-      style D stroke:#0000ff,fill:#ccccff,color:#0000ff
-      style E stroke:#ff0000,fill:#ffcccc,color:#ff0000
-      style F stroke:#0000ff,fill:#ccccff,color:#0000ff
-      style G stroke:#ff0000,fill:#ffcccc,color:#ff0000
-      style H stroke:#0000ff,fill:#ccccff,color:#0000ff
-      style I stroke:#ff0000,fill:#ffcccc,color:#ff0000
-      style J stroke:#0000ff,fill:#ccccff,color:#0000ff
-      style K stroke:#ff0000,fill:#ffcccc,color:#ff0000
-      style L stroke:#0000ff,fill:#ccccff,color:#0000ff
-      style M stroke:#ff0000,fill:#ffcccc,color:#ff0000
-      style N stroke:#0000ff,fill:#ccccff,color:#0000ff
+      style A stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style B stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style C stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style D stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style E stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style F stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style G stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style H stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style I stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style J stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style K stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style L stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style M stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style N stroke:#0000ff,fill:#ccccff,color:#0000ff;
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose', logLevel:2}
     );
   });
   it('61: fontawesome icons in edge labels', () => {
@@ -606,6 +606,29 @@ flowchart RL
       a1 -- l1 --> a2
       a1 -- l2 --> a2
     end
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
+    it('2050: handling of different rendering direction in subgraphs', () => {
+    imgSnapshotTest(
+      `
+    flowchart LR
+
+      subgraph TOP
+        direction TB
+        subgraph B1
+            direction RL
+            i1 -->f1
+        end
+        subgraph B2
+            direction BT
+            i2 -->f2
+        end
+      end
+      A --> TOP --> B
+      B1 --> B2
       `,
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );

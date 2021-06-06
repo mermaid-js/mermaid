@@ -137,7 +137,8 @@ const initialize = function(config) {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
     }
     if (typeof config.mermaid.htmlLabels !== 'undefined') {
-      mermaid.htmlLabels = config.mermaid.htmlLabels;
+      mermaid.htmlLabels =
+        config.mermaid.htmlLabels === 'false' || config.mermaid.htmlLabels === false ? false : true;
     }
   }
   mermaidAPI.initialize(config);
