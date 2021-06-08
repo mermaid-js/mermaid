@@ -26,6 +26,10 @@ export const removeScript = txt => {
       break;
     }
   }
+
+  rs = rs.replace('javascript:', '#');
+  rs = rs.replace('<iframe', '');
+
   return rs;
 };
 
