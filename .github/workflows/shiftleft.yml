@@ -1,0 +1,54 @@
+---
+# This workflow integrates ShiftLeft NG SAST with GitHub
+# Visit https://docs.shiftleft.io for help
+name: ShiftLeft
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  NextGen-Static-Analysis:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download ShiftLeft CLI
+      run: |
+        curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
+    # ShiftLeft requires Java 1.8. Post the package step override the version
+    - name: Setup Java JDK
+      uses: actions/setup-java@v1.4.3
+      with:
+        java-version: 1.8
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
+    - name: NextGen Static Analysis
+      run: ${GITHUB_WORKSPACE}/sl analyze --wait --app mermaid --tag branch=${{ github.head_ref || steps.extract_branch.outputs.branch }} --js --cpg .
+      env:
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
+        
+   
+  ## Uncomment the following section to enable build rule checking and enforcing.
+  #Build-Rules: 
+    #runs-on: ubuntu-latest
+    #needs: NextGen-Static-Analysis
+    #steps:
+    #- uses: actions/checkout@v2
+    #- name: Download ShiftLeft CLI
+    #  run: |
+    #    curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
+    #- name: Validate Build Rules
+    #  run: |
+    #    ${GITHUB_WORKSPACE}/sl check-analysis --app mermaid \
+    #       --source 'tag.branch=${{ github.event.pull_request.base.ref }}' \
+    #       --target "tag.branch=${{ github.head_ref || steps.extract_branch.outputs.branch }}" \
+    #       --report \
+    #       --github-pr-number=${{github.event.number}} \
+    #       --github-pr-user=${{ github.repository_owner }} \
+    #       --github-pr-repo=${{ github.event.repository.name }} \
+    #       --github-token=${{ secrets.GITHUB_TOKEN }}
+    #  env:
+        #SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
+        
