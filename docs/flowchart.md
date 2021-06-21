@@ -587,7 +587,7 @@ flowchart TB
 
  ## Direction in subgraphs
 
-With the graphtype flowcharts you can use the direction state4ment to set the direction which the subgraph will render like in this example.
+With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
 
 ```
 flowchart LR
