@@ -108,6 +108,7 @@ export const drawCircle = function(element, circleData) {
   const circleElement = element.append('circle');
   circleElement.attr('cx', circleData.cx);
   circleElement.attr('cy', circleData.cy);
+  circleElement.attr('class', 'actor-' + circleData.pos);
   circleElement.attr('fill', circleData.fill);
   circleElement.attr('stroke', circleData.stroke);
   circleElement.attr('r', circleData.r);
@@ -247,7 +248,7 @@ export const drawTask = function(elem, task, conf) {
 
   let xPos = task.x + 14;
   task.people.forEach(person => {
-    const colour = task.actors[person];
+    const colour = task.actors[person].color;
 
     const circle = {
       cx: xPos,
@@ -255,7 +256,8 @@ export const drawTask = function(elem, task, conf) {
       r: 7,
       fill: colour,
       stroke: '#000',
-      title: person
+      title: person,
+      pos: task.actors[person].position
     };
 
     drawCircle(g, circle);
