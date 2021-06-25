@@ -54,9 +54,7 @@
     "dagre-d3": "^0.6.4",
     "entity-decode": "^2.0.2",
     "graphlib": "^2.1.7",
-    "he": "^1.2.0",
     "khroma": "^1.1.0",
-    "minify": "^4.1.1",
     "moment-mini": "^2.22.1",
     "stylis": "^3.5.2"
   },
@@ -81,6 +79,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.9.0",
     "jison": "^0.4.18",
+    "minify": "^4.1.1",
     "moment": "^2.23.0",
     "node-sass": "^5.0.0",
     "prettier": "^1.18.2",
