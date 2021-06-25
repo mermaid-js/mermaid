@@ -372,7 +372,7 @@ const _drawTextCandidateFunc = (function() {
       .attr('position', 'fixed');
 
     const text = f
-      .append('div')
+      .append('xhtml:div')
       .style('display', 'table')
       .style('height', '100%')
       .style('width', '100%');
