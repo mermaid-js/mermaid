@@ -82,7 +82,7 @@
     "minify": "^4.1.1",
     "moment": "^2.23.0",
     "node-sass": "^5.0.0",
-    "prettier": "^1.18.2",
+    "prettier": "^2.3.1",
     "puppeteer": "^1.17.0",
     "sass-loader": "^7.1.0",
     "start-server-and-test": "^1.10.6",
