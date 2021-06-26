@@ -27,8 +27,9 @@ export const removeScript = txt => {
     }
   }
 
-  rs = rs.replace('javascript:', '#');
-  rs = rs.replace('<iframe', '');
+  rs = rs.replace(/javascript:/g, '#');
+  rs = rs.replace(/onerror=/g, 'onerror:');
+  rs = rs.replace(/<iframe/g, '');
 
   return rs;
 };
