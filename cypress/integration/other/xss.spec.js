@@ -58,5 +58,15 @@ describe('XSS', () => {
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   })
+  it('should not allow maniplulating antiscript to run javascript', () => {
+    cy.visit('http://localhost:9000/xss5.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  })
+  it('should not allow maniplulating antiscript to run javascript using onerror', () => {
+    cy.visit('http://localhost:9000/xss6.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  })
 
 })
