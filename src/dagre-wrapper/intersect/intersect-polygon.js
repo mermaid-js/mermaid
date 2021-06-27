@@ -53,13 +53,13 @@ function intersectPolygon(node, polyPoints, point) {
     intersections.sort(function(p, q) {
       var pdx = p.x - point.x;
       var pdy = p.y - point.y;
-      var distp = Math.sqrt(pdx * pdx + pdy * pdy);
+      var distpSquare = pdx * pdx + pdy * pdy;
 
       var qdx = q.x - point.x;
       var qdy = q.y - point.y;
-      var distq = Math.sqrt(qdx * qdx + qdy * qdy);
+      var distqSquare = qdx * qdx + qdy * qdy;
 
-      return distp < distq ? -1 : distp === distq ? 0 : 1;
+      return distpSquare < distqSquare ? -1 : distpSquare === distqSquare ? 0 : 1;
     });
   }
   return intersections[0];
