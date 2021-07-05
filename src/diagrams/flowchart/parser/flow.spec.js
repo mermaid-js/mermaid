@@ -105,6 +105,7 @@ describe('when parsing ', function() {
     //   charTest('>', '&gt;');
     // });
 
+
     // it("it should be able to parse a '='", function() {
     //   charTest('=', '&equals;');
     // });
