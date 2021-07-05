@@ -55,10 +55,6 @@ const breakToPlaceholder = s => {
   return s.replace(lineBreakRegex, '#br#');
 };
 
-const placeholderToBreak = s => {
-  return s.replace(/#br#/g, '<br/>');
-};
-
 const getUrl = useAbsolute => {
   let url = '';
   if (useAbsolute) {
