@@ -82,7 +82,6 @@
     "jison": "^0.4.18",
     "minify": "^4.1.1",
     "moment": "^2.23.0",
-    "node-sass": "^5.0.0",
     "prettier": "^1.18.2",
     "puppeteer": "^1.17.0",
     "sass-loader": "^7.1.0",
