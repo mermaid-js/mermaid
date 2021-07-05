@@ -59,6 +59,7 @@
     "stylis": "^3.5.2"
   },
   "devDependencies": {
+    "js-base64":"3.6.1",
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.0.0",
