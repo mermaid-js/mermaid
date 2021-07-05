@@ -328,7 +328,7 @@ describe('[Text] when parsing', () => {
       const edges = flow.parser.yy.getEdges();
 
       expect(vert['C'].type).toBe('round');
-      expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br/> -  ÅÄÖ');
+      expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
     });
     // xit('it should handle åäö, minus and space and br',function(){
     //    const res = flow.parser.parse('graph TD; A[Object&#40;foo,bar&#41;]-->B(Thing);');
