@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 export const getRows = s => {
   if (!s) return 1;
   let str = breakToPlaceholder(s);
@@ -34,30 +36,8 @@ export const removeScript = txt => {
   return rs;
 };
 
-export const sanitizeText = (text, config) => {
-  let txt = text;
-  let htmlLabels = true;
-  if (
-    config.flowchart &&
-    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
-  ) {
-    htmlLabels = false;
-  }
-
-  if (htmlLabels) {
-    const level = config.securityLevel;
-
-    if (level === 'antiscript') {
-      txt = removeScript(txt);
-    } else if (level !== 'loose') {
-      // eslint-disable-line
-      txt = breakToPlaceholder(txt);
-      txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      txt = txt.replace(/=/g, '&equals;');
-      txt = placeholderToBreak(txt);
-    }
-  }
-
+export const sanitizeText = text => {
+  const txt = DOMPurify.sanitize(text);
   return txt;
 };
 
