@@ -812,6 +812,20 @@ export const initIdGeneratior = class iterator {
   }
 };
 
+// Source https://github.com/shrpne/entity-decode/blob/master/browser.js
+let decoder;
+export const entityDecode = function(html) {
+  decoder = decoder || document.createElement('div');
+  // Escape HTML before decoding for HTML Entities
+  html = escape(html)
+    .replace(/%26/g, '&')
+    .replace(/%23/g, '#')
+    .replace(/%3B/g, ';');
+  // decoding
+  decoder.innerHTML = html;
+  return unescape(decoder.textContent);
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -834,5 +848,6 @@ export default {
   random,
   memoize,
   runFunc,
+  entityDecode,
   initIdGeneratior
 };
