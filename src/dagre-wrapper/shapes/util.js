@@ -1,6 +1,7 @@
 import createLabel from '../createLabel';
 import { getConfig } from '../../config';
 import { select } from 'd3';
+import { evaluate } from '../../diagrams/common/common';
 export const labelHelper = (parent, node, _classes, isNode) => {
   let classes;
   if (!_classes) {
@@ -27,7 +28,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();

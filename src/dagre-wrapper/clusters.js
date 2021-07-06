@@ -3,6 +3,7 @@ import { log } from '../logger';
 import createLabel from './createLabel';
 import { select } from 'd3';
 import { getConfig } from '../config';
+import { evaluate } from '../diagrams/common/common';
 
 const rect = (parent, node) => {
   log.trace('Creating subgraph rect for ', node.id, node);
@@ -26,7 +27,7 @@ const rect = (parent, node) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -132,7 +133,7 @@ const roundedWithTitle = (parent, node) => {
 
   // Get the size of the label
   let bbox = text.getBBox();
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -145,7 +146,7 @@ const roundedWithTitle = (parent, node) => {
 
   const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
   if (node.width <= bbox.width + node.padding) {
-    node.diff = (bbox.width + node.padding - node.width) / 2;
+    node.diff = (bbox.width + node.padding * 0 - node.width) / 2;
   } else {
     node.diff = -node.padding / 2;
   }
@@ -170,7 +171,10 @@ const roundedWithTitle = (parent, node) => {
     'translate(' +
       (node.x - bbox.width / 2) +
       ', ' +
-      (node.y - node.height / 2 - node.padding / 3 + (getConfig().flowchart.htmlLabels ? 5 : 3)) +
+      (node.y -
+        node.height / 2 -
+        node.padding / 3 +
+        (evaluate(getConfig().flowchart.htmlLabels) ? 5 : 3)) +
       ')'
   );
 
@@ -208,7 +212,7 @@ const divider = (parent, node) => {
   const rectBox = rect.node().getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
-
+  node.diff = -node.padding / 2;
   node.intersect = function(point) {
     return intersectRect(node, point);
   };

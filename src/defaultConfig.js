@@ -89,7 +89,7 @@ const config = {
    *
    * **Notes**:
    *
-   * - **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   * - **strict**: (**default**) tags in text are encoded, click functionality is disabled
    * - **loose**: tags in text are allowed, click functionality is enabled
    * - **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
    */
@@ -966,7 +966,7 @@ top of the chart
      *
      * Default value: 'dagre-d3'
      */
-    defaultRenderer: 'dagre-d3'
+    defaultRenderer: 'dagre-wrapper'
   },
 
   /**

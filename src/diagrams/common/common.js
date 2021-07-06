@@ -26,6 +26,10 @@ export const removeScript = txt => {
       break;
     }
   }
+
+  rs = rs.replace('javascript:', '#');
+  rs = rs.replace('<iframe', '');
+
   return rs;
 };
 
@@ -90,6 +94,8 @@ const getUrl = useAbsolute => {
   return url;
 };
 
+export const evaluate = val => (val === 'false' || val === false ? false : true);
+
 export default {
   getRows,
   sanitizeText,
@@ -97,5 +103,6 @@ export default {
   splitBreaks,
   lineBreakRegex,
   removeScript,
-  getUrl
+  getUrl,
+  evaluate
 };

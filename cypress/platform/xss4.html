@@ -69,12 +69,13 @@
         fontSize: 18,
         curve: 'basis',
         securityLevel: 'strict',
-        startOnLoad: false
+        startOnLoad: false,
+        secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
         // themeVariables: {relationLabelColor: 'red'}
       });
       function callback(){alert('It worked');}
 
-      var diagram = "%%{init: {\"flowchart\": {\"htmlLabels\": \"false\"}} }%%\n";
+      var diagram = "%%{init: {\"flowchart\": {\"htmlLabels\": \"true\"}} }%%\n";
   diagram += "flowchart\n";
   diagram += "A[\"<ifra";
   diagram += "me srcdoc='<scrip";

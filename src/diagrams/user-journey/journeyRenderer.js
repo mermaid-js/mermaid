@@ -22,14 +22,15 @@ function drawActorLegend(diagram) {
   // Draw the actors
   let yPos = 60;
   Object.keys(actors).forEach(person => {
-    const colour = actors[person];
+    const colour = actors[person].color;
 
     const circleData = {
       cx: 20,
       cy: yPos,
       r: 7,
       fill: colour,
-      stroke: '#000'
+      stroke: '#000',
+      pos: actors[person].position
     };
     svgDraw.drawCircle(diagram, circleData);
 
@@ -65,7 +66,10 @@ export const draw = function(text, id) {
   for (let member in actors) delete actors[member];
   let actorPos = 0;
   actorNames.forEach(actorName => {
-    actors[actorName] = conf.actorColours[actorPos % conf.actorColours.length];
+    actors[actorName] = {
+      color: conf.actorColours[actorPos % conf.actorColours.length],
+      position: actorPos
+    };
     actorPos++;
   });
 

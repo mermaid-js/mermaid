@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.10.1",
+  "version": "8.10.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -54,7 +54,6 @@
     "dagre-d3": "^0.6.4",
     "graphlib": "^2.1.7",
     "khroma": "^1.1.0",
-    "minify": "^4.1.1",
     "moment-mini": "^2.22.1",
     "stylis": "^3.5.2"
   },
@@ -79,6 +78,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^24.9.0",
     "jison": "^0.4.18",
+    "minify": "^4.1.1",
     "moment": "^2.23.0",
     "node-sass": "^5.0.0",
     "prettier": "^1.18.2",
