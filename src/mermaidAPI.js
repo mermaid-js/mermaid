@@ -14,7 +14,7 @@
  * @name mermaidAPI
  */
 import { select } from 'd3';
-import Stylis from 'stylis';
+import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
 import classDb from './diagrams/class/classDb';
@@ -333,7 +333,7 @@ const render = function(id, _txt, cb, container) {
 
   // log.warn(cnf.themeVariables);
 
-  const stylis = new Stylis();
+  const stylis = (selector, styles) => serialize(compile(`${selector}{${styles}}`), stringify);
   const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
   const style1 = document.createElement('style');

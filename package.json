@@ -48,15 +48,15 @@
     ]
   },
   "dependencies": {
-    "@braintree/sanitize-url": "^3.1.0",
+    "@braintree/sanitize-url": "^5.0.2",
     "@percy/migrate": "^0.10.0",
     "d3": "^5.7.0",
-    "dagre": "^0.8.4",
+    "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
-    "graphlib": "^2.1.7",
-    "khroma": "^1.1.0",
-    "moment-mini": "^2.22.1",
-    "stylis": "^3.5.2"
+    "graphlib": "^2.1.8",
+    "khroma": "^1.4.1",
+    "moment-mini": "^2.24.0",
+    "stylis": "^4.0.10"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",

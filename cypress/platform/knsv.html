@@ -67,8 +67,7 @@ stateDiagram-v2
 </div>
 <div class="mermaid" style="width: 100%; height: 20%;">
 flowchart TD
-A("<img scr='https://iconscout.com/ms-icon-310x310.png'  />")
-B(<b>Bold text!</b>)
+A("https://iconscout.com/ms-icon-310x310.png") --> B(<b>Bold text!</b>)
   </div>
 <div class="mermaid2" style="width: 100%; height: 20%;">
 stateDiagram-v2
@@ -106,7 +105,7 @@ YourState
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'default',
+        theme: 'base',
         arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 2,
