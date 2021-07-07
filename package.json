@@ -55,7 +55,7 @@
     "graphlib": "^2.1.7",
     "khroma": "^1.1.0",
     "moment-mini": "^2.22.1",
-    "stylis": "^3.5.2"
+    "stylis": "^4.0.10"
   },
   "devDependencies": {
     "js-base64":"3.6.1",
