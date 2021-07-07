@@ -101,13 +101,14 @@ describe('when parsing ', function() {
       charTest('<', '&lt;');
     });
 
-    it("it should be able to parse a '>'", function() {
-      charTest('>', '&gt;');
-    });
+    // it("it should be able to parse a '>'", function() {
+    //   charTest('>', '&gt;');
+    // });
 
-    it("it should be able to parse a '='", function() {
-      charTest('=', '&equals;');
-    });
+
+    // it("it should be able to parse a '='", function() {
+    //   charTest('=', '&equals;');
+    // });
     it("it should be able to parse a '&'", function() {
       charTest('&');
     });

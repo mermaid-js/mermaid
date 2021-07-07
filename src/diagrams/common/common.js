@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 export const getRows = s => {
   if (!s) return 1;
   let str = breakToPlaceholder(s);
@@ -27,36 +29,15 @@ export const removeScript = txt => {
     }
   }
 
-  rs = rs.replace('javascript:', '#');
-  rs = rs.replace('<iframe', '');
+  rs = rs.replace(/javascript:/g, '#');
+  rs = rs.replace(/onerror=/g, 'onerror:');
+  rs = rs.replace(/<iframe/g, '');
 
   return rs;
 };
 
-export const sanitizeText = (text, config) => {
-  let txt = text;
-  let htmlLabels = true;
-  if (
-    config.flowchart &&
-    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
-  ) {
-    htmlLabels = false;
-  }
-
-  if (htmlLabels) {
-    const level = config.securityLevel;
-
-    if (level === 'antiscript') {
-      txt = removeScript(txt);
-    } else if (level !== 'loose') {
-      // eslint-disable-line
-      txt = breakToPlaceholder(txt);
-      txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      txt = txt.replace(/=/g, '&equals;');
-      txt = placeholderToBreak(txt);
-    }
-  }
-
+export const sanitizeText = text => {
+  const txt = DOMPurify.sanitize(text);
   return txt;
 };
 
@@ -72,10 +53,6 @@ export const splitBreaks = text => {
 
 const breakToPlaceholder = s => {
   return s.replace(lineBreakRegex, '#br#');
-};
-
-const placeholderToBreak = s => {
-  return s.replace(/#br#/g, '<br/>');
 };
 
 const getUrl = useAbsolute => {
