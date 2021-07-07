@@ -52,7 +52,6 @@
     "d3": "^5.7.0",
     "dagre": "^0.8.4",
     "dagre-d3": "^0.6.4",
-    "entity-decode": "^2.0.2",
     "graphlib": "^2.1.7",
     "khroma": "^1.1.0",
     "moment-mini": "^2.22.1",
