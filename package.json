@@ -85,14 +85,13 @@
     "minify": "^4.1.1",
     "moment": "^2.23.0",
     "prettier": "^1.18.2",
-    "start-server-and-test": "^1.10.6",
+    "start-server-and-test": "^1.12.6",
     "terser-webpack-plugin": "^2.2.2",
     "webpack": "^4.41.2",
-    "webpack-bundle-analyzer": "^3.7.0",
+    "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.4.1",
-    "webpack-node-externals": "^1.7.2",
-    "yarn-upgrade-all": "^0.5.0"
+    "webpack-node-externals": "^1.7.2"
   },
   "files": [
     "dist"
