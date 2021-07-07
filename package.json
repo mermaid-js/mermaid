@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.10.2",
+  "version": "8.11.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -59,10 +59,12 @@
     "stylis": "^3.5.2"
   },
   "devDependencies": {
+    "js-base64":"3.6.1",
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.0.0",
-    "@percy/cypress": "*",
+    "@percy/cypress": "2.3.0",
+    "dompurify": "2.2.9",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^24.9.0",
@@ -81,7 +83,6 @@
     "jison": "^0.4.18",
     "minify": "^4.1.1",
     "moment": "^2.23.0",
-    "node-sass": "^5.0.0",
     "prettier": "^1.18.2",
     "puppeteer": "^1.17.0",
     "sass-loader": "^7.1.0",

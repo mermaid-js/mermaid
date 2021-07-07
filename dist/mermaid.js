@@ -49035,7 +49035,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.10.2\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.11.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"khroma\":\"^1.1.0\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"minify\":\"^4.1.1\",\"moment\":\"^2.23.0\",\"node-sass\":\"^5.0.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -49385,7 +49385,7 @@ var roundedWithTitle = function roundedWithTitle(parent, node) {
   var width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
 
   if (node.width <= bbox.width + node.padding) {
-    node.diff = (bbox.width + node.padding - node.width) / 2;
+    node.diff = (bbox.width + node.padding * 0 - node.width) / 2;
   } else {
     node.diff = -node.padding / 2;
   } // center the rect around its coordinate
@@ -49417,6 +49417,7 @@ var divider = function divider(parent, node) {
   var rectBox = rect.node().getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
+  node.diff = -node.padding / 2;
 
   node.intersect = function (point) {
     return Object(_intersect_intersect_rect__WEBPACK_IMPORTED_MODULE_0__["default"])(node, point);
@@ -52313,7 +52314,7 @@ var config = {
    *
    * **Notes**:
    *
-   * - **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   * - **strict**: (**default**) tags in text are encoded, click functionality is disabled
    * - **loose**: tags in text are allowed, click functionality is enabled
    * - **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
    */
@@ -53187,7 +53188,7 @@ var config = {
      *
      * Default value: 'dagre-d3'
      */
-    defaultRenderer: 'dagre-d3'
+    defaultRenderer: 'dagre-wrapper'
   },
 
   /**
@@ -55675,6 +55676,9 @@ var removeScript = function removeScript(txt) {
     }
   }
 
+  rs = rs.replace(/javascript:/g, '#');
+  rs = rs.replace(/onerror=/g, 'onerror:');
+  rs = rs.replace(/<iframe/g, '');
   return rs;
 };
 var sanitizeText = function sanitizeText(text, config) {
@@ -69303,7 +69307,7 @@ var _drawTextCandidateFunc = function () {
   function byFo(content, g, x, y, width, height, textAttrs, conf) {
     var s = g.append('switch');
     var f = s.append('foreignObject').attr('x', x).attr('y', y).attr('width', width).attr('height', height);
-    var text = f.append('div').style('display', 'table').style('height', '100%').style('width', '100%');
+    var text = f.append('xhtml:div').style('display', 'table').style('height', '100%').style('width', '100%');
     text.append('div').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle').text(content);
     byTspan(content, s, x, y, width, height, textAttrs, conf);
 
@@ -71809,13 +71813,14 @@ function drawActorLegend(diagram) {
 
   var yPos = 60;
   Object.keys(actors).forEach(function (person) {
-    var colour = actors[person];
+    var colour = actors[person].color;
     var circleData = {
       cx: 20,
       cy: yPos,
       r: 7,
       fill: colour,
-      stroke: '#000'
+      stroke: '#000',
+      pos: actors[person].position
     };
     _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].drawCircle(diagram, circleData);
     var labelData = {
@@ -71850,7 +71855,10 @@ var draw = function draw(text, id) {
 
   var actorPos = 0;
   actorNames.forEach(function (actorName) {
-    actors[actorName] = conf.actorColours[actorPos % conf.actorColours.length];
+    actors[actorName] = {
+      color: conf.actorColours[actorPos % conf.actorColours.length],
+      position: actorPos
+    };
     actorPos++;
   });
   drawActorLegend(diagram);
@@ -72714,7 +72722,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return ".label {\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n    color: ".concat(options.textColor, ";\n  }\n  .mouth {\n    stroke: #666;\n  }\n\n  line {\n    stroke: ").concat(options.textColor, "\n  }\n\n  .legend {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: #333;\n  }\n  .label {\n    color: ").concat(options.textColor, "\n  }\n\n  .face {\n    fill: #FFF8DC;\n    stroke: #999;\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n\n  .task-type-0, .section-type-0  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType0) : '', ";\n  }\n  .task-type-1, .section-type-1  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType1) : '', ";\n  }\n  .task-type-2, .section-type-2  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType2) : '', ";\n  }\n  .task-type-3, .section-type-3  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType3) : '', ";\n  }\n  .task-type-4, .section-type-4  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType4) : '', ";\n  }\n  .task-type-5, .section-type-5  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType5) : '', ";\n  }\n  .task-type-6, .section-type-6  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType6) : '', ";\n  }\n  .task-type-7, .section-type-7  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType7) : '', ";\n  }\n");
+  return ".label {\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n    color: ".concat(options.textColor, ";\n  }\n  .mouth {\n    stroke: #666;\n  }\n\n  line {\n    stroke: ").concat(options.textColor, "\n  }\n\n  .legend {\n    fill: ").concat(options.textColor, ";\n  }\n\n  .label text {\n    fill: #333;\n  }\n  .label {\n    color: ").concat(options.textColor, "\n  }\n\n  .face {\n    ").concat(options.faceColor ? "fill: ".concat(options.faceColor) : 'fill: #FFF8DC', ";\n    stroke: #999;\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n\n  .task-type-0, .section-type-0  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType0) : '', ";\n  }\n  .task-type-1, .section-type-1  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType1) : '', ";\n  }\n  .task-type-2, .section-type-2  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType2) : '', ";\n  }\n  .task-type-3, .section-type-3  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType3) : '', ";\n  }\n  .task-type-4, .section-type-4  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType4) : '', ";\n  }\n  .task-type-5, .section-type-5  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType5) : '', ";\n  }\n  .task-type-6, .section-type-6  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType6) : '', ";\n  }\n  .task-type-7, .section-type-7  {\n    ").concat(options.fillType0 ? "fill: ".concat(options.fillType7) : '', ";\n  }\n\n  .actor-0 {\n    ").concat(options.actor0 ? "fill: ".concat(options.actor0) : '', ";\n  }\n  .actor-1 {\n    ").concat(options.actor1 ? "fill: ".concat(options.actor1) : '', ";\n  }\n  .actor-2 {\n    ").concat(options.actor2 ? "fill: ".concat(options.actor2) : '', ";\n  }\n  .actor-3 {\n    ").concat(options.actor3 ? "fill: ".concat(options.actor3) : '', ";\n  }\n  .actor-4 {\n    ").concat(options.actor4 ? "fill: ".concat(options.actor4) : '', ";\n  }\n  .actor-5 {\n    ").concat(options.actor5 ? "fill: ".concat(options.actor5) : '', ";\n  }\n\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -72798,6 +72806,7 @@ var drawCircle = function drawCircle(element, circleData) {
   var circleElement = element.append('circle');
   circleElement.attr('cx', circleData.cx);
   circleElement.attr('cy', circleData.cy);
+  circleElement.attr('class', 'actor-' + circleData.pos);
   circleElement.attr('fill', circleData.fill);
   circleElement.attr('stroke', circleData.stroke);
   circleElement.attr('r', circleData.r);
@@ -72890,14 +72899,15 @@ var drawTask = function drawTask(elem, task, conf) {
   drawRect(g, rect);
   var xPos = task.x + 14;
   task.people.forEach(function (person) {
-    var colour = task.actors[person];
+    var colour = task.actors[person].color;
     var circle = {
       cx: xPos,
       cy: task.y,
       r: 7,
       fill: colour,
       stroke: '#000',
-      title: person
+      title: person,
+      pos: task.actors[person].position
     };
     drawCircle(g, circle);
     xPos += 10;
@@ -72974,7 +72984,7 @@ var _drawTextCandidateFunc = function () {
   function byFo(content, g, x, y, width, height, textAttrs, conf) {
     var body = g.append('switch');
     var f = body.append('foreignObject').attr('x', x).attr('y', y).attr('width', width).attr('height', height).attr('position', 'fixed');
-    var text = f.append('div').style('display', 'table').style('height', '100%').style('width', '100%');
+    var text = f.append('xhtml:div').style('display', 'table').style('height', '100%').style('width', '100%');
     text.append('div').attr('class', 'label').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle') // .style('color', colour)
     .text(content);
     byTspan(content, body, x, y, width, height, textAttrs, conf);
@@ -73175,7 +73185,6 @@ __webpack_require__.r(__webpack_exports__);
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
  */
-// import { decode } from 'he';
 
 
 
