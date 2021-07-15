@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build:development": "webpack --progress --color",
-    "build:production": "yarn build:development -p --config webpack.config.prod.babel.js",
+    "build:production": "yarn build:development --mode production --config webpack.config.prod.babel.js",
     "build": "yarn build:development && yarn build:production",
     "postbuild": "documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md",
     "build:watch": "yarn build --watch",
