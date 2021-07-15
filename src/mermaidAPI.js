@@ -337,7 +337,7 @@ const render = function(id, _txt, cb, container) {
   const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
   const style1 = document.createElement('style');
-  style1.innerHTML = rules;
+  style1.innerHTML = `#${id} ` + rules;
   svg.insertBefore(style1, firstChild);
 
   // Verify that the generated svgs are ok before removing this
