@@ -49,7 +49,7 @@
   "dependencies": {
     "@braintree/sanitize-url": "^3.1.0",
     "@percy/migrate": "^0.10.0",
-    "d3": "^5.7.0",
+    "d3": "^7.0.0",
     "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
     "graphlib": "^2.1.8",
