@@ -2,7 +2,7 @@
 
 **Mermaid lets you create diagrams and visualizations using text and code.**
 
-It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically. 
+It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
 >If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](./n00b-syntaxReference.md).
 
@@ -18,7 +18,7 @@ The main purpose of Mermaid is to help with Visualizing Documentation, and helpi
 > Documentation-Rot is a Catch-22 that Mermaid helps to solve.
 
 Diagramming and Documentation costs precious developer time and gets outdated quickly.
-But not having diagrams or docs ruins productivity and hurts organizational learning. 
+But not having diagrams or docs ruins productivity and hurts organizational learning.
 
 Mermaid addresses this Catch-22 by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.
 Mermaid, as a text-based diagramming tool allows for quick and easy updates, it can also be made part of production scripts (and other pieces of code), to make documentation much easier.
@@ -181,7 +181,7 @@ Latest Version: [https://unpkg.com/browse/mermaid@8.8.0/](https://unpkg.com/brow
 ## Deploying Mermaid
 To Deploy Mermaid:
 
-1. You will need to install node v10 or 12, which would have npm
+1. You will need to install node v16, which would have npm
 2. Download yarn using npm
 3. Enter the following command: `yarn add mermaid`
 4. You can then add mermaid as a dev dependency using this command:

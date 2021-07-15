@@ -1,14 +1,14 @@
 # A Mermaid User-Guide for Beginners
-Mermaid is composed of three parts, Deployment, Syntax and Configuration. 
+Mermaid is composed of three parts, Deployment, Syntax and Configuration.
 
-This section talks about the different ways to deploy Mermaid. Learning the [Syntax](./n00b-syntaxReference.md) ahead of time would be more helpful to the beginner. 
+This section talks about the different ways to deploy Mermaid. Learning the [Syntax](./n00b-syntaxReference.md) ahead of time would be more helpful to the beginner.
 
->Generally the live editor is enough for most general uses of mermaid, and is a good place to start learning. 
+>Generally the live editor is enough for most general uses of mermaid, and is a good place to start learning.
 
 **Absolute beginners are recommended to view the Video [Tutorials](./Tutorials.md) on the Live Editor, to gain a better understanding of mermaid.**
 
 ## Four ways of using mermaid:
-1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).  
+1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).
 2. Using [mermaid plugins](./integrations.md) with programs you are familiar with.
 3. Calling the Mermaid Javascript API.
 4. Deploying Mermaid as a dependency.
@@ -21,7 +21,7 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 
 ![EditingProcess](./img/Editing-process.png )
 
-In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it. 
+In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
 
 The `Configuration` Section is for changing the appearance and behavior of mermaid diagrams. An easy introduction to mermaid configuration is found in the [Advanced usage](./n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](Setup.md) page.
 
@@ -29,14 +29,14 @@ The `Configuration` Section is for changing the appearance and behavior of merma
 ![Code,Config and Preview](./img/Code-Preview-Config.png)
 
 ### Saving a Diagram:
-You may choose any of the methods below, to save it 
+You may choose any of the methods below, to save it
 
 **We recommend that you save your diagram code on top of any method you choose, in order to make edits and modifications further down the line.**
 
 ![Flowchart](./img/Live-Editor-Choices.png)
 
 ### Editing your diagrams
-Editing is as easy as pasting your **Diagram code**, into the `code` section of the `Live Editor`. 
+Editing is as easy as pasting your **Diagram code**, into the `code` section of the `Live Editor`.
 
 
 ## 2. Using Mermaid Plugins:
@@ -51,7 +51,7 @@ This method can be used with any common web server. Apache, IIS, nginx, node exp
 
 You will also need a text editting tool like Notepad++, to generate an html file. It is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
 
-The API works by pulling rendering instructions from a source from `mermaid.js` to render diagrams in the page. 
+The API works by pulling rendering instructions from a source from `mermaid.js` to render diagrams in the page.
 
 
 ###  Requirements for the Mermaid API.
@@ -106,7 +106,7 @@ Mermaid rendering is initalized with `mermaid.initialize()`.You can place `merma
 | --------- | --------------- | ------ | ---------------------------------------------------- |
 |startOnLoad| Toggle for Rendering upon loading | Boolean | true, false                       |
 
-### Working Examples 
+### Working Examples
 
 **Here is a full working example of the mermaidAPI being called through the CDN:**
 
@@ -135,7 +135,7 @@ Mermaid rendering is initalized with `mermaid.initialize()`.You can place `merma
 </html>
 ```
 **Another Option:**
-In this example mermaid.js is referenced in `src` as a separate JavaScript file, in an example Path. 
+In this example mermaid.js is referenced in `src` as a separate JavaScript file, in an example Path.
 ```html
 <html lang="en">
 <head>
@@ -164,17 +164,17 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
 ---
 ## 4. Adding Mermaid as a dependency.
 
-1. install node v10 or 12, which would have npm
+1. install node v16, which would have npm
 
 2. download yarn using npm by entering the command below:
     npm install -g yarn
 
 3. After yarn installs, enter the following command:
     yarn add mermaid
-    
+
 4. To add Mermaid as a Dev Dependency
     yarn add --dev mermaid
-    
+
 
 
 **Comments from Knut Sveidqvist, creator of mermaid:**
