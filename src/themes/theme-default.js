@@ -209,20 +209,20 @@ class Theme {
     const keys = Object.keys(overrides);
 
     // Copy values from overrides, this is mainly for base colors
-    keys.forEach(k => {
+    keys.forEach((k) => {
       this[k] = overrides[k];
     });
 
     // Calculate colors form base colors
     this.updateColors();
     // Copy values from overrides again in case of an override of derived value
-    keys.forEach(k => {
+    keys.forEach((k) => {
       this[k] = overrides[k];
     });
   }
 }
 
-export const getThemeVariables = userOverrides => {
+export const getThemeVariables = (userOverrides) => {
   const theme = new Theme();
   theme.calculate(userOverrides);
   return theme;

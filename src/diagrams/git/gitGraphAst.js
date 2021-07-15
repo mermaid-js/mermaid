@@ -49,11 +49,11 @@ function uniqBy(list, fn) {
   }, []);
 }
 
-export const setDirection = function(dir) {
+export const setDirection = function (dir) {
   direction = dir;
 };
 let options = {};
-export const setOptions = function(rawOptString) {
+export const setOptions = function (rawOptString) {
   log.debug('options str', rawOptString);
   rawOptString = rawOptString && rawOptString.trim();
   rawOptString = rawOptString || '{}';
@@ -64,16 +64,16 @@ export const setOptions = function(rawOptString) {
   }
 };
 
-export const getOptions = function() {
+export const getOptions = function () {
   return options;
 };
 
-export const commit = function(msg) {
+export const commit = function (msg) {
   const commit = {
     id: getId(),
     message: msg,
     seq: seq++,
-    parent: head == null ? null : head.id
+    parent: head == null ? null : head.id,
   };
   head = commit;
   commits[commit.id] = commit;
@@ -81,12 +81,12 @@ export const commit = function(msg) {
   log.debug('in pushCommit ' + commit.id);
 };
 
-export const branch = function(name) {
+export const branch = function (name) {
   branches[name] = head != null ? head.id : null;
   log.debug('in createBranch');
 };
 
-export const merge = function(otherBranch) {
+export const merge = function (otherBranch) {
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
   if (isReachableFrom(currentCommit, otherCommit)) {
@@ -102,7 +102,7 @@ export const merge = function(otherBranch) {
       id: getId(),
       message: 'merged branch ' + otherBranch + ' into ' + curBranch,
       seq: seq++,
-      parent: [head == null ? null : head.id, branches[otherBranch]]
+      parent: [head == null ? null : head.id, branches[otherBranch]],
     };
     head = commit;
     commits[commit.id] = commit;
@@ -112,14 +112,14 @@ export const merge = function(otherBranch) {
   log.debug('in mergeBranch');
 };
 
-export const checkout = function(branch) {
+export const checkout = function (branch) {
   log.debug('in checkout');
   curBranch = branch;
   const id = branches[curBranch];
   head = commits[id];
 };
 
-export const reset = function(commitRef) {
+export const reset = function (commitRef) {
   log.debug('in reset', commitRef);
   const ref = commitRef.split(':')[0];
   let parentCount = parseInt(commitRef.split(':')[1]);
@@ -153,7 +153,7 @@ function prettyPrintCommitHistory(commitArr) {
     return commit;
   }, commitArr[0]);
   let line = '';
-  commitArr.forEach(function(c) {
+  commitArr.forEach(function (c) {
     if (c === commit) {
       line += '\t*';
     } else {
@@ -175,17 +175,17 @@ function prettyPrintCommitHistory(commitArr) {
     const nextCommit = commits[commit.parent];
     upsert(commitArr, commit, nextCommit);
   }
-  commitArr = uniqBy(commitArr, c => c.id);
+  commitArr = uniqBy(commitArr, (c) => c.id);
   prettyPrintCommitHistory(commitArr);
 }
 
-export const prettyPrint = function() {
+export const prettyPrint = function () {
   log.debug(commits);
   const node = getCommitsArray()[0];
   prettyPrintCommitHistory([node]);
 };
 
-export const clear = function() {
+export const clear = function () {
   commits = {};
   head = null;
   branches = { master: head };
@@ -193,7 +193,7 @@ export const clear = function() {
   seq = 0;
 };
 
-export const getBranchesAsObjArray = function() {
+export const getBranchesAsObjArray = function () {
   const branchArr = [];
   for (let branch in branches) {
     branchArr.push({ name: branch, commit: commits[branches[branch]] });
@@ -201,29 +201,29 @@ export const getBranchesAsObjArray = function() {
   return branchArr;
 };
 
-export const getBranches = function() {
+export const getBranches = function () {
   return branches;
 };
-export const getCommits = function() {
+export const getCommits = function () {
   return commits;
 };
-export const getCommitsArray = function() {
-  const commitArr = Object.keys(commits).map(function(key) {
+export const getCommitsArray = function () {
+  const commitArr = Object.keys(commits).map(function (key) {
     return commits[key];
   });
-  commitArr.forEach(function(o) {
+  commitArr.forEach(function (o) {
     log.debug(o.id);
   });
   commitArr.sort((a, b) => b.seq - a.seq);
   return commitArr;
 };
-export const getCurrentBranch = function() {
+export const getCurrentBranch = function () {
   return curBranch;
 };
-export const getDirection = function() {
+export const getDirection = function () {
   return direction;
 };
-export const getHead = function() {
+export const getHead = function () {
   return head;
 };
 
@@ -244,5 +244,5 @@ export default {
   getCommitsArray,
   getCurrentBranch,
   getDirection,
-  getHead
+  getHead,
 };

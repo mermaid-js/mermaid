@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `
   .mermaid-main-font {
     font-family: "trebuchet ms", verdana, arial, sans-serif;

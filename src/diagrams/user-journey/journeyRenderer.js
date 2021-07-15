@@ -7,10 +7,10 @@ import { configureSvgSize } from '../../utils';
 
 parser.yy = journeyDb;
 
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
 
-  keys.forEach(function(key) {
+  keys.forEach(function (key) {
     conf[key] = cnf[key];
   });
 };
@@ -21,7 +21,7 @@ function drawActorLegend(diagram) {
   const conf = getConfig().journey;
   // Draw the actors
   let yPos = 60;
-  Object.keys(actors).forEach(person => {
+  Object.keys(actors).forEach((person) => {
     const colour = actors[person].color;
 
     const circleData = {
@@ -30,7 +30,7 @@ function drawActorLegend(diagram) {
       r: 7,
       fill: colour,
       stroke: '#000',
-      pos: actors[person].position
+      pos: actors[person].position,
     };
     svgDraw.drawCircle(diagram, circleData);
 
@@ -39,7 +39,7 @@ function drawActorLegend(diagram) {
       y: yPos + 7,
       fill: '#666',
       text: person,
-      textMargin: conf.boxTextMargin | 5
+      textMargin: conf.boxTextMargin | 5,
     };
     svgDraw.drawText(diagram, labelData);
 
@@ -48,7 +48,7 @@ function drawActorLegend(diagram) {
 }
 const conf = getConfig().journey;
 const LEFT_MARGIN = getConfig().journey.leftMargin;
-export const draw = function(text, id) {
+export const draw = function (text, id) {
   const conf = getConfig().journey;
   parser.yy.clear();
   parser.parse(text + '\n');
@@ -65,10 +65,10 @@ export const draw = function(text, id) {
   const actorNames = parser.yy.getActors();
   for (let member in actors) delete actors[member];
   let actorPos = 0;
-  actorNames.forEach(actorName => {
+  actorNames.forEach((actorName) => {
     actors[actorName] = {
       color: conf.actorColours[actorPos % conf.actorColours.length],
-      position: actorPos
+      position: actorPos,
     };
     actorPos++;
   });
@@ -114,29 +114,29 @@ export const bounds = {
     startx: undefined,
     stopx: undefined,
     starty: undefined,
-    stopy: undefined
+    stopy: undefined,
   },
   verticalPos: 0,
 
   sequenceItems: [],
-  init: function() {
+  init: function () {
     this.sequenceItems = [];
     this.data = {
       startx: undefined,
       stopx: undefined,
       starty: undefined,
-      stopy: undefined
+      stopy: undefined,
     };
     this.verticalPos = 0;
   },
-  updateVal: function(obj, key, val, fun) {
+  updateVal: function (obj, key, val, fun) {
     if (typeof obj[key] === 'undefined') {
       obj[key] = val;
     } else {
       obj[key] = fun(val, obj[key]);
     }
   },
-  updateBounds: function(startx, starty, stopx, stopy) {
+  updateBounds: function (startx, starty, stopx, stopy) {
     const conf = getConfig().journey;
     const _self = this;
     let cnt = 0;
@@ -163,7 +163,7 @@ export const bounds = {
 
     this.sequenceItems.forEach(updateFn());
   },
-  insert: function(startx, starty, stopx, stopy) {
+  insert: function (startx, starty, stopx, stopy) {
     const _startx = Math.min(startx, stopx);
     const _stopx = Math.max(startx, stopx);
     const _starty = Math.min(starty, stopy);
@@ -176,22 +176,22 @@ export const bounds = {
 
     this.updateBounds(_startx, _starty, _stopx, _stopy);
   },
-  bumpVerticalPos: function(bump) {
+  bumpVerticalPos: function (bump) {
     this.verticalPos = this.verticalPos + bump;
     this.data.stopy = this.verticalPos;
   },
-  getVerticalPos: function() {
+  getVerticalPos: function () {
     return this.verticalPos;
   },
-  getBounds: function() {
+  getBounds: function () {
     return this.data;
-  }
+  },
 };
 
 const fills = conf.sectionFills;
 const textColours = conf.sectionColours;
 
-export const drawTasks = function(diagram, tasks, verticalPos) {
+export const drawTasks = function (diagram, tasks, verticalPos) {
   const conf = getConfig().journey;
   let lastSection = '';
   const sectionVHeight = conf.height * 2 + conf.diagramMarginY;
@@ -216,7 +216,7 @@ export const drawTasks = function(diagram, tasks, verticalPos) {
         text: task.section,
         fill,
         num,
-        colour
+        colour,
       };
 
       svgDraw.drawSection(diagram, section, conf);
@@ -251,5 +251,5 @@ export const drawTasks = function(diagram, tasks, verticalPos) {
 
 export default {
   setConf,
-  draw
+  draw,
 };

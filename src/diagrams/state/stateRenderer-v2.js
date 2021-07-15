@@ -9,7 +9,7 @@ import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 
 const conf = {};
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
   for (let i = 0; i < keys.length; i++) {
     conf[keys[i]] = cnf[keys[i]];
@@ -22,7 +22,7 @@ let nodeDb = {};
  * Returns the all the styles from classDef statements in the graph definition.
  * @returns {object} classDef styles
  */
-export const getClasses = function(text) {
+export const getClasses = function (text) {
   log.trace('Extracting classes');
   stateDb.clear();
   const parser = state.parser;
@@ -52,7 +52,7 @@ const setupNode = (g, parent, node, altFlag) => {
         id: node.id,
         shape,
         description: node.id,
-        classes: 'statediagram-state'
+        classes: 'statediagram-state',
       };
     }
 
@@ -107,7 +107,7 @@ const setupNode = (g, parent, node, altFlag) => {
       dir: nodeDb[node.id].dir,
       domId: 'state-' + node.id + '-' + cnt,
       type: nodeDb[node.id].type,
-      padding: 15 //getConfig().flowchart.padding
+      padding: 15, //getConfig().flowchart.padding
     };
 
     if (node.note) {
@@ -121,7 +121,7 @@ const setupNode = (g, parent, node, altFlag) => {
         id: node.id + '----note-' + cnt,
         domId: 'state-' + node.id + '----note-' + cnt,
         type: nodeDb[node.id].type,
-        padding: 15 //getConfig().flowchart.padding
+        padding: 15, //getConfig().flowchart.padding
       };
       const groupData = {
         labelStyle: '',
@@ -132,7 +132,7 @@ const setupNode = (g, parent, node, altFlag) => {
         id: node.id + '----parent',
         domId: 'state-' + node.id + '----parent-' + cnt,
         type: 'group',
-        padding: 0 //getConfig().flowchart.padding
+        padding: 0, //getConfig().flowchart.padding
       };
       cnt++;
 
@@ -160,7 +160,7 @@ const setupNode = (g, parent, node, altFlag) => {
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
-        thickness: 'normal'
+        thickness: 'normal',
       });
     } else {
       g.setNode(node.id, nodeData);
@@ -182,7 +182,7 @@ let cnt = 0;
 const setupDoc = (g, parent, doc, altFlag) => {
   // cnt = 0;
   log.trace('items', doc);
-  doc.forEach(item => {
+  doc.forEach((item) => {
     if (item.stmt === 'state' || item.stmt === 'default') {
       setupNode(g, parent, item, altFlag);
     } else if (item.stmt === 'relation') {
@@ -199,7 +199,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
         labelpos: 'c',
         labelType: 'text',
         thickness: 'normal',
-        classes: 'transition'
+        classes: 'transition',
       };
       let startId = item.state1.id;
       let endId = item.state2.id;
@@ -226,7 +226,7 @@ const getDir = (nodes, defaultDir) => {
  * @param text
  * @param id
  */
-export const draw = function(text, id) {
+export const draw = function (text, id) {
   log.info('Drawing state diagram (v2)', id);
   stateDb.clear();
   nodeDb = {};
@@ -253,16 +253,16 @@ export const draw = function(text, id) {
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
     multigraph: true,
-    compound: true
+    compound: true,
   })
     .setGraph({
       rankdir: getDir(stateDb.getRootDocV2()),
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
-      marginy: 8
+      marginy: 8,
     })
-    .setDefaultEdgeLabel(function() {
+    .setDefaultEdgeLabel(function () {
       return {};
     });
 
@@ -317,5 +317,5 @@ export const draw = function(text, id) {
 export default {
   setConf,
   getClasses,
-  draw
+  draw,
 };

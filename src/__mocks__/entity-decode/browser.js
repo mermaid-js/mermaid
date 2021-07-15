@@ -1,3 +1,3 @@
-module.exports = function(txt) {
+module.exports = function (txt) {
   return txt;
 };

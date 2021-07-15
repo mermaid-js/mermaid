@@ -5,7 +5,7 @@ export const LEVELS = {
   info: 2,
   warn: 3,
   error: 4,
-  fatal: 5
+  fatal: 5,
 };
 
 export const log = {
@@ -13,10 +13,10 @@ export const log = {
   info: () => {},
   warn: () => {},
   error: () => {},
-  fatal: () => {}
+  fatal: () => {},
 };
 
-export const setLogLevel = function(level = 'fatal') {
+export const setLogLevel = function (level = 'fatal') {
   if (isNaN(level)) {
     level = level.toLowerCase();
     if (LEVELS[level] !== undefined) {
@@ -56,7 +56,7 @@ export const setLogLevel = function(level = 'fatal') {
   }
 };
 
-const format = level => {
+const format = (level) => {
   const time = moment().format('ss.SSS');
   return `%c${time} : ${level} : `;
 };

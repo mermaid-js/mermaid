@@ -15,7 +15,7 @@ const conf = {};
  * storing it in the local conf object. Note that generic config still needs to be
  * retrieved using getConfig() imported from the config module
  */
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
   for (let i = 0; i < keys.length; i++) {
     conf[keys[i]] = cnf[keys[i]];
@@ -40,7 +40,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
   let cumulativeHeight = labelBBox.height + heightPadding * 2;
   let attrNum = 1;
 
-  attributes.forEach(item => {
+  attributes.forEach((item) => {
     const attrPrefix = `${entityTextNode.node().id}-attr-${attrNum}`;
 
     // Add a text node for the attribute type
@@ -98,7 +98,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     height:
       attributes.length > 0
         ? cumulativeHeight
-        : Math.max(conf.minEntityHeight, labelBBox.height + conf.entityPadding * 2)
+        : Math.max(conf.minEntityHeight, labelBBox.height + conf.entityPadding * 2),
   };
 
   // There might be some spare width for padding out attributes if the entity name is very long
@@ -115,7 +115,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     let heightOffset = labelBBox.height + heightPadding * 2; // Start at the bottom of the entity label
     let attribStyle = 'attributeBoxOdd'; // We will flip the style on alternate rows to achieve a banded effect
 
-    attributeNodes.forEach(nodePair => {
+    attributeNodes.forEach((nodePair) => {
       // Calculate the alignment y co-ordinate for the type/name of the attribute
       const alignY =
         heightOffset +
@@ -182,11 +182,11 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
  * @param graph The graph that contains the vertex and edge definitions post-layout
  * @return The first entity that was inserted
  */
-const drawEntities = function(svgNode, entities, graph) {
+const drawEntities = function (svgNode, entities, graph) {
   const keys = Object.keys(entities);
   let firstOne;
 
-  keys.forEach(function(id) {
+  keys.forEach(function (id) {
     // Create a group for each entity
     const groupNode = svgNode.append('g').attr('id', id);
 
@@ -234,14 +234,14 @@ const drawEntities = function(svgNode, entities, graph) {
       width: rectBBox.width,
       height: rectBBox.height,
       shape: 'rect',
-      id: id
+      id: id,
     });
   });
   return firstOne;
 }; // drawEntities
 
-const adjustEntities = function(svgNode, graph) {
-  graph.nodes().forEach(function(v) {
+const adjustEntities = function (svgNode, graph) {
+  graph.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
       svgNode
         .select('#' + v)
@@ -258,7 +258,7 @@ const adjustEntities = function(svgNode, graph) {
   return;
 };
 
-const getEdgeName = function(rel) {
+const getEdgeName = function (rel) {
   return (rel.entityA + rel.roleA + rel.entityB).replace(/\s/g, '');
 };
 
@@ -268,8 +268,8 @@ const getEdgeName = function(rel) {
  * @param g the graph
  * @return {Array} The array of relationships
  */
-const addRelationships = function(relationships, g) {
-  relationships.forEach(function(r) {
+const addRelationships = function (relationships, g) {
+  relationships.forEach(function (r) {
     g.setEdge(r.entityA, r.entityB, { relationship: r }, getEdgeName(r));
   });
   return relationships;
@@ -283,7 +283,7 @@ let relCnt = 0;
  * @param g the graph containing the edge information
  * @param insert the insertion point in the svg DOM (because relationships have markers that need to sit 'behind' opaque entity boxes)
  */
-const drawRelationshipFromLayout = function(svg, rel, g, insert) {
+const drawRelationshipFromLayout = function (svg, rel, g, insert) {
   relCnt++;
 
   // Find the edge relating to this relationship
@@ -291,10 +291,10 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
 
   // Get a function that will generate the line path
   const lineFunction = line()
-    .x(function(d) {
+    .x(function (d) {
       return d.x;
     })
-    .y(function(d) {
+    .y(function (d) {
       return d.y;
     })
     .curve(curveBasis);
@@ -413,7 +413,7 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
  * @param text the text of the diagram
  * @param id the unique id of the DOM node that contains the diagram
  */
-export const draw = function(text, id) {
+export const draw = function (text, id) {
   log.info('Drawing ER diagram');
   erDb.clear();
   const parser = erParser.parser;
@@ -457,7 +457,7 @@ export const draw = function(text, id) {
   g = new graphlib.Graph({
     multigraph: true,
     directed: true,
-    compound: false
+    compound: false,
   })
     .setGraph({
       rankdir: conf.layoutDirection,
@@ -465,9 +465,9 @@ export const draw = function(text, id) {
       marginy: 20,
       nodesep: 100,
       edgesep: 100,
-      ranksep: 100
+      ranksep: 100,
     })
-    .setDefaultEdgeLabel(function() {
+    .setDefaultEdgeLabel(function () {
       return {};
     });
 
@@ -486,7 +486,7 @@ export const draw = function(text, id) {
   adjustEntities(svg, g);
 
   // Draw the relationships
-  relationships.forEach(function(rel) {
+  relationships.forEach(function (rel) {
     drawRelationshipFromLayout(svg, rel, g, firstEntity);
   });
 
@@ -503,5 +503,5 @@ export const draw = function(text, id) {
 
 export default {
   setConf,
-  draw
+  draw,
 };

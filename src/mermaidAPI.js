@@ -155,19 +155,19 @@ function parse(text) {
   return parser;
 }
 
-export const encodeEntities = function(text) {
+export const encodeEntities = function (text) {
   let txt = text;
 
-  txt = txt.replace(/style.*:\S*#.*;/g, function(s) {
+  txt = txt.replace(/style.*:\S*#.*;/g, function (s) {
     const innerTxt = s.substring(0, s.length - 1);
     return innerTxt;
   });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function(s) {
+  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s) {
     const innerTxt = s.substring(0, s.length - 1);
     return innerTxt;
   });
 
-  txt = txt.replace(/#\w+;/g, function(s) {
+  txt = txt.replace(/#\w+;/g, function (s) {
     const innerTxt = s.substring(1, s.length - 1);
 
     const isInt = /^\+?\d+$/.test(innerTxt);
@@ -181,16 +181,16 @@ export const encodeEntities = function(text) {
   return txt;
 };
 
-export const decodeEntities = function(text) {
+export const decodeEntities = function (text) {
   let txt = text;
 
-  txt = txt.replace(/ﬂ°°/g, function() {
+  txt = txt.replace(/ﬂ°°/g, function () {
     return '&#';
   });
-  txt = txt.replace(/ﬂ°/g, function() {
+  txt = txt.replace(/ﬂ°/g, function () {
     return '&';
   });
-  txt = txt.replace(/¶ß/g, function() {
+  txt = txt.replace(/¶ß/g, function () {
     return ';';
   });
 
@@ -218,7 +218,7 @@ export const decodeEntities = function(text) {
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
  * completed.
  */
-const render = function(id, _txt, cb, container) {
+const render = function (id, _txt, cb, container) {
   configApi.reset();
   let txt = _txt;
   const graphInit = utils.detectInit(txt);
@@ -495,7 +495,7 @@ const render = function(id, _txt, cb, container) {
 
 let currentDirective = {};
 
-const parseDirective = function(p, statement, context, type) {
+const parseDirective = function (p, statement, context, type) {
   try {
     if (statement !== undefined) {
       statement = statement.trim();
@@ -523,12 +523,12 @@ const parseDirective = function(p, statement, context, type) {
   }
 };
 
-const handleDirective = function(p, directive, type) {
+const handleDirective = function (p, directive, type) {
   log.debug(`Directive type=${directive.type} with args:`, directive.args);
   switch (directive.type) {
     case 'init':
     case 'initialize': {
-      ['config'].forEach(prop => {
+      ['config'].forEach((prop) => {
         if (typeof directive.args[prop] !== 'undefined') {
           if (type === 'flowchart-v2') {
             type = 'flowchart';
@@ -646,7 +646,7 @@ const mermaidAPI = Object.freeze({
     configApi.reset(configApi.defaultConfig);
     updateRendererConfigs(configApi.getConfig());
   },
-  defaultConfig: configApi.defaultConfig
+  defaultConfig: configApi.defaultConfig,
 });
 
 setLogLevel(configApi.getConfig().logLevel);

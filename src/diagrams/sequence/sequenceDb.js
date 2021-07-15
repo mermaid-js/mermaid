@@ -11,11 +11,11 @@ let titleWrapped = false;
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
 
-export const parseDirective = function(statement, context, type) {
+export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-export const addActor = function(id, name, description) {
+export const addActor = function (id, name, description) {
   // Don't allow description nulling
   const old = actors[id];
   if (old && name === old.name && description == null) return;
@@ -29,7 +29,7 @@ export const addActor = function(id, name, description) {
     name: name,
     description: description.text,
     wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
-    prevActor: prevActor
+    prevActor: prevActor,
   };
   if (prevActor && actors[prevActor]) {
     actors[prevActor].nextActor = id;
@@ -38,7 +38,7 @@ export const addActor = function(id, name, description) {
   prevActor = id;
 };
 
-const activationCount = part => {
+const activationCount = (part) => {
   let i;
   let count = 0;
   for (i = 0; i < messages.length; i++) {
@@ -56,17 +56,17 @@ const activationCount = part => {
   return count;
 };
 
-export const addMessage = function(idFrom, idTo, message, answer) {
+export const addMessage = function (idFrom, idTo, message, answer) {
   messages.push({
     from: idFrom,
     to: idTo,
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
-    answer: answer
+    answer: answer,
   });
 };
 
-export const addSignal = function(
+export const addSignal = function (
   idFrom,
   idTo,
   message = { text: undefined, wrap: undefined },
@@ -82,7 +82,7 @@ export const addSignal = function(
         token: '->>-',
         line: '1',
         loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
-        expected: ["'ACTIVE_PARTICIPANT'"]
+        expected: ["'ACTIVE_PARTICIPANT'"],
       };
       throw error;
     }
@@ -92,47 +92,47 @@ export const addSignal = function(
     to: idTo,
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
-    type: messageType
+    type: messageType,
   });
   return true;
 };
 
-export const getMessages = function() {
+export const getMessages = function () {
   return messages;
 };
 
-export const getActors = function() {
+export const getActors = function () {
   return actors;
 };
-export const getActor = function(id) {
+export const getActor = function (id) {
   return actors[id];
 };
-export const getActorKeys = function() {
+export const getActorKeys = function () {
   return Object.keys(actors);
 };
-export const getTitle = function() {
+export const getTitle = function () {
   return title;
 };
-export const getTitleWrapped = function() {
+export const getTitleWrapped = function () {
   return titleWrapped;
 };
-export const enableSequenceNumbers = function() {
+export const enableSequenceNumbers = function () {
   sequenceNumbersEnabled = true;
 };
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
 
-export const setWrap = function(wrapSetting) {
+export const setWrap = function (wrapSetting) {
   wrapEnabled = wrapSetting;
 };
 
 export const autoWrap = () => wrapEnabled;
 
-export const clear = function() {
+export const clear = function () {
   actors = {};
   messages = [];
 };
 
-export const parseMessage = function(str) {
+export const parseMessage = function (str) {
   const _str = str.trim();
   const message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
@@ -141,7 +141,7 @@ export const parseMessage = function(str) {
         ? true
         : _str.match(/^[:]?nowrap:/) !== null
         ? false
-        : undefined
+        : undefined,
   };
   log.debug('parseMessage:', message);
   return message;
@@ -170,26 +170,26 @@ export const LINETYPE = {
   RECT_START: 22,
   RECT_END: 23,
   SOLID_POINT: 24,
-  DOTTED_POINT: 25
+  DOTTED_POINT: 25,
 };
 
 export const ARROWTYPE = {
   FILLED: 0,
-  OPEN: 1
+  OPEN: 1,
 };
 
 export const PLACEMENT = {
   LEFTOF: 0,
   RIGHTOF: 1,
-  OVER: 2
+  OVER: 2,
 };
 
-export const addNote = function(actor, placement, message) {
+export const addNote = function (actor, placement, message) {
   const note = {
     actor: actor,
     placement: placement,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
   };
 
   // Coerce actor into a [to, from, ...] array
@@ -202,18 +202,18 @@ export const addNote = function(actor, placement, message) {
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: LINETYPE.NOTE,
-    placement: placement
+    placement: placement,
   });
 };
 
-export const setTitle = function(titleWrap) {
+export const setTitle = function (titleWrap) {
   title = titleWrap.text;
   titleWrapped = (titleWrap.wrap === undefined && autoWrap()) || !!titleWrap.wrap;
 };
 
-export const apply = function(param) {
+export const apply = function (param) {
   if (param instanceof Array) {
-    param.forEach(function(item) {
+    param.forEach(function (item) {
       apply(item);
     });
   } else {
@@ -299,5 +299,5 @@ export default {
   PLACEMENT,
   addNote,
   setTitle,
-  apply
+  apply,
 };

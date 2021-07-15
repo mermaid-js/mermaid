@@ -18,7 +18,7 @@ const question = (parent, node) => {
     { x: s / 2, y: 0 },
     { x: s, y: -s / 2 },
     { x: s / 2, y: -s },
-    { x: 0, y: -s / 2 }
+    { x: 0, y: -s / 2 },
   ];
 
   log.info('Question main (Circle)');
@@ -27,7 +27,7 @@ const question = (parent, node) => {
   questionElem.attr('style', node.style);
   updateNodeBounds(node, questionElem);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     log.warn('Intersect called');
     return intersect.polygon(node, points, point);
   };
@@ -46,27 +46,23 @@ const choice = (parent, node) => {
     { x: 0, y: s / 2 },
     { x: s / 2, y: 0 },
     { x: 0, y: -s / 2 },
-    { x: -s / 2, y: 0 }
+    { x: -s / 2, y: 0 },
   ];
 
   const choice = shapeSvg.insert('polygon', ':first-child').attr(
     'points',
     points
-      .map(function(d) {
+      .map(function (d) {
         return d.x + ',' + d.y;
       })
       .join(' ')
   );
   // center the circle around its coordinate
-  choice
-    .attr('class', 'state-start')
-    .attr('r', 7)
-    .attr('width', 28)
-    .attr('height', 28);
+  choice.attr('class', 'state-start').attr('r', 7).attr('width', 28).attr('height', 28);
   node.width = 28;
   node.height = 28;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.circle(node, 14, point);
   };
 
@@ -86,14 +82,14 @@ const hexagon = (parent, node) => {
     { x: w, y: -h / 2 },
     { x: w - m, y: -h },
     { x: m, y: -h },
-    { x: 0, y: -h / 2 }
+    { x: 0, y: -h / 2 },
   ];
 
   const hex = insertPolygonShape(shapeSvg, w, h, points);
   hex.attr('style', node.style);
   updateNodeBounds(node, hex);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -110,7 +106,7 @@ const rect_left_inv_arrow = (parent, node) => {
     { x: w, y: 0 },
     { x: w, y: -h },
     { x: -h / 2, y: -h },
-    { x: 0, y: -h / 2 }
+    { x: 0, y: -h / 2 },
   ];
 
   const el = insertPolygonShape(shapeSvg, w, h, points);
@@ -119,7 +115,7 @@ const rect_left_inv_arrow = (parent, node) => {
   node.width = w + h;
   node.height = h;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -135,14 +131,14 @@ const lean_right = (parent, node) => {
     { x: (-2 * h) / 6, y: 0 },
     { x: w - h / 6, y: 0 },
     { x: w + (2 * h) / 6, y: -h },
-    { x: h / 6, y: -h }
+    { x: h / 6, y: -h },
   ];
 
   const el = insertPolygonShape(shapeSvg, w, h, points);
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -158,14 +154,14 @@ const lean_left = (parent, node) => {
     { x: (2 * h) / 6, y: 0 },
     { x: w + h / 6, y: 0 },
     { x: w - (2 * h) / 6, y: -h },
-    { x: -h / 6, y: -h }
+    { x: -h / 6, y: -h },
   ];
 
   const el = insertPolygonShape(shapeSvg, w, h, points);
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -181,14 +177,14 @@ const trapezoid = (parent, node) => {
     { x: (-2 * h) / 6, y: 0 },
     { x: w + (2 * h) / 6, y: 0 },
     { x: w - h / 6, y: -h },
-    { x: h / 6, y: -h }
+    { x: h / 6, y: -h },
   ];
 
   const el = insertPolygonShape(shapeSvg, w, h, points);
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -204,14 +200,14 @@ const inv_trapezoid = (parent, node) => {
     { x: h / 6, y: 0 },
     { x: w - h / 6, y: 0 },
     { x: w + (2 * h) / 6, y: -h },
-    { x: (-2 * h) / 6, y: -h }
+    { x: (-2 * h) / 6, y: -h },
   ];
 
   const el = insertPolygonShape(shapeSvg, w, h, points);
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -228,14 +224,14 @@ const rect_right_inv_arrow = (parent, node) => {
     { x: w + h / 2, y: 0 },
     { x: w, y: -h / 2 },
     { x: w + h / 2, y: -h },
-    { x: 0, y: -h }
+    { x: 0, y: -h },
   ];
 
   const el = insertPolygonShape(shapeSvg, w, h, points);
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -285,7 +281,7 @@ const cylinder = (parent, node) => {
 
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     const pos = intersect.rect(node, point);
     const x = pos.x - node.x;
 
@@ -329,7 +325,7 @@ const rect = (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -442,7 +438,7 @@ const rectWithTitle = (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -468,7 +464,7 @@ const stadium = (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -492,7 +488,7 @@ const circle = (parent, node) => {
 
   updateNodeBounds(node, circle);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     log.info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
     return intersect.circle(node, bbox.width / 2 + halfPadding, point);
   };
@@ -515,14 +511,14 @@ const subroutine = (parent, node) => {
     { x: w + 8, y: 0 },
     { x: w + 8, y: -h },
     { x: -8, y: -h },
-    { x: -8, y: 0 }
+    { x: -8, y: 0 },
   ];
 
   const el = insertPolygonShape(shapeSvg, w, h, points);
   el.attr('style', node.style);
   updateNodeBounds(node, el);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.polygon(node, points, point);
   };
 
@@ -537,15 +533,11 @@ const start = (parent, node) => {
   const circle = shapeSvg.insert('circle', ':first-child');
 
   // center the circle around its coordinate
-  circle
-    .attr('class', 'state-start')
-    .attr('r', 7)
-    .attr('width', 14)
-    .attr('height', 14);
+  circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
 
   updateNodeBounds(node, circle);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.circle(node, 7, point);
   };
 
@@ -577,7 +569,7 @@ const forkJoin = (parent, node, dir) => {
   updateNodeBounds(node, shape);
   node.height = node.height + node.padding / 2;
   node.width = node.width + node.padding / 2;
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -592,21 +584,13 @@ const end = (parent, node) => {
   const innerCircle = shapeSvg.insert('circle', ':first-child');
   const circle = shapeSvg.insert('circle', ':first-child');
 
-  circle
-    .attr('class', 'state-start')
-    .attr('r', 7)
-    .attr('width', 14)
-    .attr('height', 14);
+  circle.attr('class', 'state-start').attr('r', 7).attr('width', 14).attr('height', 14);
 
-  innerCircle
-    .attr('class', 'state-end')
-    .attr('r', 5)
-    .attr('width', 10)
-    .attr('height', 10);
+  innerCircle.attr('class', 'state-end').attr('r', 5).attr('width', 10).attr('height', 10);
 
   updateNodeBounds(node, circle);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.circle(node, 7, point);
   };
 
@@ -683,7 +667,7 @@ const class_box = (parent, node) => {
     maxWidth = classTitleBBox.width;
   }
   const classAttributes = [];
-  node.classData.members.forEach(str => {
+  node.classData.members.forEach((str) => {
     const parsedText = parseMember(str).displayText;
     const lbl = labelContainer
       .node()
@@ -706,7 +690,7 @@ const class_box = (parent, node) => {
   maxHeight += lineHeight;
 
   const classMethods = [];
-  node.classData.methods.forEach(str => {
+  node.classData.methods.forEach((str) => {
     const parsedText = parseMember(str).displayText;
     const lbl = labelContainer
       .node()
@@ -761,7 +745,7 @@ const class_box = (parent, node) => {
 
   verticalPos += lineHeight;
 
-  classAttributes.forEach(lbl => {
+  classAttributes.forEach((lbl) => {
     select(lbl).attr(
       'transform',
       'translate( ' +
@@ -783,7 +767,7 @@ const class_box = (parent, node) => {
 
   verticalPos += lineHeight;
 
-  classMethods.forEach(lbl => {
+  classMethods.forEach((lbl) => {
     select(lbl).attr(
       'transform',
       'translate( ' + -maxWidth / 2 + ', ' + ((-1 * maxHeight) / 2 + verticalPos) + ')'
@@ -862,7 +846,7 @@ const class_box = (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 
@@ -890,7 +874,7 @@ const shapes = {
   subroutine,
   fork: forkJoin,
   join: forkJoin,
-  class_box
+  class_box,
 };
 
 let nodeElems = {};
@@ -930,7 +914,7 @@ export const clear = () => {
   nodeElems = {};
 };
 
-export const positionNode = node => {
+export const positionNode = (node) => {
   const el = nodeElems[node.id];
   log.trace(
     'Transforming node',

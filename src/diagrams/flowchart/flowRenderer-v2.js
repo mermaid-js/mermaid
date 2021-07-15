@@ -12,7 +12,7 @@ import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 
 const conf = {};
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
   for (let i = 0; i < keys.length; i++) {
     conf[keys[i]] = cnf[keys[i]];
@@ -24,12 +24,12 @@ export const setConf = function(cnf) {
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
-export const addVertices = function(vert, g, svgId) {
+export const addVertices = function (vert, g, svgId) {
   const svg = select(`[id="${svgId}"]`);
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function(id) {
+  keys.forEach(function (id) {
     const vertex = vert[id];
 
     /**
@@ -53,8 +53,8 @@ export const addVertices = function(vert, g, svgId) {
       const node = {
         label: vertexText.replace(
           /fa[lrsb]?:fa-[\w-]+/g,
-          s => `<i class='${s.replace(':', ' ')}'></i>`
-        )
+          (s) => `<i class='${s.replace(':', ' ')}'></i>`
+        ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
@@ -149,7 +149,7 @@ export const addVertices = function(vert, g, svgId) {
       width: vertex.type === 'group' ? 500 : undefined,
       dir: vertex.dir,
       type: vertex.type,
-      padding: getConfig().flowchart.padding
+      padding: getConfig().flowchart.padding,
     });
 
     log.info('setNode', {
@@ -165,7 +165,7 @@ export const addVertices = function(vert, g, svgId) {
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       dir: vertex.dir,
-      padding: getConfig().flowchart.padding
+      padding: getConfig().flowchart.padding,
     });
   });
 };
@@ -175,7 +175,7 @@ export const addVertices = function(vert, g, svgId) {
  * @param {Object} edges The edges to add to the graph
  * @param {Object} g The graph object
  */
-export const addEdges = function(edges, g) {
+export const addEdges = function (edges, g) {
   log.info('abc78 edges = ', edges);
   let cnt = 0;
   let linkIdCnt = {};
@@ -189,7 +189,7 @@ export const addEdges = function(edges, g) {
     defaultLabelStyle = defaultStyles.labelStyle;
   }
 
-  edges.forEach(function(edge) {
+  edges.forEach(function (edge) {
     cnt++;
 
     // Identify Link
@@ -319,7 +319,7 @@ export const addEdges = function(edges, g) {
  * Returns the all the styles from classDef statements in the graph definition.
  * @returns {object} classDef styles
  */
-export const getClasses = function(text) {
+export const getClasses = function (text) {
   log.info('Extracting classes');
   flowDb.clear();
   const parser = flow.parser;
@@ -341,7 +341,7 @@ export const getClasses = function(text) {
  * @param id
  */
 
-export const draw = function(text, id) {
+export const draw = function (text, id) {
   log.info('Drawing flowchart');
   flowDb.clear();
   flowDb.setGen('gen-2');
@@ -368,16 +368,16 @@ export const draw = function(text, id) {
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
     multigraph: true,
-    compound: true
+    compound: true,
   })
     .setGraph({
       rankdir: dir,
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
-      marginy: 8
+      marginy: 8,
     })
-    .setDefaultEdgeLabel(function() {
+    .setDefaultEdgeLabel(function () {
       return {};
     });
 
@@ -463,7 +463,7 @@ export const draw = function(text, id) {
 
   // If node has a link, wrap it in an anchor SVG object.
   const keys = Object.keys(vert);
-  keys.forEach(function(key) {
+  keys.forEach(function (key) {
     const vertex = vert[key];
 
     if (vertex.link) {
@@ -477,20 +477,20 @@ export const draw = function(text, id) {
           link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
         }
 
-        const linkNode = node.insert(function() {
+        const linkNode = node.insert(function () {
           return link;
         }, ':first-child');
 
         const shape = node.select('.label-container');
         if (shape) {
-          linkNode.append(function() {
+          linkNode.append(function () {
             return shape.node();
           });
         }
 
         const label = node.select('.label');
         if (label) {
-          linkNode.append(function() {
+          linkNode.append(function () {
             return label.node();
           });
         }
@@ -504,5 +504,5 @@ export default {
   addVertices,
   addEdges,
   getClasses,
-  draw
+  draw,
 };
