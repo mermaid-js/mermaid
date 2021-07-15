@@ -41,7 +41,7 @@ module.exports = {
     extensions: ['.wasm', '.mjs', '.js', '.json', '.jison']
   },
   node: {
-      fs: 'empty' // jison generated code requires 'fs'
+    fs: 'empty' // jison generated code requires 'fs'
   },
   output: {
     path: path.join(__dirname, './dist/'),
