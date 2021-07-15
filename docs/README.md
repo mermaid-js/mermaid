@@ -42,7 +42,7 @@ For a more detailed introduction to Mermaid and some of it's more basic uses, lo
 
 # Diagram Types
 
-### [Flowchart](./flowchart.md?id=flowcharts-basic-syntax)
+### [Flowchart](/flowchart?id=flowcharts-basic-syntax)
 
 ```
 graph TD;
@@ -54,7 +54,7 @@ graph TD;
 
 ![Flowchart](img/flow.png)
 
-### [Sequence diagram](./sequenceDiagram.md)
+### [Sequence diagram](/sequenceDiagram)
 
 ```
 sequenceDiagram
@@ -72,7 +72,7 @@ sequenceDiagram
 
 ![Sequence diagram](img/sequence.png)
 
-### [Gantt diagram](./gantt.md)
+### [Gantt diagram](/gantt)
 
 ```
 gantt
@@ -89,7 +89,7 @@ Future task2               :         des4, after des3, 5d
 
 ![Gantt diagram](img/gantt.png)
 
-### [Class diagram](./classDiagram.md)
+### [Class diagram](/classDiagram)
 
 ```
 classDiagram
@@ -133,7 +133,7 @@ merge newbranch
 ```
 ![Git graph](img/git.png)
 
-### [Entity Relationship Diagram - :exclamation: experimental](./entityRelationshipDiagram.md)
+### [Entity Relationship Diagram - :exclamation: experimental](/entityRelationshipDiagram)
 
 ```
 erDiagram
@@ -145,7 +145,7 @@ erDiagram
 
 ![ER diagram](img/simple-er.png)
 
-### [User Journey Diagram](./user-journey.md)
+### [User Journey Diagram](/user-journey)
 
 ```markdown
 journey
