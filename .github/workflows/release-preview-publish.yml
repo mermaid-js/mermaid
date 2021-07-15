@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.3.4
     - name: Setup Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2.2.0
       with:
         node-version: 10.x
     - name: Install Yarn
