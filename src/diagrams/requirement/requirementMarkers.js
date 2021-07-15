@@ -1,6 +1,6 @@
 const ReqMarkers = {
   CONTAINS: 'contains',
-  ARROW: 'arrow'
+  ARROW: 'arrow',
 };
 
 const insertLineEndings = (parentNode, conf) => {
@@ -65,5 +65,5 @@ const insertLineEndings = (parentNode, conf) => {
 
 export default {
   ReqMarkers,
-  insertLineEndings
+  insertLineEndings,
 };

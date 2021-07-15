@@ -242,7 +242,7 @@ describe('when using the ganttDb', function() {
     expect(tasks[5].order).toEqual(5);
     expect(tasks[5].id).toEqual('task2');
     expect(tasks[5].task).toEqual('Implement parser and jison');
-    
+
     expect(tasks[6].startTime).toEqual(moment('2014-01-10', 'YYYY-MM-DD').toDate());
     expect(tasks[6].endTime).toEqual(moment('2014-01-13', 'YYYY-MM-DD').toDate());
     expect(tasks[6].order).toEqual(6);

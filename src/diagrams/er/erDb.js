@@ -13,19 +13,19 @@ const Cardinality = {
   ZERO_OR_ONE: 'ZERO_OR_ONE',
   ZERO_OR_MORE: 'ZERO_OR_MORE',
   ONE_OR_MORE: 'ONE_OR_MORE',
-  ONLY_ONE: 'ONLY_ONE'
+  ONLY_ONE: 'ONLY_ONE',
 };
 
 const Identification = {
   NON_IDENTIFYING: 'NON_IDENTIFYING',
-  IDENTIFYING: 'IDENTIFYING'
+  IDENTIFYING: 'IDENTIFYING',
 };
 
-export const parseDirective = function(statement, context, type) {
+export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-const addEntity = function(name) {
+const addEntity = function (name) {
   if (typeof entities[name] === 'undefined') {
     entities[name] = { attributes: [] };
     log.info('Added new entity :', name);
@@ -36,7 +36,7 @@ const addEntity = function(name) {
 
 const getEntities = () => entities;
 
-const addAttributes = function(entityName, attribs) {
+const addAttributes = function (entityName, attribs) {
   let entity = addEntity(entityName); // May do nothing (if entity has already been added)
 
   // Process attribs in reverse order due to effect of recursive construction (last attribute is first)
@@ -54,12 +54,12 @@ const addAttributes = function(entityName, attribs) {
  * @param entB The second entity in the relationship
  * @param rSpec The details of the relationship between the two entities
  */
-const addRelationship = function(entA, rolA, entB, rSpec) {
+const addRelationship = function (entA, rolA, entB, rSpec) {
   let rel = {
     entityA: entA,
     roleA: rolA,
     entityB: entB,
-    relSpec: rSpec
+    relSpec: rSpec,
   };
 
   relationships.push(rel);
@@ -69,15 +69,15 @@ const addRelationship = function(entA, rolA, entB, rSpec) {
 const getRelationships = () => relationships;
 
 // Keep this - TODO: revisit...allow the diagram to have a title
-const setTitle = function(txt) {
+const setTitle = function (txt) {
   title = txt;
 };
 
-const getTitle = function() {
+const getTitle = function () {
   return title;
 };
 
-const clear = function() {
+const clear = function () {
   entities = {};
   relationships = [];
   title = '';
@@ -95,5 +95,5 @@ export default {
   getRelationships,
   clear,
   setTitle,
-  getTitle
+  getTitle,
 };

@@ -240,7 +240,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     r = (R * q) / Q;
     const res = {
       x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - R + r,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + Q - q : insidePoint.y - Q + q,
     };
 
     if (r === 0) {
@@ -298,7 +298,7 @@ const cutPathAtIntersect = (_points, boundryNode) => {
   let points = [];
   let lastPointOutside = _points[0];
   let isInside = false;
-  _points.forEach(point => {
+  _points.forEach((point) => {
     // const node = clusterDb[edge.toCluster].node;
     log.info('abc88 checking point', point, boundryNode);
 
@@ -312,11 +312,11 @@ const cutPathAtIntersect = (_points, boundryNode) => {
 
       // // Check case where the intersection is the same as the last point
       let pointPresent = false;
-      points.forEach(p => {
+      points.forEach((p) => {
         pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
       });
       // // if (!pointPresent) {
-      if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+      if (!points.find((e) => e.x === inter.x && e.y === inter.y)) {
         points.push(inter);
       } else {
         log.warn('abc88 no intersect', inter, points);
@@ -336,7 +336,7 @@ const cutPathAtIntersect = (_points, boundryNode) => {
 };
 
 //(edgePaths, e, edge, clusterDb, diagramtype, graph)
-export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph) {
+export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph) {
   let points = edge.points;
   let pointsHasChanged = false;
   const tail = graph.node(e.v);
@@ -437,7 +437,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   }
 
   // The data for our line
-  const lineData = points.filter(p => !Number.isNaN(p.y));
+  const lineData = points.filter((p) => !Number.isNaN(p.y));
 
   // This is the accessor function we talked about above
   let curve;
@@ -451,10 +451,10 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
   }
   // curve = curveLinear;
   const lineFunction = line()
-    .x(function(d) {
+    .x(function (d) {
       return d.x;
     })
-    .y(function(d) {
+    .y(function (d) {
       return d.y;
     })
     .curve(curve);

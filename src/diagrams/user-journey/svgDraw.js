@@ -1,6 +1,6 @@
 import { arc as d3arc } from 'd3';
 
-export const drawRect = function(elem, rectData) {
+export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
   rectElem.attr('x', rectData.x);
   rectElem.attr('y', rectData.y);
@@ -18,7 +18,7 @@ export const drawRect = function(elem, rectData) {
   return rectElem;
 };
 
-export const drawFace = function(element, faceData) {
+export const drawFace = function (element, faceData) {
   const radius = 15;
   const circleElement = element
     .append('circle')
@@ -104,7 +104,7 @@ export const drawFace = function(element, faceData) {
   return circleElement;
 };
 
-export const drawCircle = function(element, circleData) {
+export const drawCircle = function (element, circleData) {
   const circleElement = element.append('circle');
   circleElement.attr('cx', circleData.cx);
   circleElement.attr('cy', circleData.cy);
@@ -124,7 +124,7 @@ export const drawCircle = function(element, circleData) {
   return circleElement;
 };
 
-export const drawText = function(elem, textData) {
+export const drawText = function (elem, textData) {
   // Remove and ignore br:s
   const nText = textData.text.replace(/<br\s*\/?>/gi, ' ');
 
@@ -146,7 +146,7 @@ export const drawText = function(elem, textData) {
   return textElem;
 };
 
-export const drawLabel = function(elem, txtObject) {
+export const drawLabel = function (elem, txtObject) {
   function genPoints(x, y, width, height, cut) {
     return (
       x +
@@ -179,7 +179,7 @@ export const drawLabel = function(elem, txtObject) {
   drawText(elem, txtObject);
 };
 
-export const drawSection = function(elem, section, conf) {
+export const drawSection = function (elem, section, conf) {
   const g = elem.append('g');
 
   const rect = getNoteRect();
@@ -213,7 +213,7 @@ let taskCount = -1;
  * @param task The task to render
  * @param conf The global configuration
  */
-export const drawTask = function(elem, task, conf) {
+export const drawTask = function (elem, task, conf) {
   const center = task.x + conf.width / 2;
   const g = elem.append('g');
   taskCount++;
@@ -232,7 +232,7 @@ export const drawTask = function(elem, task, conf) {
   drawFace(g, {
     cx: center,
     cy: 300 + (5 - task.score) * 30,
-    score: task.score
+    score: task.score,
   });
 
   const rect = getNoteRect();
@@ -247,7 +247,7 @@ export const drawTask = function(elem, task, conf) {
   drawRect(g, rect);
 
   let xPos = task.x + 14;
-  task.people.forEach(person => {
+  task.people.forEach((person) => {
     const colour = task.actors[person].color;
 
     const circle = {
@@ -257,7 +257,7 @@ export const drawTask = function(elem, task, conf) {
       fill: colour,
       stroke: '#000',
       title: person,
-      pos: task.actors[person].position
+      pos: task.actors[person].position,
     };
 
     drawCircle(g, circle);
@@ -282,19 +282,19 @@ export const drawTask = function(elem, task, conf) {
  * @param elem The html element
  * @param bounds The bounds of the drawing
  */
-export const drawBackgroundRect = function(elem, bounds) {
+export const drawBackgroundRect = function (elem, bounds) {
   const rectElem = drawRect(elem, {
     x: bounds.startx,
     y: bounds.starty,
     width: bounds.stopx - bounds.startx,
     height: bounds.stopy - bounds.starty,
     fill: bounds.fill,
-    class: 'rect'
+    class: 'rect',
   });
   rectElem.lower();
 };
 
-export const getTextObj = function() {
+export const getTextObj = function () {
   return {
     x: 0,
     y: 0,
@@ -304,11 +304,11 @@ export const getTextObj = function() {
     height: 100,
     textMargin: 0,
     rx: 0,
-    ry: 0
+    ry: 0,
   };
 };
 
-export const getNoteRect = function() {
+export const getNoteRect = function () {
   return {
     x: 0,
     y: 0,
@@ -316,11 +316,11 @@ export const getNoteRect = function() {
     anchor: 'start',
     height: 100,
     rx: 0,
-    ry: 0
+    ry: 0,
   };
 };
 
-const _drawTextCandidateFunc = (function() {
+const _drawTextCandidateFunc = (function () {
   function byText(content, g, x, y, width, height, textAttrs, colour) {
     const text = g
       .append('text')
@@ -400,12 +400,12 @@ const _drawTextCandidateFunc = (function() {
     }
   }
 
-  return function(conf) {
+  return function (conf) {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
 
-const initGraphics = function(graphics) {
+const initGraphics = function (graphics) {
   graphics
     .append('defs')
     .append('marker')
@@ -429,5 +429,5 @@ export default {
   drawBackgroundRect,
   getTextObj,
   getNoteRect,
-  initGraphics
+  initGraphics,
 };

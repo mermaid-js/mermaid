@@ -10,12 +10,12 @@ import config from './defaultConfig';
 // import themeForestVariables from './theme-forest';
 // import themeNeutralVariables from './theme-neutral';
 
-const handleThemeVariables = value => {
+const handleThemeVariables = (value) => {
   return theme[value] ? theme[value].getThemeVariables() : theme.default.getThemeVariables();
 };
 
 const manipulators = {
-  themeVariables: handleThemeVariables
+  themeVariables: handleThemeVariables,
 };
 
 // debugger;
@@ -40,10 +40,10 @@ const currentConfig = assignWithDepth({}, defaultConfig);
  * @param conf - the base currentConfig to use as siteConfig
  * @returns {*} - the siteConfig
  */
-export const setSiteConfig = conf => {
+export const setSiteConfig = (conf) => {
   console.log('setSiteConfig');
 
-  Object.keys(conf).forEach(key => {
+  Object.keys(conf).forEach((key) => {
     const manipulator = manipulators[key];
     conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
   });
@@ -78,10 +78,10 @@ export const getSiteConfig = () => {
  * @param conf - the potential currentConfig
  * @returns {*} - the currentConfig merged with the sanitized conf
  */
-export const setConfig = conf => {
+export const setConfig = (conf) => {
   console.log('setConfig');
   sanitize(conf);
-  Object.keys(conf).forEach(key => {
+  Object.keys(conf).forEach((key) => {
     const manipulator = manipulators[key];
     conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
   });
@@ -110,8 +110,8 @@ export const getConfig = () => {
  *Note: modifies options in-place
  * @param options - the potential setConfig parameter
  */
-export const sanitize = options => {
-  Object.keys(siteConfig.secure).forEach(key => {
+export const sanitize = (options) => {
+  Object.keys(siteConfig.secure).forEach((key) => {
     if (typeof options[siteConfig.secure[key]] !== 'undefined') {
       // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
@@ -139,8 +139,8 @@ export const sanitize = options => {
  */
 export const reset = (conf = getSiteConfig()) => {
   console.warn('reset');
-  Object.keys(siteConfig).forEach(key => delete siteConfig[key]);
-  Object.keys(currentConfig).forEach(key => delete currentConfig[key]);
+  Object.keys(siteConfig).forEach((key) => delete siteConfig[key]);
+  Object.keys(currentConfig).forEach((key) => delete currentConfig[key]);
   assignWithDepth(siteConfig, conf, { clobber: true });
   assignWithDepth(currentConfig, conf, { clobber: true });
 };
@@ -152,6 +152,6 @@ const configApi = Object.freeze({
   setConfig,
   getConfig,
   reset,
-  defaultConfig
+  defaultConfig,
 });
 export default configApi;

@@ -8,11 +8,11 @@ const sections = [];
 const tasks = [];
 const rawTasks = [];
 
-export const parseDirective = function(statement, context, type) {
+export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-export const clear = function() {
+export const clear = function () {
   sections.length = 0;
   tasks.length = 0;
   currentSection = '';
@@ -20,24 +20,24 @@ export const clear = function() {
   rawTasks.length = 0;
 };
 
-export const setTitle = function(txt) {
+export const setTitle = function (txt) {
   title = txt;
 };
 
-export const getTitle = function() {
+export const getTitle = function () {
   return title;
 };
 
-export const addSection = function(txt) {
+export const addSection = function (txt) {
   currentSection = txt;
   sections.push(txt);
 };
 
-export const getSections = function() {
+export const getSections = function () {
   return sections;
 };
 
-export const getTasks = function() {
+export const getTasks = function () {
   let allItemsProcessed = compileTasks();
   const maxDepth = 100;
   let iterationCount = 0;
@@ -51,9 +51,9 @@ export const getTasks = function() {
   return tasks;
 };
 
-const updateActors = function() {
+const updateActors = function () {
   const tempActors = [];
-  tasks.forEach(task => {
+  tasks.forEach((task) => {
     if (task.people) {
       tempActors.push(...task.people);
     }
@@ -63,7 +63,7 @@ const updateActors = function() {
   return [...unique].sort();
 };
 
-export const addTask = function(descr, taskData) {
+export const addTask = function (descr, taskData) {
   const pieces = taskData.substr(1).split(':');
 
   let score = 0;
@@ -75,32 +75,32 @@ export const addTask = function(descr, taskData) {
     score = Number(pieces[0]);
     peeps = pieces[1].split(',');
   }
-  const peopleList = peeps.map(s => s.trim());
+  const peopleList = peeps.map((s) => s.trim());
 
   const rawTask = {
     section: currentSection,
     type: currentSection,
     people: peopleList,
     task: descr,
-    score
+    score,
   };
 
   rawTasks.push(rawTask);
 };
 
-export const addTaskOrg = function(descr) {
+export const addTaskOrg = function (descr) {
   const newTask = {
     section: currentSection,
     type: currentSection,
     description: descr,
     task: descr,
-    classes: []
+    classes: [],
   };
   tasks.push(newTask);
 };
 
-const compileTasks = function() {
-  const compileTask = function(pos) {
+const compileTasks = function () {
+  const compileTask = function (pos) {
     return rawTasks[pos].processed;
   };
 
@@ -113,7 +113,7 @@ const compileTasks = function() {
   return allProcessed;
 };
 
-const getActors = function() {
+const getActors = function () {
   return updateActors();
 };
 
@@ -128,5 +128,5 @@ export default {
   getTasks,
   addTask,
   addTaskOrg,
-  getActors
+  getActors,
 };

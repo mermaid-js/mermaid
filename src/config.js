@@ -55,7 +55,7 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  * @param conf - the base currentConfig to use as siteConfig
  * @returns {*} - the siteConfig
  */
-export const setSiteConfig = conf => {
+export const setSiteConfig = (conf) => {
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
 
@@ -67,11 +67,11 @@ export const setSiteConfig = conf => {
   return siteConfig;
 };
 
-export const saveConfigFromInitilize = conf => {
+export const saveConfigFromInitilize = (conf) => {
   configFromInitialize = assignWithDepth({}, conf);
 };
 
-export const updateSiteConfig = conf => {
+export const updateSiteConfig = (conf) => {
   siteConfig = assignWithDepth(siteConfig, conf);
   updateCurrentConfig(siteConfig, directives);
 
@@ -101,7 +101,7 @@ export const getSiteConfig = () => {
  * @param conf - the potential currentConfig
  * @returns {*} - the currentConfig merged with the sanitized conf
  */
-export const setConfig = conf => {
+export const setConfig = (conf) => {
   // sanitize(conf);
   // Object.keys(conf).forEach(key => {
   //   const manipulator = manipulators[key];
@@ -134,9 +134,9 @@ export const getConfig = () => {
  *Note: modifies options in-place
  * @param options - the potential setConfig parameter
  */
-export const sanitize = options => {
+export const sanitize = (options) => {
   // Checking that options are not in the list of excluded options
-  Object.keys(siteConfig.secure).forEach(key => {
+  Object.keys(siteConfig.secure).forEach((key) => {
     if (typeof options[siteConfig.secure[key]] !== 'undefined') {
       // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
@@ -149,14 +149,14 @@ export const sanitize = options => {
   });
 
   // Check that there no attempts of prototype pollution
-  Object.keys(options).forEach(key => {
+  Object.keys(options).forEach((key) => {
     if (key.indexOf('__') === 0) {
       delete options[key];
     }
   });
   // Check that there no attempts of xss, there should be no tags at all in the directive
   // blocking data urls as base64 urls can contain svgs with inline script tags
-  Object.keys(options).forEach(key => {
+  Object.keys(options).forEach((key) => {
     if (typeof options[key] === 'string') {
       if (
         options[key].indexOf('<') > -1 ||
@@ -172,7 +172,7 @@ export const sanitize = options => {
   });
 };
 
-export const addDirective = directive => {
+export const addDirective = (directive) => {
   if (directive.fontFamily) {
     if (!directive.themeVariables) {
       directive.themeVariables = { fontFamily: directive.fontFamily };

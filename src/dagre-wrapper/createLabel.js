@@ -95,9 +95,9 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
       isNode,
       label: vertexText.replace(
         /fa[lrsb]?:fa-[\w-]+/g,
-        s => `<i class='${s.replace(':', ' ')}'></i>`
+        (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
-      labelStyle: style.replace('fill:', 'color:')
+      labelStyle: style.replace('fill:', 'color:'),
     };
     let vertexNode = addHtmlLabel(node);
     // vertexNode.parentNode.removeChild(vertexNode);

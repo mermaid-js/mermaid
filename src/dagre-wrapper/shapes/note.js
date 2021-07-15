@@ -19,7 +19,7 @@ const note = (parent, node) => {
 
   updateNodeBounds(node, rect);
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersect.rect(node, point);
   };
 

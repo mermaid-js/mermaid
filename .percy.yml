@@ -1,3 +1,6 @@
-version: 1
+version: 2
 snapshot:
-  widths: [1280]
+  widths:
+    - 1280
+discovery:
+  disable-cache: true

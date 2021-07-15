@@ -16,10 +16,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
     .attr('id', node.domId || node.id);
 
   // Create the label and insert it after the rect
-  const label = shapeSvg
-    .insert('g')
-    .attr('class', 'label')
-    .attr('style', node.labelStyle);
+  const label = shapeSvg.insert('g').attr('class', 'label').attr('style', node.labelStyle);
 
   const text = label
     .node()
@@ -56,7 +53,7 @@ export function insertPolygonShape(parent, w, h, points) {
     .attr(
       'points',
       points
-        .map(function(d) {
+        .map(function (d) {
           return d.x + ',' + d.y;
         })
         .join(' ')

@@ -174,7 +174,7 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
 
 ## 4. Adding Mermaid as a dependency.
 
-1. install node v10 or 12, which would have npm
+1. install node v16, which would have npm
 
 2. download yarn using npm by entering the command below:
    npm install -g yarn

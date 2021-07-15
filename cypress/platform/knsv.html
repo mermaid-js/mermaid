@@ -65,13 +65,12 @@ stateDiagram-v2
   }
 
 </div>
+&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A&#x61&#x6C&#x65&#x72&#x74&#x28&#x27&#x58&#x53&#x53&#x27&#x29
 <div class="mermaid" style="width: 100%; height: 20%;">
-stateDiagram-v2
-state CompositeState {
-state AnotherCompositeState1234567890 {
-YourState
-}
-}
+flowchart TD
+  Link --> b
+  click Link href "&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A&#x61&#x6C&#x65&#x72&#x74&#x28&#x27&#x58&#x53&#x53&#x27&#x29" "Tooltip for
+Amet"
   </div>
 <div class="mermaid2" style="width: 100%; height: 20%;">
 stateDiagram-v2
@@ -81,7 +80,7 @@ YourState
 }
 }
   </div>
-<div class="mermaid" style="width: 100%; height: 20%;">
+<div class="mermaid2" style="width: 100%; height: 20%;">
       stateDiagram-v2
         [*] --> Active
 
@@ -109,7 +108,7 @@ YourState
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'default',
+        theme: 'base',
         arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 2,
@@ -125,7 +124,7 @@ YourState
           rankSpacing: 50,
           defaultRenderer: 'dagre-wrapper',
         },
-
+        logLevel:0,
         fontSize: 18,
         curve: 'cardinal',
         securityLevel: 'loose',
