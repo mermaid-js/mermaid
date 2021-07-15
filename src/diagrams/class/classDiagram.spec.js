@@ -2,6 +2,8 @@
 import { parser } from './parser/classDiagram';
 import classDb from './classDb';
 
+const spyOn = jest.spyOn;
+
 describe('class diagram, ', function () {
   describe('when parsing an info graph it', function () {
     beforeEach(function () {

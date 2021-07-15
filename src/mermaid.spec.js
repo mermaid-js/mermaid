@@ -4,6 +4,8 @@ import flowDb from './diagrams/flowchart/flowDb';
 import flowParser from './diagrams/flowchart/parser/flow';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 
+const spyOn = jest.spyOn;
+
 describe('when using mermaid and ', function() {
   describe('when detecting chart type ', function() {
     it('should not start rendering with mermaid.startOnLoad set to false', function() {

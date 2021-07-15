@@ -96,43 +96,55 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/@braintree/sanitize-url/dist/index.js":
-/*!************************************************************!*\
-  !*** ./node_modules/@braintree/sanitize-url/dist/index.js ***!
-  \************************************************************/
+/***/ "./node_modules/@braintree/sanitize-url/index.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/@braintree/sanitize-url/index.js ***!
+  \*******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.sanitizeUrl = void 0;
-var invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
-var ctrlCharactersRegex = /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim;
+
+var invalidPrototcolRegex = /^(%20|\s)*(javascript|data)/im;
+var ctrlCharactersRegex = /[^\x20-\x7E]/gmi;
 var urlSchemeRegex = /^([^:]+):/gm;
-var relativeFirstCharacters = [".", "/"];
-function isRelativeUrlWithoutProtocol(url) {
-    return relativeFirstCharacters.indexOf(url[0]) > -1;
+var relativeFirstCharacters = ['.', '/']
+
+function isRelativeUrl(url) {
+  return relativeFirstCharacters.indexOf(url[0]) > -1;
 }
+
 function sanitizeUrl(url) {
-    if (!url) {
-        return "about:blank";
-    }
-    var sanitizedUrl = url.replace(ctrlCharactersRegex, "").trim();
-    if (isRelativeUrlWithoutProtocol(sanitizedUrl)) {
-        return sanitizedUrl;
-    }
-    var urlSchemeParseResults = sanitizedUrl.match(urlSchemeRegex);
-    if (!urlSchemeParseResults) {
-        return sanitizedUrl;
-    }
-    var urlScheme = urlSchemeParseResults[0];
-    if (invalidProtocolRegex.test(urlScheme)) {
-        return "about:blank";
-    }
+  if (!url) {
+    return 'about:blank';
+  }
+
+  var urlScheme, urlSchemeParseResults;
+  var sanitizedUrl = url.replace(ctrlCharactersRegex, '').trim();
+
+  if (isRelativeUrl(sanitizedUrl)) {
     return sanitizedUrl;
+  }
+
+  urlSchemeParseResults = sanitizedUrl.match(urlSchemeRegex);
+
+  if (!urlSchemeParseResults) {
+    return 'about:blank';
+  }
+
+  urlScheme = urlSchemeParseResults[0];
+
+  if (invalidPrototcolRegex.test(urlScheme)) {
+    return 'about:blank';
+  }
+
+  return sanitizedUrl;
 }
-exports.sanitizeUrl = sanitizeUrl;
+
+module.exports = {
+  sanitizeUrl: sanitizeUrl
+};
 
 
 /***/ }),
@@ -49056,7 +49068,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.11.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^5.0.2\",\"@percy/migrate\":\"^0.10.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"7.6.0\",\"documentation\":\"^12.0.1\",\"dompurify\":\"2.3.0\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"minify\":\"^4.1.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^1.18.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^4.4.2\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.11.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"@percy/migrate\":\"^0.10.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"7.6.0\",\"documentation\":\"^12.0.1\",\"dompurify\":\"2.3.0\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"minify\":\"^4.1.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^1.18.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^4.4.2\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -60496,7 +60508,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindFunctions", function() { return bindFunctions; });
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment-mini */ "./node_modules/moment-mini/moment.min.js");
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment_mini__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @braintree/sanitize-url */ "./node_modules/@braintree/sanitize-url/dist/index.js");
+/* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @braintree/sanitize-url */ "./node_modules/@braintree/sanitize-url/index.js");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
@@ -75696,7 +75708,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "configureSvgSize", function() { return configureSvgSize; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initIdGeneratior", function() { return initIdGeneratior; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "entityDecode", function() { return entityDecode; });
-/* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @braintree/sanitize-url */ "./node_modules/@braintree/sanitize-url/dist/index.js");
+/* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @braintree/sanitize-url */ "./node_modules/@braintree/sanitize-url/index.js");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./diagrams/common/common */ "./src/diagrams/common/common.js");

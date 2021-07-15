@@ -48,7 +48,7 @@
     ]
   },
   "dependencies": {
-    "@braintree/sanitize-url": "^5.0.2",
+    "@braintree/sanitize-url": "^3.1.0",
     "@percy/migrate": "^0.10.0",
     "d3": "^5.7.0",
     "dagre": "^0.8.5",
@@ -66,7 +66,7 @@
     "@percy/cypress": "^3.1.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
-    "babel-jest": "^24.9.0",
+    "babel-jest": "^27.0.6",
     "babel-loader": "^8.2.2",
     "coveralls": "^3.0.2",
     "css-to-string-loader": "^0.1.3",
@@ -78,7 +78,7 @@
     "eslint-plugin-prettier": "^3.1.0",
     "husky": "^1.2.1",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^24.9.0",
+    "jest": "^27.0.6",
     "jison": "^0.4.18",
     "js-base64": "3.6.1",
     "minify": "^4.1.1",
