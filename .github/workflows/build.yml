@@ -20,7 +20,7 @@ jobs:
       run: npm i yarn --global
 
     - name: Cache Node Modules
-      uses: actions/cache@v2.1.5
+      uses: actions/cache@v2.1.6
       with:
         path: .cache
         key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
@@ -36,7 +36,7 @@ jobs:
       run: yarn build
 
     - name: Upload Build as Artifact
-      uses: actions/upload-artifact@v2.2.3
+      uses: actions/upload-artifact@v2.2.4
       with:
         name: dist
         path: dist
