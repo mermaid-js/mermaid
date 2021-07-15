@@ -43,9 +43,11 @@ export const jsConfig = () => {
     resolve: {
       extensions: ['.wasm', '.mjs', '.js', '.json', '.jison']
     },
-    node: {
-      fs: 'empty' // jison generated code requires 'fs'
-    },
+    resolve: {
+      fallback: {
+        fs: false // jison generated code requires 'fs'
+      }
+    }, 
     output: {
       path: path.join(__dirname, './dist/'),
       filename: '[name].js',
