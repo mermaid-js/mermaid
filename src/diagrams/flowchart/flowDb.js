@@ -306,6 +306,9 @@ export const setLink = function (ids, linkStr, target) {
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = utils.formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
+    } else if (typeof subGraphs[getPosForId(id)] !== 'undefined') {
+      subGraphs[getPosForId(id)].link = utils.formatUrl(linkStr, config);
+      subGraphs[getPosForId(id)].linkTarget = target;
     }
   });
   setClass(ids, 'clickable');
