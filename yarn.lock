@@ -10283,9 +10283,9 @@ standard-version@^9.0.0:
     yargs "^16.0.0"
 
 start-server-and-test@^1.12.6:
-  version "1.12.6"
-  resolved "https://registry.yarnpkg.com/start-server-and-test/-/start-server-and-test-1.12.6.tgz#11072d1ca016ac35975dc21dc9cc15492aed8b69"
-  integrity sha512-2N+JgOCJIM36KqKZdER7+ybJqVCJRyND42wIUvK+T1iE015ee/FAVArjSHqnSBismQghPUsfV7fB8lCFcpL7/w==
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/start-server-and-test/-/start-server-and-test-1.13.0.tgz#192ed2ae16bd7568c0275a1c2461ef874922bed4"
+  integrity sha512-04A+a3Rja4X4Ha3JtpmSHY8cQMlH7HnGFUTWaMhfZuSodqek7KKd7qn65TYjFNNX9yJinM502wMUGGJi67i72w==
   dependencies:
     bluebird "3.7.2"
     check-more-types "2.24.0"
