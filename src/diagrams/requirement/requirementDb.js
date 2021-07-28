@@ -14,20 +14,20 @@ const RequirementType = {
   INTERFACE_REQUIREMENT: 'Interface Requirement',
   PERFORMANCE_REQUIREMENT: 'Performance Requirement',
   PHYSICAL_REQUIREMENT: 'Physical Requirement',
-  DESIGN_CONSTRAINT: 'Design Constraint'
+  DESIGN_CONSTRAINT: 'Design Constraint',
 };
 
 const RiskLevel = {
   LOW_RISK: 'Low',
   MED_RISK: 'Medium',
-  HIGH_RISK: 'High'
+  HIGH_RISK: 'High',
 };
 
 const VerifyType = {
   VERIFY_ANALYSIS: 'Analysis',
   VERIFY_DEMONSTRATION: 'Demonstration',
   VERIFY_INSPECTION: 'Inspection',
-  VERIFY_TEST: 'Test'
+  VERIFY_TEST: 'Test',
 };
 
 const Relationships = {
@@ -37,10 +37,10 @@ const Relationships = {
   SATISFIES: 'satisfies',
   VERIFIES: 'verifies',
   REFINES: 'refines',
-  TRACES: 'traces'
+  TRACES: 'traces',
 };
 
-export const parseDirective = function(statement, context, type) {
+export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
@@ -53,7 +53,7 @@ const addRequirement = (name, type) => {
       id: latestRequirement.id,
       text: latestRequirement.text,
       risk: latestRequirement.risk,
-      verifyMethod: latestRequirement.verifyMethod
+      verifyMethod: latestRequirement.verifyMethod,
     };
   }
   latestRequirement = {};
@@ -63,37 +63,37 @@ const addRequirement = (name, type) => {
 
 const getRequirements = () => requirements;
 
-const setNewReqId = id => {
+const setNewReqId = (id) => {
   if (typeof latestRequirement != 'undefined') {
     latestRequirement.id = id;
   }
 };
 
-const setNewReqText = text => {
+const setNewReqText = (text) => {
   if (typeof latestRequirement != 'undefined') {
     latestRequirement.text = text;
   }
 };
 
-const setNewReqRisk = risk => {
+const setNewReqRisk = (risk) => {
   if (typeof latestRequirement != 'undefined') {
     latestRequirement.risk = risk;
   }
 };
 
-const setNewReqVerifyMethod = verifyMethod => {
+const setNewReqVerifyMethod = (verifyMethod) => {
   if (typeof latestRequirement != 'undefined') {
     latestRequirement.verifyMethod = verifyMethod;
   }
 };
 
-const addElement = name => {
+const addElement = (name) => {
   if (typeof elements[name] === 'undefined') {
     elements[name] = {
       name,
 
       type: latestElement.type,
-      docRef: latestElement.docRef
+      docRef: latestElement.docRef,
     };
     log.info('Added new requirement: ', name);
   }
@@ -104,13 +104,13 @@ const addElement = name => {
 
 const getElements = () => elements;
 
-const setNewElementType = type => {
+const setNewElementType = (type) => {
   if (typeof latestElement != 'undefined') {
     latestElement.type = type;
   }
 };
 
-const setNewElementDocRef = docRef => {
+const setNewElementDocRef = (docRef) => {
   if (typeof latestElement != 'undefined') {
     latestElement.docRef = docRef;
   }
@@ -120,7 +120,7 @@ const addRelationship = (type, src, dst) => {
   relations.push({
     type,
     src,
-    dst
+    dst,
   });
 };
 
@@ -158,5 +158,5 @@ export default {
   addRelationship,
   getRelationships,
 
-  clear
+  clear,
 };

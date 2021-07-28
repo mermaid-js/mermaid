@@ -11,7 +11,7 @@ import { log } from '../../logger';
 /**
  * Draws a start state as a black circle
  */
-export const drawStartState = g =>
+export const drawStartState = (g) =>
   g
     .append('circle')
     // .style('stroke', 'black')
@@ -24,7 +24,7 @@ export const drawStartState = g =>
 /**
  * Draws a start state as a black circle
  */
-export const drawDivider = g =>
+export const drawDivider = (g) =>
   g
     .append('line')
     .style('stroke', 'grey')
@@ -64,7 +64,7 @@ export const drawSimpleState = (g, stateDef) => {
  * @param {*} stateDef
  */
 export const drawDescrState = (g, stateDef) => {
-  const addTspan = function(textEl, txt, isFirst) {
+  const addTspan = function (textEl, txt, isFirst) {
     const tSpan = textEl
       .append('tspan')
       .attr('x', 2 * getConfig().state.padding)
@@ -98,7 +98,7 @@ export const drawDescrState = (g, stateDef) => {
 
   let isFirst = true;
   let isSecond = true;
-  stateDef.descriptions.forEach(function(descr) {
+  stateDef.descriptions.forEach(function (descr) {
     if (!isFirst) {
       addTspan(description, descr, isSecond);
       isSecond = false;
@@ -239,7 +239,7 @@ export const addTitleAndBox = (g, stateDef, altBkg) => {
   return g;
 };
 
-const drawEndState = g => {
+const drawEndState = (g) => {
   g.append('circle')
     // .style('stroke', 'black')
     // .style('fill', 'white')
@@ -284,7 +284,7 @@ const drawForkJoinState = (g, stateDef) => {
     .attr('y', getConfig().state.padding);
 };
 
-export const drawText = function(elem, textData) {
+export const drawText = function (elem, textData) {
   // Remove and ignore br:s
   const nText = textData.text.replace(common.lineBreakRegex, ' ');
 
@@ -343,10 +343,7 @@ const _drawLongText = (_text, x, y, g) => {
 
 export const drawNote = (text, g) => {
   g.attr('class', 'state-note');
-  const note = g
-    .append('rect')
-    .attr('x', 0)
-    .attr('y', getConfig().state.padding);
+  const note = g.append('rect').attr('x', 0).attr('y', getConfig().state.padding);
   const rectElem = g.append('g');
 
   const { textWidth, textHeight } = _drawLongText(text, 0, 0, rectElem);
@@ -363,19 +360,16 @@ export const drawNote = (text, g) => {
  * @param {*} stateDef
  */
 
-export const drawState = function(elem, stateDef) {
+export const drawState = function (elem, stateDef) {
   const id = stateDef.id;
   const stateInfo = {
     id: id,
     label: stateDef.id,
     width: 0,
-    height: 0
+    height: 0,
   };
 
-  const g = elem
-    .append('g')
-    .attr('id', id)
-    .attr('class', 'stateGroup');
+  const g = elem.append('g').attr('id', id).attr('class', 'stateGroup');
 
   if (stateDef.type === 'start') drawStartState(g);
   if (stateDef.type === 'end') drawEndState(g);
@@ -396,8 +390,8 @@ export const drawState = function(elem, stateDef) {
 };
 
 let edgeCount = 0;
-export const drawEdge = function(elem, path, relation) {
-  const getRelationType = function(type) {
+export const drawEdge = function (elem, path, relation) {
+  const getRelationType = function (type) {
     switch (type) {
       case stateDb.relationType.AGGREGATION:
         return 'aggregation';
@@ -410,17 +404,17 @@ export const drawEdge = function(elem, path, relation) {
     }
   };
 
-  path.points = path.points.filter(p => !Number.isNaN(p.y));
+  path.points = path.points.filter((p) => !Number.isNaN(p.y));
 
   // The data for our line
   const lineData = path.points;
 
   // This is the accessor function we talked about above
   const lineFunction = line()
-    .x(function(d) {
+    .x(function (d) {
       return d.x;
     })
-    .y(function(d) {
+    .y(function (d) {
       return d.y;
     })
     .curve(curveBasis);

@@ -30,6 +30,7 @@ if (location.href.match('test-html-escaping')) {
   code = code3;
 }
 
+
 mermaid.initialize({
   theme: 'default',
   // fontFamily: '"Lucida Console", Monaco, monospace',

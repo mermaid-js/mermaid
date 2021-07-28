@@ -1,11 +1,13 @@
-export const getRows = s => {
+import DOMPurify from 'dompurify';
+
+export const getRows = (s) => {
   if (!s) return 1;
   let str = breakToPlaceholder(s);
   str = str.replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
 
-export const removeScript = txt => {
+export const removeScript = (txt) => {
   var rs = '';
   var idx = 0;
 
@@ -34,52 +36,26 @@ export const removeScript = txt => {
   return rs;
 };
 
-export const sanitizeText = (text, config) => {
-  let txt = text;
-  let htmlLabels = true;
-  if (
-    config.flowchart &&
-    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
-  ) {
-    htmlLabels = false;
-  }
-
-  if (htmlLabels) {
-    const level = config.securityLevel;
-
-    if (level === 'antiscript') {
-      txt = removeScript(txt);
-    } else if (level !== 'loose') {
-      // eslint-disable-line
-      txt = breakToPlaceholder(txt);
-      txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      txt = txt.replace(/=/g, '&equals;');
-      txt = placeholderToBreak(txt);
-    }
-  }
-
+export const sanitizeText = (text) => {
+  const txt = DOMPurify.sanitize(text);
   return txt;
 };
 
 export const lineBreakRegex = /<br\s*\/?>/gi;
 
-export const hasBreaks = text => {
+export const hasBreaks = (text) => {
   return /<br\s*[/]?>/gi.test(text);
 };
 
-export const splitBreaks = text => {
+export const splitBreaks = (text) => {
   return text.split(/<br\s*[/]?>/gi);
 };
 
-const breakToPlaceholder = s => {
+const breakToPlaceholder = (s) => {
   return s.replace(lineBreakRegex, '#br#');
 };
 
-const placeholderToBreak = s => {
-  return s.replace(/#br#/g, '<br/>');
-};
-
-const getUrl = useAbsolute => {
+const getUrl = (useAbsolute) => {
   let url = '';
   if (useAbsolute) {
     url =
@@ -95,7 +71,7 @@ const getUrl = useAbsolute => {
   return url;
 };
 
-export const evaluate = val => (val === 'false' || val === false ? false : true);
+export const evaluate = (val) => (val === 'false' || val === false ? false : true);
 
 export default {
   getRows,
@@ -105,5 +81,5 @@ export default {
   lineBreakRegex,
   removeScript,
   getUrl,
-  evaluate
+  evaluate,
 };

@@ -4,7 +4,7 @@
 
 Mermaid is a Javascript tool that makes use of a markdown based syntax to render customizable diagrams, charts and visualizations.
 
-Diagrams can be re-rendered/modified by modifying their descriptions. 
+Diagrams can be re-rendered/modified by modifying their descriptions.
 
 ### CDN
 
@@ -16,14 +16,14 @@ Please note that you can switch versions through the dropdown box at the top rig
 
 For the majority of users, Using the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/) would be sufficient, however you may also opt to deploy mermaid as a dependency or using the [Mermaid API](./Setup.md).
 
-We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor. 
+We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermaid Live Editor.
 
 **Installing and Hosting Mermaid on a Webpage**
 
 **Using the npm package**
 
 ```
-1.You will need to install node v10 or 12, which would have npm.
+1.You will need to install node v16, which would have npm.
 
 2. download yarn using npm.
 

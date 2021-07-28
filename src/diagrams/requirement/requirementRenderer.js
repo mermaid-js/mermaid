@@ -12,7 +12,7 @@ import markers from './requirementMarkers';
 const conf = {};
 let relCnt = 0;
 
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   if (typeof cnf === 'undefined') {
     return;
   }
@@ -47,7 +47,7 @@ const newTitleNode = (parentNode, id, txts) => {
   //   'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
   // )
   let i = 0;
-  txts.forEach(textStr => {
+  txts.forEach((textStr) => {
     if (i == 0) {
       title
         .append('tspan')
@@ -80,7 +80,7 @@ const newTitleNode = (parentNode, id, txts) => {
 
   return {
     titleNode: title,
-    y: totalY
+    y: totalY,
   };
 };
 
@@ -100,7 +100,7 @@ const newBodyNode = (parentNode, id, txts, yStart) => {
   let currentRow = 0;
   const charLimit = 30;
   let wrappedTxts = [];
-  txts.forEach(textStr => {
+  txts.forEach((textStr) => {
     let currentTextLen = textStr.length;
     while (currentTextLen > charLimit && currentRow < 3) {
       let firstPart = textStr.substring(0, charLimit);
@@ -118,12 +118,8 @@ const newBodyNode = (parentNode, id, txts, yStart) => {
     currentRow = 0;
   });
 
-  wrappedTxts.forEach(textStr => {
-    body
-      .append('tspan')
-      .attr('x', conf.rect_padding)
-      .attr('dy', conf.line_height)
-      .text(textStr);
+  wrappedTxts.forEach((textStr) => {
+    body.append('tspan').attr('x', conf.rect_padding).attr('dy', conf.line_height).text(textStr);
   });
 
   return body;
@@ -164,16 +160,16 @@ const addEdgeLabel = (parentNode, svgPath, conf, txt) => {
     .attr('fill-opacity', '85%');
 };
 
-const drawRelationshipFromLayout = function(svg, rel, g, insert) {
+const drawRelationshipFromLayout = function (svg, rel, g, insert) {
   // Find the edge relating to this relationship
   const edge = g.edge(elementString(rel.src), elementString(rel.dst));
 
   // Get a function that will generate the line path
   const lineFunction = line()
-    .x(function(d) {
+    .x(function (d) {
       return d.x;
     })
-    .y(function(d) {
+    .y(function (d) {
       return d.y;
     });
 
@@ -208,7 +204,7 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
 };
 
 export const drawReqs = (reqs, graph, svgNode) => {
-  Object.keys(reqs).forEach(reqName => {
+  Object.keys(reqs).forEach((reqName) => {
     let req = reqs[reqName];
     reqName = elementString(reqName);
     log.info('Added new requirement: ', reqName);
@@ -221,7 +217,7 @@ export const drawReqs = (reqs, graph, svgNode) => {
 
     let titleNodeInfo = newTitleNode(groupNode, reqName + '_title', [
       `<<${req.type}>>`,
-      `${req.name}`
+      `${req.name}`,
     ]);
 
     nodes.push(titleNodeInfo.titleNode);
@@ -233,7 +229,7 @@ export const drawReqs = (reqs, graph, svgNode) => {
         `Id: ${req.id}`,
         `Text: ${req.text}`,
         `Risk: ${req.risk}`,
-        `Verification: ${req.verifyMethod}`
+        `Verification: ${req.verifyMethod}`,
       ],
       titleNodeInfo.y
     );
@@ -247,13 +243,13 @@ export const drawReqs = (reqs, graph, svgNode) => {
       width: rectBBox.width,
       height: rectBBox.height,
       shape: 'rect',
-      id: reqName
+      id: reqName,
     });
   });
 };
 
 export const drawElements = (els, graph, svgNode) => {
-  Object.keys(els).forEach(elName => {
+  Object.keys(els).forEach((elName) => {
     let el = els[elName];
     const id = elementString(elName);
 
@@ -283,13 +279,13 @@ export const drawElements = (els, graph, svgNode) => {
       width: rectBBox.width,
       height: rectBBox.height,
       shape: 'rect',
-      id: id
+      id: id,
     });
   });
 };
 
 const addRelationships = (relationships, g) => {
-  relationships.forEach(function(r) {
+  relationships.forEach(function (r) {
     let src = elementString(r.src);
     let dst = elementString(r.dst);
     g.setEdge(src, dst, { relationship: r });
@@ -297,8 +293,8 @@ const addRelationships = (relationships, g) => {
   return relationships;
 };
 
-const adjustEntities = function(svgNode, graph) {
-  graph.nodes().forEach(function(v) {
+const adjustEntities = function (svgNode, graph) {
+  graph.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
       svgNode.select('#' + v);
       svgNode
@@ -316,7 +312,7 @@ const adjustEntities = function(svgNode, graph) {
   return;
 };
 
-const elementString = str => {
+const elementString = (str) => {
   return str.replace(/\s/g, '').replace(/\./g, '_');
 };
 
@@ -331,7 +327,7 @@ export const draw = (text, id) => {
   const g = new graphlib.Graph({
     multigraph: false,
     compound: false,
-    directed: true
+    directed: true,
   })
     .setGraph({
       rankdir: conf.layoutDirection,
@@ -339,9 +335,9 @@ export const draw = (text, id) => {
       marginy: 20,
       nodesep: 100,
       edgesep: 100,
-      ranksep: 100
+      ranksep: 100,
     })
-    .setDefaultEdgeLabel(function() {
+    .setDefaultEdgeLabel(function () {
       return {};
     });
 
@@ -355,7 +351,7 @@ export const draw = (text, id) => {
   dagre.layout(g);
   adjustEntities(svg, g);
 
-  relationships.forEach(function(rel) {
+  relationships.forEach(function (rel) {
     drawRelationshipFromLayout(svg, rel, g, id);
   });
 
@@ -372,5 +368,5 @@ export const draw = (text, id) => {
 
 export default {
   setConf,
-  draw
+  draw,
 };

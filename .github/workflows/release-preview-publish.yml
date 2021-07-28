@@ -11,9 +11,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2.3.4
     - name: Setup Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2.2.0
       with:
-        node-version: 10.x
+        node-version: 16.x
     - name: Install Yarn
       run: npm i yarn --global
 
@@ -25,7 +25,7 @@ jobs:
 
     - name: Publish
       run: |
-        PREVIEW_VERSION=$(git rev-list --count --first-parent HEAD)
+        PREVIEW_VERSION=3
         VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
         echo $VERSION
         npm version --no-git-tag-version --allow-same-version $VERSION

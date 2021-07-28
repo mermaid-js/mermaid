@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `.label {
     font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);

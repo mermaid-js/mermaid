@@ -1110,7 +1110,7 @@ mermaidAPI.initialize({
 <script>
   var config = {
     theme:'default',
-    logLevel: 5, // corresponds with "fatal"
+    logLevel:'fatal',
     securityLevel:'strict',
     startOnLoad:true,
     arrowMarkerAbsolute:false,

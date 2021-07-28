@@ -3,15 +3,15 @@ import { generateId } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 
-const clone = o => JSON.parse(JSON.stringify(o));
+const clone = (o) => JSON.parse(JSON.stringify(o));
 
 let rootDoc = [];
 
-export const parseDirective = function(statement, context, type) {
+export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-const setRootDoc = o => {
+const setRootDoc = (o) => {
   log.info('Setting root doc', o);
   // rootDoc = { id: 'root', doc: o };
   rootDoc = o;
@@ -54,13 +54,13 @@ const docTranslator = (parent, node, first) => {
           stmt: 'state',
           id: generateId(),
           type: 'divider',
-          doc: clone(currentDoc)
+          doc: clone(currentDoc),
         };
         doc.push(clone(newNode));
         node.doc = doc;
       }
 
-      node.doc.forEach(docNode => docTranslator(node, docNode, true));
+      node.doc.forEach((docNode) => docTranslator(node, docNode, true));
     }
   }
 };
@@ -70,7 +70,7 @@ const getRootDocV2 = () => {
   // Here
 };
 
-const extract = _doc => {
+const extract = (_doc) => {
   // const res = { states: [], relations: [] };
   let doc;
   if (_doc.doc) {
@@ -87,7 +87,7 @@ const extract = _doc => {
 
   log.info('Extract', doc);
 
-  doc.forEach(item => {
+  doc.forEach((item) => {
     if (item.stmt === 'state') {
       addState(item.id, item.type, item.doc, item.description, item.note);
     }
@@ -101,12 +101,12 @@ const newDoc = () => {
   return {
     relations: [],
     states: {},
-    documents: {}
+    documents: {},
   };
 };
 
 let documents = {
-  root: newDoc()
+  root: newDoc(),
 };
 
 let currentDocument = documents.root;
@@ -122,14 +122,14 @@ let endCnt = 0; // eslint-disable-line
  * @param type
  * @param style
  */
-export const addState = function(id, type, doc, descr, note) {
+export const addState = function (id, type, doc, descr, note) {
   if (typeof currentDocument.states[id] === 'undefined') {
     currentDocument.states[id] = {
       id: id,
       descriptions: [],
       type,
       doc,
-      note
+      note,
     };
   } else {
     if (!currentDocument.states[id].doc) {
@@ -144,16 +144,16 @@ export const addState = function(id, type, doc, descr, note) {
     if (typeof descr === 'string') addDescription(id, descr.trim());
 
     if (typeof descr === 'object') {
-      descr.forEach(des => addDescription(id, des.trim()));
+      descr.forEach((des) => addDescription(id, des.trim()));
     }
   }
 
   if (note) currentDocument.states[id].note = note;
 };
 
-export const clear = function() {
+export const clear = function () {
   documents = {
-    root: newDoc()
+    root: newDoc(),
   };
   currentDocument = documents.root;
 
@@ -164,21 +164,21 @@ export const clear = function() {
   classes = [];
 };
 
-export const getState = function(id) {
+export const getState = function (id) {
   return currentDocument.states[id];
 };
 
-export const getStates = function() {
+export const getStates = function () {
   return currentDocument.states;
 };
-export const logDocuments = function() {
+export const logDocuments = function () {
   log.info('Documents = ', documents);
 };
-export const getRelations = function() {
+export const getRelations = function () {
   return currentDocument.relations;
 };
 
-export const addRelation = function(_id1, _id2, title) {
+export const addRelation = function (_id1, _id2, title) {
   let id1 = _id1;
   let id2 = _id2;
   let type1 = 'default';
@@ -198,7 +198,7 @@ export const addRelation = function(_id1, _id2, title) {
   currentDocument.relations.push({ id1, id2, title: title });
 };
 
-const addDescription = function(id, _descr) {
+const addDescription = function (id, _descr) {
   const theState = currentDocument.states[id];
   let descr = _descr;
   if (descr[0] === ':') {
@@ -208,7 +208,7 @@ const addDescription = function(id, _descr) {
   theState.descriptions.push(descr);
 };
 
-export const cleanupLabel = function(label) {
+export const cleanupLabel = function (label) {
   if (label.substring(0, 1) === ':') {
     return label.substr(2).trim();
   } else {
@@ -218,7 +218,7 @@ export const cleanupLabel = function(label) {
 
 export const lineType = {
   LINE: 0,
-  DOTTED_LINE: 1
+  DOTTED_LINE: 1,
 };
 
 let dividerCnt = 0;
@@ -233,7 +233,7 @@ const getClasses = () => classes;
 
 let direction = 'TB';
 const getDirection = () => direction;
-const setDirection = dir => {
+const setDirection = (dir) => {
   direction = dir;
 };
 
@@ -241,10 +241,10 @@ export const relationType = {
   AGGREGATION: 0,
   EXTENSION: 1,
   COMPOSITION: 2,
-  DEPENDENCY: 3
+  DEPENDENCY: 3,
 };
 
-const trimColon = str => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
+const trimColon = (str) => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
 export default {
   parseDirective,
@@ -268,5 +268,5 @@ export default {
   setRootDoc,
   getRootDocV2,
   extract,
-  trimColon
+  trimColon,
 };

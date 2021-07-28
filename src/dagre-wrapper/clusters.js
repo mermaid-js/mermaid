@@ -70,7 +70,7 @@ const rect = (parent, node) => {
   node.width = rectBox.width;
   node.height = rectBox.height;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
@@ -82,10 +82,7 @@ const rect = (parent, node) => {
  */
 const noteGroup = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', 'note-cluster')
-    .attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -107,7 +104,7 @@ const noteGroup = (parent, node) => {
   node.width = rectBox.width;
   node.height = rectBox.height;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
@@ -115,10 +112,7 @@ const noteGroup = (parent, node) => {
 };
 const roundedWithTitle = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', node.classes)
-    .attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -181,7 +175,7 @@ const roundedWithTitle = (parent, node) => {
   const rectBox = rect.node().getBBox();
   node.height = rectBox.height;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
@@ -190,10 +184,7 @@ const roundedWithTitle = (parent, node) => {
 
 const divider = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', node.classes)
-    .attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -213,7 +204,7 @@ const divider = (parent, node) => {
   node.width = rectBox.width;
   node.height = rectBox.height;
   node.diff = -node.padding / 2;
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
@@ -241,7 +232,7 @@ export const clear = () => {
   clusterElems = {};
 };
 
-export const positionCluster = node => {
+export const positionCluster = (node) => {
   log.info('Position cluster (' + node.id + ', ' + node.x + ', ' + node.y + ')');
   const el = clusterElems[node.id];
 

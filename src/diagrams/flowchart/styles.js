@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `.label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};

@@ -1,4 +1,4 @@
-const getStyles = options => `
+const getStyles = (options) => `
 
   marker {
     fill: ${options.relationColor};

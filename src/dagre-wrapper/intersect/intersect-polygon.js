@@ -17,7 +17,7 @@ function intersectPolygon(node, polyPoints, point) {
   var minX = Number.POSITIVE_INFINITY;
   var minY = Number.POSITIVE_INFINITY;
   if (typeof polyPoints.forEach === 'function') {
-    polyPoints.forEach(function(entry) {
+    polyPoints.forEach(function (entry) {
       minX = Math.min(minX, entry.x);
       minY = Math.min(minY, entry.y);
     });
@@ -50,7 +50,7 @@ function intersectPolygon(node, polyPoints, point) {
 
   if (intersections.length > 1) {
     // More intersections, find the one nearest to edge end point
-    intersections.sort(function(p, q) {
+    intersections.sort(function (p, q) {
       var pdx = p.x - point.x;
       var pdy = p.y - point.y;
       var distp = Math.sqrt(pdx * pdx + pdy * pdy);

@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `g.classGroup text {
   fill: ${options.nodeBorder};
   fill: ${options.classText};

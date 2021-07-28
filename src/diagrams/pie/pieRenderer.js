@@ -60,7 +60,7 @@ export const draw = (txt, id) => {
 
     var data = pieData.getSections();
     var sum = 0;
-    Object.keys(data).forEach(function(key) {
+    Object.keys(data).forEach(function (key) {
       sum += data[key];
     });
 
@@ -77,24 +77,20 @@ export const draw = (txt, id) => {
       themeVariables.pie9,
       themeVariables.pie10,
       themeVariables.pie11,
-      themeVariables.pie12
+      themeVariables.pie12,
     ];
 
     // Set the color scale
-    var color = scaleOrdinal()
-      .domain(data)
-      .range(myGeneratedColors);
+    var color = scaleOrdinal().domain(data).range(myGeneratedColors);
 
     // Compute the position of each group on the pie:
-    var pie = d3pie().value(function(d) {
+    var pie = d3pie().value(function (d) {
       return d.value;
     });
     var dataReady = pie(entries(data));
 
     // Shape helper to build arcs:
-    var arcGenerator = arc()
-      .innerRadius(0)
-      .outerRadius(radius);
+    var arcGenerator = arc().innerRadius(0).outerRadius(radius);
 
     // Build the pie chart: each part of the pie is a path that we build using the arc function.
     svg
@@ -103,7 +99,7 @@ export const draw = (txt, id) => {
       .enter()
       .append('path')
       .attr('d', arcGenerator)
-      .attr('fill', function(d) {
+      .attr('fill', function (d) {
         return color(d.data.key);
       })
       .attr('class', 'pieCircle');
@@ -112,13 +108,13 @@ export const draw = (txt, id) => {
     // Use the centroid method to get the best coordinates.
     svg
       .selectAll('mySlices')
-      .data(dataReady.filter(value => value.data.value !== 0))
+      .data(dataReady.filter((value) => value.data.value !== 0))
       .enter()
       .append('text')
-      .text(function(d) {
+      .text(function (d) {
         return ((d.data.value / sum) * 100).toFixed(0) + '%';
       })
-      .attr('transform', function(d) {
+      .attr('transform', function (d) {
         return 'translate(' + arcGenerator.centroid(d) + ')';
       })
       .style('text-anchor', 'middle')
@@ -138,7 +134,7 @@ export const draw = (txt, id) => {
       .enter()
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', function(d, i) {
+      .attr('transform', function (d, i) {
         var height = legendRectSize + legendSpacing;
         var offset = (height * color.domain().length) / 2;
         var horz = 12 * legendRectSize;
@@ -154,11 +150,11 @@ export const draw = (txt, id) => {
       .style('stroke', color);
 
     legend
-      .data(dataReady.filter(value => value.data.value !== 0))
+      .data(dataReady.filter((value) => value.data.value !== 0))
       .append('text')
       .attr('x', legendRectSize + legendSpacing)
       .attr('y', legendRectSize - legendSpacing)
-      .text(function(d) {
+      .text(function (d) {
         if (parser.yy.getShowData() || conf.showData || conf.pie.showData) {
           return d.data.key + ' [' + d.data.value + ']';
         } else {
@@ -172,5 +168,5 @@ export const draw = (txt, id) => {
 };
 
 export default {
-  draw
+  draw,
 };

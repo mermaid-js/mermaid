@@ -2,6 +2,8 @@ import flowDb from '../flowDb';
 import flow from './flow';
 import { setConfig } from '../../../config';
 
+const spyOn = jest.spyOn;
+
 setConfig({
   securityLevel: 'strict'
 });

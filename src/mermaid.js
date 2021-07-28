@@ -2,7 +2,6 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
  */
-import decode from 'entity-decode/browser';
 import { log } from './logger';
 import mermaidAPI from './mermaidAPI';
 import utils from './utils';
@@ -28,7 +27,7 @@ import utils from './utils';
  * Renders the mermaid diagrams
  * @param nodes a css selector or an array of nodes
  */
-const init = function() {
+const init = function () {
   const conf = mermaidAPI.getConfig();
   // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   let nodes;
@@ -97,7 +96,8 @@ const init = function() {
     txt = element.innerHTML;
 
     // transforms the html to pure text
-    txt = decode(txt)
+    txt = utils
+      .entityDecode(txt)
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
@@ -129,7 +129,7 @@ const init = function() {
   }
 };
 
-const initialize = function(config) {
+const initialize = function (config) {
   // mermaidAPI.reset();
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
@@ -149,7 +149,7 @@ const initialize = function(config) {
  * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
  * calls init for rendering the mermaid diagrams on the page.
  */
-const contentLoaded = function() {
+const contentLoaded = function () {
   let config;
 
   if (mermaid.startOnLoad) {
@@ -175,7 +175,7 @@ if (typeof document !== 'undefined') {
    */
   window.addEventListener(
     'load',
-    function() {
+    function () {
       contentLoaded();
     },
     false
@@ -193,7 +193,7 @@ const mermaid = {
   init,
   initialize,
 
-  contentLoaded
+  contentLoaded,
 };
 
 export default mermaid;

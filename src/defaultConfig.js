@@ -241,7 +241,7 @@ const config = {
      *
      * Default value: 'dagre-d3'
      */
-    defaultRenderer: 'dagre-d3'
+    defaultRenderer: 'dagre-d3',
   },
 
   /**
@@ -541,27 +541,27 @@ const config = {
      */
     labelBoxHeight: 20,
 
-    messageFont: function() {
+    messageFont: function () {
       return {
         fontFamily: this.messageFontFamily,
         fontSize: this.messageFontSize,
-        fontWeight: this.messageFontWeight
+        fontWeight: this.messageFontWeight,
       };
     },
-    noteFont: function() {
+    noteFont: function () {
       return {
         fontFamily: this.noteFontFamily,
         fontSize: this.noteFontSize,
-        fontWeight: this.noteFontWeight
+        fontWeight: this.noteFontWeight,
       };
     },
-    actorFont: function() {
+    actorFont: function () {
       return {
         fontFamily: this.actorFontFamily,
         fontSize: this.actorFontSize,
-        fontWeight: this.actorFontWeight
+        fontWeight: this.actorFontWeight,
       };
-    }
+    },
   },
 
   /**
@@ -709,7 +709,7 @@ top of the chart
      */
     topAxis: false,
 
-    useWidth: undefined
+    useWidth: undefined,
   },
 
   /**
@@ -869,7 +869,7 @@ top of the chart
     actorColours: ['#8FBC8F', '#7CFC00', '#00FFFF', '#20B2AA', '#B0E0E6', '#FFFFE0'],
 
     sectionFills: ['#191970', '#8B008B', '#4B0082', '#2F4F4F', '#800000', '#8B4513', '#00008B'],
-    sectionColours: ['#fff']
+    sectionColours: ['#fff'],
   },
   class: {
     arrowMarkerAbsolute: false,
@@ -900,7 +900,7 @@ top of the chart
      *
      * Default value: 'dagre-d3'
      */
-    defaultRenderer: 'dagre-d3'
+    defaultRenderer: 'dagre-d3',
   },
   git: {
     arrowMarkerAbsolute: false,
@@ -919,7 +919,7 @@ top of the chart
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
   },
   state: {
     dividerMargin: 10,
@@ -966,7 +966,7 @@ top of the chart
      *
      * Default value: 'dagre-d3'
      */
-    defaultRenderer: 'dagre-wrapper'
+    defaultRenderer: 'dagre-wrapper',
   },
 
   /**
@@ -1081,7 +1081,7 @@ top of the chart
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
   },
 
   /**
@@ -1103,7 +1103,7 @@ top of the chart
      *
      * Default value: true
      */
-    useMaxWidth: true
+    useMaxWidth: true,
   },
 
   /**
@@ -1135,8 +1135,8 @@ top of the chart
     rect_min_height: 200,
     fontSize: 14,
     rect_padding: 10,
-    line_height: 20
-  }
+    line_height: 20,
+  },
 };
 
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;

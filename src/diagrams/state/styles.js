@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `
 defs #statediagram-barbEnd {
     fill: ${options.transitionColor};

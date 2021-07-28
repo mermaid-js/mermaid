@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `.actor {
     stroke: ${options.actorBorder};
     fill: ${options.actorBkg};

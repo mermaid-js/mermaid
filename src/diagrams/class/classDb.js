@@ -13,11 +13,11 @@ let classCounter = 0;
 
 let funs = [];
 
-export const parseDirective = function(statement, context, type) {
+export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-const splitClassNameAndType = function(id) {
+const splitClassNameAndType = function (id) {
   let genericType = '';
   let className = id;
 
@@ -36,7 +36,7 @@ const splitClassNameAndType = function(id) {
  * @param id
  * @public
  */
-export const addClass = function(id) {
+export const addClass = function (id) {
   let classId = splitClassNameAndType(id);
   // Only add class if not exists
   if (typeof classes[classId.className] !== 'undefined') return;
@@ -48,7 +48,7 @@ export const addClass = function(id) {
     methods: [],
     members: [],
     annotations: [],
-    domId: MERMAID_DOM_ID_PREFIX + classId.className + '-' + classCounter
+    domId: MERMAID_DOM_ID_PREFIX + classId.className + '-' + classCounter,
   };
 
   classCounter++;
@@ -59,7 +59,7 @@ export const addClass = function(id) {
  * @param id
  * @public
  */
-export const lookUpDomId = function(id) {
+export const lookUpDomId = function (id) {
   const classKeys = Object.keys(classes);
   for (let i = 0; i < classKeys.length; i++) {
     if (classes[classKeys[i]].id === id) {
@@ -68,25 +68,25 @@ export const lookUpDomId = function(id) {
   }
 };
 
-export const clear = function() {
+export const clear = function () {
   relations = [];
   classes = {};
   funs = [];
   funs.push(setupToolTips);
 };
 
-export const getClass = function(id) {
+export const getClass = function (id) {
   return classes[id];
 };
-export const getClasses = function() {
+export const getClasses = function () {
   return classes;
 };
 
-export const getRelations = function() {
+export const getRelations = function () {
   return relations;
 };
 
-export const addRelation = function(relation) {
+export const addRelation = function (relation) {
   log.debug('Adding relation: ' + JSON.stringify(relation));
   addClass(relation.id1);
   addClass(relation.id2);
@@ -104,7 +104,7 @@ export const addRelation = function(relation) {
  * @param annotation The name of the annotation without any brackets
  * @public
  */
-export const addAnnotation = function(className, annotation) {
+export const addAnnotation = function (className, annotation) {
   const validatedClassName = splitClassNameAndType(className).className;
   classes[validatedClassName].annotations.push(annotation);
 };
@@ -118,7 +118,7 @@ export const addAnnotation = function(className, annotation) {
  * Otherwise the member will be treated as a normal property
  * @public
  */
-export const addMember = function(className, member) {
+export const addMember = function (className, member) {
   const validatedClassName = splitClassNameAndType(className).className;
   const theClass = classes[validatedClassName];
 
@@ -137,14 +137,14 @@ export const addMember = function(className, member) {
   }
 };
 
-export const addMembers = function(className, members) {
+export const addMembers = function (className, members) {
   if (Array.isArray(members)) {
     members.reverse();
-    members.forEach(member => addMember(className, member));
+    members.forEach((member) => addMember(className, member));
   }
 };
 
-export const cleanupLabel = function(label) {
+export const cleanupLabel = function (label) {
   if (label.substring(0, 1) === ':') {
     return label.substr(1).trim();
   } else {
@@ -157,8 +157,8 @@ export const cleanupLabel = function(label) {
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
-export const setCssClass = function(ids, className) {
-  ids.split(',').forEach(function(_id) {
+export const setCssClass = function (ids, className) {
+  ids.split(',').forEach(function (_id) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof classes[id] !== 'undefined') {
@@ -172,9 +172,9 @@ export const setCssClass = function(ids, className) {
  * @param ids Comma separated list of ids
  * @param tooltip Tooltip to add
  */
-const setTooltip = function(ids, tooltip) {
+const setTooltip = function (ids, tooltip) {
   const config = configApi.getConfig();
-  ids.split(',').forEach(function(id) {
+  ids.split(',').forEach(function (id) {
     if (typeof tooltip !== 'undefined') {
       classes[id].tooltip = common.sanitizeText(tooltip, config);
     }
@@ -187,9 +187,9 @@ const setTooltip = function(ids, tooltip) {
  * @param linkStr URL to create a link for
  * @param target Target of the link, _blank by default as originally defined in the svgDraw.js file
  */
-export const setLink = function(ids, linkStr, target) {
+export const setLink = function (ids, linkStr, target) {
   const config = configApi.getConfig();
-  ids.split(',').forEach(function(_id) {
+  ids.split(',').forEach(function (_id) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof classes[id] !== 'undefined') {
@@ -210,15 +210,15 @@ export const setLink = function(ids, linkStr, target) {
  * @param functionName Function to be called on click
  * @param functionArgs Function args the function should be called with
  */
-export const setClickEvent = function(ids, functionName, functionArgs) {
-  ids.split(',').forEach(function(id) {
+export const setClickEvent = function (ids, functionName, functionArgs) {
+  ids.split(',').forEach(function (id) {
     setClickFunc(id, functionName, functionArgs);
     classes[id].haveCallback = true;
   });
   setCssClass(ids, 'clickable');
 };
 
-const setClickFunc = function(domId, functionName, functionArgs) {
+const setClickFunc = function (domId, functionName, functionArgs) {
   const config = configApi.getConfig();
   let id = domId;
   let elemId = lookUpDomId(id);
@@ -250,12 +250,12 @@ const setClickFunc = function(domId, functionName, functionArgs) {
       argList.push(elemId);
     }
 
-    funs.push(function() {
+    funs.push(function () {
       const elem = document.querySelector(`[id="${elemId}"]`);
       if (elem !== null) {
         elem.addEventListener(
           'click',
-          function() {
+          function () {
             utils.runFunc(functionName, ...argList);
           },
           false
@@ -265,38 +265,35 @@ const setClickFunc = function(domId, functionName, functionArgs) {
   }
 };
 
-export const bindFunctions = function(element) {
-  funs.forEach(function(fun) {
+export const bindFunctions = function (element) {
+  funs.forEach(function (fun) {
     fun(element);
   });
 };
 
 export const lineType = {
   LINE: 0,
-  DOTTED_LINE: 1
+  DOTTED_LINE: 1,
 };
 
 export const relationType = {
   AGGREGATION: 0,
   EXTENSION: 1,
   COMPOSITION: 2,
-  DEPENDENCY: 3
+  DEPENDENCY: 3,
 };
 
-const setupToolTips = function(element) {
+const setupToolTips = function (element) {
   let tooltipElem = select('.mermaidTooltip');
   if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-    tooltipElem = select('body')
-      .append('div')
-      .attr('class', 'mermaidTooltip')
-      .style('opacity', 0);
+    tooltipElem = select('body').append('div').attr('class', 'mermaidTooltip').style('opacity', 0);
   }
 
   const svg = select(element).select('svg');
 
   const nodes = svg.selectAll('g.node');
   nodes
-    .on('mouseover', function() {
+    .on('mouseover', function () {
       const el = select(this);
       const title = el.attr('title');
       // Dont try to draw a tooltip if no data is provided
@@ -305,21 +302,15 @@ const setupToolTips = function(element) {
       }
       const rect = this.getBoundingClientRect();
 
-      tooltipElem
-        .transition()
-        .duration(200)
-        .style('opacity', '.9');
+      tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
         .html(el.attr('title'))
         .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
         .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
       el.classed('hover', true);
     })
-    .on('mouseout', function() {
-      tooltipElem
-        .transition()
-        .duration(500)
-        .style('opacity', 0);
+    .on('mouseout', function () {
+      tooltipElem.transition().duration(500).style('opacity', 0);
       const el = select(this);
       el.classed('hover', false);
     });
@@ -346,5 +337,5 @@ export default {
   setCssClass,
   setLink,
   setTooltip,
-  lookUpDomId
+  lookUpDomId,
 };

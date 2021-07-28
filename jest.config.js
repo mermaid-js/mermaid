@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+  testEnvironment:"jsdom",
   transform: {
     '^.+\\.jsx?$': './transformer.js',
     '^.+\\.jison$': path.resolve(__dirname, './jisonTransformer.js')

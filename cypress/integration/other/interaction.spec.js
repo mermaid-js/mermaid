@@ -178,7 +178,8 @@ describe('Interaction', () => {
         .find('g#flowchart-Function-2')
         .click();
 
-      cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
+      cy.get('.created-by-click').should('not.exist');
+      // cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
     });
     it('should handle a click on a node with a bound function where the node starts with a number', () => {
       const url = 'http://localhost:9000/click_security_strict.html';
@@ -188,7 +189,8 @@ describe('Interaction', () => {
         .find('g[id="flowchart-1Function-6"]')
         .click();
 
-      cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
+      // cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
+      cy.get('.created-by-click').should('not.exist');
     });
     it('should handle a click on a node with a bound url', () => {
       const url = 'http://localhost:9000/click_security_strict.html';
@@ -247,7 +249,8 @@ describe('Interaction', () => {
         .find('rect#cl2')
         .click({ force: true });
 
-      cy.get('.created-by-gant-click').should('not.have.text', 'Clicked By Gant cl2');
+      // cy.get('.created-by-gant-click').should('not.have.text', 'Clicked By Gant cl2');
+      cy.get('.created-by-gant-click').should('not.exist')
     });
     it('should handle a click on a task with a bound function', () => {
       const url = 'http://localhost:9000/click_security_strict.html';
@@ -257,7 +260,8 @@ describe('Interaction', () => {
         .find('text#cl2-text')
         .click({ force: true });
 
-      cy.get('.created-by-gant-click').should('not.have.text', 'Clicked By Gant cl2');
+      // cy.get('.created-by-gant-click').should('not.have.text', 'Clicked By Gant cl2');
+      cy.get('.created-by-gant-click').should('not.exist')
     });
   });
 
@@ -270,7 +274,8 @@ describe('Interaction', () => {
         .find('g#flowchart-Function-2')
         .click();
 
-      cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
+      // cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
+      cy.get('.created-by-click').should('not.exist');
     });
     it('should handle a click on a node with a bound function where the node starts with a number', () => {
       const url = 'http://localhost:9000/click_security_other.html';
@@ -280,7 +285,8 @@ describe('Interaction', () => {
         .find('g[id="flowchart-1Function-6"]')
         .click();
 
-      cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
+      cy.get('.created-by-click').should('not.exist');
+      cy.get('.created-by-click').should('not.exist');
     });
     it('should handle a click on a node with a bound url', () => {
       const url = 'http://localhost:9000/click_security_other.html';
@@ -303,7 +309,7 @@ describe('Interaction', () => {
         .find('rect#cl2')
         .click({ force: true });
 
-      cy.get('.created-by-gant-click').should('not.have.text', 'Clicked By Gant cl2');
+      cy.get('.created-by-gant-click').should('not.exist');
     });
     it('should handle a click on a task with a bound function', () => {
       const url = 'http://localhost:9000/click_security_other.html';
@@ -313,7 +319,7 @@ describe('Interaction', () => {
         .find('text#cl2-text')
         .click({ force: true });
 
-      cy.get('.created-by-gant-click').should('not.have.text', 'Clicked By Gant cl2');
+      cy.get('.created-by-gant-click').should('not.exist');
     });
   });
 });
