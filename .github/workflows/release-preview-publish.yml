@@ -25,7 +25,7 @@ jobs:
 
     - name: Publish
       run: |
-        PREVIEW_VERSION=$(git rev-list --count --first-parent HEAD)
+        PREVIEW_VERSION=2
         VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
         echo $VERSION
         npm version --no-git-tag-version --allow-same-version $VERSION
