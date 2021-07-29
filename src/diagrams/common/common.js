@@ -63,8 +63,8 @@ const sanitizeMore = (text, config) => {
   return txt;
 };
 
-export const sanitizeText = (text) => {
-  const txt = sanitizeMore(DOMPurify.sanitize(text));
+export const sanitizeText = (text, config) => {
+  const txt = sanitizeMore(DOMPurify.sanitize(text), config);
 
   return txt;
 };
@@ -78,7 +78,9 @@ export const hasBreaks = (text) => {
 export const splitBreaks = (text) => {
   return text.split(/<br\s*[/]?>/gi);
 };
-
+const placeholderToBreak = (s) => {
+  return s.replace(/#br#/g, '<br/>');
+};
 const breakToPlaceholder = (s) => {
   return s.replace(lineBreakRegex, '#br#');
 };
