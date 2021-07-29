@@ -9,9 +9,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2.3.4
+    - uses: actions/checkout@v2
     - name: Setup Node.js
-      uses: actions/setup-node@v2.3.0
+      uses: actions/setup-node@v2
       with:
         node-version: 10.x
     - name: Install Yarn
