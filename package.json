@@ -59,12 +59,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
+    "@babel/eslint-parser": "^7.14.7",
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.14.5",
     "@percy/cli": "^1.0.0-beta.58",
     "@percy/cypress": "^3.1.0",
-    "babel-core": "7.0.0-bridge.0",
-    "babel-eslint": "^10.1.0",
     "babel-jest": "^27.0.6",
     "babel-loader": "^8.2.2",
     "coveralls": "^3.0.2",
@@ -85,7 +84,6 @@
     "start-server-and-test": "^1.12.6",
     "terser-webpack-plugin": "^4.2.3",
     "webpack": "^4.41.2",
-    "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.4.1",
     "webpack-node-externals": "^3.0.0"
@@ -93,11 +91,6 @@
   "files": [
     "dist"
   ],
-  "yarn-upgrade-all": {
-    "ignore": [
-      "babel-core"
-    ]
-  },
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
