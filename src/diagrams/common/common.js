@@ -36,8 +36,36 @@ export const removeScript = (txt) => {
   return rs;
 };
 
+const sanitizeMore = (text, config) => {
+  let txt = text;
+  let htmlLabels = true;
+  if (
+    config.flowchart &&
+    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
+  ) {
+    htmlLabels = false;
+  }
+
+  if (htmlLabels) {
+    const level = config.securityLevel;
+
+    if (level === 'antiscript') {
+      txt = removeScript(txt);
+    } else if (level !== 'loose') {
+      // eslint-disable-line
+      txt = breakToPlaceholder(txt);
+      txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      txt = txt.replace(/=/g, '&equals;');
+      txt = placeholderToBreak(txt);
+    }
+  }
+
+  return txt;
+};
+
 export const sanitizeText = (text) => {
-  const txt = DOMPurify.sanitize(text);
+  const txt = sanitizeMore(DOMPurify.sanitize(text));
+
   return txt;
 };
 
