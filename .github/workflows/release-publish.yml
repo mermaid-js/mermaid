@@ -14,7 +14,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v2.2.0
       with:
-        node-version: 10.x
+        node-version: 16.x
     - name: Install Yarn
       run: npm i yarn --global
 
