@@ -65,7 +65,6 @@ const sanitizeMore = (text, config) => {
 
 export const sanitizeText = (text, config) => {
   const txt = sanitizeMore(DOMPurify.sanitize(text), config);
-
   return txt;
 };
 
