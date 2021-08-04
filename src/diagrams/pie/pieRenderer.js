@@ -1,7 +1,7 @@
 /**
  * Created by AshishJ on 11-09-2019.
  */
-import { select, scaleOrdinal, pie as d3pie, entries, arc } from 'd3';
+import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import pieData from './pieDb';
 import pieParser from './parser/pie';
 import { log } from '../../logger';
@@ -87,7 +87,7 @@ export const draw = (txt, id) => {
     var pie = d3pie().value(function (d) {
       return d.value;
     });
-    var dataReady = pie(entries(data));
+    var dataReady = pie(Object.entries(data));
 
     // Shape helper to build arcs:
     var arcGenerator = arc().innerRadius(0).outerRadius(radius);
