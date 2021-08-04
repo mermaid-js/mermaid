@@ -77,8 +77,20 @@ export const detectInit = function (text, cnf) {
           log.debug('sanitize deleting prototype option', args[key]);
           delete args[argKey][key];
         }
+
+        if (key.indexOf('proto') >= 0) {
+          log.debug('sanitize deleting prototype option', args[key]);
+          delete args[argKey][key];
+        }
+
+        if (key.indexOf('constr') >= 0) {
+          log.debug('sanitize deleting prototype option', args[key]);
+          delete args[argKey][key];
+        }
       });
     });
+    Object.freeze(Object.prototype);
+    Object.freeze(Object);
     results = assignWithDepth(results, [...args]);
   } else {
     results = inits.args;
