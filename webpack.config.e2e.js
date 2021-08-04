@@ -4,8 +4,8 @@ const jsRule = {
   test: /\.js$/,
   exclude: /node_modules/,
   use: {
-    loader: 'babel-loader'
-  }
+    loader: 'babel-loader',
+  },
 };
 
 const jisonRule = {
@@ -13,20 +13,20 @@ const jisonRule = {
   use: {
     loader: path.resolve(__dirname, './jisonLoader'),
     options: {
-      'token-stack': true
-    }
-  }
+      'token-stack': true,
+    },
+  },
 };
 
 const amdRule = {
   parser: {
-    amd: false // https://github.com/lodash/lodash/issues/3052
-  }
+    amd: false, // https://github.com/lodash/lodash/issues/3052
+  },
 };
 const scssRule = {
   // load scss to string
   test: /\.scss$/,
-  use: [{ loader: 'css-to-string-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }]
+  use: [{ loader: 'css-to-string-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
 };
 
 module.exports = {
@@ -35,31 +35,31 @@ module.exports = {
   entry: {
     mermaid: './src/mermaid.js',
     e2e: './cypress/platform/viewer.js',
-    'bundle-test': './cypress/platform/bundle-test.js'
+    'bundle-test': './cypress/platform/bundle-test.js',
   },
   resolve: {
-    extensions: ['.wasm', '.mjs', '.js', '.json', '.jison']
+    extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
   },
   node: {
-    fs: 'empty' // jison generated code requires 'fs'
+    fs: 'empty', // jison generated code requires 'fs'
   },
   output: {
     path: path.join(__dirname, './dist/'),
     filename: '[name].js',
     library: 'mermaid',
     libraryTarget: 'umd',
-    libraryExport: 'default'
+    libraryExport: 'default',
   },
   devServer: {
     contentBase: [path.join(__dirname, 'cypress', 'platform'), path.join(__dirname, 'dist')],
     compress: true,
-    port: 9000
+    port: 9000,
   },
   module: {
-    rules: [amdRule, jsRule, scssRule, jisonRule]
+    rules: [amdRule, jsRule, scssRule, jisonRule],
   },
   externals: {
-    mermaid: 'mermaid'
+    mermaid: 'mermaid',
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
 };
