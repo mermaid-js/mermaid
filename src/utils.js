@@ -89,8 +89,8 @@ export const detectInit = function (text, cnf) {
         }
       });
     });
-    Object.freeze(Object.prototype);
-    Object.freeze(Object);
+    // Object.freeze(Object.prototype);
+    // Object.freeze(Object);
     results = assignWithDepth(results, [...args]);
   } else {
     results = inits.args;
