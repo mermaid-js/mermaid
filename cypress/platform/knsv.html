@@ -57,9 +57,19 @@ subgraph CompositeState
 end
 </div>
 <div class="mermaid" style="width: 100%; height: 20%;">
-graph TD
-  A["<img src=`https://via.placeholder.com/64/`>"]
+%%{init: { '__proto__': {'vuln': 'test'}} }%%
+%%{init: { '__proto__': {'vuln': 'test'}} }%%
+
+sequenceDiagram
+Alice->>Bob: Hi Bob
+Bob->>Alice: Hi Alice
 </div>
+    <div class="mermaid">
+      %%{init: { 'theme':'base', '__proto__': {'polluted': 'asdf'}} }%%
+      %%{init: { 'theme':'base', '__proto__': {'polluted': 'asdf'}} }%%
+      graph LR
+          A --> B
+    </div>
 <div class="mermaid2" style="width: 100%; height: 20%;">
 flowchart TD
   Link --> b
@@ -121,7 +131,7 @@ YourState
         logLevel:0,
         fontSize: 18,
         curve: 'cardinal',
-        securityLevel: 'loose',
+        securityLevel: 'strict',
         // themeVariables: {relationLabelColor: 'red'}
       });
       function callback(){alert('It worked');}

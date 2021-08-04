@@ -71,6 +71,14 @@ export const detectInit = function (text, cnf) {
   let results = {};
   if (Array.isArray(inits)) {
     let args = inits.map((init) => init.args);
+    Object.keys(args).forEach((argKey) => {
+      Object.keys(args[argKey]).forEach((key) => {
+        if (key.indexOf('__') === 0) {
+          log.debug('sanitize deleting prototype option', args[key]);
+          delete args[argKey][key];
+        }
+      });
+    });
     results = assignWithDepth(results, [...args]);
   } else {
     results = inits.args;
@@ -173,7 +181,6 @@ export const detectDirective = function (text, type = null) {
  */
 export const detectType = function (text, cnf) {
   text = text.replace(directive, '').replace(anyComment, '\n');
-  log.debug('Detecting diagram type based on the text ' + text);
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';
   }
