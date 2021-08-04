@@ -14,6 +14,7 @@ import {
   select,
 } from 'd3';
 import common from './diagrams/common/common';
+import { configKeys } from './defaultConfig';
 import { log } from './logger';
 
 // Effectively an enum of the supported curve types, accessible by name
@@ -73,18 +74,22 @@ export const detectInit = function (text, cnf) {
     let args = inits.map((init) => init.args);
     Object.keys(args).forEach((argKey) => {
       Object.keys(args[argKey]).forEach((key) => {
-        if (key.indexOf('__') === 0) {
-          log.debug('sanitize deleting prototype option', args[key]);
-          delete args[argKey][key];
-        }
+        // if (key.indexOf('__') === 0) {
+        //   log.debug('sanitize deleting prototype option', args[key]);
+        //   delete args[argKey][key];
+        // }
 
-        if (key.indexOf('proto') >= 0) {
-          log.debug('sanitize deleting prototype option', args[key]);
-          delete args[argKey][key];
-        }
+        // if (key.indexOf('proto') >= 0) {
+        //   log.debug('sanitize deleting prototype option', args[key]);
+        //   delete args[argKey][key];
+        // }
 
-        if (key.indexOf('constr') >= 0) {
-          log.debug('sanitize deleting prototype option', args[key]);
+        // if (key.indexOf('constr') >= 0) {
+        //   log.debug('sanitize deleting prototype option', args[key]);
+        //   delete args[argKey][key];
+        // }
+        if(configKeys.indexOf(key)<0) {
+          log.debug('sanitize deleting option', args[argKey][key]);
           delete args[argKey][key];
         }
       });
