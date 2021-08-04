@@ -88,7 +88,7 @@ export const detectInit = function (text, cnf) {
           log.debug('sanitize deleting prototype option', args[key]);
           delete args[argKey][key];
         }
-        if(configKeys.indexOf(key)<0) {
+        if (configKeys.indexOf(key) < 0) {
           log.debug('sanitize deleting option', args[argKey][key]);
           delete args[argKey][key];
         }
