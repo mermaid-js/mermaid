@@ -538,9 +538,9 @@ const handleDirective = function (p, directive, type) {
           delete directive.args[prop];
         }
       });
-      console.log('sanitize in handleDirective', directive.args);
+      log.debug('sanitize in handleDirective', directive.args);
       directiveSanitizer(directive.args);
-      console.log('sanitize in handleDirective (done)', directive.args);
+      log.debug('sanitize in handleDirective (done)', directive.args);
       reinitialize(directive.args);
       configApi.addDirective(directive.args);
       break;

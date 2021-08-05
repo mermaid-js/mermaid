@@ -73,11 +73,9 @@ export const detectInit = function (text, cnf) {
 
   if (Array.isArray(inits)) {
     let args = inits.map((init) => init.args);
-    console.log('sanitizer (args)', args);
     directiveSanitizer(args);
 
     results = assignWithDepth(results, [...args]);
-    console.log('sanitize results', results);
   } else {
     results = inits.args;
   }
@@ -822,7 +820,7 @@ export const entityDecode = function (html) {
 };
 
 export const directiveSanitizer = (args) => {
-  console.log('directiveSanitizer called with', args);
+  log.debug('directiveSanitizer called with', args);
   if (typeof args === 'object') {
     // check for array
     if (args.length) {
