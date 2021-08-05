@@ -1142,4 +1142,15 @@ top of the chart
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
+const keyify = (obj, prefix = '') =>
+  Object.keys(obj).reduce((res, el) => {
+    if (Array.isArray(obj[el])) {
+      return res;
+    } else if (typeof obj[el] === 'object' && obj[el] !== null) {
+      return [...res, prefix + el, ...keyify(obj[el], '')];
+    }
+    return [...res, prefix + el];
+  }, []);
+
+export const configKeys = keyify(config, '');
 export default config;

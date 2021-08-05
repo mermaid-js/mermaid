@@ -14,6 +14,7 @@ import {
   select,
 } from 'd3';
 import common from './diagrams/common/common';
+import { configKeys } from './defaultConfig';
 import { log } from './logger';
 
 // Effectively an enum of the supported curve types, accessible by name
@@ -69,16 +70,11 @@ const anyComment = /\s*%%.*\n/gm;
 export const detectInit = function (text, cnf) {
   let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
+
   if (Array.isArray(inits)) {
     let args = inits.map((init) => init.args);
-    Object.keys(args).forEach((argKey) => {
-      Object.keys(args[argKey]).forEach((key) => {
-        if (key.indexOf('__') === 0) {
-          log.debug('sanitize deleting prototype option', args[key]);
-          delete args[argKey][key];
-        }
-      });
-    });
+    directiveSanitizer(args);
+
     results = assignWithDepth(results, [...args]);
   } else {
     results = inits.args;
@@ -95,6 +91,8 @@ export const detectInit = function (text, cnf) {
       }
     });
   }
+
+  // Todo: refactor this, these results are never used
   return results;
 };
 
@@ -821,6 +819,44 @@ export const entityDecode = function (html) {
   return unescape(decoder.textContent);
 };
 
+export const directiveSanitizer = (args) => {
+  log.debug('directiveSanitizer called with', args);
+  if (typeof args === 'object') {
+    // check for array
+    if (args.length) {
+      args.forEach((arg) => directiveSanitizer(arg));
+    } else {
+      // This is an object
+      Object.keys(args).forEach((key) => {
+        log.debug('Checking key', key);
+        if (key.indexOf('__') === 0) {
+          log.debug('sanitize deleting __ option', key);
+          delete args[key];
+        }
+
+        if (key.indexOf('proto') >= 0) {
+          log.debug('sanitize deleting proto option', key);
+          delete args[key];
+        }
+
+        if (key.indexOf('constr') >= 0) {
+          log.debug('sanitize deleting constr option', key);
+          delete args[key];
+        }
+        if (configKeys.indexOf(key) < 0) {
+          log.debug('sanitize deleting option', key);
+          delete args[key];
+        } else {
+          if (typeof args[key] === 'object') {
+            log.debug('sanitize deleting object', key);
+            directiveSanitizer(args[key]);
+          }
+        }
+      });
+    }
+  }
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -845,4 +881,5 @@ export default {
   runFunc,
   entityDecode,
   initIdGeneratior,
+  directiveSanitizer,
 };
