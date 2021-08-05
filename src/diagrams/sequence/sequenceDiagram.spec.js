@@ -1348,7 +1348,7 @@ Bob->>Alice: Fine!`;
   });
   it('it should draw two actors, notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', function() {
     const str = `
-    %%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrap": true }}}%%
+    %%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "messageFontWeight": 400, "wrap": true }}}%%
 sequenceDiagram
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
@@ -1364,7 +1364,7 @@ Bob->>Alice: Fine!`;
     expect(mermaid.theme).toBe('dark');
     expect(mermaid.sequence.fontFamily).toBe('Menlo');
     expect(mermaid.sequence.fontSize).toBe(18);
-    expect(mermaid.sequence.fontWeight).toBe(400);
+    expect(mermaid.sequence.messageFontWeight).toBe(400);
     expect(msgs.every(v => v.wrap)).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
