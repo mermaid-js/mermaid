@@ -54,7 +54,6 @@ import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import errorRenderer from './errorRenderer';
-import { configKeys } from './defaultConfig';
 
 // import * as configApi from './config';
 // // , {
