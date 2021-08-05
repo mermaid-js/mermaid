@@ -3283,10 +3283,8 @@ var rectWithTitle = function rectWithTitle(parent, node) {
 
 
   var halfPadding = node.padding / 2;
-  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(descr).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
-  bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) + ', ' + (titleBox.height + halfPadding + 5) + ')');
-  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(text).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
-  bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) + ', ' + 0 + ')'); // Get the size of the label
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(descr).attr('transform', 'translate( ' + (bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) + ', ' + (titleBox.height + halfPadding + 5) + ')');
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(text).attr('transform', 'translate( ' + (bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) + ', ' + 0 + ')'); // Get the size of the label
   // Bounding box for title and text
 
   bbox = label.node().getBBox(); // Center the label
@@ -3989,7 +3987,7 @@ var config = {
    * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
    * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
-    * **Notes**:
+     * **Notes**:
    *
    * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
