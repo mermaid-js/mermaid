@@ -74074,9 +74074,9 @@ var handleDirective = function handleDirective(p, directive, type) {
             delete directive.args[prop];
           }
         });
-        console.log('sanitize in handleDirective', directive.args);
+        _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('sanitize in handleDirective', directive.args);
         Object(_utils__WEBPACK_IMPORTED_MODULE_44__["directiveSanitizer"])(directive.args);
-        console.log('sanitize in handleDirective (done)', directive.args);
+        _logger__WEBPACK_IMPORTED_MODULE_41__["log"].debug('sanitize in handleDirective (done)', directive.args);
         reinitialize(directive.args);
         _config__WEBPACK_IMPORTED_MODULE_3__["addDirective"](directive.args);
         break;
@@ -75863,10 +75863,8 @@ var detectInit = function detectInit(text, cnf) {
     var args = inits.map(function (init) {
       return init.args;
     });
-    console.log('sanitizer (args)', args);
     directiveSanitizer(args);
     results = assignWithDepth(results, _toConsumableArray(args));
-    console.log('sanitize results', results);
   } else {
     results = inits.args;
   }
@@ -76722,7 +76720,7 @@ var entityDecode = function entityDecode(html) {
   return unescape(decoder.textContent);
 };
 var directiveSanitizer = function directiveSanitizer(args) {
-  console.log('directiveSanitizer called with', args);
+  _logger__WEBPACK_IMPORTED_MODULE_4__["log"].debug('directiveSanitizer called with', args);
 
   if (_typeof(args) === 'object') {
     // check for array
