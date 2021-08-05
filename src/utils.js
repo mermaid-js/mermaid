@@ -70,33 +70,14 @@ const anyComment = /\s*%%.*\n/gm;
 export const detectInit = function (text, cnf) {
   let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
+
   if (Array.isArray(inits)) {
     let args = inits.map((init) => init.args);
-    Object.keys(args).forEach((argKey) => {
-      Object.keys(args[argKey]).forEach((key) => {
-        if (key.indexOf('__') === 0) {
-          log.debug('sanitize deleting prototype option', args[key]);
-          delete args[argKey][key];
-        }
+    console.log('sanitizer (args)', args);
+    directiveSanitizer(args);
 
-        if (key.indexOf('proto') >= 0) {
-          log.debug('sanitize deleting prototype option', args[key]);
-          delete args[argKey][key];
-        }
-
-        if (key.indexOf('constr') >= 0) {
-          log.debug('sanitize deleting prototype option', args[key]);
-          delete args[argKey][key];
-        }
-        if (configKeys.indexOf(key) < 0) {
-          log.debug('sanitize deleting option', args[argKey][key]);
-          delete args[argKey][key];
-        }
-      });
-    });
-    // Object.freeze(Object.prototype);
-    // Object.freeze(Object);
     results = assignWithDepth(results, [...args]);
+    console.log('sanitize results', results);
   } else {
     results = inits.args;
   }
@@ -112,6 +93,8 @@ export const detectInit = function (text, cnf) {
       }
     });
   }
+
+  // Todo: refactor this, these results are never used
   return results;
 };
 
@@ -838,6 +821,44 @@ export const entityDecode = function (html) {
   return unescape(decoder.textContent);
 };
 
+export const directiveSanitizer = (args) => {
+  console.log('directiveSanitizer called with', args);
+  if (typeof args === 'object') {
+    // check for array
+    if (args.length) {
+      args.forEach((arg) => directiveSanitizer(arg));
+    } else {
+      // This is an object
+      Object.keys(args).forEach((key) => {
+        log.debug('Checking key', key);
+        if (key.indexOf('__') === 0) {
+          log.debug('sanitize deleting __ option', key);
+          delete args[key];
+        }
+
+        if (key.indexOf('proto') >= 0) {
+          log.debug('sanitize deleting proto option', key);
+          delete args[key];
+        }
+
+        if (key.indexOf('constr') >= 0) {
+          log.debug('sanitize deleting constr option', key);
+          delete args[key];
+        }
+        if (configKeys.indexOf(key) < 0) {
+          log.debug('sanitize deleting option', key);
+          delete args[key];
+        } else {
+          if (typeof args[key] === 'object') {
+            log.debug('sanitize deleting object', key);
+            directiveSanitizer(args[key]);
+          }
+        }
+      });
+    }
+  }
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -862,4 +883,5 @@ export default {
   runFunc,
   entityDecode,
   initIdGeneratior,
+  directiveSanitizer,
 };

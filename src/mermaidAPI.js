@@ -54,6 +54,8 @@ import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import errorRenderer from './errorRenderer';
+import { configKeys } from './defaultConfig';
+
 // import * as configApi from './config';
 // // , {
 // //   setConfig,
@@ -66,7 +68,7 @@ import errorRenderer from './errorRenderer';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
-import utils, { assignWithDepth } from './utils';
+import utils, { directiveSanitizer, assignWithDepth } from './utils';
 
 function parse(text) {
   const cnf = configApi.getConfig();
@@ -537,7 +539,9 @@ const handleDirective = function (p, directive, type) {
           delete directive.args[prop];
         }
       });
-
+      console.log('sanitize in handleDirective', directive.args);
+      directiveSanitizer(directive.args);
+      console.log('sanitize in handleDirective (done)', directive.args);
       reinitialize(directive.args);
       configApi.addDirective(directive.args);
       break;
