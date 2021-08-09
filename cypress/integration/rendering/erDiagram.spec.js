@@ -186,4 +186,15 @@ describe('Entity Relationship Diagram', () => {
     cy.get('svg');
   });
 
+  it('should render entities with keys and comments', () => {
+    renderGraph(
+      `
+    erDiagram
+        BOOK { string title PK "comment"}
+      `,
+      { logLevel : 1 }
+    );
+    cy.get('svg');
+  });
+
 });

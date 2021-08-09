@@ -35,13 +35,20 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const attrFontSize = conf.fontSize * 0.85;
   const labelBBox = entityTextNode.node().getBBox();
   const attributeNodes = []; // Intermediate storage for attribute nodes created so that we can do a second pass
+  let hasKeyType = false;
+  let hasComment = false;
+  let maxWidth = 0;
   let maxTypeWidth = 0;
   let maxNameWidth = 0;
+  let maxKeyWidth = 0;
+  let maxCommentWidth = 0;
   let cumulativeHeight = labelBBox.height + heightPadding * 2;
   let attrNum = 1;
 
   attributes.forEach((item) => {
     const attrPrefix = `${entityTextNode.node().id}-attr-${attrNum}`;
+    let nodeWidth = 0;
+    let nodeHeight = 0;
 
     // Add a text node for the attribute type
     const typeNode = groupNode
@@ -73,16 +80,70 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       )
       .text(item.attributeName);
 
-    // Keep a reference to the nodes so that we can iterate through them later
-    attributeNodes.push({ tn: typeNode, nn: nameNode });
+    const attributeNode = {};
+    attributeNode.tn = typeNode;
+    attributeNode.nn = nameNode;
 
     const typeBBox = typeNode.node().getBBox();
     const nameBBox = nameNode.node().getBBox();
-
     maxTypeWidth = Math.max(maxTypeWidth, typeBBox.width);
     maxNameWidth = Math.max(maxNameWidth, nameBBox.width);
+    nodeWidth += typeBBox.width;
+    nodeWidth += nameBBox.width;
 
-    cumulativeHeight += Math.max(typeBBox.height, nameBBox.height) + heightPadding * 2;
+    nodeHeight = Math.max(typeBBox.height, nameBBox.height);
+
+    if (hasKeyType || item.attributeKeyType !== undefined) {
+      const keyTypeNode = groupNode
+        .append('text')
+        .attr('class', 'er entityLabel')
+        .attr('id', `${attrPrefix}-name`)
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('dominant-baseline', 'middle')
+        .attr('text-anchor', 'left')
+        .attr(
+          'style',
+          'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
+        )
+        .text(item.attributeKeyType || '');
+
+      attributeNode.kn = keyTypeNode;
+      const keyTypeBBox = keyTypeNode.node().getBBox();
+      nodeWidth += keyTypeBBox.width;
+      maxKeyWidth = Math.max(maxKeyWidth, nodeWidth);
+      nodeHeight = Math.max(nodeHeight, keyTypeBBox.height);
+      hasKeyType = true;
+    }
+
+    if (hasComment || item.attributeComment !== undefined) {
+      const commentNode = groupNode
+        .append('text')
+        .attr('class', 'er entityLabel')
+        .attr('id', `${attrPrefix}-name`)
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('dominant-baseline', 'middle')
+        .attr('text-anchor', 'left')
+        .attr(
+          'style',
+          'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
+        )
+        .text(item.attributeComment || '');
+
+      attributeNode.cn = commentNode;
+      const commentNodeBBox = commentNode.node().getBBox();
+      nodeWidth += commentNodeBBox.width;
+      maxCommentWidth = Math.max(nodeWidth, nameBBox.width);
+      nodeHeight = Math.max(nodeHeight, commentNodeBBox.height);
+      hasComment = true;
+    }
+
+    attributeNode.height = nodeHeight;
+    // Keep a reference to the nodes so that we can iterate through them later
+    attributeNodes.push(attributeNode);
+    maxWidth = Math.max(maxWidth, nodeWidth);
+    cumulativeHeight += nodeHeight + heightPadding * 2;
     attrNum += 1;
   });
 
@@ -90,10 +151,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const bBox = {
     width: Math.max(
       conf.minEntityWidth,
-      Math.max(
-        labelBBox.width + conf.entityPadding * 2,
-        maxTypeWidth + maxNameWidth + widthPadding * 4
-      )
+      Math.max(labelBBox.width + conf.entityPadding * 2, maxWidth + widthPadding * 4)
     ),
     height:
       attributes.length > 0
@@ -102,7 +160,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
   };
 
   // There might be some spare width for padding out attributes if the entity name is very long
-  const spareWidth = Math.max(0, bBox.width - (maxTypeWidth + maxNameWidth) - widthPadding * 4);
+  const spareWidth = Math.max(0, bBox.width - maxWidth - widthPadding * 4);
 
   if (attributes.length > 0) {
     // Position the entity label near the top of the entity bounding box
@@ -115,51 +173,85 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     let heightOffset = labelBBox.height + heightPadding * 2; // Start at the bottom of the entity label
     let attribStyle = 'attributeBoxOdd'; // We will flip the style on alternate rows to achieve a banded effect
 
-    attributeNodes.forEach((nodePair) => {
+    attributeNodes.forEach((attributeNode) => {
       // Calculate the alignment y co-ordinate for the type/name of the attribute
-      const alignY =
-        heightOffset +
-        heightPadding +
-        Math.max(nodePair.tn.node().getBBox().height, nodePair.nn.node().getBBox().height) / 2;
+      const alignY = heightOffset + heightPadding + attributeNode.height / 2;
 
       // Position the type of the attribute
-      nodePair.tn.attr('transform', 'translate(' + widthPadding + ',' + alignY + ')');
+      attributeNode.tn.attr('transform', 'translate(' + widthPadding + ',' + alignY + ')');
 
       // Insert a rectangle for the type
       const typeRect = groupNode
-        .insert('rect', '#' + nodePair.tn.node().id)
+        .insert('rect', '#' + attributeNode.tn.node().id)
         .attr('class', `er ${attribStyle}`)
         .attr('fill', conf.fill)
         .attr('fill-opacity', '100%')
         .attr('stroke', conf.stroke)
         .attr('x', 0)
         .attr('y', heightOffset)
-        .attr('width', maxTypeWidth + widthPadding * 2 + spareWidth / 2)
-        .attr('height', nodePair.tn.node().getBBox().height + heightPadding * 2);
+        .attr('width', maxTypeWidth * 2 + spareWidth / 2)
+        .attr('height', attributeNode.tn.node().getBBox().height + heightPadding * 2);
 
       // Position the name of the attribute
-      nodePair.nn.attr(
+      attributeNode.nn.attr(
         'transform',
         'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'
       );
 
       // Insert a rectangle for the name
       groupNode
-        .insert('rect', '#' + nodePair.nn.node().id)
+        .insert('rect', '#' + attributeNode.nn.node().id)
         .attr('class', `er ${attribStyle}`)
         .attr('fill', conf.fill)
         .attr('fill-opacity', '100%')
         .attr('stroke', conf.stroke)
         .attr('x', `${typeRect.attr('x') + typeRect.attr('width')}`)
-        //.attr('x', maxTypeWidth + (widthPadding * 2))
         .attr('y', heightOffset)
         .attr('width', maxNameWidth + widthPadding * 2 + spareWidth / 2)
-        .attr('height', nodePair.nn.node().getBBox().height + heightPadding * 2);
+        .attr('height', attributeNode.nn.node().getBBox().height + heightPadding * 2);
+
+      if (hasKeyType) {
+        // Position the name of the attribute
+        attributeNode.kn.attr(
+          'transform',
+          'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'
+        );
+
+        // Insert a rectangle for the name
+        groupNode
+          .insert('rect', '#' + attributeNode.kn.node().id)
+          .attr('class', `er ${attribStyle}`)
+          .attr('fill', conf.fill)
+          .attr('fill-opacity', '100%')
+          .attr('stroke', conf.stroke)
+          .attr('x', `${typeRect.attr('x') + typeRect.attr('width')}`)
+          .attr('y', heightOffset)
+          .attr('width', maxKeyWidth + widthPadding * 2 + spareWidth / 2)
+          .attr('height', attributeNode.kn.node().getBBox().height + heightPadding * 2);
+      }
+
+      if (hasComment) {
+        // Position the name of the attribute
+        attributeNode.cn.attr(
+          'transform',
+          'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'
+        );
+
+        // Insert a rectangle for the name
+        groupNode
+          .insert('rect', '#' + attributeNode.cn.node().id)
+          .attr('class', `er ${attribStyle}`)
+          .attr('fill', conf.fill)
+          .attr('fill-opacity', '100%')
+          .attr('stroke', conf.stroke)
+          .attr('x', `${typeRect.attr('x') + typeRect.attr('width')}`)
+          .attr('y', heightOffset)
+          .attr('width', maxCommentWidth + widthPadding * 2 + spareWidth / 2)
+          .attr('height', attributeNode.cn.node().getBBox().height + heightPadding * 2);
+      }
 
       // Increment the height offset to move to the next row
-      heightOffset +=
-        Math.max(nodePair.tn.node().getBBox().height, nodePair.nn.node().getBBox().height) +
-        heightPadding * 2;
+      heightOffset += attributeNode.height + heightPadding * 2;
 
       // Flip the attribute style for row banding
       attribStyle = attribStyle == 'attributeBoxOdd' ? 'attributeBoxEven' : 'attributeBoxOdd';
