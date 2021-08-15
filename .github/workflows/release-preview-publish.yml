@@ -25,7 +25,7 @@ jobs:
 
     - name: Publish
       run: |
-        PREVIEW_VERSION=8
+        PREVIEW_VERSION=9
         VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
         echo $VERSION
         npm version --no-git-tag-version --allow-same-version $VERSION
