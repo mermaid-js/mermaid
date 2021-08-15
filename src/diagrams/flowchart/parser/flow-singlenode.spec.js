@@ -121,7 +121,7 @@ describe('[Singlenodes] when parsing', () => {
 
     expect(edges.length).toBe(0);
     expect(vert['a'].type).toBe('diamond');
-    expect(vert['a'].text).toBe('A <br/> end');
+    expect(vert['a'].text).toBe('A <br> end');
   });
 
   it('should handle a single hexagon node', function() {
@@ -144,7 +144,7 @@ describe('[Singlenodes] when parsing', () => {
 
     expect(edges.length).toBe(0);
     expect(vert['a'].type).toBe('hexagon');
-    expect(vert['a'].text).toBe('A <br/> end');
+    expect(vert['a'].text).toBe('A <br> end');
   });
 
   it('should handle a single round node with html in it', function() {
@@ -156,7 +156,7 @@ describe('[Singlenodes] when parsing', () => {
 
     expect(edges.length).toBe(0);
     expect(vert['a'].type).toBe('round');
-    expect(vert['a'].text).toBe('A <br/> end');
+    expect(vert['a'].text).toBe('A <br> end');
   });
 
   it('should handle a single node with alphanumerics starting on a char', function() {
