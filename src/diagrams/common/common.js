@@ -29,10 +29,11 @@ export const removeScript = (txt) => {
     }
   }
 
-  rs = rs.replace(/javascript:/g, '#');
-  rs = rs.replace(/onerror=/g, 'onerror:');
-  rs = rs.replace(/<iframe/g, '');
-
+  rs = rs.replace(/script>/gi, '#');
+  rs = rs.replace(/script>/gi, '#');
+  rs = rs.replace(/javascript:/gi, '#');
+  rs = rs.replace(/onerror=/gi, 'onerror:');
+  rs = rs.replace(/<iframe/gi, '');
   return rs;
 };
 
@@ -64,7 +65,7 @@ const sanitizeMore = (text, config) => {
 };
 
 export const sanitizeText = (text, config) => {
-  const txt = sanitizeMore(DOMPurify.sanitize(text), config);
+  const txt = DOMPurify.sanitize(sanitizeMore(text, config));
   return txt;
 };
 
