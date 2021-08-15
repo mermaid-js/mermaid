@@ -37,6 +37,17 @@ export const removeScript = (txt) => {
   return rs;
 };
 
+/**
+ * Simple css sanitization
+ */
+export const sanitizeCSS = (css) => {
+  if (css.indexOf('url') >= 0) return '';
+  if (css.indexOf('/*') >= 0) return '';
+  if (css.indexOf('//') >= 0) return '';
+
+  return css;
+};
+
 const sanitizeMore = (text, config) => {
   let txt = text;
   let htmlLabels = true;
@@ -112,4 +123,5 @@ export default {
   removeScript,
   getUrl,
   evaluate,
+  sanitizeCSS,
 };

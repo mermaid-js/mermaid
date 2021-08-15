@@ -15,6 +15,7 @@
  */
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
+import common from './diagrams/common/common';
 import pkg from '../package.json';
 import * as configApi from './config';
 import classDb from './diagrams/class/classDb';
@@ -284,7 +285,7 @@ const render = function (id, _txt, cb, container) {
   let userStyles = '';
   // user provided theme CSS
   if (cnf.themeCSS !== undefined) {
-    userStyles += `\n${cnf.themeCSS}`;
+    userStyles += `\n${common.sanitizeCSS(cnf.themeCSS)}`;
   }
   // user provided theme CSS
   if (cnf.fontFamily !== undefined) {
