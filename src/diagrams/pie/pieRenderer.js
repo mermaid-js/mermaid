@@ -156,7 +156,7 @@ export const draw = (txt, id) => {
       .attr('y', legendRectSize - legendSpacing)
       .text(function (d) {
         if (parser.yy.getShowData() || conf.showData || conf.pie.showData) {
-          return d.data[0] + ' [' + d.data[1]+ ']';
+          return d.data[0] + ' [' + d.data[1] + ']';
         } else {
           return d.data[0];
         }

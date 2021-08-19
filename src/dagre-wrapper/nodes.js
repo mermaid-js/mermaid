@@ -674,8 +674,8 @@ const class_box = (parent, node) => {
   node.classData.members.forEach((str) => {
     let parsedText = parseMember(str).displayText;
     if (getConfig().flowchart.htmlLabels) {
-      parsedText  = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    } 
+      parsedText = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
     const lbl = labelContainer
       .node()
       .appendChild(createLabel(parsedText, node.labelStyle, true, true));
@@ -699,10 +699,10 @@ const class_box = (parent, node) => {
   const classMethods = [];
   node.classData.methods.forEach((str) => {
     const parsedInfo = parseMember(str);
-    let displayText =parsedInfo.displayText;
+    let displayText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
-      displayText  = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    } 
+      displayText = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
     const lbl = labelContainer
       .node()
       .appendChild(
