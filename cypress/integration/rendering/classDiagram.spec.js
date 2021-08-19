@@ -264,7 +264,7 @@ describe('Class diagram', () => {
         testArray() bool[]
       }
 
-      cssClass "Class10" exClass
+      class Class10:::exClass2
       `,
       {}
     );
