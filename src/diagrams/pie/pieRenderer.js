@@ -81,7 +81,7 @@ export const draw = (txt, id) => {
     ];
 
     // Set the color scale
-    var color = scaleOrdinal().domain(data).range(myGeneratedColors);
+    var color = scaleOrdinal().range(myGeneratedColors);
 
     // Compute the position of each group on the pie:
     var pie = d3pie().value(function (d) {
