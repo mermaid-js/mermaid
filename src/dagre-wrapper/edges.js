@@ -43,25 +43,27 @@ export const insertEdgeLabel = (elem, edge) => {
   edge.width = bbox.width;
   edge.height = bbox.height;
 
+  let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
     const startLabelElement = createLabel(edge.startLabelLeft, edge.labelStyle);
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
-    inner.node().appendChild(startLabelElement);
+    fo=inner.node().appendChild(startLabelElement);
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
     if (!terminalLabels[edge.id]) {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].startLeft = startEdgeLabelLeft;
+    setTerminalWidth(fo,bbox);
   }
   if (edge.startLabelRight) {
     // Create the actual text element
     const startLabelElement = createLabel(edge.startLabelRight, edge.labelStyle);
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
-    startEdgeLabelRight.node().appendChild(startLabelElement);
+    fo=startEdgeLabelRight.node().appendChild(startLabelElement);
     inner.node().appendChild(startLabelElement);
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
@@ -70,21 +72,25 @@ export const insertEdgeLabel = (elem, edge) => {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].startRight = startEdgeLabelRight;
+    setTerminalWidth(fo,bbox);
+
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
     const endLabelElement = createLabel(edge.endLabelLeft, edge.labelStyle);
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
-    inner.node().appendChild(endLabelElement);
+    fo=inner.node().appendChild(endLabelElement);
     const slBox = endLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
+
     if (!terminalLabels[edge.id]) {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].endLeft = endEdgeLabelLeft;
+    setTerminalWidth(fo,bbox);
   }
   if (edge.endLabelRight) {
     // Create the actual text element
@@ -92,7 +98,7 @@ export const insertEdgeLabel = (elem, edge) => {
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
-    inner.node().appendChild(endLabelElement);
+    fo=inner.node().appendChild(endLabelElement);
     const slBox = endLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
@@ -101,8 +107,17 @@ export const insertEdgeLabel = (elem, edge) => {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
+    setTerminalWidth(fo,bbox);
+    
   }
 };
+
+function setTerminalWidth(fo, box){
+  if(getConfig().flowchart.htmlLabels && fo){
+    fo.style.width=box.width;
+    fo.style.height=box.height;
+  }
+}
 
 export const positionEdgeLabel = (edge, paths) => {
   log.info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
