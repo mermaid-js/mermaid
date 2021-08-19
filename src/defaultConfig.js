@@ -900,7 +900,7 @@ top of the chart
      *
      * Default value: 'dagre-d3'
      */
-    defaultRenderer: 'dagre-d3',
+    defaultRenderer: 'dagre-wrapper',
   },
   git: {
     arrowMarkerAbsolute: false,
