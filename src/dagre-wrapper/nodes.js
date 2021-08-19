@@ -648,7 +648,11 @@ const class_box = (parent, node) => {
   let classTitleString = node.classData.id;
 
   if (node.classData.type !== undefined && node.classData.type !== '') {
-    classTitleString += '<' + node.classData.type + '>';
+    if (getConfig().flowchart.htmlLabels) {
+      classTitleString += '&lt;' + node.classData.type + '&gt;';
+    } else {
+      classTitleString += '<' + node.classData.type + '>';
+    }
   }
   const classTitleLabel = labelContainer
     .node()
