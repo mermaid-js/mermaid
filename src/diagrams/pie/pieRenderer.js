@@ -85,7 +85,7 @@ export const draw = (txt, id) => {
 
     // Compute the position of each group on the pie:
     var pie = d3pie().value(function (d) {
-      return d.value;
+      return d[1];
     });
     var dataReady = pie(Object.entries(data));
 
@@ -100,7 +100,7 @@ export const draw = (txt, id) => {
       .append('path')
       .attr('d', arcGenerator)
       .attr('fill', function (d) {
-        return color(d.data.key);
+        return color(d.data[0]);
       })
       .attr('class', 'pieCircle');
 
@@ -108,11 +108,11 @@ export const draw = (txt, id) => {
     // Use the centroid method to get the best coordinates.
     svg
       .selectAll('mySlices')
-      .data(dataReady.filter((value) => value.data.value !== 0))
+      .data(dataReady)
       .enter()
       .append('text')
       .text(function (d) {
-        return ((d.data.value / sum) * 100).toFixed(0) + '%';
+        return ((d.data[1] / sum) * 100).toFixed(0) + '%';
       })
       .attr('transform', function (d) {
         return 'translate(' + arcGenerator.centroid(d) + ')';
@@ -150,15 +150,15 @@ export const draw = (txt, id) => {
       .style('stroke', color);
 
     legend
-      .data(dataReady.filter((value) => value.data.value !== 0))
+      .data(dataReady)
       .append('text')
       .attr('x', legendRectSize + legendSpacing)
       .attr('y', legendRectSize - legendSpacing)
       .text(function (d) {
         if (parser.yy.getShowData() || conf.showData || conf.pie.showData) {
-          return d.data.key + ' [' + d.data.value + ']';
+          return d.data[0] + ' [' + d.data[1]+ ']';
         } else {
-          return d.data.key;
+          return d.data[0];
         }
       });
   } catch (e) {

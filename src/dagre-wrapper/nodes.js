@@ -648,7 +648,11 @@ const class_box = (parent, node) => {
   let classTitleString = node.classData.id;
 
   if (node.classData.type !== undefined && node.classData.type !== '') {
-    classTitleString += '<' + node.classData.type + '>';
+    if (getConfig().flowchart.htmlLabels) {
+      classTitleString += '&lt;' + node.classData.type + '&gt;';
+    } else {
+      classTitleString += '<' + node.classData.type + '>';
+    }
   }
   const classTitleLabel = labelContainer
     .node()
@@ -668,7 +672,10 @@ const class_box = (parent, node) => {
   }
   const classAttributes = [];
   node.classData.members.forEach((str) => {
-    const parsedText = parseMember(str).displayText;
+    let parsedText = parseMember(str).displayText;
+    if (getConfig().flowchart.htmlLabels) {
+      parsedText  = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    } 
     const lbl = labelContainer
       .node()
       .appendChild(createLabel(parsedText, node.labelStyle, true, true));
@@ -691,10 +698,21 @@ const class_box = (parent, node) => {
 
   const classMethods = [];
   node.classData.methods.forEach((str) => {
-    const parsedText = parseMember(str).displayText;
+    const parsedInfo = parseMember(str);
+    let displayText =parsedInfo.displayText;
+    if (getConfig().flowchart.htmlLabels) {
+      displayText  = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    } 
     const lbl = labelContainer
       .node()
-      .appendChild(createLabel(parsedText, node.labelStyle, true, true));
+      .appendChild(
+        createLabel(
+          displayText,
+          parsedInfo.cssStyle ? parsedInfo.cssStyle : node.labelStyle,
+          true,
+          true
+        )
+      );
     let bbox = lbl.getBBox();
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       const div = lbl.children[0];
