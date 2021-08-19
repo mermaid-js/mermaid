@@ -656,7 +656,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.11.4\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.0\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.11.4\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.1\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -1280,13 +1280,14 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
 
   edge.width = bbox.width;
   edge.height = bbox.height;
+  var fo;
 
   if (edge.startLabelLeft) {
     // Create the actual text element
     var startLabelElement = Object(_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(edge.startLabelLeft, edge.labelStyle);
     var startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     var inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
-    inner.node().appendChild(startLabelElement);
+    fo = inner.node().appendChild(startLabelElement);
     var slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
@@ -1295,6 +1296,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
     }
 
     terminalLabels[edge.id].startLeft = startEdgeLabelLeft;
+    setTerminalWidth(fo, bbox);
   }
 
   if (edge.startLabelRight) {
@@ -1305,7 +1307,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
 
     var _inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
 
-    startEdgeLabelRight.node().appendChild(_startLabelElement);
+    fo = startEdgeLabelRight.node().appendChild(_startLabelElement);
 
     _inner.node().appendChild(_startLabelElement);
 
@@ -1318,6 +1320,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
     }
 
     terminalLabels[edge.id].startRight = startEdgeLabelRight;
+    setTerminalWidth(fo, bbox);
   }
 
   if (edge.endLabelLeft) {
@@ -1327,7 +1330,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
 
     var _inner2 = endEdgeLabelLeft.insert('g').attr('class', 'inner');
 
-    _inner2.node().appendChild(endLabelElement);
+    fo = _inner2.node().appendChild(endLabelElement);
 
     var _slBox2 = endLabelElement.getBBox();
 
@@ -1340,6 +1343,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
     }
 
     terminalLabels[edge.id].endLeft = endEdgeLabelLeft;
+    setTerminalWidth(fo, bbox);
   }
 
   if (edge.endLabelRight) {
@@ -1350,7 +1354,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
 
     var _inner3 = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
-    _inner3.node().appendChild(_endLabelElement);
+    fo = _inner3.node().appendChild(_endLabelElement);
 
     var _slBox3 = _endLabelElement.getBBox();
 
@@ -1363,8 +1367,17 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
     }
 
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
+    setTerminalWidth(fo, bbox);
   }
 };
+
+function setTerminalWidth(fo, box) {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels && fo) {
+    fo.style.width = box.width;
+    fo.style.height = box.height;
+  }
+}
+
 var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
   _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
   var path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
@@ -3483,7 +3496,11 @@ var class_box = function class_box(parent, node) {
   var classTitleString = node.classData.id;
 
   if (node.classData.type !== undefined && node.classData.type !== '') {
-    classTitleString += '<' + node.classData.type + '>';
+    if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+      classTitleString += '&lt;' + node.classData.type + '&gt;';
+    } else {
+      classTitleString += '<' + node.classData.type + '>';
+    }
   }
 
   var classTitleLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(classTitleString, node.labelStyle, true, true));
@@ -3511,6 +3528,11 @@ var class_box = function class_box(parent, node) {
   var classAttributes = [];
   node.classData.members.forEach(function (str) {
     var parsedText = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str).displayText;
+
+    if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+      parsedText = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
     var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(parsedText, node.labelStyle, true, true));
     var bbox = lbl.getBBox();
 
@@ -3536,8 +3558,14 @@ var class_box = function class_box(parent, node) {
   maxHeight += lineHeight;
   var classMethods = [];
   node.classData.methods.forEach(function (str) {
-    var parsedText = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str).displayText;
-    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(parsedText, node.labelStyle, true, true));
+    var parsedInfo = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str);
+    var displayText = parsedInfo.displayText;
+
+    if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+      displayText = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(displayText, parsedInfo.cssStyle ? parsedInfo.cssStyle : node.labelStyle, true, true));
     var bbox = lbl.getBBox();
 
     if (Object(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_8__["evaluate"])(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels)) {
@@ -3987,7 +4015,7 @@ var config = {
    * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
    * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
-     * **Notes**:
+    * **Notes**:
    *
    * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
@@ -5637,7 +5665,7 @@ var addRelations = function addRelations(relations, g) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
 
-      if (Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.htmlLabels && false) {
+      if (Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.htmlLabels) {
         // eslint-disable-line
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
@@ -16957,21 +16985,19 @@ var draw = function draw(txt, id) {
     var color = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleOrdinal"])().domain(data).range(myGeneratedColors); // Compute the position of each group on the pie:
 
     var pie = Object(d3__WEBPACK_IMPORTED_MODULE_0__["pie"])().value(function (d) {
-      return d.value;
+      return d[1];
     });
     var dataReady = pie(Object.entries(data)); // Shape helper to build arcs:
 
     var arcGenerator = Object(d3__WEBPACK_IMPORTED_MODULE_0__["arc"])().innerRadius(0).outerRadius(radius); // Build the pie chart: each part of the pie is a path that we build using the arc function.
 
     svg.selectAll('mySlices').data(dataReady).enter().append('path').attr('d', arcGenerator).attr('fill', function (d) {
-      return color(d.data.key);
+      return color(d.data[0]);
     }).attr('class', 'pieCircle'); // Now add the percentage.
     // Use the centroid method to get the best coordinates.
 
-    svg.selectAll('mySlices').data(dataReady.filter(function (value) {
-      return value.data.value !== 0;
-    })).enter().append('text').text(function (d) {
-      return (d.data.value / sum * 100).toFixed(0) + '%';
+    svg.selectAll('mySlices').data(dataReady).enter().append('text').text(function (d) {
+      return (d.data[1] / sum * 100).toFixed(0) + '%';
     }).attr('transform', function (d) {
       return 'translate(' + arcGenerator.centroid(d) + ')';
     }).style('text-anchor', 'middle').attr('class', 'slice');
@@ -16985,13 +17011,11 @@ var draw = function draw(txt, id) {
       return 'translate(' + horz + ',' + vert + ')';
     });
     legend.append('rect').attr('width', legendRectSize).attr('height', legendRectSize).style('fill', color).style('stroke', color);
-    legend.data(dataReady.filter(function (value) {
-      return value.data.value !== 0;
-    })).append('text').attr('x', legendRectSize + legendSpacing).attr('y', legendRectSize - legendSpacing).text(function (d) {
+    legend.data(dataReady).append('text').attr('x', legendRectSize + legendSpacing).attr('y', legendRectSize - legendSpacing).text(function (d) {
       if (parser.yy.getShowData() || conf.showData || conf.pie.showData) {
-        return d.data.key + ' [' + d.data.value + ']';
+        return d.data[0] + ' [' + d.data[1] + ']';
       } else {
-        return d.data.key;
+        return d.data[0];
       }
     });
   } catch (e) {
