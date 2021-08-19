@@ -56,7 +56,7 @@ export const insertEdgeLabel = (elem, edge) => {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].startLeft = startEdgeLabelLeft;
-    setTerminalWidth(fo, bbox);
+    setTerminalWidth(fo, edge.startLabelLeft);
   }
   if (edge.startLabelRight) {
     // Create the actual text element
@@ -72,7 +72,7 @@ export const insertEdgeLabel = (elem, edge) => {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].startRight = startEdgeLabelRight;
-    setTerminalWidth(fo, bbox);
+    setTerminalWidth(fo, edge.startLabelRight);
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
@@ -89,7 +89,7 @@ export const insertEdgeLabel = (elem, edge) => {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].endLeft = endEdgeLabelLeft;
-    setTerminalWidth(fo, bbox);
+    setTerminalWidth(fo, edge.endLabelLeft);
   }
   if (edge.endLabelRight) {
     // Create the actual text element
@@ -106,14 +106,14 @@ export const insertEdgeLabel = (elem, edge) => {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
-    setTerminalWidth(fo, bbox);
+    setTerminalWidth(fo, edge.endLabelRight);
   }
 };
 
-function setTerminalWidth(fo, box) {
+function setTerminalWidth(fo, value) {
   if (getConfig().flowchart.htmlLabels && fo) {
-    fo.style.width = box.width;
-    fo.style.height = box.height;
+    fo.style.width = value.length * 9 + 'px';
+    fo.style.height = '12px';
   }
 }
 
