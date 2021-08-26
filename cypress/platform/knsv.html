@@ -27,7 +27,7 @@
     <div>info below</div>
     <div class="flex">
 
-<div class="mermaid" style="width: 100%; height: 20%;">
+<div class="mermaid2" style="width: 100%; height: 20%;">
 classDiagram
   direction TB
   class Student {
@@ -52,14 +52,11 @@ stateDiagram
     }
 
 </div>
-<div class="mermaid3" style="width: 100%; height: 20%;">
-flowchart
-subgraph CompositeState
-  subgraph AnotherCompositeStateCompositeStateCompositeStateCompositeState
-      YourState --a label--> MyState
-  end
+<div class="mermaid" style="width: 100%; height: 20%;">
+flowchart LR
+  one --> two
+  three -.-> four[whoa, big arrowhead nine o'clock]
 
-end
 </div>
 <div class="mermaid2" style="width: 100%; height: 20%;">
 %%{init: { "apa":"b", "theme":"forest"}}%%
