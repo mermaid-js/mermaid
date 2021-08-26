@@ -43,25 +43,27 @@ export const insertEdgeLabel = (elem, edge) => {
   edge.width = bbox.width;
   edge.height = bbox.height;
 
+  let fo;
   if (edge.startLabelLeft) {
     // Create the actual text element
     const startLabelElement = createLabel(edge.startLabelLeft, edge.labelStyle);
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
-    inner.node().appendChild(startLabelElement);
+    fo = inner.node().appendChild(startLabelElement);
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
     if (!terminalLabels[edge.id]) {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].startLeft = startEdgeLabelLeft;
+    setTerminalWidth(fo, edge.startLabelLeft);
   }
   if (edge.startLabelRight) {
     // Create the actual text element
     const startLabelElement = createLabel(edge.startLabelRight, edge.labelStyle);
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
-    startEdgeLabelRight.node().appendChild(startLabelElement);
+    fo = startEdgeLabelRight.node().appendChild(startLabelElement);
     inner.node().appendChild(startLabelElement);
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
@@ -70,21 +72,24 @@ export const insertEdgeLabel = (elem, edge) => {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].startRight = startEdgeLabelRight;
+    setTerminalWidth(fo, edge.startLabelRight);
   }
   if (edge.endLabelLeft) {
     // Create the actual text element
     const endLabelElement = createLabel(edge.endLabelLeft, edge.labelStyle);
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
-    inner.node().appendChild(endLabelElement);
+    fo = inner.node().appendChild(endLabelElement);
     const slBox = endLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
     endEdgeLabelLeft.node().appendChild(endLabelElement);
+
     if (!terminalLabels[edge.id]) {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].endLeft = endEdgeLabelLeft;
+    setTerminalWidth(fo, edge.endLabelLeft);
   }
   if (edge.endLabelRight) {
     // Create the actual text element
@@ -92,7 +97,7 @@ export const insertEdgeLabel = (elem, edge) => {
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
-    inner.node().appendChild(endLabelElement);
+    fo = inner.node().appendChild(endLabelElement);
     const slBox = endLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
@@ -101,8 +106,16 @@ export const insertEdgeLabel = (elem, edge) => {
       terminalLabels[edge.id] = {};
     }
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
+    setTerminalWidth(fo, edge.endLabelRight);
   }
 };
+
+function setTerminalWidth(fo, value) {
+  if (getConfig().flowchart.htmlLabels && fo) {
+    fo.style.width = value.length * 9 + 'px';
+    fo.style.height = '12px';
+  }
+}
 
 export const positionEdgeLabel = (edge, paths) => {
   log.info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
@@ -128,7 +141,7 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'start_left', path);
+      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
       x = pos.x;
       y = pos.y;
     }
@@ -140,7 +153,11 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'start_right', path);
+      const pos = utils.calcTerminalLabelPosition(
+        edge.arrowTypeStart ? 10 : 0,
+        'start_right',
+        path
+      );
       x = pos.x;
       y = pos.y;
     }
@@ -152,7 +169,7 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'end_left', path);
+      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
       x = pos.x;
       y = pos.y;
     }
@@ -164,7 +181,7 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'end_right', path);
+      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
       x = pos.x;
       y = pos.y;
     }

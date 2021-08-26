@@ -653,10 +653,10 @@ module.exports = function(module) {
 /*!**********************!*\
   !*** ./package.json ***!
   \**********************/
-/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
+/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.11.4\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"@percy/migrate\":\"^0.10.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.0\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-eslint\":\"^10.1.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"7.6.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^4.4.2\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.12.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.1\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -1280,13 +1280,14 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
 
   edge.width = bbox.width;
   edge.height = bbox.height;
+  var fo;
 
   if (edge.startLabelLeft) {
     // Create the actual text element
     var startLabelElement = Object(_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(edge.startLabelLeft, edge.labelStyle);
     var startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     var inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
-    inner.node().appendChild(startLabelElement);
+    fo = inner.node().appendChild(startLabelElement);
     var slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
 
@@ -1295,6 +1296,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
     }
 
     terminalLabels[edge.id].startLeft = startEdgeLabelLeft;
+    setTerminalWidth(fo, edge.startLabelLeft);
   }
 
   if (edge.startLabelRight) {
@@ -1305,7 +1307,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
 
     var _inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
 
-    startEdgeLabelRight.node().appendChild(_startLabelElement);
+    fo = startEdgeLabelRight.node().appendChild(_startLabelElement);
 
     _inner.node().appendChild(_startLabelElement);
 
@@ -1318,6 +1320,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
     }
 
     terminalLabels[edge.id].startRight = startEdgeLabelRight;
+    setTerminalWidth(fo, edge.startLabelRight);
   }
 
   if (edge.endLabelLeft) {
@@ -1327,7 +1330,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
 
     var _inner2 = endEdgeLabelLeft.insert('g').attr('class', 'inner');
 
-    _inner2.node().appendChild(endLabelElement);
+    fo = _inner2.node().appendChild(endLabelElement);
 
     var _slBox2 = endLabelElement.getBBox();
 
@@ -1340,6 +1343,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
     }
 
     terminalLabels[edge.id].endLeft = endEdgeLabelLeft;
+    setTerminalWidth(fo, edge.endLabelLeft);
   }
 
   if (edge.endLabelRight) {
@@ -1350,7 +1354,7 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
 
     var _inner3 = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
-    _inner3.node().appendChild(_endLabelElement);
+    fo = _inner3.node().appendChild(_endLabelElement);
 
     var _slBox3 = _endLabelElement.getBBox();
 
@@ -1363,8 +1367,17 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
     }
 
     terminalLabels[edge.id].endRight = endEdgeLabelRight;
+    setTerminalWidth(fo, edge.endLabelRight);
   }
 };
+
+function setTerminalWidth(fo, value) {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels && fo) {
+    fo.style.width = value.length * 9 + 'px';
+    fo.style.height = '12px';
+  }
+}
+
 var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
   _logger__WEBPACK_IMPORTED_MODULE_0__["log"].info('Moving label abc78 ', edge.id, edge.label, edgeLabels[edge.id]);
   var path = paths.updatedPath ? paths.updatedPath : paths.originalPath;
@@ -1392,7 +1405,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
 
     if (path) {
       // debugger;
-      var _pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_left', path);
+      var _pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
 
       _x2 = _pos.x;
       _y2 = _pos.y;
@@ -1408,7 +1421,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
 
     if (path) {
       // debugger;
-      var _pos2 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'start_right', path);
+      var _pos2 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_right', path);
 
       _x3 = _pos2.x;
       _y3 = _pos2.y;
@@ -1424,7 +1437,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
 
     if (path) {
       // debugger;
-      var _pos3 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_left', path);
+      var _pos3 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
 
       _x4 = _pos3.x;
       _y4 = _pos3.y;
@@ -1440,7 +1453,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge, paths) {
 
     if (path) {
       // debugger;
-      var _pos4 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(0, 'end_right', path);
+      var _pos4 = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
 
       _x5 = _pos4.x;
       _y5 = _pos4.y;
@@ -3283,10 +3296,8 @@ var rectWithTitle = function rectWithTitle(parent, node) {
 
 
   var halfPadding = node.padding / 2;
-  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(descr).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
-  bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) + ', ' + (titleBox.height + halfPadding + 5) + ')');
-  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(text).attr('transform', 'translate( ' + ( // (titleBox.width - bbox.width) / 2 +
-  bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) + ', ' + 0 + ')'); // Get the size of the label
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(descr).attr('transform', 'translate( ' + (bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) + ', ' + (titleBox.height + halfPadding + 5) + ')');
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(text).attr('transform', 'translate( ' + (bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) + ', ' + 0 + ')'); // Get the size of the label
   // Bounding box for title and text
 
   bbox = label.node().getBBox(); // Center the label
@@ -3485,7 +3496,11 @@ var class_box = function class_box(parent, node) {
   var classTitleString = node.classData.id;
 
   if (node.classData.type !== undefined && node.classData.type !== '') {
-    classTitleString += '<' + node.classData.type + '>';
+    if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+      classTitleString += '&lt;' + node.classData.type + '&gt;';
+    } else {
+      classTitleString += '<' + node.classData.type + '>';
+    }
   }
 
   var classTitleLabel = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(classTitleString, node.labelStyle, true, true));
@@ -3513,6 +3528,11 @@ var class_box = function class_box(parent, node) {
   var classAttributes = [];
   node.classData.members.forEach(function (str) {
     var parsedText = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str).displayText;
+
+    if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+      parsedText = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
     var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(parsedText, node.labelStyle, true, true));
     var bbox = lbl.getBBox();
 
@@ -3538,8 +3558,14 @@ var class_box = function class_box(parent, node) {
   maxHeight += lineHeight;
   var classMethods = [];
   node.classData.methods.forEach(function (str) {
-    var parsedText = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str).displayText;
-    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(parsedText, node.labelStyle, true, true));
+    var parsedInfo = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str);
+    var displayText = parsedInfo.displayText;
+
+    if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
+      displayText = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(displayText, parsedInfo.cssStyle ? parsedInfo.cssStyle : node.labelStyle, true, true));
     var bbox = lbl.getBBox();
 
     if (Object(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_8__["evaluate"])(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels)) {
@@ -4762,7 +4788,7 @@ var config = {
      *
      * Default value: 'dagre-d3'
      */
-    defaultRenderer: 'dagre-d3'
+    defaultRenderer: 'dagre-wrapper'
   },
   git: {
     arrowMarkerAbsolute: false,
@@ -5380,6 +5406,16 @@ var setupToolTips = function setupToolTips(element) {
 };
 
 funs.push(setupToolTips);
+var direction = 'TB';
+
+var getDirection = function getDirection() {
+  return direction;
+};
+
+var setDirection = function setDirection(dir) {
+  direction = dir;
+};
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   parseDirective: parseDirective,
   getConfig: function getConfig() {
@@ -5393,6 +5429,8 @@ funs.push(setupToolTips);
   addAnnotation: addAnnotation,
   getRelations: getRelations,
   addRelation: addRelation,
+  getDirection: getDirection,
+  setDirection: setDirection,
   addMember: addMember,
   addMembers: addMembers,
   cleanupLabel: cleanupLabel,
@@ -5639,7 +5677,7 @@ var addRelations = function addRelations(relations, g) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
 
-      if (Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.htmlLabels && false) {
+      if (Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart.htmlLabels) {
         // eslint-disable-line
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
@@ -5761,8 +5799,8 @@ var draw = function draw(text, id) {
   // log.debug('Parsing failed');
   // }
   // Fetch the default direction, use TD if none was found
+  //let dir = 'TD';
 
-  var dir = 'TD';
   var conf = Object(_config__WEBPACK_IMPORTED_MODULE_7__["getConfig"])().flowchart;
   _logger__WEBPACK_IMPORTED_MODULE_3__["log"].info('config:', conf);
   var nodeSpacing = conf.nodeSpacing || 50;
@@ -5772,7 +5810,7 @@ var draw = function draw(text, id) {
     multigraph: true,
     compound: true
   }).setGraph({
-    rankdir: dir,
+    rankdir: _classDb__WEBPACK_IMPORTED_MODULE_4__["default"].getDirection(),
     nodesep: nodeSpacing,
     ranksep: rankSpacing,
     marginx: 8,
@@ -5835,8 +5873,8 @@ var draw = function draw(text, id) {
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
-      rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
+      rect.setAttribute('height', dim.height); // rect.setAttribute('style', 'fill:#e8e8e8;');
+
       label.insertBefore(rect, label.firstChild);
     }
   } // If node has a link, wrap it in an anchor SVG object.
@@ -6136,153 +6174,165 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,6],$V2=[1,14],$V3=[1,25],$V4=[1,28],$V5=[1,26],$V6=[1,27],$V7=[1,29],$V8=[1,30],$V9=[1,31],$Va=[1,32],$Vb=[1,35],$Vc=[1,36],$Vd=[1,37],$Ve=[1,38],$Vf=[10,19],$Vg=[1,50],$Vh=[1,51],$Vi=[1,52],$Vj=[1,53],$Vk=[1,54],$Vl=[1,55],$Vm=[10,19,26,33,34,42,45,46,47,48,49,50,55,57],$Vn=[10,19,24,26,33,34,38,42,45,46,47,48,49,50,55,57,72,73,74,75],$Vo=[10,13,17,19],$Vp=[42,72,73,74,75],$Vq=[42,49,50,72,73,74,75],$Vr=[42,45,46,47,48,72,73,74,75],$Vs=[10,19,26],$Vt=[1,87];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,6],$V1=[1,7],$V2=[1,8],$V3=[1,9],$V4=[1,12],$V5=[1,11],$V6=[1,15,24],$V7=[1,19],$V8=[1,31],$V9=[1,34],$Va=[1,32],$Vb=[1,33],$Vc=[1,35],$Vd=[1,36],$Ve=[1,37],$Vf=[1,38],$Vg=[1,41],$Vh=[1,42],$Vi=[1,43],$Vj=[1,44],$Vk=[15,24],$Vl=[1,56],$Vm=[1,57],$Vn=[1,58],$Vo=[1,59],$Vp=[1,60],$Vq=[1,61],$Vr=[15,24,31,38,39,47,50,51,52,53,54,55,60,62],$Vs=[15,24,29,31,38,39,43,47,50,51,52,53,54,55,60,62,77,78,79,80],$Vt=[7,8,9,10,15,18,22,24],$Vu=[47,77,78,79,80],$Vv=[47,54,55,77,78,79,80],$Vw=[47,50,51,52,53,77,78,79,80],$Vx=[15,24,31],$Vy=[1,93];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"mermaidDoc":4,"directive":5,"graphConfig":6,"openDirective":7,"typeDirective":8,"closeDirective":9,"NEWLINE":10,":":11,"argDirective":12,"open_directive":13,"type_directive":14,"arg_directive":15,"close_directive":16,"CLASS_DIAGRAM":17,"statements":18,"EOF":19,"statement":20,"className":21,"alphaNumToken":22,"classLiteralName":23,"GENERICTYPE":24,"relationStatement":25,"LABEL":26,"classStatement":27,"methodStatement":28,"annotationStatement":29,"clickStatement":30,"cssClassStatement":31,"CLASS":32,"STYLE_SEPARATOR":33,"STRUCT_START":34,"members":35,"STRUCT_STOP":36,"ANNOTATION_START":37,"ANNOTATION_END":38,"MEMBER":39,"SEPARATOR":40,"relation":41,"STR":42,"relationType":43,"lineType":44,"AGGREGATION":45,"EXTENSION":46,"COMPOSITION":47,"DEPENDENCY":48,"LINE":49,"DOTTED_LINE":50,"CALLBACK":51,"LINK":52,"LINK_TARGET":53,"CLICK":54,"CALLBACK_NAME":55,"CALLBACK_ARGS":56,"HREF":57,"CSSCLASS":58,"commentToken":59,"textToken":60,"graphCodeTokens":61,"textNoTagsToken":62,"TAGSTART":63,"TAGEND":64,"==":65,"--":66,"PCT":67,"DEFAULT":68,"SPACE":69,"MINUS":70,"keywords":71,"UNICODE_TEXT":72,"NUM":73,"ALPHA":74,"BQUOTE_STR":75,"$accept":0,"$end":1},
-terminals_: {2:"error",10:"NEWLINE",11:":",13:"open_directive",14:"type_directive",15:"arg_directive",16:"close_directive",17:"CLASS_DIAGRAM",19:"EOF",24:"GENERICTYPE",26:"LABEL",32:"CLASS",33:"STYLE_SEPARATOR",34:"STRUCT_START",36:"STRUCT_STOP",37:"ANNOTATION_START",38:"ANNOTATION_END",39:"MEMBER",40:"SEPARATOR",42:"STR",45:"AGGREGATION",46:"EXTENSION",47:"COMPOSITION",48:"DEPENDENCY",49:"LINE",50:"DOTTED_LINE",51:"CALLBACK",52:"LINK",53:"LINK_TARGET",54:"CLICK",55:"CALLBACK_NAME",56:"CALLBACK_ARGS",57:"HREF",58:"CSSCLASS",61:"graphCodeTokens",63:"TAGSTART",64:"TAGEND",65:"==",66:"--",67:"PCT",68:"DEFAULT",69:"SPACE",70:"MINUS",71:"keywords",72:"UNICODE_TEXT",73:"NUM",74:"ALPHA",75:"BQUOTE_STR"},
-productions_: [0,[3,1],[3,2],[4,1],[5,4],[5,6],[7,1],[8,1],[12,1],[9,1],[6,4],[18,1],[18,2],[18,3],[21,1],[21,1],[21,2],[21,2],[21,2],[20,1],[20,2],[20,1],[20,1],[20,1],[20,1],[20,1],[20,1],[27,2],[27,4],[27,5],[27,7],[29,4],[35,1],[35,2],[28,1],[28,2],[28,1],[28,1],[25,3],[25,4],[25,4],[25,5],[41,3],[41,2],[41,2],[41,1],[43,1],[43,1],[43,1],[43,1],[44,1],[44,1],[30,3],[30,4],[30,3],[30,4],[30,4],[30,5],[30,3],[30,4],[30,4],[30,5],[30,3],[30,4],[30,4],[30,5],[31,3],[59,1],[59,1],[60,1],[60,1],[60,1],[60,1],[60,1],[60,1],[60,1],[62,1],[62,1],[62,1],[62,1],[22,1],[22,1],[22,1],[23,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"direction":5,"directive":6,"direction_tb":7,"direction_bt":8,"direction_rl":9,"direction_lr":10,"graphConfig":11,"openDirective":12,"typeDirective":13,"closeDirective":14,"NEWLINE":15,":":16,"argDirective":17,"open_directive":18,"type_directive":19,"arg_directive":20,"close_directive":21,"CLASS_DIAGRAM":22,"statements":23,"EOF":24,"statement":25,"className":26,"alphaNumToken":27,"classLiteralName":28,"GENERICTYPE":29,"relationStatement":30,"LABEL":31,"classStatement":32,"methodStatement":33,"annotationStatement":34,"clickStatement":35,"cssClassStatement":36,"CLASS":37,"STYLE_SEPARATOR":38,"STRUCT_START":39,"members":40,"STRUCT_STOP":41,"ANNOTATION_START":42,"ANNOTATION_END":43,"MEMBER":44,"SEPARATOR":45,"relation":46,"STR":47,"relationType":48,"lineType":49,"AGGREGATION":50,"EXTENSION":51,"COMPOSITION":52,"DEPENDENCY":53,"LINE":54,"DOTTED_LINE":55,"CALLBACK":56,"LINK":57,"LINK_TARGET":58,"CLICK":59,"CALLBACK_NAME":60,"CALLBACK_ARGS":61,"HREF":62,"CSSCLASS":63,"commentToken":64,"textToken":65,"graphCodeTokens":66,"textNoTagsToken":67,"TAGSTART":68,"TAGEND":69,"==":70,"--":71,"PCT":72,"DEFAULT":73,"SPACE":74,"MINUS":75,"keywords":76,"UNICODE_TEXT":77,"NUM":78,"ALPHA":79,"BQUOTE_STR":80,"$accept":0,"$end":1},
+terminals_: {2:"error",7:"direction_tb",8:"direction_bt",9:"direction_rl",10:"direction_lr",15:"NEWLINE",16:":",18:"open_directive",19:"type_directive",20:"arg_directive",21:"close_directive",22:"CLASS_DIAGRAM",24:"EOF",29:"GENERICTYPE",31:"LABEL",37:"CLASS",38:"STYLE_SEPARATOR",39:"STRUCT_START",41:"STRUCT_STOP",42:"ANNOTATION_START",43:"ANNOTATION_END",44:"MEMBER",45:"SEPARATOR",47:"STR",50:"AGGREGATION",51:"EXTENSION",52:"COMPOSITION",53:"DEPENDENCY",54:"LINE",55:"DOTTED_LINE",56:"CALLBACK",57:"LINK",58:"LINK_TARGET",59:"CLICK",60:"CALLBACK_NAME",61:"CALLBACK_ARGS",62:"HREF",63:"CSSCLASS",66:"graphCodeTokens",68:"TAGSTART",69:"TAGEND",70:"==",71:"--",72:"PCT",73:"DEFAULT",74:"SPACE",75:"MINUS",76:"keywords",77:"UNICODE_TEXT",78:"NUM",79:"ALPHA",80:"BQUOTE_STR"},
+productions_: [0,[3,1],[3,1],[3,2],[5,1],[5,1],[5,1],[5,1],[4,1],[6,4],[6,6],[12,1],[13,1],[17,1],[14,1],[11,4],[23,1],[23,2],[23,3],[26,1],[26,1],[26,2],[26,2],[26,2],[25,1],[25,2],[25,1],[25,1],[25,1],[25,1],[25,1],[25,1],[25,1],[32,2],[32,4],[32,5],[32,7],[34,4],[40,1],[40,2],[33,1],[33,2],[33,1],[33,1],[30,3],[30,4],[30,4],[30,5],[46,3],[46,2],[46,2],[46,1],[48,1],[48,1],[48,1],[48,1],[49,1],[49,1],[35,3],[35,4],[35,3],[35,4],[35,4],[35,5],[35,3],[35,4],[35,4],[35,5],[35,3],[35,4],[35,4],[35,5],[36,3],[64,1],[64,1],[65,1],[65,1],[65,1],[65,1],[65,1],[65,1],[65,1],[67,1],[67,1],[67,1],[67,1],[27,1],[27,1],[27,1],[28,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
+case 4:
+ yy.setDirection('TB');
+break;
+case 5:
+ yy.setDirection('BT');
+break;
 case 6:
- yy.parseDirective('%%{', 'open_directive'); 
+ yy.setDirection('RL');
 break;
 case 7:
+ yy.setDirection('LR');
+break;
+case 11:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 12:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 8:
+case 13:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 9:
+case 14:
  yy.parseDirective('}%%', 'close_directive', 'class'); 
 break;
-case 14: case 15:
+case 19: case 20:
  this.$=$$[$0]; 
 break;
-case 16:
+case 21:
  this.$=$$[$0-1]+$$[$0]; 
 break;
-case 17: case 18:
+case 22: case 23:
  this.$=$$[$0-1]+'~'+$$[$0]; 
 break;
-case 19:
+case 24:
  yy.addRelation($$[$0]); 
 break;
-case 20:
+case 25:
  $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
 break;
-case 27:
+case 33:
 yy.addClass($$[$0]);
 break;
-case 28:
+case 34:
 yy.addClass($$[$0-2]);yy.setCssClass($$[$0-2], $$[$0]);
 break;
-case 29:
+case 35:
 /*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addClass($$[$0-3]);yy.addMembers($$[$0-3],$$[$0-1]);
 break;
-case 30:
+case 36:
 yy.addClass($$[$0-5]);yy.setCssClass($$[$0-5], $$[$0-3]);yy.addMembers($$[$0-5],$$[$0-1]);
 break;
-case 31:
+case 37:
  yy.addAnnotation($$[$0],$$[$0-2]); 
 break;
-case 32:
+case 38:
  this.$ = [$$[$0]]; 
 break;
-case 33:
+case 39:
  $$[$0].push($$[$0-1]);this.$=$$[$0];
 break;
-case 34:
+case 40:
 /*console.log('Rel found',$$[$0]);*/
 break;
-case 35:
+case 41:
 yy.addMember($$[$0-1],yy.cleanupLabel($$[$0]));
 break;
-case 36:
+case 42:
 /*console.warn('Member',$$[$0]);*/
 break;
-case 37:
+case 43:
 /*console.log('sep found',$$[$0]);*/
 break;
-case 38:
+case 44:
  this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
 break;
-case 39:
+case 45:
  this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
 break;
-case 40:
+case 46:
  this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
 break;
-case 41:
+case 47:
  this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
-case 42:
+case 48:
  this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
 break;
-case 43:
+case 49:
  this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
 break;
-case 44:
+case 50:
  this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
 break;
-case 45:
+case 51:
  this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
 break;
-case 46:
+case 52:
  this.$=yy.relationType.AGGREGATION;
 break;
-case 47:
+case 53:
  this.$=yy.relationType.EXTENSION;
 break;
-case 48:
+case 54:
  this.$=yy.relationType.COMPOSITION;
 break;
-case 49:
+case 55:
  this.$=yy.relationType.DEPENDENCY;
 break;
-case 50:
+case 56:
 this.$=yy.lineType.LINE;
 break;
-case 51:
+case 57:
 this.$=yy.lineType.DOTTED_LINE;
 break;
-case 52: case 58:
+case 58: case 64:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0]);
 break;
-case 53: case 59:
+case 59: case 65:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-2], $$[$0]);
 break;
-case 54: case 62:
+case 60: case 68:
 this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 55:
+case 61:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1],$$[$0]);
 break;
-case 56: case 64:
+case 62: case 70:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-2], $$[$0]);
 break;
-case 57: case 65:
+case 63: case 71:
 this.$ = $$[$0-4];yy.setLink($$[$0-3], $$[$0-2], $$[$0]);yy.setTooltip($$[$0-3], $$[$0-1]);
 break;
-case 60:
+case 66:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 61:
+case 67:
 this.$ = $$[$0-4];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-3], $$[$0]);
 break;
-case 63:
+case 69:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 66:
+case 72:
 yy.setCssClass($$[$0-1], $$[$0]);
 break;
 }
 },
-table: [{3:1,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[3]},{1:[2,1]},{3:8,4:2,5:3,6:4,7:5,13:$V0,17:$V1},{1:[2,3]},{8:9,14:[1,10]},{10:[1,11]},{14:[2,6]},{1:[2,2]},{9:12,11:[1,13],16:$V2},o([11,16],[2,7]),{5:23,7:5,13:$V0,18:15,20:16,21:24,22:33,23:34,25:17,27:18,28:19,29:20,30:21,31:22,32:$V3,37:$V4,39:$V5,40:$V6,51:$V7,52:$V8,54:$V9,58:$Va,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{10:[1,39]},{12:40,15:[1,41]},{10:[2,9]},{19:[1,42]},{10:[1,43],19:[2,11]},o($Vf,[2,19],{26:[1,44]}),o($Vf,[2,21]),o($Vf,[2,22]),o($Vf,[2,23]),o($Vf,[2,24]),o($Vf,[2,25]),o($Vf,[2,26]),o($Vf,[2,34],{41:45,43:48,44:49,26:[1,47],42:[1,46],45:$Vg,46:$Vh,47:$Vi,48:$Vj,49:$Vk,50:$Vl}),{21:56,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vf,[2,36]),o($Vf,[2,37]),{22:57,72:$Vb,73:$Vc,74:$Vd},{21:58,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{21:59,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{21:60,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{42:[1,61]},o($Vm,[2,14],{22:33,23:34,21:62,24:[1,63],72:$Vb,73:$Vc,74:$Vd,75:$Ve}),o($Vm,[2,15],{24:[1,64]}),o($Vn,[2,80]),o($Vn,[2,81]),o($Vn,[2,82]),o([10,19,24,26,33,34,42,45,46,47,48,49,50,55,57],[2,83]),o($Vo,[2,4]),{9:65,16:$V2},{16:[2,8]},{1:[2,10]},{5:23,7:5,13:$V0,18:66,19:[2,12],20:16,21:24,22:33,23:34,25:17,27:18,28:19,29:20,30:21,31:22,32:$V3,37:$V4,39:$V5,40:$V6,51:$V7,52:$V8,54:$V9,58:$Va,72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vf,[2,20]),{21:67,22:33,23:34,42:[1,68],72:$Vb,73:$Vc,74:$Vd,75:$Ve},{41:69,43:48,44:49,45:$Vg,46:$Vh,47:$Vi,48:$Vj,49:$Vk,50:$Vl},o($Vf,[2,35]),{44:70,49:$Vk,50:$Vl},o($Vp,[2,45],{43:71,45:$Vg,46:$Vh,47:$Vi,48:$Vj}),o($Vq,[2,46]),o($Vq,[2,47]),o($Vq,[2,48]),o($Vq,[2,49]),o($Vr,[2,50]),o($Vr,[2,51]),o($Vf,[2,27],{33:[1,72],34:[1,73]}),{38:[1,74]},{42:[1,75]},{42:[1,76]},{55:[1,77],57:[1,78]},{22:79,72:$Vb,73:$Vc,74:$Vd},o($Vm,[2,16]),o($Vm,[2,17]),o($Vm,[2,18]),{10:[1,80]},{19:[2,13]},o($Vs,[2,38]),{21:81,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},{21:82,22:33,23:34,42:[1,83],72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vp,[2,44],{43:84,45:$Vg,46:$Vh,47:$Vi,48:$Vj}),o($Vp,[2,43]),{22:85,72:$Vb,73:$Vc,74:$Vd},{35:86,39:$Vt},{21:88,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vf,[2,52],{42:[1,89]}),o($Vf,[2,54],{42:[1,91],53:[1,90]}),o($Vf,[2,58],{42:[1,92],56:[1,93]}),o($Vf,[2,62],{42:[1,95],53:[1,94]}),o($Vf,[2,66]),o($Vo,[2,5]),o($Vs,[2,40]),o($Vs,[2,39]),{21:96,22:33,23:34,72:$Vb,73:$Vc,74:$Vd,75:$Ve},o($Vp,[2,42]),o($Vf,[2,28],{34:[1,97]}),{36:[1,98]},{35:99,36:[2,32],39:$Vt},o($Vf,[2,31]),o($Vf,[2,53]),o($Vf,[2,55]),o($Vf,[2,56],{53:[1,100]}),o($Vf,[2,59]),o($Vf,[2,60],{42:[1,101]}),o($Vf,[2,63]),o($Vf,[2,64],{53:[1,102]}),o($Vs,[2,41]),{35:103,39:$Vt},o($Vf,[2,29]),{36:[2,33]},o($Vf,[2,57]),o($Vf,[2,61]),o($Vf,[2,65]),{36:[1,104]},o($Vf,[2,30])],
-defaultActions: {2:[2,1],4:[2,3],7:[2,6],8:[2,2],14:[2,9],41:[2,8],42:[2,10],66:[2,13],99:[2,33]},
+table: [{3:1,4:2,5:3,6:4,7:$V0,8:$V1,9:$V2,10:$V3,11:5,12:10,18:$V4,22:$V5},{1:[3]},{1:[2,1]},{1:[2,2]},{3:13,4:2,5:3,6:4,7:$V0,8:$V1,9:$V2,10:$V3,11:5,12:10,18:$V4,22:$V5},{1:[2,8]},o($V6,[2,4]),o($V6,[2,5]),o($V6,[2,6]),o($V6,[2,7]),{13:14,19:[1,15]},{15:[1,16]},{19:[2,11]},{1:[2,3]},{14:17,16:[1,18],21:$V7},o([16,21],[2,12]),{5:29,6:28,7:$V0,8:$V1,9:$V2,10:$V3,12:10,18:$V4,23:20,25:21,26:30,27:39,28:40,30:22,32:23,33:24,34:25,35:26,36:27,37:$V8,42:$V9,44:$Va,45:$Vb,56:$Vc,57:$Vd,59:$Ve,63:$Vf,77:$Vg,78:$Vh,79:$Vi,80:$Vj},{15:[1,45]},{17:46,20:[1,47]},{15:[2,14]},{24:[1,48]},{15:[1,49],24:[2,16]},o($Vk,[2,24],{31:[1,50]}),o($Vk,[2,26]),o($Vk,[2,27]),o($Vk,[2,28]),o($Vk,[2,29]),o($Vk,[2,30]),o($Vk,[2,31]),o($Vk,[2,32]),o($Vk,[2,40],{46:51,48:54,49:55,31:[1,53],47:[1,52],50:$Vl,51:$Vm,52:$Vn,53:$Vo,54:$Vp,55:$Vq}),{26:62,27:39,28:40,77:$Vg,78:$Vh,79:$Vi,80:$Vj},o($Vk,[2,42]),o($Vk,[2,43]),{27:63,77:$Vg,78:$Vh,79:$Vi},{26:64,27:39,28:40,77:$Vg,78:$Vh,79:$Vi,80:$Vj},{26:65,27:39,28:40,77:$Vg,78:$Vh,79:$Vi,80:$Vj},{26:66,27:39,28:40,77:$Vg,78:$Vh,79:$Vi,80:$Vj},{47:[1,67]},o($Vr,[2,19],{27:39,28:40,26:68,29:[1,69],77:$Vg,78:$Vh,79:$Vi,80:$Vj}),o($Vr,[2,20],{29:[1,70]}),o($Vs,[2,86]),o($Vs,[2,87]),o($Vs,[2,88]),o([15,24,29,31,38,39,47,50,51,52,53,54,55,60,62],[2,89]),o($Vt,[2,9]),{14:71,21:$V7},{21:[2,13]},{1:[2,15]},{5:29,6:28,7:$V0,8:$V1,9:$V2,10:$V3,12:10,18:$V4,23:72,24:[2,17],25:21,26:30,27:39,28:40,30:22,32:23,33:24,34:25,35:26,36:27,37:$V8,42:$V9,44:$Va,45:$Vb,56:$Vc,57:$Vd,59:$Ve,63:$Vf,77:$Vg,78:$Vh,79:$Vi,80:$Vj},o($Vk,[2,25]),{26:73,27:39,28:40,47:[1,74],77:$Vg,78:$Vh,79:$Vi,80:$Vj},{46:75,48:54,49:55,50:$Vl,51:$Vm,52:$Vn,53:$Vo,54:$Vp,55:$Vq},o($Vk,[2,41]),{49:76,54:$Vp,55:$Vq},o($Vu,[2,51],{48:77,50:$Vl,51:$Vm,52:$Vn,53:$Vo}),o($Vv,[2,52]),o($Vv,[2,53]),o($Vv,[2,54]),o($Vv,[2,55]),o($Vw,[2,56]),o($Vw,[2,57]),o($Vk,[2,33],{38:[1,78],39:[1,79]}),{43:[1,80]},{47:[1,81]},{47:[1,82]},{60:[1,83],62:[1,84]},{27:85,77:$Vg,78:$Vh,79:$Vi},o($Vr,[2,21]),o($Vr,[2,22]),o($Vr,[2,23]),{15:[1,86]},{24:[2,18]},o($Vx,[2,44]),{26:87,27:39,28:40,77:$Vg,78:$Vh,79:$Vi,80:$Vj},{26:88,27:39,28:40,47:[1,89],77:$Vg,78:$Vh,79:$Vi,80:$Vj},o($Vu,[2,50],{48:90,50:$Vl,51:$Vm,52:$Vn,53:$Vo}),o($Vu,[2,49]),{27:91,77:$Vg,78:$Vh,79:$Vi},{40:92,44:$Vy},{26:94,27:39,28:40,77:$Vg,78:$Vh,79:$Vi,80:$Vj},o($Vk,[2,58],{47:[1,95]}),o($Vk,[2,60],{47:[1,97],58:[1,96]}),o($Vk,[2,64],{47:[1,98],61:[1,99]}),o($Vk,[2,68],{47:[1,101],58:[1,100]}),o($Vk,[2,72]),o($Vt,[2,10]),o($Vx,[2,46]),o($Vx,[2,45]),{26:102,27:39,28:40,77:$Vg,78:$Vh,79:$Vi,80:$Vj},o($Vu,[2,48]),o($Vk,[2,34],{39:[1,103]}),{41:[1,104]},{40:105,41:[2,38],44:$Vy},o($Vk,[2,37]),o($Vk,[2,59]),o($Vk,[2,61]),o($Vk,[2,62],{58:[1,106]}),o($Vk,[2,65]),o($Vk,[2,66],{47:[1,107]}),o($Vk,[2,69]),o($Vk,[2,70],{58:[1,108]}),o($Vx,[2,47]),{40:109,44:$Vy},o($Vk,[2,35]),{41:[2,39]},o($Vk,[2,63]),o($Vk,[2,67]),o($Vk,[2,71]),{41:[1,110]},o($Vk,[2,36])],
+defaultActions: {2:[2,1],3:[2,2],5:[2,8],12:[2,11],13:[2,3],19:[2,14],47:[2,13],48:[2,15],72:[2,18],105:[2,39]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -6761,146 +6811,154 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 13; 
+case 0: this.begin('open_directive'); return 18; 
 break;
-case 1: this.begin('type_directive'); return 14; 
+case 1:return 7;
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 11; 
+case 2:return 8;
 break;
-case 3: this.popState(); this.popState(); return 16; 
+case 3:return 9;
 break;
-case 4:return 15;
+case 4:return 10;
 break;
-case 5:/* skip comments */
+case 5: this.begin('type_directive'); return 19; 
 break;
-case 6:/* skip comments */
+case 6: this.popState(); this.begin('arg_directive'); return 16; 
 break;
-case 7:return 10;
+case 7: this.popState(); this.popState(); return 21; 
 break;
-case 8:/* skip whitespace */
+case 8:return 20;
 break;
-case 9:return 17;
+case 9:/* skip comments */
 break;
-case 10:return 17;
+case 10:/* skip comments */
 break;
-case 11: this.begin("struct"); /*console.log('Starting struct');*/ return 34;
+case 11:return 15;
 break;
-case 12:return "EOF_IN_STRUCT";
+case 12:/* skip whitespace */
 break;
-case 13:return "OPEN_IN_STRUCT";
+case 13:return 22;
 break;
-case 14: /*console.log('Ending struct');*/this.popState(); return 36;
+case 14:return 22;
 break;
-case 15:/* nothing */
+case 15: this.begin("struct"); /*console.log('Starting struct');*/ return 39;
 break;
-case 16: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
+case 16:return "EOF_IN_STRUCT";
 break;
-case 17:return 32;
+case 17:return "OPEN_IN_STRUCT";
 break;
-case 18:return 58;
+case 18: /*console.log('Ending struct');*/this.popState(); return 41;
 break;
-case 19:return 51;
+case 19:/* nothing */
 break;
-case 20:return 52;
+case 20: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
 break;
-case 21:return 54;
+case 21:return 37;
 break;
-case 22:return 37;
+case 22:return 63;
 break;
-case 23:return 38;
+case 23:return 56;
 break;
-case 24:this.begin("generic");
+case 24:return 57;
 break;
-case 25:this.popState();
+case 25:return 59;
 break;
-case 26:return "GENERICTYPE";
+case 26:return 42;
 break;
-case 27:this.begin("string");
+case 27:return 43;
 break;
-case 28:this.popState();
+case 28:this.begin("generic");
 break;
-case 29:return "STR";
+case 29:this.popState();
 break;
-case 30:this.begin("bqstring");
+case 30:return "GENERICTYPE";
 break;
-case 31:this.popState();
+case 31:this.begin("string");
 break;
-case 32:return "BQUOTE_STR";
+case 32:this.popState();
 break;
-case 33:this.begin("href");
+case 33:return "STR";
 break;
-case 34:this.popState();
+case 34:this.begin("bqstring");
 break;
-case 35:return 57;
+case 35:this.popState();
 break;
-case 36:this.begin("callback_name");
+case 36:return "BQUOTE_STR";
 break;
-case 37:this.popState();
+case 37:this.begin("href");
 break;
-case 38:this.popState(); this.begin("callback_args");
+case 38:this.popState();
 break;
-case 39:return 55;
+case 39:return 62;
 break;
-case 40:this.popState();
+case 40:this.begin("callback_name");
 break;
-case 41:return 56;
+case 41:this.popState();
 break;
-case 42:return 53;
+case 42:this.popState(); this.begin("callback_args");
 break;
-case 43:return 53;
+case 43:return 60;
 break;
-case 44:return 53;
+case 44:this.popState();
 break;
-case 45:return 53;
+case 45:return 61;
 break;
-case 46:return 46;
+case 46:return 58;
 break;
-case 47:return 46;
+case 47:return 58;
 break;
-case 48:return 48;
+case 48:return 58;
 break;
-case 49:return 48;
+case 49:return 58;
 break;
-case 50:return 47;
+case 50:return 51;
 break;
-case 51:return 45;
+case 51:return 51;
 break;
-case 52:return 49;
+case 52:return 53;
 break;
-case 53:return 50;
+case 53:return 53;
 break;
-case 54:return 26;
+case 54:return 52;
 break;
-case 55:return 33;
+case 55:return 50;
 break;
-case 56:return 70;
+case 56:return 54;
 break;
-case 57:return 'DOT';
+case 57:return 55;
 break;
-case 58:return 'PLUS';
+case 58:return 31;
 break;
-case 59:return 67;
+case 59:return 38;
 break;
-case 60:return 'EQUALS';
+case 60:return 75;
 break;
-case 61:return 'EQUALS';
+case 61:return 'DOT';
 break;
-case 62:return 74;
+case 62:return 'PLUS';
 break;
-case 63:return 'PUNCTUATION';
+case 63:return 72;
 break;
-case 64:return 73;
+case 64:return 'EQUALS';
 break;
-case 65:return 72;
+case 65:return 'EQUALS';
 break;
-case 66:return 69;
+case 66:return 79;
 break;
-case 67:return 19;
+case 67:return 'PUNCTUATION';
+break;
+case 68:return 78;
+break;
+case 69:return 77;
+break;
+case 70:return 74;
+break;
+case 71:return 24;
 break;
 }
 },
-rules: [/^(?:%%\{)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n?)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:cssClass\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:click\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:[`])/,/^(?:[`])/,/^(?:[^`]+)/,/^(?:href[\s]+["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:call[\s]+)/,/^(?:\([\s]*\))/,/^(?:\()/,/^(?:[^(]*)/,/^(?:\))/,/^(?:[^)]*)/,/^(?:_self\b)/,/^(?:_blank\b)/,/^(?:_parent\b)/,/^(?:_top\b)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::{1}[^:\n;]+)/,/^(?::{3})/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
-conditions: {"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callback_args":{"rules":[40,41],"inclusive":false},"callback_name":{"rules":[37,38,39],"inclusive":false},"href":{"rules":[34,35],"inclusive":false},"struct":{"rules":[12,13,14,15,16],"inclusive":false},"generic":{"rules":[25,26],"inclusive":false},"bqstring":{"rules":[31,32],"inclusive":false},"string":{"rules":[28,29],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,17,18,19,20,21,22,23,24,27,30,33,36,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67],"inclusive":true}}
+rules: [/^(?:%%\{)/,/^(?:.*direction\s+TB[^\n]*)/,/^(?:.*direction\s+BT[^\n]*)/,/^(?:.*direction\s+RL[^\n]*)/,/^(?:.*direction\s+LR[^\n]*)/,/^(?:((?:(?!\}%%)[^:.])*))/,/^(?::)/,/^(?:\}%%)/,/^(?:((?:(?!\}%%).|\n)*))/,/^(?:%%(?!\{)*[^\n]*(\r?\n?)+)/,/^(?:%%[^\n]*(\r?\n)*)/,/^(?:(\r?\n)+)/,/^(?:\s+)/,/^(?:classDiagram-v2\b)/,/^(?:classDiagram\b)/,/^(?:[{])/,/^(?:$)/,/^(?:[{])/,/^(?:[}])/,/^(?:[\n])/,/^(?:[^{}\n]*)/,/^(?:class\b)/,/^(?:cssClass\b)/,/^(?:callback\b)/,/^(?:link\b)/,/^(?:click\b)/,/^(?:<<)/,/^(?:>>)/,/^(?:[~])/,/^(?:[~])/,/^(?:[^~]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:[`])/,/^(?:[`])/,/^(?:[^`]+)/,/^(?:href[\s]+["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:call[\s]+)/,/^(?:\([\s]*\))/,/^(?:\()/,/^(?:[^(]*)/,/^(?:\))/,/^(?:[^)]*)/,/^(?:_self\b)/,/^(?:_blank\b)/,/^(?:_parent\b)/,/^(?:_top\b)/,/^(?:\s*<\|)/,/^(?:\s*\|>)/,/^(?:\s*>)/,/^(?:\s*<)/,/^(?:\s*\*)/,/^(?:\s*o\b)/,/^(?:--)/,/^(?:\.\.)/,/^(?::{1}[^:\n;]+)/,/^(?::{3})/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:\w+)/,/^(?:[!"#$%&'*+,-.`?\\/])/,/^(?:[0-9]+)/,/^(?:[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC])/,/^(?:\s)/,/^(?:$)/],
+conditions: {"arg_directive":{"rules":[7,8],"inclusive":false},"type_directive":{"rules":[6,7],"inclusive":false},"open_directive":{"rules":[5],"inclusive":false},"callback_args":{"rules":[44,45],"inclusive":false},"callback_name":{"rules":[41,42,43],"inclusive":false},"href":{"rules":[38,39],"inclusive":false},"struct":{"rules":[16,17,18,19,20],"inclusive":false},"generic":{"rules":[29,30],"inclusive":false},"bqstring":{"rules":[35,36],"inclusive":false},"string":{"rules":[32,33],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,9,10,11,12,13,14,15,21,22,23,24,25,26,27,28,31,34,37,40,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71],"inclusive":true}}
 });
 return lexer;
 })();
@@ -6943,7 +7001,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n\n}\n\n.classTitle {\n  font-weight: bolder;\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n.edgeTerminals {\n  font-size: 11px;\n}\n\n");
+  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n\n}\n\n.nodeLabel, .edgeLabel {\n  color: ").concat(options.classText, ";\n}\n.edgeLabel .label rect {\n  fill: ").concat(options.mainBkg, ";\n}\n.label text {\n  fill: ").concat(options.classText, ";\n}\n.edgeLabel .label span {\n  background: ").concat(options.mainBkg, ";\n}\n\n.classTitle {\n  font-weight: bolder;\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n.edgeTerminals {\n  font-size: 11px;\n}\n\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -12125,7 +12183,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n  .cluster-label text {\n    fill: ").concat(options.titleColor, ";\n  }\n  .cluster-label span {\n    color: ").concat(options.titleColor, ";\n  }\n\n  .label text,span {\n    fill: ").concat(options.nodeTextColor || options.textColor, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n      background-color: ").concat(options.edgeLabelBackground, ";\n      fill: ").concat(options.edgeLabelBackground, ";\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .cluster span {\n    color: ").concat(options.titleColor, ";\n  }\n  // .cluster div {\n  //   color: ").concat(options.titleColor, ";\n  // }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
+  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n  .cluster-label text {\n    fill: ").concat(options.titleColor, ";\n  }\n  .cluster-label span {\n    color: ").concat(options.titleColor, ";\n  }\n\n  .label text,span {\n    fill: ").concat(options.nodeTextColor || options.textColor, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 2.0px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n      background-color: ").concat(options.edgeLabelBackground, ";\n      fill: ").concat(options.edgeLabelBackground, ";\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .cluster span {\n    color: ").concat(options.titleColor, ";\n  }\n  // .cluster div {\n  //   color: ").concat(options.titleColor, ";\n  // }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -16956,24 +17014,22 @@ var draw = function draw(txt, id) {
     var themeVariables = conf.themeVariables;
     var myGeneratedColors = [themeVariables.pie1, themeVariables.pie2, themeVariables.pie3, themeVariables.pie4, themeVariables.pie5, themeVariables.pie6, themeVariables.pie7, themeVariables.pie8, themeVariables.pie9, themeVariables.pie10, themeVariables.pie11, themeVariables.pie12]; // Set the color scale
 
-    var color = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleOrdinal"])().domain(data).range(myGeneratedColors); // Compute the position of each group on the pie:
+    var color = Object(d3__WEBPACK_IMPORTED_MODULE_0__["scaleOrdinal"])().range(myGeneratedColors); // Compute the position of each group on the pie:
 
     var pie = Object(d3__WEBPACK_IMPORTED_MODULE_0__["pie"])().value(function (d) {
-      return d.value;
+      return d[1];
     });
-    var dataReady = pie(Object(d3__WEBPACK_IMPORTED_MODULE_0__["entries"])(data)); // Shape helper to build arcs:
+    var dataReady = pie(Object.entries(data)); // Shape helper to build arcs:
 
     var arcGenerator = Object(d3__WEBPACK_IMPORTED_MODULE_0__["arc"])().innerRadius(0).outerRadius(radius); // Build the pie chart: each part of the pie is a path that we build using the arc function.
 
     svg.selectAll('mySlices').data(dataReady).enter().append('path').attr('d', arcGenerator).attr('fill', function (d) {
-      return color(d.data.key);
+      return color(d.data[0]);
     }).attr('class', 'pieCircle'); // Now add the percentage.
     // Use the centroid method to get the best coordinates.
 
-    svg.selectAll('mySlices').data(dataReady.filter(function (value) {
-      return value.data.value !== 0;
-    })).enter().append('text').text(function (d) {
-      return (d.data.value / sum * 100).toFixed(0) + '%';
+    svg.selectAll('mySlices').data(dataReady).enter().append('text').text(function (d) {
+      return (d.data[1] / sum * 100).toFixed(0) + '%';
     }).attr('transform', function (d) {
       return 'translate(' + arcGenerator.centroid(d) + ')';
     }).style('text-anchor', 'middle').attr('class', 'slice');
@@ -16987,13 +17043,11 @@ var draw = function draw(txt, id) {
       return 'translate(' + horz + ',' + vert + ')';
     });
     legend.append('rect').attr('width', legendRectSize).attr('height', legendRectSize).style('fill', color).style('stroke', color);
-    legend.data(dataReady.filter(function (value) {
-      return value.data.value !== 0;
-    })).append('text').attr('x', legendRectSize + legendSpacing).attr('y', legendRectSize - legendSpacing).text(function (d) {
+    legend.data(dataReady).append('text').attr('x', legendRectSize + legendSpacing).attr('y', legendRectSize - legendSpacing).text(function (d) {
       if (parser.yy.getShowData() || conf.showData || conf.pie.showData) {
-        return d.data.key + ' [' + d.data.value + ']';
+        return d.data[0] + ' [' + d.data[1] + ']';
       } else {
-        return d.data.key;
+        return d.data[0];
       }
     });
   } catch (e) {
@@ -27851,7 +27905,7 @@ var calcTerminalLabelPosition = function calcTerminalLabelPosition(terminalMarke
     prevPoint = point;
   }); // Traverse only 25 total distance along points to find cardinality point
 
-  var distanceToCardinalityPoint = 25;
+  var distanceToCardinalityPoint = 25 + terminalMarkerSize;
   var remainingDistance = distanceToCardinalityPoint;
   var center;
   prevPoint = undefined;
@@ -27883,7 +27937,7 @@ var calcTerminalLabelPosition = function calcTerminalLabelPosition(terminalMarke
     prevPoint = point;
   }); // if relation is present (Arrows will be added), change cardinality point off-set distance (d)
 
-  var d = 10; //Calculate Angle for x and y axis
+  var d = 10 + terminalMarkerSize * 0.5; //Calculate Angle for x and y axis
 
   var angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
   var cardinalityPosition = {

@@ -410,7 +410,7 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   });
 
   // Traverse only 25 total distance along points to find cardinality point
-  const distanceToCardinalityPoint = 25;
+  const distanceToCardinalityPoint = 25 + terminalMarkerSize;
 
   let remainingDistance = distanceToCardinalityPoint;
   let center;
@@ -437,7 +437,7 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
     prevPoint = point;
   });
   // if relation is present (Arrows will be added), change cardinality point off-set distance (d)
-  let d = 10;
+  let d = 10 + terminalMarkerSize * 0.5;
   //Calculate Angle for x and y axis
   let angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
 
