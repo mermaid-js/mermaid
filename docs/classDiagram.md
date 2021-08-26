@@ -228,9 +228,13 @@ To specify the visibility of a class member (i.e. any attribute or method), thes
 - `~` Package/Internal
 
 > _note_ you can also include additional _classifiers_ to a method definition by adding the following notations to the end of the method, i.e.: after the `()`:
-
 > - `*` Abstract e.g.: `someAbstractMethod()*`
 > - `$` Static e.g.: `someStaticMethod()$`
+
+> _note_ you can also include additional _classifiers_ to a field definition by adding the following notations to the end of the field name:
+> - `*` Static e.g.: `String someField$`
+
+
 
 ## Defining Relationship
 
