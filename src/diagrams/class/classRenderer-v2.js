@@ -457,7 +457,7 @@ export const draw = function (text, id) {
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
       rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
+      // rect.setAttribute('style', 'fill:#e8e8e8;');
 
       label.insertBefore(rect, label.firstChild);
     }

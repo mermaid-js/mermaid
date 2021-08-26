@@ -12,6 +12,19 @@ const getStyles = (options) =>
 
 }
 
+.nodeLabel, .edgeLabel {
+  color: ${options.classText};
+}
+.edgeLabel .label rect {
+  fill: ${options.mainBkg};
+}
+.label text {
+  fill: ${options.classText};
+}
+.edgeLabel .label span {
+  background: ${options.mainBkg};
+}
+
 .classTitle {
   font-weight: bolder;
 }
