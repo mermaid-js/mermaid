@@ -141,7 +141,7 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'start_left', path);
+      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeStart ? 10 : 0, 'start_left', path);
       x = pos.x;
       y = pos.y;
     }
@@ -153,7 +153,11 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'start_right', path);
+      const pos = utils.calcTerminalLabelPosition(
+        edge.arrowTypeStart ? 10 : 0,
+        'start_right',
+        path
+      );
       x = pos.x;
       y = pos.y;
     }
@@ -165,7 +169,7 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'end_left', path);
+      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_left', path);
       x = pos.x;
       y = pos.y;
     }
@@ -177,7 +181,7 @@ export const positionEdgeLabel = (edge, paths) => {
     let y = edge.y;
     if (path) {
       // debugger;
-      const pos = utils.calcTerminalLabelPosition(0, 'end_right', path);
+      const pos = utils.calcTerminalLabelPosition(edge.arrowTypeEnd ? 10 : 0, 'end_right', path);
       x = pos.x;
       y = pos.y;
     }
