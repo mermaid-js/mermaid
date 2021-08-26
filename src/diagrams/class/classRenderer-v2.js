@@ -359,7 +359,7 @@ export const draw = function (text, id) {
   // }
 
   // Fetch the default direction, use TD if none was found
-  let dir = 'TD';
+  //let dir = 'TD';
 
   const conf = getConfig().flowchart;
   log.info('config:', conf);
