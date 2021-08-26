@@ -274,7 +274,7 @@ export const drawClass = function (elem, classDef, conf) {
 };
 
 export const parseMember = function (text) {
-  const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+) *(\$)?$/;
+  const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+) *(\*|\$)?$/;
   const methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
 
   let fieldMatch = text.match(fieldRegEx);
