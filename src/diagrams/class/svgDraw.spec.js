@@ -156,5 +156,21 @@ describe('class member Renderer, ', function () {
       expect(actual.displayText).toBe('List<int> ids');
       expect(actual.cssStyle).toBe('');
     });
+
+    it('should handle abstract classifier', function () {
+      const str = 'String foo*';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('String foo');
+      expect(actual.cssStyle).toBe('font-style:italic;');
+    });
+
+    it('should handle static classifier', function () {
+      const str = 'String foo$';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('String foo');
+      expect(actual.cssStyle).toBe('text-decoration:underline;');
+    });
   });
 });
