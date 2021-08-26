@@ -372,7 +372,7 @@ export const draw = function (text, id) {
     compound: true,
   })
     .setGraph({
-      rankdir: dir,
+      rankdir: classDb.getDirection(),
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,

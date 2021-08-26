@@ -354,6 +354,37 @@ stateDiagram-v2
     }
 ```
 
+## Setting the direction of the diagram
+
+With state diagrams you can use the direction statement to set the direction which the diagram will render like in this example.
+
+```
+stateDiagram
+    direction LR
+    [*] --> A
+    A --> B
+    B --> C
+    state B {
+      direction LR
+      a --> b
+    }
+    B --> D
+ ```
+ This is how this renders
+```mermaid
+stateDiagram
+    direction LR
+    [*] --> A
+    A --> B
+    B --> C
+    state B {
+      direction LR
+      a --> b
+    }
+    B --> D
+ ```
+
+
 ## Comments
 
 Comments can be entered within a state diagram chart, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
