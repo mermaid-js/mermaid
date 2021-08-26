@@ -370,4 +370,17 @@ describe('Class diagram V2', () => {
     );
     cy.get('svg');
   });
+
+  it('16: should render a simple class diagram with static field', () => {
+    imgSnapshotTest(
+      `
+    classDiagram-v2
+      Foo {
+        +String bar$
+      }
+      `,
+       {logLevel : 1, flowchart: { "htmlLabels": false },}
+    );
+    cy.get('svg');
+  });
 });
