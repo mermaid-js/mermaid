@@ -49,6 +49,8 @@ class Theme {
     this.tertiaryBorderColor =
       this.tertiaryBorderColor || mkBorder(this.tertiaryColor, this.darkMode);
     this.noteBorderColor = this.noteBorderColor || mkBorder(this.noteBkgColor, this.darkMode);
+    this.noteBkgColor = this.noteBkgColor || '#fff5ad';
+    this.noteTextColor = this.noteTextColor || '#333';
 
     this.secondaryTextColor = this.secondaryTextColor || invert(this.secondaryColor);
     this.tertiaryTextColor = this.tertiaryTextColor || invert(this.tertiaryColor);
@@ -108,10 +110,22 @@ class Theme {
     this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
 
     /* state colors */
-    this.labelColor = this.labelColor || this.primaryTextColor;
+    this.transitionColor = this.transitionColor || this.lineColor;
+    this.transitionLabelColor = this.transitionLabelColor || this.textColor;
+    /* The color of the text tables of the tstates*/
+    this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
+
+    this.stateBkg = this.stateBkg || this.mainBkg;
+    this.labelBackgroundColor = this.labelBackgroundColor || this.stateBkg;
+    this.compositeBackground = this.compositeBackground || this.background || this.tertiaryColor;
     this.altBackground = this.altBackground || this.tertiaryColor;
+    this.compositeTitleBackground = this.compositeTitleBackground || this.mainBkg;
+    this.compositeBorder = this.compositeBorder || this.nodeBorder;
+    this.innerEndBackground = this.nodeBorder;
     this.errorBkgColor = this.errorBkgColor || this.tertiaryColor;
     this.errorTextColor = this.errorTextColor || this.tertiaryTextColor;
+    this.transitionColor = this.transitionColor || this.lineColor;
+    this.specialStateColor = this.lineColor;
 
     /* class */
     this.classText = this.classText || this.textColor;
@@ -125,6 +139,40 @@ class Theme {
     this.fillType5 = this.fillType5 || adjust(this.secondaryColor, { h: -64 });
     this.fillType6 = this.fillType6 || adjust(this.primaryColor, { h: 128 });
     this.fillType7 = this.fillType7 || adjust(this.secondaryColor, { h: 128 });
+
+    /* pie */
+    this.pie1 = this.pie1 || this.primaryColor;
+    this.pie2 = this.pie2 || this.secondaryColor;
+    this.pie3 = this.pie3 || this.tertiaryColor;
+    this.pie4 = this.pie4 || adjust(this.primaryColor, { l: -10 });
+    this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
+    this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
+    this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
+    this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
+    this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
+    this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
+    this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
+    this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
+    this.pieTitleTextSize = this.pieTitleTextSize || '25px';
+    this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
+    this.pieSectionTextSize = this.pieSectionTextSize || '17px';
+    this.pieSectionTextColor = this.pieSectionTextColor || this.textColor;
+    this.pieLegendTextSize = this.pieLegendTextSize || '17px';
+    this.pieLegendTextColor = this.pieLegendTextColor || this.taskTextDarkColor;
+    this.pieStrokeColor = this.pieStrokeColor || 'black';
+    this.pieStrokeWidth = this.pieStrokeWidth || '2px';
+    this.pieOpacity = this.pieOpacity || '0.7';
+
+    /* requirement-diagram */
+    this.requirementBackground = this.requirementBackground || this.primaryColor;
+    this.requirementBorderColor = this.requirementBorderColor || this.primaryBorderColor;
+    this.requirementBorderSize = this.requirementBorderSize || this.primaryBorderColor;
+    this.requirementTextColor = this.requirementTextColor || this.primaryTextColor;
+    this.relationColor = this.relationColor || this.lineColor;
+    this.relationLabelBackground =
+      this.relationLabelBackground ||
+      (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
+    this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
@@ -136,20 +184,20 @@ class Theme {
     const keys = Object.keys(overrides);
 
     // Copy values from overrides, this is mainly for base colors
-    keys.forEach(k => {
+    keys.forEach((k) => {
       this[k] = overrides[k];
     });
 
     // Calculate colors form base colors
     this.updateColors();
     // Copy values from overrides again in case of an override of derived value
-    keys.forEach(k => {
+    keys.forEach((k) => {
       this[k] = overrides[k];
     });
   }
 }
 
-export const getThemeVariables = userOverrides => {
+export const getThemeVariables = (userOverrides) => {
   const theme = new Theme();
   theme.calculate(userOverrides);
   return theme;

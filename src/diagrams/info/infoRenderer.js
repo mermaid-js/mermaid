@@ -7,10 +7,10 @@ import infoParser from './parser/info';
 import { log } from '../../logger';
 
 const conf = {};
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
 
-  keys.forEach(function(key) {
+  keys.forEach(function (key) {
     conf[key] = cnf[key];
   });
 };
@@ -52,5 +52,5 @@ export const draw = (txt, id, ver) => {
 
 export default {
   setConf,
-  draw
+  draw,
 };

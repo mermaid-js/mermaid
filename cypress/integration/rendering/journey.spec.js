@@ -32,8 +32,11 @@ section Order from website
   it('should render a user journey diagram when useMaxWidth is true (default)', () => {
     renderGraph(
       `journey
-title Adding journey diagram functionality to mermaid
+title E-Commerce
 section Order from website
+  Add to cart: 5: Me
+section Checkout from website
+  Add payment details: 5: Me
     `,
       { journey: { useMaxWidth: true } }
     );
@@ -42,29 +45,24 @@ section Order from website
         expect(svg).to.have.attr('width', '100%');
         expect(svg).to.have.attr('height');
         const height = parseFloat(svg.attr('height'));
-        expect(height).to.eq(20);
+        expect(height).to.eq(565);
         const style = svg.attr('style');
         expect(style).to.match(/^max-width: [\d.]+px;$/);
         const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-        expect(maxWidthValue).to.eq(400);
+        expect(maxWidthValue).to.eq(700);
       });
   });
 
   it('should render a user journey diagram when useMaxWidth is false', () => {
-    renderGraph(
+    imgSnapshotTest(
       `journey
-title Adding journey diagram functionality to mermaid
+title E-Commerce
 section Order from website
+  Add to cart: 5: Me
+section Checkout from website
+  Add payment details: 5: Me
     `,
       { journey: { useMaxWidth: false } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        const height = parseFloat(svg.attr('height'));
-        const width = parseFloat(svg.attr('width'));
-        expect(height).to.eq(20);
-        expect(width).to.eq(400);
-        expect(svg).to.not.have.attr('style');
-      });
   });
 });

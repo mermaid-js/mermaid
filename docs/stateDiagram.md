@@ -228,6 +228,28 @@ stateDiagram-v2
 
 *You can not define transitions between internal states belonging to different composite states*
 
+## Choice
+
+Sometimes you need to model a choice between two or more paths, you can do so using &lt;&lt;choice&gt;&gt;.
+
+```
+stateDiagram-v2
+    state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+```
+
+```mermaid
+stateDiagram-v2
+    state if_state <<choice>>
+    [*] --> IsPositive
+    IsPositive --> if_state
+    if_state --> False: if n < 0
+    if_state --> True : if n >= 0
+```
+
 ## Forks
 
 It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&lt;join&gt;&gt;.
@@ -331,6 +353,37 @@ stateDiagram-v2
         ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
     }
 ```
+
+## Setting the direction of the diagram
+
+With state diagrams you can use the direction statement to set the direction which the diagram will render like in this example.
+
+```
+stateDiagram
+    direction LR
+    [*] --> A
+    A --> B
+    B --> C
+    state B {
+      direction LR
+      a --> b
+    }
+    B --> D
+ ```
+ This is how this renders
+```mermaid
+stateDiagram
+    direction LR
+    [*] --> A
+    A --> B
+    B --> C
+    state B {
+      direction LR
+      a --> b
+    }
+    B --> D
+ ```
+
 
 ## Comments
 

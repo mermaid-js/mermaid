@@ -6,18 +6,18 @@ import { getThemeVariables as neutralThemeVariables } from './theme-neutral';
 
 export default {
   base: {
-    getThemeVariables: baseThemeVariables
+    getThemeVariables: baseThemeVariables,
   },
   dark: {
-    getThemeVariables: darkThemeVariables
+    getThemeVariables: darkThemeVariables,
   },
   default: {
-    getThemeVariables: defaultThemeVariables
+    getThemeVariables: defaultThemeVariables,
   },
   forest: {
-    getThemeVariables: forestThemeVariables
+    getThemeVariables: forestThemeVariables,
   },
   neutral: {
-    getThemeVariables: neutralThemeVariables
-  }
+    getThemeVariables: neutralThemeVariables,
+  },
 };

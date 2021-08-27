@@ -3,6 +3,7 @@ import { log } from '../logger';
 import createLabel from './createLabel';
 import { select } from 'd3';
 import { getConfig } from '../config';
+import { evaluate } from '../diagrams/common/common';
 
 const rect = (parent, node) => {
   log.trace('Creating subgraph rect for ', node.id, node);
@@ -26,7 +27,7 @@ const rect = (parent, node) => {
   // Get the size of the label
   let bbox = text.getBBox();
 
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -37,15 +38,22 @@ const rect = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
+  const width = node.width <= bbox.width + padding ? bbox.width + padding : node.width;
+  if (node.width <= bbox.width + padding) {
+    node.diff = (bbox.width - node.width) / 2;
+  } else {
+    node.diff = -node.padding / 2;
+  }
+
   log.trace('Data ', node, JSON.stringify(node));
   // center the rect around its coordinate
   rect
     .attr('style', node.style)
     .attr('rx', node.rx)
     .attr('ry', node.ry)
-    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('x', node.x - width / 2)
     .attr('y', node.y - node.height / 2 - halfPadding)
-    .attr('width', node.width + padding)
+    .attr('width', width)
     .attr('height', node.height + padding);
 
   // Center the label
@@ -62,7 +70,7 @@ const rect = (parent, node) => {
   node.width = rectBox.width;
   node.height = rectBox.height;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
@@ -74,10 +82,7 @@ const rect = (parent, node) => {
  */
 const noteGroup = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', 'note-cluster')
-    .attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', 'note-cluster').attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -99,7 +104,7 @@ const noteGroup = (parent, node) => {
   node.width = rectBox.width;
   node.height = rectBox.height;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
@@ -107,10 +112,7 @@ const noteGroup = (parent, node) => {
 };
 const roundedWithTitle = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', node.classes)
-    .attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -125,7 +127,7 @@ const roundedWithTitle = (parent, node) => {
 
   // Get the size of the label
   let bbox = text.getBBox();
-  if (getConfig().flowchart.htmlLabels) {
+  if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
     bbox = div.getBoundingClientRect();
@@ -136,18 +138,25 @@ const roundedWithTitle = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
+  const width = node.width <= bbox.width + node.padding ? bbox.width + node.padding : node.width;
+  if (node.width <= bbox.width + node.padding) {
+    node.diff = (bbox.width + node.padding * 0 - node.width) / 2;
+  } else {
+    node.diff = -node.padding / 2;
+  }
+
   // center the rect around its coordinate
   rect
     .attr('class', 'outer')
-    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('x', node.x - width / 2 - halfPadding)
     .attr('y', node.y - node.height / 2 - halfPadding)
-    .attr('width', node.width + padding)
+    .attr('width', width + padding)
     .attr('height', node.height + padding);
   innerRect
     .attr('class', 'inner')
-    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('x', node.x - width / 2 - halfPadding)
     .attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1)
-    .attr('width', node.width + padding)
+    .attr('width', width + padding)
     .attr('height', node.height + padding - bbox.height - 3);
 
   // Center the label
@@ -156,15 +165,17 @@ const roundedWithTitle = (parent, node) => {
     'translate(' +
       (node.x - bbox.width / 2) +
       ', ' +
-      (node.y - node.height / 2 - node.padding / 3 + (getConfig().flowchart.htmlLabels ? 5 : 3)) +
+      (node.y -
+        node.height / 2 -
+        node.padding / 3 +
+        (evaluate(getConfig().flowchart.htmlLabels) ? 5 : 3)) +
       ')'
   );
 
   const rectBox = rect.node().getBBox();
-  node.width = rectBox.width;
   node.height = rectBox.height;
 
-  node.intersect = function(point) {
+  node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
@@ -173,10 +184,7 @@ const roundedWithTitle = (parent, node) => {
 
 const divider = (parent, node) => {
   // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', node.classes)
-    .attr('id', node.id);
+  const shapeSvg = parent.insert('g').attr('class', node.classes).attr('id', node.id);
 
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
@@ -195,8 +203,8 @@ const divider = (parent, node) => {
   const rectBox = rect.node().getBBox();
   node.width = rectBox.width;
   node.height = rectBox.height;
-
-  node.intersect = function(point) {
+  node.diff = -node.padding / 2;
+  node.intersect = function (point) {
     return intersectRect(node, point);
   };
 
@@ -224,8 +232,8 @@ export const clear = () => {
   clusterElems = {};
 };
 
-export const positionCluster = node => {
-  log.info('Position cluster');
+export const positionCluster = (node) => {
+  log.info('Position cluster (' + node.id + ', ' + node.x + ', ' + node.y + ')');
   const el = clusterElems[node.id];
 
   el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');

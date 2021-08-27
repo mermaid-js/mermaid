@@ -16,15 +16,16 @@ let currentSection = '';
 const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
+let topAxis = false;
 
 // The serial order of the task in the script
 let lastOrder = 0;
 
-export const parseDirective = function(statement, context, type) {
+export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-export const clear = function() {
+export const clear = function () {
   sections = [];
   tasks = [];
   currentSection = '';
@@ -39,67 +40,76 @@ export const clear = function() {
   todayMarker = '';
   excludes = [];
   inclusiveEndDates = false;
+  topAxis = false;
   lastOrder = 0;
 };
 
-export const setAxisFormat = function(txt) {
+export const setAxisFormat = function (txt) {
   axisFormat = txt;
 };
 
-export const getAxisFormat = function() {
+export const getAxisFormat = function () {
   return axisFormat;
 };
 
-export const setTodayMarker = function(txt) {
+export const setTodayMarker = function (txt) {
   todayMarker = txt;
 };
 
-export const getTodayMarker = function() {
+export const getTodayMarker = function () {
   return todayMarker;
 };
 
-export const setDateFormat = function(txt) {
+export const setDateFormat = function (txt) {
   dateFormat = txt;
 };
 
-export const enableInclusiveEndDates = function() {
+export const enableInclusiveEndDates = function () {
   inclusiveEndDates = true;
 };
 
-export const endDatesAreInclusive = function() {
+export const endDatesAreInclusive = function () {
   return inclusiveEndDates;
 };
 
-export const getDateFormat = function() {
+export const enableTopAxis = function () {
+  topAxis = true;
+};
+
+export const topAxisEnabled = function () {
+  return topAxis;
+};
+
+export const getDateFormat = function () {
   return dateFormat;
 };
 
-export const setExcludes = function(txt) {
+export const setExcludes = function (txt) {
   excludes = txt.toLowerCase().split(/[\s,]+/);
 };
 
-export const getExcludes = function() {
+export const getExcludes = function () {
   return excludes;
 };
 
-export const setTitle = function(txt) {
+export const setTitle = function (txt) {
   title = txt;
 };
 
-export const getTitle = function() {
+export const getTitle = function () {
   return title;
 };
 
-export const addSection = function(txt) {
+export const addSection = function (txt) {
   currentSection = txt;
   sections.push(txt);
 };
 
-export const getSections = function() {
+export const getSections = function () {
   return sections;
 };
 
-export const getTasks = function() {
+export const getTasks = function () {
   let allItemsPricessed = compileTasks();
   const maxDepth = 10;
   let iterationCount = 0;
@@ -113,7 +123,7 @@ export const getTasks = function() {
   return tasks;
 };
 
-const isInvalidDate = function(date, dateFormat, excludes) {
+const isInvalidDate = function (date, dateFormat, excludes) {
   if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
     return true;
   }
@@ -123,7 +133,7 @@ const isInvalidDate = function(date, dateFormat, excludes) {
   return excludes.indexOf(date.format(dateFormat.trim())) >= 0;
 };
 
-const checkTaskDates = function(task, dateFormat, excludes) {
+const checkTaskDates = function (task, dateFormat, excludes) {
   if (!excludes.length || task.manualEndTime) return;
   let startTime = moment(task.startTime, dateFormat, true);
   startTime.add(1, 'd');
@@ -133,7 +143,7 @@ const checkTaskDates = function(task, dateFormat, excludes) {
   task.renderEndTime = renderEndTime;
 };
 
-const fixTaskDates = function(startTime, endTime, dateFormat, excludes) {
+const fixTaskDates = function (startTime, endTime, dateFormat, excludes) {
   let invalid = false;
   let renderEndTime = null;
   while (startTime <= endTime) {
@@ -149,7 +159,7 @@ const fixTaskDates = function(startTime, endTime, dateFormat, excludes) {
   return renderEndTime;
 };
 
-const getStartDate = function(prevTime, dateFormat, str) {
+const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim();
 
   // Test for after
@@ -159,7 +169,7 @@ const getStartDate = function(prevTime, dateFormat, str) {
   if (afterStatement !== null) {
     // check all after ids and take the latest
     let latestEndingTask = null;
-    afterStatement[1].split(' ').forEach(function(id) {
+    afterStatement[1].split(' ').forEach(function (id) {
       let task = findTaskById(id);
       if (typeof task !== 'undefined') {
         if (!latestEndingTask) {
@@ -194,7 +204,7 @@ const getStartDate = function(prevTime, dateFormat, str) {
   return new Date();
 };
 
-const durationToDate = function(durationStatement, relativeTime) {
+const durationToDate = function (durationStatement, relativeTime) {
   if (durationStatement !== null) {
     switch (durationStatement[2]) {
       case 's':
@@ -218,7 +228,7 @@ const durationToDate = function(durationStatement, relativeTime) {
   return relativeTime.toDate();
 };
 
-const getEndDate = function(prevTime, dateFormat, str, inclusive) {
+const getEndDate = function (prevTime, dateFormat, str, inclusive) {
   inclusive = inclusive || false;
   str = str.trim();
 
@@ -235,7 +245,7 @@ const getEndDate = function(prevTime, dateFormat, str, inclusive) {
 };
 
 let taskCnt = 0;
-const parseId = function(idStr) {
+const parseId = function (idStr) {
   if (typeof idStr === 'undefined') {
     taskCnt = taskCnt + 1;
     return 'task' + taskCnt;
@@ -253,7 +263,7 @@ const parseId = function(idStr) {
 // endDate
 // length
 
-const compileData = function(prevTask, dataStr) {
+const compileData = function (prevTask, dataStr) {
   let ds;
 
   if (dataStr.substr(0, 1) === ':') {
@@ -302,7 +312,7 @@ const compileData = function(prevTask, dataStr) {
   return task;
 };
 
-const parseData = function(prevTaskId, dataStr) {
+const parseData = function (prevTaskId, dataStr) {
   let ds;
   if (dataStr.substr(0, 1) === ':') {
     ds = dataStr.substr(1, dataStr.length);
@@ -326,30 +336,30 @@ const parseData = function(prevTaskId, dataStr) {
       task.id = parseId();
       task.startTime = {
         type: 'prevTaskEnd',
-        id: prevTaskId
+        id: prevTaskId,
       };
       task.endTime = {
-        data: data[0]
+        data: data[0],
       };
       break;
     case 2:
       task.id = parseId();
       task.startTime = {
         type: 'getStartDate',
-        startData: data[0]
+        startData: data[0],
       };
       task.endTime = {
-        data: data[1]
+        data: data[1],
       };
       break;
     case 3:
       task.id = parseId(data[0]);
       task.startTime = {
         type: 'getStartDate',
-        startData: data[1]
+        startData: data[1],
       };
       task.endTime = {
-        data: data[2]
+        data: data[2],
       };
       break;
     default:
@@ -362,7 +372,7 @@ let lastTask;
 let lastTaskID;
 let rawTasks = [];
 const taskDb = {};
-export const addTask = function(descr, data) {
+export const addTask = function (descr, data) {
   const rawTask = {
     section: currentSection,
     type: currentSection,
@@ -371,7 +381,7 @@ export const addTask = function(descr, data) {
     renderEndTime: null,
     raw: { data: data },
     task: descr,
-    classes: []
+    classes: [],
   };
   const taskInfo = parseData(lastTaskID, data);
   rawTask.raw.startTime = taskInfo.startTime;
@@ -393,18 +403,18 @@ export const addTask = function(descr, data) {
   taskDb[rawTask.id] = pos - 1;
 };
 
-export const findTaskById = function(id) {
+export const findTaskById = function (id) {
   const pos = taskDb[id];
   return rawTasks[pos];
 };
 
-export const addTaskOrg = function(descr, data) {
+export const addTaskOrg = function (descr, data) {
   const newTask = {
     section: currentSection,
     type: currentSection,
     description: descr,
     task: descr,
-    classes: []
+    classes: [],
   };
   const taskInfo = compileData(lastTask, data);
   newTask.startTime = taskInfo.startTime;
@@ -418,8 +428,8 @@ export const addTaskOrg = function(descr, data) {
   tasks.push(newTask);
 };
 
-const compileTasks = function() {
-  const compileTask = function(pos) {
+const compileTasks = function () {
+  const compileTask = function (pos) {
     const task = rawTasks[pos];
     let startTime = '';
     switch (rawTasks[pos].raw.startTime.type) {
@@ -471,12 +481,12 @@ const compileTasks = function() {
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
  */
-export const setLink = function(ids, _linkStr) {
+export const setLink = function (ids, _linkStr) {
   let linkStr = _linkStr;
   if (configApi.getConfig().securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr);
   }
-  ids.split(',').forEach(function(id) {
+  ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id);
     if (typeof rawTask !== 'undefined') {
       pushFun(id, () => {
@@ -492,8 +502,8 @@ export const setLink = function(ids, _linkStr) {
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
-export const setClass = function(ids, className) {
-  ids.split(',').forEach(function(id) {
+export const setClass = function (ids, className) {
+  ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id);
     if (typeof rawTask !== 'undefined') {
       rawTask.classes.push(className);
@@ -501,7 +511,7 @@ export const setClass = function(ids, className) {
   });
 };
 
-const setClickFun = function(id, functionName, functionArgs) {
+const setClickFun = function (id, functionName, functionArgs) {
   if (configApi.getConfig().securityLevel !== 'loose') {
     return;
   }
@@ -542,21 +552,21 @@ const setClickFun = function(id, functionName, functionArgs) {
  * @param id The task's id
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
-const pushFun = function(id, callbackFunction) {
-  funs.push(function() {
+const pushFun = function (id, callbackFunction) {
+  funs.push(function () {
     // const elem = d3.select(element).select(`[id="${id}"]`)
     const elem = document.querySelector(`[id="${id}"]`);
     if (elem !== null) {
-      elem.addEventListener('click', function() {
+      elem.addEventListener('click', function () {
         callbackFunction();
       });
     }
   });
-  funs.push(function() {
+  funs.push(function () {
     // const elem = d3.select(element).select(`[id="${id}-text"]`)
     const elem = document.querySelector(`[id="${id}-text"]`);
     if (elem !== null) {
-      elem.addEventListener('click', function() {
+      elem.addEventListener('click', function () {
         callbackFunction();
       });
     }
@@ -569,8 +579,8 @@ const pushFun = function(id, callbackFunction) {
  * @param functionName Function to be called on click
  * @param functionArgs Function args the function should be called with
  */
-export const setClickEvent = function(ids, functionName, functionArgs) {
-  ids.split(',').forEach(function(id) {
+export const setClickEvent = function (ids, functionName, functionArgs) {
+  ids.split(',').forEach(function (id) {
     setClickFun(id, functionName, functionArgs);
   });
   setClass(ids, 'clickable');
@@ -580,8 +590,8 @@ export const setClickEvent = function(ids, functionName, functionArgs) {
  * Binds all functions previously added to fun (specified through click) to the element
  * @param element
  */
-export const bindFunctions = function(element) {
-  funs.forEach(function(fun) {
+export const bindFunctions = function (element) {
+  funs.forEach(function (fun) {
     fun(element);
   });
 };
@@ -594,6 +604,8 @@ export default {
   getDateFormat,
   enableInclusiveEndDates,
   endDatesAreInclusive,
+  enableTopAxis,
+  topAxisEnabled,
   setAxisFormat,
   getAxisFormat,
   setTodayMarker,
@@ -611,14 +623,14 @@ export default {
   setClickEvent,
   setLink,
   bindFunctions,
-  durationToDate
+  durationToDate,
 };
 
 function getTaskTags(data, task, tags) {
   let matchFound = true;
   while (matchFound) {
     matchFound = false;
-    tags.forEach(function(t) {
+    tags.forEach(function (t) {
       const pattern = '^\\s*' + t + '\\s*$';
       const regex = new RegExp(pattern);
       if (data[0].match(regex)) {

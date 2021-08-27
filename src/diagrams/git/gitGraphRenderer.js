@@ -22,11 +22,11 @@ let config = {
     width: 75,
     height: 100,
     x: -25,
-    y: 0
-  }
+    y: 0,
+  },
 };
 let apiConfig = {};
-export const setConf = function(c) {
+export const setConf = function (c) {
   apiConfig = c;
 };
 
@@ -56,10 +56,10 @@ function svgDrawLine(svg, points, colorIdx, interpolate) {
   const curve = interpolateToCurve(interpolate, curveBasis);
   const color = config.branchColors[colorIdx % config.branchColors.length];
   const lineGen = line()
-    .x(function(d) {
+    .x(function (d) {
       return Math.round(d.x);
     })
-    .y(function(d) {
+    .y(function (d) {
       return Math.round(d.y);
     })
     .curve(curve);
@@ -82,7 +82,7 @@ function getElementCoords(element, coords) {
     left: xn,
     top: yn,
     width: coords.width,
-    height: coords.height
+    height: coords.height,
   };
 }
 
@@ -98,7 +98,7 @@ function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
       if (fromBbox.left - toBbox.left > config.nodeSpacing) {
         const lineStart = {
           x: fromBbox.left - config.nodeSpacing,
-          y: toBbox.top + toBbox.height / 2
+          y: toBbox.top + toBbox.height / 2,
         };
         const lineEnd = { x: toBbox.left + toBbox.width, y: toBbox.top + toBbox.height / 2 };
         svgDrawLine(svg, [lineStart, lineEnd], color, 'linear');
@@ -108,7 +108,7 @@ function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
             { x: fromBbox.left, y: fromBbox.top + fromBbox.height / 2 },
             { x: fromBbox.left - config.nodeSpacing / 2, y: fromBbox.top + fromBbox.height / 2 },
             { x: fromBbox.left - config.nodeSpacing / 2, y: lineStart.y },
-            lineStart
+            lineStart,
           ],
           color
         );
@@ -118,20 +118,20 @@ function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
           [
             {
               x: fromBbox.left,
-              y: fromBbox.top + fromBbox.height / 2
+              y: fromBbox.top + fromBbox.height / 2,
             },
             {
               x: fromBbox.left - config.nodeSpacing / 2,
-              y: fromBbox.top + fromBbox.height / 2
+              y: fromBbox.top + fromBbox.height / 2,
             },
             {
               x: fromBbox.left - config.nodeSpacing / 2,
-              y: toBbox.top + toBbox.height / 2
+              y: toBbox.top + toBbox.height / 2,
             },
             {
               x: toBbox.left + toBbox.width,
-              y: toBbox.top + toBbox.height / 2
-            }
+              y: toBbox.top + toBbox.height / 2,
+            },
           ],
           color
         );
@@ -145,7 +145,7 @@ function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
       if (toBbox.top - fromBbox.top > config.nodeSpacing) {
         const lineStart = {
           x: toBbox.left + toBbox.width / 2,
-          y: fromBbox.top + fromBbox.height + config.nodeSpacing
+          y: fromBbox.top + fromBbox.height + config.nodeSpacing,
         };
         const lineEnd = { x: toBbox.left + toBbox.width / 2, y: toBbox.top };
         svgDrawLine(svg, [lineStart, lineEnd], color, 'linear');
@@ -155,10 +155,10 @@ function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
             { x: fromBbox.left + fromBbox.width / 2, y: fromBbox.top + fromBbox.height },
             {
               x: fromBbox.left + fromBbox.width / 2,
-              y: fromBbox.top + fromBbox.height + config.nodeSpacing / 2
+              y: fromBbox.top + fromBbox.height + config.nodeSpacing / 2,
             },
             { x: toBbox.left + toBbox.width / 2, y: lineStart.y - config.nodeSpacing / 2 },
-            lineStart
+            lineStart,
           ],
           color
         );
@@ -168,20 +168,20 @@ function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
           [
             {
               x: fromBbox.left + fromBbox.width / 2,
-              y: fromBbox.top + fromBbox.height
+              y: fromBbox.top + fromBbox.height,
             },
             {
               x: fromBbox.left + fromBbox.width / 2,
-              y: fromBbox.top + config.nodeSpacing / 2
+              y: fromBbox.top + config.nodeSpacing / 2,
             },
             {
               x: toBbox.left + toBbox.width / 2,
-              y: toBbox.top - config.nodeSpacing / 2
+              y: toBbox.top - config.nodeSpacing / 2,
             },
             {
               x: toBbox.left + toBbox.width / 2,
-              y: toBbox.top
-            }
+              y: toBbox.top,
+            },
           ],
           color
         );
@@ -191,10 +191,7 @@ function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
 }
 
 function cloneNode(svg, selector) {
-  return svg
-    .select(selector)
-    .node()
-    .cloneNode(true);
+  return svg.select(selector).node().cloneNode(true);
 }
 
 function renderCommitHistory(svg, commitid, branches, direction) {
@@ -208,14 +205,14 @@ function renderCommitHistory(svg, commitid, branches, direction) {
         return;
       }
       svg
-        .append(function() {
+        .append(function () {
           return cloneNode(svg, '#def-commit');
         })
         .attr('class', 'commit')
-        .attr('id', function() {
+        .attr('id', function () {
           return 'node-' + commit.id;
         })
-        .attr('transform', function() {
+        .attr('transform', function () {
           switch (direction) {
             case 'LR':
               return (
@@ -296,7 +293,7 @@ function renderLines(svg, commit, direction, branchColor) {
   }
 }
 
-export const draw = function(txt, id, ver) {
+export const draw = function (txt, id, ver) {
   try {
     const parser = gitGraphParser.parser;
     parser.yy = db;
@@ -325,7 +322,7 @@ export const draw = function(txt, id, ver) {
       renderLines(svg, v.commit, direction);
       branchNum++;
     }
-    svg.attr('height', function() {
+    svg.attr('height', function () {
       if (direction === 'BT') return Object.keys(allCommitsDict).length * config.nodeSpacing;
       return (branches.length + 1) * config.branchOffset;
     });
@@ -337,5 +334,5 @@ export const draw = function(txt, id, ver) {
 
 export default {
   setConf,
-  draw
+  draw,
 };

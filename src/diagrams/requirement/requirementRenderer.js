@@ -1,7 +1,7 @@
 import { line, select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
-import * as configApi from '../../config';
+// import * as configApi from '../../config';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 import common from '../common/common';
@@ -12,7 +12,7 @@ import markers from './requirementMarkers';
 const conf = {};
 let relCnt = 0;
 
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   if (typeof cnf === 'undefined') {
     return;
   }
@@ -26,10 +26,6 @@ const newRectNode = (parentNode, id) => {
   return parentNode
     .insert('rect', '#' + id)
     .attr('class', 'req reqBox')
-    .attr('fill', conf.rect_fill)
-    .attr('fill-opacity', '100%')
-    .attr('stroke', conf.rect_border_color)
-    .attr('stroke-size', conf.rect_border_size)
     .attr('x', 0)
     .attr('y', 0)
     .attr('width', conf.rect_min_width + 'px')
@@ -45,14 +41,13 @@ const newTitleNode = (parentNode, id, txts) => {
     .attr('id', id)
     .attr('x', x)
     .attr('y', conf.rect_padding)
-    .attr('dominant-baseline', 'hanging')
-    .attr(
-      'style',
-      'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
-    );
-
+    .attr('dominant-baseline', 'hanging');
+  // .attr(
+  //   'style',
+  //   'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+  // )
   let i = 0;
-  txts.forEach(textStr => {
+  txts.forEach((textStr) => {
     if (i == 0) {
       title
         .append('tspan')
@@ -77,15 +72,15 @@ const newTitleNode = (parentNode, id, txts) => {
 
   parentNode
     .append('line')
+    .attr('class', 'req-title-line')
     .attr('x1', '0')
     .attr('x2', conf.rect_min_width)
     .attr('y1', totalY)
-    .attr('y2', totalY)
-    .attr('style', `stroke: ${conf.rect_border_color}; stroke-width: 1`);
+    .attr('y2', totalY);
 
   return {
     titleNode: title,
-    y: totalY
+    y: totalY,
   };
 };
 
@@ -96,16 +91,16 @@ const newBodyNode = (parentNode, id, txts, yStart) => {
     .attr('id', id)
     .attr('x', conf.rect_padding)
     .attr('y', yStart)
-    .attr('dominant-baseline', 'hanging')
-    .attr(
-      'style',
-      'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
-    );
+    .attr('dominant-baseline', 'hanging');
+  // .attr(
+  //   'style',
+  //   'font-family: ' + configApi.getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+  // );
 
   let currentRow = 0;
   const charLimit = 30;
   let wrappedTxts = [];
-  txts.forEach(textStr => {
+  txts.forEach((textStr) => {
     let currentTextLen = textStr.length;
     while (currentTextLen > charLimit && currentRow < 3) {
       let firstPart = textStr.substring(0, charLimit);
@@ -123,12 +118,8 @@ const newBodyNode = (parentNode, id, txts, yStart) => {
     currentRow = 0;
   });
 
-  wrappedTxts.forEach(textStr => {
-    body
-      .append('tspan')
-      .attr('x', conf.rect_padding)
-      .attr('dy', conf.line_height)
-      .text(textStr);
+  wrappedTxts.forEach((textStr) => {
+    body.append('tspan').attr('x', conf.rect_padding).attr('dy', conf.line_height).text(textStr);
   });
 
   return body;
@@ -145,13 +136,13 @@ const addEdgeLabel = (parentNode, svgPath, conf, txt) => {
 
   const labelNode = parentNode
     .append('text')
-    .attr('class', 'er relationshipLabel')
+    .attr('class', 'req relationshipLabel')
     .attr('id', labelId)
     .attr('x', labelPoint.x)
     .attr('y', labelPoint.y)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .attr('style', 'font-family: ' + conf.fontFamily + '; font-size: ' + conf.fontSize + 'px')
+    // .attr('style', 'font-family: ' + conf.fontFamily + '; font-size: ' + conf.fontSize + 'px')
     .text(txt);
 
   // Figure out how big the opaque 'container' rectangle needs to be
@@ -169,16 +160,16 @@ const addEdgeLabel = (parentNode, svgPath, conf, txt) => {
     .attr('fill-opacity', '85%');
 };
 
-const drawRelationshipFromLayout = function(svg, rel, g, insert) {
+const drawRelationshipFromLayout = function (svg, rel, g, insert) {
   // Find the edge relating to this relationship
   const edge = g.edge(elementString(rel.src), elementString(rel.dst));
 
   // Get a function that will generate the line path
   const lineFunction = line()
-    .x(function(d) {
+    .x(function (d) {
       return d.x;
     })
-    .y(function(d) {
+    .y(function (d) {
       return d.y;
     });
 
@@ -187,7 +178,6 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
     .insert('path', '#' + insert)
     .attr('class', 'er relationshipLine')
     .attr('d', lineFunction(edge.points))
-    .attr('stroke', conf.rect_border_color)
     .attr('fill', 'none');
 
   if (rel.type == requirementDb.Relationships.CONTAINS) {
@@ -214,10 +204,9 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
 };
 
 export const drawReqs = (reqs, graph, svgNode) => {
-  Object.keys(reqs).forEach(reqName => {
+  Object.keys(reqs).forEach((reqName) => {
     let req = reqs[reqName];
     reqName = elementString(reqName);
-    console.log('reqName: ', reqName);
     log.info('Added new requirement: ', reqName);
 
     const groupNode = svgNode.append('g').attr('id', reqName);
@@ -228,7 +217,7 @@ export const drawReqs = (reqs, graph, svgNode) => {
 
     let titleNodeInfo = newTitleNode(groupNode, reqName + '_title', [
       `<<${req.type}>>`,
-      `${req.name}`
+      `${req.name}`,
     ]);
 
     nodes.push(titleNodeInfo.titleNode);
@@ -240,7 +229,7 @@ export const drawReqs = (reqs, graph, svgNode) => {
         `Id: ${req.id}`,
         `Text: ${req.text}`,
         `Risk: ${req.risk}`,
-        `Verification: ${req.verifyMethod}`
+        `Verification: ${req.verifyMethod}`,
       ],
       titleNodeInfo.y
     );
@@ -254,13 +243,13 @@ export const drawReqs = (reqs, graph, svgNode) => {
       width: rectBBox.width,
       height: rectBBox.height,
       shape: 'rect',
-      id: reqName
+      id: reqName,
     });
   });
 };
 
 export const drawElements = (els, graph, svgNode) => {
-  Object.keys(els).forEach(elName => {
+  Object.keys(els).forEach((elName) => {
     let el = els[elName];
     const id = elementString(elName);
 
@@ -277,7 +266,7 @@ export const drawElements = (els, graph, svgNode) => {
     let bodyNode = newBodyNode(
       groupNode,
       textId + '_body',
-      [`Type: ${el.type || 'Not Specified'}`, `Doc Ref: ${el.docref || 'None'}`],
+      [`Type: ${el.type || 'Not Specified'}`, `Doc Ref: ${el.docRef || 'None'}`],
       titleNodeInfo.y
     );
 
@@ -290,13 +279,13 @@ export const drawElements = (els, graph, svgNode) => {
       width: rectBBox.width,
       height: rectBBox.height,
       shape: 'rect',
-      id: id
+      id: id,
     });
   });
 };
 
 const addRelationships = (relationships, g) => {
-  relationships.forEach(function(r) {
+  relationships.forEach(function (r) {
     let src = elementString(r.src);
     let dst = elementString(r.dst);
     g.setEdge(src, dst, { relationship: r });
@@ -304,8 +293,8 @@ const addRelationships = (relationships, g) => {
   return relationships;
 };
 
-const adjustEntities = function(svgNode, graph) {
-  graph.nodes().forEach(function(v) {
+const adjustEntities = function (svgNode, graph) {
+  graph.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
       svgNode.select('#' + v);
       svgNode
@@ -323,12 +312,13 @@ const adjustEntities = function(svgNode, graph) {
   return;
 };
 
-const elementString = str => {
+const elementString = (str) => {
   return str.replace(/\s/g, '').replace(/\./g, '_');
 };
 
 export const draw = (text, id) => {
   parser.yy = requirementDb;
+  parser.yy.clear();
   parser.parse(text);
 
   const svg = select(`[id='${id}']`);
@@ -337,7 +327,7 @@ export const draw = (text, id) => {
   const g = new graphlib.Graph({
     multigraph: false,
     compound: false,
-    directed: true
+    directed: true,
   })
     .setGraph({
       rankdir: conf.layoutDirection,
@@ -345,9 +335,9 @@ export const draw = (text, id) => {
       marginy: 20,
       nodesep: 100,
       edgesep: 100,
-      ranksep: 100
+      ranksep: 100,
     })
-    .setDefaultEdgeLabel(function() {
+    .setDefaultEdgeLabel(function () {
       return {};
     });
 
@@ -361,7 +351,7 @@ export const draw = (text, id) => {
   dagre.layout(g);
   adjustEntities(svg, g);
 
-  relationships.forEach(function(rel) {
+  relationships.forEach(function (rel) {
     drawRelationshipFromLayout(svg, rel, g, id);
   });
 
@@ -378,5 +368,5 @@ export const draw = (text, id) => {
 
 export default {
   setConf,
-  draw
+  draw,
 };

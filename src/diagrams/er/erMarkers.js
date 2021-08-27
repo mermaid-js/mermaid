@@ -6,13 +6,13 @@ const ERMarkers = {
   ONE_OR_MORE_START: 'ONE_OR_MORE_START',
   ONE_OR_MORE_END: 'ONE_OR_MORE_END',
   ZERO_OR_MORE_START: 'ZERO_OR_MORE_START',
-  ZERO_OR_MORE_END: 'ZERO_OR_MORE_END'
+  ZERO_OR_MORE_END: 'ZERO_OR_MORE_END',
 };
 
 /**
  * Put the markers into the svg DOM for later use with edge paths
  */
-const insertMarkers = function(elem, conf) {
+const insertMarkers = function (elem, conf) {
   let marker;
 
   elem
@@ -59,11 +59,7 @@ const insertMarkers = function(elem, conf) {
     .attr('cx', 21)
     .attr('cy', 9)
     .attr('r', 6);
-  marker
-    .append('path')
-    .attr('stroke', conf.stroke)
-    .attr('fill', 'none')
-    .attr('d', 'M9,0 L9,18');
+  marker.append('path').attr('stroke', conf.stroke).attr('fill', 'none').attr('d', 'M9,0 L9,18');
 
   marker = elem
     .append('defs')
@@ -81,11 +77,7 @@ const insertMarkers = function(elem, conf) {
     .attr('cx', 9)
     .attr('cy', 9)
     .attr('r', 6);
-  marker
-    .append('path')
-    .attr('stroke', conf.stroke)
-    .attr('fill', 'none')
-    .attr('d', 'M21,0 L21,18');
+  marker.append('path').attr('stroke', conf.stroke).attr('fill', 'none').attr('d', 'M21,0 L21,18');
 
   elem
     .append('defs')
@@ -164,5 +156,5 @@ const insertMarkers = function(elem, conf) {
 
 export default {
   ERMarkers,
-  insertMarkers
+  insertMarkers,
 };

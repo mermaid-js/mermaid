@@ -1,6 +1,6 @@
 /** mermaid
  *  https://mermaidjs.github.io/
- *  (c) 2014-2015 Knut Sveidqvist
+ *  (c) 2014-2021 Knut Sveidqvist
  *  MIT license.
  *
  *  Based on js sequence diagrams jison grammr
@@ -35,30 +35,42 @@
 %x LINE
 
 %%
+
+.*direction\s+TB[^\n]*                                      return 'direction_tb';
+.*direction\s+BT[^\n]*                                      return 'direction_bt';
+.*direction\s+RL[^\n]*                                      return 'direction_rl';
+.*direction\s+LR[^\n]*                                      return 'direction_lr';
+
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 <open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%\%(?!\{)[^\n]*                                                /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */{ console.log('Crap after close'); }
+[^\}]\%\%[^\n]*                                                 /* skip comments */{ /*console.log('Crap after close');*/ }
 
 [\n]+                            return 'NL';
 [\s]+                              /* skip all whitespace */
 <ID,STATE,struct,LINE,open_directive,type_directive,arg_directive,close_directive>((?!\n)\s)+       /* skip same-line whitespace */
 <INITIAL,ID,STATE,struct,LINE,open_directive,type_directive,arg_directive,close_directive>\#[^\n]*  /* skip comments */
 \%%[^\n]*                        /* skip comments */
-
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
 
-<INITIAL,struct>"state"\s+            { this.pushState('STATE'); }
+<INITIAL,struct>"state"\s+            { /*console.log('Starting STATE zxzx'+yy.getDirection());*/this.pushState('STATE'); }
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
+<STATE>.*"<<choice>>"                   {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
 <STATE>.*"[[fork]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
 <STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
-<STATE>["]                   this.begin("STATE_STRING");
+<STATE>.*"[[choice]]"                   {this.popState();yytext=yytext.slice(0,-10).trim();/*console.warn('Fork Join: ',yytext);*/return 'CHOICE';}
+<struct>.*direction\s+TB[^\n]*            { return 'direction_tb';}
+<struct>.*direction\s+BT[^\n]*            { return 'direction_bt';}
+<struct>.*direction\s+RL[^\n]*            { return 'direction_rl';}
+<struct>.*direction\s+LR[^\n]*            { return 'direction_lr';}
+
+<STATE>["]                   { /*console.log('Starting STATE_STRING zxzx');*/this.begin("STATE_STRING");}
 <STATE>\s*"as"\s+         {this.popState();this.pushState('STATE_ID');return "AS";}
 <STATE_ID>[^\n\{]*         {this.popState();/* console.log('STATE_ID', yytext);*/return "ID";}
 <STATE_STRING>["]              this.popState();
@@ -142,7 +154,6 @@ statement
     | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     {
-
         /* console.warn('Adding document for state without id ', $1);*/
         $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
     }
@@ -159,7 +170,7 @@ statement
     }
     | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP
     {
-         //console.warn('Adding document for state with id ', $3, $4); yy.addDocument($3);
+         // console.warn('Adding document for state with id zxzx', $3, $4, yy.getDirection()); yy.addDocument($3);
          $$={ stmt: 'state', id: $3, type: 'default', description: $1, doc: $5 }
     }
     | FORK {
@@ -168,21 +179,35 @@ statement
     | JOIN {
         $$={ stmt: 'state', id: $1, type: 'join' }
     }
+    | CHOICE {
+        $$={ stmt: 'state', id: $1, type: 'choice' }
+    }
     | CONCURRENT {
         $$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
     }
     | note notePosition ID NOTE_TEXT
     {
-        /*console.warn('got NOTE, position: ', $2.trim(), 'id = ', $3.trim(), 'note: ', $4);*/
+        /* console.warn('got NOTE, position: ', $2.trim(), 'id = ', $3.trim(), 'note: ', $4);*/
         $$={ stmt: 'state', id: $3.trim(), note:{position: $2.trim(), text: $4.trim()}};
     }
     | note NOTE_TEXT AS ID
   	| directive
+    | direction
     ;
 
 directive
     : openDirective typeDirective closeDirective
     | openDirective typeDirective ':' argDirective closeDirective
+    ;
+direction
+    : direction_tb
+    { yy.setDirection('TB');$$={stmt:'dir', value:'TB'};}
+    | direction_bt
+    { yy.setDirection('BT');$$={stmt:'dir', value:'BT'};}
+    | direction_rl
+    { yy.setDirection('RL'); $$={stmt:'dir', value:'RL'};}
+    | direction_lr
+    { yy.setDirection('LR');$$={stmt:'dir', value:'LR'};}
     ;
 
 eol

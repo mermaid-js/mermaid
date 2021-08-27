@@ -1,11 +1,13 @@
-export const getRows = s => {
+import DOMPurify from 'dompurify';
+
+export const getRows = (s) => {
   if (!s) return 1;
   let str = breakToPlaceholder(s);
   str = str.replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
 
-export const removeScript = txt => {
+export const removeScript = (txt) => {
   var rs = '';
   var idx = 0;
 
@@ -26,10 +28,15 @@ export const removeScript = txt => {
       break;
     }
   }
+
+  rs = rs.replace(/javascript:/g, '#');
+  rs = rs.replace(/onerror=/g, 'onerror:');
+  rs = rs.replace(/<iframe/g, '');
+
   return rs;
 };
 
-export const sanitizeText = (text, config) => {
+const sanitizeMore = (text, config) => {
   let txt = text;
   let htmlLabels = true;
   if (
@@ -56,25 +63,28 @@ export const sanitizeText = (text, config) => {
   return txt;
 };
 
+export const sanitizeText = (text, config) => {
+  const txt = sanitizeMore(DOMPurify.sanitize(text), config);
+  return txt;
+};
+
 export const lineBreakRegex = /<br\s*\/?>/gi;
 
-export const hasBreaks = text => {
+export const hasBreaks = (text) => {
   return /<br\s*[/]?>/gi.test(text);
 };
 
-export const splitBreaks = text => {
+export const splitBreaks = (text) => {
   return text.split(/<br\s*[/]?>/gi);
 };
-
-const breakToPlaceholder = s => {
+const placeholderToBreak = (s) => {
+  return s.replace(/#br#/g, '<br/>');
+};
+const breakToPlaceholder = (s) => {
   return s.replace(lineBreakRegex, '#br#');
 };
 
-const placeholderToBreak = s => {
-  return s.replace(/#br#/g, '<br/>');
-};
-
-const getUrl = useAbsolute => {
+const getUrl = (useAbsolute) => {
   let url = '';
   if (useAbsolute) {
     url =
@@ -90,6 +100,8 @@ const getUrl = useAbsolute => {
   return url;
 };
 
+export const evaluate = (val) => (val === 'false' || val === false ? false : true);
+
 export default {
   getRows,
   sanitizeText,
@@ -97,5 +109,6 @@ export default {
   splitBreaks,
   lineBreakRegex,
   removeScript,
-  getUrl
+  getUrl,
+  evaluate,
 };

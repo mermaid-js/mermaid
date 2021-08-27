@@ -25,7 +25,7 @@ const themes = {
   pie,
   er,
   journey,
-  requirement
+  requirement,
 };
 
 export const calcThemeVariables = (theme, userOverRides) => theme.calcColors(userOverRides);
@@ -81,8 +81,6 @@ const getStyles = (type, userStyles, options) => {
   ${themes[type](options)}
 
   ${userStyles}
-
-  ${type} { fill: apa;}
 `;
 };
 

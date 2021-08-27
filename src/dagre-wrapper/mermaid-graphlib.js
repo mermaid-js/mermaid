@@ -17,7 +17,7 @@ export const clear = () => {
 const isDecendant = (id, ancenstorId) => {
   // if (id === ancenstorId) return true;
 
-  log.debug(
+  log.trace(
     'In isDecendant',
     ancenstorId,
     ' ',
@@ -70,7 +70,7 @@ const copy = (clusterId, graph, newGraph, rootId) => {
 
   log.warn('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
 
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     if (graph.children(node).length > 0) {
       copy(node, graph, newGraph, rootId);
     } else {
@@ -98,7 +98,7 @@ const copy = (clusterId, graph, newGraph, rootId) => {
       }
       const edges = graph.edges(node);
       log.debug('Copying Edges', edges);
-      edges.forEach(edge => {
+      edges.forEach((edge) => {
         log.info('Edge', edge);
         const data = graph.edge(edge.v, edge.w, edge.name);
         log.info('Edge data', data, rootId);
@@ -147,7 +147,7 @@ export const extractDecendants = (id, graph) => {
  * edges between nodes also ia correct. When not correct the function logs the discrepancies.
  * @param {graphlib graph} g
  */
-export const validate = graph => {
+export const validate = (graph) => {
   const edges = graph.edges();
   log.trace('Edges: ', edges);
   for (let i = 0; i < edges.length; i++) {
@@ -187,7 +187,7 @@ export const findNonClusterChild = (id, graph) => {
   }
 };
 
-const getAnchorId = id => {
+const getAnchorId = (id) => {
   if (!clusterDb[id]) {
     return id;
   }
@@ -212,7 +212,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
   }
   // Go through the nodes and for each cluster found, save a replacment node, this can be used when
   // faking a link to a cluster
-  graph.nodes().forEach(function(id) {
+  graph.nodes().forEach(function (id) {
     const children = graph.children(id);
     if (children.length > 0) {
       log.warn(
@@ -227,12 +227,12 @@ export const adjustClustersAndEdges = (graph, depth) => {
   });
 
   // Check incoming and outgoing edges for each cluster
-  graph.nodes().forEach(function(id) {
+  graph.nodes().forEach(function (id) {
     const children = graph.children(id);
     const edges = graph.edges();
     if (children.length > 0) {
       log.debug('Cluster identified', id, decendants);
-      edges.forEach(edge => {
+      edges.forEach((edge) => {
         // log.debug('Edge, decendants: ', edge, decendants[id]);
 
         // Check if any edge leaves the cluster (not the actual cluster, thats a link from the box)
@@ -258,7 +258,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
 
   // For clusters with incoming and/or outgoing edges translate those edges to a real node
   // in the cluster inorder to fake the edge
-  graph.edges().forEach(function(e) {
+  graph.edges().forEach(function (e) {
     const edge = graph.edge(e);
     log.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
     log.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
@@ -358,20 +358,26 @@ export const extractor = (graph, depth) => {
       );
 
       const graphSettings = graph.graph();
+      let dir = graphSettings.rankdir === 'TB' ? 'LR' : 'TB';
+      if (clusterDb[node]) {
+        if (clusterDb[node].clusterData && clusterDb[node].clusterData.dir) {
+          dir = clusterDb[node].clusterData.dir;
+          log.warn('Fixing dir', clusterDb[node].clusterData.dir, dir);
+        }
+      }
 
       const clusterGraph = new graphlib.Graph({
         multigraph: true,
-        compound: true
+        compound: true,
       })
         .setGraph({
-          rankdir: graphSettings.rankdir === 'TB' ? 'LR' : 'TB',
-          // Todo: set proper spacing
+          rankdir: dir, // Todo: set proper spacing
           nodesep: 50,
           ranksep: 50,
           marginx: 8,
-          marginy: 8
+          marginy: 8,
         })
-        .setDefaultEdgeLabel(function() {
+        .setDefaultEdgeLabel(function () {
           return {};
         });
 
@@ -382,7 +388,7 @@ export const extractor = (graph, depth) => {
         id: node,
         clusterData: clusterDb[node].clusterData,
         labelText: clusterDb[node].labelText,
-        graph: clusterGraph
+        graph: clusterGraph,
       });
       log.warn('New graph after copy node: (', node, ')', graphlib.json.write(clusterGraph));
       log.debug('Old graph after copy', graphlib.json.write(graph));
@@ -418,7 +424,7 @@ export const extractor = (graph, depth) => {
 const sorter = (graph, nodes) => {
   if (nodes.length === 0) return [];
   let result = Object.assign(nodes);
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     const children = graph.children(node);
     const sorted = sorter(graph, children);
     result = result.concat(sorted);
@@ -427,4 +433,4 @@ const sorter = (graph, nodes) => {
   return result;
 };
 
-export const sortNodesByHierarchy = graph => sorter(graph, graph.children());
+export const sortNodesByHierarchy = (graph) => sorter(graph, graph.children());

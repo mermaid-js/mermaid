@@ -23,7 +23,7 @@ let version; // As in graph
 // Functions to be run after graph rendering
 let funs = [];
 
-export const parseDirective = function(statement, context, type) {
+export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
@@ -32,7 +32,7 @@ export const parseDirective = function(statement, context, type) {
  * @param id
  * @public
  */
-export const lookUpDomId = function(id) {
+export const lookUpDomId = function (id) {
   const veritceKeys = Object.keys(vertices);
   for (let i = 0; i < veritceKeys.length; i++) {
     if (vertices[veritceKeys[i]].id === id) {
@@ -50,7 +50,7 @@ export const lookUpDomId = function(id) {
  * @param style
  * @param classes
  */
-export const addVertex = function(_id, text, type, style, classes) {
+export const addVertex = function (_id, text, type, style, classes, dir) {
   let txt;
   let id = _id;
   if (typeof id === 'undefined') {
@@ -67,7 +67,7 @@ export const addVertex = function(_id, text, type, style, classes) {
       id: id,
       domId: MERMAID_DOM_ID_PREFIX + id + '-' + vertexCounter,
       styles: [],
-      classes: []
+      classes: [],
     };
   }
   vertexCounter++;
@@ -91,17 +91,20 @@ export const addVertex = function(_id, text, type, style, classes) {
   }
   if (typeof style !== 'undefined') {
     if (style !== null) {
-      style.forEach(function(s) {
+      style.forEach(function (s) {
         vertices[id].styles.push(s);
       });
     }
   }
   if (typeof classes !== 'undefined') {
     if (classes !== null) {
-      classes.forEach(function(s) {
+      classes.forEach(function (s) {
         vertices[id].classes.push(s);
       });
     }
+  }
+  if (typeof dir !== 'undefined') {
+    vertices[id].dir = dir;
   }
 };
 
@@ -112,7 +115,7 @@ export const addVertex = function(_id, text, type, style, classes) {
  * @param type
  * @param linktext
  */
-export const addSingleLink = function(_start, _end, type, linktext) {
+export const addSingleLink = function (_start, _end, type, linktext) {
   let start = _start;
   let end = _end;
   // if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
@@ -138,7 +141,7 @@ export const addSingleLink = function(_start, _end, type, linktext) {
   }
   edges.push(edge);
 };
-export const addLink = function(_start, _end, type, linktext) {
+export const addLink = function (_start, _end, type, linktext) {
   let i, j;
   for (i = 0; i < _start.length; i++) {
     for (j = 0; j < _end.length; j++) {
@@ -152,8 +155,8 @@ export const addLink = function(_start, _end, type, linktext) {
  * @param pos
  * @param interpolate
  */
-export const updateLinkInterpolate = function(positions, interp) {
-  positions.forEach(function(pos) {
+export const updateLinkInterpolate = function (positions, interp) {
+  positions.forEach(function (pos) {
     if (pos === 'default') {
       edges.defaultInterpolate = interp;
     } else {
@@ -167,8 +170,8 @@ export const updateLinkInterpolate = function(positions, interp) {
  * @param pos
  * @param style
  */
-export const updateLink = function(positions, style) {
-  positions.forEach(function(pos) {
+export const updateLink = function (positions, style) {
+  positions.forEach(function (pos) {
     if (pos === 'default') {
       edges.defaultStyle = style;
     } else {
@@ -180,14 +183,14 @@ export const updateLink = function(positions, style) {
   });
 };
 
-export const addClass = function(id, style) {
+export const addClass = function (id, style) {
   if (typeof classes[id] === 'undefined') {
     classes[id] = { id: id, styles: [], textStyles: [] };
   }
 
   if (typeof style !== 'undefined') {
     if (style !== null) {
-      style.forEach(function(s) {
+      style.forEach(function (s) {
         if (s.match('color')) {
           const newStyle1 = s.replace('fill', 'bgFill');
           const newStyle2 = newStyle1.replace('color', 'fill');
@@ -203,7 +206,7 @@ export const addClass = function(id, style) {
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
  */
-export const setDirection = function(dir) {
+export const setDirection = function (dir) {
   direction = dir;
   if (direction.match(/.*</)) {
     direction = 'RL';
@@ -224,8 +227,8 @@ export const setDirection = function(dir) {
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
-export const setClass = function(ids, className) {
-  ids.split(',').forEach(function(_id) {
+export const setClass = function (ids, className) {
+  ids.split(',').forEach(function (_id) {
     // let id = version === 'gen-2' ? lookUpDomId(_id) : _id;
     let id = _id;
     // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
@@ -239,15 +242,15 @@ export const setClass = function(ids, className) {
   });
 };
 
-const setTooltip = function(ids, tooltip) {
-  ids.split(',').forEach(function(id) {
+const setTooltip = function (ids, tooltip) {
+  ids.split(',').forEach(function (id) {
     if (typeof tooltip !== 'undefined') {
       tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = common.sanitizeText(tooltip, config);
     }
   });
 };
 
-const setClickFun = function(id, functionName, functionArgs) {
+const setClickFun = function (id, functionName, functionArgs) {
   let domId = lookUpDomId(id);
   // if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   if (configApi.getConfig().securityLevel !== 'loose') {
@@ -278,12 +281,12 @@ const setClickFun = function(id, functionName, functionArgs) {
 
   if (typeof vertices[id] !== 'undefined') {
     vertices[id].haveCallback = true;
-    funs.push(function() {
+    funs.push(function () {
       const elem = document.querySelector(`[id="${domId}"]`);
       if (elem !== null) {
         elem.addEventListener(
           'click',
-          function() {
+          function () {
             utils.runFunc(functionName, ...argList);
           },
           false
@@ -298,8 +301,8 @@ const setClickFun = function(id, functionName, functionArgs) {
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
  */
-export const setLink = function(ids, linkStr, target) {
-  ids.split(',').forEach(function(id) {
+export const setLink = function (ids, linkStr, target) {
+  ids.split(',').forEach(function (id) {
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].link = utils.formatUrl(linkStr, config);
       vertices[id].linkTarget = target;
@@ -307,7 +310,7 @@ export const setLink = function(ids, linkStr, target) {
   });
   setClass(ids, 'clickable');
 };
-export const getTooltip = function(id) {
+export const getTooltip = function (id) {
   return tooltips[id];
 };
 
@@ -317,26 +320,26 @@ export const getTooltip = function(id) {
  * @param functionName Function to be called on click
  * @param tooltip Tooltip for the clickable element
  */
-export const setClickEvent = function(ids, functionName, functionArgs) {
-  ids.split(',').forEach(function(id) {
+export const setClickEvent = function (ids, functionName, functionArgs) {
+  ids.split(',').forEach(function (id) {
     setClickFun(id, functionName, functionArgs);
   });
   setClass(ids, 'clickable');
 };
 
-export const bindFunctions = function(element) {
-  funs.forEach(function(fun) {
+export const bindFunctions = function (element) {
+  funs.forEach(function (fun) {
     fun(element);
   });
 };
-export const getDirection = function() {
+export const getDirection = function () {
   return direction.trim();
 };
 /**
  * Retrieval function for fetching the found nodes after parsing has completed.
  * @returns {{}|*|vertices}
  */
-export const getVertices = function() {
+export const getVertices = function () {
   return vertices;
 };
 
@@ -344,7 +347,7 @@ export const getVertices = function() {
  * Retrieval function for fetching the found links after parsing has completed.
  * @returns {{}|*|edges}
  */
-export const getEdges = function() {
+export const getEdges = function () {
   return edges;
 };
 
@@ -352,24 +355,21 @@ export const getEdges = function() {
  * Retrieval function for fetching the found class definitions after parsing has completed.
  * @returns {{}|*|classes}
  */
-export const getClasses = function() {
+export const getClasses = function () {
   return classes;
 };
 
-const setupToolTips = function(element) {
+const setupToolTips = function (element) {
   let tooltipElem = select('.mermaidTooltip');
   if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-    tooltipElem = select('body')
-      .append('div')
-      .attr('class', 'mermaidTooltip')
-      .style('opacity', 0);
+    tooltipElem = select('body').append('div').attr('class', 'mermaidTooltip').style('opacity', 0);
   }
 
   const svg = select(element).select('svg');
 
   const nodes = svg.selectAll('g.node');
   nodes
-    .on('mouseover', function() {
+    .on('mouseover', function () {
       const el = select(this);
       const title = el.attr('title');
 
@@ -379,21 +379,15 @@ const setupToolTips = function(element) {
       }
       const rect = this.getBoundingClientRect();
 
-      tooltipElem
-        .transition()
-        .duration(200)
-        .style('opacity', '.9');
+      tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
         .html(el.attr('title'))
         .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
         .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
       el.classed('hover', true);
     })
-    .on('mouseout', function() {
-      tooltipElem
-        .transition()
-        .duration(500)
-        .style('opacity', 0);
+    .on('mouseout', function () {
+      tooltipElem.transition().duration(500).style('opacity', 0);
       const el = select(this);
       el.classed('hover', false);
     });
@@ -403,7 +397,7 @@ funs.push(setupToolTips);
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
-export const clear = function(ver) {
+export const clear = function (ver) {
   vertices = {};
   classes = {};
   edges = [];
@@ -416,21 +410,22 @@ export const clear = function(ver) {
   firstGraphFlag = true;
   version = ver || 'gen-1';
 };
-export const setGen = ver => {
+export const setGen = (ver) => {
   version = ver || 'gen-1';
 };
 /**
  *
  * @returns {string}
  */
-export const defaultStyle = function() {
+export const defaultStyle = function () {
   return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
 };
 
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
-export const addSubGraph = function(_id, list, _title) {
+export const addSubGraph = function (_id, list, _title) {
+  // console.log('addSubGraph', _id, list, _title);
   let id = _id.trim();
   let title = _title;
   if (_id === _title && _title.match(/\s/)) {
@@ -440,8 +435,13 @@ export const addSubGraph = function(_id, list, _title) {
     const prims = { boolean: {}, number: {}, string: {} };
     const objs = [];
 
-    return a.filter(function(item) {
+    let dir; //  = unbdefined; direction.trim();
+    const nodeList = a.filter(function (item) {
       const type = typeof item;
+      if (item.stmt && item.stmt === 'dir') {
+        dir = item.value;
+        return false;
+      }
       if (item.trim() === '') {
         return false;
       }
@@ -451,11 +451,13 @@ export const addSubGraph = function(_id, list, _title) {
         return objs.indexOf(item) >= 0 ? false : objs.push(item);
       }
     });
+    return { nodeList, dir };
   }
 
   let nodeList = [];
 
-  nodeList = uniq(nodeList.concat.apply(nodeList, list));
+  const { nodeList: nl, dir } = uniq(nodeList.concat.apply(nodeList, list));
+  nodeList = nl;
   if (version === 'gen-1') {
     log.warn('LOOKING UP');
     for (let i = 0; i < nodeList.length; i++) {
@@ -468,9 +470,9 @@ export const addSubGraph = function(_id, list, _title) {
   title = title || '';
   title = common.sanitizeText(title, config);
   subCount = subCount + 1;
-  const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
+  const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [], dir };
 
-  log.info('Adding', subGraph.id, subGraph.nodes);
+  log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
   /**
    * Deletes an id from all subgraphs
@@ -494,7 +496,7 @@ export const addSubGraph = function(_id, list, _title) {
   return id;
 };
 
-const getPosForId = function(id) {
+const getPosForId = function (id) {
   for (let i = 0; i < subGraphs.length; i++) {
     if (subGraphs[i].id === id) {
       return i;
@@ -504,7 +506,7 @@ const getPosForId = function(id) {
 };
 let secCount = -1;
 const posCrossRef = [];
-const indexNodes2 = function(id, pos) {
+const indexNodes2 = function (id, pos) {
   const nodes = subGraphs[pos].nodes;
   secCount = secCount + 1;
   if (secCount > 2000) {
@@ -515,7 +517,7 @@ const indexNodes2 = function(id, pos) {
   if (subGraphs[pos].id === id) {
     return {
       result: true,
-      count: 0
+      count: 0,
     };
   }
 
@@ -529,7 +531,7 @@ const indexNodes2 = function(id, pos) {
       if (res.result) {
         return {
           result: true,
-          count: posCount + res.count
+          count: posCount + res.count,
         };
       } else {
         posCount = posCount + res.count;
@@ -540,21 +542,21 @@ const indexNodes2 = function(id, pos) {
 
   return {
     result: false,
-    count: posCount
+    count: posCount,
   };
 };
 
-export const getDepthFirstPos = function(pos) {
+export const getDepthFirstPos = function (pos) {
   return posCrossRef[pos];
 };
-export const indexNodes = function() {
+export const indexNodes = function () {
   secCount = -1;
   if (subGraphs.length > 0) {
     indexNodes2('none', subGraphs.length - 1, 0);
   }
 };
 
-export const getSubGraphs = function() {
+export const getSubGraphs = function () {
   return subGraphs;
 };
 
@@ -566,7 +568,7 @@ export const firstGraph = () => {
   return false;
 };
 
-const destructStartLink = _str => {
+const destructStartLink = (_str) => {
   let str = _str.trim();
   let type = 'arrow_open';
 
@@ -609,7 +611,7 @@ const countChar = (char, str) => {
   return count;
 };
 
-const destructEndLink = _str => {
+const destructEndLink = (_str) => {
   const str = _str.trim();
   let line = str.slice(0, -1);
   let type = 'arrow_open';
@@ -689,7 +691,7 @@ const destructLink = (_str, _startStr) => {
 // Todo optimizer this by caching existing nodes
 const exists = (allSgs, _id) => {
   let res = false;
-  allSgs.forEach(sg => {
+  allSgs.forEach((sg) => {
     const pos = sg.nodes.indexOf(_id);
     if (pos >= 0) {
       res = true;
@@ -739,8 +741,8 @@ export default {
   getSubGraphs,
   destructLink,
   lex: {
-    firstGraph
+    firstGraph,
   },
   exists,
-  makeUniq
+  makeUniq,
 };

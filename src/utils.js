@@ -11,11 +11,11 @@ import {
   curveStep,
   curveStepAfter,
   curveStepBefore,
-  select
+  select,
 } from 'd3';
 import common from './diagrams/common/common';
+import { configKeys } from './defaultConfig';
 import { log } from './logger';
-// import cryptoRandomString from 'crypto-random-string';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -29,10 +29,12 @@ const d3CurveTypes = {
   curveNatural: curveNatural,
   curveStep: curveStep,
   curveStepAfter: curveStepAfter,
-  curveStepBefore: curveStepBefore
+  curveStepBefore: curveStepBefore,
 };
-const directive = /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
-const directiveWithoutOpen = /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+const directive =
+  /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+const directiveWithoutOpen =
+  /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
 
 /**
@@ -65,18 +67,21 @@ const anyComment = /\s*%%.*\n/gm;
  * @param {string} text The text defining the graph
  * @returns {object} the json object representing the init passed to mermaid.initialize()
  */
-export const detectInit = function(text) {
+export const detectInit = function (text, cnf) {
   let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
+
   if (Array.isArray(inits)) {
-    let args = inits.map(init => init.args);
+    let args = inits.map((init) => init.args);
+    directiveSanitizer(args);
+
     results = assignWithDepth(results, [...args]);
   } else {
     results = inits.args;
   }
   if (results) {
-    let type = detectType(text);
-    ['config'].forEach(prop => {
+    let type = detectType(text, cnf);
+    ['config'].forEach((prop) => {
       if (typeof results[prop] !== 'undefined') {
         if (type === 'flowchart-v2') {
           type = 'flowchart';
@@ -86,6 +91,8 @@ export const detectInit = function(text) {
       }
     });
   }
+
+  // Todo: refactor this, these results are never used
   return results;
 };
 
@@ -110,16 +117,13 @@ export const detectInit = function(text) {
  * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matched by the input type
  *          if a single directive was found, that directive object will be returned.
  */
-export const detectDirective = function(text, type = null) {
+export const detectDirective = function (text, type = null) {
   try {
     const commentWithoutDirectives = new RegExp(
       `[%]{2}(?![{]${directiveWithoutOpen.source})(?=[}][%]{2}).*\n`,
       'ig'
     );
-    text = text
-      .trim()
-      .replace(commentWithoutDirectives, '')
-      .replace(/'/gm, '"');
+    text = text.trim().replace(commentWithoutDirectives, '').replace(/'/gm, '"');
     log.debug(
       `Detecting diagram directive${type !== null ? ' type:' + type : ''} based on the text:${text}`
     );
@@ -173,9 +177,8 @@ export const detectDirective = function(text, type = null) {
  * @param {string} text The text defining the graph
  * @returns {string} A graph definition key
  */
-export const detectType = function(text) {
+export const detectType = function (text, cnf) {
   text = text.replace(directive, '').replace(anyComment, '\n');
-  log.debug('Detecting diagram type based on the text ' + text);
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';
   }
@@ -187,6 +190,7 @@ export const detectType = function(text) {
     return 'classDiagram';
   }
   if (text.match(/^\s*classDiagram/)) {
+    if (cnf && cnf.class && cnf.class.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
     return 'class';
   }
 
@@ -195,6 +199,7 @@ export const detectType = function(text) {
   }
 
   if (text.match(/^\s*stateDiagram/)) {
+    if (cnf && cnf.class && cnf.state.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
     return 'state';
   }
 
@@ -223,6 +228,8 @@ export const detectType = function(text) {
   if (text.match(/^\s*requirement/) || text.match(/^\s*requirementDiagram/)) {
     return 'requirement';
   }
+  if (cnf && cnf.flowchart && cnf.flowchart.defaultRenderer === 'dagre-wrapper')
+    return 'flowchart-v2';
 
   return 'flowchart';
 };
@@ -248,7 +255,7 @@ const memoize = (fn, resolver) => {
  * @param {array} arr The array to search
  * @returns {number} the array index containing the substring or -1 if not present
  **/
-export const isSubstringInArray = function(str, arr) {
+export const isSubstringInArray = function (str, arr) {
   for (let i = 0; i < arr.length; i++) {
     if (arr[i].match(str)) return i;
   }
@@ -293,11 +300,11 @@ export const runFunc = (functionName, ...params) => {
 const distance = (p1, p2) =>
   p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
 
-const traverseEdge = points => {
+const traverseEdge = (points) => {
   let prevPoint;
   let totalDistance = 0;
 
-  points.forEach(point => {
+  points.forEach((point) => {
     totalDistance += distance(point, prevPoint);
     prevPoint = point;
   });
@@ -306,7 +313,7 @@ const traverseEdge = points => {
   let remainingDistance = totalDistance / 2;
   let center = undefined;
   prevPoint = undefined;
-  points.forEach(point => {
+  points.forEach((point) => {
     if (prevPoint && !center) {
       const vectorDistance = distance(point, prevPoint);
       if (vectorDistance < remainingDistance) {
@@ -320,7 +327,7 @@ const traverseEdge = points => {
         if (distanceRatio > 0 && distanceRatio < 1) {
           center = {
             x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
-            y: (1 - distanceRatio) * prevPoint.y + distanceRatio * point.y
+            y: (1 - distanceRatio) * prevPoint.y + distanceRatio * point.y,
           };
         }
       }
@@ -330,7 +337,7 @@ const traverseEdge = points => {
   return center;
 };
 
-const calcLabelPosition = points => {
+const calcLabelPosition = (points) => {
   return traverseEdge(points);
 };
 
@@ -341,7 +348,7 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
   if (points[0] !== initialPosition) {
     points = points.reverse();
   }
-  points.forEach(point => {
+  points.forEach((point) => {
     totalDistance += distance(point, prevPoint);
     prevPoint = point;
   });
@@ -352,7 +359,7 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
   let remainingDistance = distanceToCardinalityPoint;
   let center;
   prevPoint = undefined;
-  points.forEach(point => {
+  points.forEach((point) => {
     if (prevPoint && !center) {
       const vectorDistance = distance(point, prevPoint);
       if (vectorDistance < remainingDistance) {
@@ -366,7 +373,7 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
         if (distanceRatio > 0 && distanceRatio < 1) {
           center = {
             x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
-            y: (1 - distanceRatio) * prevPoint.y + distanceRatio * point.y
+            y: (1 - distanceRatio) * prevPoint.y + distanceRatio * point.y,
           };
         }
       }
@@ -397,18 +404,18 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
     points = points.reverse();
   }
 
-  points.forEach(point => {
+  points.forEach((point) => {
     totalDistance += distance(point, prevPoint);
     prevPoint = point;
   });
 
   // Traverse only 25 total distance along points to find cardinality point
-  const distanceToCardinalityPoint = 25;
+  const distanceToCardinalityPoint = 25 + terminalMarkerSize;
 
   let remainingDistance = distanceToCardinalityPoint;
   let center;
   prevPoint = undefined;
-  points.forEach(point => {
+  points.forEach((point) => {
     if (prevPoint && !center) {
       const vectorDistance = distance(point, prevPoint);
       if (vectorDistance < remainingDistance) {
@@ -422,7 +429,7 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
         if (distanceRatio > 0 && distanceRatio < 1) {
           center = {
             x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
-            y: (1 - distanceRatio) * prevPoint.y + distanceRatio * point.y
+            y: (1 - distanceRatio) * prevPoint.y + distanceRatio * point.y,
           };
         }
       }
@@ -430,7 +437,7 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
     prevPoint = point;
   });
   // if relation is present (Arrows will be added), change cardinality point off-set distance (d)
-  let d = 10;
+  let d = 10 + terminalMarkerSize * 0.5;
   //Calculate Angle for x and y axis
   let angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
 
@@ -455,7 +462,7 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   return cardinalityPosition;
 };
 
-export const getStylesFromArray = arr => {
+export const getStylesFromArray = (arr) => {
   let style = '';
   let labelStyle = '';
 
@@ -476,14 +483,7 @@ export const getStylesFromArray = arr => {
 let cnt = 0;
 export const generateId = () => {
   cnt++;
-  return (
-    'id-' +
-    Math.random()
-      .toString(36)
-      .substr(2, 12) +
-    '-' +
-    cnt
-  );
+  return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
 };
 
 function makeid(length) {
@@ -496,7 +496,7 @@ function makeid(length) {
   return result;
 }
 
-export const random = options => {
+export const random = (options) => {
   return makeid(options.length);
 };
 
@@ -526,13 +526,13 @@ export const random = options => {
  * clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
  * @returns {*}
  */
-export const assignWithDepth = function(dst, src, config) {
+export const assignWithDepth = function (dst, src, config) {
   const { depth, clobber } = Object.assign({ depth: 2, clobber: false }, config);
   if (Array.isArray(src) && !Array.isArray(dst)) {
-    src.forEach(s => assignWithDepth(dst, s, config));
+    src.forEach((s) => assignWithDepth(dst, s, config));
     return dst;
   } else if (Array.isArray(src) && Array.isArray(dst)) {
-    src.forEach(s => {
+    src.forEach((s) => {
       if (dst.indexOf(s) === -1) {
         dst.push(s);
       }
@@ -547,7 +547,7 @@ export const assignWithDepth = function(dst, src, config) {
     }
   }
   if (typeof src !== 'undefined' && typeof dst === 'object' && typeof src === 'object') {
-    Object.keys(src).forEach(key => {
+    Object.keys(src).forEach((key) => {
       if (
         typeof src[key] === 'object' &&
         (dst[key] === undefined || typeof dst[key] === 'object')
@@ -564,7 +564,7 @@ export const assignWithDepth = function(dst, src, config) {
   return dst;
 };
 
-export const getTextObj = function() {
+export const getTextObj = function () {
   return {
     x: 0,
     y: 0,
@@ -576,11 +576,11 @@ export const getTextObj = function() {
     textMargin: 0,
     rx: 0,
     ry: 0,
-    valign: undefined
+    valign: undefined,
   };
 };
 
-export const drawSimpleText = function(elem, textData) {
+export const drawSimpleText = function (elem, textData) {
   // Remove and ignore br:s
   const nText = textData.text.replace(common.lineBreakRegex, ' ');
 
@@ -638,7 +638,7 @@ export const wrapLabel = memoize(
         completedLines.push(nextLine);
       }
     });
-    return completedLines.filter(line => line !== '').join(config.joinWith);
+    return completedLines.filter((line) => line !== '').join(config.joinWith);
   },
   (label, maxWidth, config) =>
     `${label}-${maxWidth}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}-${config.joinWith}`
@@ -683,7 +683,7 @@ const breakString = memoize(
  * @param text the text to measure
  * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
  */
-export const calculateTextHeight = function(text, config) {
+export const calculateTextHeight = function (text, config) {
   config = Object.assign(
     { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
     config
@@ -698,7 +698,7 @@ export const calculateTextHeight = function(text, config) {
  * @param text - The text to calculate the width of
  * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
  */
-export const calculateTextWidth = function(text, config) {
+export const calculateTextWidth = function (text, config) {
   config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
   return calculateTextDimensions(text, config).width;
 };
@@ -711,7 +711,7 @@ export const calculateTextWidth = function(text, config) {
  * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
  */
 export const calculateTextDimensions = memoize(
-  function(text, config) {
+  function (text, config) {
     config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
     const { fontSize, fontFamily, fontWeight } = config;
     if (!text) {
@@ -770,13 +770,13 @@ export const calculateTextDimensions = memoize(
   (text, config) => `${text}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
 );
 
-const d3Attrs = function(d3Elem, attrs) {
+const d3Attrs = function (d3Elem, attrs) {
   for (let attr of attrs) {
     d3Elem.attr(attr[0], attr[1]);
   }
 };
 
-export const calculateSvgSizeAttrs = function(height, width, useMaxWidth) {
+export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
   let attrs = new Map();
   attrs.set('height', height);
   if (useMaxWidth) {
@@ -788,22 +788,73 @@ export const calculateSvgSizeAttrs = function(height, width, useMaxWidth) {
   return attrs;
 };
 
-export const configureSvgSize = function(svgElem, height, width, useMaxWidth) {
+export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
   const attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
   d3Attrs(svgElem, attrs);
 };
 
-export const initIdGeneratior = function(deterministic, seed) {
-  if (!deterministic) return { next: () => Date.now() };
-  class iterator {
-    constructor() {
-      return (this.count = seed ? seed.length : 0);
-    }
-    next() {
-      return this.count++;
+export const initIdGeneratior = class iterator {
+  constructor(deterministic, seed) {
+    this.deterministic = deterministic;
+    this.seed = seed;
+
+    this.count = seed ? seed.length : 0;
+  }
+
+  next() {
+    if (!this.deterministic) return Date.now();
+
+    return this.count++;
+  }
+};
+
+// Source https://github.com/shrpne/entity-decode/blob/master/browser.js
+let decoder;
+export const entityDecode = function (html) {
+  decoder = decoder || document.createElement('div');
+  // Escape HTML before decoding for HTML Entities
+  html = escape(html).replace(/%26/g, '&').replace(/%23/g, '#').replace(/%3B/g, ';');
+  // decoding
+  decoder.innerHTML = html;
+  return unescape(decoder.textContent);
+};
+
+export const directiveSanitizer = (args) => {
+  log.debug('directiveSanitizer called with', args);
+  if (typeof args === 'object') {
+    // check for array
+    if (args.length) {
+      args.forEach((arg) => directiveSanitizer(arg));
+    } else {
+      // This is an object
+      Object.keys(args).forEach((key) => {
+        log.debug('Checking key', key);
+        if (key.indexOf('__') === 0) {
+          log.debug('sanitize deleting __ option', key);
+          delete args[key];
+        }
+
+        if (key.indexOf('proto') >= 0) {
+          log.debug('sanitize deleting proto option', key);
+          delete args[key];
+        }
+
+        if (key.indexOf('constr') >= 0) {
+          log.debug('sanitize deleting constr option', key);
+          delete args[key];
+        }
+        if (configKeys.indexOf(key) < 0) {
+          log.debug('sanitize deleting option', key);
+          delete args[key];
+        } else {
+          if (typeof args[key] === 'object') {
+            log.debug('sanitize deleting object', key);
+            directiveSanitizer(args[key]);
+          }
+        }
+      });
     }
   }
-  return new iterator();
 };
 
 export default {
@@ -828,5 +879,7 @@ export default {
   random,
   memoize,
   runFunc,
-  initIdGeneratior
+  entityDecode,
+  initIdGeneratior,
+  directiveSanitizer,
 };

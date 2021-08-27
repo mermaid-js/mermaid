@@ -19,6 +19,10 @@
 
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
+.*direction\s+TB[^\n]*                                          return 'direction_tb';
+.*direction\s+BT[^\n]*                                          return 'direction_bt';
+.*direction\s+RL[^\n]*                                          return 'direction_rl';
+.*direction\s+LR[^\n]*                                          return 'direction_lr';
 <open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
@@ -180,7 +184,19 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 
 start
     : mermaidDoc
+    | direction
     | directive start
+    ;
+
+direction
+    : direction_tb
+    { yy.setDirection('TB');}
+    | direction_bt
+    { yy.setDirection('BT');}
+    | direction_rl
+    { yy.setDirection('RL');}
+    | direction_lr
+    { yy.setDirection('LR');}
     ;
 
 mermaidDoc
@@ -235,6 +251,7 @@ statement
     | clickStatement
     | cssClassStatement
     | directive
+    | direction
     ;
 
 classStatement

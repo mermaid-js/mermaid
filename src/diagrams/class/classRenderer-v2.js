@@ -20,7 +20,7 @@ const padding = 20;
 const conf = {
   dividerMargin: 10,
   padding: 5,
-  textHeight: 10
+  textHeight: 10,
 };
 
 /**
@@ -28,14 +28,14 @@ const conf = {
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
-export const addClasses = function(classes, g) {
+export const addClasses = function (classes, g) {
   // const svg = select(`[id="${svgId}"]`);
   const keys = Object.keys(classes);
   log.info('keys:', keys);
   log.info(classes);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function(id) {
+  keys.forEach(function (id) {
     const vertex = classes[id];
 
     /**
@@ -57,7 +57,7 @@ export const addClasses = function(classes, g) {
 
     // We create a SVG label, either by delegating to addHtmlLabel or manually
     // let vertexNode;
-    // if (getConfig().flowchart.htmlLabels) {
+    // if (evaluate(getConfig().flowchart.htmlLabels)) {
     //   const node = {
     //     label: vertexText.replace(
     //       /fa[lrsb]?:fa-[\w-]+/g,
@@ -109,7 +109,7 @@ export const addClasses = function(classes, g) {
       link: vertex.link,
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
-      padding: getConfig().flowchart.padding
+      padding: getConfig().flowchart.padding,
     });
 
     log.info('setNode', {
@@ -123,7 +123,7 @@ export const addClasses = function(classes, g) {
       id: vertex.id,
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
-      padding: getConfig().flowchart.padding
+      padding: getConfig().flowchart.padding,
     });
   });
 };
@@ -133,7 +133,7 @@ export const addClasses = function(classes, g) {
  * @param {Object} edges The edges to add to the graph
  * @param {Object} g The graph object
  */
-export const addRelations = function(relations, g) {
+export const addRelations = function (relations, g) {
   let cnt = 0;
 
   let defaultStyle;
@@ -145,7 +145,7 @@ export const addRelations = function(relations, g) {
   //   defaultLabelStyle = defaultStyles.labelStyle;
   // }
 
-  relations.forEach(function(edge) {
+  relations.forEach(function (edge) {
     cnt++;
     const edgeData = {};
     //Set relationship style and line type
@@ -207,7 +207,7 @@ export const addRelations = function(relations, g) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
 
-      if (getConfig().flowchart.htmlLabels && false) { // eslint-disable-line
+      if (getConfig().flowchart.htmlLabels) { // eslint-disable-line
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
@@ -227,7 +227,7 @@ export const addRelations = function(relations, g) {
 };
 
 // Todo optimize
-const getGraphId = function(label) {
+const getGraphId = function (label) {
   const keys = Object.keys(idCache);
 
   for (let i = 0; i < keys.length; i++) {
@@ -239,10 +239,10 @@ const getGraphId = function(label) {
   return undefined;
 };
 
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
 
-  keys.forEach(function(key) {
+  keys.forEach(function (key) {
     conf[key] = cnf[key];
   });
 };
@@ -252,7 +252,7 @@ export const setConf = function(cnf) {
  * @param text
  * @param id
  */
-export const drawOld = function(text, id) {
+export const drawOld = function (text, id) {
   idCache = {};
   parser.yy.clear();
   parser.parse(text);
@@ -265,16 +265,16 @@ export const drawOld = function(text, id) {
 
   // Layout graph, Create a new directed graph
   const g = new graphlib.Graph({
-    multigraph: true
+    multigraph: true,
   });
 
   // Set an object for the graph label
   g.setGraph({
-    isMultiGraph: true
+    isMultiGraph: true,
   });
 
   // Default to assigning a new object as a label for each new edge.
-  g.setDefaultEdgeLabel(function() {
+  g.setDefaultEdgeLabel(function () {
     return {};
   });
 
@@ -297,7 +297,7 @@ export const drawOld = function(text, id) {
 
   const relations = classDb.getRelations();
   log.info('relations:', relations);
-  relations.forEach(function(relation) {
+  relations.forEach(function (relation) {
     log.info(
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
     );
@@ -305,14 +305,14 @@ export const drawOld = function(text, id) {
       getGraphId(relation.id1),
       getGraphId(relation.id2),
       {
-        relation: relation
+        relation: relation,
       },
       relation.title || 'DEFAULT'
     );
   });
 
   dagre.layout(g);
-  g.nodes().forEach(function(v) {
+  g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
       log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       select('#' + lookUpDomId(v)).attr(
@@ -326,7 +326,7 @@ export const drawOld = function(text, id) {
     }
   });
 
-  g.edges().forEach(function(e) {
+  g.edges().forEach(function (e) {
     if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
       log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
       svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
@@ -345,7 +345,7 @@ export const drawOld = function(text, id) {
   diagram.attr('viewBox', vBox);
 };
 
-export const draw = function(text, id) {
+export const draw = function (text, id) {
   log.info('Drawing class');
   classDb.clear();
   // const parser = classDb.parser;
@@ -359,7 +359,7 @@ export const draw = function(text, id) {
   // }
 
   // Fetch the default direction, use TD if none was found
-  let dir = 'TD';
+  //let dir = 'TD';
 
   const conf = getConfig().flowchart;
   log.info('config:', conf);
@@ -369,16 +369,16 @@ export const draw = function(text, id) {
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
     multigraph: true,
-    compound: true
+    compound: true,
   })
     .setGraph({
-      rankdir: dir,
+      rankdir: classDb.getDirection(),
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
-      marginy: 8
+      marginy: 8,
     })
-    .setDefaultEdgeLabel(function() {
+    .setDefaultEdgeLabel(function () {
       return {};
     });
 
@@ -457,7 +457,7 @@ export const draw = function(text, id) {
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
       rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
+      // rect.setAttribute('style', 'fill:#e8e8e8;');
 
       label.insertBefore(rect, label.firstChild);
     }
@@ -500,7 +500,7 @@ export const draw = function(text, id) {
 
 export default {
   setConf,
-  draw
+  draw,
 };
 function getArrowMarker(type) {
   let marker;

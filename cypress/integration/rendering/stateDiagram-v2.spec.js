@@ -329,6 +329,37 @@ describe('State diagram', () => {
       }
     );
   });
+  it('v2 it should be possibel to use a choice', () => {
+    imgSnapshotTest(
+      `
+  stateDiagram-v2
+    [*] --> Off
+    Off --> On
+    state MyChoice [[choice]]
+    On --> MyChoice
+    MyChoice --> Washing
+    MyChoice --> Drying
+    Washing --> Finished
+    Finished --> [*]
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
+  it('v2 width of compond state should grow with title if title is wider', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+  state "Long state name" as NotShooting {
+    a-->b
+  }
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
   it('v2 Simplest composite state', () => {
     imgSnapshotTest(
       `
@@ -354,6 +385,58 @@ describe('State diagram', () => {
       }
     );
   });
+  it('v2 should handle multiple notes added to one state', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+    MyState
+    note left of MyState : I am a leftie
+    note right of MyState : I am a rightie
+    `,
+      {
+        logLevel: 0, fontFamily: 'courier',
+      }
+    );
+  });
+  it('v2 should handle different rendering directions in composite states', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+  direction LR
+  state A {
+    direction BT
+    a --> b
+  }
+  state C {
+    direction RL
+    c --> d
+  }
+  A --> C
+    `,
+      {
+        logLevel: 0, fontFamily: 'courier',
+      }
+    );
+  });
+  it('v2 handle transition from one state in a composite state to a composite state', () => {
+    imgSnapshotTest(
+      `
+stateDiagram-v2
+  state S1 {
+    sub1 -->sub2
+  }
+
+  state S2 {
+    sub4
+  }
+  S1 --> S2
+  sub1 --> sub4
+    `,
+      {
+        logLevel: 0, fontFamily: 'courier',
+      }
+    );
+  });
   it('v2 should render a state diagram when useMaxWidth is true (default)', () => {
     renderGraph(
       `
@@ -369,7 +452,7 @@ describe('State diagram', () => {
         expect(svg).to.have.attr('width', '100%');
         expect(svg).to.have.attr('height');
         const height = parseFloat(svg.attr('height'));
-        expect(height).to.eq(177);
+        expect(height).to.be.within(177, 178);
         const style = svg.attr('style');
         expect(style).to.match(/^max-width: [\d.]+px;$/);
         const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
@@ -391,7 +474,7 @@ describe('State diagram', () => {
       .should((svg) => {
         const height = parseFloat(svg.attr('height'));
         const width = parseFloat(svg.attr('width'));
-        expect(height).to.eq(177);
+        expect(height).to.be.within(177, 178);
         // use within because the absolute value can be slightly different depending on the environment ±5%
         expect(width).to.be.within(135 * .95, 135 * 1.05);
         expect(svg).to.not.have.attr('style');

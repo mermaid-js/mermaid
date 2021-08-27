@@ -3,6 +3,7 @@
 import { parser } from './gantt';
 import ganttDb from '../ganttDb';
 
+const spyOn = jest.spyOn;
 const parserFnConstructor = str => {
   return () => {
     parser.parse(str);

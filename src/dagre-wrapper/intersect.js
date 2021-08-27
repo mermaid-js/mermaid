@@ -3,5 +3,5 @@ module.exports = {
   circle: require('./intersect-circle'),
   ellipse: require('./intersect-ellipse'),
   polygon: require('./intersect-polygon'),
-  rect: require('./intersect-rect')
+  rect: require('./intersect-rect'),
 };

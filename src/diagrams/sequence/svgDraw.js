@@ -1,6 +1,6 @@
 import common from '../common/common';
 
-export const drawRect = function(elem, rectData) {
+export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
   rectElem.attr('x', rectData.x);
   rectElem.attr('y', rectData.y);
@@ -234,7 +234,7 @@ export const drawText = function (elem, textData) {
   return textElems;
 };
 
-export const drawLabel = function(elem, txtObject) {
+export const drawLabel = function (elem, txtObject) {
   function genPoints(x, y, width, height, cut) {
     return (
       x +
@@ -275,7 +275,7 @@ let actorCnt = -1;
  * @param actor - The actor to draw.
  * @param conf - drawText implementation discriminator object
  */
-export const drawActor = function(elem, actor, conf) {
+export const drawActor = function (elem, actor, conf) {
   const center = actor.x + actor.width / 2;
 
   const boxpluslineGroup = elem.append('g');
@@ -341,7 +341,7 @@ export const drawActor = function(elem, actor, conf) {
   );
 };
 
-export const anchorElement = function(elem) {
+export const anchorElement = function (elem) {
   return elem.append('g');
 };
 /**
@@ -352,7 +352,7 @@ export const anchorElement = function(elem) {
  * @param conf - sequence diagram config object.
  * @param actorActivations - number of activations on the actor.
  */
-export const drawActivation = function(elem, bounds, verticalPos, conf, actorActivations) {
+export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
   const rect = getNoteRect();
   const g = bounds.anchored;
   rect.x = bounds.startx;
@@ -378,10 +378,10 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
     labelBoxWidth,
     messageFontFamily: fontFamily,
     messageFontSize: fontSize,
-    messageFontWeight: fontWeight
+    messageFontWeight: fontWeight,
   } = conf;
   const g = elem.append('g');
-  const drawLoopLine = function(startx, starty, stopx, stopy) {
+  const drawLoopLine = function (startx, starty, stopx, stopy) {
     return g
       .append('line')
       .attr('x1', startx)
@@ -395,7 +395,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
   drawLoopLine(loopModel.startx, loopModel.stopy, loopModel.stopx, loopModel.stopy);
   drawLoopLine(loopModel.startx, loopModel.starty, loopModel.startx, loopModel.stopy);
   if (typeof loopModel.sections !== 'undefined') {
-    loopModel.sections.forEach(function(item) {
+    loopModel.sections.forEach(function (item) {
       drawLoopLine(loopModel.startx, item.y, loopModel.stopx, item.y).style(
         'stroke-dasharray',
         '3, 3'
@@ -435,7 +435,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
   let textElem = drawText(g, txt);
 
   if (typeof loopModel.sectionTitles !== 'undefined') {
-    loopModel.sectionTitles.forEach(function(item, idx) {
+    loopModel.sectionTitles.forEach(function (item, idx) {
       if (item.message) {
         txt.text = item.message;
         txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
@@ -451,7 +451,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
         textElem = drawText(g, txt);
         let sectionHeight = Math.round(
           textElem
-            .map(te => (te._groups || te)[0][0].getBBox().height)
+            .map((te) => (te._groups || te)[0][0].getBBox().height)
             .reduce((acc, curr) => acc + curr)
         );
         loopModel.sections[idx].height += sectionHeight - (boxMargin + boxTextMargin);
@@ -468,7 +468,7 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
  * @param elem diagram (reference for bounds)
  * @param bounds shape of the rectangle
  */
-export const drawBackgroundRect = function(elem, bounds) {
+export const drawBackgroundRect = function (elem, bounds) {
   const rectElem = drawRect(elem, {
     x: bounds.startx,
     y: bounds.starty,
@@ -519,7 +519,7 @@ export const insertClockIcon = function (elem) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-export const insertArrowHead = function(elem) {
+export const insertArrowHead = function (elem) {
   elem
     .append('defs')
     .append('marker')
@@ -536,7 +536,7 @@ export const insertArrowHead = function(elem) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-export const insertArrowFilledHead = function(elem) {
+export const insertArrowFilledHead = function (elem) {
   elem
     .append('defs')
     .append('marker')
@@ -552,7 +552,7 @@ export const insertArrowFilledHead = function(elem) {
 /**
  * Setup node number. The result is appended to the svg.
  */
-export const insertSequenceNumber = function(elem) {
+export const insertSequenceNumber = function (elem) {
   elem
     .append('defs')
     .append('marker')
@@ -571,7 +571,7 @@ export const insertSequenceNumber = function(elem) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-export const insertArrowCrossHead = function(elem) {
+export const insertArrowCrossHead = function (elem) {
   const defs = elem.append('defs');
   const marker = defs
     .append('marker')
@@ -602,7 +602,7 @@ export const insertArrowCrossHead = function(elem) {
   // this is actual shape for arrowhead
 };
 
-export const getTextObj = function() {
+export const getTextObj = function () {
   return {
     x: 0,
     y: 0,
@@ -615,11 +615,11 @@ export const getTextObj = function() {
     rx: 0,
     ry: 0,
     tspan: true,
-    valign: undefined
+    valign: undefined,
   };
 };
 
-export const getNoteRect = function() {
+export const getNoteRect = function () {
   return {
     x: 0,
     y: 0,
@@ -629,11 +629,11 @@ export const getNoteRect = function() {
     anchor: 'start',
     height: 100,
     rx: 0,
-    ry: 0
+    ry: 0,
   };
 };
 
-const _drawTextCandidateFunc = (function() {
+const _drawTextCandidateFunc = (function () {
   function byText(content, g, x, y, width, height, textAttrs) {
     const text = g
       .append('text')

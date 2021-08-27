@@ -1,16 +1,12 @@
 # mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 
-<p align="center">
-    <a href="https://www.buymeacoffee.com/knsv" rel="nofollow">
-        <img src="https://user-images.githubusercontent.com/30767528/63641973-9d301680-c6b7-11e9-9d29-2ad1da50fdce.png" style="max-width:100%;" />
-    </a>
-</p>
-
 ![banner](./img/header.png)
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/2019) in the category "The most exciting use of technology"!!!**
 
-**Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project 🙏**
+**Thanks to all involved, people committing pull requests, people answering questions! 🙏**
+
+<a href="https://mermaid-js.github.io/mermaid/landing/" alt="Link to landing page for the book The Official Guide To mermaid.js"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/img/book-banner-pre-release.jpg"></a>
 
 ## About
 
@@ -24,7 +20,7 @@ But not having diagrams or docs ruins productivity and hurts organizational lear
 Mermaid addresses this problem by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.
 The text definitions for Mermaid diagrams allows for it to be updated easily, it can also be made part of production scripts (and other pieces of code).
 So less time needs to be spent on documenting, as a separate and laborious task. <br/>
-Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor).<br/>
+Even non-programmers can create diagrams through the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).<br/>
 [Tutorials](./docs/Tutorials.md) has video tutorials.
 Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/integrations.md).
 

@@ -15,11 +15,11 @@ const padding = 20;
 const conf = {
   dividerMargin: 10,
   padding: 5,
-  textHeight: 10
+  textHeight: 10,
 };
 
 // Todo optimize
-const getGraphId = function(label) {
+const getGraphId = function (label) {
   const keys = Object.keys(idCache);
 
   for (let i = 0; i < keys.length; i++) {
@@ -34,7 +34,7 @@ const getGraphId = function(label) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-const insertMarkers = function(elem) {
+const insertMarkers = function (elem) {
   elem
     .append('defs')
     .append('marker')
@@ -136,10 +136,10 @@ const insertMarkers = function(elem) {
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
 
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
 
-  keys.forEach(function(key) {
+  keys.forEach(function (key) {
     conf[key] = cnf[key];
   });
 };
@@ -149,7 +149,7 @@ export const setConf = function(cnf) {
  * @param text
  * @param id
  */
-export const draw = function(text, id) {
+export const draw = function (text, id) {
   idCache = {};
   parser.yy.clear();
   parser.parse(text);
@@ -163,16 +163,16 @@ export const draw = function(text, id) {
 
   // Layout graph, Create a new directed graph
   const g = new graphlib.Graph({
-    multigraph: true
+    multigraph: true,
   });
 
   // Set an object for the graph label
   g.setGraph({
-    isMultiGraph: true
+    isMultiGraph: true,
   });
 
   // Default to assigning a new object as a label for each new edge.
-  g.setDefaultEdgeLabel(function() {
+  g.setDefaultEdgeLabel(function () {
     return {};
   });
 
@@ -193,7 +193,7 @@ export const draw = function(text, id) {
   }
 
   const relations = classDb.getRelations();
-  relations.forEach(function(relation) {
+  relations.forEach(function (relation) {
     log.info(
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
     );
@@ -201,14 +201,14 @@ export const draw = function(text, id) {
       getGraphId(relation.id1),
       getGraphId(relation.id2),
       {
-        relation: relation
+        relation: relation,
       },
       relation.title || 'DEFAULT'
     );
   });
 
   dagre.layout(g);
-  g.nodes().forEach(function(v) {
+  g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
       log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       select('#' + lookUpDomId(v)).attr(
@@ -222,7 +222,7 @@ export const draw = function(text, id) {
     }
   });
 
-  g.edges().forEach(function(e) {
+  g.edges().forEach(function (e) {
     if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
       log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
       svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
@@ -243,5 +243,5 @@ export const draw = function(text, id) {
 
 export default {
   setConf,
-  draw
+  draw,
 };

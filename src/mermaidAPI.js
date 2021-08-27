@@ -14,7 +14,7 @@
  * @name mermaidAPI
  */
 import { select } from 'd3';
-import Stylis from 'stylis';
+import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
 import classDb from './diagrams/class/classDb';
@@ -54,6 +54,7 @@ import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import errorRenderer from './errorRenderer';
+
 // import * as configApi from './config';
 // // , {
 // //   setConfig,
@@ -66,15 +67,16 @@ import errorRenderer from './errorRenderer';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
-import utils, { assignWithDepth } from './utils';
+import utils, { directiveSanitizer, assignWithDepth } from './utils';
 
 function parse(text) {
-  const graphInit = utils.detectInit(text);
+  const cnf = configApi.getConfig();
+  const graphInit = utils.detectInit(text, cnf);
   if (graphInit) {
     reinitialize(graphInit);
     log.debug('reinit ', graphInit);
   }
-  const graphType = utils.detectType(text);
+  const graphType = utils.detectType(text, cnf);
   let parser;
 
   log.debug('Type ' + graphType);
@@ -139,7 +141,6 @@ function parse(text) {
       break;
     case 'requirement':
     case 'requirementDiagram':
-      console.log('RequirementDiagram');
       log.debug('RequirementDiagram');
       parser = requirementParser;
       parser.parser.yy = requirementDb;
@@ -155,19 +156,19 @@ function parse(text) {
   return parser;
 }
 
-export const encodeEntities = function(text) {
+export const encodeEntities = function (text) {
   let txt = text;
 
-  txt = txt.replace(/style.*:\S*#.*;/g, function(s) {
+  txt = txt.replace(/style.*:\S*#.*;/g, function (s) {
     const innerTxt = s.substring(0, s.length - 1);
     return innerTxt;
   });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function(s) {
+  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s) {
     const innerTxt = s.substring(0, s.length - 1);
     return innerTxt;
   });
 
-  txt = txt.replace(/#\w+;/g, function(s) {
+  txt = txt.replace(/#\w+;/g, function (s) {
     const innerTxt = s.substring(1, s.length - 1);
 
     const isInt = /^\+?\d+$/.test(innerTxt);
@@ -181,16 +182,16 @@ export const encodeEntities = function(text) {
   return txt;
 };
 
-export const decodeEntities = function(text) {
+export const decodeEntities = function (text) {
   let txt = text;
 
-  txt = txt.replace(/ﬂ°°/g, function() {
+  txt = txt.replace(/ﬂ°°/g, function () {
     return '&#';
   });
-  txt = txt.replace(/ﬂ°/g, function() {
+  txt = txt.replace(/ﬂ°/g, function () {
     return '&';
   });
-  txt = txt.replace(/¶ß/g, function() {
+  txt = txt.replace(/¶ß/g, function () {
     return ';';
   });
 
@@ -218,7 +219,7 @@ export const decodeEntities = function(text) {
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
  * completed.
  */
-const render = function(id, _txt, cb, container) {
+const render = function (id, _txt, cb, container) {
   configApi.reset();
   let txt = _txt;
   const graphInit = utils.detectInit(txt);
@@ -232,7 +233,7 @@ const render = function(id, _txt, cb, container) {
   // }
   // console.warn('Render fetching config');
 
-  const cnf = configApi.getConfig();
+  let cnf = configApi.getConfig();
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -274,7 +275,7 @@ const render = function(id, _txt, cb, container) {
   txt = encodeEntities(txt);
 
   const element = select('#d' + id).node();
-  const graphType = utils.detectType(txt);
+  const graphType = utils.detectType(txt, cnf);
 
   // insert inline style into svg
   const svg = element.firstChild;
@@ -297,8 +298,9 @@ const render = function(id, _txt, cb, container) {
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     const classes = flowRenderer.getClasses(txt);
+    const htmlLabels = cnf.htmlLabels || cnf.flowchart.htmlLabels;
     for (const className in classes) {
-      if (cnf.htmlLabels || cnf.flowchart.htmlLabels) {
+      if (htmlLabels) {
         userStyles += `\n.${className} > * { ${classes[className].styles.join(
           ' !important; '
         )} !important; }`;
@@ -306,7 +308,6 @@ const render = function(id, _txt, cb, container) {
           ' !important; '
         )} !important; }`;
       } else {
-        // console.log('classes[className].styles', classes[className].styles, cnf.htmlLabels);
         userStyles += `\n.${className} path { ${classes[className].styles.join(
           ' !important; '
         )} !important; }`;
@@ -333,11 +334,11 @@ const render = function(id, _txt, cb, container) {
 
   // log.warn(cnf.themeVariables);
 
-  const stylis = new Stylis();
+  const stylis = (selector, styles) => serialize(compile(`${selector}{${styles}}`), stringify);
   const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
   const style1 = document.createElement('style');
-  style1.innerHTML = rules;
+  style1.innerHTML = `#${id} ` + rules;
   svg.insertBefore(style1, firstChild);
 
   // Verify that the generated svgs are ok before removing this
@@ -413,8 +414,8 @@ const render = function(id, _txt, cb, container) {
         infoRenderer.draw(txt, id, pkg.version);
         break;
       case 'pie':
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        pieRenderer.setConf(cnf.pie);
+        //cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        //pieRenderer.setConf(cnf.pie);
         pieRenderer.draw(txt, id, pkg.version);
         break;
       case 'er':
@@ -495,7 +496,7 @@ const render = function(id, _txt, cb, container) {
 
 let currentDirective = {};
 
-const parseDirective = function(p, statement, context, type) {
+const parseDirective = function (p, statement, context, type) {
   try {
     if (statement !== undefined) {
       statement = statement.trim();
@@ -523,12 +524,12 @@ const parseDirective = function(p, statement, context, type) {
   }
 };
 
-const handleDirective = function(p, directive, type) {
+const handleDirective = function (p, directive, type) {
   log.debug(`Directive type=${directive.type} with args:`, directive.args);
   switch (directive.type) {
     case 'init':
     case 'initialize': {
-      ['config'].forEach(prop => {
+      ['config'].forEach((prop) => {
         if (typeof directive.args[prop] !== 'undefined') {
           if (type === 'flowchart-v2') {
             type = 'flowchart';
@@ -537,7 +538,9 @@ const handleDirective = function(p, directive, type) {
           delete directive.args[prop];
         }
       });
-
+      log.debug('sanitize in handleDirective', directive.args);
+      directiveSanitizer(directive.args);
+      log.debug('sanitize in handleDirective (done)', directive.args);
       reinitialize(directive.args);
       configApi.addDirective(directive.args);
       break;
@@ -560,6 +563,7 @@ const handleDirective = function(p, directive, type) {
 };
 
 function updateRendererConfigs(conf) {
+  // Todo remove, all diagrams should get config on demoand from the config object, no need for this
   gitGraphRenderer.setConf(conf.git);
   flowRenderer.setConf(conf.flowchart);
   flowRendererV2.setConf(conf.flowchart);
@@ -572,7 +576,7 @@ function updateRendererConfigs(conf) {
   stateRenderer.setConf(conf.state);
   stateRendererV2.setConf(conf.state);
   infoRenderer.setConf(conf.class);
-  pieRenderer.setConf(conf.class);
+  // pieRenderer.setConf(conf.class);
   erRenderer.setConf(conf.er);
   journeyRenderer.setConf(conf.journey);
   requirementRenderer.setConf(conf.requirement);
@@ -645,7 +649,7 @@ const mermaidAPI = Object.freeze({
     configApi.reset(configApi.defaultConfig);
     updateRendererConfigs(configApi.getConfig());
   },
-  defaultConfig: configApi.defaultConfig
+  defaultConfig: configApi.defaultConfig,
 });
 
 setLogLevel(configApi.getConfig().logLevel);
@@ -678,7 +682,7 @@ export default mermaidAPI;
  *     flowchart:{
  *       diagramPadding:8,
  *       htmlLabels:true,
- *       curve:'linear',
+ *       curve:'basis',
  *     },
  *     sequence:{
  *       diagramMarginX:50,
@@ -708,6 +712,7 @@ export default mermaidAPI;
  *       fontFamily:'"Open-Sans", "sans-serif"',
  *       numberSectionStyles:4,
  *       axisFormat:'%Y-%m-%d',
+ *       topAxis:false,
  *     }
  *   };
  *   mermaid.initialize(config);

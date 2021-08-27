@@ -1,20 +1,14 @@
 /**
  * Created by AshishJ on 11-09-2019.
  */
-import { select, scaleOrdinal, schemeSet2, pie as d3pie, entries, arc } from 'd3';
+import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import pieData from './pieDb';
 import pieParser from './parser/pie';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
+import * as configApi from '../../config';
 
-const conf = {};
-export const setConf = function(cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function(key) {
-    conf[key] = cnf[key];
-  });
-};
+let conf = configApi.getConfig();
 
 /**
  * Draws a Pie Chart with the data given in text.
@@ -25,6 +19,7 @@ let width;
 const height = 450;
 export const draw = (txt, id) => {
   try {
+    conf = configApi.getConfig();
     const parser = pieParser.parser;
     parser.yy = pieData;
     log.debug('Rendering info diagram\n' + txt);
@@ -42,9 +37,12 @@ export const draw = (txt, id) => {
     if (typeof conf.useWidth !== 'undefined') {
       width = conf.useWidth;
     }
+    if (typeof conf.pie.useWidth !== 'undefined') {
+      width = conf.pie.useWidth;
+    }
 
     const diagram = select('#' + id);
-    configureSvgSize(diagram, height, width, conf.useMaxWidth);
+    configureSvgSize(diagram, height, width, conf.pie.useMaxWidth);
 
     // Set viewBox
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
@@ -62,25 +60,37 @@ export const draw = (txt, id) => {
 
     var data = pieData.getSections();
     var sum = 0;
-    Object.keys(data).forEach(function(key) {
+    Object.keys(data).forEach(function (key) {
       sum += data[key];
     });
 
+    const themeVariables = conf.themeVariables;
+    var myGeneratedColors = [
+      themeVariables.pie1,
+      themeVariables.pie2,
+      themeVariables.pie3,
+      themeVariables.pie4,
+      themeVariables.pie5,
+      themeVariables.pie6,
+      themeVariables.pie7,
+      themeVariables.pie8,
+      themeVariables.pie9,
+      themeVariables.pie10,
+      themeVariables.pie11,
+      themeVariables.pie12,
+    ];
+
     // Set the color scale
-    var color = scaleOrdinal()
-      .domain(data)
-      .range(schemeSet2);
+    var color = scaleOrdinal().range(myGeneratedColors);
 
     // Compute the position of each group on the pie:
-    var pie = d3pie().value(function(d) {
-      return d.value;
+    var pie = d3pie().value(function (d) {
+      return d[1];
     });
-    var dataReady = pie(entries(data));
+    var dataReady = pie(Object.entries(data));
 
     // Shape helper to build arcs:
-    var arcGenerator = arc()
-      .innerRadius(0)
-      .outerRadius(radius);
+    var arcGenerator = arc().innerRadius(0).outerRadius(radius);
 
     // Build the pie chart: each part of the pie is a path that we build using the arc function.
     svg
@@ -89,29 +99,26 @@ export const draw = (txt, id) => {
       .enter()
       .append('path')
       .attr('d', arcGenerator)
-      .attr('fill', function(d) {
-        return color(d.data.key);
+      .attr('fill', function (d) {
+        return color(d.data[0]);
       })
-      .attr('stroke', 'black')
-      .style('stroke-width', '2px')
-      .style('opacity', 0.7);
+      .attr('class', 'pieCircle');
 
     // Now add the percentage.
     // Use the centroid method to get the best coordinates.
     svg
       .selectAll('mySlices')
-      .data(dataReady.filter(value => value.data.value !== 0))
+      .data(dataReady)
       .enter()
       .append('text')
-      .text(function(d) {
-        return ((d.data.value / sum) * 100).toFixed(0) + '%';
+      .text(function (d) {
+        return ((d.data[1] / sum) * 100).toFixed(0) + '%';
       })
-      .attr('transform', function(d) {
+      .attr('transform', function (d) {
         return 'translate(' + arcGenerator.centroid(d) + ')';
       })
       .style('text-anchor', 'middle')
-      .attr('class', 'slice')
-      .style('font-size', 17);
+      .attr('class', 'slice');
 
     svg
       .append('text')
@@ -127,7 +134,7 @@ export const draw = (txt, id) => {
       .enter()
       .append('g')
       .attr('class', 'legend')
-      .attr('transform', function(d, i) {
+      .attr('transform', function (d, i) {
         var height = legendRectSize + legendSpacing;
         var offset = (height * color.domain().length) / 2;
         var horz = 12 * legendRectSize;
@@ -143,11 +150,16 @@ export const draw = (txt, id) => {
       .style('stroke', color);
 
     legend
+      .data(dataReady)
       .append('text')
       .attr('x', legendRectSize + legendSpacing)
       .attr('y', legendRectSize - legendSpacing)
-      .text(function(d) {
-        return d;
+      .text(function (d) {
+        if (parser.yy.getShowData() || conf.showData || conf.pie.showData) {
+          return d.data[0] + ' [' + d.data[1] + ']';
+        } else {
+          return d.data[0];
+        }
       });
   } catch (e) {
     log.error('Error while rendering info diagram');
@@ -156,6 +168,5 @@ export const draw = (txt, id) => {
 };
 
 export default {
-  setConf,
-  draw
+  draw,
 };

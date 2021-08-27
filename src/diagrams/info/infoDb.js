@@ -6,7 +6,7 @@ import { log } from '../../logger';
 var message = '';
 var info = false;
 
-export const setMessage = txt => {
+export const setMessage = (txt) => {
   log.debug('Setting message to: ' + txt);
   message = txt;
 };
@@ -15,7 +15,7 @@ export const getMessage = () => {
   return message;
 };
 
-export const setInfo = inf => {
+export const setInfo = (inf) => {
   info = inf;
 };
 
@@ -31,6 +31,6 @@ export default {
   setMessage,
   getMessage,
   setInfo,
-  getInfo
+  getInfo,
   // parseError
 };

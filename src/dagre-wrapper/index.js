@@ -7,7 +7,7 @@ import {
   clusterDb,
   adjustClustersAndEdges,
   findNonClusterChild,
-  sortNodesByHierarchy
+  sortNodesByHierarchy,
 } from './mermaid-graphlib';
 import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes';
 import { insertCluster, clear as clearClusters } from './clusters';
@@ -17,7 +17,7 @@ import { log } from '../logger';
 const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   log.info('Graph in recursive render: XXX', graphlib.json.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
-  log.warn('Dir in recursive render - dir:', dir);
+  log.trace('Dir in recursive render - dir:', dir);
 
   const elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
   if (!graph.nodes()) {
@@ -26,7 +26,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     log.info('Recursive render XXX', graph.nodes());
   }
   if (graph.edges().length > 0) {
-    log.info('Recursive edges', graph.edge(graph.edges()[0]));
+    log.trace('Recursive edges', graph.edge(graph.edges()[0]));
   }
   const clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
@@ -35,7 +35,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
 
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
-  graph.nodes().forEach(function(v) {
+  graph.nodes().forEach(function (v) {
     const node = graph.node(v);
     if (typeof parentCluster !== 'undefined') {
       const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
@@ -43,19 +43,22 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
       log.info('Setting data for cluster XXX (', v, ') ', data, parentCluster);
       graph.setNode(parentCluster.id, data);
       if (!graph.parent(v)) {
-        log.warn('Setting parent', v, parentCluster.id);
+        log.trace('Setting parent', v, parentCluster.id);
         graph.setParent(v, parentCluster.id, data);
       }
     }
     log.info('(Insert) Node XXX' + v + ': ' + JSON.stringify(graph.node(v)));
     if (node && node.clusterNode) {
       // const children = graph.children(v);
-      log.info('Cluster identified', v, node, graph.node(v));
-      const newEl = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
+      log.info('Cluster identified', v, node.width, graph.node(v));
+      const o = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
+      const newEl = o.elem;
       updateNodeBounds(node, newEl);
+      node.diff = o.diff || 0;
+      log.info('Node bounds (abc123)', v, node, node.width, node.x, node.y);
       setNodeElem(newEl, node);
 
-      log.warn('Recursive render complete', newEl, node);
+      log.warn('Recursive render complete ', newEl, node);
     } else {
       if (graph.children(v).length > 0) {
         // This is a cluster but not to be rendered recusively
@@ -75,7 +78,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   // Also figure out which edges point to/from clusters and adjust them accordingly
   // Edges from/to clusters really points to the first child in the cluster.
   // TODO: pick optimal child in the cluster to us as link anchor
-  graph.edges().forEach(function(e) {
+  graph.edges().forEach(function (e) {
     const edge = graph.edge(e.v, e.w, e.name);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
@@ -85,7 +88,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     insertEdgeLabel(edgeLabels, edge);
   });
 
-  graph.edges().forEach(function(e) {
+  graph.edges().forEach(function (e) {
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
   });
   log.info('#############################################');
@@ -95,7 +98,8 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   dagre.layout(graph);
   log.info('Graph after layout:', graphlib.json.write(graph));
   // Move the nodes to the correct place
-  sortNodesByHierarchy(graph).forEach(function(v) {
+  let diff = 0;
+  sortNodesByHierarchy(graph).forEach(function (v) {
     const node = graph.node(v);
     log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
     log.info(
@@ -124,7 +128,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   });
 
   // Move the edge labels to the correct place after layout
-  graph.edges().forEach(function(e) {
+  graph.edges().forEach(function (e) {
     const edge = graph.edge(e);
     log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
@@ -132,7 +136,14 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     positionEdgeLabel(edge, paths);
   });
 
-  return elem;
+  graph.nodes().forEach(function (v) {
+    const n = graph.node(v);
+    log.info(v, n.type, n.diff);
+    if (n.type === 'group') {
+      diff = n.diff;
+    }
+  });
+  return { elem, diff };
 };
 
 export const render = (elem, graph, markers, diagramtype, id) => {

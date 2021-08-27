@@ -1,0 +1,210 @@
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background:#333; */
+        font-family: 'Arial';
+        /* font-size: 18px !important; */
+        }
+      h1 { color: grey;}
+      .mermaid2 {
+        display: none;
+      }
+      .mermaid svg {
+        /* font-size: 18px !important; */
+      }
+    </style>
+  </head>
+  <body>
+    <div>info below</div>
+    <div class="flex">
+      <div class="mermaid2" style="width: 100%; height: 400px;">
+%%{init: { "logLevel": 1, "er": {"fontSize":18 }} }%%
+      erDiagram
+        CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+        CUSTOMER ||--o{ ORDER : places
+        CUSTOMER ||--o{ INVOICE : "liable for"
+        DELIVERY-ADDRESS ||--o{ ORDER : receives
+        INVOICE ||--|{ ORDER : covers
+        ORDER ||--|{ ORDER-ITEM : includes
+        PRODUCT-CATEGORY ||--|{ PRODUCT : contains
+        PRODUCT ||--o{ ORDER-ITEM : "ordered in"
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 400px;">
+flowchart TD
+  A[Christmas] ==> D
+  A[Christmas] -->|Get money| B(Go shopping)
+  A[Christmas] ==> C
+  subgraph T ["Test"]
+    A
+    B
+    C
+  end
+
+  classDef Test fill:#F84E68,stroke:#333,color:white;
+  class A,T Test
+  classDef TestSub fill:green;
+  class T TestSub
+  linkStyle 0,1 color:orange, stroke: orange;
+</div>
+      <div class="mermaid" style="width: 100%; height: 20%;">
+flowchart TB
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
+      </div>
+<div class="mermaid2" style="width: 100%; height: 20%;">
+flowchart TB
+    c1-->a2
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+    one --> two
+    three --> two
+    two --> c2
+</div>
+      <div class="mermaid2" style="width: 100%; height: 20%;">
+stateDiagram-v2
+state S1 {
+sub1 -->sub2
+}
+state S2 {
+    sub4
+}
+S1 --> S2
+sub1 --> sub4
+
+      </div>
+<div class="mermaid2" style="width: 100%; height: 20%;">
+  requirementDiagram
+  requirement test_req {
+    id: 1
+    text: the test text.
+    risk: high
+    verifymethod: test
+    }
+
+    functionalRequirement test_req2 {
+    id: 1.1
+    text: the second test text.
+    risk: low
+    verifymethod: inspection
+    }
+
+    performanceRequirement test_req3 {
+    id: 1.2
+    text: the third test text.
+    risk: medium
+    verifymethod: demonstration
+    }
+
+    element test_entity {
+    type: simulation
+    }
+
+    element test_entity2 {
+    type: word doc
+    docRef: reqs/test_entity
+    }
+
+
+    test_entity - satisfies -> test_req2
+    test_req - traces -> test_req2
+    test_req - contains -> test_req3
+    test_req <- copies - test_entity2
+  </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
+flowchart LR
+  classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
+  Lorem --> Ipsum --> Dolor
+  class Lorem,Dolor dark
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
+%%{init: {'theme': 'base' }}%%
+%%{init2: { 'logLevel': 0, 'theme': 'forest'} }%%
+flowchart TD
+      L1 --- L2
+      L2 --- C
+      M1 ---> C
+      R1 .-> R2
+      R2 <.-> C
+      C -->|Label 1| E1
+      C <-- Label 2 ---> E2
+      C ----> E3
+      C <-...-> E4
+      C ======> E5
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 21%;">
+flowchart LR
+A[red text] -->|default style| B(blue text)
+C([red text]) -->|default style| D[[blue text]]
+E[(red text)] -->|default style| F((blue text))
+G>red text] -->|default style| H{blue text}
+I{{red text}} -->|default style| J[/blue text/]
+K[
+ed text] -->|default style| L[/blue text]
+M[
+ed text/] -->|default style| N[blue text]
+linkStyle default color:Sienna;
+style A stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style B stroke:#0000ff,fill:#ccccff,color:#0000ff
+style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style D stroke:#0000ff,fill:#ccccff,color:#0000ff
+style E stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style F stroke:#0000ff,fill:#ccccff,color:#0000ff
+style G stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style H stroke:#0000ff,fill:#ccccff,color:#0000ff
+style I stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style J stroke:#0000ff,fill:#ccccff,color:#0000ff
+style K stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style L stroke:#0000ff,fill:#ccccff,color:#0000ff
+style M stroke:#ff0000,fill:#ffcccc,color:#ff0000
+style N stroke:#0000ff,fill:#ccccff,color:#0000ff
+      </div>
+
+
+  <script src="./mermaid.js"></script>
+    <script>
+      mermaid.parseError = function (err, hash) {
+          // console.error('Mermaid error: ', err);
+        };
+      mermaid.initialize({
+        theme: 'neutral',
+        arrowMarkerAbsolute: true,
+        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
+        logLevel: 0,
+        flowchart: { nodeSpacing: 10, curve: 'cardinal', htmlLabels: true },
+        htmlLabels: true,
+        // gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorFontFamily: 'courier',actorMargin: 50, showSequenceNumbers: false },
+        // sequenceDiagram: { actorMargin: 300 } // deprecated
+        // fontFamily: '"times", sans-serif',
+        // fontFamily: 'courier',
+        fontSize: 18,
+        curve: 'cardinal',
+        securityLevel: 'loose',
+        // themeVariables: {relationLabelColor: 'red'}
+      });
+      function callback(){alert('It worked');}
+    </script>
+  </body>
+</html>

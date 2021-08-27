@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `.label {
     font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
@@ -24,7 +24,7 @@ const getStyles = options =>
   }
 
   .face {
-    fill: #FFF8DC;
+    ${options.faceColor ? `fill: ${options.faceColor}` : 'fill: #FFF8DC'};
     stroke: #999;
   }
 
@@ -112,6 +112,27 @@ const getStyles = options =>
   }
   .task-type-7, .section-type-7  {
     ${options.fillType0 ? `fill: ${options.fillType7}` : ''};
+  }
+
+  .actor-0 {
+    ${options.actor0 ? `fill: ${options.actor0}` : ''};
+  }
+  .actor-1 {
+    ${options.actor1 ? `fill: ${options.actor1}` : ''};
+  }
+  .actor-2 {
+    ${options.actor2 ? `fill: ${options.actor2}` : ''};
+  }
+  .actor-3 {
+    ${options.actor3 ? `fill: ${options.actor3}` : ''};
+  }
+  .actor-4 {
+    ${options.actor4 ? `fill: ${options.actor4}` : ''};
+  }
+  .actor-5 {
+    ${options.actor5 ? `fill: ${options.actor5}` : ''};
+  }
+
   }
 `;
 

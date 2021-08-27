@@ -16,6 +16,6 @@ describe('Sequencediagram', () => {
       .find('svg')
       .should('have.length', 1);
 
-    cy.get('.label > g > foreignobject > div').should('not.contain.text', '<b>');
+    cy.get('g.label > foreignobject > div').should('not.contain.text', '<b>');
   });
 });

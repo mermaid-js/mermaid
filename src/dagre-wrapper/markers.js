@@ -6,7 +6,7 @@ import { log } from '../logger';
 
 // Only add the number of markers that the diagram needs
 const insertMarkers = (elem, markerArray, type, id) => {
-  markerArray.forEach(markerName => {
+  markerArray.forEach((markerName) => {
     markers[markerName](elem, type, id);
   });
 };
@@ -255,6 +255,6 @@ const markers = {
   point,
   circle,
   cross,
-  barb
+  barb,
 };
 export default insertMarkers;
