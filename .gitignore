@@ -24,3 +24,4 @@ local/
 
 _site
 Gemfile.lock
+/.vs

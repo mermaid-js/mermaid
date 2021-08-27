@@ -230,7 +230,9 @@ const drawNote = function(elem, noteModel) {
   let textElem = drawText(g, textObj);
 
   let textHeight = Math.round(
-    textElem.map(te => (te._groups || te)[0][0].getBBox().height).reduce((acc, curr) => acc + curr)
+    textElem
+      .map(te => (te._groups || te)[0][0].getBBox().height)
+      .reduce((acc, curr) => acc + curr)
   );
 
   rectElem.attr('height', textHeight + 2 * conf.noteMargin);
@@ -253,7 +255,7 @@ const noteFont = cnf => {
   return {
     fontFamily: cnf.noteFontFamily,
     fontSize: cnf.noteFontSize,
-    fontWeight: cnf.noteFontWeight
+    fontWeight: cnf.noteFontWeight,
   };
 };
 const actorFont = cnf => {
@@ -308,7 +310,7 @@ const drawMessage = function(g, msgModel) {
         .attr(
           'd',
           `M  ${startx},${lineStarty} H ${startx +
-            Math.max(conf.width / 2, textWidth / 2)} V ${lineStarty + 25} H ${startx}`
+          Math.max(conf.width / 2, textWidth / 2)} V ${lineStarty + 25} H ${startx}`
         );
     } else {
       totalOffset += conf.boxMargin;
@@ -443,6 +445,24 @@ export const drawActors = function(diagram, actors, actorKeys, verticalPos) {
   bounds.bumpVerticalPos(conf.height);
 };
 
+export const drawActorsPopup = function(diagram, actors, actorKeys) {
+  var maxHeight = 0;
+  var maxWidth = 0;
+  for (let i = 0; i < actorKeys.length; i++) {
+    const actor = actors[actorKeys[i]];
+    const minMenuWidth = getRequiredPopupWidth(actor);
+    var menuDimensions = svgDraw.drawPopup(diagram, actor, minMenuWidth, conf, conf.forceMenus);
+    if (menuDimensions.height > maxHeight) {
+      maxHeight = menuDimensions.height;
+    }
+    if (menuDimensions.width + actor.x > maxWidth) {
+      maxWidth = menuDimensions.width + actor.x;
+    }
+  }
+
+  return { maxHeight: maxHeight, maxWidth: maxWidth };
+};
+
 export const setConf = function(cnf) {
   assignWithDepth(conf, cnf);
 
@@ -520,6 +540,10 @@ export const draw = function(text, id) {
 
   const maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages);
   conf.height = calculateActorMargins(actors, maxMessageWidthPerActor);
+
+  svgDraw.insertComputerIcon(diagram);
+  svgDraw.insertDatabaseIcon(diagram);
+  svgDraw.insertClockIcon(diagram);
 
   drawActors(diagram, actors, actorKeys, 0);
   const loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor);
@@ -687,6 +711,9 @@ export const draw = function(text, id) {
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
   }
 
+  // only draw popups for the top row of actors.
+  var requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys);
+
   const { bounds: box } = bounds.getBounds();
 
   // Adjust line height of actor lines now that the height of the diagram is known
@@ -694,12 +721,23 @@ export const draw = function(text, id) {
   const actorLines = selectAll('#' + id + ' .actor-line');
   actorLines.attr('y2', box.stopy);
 
-  let height = box.stopy - box.starty + 2 * conf.diagramMarginY;
+  // Make sure the height of the diagram supports long menus.
+  let boxHeight = box.stopy - box.starty;
+  if (boxHeight < requiredBoxSize.maxHeight) {
+    boxHeight = requiredBoxSize.maxHeight;
+  }
+
+  let height = boxHeight + 2 * conf.diagramMarginY;
   if (conf.mirrorActors) {
     height = height - conf.boxMargin + conf.bottomMarginAdj;
   }
 
-  const width = box.stopx - box.startx + 2 * conf.diagramMarginX;
+  // Make sure the width of the diagram supports wide menus.
+  let boxWidth = box.stopx - box.startx;
+  if (boxWidth < requiredBoxSize.maxWidth) {
+    boxWidth = requiredBoxSize.maxWidth;
+  }
+  const width = boxWidth + 2 * conf.diagramMarginX;
 
   if (title) {
     diagram
@@ -830,6 +868,20 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
   log.debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
 };
+
+const getRequiredPopupWidth = function(actor) {
+  let requiredPopupWidth = 0;
+  const textFont = actorFont(conf);
+  for (let key in actor.links) {
+    let labelDimensions = utils.calculateTextDimensions(key, textFont);
+    let labelWidth = labelDimensions.width + 2 * conf.wrapPadding + 2 * conf.boxMargin;
+    if (requiredPopupWidth < labelWidth) {
+      requiredPopupWidth = labelWidth;
+    }
+  }
+
+    return requiredPopupWidth;
+}
 
 /**
  * This will calculate the optimal margin for each given actor, for a given
@@ -1111,6 +1163,7 @@ const calculateLoopBounds = function(messages, actors) {
 export default {
   bounds,
   drawActors,
+  drawActorsPopup,
   setConf,
   draw
 };

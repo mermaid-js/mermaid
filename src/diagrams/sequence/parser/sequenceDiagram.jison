@@ -47,6 +47,9 @@
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
+"links"                                                         return 'links';
+"properties"                                                    return 'properties';
+"details"                                                       return 'details';
 "over"                                                          return 'over';
 "note"                                                          return 'note';
 "activate"                                                      { this.begin('ID'); return 'activate'; }
@@ -110,6 +113,9 @@ statement
 	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
 	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NEWLINE'
+	| links_statement 'NEWLINE'
+	| properties_statement 'NEWLINE'
+	| details_statement 'NEWLINE'
 	| title text2 'NEWLINE' {$$=[{type:'setTitle', text:$2}]}
 	| 'loop' restOfLine document end
 	{
@@ -168,6 +174,27 @@ note_statement
 		$2[0] = $2[0].actor;
 		$2[1] = $2[1].actor;
 		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text:$4}];}
+	;
+
+links_statement
+	: 'links' actor text2
+	{
+		$$ = [$2, {type:'addLinks', actor:$2.actor, text:$3}];
+  }
+	;
+
+properties_statement
+	: 'properties' actor text2
+	{
+		$$ = [$2, {type:'addProperties', actor:$2.actor, text:$3}];
+  }
+	;
+
+details_statement
+	: 'details' actor text2
+	{
+		$$ = [$2, {type:'addDetails', actor:$2.actor, text:$3}];
+  }
 	;
 
 spaceList

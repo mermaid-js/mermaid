@@ -550,6 +550,46 @@ context('Sequence diagram', () => {
       );
     });
   });
+  context('links', () => {
+    it('should support actor links and properties', () => {
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "mirrorActors": true, "forceMenus": true }}}%%
+        sequenceDiagram
+        participant a as Alice
+        participant j as John
+        note right of a: Hello world!
+        properties a: {"class": "internal-service-actor", "type": "@clock"}
+        properties j: {"class": "external-service-actor", "type": "@computer"}
+        links a: {"Repo": "https://www.contoso.com/repo", "Swagger": "https://www.contoso.com/swagger"}
+        links j: {"Repo": "https://www.contoso.com/repo"}
+        links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
+        a->>j: Hello John, how are you?
+        j-->>a: Great!
+      `,
+        { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+      );
+    });
+    it('should support actor links and properties when not mirrored', () => {
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "mirrorActors": false, "forceMenus": true, "wrap": true }}}%%
+        sequenceDiagram
+        participant a as Alice
+        participant j as John
+        note right of a: Hello world!
+        properties a: {"class": "internal-service-actor", "type": "@clock"}
+        properties j: {"class": "external-service-actor", "type": "@computer"}
+        links a: {"Repo": "https://www.contoso.com/repo", "Swagger": "https://www.contoso.com/swagger"}
+        links j: {"Repo": "https://www.contoso.com/repo"}
+        links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
+        a->>j: Hello John, how are you?
+        j-->>a: Great!
+      `,
+        { logLevel: 0, sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' } }
+      );
+    });
+  });
   context('svg size', () => {
     it('should render a sequence diagram when useMaxWidth is true (default)', () => {
       renderGraph(

@@ -406,6 +406,58 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
+## Actor Menus
+
+Actors can have popup-menus containing individualized links to external pages.  For example, if an actor represented a web service, useful links might include a link to the service health dashboard, repo containing the code for the service, or a wiki page describing the service.
+This can be configured by adding the links lines with the format:
+
+     links <actor>: <json-formatted link-name link-url pairs>
+
+An example is below:
+
+```
+sequenceDiagram
+    participant Alice
+    participant John
+    links Alice: {"Dashboard": "https://dashboard.contoso.com/alice", "Wiki": "https://wiki.contoso.com/alice"}
+    links John: {"Dashboard": "https://dashboard.contoso.com/john", "Wiki": "https://wiki.contoso.com/john"}
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
+
+## Actor Individualized Styles & Icons
+
+Actors can have individualized styling including an embedded icon.
+This can be configured by adding the properties lines with this format:
+
+     properties <actor>: { "class": "<css className>", "icon": @<built-in-icon-name> -or- <url to an image file>
+>
+
+```
+sequenceDiagram
+    participant Alice
+    participant John
+    properties Alice: {"class": "scheduled-job-actor", "icon": "@clock"}
+    properties John: {"class": "database-service-actor", "icon": "https://icons.contoso.com/database.svg"}
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant John
+    properties Alice: {"icon": "@clock"}
+    properties John: {"icon": "@database"}
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
+
+Built-in icon names include @clock, @database, @computer.
+
 ## Styling
 
 Styling of a sequence diagram is done by defining a number of css classes. During rendering these classes are extracted from the file located at src/themes/sequence.scss

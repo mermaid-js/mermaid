@@ -29,7 +29,11 @@ export const addActor = function(id, name, description) {
     name: name,
     description: description.text,
     wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
-    prevActor: prevActor
+    prevActor: prevActor,
+    links: {},
+    properties: {},
+    actorCnt: null,
+    rectData: null,
   };
   if (prevActor && actors[prevActor]) {
     actors[prevActor].nextActor = id;
@@ -206,6 +210,87 @@ export const addNote = function(actor, placement, message) {
   });
 };
 
+export const addLinks = function (actorId, text) {
+  // find the actor
+  const actor = getActor(actorId);
+  // JSON.parse the text
+  try {
+    const links = JSON.parse(text.text);
+    // add the deserialized text to the actor's links field.
+    insertLinks(actor, links);
+  }
+  catch (e) {
+    log.error('error while parsing actor link text', e);
+  }
+};
+
+function insertLinks(actor, links) {
+  if (actor.links == null) {
+    actor.links = links;
+  }
+  else {
+    for (let key in links) {
+      actor.links[key] = links[key];
+    }
+  }
+}
+
+export const addProperties = function (actorId, text) {
+  // find the actor
+  const actor = getActor(actorId);
+  // JSON.parse the text
+  try {
+    const properties = JSON.parse(text.text);
+    // add the deserialized text to the actor's property field.
+    insertProperties(actor, properties);
+  }
+  catch (e) {
+    log.error('error while parsing actor properties text', e);
+  }
+};
+
+function insertProperties(actor, properties) {
+  if (actor.properties == null) {
+    actor.properties = properties;
+  }
+  else {
+    for (let key in properties) {
+      actor.properties[key] = properties[key];
+    }
+  }
+}
+
+export const addDetails = function (actorId, text) {
+  // find the actor
+  const actor = getActor(actorId);
+  const elem = document.getElementById(text.text);
+
+  // JSON.parse the text
+  try {
+    const text = elem.innerHTML;
+    const details = JSON.parse(text);
+    // add the deserialized text to the actor's property field.
+    if (details["properties"]) {
+      insertProperties(actor, details["properties"]);
+    }
+
+    if (details["links"]) {
+      insertLinks(actor, details["links"]);
+    }
+  }
+  catch (e) {
+    log.error('error while parsing actor details text', e);
+  }
+};
+
+export const getActorProperty = function (actor, key) {
+  if (typeof actor !== 'undefined' && typeof actor.properties !== 'undefined') {
+    return actor.properties[key];
+  }
+
+  return undefined;
+}
+
 export const setTitle = function(titleWrap) {
   title = titleWrap.text;
   titleWrapped = (titleWrap.wrap === undefined && autoWrap()) || !!titleWrap.wrap;
@@ -229,6 +314,15 @@ export const apply = function(param) {
         break;
       case 'addNote':
         addNote(param.actor, param.placement, param.text);
+        break;
+      case 'addLinks':
+        addLinks(param.actor, param.text);
+        break;
+      case 'addProperties':
+        addProperties(param.actor, param.text);
+        break;
+      case 'addDetails':
+        addDetails(param.actor, param.text);
         break;
       case 'addMessage':
         addSignal(param.from, param.to, param.msg, param.signalType);
@@ -280,6 +374,9 @@ export default {
   addActor,
   addMessage,
   addSignal,
+  addLinks,
+  addDetails,
+  addProperties,
   autoWrap,
   setWrap,
   enableSequenceNumbers,
@@ -288,6 +385,7 @@ export default {
   getActors,
   getActor,
   getActorKeys,
+  getActorProperty,
   getTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
