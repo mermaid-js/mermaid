@@ -726,6 +726,26 @@ defined in the linkStyle statement will belong to the fourth link in the graph:
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ```
 
+You can specify default to apply to all links, or you can give a list of link order numbers seperated by a comma.
+
+Instead of giving a styles option, you can also use custom d3 curve types with the following syntax:
+
+```
+linkStyle default|numList|num interpolate curveType
+```
+
+If you want to add style options too, instead of writing:
+
+```
+linkStyle default interpolate cardinal
+linkStyle default stroke:#ff3,stroke-width:4px,color:red;
+```
+
+You can combine them into:
+
+```
+linkStyle default interpolate cardinal stroke:#ff3,stroke-width:4px,color:red;
+```
 
 ### Styling a node
 
