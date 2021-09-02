@@ -18,6 +18,10 @@ export const drawRect = function (elem, rectData) {
   return rectElem;
 };
 
+const sanitizeUrl = function (s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;').replace(/javascript:/g, '');
+}
+
 export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
 
   if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
@@ -61,7 +65,8 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
     var linkY = 20;
     for (let key in links) {
       var linkElem = g.append('a');
-      linkElem.attr('xlink:href', links[key]);
+      var sanitizedLink = sanitizeUrl(links[key]);
+      linkElem.attr('xlink:href', sanitizedLink);
       linkElem.attr('target', '_blank');
 
       _drawMenuItemTextCandidateFunc(textAttrs)(
@@ -88,14 +93,16 @@ export const drawImage = function (elem, x, y, link) {
   const imageElem = elem.append('image');
   imageElem.attr('x', x);
   imageElem.attr('y', y);
-  imageElem.attr('xlink:href', link);
+  var sanitizedLink = sanitizeUrl(link);
+  imageElem.attr('xlink:href', sanitizedLink);
 }
 
 export const drawEmbeddedImage = function (elem, x, y, link) {
   const imageElem = elem.append('use');
   imageElem.attr('x', x);
   imageElem.attr('y', y);
-  imageElem.attr('xlink:href', '#' + link);
+  var sanitizedLink = sanitizeUrl(link);
+  imageElem.attr('xlink:href', '#' + sanitizedLink);
 }
 
 export const popupMenu = function (popid) {
