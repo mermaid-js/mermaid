@@ -4358,9 +4358,9 @@ d3@^5.14:
     d3-zoom "1"
 
 d3@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/d3/-/d3-7.0.0.tgz#fe6036b38ba2026ff34223e208fd294db1b997da"
-  integrity sha512-t+jEKGO2jQiSBLJYYq6RFc500tsCeXBB4x41oQaSnZD3Som95nQrlw9XJGrFTMUOQOkwSMauWy9+8Tz1qm9UZw==
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-7.0.1.tgz#ecd7eb094c398ec71dd61e8628a97ddf1c404d20"
+  integrity sha512-74zonD4nAtxF9dtwFwJ3RuoHPh2D/UTFX26midBuMVH+7pRbOezuyLUIb8mbQMuYFlcUXT+xy++orCmnvMM/CA==
   dependencies:
     d3-array "3"
     d3-axis "3"
