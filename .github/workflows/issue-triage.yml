@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: andymckay/labeler@1.0.3
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
         add-labels: "Status: Triage"
