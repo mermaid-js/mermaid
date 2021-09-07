@@ -10,5 +10,5 @@ jobs:
     steps:
     - uses: andymckay/labeler@1.0.3
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
         add-labels: "Status: Triage"
