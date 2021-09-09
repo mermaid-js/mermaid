@@ -18,7 +18,9 @@
 "erDiagram"                     return 'ER_DIAGRAM';
 "{"                             { this.begin("block"); return 'BLOCK_START'; }
 <block>\s+                      /* skip whitespace in block */
-<block>[A-Za-z][A-Za-z0-9\-_]*  { return 'ATTRIBUTE_WORD'; }
+<block>(?:PK)|(?:FK)            return 'ATTRIBUTE_KEY'
+<block>[A-Za-z][A-Za-z0-9\-_]*  return 'ATTRIBUTE_WORD'
+<block>\"[^"]*\"                return 'COMMENT';
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
@@ -95,6 +97,9 @@ attributes
 
 attribute
     : attributeType attributeName { $$ = { attributeType: $1, attributeName: $2 }; }
+    | attributeType attributeName attributeKeyType { $$ = { attributeType: $1, attributeName: $2, attributeKeyType: $3 }; }
+    | attributeType attributeName COMMENT { $$ = { attributeType: $1, attributeName: $2, attributeComment: $3 }; }
+    | attributeType attributeName attributeKeyType COMMENT { $$ = { attributeType: $1, attributeName: $2, attributeKeyType: $3, attributeComment: $4 }; }
     ;
 
 attributeType
@@ -103,6 +108,10 @@ attributeType
 
 attributeName
     : ATTRIBUTE_WORD { $$=$1; }
+    ;
+
+attributeKeyType
+    : ATTRIBUTE_KEY { $$=$1; }
     ;
 
 relSpec
