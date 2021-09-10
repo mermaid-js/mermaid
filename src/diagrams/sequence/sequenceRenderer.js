@@ -446,7 +446,7 @@ export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
   bounds.bumpVerticalPos(conf.height);
 };
 
-export const drawActorsPopup = function(diagram, actors, actorKeys) {
+export const drawActorsPopup = function (diagram, actors, actorKeys) {
   var maxHeight = 0;
   var maxWidth = 0;
   for (let i = 0; i < actorKeys.length; i++) {
@@ -870,7 +870,7 @@ const getMaxMessageWidthPerActor = function (actors, messages) {
   return maxMessageWidthPerActor;
 };
 
-const getRequiredPopupWidth = function(actor) {
+const getRequiredPopupWidth = function (actor) {
   let requiredPopupWidth = 0;
   const textFont = actorFont(conf);
   for (let key in actor.links) {
@@ -881,8 +881,8 @@ const getRequiredPopupWidth = function(actor) {
     }
   }
 
-    return requiredPopupWidth;
-}
+  return requiredPopupWidth;
+};
 
 /**
  * This will calculate the optimal margin for each given actor, for a given

@@ -48,6 +48,7 @@
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
 "links"                                                         return 'links';
+"link"                                                          return 'link';
 "properties"                                                    return 'properties';
 "details"                                                       return 'details';
 "over"                                                          return 'over';
@@ -56,7 +57,7 @@
 "deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
 "title"                                                         return 'title';
 "sequenceDiagram"                                               return 'SD';
-"autonumber" 			                                        return 'autonumber';
+"autonumber"                                                    return 'autonumber';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
 [^\+\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
@@ -66,8 +67,8 @@
 "-->"                                                           return 'DOTTED_OPEN_ARROW';
 \-[x]                                                           return 'SOLID_CROSS';
 \-\-[x]                                                         return 'DOTTED_CROSS';
-\-[\)]                                                           return 'SOLID_POINT';
-\-\-[\)]                                                         return 'DOTTED_POINT';
+\-[\)]                                                          return 'SOLID_POINT';
+\-\-[\)]                                                        return 'DOTTED_POINT';
 ":"(?:(?:no)?wrap:)?[^#\n;]+                                    return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
@@ -114,6 +115,7 @@ statement
 	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NEWLINE'
 	| links_statement 'NEWLINE'
+	| link_statement 'NEWLINE'
 	| properties_statement 'NEWLINE'
 	| details_statement 'NEWLINE'
 	| title text2 'NEWLINE' {$$=[{type:'setTitle', text:$2}]}
@@ -180,6 +182,13 @@ links_statement
 	: 'links' actor text2
 	{
 		$$ = [$2, {type:'addLinks', actor:$2.actor, text:$3}];
+  }
+	;
+
+link_statement
+	: 'link' actor text2
+	{
+		$$ = [$2, {type:'addALink', actor:$2.actor, text:$3}];
   }
 	;
 

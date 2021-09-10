@@ -409,6 +409,27 @@ sequenceDiagram
 ## Actor Menus
 
 Actors can have popup-menus containing individualized links to external pages.  For example, if an actor represented a web service, useful links might include a link to the service health dashboard, repo containing the code for the service, or a wiki page describing the service.
+
+This can be configured by adding one or more link lines with the format:
+
+      link <actor>: <link-label> @ <link-url>
+
+```
+sequenceDiagram
+    participant Alice
+    participant John
+    link Alice: Dashboard @ https://dashboard.contoso.com/alice
+    link Alice: Wiki @ https://wiki.contoso.com/alice
+    link John: Dashboard @ https://dashboard.contoso.com/john
+    link John: Wiki @ https://wiki.contoso.com/john
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
+
+#### Advanced Menu Syntax
+There is an advanced syntax that relies on JSON formatting. If you are comfortable with JSON format, then this exists as well.
+
 This can be configured by adding the links lines with the format:
 
      links <actor>: <json-formatted link-name link-url pairs>
@@ -425,38 +446,6 @@ sequenceDiagram
     John-->>Alice: Great!
     Alice-)John: See you later!
 ```
-
-## Actor Individualized Styles & Icons
-
-Actors can have individualized styling including an embedded icon.
-This can be configured by adding the properties lines with this format:
-
-     properties <actor>: { "class": "<css className>", "icon": @<built-in-icon-name> -or- <url to an image file>
->
-
-```
-sequenceDiagram
-    participant Alice
-    participant John
-    properties Alice: {"class": "scheduled-job-actor", "icon": "@clock"}
-    properties John: {"class": "database-service-actor", "icon": "https://icons.contoso.com/database.svg"}
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
-    Alice-)John: See you later!
-```
-
-```mermaid
-sequenceDiagram
-    participant Alice
-    participant John
-    properties Alice: {"icon": "@clock"}
-    properties John: {"icon": "@database"}
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
-    Alice-)John: See you later!
-```
-
-Built-in icon names include @clock, @database, @computer.
 
 ## Styling
 

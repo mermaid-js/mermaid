@@ -218,8 +218,24 @@ export const addLinks = function (actorId, text) {
     const links = JSON.parse(text.text);
     // add the deserialized text to the actor's links field.
     insertLinks(actor, links);
+  } catch (e) {
+    log.error('error while parsing actor link text', e);
   }
-  catch (e) {
+};
+
+export const addALink = function (actorId, text) {
+  // find the actor
+  const actor = getActor(actorId);
+  try {
+    const links = {};
+    var sep = text.text.indexOf('@');
+    var label = text.text.slice(0, sep - 1).trim();
+    var link = text.text.slice(sep + 1).trim();
+
+    links[label] = link;
+    // add the deserialized text to the actor's links field.
+    insertLinks(actor, links);
+  } catch (e) {
     log.error('error while parsing actor link text', e);
   }
 };
@@ -227,8 +243,7 @@ export const addLinks = function (actorId, text) {
 function insertLinks(actor, links) {
   if (actor.links == null) {
     actor.links = links;
-  }
-  else {
+  } else {
     for (let key in links) {
       actor.links[key] = links[key];
     }
@@ -243,8 +258,7 @@ export const addProperties = function (actorId, text) {
     const properties = JSON.parse(text.text);
     // add the deserialized text to the actor's property field.
     insertProperties(actor, properties);
-  }
-  catch (e) {
+  } catch (e) {
     log.error('error while parsing actor properties text', e);
   }
 };
@@ -252,8 +266,7 @@ export const addProperties = function (actorId, text) {
 function insertProperties(actor, properties) {
   if (actor.properties == null) {
     actor.properties = properties;
-  }
-  else {
+  } else {
     for (let key in properties) {
       actor.properties[key] = properties[key];
     }
@@ -270,15 +283,14 @@ export const addDetails = function (actorId, text) {
     const text = elem.innerHTML;
     const details = JSON.parse(text);
     // add the deserialized text to the actor's property field.
-    if (details["properties"]) {
-      insertProperties(actor, details["properties"]);
+    if (details['properties']) {
+      insertProperties(actor, details['properties']);
     }
 
-    if (details["links"]) {
-      insertLinks(actor, details["links"]);
+    if (details['links']) {
+      insertLinks(actor, details['links']);
     }
-  }
-  catch (e) {
+  } catch (e) {
     log.error('error while parsing actor details text', e);
   }
 };
@@ -317,6 +329,9 @@ export const apply = function (param) {
         break;
       case 'addLinks':
         addLinks(param.actor, param.text);
+        break;
+      case 'addALink':
+        addALink(param.actor, param.text);
         break;
       case 'addProperties':
         addProperties(param.actor, param.text);

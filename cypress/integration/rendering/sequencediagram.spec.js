@@ -564,6 +564,7 @@ context('Sequence diagram', () => {
         links a: {"Repo": "https://www.contoso.com/repo", "Swagger": "https://www.contoso.com/swagger"}
         links j: {"Repo": "https://www.contoso.com/repo"}
         links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
+        link a: Contacts @ https://contacts.contoso.com/?contact=alice@contoso.com
         a->>j: Hello John, how are you?
         j-->>a: Great!
       `,

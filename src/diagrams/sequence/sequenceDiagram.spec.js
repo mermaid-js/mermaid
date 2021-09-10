@@ -908,6 +908,9 @@ participant c as Charlie
 links a: { "Repo": "https://repo.contoso.com/", "Dashboard": "https://dashboard.contoso.com/" }
 links b: { "Dashboard": "https://dashboard.contoso.com/" }
 links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
+link a: Endpoint @ https://alice.contoso.com
+link a: Swagger @ https://swagger.contoso.com
+link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 `;
     console.log(str);
 
@@ -919,6 +922,9 @@ links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
     expect(actors.b.links["Dashboard"]).toBe("https://dashboard.contoso.com/");
     expect(actors.a.links["On-Call"]).toBe("https://oncall.contoso.com/?svc=alice");
     expect(actors.c.links["Dashboard"]).toBe(undefined);
+    expect(actors.a.links["Endpoint"]).toBe("https://alice.contoso.com");
+    expect(actors.a.links["Swagger"]).toBe("https://swagger.contoso.com");
+    expect(actors.a.links["Tests"]).toBe("https://tests.contoso.com/?svc=alice@contoso.com");
   });
 
   it('it should handle properties', function () {

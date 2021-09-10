@@ -372,7 +372,7 @@ const config = {
      *| forceMenus | forces actor popup menus to always be visible (to support E2E testing). | Boolean| Required | True, False |
      *
      * **Notes:**
-     * 
+     *
      * Default value: false.
      */
     forceMenus: false,
