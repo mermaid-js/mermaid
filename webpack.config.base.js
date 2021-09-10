@@ -53,9 +53,11 @@ export const jsConfig = () => {
     output: {
       path: path.join(__dirname, './dist/'),
       filename: '[name].js',
-      library: 'mermaid',
-      libraryTarget: 'umd',
-      libraryExport: 'default',
+      library: {
+        name: 'mermaid',
+        type: 'umd',
+        export: 'default',
+      },
       globalObject: 'typeof self !== "undefined" ? self : this',
     },
     module: {

@@ -51,9 +51,11 @@ module.exports = {
   output: {
     path: path.join(__dirname, './dist/'),
     filename: '[name].js',
-    library: 'mermaid',
-    libraryTarget: 'umd',
-    libraryExport: 'default',
+    library: {
+      name: 'mermaid',
+      type: 'umd',
+      export: 'default',
+    },
   },
   devServer: {
     compress: true,
