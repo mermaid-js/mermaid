@@ -1,5 +1,14 @@
 const path = require('path');
 
+const jisonRule = {
+  test: /\.jison$/,
+  use: {
+    loader: path.resolve(__dirname, './jison/loader'),
+    options: {
+      'token-stack': true,
+    },
+  },
+};
 const jsRule = {
   test: /\.js$/,
   exclude: /node_modules/,
@@ -8,25 +17,20 @@ const jsRule = {
   },
 };
 
-const jisonRule = {
-  test: /\.jison$/,
-  use: {
-    loader: path.resolve(__dirname, './jisonLoader'),
-    options: {
-      'token-stack': true,
-    },
-  },
-};
-
-const amdRule = {
-  parser: {
-    amd: false, // https://github.com/lodash/lodash/issues/3052
-  },
-};
 const scssRule = {
   // load scss to string
   test: /\.scss$/,
-  use: [{ loader: 'css-to-string-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
+  use: [
+    {
+      loader: 'css-to-string-loader',
+    },
+    {
+      loader: 'css-loader',
+    },
+    {
+      loader: 'sass-loader',
+    }
+  ],
 };
 
 module.exports = {
@@ -39,24 +43,34 @@ module.exports = {
   },
   resolve: {
     extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
-  },
-  node: {
-    fs: 'empty', // jison generated code requires 'fs'
+    fallback: {
+      fs: false, // jison generated code requires 'fs'
+      path: require.resolve("path-browserify"),
+    },
   },
   output: {
     path: path.join(__dirname, './dist/'),
     filename: '[name].js',
-    library: 'mermaid',
-    libraryTarget: 'umd',
-    libraryExport: 'default',
+    library: {
+      name: 'mermaid',
+      type: 'umd',
+      export: 'default',
+    },
   },
   devServer: {
-    contentBase: [path.join(__dirname, 'cypress', 'platform'), path.join(__dirname, 'dist')],
     compress: true,
     port: 9000,
+    static: [
+      {
+        directory: path.join(__dirname, 'cypress', 'platform'),
+      },
+      {
+        directory: path.join(__dirname, 'dist'),
+      }
+    ]
   },
   module: {
-    rules: [amdRule, jsRule, scssRule, jisonRule],
+    rules: [jsRule, scssRule, jisonRule],
   },
   externals: {
     mermaid: 'mermaid',

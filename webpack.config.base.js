@@ -1,15 +1,9 @@
 import path from 'path';
 
-const amdRule = {
-  parser: {
-    amd: false, // https://github.com/lodash/lodash/issues/3052
-  },
-};
-
 const jisonRule = {
   test: /\.jison$/,
   use: {
-    loader: path.resolve(__dirname, './jisonLoader'),
+    loader: path.resolve(__dirname, './jison/loader'),
     options: {
       'token-stack': true,
     },
@@ -29,7 +23,17 @@ const jsRule = {
 const scssRule = {
   // load scss to string
   test: /\.scss$/,
-  use: [{ loader: 'css-to-string-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
+  use: [
+    {
+      loader: 'css-to-string-loader',
+    },
+    {
+      loader: 'css-loader',
+    },
+    {
+      loader: 'sass-loader',
+    }
+  ],
 };
 
 export const jsConfig = () => {
@@ -41,20 +45,23 @@ export const jsConfig = () => {
     },
     resolve: {
       extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
-    },
-    node: {
-      fs: 'empty', // jison generated code requires 'fs'
+      fallback: {
+        fs: false, // jison generated code requires 'fs'
+        path: require.resolve("path-browserify"),
+      },
     },
     output: {
       path: path.join(__dirname, './dist/'),
       filename: '[name].js',
-      library: 'mermaid',
-      libraryTarget: 'umd',
-      libraryExport: 'default',
+      library: {
+        name: 'mermaid',
+        type: 'umd',
+        export: 'default',
+      },
       globalObject: 'typeof self !== "undefined" ? self : this',
     },
     module: {
-      rules: [amdRule, jsRule, scssRule, jisonRule],
+      rules: [jsRule, scssRule, jisonRule],
     },
     devtool: 'source-map',
   };
