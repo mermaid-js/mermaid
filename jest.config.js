@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.jsx?$': ['babel-jest', {rootMode: "upward"}],
+    '^.+\\.jsx?$': ['babel-jest', { rootMode: 'upward' }],
     '^.+\\.jison$': path.resolve(__dirname, './jison/transformer.js'),
   },
   transformIgnorePatterns: ['/node_modules/(?!dagre-d3-renderer/lib).*\\.js'],

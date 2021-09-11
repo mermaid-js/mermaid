@@ -23,21 +23,12 @@ const jsRule = {
 const scssRule = {
   // load scss to string
   test: /\.scss$/,
-  use: [
-    {
-      loader: 'css-to-string-loader',
-    },
-    {
-      loader: 'css-loader',
-    },
-    {
-      loader: 'sass-loader',
-    }
-  ],
+  use: [{ loader: 'css-to-string-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
 };
 
 export const jsConfig = () => {
   return {
+    amd: false, // https://github.com/lodash/lodash/issues/3052
     mode: 'development',
     target: 'web',
     entry: {
@@ -47,7 +38,7 @@ export const jsConfig = () => {
       extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
       fallback: {
         fs: false, // jison generated code requires 'fs'
-        path: require.resolve("path-browserify"),
+        path: require.resolve('path-browserify'),
       },
     },
     output: {

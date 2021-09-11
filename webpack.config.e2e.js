@@ -20,20 +20,11 @@ const jsRule = {
 const scssRule = {
   // load scss to string
   test: /\.scss$/,
-  use: [
-    {
-      loader: 'css-to-string-loader',
-    },
-    {
-      loader: 'css-loader',
-    },
-    {
-      loader: 'sass-loader',
-    }
-  ],
+  use: [{ loader: 'css-to-string-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
 };
 
 module.exports = {
+  amd: false, // https://github.com/lodash/lodash/issues/3052
   mode: 'development',
   target: 'web',
   entry: {
@@ -45,7 +36,7 @@ module.exports = {
     extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
     fallback: {
       fs: false, // jison generated code requires 'fs'
-      path: require.resolve("path-browserify"),
+      path: require.resolve('path-browserify'),
     },
   },
   output: {
@@ -61,13 +52,9 @@ module.exports = {
     compress: true,
     port: 9000,
     static: [
-      {
-        directory: path.join(__dirname, 'cypress', 'platform'),
-      },
-      {
-        directory: path.join(__dirname, 'dist'),
-      }
-    ]
+      { directory: path.join(__dirname, 'cypress', 'platform') },
+      { directory: path.join(__dirname, 'dist') },
+    ],
   },
   module: {
     rules: [jsRule, scssRule, jisonRule],
