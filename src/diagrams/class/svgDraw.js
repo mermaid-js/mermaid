@@ -274,7 +274,7 @@ export const drawClass = function (elem, classDef, conf) {
 };
 
 export const parseMember = function (text) {
-  const fieldRegEx = /(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)/;
+  const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+) *(\*|\$)?$/;
   const methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
 
   let fieldMatch = text.match(fieldRegEx);
@@ -290,6 +290,7 @@ export const parseMember = function (text) {
 };
 
 const buildFieldDisplay = function (parsedText) {
+  let cssStyle = '';
   let displayText = '';
 
   try {
@@ -297,15 +298,17 @@ const buildFieldDisplay = function (parsedText) {
     let fieldType = parsedText[2] ? parsedText[2].trim() : '';
     let genericType = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
     let fieldName = parsedText[4] ? parsedText[4].trim() : '';
+    let classifier = parsedText[5] ? parsedText[5].trim() : '';
 
     displayText = visibility + fieldType + genericType + ' ' + fieldName;
+    cssStyle = parseClassifier(classifier);
   } catch (err) {
     displayText = parsedText;
   }
 
   return {
     displayText: displayText,
-    cssStyle: '',
+    cssStyle: cssStyle,
   };
 };
 
@@ -321,7 +324,6 @@ const buildMethodDisplay = function (parsedText) {
     let returnType = parsedText[5] ? ' : ' + parseGenericTypes(parsedText[5]).trim() : '';
 
     displayText = visibility + methodName + '(' + parameters + ')' + returnType;
-
     cssStyle = parseClassifier(classifier);
   } catch (err) {
     displayText = parsedText;
