@@ -359,7 +359,7 @@ export const draw = function (text, id) {
   // }
 
   // Fetch the default direction, use TD if none was found
-  let dir = 'TD';
+  //let dir = 'TD';
 
   const conf = getConfig().flowchart;
   log.info('config:', conf);
@@ -372,7 +372,7 @@ export const draw = function (text, id) {
     compound: true,
   })
     .setGraph({
-      rankdir: dir,
+      rankdir: classDb.getDirection(),
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
@@ -457,7 +457,7 @@ export const draw = function (text, id) {
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
       rect.setAttribute('height', dim.height);
-      rect.setAttribute('style', 'fill:#e8e8e8;');
+      // rect.setAttribute('style', 'fill:#e8e8e8;');
 
       label.insertBefore(rect, label.firstChild);
     }

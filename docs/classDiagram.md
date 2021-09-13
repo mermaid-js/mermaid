@@ -447,6 +447,46 @@ class Shape{
 
 ```
 
+## Setting the direction of the diagram
+
+With class diagrams you can use the direction statement to set the direction which the diagram will render like in this example.
+
+```
+classDiagram
+  direction RL
+  class Student {
+    -idCard : IdCard
+  }
+  class IdCard{
+    -id : int
+    -name : string
+  }
+  class Bike{
+    -id : int
+    -name : string
+  }
+  Student "1" --o "1" IdCard : carries
+  Student "1" --o "1" Bike : rides
+ ```
+ This is how this renders
+```mermaid
+classDiagram
+  direction RL
+  class Student {
+    -idCard : IdCard
+  }
+  class IdCard{
+    -id : int
+    -name : string
+  }
+  class Bike{
+    -id : int
+    -name : string
+  }
+  Student "1" --o "1" IdCard : carries
+  Student "1" --o "1" Bike : rides
+ ```
+
 ## Interaction
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.

@@ -317,6 +317,12 @@ const setupToolTips = function (element) {
 };
 funs.push(setupToolTips);
 
+let direction = 'TB';
+const getDirection = () => direction;
+const setDirection = (dir) => {
+  direction = dir;
+};
+
 export default {
   parseDirective,
   getConfig: () => configApi.getConfig().class,
@@ -328,6 +334,8 @@ export default {
   addAnnotation,
   getRelations,
   addRelation,
+  getDirection,
+  setDirection,
   addMember,
   addMembers,
   cleanupLabel,
