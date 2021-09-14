@@ -301,7 +301,7 @@ export const getActorProperty = function (actor, key) {
   }
 
   return undefined;
-}
+};
 
 export const setTitle = function (titleWrap) {
   title = titleWrap.text;
