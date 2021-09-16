@@ -95,6 +95,15 @@ const getStyles = (options) =>
     fill: ${options.activationBkgColor};
     stroke: ${options.activationBorderColor};
   }
+  .actor-man line {
+    stroke: ${options.actorBorder};
+    fill: ${options.actorBkg};
+  }
+  .actor-man circle, line {
+    stroke: ${options.actorBorder};
+    fill: ${options.actorBkg};
+    stroke-width: 2px;
+  }
 `;
 
 export default getStyles;

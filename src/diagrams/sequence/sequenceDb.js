@@ -15,14 +15,17 @@ export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-export const addActor = function (id, name, description) {
+export const addActor = function (id, name, description, type) {
   // Don't allow description nulling
   const old = actors[id];
   if (old && name === old.name && description == null) return;
 
   // Don't allow null descriptions, either
   if (description == null || description.text == null) {
-    description = { text: name, wrap: null };
+    description = { text: name, wrap: null, type };
+  }
+  if (type == null || description.text == null) {
+    description = { text: name, wrap: null, type };
   }
 
   actors[id] = {
@@ -30,6 +33,7 @@ export const addActor = function (id, name, description) {
     description: description.text,
     wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
     prevActor: prevActor,
+    type: type || 'participant'
   };
   if (prevActor && actors[prevActor]) {
     actors[prevActor].nextActor = id;
@@ -218,8 +222,11 @@ export const apply = function (param) {
     });
   } else {
     switch (param.type) {
+      case 'addParticipant':
+        addActor(param.actor, param.actor, param.description, 'participant');
+        break;
       case 'addActor':
-        addActor(param.actor, param.actor, param.description);
+        addActor(param.actor, param.actor, param.description, 'actor');
         break;
       case 'activeStart':
         addSignal(param.actor, undefined, undefined, param.signalType);

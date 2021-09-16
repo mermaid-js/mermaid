@@ -10,7 +10,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        background:#333;
+        /* background:#333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
         }
@@ -53,13 +53,20 @@ stateDiagram
 
 </div>
 <div class="mermaid" style="width: 100%; height: 20%;">
-flowchart LR
-  one --> two
-  three -.-> four[whoa, big arrowhead nine o'clock]
+sequenceDiagram
+  actor Alice as Alice2
+  actor Bob
+  participant John as John2
+  participant Mandy
+  Alice->>Bob: Hi Bob
+  Bob->>Alice: Hi Alice
+  Alice->>John: Hi John
+  John->>Mandy: Hi Mandy
+  Mandy ->>Joan: Hi Joan
 
 </div>
-<div class="mermaid2" style="width: 100%; height: 20%;">
-%%{init: { "apa":"b", "theme":"forest"}}%%
+<div class="mermaid" style="width: 100%; height: 20%;">
+%%{int: { "apa":"b", "theme":"forest"}}%%
 sequenceDiagram
 Alice->>Bob: Hi Bob
 Bob->>Alice: Hi Alice
@@ -112,8 +119,8 @@ YourState
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'dark',
-        // theme: 'forest',
+        // theme: 'dark',
+        theme: 'forest',
         arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 2,

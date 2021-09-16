@@ -33,6 +33,7 @@
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
 "participant"                                                   { this.begin('ID'); return 'participant'; }
+"actor"                                                   			{ this.begin('ID'); return 'participant_actor'; }
 <ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)           { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
@@ -103,8 +104,10 @@ directive
   ;
 
 statement
-	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.description=yy.parseMessage($4); $$=$2;}
-	| 'participant' actor 'NEWLINE' {$$=$2;}
+	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant' actor 'NEWLINE' {$2.type='addParticipant';$$=$2;}
+	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.type='addActor';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_actor' actor 'NEWLINE' {$2.type='addActor'; $$=$2;}
 	| signal 'NEWLINE'
 	| autonumber {yy.enableSequenceNumbers()}
 	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
@@ -197,9 +200,13 @@ signal
 	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
 	;
 
-actor
-	: ACTOR {$$={type: 'addActor', actor:$1}}
-	;
+// actor
+// 	: actor_participant
+// 	| actor_actor
+// 	;
+
+actor: ACTOR {$$={ type: 'addParticipant', actor:$1}};
+// actor_actor: ACTOR {$$={type: 'addActor', actor:$1}};
 
 signaltype
 	: SOLID_OPEN_ARROW  { $$ = yy.LINETYPE.SOLID_OPEN; }
