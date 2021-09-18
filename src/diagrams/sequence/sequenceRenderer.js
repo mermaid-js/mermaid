@@ -689,6 +689,7 @@ export const draw = function (text, id) {
     // Draw actors below diagram
     bounds.bumpVerticalPos(conf.boxMargin * 2);
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
+    bounds.bumpVerticalPos(conf.boxMargin*2);
     fixLifeLineHeights(diagram, bounds.getVerticalPos());
   }
 

@@ -223,7 +223,7 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
   rect.class = 'actor';
   rect.rx = 3;
   rect.ry = 3;
-  drawRect(g, rect);
+  const rectElem = drawRect(g, rect);
 
   _drawTextCandidateFunc(conf)(
     actor.description,
@@ -236,7 +236,10 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
     conf
   );
 
-  return 75;
+    const bounds = rectElem.node().getBBox();
+    actor.height = bounds.height;
+    console.log('Height = ',bounds.height)
+    return bounds.height;
 };
 
 const drawActorTypeActor = function (elem, actor, conf) {
@@ -318,7 +321,7 @@ const drawActorTypeActor = function (elem, actor, conf) {
     conf
   );
 
-  return 100;
+  return actor.height;
 };
 
 export const drawActor = function (elem, actor, conf) {

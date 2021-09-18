@@ -13,6 +13,7 @@
         /* background:#333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
+        width: 100%;
         }
       h1 { color: grey;}
       .mermaid2,.mermaid3 {
@@ -25,7 +26,7 @@
   </head>
   <body>
     <div>info below</div>
-    <div class="flex">
+    <div class="flex flex-wrap">
 
 <div class="mermaid2" style="width: 100%; height: 20%;">
 classDiagram
@@ -54,7 +55,8 @@ stateDiagram
 </div>
 <div class="mermaid" style="width: 100%; height: 20%;">
 sequenceDiagram
-  actor Alice as Alice2
+  %%{init: {'config': {'wrap': true }}}%%
+  actor Alice as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
   actor Bob
   participant John as John2
   participant Mandy
@@ -71,17 +73,20 @@ sequenceDiagram
 Alice->>Bob: Hi Bob
 Bob->>Alice: Hi Alice
 </div>
-    <div class="mermaid2">
-      %%{init: { 'theme':'base', '__proto__': {'polluted': 'asdf'}} }%%
-      %%{init: { 'theme':'base', '__proto__': {'polluted': 'asdf'}} }%%
-      graph LR
-          A --> B
-    </div>
-<div class="mermaid2" style="width: 100%; height: 20%;">
-flowchart TD
-  Link --> b
-  click Link href "&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A&#x61&#x6C&#x65&#x72&#x74&#x28&#x27&#x58&#x53&#x53&#x27&#x29" "Tooltip for
-Amet"
+<div class="mermaid">
+sequenceDiagram
+  %%{init: {'config': {'wrap': true }}}%%
+  actor Alice
+  actor Bob
+  Alice->>Bob: Hi Bob
+  Bob->>Alice: Hi Alice
+</div>
+<div class="mermaid" style="width: 100%; height: 20%;">
+        %%{init: {'config': {'wrap': true }}}%%
+        sequenceDiagram
+        participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        A->>Bob: Hola
+        Bob-->A: Pasten !
   </div>
 <div class="mermaid2" style="width: 100%; height: 20%;">
 stateDiagram-v2
