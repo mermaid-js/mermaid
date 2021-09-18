@@ -122,6 +122,55 @@ B-->A: I am good thanks!`;
     mermaidAPI.parse(str);
 
     const actors = parser.yy.getActors();
+
+    expect(Object.keys(actors)).toEqual(['A', 'B']);
+    expect(actors.A.description).toBe('Alice');
+    expect(actors.B.description).toBe('Bob');
+
+    const messages = parser.yy.getMessages();
+    expect(messages.length).toBe(2);
+    expect(messages[0].from).toBe('A');
+    expect(messages[1].from).toBe('B');
+  });
+  it('it should alias a mix of actors and participants apa12', function() {
+    const str = `
+sequenceDiagram
+  actor Alice as Alice2
+  actor Bob
+  participant John as John2
+  participant Mandy
+  Alice->>Bob: Hi Bob
+  Bob->>Alice: Hi Alice
+  Alice->>John: Hi John
+  John->>Mandy: Hi Mandy
+  Mandy ->>Joan: Hi Joan`;
+
+    mermaidAPI.parse(str);
+
+    const actors = parser.yy.getActors();
+    expect(Object.keys(actors)).toEqual(['Alice', 'Bob', 'John', 'Mandy', 'Joan']);
+    expect(actors.Alice.description).toBe('Alice2');
+    expect(actors.Alice.type).toBe('actor');
+    expect(actors.Bob.description).toBe('Bob');
+    expect(actors.John.type).toBe('participant');
+    expect(actors.Joan.type).toBe('participant');
+
+    const messages = parser.yy.getMessages();
+    expect(messages.length).toBe(5);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[4].to).toBe('Joan');
+  });
+  it('it should alias actors apa13', function() {
+    const str = `
+sequenceDiagram
+actor A as Alice
+actor B as Bob
+A->B:Hello Bob, how are you?
+B-->A: I am good thanks!`;
+
+    mermaidAPI.parse(str);
+
+    const actors = parser.yy.getActors();
     expect(Object.keys(actors)).toEqual(['A', 'B']);
     expect(actors.A.description).toBe('Alice');
     expect(actors.B.description).toBe('Bob');
@@ -1452,7 +1501,7 @@ participant Alice`;
       expect(bounds.startx).toBe(0);
       expect(bounds.starty).toBe(0);
       expect(bounds.stopx).toBe(conf.width);
-      expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height);
+      expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height + conf.boxMargin);
     });
   });
 });
@@ -1501,7 +1550,7 @@ participant Alice
     expect(bounds.startx).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
-    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height);
+    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin);
   });
   it('it should handle one actor, when logLevel is 3', function() {
     const str = `
@@ -1519,6 +1568,6 @@ participant Alice
     expect(bounds.startx).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
-    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height);
+    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin);
   });
 });

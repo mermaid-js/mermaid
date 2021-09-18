@@ -1,5 +1,5 @@
 import { select, selectAll } from 'd3';
-import svgDraw, { drawText } from './svgDraw';
+import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
 import { log } from '../../logger';
 import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
@@ -421,7 +421,7 @@ export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
   // Draw the actors
   let prevWidth = 0;
   let prevMargin = 0;
-
+  let maxHeight = 0;
   for (let i = 0; i < actorKeys.length; i++) {
     const actor = actors[actorKeys[i]];
 
@@ -434,7 +434,8 @@ export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
     actor.y = verticalPos;
 
     // Draw the box with the attached line
-    svgDraw.drawActor(diagram, actor, conf);
+    const height = svgDraw.drawActor(diagram, actor, conf);
+    maxHeight = Math.max(maxHeight, height);
     bounds.insert(actor.x, verticalPos, actor.x + actor.width, actor.height);
 
     prevWidth += actor.width;
@@ -443,7 +444,7 @@ export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
   }
 
   // Add a margin between the actor boxes and the first arrow
-  bounds.bumpVerticalPos(conf.height);
+  bounds.bumpVerticalPos(maxHeight);
 };
 
 export const setConf = function (cnf) {
@@ -688,6 +689,8 @@ export const draw = function (text, id) {
     // Draw actors below diagram
     bounds.bumpVerticalPos(conf.boxMargin * 2);
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
+    bounds.bumpVerticalPos(conf.boxMargin);
+    fixLifeLineHeights(diagram, bounds.getVerticalPos());
   }
 
   const { bounds: box } = bounds.getBounds();
