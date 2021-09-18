@@ -292,14 +292,14 @@ module.exports = (options) ->
 
 ## Advanced usage
 
-**Error handling**
+**Syntax validation**
 
 When the parser encounters invalid syntax the **mermaid.parseError** function is called. It is possible to override this
 function in order to handle the error in an application-specific way.
 
 **Parsing text without rendering**
 
-It is also possible to validate the syntax before rendering in order to streamline the user experience. The function
+To validate syntax before rendering in order to streamline the user experience. The function
 **mermaid.parse(txt)** takes a text string as an argument and returns true if the text is syntactically correct and
 false if it is not. The parseError function will be called when the parse function returns false.
 
