@@ -173,6 +173,18 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should be possible to use actor symbols instead of boxes', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          actor Alice
+          actor Bob
+          Alice->>Bob: Hi Bob
+          Bob->>Alice: Hi Alice
+      `,
+        {}
+      );
+    });
     it('should render long notes left of actor', () => {
       imgSnapshotTest(
         `
