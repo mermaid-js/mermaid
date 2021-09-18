@@ -19,7 +19,7 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 
 > More in depth information can be found on [Usage](./usage.md).
 
-## 1. Using [The Live Editor](https://mermaidjs.github.io/mermaid-live-editor/edit).
+## 1. Using [The Live Editor](https://mermaid-js.github.io/mermaid-live-editor/edit).
 
 ![EditingProcess](./img/Editing-process.png)
 

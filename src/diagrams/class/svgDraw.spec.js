@@ -51,7 +51,7 @@ describe('class member Renderer, ', function () {
       expect(actual.cssStyle).toBe('');
     });
 
-    it('should handle abstract classifier', function () {
+    it('should handle abstract method classifier', function () {
       const str = 'foo()*';
       let actual = svgDraw.parseMember(str);
 
@@ -59,7 +59,7 @@ describe('class member Renderer, ', function () {
       expect(actual.cssStyle).toBe('font-style:italic;');
     });
 
-    it('should handle static classifier', function () {
+    it('should handle static method classifier', function () {
       const str = 'foo()$';
       let actual = svgDraw.parseMember(str);
 
@@ -155,6 +155,14 @@ describe('class member Renderer, ', function () {
 
       expect(actual.displayText).toBe('List<int> ids');
       expect(actual.cssStyle).toBe('');
+    });
+
+    it('should handle static field classifier', function () {
+      const str = 'String foo$';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('String foo');
+      expect(actual.cssStyle).toBe('text-decoration:underline;');
     });
   });
 });

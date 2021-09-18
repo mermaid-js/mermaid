@@ -36,18 +36,53 @@ appearance by doing the following:
 
 ```
 sequenceDiagram
-    participant John
     participant Alice
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
+    participant Bob
+    Alice->>Bob: Hi Bob
+    Bob->>Alice: Hi Alice
 ```
 
 ```mermaid
+    sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice->>Bob: Hi Bob
+        Bob->>Alice: Hi Alice
+```
+
+### Actors
+
+If you specifically want to use the actor symbol instead of a rectangle with text you can do so by using actor statements as per below.
+```
 sequenceDiagram
-    participant John
-    participant Alice
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
+    actor Alice
+    actor Bob
+    Alice->>Bob: Hi Bob
+    Bob->>Alice: Hi Alice
+```
+
+```mermaid
+    sequenceDiagram
+        actor Alice
+        actor Bob
+        Alice->>Bob: Hi Bob
+        Bob->>Alice: Hi Alice
+```
+
+```
+sequenceDiagram
+    actor Alice
+    actor Bob
+    Alice->>Bob: Hi Bob
+    Bob->>Alice: Hi Alice
+```
+
+```mermaid
+    sequenceDiagram
+        actor Alice
+        actor Bob
+        Alice->>Bob: Hi Bob
+        Bob->>Alice: Hi Alice
 ```
 
 ### Aliases
