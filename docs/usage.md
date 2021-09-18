@@ -292,16 +292,15 @@ module.exports = (options) ->
 
 ## Advanced usage
 
-**Syntax validation**
+**Syntax validation (Work in Progress)**
+
+Ideally, **mermaid.parse(txt)** function validates graph definitions without rendering a graph. **(This function is still a work in progress, find alternatives below)**
+
+The function **mermaid.parse(txt)**, takes a text string as an argument and returns true if the definition follows mermaid's syntax and
+false if it does not. The parseError function will be called when the parse function returns false.
 
 When the parser encounters invalid syntax the **mermaid.parseError** function is called. It is possible to override this
 function in order to handle the error in an application-specific way.
-
-**Parsing text without rendering**
-
-To validate syntax before rendering in order to streamline the user experience. The function
-**mermaid.parse(txt)** takes a text string as an argument and returns true if the text is syntactically correct and
-false if it is not. The parseError function will be called when the parse function returns false.
 
 The code-example below in meta code illustrates how this could work:
 
@@ -320,7 +319,7 @@ var textFieldUpdated = function(){
 
 bindEventHandler('change', 'code', textFieldUpdated);
 ```
-
+### Alternative to mermaid.parse()
 
 ## Configuration
 
