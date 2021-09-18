@@ -441,6 +441,47 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
+## Actor Menus
+
+Actors can have popup-menus containing individualized links to external pages.  For example, if an actor represented a web service, useful links might include a link to the service health dashboard, repo containing the code for the service, or a wiki page describing the service.
+
+This can be configured by adding one or more link lines with the format:
+
+      link <actor>: <link-label> @ <link-url>
+
+```
+sequenceDiagram
+    participant Alice
+    participant John
+    link Alice: Dashboard @ https://dashboard.contoso.com/alice
+    link Alice: Wiki @ https://wiki.contoso.com/alice
+    link John: Dashboard @ https://dashboard.contoso.com/john
+    link John: Wiki @ https://wiki.contoso.com/john
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
+
+#### Advanced Menu Syntax
+There is an advanced syntax that relies on JSON formatting. If you are comfortable with JSON format, then this exists as well.
+
+This can be configured by adding the links lines with the format:
+
+     links <actor>: <json-formatted link-name link-url pairs>
+
+An example is below:
+
+```
+sequenceDiagram
+    participant Alice
+    participant John
+    links Alice: {"Dashboard": "https://dashboard.contoso.com/alice", "Wiki": "https://wiki.contoso.com/alice"}
+    links John: {"Dashboard": "https://dashboard.contoso.com/john", "Wiki": "https://wiki.contoso.com/john"}
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
+
 ## Styling
 
 Styling of a sequence diagram is done by defining a number of css classes. During rendering these classes are extracted from the file located at src/themes/sequence.scss

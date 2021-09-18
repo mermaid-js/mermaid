@@ -95,6 +95,17 @@ const getStyles = (options) =>
     fill: ${options.activationBkgColor};
     stroke: ${options.activationBorderColor};
   }
+
+  .actorPopupMenu {
+    position: absolute;
+  }
+
+  .actorPopupMenuPanel {
+    position: absolute;
+    fill: ${options.actorBkg};
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));
+}
   .actor-man line {
     stroke: ${options.actorBorder};
     fill: ${options.actorBkg};

@@ -947,6 +947,55 @@ end`;
     expect(messages[3].message).toBe('');
     expect(messages[4].message).toBe('I am good thanks!');
   });
+
+  it('it should handle links', function () {
+    const str = `
+sequenceDiagram
+participant a as Alice
+participant b as Bob
+participant c as Charlie
+links a: { "Repo": "https://repo.contoso.com/", "Dashboard": "https://dashboard.contoso.com/" }
+links b: { "Dashboard": "https://dashboard.contoso.com/" }
+links a: { "On-Call": "https://oncall.contoso.com/?svc=alice" }
+link a: Endpoint @ https://alice.contoso.com
+link a: Swagger @ https://swagger.contoso.com
+link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
+`;
+    console.log(str);
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+    expect(actors.a.links["Repo"]).toBe("https://repo.contoso.com/");
+    expect(actors.b.links["Repo"]).toBe(undefined);
+    expect(actors.a.links["Dashboard"]).toBe("https://dashboard.contoso.com/");
+    expect(actors.b.links["Dashboard"]).toBe("https://dashboard.contoso.com/");
+    expect(actors.a.links["On-Call"]).toBe("https://oncall.contoso.com/?svc=alice");
+    expect(actors.c.links["Dashboard"]).toBe(undefined);
+    expect(actors.a.links["Endpoint"]).toBe("https://alice.contoso.com");
+    expect(actors.a.links["Swagger"]).toBe("https://swagger.contoso.com");
+    expect(actors.a.links["Tests"]).toBe("https://tests.contoso.com/?svc=alice@contoso.com");
+  });
+
+  it('it should handle properties', function () {
+    const str = `
+sequenceDiagram
+participant a as Alice
+participant b as Bob
+participant c as Charlie
+properties a: {"class": "internal-service-actor", "icon": "@clock"}
+properties b: {"class": "external-service-actor", "icon": "@computer"}
+`;
+    console.log(str);
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+    expect(actors.a.properties["class"]).toBe("internal-service-actor");
+    expect(actors.b.properties["class"]).toBe("external-service-actor");
+    expect(actors.a.properties["icon"]).toBe("@clock");
+    expect(actors.b.properties["icon"]).toBe("@computer");
+    expect(actors.c.properties["class"]).toBe(undefined);
+  });
+
 });
 
 describe('when checking the bounds in a sequenceDiagram', function() {
