@@ -1,7 +1,7 @@
 import graphlib from 'graphlib';
 import { line, curveBasis, select } from 'd3';
 import erDb from './erDb';
-import erParser from './parser/erDiagram';
+import erParser from './parser/erDiagram.jison';
 import dagre from 'dagre';
 import { getConfig } from '../../config';
 import { log } from '../../logger';

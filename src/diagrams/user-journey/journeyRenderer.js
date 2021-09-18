@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { parser } from './parser/journey';
+import { parser } from './parser/journey.jison';
 import journeyDb from './journeyDb';
 import svgDraw from './svgDraw';
 import { getConfig } from '../../config';

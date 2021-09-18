@@ -2,7 +2,7 @@
 describe('when parsing an info graph it', function() {
   var ex;
   beforeEach(function() {
-    ex = require('./parser/info').parser;
+    ex = require('./parser/info.jison').parser;
     ex.yy = require('./infoDb');
   });
 

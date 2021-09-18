@@ -1,5 +1,5 @@
 /* eslint-env jasmine */
-import { parser } from './parser/classDiagram';
+import { parser } from './parser/classDiagram.jison';
 import classDb from './classDb';
 
 describe('class diagram, ', function() {
@@ -17,7 +17,7 @@ describe('class diagram, ', function() {
       expect(parser.yy.getClass('Class01').cssClasses[0]).toBe('exClass');
     });
 
-    it('should be possible to apply a css class to a class directly with struct', function () {
+    it('should be possible to apply a css class to a class directly with struct', function() {
       const str =
         'classDiagram\n' +
         'class Class1:::exClass {\n' +
@@ -49,7 +49,8 @@ describe('class diagram, ', function() {
     });
 
     it('should be possible to apply a cssClass to a comma separated list of classes', function() {
-      const str = 'classDiagram\n' + 'class Class01\n class Class02\n cssClass "Class01,Class02" exClass';
+      const str =
+        'classDiagram\n' + 'class Class01\n class Class02\n cssClass "Class01,Class02" exClass';
 
       parser.parse(str);
 

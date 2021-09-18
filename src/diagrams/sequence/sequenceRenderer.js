@@ -1,7 +1,7 @@
 import { select, selectAll } from 'd3';
 import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
 import { log } from '../../logger';
-import { parser } from './parser/sequenceDiagram';
+import { parser } from './parser/sequenceDiagram.jison';
 import common from '../common/common';
 import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';

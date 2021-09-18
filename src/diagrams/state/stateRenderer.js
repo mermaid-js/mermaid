@@ -4,7 +4,7 @@ import graphlib from 'graphlib';
 import { log } from '../../logger';
 import stateDb from './stateDb';
 import common from '../common/common';
-import { parser } from './parser/stateDiagram';
+import { parser } from './parser/stateDiagram.jison';
 // import idCache from './id-cache';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';

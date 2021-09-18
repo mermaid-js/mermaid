@@ -27,8 +27,7 @@
     "dev": "webpack serve --config webpack.config.e2e.js",
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
-    "prepublishOnly": "yarn build && yarn test",
-    "prepare": "yarn build"
+    "prepublishOnly": "yarn build && yarn test"
   },
   "repository": {
     "type": "git",
@@ -71,6 +70,8 @@
     "css-to-string-loader": "^0.1.3",
     "cypress": "8.1.0",
     "documentation": "13.2.0",
+    "esbuild": "^0.12.28",
+    "esbuild-loader": "^2.15.1",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
@@ -80,6 +81,7 @@
     "jison": "^0.4.18",
     "js-base64": "3.6.1",
     "moment": "^2.23.0",
+    "path-browserify": "^1.0.1",
     "prettier": "^2.3.2",
     "start-server-and-test": "^1.12.6",
     "terser-webpack-plugin": "^4.2.3",
@@ -99,5 +101,9 @@
     "hooks": {
       "pre-push": "yarn test"
     }
+  },
+  "browser": {
+    "path": "path-browserify",
+    "fs": false
   }
 }

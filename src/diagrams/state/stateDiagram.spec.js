@@ -1,5 +1,5 @@
 /* eslint-env jasmine */
-import { parser } from './parser/stateDiagram';
+import { parser } from './parser/stateDiagram.jison';
 import stateDb from './stateDb';
 
 describe('state diagram, ', function() {
@@ -349,7 +349,6 @@ describe('state diagram, ', function() {
     });
   });
   describe('when parsing an ignored info graph it', function() {
-
     xit('should handle if statements', function() {
       const str = `stateDiagram\n
       [*] --> "Order Submitted"

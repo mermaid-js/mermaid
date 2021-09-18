@@ -5,7 +5,7 @@ import graphlib from 'graphlib';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 import common from '../common/common';
-import { parser } from './parser/requirementDiagram';
+import { parser } from './parser/requirementDiagram.jison';
 import requirementDb from './requirementDb';
 import markers from './requirementMarkers';
 

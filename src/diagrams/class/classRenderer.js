@@ -3,7 +3,7 @@ import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
 import classDb, { lookUpDomId } from './classDb';
-import { parser } from './parser/classDiagram';
+import { parser } from './parser/classDiagram.jison';
 import svgDraw from './svgDraw';
 import { configureSvgSize } from '../../utils';
 

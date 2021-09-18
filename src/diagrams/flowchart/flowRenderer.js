@@ -2,7 +2,7 @@ import graphlib from 'graphlib';
 import { select, curveLinear, selectAll } from 'd3';
 
 import flowDb from './flowDb';
-import flow from './parser/flow';
+import flow from './parser/flow.jison';
 import { getConfig } from '../../config';
 
 import dagreD3 from 'dagre-d3';

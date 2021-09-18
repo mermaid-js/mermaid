@@ -3,7 +3,7 @@
  */
 import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import pieData from './pieDb';
-import pieParser from './parser/pie';
+import pieParser from './parser/pie.jison';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 import * as configApi from '../../config';

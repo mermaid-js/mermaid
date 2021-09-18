@@ -1,5 +1,5 @@
 /* eslint-env jasmine */
-import { parser } from './parser/sequenceDiagram';
+import { parser } from './parser/sequenceDiagram.jison';
 import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import renderer from './sequenceRenderer';
@@ -102,7 +102,7 @@ Bob-->Alice-in-Wonderland:I am good thanks!`;
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
-    expect(actors["Alice-in-Wonderland"].description).toBe('Alice-in-Wonderland');
+    expect(actors['Alice-in-Wonderland'].description).toBe('Alice-in-Wonderland');
     actors.Bob.description = 'Bob';
 
     const messages = parser.yy.getMessages();
@@ -521,7 +521,7 @@ note right of 1: multiline<br \t/>text
     expect(messages[6].message).toBe('multiline<br \t/>text');
     expect(messages[7].message).toBe('multiline<br \t/>text');
   });
-  it('it should handle notes and messages without wrap specified', function () {
+  it('it should handle notes and messages without wrap specified', function() {
     const str = `
 sequenceDiagram
 participant 1
@@ -559,8 +559,8 @@ note right of 1:nowrap: multiline<br/>text
     expect(messages[5].wrap).toBe(false);
     expect(messages[6].wrap).toBe(false);
     expect(messages[7].wrap).toBe(false);
-  })
-  it('it should handle notes and messages with wrap specified', function () {
+  });
+  it('it should handle notes and messages with wrap specified', function() {
     const str = `
 sequenceDiagram
 participant 1
@@ -584,8 +584,8 @@ note right of 3:wrap: multiline<br/>text
     expect(messages[1].wrap).toBe(true);
     expect(messages[2].wrap).toBe(true);
     expect(messages[3].wrap).toBe(true);
-  })
-  it('it should handle notes and messages with nowrap or line breaks', function () {
+  });
+  it('it should handle notes and messages with nowrap or line breaks', function() {
     const str = `
 sequenceDiagram
 participant 1
@@ -601,7 +601,7 @@ note right of 2: single-line text
     expect(messages[1].message).toBe('single-line text');
     expect(messages[0].wrap).toBe(false);
     expect(messages[1].wrap).toBe(false);
-  })
+  });
   it('it should handle notes over a single actor', function() {
     const str = `
 sequenceDiagram
@@ -1025,7 +1025,6 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     conf = parser.yy.getConfig();
   });
   it('it should handle a simple bound call', function() {
-
     renderer.bounds.insert(100, 100, 200, 200);
 
     const { bounds } = renderer.bounds.getBounds();
@@ -1035,7 +1034,6 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(200);
   });
   it('it should handle an expanding bound', function() {
-
     renderer.bounds.insert(100, 100, 200, 200);
     renderer.bounds.insert(25, 50, 300, 400);
 
@@ -1046,7 +1044,6 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(400);
   });
   it('it should handle inserts within the bound without changing the outer bounds', function() {
-
     renderer.bounds.insert(100, 100, 200, 200);
     renderer.bounds.insert(25, 50, 300, 400);
     renderer.bounds.insert(125, 150, 150, 200);
@@ -1058,7 +1055,6 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(400);
   });
   it('it should handle a loop without expanding the area', function() {
-
     renderer.bounds.insert(25, 50, 300, 400);
     renderer.bounds.verticalPos = 150;
     renderer.bounds.newLoop();
@@ -1080,7 +1076,6 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(400);
   });
   it('it should handle multiple loops withtout expanding the bounds', function() {
-
     renderer.bounds.insert(100, 100, 1000, 1000);
     renderer.bounds.verticalPos = 200;
     renderer.bounds.newLoop();
@@ -1112,7 +1107,6 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(1000);
   });
   it('it should handle a loop that expands the area', function() {
-
     renderer.bounds.insert(100, 100, 200, 200);
     renderer.bounds.verticalPos = 200;
     renderer.bounds.newLoop();
@@ -1182,7 +1176,7 @@ it should handle one actor, when textPlacement is ${textPlacement}`, function() 
 sequenceDiagram
 participant Alice`;
 
-      mermaidAPI.reinitialize({sequence: { textPlacement: textPlacement}});
+      mermaidAPI.reinitialize({ sequence: { textPlacement: textPlacement } });
       mermaidAPI.parse(str);
       // renderer.setConf(mermaidAPI.getConfig().sequence);
       renderer.draw(str, 'tst');
@@ -1309,7 +1303,6 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
     expect(msgs.every(v => v.wrap)).toBe(true);
-
   });
   it('it should handle two actors and two centered shared notes', function() {
     const str = `
@@ -1503,7 +1496,6 @@ end`;
     expect(bounds.stopy).toBe(models.lastLoop().stopy);
   });
 });
-
 
 describe('when rendering a sequenceDiagram with actor mirror activated', function() {
   beforeAll(() => {

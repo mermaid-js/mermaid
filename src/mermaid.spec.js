@@ -1,7 +1,7 @@
 /* eslint-env jasmine */
 import mermaid from './mermaid';
 import flowDb from './diagrams/flowchart/flowDb';
-import flowParser from './diagrams/flowchart/parser/flow';
+import flowParser from './diagrams/flowchart/parser/flow.jison';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 
 const spyOn = jest.spyOn;

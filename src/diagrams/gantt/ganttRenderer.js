@@ -7,23 +7,23 @@ import {
   interpolateHcl,
   axisBottom,
   axisTop,
-  timeFormat,
+  timeFormat
 } from 'd3';
-import { parser } from './parser/gantt';
+import { parser } from './parser/gantt.jison';
 import common from '../common/common';
 import ganttDb from './ganttDb';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 
 parser.yy = ganttDb;
-export const setConf = function () {
+export const setConf = function() {
   // const keys = Object.keys(cnf);
   // keys.forEach(function(key) {
   //   conf[key] = cnf[key];
   // });
 };
 let w;
-export const draw = function (text, id) {
+export const draw = function(text, id) {
   const conf = getConfig().gantt;
   parser.yy.clear();
   parser.parse(text);
@@ -51,12 +51,12 @@ export const draw = function (text, id) {
   // Set timescale
   const timeScale = scaleTime()
     .domain([
-      min(taskArray, function (d) {
+      min(taskArray, function(d) {
         return d.startTime;
       }),
-      max(taskArray, function (d) {
+      max(taskArray, function(d) {
         return d.endTime;
-      }),
+      })
     ])
     .rangeRound([0, w - conf.leftPadding - conf.rightPadding]);
 
@@ -123,16 +123,16 @@ export const draw = function (text, id) {
       .enter()
       .append('rect')
       .attr('x', 0)
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
         return i * theGap + theTopPad - 2;
       })
-      .attr('width', function () {
+      .attr('width', function() {
         return w - conf.rightPadding / 2;
       })
       .attr('height', theGap)
-      .attr('class', function (d) {
+      .attr('class', function(d) {
         for (let i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
             return 'section section' + (i % conf.numberSectionStyles);
@@ -142,16 +142,20 @@ export const draw = function (text, id) {
       });
 
     // Draw the rects representing the tasks
-    const rectangles = svg.append('g').selectAll('rect').data(theArray).enter();
+    const rectangles = svg
+      .append('g')
+      .selectAll('rect')
+      .data(theArray)
+      .enter();
 
     rectangles
       .append('rect')
-      .attr('id', function (d) {
+      .attr('id', function(d) {
         return d.id;
       })
       .attr('rx', 3)
       .attr('ry', 3)
-      .attr('x', function (d) {
+      .attr('x', function(d) {
         if (d.milestone) {
           return (
             timeScale(d.startTime) +
@@ -162,19 +166,19 @@ export const draw = function (text, id) {
         }
         return timeScale(d.startTime) + theSidePad;
       })
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
         return i * theGap + theTopPad;
       })
-      .attr('width', function (d) {
+      .attr('width', function(d) {
         if (d.milestone) {
           return theBarHeight;
         }
         return timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime);
       })
       .attr('height', theBarHeight)
-      .attr('transform-origin', function (d, i) {
+      .attr('transform-origin', function(d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
 
@@ -189,7 +193,7 @@ export const draw = function (text, id) {
           'px'
         );
       })
-      .attr('class', function (d) {
+      .attr('class', function(d) {
         const res = 'task';
 
         let classStr = '';
@@ -241,14 +245,14 @@ export const draw = function (text, id) {
     // Append task labels
     rectangles
       .append('text')
-      .attr('id', function (d) {
+      .attr('id', function(d) {
         return d.id + '-text';
       })
-      .text(function (d) {
+      .text(function(d) {
         return d.task;
       })
       .attr('font-size', conf.fontSize)
-      .attr('x', function (d) {
+      .attr('x', function(d) {
         let startX = timeScale(d.startTime);
         let endX = timeScale(d.renderEndTime || d.endTime);
         if (d.milestone) {
@@ -270,13 +274,13 @@ export const draw = function (text, id) {
           return (endX - startX) / 2 + startX + theSidePad;
         }
       })
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         // Ignore the incoming i value and use our order instead
         i = d.order;
         return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
       })
       .attr('text-height', theBarHeight)
-      .attr('class', function (d) {
+      .attr('class', function(d) {
         const startX = timeScale(d.startTime);
         let endX = timeScale(d.endTime);
         if (d.milestone) {
@@ -391,7 +395,7 @@ export const draw = function (text, id) {
       .selectAll('text')
       .data(numOccurances)
       .enter()
-      .append(function (d) {
+      .append(function(d) {
         const rows = d[0].split(common.lineBreakRegex);
         const dy = -(rows.length - 1) / 2;
 
@@ -409,7 +413,7 @@ export const draw = function (text, id) {
         return svgLabel;
       })
       .attr('x', 10)
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         if (i > 0) {
           for (let j = 0; j < i; j++) {
             prevGap += numOccurances[i - 1][1];
@@ -421,7 +425,7 @@ export const draw = function (text, id) {
       })
       .attr('font-size', conf.sectionFontSize)
       .attr('font-size', conf.sectionFontSize)
-      .attr('class', function (d) {
+      .attr('class', function(d) {
         for (let i = 0; i < categories.length; i++) {
           if (d[0] === categories[i]) {
             return 'sectionTitle sectionTitle' + (i % conf.numberSectionStyles);
@@ -458,7 +462,8 @@ export const draw = function (text, id) {
     const hash = {};
     const result = [];
     for (let i = 0, l = arr.length; i < l; ++i) {
-      if (!hash.hasOwnProperty(arr[i])) { // eslint-disable-line
+      if (!hash.hasOwnProperty(arr[i])) {
+        // eslint-disable-line
         // it works with objects! in FF, at least
         hash[arr[i]] = true;
         result.push(arr[i]);
@@ -485,5 +490,5 @@ export const draw = function (text, id) {
 
 export default {
   setConf,
-  draw,
+  draw
 };

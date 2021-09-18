@@ -3,7 +3,7 @@
  */
 import { select } from 'd3';
 import db from './infoDb';
-import infoParser from './parser/info';
+import infoParser from './parser/info.jison';
 import { log } from '../../logger';
 
 const conf = {};

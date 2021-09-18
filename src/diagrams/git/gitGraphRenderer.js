@@ -1,7 +1,7 @@
 import { curveBasis, line, select } from 'd3';
 
 import db from './gitGraphAst';
-import gitGraphParser from './parser/gitGraph';
+import gitGraphParser from './parser/gitGraph.jison';
 import { log } from '../../logger';
 import { interpolateToCurve } from '../../utils';
 
