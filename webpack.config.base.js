@@ -1,9 +1,10 @@
 import path from 'path';
+const { ESBuildMinifyPlugin } = require('esbuild-loader');
 
 const amdRule = {
   parser: {
-    amd: false, // https://github.com/lodash/lodash/issues/3052
-  },
+    amd: false // https://github.com/lodash/lodash/issues/3052
+  }
 };
 
 const jisonRule = {
@@ -11,25 +12,28 @@ const jisonRule = {
   use: {
     loader: path.resolve(__dirname, './jisonLoader'),
     options: {
-      'token-stack': true,
-    },
-  },
+      'token-stack': true
+    }
+  }
 };
 const jsRule = {
   test: /\.js$/,
   include: [
     path.resolve(__dirname, './src'),
-    path.resolve(__dirname, './node_modules/dagre-d3-renderer/lib'),
+    path.resolve(__dirname, './node_modules/dagre-d3-renderer/lib')
   ],
   use: {
-    loader: 'babel-loader',
-  },
+    loader: 'esbuild-loader',
+    options: {
+      target: 'es2015'
+    }
+  }
 };
 
 const scssRule = {
   // load scss to string
   test: /\.scss$/,
-  use: [{ loader: 'css-to-string-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
+  use: [{ loader: 'css-to-string-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }]
 };
 
 export const jsConfig = () => {
@@ -37,13 +41,13 @@ export const jsConfig = () => {
     mode: 'development',
     target: 'web',
     entry: {
-      mermaid: './src/mermaid.js',
+      mermaid: './src/mermaid.js'
     },
     resolve: {
-      extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
+      extensions: ['.wasm', '.mjs', '.js', '.json', '.jison']
     },
     node: {
-      fs: 'empty', // jison generated code requires 'fs'
+      fs: 'empty' // jison generated code requires 'fs'
     },
     output: {
       path: path.join(__dirname, './dist/'),
@@ -51,11 +55,18 @@ export const jsConfig = () => {
       library: 'mermaid',
       libraryTarget: 'umd',
       libraryExport: 'default',
-      globalObject: 'typeof self !== "undefined" ? self : this',
+      globalObject: 'typeof self !== "undefined" ? self : this'
     },
     module: {
-      rules: [amdRule, jsRule, scssRule, jisonRule],
+      rules: [amdRule, jsRule, scssRule, jisonRule]
     },
     devtool: 'source-map',
+    optimization: {
+      minimizer: [
+        new ESBuildMinifyPlugin({
+          target: 'es2015'
+        })
+      ]
+    }
   };
 };
