@@ -444,7 +444,7 @@ export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
   }
 
   // Add a margin between the actor boxes and the first arrow
-  bounds.bumpVerticalPos(maxHeight-conf.boxMargin);
+  bounds.bumpVerticalPos(maxHeight);
 };
 
 export const setConf = function (cnf) {
@@ -689,7 +689,7 @@ export const draw = function (text, id) {
     // Draw actors below diagram
     bounds.bumpVerticalPos(conf.boxMargin * 2);
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
-    bounds.bumpVerticalPos(conf.boxMargin*2);
+    bounds.bumpVerticalPos(conf.boxMargin);
     fixLifeLineHeights(diagram, bounds.getVerticalPos());
   }
 

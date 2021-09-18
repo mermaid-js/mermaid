@@ -75,6 +75,23 @@ Bob->>Alice: Hi Alice
 </div>
 <div class="mermaid">
 sequenceDiagram
+  autonumber
+  par Action 1
+    Alice->>John: Hello John, how are you?
+  and Action 2
+    Alice->>Bob: Hello Bob, how are you?
+  end
+  Alice->>+John: Hello John, how are you?
+  Alice->>+John: John, can you hear me?
+  John-->>-Alice: Hi Alice, I can hear you!
+  Note right of John: John is perceptive
+  John-->>-Alice: I feel great!
+      loop Every minute
+        John-->Alice: Great!
+    end
+</div>
+<div class="mermaid">
+sequenceDiagram
   %%{init: {'config': {'wrap': true }}}%%
   actor Alice
   actor Bob
