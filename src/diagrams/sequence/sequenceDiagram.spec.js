@@ -1501,7 +1501,7 @@ participant Alice`;
       expect(bounds.startx).toBe(0);
       expect(bounds.starty).toBe(0);
       expect(bounds.stopx).toBe(conf.width);
-      expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height);
+      expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height + conf.boxMargin);
     });
   });
 });
@@ -1550,7 +1550,7 @@ participant Alice
     expect(bounds.startx).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
-    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height);
+    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin);
   });
   it('it should handle one actor, when logLevel is 3', function() {
     const str = `
@@ -1568,6 +1568,6 @@ participant Alice
     expect(bounds.startx).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
-    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height);
+    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin);
   });
 });

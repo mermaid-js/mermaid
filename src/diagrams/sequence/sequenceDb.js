@@ -33,7 +33,7 @@ export const addActor = function (id, name, description, type) {
     description: description.text,
     wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
     prevActor: prevActor,
-    type: type || 'participant'
+    type: type || 'participant',
   };
   if (prevActor && actors[prevActor]) {
     actors[prevActor].nextActor = id;

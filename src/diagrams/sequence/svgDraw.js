@@ -183,12 +183,11 @@ export const drawLabel = function (elem, txtObject) {
 let actorCnt = -1;
 
 export const fixLifeLineHeights = (diagram, bounds) => {
-  console.log('fixLifeLineHeights', diagram, bounds);
+  if (!diagram.selectAll) return;
   diagram
-  .selectAll(".actor-line")
-  .attr("class", "200") //
-  .attr("y2", bounds-55) //
-
+    .selectAll('.actor-line')
+    .attr('class', '200')
+    .attr('y2', bounds - 55);
 };
 
 /**
@@ -236,27 +235,30 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
     conf
   );
 
+  let height = actor.height;
+  if (rectElem.node) {
     const bounds = rectElem.node().getBBox();
     actor.height = bounds.height;
-    console.log('Height = ',bounds.height)
-    return bounds.height;
+    height = bounds.height;
+  }
+  return height;
 };
 
 const drawActorTypeActor = function (elem, actor, conf) {
   const center = actor.x + actor.width / 2;
 
-
   if (actor.y === 0) {
     actorCnt++;
-    elem.append('line')
-    .attr('id', 'actor' + actorCnt)
-    .attr('x1', center)
-    .attr('y1', 80)
-    .attr('x2', center)
-    .attr('y2', 2000)
-    .attr('class', 'actor-line')
-    .attr('stroke-width', '0.5px')
-    .attr('stroke', '#999');
+    elem
+      .append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', 80)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999');
   }
   const actElem = elem.append('g');
   actElem.attr('class', 'actor-man');
@@ -272,43 +274,43 @@ const drawActorTypeActor = function (elem, actor, conf) {
   rect.ry = 3;
   // drawRect(actElem, rect);
 
-  actElem.append('line')
+  actElem
+    .append('line')
     .attr('id', 'actor-man-torso' + actorCnt)
     .attr('x1', center)
-    .attr('y1', actor.y+25)
+    .attr('y1', actor.y + 25)
     .attr('x2', center)
-    .attr('y2', actor.y+45);
+    .attr('y2', actor.y + 45);
 
-    actElem.append('line')
+  actElem
+    .append('line')
     .attr('id', 'actor-man-arms' + actorCnt)
-    .attr('x1', center-18)
+    .attr('x1', center - 18)
     .attr('y1', actor.y + 33)
-    .attr('x2', center+18)
+    .attr('x2', center + 18)
     .attr('y2', actor.y + 33);
-    actElem.append('line')
-    .attr('x1', center-18)
+  actElem
+    .append('line')
+    .attr('x1', center - 18)
     .attr('y1', actor.y + 60)
     .attr('x2', center)
     .attr('y2', actor.y + 45);
-    actElem.append('line')
+  actElem
+    .append('line')
     .attr('x1', center)
     .attr('y1', actor.y + 45)
-    .attr('x2', center+16)
+    .attr('x2', center + 16)
     .attr('y2', actor.y + 60);
 
-
   const circle = actElem.append('circle');
-  circle.attr('cx', actor.x + actor.width/2);
-  circle.attr('cy', actor.y+10);
+  circle.attr('cx', actor.x + actor.width / 2);
+  circle.attr('cy', actor.y + 10);
   circle.attr('r', 15);
   circle.attr('width', actor.width);
   circle.attr('height', actor.height);
-  // circle.attr('rx', rectData.rx);
-  // circle.attr('ry', rectData.ry);
 
   const bounds = actElem.node().getBBox();
   actor.height = bounds.height;
-
 
   _drawTextCandidateFunc(conf)(
     actor.description,
@@ -325,7 +327,7 @@ const drawActorTypeActor = function (elem, actor, conf) {
 };
 
 export const drawActor = function (elem, actor, conf) {
-  switch(actor.type) {
+  switch (actor.type) {
     case 'actor':
       return drawActorTypeActor(elem, actor, conf);
     case 'participant':
