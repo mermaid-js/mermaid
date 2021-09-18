@@ -294,7 +294,7 @@ module.exports = (options) ->
 
 **Syntax validation without rendering (Work in Progress)**
 
-The **mermaid.parse(txt)** function validates graph definitions without rendering a graph. **[This function is still a work in progress](https://github.com/mermaid-js/mermaid/issues/1066), find alternatives below**
+The **mermaid.parse(txt)** function validates graph definitions without rendering a graph. **[This function is still a work in progress](https://github.com/mermaid-js/mermaid/issues/1066), find alternatives below.**
 
 The function **mermaid.parse(txt)**, takes a text string as an argument and returns true if the definition follows mermaid's syntax and
 false if it does not. The parseError function will be called when the parse function returns false.
@@ -319,7 +319,7 @@ var textFieldUpdated = function(){
 
 bindEventHandler('change', 'code', textFieldUpdated);
 ```
-**Alternative to mermaid.parse()**
+**Alternative to mermaid.parse():**
 One effective and more future-proof method of validating your graph deinitions, is to paste and render them via the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/). This will ensure that your code is compliant with the syntax of Mermaid's most recent version. 
 
 
@@ -396,9 +396,7 @@ This way of setting the configuration is deprecated. Instead the preferred way i
 
 ## Using the mermaid.init call
 
-#
-Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
-approach are:
+To set some configuration via the mermaid object. The two parameters that are supported using this approach are:
 
 * mermaid_config.startOnLoad
 * mermaid_config.htmlLabels
