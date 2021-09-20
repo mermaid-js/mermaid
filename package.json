@@ -85,7 +85,7 @@
     "terser-webpack-plugin": "^4.2.3",
     "webpack": "^4.41.2",
     "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^3.4.1",
+    "webpack-dev-server": "^4.2.1",
     "webpack-node-externals": "^3.0.0"
   },
   "files": [
