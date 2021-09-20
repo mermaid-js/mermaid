@@ -51,9 +51,12 @@ module.exports = {
     libraryExport: 'default',
   },
   devServer: {
-    contentBase: [path.join(__dirname, 'cypress', 'platform'), path.join(__dirname, 'dist')],
     compress: true,
     port: 9000,
+    static: [
+      { directory: path.join(__dirname, 'cypress', 'platform') },
+      { directory: path.join(__dirname, 'dist') },
+    ],
   },
   module: {
     rules: [amdRule, jsRule, scssRule, jisonRule],
