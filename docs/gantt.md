@@ -61,6 +61,7 @@ gantt
     Future task in critical line        :crit, 5d
     Create tests for renderer           :2d
     Add to mermaid                      :1d
+    functionality added                 :milestone
 
     section Documentation
     Describe gantt syntax               :active, a1, after des1, 3d
@@ -128,6 +129,11 @@ The `title` is an *optional* string to be displayed at the top of the Gantt char
 You can divide the chart into various sections, for example to separate different parts of a project like development and documentation.
 
 To do so, start a line with the `section` keyword and give it a name. (Note that unlike with the [title for the entire chart](#title), this name is *required*.
+
+
+### Milestones
+
+You can add milestones to the diagrams. Milestones differ from tasks as they represent a signle instant in time and are identifiedd by the keyword `milestone`
 
 
 ## Setting dates
