@@ -343,6 +343,16 @@ Default value: 'center'
 **Notes:**
 Default value: true
 
+### forceMenus
+
+| Parameter  | Description                                                             | Type    | Required | Values      |
+| ---------- | ----------------------------------------------------------------------- | ------- | -------- | ----------- |
+| forceMenus | forces actor popup menus to always be visible (to support E2E testing). | Boolean | Required | True, False |
+
+**Notes:**
+
+Default value: false.
+
 ### bottomMarginAdj
 
 | Parameter       | Description                                | Type    | Required | Values             |
