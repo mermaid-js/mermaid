@@ -375,7 +375,7 @@ describe('Class diagram V2', () => {
     imgSnapshotTest(
       `
     classDiagram-v2
-      Foo {
+      class Foo {
         +String bar$
       }
             `,
