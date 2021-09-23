@@ -38,7 +38,7 @@ const getStyles = (options) =>
 
   .edgePath .path {
     stroke: ${options.lineColor};
-    stroke-width: 1.5px;
+    stroke-width: 2.0px;
   }
 
   .flowchart-link {

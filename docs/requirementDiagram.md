@@ -63,6 +63,7 @@ A requirement definition contains a requirement type, name, id, text, risk, and 
 Type, risk, and method are enumerations defined in SysML.
 
 | Keyword | Options |
+|---|---|
 | Type | requirement, functionalRequirement, interfaceRequirement, performanceRequirement, physicalRequirement, designConstraint |
 | Risk | Low, Medium, High |
 | VerifcationMethod | Analysis, Inspection, Test, Demonstration |

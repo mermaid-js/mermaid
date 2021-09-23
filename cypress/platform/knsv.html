@@ -10,7 +10,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background:#333; */
+        background:#333;
         font-family: 'Arial';
         /* font-size: 18px !important; */
         }
@@ -27,17 +27,22 @@
     <div>info below</div>
     <div class="flex">
 
-<div class="mermaid3" style="width: 100%; height: 20%;">
-stateDiagram-v2
-  state S1 {
-    sub1 -->sub2
+<div class="mermaid2" style="width: 100%; height: 20%;">
+classDiagram
+  direction TB
+  class Student {
+    -idCard : IdCard
   }
-
-  state S2 {
-    sub4
+  class IdCard{
+    -id : int
+    -name : string
   }
-  S1 --> S2
-  sub1 --> sub4
+  class Bike{
+    -id : int
+    -name : string
+  }
+  Student "1" --o "1" IdCard : carries
+  Student "1" --o "1" Bike : rides
 
 </div>
 <div class="mermaid3" style="width: 100%; height: 20%;">
@@ -47,16 +52,13 @@ stateDiagram
     }
 
 </div>
-<div class="mermaid3" style="width: 100%; height: 20%;">
-flowchart
-subgraph CompositeState
-  subgraph AnotherCompositeStateCompositeStateCompositeStateCompositeState
-      YourState --a label--> MyState
-  end
-
-end
-</div>
 <div class="mermaid" style="width: 100%; height: 20%;">
+flowchart LR
+  one --> two
+  three -.-> four[whoa, big arrowhead nine o'clock]
+
+</div>
+<div class="mermaid2" style="width: 100%; height: 20%;">
 %%{init: { "apa":"b", "theme":"forest"}}%%
 sequenceDiagram
 Alice->>Bob: Hi Bob
@@ -110,12 +112,12 @@ YourState
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'base',
+        theme: 'dark',
+        // theme: 'forest',
         arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 2,
-        flowchart: { nodeSpacing: 10, curve: 'cardinal', htmlLabels: true },
-        htmlLabels: true,
+        flowchart: { nodeSpacing: 10, curve: 'cardinal', htmlLabels: false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorFontFamily: 'courier',actorMargin: 50, showSequenceNumbers: false },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
