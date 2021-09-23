@@ -656,7 +656,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.13.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.1\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.13.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.3\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.4.1\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^4.0.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.7.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^4.2.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -4257,6 +4257,17 @@ var config = {
      * Default value: true
      */
     mirrorActors: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| forceMenus | forces actor popup menus to always be visible (to support E2E testing). | Boolean| Required | True, False |
+     *
+     * **Notes:**
+     *
+     * Default value: false.
+     */
+    forceMenus: false,
 
     /**
      * | Parameter | Description | Type | Required | Values |
@@ -18529,12 +18540,12 @@ var getStyles = function getStyles(options) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,19],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,25],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,29],$Vh=[1,30],$Vi=[1,33],$Vj=[1,34],$Vk=[1,37],$Vl=[1,4,5,16,20,22,23,24,26,28,29,30,31,32,34,36,37,38,49,59],$Vm=[1,46],$Vn=[4,5,16,20,22,23,24,26,28,29,30,31,32,34,38,49,59],$Vo=[4,5,16,20,22,23,24,26,28,29,30,31,32,34,37,38,49,59],$Vp=[4,5,16,20,22,23,24,26,28,29,30,31,32,34,36,38,49,59],$Vq=[47,48,49],$Vr=[1,4,5,7,16,20,22,23,24,26,28,29,30,31,32,34,36,37,38,49,59];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,19],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,29],$Vd=[1,30],$Ve=[1,31],$Vf=[1,32],$Vg=[1,33],$Vh=[1,34],$Vi=[1,37],$Vj=[1,38],$Vk=[1,39],$Vl=[1,40],$Vm=[1,41],$Vn=[1,42],$Vo=[1,45],$Vp=[1,4,5,16,20,22,23,24,30,32,33,34,35,36,38,40,41,42,46,47,48,49,57,67],$Vq=[1,58],$Vr=[4,5,16,20,22,23,24,30,32,33,34,35,36,38,42,46,47,48,49,57,67],$Vs=[4,5,16,20,22,23,24,30,32,33,34,35,36,38,41,42,46,47,48,49,57,67],$Vt=[4,5,16,20,22,23,24,30,32,33,34,35,36,38,40,42,46,47,48,49,57,67],$Vu=[55,56,57],$Vv=[1,4,5,7,16,20,22,23,24,30,32,33,34,35,36,38,40,41,42,46,47,48,49,57,67];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"participant_actor":20,"signal":21,"autonumber":22,"activate":23,"deactivate":24,"note_statement":25,"title":26,"text2":27,"loop":28,"end":29,"rect":30,"opt":31,"alt":32,"else_sections":33,"par":34,"par_sections":35,"and":36,"else":37,"note":38,"placement":39,"over":40,"actor_pair":41,"spaceList":42,",":43,"left_of":44,"right_of":45,"signaltype":46,"+":47,"-":48,"ACTOR":49,"SOLID_OPEN_ARROW":50,"DOTTED_OPEN_ARROW":51,"SOLID_ARROW":52,"DOTTED_ARROW":53,"SOLID_CROSS":54,"DOTTED_CROSS":55,"SOLID_POINT":56,"DOTTED_POINT":57,"TXT":58,"open_directive":59,"type_directive":60,"arg_directive":61,"close_directive":62,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",20:"participant_actor",22:"autonumber",23:"activate",24:"deactivate",26:"title",28:"loop",29:"end",30:"rect",31:"opt",32:"alt",34:"par",36:"and",37:"else",38:"note",40:"over",43:",",44:"left_of",45:"right_of",47:"+",48:"-",49:"ACTOR",50:"SOLID_OPEN_ARROW",51:"DOTTED_OPEN_ARROW",52:"SOLID_ARROW",53:"DOTTED_ARROW",54:"SOLID_CROSS",55:"DOTTED_CROSS",56:"SOLID_POINT",57:"DOTTED_POINT",58:"TXT",59:"open_directive",60:"type_directive",61:"arg_directive",62:"close_directive"},
-productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,5],[10,3],[10,2],[10,1],[10,3],[10,3],[10,2],[10,3],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[35,1],[35,4],[33,1],[33,4],[25,4],[25,4],[42,2],[42,1],[41,3],[41,1],[39,1],[39,1],[21,5],[21,5],[21,4],[17,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[27,1],[11,1],[12,1],[15,1],[13,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"participant_actor":20,"signal":21,"autonumber":22,"activate":23,"deactivate":24,"note_statement":25,"links_statement":26,"link_statement":27,"properties_statement":28,"details_statement":29,"title":30,"text2":31,"loop":32,"end":33,"rect":34,"opt":35,"alt":36,"else_sections":37,"par":38,"par_sections":39,"and":40,"else":41,"note":42,"placement":43,"over":44,"actor_pair":45,"links":46,"link":47,"properties":48,"details":49,"spaceList":50,",":51,"left_of":52,"right_of":53,"signaltype":54,"+":55,"-":56,"ACTOR":57,"SOLID_OPEN_ARROW":58,"DOTTED_OPEN_ARROW":59,"SOLID_ARROW":60,"DOTTED_ARROW":61,"SOLID_CROSS":62,"DOTTED_CROSS":63,"SOLID_POINT":64,"DOTTED_POINT":65,"TXT":66,"open_directive":67,"type_directive":68,"arg_directive":69,"close_directive":70,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",20:"participant_actor",22:"autonumber",23:"activate",24:"deactivate",30:"title",32:"loop",33:"end",34:"rect",35:"opt",36:"alt",38:"par",40:"and",41:"else",42:"note",44:"over",46:"links",47:"link",48:"properties",49:"details",51:",",52:"left_of",53:"right_of",55:"+",56:"-",57:"ACTOR",58:"SOLID_OPEN_ARROW",59:"DOTTED_OPEN_ARROW",60:"SOLID_ARROW",61:"DOTTED_ARROW",62:"SOLID_CROSS",63:"DOTTED_CROSS",64:"SOLID_POINT",65:"DOTTED_POINT",66:"TXT",67:"open_directive",68:"type_directive",69:"arg_directive",70:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,5],[10,3],[10,2],[10,1],[10,3],[10,3],[10,2],[10,2],[10,2],[10,2],[10,2],[10,3],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[39,1],[39,4],[37,1],[37,4],[25,4],[25,4],[26,3],[27,3],[28,3],[29,3],[50,2],[50,1],[45,3],[45,1],[43,1],[43,1],[21,5],[21,5],[21,4],[17,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[31,1],[11,1],[12,1],[15,1],[13,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -18576,28 +18587,28 @@ break;
 case 19:
 this.$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-1]};
 break;
-case 21:
+case 25:
 this.$=[{type:'setTitle', text:$$[$0-1]}]
 break;
-case 22:
+case 26:
 
 		$$[$0-1].unshift({type: 'loopStart', loopText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.LOOP_START});
 		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
 		this.$=$$[$0-1];
 break;
-case 23:
+case 27:
 
 		$$[$0-1].unshift({type: 'rectStart', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_START });
 		$$[$0-1].push({type: 'rectEnd', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_END });
 		this.$=$$[$0-1];
 break;
-case 24:
+case 28:
 
 		$$[$0-1].unshift({type: 'optStart', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_START});
 		$$[$0-1].push({type: 'optEnd', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_END});
 		this.$=$$[$0-1];
 break;
-case 25:
+case 29:
 
 		// Alt start
 		$$[$0-1].unshift({type: 'altStart', altText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.ALT_START});
@@ -18606,7 +18617,7 @@ case 25:
 		$$[$0-1].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
 		this.$=$$[$0-1];
 break;
-case 26:
+case 30:
 
 		// Parallel start
 		$$[$0-1].unshift({type: 'parStart', parText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.PAR_START});
@@ -18615,17 +18626,17 @@ case 26:
 		$$[$0-1].push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		this.$=$$[$0-1];
 break;
-case 29:
+case 33:
  this.$ = $$[$0-3].concat([{type: 'and', parText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
 break;
-case 31:
+case 35:
  this.$ = $$[$0-3].concat([{type: 'else', altText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
 break;
-case 32:
+case 36:
 
 		this.$ = [$$[$0-1], {type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
-case 33:
+case 37:
 
 		// Coerce actor_pair into a [to, from, ...] array
 		$$[$0-2] = [].concat($$[$0-1], $$[$0-1]).slice(0, 2);
@@ -18633,77 +18644,97 @@ case 33:
 		$$[$0-2][1] = $$[$0-2][1].actor;
 		this.$ = [$$[$0-1], {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$$[$0-2].slice(0, 2), text:$$[$0]}];
 break;
-case 36:
- this.$ = [$$[$0-2], $$[$0]]; 
-break;
-case 37:
- this.$ = $$[$0]; 
-break;
 case 38:
- this.$ = yy.PLACEMENT.LEFTOF; 
+
+		this.$ = [$$[$0-1], {type:'addLinks', actor:$$[$0-1].actor, text:$$[$0]}];
+  
 break;
 case 39:
- this.$ = yy.PLACEMENT.RIGHTOF; 
+
+		this.$ = [$$[$0-1], {type:'addALink', actor:$$[$0-1].actor, text:$$[$0]}];
+  
 break;
 case 40:
+
+		this.$ = [$$[$0-1], {type:'addProperties', actor:$$[$0-1].actor, text:$$[$0]}];
+  
+break;
+case 41:
+
+		this.$ = [$$[$0-1], {type:'addDetails', actor:$$[$0-1].actor, text:$$[$0]}];
+  
+break;
+case 44:
+ this.$ = [$$[$0-2], $$[$0]]; 
+break;
+case 45:
+ this.$ = $$[$0]; 
+break;
+case 46:
+ this.$ = yy.PLACEMENT.LEFTOF; 
+break;
+case 47:
+ this.$ = yy.PLACEMENT.RIGHTOF; 
+break;
+case 48:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]}
 	             ]
 break;
-case 41:
+case 49:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-4]}
 	             ]
 break;
-case 42:
+case 50:
  this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
-case 43:
+case 51:
 this.$={ type: 'addParticipant', actor:$$[$0]}
 break;
-case 44:
+case 52:
  this.$ = yy.LINETYPE.SOLID_OPEN; 
 break;
-case 45:
+case 53:
  this.$ = yy.LINETYPE.DOTTED_OPEN; 
 break;
-case 46:
+case 54:
  this.$ = yy.LINETYPE.SOLID; 
 break;
-case 47:
+case 55:
  this.$ = yy.LINETYPE.DOTTED; 
 break;
-case 48:
+case 56:
  this.$ = yy.LINETYPE.SOLID_CROSS; 
 break;
-case 49:
+case 57:
  this.$ = yy.LINETYPE.DOTTED_CROSS; 
 break;
-case 50:
+case 58:
  this.$ = yy.LINETYPE.SOLID_POINT; 
 break;
-case 51:
+case 59:
  this.$ = yy.LINETYPE.DOTTED_POINT; 
 break;
-case 52:
+case 60:
 this.$ = yy.parseMessage($$[$0].trim().substring(1)) 
 break;
-case 53:
+case 61:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 54:
+case 62:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 55:
+case 63:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 56:
+case 64:
  yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:6,59:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:6,59:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:6,59:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,11:6,59:$V3},o([1,4,5,16,20,22,23,24,26,28,30,31,32,34,38,49,59],$V4,{8:11}),{12:12,60:[1,13]},{60:[2,53]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},{13:35,14:[1,36],62:$Vk},o([14,62],[2,54]),o($Vl,[2,6]),{6:31,10:38,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},o($Vl,[2,8]),o($Vl,[2,9]),{17:39,49:$Vj},{17:40,49:$Vj},{5:[1,41]},o($Vl,[2,17]),{17:42,49:$Vj},{17:43,49:$Vj},{5:[1,44]},{27:45,58:$Vm},{19:[1,47]},{19:[1,48]},{19:[1,49]},{19:[1,50]},{19:[1,51]},o($Vl,[2,27]),{46:52,50:[1,53],51:[1,54],52:[1,55],53:[1,56],54:[1,57],55:[1,58],56:[1,59],57:[1,60]},{39:61,40:[1,62],44:[1,63],45:[1,64]},o([5,18,43,50,51,52,53,54,55,56,57,58],[2,43]),{5:[1,65]},{15:66,61:[1,67]},{5:[2,56]},o($Vl,[2,7]),{5:[1,69],18:[1,68]},{5:[1,71],18:[1,70]},o($Vl,[2,16]),{5:[1,72]},{5:[1,73]},o($Vl,[2,20]),{5:[1,74]},{5:[2,52]},o($Vn,$V4,{8:75}),o($Vn,$V4,{8:76}),o($Vn,$V4,{8:77}),o($Vo,$V4,{33:78,8:79}),o($Vp,$V4,{35:80,8:81}),{17:84,47:[1,82],48:[1,83],49:$Vj},o($Vq,[2,44]),o($Vq,[2,45]),o($Vq,[2,46]),o($Vq,[2,47]),o($Vq,[2,48]),o($Vq,[2,49]),o($Vq,[2,50]),o($Vq,[2,51]),{17:85,49:$Vj},{17:87,41:86,49:$Vj},{49:[2,38]},{49:[2,39]},o($Vr,[2,10]),{13:88,62:$Vk},{62:[2,55]},{19:[1,89]},o($Vl,[2,13]),{19:[1,90]},o($Vl,[2,15]),o($Vl,[2,18]),o($Vl,[2,19]),o($Vl,[2,21]),{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[1,91],30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[1,92],30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[1,93],30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},{29:[1,94]},{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[2,30],30:$Ve,31:$Vf,32:$Vg,34:$Vh,37:[1,95],38:$Vi,49:$Vj,59:$V3},{29:[1,96]},{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[2,28],30:$Ve,31:$Vf,32:$Vg,34:$Vh,36:[1,97],38:$Vi,49:$Vj,59:$V3},{17:98,49:$Vj},{17:99,49:$Vj},{27:100,58:$Vm},{27:101,58:$Vm},{27:102,58:$Vm},{43:[1,103],58:[2,37]},{5:[1,104]},{5:[1,105]},{5:[1,106]},o($Vl,[2,22]),o($Vl,[2,23]),o($Vl,[2,24]),o($Vl,[2,25]),{19:[1,107]},o($Vl,[2,26]),{19:[1,108]},{27:109,58:$Vm},{27:110,58:$Vm},{5:[2,42]},{5:[2,32]},{5:[2,33]},{17:111,49:$Vj},o($Vr,[2,11]),o($Vl,[2,12]),o($Vl,[2,14]),o($Vo,$V4,{8:79,33:112}),o($Vp,$V4,{8:81,35:113}),{5:[2,40]},{5:[2,41]},{58:[2,36]},{29:[2,31]},{29:[2,29]}],
-defaultActions: {7:[2,53],8:[2,1],9:[2,2],10:[2,3],37:[2,56],46:[2,52],63:[2,38],64:[2,39],67:[2,55],100:[2,42],101:[2,32],102:[2,33],109:[2,40],110:[2,41],111:[2,36],112:[2,31],113:[2,29]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:6,67:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:6,67:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:6,67:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,11:6,67:$V3},o([1,4,5,16,20,22,23,24,30,32,34,35,36,38,42,46,47,48,49,57,67],$V4,{8:11}),{12:12,68:[1,13]},{68:[2,61]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{13:43,14:[1,44],70:$Vo},o([14,70],[2,62]),o($Vp,[2,6]),{6:35,10:46,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},o($Vp,[2,8]),o($Vp,[2,9]),{17:47,57:$Vn},{17:48,57:$Vn},{5:[1,49]},o($Vp,[2,17]),{17:50,57:$Vn},{17:51,57:$Vn},{5:[1,52]},{5:[1,53]},{5:[1,54]},{5:[1,55]},{5:[1,56]},{31:57,66:$Vq},{19:[1,59]},{19:[1,60]},{19:[1,61]},{19:[1,62]},{19:[1,63]},o($Vp,[2,31]),{54:64,58:[1,65],59:[1,66],60:[1,67],61:[1,68],62:[1,69],63:[1,70],64:[1,71],65:[1,72]},{43:73,44:[1,74],52:[1,75],53:[1,76]},{17:77,57:$Vn},{17:78,57:$Vn},{17:79,57:$Vn},{17:80,57:$Vn},o([5,18,51,58,59,60,61,62,63,64,65,66],[2,51]),{5:[1,81]},{15:82,69:[1,83]},{5:[2,64]},o($Vp,[2,7]),{5:[1,85],18:[1,84]},{5:[1,87],18:[1,86]},o($Vp,[2,16]),{5:[1,88]},{5:[1,89]},o($Vp,[2,20]),o($Vp,[2,21]),o($Vp,[2,22]),o($Vp,[2,23]),o($Vp,[2,24]),{5:[1,90]},{5:[2,60]},o($Vr,$V4,{8:91}),o($Vr,$V4,{8:92}),o($Vr,$V4,{8:93}),o($Vs,$V4,{37:94,8:95}),o($Vt,$V4,{39:96,8:97}),{17:100,55:[1,98],56:[1,99],57:$Vn},o($Vu,[2,52]),o($Vu,[2,53]),o($Vu,[2,54]),o($Vu,[2,55]),o($Vu,[2,56]),o($Vu,[2,57]),o($Vu,[2,58]),o($Vu,[2,59]),{17:101,57:$Vn},{17:103,45:102,57:$Vn},{57:[2,46]},{57:[2,47]},{31:104,66:$Vq},{31:105,66:$Vq},{31:106,66:$Vq},{31:107,66:$Vq},o($Vv,[2,10]),{13:108,70:$Vo},{70:[2,63]},{19:[1,109]},o($Vp,[2,13]),{19:[1,110]},o($Vp,[2,15]),o($Vp,[2,18]),o($Vp,[2,19]),o($Vp,[2,25]),{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[1,111],34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[1,112],34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[1,113],34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{33:[1,114]},{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[2,34],34:$Ve,35:$Vf,36:$Vg,38:$Vh,41:[1,115],42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{33:[1,116]},{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[2,32],34:$Ve,35:$Vf,36:$Vg,38:$Vh,40:[1,117],42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{17:118,57:$Vn},{17:119,57:$Vn},{31:120,66:$Vq},{31:121,66:$Vq},{31:122,66:$Vq},{51:[1,123],66:[2,45]},{5:[2,38]},{5:[2,39]},{5:[2,40]},{5:[2,41]},{5:[1,124]},{5:[1,125]},{5:[1,126]},o($Vp,[2,26]),o($Vp,[2,27]),o($Vp,[2,28]),o($Vp,[2,29]),{19:[1,127]},o($Vp,[2,30]),{19:[1,128]},{31:129,66:$Vq},{31:130,66:$Vq},{5:[2,50]},{5:[2,36]},{5:[2,37]},{17:131,57:$Vn},o($Vv,[2,11]),o($Vp,[2,12]),o($Vp,[2,14]),o($Vs,$V4,{8:95,37:132}),o($Vt,$V4,{8:97,39:133}),{5:[2,48]},{5:[2,49]},{66:[2,44]},{33:[2,35]},{33:[2,33]}],
+defaultActions: {7:[2,61],8:[2,1],9:[2,2],10:[2,3],45:[2,64],58:[2,60],75:[2,46],76:[2,47],83:[2,63],104:[2,38],105:[2,39],106:[2,40],107:[2,41],120:[2,50],121:[2,36],122:[2,37],129:[2,48],130:[2,49],131:[2,44],132:[2,35],133:[2,33]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -19182,15 +19213,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 59; 
+case 0: this.begin('open_directive'); return 67; 
 break;
-case 1: this.begin('type_directive'); return 60; 
+case 1: this.begin('type_directive'); return 68; 
 break;
 case 2: this.popState(); this.begin('arg_directive'); return 14; 
 break;
-case 3: this.popState(); this.popState(); return 62; 
+case 3: this.popState(); this.popState(); return 70; 
 break;
-case 4:return 61;
+case 4:return 69;
 break;
 case 5:return 5;
 break;
@@ -19208,84 +19239,92 @@ case 11: this.begin('ID'); return 16;
 break;
 case 12: this.begin('ID'); return 20; 
 break;
-case 13: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 49; 
+case 13: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 57; 
 break;
 case 14: this.popState(); this.popState(); this.begin('LINE'); return 18; 
 break;
 case 15: this.popState(); this.popState(); return 5; 
 break;
-case 16: this.begin('LINE'); return 28; 
+case 16: this.begin('LINE'); return 32; 
 break;
-case 17: this.begin('LINE'); return 30; 
+case 17: this.begin('LINE'); return 34; 
 break;
-case 18: this.begin('LINE'); return 31; 
+case 18: this.begin('LINE'); return 35; 
 break;
-case 19: this.begin('LINE'); return 32; 
+case 19: this.begin('LINE'); return 36; 
 break;
-case 20: this.begin('LINE'); return 37; 
+case 20: this.begin('LINE'); return 41; 
 break;
-case 21: this.begin('LINE'); return 34; 
+case 21: this.begin('LINE'); return 38; 
 break;
-case 22: this.begin('LINE'); return 36; 
+case 22: this.begin('LINE'); return 40; 
 break;
 case 23: this.popState(); return 19; 
 break;
-case 24:return 29;
+case 24:return 33;
 break;
-case 25:return 44;
+case 25:return 52;
 break;
-case 26:return 45;
+case 26:return 53;
 break;
-case 27:return 40;
+case 27:return 46;
 break;
-case 28:return 38;
+case 28:return 47;
 break;
-case 29: this.begin('ID'); return 23; 
+case 29:return 48;
 break;
-case 30: this.begin('ID'); return 24; 
+case 30:return 49;
 break;
-case 31:return 26;
+case 31:return 44;
 break;
-case 32:return 7;
+case 32:return 42;
 break;
-case 33:return 22;
+case 33: this.begin('ID'); return 23; 
 break;
-case 34:return 43;
+case 34: this.begin('ID'); return 24; 
 break;
-case 35:return 5;
+case 35:return 30;
 break;
-case 36: yy_.yytext = yy_.yytext.trim(); return 49; 
+case 36:return 7;
 break;
-case 37:return 52;
+case 37:return 22;
 break;
-case 38:return 53;
+case 38:return 51;
 break;
-case 39:return 50;
+case 39:return 5;
 break;
-case 40:return 51;
+case 40: yy_.yytext = yy_.yytext.trim(); return 57; 
 break;
-case 41:return 54;
+case 41:return 60;
 break;
-case 42:return 55;
+case 42:return 61;
 break;
-case 43:return 56;
+case 43:return 58;
 break;
-case 44:return 57;
+case 44:return 59;
 break;
-case 45:return 58;
+case 45:return 62;
 break;
-case 46:return 47;
+case 46:return 63;
 break;
-case 47:return 48;
+case 47:return 64;
 break;
-case 48:return 5;
+case 48:return 65;
 break;
-case 49:return 'INVALID';
+case 49:return 66;
+break;
+case 50:return 55;
+break;
+case 51:return 56;
+break;
+case 52:return 5;
+break;
+case 53:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:actor\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x|-\)|--\)))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?:-[\)])/i,/^(?:--[\)])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,13],"inclusive":false},"ALIAS":{"rules":[7,8,14,15],"inclusive":false},"LINE":{"rules":[7,8,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,12,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:actor\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:links\b)/i,/^(?:link\b)/i,/^(?:properties\b)/i,/^(?:details\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x|-\)|--\)))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?:-[\)])/i,/^(?:--[\)])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,13],"inclusive":false},"ALIAS":{"rules":[7,8,14,15],"inclusive":false},"LINE":{"rules":[7,8,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,12,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53],"inclusive":true}}
 });
 return lexer;
 })();
@@ -19322,7 +19361,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 /*!*********************************************!*\
   !*** ./src/diagrams/sequence/sequenceDb.js ***!
   \*********************************************/
-/*! exports provided: parseDirective, addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, getTitleWrapped, enableSequenceNumbers, showSequenceNumbers, setWrap, autoWrap, clear, parseMessage, LINETYPE, ARROWTYPE, PLACEMENT, addNote, setTitle, apply, default */
+/*! exports provided: parseDirective, addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, getTitleWrapped, enableSequenceNumbers, showSequenceNumbers, setWrap, autoWrap, clear, parseMessage, LINETYPE, ARROWTYPE, PLACEMENT, addNote, addLinks, addALink, addProperties, addDetails, getActorProperty, setTitle, apply, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19347,6 +19386,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ARROWTYPE", function() { return ARROWTYPE; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PLACEMENT", function() { return PLACEMENT; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addNote", function() { return addNote; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addLinks", function() { return addLinks; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addALink", function() { return addALink; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addProperties", function() { return addProperties; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addDetails", function() { return addDetails; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getActorProperty", function() { return getActorProperty; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setTitle", function() { return setTitle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "apply", function() { return apply; });
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
@@ -19392,6 +19436,10 @@ var addActor = function addActor(id, name, description, type) {
     description: description.text,
     wrap: description.wrap === undefined && autoWrap() || !!description.wrap,
     prevActor: prevActor,
+    links: {},
+    properties: {},
+    actorCnt: null,
+    rectData: null,
     type: type || 'participant'
   };
 
@@ -19567,6 +19615,95 @@ var addNote = function addNote(actor, placement, message) {
     placement: placement
   });
 };
+var addLinks = function addLinks(actorId, text) {
+  // find the actor
+  var actor = getActor(actorId); // JSON.parse the text
+
+  try {
+    var links = JSON.parse(text.text); // add the deserialized text to the actor's links field.
+
+    insertLinks(actor, links);
+  } catch (e) {
+    _logger__WEBPACK_IMPORTED_MODULE_2__["log"].error('error while parsing actor link text', e);
+  }
+};
+var addALink = function addALink(actorId, text) {
+  // find the actor
+  var actor = getActor(actorId);
+
+  try {
+    var links = {};
+    var sep = text.text.indexOf('@');
+    var label = text.text.slice(0, sep - 1).trim();
+    var link = text.text.slice(sep + 1).trim();
+    links[label] = link; // add the deserialized text to the actor's links field.
+
+    insertLinks(actor, links);
+  } catch (e) {
+    _logger__WEBPACK_IMPORTED_MODULE_2__["log"].error('error while parsing actor link text', e);
+  }
+};
+
+function insertLinks(actor, links) {
+  if (actor.links == null) {
+    actor.links = links;
+  } else {
+    for (var key in links) {
+      actor.links[key] = links[key];
+    }
+  }
+}
+
+var addProperties = function addProperties(actorId, text) {
+  // find the actor
+  var actor = getActor(actorId); // JSON.parse the text
+
+  try {
+    var properties = JSON.parse(text.text); // add the deserialized text to the actor's property field.
+
+    insertProperties(actor, properties);
+  } catch (e) {
+    _logger__WEBPACK_IMPORTED_MODULE_2__["log"].error('error while parsing actor properties text', e);
+  }
+};
+
+function insertProperties(actor, properties) {
+  if (actor.properties == null) {
+    actor.properties = properties;
+  } else {
+    for (var key in properties) {
+      actor.properties[key] = properties[key];
+    }
+  }
+}
+
+var addDetails = function addDetails(actorId, text) {
+  // find the actor
+  var actor = getActor(actorId);
+  var elem = document.getElementById(text.text); // JSON.parse the text
+
+  try {
+    var _text = elem.innerHTML;
+    var details = JSON.parse(_text); // add the deserialized text to the actor's property field.
+
+    if (details['properties']) {
+      insertProperties(actor, details['properties']);
+    }
+
+    if (details['links']) {
+      insertLinks(actor, details['links']);
+    }
+  } catch (e) {
+    _logger__WEBPACK_IMPORTED_MODULE_2__["log"].error('error while parsing actor details text', e);
+  }
+};
+var getActorProperty = function getActorProperty(actor, key) {
+  if (typeof actor !== 'undefined' && typeof actor.properties !== 'undefined') {
+    return actor.properties[key];
+  }
+
+  return undefined;
+};
 var setTitle = function setTitle(titleWrap) {
   title = titleWrap.text;
   titleWrapped = titleWrap.wrap === undefined && autoWrap() || !!titleWrap.wrap;
@@ -19596,6 +19733,22 @@ var apply = function apply(param) {
 
       case 'addNote':
         addNote(param.actor, param.placement, param.text);
+        break;
+
+      case 'addLinks':
+        addLinks(param.actor, param.text);
+        break;
+
+      case 'addALink':
+        addALink(param.actor, param.text);
+        break;
+
+      case 'addProperties':
+        addProperties(param.actor, param.text);
+        break;
+
+      case 'addDetails':
+        addDetails(param.actor, param.text);
         break;
 
       case 'addMessage':
@@ -19660,6 +19813,9 @@ var apply = function apply(param) {
   addActor: addActor,
   addMessage: addMessage,
   addSignal: addSignal,
+  addLinks: addLinks,
+  addDetails: addDetails,
+  addProperties: addProperties,
   autoWrap: autoWrap,
   setWrap: setWrap,
   enableSequenceNumbers: enableSequenceNumbers,
@@ -19668,6 +19824,7 @@ var apply = function apply(param) {
   getActors: getActors,
   getActor: getActor,
   getActorKeys: getActorKeys,
+  getActorProperty: getActorProperty,
   getTitle: getTitle,
   parseDirective: parseDirective,
   getConfig: function getConfig() {
@@ -19690,13 +19847,14 @@ var apply = function apply(param) {
 /*!***************************************************!*\
   !*** ./src/diagrams/sequence/sequenceRenderer.js ***!
   \***************************************************/
-/*! exports provided: bounds, drawActors, setConf, draw, default */
+/*! exports provided: bounds, drawActors, drawActorsPopup, setConf, draw, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bounds", function() { return bounds; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawActors", function() { return drawActors; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawActorsPopup", function() { return drawActorsPopup; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConf", function() { return setConf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "draw", function() { return draw; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
@@ -20131,6 +20289,29 @@ var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
 
   bounds.bumpVerticalPos(maxHeight);
 };
+var drawActorsPopup = function drawActorsPopup(diagram, actors, actorKeys) {
+  var maxHeight = 0;
+  var maxWidth = 0;
+
+  for (var i = 0; i < actorKeys.length; i++) {
+    var actor = actors[actorKeys[i]];
+    var minMenuWidth = getRequiredPopupWidth(actor);
+    var menuDimensions = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawPopup(diagram, actor, minMenuWidth, conf, conf.forceMenus);
+
+    if (menuDimensions.height > maxHeight) {
+      maxHeight = menuDimensions.height;
+    }
+
+    if (menuDimensions.width + actor.x > maxWidth) {
+      maxWidth = menuDimensions.width + actor.x;
+    }
+  }
+
+  return {
+    maxHeight: maxHeight,
+    maxWidth: maxWidth
+  };
+};
 var setConf = function setConf(cnf) {
   Object(_utils__WEBPACK_IMPORTED_MODULE_7__["assignWithDepth"])(conf, cnf);
 
@@ -20208,6 +20389,9 @@ var draw = function draw(text, id) {
   var title = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getTitle();
   var maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages);
   conf.height = calculateActorMargins(actors, maxMessageWidthPerActor);
+  _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].insertComputerIcon(diagram);
+  _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].insertDatabaseIcon(diagram);
+  _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].insertClockIcon(diagram);
   drawActors(diagram, actors, actorKeys, 0);
   var loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor); // The arrow head definition is attached to the svg once
 
@@ -20350,7 +20534,10 @@ var draw = function draw(text, id) {
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
     bounds.bumpVerticalPos(conf.boxMargin);
     Object(_svgDraw__WEBPACK_IMPORTED_MODULE_1__["fixLifeLineHeights"])(diagram, bounds.getVerticalPos());
-  }
+  } // only draw popups for the top row of actors.
+
+
+  var requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys);
 
   var _bounds$getBounds = bounds.getBounds(),
       box = _bounds$getBounds.bounds; // Adjust line height of actor lines now that the height of the diagram is known
@@ -20358,14 +20545,28 @@ var draw = function draw(text, id) {
 
   _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug('For line height fix Querying: #' + id + ' .actor-line');
   var actorLines = Object(d3__WEBPACK_IMPORTED_MODULE_0__["selectAll"])('#' + id + ' .actor-line');
-  actorLines.attr('y2', box.stopy);
-  var height = box.stopy - box.starty + 2 * conf.diagramMarginY;
+  actorLines.attr('y2', box.stopy); // Make sure the height of the diagram supports long menus.
+
+  var boxHeight = box.stopy - box.starty;
+
+  if (boxHeight < requiredBoxSize.maxHeight) {
+    boxHeight = requiredBoxSize.maxHeight;
+  }
+
+  var height = boxHeight + 2 * conf.diagramMarginY;
 
   if (conf.mirrorActors) {
     height = height - conf.boxMargin + conf.bottomMarginAdj;
+  } // Make sure the width of the diagram supports wide menus.
+
+
+  var boxWidth = box.stopx - box.startx;
+
+  if (boxWidth < requiredBoxSize.maxWidth) {
+    boxWidth = requiredBoxSize.maxWidth;
   }
 
-  var width = box.stopx - box.startx + 2 * conf.diagramMarginX;
+  var width = boxWidth + 2 * conf.diagramMarginX;
 
   if (title) {
     diagram.append('text').text(title).attr('x', (box.stopx - box.startx) / 2 - 2 * conf.diagramMarginX).attr('y', -25);
@@ -20449,6 +20650,22 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
   });
   _logger__WEBPACK_IMPORTED_MODULE_2__["log"].debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
+};
+
+var getRequiredPopupWidth = function getRequiredPopupWidth(actor) {
+  var requiredPopupWidth = 0;
+  var textFont = actorFont(conf);
+
+  for (var key in actor.links) {
+    var labelDimensions = _utils__WEBPACK_IMPORTED_MODULE_7__["default"].calculateTextDimensions(key, textFont);
+    var labelWidth = labelDimensions.width + 2 * conf.wrapPadding + 2 * conf.boxMargin;
+
+    if (requiredPopupWidth < labelWidth) {
+      requiredPopupWidth = labelWidth;
+    }
+  }
+
+  return requiredPopupWidth;
 };
 /**
  * This will calculate the optimal margin for each given actor, for a given
@@ -20683,6 +20900,7 @@ var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
 /* harmony default export */ __webpack_exports__["default"] = ({
   bounds: bounds,
   drawActors: drawActors,
+  drawActorsPopup: drawActorsPopup,
   setConf: setConf,
   draw: draw
 });
@@ -20699,7 +20917,7 @@ var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return ".actor {\n    stroke: ".concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n  }\n\n  text.actor > tspan {\n    fill: ").concat(options.actorTextColor, ";\n    stroke: none;\n  }\n\n  .actor-line {\n    stroke: ").concat(options.actorLineColor, ";\n  }\n\n  .messageLine0 {\n    stroke-width: 1.5;\n    stroke-dasharray: none;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageLine1 {\n    stroke-width: 1.5;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  #arrowhead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .sequenceNumber {\n    fill: ").concat(options.sequenceNumberColor, ";\n  }\n\n  #sequencenumber {\n    fill: ").concat(options.signalColor, ";\n  }\n\n  #crosshead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageText {\n    fill: ").concat(options.signalTextColor, ";\n    stroke: ").concat(options.signalTextColor, ";\n  }\n\n  .labelBox {\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBkgColor, ";\n  }\n\n  .labelText, .labelText > tspan {\n    fill: ").concat(options.labelTextColor, ";\n    stroke: none;\n  }\n\n  .loopText, .loopText > tspan {\n    fill: ").concat(options.loopTextColor, ";\n    stroke: none;\n  }\n\n  .loopLine {\n    stroke-width: 2px;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBorderColor, ";\n  }\n\n  .note {\n    //stroke: #decc93;\n    stroke: ").concat(options.noteBorderColor, ";\n    fill: ").concat(options.noteBkgColor, ";\n  }\n\n  .noteText, .noteText > tspan {\n    fill: ").concat(options.noteTextColor, ";\n    stroke: none;\n  }\n\n  .activation0 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation1 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation2 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n  .actor-man line {\n    stroke: ").concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n  }\n  .actor-man circle, line {\n    stroke: ").concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n    stroke-width: 2px;\n  }\n");
+  return ".actor {\n    stroke: ".concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n  }\n\n  text.actor > tspan {\n    fill: ").concat(options.actorTextColor, ";\n    stroke: none;\n  }\n\n  .actor-line {\n    stroke: ").concat(options.actorLineColor, ";\n  }\n\n  .messageLine0 {\n    stroke-width: 1.5;\n    stroke-dasharray: none;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageLine1 {\n    stroke-width: 1.5;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  #arrowhead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .sequenceNumber {\n    fill: ").concat(options.sequenceNumberColor, ";\n  }\n\n  #sequencenumber {\n    fill: ").concat(options.signalColor, ";\n  }\n\n  #crosshead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageText {\n    fill: ").concat(options.signalTextColor, ";\n    stroke: ").concat(options.signalTextColor, ";\n  }\n\n  .labelBox {\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBkgColor, ";\n  }\n\n  .labelText, .labelText > tspan {\n    fill: ").concat(options.labelTextColor, ";\n    stroke: none;\n  }\n\n  .loopText, .loopText > tspan {\n    fill: ").concat(options.loopTextColor, ";\n    stroke: none;\n  }\n\n  .loopLine {\n    stroke-width: 2px;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBorderColor, ";\n  }\n\n  .note {\n    //stroke: #decc93;\n    stroke: ").concat(options.noteBorderColor, ";\n    fill: ").concat(options.noteBkgColor, ";\n  }\n\n  .noteText, .noteText > tspan {\n    fill: ").concat(options.noteTextColor, ";\n    stroke: none;\n  }\n\n  .activation0 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation1 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation2 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .actorPopupMenu {\n    position: absolute;\n  }\n\n  .actorPopupMenuPanel {\n    position: absolute;\n    fill: ").concat(options.actorBkg, ";\n    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);\n    filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));\n}\n  .actor-man line {\n    stroke: ").concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n  }\n  .actor-man circle, line {\n    stroke: ").concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n    stroke-width: 2px;\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -20710,12 +20928,17 @@ var getStyles = function getStyles(options) {
 /*!******************************************!*\
   !*** ./src/diagrams/sequence/svgDraw.js ***!
   \******************************************/
-/*! exports provided: drawRect, drawText, drawLabel, fixLifeLineHeights, drawActor, anchorElement, drawActivation, drawLoop, drawBackgroundRect, insertArrowHead, insertArrowFilledHead, insertSequenceNumber, insertArrowCrossHead, getTextObj, getNoteRect, default */
+/*! exports provided: drawRect, drawPopup, drawImage, drawEmbeddedImage, popupMenu, popdownMenu, drawText, drawLabel, fixLifeLineHeights, drawActor, anchorElement, drawActivation, drawLoop, drawBackgroundRect, insertDatabaseIcon, insertComputerIcon, insertClockIcon, insertArrowHead, insertArrowFilledHead, insertSequenceNumber, insertArrowCrossHead, getTextObj, getNoteRect, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawRect", function() { return drawRect; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawPopup", function() { return drawPopup; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawImage", function() { return drawImage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawEmbeddedImage", function() { return drawEmbeddedImage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "popupMenu", function() { return popupMenu; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "popdownMenu", function() { return popdownMenu; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawText", function() { return drawText; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawLabel", function() { return drawLabel; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fixLifeLineHeights", function() { return fixLifeLineHeights; });
@@ -20724,6 +20947,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawActivation", function() { return drawActivation; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawLoop", function() { return drawLoop; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawBackgroundRect", function() { return drawBackgroundRect; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertDatabaseIcon", function() { return insertDatabaseIcon; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertComputerIcon", function() { return insertComputerIcon; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertClockIcon", function() { return insertClockIcon; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertArrowHead", function() { return insertArrowHead; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertArrowFilledHead", function() { return insertArrowFilledHead; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertSequenceNumber", function() { return insertSequenceNumber; });
@@ -20748,6 +20974,95 @@ var drawRect = function drawRect(elem, rectData) {
   }
 
   return rectElem;
+};
+
+var sanitizeUrl = function sanitizeUrl(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/javascript:/g, '');
+};
+
+var drawPopup = function drawPopup(elem, actor, minMenuWidth, textAttrs, forceMenus) {
+  if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
+    return {
+      height: 0,
+      width: 0
+    };
+  }
+
+  var links = actor.links;
+  var actorCnt = actor.actorCnt;
+  var rectData = actor.rectData;
+  var displayValue = 'none';
+
+  if (forceMenus) {
+    displayValue = 'block !important';
+  }
+
+  var g = elem.append('g');
+  g.attr('id', 'actor' + actorCnt + '_popup');
+  g.attr('class', 'actorPopupMenu');
+  g.attr('display', displayValue);
+  g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
+  g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
+  var actorClass = '';
+
+  if (typeof rectData.class !== 'undefined') {
+    actorClass = ' ' + rectData.class;
+  }
+
+  var menuWidth = rectData.width > minMenuWidth ? rectData.width : minMenuWidth;
+  var rectElem = g.append('rect');
+  rectElem.attr('class', 'actorPopupMenuPanel' + actorClass);
+  rectElem.attr('x', rectData.x);
+  rectElem.attr('y', rectData.height);
+  rectElem.attr('fill', rectData.fill);
+  rectElem.attr('stroke', rectData.stroke);
+  rectElem.attr('width', menuWidth);
+  rectElem.attr('height', rectData.height);
+  rectElem.attr('rx', rectData.rx);
+  rectElem.attr('ry', rectData.ry);
+
+  if (links != null) {
+    var linkY = 20;
+
+    for (var key in links) {
+      var linkElem = g.append('a');
+      var sanitizedLink = sanitizeUrl(links[key]);
+      linkElem.attr('xlink:href', sanitizedLink);
+      linkElem.attr('target', '_blank');
+
+      _drawMenuItemTextCandidateFunc(textAttrs)(key, linkElem, rectData.x + 10, rectData.height + linkY, menuWidth, 20, {
+        class: 'actor'
+      }, textAttrs);
+
+      linkY += 30;
+    }
+  }
+
+  rectElem.attr('height', linkY);
+  return {
+    height: rectData.height + linkY,
+    width: menuWidth
+  };
+};
+var drawImage = function drawImage(elem, x, y, link) {
+  var imageElem = elem.append('image');
+  imageElem.attr('x', x);
+  imageElem.attr('y', y);
+  var sanitizedLink = sanitizeUrl(link);
+  imageElem.attr('xlink:href', sanitizedLink);
+};
+var drawEmbeddedImage = function drawEmbeddedImage(elem, x, y, link) {
+  var imageElem = elem.append('use');
+  imageElem.attr('x', x);
+  imageElem.attr('y', y);
+  var sanitizedLink = sanitizeUrl(link);
+  imageElem.attr('xlink:href', '#' + sanitizedLink);
+};
+var popupMenu = function popupMenu(popid) {
+  return "var pu = document.getElementById('" + popid + "'); if (pu != null) { pu.style.display = 'block'; }";
+};
+var popdownMenu = function popdownMenu(popid) {
+  return "var pu = document.getElementById('" + popid + "'); if (pu != null) { pu.style.display = 'none'; }";
 };
 var drawText = function drawText(elem, textData) {
   var prevTextHeight = 0,
@@ -20906,23 +21221,49 @@ var fixLifeLineHeights = function fixLifeLineHeights(diagram, bounds) {
 
 var drawActorTypeParticipant = function drawActorTypeParticipant(elem, actor, conf) {
   var center = actor.x + actor.width / 2;
-  var g = elem.append('g');
+  var boxpluslineGroup = elem.append('g');
+  var g = boxpluslineGroup;
 
   if (actor.y === 0) {
     actorCnt++;
     g.append('line').attr('id', 'actor' + actorCnt).attr('x1', center).attr('y1', 5).attr('x2', center).attr('y2', 2000).attr('class', 'actor-line').attr('stroke-width', '0.5px').attr('stroke', '#999');
+    g = boxpluslineGroup.append('g');
+    actor.actorCnt = actorCnt;
+
+    if (actor.links != null) {
+      g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
+      g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
+    }
   }
 
   var rect = getNoteRect();
+  var cssclass = 'actor';
+
+  if (actor.properties != null && actor.properties['class']) {
+    cssclass = actor.properties['class'];
+  } else {
+    rect.fill = '#eaeaea';
+  }
+
   rect.x = actor.x;
   rect.y = actor.y;
-  rect.fill = '#eaeaea';
   rect.width = actor.width;
   rect.height = actor.height;
-  rect.class = 'actor';
+  rect.class = cssclass;
   rect.rx = 3;
   rect.ry = 3;
   var rectElem = drawRect(g, rect);
+  actor.rectData = rect;
+
+  if (actor.properties != null && actor.properties['icon']) {
+    var iconSrc = actor.properties['icon'].trim();
+
+    if (iconSrc.charAt(0) === '@') {
+      drawEmbeddedImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc.substr(1));
+    } else {
+      drawImage(g, rect.x + rect.width - 20, rect.y + 10, iconSrc);
+    }
+  }
 
   _drawTextCandidateFunc(conf)(actor.description, g, rect.x, rect.y, rect.width, rect.height, {
     class: 'actor'
@@ -21118,6 +21459,15 @@ var drawBackgroundRect = function drawBackgroundRect(elem, bounds) {
   });
   rectElem.lower();
 };
+var insertDatabaseIcon = function insertDatabaseIcon(elem) {
+  elem.append('defs').append('symbol').attr('id', 'database').attr('fill-rule', 'evenodd').attr('clip-rule', 'evenodd').append('path').attr('transform', 'scale(.5)').attr('d', 'M12.258.001l.256.004.255.005.253.008.251.01.249.012.247.015.246.016.242.019.241.02.239.023.236.024.233.027.231.028.229.031.225.032.223.034.22.036.217.038.214.04.211.041.208.043.205.045.201.046.198.048.194.05.191.051.187.053.183.054.18.056.175.057.172.059.168.06.163.061.16.063.155.064.15.066.074.033.073.033.071.034.07.034.069.035.068.035.067.035.066.035.064.036.064.036.062.036.06.036.06.037.058.037.058.037.055.038.055.038.053.038.052.038.051.039.05.039.048.039.047.039.045.04.044.04.043.04.041.04.04.041.039.041.037.041.036.041.034.041.033.042.032.042.03.042.029.042.027.042.026.043.024.043.023.043.021.043.02.043.018.044.017.043.015.044.013.044.012.044.011.045.009.044.007.045.006.045.004.045.002.045.001.045v17l-.001.045-.002.045-.004.045-.006.045-.007.045-.009.044-.011.045-.012.044-.013.044-.015.044-.017.043-.018.044-.02.043-.021.043-.023.043-.024.043-.026.043-.027.042-.029.042-.03.042-.032.042-.033.042-.034.041-.036.041-.037.041-.039.041-.04.041-.041.04-.043.04-.044.04-.045.04-.047.039-.048.039-.05.039-.051.039-.052.038-.053.038-.055.038-.055.038-.058.037-.058.037-.06.037-.06.036-.062.036-.064.036-.064.036-.066.035-.067.035-.068.035-.069.035-.07.034-.071.034-.073.033-.074.033-.15.066-.155.064-.16.063-.163.061-.168.06-.172.059-.175.057-.18.056-.183.054-.187.053-.191.051-.194.05-.198.048-.201.046-.205.045-.208.043-.211.041-.214.04-.217.038-.22.036-.223.034-.225.032-.229.031-.231.028-.233.027-.236.024-.239.023-.241.02-.242.019-.246.016-.247.015-.249.012-.251.01-.253.008-.255.005-.256.004-.258.001-.258-.001-.256-.004-.255-.005-.253-.008-.251-.01-.249-.012-.247-.015-.245-.016-.243-.019-.241-.02-.238-.023-.236-.024-.234-.027-.231-.028-.228-.031-.226-.032-.223-.034-.22-.036-.217-.038-.214-.04-.211-.041-.208-.043-.204-.045-.201-.046-.198-.048-.195-.05-.19-.051-.187-.053-.184-.054-.179-.056-.176-.057-.172-.059-.167-.06-.164-.061-.159-.063-.155-.064-.151-.066-.074-.033-.072-.033-.072-.034-.07-.034-.069-.035-.068-.035-.067-.035-.066-.035-.064-.036-.063-.036-.062-.036-.061-.036-.06-.037-.058-.037-.057-.037-.056-.038-.055-.038-.053-.038-.052-.038-.051-.039-.049-.039-.049-.039-.046-.039-.046-.04-.044-.04-.043-.04-.041-.04-.04-.041-.039-.041-.037-.041-.036-.041-.034-.041-.033-.042-.032-.042-.03-.042-.029-.042-.027-.042-.026-.043-.024-.043-.023-.043-.021-.043-.02-.043-.018-.044-.017-.043-.015-.044-.013-.044-.012-.044-.011-.045-.009-.044-.007-.045-.006-.045-.004-.045-.002-.045-.001-.045v-17l.001-.045.002-.045.004-.045.006-.045.007-.045.009-.044.011-.045.012-.044.013-.044.015-.044.017-.043.018-.044.02-.043.021-.043.023-.043.024-.043.026-.043.027-.042.029-.042.03-.042.032-.042.033-.042.034-.041.036-.041.037-.041.039-.041.04-.041.041-.04.043-.04.044-.04.046-.04.046-.039.049-.039.049-.039.051-.039.052-.038.053-.038.055-.038.056-.038.057-.037.058-.037.06-.037.061-.036.062-.036.063-.036.064-.036.066-.035.067-.035.068-.035.069-.035.07-.034.072-.034.072-.033.074-.033.151-.066.155-.064.159-.063.164-.061.167-.06.172-.059.176-.057.179-.056.184-.054.187-.053.19-.051.195-.05.198-.048.201-.046.204-.045.208-.043.211-.041.214-.04.217-.038.22-.036.223-.034.226-.032.228-.031.231-.028.234-.027.236-.024.238-.023.241-.02.243-.019.245-.016.247-.015.249-.012.251-.01.253-.008.255-.005.256-.004.258-.001.258.001zm-9.258 20.499v.01l.001.021.003.021.004.022.005.021.006.022.007.022.009.023.01.022.011.023.012.023.013.023.015.023.016.024.017.023.018.024.019.024.021.024.022.025.023.024.024.025.052.049.056.05.061.051.066.051.07.051.075.051.079.052.084.052.088.052.092.052.097.052.102.051.105.052.11.052.114.051.119.051.123.051.127.05.131.05.135.05.139.048.144.049.147.047.152.047.155.047.16.045.163.045.167.043.171.043.176.041.178.041.183.039.187.039.19.037.194.035.197.035.202.033.204.031.209.03.212.029.216.027.219.025.222.024.226.021.23.02.233.018.236.016.24.015.243.012.246.01.249.008.253.005.256.004.259.001.26-.001.257-.004.254-.005.25-.008.247-.011.244-.012.241-.014.237-.016.233-.018.231-.021.226-.021.224-.024.22-.026.216-.027.212-.028.21-.031.205-.031.202-.034.198-.034.194-.036.191-.037.187-.039.183-.04.179-.04.175-.042.172-.043.168-.044.163-.045.16-.046.155-.046.152-.047.148-.048.143-.049.139-.049.136-.05.131-.05.126-.05.123-.051.118-.052.114-.051.11-.052.106-.052.101-.052.096-.052.092-.052.088-.053.083-.051.079-.052.074-.052.07-.051.065-.051.06-.051.056-.05.051-.05.023-.024.023-.025.021-.024.02-.024.019-.024.018-.024.017-.024.015-.023.014-.024.013-.023.012-.023.01-.023.01-.022.008-.022.006-.022.006-.022.004-.022.004-.021.001-.021.001-.021v-4.127l-.077.055-.08.053-.083.054-.085.053-.087.052-.09.052-.093.051-.095.05-.097.05-.1.049-.102.049-.105.048-.106.047-.109.047-.111.046-.114.045-.115.045-.118.044-.12.043-.122.042-.124.042-.126.041-.128.04-.13.04-.132.038-.134.038-.135.037-.138.037-.139.035-.142.035-.143.034-.144.033-.147.032-.148.031-.15.03-.151.03-.153.029-.154.027-.156.027-.158.026-.159.025-.161.024-.162.023-.163.022-.165.021-.166.02-.167.019-.169.018-.169.017-.171.016-.173.015-.173.014-.175.013-.175.012-.177.011-.178.01-.179.008-.179.008-.181.006-.182.005-.182.004-.184.003-.184.002h-.37l-.184-.002-.184-.003-.182-.004-.182-.005-.181-.006-.179-.008-.179-.008-.178-.01-.176-.011-.176-.012-.175-.013-.173-.014-.172-.015-.171-.016-.17-.017-.169-.018-.167-.019-.166-.02-.165-.021-.163-.022-.162-.023-.161-.024-.159-.025-.157-.026-.156-.027-.155-.027-.153-.029-.151-.03-.15-.03-.148-.031-.146-.032-.145-.033-.143-.034-.141-.035-.14-.035-.137-.037-.136-.037-.134-.038-.132-.038-.13-.04-.128-.04-.126-.041-.124-.042-.122-.042-.12-.044-.117-.043-.116-.045-.113-.045-.112-.046-.109-.047-.106-.047-.105-.048-.102-.049-.1-.049-.097-.05-.095-.05-.093-.052-.09-.051-.087-.052-.085-.053-.083-.054-.08-.054-.077-.054v4.127zm0-5.654v.011l.001.021.003.021.004.021.005.022.006.022.007.022.009.022.01.022.011.023.012.023.013.023.015.024.016.023.017.024.018.024.019.024.021.024.022.024.023.025.024.024.052.05.056.05.061.05.066.051.07.051.075.052.079.051.084.052.088.052.092.052.097.052.102.052.105.052.11.051.114.051.119.052.123.05.127.051.131.05.135.049.139.049.144.048.147.048.152.047.155.046.16.045.163.045.167.044.171.042.176.042.178.04.183.04.187.038.19.037.194.036.197.034.202.033.204.032.209.03.212.028.216.027.219.025.222.024.226.022.23.02.233.018.236.016.24.014.243.012.246.01.249.008.253.006.256.003.259.001.26-.001.257-.003.254-.006.25-.008.247-.01.244-.012.241-.015.237-.016.233-.018.231-.02.226-.022.224-.024.22-.025.216-.027.212-.029.21-.03.205-.032.202-.033.198-.035.194-.036.191-.037.187-.039.183-.039.179-.041.175-.042.172-.043.168-.044.163-.045.16-.045.155-.047.152-.047.148-.048.143-.048.139-.05.136-.049.131-.05.126-.051.123-.051.118-.051.114-.052.11-.052.106-.052.101-.052.096-.052.092-.052.088-.052.083-.052.079-.052.074-.051.07-.052.065-.051.06-.05.056-.051.051-.049.023-.025.023-.024.021-.025.02-.024.019-.024.018-.024.017-.024.015-.023.014-.023.013-.024.012-.022.01-.023.01-.023.008-.022.006-.022.006-.022.004-.021.004-.022.001-.021.001-.021v-4.139l-.077.054-.08.054-.083.054-.085.052-.087.053-.09.051-.093.051-.095.051-.097.05-.1.049-.102.049-.105.048-.106.047-.109.047-.111.046-.114.045-.115.044-.118.044-.12.044-.122.042-.124.042-.126.041-.128.04-.13.039-.132.039-.134.038-.135.037-.138.036-.139.036-.142.035-.143.033-.144.033-.147.033-.148.031-.15.03-.151.03-.153.028-.154.028-.156.027-.158.026-.159.025-.161.024-.162.023-.163.022-.165.021-.166.02-.167.019-.169.018-.169.017-.171.016-.173.015-.173.014-.175.013-.175.012-.177.011-.178.009-.179.009-.179.007-.181.007-.182.005-.182.004-.184.003-.184.002h-.37l-.184-.002-.184-.003-.182-.004-.182-.005-.181-.007-.179-.007-.179-.009-.178-.009-.176-.011-.176-.012-.175-.013-.173-.014-.172-.015-.171-.016-.17-.017-.169-.018-.167-.019-.166-.02-.165-.021-.163-.022-.162-.023-.161-.024-.159-.025-.157-.026-.156-.027-.155-.028-.153-.028-.151-.03-.15-.03-.148-.031-.146-.033-.145-.033-.143-.033-.141-.035-.14-.036-.137-.036-.136-.037-.134-.038-.132-.039-.13-.039-.128-.04-.126-.041-.124-.042-.122-.043-.12-.043-.117-.044-.116-.044-.113-.046-.112-.046-.109-.046-.106-.047-.105-.048-.102-.049-.1-.049-.097-.05-.095-.051-.093-.051-.09-.051-.087-.053-.085-.052-.083-.054-.08-.054-.077-.054v4.139zm0-5.666v.011l.001.02.003.022.004.021.005.022.006.021.007.022.009.023.01.022.011.023.012.023.013.023.015.023.016.024.017.024.018.023.019.024.021.025.022.024.023.024.024.025.052.05.056.05.061.05.066.051.07.051.075.052.079.051.084.052.088.052.092.052.097.052.102.052.105.051.11.052.114.051.119.051.123.051.127.05.131.05.135.05.139.049.144.048.147.048.152.047.155.046.16.045.163.045.167.043.171.043.176.042.178.04.183.04.187.038.19.037.194.036.197.034.202.033.204.032.209.03.212.028.216.027.219.025.222.024.226.021.23.02.233.018.236.017.24.014.243.012.246.01.249.008.253.006.256.003.259.001.26-.001.257-.003.254-.006.25-.008.247-.01.244-.013.241-.014.237-.016.233-.018.231-.02.226-.022.224-.024.22-.025.216-.027.212-.029.21-.03.205-.032.202-.033.198-.035.194-.036.191-.037.187-.039.183-.039.179-.041.175-.042.172-.043.168-.044.163-.045.16-.045.155-.047.152-.047.148-.048.143-.049.139-.049.136-.049.131-.051.126-.05.123-.051.118-.052.114-.051.11-.052.106-.052.101-.052.096-.052.092-.052.088-.052.083-.052.079-.052.074-.052.07-.051.065-.051.06-.051.056-.05.051-.049.023-.025.023-.025.021-.024.02-.024.019-.024.018-.024.017-.024.015-.023.014-.024.013-.023.012-.023.01-.022.01-.023.008-.022.006-.022.006-.022.004-.022.004-.021.001-.021.001-.021v-4.153l-.077.054-.08.054-.083.053-.085.053-.087.053-.09.051-.093.051-.095.051-.097.05-.1.049-.102.048-.105.048-.106.048-.109.046-.111.046-.114.046-.115.044-.118.044-.12.043-.122.043-.124.042-.126.041-.128.04-.13.039-.132.039-.134.038-.135.037-.138.036-.139.036-.142.034-.143.034-.144.033-.147.032-.148.032-.15.03-.151.03-.153.028-.154.028-.156.027-.158.026-.159.024-.161.024-.162.023-.163.023-.165.021-.166.02-.167.019-.169.018-.169.017-.171.016-.173.015-.173.014-.175.013-.175.012-.177.01-.178.01-.179.009-.179.007-.181.006-.182.006-.182.004-.184.003-.184.001-.185.001-.185-.001-.184-.001-.184-.003-.182-.004-.182-.006-.181-.006-.179-.007-.179-.009-.178-.01-.176-.01-.176-.012-.175-.013-.173-.014-.172-.015-.171-.016-.17-.017-.169-.018-.167-.019-.166-.02-.165-.021-.163-.023-.162-.023-.161-.024-.159-.024-.157-.026-.156-.027-.155-.028-.153-.028-.151-.03-.15-.03-.148-.032-.146-.032-.145-.033-.143-.034-.141-.034-.14-.036-.137-.036-.136-.037-.134-.038-.132-.039-.13-.039-.128-.041-.126-.041-.124-.041-.122-.043-.12-.043-.117-.044-.116-.044-.113-.046-.112-.046-.109-.046-.106-.048-.105-.048-.102-.048-.1-.05-.097-.049-.095-.051-.093-.051-.09-.052-.087-.052-.085-.053-.083-.053-.08-.054-.077-.054v4.153zm8.74-8.179l-.257.004-.254.005-.25.008-.247.011-.244.012-.241.014-.237.016-.233.018-.231.021-.226.022-.224.023-.22.026-.216.027-.212.028-.21.031-.205.032-.202.033-.198.034-.194.036-.191.038-.187.038-.183.04-.179.041-.175.042-.172.043-.168.043-.163.045-.16.046-.155.046-.152.048-.148.048-.143.048-.139.049-.136.05-.131.05-.126.051-.123.051-.118.051-.114.052-.11.052-.106.052-.101.052-.096.052-.092.052-.088.052-.083.052-.079.052-.074.051-.07.052-.065.051-.06.05-.056.05-.051.05-.023.025-.023.024-.021.024-.02.025-.019.024-.018.024-.017.023-.015.024-.014.023-.013.023-.012.023-.01.023-.01.022-.008.022-.006.023-.006.021-.004.022-.004.021-.001.021-.001.021.001.021.001.021.004.021.004.022.006.021.006.023.008.022.01.022.01.023.012.023.013.023.014.023.015.024.017.023.018.024.019.024.02.025.021.024.023.024.023.025.051.05.056.05.06.05.065.051.07.052.074.051.079.052.083.052.088.052.092.052.096.052.101.052.106.052.11.052.114.052.118.051.123.051.126.051.131.05.136.05.139.049.143.048.148.048.152.048.155.046.16.046.163.045.168.043.172.043.175.042.179.041.183.04.187.038.191.038.194.036.198.034.202.033.205.032.21.031.212.028.216.027.22.026.224.023.226.022.231.021.233.018.237.016.241.014.244.012.247.011.25.008.254.005.257.004.26.001.26-.001.257-.004.254-.005.25-.008.247-.011.244-.012.241-.014.237-.016.233-.018.231-.021.226-.022.224-.023.22-.026.216-.027.212-.028.21-.031.205-.032.202-.033.198-.034.194-.036.191-.038.187-.038.183-.04.179-.041.175-.042.172-.043.168-.043.163-.045.16-.046.155-.046.152-.048.148-.048.143-.048.139-.049.136-.05.131-.05.126-.051.123-.051.118-.051.114-.052.11-.052.106-.052.101-.052.096-.052.092-.052.088-.052.083-.052.079-.052.074-.051.07-.052.065-.051.06-.05.056-.05.051-.05.023-.025.023-.024.021-.024.02-.025.019-.024.018-.024.017-.023.015-.024.014-.023.013-.023.012-.023.01-.023.01-.022.008-.022.006-.023.006-.021.004-.022.004-.021.001-.021.001-.021-.001-.021-.001-.021-.004-.021-.004-.022-.006-.021-.006-.023-.008-.022-.01-.022-.01-.023-.012-.023-.013-.023-.014-.023-.015-.024-.017-.023-.018-.024-.019-.024-.02-.025-.021-.024-.023-.024-.023-.025-.051-.05-.056-.05-.06-.05-.065-.051-.07-.052-.074-.051-.079-.052-.083-.052-.088-.052-.092-.052-.096-.052-.101-.052-.106-.052-.11-.052-.114-.052-.118-.051-.123-.051-.126-.051-.131-.05-.136-.05-.139-.049-.143-.048-.148-.048-.152-.048-.155-.046-.16-.046-.163-.045-.168-.043-.172-.043-.175-.042-.179-.041-.183-.04-.187-.038-.191-.038-.194-.036-.198-.034-.202-.033-.205-.032-.21-.031-.212-.028-.216-.027-.22-.026-.224-.023-.226-.022-.231-.021-.233-.018-.237-.016-.241-.014-.244-.012-.247-.011-.25-.008-.254-.005-.257-.004-.26-.001-.26.001z');
+};
+var insertComputerIcon = function insertComputerIcon(elem) {
+  elem.append('defs').append('symbol').attr('id', 'computer').attr('width', '24').attr('height', '24').append('path').attr('transform', 'scale(.5)').attr('d', 'M2 2v13h20v-13h-20zm18 11h-16v-9h16v9zm-10.228 6l.466-1h3.524l.467 1h-4.457zm14.228 3h-24l2-6h2.104l-1.33 4h18.45l-1.297-4h2.073l2 6zm-5-10h-14v-7h14v7z');
+};
+var insertClockIcon = function insertClockIcon(elem) {
+  elem.append('defs').append('symbol').attr('id', 'clock').attr('width', '24').attr('height', '24').append('path').attr('transform', 'scale(.5)').attr('d', 'M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.848 12.459c.202.038.202.333.001.372-1.907.361-6.045 1.111-6.547 1.111-.719 0-1.301-.582-1.301-1.301 0-.512.77-5.447 1.125-7.445.034-.192.312-.181.343.014l.985 6.238 5.394 1.011z');
+};
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
@@ -21228,11 +21578,61 @@ var _drawTextCandidateFunc = function () {
   };
 }();
 
+var _drawMenuItemTextCandidateFunc = function () {
+  function byText(content, g, x, y, width, height, textAttrs) {
+    var text = g.append('text').attr('x', x).attr('y', y).style('text-anchor', 'start').text(content);
+
+    _setTextAttrs(text, textAttrs);
+  }
+
+  function byTspan(content, g, x, y, width, height, textAttrs, conf) {
+    var actorFontSize = conf.actorFontSize,
+        actorFontFamily = conf.actorFontFamily,
+        actorFontWeight = conf.actorFontWeight;
+    var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
+
+    for (var i = 0; i < lines.length; i++) {
+      var dy = i * actorFontSize - actorFontSize * (lines.length - 1) / 2;
+      var text = g.append('text').attr('x', x).attr('y', y).style('text-anchor', 'start').style('font-size', actorFontSize).style('font-weight', actorFontWeight).style('font-family', actorFontFamily);
+      text.append('tspan').attr('x', x).attr('dy', dy).text(lines[i]);
+      text.attr('y', y + height / 2.0).attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
+
+      _setTextAttrs(text, textAttrs);
+    }
+  }
+
+  function byFo(content, g, x, y, width, height, textAttrs, conf) {
+    var s = g.append('switch');
+    var f = s.append('foreignObject').attr('x', x).attr('y', y).attr('width', width).attr('height', height);
+    var text = f.append('xhtml:div').style('display', 'table').style('height', '100%').style('width', '100%');
+    text.append('div').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle').text(content);
+    byTspan(content, s, x, y, width, height, textAttrs, conf);
+
+    _setTextAttrs(text, textAttrs);
+  }
+
+  function _setTextAttrs(toText, fromTextAttrsDict) {
+    for (var key in fromTextAttrsDict) {
+      if (fromTextAttrsDict.hasOwnProperty(key)) {
+        // eslint-disable-line
+        toText.attr(key, fromTextAttrsDict[key]);
+      }
+    }
+  }
+
+  return function (conf) {
+    return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
+  };
+}();
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   drawRect: drawRect,
   drawText: drawText,
   drawLabel: drawLabel,
   drawActor: drawActor,
+  drawPopup: drawPopup,
+  drawImage: drawImage,
+  drawEmbeddedImage: drawEmbeddedImage,
   anchorElement: anchorElement,
   drawActivation: drawActivation,
   drawLoop: drawLoop,
@@ -21241,8 +21641,13 @@ var _drawTextCandidateFunc = function () {
   insertArrowFilledHead: insertArrowFilledHead,
   insertSequenceNumber: insertSequenceNumber,
   insertArrowCrossHead: insertArrowCrossHead,
+  insertDatabaseIcon: insertDatabaseIcon,
+  insertComputerIcon: insertComputerIcon,
+  insertClockIcon: insertClockIcon,
   getTextObj: getTextObj,
   getNoteRect: getNoteRect,
+  popupMenu: popupMenu,
+  popdownMenu: popdownMenu,
   fixLifeLineHeights: fixLifeLineHeights
 });
 
@@ -28501,13 +28906,14 @@ var d3Attrs = function d3Attrs(d3Elem, attrs) {
 
 var calculateSvgSizeAttrs = function calculateSvgSizeAttrs(height, width, useMaxWidth) {
   var attrs = new Map();
-  attrs.set('height', height);
 
   if (useMaxWidth) {
     attrs.set('width', '100%');
+    attrs.set('height', '100%');
     attrs.set('style', "max-width: ".concat(width, "px;"));
   } else {
     attrs.set('width', width);
+    attrs.set('height', height);
   }
 
   return attrs;
