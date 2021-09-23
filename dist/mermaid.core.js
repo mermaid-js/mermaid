@@ -656,7 +656,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.12.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.1\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.13.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.1\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -20129,7 +20129,7 @@ var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
   } // Add a margin between the actor boxes and the first arrow
 
 
-  bounds.bumpVerticalPos(maxHeight - conf.boxMargin);
+  bounds.bumpVerticalPos(maxHeight);
 };
 var setConf = function setConf(cnf) {
   Object(_utils__WEBPACK_IMPORTED_MODULE_7__["assignWithDepth"])(conf, cnf);
@@ -20348,7 +20348,7 @@ var draw = function draw(text, id) {
     // Draw actors below diagram
     bounds.bumpVerticalPos(conf.boxMargin * 2);
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
-    bounds.bumpVerticalPos(conf.boxMargin * 2);
+    bounds.bumpVerticalPos(conf.boxMargin);
     Object(_svgDraw__WEBPACK_IMPORTED_MODULE_1__["fixLifeLineHeights"])(diagram, bounds.getVerticalPos());
   }
 
@@ -20894,9 +20894,8 @@ var drawLabel = function drawLabel(elem, txtObject) {
 };
 var actorCnt = -1;
 var fixLifeLineHeights = function fixLifeLineHeights(diagram, bounds) {
-  console.log('fixLifeLineHeights', diagram, bounds);
-  diagram.selectAll(".actor-line").attr("class", "200") //
-  .attr("y2", bounds - 55); //
+  if (!diagram.selectAll) return;
+  diagram.selectAll('.actor-line').attr('class', '200').attr('y2', bounds - 55);
 };
 /**
  * Draws an actor in the diagram with the attached line
@@ -20929,10 +20928,15 @@ var drawActorTypeParticipant = function drawActorTypeParticipant(elem, actor, co
     class: 'actor'
   }, conf);
 
-  var bounds = rectElem.node().getBBox();
-  actor.height = bounds.height;
-  console.log('Height = ', bounds.height);
-  return bounds.height;
+  var height = actor.height;
+
+  if (rectElem.node) {
+    var bounds = rectElem.node().getBBox();
+    actor.height = bounds.height;
+    height = bounds.height;
+  }
+
+  return height;
 };
 
 var drawActorTypeActor = function drawActorTypeActor(elem, actor, conf) {
@@ -20964,9 +20968,7 @@ var drawActorTypeActor = function drawActorTypeActor(elem, actor, conf) {
   circle.attr('cy', actor.y + 10);
   circle.attr('r', 15);
   circle.attr('width', actor.width);
-  circle.attr('height', actor.height); // circle.attr('rx', rectData.rx);
-  // circle.attr('ry', rectData.ry);
-
+  circle.attr('height', actor.height);
   var bounds = actElem.node().getBBox();
   actor.height = bounds.height;
 
