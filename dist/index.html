@@ -316,8 +316,7 @@
   <div class="mermaid">
     graph TD
     A[Christmas] -->|Get money| B(Go shopping)
-    B --> C{{Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or
-    something to get around?}}
+    B --> C{{Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?}}
     C -->|One| D[Laptop]
     C -->|Two| E[iPhone]
     C -->|Three| F[Car]
@@ -331,8 +330,7 @@
     graph TD
     A([stadium shape test])
     A -->|Get money| B([Go shopping])
-    B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or
-    something to get around?])
+    B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
     C -->|One| D([Laptop])
     C -->|Two| E([iPhone])
     C -->|Three| F([Car<br />wroom wroom])
@@ -346,8 +344,7 @@
     graph LR
     A[[subroutine shape test]]
     A -->|Get money| B[[Go shopping]]
-    B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or
-    something to get around?]]
+    B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
     C -->|One| D[[Laptop]]
     C -->|Two| E[[iPhone]]
     C -->|Three| F[[Car<br />wroom wroom]]
@@ -364,7 +361,7 @@
     A -->|Get money| B2[(Go shopping 2)]
     A -->|Get money| B3[(Go shopping 3)]
     C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or
-    something to get around?)]
+ something to get around?)]
     B1 --> C
     B2 --> C
     B3 --> C
@@ -597,21 +594,26 @@
 
   <div class="mermaid">
     classDiagram
-    Class01 <|-- AveryLongClass : Cool &lt;&lt;interface&gt;&gt; Class01 Class03 "0" *-- "0..n" Class04 Class05 "1"
-      o-- "many" Class06 Class07 .. Class08 Class09 "many" --> "1" C2 : Where am i?
-      Class09 "0" --* "1..n" C3
-      Class09 --|> Class07
-      Class07 : equals()
-      Class07 : Object[] elementData
-      Class01 : #size()
-      Class01 : -int chimp
-      Class01 : +int gorilla
-      Class08 <--> C2: Cool label
-        class Class10 {
-        &lt;&lt;service&gt;&gt;
-        int id
-        size()
-        }
+    Class01 <|-- AveryLongClass : Cool 
+
+    &lt;&lt;interface&gt;&gt; Class01
+    Class03 "0" *-- "0..n" Class04
+    Class05 "1" o-- "many" Class06
+    Class07 .. Class08
+    Class09 "many" --> "1" C2 : Where am i?
+    Class09 "0" --* "1..n" C3
+    Class09 --|> Class07
+    Class07 : equals()
+    Class07 : Object[] elementData
+    Class01 : #size()
+    Class01 : -int chimp
+    Class01 : +int gorilla
+    Class08 <--> C2: Cool label
+      class Class10 {
+      &lt;&lt;service&gt;&gt;
+      int id
+      size()
+      }
   </div>
 
   <div class="mermaid">
@@ -629,8 +631,12 @@
 
   <div class="mermaid">
     classDiagram
-    Class01~T~ <|-- AveryLongClass : Cool &lt;&lt;interface&gt;&gt; Class01 Class03~T~ "0" *-- "0..n" Class04
-      Class05 "1" o-- "many" Class06 Class07~T~ .. Class08 Class09 "many" --> "1" C2 : Where am i?
+    Class01~T~ <|-- AveryLongClass : Cool 
+    &lt;&lt;interface&gt;&gt; Class01
+    Class03~T~ "0" *-- "0..n" Class04
+    Class05 "1" o-- "many" Class06
+    Class07~T~ .. Class08
+    Class09 "many" --> "1" C2 : Where am i?
       Class09 "0" --* "1..n" C3
       Class09 --|> Class07
       Class07 : equals()
