@@ -778,12 +778,13 @@ const d3Attrs = function (d3Elem, attrs) {
 
 export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
   let attrs = new Map();
-  attrs.set('height', height);
   if (useMaxWidth) {
     attrs.set('width', '100%');
+    attrs.set('height', '100%');
     attrs.set('style', `max-width: ${width}px;`);
   } else {
     attrs.set('width', width);
+    attrs.set('height', height);
   }
   return attrs;
 };
