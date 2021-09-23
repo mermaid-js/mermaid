@@ -6,7 +6,7 @@
 
 **Thanks to all involved, people committing pull requests, people answering questions! 🙏**
 
-<a href="https://mermaid-js.github.io/mermaid/landing/" alt="Link to landing page for the book The Official Guide To mermaid.js"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/img/book-banner-pre-release.jpg"></a>
+<a href="https://mermaid-js.github.io/mermaid/landing/" alt="Link to landing page for the book The Official Guide To mermaid.js"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/img/book-banner-post-release.jpg"></a>
 
 ## About
 
