@@ -656,7 +656,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.12.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.1\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.13.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.1\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -3527,13 +3527,14 @@ var class_box = function class_box(parent, node) {
 
   var classAttributes = [];
   node.classData.members.forEach(function (str) {
-    var parsedText = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str).displayText;
+    var parsedInfo = Object(_diagrams_class_svgDraw__WEBPACK_IMPORTED_MODULE_7__["parseMember"])(str);
+    var parsedText = parsedInfo.displayText;
 
     if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels) {
       parsedText = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(parsedText, node.labelStyle, true, true));
+    var lbl = labelContainer.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(parsedText, parsedInfo.cssStyle ? parsedInfo.cssStyle : node.labelStyle, true, true));
     var bbox = lbl.getBBox();
 
     if (Object(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_8__["evaluate"])(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels)) {
@@ -7205,7 +7206,7 @@ var drawClass = function drawClass(elem, classDef, conf) {
   return classInfo;
 };
 var parseMember = function parseMember(text) {
-  var fieldRegEx = /(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)/;
+  var fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+) *(\*|\$)?$/;
   var methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
   var fieldMatch = text.match(fieldRegEx);
   var methodMatch = text.match(methodRegEx);
@@ -7220,6 +7221,7 @@ var parseMember = function parseMember(text) {
 };
 
 var buildFieldDisplay = function buildFieldDisplay(parsedText) {
+  var cssStyle = '';
   var displayText = '';
 
   try {
@@ -7227,14 +7229,16 @@ var buildFieldDisplay = function buildFieldDisplay(parsedText) {
     var fieldType = parsedText[2] ? parsedText[2].trim() : '';
     var genericType = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
     var fieldName = parsedText[4] ? parsedText[4].trim() : '';
+    var classifier = parsedText[5] ? parsedText[5].trim() : '';
     displayText = visibility + fieldType + genericType + ' ' + fieldName;
+    cssStyle = parseClassifier(classifier);
   } catch (err) {
     displayText = parsedText;
   }
 
   return {
     displayText: displayText,
-    cssStyle: ''
+    cssStyle: cssStyle
   };
 };
 
@@ -7715,35 +7719,68 @@ var drawAttributes = function drawAttributes(groupNode, entityTextNode, attribut
   var labelBBox = entityTextNode.node().getBBox();
   var attributeNodes = []; // Intermediate storage for attribute nodes created so that we can do a second pass
 
+  var hasKeyType = false;
+  var hasComment = false;
+  var maxWidth = 0;
   var maxTypeWidth = 0;
   var maxNameWidth = 0;
+  var maxKeyWidth = 0;
+  var maxCommentWidth = 0;
   var cumulativeHeight = labelBBox.height + heightPadding * 2;
   var attrNum = 1;
   attributes.forEach(function (item) {
-    var attrPrefix = "".concat(entityTextNode.node().id, "-attr-").concat(attrNum); // Add a text node for the attribute type
+    var attrPrefix = "".concat(entityTextNode.node().id, "-attr-").concat(attrNum);
+    var nodeWidth = 0;
+    var nodeHeight = 0; // Add a text node for the attribute type
 
     var typeNode = groupNode.append('text').attr('class', 'er entityLabel').attr('id', "".concat(attrPrefix, "-type")).attr('x', 0).attr('y', 0).attr('dominant-baseline', 'middle').attr('text-anchor', 'left').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + attrFontSize + 'px').text(item.attributeType); // Add a text node for the attribute name
 
-    var nameNode = groupNode.append('text').attr('class', 'er entityLabel').attr('id', "".concat(attrPrefix, "-name")).attr('x', 0).attr('y', 0).attr('dominant-baseline', 'middle').attr('text-anchor', 'left').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + attrFontSize + 'px').text(item.attributeName); // Keep a reference to the nodes so that we can iterate through them later
-
-    attributeNodes.push({
-      tn: typeNode,
-      nn: nameNode
-    });
+    var nameNode = groupNode.append('text').attr('class', 'er entityLabel').attr('id', "".concat(attrPrefix, "-name")).attr('x', 0).attr('y', 0).attr('dominant-baseline', 'middle').attr('text-anchor', 'left').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + attrFontSize + 'px').text(item.attributeName);
+    var attributeNode = {};
+    attributeNode.tn = typeNode;
+    attributeNode.nn = nameNode;
     var typeBBox = typeNode.node().getBBox();
     var nameBBox = nameNode.node().getBBox();
     maxTypeWidth = Math.max(maxTypeWidth, typeBBox.width);
     maxNameWidth = Math.max(maxNameWidth, nameBBox.width);
-    cumulativeHeight += Math.max(typeBBox.height, nameBBox.height) + heightPadding * 2;
+    nodeWidth += typeBBox.width;
+    nodeWidth += nameBBox.width;
+    nodeHeight = Math.max(typeBBox.height, nameBBox.height);
+
+    if (hasKeyType || item.attributeKeyType !== undefined) {
+      var keyTypeNode = groupNode.append('text').attr('class', 'er entityLabel').attr('id', "".concat(attrPrefix, "-name")).attr('x', 0).attr('y', 0).attr('dominant-baseline', 'middle').attr('text-anchor', 'left').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + attrFontSize + 'px').text(item.attributeKeyType || '');
+      attributeNode.kn = keyTypeNode;
+      var keyTypeBBox = keyTypeNode.node().getBBox();
+      nodeWidth += keyTypeBBox.width;
+      maxKeyWidth = Math.max(maxKeyWidth, nodeWidth);
+      nodeHeight = Math.max(nodeHeight, keyTypeBBox.height);
+      hasKeyType = true;
+    }
+
+    if (hasComment || item.attributeComment !== undefined) {
+      var commentNode = groupNode.append('text').attr('class', 'er entityLabel').attr('id', "".concat(attrPrefix, "-name")).attr('x', 0).attr('y', 0).attr('dominant-baseline', 'middle').attr('text-anchor', 'left').attr('style', 'font-family: ' + Object(_config__WEBPACK_IMPORTED_MODULE_5__["getConfig"])().fontFamily + '; font-size: ' + attrFontSize + 'px').text(item.attributeComment || '');
+      attributeNode.cn = commentNode;
+      var commentNodeBBox = commentNode.node().getBBox();
+      nodeWidth += commentNodeBBox.width;
+      maxCommentWidth = Math.max(nodeWidth, nameBBox.width);
+      nodeHeight = Math.max(nodeHeight, commentNodeBBox.height);
+      hasComment = true;
+    }
+
+    attributeNode.height = nodeHeight; // Keep a reference to the nodes so that we can iterate through them later
+
+    attributeNodes.push(attributeNode);
+    maxWidth = Math.max(maxWidth, nodeWidth);
+    cumulativeHeight += nodeHeight + heightPadding * 2;
     attrNum += 1;
   }); // Calculate the new bounding box of the overall entity, now that attributes have been added
 
   var bBox = {
-    width: Math.max(conf.minEntityWidth, Math.max(labelBBox.width + conf.entityPadding * 2, maxTypeWidth + maxNameWidth + widthPadding * 4)),
+    width: Math.max(conf.minEntityWidth, Math.max(labelBBox.width + conf.entityPadding * 2, maxWidth + widthPadding * 4)),
     height: attributes.length > 0 ? cumulativeHeight : Math.max(conf.minEntityHeight, labelBBox.height + conf.entityPadding * 2)
   }; // There might be some spare width for padding out attributes if the entity name is very long
 
-  var spareWidth = Math.max(0, bBox.width - (maxTypeWidth + maxNameWidth) - widthPadding * 4);
+  var spareWidth = Math.max(0, bBox.width - maxWidth - widthPadding * 4);
 
   if (attributes.length > 0) {
     // Position the entity label near the top of the entity bounding box
@@ -7753,20 +7790,34 @@ var drawAttributes = function drawAttributes(groupNode, entityTextNode, attribut
 
     var attribStyle = 'attributeBoxOdd'; // We will flip the style on alternate rows to achieve a banded effect
 
-    attributeNodes.forEach(function (nodePair) {
+    attributeNodes.forEach(function (attributeNode) {
       // Calculate the alignment y co-ordinate for the type/name of the attribute
-      var alignY = heightOffset + heightPadding + Math.max(nodePair.tn.node().getBBox().height, nodePair.nn.node().getBBox().height) / 2; // Position the type of the attribute
+      var alignY = heightOffset + heightPadding + attributeNode.height / 2; // Position the type of the attribute
 
-      nodePair.tn.attr('transform', 'translate(' + widthPadding + ',' + alignY + ')'); // Insert a rectangle for the type
+      attributeNode.tn.attr('transform', 'translate(' + widthPadding + ',' + alignY + ')'); // Insert a rectangle for the type
 
-      var typeRect = groupNode.insert('rect', '#' + nodePair.tn.node().id).attr('class', "er ".concat(attribStyle)).attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', 0).attr('y', heightOffset).attr('width', maxTypeWidth + widthPadding * 2 + spareWidth / 2).attr('height', nodePair.tn.node().getBBox().height + heightPadding * 2); // Position the name of the attribute
+      var typeRect = groupNode.insert('rect', '#' + attributeNode.tn.node().id).attr('class', "er ".concat(attribStyle)).attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', 0).attr('y', heightOffset).attr('width', maxTypeWidth * 2 + spareWidth / 2).attr('height', attributeNode.tn.node().getBBox().height + heightPadding * 2); // Position the name of the attribute
 
-      nodePair.nn.attr('transform', 'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'); // Insert a rectangle for the name
+      attributeNode.nn.attr('transform', 'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'); // Insert a rectangle for the name
 
-      groupNode.insert('rect', '#' + nodePair.nn.node().id).attr('class', "er ".concat(attribStyle)).attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', "".concat(typeRect.attr('x') + typeRect.attr('width'))) //.attr('x', maxTypeWidth + (widthPadding * 2))
-      .attr('y', heightOffset).attr('width', maxNameWidth + widthPadding * 2 + spareWidth / 2).attr('height', nodePair.nn.node().getBBox().height + heightPadding * 2); // Increment the height offset to move to the next row
+      groupNode.insert('rect', '#' + attributeNode.nn.node().id).attr('class', "er ".concat(attribStyle)).attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', "".concat(typeRect.attr('x') + typeRect.attr('width'))).attr('y', heightOffset).attr('width', maxNameWidth + widthPadding * 2 + spareWidth / 2).attr('height', attributeNode.nn.node().getBBox().height + heightPadding * 2);
 
-      heightOffset += Math.max(nodePair.tn.node().getBBox().height, nodePair.nn.node().getBBox().height) + heightPadding * 2; // Flip the attribute style for row banding
+      if (hasKeyType) {
+        // Position the name of the attribute
+        attributeNode.kn.attr('transform', 'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'); // Insert a rectangle for the name
+
+        groupNode.insert('rect', '#' + attributeNode.kn.node().id).attr('class', "er ".concat(attribStyle)).attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', "".concat(typeRect.attr('x') + typeRect.attr('width'))).attr('y', heightOffset).attr('width', maxKeyWidth + widthPadding * 2 + spareWidth / 2).attr('height', attributeNode.kn.node().getBBox().height + heightPadding * 2);
+      }
+
+      if (hasComment) {
+        // Position the name of the attribute
+        attributeNode.cn.attr('transform', 'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'); // Insert a rectangle for the name
+
+        groupNode.insert('rect', '#' + attributeNode.cn.node().id).attr('class', "er ".concat(attribStyle)).attr('fill', conf.fill).attr('fill-opacity', '100%').attr('stroke', conf.stroke).attr('x', "".concat(typeRect.attr('x') + typeRect.attr('width'))).attr('y', heightOffset).attr('width', maxCommentWidth + widthPadding * 2 + spareWidth / 2).attr('height', attributeNode.cn.node().getBBox().height + heightPadding * 2);
+      } // Increment the height offset to move to the next row
+
+
+      heightOffset += attributeNode.height + heightPadding * 2; // Flip the attribute style for row banding
 
       attribStyle = attribStyle == 'attributeBoxOdd' ? 'attributeBoxEven' : 'attributeBoxOdd';
     });
@@ -8103,12 +8154,12 @@ var draw = function draw(text, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,5],$V2=[6,9,11,23,37],$V3=[1,17],$V4=[1,20],$V5=[1,25],$V6=[1,26],$V7=[1,27],$V8=[1,28],$V9=[1,37],$Va=[23,34,35],$Vb=[4,6,9,11,23,37],$Vc=[30,31,32,33],$Vd=[22,27];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,5],$V2=[6,9,11,23,40],$V3=[1,17],$V4=[1,20],$V5=[1,25],$V6=[1,26],$V7=[1,27],$V8=[1,28],$V9=[1,37],$Va=[23,37,38],$Vb=[4,6,9,11,23,40],$Vc=[33,34,35,36],$Vd=[22,29];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"ER_DIAGRAM":4,"document":5,"EOF":6,"directive":7,"line":8,"SPACE":9,"statement":10,"NEWLINE":11,"openDirective":12,"typeDirective":13,"closeDirective":14,":":15,"argDirective":16,"entityName":17,"relSpec":18,"role":19,"BLOCK_START":20,"attributes":21,"BLOCK_STOP":22,"ALPHANUM":23,"attribute":24,"attributeType":25,"attributeName":26,"ATTRIBUTE_WORD":27,"cardinality":28,"relType":29,"ZERO_OR_ONE":30,"ZERO_OR_MORE":31,"ONE_OR_MORE":32,"ONLY_ONE":33,"NON_IDENTIFYING":34,"IDENTIFYING":35,"WORD":36,"open_directive":37,"type_directive":38,"arg_directive":39,"close_directive":40,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"ER_DIAGRAM",6:"EOF",9:"SPACE",11:"NEWLINE",15:":",20:"BLOCK_START",22:"BLOCK_STOP",23:"ALPHANUM",27:"ATTRIBUTE_WORD",30:"ZERO_OR_ONE",31:"ZERO_OR_MORE",32:"ONE_OR_MORE",33:"ONLY_ONE",34:"NON_IDENTIFYING",35:"IDENTIFYING",36:"WORD",37:"open_directive",38:"type_directive",39:"arg_directive",40:"close_directive"},
-productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,5],[10,4],[10,3],[10,1],[17,1],[21,1],[21,2],[24,2],[25,1],[26,1],[18,3],[28,1],[28,1],[28,1],[28,1],[29,1],[29,1],[19,1],[19,1],[12,1],[13,1],[16,1],[14,1]],
+symbols_: {"error":2,"start":3,"ER_DIAGRAM":4,"document":5,"EOF":6,"directive":7,"line":8,"SPACE":9,"statement":10,"NEWLINE":11,"openDirective":12,"typeDirective":13,"closeDirective":14,":":15,"argDirective":16,"entityName":17,"relSpec":18,"role":19,"BLOCK_START":20,"attributes":21,"BLOCK_STOP":22,"ALPHANUM":23,"attribute":24,"attributeType":25,"attributeName":26,"attributeKeyType":27,"COMMENT":28,"ATTRIBUTE_WORD":29,"ATTRIBUTE_KEY":30,"cardinality":31,"relType":32,"ZERO_OR_ONE":33,"ZERO_OR_MORE":34,"ONE_OR_MORE":35,"ONLY_ONE":36,"NON_IDENTIFYING":37,"IDENTIFYING":38,"WORD":39,"open_directive":40,"type_directive":41,"arg_directive":42,"close_directive":43,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"ER_DIAGRAM",6:"EOF",9:"SPACE",11:"NEWLINE",15:":",20:"BLOCK_START",22:"BLOCK_STOP",23:"ALPHANUM",28:"COMMENT",29:"ATTRIBUTE_WORD",30:"ATTRIBUTE_KEY",33:"ZERO_OR_ONE",34:"ZERO_OR_MORE",35:"ONE_OR_MORE",36:"ONLY_ONE",37:"NON_IDENTIFYING",38:"IDENTIFYING",39:"WORD",40:"open_directive",41:"type_directive",42:"arg_directive",43:"close_directive"},
+productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,5],[10,4],[10,3],[10,1],[17,1],[21,1],[21,2],[24,2],[24,3],[24,3],[24,4],[25,1],[26,1],[27,1],[18,3],[31,1],[31,1],[31,1],[31,1],[32,1],[32,1],[19,1],[19,1],[12,1],[13,1],[16,1],[14,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -8163,55 +8214,64 @@ break;
 case 19:
  this.$ = { attributeType: $$[$0-1], attributeName: $$[$0] }; 
 break;
-case 20: case 21:
- this.$=$$[$0]; 
+case 20:
+ this.$ = { attributeType: $$[$0-2], attributeName: $$[$0-1], attributeKeyType: $$[$0] }; 
+break;
+case 21:
+ this.$ = { attributeType: $$[$0-2], attributeName: $$[$0-1], attributeComment: $$[$0] }; 
 break;
 case 22:
+ this.$ = { attributeType: $$[$0-3], attributeName: $$[$0-2], attributeKeyType: $$[$0-1], attributeComment: $$[$0] }; 
+break;
+case 23: case 24: case 25:
+ this.$=$$[$0]; 
+break;
+case 26:
 
         this.$ = { cardA: $$[$0], relType: $$[$0-1], cardB: $$[$0-2] };
         /*console.log('relSpec: ' + $$[$0] + $$[$0-1] + $$[$0-2]);*/
       
 break;
-case 23:
+case 27:
  this.$ = yy.Cardinality.ZERO_OR_ONE; 
 break;
-case 24:
+case 28:
  this.$ = yy.Cardinality.ZERO_OR_MORE; 
 break;
-case 25:
+case 29:
  this.$ = yy.Cardinality.ONE_OR_MORE; 
 break;
-case 26:
+case 30:
  this.$ = yy.Cardinality.ONLY_ONE; 
 break;
-case 27:
+case 31:
  this.$ = yy.Identification.NON_IDENTIFYING;  
 break;
-case 28:
+case 32:
  this.$ = yy.Identification.IDENTIFYING; 
 break;
-case 29:
+case 33:
  this.$ = $$[$0].replace(/"/g, ''); 
 break;
-case 30:
+case 34:
  this.$ = $$[$0]; 
 break;
-case 31:
+case 35:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 32:
+case 36:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 33:
+case 37:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 34:
+case 38:
  yy.parseDirective('}%%', 'close_directive', 'er'); 
 break;
 }
 },
-table: [{3:1,4:$V0,7:3,12:4,37:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,37:$V1},{13:8,38:[1,9]},{38:[2,31]},{6:[1,10],7:15,8:11,9:[1,12],10:13,11:[1,14],12:4,17:16,23:$V3,37:$V1},{1:[2,2]},{14:18,15:[1,19],40:$V4},o([15,40],[2,32]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:15,10:21,12:4,17:16,23:$V3,37:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),o($V2,[2,15],{18:22,28:24,20:[1,23],30:$V5,31:$V6,32:$V7,33:$V8}),o([6,9,11,15,20,23,30,31,32,33,37],[2,16]),{11:[1,29]},{16:30,39:[1,31]},{11:[2,34]},o($V2,[2,5]),{17:32,23:$V3},{21:33,22:[1,34],24:35,25:36,27:$V9},{29:38,34:[1,39],35:[1,40]},o($Va,[2,23]),o($Va,[2,24]),o($Va,[2,25]),o($Va,[2,26]),o($Vb,[2,9]),{14:41,40:$V4},{40:[2,33]},{15:[1,42]},{22:[1,43]},o($V2,[2,14]),{21:44,22:[2,17],24:35,25:36,27:$V9},{26:45,27:[1,46]},{27:[2,20]},{28:47,30:$V5,31:$V6,32:$V7,33:$V8},o($Vc,[2,27]),o($Vc,[2,28]),{11:[1,48]},{19:49,23:[1,51],36:[1,50]},o($V2,[2,13]),{22:[2,18]},o($Vd,[2,19]),o($Vd,[2,21]),{23:[2,22]},o($Vb,[2,10]),o($V2,[2,12]),o($V2,[2,29]),o($V2,[2,30])],
-defaultActions: {5:[2,31],7:[2,2],20:[2,34],31:[2,33],37:[2,20],44:[2,18],47:[2,22]},
+table: [{3:1,4:$V0,7:3,12:4,40:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,40:$V1},{13:8,41:[1,9]},{41:[2,35]},{6:[1,10],7:15,8:11,9:[1,12],10:13,11:[1,14],12:4,17:16,23:$V3,40:$V1},{1:[2,2]},{14:18,15:[1,19],43:$V4},o([15,43],[2,36]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:15,10:21,12:4,17:16,23:$V3,40:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),o($V2,[2,15],{18:22,31:24,20:[1,23],33:$V5,34:$V6,35:$V7,36:$V8}),o([6,9,11,15,20,23,33,34,35,36,40],[2,16]),{11:[1,29]},{16:30,42:[1,31]},{11:[2,38]},o($V2,[2,5]),{17:32,23:$V3},{21:33,22:[1,34],24:35,25:36,29:$V9},{32:38,37:[1,39],38:[1,40]},o($Va,[2,27]),o($Va,[2,28]),o($Va,[2,29]),o($Va,[2,30]),o($Vb,[2,9]),{14:41,43:$V4},{43:[2,37]},{15:[1,42]},{22:[1,43]},o($V2,[2,14]),{21:44,22:[2,17],24:35,25:36,29:$V9},{26:45,29:[1,46]},{29:[2,23]},{31:47,33:$V5,34:$V6,35:$V7,36:$V8},o($Vc,[2,31]),o($Vc,[2,32]),{11:[1,48]},{19:49,23:[1,51],39:[1,50]},o($V2,[2,13]),{22:[2,18]},o($Vd,[2,19],{27:52,28:[1,53],30:[1,54]}),o([22,28,29,30],[2,24]),{23:[2,26]},o($Vb,[2,10]),o($V2,[2,12]),o($V2,[2,33]),o($V2,[2,34]),o($Vd,[2,20],{28:[1,55]}),o($Vd,[2,21]),o([22,28,29],[2,25]),o($Vd,[2,22])],
+defaultActions: {5:[2,35],7:[2,2],20:[2,38],31:[2,37],37:[2,23],44:[2,18],47:[2,26]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -8690,15 +8750,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 37; 
+case 0: this.begin('open_directive'); return 40; 
 break;
-case 1: this.begin('type_directive'); return 38; 
+case 1: this.begin('type_directive'); return 41; 
 break;
 case 2: this.popState(); this.begin('arg_directive'); return 15; 
 break;
-case 3: this.popState(); this.popState(); return 40; 
+case 3: this.popState(); this.popState(); return 43; 
 break;
-case 4:return 39;
+case 4:return 42;
 break;
 case 5:/* skip comments */
 break;
@@ -8710,7 +8770,7 @@ case 8:/* skip whitespace */
 break;
 case 9:return 9;
 break;
-case 10:return 36;
+case 10:return 39;
 break;
 case 11:return 4;
 break;
@@ -8718,46 +8778,50 @@ case 12: this.begin("block"); return 20;
 break;
 case 13:/* skip whitespace in block */
 break;
-case 14: return 27; 
+case 14:return 30
 break;
-case 15:/* nothing */
+case 15:return 29
 break;
-case 16: this.popState(); return 22; 
+case 16:return 28;
 break;
-case 17:return yy_.yytext[0];
+case 17:/* nothing */
 break;
-case 18:return 30;
+case 18: this.popState(); return 22; 
 break;
-case 19:return 31;
+case 19:return yy_.yytext[0];
 break;
-case 20:return 32;
+case 20:return 33;
 break;
-case 21:return 33;
+case 21:return 34;
 break;
-case 22:return 30;
+case 22:return 35;
 break;
-case 23:return 31;
+case 23:return 36;
 break;
-case 24:return 32;
+case 24:return 33;
 break;
 case 25:return 34;
 break;
 case 26:return 35;
 break;
-case 27:return 34;
+case 27:return 37;
 break;
-case 28:return 34;
+case 28:return 38;
 break;
-case 29:return 23;
+case 29:return 37;
 break;
-case 30:return yy_.yytext[0];
+case 30:return 37;
 break;
-case 31:return 6;
+case 31:return 23;
+break;
+case 32:return yy_.yytext[0];
+break;
+case 33:return 6;
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\{)/i,/^(?:\s+)/i,/^(?:[A-Za-z][A-Za-z0-9\-_]*)/i,/^(?:[\n]+)/i,/^(?:\})/i,/^(?:.)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-_]*)/i,/^(?:.)/i,/^(?:$)/i],
-conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"block":{"rules":[13,14,15,16,17],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,18,19,20,21,22,23,24,25,26,27,28,29,30,31],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\{)/i,/^(?:\s+)/i,/^(?:(?:PK)|(?:FK))/i,/^(?:[A-Za-z][A-Za-z0-9\-_]*)/i,/^(?:"[^"]*")/i,/^(?:[\n]+)/i,/^(?:\})/i,/^(?:.)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-_]*)/i,/^(?:.)/i,/^(?:$)/i],
+conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"block":{"rules":[13,14,15,16,17,18,19],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,20,21,22,23,24,25,26,27,28,29,30,31,32,33],"inclusive":true}}
 });
 return lexer;
 })();
@@ -18465,12 +18529,12 @@ var getStyles = function getStyles(options) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,24],$Vc=[1,25],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,29],$Vh=[1,32],$Vi=[1,33],$Vj=[1,36],$Vk=[1,4,5,16,21,22,23,25,27,28,29,30,31,33,35,36,37,48,58],$Vl=[1,44],$Vm=[4,5,16,21,22,23,25,27,28,29,30,31,33,37,48,58],$Vn=[4,5,16,21,22,23,25,27,28,29,30,31,33,36,37,48,58],$Vo=[4,5,16,21,22,23,25,27,28,29,30,31,33,35,37,48,58],$Vp=[46,47,48],$Vq=[1,4,5,7,16,21,22,23,25,27,28,29,30,31,33,35,36,37,48,58];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,19],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,25],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,29],$Vh=[1,30],$Vi=[1,33],$Vj=[1,34],$Vk=[1,37],$Vl=[1,4,5,16,20,22,23,24,26,28,29,30,31,32,34,36,37,38,49,59],$Vm=[1,46],$Vn=[4,5,16,20,22,23,24,26,28,29,30,31,32,34,38,49,59],$Vo=[4,5,16,20,22,23,24,26,28,29,30,31,32,34,37,38,49,59],$Vp=[4,5,16,20,22,23,24,26,28,29,30,31,32,34,36,38,49,59],$Vq=[47,48,49],$Vr=[1,4,5,7,16,20,22,23,24,26,28,29,30,31,32,34,36,37,38,49,59];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"signal":20,"autonumber":21,"activate":22,"deactivate":23,"note_statement":24,"title":25,"text2":26,"loop":27,"end":28,"rect":29,"opt":30,"alt":31,"else_sections":32,"par":33,"par_sections":34,"and":35,"else":36,"note":37,"placement":38,"over":39,"actor_pair":40,"spaceList":41,",":42,"left_of":43,"right_of":44,"signaltype":45,"+":46,"-":47,"ACTOR":48,"SOLID_OPEN_ARROW":49,"DOTTED_OPEN_ARROW":50,"SOLID_ARROW":51,"DOTTED_ARROW":52,"SOLID_CROSS":53,"DOTTED_CROSS":54,"SOLID_POINT":55,"DOTTED_POINT":56,"TXT":57,"open_directive":58,"type_directive":59,"arg_directive":60,"close_directive":61,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",21:"autonumber",22:"activate",23:"deactivate",25:"title",27:"loop",28:"end",29:"rect",30:"opt",31:"alt",33:"par",35:"and",36:"else",37:"note",39:"over",42:",",43:"left_of",44:"right_of",46:"+",47:"-",48:"ACTOR",49:"SOLID_OPEN_ARROW",50:"DOTTED_OPEN_ARROW",51:"SOLID_ARROW",52:"DOTTED_ARROW",53:"SOLID_CROSS",54:"DOTTED_CROSS",55:"SOLID_POINT",56:"DOTTED_POINT",57:"TXT",58:"open_directive",59:"type_directive",60:"arg_directive",61:"close_directive"},
-productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,2],[10,1],[10,3],[10,3],[10,2],[10,3],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[34,1],[34,4],[32,1],[32,4],[24,4],[24,4],[41,2],[41,1],[40,3],[40,1],[38,1],[38,1],[20,5],[20,5],[20,4],[17,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[26,1],[11,1],[12,1],[15,1],[13,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"participant_actor":20,"signal":21,"autonumber":22,"activate":23,"deactivate":24,"note_statement":25,"title":26,"text2":27,"loop":28,"end":29,"rect":30,"opt":31,"alt":32,"else_sections":33,"par":34,"par_sections":35,"and":36,"else":37,"note":38,"placement":39,"over":40,"actor_pair":41,"spaceList":42,",":43,"left_of":44,"right_of":45,"signaltype":46,"+":47,"-":48,"ACTOR":49,"SOLID_OPEN_ARROW":50,"DOTTED_OPEN_ARROW":51,"SOLID_ARROW":52,"DOTTED_ARROW":53,"SOLID_CROSS":54,"DOTTED_CROSS":55,"SOLID_POINT":56,"DOTTED_POINT":57,"TXT":58,"open_directive":59,"type_directive":60,"arg_directive":61,"close_directive":62,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",20:"participant_actor",22:"autonumber",23:"activate",24:"deactivate",26:"title",28:"loop",29:"end",30:"rect",31:"opt",32:"alt",34:"par",36:"and",37:"else",38:"note",40:"over",43:",",44:"left_of",45:"right_of",47:"+",48:"-",49:"ACTOR",50:"SOLID_OPEN_ARROW",51:"DOTTED_OPEN_ARROW",52:"SOLID_ARROW",53:"DOTTED_ARROW",54:"SOLID_CROSS",55:"DOTTED_CROSS",56:"SOLID_POINT",57:"DOTTED_POINT",58:"TXT",59:"open_directive",60:"type_directive",61:"arg_directive",62:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,5],[10,3],[10,2],[10,1],[10,3],[10,3],[10,2],[10,3],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[35,1],[35,4],[33,1],[33,4],[25,4],[25,4],[42,2],[42,1],[41,3],[41,1],[39,1],[39,1],[21,5],[21,5],[21,4],[17,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[27,1],[11,1],[12,1],[15,1],[13,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -18492,42 +18556,48 @@ case 9:
  this.$=[]; 
 break;
 case 12:
-$$[$0-3].description=yy.parseMessage($$[$0-1]); this.$=$$[$0-3];
+$$[$0-3].type='addParticipant';$$[$0-3].description=yy.parseMessage($$[$0-1]); this.$=$$[$0-3];
 break;
 case 13:
-this.$=$$[$0-1];
+$$[$0-1].type='addParticipant';this.$=$$[$0-1];
+break;
+case 14:
+$$[$0-3].type='addActor';$$[$0-3].description=yy.parseMessage($$[$0-1]); this.$=$$[$0-3];
 break;
 case 15:
-yy.enableSequenceNumbers()
-break;
-case 16:
-this.$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]};
+$$[$0-1].type='addActor'; this.$=$$[$0-1];
 break;
 case 17:
-this.$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-1]};
+yy.enableSequenceNumbers()
+break;
+case 18:
+this.$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]};
 break;
 case 19:
+this.$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-1]};
+break;
+case 21:
 this.$=[{type:'setTitle', text:$$[$0-1]}]
 break;
-case 20:
+case 22:
 
 		$$[$0-1].unshift({type: 'loopStart', loopText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.LOOP_START});
 		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
 		this.$=$$[$0-1];
 break;
-case 21:
+case 23:
 
 		$$[$0-1].unshift({type: 'rectStart', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_START });
 		$$[$0-1].push({type: 'rectEnd', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_END });
 		this.$=$$[$0-1];
 break;
-case 22:
+case 24:
 
 		$$[$0-1].unshift({type: 'optStart', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_START});
 		$$[$0-1].push({type: 'optEnd', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_END});
 		this.$=$$[$0-1];
 break;
-case 23:
+case 25:
 
 		// Alt start
 		$$[$0-1].unshift({type: 'altStart', altText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.ALT_START});
@@ -18536,7 +18606,7 @@ case 23:
 		$$[$0-1].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
 		this.$=$$[$0-1];
 break;
-case 24:
+case 26:
 
 		// Parallel start
 		$$[$0-1].unshift({type: 'parStart', parText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.PAR_START});
@@ -18545,17 +18615,17 @@ case 24:
 		$$[$0-1].push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		this.$=$$[$0-1];
 break;
-case 27:
+case 29:
  this.$ = $$[$0-3].concat([{type: 'and', parText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
 break;
-case 29:
+case 31:
  this.$ = $$[$0-3].concat([{type: 'else', altText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
 break;
-case 30:
+case 32:
 
 		this.$ = [$$[$0-1], {type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
-case 31:
+case 33:
 
 		// Coerce actor_pair into a [to, from, ...] array
 		$$[$0-2] = [].concat($$[$0-1], $$[$0-1]).slice(0, 2);
@@ -18563,77 +18633,77 @@ case 31:
 		$$[$0-2][1] = $$[$0-2][1].actor;
 		this.$ = [$$[$0-1], {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$$[$0-2].slice(0, 2), text:$$[$0]}];
 break;
-case 34:
+case 36:
  this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 35:
+case 37:
  this.$ = $$[$0]; 
 break;
-case 36:
+case 38:
  this.$ = yy.PLACEMENT.LEFTOF; 
 break;
-case 37:
+case 39:
  this.$ = yy.PLACEMENT.RIGHTOF; 
 break;
-case 38:
+case 40:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]}
 	             ]
 break;
-case 39:
+case 41:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-4]}
 	             ]
 break;
-case 40:
+case 42:
  this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
-case 41:
-this.$={type: 'addActor', actor:$$[$0]}
-break;
-case 42:
- this.$ = yy.LINETYPE.SOLID_OPEN; 
-break;
 case 43:
- this.$ = yy.LINETYPE.DOTTED_OPEN; 
+this.$={ type: 'addParticipant', actor:$$[$0]}
 break;
 case 44:
- this.$ = yy.LINETYPE.SOLID; 
+ this.$ = yy.LINETYPE.SOLID_OPEN; 
 break;
 case 45:
- this.$ = yy.LINETYPE.DOTTED; 
+ this.$ = yy.LINETYPE.DOTTED_OPEN; 
 break;
 case 46:
- this.$ = yy.LINETYPE.SOLID_CROSS; 
+ this.$ = yy.LINETYPE.SOLID; 
 break;
 case 47:
- this.$ = yy.LINETYPE.DOTTED_CROSS; 
+ this.$ = yy.LINETYPE.DOTTED; 
 break;
 case 48:
- this.$ = yy.LINETYPE.SOLID_POINT; 
+ this.$ = yy.LINETYPE.SOLID_CROSS; 
 break;
 case 49:
- this.$ = yy.LINETYPE.DOTTED_POINT; 
+ this.$ = yy.LINETYPE.DOTTED_CROSS; 
 break;
 case 50:
-this.$ = yy.parseMessage($$[$0].trim().substring(1)) 
+ this.$ = yy.LINETYPE.SOLID_POINT; 
 break;
 case 51:
- yy.parseDirective('%%{', 'open_directive'); 
+ this.$ = yy.LINETYPE.DOTTED_POINT; 
 break;
 case 52:
- yy.parseDirective($$[$0], 'type_directive'); 
+this.$ = yy.parseMessage($$[$0].trim().substring(1)) 
 break;
 case 53:
- $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+ yy.parseDirective('%%{', 'open_directive'); 
 break;
 case 54:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 55:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 56:
  yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:6,58:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:6,58:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:6,58:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,11:6,58:$V3},o([1,4,5,16,21,22,23,25,27,29,30,31,33,37,48,58],$V4,{8:11}),{12:12,59:[1,13]},{59:[2,51]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,58:$V3},{13:34,14:[1,35],61:$Vj},o([14,61],[2,52]),o($Vk,[2,6]),{6:30,10:37,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,58:$V3},o($Vk,[2,8]),o($Vk,[2,9]),{17:38,48:$Vi},{5:[1,39]},o($Vk,[2,15]),{17:40,48:$Vi},{17:41,48:$Vi},{5:[1,42]},{26:43,57:$Vl},{19:[1,45]},{19:[1,46]},{19:[1,47]},{19:[1,48]},{19:[1,49]},o($Vk,[2,25]),{45:50,49:[1,51],50:[1,52],51:[1,53],52:[1,54],53:[1,55],54:[1,56],55:[1,57],56:[1,58]},{38:59,39:[1,60],43:[1,61],44:[1,62]},o([5,18,42,49,50,51,52,53,54,55,56,57],[2,41]),{5:[1,63]},{15:64,60:[1,65]},{5:[2,54]},o($Vk,[2,7]),{5:[1,67],18:[1,66]},o($Vk,[2,14]),{5:[1,68]},{5:[1,69]},o($Vk,[2,18]),{5:[1,70]},{5:[2,50]},o($Vm,$V4,{8:71}),o($Vm,$V4,{8:72}),o($Vm,$V4,{8:73}),o($Vn,$V4,{32:74,8:75}),o($Vo,$V4,{34:76,8:77}),{17:80,46:[1,78],47:[1,79],48:$Vi},o($Vp,[2,42]),o($Vp,[2,43]),o($Vp,[2,44]),o($Vp,[2,45]),o($Vp,[2,46]),o($Vp,[2,47]),o($Vp,[2,48]),o($Vp,[2,49]),{17:81,48:$Vi},{17:83,40:82,48:$Vi},{48:[2,36]},{48:[2,37]},o($Vq,[2,10]),{13:84,61:$Vj},{61:[2,53]},{19:[1,85]},o($Vk,[2,13]),o($Vk,[2,16]),o($Vk,[2,17]),o($Vk,[2,19]),{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[1,86],29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,58:$V3},{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[1,87],29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,58:$V3},{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[1,88],29:$Vd,30:$Ve,31:$Vf,33:$Vg,37:$Vh,48:$Vi,58:$V3},{28:[1,89]},{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[2,28],29:$Vd,30:$Ve,31:$Vf,33:$Vg,36:[1,90],37:$Vh,48:$Vi,58:$V3},{28:[1,91]},{4:$V5,5:$V6,6:30,9:14,10:16,11:6,16:$V7,17:31,20:19,21:$V8,22:$V9,23:$Va,24:23,25:$Vb,27:$Vc,28:[2,26],29:$Vd,30:$Ve,31:$Vf,33:$Vg,35:[1,92],37:$Vh,48:$Vi,58:$V3},{17:93,48:$Vi},{17:94,48:$Vi},{26:95,57:$Vl},{26:96,57:$Vl},{26:97,57:$Vl},{42:[1,98],57:[2,35]},{5:[1,99]},{5:[1,100]},o($Vk,[2,20]),o($Vk,[2,21]),o($Vk,[2,22]),o($Vk,[2,23]),{19:[1,101]},o($Vk,[2,24]),{19:[1,102]},{26:103,57:$Vl},{26:104,57:$Vl},{5:[2,40]},{5:[2,30]},{5:[2,31]},{17:105,48:$Vi},o($Vq,[2,11]),o($Vk,[2,12]),o($Vn,$V4,{8:75,32:106}),o($Vo,$V4,{8:77,34:107}),{5:[2,38]},{5:[2,39]},{57:[2,34]},{28:[2,29]},{28:[2,27]}],
-defaultActions: {7:[2,51],8:[2,1],9:[2,2],10:[2,3],36:[2,54],44:[2,50],61:[2,36],62:[2,37],65:[2,53],95:[2,40],96:[2,30],97:[2,31],103:[2,38],104:[2,39],105:[2,34],106:[2,29],107:[2,27]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:6,59:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:6,59:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:6,59:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,11:6,59:$V3},o([1,4,5,16,20,22,23,24,26,28,30,31,32,34,38,49,59],$V4,{8:11}),{12:12,60:[1,13]},{60:[2,53]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},{13:35,14:[1,36],62:$Vk},o([14,62],[2,54]),o($Vl,[2,6]),{6:31,10:38,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},o($Vl,[2,8]),o($Vl,[2,9]),{17:39,49:$Vj},{17:40,49:$Vj},{5:[1,41]},o($Vl,[2,17]),{17:42,49:$Vj},{17:43,49:$Vj},{5:[1,44]},{27:45,58:$Vm},{19:[1,47]},{19:[1,48]},{19:[1,49]},{19:[1,50]},{19:[1,51]},o($Vl,[2,27]),{46:52,50:[1,53],51:[1,54],52:[1,55],53:[1,56],54:[1,57],55:[1,58],56:[1,59],57:[1,60]},{39:61,40:[1,62],44:[1,63],45:[1,64]},o([5,18,43,50,51,52,53,54,55,56,57,58],[2,43]),{5:[1,65]},{15:66,61:[1,67]},{5:[2,56]},o($Vl,[2,7]),{5:[1,69],18:[1,68]},{5:[1,71],18:[1,70]},o($Vl,[2,16]),{5:[1,72]},{5:[1,73]},o($Vl,[2,20]),{5:[1,74]},{5:[2,52]},o($Vn,$V4,{8:75}),o($Vn,$V4,{8:76}),o($Vn,$V4,{8:77}),o($Vo,$V4,{33:78,8:79}),o($Vp,$V4,{35:80,8:81}),{17:84,47:[1,82],48:[1,83],49:$Vj},o($Vq,[2,44]),o($Vq,[2,45]),o($Vq,[2,46]),o($Vq,[2,47]),o($Vq,[2,48]),o($Vq,[2,49]),o($Vq,[2,50]),o($Vq,[2,51]),{17:85,49:$Vj},{17:87,41:86,49:$Vj},{49:[2,38]},{49:[2,39]},o($Vr,[2,10]),{13:88,62:$Vk},{62:[2,55]},{19:[1,89]},o($Vl,[2,13]),{19:[1,90]},o($Vl,[2,15]),o($Vl,[2,18]),o($Vl,[2,19]),o($Vl,[2,21]),{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[1,91],30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[1,92],30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[1,93],30:$Ve,31:$Vf,32:$Vg,34:$Vh,38:$Vi,49:$Vj,59:$V3},{29:[1,94]},{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[2,30],30:$Ve,31:$Vf,32:$Vg,34:$Vh,37:[1,95],38:$Vi,49:$Vj,59:$V3},{29:[1,96]},{4:$V5,5:$V6,6:31,9:14,10:16,11:6,16:$V7,17:32,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:$Vc,28:$Vd,29:[2,28],30:$Ve,31:$Vf,32:$Vg,34:$Vh,36:[1,97],38:$Vi,49:$Vj,59:$V3},{17:98,49:$Vj},{17:99,49:$Vj},{27:100,58:$Vm},{27:101,58:$Vm},{27:102,58:$Vm},{43:[1,103],58:[2,37]},{5:[1,104]},{5:[1,105]},{5:[1,106]},o($Vl,[2,22]),o($Vl,[2,23]),o($Vl,[2,24]),o($Vl,[2,25]),{19:[1,107]},o($Vl,[2,26]),{19:[1,108]},{27:109,58:$Vm},{27:110,58:$Vm},{5:[2,42]},{5:[2,32]},{5:[2,33]},{17:111,49:$Vj},o($Vr,[2,11]),o($Vl,[2,12]),o($Vl,[2,14]),o($Vo,$V4,{8:79,33:112}),o($Vp,$V4,{8:81,35:113}),{5:[2,40]},{5:[2,41]},{58:[2,36]},{29:[2,31]},{29:[2,29]}],
+defaultActions: {7:[2,53],8:[2,1],9:[2,2],10:[2,3],37:[2,56],46:[2,52],63:[2,38],64:[2,39],67:[2,55],100:[2,42],101:[2,32],102:[2,33],109:[2,40],110:[2,41],111:[2,36],112:[2,31],113:[2,29]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -19112,15 +19182,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 58; 
+case 0: this.begin('open_directive'); return 59; 
 break;
-case 1: this.begin('type_directive'); return 59; 
+case 1: this.begin('type_directive'); return 60; 
 break;
 case 2: this.popState(); this.begin('arg_directive'); return 14; 
 break;
-case 3: this.popState(); this.popState(); return 61; 
+case 3: this.popState(); this.popState(); return 62; 
 break;
-case 4:return 60;
+case 4:return 61;
 break;
 case 5:return 5;
 break;
@@ -19136,63 +19206,63 @@ case 10:/* skip comments */
 break;
 case 11: this.begin('ID'); return 16; 
 break;
-case 12: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 48; 
+case 12: this.begin('ID'); return 20; 
 break;
-case 13: this.popState(); this.popState(); this.begin('LINE'); return 18; 
+case 13: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 49; 
 break;
-case 14: this.popState(); this.popState(); return 5; 
+case 14: this.popState(); this.popState(); this.begin('LINE'); return 18; 
 break;
-case 15: this.begin('LINE'); return 27; 
+case 15: this.popState(); this.popState(); return 5; 
 break;
-case 16: this.begin('LINE'); return 29; 
+case 16: this.begin('LINE'); return 28; 
 break;
 case 17: this.begin('LINE'); return 30; 
 break;
 case 18: this.begin('LINE'); return 31; 
 break;
-case 19: this.begin('LINE'); return 36; 
+case 19: this.begin('LINE'); return 32; 
 break;
-case 20: this.begin('LINE'); return 33; 
+case 20: this.begin('LINE'); return 37; 
 break;
-case 21: this.begin('LINE'); return 35; 
+case 21: this.begin('LINE'); return 34; 
 break;
-case 22: this.popState(); return 19; 
+case 22: this.begin('LINE'); return 36; 
 break;
-case 23:return 28;
+case 23: this.popState(); return 19; 
 break;
-case 24:return 43;
+case 24:return 29;
 break;
 case 25:return 44;
 break;
-case 26:return 39;
+case 26:return 45;
 break;
-case 27:return 37;
+case 27:return 40;
 break;
-case 28: this.begin('ID'); return 22; 
+case 28:return 38;
 break;
 case 29: this.begin('ID'); return 23; 
 break;
-case 30:return 25;
+case 30: this.begin('ID'); return 24; 
 break;
-case 31:return 7;
+case 31:return 26;
 break;
-case 32:return 21;
+case 32:return 7;
 break;
-case 33:return 42;
+case 33:return 22;
 break;
-case 34:return 5;
+case 34:return 43;
 break;
-case 35: yy_.yytext = yy_.yytext.trim(); return 48; 
+case 35:return 5;
 break;
-case 36:return 51;
+case 36: yy_.yytext = yy_.yytext.trim(); return 49; 
 break;
 case 37:return 52;
 break;
-case 38:return 49;
+case 38:return 53;
 break;
 case 39:return 50;
 break;
-case 40:return 53;
+case 40:return 51;
 break;
 case 41:return 54;
 break;
@@ -19202,18 +19272,20 @@ case 43:return 56;
 break;
 case 44:return 57;
 break;
-case 45:return 46;
+case 45:return 58;
 break;
 case 46:return 47;
 break;
-case 47:return 5;
+case 47:return 48;
 break;
-case 48:return 'INVALID';
+case 48:return 5;
+break;
+case 49:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x|-\)|--\)))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?:-[\)])/i,/^(?:--[\)])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,12],"inclusive":false},"ALIAS":{"rules":[7,8,13,14],"inclusive":false},"LINE":{"rules":[7,8,22],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:actor\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x|-\)|--\)))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?:-[\)])/i,/^(?:--[\)])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,13],"inclusive":false},"ALIAS":{"rules":[7,8,14,15],"inclusive":false},"LINE":{"rules":[7,8,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,12,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49],"inclusive":true}}
 });
 return lexer;
 })();
@@ -19294,7 +19366,7 @@ var wrapEnabled = false;
 var parseDirective = function parseDirective(statement, context, type) {
   _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(this, statement, context, type);
 };
-var addActor = function addActor(id, name, description) {
+var addActor = function addActor(id, name, description, type) {
   // Don't allow description nulling
   var old = actors[id];
   if (old && name === old.name && description == null) return; // Don't allow null descriptions, either
@@ -19302,7 +19374,16 @@ var addActor = function addActor(id, name, description) {
   if (description == null || description.text == null) {
     description = {
       text: name,
-      wrap: null
+      wrap: null,
+      type: type
+    };
+  }
+
+  if (type == null || description.text == null) {
+    description = {
+      text: name,
+      wrap: null,
+      type: type
     };
   }
 
@@ -19310,7 +19391,8 @@ var addActor = function addActor(id, name, description) {
     name: name,
     description: description.text,
     wrap: description.wrap === undefined && autoWrap() || !!description.wrap,
-    prevActor: prevActor
+    prevActor: prevActor,
+    type: type || 'participant'
   };
 
   if (prevActor && actors[prevActor]) {
@@ -19496,8 +19578,12 @@ var apply = function apply(param) {
     });
   } else {
     switch (param.type) {
+      case 'addParticipant':
+        addActor(param.actor, param.actor, param.description, 'participant');
+        break;
+
       case 'addActor':
-        addActor(param.actor, param.actor, param.description);
+        addActor(param.actor, param.actor, param.description, 'actor');
         break;
 
       case 'activeStart':
@@ -20023,6 +20109,7 @@ var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
   // Draw the actors
   var prevWidth = 0;
   var prevMargin = 0;
+  var maxHeight = 0;
 
   for (var i = 0; i < actorKeys.length; i++) {
     var actor = actors[actorKeys[i]]; // Add some rendering data to the object
@@ -20033,7 +20120,8 @@ var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
     actor.x = prevWidth + prevMargin;
     actor.y = verticalPos; // Draw the box with the attached line
 
-    _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawActor(diagram, actor, conf);
+    var height = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawActor(diagram, actor, conf);
+    maxHeight = Math.max(maxHeight, height);
     bounds.insert(actor.x, verticalPos, actor.x + actor.width, actor.height);
     prevWidth += actor.width;
     prevMargin += actor.margin;
@@ -20041,7 +20129,7 @@ var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
   } // Add a margin between the actor boxes and the first arrow
 
 
-  bounds.bumpVerticalPos(conf.height);
+  bounds.bumpVerticalPos(maxHeight);
 };
 var setConf = function setConf(cnf) {
   Object(_utils__WEBPACK_IMPORTED_MODULE_7__["assignWithDepth"])(conf, cnf);
@@ -20260,6 +20348,8 @@ var draw = function draw(text, id) {
     // Draw actors below diagram
     bounds.bumpVerticalPos(conf.boxMargin * 2);
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
+    bounds.bumpVerticalPos(conf.boxMargin);
+    Object(_svgDraw__WEBPACK_IMPORTED_MODULE_1__["fixLifeLineHeights"])(diagram, bounds.getVerticalPos());
   }
 
   var _bounds$getBounds = bounds.getBounds(),
@@ -20609,7 +20699,7 @@ var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return ".actor {\n    stroke: ".concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n  }\n\n  text.actor > tspan {\n    fill: ").concat(options.actorTextColor, ";\n    stroke: none;\n  }\n\n  .actor-line {\n    stroke: ").concat(options.actorLineColor, ";\n  }\n\n  .messageLine0 {\n    stroke-width: 1.5;\n    stroke-dasharray: none;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageLine1 {\n    stroke-width: 1.5;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  #arrowhead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .sequenceNumber {\n    fill: ").concat(options.sequenceNumberColor, ";\n  }\n\n  #sequencenumber {\n    fill: ").concat(options.signalColor, ";\n  }\n\n  #crosshead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageText {\n    fill: ").concat(options.signalTextColor, ";\n    stroke: ").concat(options.signalTextColor, ";\n  }\n\n  .labelBox {\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBkgColor, ";\n  }\n\n  .labelText, .labelText > tspan {\n    fill: ").concat(options.labelTextColor, ";\n    stroke: none;\n  }\n\n  .loopText, .loopText > tspan {\n    fill: ").concat(options.loopTextColor, ";\n    stroke: none;\n  }\n\n  .loopLine {\n    stroke-width: 2px;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBorderColor, ";\n  }\n\n  .note {\n    //stroke: #decc93;\n    stroke: ").concat(options.noteBorderColor, ";\n    fill: ").concat(options.noteBkgColor, ";\n  }\n\n  .noteText, .noteText > tspan {\n    fill: ").concat(options.noteTextColor, ";\n    stroke: none;\n  }\n\n  .activation0 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation1 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation2 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n");
+  return ".actor {\n    stroke: ".concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n  }\n\n  text.actor > tspan {\n    fill: ").concat(options.actorTextColor, ";\n    stroke: none;\n  }\n\n  .actor-line {\n    stroke: ").concat(options.actorLineColor, ";\n  }\n\n  .messageLine0 {\n    stroke-width: 1.5;\n    stroke-dasharray: none;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageLine1 {\n    stroke-width: 1.5;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  #arrowhead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .sequenceNumber {\n    fill: ").concat(options.sequenceNumberColor, ";\n  }\n\n  #sequencenumber {\n    fill: ").concat(options.signalColor, ";\n  }\n\n  #crosshead path {\n    fill: ").concat(options.signalColor, ";\n    stroke: ").concat(options.signalColor, ";\n  }\n\n  .messageText {\n    fill: ").concat(options.signalTextColor, ";\n    stroke: ").concat(options.signalTextColor, ";\n  }\n\n  .labelBox {\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBkgColor, ";\n  }\n\n  .labelText, .labelText > tspan {\n    fill: ").concat(options.labelTextColor, ";\n    stroke: none;\n  }\n\n  .loopText, .loopText > tspan {\n    fill: ").concat(options.loopTextColor, ";\n    stroke: none;\n  }\n\n  .loopLine {\n    stroke-width: 2px;\n    stroke-dasharray: 2, 2;\n    stroke: ").concat(options.labelBoxBorderColor, ";\n    fill: ").concat(options.labelBoxBorderColor, ";\n  }\n\n  .note {\n    //stroke: #decc93;\n    stroke: ").concat(options.noteBorderColor, ";\n    fill: ").concat(options.noteBkgColor, ";\n  }\n\n  .noteText, .noteText > tspan {\n    fill: ").concat(options.noteTextColor, ";\n    stroke: none;\n  }\n\n  .activation0 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation1 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n\n  .activation2 {\n    fill: ").concat(options.activationBkgColor, ";\n    stroke: ").concat(options.activationBorderColor, ";\n  }\n  .actor-man line {\n    stroke: ").concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n  }\n  .actor-man circle, line {\n    stroke: ").concat(options.actorBorder, ";\n    fill: ").concat(options.actorBkg, ";\n    stroke-width: 2px;\n  }\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -20620,7 +20710,7 @@ var getStyles = function getStyles(options) {
 /*!******************************************!*\
   !*** ./src/diagrams/sequence/svgDraw.js ***!
   \******************************************/
-/*! exports provided: drawRect, drawText, drawLabel, drawActor, anchorElement, drawActivation, drawLoop, drawBackgroundRect, insertArrowHead, insertArrowFilledHead, insertSequenceNumber, insertArrowCrossHead, getTextObj, getNoteRect, default */
+/*! exports provided: drawRect, drawText, drawLabel, fixLifeLineHeights, drawActor, anchorElement, drawActivation, drawLoop, drawBackgroundRect, insertArrowHead, insertArrowFilledHead, insertSequenceNumber, insertArrowCrossHead, getTextObj, getNoteRect, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20628,6 +20718,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawRect", function() { return drawRect; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawText", function() { return drawText; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawLabel", function() { return drawLabel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fixLifeLineHeights", function() { return fixLifeLineHeights; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawActor", function() { return drawActor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "anchorElement", function() { return anchorElement; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawActivation", function() { return drawActivation; });
@@ -20802,6 +20893,10 @@ var drawLabel = function drawLabel(elem, txtObject) {
   return polygon;
 };
 var actorCnt = -1;
+var fixLifeLineHeights = function fixLifeLineHeights(diagram, bounds) {
+  if (!diagram.selectAll) return;
+  diagram.selectAll('.actor-line').attr('class', '200').attr('y2', bounds - 55);
+};
 /**
  * Draws an actor in the diagram with the attached line
  * @param elem - The diagram we'll draw to.
@@ -20809,7 +20904,7 @@ var actorCnt = -1;
  * @param conf - drawText implementation discriminator object
  */
 
-var drawActor = function drawActor(elem, actor, conf) {
+var drawActorTypeParticipant = function drawActorTypeParticipant(elem, actor, conf) {
   var center = actor.x + actor.width / 2;
   var g = elem.append('g');
 
@@ -20827,11 +20922,71 @@ var drawActor = function drawActor(elem, actor, conf) {
   rect.class = 'actor';
   rect.rx = 3;
   rect.ry = 3;
-  drawRect(g, rect);
+  var rectElem = drawRect(g, rect);
 
   _drawTextCandidateFunc(conf)(actor.description, g, rect.x, rect.y, rect.width, rect.height, {
     class: 'actor'
   }, conf);
+
+  var height = actor.height;
+
+  if (rectElem.node) {
+    var bounds = rectElem.node().getBBox();
+    actor.height = bounds.height;
+    height = bounds.height;
+  }
+
+  return height;
+};
+
+var drawActorTypeActor = function drawActorTypeActor(elem, actor, conf) {
+  var center = actor.x + actor.width / 2;
+
+  if (actor.y === 0) {
+    actorCnt++;
+    elem.append('line').attr('id', 'actor' + actorCnt).attr('x1', center).attr('y1', 80).attr('x2', center).attr('y2', 2000).attr('class', 'actor-line').attr('stroke-width', '0.5px').attr('stroke', '#999');
+  }
+
+  var actElem = elem.append('g');
+  actElem.attr('class', 'actor-man');
+  var rect = getNoteRect();
+  rect.x = actor.x;
+  rect.y = actor.y;
+  rect.fill = '#eaeaea';
+  rect.width = actor.width;
+  rect.height = actor.height;
+  rect.class = 'actor';
+  rect.rx = 3;
+  rect.ry = 3; // drawRect(actElem, rect);
+
+  actElem.append('line').attr('id', 'actor-man-torso' + actorCnt).attr('x1', center).attr('y1', actor.y + 25).attr('x2', center).attr('y2', actor.y + 45);
+  actElem.append('line').attr('id', 'actor-man-arms' + actorCnt).attr('x1', center - 18).attr('y1', actor.y + 33).attr('x2', center + 18).attr('y2', actor.y + 33);
+  actElem.append('line').attr('x1', center - 18).attr('y1', actor.y + 60).attr('x2', center).attr('y2', actor.y + 45);
+  actElem.append('line').attr('x1', center).attr('y1', actor.y + 45).attr('x2', center + 16).attr('y2', actor.y + 60);
+  var circle = actElem.append('circle');
+  circle.attr('cx', actor.x + actor.width / 2);
+  circle.attr('cy', actor.y + 10);
+  circle.attr('r', 15);
+  circle.attr('width', actor.width);
+  circle.attr('height', actor.height);
+  var bounds = actElem.node().getBBox();
+  actor.height = bounds.height;
+
+  _drawTextCandidateFunc(conf)(actor.description, actElem, rect.x, rect.y + 35, rect.width, rect.height, {
+    class: 'actor'
+  }, conf);
+
+  return actor.height;
+};
+
+var drawActor = function drawActor(elem, actor, conf) {
+  switch (actor.type) {
+    case 'actor':
+      return drawActorTypeActor(elem, actor, conf);
+
+    case 'participant':
+      return drawActorTypeParticipant(elem, actor, conf);
+  }
 };
 var anchorElement = function anchorElement(elem) {
   return elem.append('g');
@@ -21087,7 +21242,8 @@ var _drawTextCandidateFunc = function () {
   insertSequenceNumber: insertSequenceNumber,
   insertArrowCrossHead: insertArrowCrossHead,
   getTextObj: getTextObj,
-  getNoteRect: getNoteRect
+  getNoteRect: getNoteRect,
+  fixLifeLineHeights: fixLifeLineHeights
 });
 
 /***/ }),

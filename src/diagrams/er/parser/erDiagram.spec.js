@@ -42,6 +42,36 @@ describe('when parsing ER diagram it...', function () {
     expect(entities[entity].attributes.length).toBe(1);
   });
 
+  it('should allow an entity with a single attribute to be defined with a key', function () {
+    const entity = 'BOOK';
+    const attribute = 'string title PK';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(1);
+  });
+
+  it('should allow an entity with a single attribute to be defined with a comment', function () {
+    const entity = 'BOOK';
+    const attribute = `string title "comment"`;
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(1);
+  });
+
+  it('should allow an entity with a single attribute to be defined with a key and a comment', function () {
+    const entity = 'BOOK';
+    const attribute = `string title PK "comment"`;
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute}\n}`);
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(1);
+  });
+
   it('should allow an entity with multiple attributes to be defined', function () {
     const entity = 'BOOK';
     const attribute1 = 'string title';

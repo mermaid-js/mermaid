@@ -672,13 +672,21 @@ const class_box = (parent, node) => {
   }
   const classAttributes = [];
   node.classData.members.forEach((str) => {
-    let parsedText = parseMember(str).displayText;
+    const parsedInfo = parseMember(str);
+    let parsedText = parsedInfo.displayText;
     if (getConfig().flowchart.htmlLabels) {
       parsedText = parsedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
     const lbl = labelContainer
       .node()
-      .appendChild(createLabel(parsedText, node.labelStyle, true, true));
+      .appendChild(
+        createLabel(
+          parsedText,
+          parsedInfo.cssStyle ? parsedInfo.cssStyle : node.labelStyle,
+          true,
+          true
+        )
+      );
     let bbox = lbl.getBBox();
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       const div = lbl.children[0];

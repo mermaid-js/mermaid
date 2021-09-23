@@ -181,13 +181,22 @@ export const drawLabel = function (elem, txtObject) {
 };
 
 let actorCnt = -1;
+
+export const fixLifeLineHeights = (diagram, bounds) => {
+  if (!diagram.selectAll) return;
+  diagram
+    .selectAll('.actor-line')
+    .attr('class', '200')
+    .attr('y2', bounds - 55);
+};
+
 /**
  * Draws an actor in the diagram with the attached line
  * @param elem - The diagram we'll draw to.
  * @param actor - The actor to draw.
  * @param conf - drawText implementation discriminator object
  */
-export const drawActor = function (elem, actor, conf) {
+const drawActorTypeParticipant = function (elem, actor, conf) {
   const center = actor.x + actor.width / 2;
 
   const g = elem.append('g');
@@ -213,7 +222,7 @@ export const drawActor = function (elem, actor, conf) {
   rect.class = 'actor';
   rect.rx = 3;
   rect.ry = 3;
-  drawRect(g, rect);
+  const rectElem = drawRect(g, rect);
 
   _drawTextCandidateFunc(conf)(
     actor.description,
@@ -225,6 +234,105 @@ export const drawActor = function (elem, actor, conf) {
     { class: 'actor' },
     conf
   );
+
+  let height = actor.height;
+  if (rectElem.node) {
+    const bounds = rectElem.node().getBBox();
+    actor.height = bounds.height;
+    height = bounds.height;
+  }
+  return height;
+};
+
+const drawActorTypeActor = function (elem, actor, conf) {
+  const center = actor.x + actor.width / 2;
+
+  if (actor.y === 0) {
+    actorCnt++;
+    elem
+      .append('line')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', 80)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999');
+  }
+  const actElem = elem.append('g');
+  actElem.attr('class', 'actor-man');
+
+  const rect = getNoteRect();
+  rect.x = actor.x;
+  rect.y = actor.y;
+  rect.fill = '#eaeaea';
+  rect.width = actor.width;
+  rect.height = actor.height;
+  rect.class = 'actor';
+  rect.rx = 3;
+  rect.ry = 3;
+  // drawRect(actElem, rect);
+
+  actElem
+    .append('line')
+    .attr('id', 'actor-man-torso' + actorCnt)
+    .attr('x1', center)
+    .attr('y1', actor.y + 25)
+    .attr('x2', center)
+    .attr('y2', actor.y + 45);
+
+  actElem
+    .append('line')
+    .attr('id', 'actor-man-arms' + actorCnt)
+    .attr('x1', center - 18)
+    .attr('y1', actor.y + 33)
+    .attr('x2', center + 18)
+    .attr('y2', actor.y + 33);
+  actElem
+    .append('line')
+    .attr('x1', center - 18)
+    .attr('y1', actor.y + 60)
+    .attr('x2', center)
+    .attr('y2', actor.y + 45);
+  actElem
+    .append('line')
+    .attr('x1', center)
+    .attr('y1', actor.y + 45)
+    .attr('x2', center + 16)
+    .attr('y2', actor.y + 60);
+
+  const circle = actElem.append('circle');
+  circle.attr('cx', actor.x + actor.width / 2);
+  circle.attr('cy', actor.y + 10);
+  circle.attr('r', 15);
+  circle.attr('width', actor.width);
+  circle.attr('height', actor.height);
+
+  const bounds = actElem.node().getBBox();
+  actor.height = bounds.height;
+
+  _drawTextCandidateFunc(conf)(
+    actor.description,
+    actElem,
+    rect.x,
+    rect.y + 35,
+    rect.width,
+    rect.height,
+    { class: 'actor' },
+    conf
+  );
+
+  return actor.height;
+};
+
+export const drawActor = function (elem, actor, conf) {
+  switch (actor.type) {
+    case 'actor':
+      return drawActorTypeActor(elem, actor, conf);
+    case 'participant':
+      return drawActorTypeParticipant(elem, actor, conf);
+  }
 };
 
 export const anchorElement = function (elem) {
@@ -576,4 +684,5 @@ export default {
   insertArrowCrossHead,
   getTextObj,
   getNoteRect,
+  fixLifeLineHeights,
 };
