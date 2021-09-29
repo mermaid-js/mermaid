@@ -10,7 +10,7 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 
 ## Four ways of using mermaid:
 
-1. Using the mermaid [Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).
+1. Using the Mermaid Live Editor at [mermaid.live](https://mermaid.live).
 2. Using [mermaid plugins](./integrations.md) with programs you are familiar with.
 3. Calling the Mermaid Javascript API.
 4. Deploying Mermaid as a dependency.
@@ -19,7 +19,9 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 
 > More in depth information can be found at [Usage](./usage.md).
 
-## 1. Using [The Live Editor](https://mermaid-js.github.io/mermaid-live-editor/edit).
+## 1. Using the Live Editor
+
+Available at [mermaid.live](https://mermaid.live)
 
 ![EditingProcess](./img/Editing-process.png)
 
