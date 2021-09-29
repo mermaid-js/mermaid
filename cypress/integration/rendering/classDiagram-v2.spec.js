@@ -375,7 +375,7 @@ describe('Class diagram V2', () => {
     imgSnapshotTest(
       `
     classDiagram-v2
-      Foo {
+      class Foo {
         +String bar$
       }
             `,
@@ -408,7 +408,7 @@ describe('Class diagram V2', () => {
     );
     cy.get('svg');
   });
-  
+
   it('18: should handle the direction statemnent with LR', () => {
     imgSnapshotTest(
       `
