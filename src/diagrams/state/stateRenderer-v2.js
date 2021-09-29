@@ -3,10 +3,10 @@ import { select } from 'd3';
 import stateDb from './stateDb';
 import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
-// import { evaluate } from '../common/common';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
+import common from '../common/common';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -51,7 +51,7 @@ const setupNode = (g, parent, node, altFlag) => {
       nodeDb[node.id] = {
         id: node.id,
         shape,
-        description: node.id,
+        description: common.sanitizeText(node.id, getConfig()),
         classes: 'statediagram-state',
       };
     }

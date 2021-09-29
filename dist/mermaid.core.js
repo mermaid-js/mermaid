@@ -656,7 +656,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, sideEffects, husky, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.13.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.1\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.13.1\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --color\",\"build:production\":\"yarn build:development --mode production --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack serve --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^7.0.0\",\"dagre\":\"^0.8.5\",\"dagre-d3\":\"^0.6.4\",\"dompurify\":\"2.3.1\",\"graphlib\":\"^2.1.8\",\"khroma\":\"^1.4.1\",\"moment-mini\":\"^2.24.0\",\"stylis\":\"^4.0.10\"},\"devDependencies\":{\"@babel/core\":\"^7.14.6\",\"@babel/eslint-parser\":\"^7.14.7\",\"@babel/preset-env\":\"^7.14.7\",\"@babel/register\":\"^7.14.5\",\"@percy/cli\":\"^1.0.0-beta.58\",\"@percy/cypress\":\"^3.1.0\",\"@percy/migrate\":\"^0.11.0\",\"babel-jest\":\"^27.0.6\",\"babel-loader\":\"^8.2.2\",\"coveralls\":\"^3.0.2\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"8.1.0\",\"documentation\":\"13.2.0\",\"eslint\":\"^7.30.0\",\"eslint-config-prettier\":\"^8.3.0\",\"eslint-plugin-prettier\":\"^3.4.0\",\"husky\":\"^7.0.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^27.0.6\",\"jison\":\"^0.4.18\",\"js-base64\":\"3.6.1\",\"moment\":\"^2.23.0\",\"prettier\":\"^2.3.2\",\"start-server-and-test\":\"^1.12.6\",\"terser-webpack-plugin\":\"^4.2.3\",\"webpack\":\"^4.41.2\",\"webpack-cli\":\"^4.7.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^3.0.0\"},\"files\":[\"dist\"],\"sideEffects\":[\"**/*.css\",\"**/*.scss\"],\"husky\":{\"hooks\":{\"pre-push\":\"yarn test\"}}}");
 
 /***/ }),
 
@@ -3266,7 +3266,10 @@ var rectWithTitle = function rectWithTitle(parent, node) {
 
   _logger__WEBPACK_IMPORTED_MODULE_1__["log"].info('Label text abc79', title, text2, _typeof(text2) === 'object');
   var text = label.node().appendChild(Object(_createLabel__WEBPACK_IMPORTED_MODULE_5__["default"])(title, node.labelStyle, true, true));
-  var bbox;
+  var bbox = {
+    width: 0,
+    height: 0
+  };
 
   if (Object(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_8__["evaluate"])(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().flowchart.htmlLabels)) {
     var div = text.children[0];
@@ -7405,9 +7408,11 @@ var removeScript = function removeScript(txt) {
     }
   }
 
-  rs = rs.replace(/javascript:/g, '#');
-  rs = rs.replace(/onerror=/g, 'onerror:');
-  rs = rs.replace(/<iframe/g, '');
+  rs = rs.replace(/script>/gi, '#');
+  rs = rs.replace(/script>/gi, '#');
+  rs = rs.replace(/javascript:/gi, '#');
+  rs = rs.replace(/onerror=/gi, 'onerror:');
+  rs = rs.replace(/<iframe/gi, '');
   return rs;
 };
 
@@ -7437,7 +7442,10 @@ var sanitizeMore = function sanitizeMore(text, config) {
 };
 
 var sanitizeText = function sanitizeText(text, config) {
-  var txt = sanitizeMore(dompurify__WEBPACK_IMPORTED_MODULE_0___default.a.sanitize(text), config);
+  var level = config.securityLevel;
+  console.log('security level', level);
+  if (!text) return text;
+  var txt = dompurify__WEBPACK_IMPORTED_MODULE_0___default.a.sanitize(sanitizeMore(text, config));
   return txt;
 };
 var lineBreakRegex = /<br\s*\/?>/gi;
@@ -22578,8 +22586,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
 
 
@@ -22749,7 +22759,10 @@ var addState = function addState(id, type, doc, descr, note) {
     }
   }
 
-  if (note) currentDocument.states[id].note = note;
+  if (note) {
+    currentDocument.states[id].note = note;
+    currentDocument.states[id].note.text = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(currentDocument.states[id].note.text, _config__WEBPACK_IMPORTED_MODULE_4__["getConfig"]());
+  }
 };
 var clear = function clear() {
   documents = {
@@ -22797,7 +22810,7 @@ var addRelation = function addRelation(_id1, _id2, title) {
   currentDocument.relations.push({
     id1: id1,
     id2: id2,
-    title: title
+    title: _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(title, _config__WEBPACK_IMPORTED_MODULE_4__["getConfig"]())
   });
 };
 
@@ -22809,7 +22822,7 @@ var addDescription = function addDescription(id, _descr) {
     descr = descr.substr(1).trim();
   }
 
-  theState.descriptions.push(descr);
+  theState.descriptions.push(_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(descr, _config__WEBPACK_IMPORTED_MODULE_4__["getConfig"]()));
 };
 
 var cleanupLabel = function cleanupLabel(label) {
@@ -22860,7 +22873,7 @@ var trimColon = function trimColon(str) {
 /* harmony default export */ __webpack_exports__["default"] = ({
   parseDirective: parseDirective,
   getConfig: function getConfig() {
-    return _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]().state;
+    return _config__WEBPACK_IMPORTED_MODULE_4__["getConfig"]().state;
   },
   addState: addState,
   clear: clear,
@@ -22909,11 +22922,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dagre_wrapper_index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../dagre-wrapper/index.js */ "./src/dagre-wrapper/index.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 
 
 
 
- // import { evaluate } from '../common/common';
+
 
 
 
@@ -22963,7 +22977,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
       nodeDb[node.id] = {
         id: node.id,
         shape: shape,
-        description: node.id,
+        description: _common_common__WEBPACK_IMPORTED_MODULE_8__["default"].sanitizeText(node.id, Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])()),
         classes: 'statediagram-state'
       };
     } // Build of the array of description strings accordinging
