@@ -16,7 +16,6 @@ export const setConf = function (cnf) {
     conf[keys[i]] = cnf[keys[i]];
   }
 };
-let mainConfig = getConfig();
 
 let nodeDb = {};
 

@@ -195,7 +195,11 @@ export const addRelation = function (_id1, _id2, title) {
   }
   addState(id1, type1);
   addState(id2, type2);
-  currentDocument.relations.push({ id1, id2, title: common.sanitizeText(title, configApi.getConfig()) });
+  currentDocument.relations.push({
+    id1,
+    id2,
+    title: common.sanitizeText(title, configApi.getConfig()),
+  });
 };
 
 const addDescription = function (id, _descr) {
@@ -204,7 +208,7 @@ const addDescription = function (id, _descr) {
   if (descr[0] === ':') {
     descr = descr.substr(1).trim();
   }
-  theState.descriptions.push(common.sanitizeText(descr, config));
+  theState.descriptions.push(common.sanitizeText(descr, configApi.getConfig()));
 };
 
 export const cleanupLabel = function (label) {
