@@ -29,7 +29,8 @@
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%\%(?!\{)*[^\n]*(\r?\n?)+                                      /* skip comments */
 \%\%[^\n]*(\r?\n)*                                              /* skip comments */
-(\r?\n)+                return 'NEWLINE';
+
+\s*(\r?\n)+                return 'NEWLINE';
 \s+                     /* skip whitespace */
 "classDiagram-v2"       return 'CLASS_DIAGRAM';
 "classDiagram"          return 'CLASS_DIAGRAM';
@@ -262,7 +263,7 @@ classStatement
     ;
 
 annotationStatement
-    : ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
+    :ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
     ;
 
 members
