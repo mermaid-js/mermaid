@@ -11,7 +11,7 @@ const jsRule = {
 const jisonRule = {
   test: /\.jison$/,
   use: {
-    loader: path.resolve(__dirname, './jisonLoader'),
+    loader: path.resolve(__dirname, './jison/loader'),
     options: {
       'token-stack': true,
     },
