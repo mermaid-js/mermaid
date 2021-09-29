@@ -114,7 +114,7 @@ describe('Entity Relationship Diagram', () => {
     cy.get('svg')
       .should((svg) => {
         expect(svg).to.have.attr('width', '100%');
-        expect(svg).to.have.attr('height', '100%');
+        expect(svg).to.have.attr('height', '465');
         const style = svg.attr('style');
         expect(style).to.match(/^max-width: [\d.]+px;$/);
         const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
@@ -174,7 +174,7 @@ describe('Entity Relationship Diagram', () => {
     renderGraph(
       `
     erDiagram
-        PRIVATE_FINANCIAL_INSTITUTION {
+        PRIVATE_FINANCIAL_INSTITUTION { 
           string name
           int    turnover
         }

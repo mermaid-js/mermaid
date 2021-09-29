@@ -243,7 +243,7 @@ describe('when formatting urls', function() {
 describe('when calculating SVG size', function() {
   it('should return width 100% when useMaxWidth is true', function () {
     const attrs = utils.calculateSvgSizeAttrs(100, 200, true);
-    expect(attrs.get('height')).toEqual('100%');
+    expect(attrs.get('height')).toEqual(100);
     expect(attrs.get('style')).toEqual('max-width: 200px;');
     expect(attrs.get('width')).toEqual('100%');
   });
