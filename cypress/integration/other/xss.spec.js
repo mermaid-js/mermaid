@@ -68,5 +68,15 @@ describe('XSS', () => {
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   })
+  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre wrapper', () => {
+    cy.visit('http://localhost:9000/xss8.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  })
+  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+    cy.visit('http://localhost:9000/xss9.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  })
 
 })
