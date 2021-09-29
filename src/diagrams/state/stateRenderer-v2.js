@@ -7,6 +7,7 @@ import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
+import common from '../common/common';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -15,6 +16,7 @@ export const setConf = function (cnf) {
     conf[keys[i]] = cnf[keys[i]];
   }
 };
+let mainConfig = getConfig();
 
 let nodeDb = {};
 
@@ -51,7 +53,7 @@ const setupNode = (g, parent, node, altFlag) => {
       nodeDb[node.id] = {
         id: node.id,
         shape,
-        description: node.id,
+        description: common.sanitizeText(node.id, getConfig()),
         classes: 'statediagram-state',
       };
     }

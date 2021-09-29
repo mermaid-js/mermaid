@@ -1,10 +1,10 @@
 import { log } from '../../logger';
 import { generateId } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
+import common from '../common/common';
 import * as configApi from '../../config';
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
-
 let rootDoc = [];
 
 export const parseDirective = function (statement, context, type) {
@@ -148,7 +148,7 @@ export const addState = function (id, type, doc, descr, note) {
     }
   }
 
-  if (note) currentDocument.states[id].note = note;
+  if (note) currentDocument.states[id].note = common.sanitizeText(note, configApi.getConfig());
 };
 
 export const clear = function () {
@@ -195,7 +195,7 @@ export const addRelation = function (_id1, _id2, title) {
   }
   addState(id1, type1);
   addState(id2, type2);
-  currentDocument.relations.push({ id1, id2, title: title });
+  currentDocument.relations.push({ id1, id2, title: common.sanitizeText(title, configApi.getConfig()) });
 };
 
 const addDescription = function (id, _descr) {
@@ -204,8 +204,7 @@ const addDescription = function (id, _descr) {
   if (descr[0] === ':') {
     descr = descr.substr(1).trim();
   }
-
-  theState.descriptions.push(descr);
+  theState.descriptions.push(common.sanitizeText(descr, config));
 };
 
 export const cleanupLabel = function (label) {
