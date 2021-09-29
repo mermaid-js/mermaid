@@ -232,7 +232,7 @@ To specify the visibility of a class member (i.e. any attribute or method), thes
 > - `$` Static e.g.: `someStaticMethod()$`
 
 > _note_ you can also include additional _classifiers_ to a field definition by adding the following notations to the end of the field name:
-> - `*` Static e.g.: `String someField$`
+> - `$` Static e.g.: `String someField$`
 
 
 
