@@ -1,11 +1,5 @@
 import path from 'path';
 
-const amdRule = {
-  parser: {
-    amd: false, // https://github.com/lodash/lodash/issues/3052
-  },
-};
-
 const jisonRule = {
   test: /\.jison$/,
   use: {
@@ -15,6 +9,7 @@ const jisonRule = {
     },
   },
 };
+
 const jsRule = {
   test: /\.js$/,
   include: [
@@ -34,6 +29,7 @@ const scssRule = {
 
 export const jsConfig = () => {
   return {
+    amd: false, // https://github.com/lodash/lodash/issues/3052
     mode: 'development',
     target: 'web',
     entry: {
@@ -41,20 +37,23 @@ export const jsConfig = () => {
     },
     resolve: {
       extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
-    },
-    node: {
-      fs: 'empty', // jison generated code requires 'fs'
+      fallback: {
+        fs: false, // jison generated code requires 'fs'
+        path: require.resolve('path-browserify'),
+      },
     },
     output: {
       path: path.join(__dirname, './dist/'),
       filename: '[name].js',
-      library: 'mermaid',
-      libraryTarget: 'umd',
-      libraryExport: 'default',
+      library: {
+        name: 'mermaid',
+        type: 'umd',
+        export: 'default',
+      },
       globalObject: 'typeof self !== "undefined" ? self : this',
     },
     module: {
-      rules: [amdRule, jsRule, scssRule, jisonRule],
+      rules: [jsRule, scssRule, jisonRule],
     },
     devtool: 'source-map',
   };
