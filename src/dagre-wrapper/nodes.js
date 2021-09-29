@@ -366,7 +366,7 @@ const rectWithTitle = (parent, node) => {
   log.info('Label text abc79', title, text2, typeof text2 === 'object');
 
   const text = label.node().appendChild(createLabel(title, node.labelStyle, true, true));
-  let bbox;
+  let bbox = { width: 0, height: 0 };
   if (evaluate(getConfig().flowchart.htmlLabels)) {
     const div = text.children[0];
     const dv = select(text);
