@@ -21,11 +21,11 @@ It is a Javascript based diagramming and charting tool that renders Markdown-ins
 The main purpose of Mermaid is to help with Visualizing Documentation, and helping it catch up with Development.
 > Documentation-Rot is a Catch-22 that Mermaid helps to solve.
 
-Diagramming and Documentation costs precious developer time and gets outdated quickly.
-But not having diagrams or docs ruins productivity and hurts organizational learning.
+Diagramming and Documentation cost precious developer time and get outdated quickly.
+However, not having diagrams or documentation ruins productivity and hampers organizational learning.
 
-Mermaid addresses this Catch-22 by cutting the time, effort and tooling that is required to create modifiable diagrams and charts, for smarter and more reusable content.
-Mermaid, as a text-based diagramming tool allows for quick and easy updates, it can also be made part of production scripts (and other pieces of code), to make documentation much easier.
+Mermaid addresses this Catch-22 situation by reducing the time, effort and tooling that is required to create modifiable diagrams and charts which in turn results in smarter and more reusable content.
+Mermaid, as a text-based diagramming tool allows for quick and easy updates and makes documentation much easier. It can also be included in production scripts and other pieces of code as per requirement.
 
 > Mermaid is a Diagramming tool for everyone.
 
@@ -33,7 +33,7 @@ Even non-programmers can create diagrams through the [Mermaid Live Editor](https
 
 Many editors, wikis and other tools also have mermaid integrations and plugins, making it easy to start using mermaid. A few of those are described in [Simple start to write diagrams](./n00b-gettingStarted.md).
 
-For a more detailed introduction to Mermaid and some of it's more basic uses, look to the [Overview for Beginners](./n00b-overview.md) and [Usage](./usage.md).
+For a more detailed introduction to Mermaid and some of it's basic uses, refer to [Overview for Beginners](./n00b-overview.md) and [Usage](./usage.md).
 
 🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md) | 📜 [Version Log](./CHANGELOG.md) | 🔌 [Plug-Ins](./integrations.md)
 
@@ -166,7 +166,7 @@ journey
 
 # Installation
 
-**In depth guides and examples can be found in [Getting Started](/n00b-gettingStarted) and [Usage](/usage).**
+**In depth guides and examples can be found at [Getting Started](/n00b-gettingStarted) and [Usage](/usage).**
 
 **It would also be helpful to learn more about mermaid's [Syntax](/n00b-syntaxReference).**
 
@@ -201,7 +201,7 @@ To Deploy Mermaid:
 ```
 **Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitons and render them into svg charts.**
 
- **Examples can be found in** [Other examples](/examples)
+ **Examples can be found at** [Other examples](/examples)
 
 # Sibling projects
 
@@ -212,8 +212,7 @@ To Deploy Mermaid:
 
 ## Request for Assistance
 
-Things are piling up and I have a hard time keeping up. To remedy this
-it would be great if we could form a core team of developers to cooperate
+Things are piling up and I have a hard time keeping up. It would be great if we could form a core team of developers to cooperate
 with the future development of mermaid.
 
 As part of this team you would get write access to the repository and would
@@ -247,7 +246,7 @@ yarn lint
 ```
 
 We use [eslint](https://eslint.org/).
-We recommend you installing [editor plugins](https://eslint.org/docs/user-guide/integrations) so you can get real time lint result.
+We recommend you to install [editor plugins](https://eslint.org/docs/user-guide/integrations) to get real time lint result.
 
 ### Test
 
@@ -266,13 +265,13 @@ Update version number in `package.json`.
 npm publish
 ```
 
-Command above generates files into the `dist` folder and publishes them to npmjs.org.
+The above command generates files into the `dist` folder and publishes them to npmjs.org.
 
 ## Credits
 
 Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!
 
-Thanks also to the [js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams. Thanks to Jessica Peter for inspiration and starting point for gantt rendering.
+Thanks also to the [js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams. Thanks to Jessica Peter for the inspiration and for the starting point of gantt rendering.
 
 _Mermaid was created by Knut Sveidqvist for easier documentation._
 
