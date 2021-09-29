@@ -72,6 +72,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Mermaid Plugin](https://foswiki.org/Extensions/MermaidPlugin)
 - [DokuWiki](https://dokuwiki.org)
   - [Flowcharts](https://www.dokuwiki.org/plugin:flowcharts?s[]=mermaid)
+  - [ComboStrap](https://combostrap.com/mermaid)
 - [TiddlyWiki](https://tiddlywiki.com/)
   - [mermaid-tw5-plugin](https://github.com/michaeljmcd/mermaid-tw5-plugin)
 
