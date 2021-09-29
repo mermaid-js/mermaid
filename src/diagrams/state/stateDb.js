@@ -148,7 +148,13 @@ export const addState = function (id, type, doc, descr, note) {
     }
   }
 
-  if (note) currentDocument.states[id].note = common.sanitizeText(note, configApi.getConfig());
+  if (note) {
+    currentDocument.states[id].note = note;
+    currentDocument.states[id].note.text = common.sanitizeText(
+      currentDocument.states[id].note.text,
+      configApi.getConfig()
+    );
+  }
 };
 
 export const clear = function () {
