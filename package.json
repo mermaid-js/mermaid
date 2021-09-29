@@ -83,7 +83,7 @@
     "path-browserify": "^1.0.1",
     "prettier": "^2.3.2",
     "start-server-and-test": "^1.12.6",
-    "terser-webpack-plugin": "^4.2.3",
+    "terser-webpack-plugin": "^5.2.4",
     "webpack": "^5.53.0",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^4.3.0",
