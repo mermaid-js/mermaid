@@ -1,7 +1,17 @@
 import { jsConfig } from './webpack.config.base';
 
-const minConfig = jsConfig();
-minConfig.mode = 'production';
-minConfig.output.filename = '[name].min.js';
+const umdConfig = jsConfig();
+umdConfig.mode = 'production';
+umdConfig.output.filename = '[name].min.js';
 
-export default [minConfig];
+const esmConfig = jsConfig();
+esmConfig.mode = 'production';
+esmConfig.output.library = {
+  type: 'module',
+};
+esmConfig.experiments = {
+  outputModule: true,
+};
+esmConfig.output.filename = '[name].esm.min.js';
+
+export default [umdConfig, esmConfig];
