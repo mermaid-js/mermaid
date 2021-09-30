@@ -9,6 +9,7 @@ const notes = [];
 let title = '';
 let titleWrapped = false;
 let sequenceNumbersEnabled = false;
+let sequenceNumbersStart = 1;
 let wrapEnabled = false;
 
 export const parseDirective = function (statement, context, type) {
@@ -124,10 +125,12 @@ export const getTitle = function () {
 export const getTitleWrapped = function () {
   return titleWrapped;
 };
-export const enableSequenceNumbers = function () {
+export const enableSequenceNumbers = function (start) {
   sequenceNumbersEnabled = true;
+  sequenceNumbersStart = start;
 };
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
+export const getSequenceNumbersStart = () => sequenceNumbersStart;
 
 export const setWrap = function (wrapSetting) {
   wrapEnabled = wrapSetting;
@@ -403,6 +406,7 @@ export default {
   setWrap,
   enableSequenceNumbers,
   showSequenceNumbers,
+  getSequenceNumbersStart,
   getMessages,
   getActors,
   getActor,

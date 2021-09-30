@@ -28,6 +28,7 @@
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 [\n]+                                                           return 'NEWLINE';
 \s+                                                             /* skip all whitespace */
+\d+                                                             return 'NUMBER';
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
 <INITIAL,ID,ALIAS,LINE,arg_directive,type_directive,open_directive>\#[^\n]*   /* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
@@ -59,6 +60,7 @@
 "title"                                                         return 'title';
 "sequenceDiagram"                                               return 'SD';
 "autonumber"                                                    return 'autonumber';
+"start from"                                                    return 'start_from';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
 [^\+\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
@@ -113,7 +115,8 @@ statement
 	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.type='addActor';$2.description=yy.parseMessage($4); $$=$2;}
 	| 'participant_actor' actor 'NEWLINE' {$2.type='addActor'; $$=$2;}
 	| signal 'NEWLINE'
-	| autonumber {yy.enableSequenceNumbers()}
+	| 'autonumber' 'start_from' 'NUMBER' 'NEWLINE' {yy.enableSequenceNumbers($3)}
+	| 'autonumber' 'NEWLINE' {yy.enableSequenceNumbers(1)}
 	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
 	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NEWLINE'

@@ -574,7 +574,7 @@ export const draw = function (text, id) {
   }
 
   // Draw the messages/signals
-  let sequenceIndex = 1;
+  let sequenceIndex = sequenceDb.getSequenceNumbersStart();
   messages.forEach(function (msg) {
     let loopModel, noteModel, msgModel;
 
