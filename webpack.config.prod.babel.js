@@ -12,6 +12,6 @@ esmConfig.output.library = {
 esmConfig.experiments = {
   outputModule: true,
 };
-esmConfig.output.filename = '[name].esm.min.js';
+esmConfig.output.filename = '[name].esm.min.mjs';
 
 export default [umdConfig, esmConfig];

@@ -3,7 +3,14 @@
   "version": "8.13.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
-  "module": "dist/mermaid.esm.min.js",
+  "module": "dist/mermaid.esm.min.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/mermaid.core.js",
+      "import": "./dist/mermaid.esm.min.mjs"
+    },
+    "./*": "./*"
+  },
   "keywords": [
     "diagram",
     "markdown",
