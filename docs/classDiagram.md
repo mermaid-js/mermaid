@@ -356,6 +356,7 @@ Where `Relation Type` can be one of:
 | \*   | Composition |
 | o    | Aggregation |
 | >    | Association |
+| <    | Association |
 | \|>  | Realization |
 
 And `Link` can be one of:
