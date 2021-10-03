@@ -65,8 +65,7 @@ const sanitizeMore = (text, config) => {
 };
 
 export const sanitizeText = (text, config) => {
-  const level = config.securityLevel;
-  console.log('security level', level);
+  // console.log('security level', config.securityLevel);
   if (!text) return text;
   const txt = DOMPurify.sanitize(sanitizeMore(text, config));
   return txt;
