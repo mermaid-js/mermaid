@@ -10480,9 +10480,9 @@ webpack-dev-middleware@^5.2.1:
     schema-utils "^3.1.0"
 
 webpack-dev-server@^4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-4.3.0.tgz#732f5869d4c06e222b599daee64bc268f5edea24"
-  integrity sha512-kuqP9Xn4OzcKe7f0rJwd4p8xqiD+4b5Lzu8tJa8OttRL3E1Q8gI2KmUtouJTgDswjjvHOHlZDV8LTQfSY5qZSA==
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-4.3.1.tgz#759d3337f0fbea297fbd1e433ab04ccfc000076b"
+  integrity sha512-qNXQCVYo1kYhH9pgLtm8LRNkXX3XzTfHSj/zqzaqYzGPca+Qjr+81wj1jgPMCHhIhso9WEQ+kX9z23iG9PzQ7w==
   dependencies:
     ansi-html-community "^0.0.8"
     bonjour "^3.5.0"
