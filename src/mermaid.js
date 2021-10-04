@@ -28,6 +28,18 @@ import utils from './utils';
  * @param nodes a css selector or an array of nodes
  */
 const init = function () {
+  try {
+    initThrowsErrors();
+  } catch (e) {
+    log.warn('Syntax Error rendering');
+    log.warn(e);
+    if (this.parseError) {
+      this.parseError(e);
+    }
+  }
+}
+
+const initThrowsErrors = function () {
   const conf = mermaidAPI.getConfig();
   // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   let nodes;
@@ -105,27 +117,19 @@ const init = function () {
     if (init) {
       log.debug('Detected early reinit: ', init);
     }
-
-    try {
-      mermaidAPI.render(
-        id,
-        txt,
-        (svgCode, bindFunctions) => {
-          element.innerHTML = svgCode;
-          if (typeof callback !== 'undefined') {
-            callback(id);
-          }
-          if (bindFunctions) bindFunctions(element);
-        },
-        element
-      );
-    } catch (e) {
-      log.warn('Syntax Error rendering');
-      log.warn(e);
-      if (this.parseError) {
-        this.parseError(e);
-      }
-    }
+    
+    mermaidAPI.render(
+      id,
+      txt,
+      (svgCode, bindFunctions) => {
+        element.innerHTML = svgCode;
+        if (typeof callback !== 'undefined') {
+          callback(id);
+        }
+        if (bindFunctions) bindFunctions(element);
+      },
+      element
+    );
   }
 };
 
