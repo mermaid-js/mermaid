@@ -117,7 +117,7 @@ const initThrowsErrors = function () {
     if (init) {
       log.debug('Detected early reinit: ', init);
     }
-    
+
     mermaidAPI.render(
       id,
       txt,
