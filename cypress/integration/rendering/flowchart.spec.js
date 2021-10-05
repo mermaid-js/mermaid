@@ -893,4 +893,14 @@ graph TD
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+  it('66: arrow color from linkStyle classes', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+        linkStyle default stroke:#f00,stroke-width:2px;
+        Lorem --> Ipsum --> Dolor
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
 });
