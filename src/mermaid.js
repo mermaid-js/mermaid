@@ -37,7 +37,7 @@ const init = function () {
       this.parseError(e);
     }
   }
-}
+};
 
 const initThrowsErrors = function () {
   const conf = mermaidAPI.getConfig();
