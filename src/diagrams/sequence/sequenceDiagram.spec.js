@@ -976,7 +976,8 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(actors.a.links["Tests"]).toBe("https://tests.contoso.com/?svc=alice@contoso.com");
   });
 
-  it('it should handle properties', function () {
+  it('it should handle properties EXPERIMENTAL: USE WITH CAUTION', function () {
+ //Be aware that the syntax for "properties" is likely to be changed. 
     const str = `
 sequenceDiagram
 participant a as Alice
