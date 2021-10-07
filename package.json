@@ -3,6 +3,14 @@
   "version": "8.13.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
+  "module": "dist/mermaid.esm.min.mjs",
+  "exports": {
+    ".": {
+      "require": "./dist/mermaid.core.js",
+      "import": "./dist/mermaid.esm.min.mjs"
+    },
+    "./*": "./*"
+  },
   "keywords": [
     "diagram",
     "markdown",
@@ -15,9 +23,9 @@
   "scripts": {
     "build:development": "webpack --progress --color",
     "build:production": "yarn build:development --mode production --config webpack.config.prod.babel.js",
-    "build": "yarn build:development && yarn build:production",
+    "build": "concurrently \"yarn build:development\" \"yarn build:production\"",
     "postbuild": "documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md",
-    "build:watch": "yarn build --watch",
+    "build:watch": "yarn build:development --watch",
     "release": "yarn build",
     "lint": "eslint src",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
@@ -67,6 +75,7 @@
     "@percy/migrate": "^0.11.0",
     "babel-jest": "^27.0.6",
     "babel-loader": "^8.2.2",
+    "concurrently": "^6.2.2",
     "coveralls": "^3.0.2",
     "css-to-string-loader": "^0.1.3",
     "cypress": "8.5.0",
