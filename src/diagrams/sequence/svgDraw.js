@@ -39,12 +39,20 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
     displayValue = 'block !important';
   }
 
+  // const a = function () {
+  //   popupMenuUpFunc('actor' + actorCnt + '_popup');
+  // };
+  // const b = function () {
+  //   popupMenuDownFunc('actor' + actorCnt + '_popup');
+  // };
   const g = elem.append('g');
   g.attr('id', 'actor' + actorCnt + '_popup');
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
   g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
   g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
+  // g.on('onmouseover', a);
+  // g.on('onmouseout', b);
 
   var actorClass = '';
   if (typeof rectData.class !== 'undefined') {
@@ -123,6 +131,19 @@ export const popdownMenu = function (popid) {
   );
 };
 
+const popupMenuUpFunc = function (popupId) {
+  var pu = document.getElementById(popupId);
+  if (pu != null) {
+    pu.style.display = 'block';
+  }
+};
+
+const popupMenuDownFunc = function (popupId) {
+  var pu = document.getElementById(popupId);
+  if (pu != null) {
+    pu.style.display = 'none';
+  }
+};
 export const drawText = function (elem, textData) {
   let prevTextHeight = 0,
     textHeight = 0;
@@ -321,6 +342,12 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
 
     g = boxpluslineGroup.append('g');
     actor.actorCnt = actorCnt;
+    // const a = function () {
+    //   popupMenuUpFunc('actor' + actorCnt + '_popup');
+    // };
+    // const b = function () {
+    //   popupMenuDownFunc('actor' + actorCnt + '_popup');
+    // };
     if (actor.links != null) {
       g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
       g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
