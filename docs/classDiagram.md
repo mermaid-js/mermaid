@@ -241,7 +241,7 @@ To specify the visibility of a class member (i.e. any attribute or method), thes
 A relationship is a general term covering the specific types of logical connections found on class and object diagrams.
 
 ```
-[classA][Arrow][ClassB]:LabelText
+[classA][Arrow][ClassB]
 ```
 
 There are different types of relations defined for classes under UML which are currently supported:
@@ -310,7 +310,7 @@ classM ..|> classN : Realization
 classO .. classP : Link(Dashed)
 ```
 
-## Labels on Relations
+### Labels on Relations
 
 It is possible to add a label text to a relation:
 
@@ -331,6 +331,40 @@ classA <|-- classB : implements
 classE o-- classF : association
 
 ```
+
+### Two-way relations
+
+Relations can go in multiple ways:
+
+```
+classDiagram
+    Animal <|--|> Zebra
+```
+
+Here is the syntax:
+
+```
+[Relation Type][Link][Relation Type]
+```
+
+Where `Relation Type` can be one of:
+
+
+| Type | Description |
+| ---- | ----------- |
+| <\|  | Inheritance |
+| \*   | Composition |
+| o    | Aggregation |
+| >    | Association |
+| <    | Association |
+| \|>  | Realization |
+
+And `Link` can be one of:
+
+| Type | Description |
+| ---- | ----------- |
+| --   | Solid       |
+| ..   | Dashed      |
 
 ## Cardinality / Multiplicity on relations
 
