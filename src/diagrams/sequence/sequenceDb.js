@@ -221,6 +221,8 @@ export const addLinks = function (actorId, text) {
   // JSON.parse the text
   try {
     let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
     const links = JSON.parse(sanitizedText);
     // add the deserialized text to the actor's links field.
     insertLinks(actor, links);
@@ -236,6 +238,8 @@ export const addALink = function (actorId, text) {
     const links = {};
     let sanitizedText = sanitizeText(text.text, configApi.getConfig());
     var sep = sanitizedText.indexOf('@');
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
     var label = sanitizedText.slice(0, sep - 1).trim();
     var link = sanitizedText.slice(sep + 1).trim();
 
