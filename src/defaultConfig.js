@@ -367,6 +367,17 @@ const config = {
     mirrorActors: true,
 
     /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| forceMenus | forces actor popup menus to always be visible (to support E2E testing). | Boolean| Required | True, False |
+     *
+     * **Notes:**
+     *
+     * Default value: false.
+     */
+    forceMenus: false,
+
+    /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
      * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | Required | Any Positive Value |
