@@ -53,7 +53,7 @@ It is a relatively straightforward solution to a significant hurdle with the sof
 
 **Diagramming and charting is a large waste of developer's time, but not having diagrams ruins productivity.**
 
-Mermaid solves this by reducing the timeand effort required to create diagrams and charts.
+Mermaid solves this by reducing the time and effort required to create diagrams and charts.
 
 Because, the text base for the diagrams allows it to be updated easily. Also, it can be made part of production scripts (and other pieces of code). So less time is spent on documenting, as a separate task.
 
