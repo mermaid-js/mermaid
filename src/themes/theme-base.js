@@ -92,6 +92,7 @@ class Theme {
     this.altSectionBkgColor = this.altSectionBkgColor || 'white';
     this.sectionBkgColor = this.sectionBkgColor || this.secondaryColor;
     this.sectionBkgColor2 = this.sectionBkgColor2 || this.primaryColor;
+    this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
     this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
     this.taskBkgColor = this.taskBkgColor || this.primaryColor;
     this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;

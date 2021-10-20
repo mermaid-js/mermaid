@@ -4,6 +4,9 @@ const getStyles = (options) =>
     font-family: "trebuchet ms", verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
   }
+  .exclude-range {
+    fill: ${options.excludeBkgColor};
+  }
 
   .section {
     stroke: none;

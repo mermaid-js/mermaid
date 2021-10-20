@@ -70,6 +70,7 @@ that id.
 "inclusiveEndDates"     return 'inclusiveEndDates';
 "topAxis"               return 'topAxis';
 "axisFormat"\s[^#\n;]+  return 'axisFormat';
+"includes"\s[^#\n;]+    return 'includes';
 "excludes"\s[^#\n;]+    return 'excludes';
 "todayMarker"\s[^\n;]+  return 'todayMarker';
 \d\d\d\d"-"\d\d"-"\d\d  return 'date';
@@ -112,6 +113,7 @@ statement
   | topAxis {yy.TopAxis();$$=$1.substr(8);}
   | axisFormat {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
   | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
+  | includes {yy.setIncludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
   | title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
   | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
