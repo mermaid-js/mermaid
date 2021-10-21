@@ -1,7 +1,8 @@
 import createLabel from '../createLabel';
 import { getConfig } from '../../config';
+import { decodeEntities } from '../../mermaidAPI';
 import { select } from 'd3';
-import { evaluate } from '../../diagrams/common/common';
+import { evaluate, sanitizeText } from '../../diagrams/common/common';
 export const labelHelper = (parent, node, _classes, isNode) => {
   let classes;
   if (!_classes) {
@@ -20,7 +21,14 @@ export const labelHelper = (parent, node, _classes, isNode) => {
 
   const text = label
     .node()
-    .appendChild(createLabel(node.labelText, node.labelStyle, false, isNode));
+    .appendChild(
+      createLabel(
+        sanitizeText(decodeEntities(node.labelText), getConfig()),
+        node.labelStyle,
+        false,
+        isNode
+      )
+    );
 
   // Get the size of the label
   let bbox = text.getBBox();
