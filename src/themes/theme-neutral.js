@@ -72,6 +72,7 @@ class Theme {
     this.sectionBkgColor = 'calculated';
     this.altSectionBkgColor = 'white';
     this.sectionBkgColor2 = 'calculated';
+    this.excludeBkgColor = '#eeeeee';
     this.taskBorderColor = 'calculated';
     this.taskBkgColor = 'calculated';
     this.taskTextLightColor = 'white';
