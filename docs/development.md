@@ -25,7 +25,7 @@ This means that **you should branch off your pull request from develop** and dir
 We make all changes via Pull Requests. As we have many Pull Requests from developers new to mermaid, we have put in place a process, wherein *knsv, Knut Sveidqvist* is the primary reviewer of changes and merging pull requests. The process is as follows:
 
 * Large changes reviewed by knsv or other developer asked to review by knsv
-* Smaller, low-risk changes like dependecies, documentation, etc. can be merged by active collaborators
+* Smaller, low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
 * Documentation (we encourage updates to the docs folder; you can submit them via direct commits)
 
 When you commit code, create a branch with the following naming convention:

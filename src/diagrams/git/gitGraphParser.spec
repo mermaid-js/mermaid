@@ -21,7 +21,7 @@ describe('when parsing a gitGraph', function() {
   afterEach(function() {
     cryptoRandomString.mockReset();
   });
-  it('should handle a gitGraph defintion', function() {
+  it('should handle a gitGraph definition', function() {
     const str = 'gitGraph:\n' + 'commit\n';
 
     parser.parse(str);
@@ -33,7 +33,7 @@ describe('when parsing a gitGraph', function() {
     expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
   });
 
-  it('should handle a gitGraph defintion with empty options', function() {
+  it('should handle a gitGraph definition with empty options', function() {
     const str = 'gitGraph:\n' + 'options\n' + 'end\n' + 'commit\n';
 
     parser.parse(str);
@@ -46,7 +46,7 @@ describe('when parsing a gitGraph', function() {
     expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
   });
 
-  it('should handle a gitGraph defintion with valid options', function() {
+  it('should handle a gitGraph definition with valid options', function() {
     const str = 'gitGraph:\n' + 'options\n' + '{"key": "value"}\n' + 'end\n' + 'commit\n';
 
     parser.parse(str);

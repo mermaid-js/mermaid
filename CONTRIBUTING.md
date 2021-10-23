@@ -11,7 +11,7 @@ Here are a few things to know to get you started on the right path.
 We make all changes via pull requests. As we have many pull requests from developers new to mermaid, the current approach is to have *knsv, Knut Sveidqvist* as a main reviewer of changes and merging pull requests. More precisely like this:
 
 * Large changes reviewed by knsv or other developer asked to review by knsv
-* Smaller low-risk changes like dependecies, documentation etc can be merged by active collaborators
+* Smaller low-risk changes like dependencies, documentation etc can be merged by active collaborators
 * documentation (updates to the docs folder is also allowed via direct commits)
 
 To commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and some describing text.

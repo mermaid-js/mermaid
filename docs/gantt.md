@@ -133,7 +133,7 @@ To do so, start a line with the `section` keyword and give it a name. (Note that
 
 ### Milestones
 
-You can add milestones to the diagrams. Milestones differ from tasks as they represent a signle instant in time and are identifiedd by the keyword `milestone`. Below is an example on how to use milestones. As you may notice, the exact location of the milestone is determined by the initial date for the milestone and the "duration" of the task this way: *initial date*+*duration*/2. 
+You can add milestones to the diagrams. Milestones differ from tasks as they represent a single instant in time and are identified by the keyword `milestone`. Below is an example on how to use milestones. As you may notice, the exact location of the milestone is determined by the initial date for the milestone and the "duration" of the task this way: *initial date*+*duration*/2. 
 
 ```
 gantt 
