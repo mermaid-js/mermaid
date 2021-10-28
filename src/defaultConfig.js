@@ -59,7 +59,7 @@ const config = {
   /**
    * | Parameter | Description | Type | Required | Values |
    * | --- | --- | --- | --- | --- |
-   * | fontFamily | specifies the font to be used in the rendered diagrams| string | Required | Any Posiable CSS FontFamily |
+   * | fontFamily | specifies the font to be used in the rendered diagrams| string | Required | Any Possible CSS FontFamily |
    *
    * **Notes:**
    * Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
@@ -98,7 +98,7 @@ const config = {
   /**
    * | Parameter | Description | Type | Required | Values |
    * | --- | --- | --- | --- | --- |
-   * | startOnLoad | Dictates whether mermaind starts on Page load | boolean | Required | true, false |
+   * | startOnLoad | Dictates whether mermaid starts on Page load | boolean | Required | true, false |
    *
    * **Notes:** Default value: true
    */
@@ -207,7 +207,7 @@ const config = {
      *
      * **Notes:**
      *
-     * Default Vaue: 'basis'
+     * Default Value: 'basis'
      */
     curve: 'basis',
     // Only used in new experimental rendering
@@ -439,7 +439,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | actorFontFamily |This sets the font family of the actor's description | string | Required | Any Posiable CSS FontFamily |
+     * | actorFontFamily |This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
      *
      * **Notes:**
      * Default value: "'Open-Sans", "sans-serif"'
@@ -467,7 +467,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | noteFontFamily| This sets the font family of actor-attached notes. | string | Required | Any Posiable CSS FontFamily |
+     * | noteFontFamily| This sets the font family of actor-attached notes. | string | Required | Any Possible CSS FontFamily |
      *
      * **Notes:**
      * Default value: ''"trebuchet ms", verdana, arial, sans-serif'
@@ -505,7 +505,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | messageFontFamily | This sets the font family of actor messages | string | Required | Any Posiable CSS FontFamily |
+     * | messageFontFamily | This sets the font family of actor messages | string | Required | Any Possible CSS FontFamily |
      *
      * **Notes:**
      * Default value: '"trebuchet ms", verdana, arial, sans-serif'
@@ -664,7 +664,7 @@ const config = {
     /**
      * | Parameter | Description | Type | Required | Values|
      * | --- | --- | --- | --- | --- |
-     * | sectionFontSize | Font size for secions| Integer | Required | Any Positive Value |
+     * | sectionFontSize | Font size for sections| Integer | Required | Any Positive Value |
      *
      * **Notes:**
      * Default value: 11
@@ -1015,7 +1015,7 @@ top of the chart
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | minEntityWidth | The mimimum width of an entity box | Integer | Required | Any Positive Value  |
+     * | minEntityWidth | The minimum width of an entity box | Integer | Required | Any Positive Value  |
      *
      * **Notes:**
      * Expressed in pixels.

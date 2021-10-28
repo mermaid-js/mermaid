@@ -61,7 +61,7 @@ describe('[Style] when parsing', () => {
     expect(vert['T'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should handle styles and graph definitons in a graph', function() {
+  it('should handle styles and graph definitions in a graph', function() {
     const res = flow.parser.parse(
       'graph TD;S-->T;\nstyle S background:#aaa;\nstyle T background:#bbb,border:1px solid red;'
     );
@@ -76,7 +76,7 @@ describe('[Style] when parsing', () => {
     expect(vert['T'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should handle styles and graph definitons in a graph', function() {
+  it('should handle styles and graph definitions in a graph', function() {
     const res = flow.parser.parse('graph TD;style T background:#bbb,border:1px solid red;');
     // const res = flow.parser.parse('graph TD;style T background: #bbb;');
 
@@ -277,7 +277,7 @@ describe('[Style] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
   });
 
-  it('should handle multi-numbered style definitons with more then 1 digit in a row', function() {
+  it('should handle multi-numbered style definitions with more then 1 digit in a row', function() {
     const res = flow.parser.parse(
       'graph TD\n' +
         'A-->B1\n' +

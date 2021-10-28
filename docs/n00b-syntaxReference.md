@@ -72,7 +72,7 @@ Used when Mermaid is called via an API, or through a `<script>` tag.
 
 
 ### [Directives](./directives.md),
-Allows for the limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram. You can pass a directive alongside your defintion inside `%%{ }%%`. It can be done either above or below your diagram definition. 
+Allows for the limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram. You can pass a directive alongside your definition inside `%%{ }%%`. It can be done either above or below your diagram definition. 
 
 ### [Theme Manipulation](./theming.md):
 An application of using Directives to change [Themes](./theming.md). `Theme` is a value within Mermaid's configuration that dictates the color scheme for diagrams. 

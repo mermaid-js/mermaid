@@ -12,7 +12,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) (**Native support**)
 - [Joplin](https://joplinapp.org) (**Native support**)
 - [GitHub](https://github.com)
-  - [Github action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
+  - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
   - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitBook](http://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
@@ -37,7 +37,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [WordPress Markdown Editor](https://wordpress.org/plugins/wp-githuber-md)
   - [WP-ReliableMD](https://wordpress.org/plugins/wp-reliablemd/)
 - [Hexo](https://hexo.io)
-  - [hexo-filter-mermid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
+  - [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
   - [hexo-tag-mermaid](https://github.com/JameChou/hexo-tag-mermaid)
   - [hexo-mermaid-diagrams](https://github.com/mslxl/hexo-mermaid-diagrams)
 
