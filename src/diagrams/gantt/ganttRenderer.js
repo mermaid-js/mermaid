@@ -9,10 +9,13 @@ import {
   axisBottom,
   axisTop,
   timeFormat,
+  timeFormatDefaultLocale,
 } from 'd3';
+
 import { parser } from './parser/gantt';
 import common from '../common/common';
 import ganttDb from './ganttDb';
+import getLocale from './locale';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 
@@ -28,6 +31,8 @@ export const draw = function (text, id) {
   const conf = getConfig().gantt;
   parser.yy.clear();
   parser.parse(text);
+
+  timeFormatDefaultLocale(getLocale(parser.yy.getAxisLocale()));
 
   const elem = document.getElementById(id);
   w = elem.parentElement.offsetWidth;

@@ -26,6 +26,7 @@
       title Airworks roadmap
       dateFormat YYYY-MM-DD
       axisFormat %m-%d %a
+      axisLocale zh-CN
       excludes	weekends, 2021-10-01,2021-10-04,2021-10-05,2021-10-06,2021-10-07
       includes 2021-10-09
         
@@ -86,7 +87,7 @@
     "];
     class sid-B3655226-6C29-4D00-B685-3D5C734DC7E1 node-executed;
     sid-4DA958A0-26D9-4D47-93A7-70F39FD7D51A["
-    负责人审批
+    负责人<br>审批
     强子
     "];
     class sid-4DA958A0-26D9-4D47-93A7-70F39FD7D51A node-executed;
@@ -783,7 +784,7 @@
       logLevel: 3,
       securityLevel: 'loose',
       flowchart: { curve: 'basis' },
-      gantt: { axisFormat: '%m/%d/%Y' },
+      gantt: { axisFormat: '%m/%d/%Y', leftPadding: 120 },
       sequence: { actorMargin: 50 },
       // sequenceDiagram: { actorMargin: 300 } // deprecated
     });

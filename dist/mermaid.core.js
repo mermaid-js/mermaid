@@ -2801,12 +2801,12 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,19,21,28,33],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,24],$Vc=[1,26],$Vd=[1,29],$Ve=[5,7,9,11,12,13,14,15,16,17,18,19,21,28,33];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,19,20,21,23,30,35],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,24],$Vd=[1,26],$Ve=[1,28],$Vf=[1,31],$Vg=[5,7,9,11,12,13,14,15,16,17,18,19,20,21,23,30,35];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"topAxis":14,"axisFormat":15,"excludes":16,"todayMarker":17,"title":18,"section":19,"clickStatement":20,"taskTxt":21,"taskData":22,"openDirective":23,"typeDirective":24,"closeDirective":25,":":26,"argDirective":27,"click":28,"callbackname":29,"callbackargs":30,"href":31,"clickStatementDebug":32,"open_directive":33,"type_directive":34,"arg_directive":35,"close_directive":36,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"topAxis",15:"axisFormat",16:"excludes",17:"todayMarker",18:"title",19:"section",21:"taskTxt",22:"taskData",26:":",28:"click",29:"callbackname",30:"callbackargs",31:"href",33:"open_directive",34:"type_directive",35:"arg_directive",36:"close_directive"},
-productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[20,2],[20,3],[20,3],[20,4],[20,3],[20,4],[20,2],[32,2],[32,3],[32,3],[32,4],[32,3],[32,4],[32,2],[23,1],[24,1],[27,1],[25,1]],
+symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"topAxis":14,"axisFormat":15,"axisLocale":16,"excludes":17,"includes":18,"todayMarker":19,"title":20,"section":21,"clickStatement":22,"taskTxt":23,"taskData":24,"openDirective":25,"typeDirective":26,"closeDirective":27,":":28,"argDirective":29,"click":30,"callbackname":31,"callbackargs":32,"href":33,"clickStatementDebug":34,"open_directive":35,"type_directive":36,"arg_directive":37,"close_directive":38,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"topAxis",15:"axisFormat",16:"axisLocale",17:"excludes",18:"includes",19:"todayMarker",20:"title",21:"section",23:"taskTxt",24:"taskData",28:":",30:"click",31:"callbackname",32:"callbackargs",33:"href",35:"open_directive",36:"type_directive",37:"arg_directive",38:"close_directive"},
+productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[22,2],[22,3],[22,3],[22,4],[22,3],[22,4],[22,2],[34,2],[34,3],[34,3],[34,4],[34,3],[34,4],[34,2],[25,1],[26,1],[29,1],[27,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -2840,66 +2840,72 @@ case 12:
 yy.setAxisFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
 case 13:
-yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
+yy.setAxisLocale($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
 case 14:
-yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
+yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
 break;
 case 15:
-yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+yy.setIncludes($$[$0].substr(9));this.$=$$[$0].substr(9);
 break;
 case 16:
-yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
+yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
+break;
+case 17:
+yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
 break;
 case 18:
+yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
+break;
+case 20:
 yy.addTask($$[$0-1],$$[$0]);this.$='task';
 break;
-case 22:
+case 24:
 this.$ = $$[$0-1];yy.setClickEvent($$[$0-1], $$[$0], null);
 break;
-case 23:
+case 25:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 24:
+case 26:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], null);yy.setLink($$[$0-2],$$[$0]);
 break;
-case 25:
+case 27:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setLink($$[$0-3],$$[$0]);
 break;
-case 26:
+case 28:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0], null);yy.setLink($$[$0-2],$$[$0-1]);
 break;
-case 27:
+case 29:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-1], $$[$0]);yy.setLink($$[$0-3],$$[$0-2]);
 break;
-case 28:
+case 30:
 this.$ = $$[$0-1];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 29: case 35:
+case 31: case 37:
 this.$=$$[$0-1] + ' ' + $$[$0];
 break;
-case 30: case 31: case 33:
+case 32: case 33: case 35:
 this.$=$$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 32: case 34:
+case 34: case 36:
 this.$=$$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 36:
+case 38:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 37:
+case 39:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 38:
+case 40:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 39:
+case 41:
  yy.parseDirective('}%%', 'close_directive', 'gantt'); 
 break;
 }
 },
-table: [{3:1,4:2,5:$V0,23:4,33:$V1},{1:[3]},{3:6,4:2,5:$V0,23:4,33:$V1},o($V2,[2,3],{6:7}),{24:8,34:[1,9]},{34:[2,36]},{1:[2,1]},{4:25,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:23,21:$Vb,23:4,28:$Vc,33:$V1},{25:27,26:[1,28],36:$Vd},o([26,36],[2,37]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:25,10:30,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:23,21:$Vb,23:4,28:$Vc,33:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),o($V2,[2,17]),{22:[1,31]},o($V2,[2,19]),{29:[1,32],31:[1,33]},{11:[1,34]},{27:35,35:[1,36]},{11:[2,39]},o($V2,[2,5]),o($V2,[2,18]),o($V2,[2,22],{30:[1,37],31:[1,38]}),o($V2,[2,28],{29:[1,39]}),o($Ve,[2,20]),{25:40,36:$Vd},{36:[2,38]},o($V2,[2,23],{31:[1,41]}),o($V2,[2,24]),o($V2,[2,26],{30:[1,42]}),{11:[1,43]},o($V2,[2,25]),o($V2,[2,27]),o($Ve,[2,21])],
-defaultActions: {5:[2,36],6:[2,1],29:[2,39],36:[2,38]},
+table: [{3:1,4:2,5:$V0,25:4,35:$V1},{1:[3]},{3:6,4:2,5:$V0,25:4,35:$V1},o($V2,[2,3],{6:7}),{26:8,36:[1,9]},{36:[2,38]},{1:[2,1]},{4:27,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:$Vb,21:$Vc,22:25,23:$Vd,25:4,30:$Ve,35:$V1},{27:29,28:[1,30],38:$Vf},o([28,38],[2,39]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:27,10:32,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:$Vb,21:$Vc,22:25,23:$Vd,25:4,30:$Ve,35:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),o($V2,[2,17]),o($V2,[2,18]),o($V2,[2,19]),{24:[1,33]},o($V2,[2,21]),{31:[1,34],33:[1,35]},{11:[1,36]},{29:37,37:[1,38]},{11:[2,41]},o($V2,[2,5]),o($V2,[2,20]),o($V2,[2,24],{32:[1,39],33:[1,40]}),o($V2,[2,30],{31:[1,41]}),o($Vg,[2,22]),{27:42,38:$Vf},{38:[2,40]},o($V2,[2,25],{33:[1,43]}),o($V2,[2,26]),o($V2,[2,28],{32:[1,44]}),{11:[1,45]},o($V2,[2,27]),o($V2,[2,29]),o($Vg,[2,23])],
+defaultActions: {5:[2,38],6:[2,1],31:[2,41],38:[2,40]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -3378,15 +3384,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 33; 
+case 0: this.begin('open_directive'); return 35; 
 break;
-case 1: this.begin('type_directive'); return 34; 
+case 1: this.begin('type_directive'); return 36; 
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 26; 
+case 2: this.popState(); this.begin('arg_directive'); return 28; 
 break;
-case 3: this.popState(); this.popState(); return 36; 
+case 3: this.popState(); this.popState(); return 38; 
 break;
-case 4:return 35;
+case 4:return 37;
 break;
 case 5:/* skip comments */
 break;
@@ -3406,7 +3412,7 @@ case 12:this.begin("href");
 break;
 case 13:this.popState();
 break;
-case 14:return 31;
+case 14:return 33;
 break;
 case 15:this.begin("callbackname");
 break;
@@ -3414,17 +3420,17 @@ case 16:this.popState();
 break;
 case 17:this.popState(); this.begin("callbackargs");
 break;
-case 18:return 29;
+case 18:return 31;
 break;
 case 19:this.popState();
 break;
-case 20:return 30;
+case 20:return 32;
 break;
 case 21:this.begin("click");
 break;
 case 22:this.popState();
 break;
-case 23:return 28;
+case 23:return 30;
 break;
 case 24:return 5;
 break;
@@ -3438,28 +3444,32 @@ case 28:return 15;
 break;
 case 29:return 16;
 break;
-case 30:return 17;
+case 30:return 18;
 break;
-case 31:return 'date';
+case 31:return 17;
 break;
-case 32:return 18;
+case 32:return 19;
 break;
-case 33:return 19;
+case 33:return 'date';
 break;
-case 34:return 21;
+case 34:return 20;
 break;
-case 35:return 22;
+case 35:return 21;
 break;
-case 36:return 26;
+case 36:return 23;
 break;
-case 37:return 7;
+case 37:return 24;
 break;
-case 38:return 'INVALID';
+case 38:return 28;
+break;
+case 39:return 7;
+break;
+case 40:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:topAxis\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:topAxis\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:axisLocale\s[^#\n;]+)/i,/^(?:includes\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40],"inclusive":true}}
 });
 return lexer;
 })();
@@ -11912,10 +11922,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "insertPolygonShape": () => (/* binding */ insertPolygonShape)
 /* harmony export */ });
 /* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../createLabel */ "./src/dagre-wrapper/createLabel.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../diagrams/common/common */ "./src/diagrams/common/common.js");
+
 
 
 
@@ -11933,11 +11945,11 @@ var labelHelper = function labelHelper(parent, node, _classes, isNode) {
   var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.domId || node.id); // Create the label and insert it after the rect
 
   var label = shapeSvg.insert('g').attr('class', 'label').attr('style', node.labelStyle);
-  var text = label.node().appendChild((0,_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(node.labelText, node.labelStyle, false, isNode)); // Get the size of the label
+  var text = label.node().appendChild((0,_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])((0,_diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)((0,_mermaidAPI__WEBPACK_IMPORTED_MODULE_3__.decodeEntities)(node.labelText), (0,_config__WEBPACK_IMPORTED_MODULE_4__.getConfig)()), node.labelStyle, false, isNode)); // Get the size of the label
 
   var bbox = text.getBBox();
 
-  if ((0,_diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__.evaluate)((0,_config__WEBPACK_IMPORTED_MODULE_3__.getConfig)().flowchart.htmlLabels)) {
+  if ((0,_diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__.evaluate)((0,_config__WEBPACK_IMPORTED_MODULE_4__.getConfig)().flowchart.htmlLabels)) {
     var div = text.children[0];
     var dv = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)(text);
     bbox = div.getBoundingClientRect();
@@ -17705,6 +17717,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "clear": () => (/* binding */ clear),
 /* harmony export */   "setAxisFormat": () => (/* binding */ setAxisFormat),
 /* harmony export */   "getAxisFormat": () => (/* binding */ getAxisFormat),
+/* harmony export */   "setAxisLocale": () => (/* binding */ setAxisLocale),
+/* harmony export */   "getAxisLocale": () => (/* binding */ getAxisLocale),
 /* harmony export */   "setTodayMarker": () => (/* binding */ setTodayMarker),
 /* harmony export */   "getTodayMarker": () => (/* binding */ getTodayMarker),
 /* harmony export */   "setDateFormat": () => (/* binding */ setDateFormat),
@@ -17713,6 +17727,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "enableTopAxis": () => (/* binding */ enableTopAxis),
 /* harmony export */   "topAxisEnabled": () => (/* binding */ topAxisEnabled),
 /* harmony export */   "getDateFormat": () => (/* binding */ getDateFormat),
+/* harmony export */   "setIncludes": () => (/* binding */ setIncludes),
+/* harmony export */   "getIncludes": () => (/* binding */ getIncludes),
 /* harmony export */   "setExcludes": () => (/* binding */ setExcludes),
 /* harmony export */   "getExcludes": () => (/* binding */ getExcludes),
 /* harmony export */   "setTitle": () => (/* binding */ setTitle),
@@ -17720,6 +17736,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "addSection": () => (/* binding */ addSection),
 /* harmony export */   "getSections": () => (/* binding */ getSections),
 /* harmony export */   "getTasks": () => (/* binding */ getTasks),
+/* harmony export */   "isInvalidDate": () => (/* binding */ isInvalidDate),
 /* harmony export */   "addTask": () => (/* binding */ addTask),
 /* harmony export */   "findTaskById": () => (/* binding */ findTaskById),
 /* harmony export */   "addTaskOrg": () => (/* binding */ addTaskOrg),
@@ -17757,7 +17774,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 var dateFormat = '';
 var axisFormat = '';
+var axisLocale = 'en-US';
 var todayMarker = '';
+var includes = [];
 var excludes = [];
 var title = '';
 var sections = [];
@@ -17784,7 +17803,9 @@ var clear = function clear() {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  axisLocale = 'en-US';
   todayMarker = '';
+  includes = [];
   excludes = [];
   inclusiveEndDates = false;
   topAxis = false;
@@ -17795,6 +17816,12 @@ var setAxisFormat = function setAxisFormat(txt) {
 };
 var getAxisFormat = function getAxisFormat() {
   return axisFormat;
+};
+var setAxisLocale = function setAxisLocale(txt) {
+  axisLocale = txt;
+};
+var getAxisLocale = function getAxisLocale() {
+  return axisLocale;
 };
 var setTodayMarker = function setTodayMarker(txt) {
   todayMarker = txt;
@@ -17819,6 +17846,12 @@ var topAxisEnabled = function topAxisEnabled() {
 };
 var getDateFormat = function getDateFormat() {
   return dateFormat;
+};
+var setIncludes = function setIncludes(txt) {
+  includes = txt.toLowerCase().split(/[\s,]+/);
+};
+var getIncludes = function getIncludes() {
+  return includes;
 };
 var setExcludes = function setExcludes(txt) {
   excludes = txt.toLowerCase().split(/[\s,]+/);
@@ -17852,8 +17885,11 @@ var getTasks = function getTasks() {
   tasks = rawTasks;
   return tasks;
 };
+var isInvalidDate = function isInvalidDate(date, dateFormat, excludes, includes) {
+  if (includes.indexOf(date.format(dateFormat.trim())) >= 0) {
+    return false;
+  }
 
-var isInvalidDate = function isInvalidDate(date, dateFormat, excludes) {
   if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
     return true;
   }
@@ -17865,17 +17901,17 @@ var isInvalidDate = function isInvalidDate(date, dateFormat, excludes) {
   return excludes.indexOf(date.format(dateFormat.trim())) >= 0;
 };
 
-var checkTaskDates = function checkTaskDates(task, dateFormat, excludes) {
+var checkTaskDates = function checkTaskDates(task, dateFormat, excludes, includes) {
   if (!excludes.length || task.manualEndTime) return;
   var startTime = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(task.startTime, dateFormat, true);
   startTime.add(1, 'd');
   var endTime = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(task.endTime, dateFormat, true);
-  var renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes);
+  var renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes, includes);
   task.endTime = endTime.toDate();
   task.renderEndTime = renderEndTime;
 };
 
-var fixTaskDates = function fixTaskDates(startTime, endTime, dateFormat, excludes) {
+var fixTaskDates = function fixTaskDates(startTime, endTime, dateFormat, excludes, includes) {
   var invalid = false;
   var renderEndTime = null;
 
@@ -17884,7 +17920,7 @@ var fixTaskDates = function fixTaskDates(startTime, endTime, dateFormat, exclude
       renderEndTime = endTime.toDate();
     }
 
-    invalid = isInvalidDate(startTime, dateFormat, excludes);
+    invalid = isInvalidDate(startTime, dateFormat, excludes, includes);
 
     if (invalid) {
       endTime.add(1, 'd');
@@ -18054,7 +18090,7 @@ var compileData = function compileData(prevTask, dataStr) {
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
     task.manualEndTime = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(endTimeData, 'YYYY-MM-DD', true).isValid();
-    checkTaskDates(task, dateFormat, excludes);
+    checkTaskDates(task, dateFormat, excludes, includes);
   }
 
   return task;
@@ -18204,7 +18240,7 @@ var compileTasks = function compileTasks() {
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
         rawTasks[pos].manualEndTime = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(rawTasks[pos].raw.endTime.data, 'YYYY-MM-DD', true).isValid();
-        checkTaskDates(rawTasks[pos], dateFormat, excludes);
+        checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
 
@@ -18371,6 +18407,8 @@ var bindFunctions = function bindFunctions(element) {
   topAxisEnabled: topAxisEnabled,
   setAxisFormat: setAxisFormat,
   getAxisFormat: getAxisFormat,
+  setAxisLocale: setAxisLocale,
+  getAxisLocale: getAxisLocale,
   setTodayMarker: setTodayMarker,
   getTodayMarker: getTodayMarker,
   setTitle: setTitle,
@@ -18381,12 +18419,15 @@ var bindFunctions = function bindFunctions(element) {
   addTask: addTask,
   findTaskById: findTaskById,
   addTaskOrg: addTaskOrg,
+  setIncludes: setIncludes,
+  getIncludes: getIncludes,
   setExcludes: setExcludes,
   getExcludes: getExcludes,
   setClickEvent: setClickEvent,
   setLink: setLink,
   bindFunctions: bindFunctions,
-  durationToDate: durationToDate
+  durationToDate: durationToDate,
+  isInvalidDate: isInvalidDate
 });
 
 function getTaskTags(data, task, tags) {
@@ -18422,21 +18463,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "draw": () => (/* binding */ draw),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
-/* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
-/* harmony import */ var _ganttDb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ganttDb */ "./src/diagrams/gantt/ganttDb.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment-mini */ "moment-mini");
+/* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment_mini__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
+/* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _ganttDb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ganttDb */ "./src/diagrams/gantt/ganttDb.js");
+/* harmony import */ var _locale__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./locale */ "./src/diagrams/gantt/locale.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 
 
 
 
 
 
-_parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy = _ganttDb__WEBPACK_IMPORTED_MODULE_2__["default"];
+
+
+_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy = _ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"];
 var setConf = function setConf() {// const keys = Object.keys(cnf);
   // keys.forEach(function(key) {
   //   conf[key] = cnf[key];
@@ -18444,9 +18490,10 @@ var setConf = function setConf() {// const keys = Object.keys(cnf);
 };
 var w;
 var draw = function draw(text, id) {
-  var conf = (0,_config__WEBPACK_IMPORTED_MODULE_3__.getConfig)().gantt;
-  _parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.clear();
-  _parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.parse(text);
+  var conf = (0,_config__WEBPACK_IMPORTED_MODULE_4__.getConfig)().gantt;
+  _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.clear();
+  _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.parse(text);
+  (0,d3__WEBPACK_IMPORTED_MODULE_1__.timeFormatDefaultLocale)((0,_locale__WEBPACK_IMPORTED_MODULE_5__["default"])(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getAxisLocale()));
   var elem = document.getElementById(id);
   w = elem.parentElement.offsetWidth;
 
@@ -18458,16 +18505,16 @@ var draw = function draw(text, id) {
     w = conf.useWidth;
   }
 
-  var taskArray = _parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.getTasks(); // Set height based on number of tasks
+  var taskArray = _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getTasks(); // Set height based on number of tasks
 
   var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding; // Set viewBox
 
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-  var svg = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)("[id=\"".concat(id, "\"]")); // Set timescale
+  var svg = (0,d3__WEBPACK_IMPORTED_MODULE_1__.select)("[id=\"".concat(id, "\"]")); // Set timescale
 
-  var timeScale = (0,d3__WEBPACK_IMPORTED_MODULE_0__.scaleTime)().domain([(0,d3__WEBPACK_IMPORTED_MODULE_0__.min)(taskArray, function (d) {
+  var timeScale = (0,d3__WEBPACK_IMPORTED_MODULE_1__.scaleTime)().domain([(0,d3__WEBPACK_IMPORTED_MODULE_1__.min)(taskArray, function (d) {
     return d.startTime;
-  }), (0,d3__WEBPACK_IMPORTED_MODULE_0__.max)(taskArray, function (d) {
+  }), (0,d3__WEBPACK_IMPORTED_MODULE_1__.max)(taskArray, function (d) {
     return d.endTime;
   })]).rangeRound([0, w - conf.leftPadding - conf.rightPadding]);
   var categories = [];
@@ -18498,15 +18545,16 @@ var draw = function draw(text, id) {
 
   taskArray.sort(taskCompare);
   makeGant(taskArray, w, h);
-  (0,_utils__WEBPACK_IMPORTED_MODULE_4__.configureSvgSize)(svg, h, w, conf.useMaxWidth);
-  svg.append('text').text(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.getTitle()).attr('x', w / 2).attr('y', conf.titleTopMargin).attr('class', 'titleText');
+  (0,_utils__WEBPACK_IMPORTED_MODULE_6__.configureSvgSize)(svg, h, w, conf.useMaxWidth);
+  svg.append('text').text(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getTitle()).attr('x', w / 2).attr('y', conf.titleTopMargin).attr('class', 'titleText');
 
   function makeGant(tasks, pageWidth, pageHeight) {
     var barHeight = conf.barHeight;
     var gap = barHeight + conf.barGap;
     var topPadding = conf.topPadding;
     var leftPadding = conf.leftPadding;
-    var colorScale = (0,d3__WEBPACK_IMPORTED_MODULE_0__.scaleLinear)().domain([0, categories.length]).range(['#00B9FA', '#F95002']).interpolate(d3__WEBPACK_IMPORTED_MODULE_0__.interpolateHcl);
+    var colorScale = (0,d3__WEBPACK_IMPORTED_MODULE_1__.scaleLinear)().domain([0, categories.length]).range(['#00B9FA', '#F95002']).interpolate(d3__WEBPACK_IMPORTED_MODULE_1__.interpolateHcl);
+    drawExcludeDays(gap, topPadding, leftPadding, pageWidth, pageHeight, tasks, _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getExcludes(), _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getIncludes());
     makeGrid(leftPadding, topPadding, pageWidth, pageHeight);
     drawRects(tasks, gap, topPadding, leftPadding, barHeight, colorScale, pageWidth, pageHeight);
     vertLabels(gap, topPadding, leftPadding, barHeight, colorScale);
@@ -18696,12 +18744,60 @@ var draw = function draw(text, id) {
     });
   }
 
+  function drawExcludeDays(theGap, theTopPad, theSidePad, w, h, tasks, excludes, includes) {
+    var minTime = tasks.reduce(function (min, _ref) {
+      var startTime = _ref.startTime;
+      return min ? Math.min(min, startTime) : startTime;
+    }, 0);
+    var maxTime = tasks.reduce(function (max, _ref2) {
+      var endTime = _ref2.endTime;
+      return max ? Math.max(max, endTime) : endTime;
+    }, 0);
+    var dateFormat = _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getDateFormat();
+    if (!minTime || !maxTime) return;
+    var excludeRanges = [];
+    var range = null;
+    var d = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(minTime);
+
+    while (d.valueOf() <= maxTime) {
+      if (_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.isInvalidDate(d, dateFormat, excludes, includes)) {
+        if (!range) {
+          range = {
+            start: d.clone(),
+            end: d.clone()
+          };
+        } else {
+          range.end = d.clone();
+        }
+      } else {
+        if (range) {
+          excludeRanges.push(range);
+          range = null;
+        }
+      }
+
+      d.add(1, 'd');
+    }
+
+    var rectangles = svg.append('g').selectAll('rect').data(excludeRanges).enter();
+    rectangles.append('rect').attr('id', function (d) {
+      return 'exclude-' + d.start.format('YYYY-MM-DD');
+    }).attr('x', function (d) {
+      return timeScale(d.start) + theSidePad;
+    }).attr('y', conf.gridLineStartPadding).attr('width', function (d) {
+      var renderEnd = d.end.clone().add(1, 'day');
+      return timeScale(renderEnd) - timeScale(d.start);
+    }).attr('height', h - theTopPad - conf.gridLineStartPadding).attr('transform-origin', function (d, i) {
+      return (timeScale(d.start) + theSidePad + 0.5 * (timeScale(d.end) - timeScale(d.start))).toString() + 'px ' + (i * theGap + 0.5 * h).toString() + 'px';
+    }).attr('class', 'exclude-range');
+  }
+
   function makeGrid(theSidePad, theTopPad, w, h) {
-    var bottomXAxis = (0,d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom)(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat((0,d3__WEBPACK_IMPORTED_MODULE_0__.timeFormat)(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+    var bottomXAxis = (0,d3__WEBPACK_IMPORTED_MODULE_1__.axisBottom)(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat((0,d3__WEBPACK_IMPORTED_MODULE_1__.timeFormat)(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
     svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')').call(bottomXAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10).attr('dy', '1em');
 
-    if (_ganttDb__WEBPACK_IMPORTED_MODULE_2__["default"].topAxisEnabled() || conf.topAxis) {
-      var topXAxis = (0,d3__WEBPACK_IMPORTED_MODULE_0__.axisTop)(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat((0,d3__WEBPACK_IMPORTED_MODULE_0__.timeFormat)(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+    if (_ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"].topAxisEnabled() || conf.topAxis) {
+      var topXAxis = (0,d3__WEBPACK_IMPORTED_MODULE_1__.axisTop)(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat((0,d3__WEBPACK_IMPORTED_MODULE_1__.timeFormat)(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
       svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + theTopPad + ')').call(topXAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10); // .attr('dy', '1em');
     }
   }
@@ -18716,7 +18812,7 @@ var draw = function draw(text, id) {
 
     svg.append('g') // without doing this, impossible to put grid lines behind text
     .selectAll('text').data(numOccurances).enter().append(function (d) {
-      var rows = d[0].split(_common_common__WEBPACK_IMPORTED_MODULE_5__["default"].lineBreakRegex);
+      var rows = d[0].split(_common_common__WEBPACK_IMPORTED_MODULE_7__["default"].lineBreakRegex);
       var dy = -(rows.length - 1) / 2;
       var svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       svgLabel.setAttribute('dy', dy + 'em');
@@ -18752,7 +18848,7 @@ var draw = function draw(text, id) {
   }
 
   function drawToday(theSidePad, theTopPad, w, h) {
-    var todayMarker = _ganttDb__WEBPACK_IMPORTED_MODULE_2__["default"].getTodayMarker();
+    var todayMarker = _ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"].getTodayMarker();
 
     if (todayMarker === 'off') {
       return;
@@ -18774,7 +18870,7 @@ var draw = function draw(text, id) {
     var result = [];
 
     for (var _i6 = 0, l = arr.length; _i6 < l; ++_i6) {
-      if (!hash.hasOwnProperty(arr[_i6])) {
+      if (!Object.prototype.hasOwnProperty.call(hash, arr[_i6])) {
         // eslint-disable-line
         // it works with objects! in FF, at least
         hash[arr[_i6]] = true;
@@ -18810,6 +18906,149 @@ var draw = function draw(text, id) {
 
 /***/ }),
 
+/***/ "./src/diagrams/gantt/locale.js":
+/*!**************************************!*\
+  !*** ./src/diagrams/gantt/locale.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* export default binding */ __WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var d3_time_format_locale_ar_EG_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3-time-format/locale/ar-EG.json */ "d3-time-format/locale/ar-EG.json");
+/* harmony import */ var d3_time_format_locale_ar_EG_json__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_ar_EG_json__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var d3_time_format_locale_ca_ES_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3-time-format/locale/ca-ES.json */ "d3-time-format/locale/ca-ES.json");
+/* harmony import */ var d3_time_format_locale_ca_ES_json__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_ca_ES_json__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var d3_time_format_locale_cs_CZ_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! d3-time-format/locale/cs-CZ.json */ "d3-time-format/locale/cs-CZ.json");
+/* harmony import */ var d3_time_format_locale_cs_CZ_json__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_cs_CZ_json__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var d3_time_format_locale_da_DK_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! d3-time-format/locale/da-DK.json */ "d3-time-format/locale/da-DK.json");
+/* harmony import */ var d3_time_format_locale_da_DK_json__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_da_DK_json__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var d3_time_format_locale_de_CH_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! d3-time-format/locale/de-CH.json */ "d3-time-format/locale/de-CH.json");
+/* harmony import */ var d3_time_format_locale_de_CH_json__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_de_CH_json__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var d3_time_format_locale_de_DE_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! d3-time-format/locale/de-DE.json */ "d3-time-format/locale/de-DE.json");
+/* harmony import */ var d3_time_format_locale_de_DE_json__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_de_DE_json__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var d3_time_format_locale_en_CA_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! d3-time-format/locale/en-CA.json */ "d3-time-format/locale/en-CA.json");
+/* harmony import */ var d3_time_format_locale_en_CA_json__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_en_CA_json__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var d3_time_format_locale_en_GB_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! d3-time-format/locale/en-GB.json */ "d3-time-format/locale/en-GB.json");
+/* harmony import */ var d3_time_format_locale_en_GB_json__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_en_GB_json__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var d3_time_format_locale_en_US_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! d3-time-format/locale/en-US.json */ "d3-time-format/locale/en-US.json");
+/* harmony import */ var d3_time_format_locale_en_US_json__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_en_US_json__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var d3_time_format_locale_es_ES_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! d3-time-format/locale/es-ES.json */ "d3-time-format/locale/es-ES.json");
+/* harmony import */ var d3_time_format_locale_es_ES_json__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_es_ES_json__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var d3_time_format_locale_es_MX_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! d3-time-format/locale/es-MX.json */ "d3-time-format/locale/es-MX.json");
+/* harmony import */ var d3_time_format_locale_es_MX_json__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_es_MX_json__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var d3_time_format_locale_fa_IR_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! d3-time-format/locale/fa-IR.json */ "d3-time-format/locale/fa-IR.json");
+/* harmony import */ var d3_time_format_locale_fa_IR_json__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_fa_IR_json__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var d3_time_format_locale_fi_FI_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! d3-time-format/locale/fi-FI.json */ "d3-time-format/locale/fi-FI.json");
+/* harmony import */ var d3_time_format_locale_fi_FI_json__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_fi_FI_json__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var d3_time_format_locale_fr_CA_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! d3-time-format/locale/fr-CA.json */ "d3-time-format/locale/fr-CA.json");
+/* harmony import */ var d3_time_format_locale_fr_CA_json__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_fr_CA_json__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var d3_time_format_locale_fr_FR_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! d3-time-format/locale/fr-FR.json */ "d3-time-format/locale/fr-FR.json");
+/* harmony import */ var d3_time_format_locale_fr_FR_json__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_fr_FR_json__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var d3_time_format_locale_he_IL_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! d3-time-format/locale/he-IL.json */ "d3-time-format/locale/he-IL.json");
+/* harmony import */ var d3_time_format_locale_he_IL_json__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_he_IL_json__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var d3_time_format_locale_hu_HU_json__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! d3-time-format/locale/hu-HU.json */ "d3-time-format/locale/hu-HU.json");
+/* harmony import */ var d3_time_format_locale_hu_HU_json__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_hu_HU_json__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var d3_time_format_locale_it_IT_json__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! d3-time-format/locale/it-IT.json */ "d3-time-format/locale/it-IT.json");
+/* harmony import */ var d3_time_format_locale_it_IT_json__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_it_IT_json__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var d3_time_format_locale_ja_JP_json__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! d3-time-format/locale/ja-JP.json */ "d3-time-format/locale/ja-JP.json");
+/* harmony import */ var d3_time_format_locale_ja_JP_json__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_ja_JP_json__WEBPACK_IMPORTED_MODULE_18__);
+/* harmony import */ var d3_time_format_locale_ko_KR_json__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! d3-time-format/locale/ko-KR.json */ "d3-time-format/locale/ko-KR.json");
+/* harmony import */ var d3_time_format_locale_ko_KR_json__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_ko_KR_json__WEBPACK_IMPORTED_MODULE_19__);
+/* harmony import */ var d3_time_format_locale_mk_MK_json__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! d3-time-format/locale/mk-MK.json */ "d3-time-format/locale/mk-MK.json");
+/* harmony import */ var d3_time_format_locale_mk_MK_json__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_mk_MK_json__WEBPACK_IMPORTED_MODULE_20__);
+/* harmony import */ var d3_time_format_locale_nb_NO_json__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! d3-time-format/locale/nb-NO.json */ "d3-time-format/locale/nb-NO.json");
+/* harmony import */ var d3_time_format_locale_nb_NO_json__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_nb_NO_json__WEBPACK_IMPORTED_MODULE_21__);
+/* harmony import */ var d3_time_format_locale_nl_NL_json__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! d3-time-format/locale/nl-NL.json */ "d3-time-format/locale/nl-NL.json");
+/* harmony import */ var d3_time_format_locale_nl_NL_json__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_nl_NL_json__WEBPACK_IMPORTED_MODULE_22__);
+/* harmony import */ var d3_time_format_locale_pl_PL_json__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! d3-time-format/locale/pl-PL.json */ "d3-time-format/locale/pl-PL.json");
+/* harmony import */ var d3_time_format_locale_pl_PL_json__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_pl_PL_json__WEBPACK_IMPORTED_MODULE_23__);
+/* harmony import */ var d3_time_format_locale_pt_BR_json__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! d3-time-format/locale/pt-BR.json */ "d3-time-format/locale/pt-BR.json");
+/* harmony import */ var d3_time_format_locale_pt_BR_json__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_pt_BR_json__WEBPACK_IMPORTED_MODULE_24__);
+/* harmony import */ var d3_time_format_locale_ru_RU_json__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! d3-time-format/locale/ru-RU.json */ "d3-time-format/locale/ru-RU.json");
+/* harmony import */ var d3_time_format_locale_ru_RU_json__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_ru_RU_json__WEBPACK_IMPORTED_MODULE_25__);
+/* harmony import */ var d3_time_format_locale_sv_SE_json__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! d3-time-format/locale/sv-SE.json */ "d3-time-format/locale/sv-SE.json");
+/* harmony import */ var d3_time_format_locale_sv_SE_json__WEBPACK_IMPORTED_MODULE_26___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_sv_SE_json__WEBPACK_IMPORTED_MODULE_26__);
+/* harmony import */ var d3_time_format_locale_tr_TR_json__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! d3-time-format/locale/tr-TR.json */ "d3-time-format/locale/tr-TR.json");
+/* harmony import */ var d3_time_format_locale_tr_TR_json__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_tr_TR_json__WEBPACK_IMPORTED_MODULE_27__);
+/* harmony import */ var d3_time_format_locale_uk_UA_json__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! d3-time-format/locale/uk-UA.json */ "d3-time-format/locale/uk-UA.json");
+/* harmony import */ var d3_time_format_locale_uk_UA_json__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_uk_UA_json__WEBPACK_IMPORTED_MODULE_28__);
+/* harmony import */ var d3_time_format_locale_zh_CN_json__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! d3-time-format/locale/zh-CN.json */ "d3-time-format/locale/zh-CN.json");
+/* harmony import */ var d3_time_format_locale_zh_CN_json__WEBPACK_IMPORTED_MODULE_29___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_zh_CN_json__WEBPACK_IMPORTED_MODULE_29__);
+/* harmony import */ var d3_time_format_locale_zh_TW_json__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! d3-time-format/locale/zh-TW.json */ "d3-time-format/locale/zh-TW.json");
+/* harmony import */ var d3_time_format_locale_zh_TW_json__WEBPACK_IMPORTED_MODULE_30___default = /*#__PURE__*/__webpack_require__.n(d3_time_format_locale_zh_TW_json__WEBPACK_IMPORTED_MODULE_30__);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var locales = {
+  'ar-EG': (d3_time_format_locale_ar_EG_json__WEBPACK_IMPORTED_MODULE_0___default()),
+  'ca-ES': (d3_time_format_locale_ca_ES_json__WEBPACK_IMPORTED_MODULE_1___default()),
+  'cs-CZ': (d3_time_format_locale_cs_CZ_json__WEBPACK_IMPORTED_MODULE_2___default()),
+  'da-DK': (d3_time_format_locale_da_DK_json__WEBPACK_IMPORTED_MODULE_3___default()),
+  'de-CH': (d3_time_format_locale_de_CH_json__WEBPACK_IMPORTED_MODULE_4___default()),
+  'de-DE': (d3_time_format_locale_de_DE_json__WEBPACK_IMPORTED_MODULE_5___default()),
+  'en-CA': (d3_time_format_locale_en_CA_json__WEBPACK_IMPORTED_MODULE_6___default()),
+  'en-GB': (d3_time_format_locale_en_GB_json__WEBPACK_IMPORTED_MODULE_7___default()),
+  'en-US': (d3_time_format_locale_en_US_json__WEBPACK_IMPORTED_MODULE_8___default()),
+  'es-ES': (d3_time_format_locale_es_ES_json__WEBPACK_IMPORTED_MODULE_9___default()),
+  'es-MX': (d3_time_format_locale_es_MX_json__WEBPACK_IMPORTED_MODULE_10___default()),
+  'fa-IR': (d3_time_format_locale_fa_IR_json__WEBPACK_IMPORTED_MODULE_11___default()),
+  'fi-FI': (d3_time_format_locale_fi_FI_json__WEBPACK_IMPORTED_MODULE_12___default()),
+  'fr-CA': (d3_time_format_locale_fr_CA_json__WEBPACK_IMPORTED_MODULE_13___default()),
+  'fr-FR': (d3_time_format_locale_fr_FR_json__WEBPACK_IMPORTED_MODULE_14___default()),
+  'he-IL': (d3_time_format_locale_he_IL_json__WEBPACK_IMPORTED_MODULE_15___default()),
+  'hu-HU': (d3_time_format_locale_hu_HU_json__WEBPACK_IMPORTED_MODULE_16___default()),
+  'it-IT': (d3_time_format_locale_it_IT_json__WEBPACK_IMPORTED_MODULE_17___default()),
+  'ja-JP': (d3_time_format_locale_ja_JP_json__WEBPACK_IMPORTED_MODULE_18___default()),
+  'ko-KR': (d3_time_format_locale_ko_KR_json__WEBPACK_IMPORTED_MODULE_19___default()),
+  'mk-MK': (d3_time_format_locale_mk_MK_json__WEBPACK_IMPORTED_MODULE_20___default()),
+  'nb-NO': (d3_time_format_locale_nb_NO_json__WEBPACK_IMPORTED_MODULE_21___default()),
+  'nl-NL': (d3_time_format_locale_nl_NL_json__WEBPACK_IMPORTED_MODULE_22___default()),
+  'pl-PL': (d3_time_format_locale_pl_PL_json__WEBPACK_IMPORTED_MODULE_23___default()),
+  'pt-BR': (d3_time_format_locale_pt_BR_json__WEBPACK_IMPORTED_MODULE_24___default()),
+  'ru-RU': (d3_time_format_locale_ru_RU_json__WEBPACK_IMPORTED_MODULE_25___default()),
+  'sv-SE': (d3_time_format_locale_sv_SE_json__WEBPACK_IMPORTED_MODULE_26___default()),
+  'tr-TR': (d3_time_format_locale_tr_TR_json__WEBPACK_IMPORTED_MODULE_27___default()),
+  'uk-UA': (d3_time_format_locale_uk_UA_json__WEBPACK_IMPORTED_MODULE_28___default()),
+  'zh-CN': (d3_time_format_locale_zh_CN_json__WEBPACK_IMPORTED_MODULE_29___default()),
+  'zh-TW': (d3_time_format_locale_zh_TW_json__WEBPACK_IMPORTED_MODULE_30___default())
+};
+/* harmony default export */ function __WEBPACK_DEFAULT_EXPORT__(lang) {
+  return locales[lang] || locales['en-US'];
+}
+
+/***/ }),
+
 /***/ "./src/diagrams/gantt/styles.js":
 /*!**************************************!*\
   !*** ./src/diagrams/gantt/styles.js ***!
@@ -18822,7 +19061,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 var getStyles = function getStyles(options) {
-  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    // text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  // .taskText:not([font-size]) {\n  //   font-size: ").concat(options.ganttFontSize, ";\n  // }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    // font-size: ").concat(options.ganttFontSize, ";\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n");
+  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n  .exclude-range {\n    fill: ".concat(options.excludeBkgColor, ";\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ").concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    // text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  // .taskText:not([font-size]) {\n  //   font-size: ").concat(options.ganttFontSize, ";\n  // }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    // font-size: ").concat(options.ganttFontSize, ";\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n");
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getStyles);
@@ -26179,6 +26418,7 @@ var Theme = /*#__PURE__*/function () {
       this.altSectionBkgColor = this.altSectionBkgColor || 'white';
       this.sectionBkgColor = this.sectionBkgColor || this.secondaryColor;
       this.sectionBkgColor2 = this.sectionBkgColor2 || this.primaryColor;
+      this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
       this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
       this.taskBkgColor = this.taskBkgColor || this.primaryColor;
       this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;
@@ -26680,6 +26920,7 @@ var Theme = /*#__PURE__*/function () {
     this.sectionBkgColor = 'calculated';
     this.altSectionBkgColor = 'calculated';
     this.sectionBkgColor2 = 'calculated';
+    this.excludeBkgColor = '#eeeeee';
     this.taskBorderColor = 'calculated';
     this.taskBkgColor = 'calculated';
     this.taskTextLightColor = 'calculated';
@@ -26969,6 +27210,7 @@ var Theme = /*#__PURE__*/function () {
     this.sectionBkgColor = '#6eaa49';
     this.altSectionBkgColor = 'white';
     this.sectionBkgColor2 = '#6eaa49';
+    this.excludeBkgColor = '#eeeeee';
     this.taskBorderColor = 'calculated';
     this.taskBkgColor = '#487e3a';
     this.taskTextLightColor = 'white';
@@ -27269,6 +27511,7 @@ var Theme = /*#__PURE__*/function () {
     this.sectionBkgColor = 'calculated';
     this.altSectionBkgColor = 'white';
     this.sectionBkgColor2 = 'calculated';
+    this.excludeBkgColor = '#eeeeee';
     this.taskBorderColor = 'calculated';
     this.taskBkgColor = 'calculated';
     this.taskTextLightColor = 'white';
@@ -29067,6 +29310,347 @@ module.exports = require("@braintree/sanitize-url");
 
 "use strict";
 module.exports = require("d3");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/ar-EG.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/ar-EG.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/ar-EG.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/ca-ES.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/ca-ES.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/ca-ES.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/cs-CZ.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/cs-CZ.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/cs-CZ.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/da-DK.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/da-DK.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/da-DK.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/de-CH.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/de-CH.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/de-CH.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/de-DE.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/de-DE.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/de-DE.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/en-CA.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/en-CA.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/en-CA.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/en-GB.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/en-GB.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/en-GB.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/en-US.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/en-US.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/en-US.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/es-ES.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/es-ES.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/es-ES.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/es-MX.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/es-MX.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/es-MX.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/fa-IR.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/fa-IR.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/fa-IR.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/fi-FI.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/fi-FI.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/fi-FI.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/fr-CA.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/fr-CA.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/fr-CA.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/fr-FR.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/fr-FR.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/fr-FR.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/he-IL.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/he-IL.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/he-IL.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/hu-HU.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/hu-HU.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/hu-HU.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/it-IT.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/it-IT.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/it-IT.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/ja-JP.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/ja-JP.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/ja-JP.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/ko-KR.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/ko-KR.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/ko-KR.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/mk-MK.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/mk-MK.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/mk-MK.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/nb-NO.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/nb-NO.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/nb-NO.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/nl-NL.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/nl-NL.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/nl-NL.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/pl-PL.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/pl-PL.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/pl-PL.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/pt-BR.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/pt-BR.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/pt-BR.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/ru-RU.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/ru-RU.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/ru-RU.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/sv-SE.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/sv-SE.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/sv-SE.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/tr-TR.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/tr-TR.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/tr-TR.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/uk-UA.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/uk-UA.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/uk-UA.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/zh-CN.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/zh-CN.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/zh-CN.json");
+
+/***/ }),
+
+/***/ "d3-time-format/locale/zh-TW.json":
+/*!***************************************************!*\
+  !*** external "d3-time-format/locale/zh-TW.json" ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("d3-time-format/locale/zh-TW.json");
 
 /***/ }),
 

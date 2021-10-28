@@ -7,6 +7,7 @@ import mermaidAPI from '../../mermaidAPI';
 
 let dateFormat = '';
 let axisFormat = '';
+let axisLocale = 'en-US';
 let todayMarker = '';
 let includes = [];
 let excludes = [];
@@ -38,6 +39,7 @@ export const clear = function () {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  axisLocale = 'en-US';
   todayMarker = '';
   includes = [];
   excludes = [];
@@ -52,6 +54,13 @@ export const setAxisFormat = function (txt) {
 
 export const getAxisFormat = function () {
   return axisFormat;
+};
+export const setAxisLocale = function (txt) {
+  axisLocale = txt;
+};
+
+export const getAxisLocale = function () {
+  return axisLocale;
 };
 
 export const setTodayMarker = function (txt) {
@@ -620,6 +629,8 @@ export default {
   topAxisEnabled,
   setAxisFormat,
   getAxisFormat,
+  setAxisLocale,
+  getAxisLocale,
   setTodayMarker,
   getTodayMarker,
   setTitle,
