@@ -4,7 +4,7 @@
 
 Mermaid can render state diagrams. The syntax tries to be compliant with the syntax used in plantUml as this will make it easier for users to share diagrams between mermaid and plantUml.
 
-```
+```mermaid-code
 stateDiagram-v2
     [*] --> Still
     Still --> [*]
@@ -42,7 +42,7 @@ In state diagrams systems are described in terms of its states and how the syste
 
 A state can be declared in multiple ways. The simplest way is to define a state id as a description.
 
-```markdown
+```mermaid-code
 stateDiagram-v2
     s1
 ```
@@ -54,7 +54,7 @@ stateDiagram-v2
 
 Another way is by using the state keyword with a description as per below:
 
-```markdown
+```mermaid-code
 stateDiagram-v2
     state "This is a state description" as s2
 ```
@@ -66,7 +66,7 @@ stateDiagram-v2
 
 Another way to define a state with a description is to define the state id followed by a colon and the description:
 
-```markdown
+```mermaid-code
 stateDiagram-v2
     s2 : This is a state description
 ```
@@ -82,7 +82,7 @@ Transitions are path/edges when one state passes into another. This is represent
 
 When you define a transition between two states and the states are not already defined the undefined states are defined with the id from the transition. You can later add descriptions to states defined this way.
 
-```
+```mermaid-code
 stateDiagram-v2
     s1 --> s2
 ```
@@ -94,7 +94,7 @@ stateDiagram-v2
 
 It is possible to add text to a transition. To describe what it represents.
 
-```
+```mermaid-code
 stateDiagram-v2
     s1 --> s2: A transition
 ```
@@ -108,7 +108,7 @@ stateDiagram-v2
 
 There are two special states indicating the start and stop of the diagram. These are written with the [\*] syntax and the direction of the transition to it defines it either as a start or a stop state.
 
-```
+```mermaid-code
 stateDiagram-v2
     [*] --> s1
     s1 --> [*]
@@ -127,7 +127,7 @@ have several internal states. These are called composite states in this terminol
 
 In order to define a composite state you need to use the state keyword followed by an id and the body of the composite state between \{\}. See the example below:
 
-```
+```mermaid-code
 stateDiagram-v2
     [*] --> First
     state First {
@@ -147,7 +147,7 @@ stateDiagram-v2
 
 You can do this in several layers:
 
-```
+```mermaid-code
 stateDiagram-v2
     [*] --> First
 
@@ -186,7 +186,7 @@ stateDiagram-v2
 
 You can also define transitions also between composite states:
 
-```
+```mermaid-code
 stateDiagram-v2
     [*] --> First
     First --> Second
@@ -232,7 +232,7 @@ stateDiagram-v2
 
 Sometimes you need to model a choice between two or more paths, you can do so using &lt;&lt;choice&gt;&gt;.
 
-```
+```mermaid-code
 stateDiagram-v2
     state if_state <<choice>>
     [*] --> IsPositive
@@ -254,7 +254,7 @@ stateDiagram-v2
 
 It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&lt;join&gt;&gt;.
 
-```
+```mermaid-code
    stateDiagram-v2
     state fork_state <<fork>>
       [*] --> fork_state
@@ -289,7 +289,7 @@ Sometimes nothing says it better then a Post-it note. That is also the case in s
 
 Here you can choose to put the note to the *right of* or to the *left of* a node.
 
-```
+```mermaid-code
     stateDiagram-v2
         State1: The state with a note
         note right of State1
@@ -316,7 +316,7 @@ Here you can choose to put the note to the *right of* or to the *left of* a node
 
 As in plantUml you can specify concurrency using the -- symbol.
 
-```
+```mermaid-code
 stateDiagram-v2
     [*] --> Active
 
@@ -358,7 +358,7 @@ stateDiagram-v2
 
 With state diagrams you can use the direction statement to set the direction which the diagram will render like in this example.
 
-```
+```mermaid-code
 stateDiagram
     direction LR
     [*] --> A
@@ -389,7 +389,7 @@ stateDiagram
 
 Comments can be entered within a state diagram chart, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```
+```mermaid-code
 stateDiagram-v2
     [*] --> Still
     Still --> [*]

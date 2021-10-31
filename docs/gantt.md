@@ -17,7 +17,7 @@
 
 Mermaid can render Gantt diagrams as SVG, PNG or a MarkDown link that can be pasted into docs.
 
-```
+```mermaid-code
 gantt
     title A Gantt Diagram
     dateFormat  YYYY-MM-DD
@@ -106,13 +106,13 @@ gantt
 ```
 
 It is possible to set multiple dependencies separated by space:
-```
+```mermaid-code
     gantt
         apple :a, 2017-07-20, 1w
         banana :crit, b, 2017-07-23, 1d
         cherry :active, c, after b a, 1d
 ```
-```
+```mermaid-code
     gantt
         apple :a, 2017-07-20, 1w
         banana :crit, b, 2017-07-23, 1d
@@ -135,7 +135,7 @@ To do so, start a line with the `section` keyword and give it a name. (Note that
 
 You can add milestones to the diagrams. Milestones differ from tasks as they represent a single instant in time and are identified by the keyword `milestone`. Below is an example on how to use milestones. As you may notice, the exact location of the milestone is determined by the initial date for the milestone and the "duration" of the task this way: *initial date*+*duration*/2. 
 
-```
+```mermaid-code
 gantt 
 dateFormat HH:mm
 axisFormat %H:%M
@@ -238,7 +238,7 @@ More info in: https://github.com/mbostock/d3/wiki/Time-Formatting
 
 Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```
+```mermaid-code
 gantt
     title A Gantt Diagram
     %% this is a comment

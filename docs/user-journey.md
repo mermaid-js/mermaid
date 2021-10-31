@@ -4,7 +4,7 @@
 
 Mermaid can render user journey diagrams:
 
-```markdown
+```mermaid-code
 journey
     title My working day
     section Go to work

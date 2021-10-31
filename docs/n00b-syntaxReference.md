@@ -10,7 +10,7 @@ One would notice that all **Diagrams definitions begin** with a declaration of t
 
 **Example** :  The code below is for an Entity Relationship Diagram, specified by the `erDiagram` declaration. What follows is the definition of the different `Entities` represented in it.
 
-```
+```mermaid-code
 erDiagram
           CUSTOMER }|..|{ DELIVERY-ADDRESS : has
           CUSTOMER ||--o{ ORDER : places

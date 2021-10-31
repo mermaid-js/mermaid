@@ -39,7 +39,7 @@ It is also possible to override site-wide theme settings locally, for a specific
 
 **Following is an example:**
 
-```
+```mermaid-code
 %%{init: {'theme':'base'}}%%
   graph TD
     a --> b
@@ -56,7 +56,7 @@ The easiest way to make a custom theme is to start with the base theme, and just
 
 Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
 
-```
+```mermaid-code
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)

@@ -401,7 +401,7 @@ To set some configuration via the mermaid object. The two parameters that are su
 * mermaid_config.startOnLoad
 * mermaid_config.htmlLabels
 
-```
+```js
 mermaid_config.startOnLoad = true;
 ```
 

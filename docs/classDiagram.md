@@ -7,7 +7,7 @@ The class diagram is the main building block of object-oriented modeling. It is 
 
 Mermaid can render class diagrams.
 
-```
+```mermaid-code
  classDiagram
       Animal <|-- Duck
       Animal <|-- Fish
@@ -68,7 +68,7 @@ A single instance of a class in the diagram contains three compartments:
 - The middle compartment contains the attributes of the class. They are left-aligned and the first letter is lowercase.
     The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
-```
+```mermaid-code
 classDiagram
     class BankAccount
     BankAccount : +String owner
@@ -94,7 +94,7 @@ There are two ways to define a class:
 - Explicitly defining a class using keyword **class** like `class Animal`. This defines the Animal class
 - Define two classes via a **relationship** between them `Vehicle <|-- Car`. This defines two classes Vehicle and Car along with their relationship.
 
-```
+```mermaid-code
 classDiagram
     class Animal
     Vehicle <|-- Car
@@ -118,7 +118,7 @@ There are two ways to define the members of a class, and regardless of whichever
 
 - Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
 
-```
+```mermaid-code
  class BankAccount
  BankAccount : +String owner
  BankAccount : +BigDecimal balance
@@ -137,7 +137,7 @@ There are two ways to define the members of a class, and regardless of whichever
 
 - Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
 
-```
+```mermaid-code
 class BankAccount{
     +String owner
     +BigDecimal balance
@@ -161,7 +161,7 @@ class BankAccount{
 Optionally you can end the method/function definition with the data type that will be returned (note: there must be a space between the final `)` of the method definition and return type
 example:
 
-```
+```mermaid-code
 class BankAccount{
     +String owner
     +BigDecimal balance
@@ -186,7 +186,7 @@ Members can be defined using generic types, such as `List<int>`, for fields, par
 
 This can be done as part of either class definition method:
 
-```
+```mermaid-code
 classDiagram
 class Square~Shape~{
     int id
@@ -240,7 +240,7 @@ To specify the visibility of a class member (i.e. any attribute or method), thes
 
 A relationship is a general term covering the specific types of logical connections found on class and object diagrams.
 
-```
+```mermaid-code
 [classA][Arrow][ClassB]
 ```
 
@@ -257,7 +257,7 @@ There are different types of relations defined for classes under UML which are c
 | ..\|> | Realization   |
 | ..    | Link (Dashed) |
 
-```
+```mermaid-code
 classDiagram
 classA <|-- classB
 classC *-- classD
@@ -285,7 +285,7 @@ classO .. classP
 
 We can use the labels to describe nature of relation between two classes. Also, arrowheads can be used in opposite directions as well :
 
-```
+```mermaid-code
 classDiagram
 classA --|> classB : Inheritance
 classC --* classD : Composition
@@ -318,7 +318,7 @@ It is possible to add a label text to a relation:
 [classA][Arrow][ClassB]:LabelText
 ```
 
-```
+```mermaid-code
 classDiagram
 classA <|-- classB : implements
 classC *-- classD : composition
@@ -336,7 +336,7 @@ classE o-- classF : association
 
 Relations can go in multiple ways:
 
-```
+```mermaid-code
 classDiagram
     Animal <|--|> Zebra
 ```
@@ -388,7 +388,7 @@ Cardinality can be easily defined by placing cardinality text within quotes `"` 
 [classA] "cardinality1" [Arrow] "cardinality2" [ClassB]:LabelText
 ```
 
-```
+```mermaid-code
 classDiagram
     Customer "1" --> "*" Ticket
     Student "1" --> "1..*" Course
@@ -415,7 +415,7 @@ Annotations are defined within the opening `<<` and closing `>>`. There are two 
 
 - In a **_separate line_** after a class is defined. For example:
 
-```
+```mermaid-code
 classDiagram
 class Shape
 <<interface>> Shape
@@ -431,7 +431,7 @@ Shape : draw()
 
 - In a **_nested structure_** along with class definition. For example:
 
-```
+```mermaid-code
 classDiagram
 class Shape{
     <<interface>>
@@ -470,7 +470,7 @@ class Color{
 
 Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any class diagram syntax
 
-```
+```mermaid-code
 classDiagram
 %% This whole line is a comment classDiagram class Shape <<interface>>
 class Shape{
@@ -485,7 +485,7 @@ class Shape{
 
 With class diagrams you can use the direction statement to set the direction which the diagram will render like in this example.
 
-```
+```mermaid-code
 classDiagram
   direction RL
   class Student {
@@ -542,7 +542,7 @@ click className href "url" "tooltip"
 
 _URL Link:_
 
-```
+```mermaid-code
 classDiagram
 class Shape
 link Shape "http://www.github.com" "This is a tooltip for a link"
@@ -552,7 +552,7 @@ click Shape2 href "http://www.github.com" "This is a tooltip for a link"
 
 _Callback:_
 
-```
+```mermaid-code
 classDiagram
 class Shape
 callback Shape "callbackFunction" "This is a tooltip for a callback"
@@ -584,7 +584,7 @@ classDiagram
 
 Beginners tip, a full example using interactive links in an html context:
 
-```
+```html
 <body>
   <div class="mermaid">
     classDiagram
@@ -658,14 +658,14 @@ It is also possible to attach a class to a list of nodes in one statement:
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator as per below:
 
-```
+```mermaid-code
 classDiagram
     class Animal:::cssClass
 ```
 
 Or:
 
-```
+```mermaid-code
 classDiagram
     class Animal:::cssClass {
         -int sizeInFeet

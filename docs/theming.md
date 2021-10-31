@@ -12,7 +12,7 @@ Themes follow and build upon the Levels of Configuration and employ `directives`
 Site-wide themes are still declared via `initialize` by site owners.
 
 Example of `Initalize` call setting `theme` to `base`:
-```
+```js
     mermaidAPI.initialize({
         'securityLevel': 'loose', 'theme': 'base'
     });
@@ -23,7 +23,7 @@ Example of `Initalize` call setting `theme` to `base`:
 When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array.
 
 
-```
+```mermaid-code
 %%{init: {'theme':'base'}}%%
   graph TD
     a --> b
@@ -61,7 +61,7 @@ The easiest way to make a custom theme is to start with the base theme, and just
 
 ## Here is an example of overriding `primaryColor` through `themeVariables` and giving everything a different look, using `%%init%%`.
 
-```
+```mermaid-code
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -204,7 +204,7 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 
 
 # Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
-```
+```mermaid-code
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -248,7 +248,7 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 * make the edge label background differ from the subgraph by setting the edgeLabelBackground
 
 
-```
+```mermaid-code
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffcccc', 'edgeLabelBackground':'#ffffee', 'tertiaryColor': '#fff0f0'}}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -296,7 +296,7 @@ When adjusting a theme it might be helpful to look at how your preferred theme g
 In the following examples, the directive `init` is used, with the `theme` being declared as `base`. For more information on using directives, read the documentation for [Version 8.6.0](/8.6.0_docs.md)
 
 ### Flowchart
-```
+```mermaid-code
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -332,7 +332,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ```
 
 ### Flowchart (beta)
-```
+```mermaid-code
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         flowchart TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -368,7 +368,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ```
 
 ### Sequence diagram
-```
+```mermaid-code
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         sequenceDiagram
           autonumber
@@ -406,7 +406,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ```
 
 ### Class diagram
-```
+```mermaid-code
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 
 classDiagram
@@ -459,7 +459,7 @@ classDiagram
 ```
 
 ### Gantt
-```
+```mermaid-code
 gantt
        dateFormat                YYYY-MM-DD
        title                     Adding GANTT diagram functionality to mermaid
@@ -520,7 +520,7 @@ gantt
 ```
 
 ### State diagram
-```
+```mermaid-code
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
       stateDiagram
         [*] --> Active
@@ -581,7 +581,7 @@ gantt
 
 ### State diagram (beta)
 
-```
+```mermaid-code
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 stateDiagram-v2
         [*] --> Active
@@ -640,7 +640,7 @@ stateDiagram-v2
 
 ### Entity Relations diagram
 
-```
+```mermaid-code
       erDiagram
         CUSTOMER }|..|{ DELIVERY-ADDRESS : has
         CUSTOMER ||--o{ ORDER : places
@@ -664,7 +664,7 @@ stateDiagram-v2
 ```
 
 ### User journey diagram
-```
+```mermaid-code
 journey
             title My working day
             section Go to work

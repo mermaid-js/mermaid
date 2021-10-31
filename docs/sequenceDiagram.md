@@ -5,7 +5,7 @@
 
 Mermaid can render sequence diagrams.
 
-```
+```mermaid-code
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
@@ -34,7 +34,7 @@ rendered in order of appearance in the diagram source text. Sometimes you might 
 different order than how they appear in the first message. It is possible to specify the actor's order of
 appearance by doing the following:
 
-```
+```mermaid-code
 sequenceDiagram
     participant Alice
     participant Bob
@@ -53,7 +53,7 @@ sequenceDiagram
 ### Actors
 
 If you specifically want to use the actor symbol instead of a rectangle with text you can do so by using actor statements as per below.
-```
+```mermaid-code
 sequenceDiagram
     actor Alice
     actor Bob
@@ -69,7 +69,7 @@ sequenceDiagram
         Bob->>Alice: Hi Alice
 ```
 
-```
+```mermaid-code
 sequenceDiagram
     actor Alice
     actor Bob
@@ -89,7 +89,7 @@ sequenceDiagram
 
 The actor can have a convenient identifier and a descriptive label.
 
-```
+```mermaid-code
 sequenceDiagram
     participant A as Alice
     participant J as John
@@ -130,7 +130,7 @@ There are six types of arrows currently supported:
 
 It is possible to activate and deactivate an actor. (de)activation can be dedicated declarations:
 
-```
+```mermaid-code
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     activate John
@@ -148,7 +148,7 @@ sequenceDiagram
 
 There is also a shortcut notation by appending `+`/`-` suffix to the message arrow:
 
-```
+```mermaid-code
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
     John-->>-Alice: Great!
@@ -162,7 +162,7 @@ sequenceDiagram
 
 Activations can be stacked for same actor:
 
-```
+```mermaid-code
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
     Alice->>+John: John, can you hear me?
@@ -185,7 +185,7 @@ Note [ right of | left of | over ] [Actor]: Text in note content
 
 See the example below:
 
-```
+```mermaid-code
 sequenceDiagram
     participant John
     Note right of John: Text in note
@@ -199,7 +199,7 @@ sequenceDiagram
 
 It is also possible to create notes spanning two participants:
 
-```
+```mermaid-code
 sequenceDiagram
     Alice->John: Hello John, how are you?
     Note over Alice,John: A typical interaction
@@ -223,7 +223,7 @@ end
 
 See the example below:
 
-```
+```mermaid-code
 sequenceDiagram
     Alice->John: Hello John, how are you?
     loop Every minute
@@ -261,7 +261,7 @@ end
 
 See the example below:
 
-```
+```mermaid-code
 sequenceDiagram
     Alice->>Bob: Hello Bob, how are you?
     alt is sick
@@ -305,6 +305,17 @@ end
 
 See the example below:
 
+```mermaid-code
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Hello guys!
+    and Alice to John
+        Alice->>John: Hello guys!
+    end
+    Bob-->>Alice: Hi Alice!
+    John-->>Alice: Hi Alice!
+```
+
 ```mermaid
 sequenceDiagram
     par Alice to Bob
@@ -317,6 +328,20 @@ sequenceDiagram
 ```
 
 It is also possible to nest parallel blocks.
+
+```mermaid-code
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Go help John
+    and Alice to John
+        Alice->>John: I want this done today
+        par John to Charlie
+            John->>Charlie: Can we do this today?
+        and John to Diana
+            John->>Diana: Can you help us today?
+        end
+    end
+```
 
 ```mermaid
 sequenceDiagram
@@ -352,6 +377,25 @@ end
 
 See the examples below:
 
+```mermaid-code
+sequenceDiagram
+    participant Alice
+    participant John
+
+    rect rgb(191, 223, 255)
+    note right of Alice: Alice calls John.
+    Alice->>+John: Hello John, how are you?
+    rect rgb(200, 150, 255)
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    end
+    John-->>-Alice: I feel great!
+    end
+    Alice ->>+ John: Did you want to go to the game tonight?
+    John -->>- Alice: Yeah! See you there.
+
+```
+
 ```mermaid
 sequenceDiagram
     participant Alice
@@ -375,7 +419,7 @@ sequenceDiagram
 
 Comments can be entered within a sequence diagram, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```
+```mermaid-code
 sequenceDiagram
     Alice->>John: Hello John, how are you?
     %% this is a comment
@@ -386,7 +430,7 @@ sequenceDiagram
 
 It is possible to escape characters using the syntax exemplified here.
 
-```
+```mermaid-code
 sequenceDiagram
     A->>B: I #9829; you!
     B->>A: I #9829; you #infin; times more!
@@ -405,7 +449,7 @@ Because semicolons can be used instead of line breaks to define the markup, you 
 
 It is possible to get a sequence number attached to each arrow in a sequence diagram. This can be configured when adding mermaid to the website as shown below:
 
-```
+```html
     <script>
       mermaid.initialize({
         sequence: { showSequenceNumbers: true },
@@ -415,7 +459,7 @@ It is possible to get a sequence number attached to each arrow in a sequence dia
 
 It can also be be turned on via the diagram code as in the diagram:
 
-```
+```mermaid-code
 sequenceDiagram
     autonumber
     Alice->>John: Hello John, how are you?
@@ -449,7 +493,7 @@ This can be configured by adding one or more link lines with the format:
 
       link <actor>: <link-label> @ <link-url>
 
-```
+```mermaid-code
 sequenceDiagram
     participant Alice
     participant John
@@ -471,7 +515,7 @@ This can be configured by adding the links lines with the format:
 
 An example is below:
 
-```
+```mermaid-code
 sequenceDiagram
     participant Alice
     participant John

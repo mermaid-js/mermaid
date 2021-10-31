@@ -8,7 +8,7 @@ This page contains a collection of examples of diagrams and charts that can be c
 
 ## Basic Pie Chart
 
-```
+```mermaid-code
 pie title NETFLIX
          "Time spent looking for movie" : 90
          "Time spent watching it" : 10
@@ -18,7 +18,7 @@ pie title NETFLIX
          "Time spent looking for movie" : 90
          "Time spent watching it" : 10
 ```
-```
+```mermaid-code
 pie title What Voldemort doesn't have?
          "FRIENDS" : 2
          "FAMILY" : 3
@@ -32,7 +32,7 @@ pie title What Voldemort doesn't have?
 ```
 ## Basic sequence diagram
 
-```
+```mermaid-code
 sequenceDiagram
     Alice ->> Bob: Hello Bob, how are you?
     Bob-->>John: How about you John?
@@ -57,7 +57,7 @@ sequenceDiagram
 
 ## Basic flowchart
 
-```
+```mermaid-code
 graph LR
     A[Square Rect] -- Link text --> B((Circle))
     A --> C(Round Rect)
@@ -75,7 +75,7 @@ graph LR
 
 ## Larger flowchart with some styling
 
-```
+```mermaid-code
 graph TB
     sq[Square shape] --> ci((Circle shape))
 
@@ -125,7 +125,7 @@ graph TB
 
 ## SequenceDiagram: Loops, alt and opt
 
-```
+```mermaid-code
 sequenceDiagram
     loop Daily query
         Alice->>Bob: Hello Bob, how are you?
@@ -159,7 +159,7 @@ sequenceDiagram
 
 ## SequenceDiagram: Message to self in loop
 
-```
+```mermaid-code
 sequenceDiagram
     participant Alice
     participant Bob

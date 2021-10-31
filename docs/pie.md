@@ -5,7 +5,7 @@
 
 Mermaid can render Pie Chart diagrams.
 
-```
+```mermaid-code
 pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85
@@ -37,7 +37,7 @@ Drawing a pie chart is really simple in mermaid.
       .
 
 ## Example
-```
+```mermaid-code
 pie
     title Key elements in Product X
     "Calcium" : 42.96
