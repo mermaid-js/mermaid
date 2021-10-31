@@ -45,7 +45,7 @@
 
     function colorizeEverything() {
       colorize.map((id) => {
-        monaco.editor.colorizeElement(document.getElementById('code' + id))
+        monaco.editor.colorizeElement(document.getElementById('code' + id), { theme: 'mermaid' })
       })
       colorize = colorize.filter(colorizeEl => colorizeEl)
     }
