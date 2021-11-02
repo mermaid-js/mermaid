@@ -1090,7 +1090,7 @@ Note: modifies options in-place
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
 
-```js
+```javascript
 mermaidAPI.initialize({
      startOnLoad:true
  });

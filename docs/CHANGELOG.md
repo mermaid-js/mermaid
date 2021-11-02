@@ -24,7 +24,7 @@ Site-wide themes are still declared via `initialize` by site owners.
 
 Example of `Initalize` call setting `theme` to `base`:
 
-```js
+```javascript
 mermaidAPI.initialize({
     'securityLevel': 'loose', 'theme': 'base'
 });
