@@ -38,16 +38,20 @@
 <body>
   <div id="app"></div>
   <script>
-    const initEditor = exports.default;
-
+    var initEditor = exports.default;
+    var parser = new DOMParser();
     var currentCodeExample = 0;
     var colorize = [];
 
-    function colorizeEverything() {
-      colorize.map((id) => {
-        monaco.editor.colorizeElement(document.getElementById('code' + id), { theme: 'mermaid' })
+    function colorizeEverything(html) {
+      initEditor(monaco)
+      return new Promise((resolve, reject) => {
+        var parsed = parser.parseFromString(html, 'text/html').body
+        Promise.all([...parsed.querySelectorAll('pre[id*="code"]')].map(codeBlock => monaco.editor.colorize(codeBlock.innerText, 'mermaid', { theme: 'mermaid' }))).then(result => {
+          parsed.querySelectorAll('pre[id*="code"]').forEach((codeBlock, index) => codeBlock.innerHTML = result[index])
+          resolve(parsed.innerHTML)
+        })
       })
-      colorize = colorize.filter(colorizeEl => colorizeEl)
     }
 
     window.$docsify = {
@@ -69,7 +73,7 @@
               currentCodeExample++;
               colorize.push(currentCodeExample);
               return (
-                '<pre id="code' + currentCodeExample + '" data-lang="mermaid">' + code + '</pre>'
+                '<pre id="code' + currentCodeExample + '">' + code + '</pre>'
               )
             }
             return this.origin.code.apply(this, arguments);
@@ -84,11 +88,12 @@
             return editHtml + html
           })
 
-          hook.ready(function () {
-            if (document.readyState !== 'complete') {
-              return;
-            }
-            colorizeEverything()
+          hook.afterEach(function (html, next) {
+            (async() => {
+                while (!window.hasOwnProperty("monaco"))
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                colorizeEverything(html).then(newHTML => next(newHTML))
+            })();
           })
         }
       ]
@@ -108,10 +113,6 @@
      if(location) {
        ga('send', 'pageview', location.hash);
      }
-  }
-  window.onload = () => {
-    initEditor(monaco)
-    colorizeEverything()
   }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
