@@ -7,7 +7,7 @@ Note that practitioners of ER modelling almost always refer to *entity types* si
 
 Mermaid can render ER diagrams
 
-```markdown
+```mermaid-code
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -27,7 +27,7 @@ Relationships between entities are represented by lines with end markers represe
 
 ER diagrams can be used for various purposes, ranging from abstract logical models devoid of any implementation details, through to physical models of relational database tables.  It can be useful to include attribute definitions on ER diagrams to aid comprehension of the purpose and meaning of entities.  These do not necessarily need to be exhaustive; often a small subset of attributes is enough.  Mermaid allows to be defined in terms of their *type* and *name*.
 
-```markdown
+```mermaid-code
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     CUSTOMER {
