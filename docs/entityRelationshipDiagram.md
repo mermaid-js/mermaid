@@ -75,7 +75,7 @@ When including attributes on ER diagrams, you must decide whether to include for
 
 Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to label the relationship.  Each statement consists of the following parts:
 
-```markdown
+```
     <first-entity> [<relationship> <second-entity> : <relationship-label>]
 ```
 
@@ -88,7 +88,7 @@ Where:
 
 For example:
 
-```markdown
+```
     PROPERTY ||--|{ ROOM : contains
 ```
 

@@ -46,8 +46,9 @@
     function colorizeEverything(html) {
       initEditor(monaco)
       return new Promise((resolve, reject) => {
+        monaco.editor.setTheme('mermaid')
         var parsed = parser.parseFromString(html, 'text/html').body
-        Promise.all([...parsed.querySelectorAll('pre[id*="code"]')].map(codeBlock => monaco.editor.colorize(codeBlock.innerText, 'mermaid', { theme: 'mermaid' }))).then(result => {
+        Promise.all([...parsed.querySelectorAll('pre[id*="code"]')].map(codeBlock => monaco.editor.colorize(codeBlock.innerText, 'mermaid'))).then(result => {
           parsed.querySelectorAll('pre[id*="code"]').forEach((codeBlock, index) => codeBlock.innerHTML = result[index])
           resolve(parsed.innerHTML)
         })
