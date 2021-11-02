@@ -11,22 +11,14 @@ This statement declares the direction of the Flowchart.
 
 This declares the graph is oriented from top to bottom (`TD` or `TB`).
 
-```mermaid-code
-graph TD
-    Start --> Stop
-```
-```mermaid
+```mermaid-example
 graph TD
     Start --> Stop
 ```
 
 This declares the graph is oriented from left to right (`LR`).
 
-```mermaid-code
-graph LR
-    Start --> Stop
-```
-```mermaid
+```mermaid-example
 graph LR
     Start --> Stop
 ```
@@ -55,12 +47,7 @@ Apart from the graph type, the syntax is the same. This is currently experimenta
 
 ### A node (default)
 
-```mermaid-code
-graph LR
-    id
-```
-
-```mermaid
+```mermaid-example
 graph LR
     id
 ```
@@ -73,11 +60,7 @@ It is also possible to set text in the box that differs from the id. If this is 
 found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The
 one previously defined will be used when rendering the box.
 
-```mermaid-code
-graph LR
-    id1[This is the text in the box]
-```
-```mermaid
+```mermaid-example
 graph LR
     id1[This is the text in the box]
 ```
@@ -86,66 +69,42 @@ graph LR
 
 ### A node with round edges
 
-```mermaid-code
-graph LR
-    id1(This is the text in the box)
-```
-```mermaid
+```mermaid-example
 graph LR
     id1(This is the text in the box)
 ```
 
 ### A stadium-shaped node
 
-```mermaid-code
-graph LR
-    id1([This is the text in the box])
-```
-```mermaid
+```mermaid-example
 graph LR
     id1([This is the text in the box])
 ```
 
 ### A node in a subroutine shape
 
-```mermaid-code
-graph LR
-    id1[[This is the text in the box]]
-```
-```mermaid
+```mermaid-example
 graph LR
     id1[[This is the text in the box]]
 ```
 
 ### A node in a cylindrical shape
 
-```mermaid-code
-graph LR
-    id1[(Database)]
-```
-```mermaid
+```mermaid-example
 graph LR
     id1[(Database)]
 ```
 
 ### A node in the form of a circle
 
-```mermaid-code
-graph LR
-    id1((This is the text in the circle))
-```
-```mermaid
+```mermaid-example
 graph LR
     id1((This is the text in the circle))
 ```
 
 ### A node in an asymmetric shape
 
-```mermaid-code
-graph LR
-    id1>This is the text in the box]
-```
-```mermaid
+```mermaid-example
 graph LR
     id1>This is the text in the box]
 ```
@@ -153,69 +112,40 @@ Currently only the shape above is possible and not its mirror. *This might chang
 
 ### A node (rhombus)
 
-```mermaid-code
-graph LR
-    id1{This is the text in the box}
-```
-```mermaid
+```mermaid-example
 graph LR
     id1{This is the text in the box}
 ```
 
 ### A hexagon node
-{% raw %}
-```mermaid-code
-graph LR
-    id1{{This is the text in the box}}
-```
-{% endraw %}
 
-```mermaid
-{% raw %}
+```mermaid-example
 graph LR
     id1{{This is the text in the box}}
-{% endraw %}
 ```
 
 ### Parallelogram
 
-```mermaid-code
+```mermaid-example
 graph TD
     id1[/This is the text in the box/]
 ```
-```mermaid
-graph TD
-    id1[/This is the text in the box/]
-```
-
 ### Parallelogram alt
 
-```mermaid-code
-graph TD
-    id1[\This is the text in the box\]
-```
-```mermaid
+```mermaid-example
 graph TD
     id1[\This is the text in the box\]
 ```
 
 ### Trapezoid
 
-```mermaid-code
-graph TD
-    A[/Christmas\]
-```
-```mermaid
+```mermaid-example
 graph TD
     A[/Christmas\]
 ```
 ### Trapezoid alt
 
-```mermaid-code
-graph TD
-    B[\Go shopping/]
-```
-```mermaid
+```mermaid-example
 graph TD
     B[\Go shopping/]
 ```
@@ -226,110 +156,70 @@ Nodes can be connected with links/edges. It is possible to have different types 
 
 ### A link with arrow head
 
-```mermaid-code
-graph LR
-    A-->B
-```
-```mermaid
+```mermaid-example
 graph LR
     A-->B
 ```
 
 ### An open link
 
-```mermaid-code
-graph LR
-    A --- B
-```
-```mermaid
+```mermaid-example
 graph LR
     A --- B
 ```
 
 ### Text on links
 
-```mermaid-code
+```mermaid-example
 graph LR
     A-- This is the text! ---B
-```
-```mermaid
-graph LR
-    A-- This is the text ---B
 ```
 
 or
 
-```mermaid-code
-graph LR
-    A---|This is the text|B
-```
-```mermaid
+```mermaid-example
 graph LR
     A---|This is the text|B
 ```
 
 ### A link with arrow head and text
 
-```mermaid-code
-graph LR
-    A-->|text|B
-```
-```mermaid
+```mermaid-example
 graph LR
     A-->|text|B
 ```
 
 or
 
-```mermaid-code
-graph LR
-    A-- text -->B
-```
-```mermaid
+```mermaid-example
 graph LR
     A-- text -->B
 ```
 
 ### Dotted link
 
-```mermaid-code
-graph LR;
-   A-.->B;
-```
-```mermaid
+```mermaid-example
 graph LR;
    A-.->B;
 ```
 
 ### Dotted link with text
 
-```mermaid-code
-graph LR
-   A-. text .-> B
-```
-```mermaid
+```mermaid-example
 graph LR
    A-. text .-> B
 ```
 
 ### Thick link
 
-```mermaid-code
-graph LR
-   A ==> B
-```
-```mermaid
+```mermaid-example
 graph LR
    A ==> B
 ```
 
 ### Thick link with text
 
-```mermaid-code
-graph LR
-   A == text ==> B
-```
-```mermaid
+```mermaid-example
 graph LR
    A == text ==> B
 ```
@@ -337,31 +227,19 @@ graph LR
 ### Chaining of links
 
 It is possible to declare many links in the same line as per below:
-```mermaid-code
-graph LR
-   A -- text --> B -- text2 --> C
-```
-```mermaid
+```mermaid-example
 graph LR
    A -- text --> B -- text2 --> C
 ```
 
 It is also possible to declare multiple nodes links in the same line as per below:
-```mermaid-code
-graph LR
-   a --> b & c--> d
-```
-```mermaid
+```mermaid-example
 graph LR
    a --> b & c--> d
 ```
 
 You can then describe dependencies in a very expressive way. Like the one-liner below:
-```mermaid-code
-graph TB
-    A & B--> C & D
-```
-```mermaid
+```mermaid-example
 graph TB
     A & B--> C & D
 ```
@@ -381,13 +259,7 @@ graph TB
 
 When using flowchart instead of graph there are new types of arrows supported as per below:
 
-```mermaid-code
-flowchart LR
-    A --o B
-    B --x C
-```
-
-```mermaid
+```mermaid-example
 flowchart LR
     A --o B
     B --x C
@@ -398,14 +270,7 @@ flowchart LR
 
 When using flowchart instead of graph there is the possibility to use multidirectional arrows.
 
-```mermaid-code
-flowchart LR
-    A o--o B
-    B <--> C
-    C x--x D
-```
-
-```mermaid
+```mermaid-example
 flowchart LR
     A o--o B
     B <--> C
@@ -423,16 +288,7 @@ than the others by adding extra dashes in the link definition.
 In the following example, two extra dashes are added in the link from node _B_
 to node _E_, so that it spans two more ranks than regular links:
 
-```mermaid-code
-graph TD
-    A[Start] --> B{Is it?};
-    B -->|Yes| C[OK];
-    C --> D[Rethink];
-    D --> B;
-    B ---->|No| E[End];
-```
-
-```mermaid
+```mermaid-example
 graph TD
     A[Start] --> B{Is it?};
     B -->|Yes| C[OK];
@@ -448,22 +304,13 @@ When the link label is written in the middle of the link, the extra dashes must
 be added on the right side of the link. The following example is equivalent to
 the previous one:
 
-```mermaid-code
+```mermaid-example
 graph TD
     A[Start] --> B{Is it?};
     B -- Yes --> C[OK];
     C --> D[Rethink];
     D --> B;
     B -- No ----> E[End];
-```
-
-```mermaid
-graph TD
-    A[Start] --> B{Is it?};
-    B -->|Yes| C[OK];
-    C --> D[Rethink];
-    D --> B;
-    B ---->|No| E[End];
 ```
 
 For dotted or thick links, the characters to add are equals signs or dots,
@@ -482,11 +329,7 @@ as summed up in the following table:
 
 It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
 
-```mermaid-code
-graph LR
-    id1["This is the (text) in the box"]
-```
-```mermaid
+```mermaid-example
 graph LR
     id1["This is the (text) in the box"]
 ```
@@ -495,11 +338,7 @@ graph LR
 
 It is possible to escape characters using the syntax exemplified here.
 
-```mermaid-code
-    graph LR
-        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
-```
-```mermaid
+```mermaid-example
     graph LR
         A["A double quote:#quot;"] -->B["A dec char:#9829;"]
 ```
@@ -514,20 +353,7 @@ end
 
 An example below:
 
-```mermaid-code
-graph TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
- ```
-```mermaid
+```mermaid-example
 graph TB
     c1-->a2
     subgraph one
@@ -543,17 +369,10 @@ graph TB
 
  You can also set an explicit id for the subgraph.
 
-```mermaid-code
+```mermaid-example
 graph TB
     c1-->a2
     subgraph ide1 [one]
-    a1-->a2
-    end
- ```
-```mermaid
-graph TB
-    c1-->a2
-    subgraph id1 [one]
     a1-->a2
     end
  ```
@@ -562,24 +381,7 @@ graph TB
 
 With the graphtype flowcharts it is also possible to set edges to and from subgraphs as in the graph below.
 
-```mermaid-code
-flowchart TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
-    one --> two
-    three --> two
-    two --> c2
- ```
-
-```mermaid
+```mermaid-example
 flowchart TB
     c1-->a2
     subgraph one
@@ -618,7 +420,9 @@ Examples of tooltip usage below:
 </script>
 ```
 
-```mermaid-code
+The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.
+
+```mermaid-example
 graph LR;
     A-->B;
     B-->C;
@@ -628,37 +432,12 @@ graph LR;
     click A call callback() "Tooltip for a callback"
     click B href "http://www.github.com" "This is a tooltip for a link"
 ```
-
-The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.
-
-```mermaid
-graph LR
-    A-->B;
-    B-->C;
-    C-->D;
-    click A callback "Tooltip"
-    click B "http://www.github.com" "This is a link"
-    click C call callback() "Tooltip"
-    click D href "http://www.github.com" "This is a link"
-```
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
 ?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/s37cjoau/3/).
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
-```mermaid-code
-graph LR;
-    A-->B;
-    B-->C;
-    C-->D;
-    D-->E;
-    click A "http://www.github.com" _blank
-    click B "http://www.github.com" "Open this in a new tab" _blank
-    click C href "http://www.github.com" _blank
-    click D href "http://www.github.com" "Open this in a new tab" _blank
-```
-
-```mermaid
+```mermaid-example
 graph LR;
     A-->B;
     B-->C;
@@ -751,13 +530,7 @@ linkStyle default interpolate cardinal stroke:#ff3,stroke-width:4px,color:red;
 
 It is possible to apply specific styles such as a thicker border or a different background color to a node.
 
-```mermaid-code
-graph LR
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-```
-```mermaid
+```mermaid-example
 graph LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
@@ -791,12 +564,7 @@ It is also possible to attach a class to a list of nodes in one statement:
 
 A shorter form of adding a class is to attach the classname to the node using the `:::`operator as per below:
 
-```mermaid-code
-graph LR
-    A:::someclass --> B
-    classDef someclass fill:#f96;
-```
-```mermaid
+```mermaid-example
 graph LR
     A:::someclass --> B
     classDef someclass fill:#f96;
@@ -822,13 +590,7 @@ below:
 
 **Example definition**
 
-```mermaid-code
-graph LR;
-    A-->B[AAA<span>BBB</span>];
-    B-->D;
-    class A cssClass;
-```
-```mermaid
+```mermaid-example
 graph LR;
     A-->B[AAA<span>BBB</span>];
     B-->D;
@@ -851,14 +613,7 @@ It is possible to add icons from fontawesome.
 
 The icons are accessed via the syntax fa:#icon class name#.
 
-```mermaid-code
-graph TD
-    B["fa:fa-twitter for peace"]
-    B-->C[fa:fa-ban forbidden]
-    B-->D(fa:fa-spinner);
-    B-->E(A fa:fa-camera-retro perhaps?);
-```
-```mermaid
+```mermaid-example
 graph TD
     B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
@@ -875,15 +630,7 @@ graph TD
 
 Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
 
-```mermaid-code
-graph LR
-    A[Hard edge] -->|Link text| B(Round edge)
-    B --> C{Decision}
-    C -->|One| D[Result one]
-    C -->|Two| E[Result two]
-```
-
-```mermaid
+```mermaid-example
 graph LR
     A[Hard edge] -->|Link text| B(Round edge)
     B --> C{Decision}

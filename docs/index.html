@@ -66,16 +66,26 @@
       markdown: {
         renderer: {
           code: function(code, lang) {
-            if (lang === "mermaid") {
-              return (
-                '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + "</div>"
-              );
-            } else if (lang === 'mermaid-code') {
-              currentCodeExample++;
-              colorize.push(currentCodeExample);
-              return (
-                '<pre id="code' + currentCodeExample + '">' + code + '</pre>'
-              )
+            if (lang.startsWith('mermaid')) {
+              var resultingHTML = '';
+              
+              if (lang === "mermaid-code" || lang === 'mermaid-example') {
+                currentCodeExample++;
+                colorize.push(currentCodeExample);
+                resultingHTML += (
+                  '<pre id="code' + currentCodeExample + '">' + code + '</pre>'
+                )
+              }
+              
+              if (lang === 'mermaid' || lang === 'mermaid-example') {
+                resultingHTML += (
+                  '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + "</div>"
+                );
+              }
+
+              if (resultingHTML !== '') {
+                return resultingHTML;
+              }
             }
             return this.origin.code.apply(this, arguments);
           }
