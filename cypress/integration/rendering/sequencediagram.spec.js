@@ -563,7 +563,8 @@ context('Sequence diagram', () => {
     });
   });
   context('links', () => {
-    it('should support actor links and properties', () => {
+    it('should support actor links and properties EXPERIMENTAL: USE WITH CAUTION', () => {
+       //Be aware that the syntax for "properties" is likely to be changed. 
       imgSnapshotTest(
         `
         %%{init: { "config": { "mirrorActors": true, "forceMenus": true }}}%%
@@ -583,7 +584,8 @@ context('Sequence diagram', () => {
         { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
       );
     });
-    it('should support actor links and properties when not mirrored', () => {
+    it('should support actor links and properties when not mirrored EXPERIMENTAL: USE WITH CAUTION', () => {
+       //Be aware that the syntax for "properties" is likely to be changed. 
       imgSnapshotTest(
         `
         %%{init: { "config": { "mirrorActors": false, "forceMenus": true, "wrap": true }}}%%

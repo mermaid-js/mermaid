@@ -1,4 +1,5 @@
 import common from '../common/common';
+import { addFunction } from '../../interactionDb';
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -25,6 +26,17 @@ const sanitizeUrl = function (s) {
     .replace(/javascript:/g, '');
 };
 
+const addPopupInteraction = (id, actorCnt) => {
+  addFunction(() => {
+    const arr = document.querySelectorAll(id);
+    arr[0].addEventListener('mouseover', function () {
+      popupMenuUpFunc('actor' + actorCnt + '_popup');
+    });
+    arr[0].addEventListener('mouseout', function () {
+      popupMenuDownFunc('actor' + actorCnt + '_popup');
+    });
+  });
+};
 export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMenus) {
   if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
     return { height: 0, width: 0 };
@@ -43,9 +55,7 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('id', 'actor' + actorCnt + '_popup');
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
-  g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
-  g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
-
+  addPopupInteraction('#actor' + actorCnt + '_popup', actorCnt);
   var actorClass = '';
   if (typeof rectData.class !== 'undefined') {
     actorClass = ' ' + rectData.class;
@@ -123,6 +133,19 @@ export const popdownMenu = function (popid) {
   );
 };
 
+const popupMenuUpFunc = function (popupId) {
+  var pu = document.getElementById(popupId);
+  if (pu != null) {
+    pu.style.display = 'block';
+  }
+};
+
+const popupMenuDownFunc = function (popupId) {
+  var pu = document.getElementById(popupId);
+  if (pu != null) {
+    pu.style.display = 'none';
+  }
+};
 export const drawText = function (elem, textData) {
   let prevTextHeight = 0,
     textHeight = 0;
@@ -321,9 +344,10 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
 
     g = boxpluslineGroup.append('g');
     actor.actorCnt = actorCnt;
+
     if (actor.links != null) {
-      g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
-      g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
+      g.attr('id', 'root-' + actorCnt);
+      addPopupInteraction('#root-' + actorCnt, actorCnt);
     }
   }
 
@@ -370,6 +394,7 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
     actor.height = bounds.height;
     height = bounds.height;
   }
+
   return height;
 };
 
