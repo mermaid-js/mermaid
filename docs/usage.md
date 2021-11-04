@@ -320,7 +320,7 @@ var textFieldUpdated = function(){
 bindEventHandler('change', 'code', textFieldUpdated);
 ```
 **Alternative to mermaid.parse():**
-One effective and more future-proof method of validating your graph deinitions, is to paste and render them via the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/). This will ensure that your code is compliant with the syntax of Mermaid's most recent version. 
+One effective and more future-proof method of validating your graph definitions, is to paste and render them via the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/). This will ensure that your code is compliant with the syntax of Mermaid's most recent version. 
 
 
 ## Configuration

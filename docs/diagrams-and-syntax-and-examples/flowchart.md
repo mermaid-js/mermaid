@@ -336,7 +336,7 @@ graph LR
 
 ### Chaining of links
 
-It is possible declare many links in the same line as per below:
+It is possible to declare many links in the same line as per below:
 ```
 graph LR
    A -- text --> B -- text2 --> C

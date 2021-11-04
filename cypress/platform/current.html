@@ -74,7 +74,7 @@ stateDiagram-v2
   A --> D: asd123
       </div>
       </div>
-      <div class="mermaid" style="width: 50%; height: 40%;">
+      <div class="mermaid2" style="width: 50%; height: 40%;">
 %% this does not produce the desired result
 flowchart TB
   subgraph container_Beta
@@ -88,24 +88,13 @@ flowchart TB
 
       </div>
       <div class="mermaid" style="width: 50%; height: 40%;">
-        %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
-flowchart TB
-    b-->B
-    a-->c
-    subgraph O
-      A
-    end
-    subgraph B
-      c
-    end
-    subgraph A
-        a
-        b
-        B
-    end
+        flowchart TB
+	a{{"Lorem 'ipsum' dolor 'sit' amet, 'consectetur' adipiscing 'elit'."}}
+	--> b{{"Lorem #quot;ipsum#quot; dolor #quot;sit#quot; amet,#quot;consectetur#quot; adipiscing #quot;elit#quot;."}}
+
 
       </div>
-      <div class="mermaid" style="width: 50%; height: 50%;">
+      <div class="mermaid2" style="width: 50%; height: 50%;">
 flowchart TB
   internet
   nat
@@ -130,7 +119,7 @@ flowchart TB
   routeur --> subnet1 & subnet2
   subnet1 & subnet2 --> nat --> internet
       </div>
-      <div class="mermaid" style="width: 50%; height: 50%;">
+      <div class="mermaid2" style="width: 50%; height: 50%;">
 flowchart TD
 
 subgraph one[One]
@@ -145,7 +134,7 @@ end
 
 sub_one --> two
       </div>
-      <div class="mermaid" style="width: 50%; height: 50%;">
+      <div class="mermaid2" style="width: 50%; height: 50%;">
 flowchart TD
 
 subgraph one[One]
@@ -174,7 +163,7 @@ _one --> b
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'cardinal', "htmlLabels": false },
+        flowchart: { curve: 'cardinal', "htmlLabels": true },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated

@@ -611,6 +611,16 @@ flowchart RL
     );
   });
 
+  it('76: handle unicode encoded character with HTML labels true', () => {
+    imgSnapshotTest(
+      `flowchart TB
+      a{{"Lorem 'ipsum' dolor 'sit' amet, 'consectetur' adipiscing 'elit'."}}
+      --> b{{"Lorem #quot;ipsum#quot; dolor #quot;sit#quot; amet,#quot;consectetur#quot; adipiscing #quot;elit#quot;."}}    
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    );
+  });
+
     it('2050: handling of different rendering direction in subgraphs', () => {
     imgSnapshotTest(
       `

@@ -8,6 +8,7 @@ import mermaidAPI from '../../mermaidAPI';
 let dateFormat = '';
 let axisFormat = '';
 let todayMarker = '';
+let includes = [];
 let excludes = [];
 let title = '';
 let sections = [];
@@ -38,6 +39,7 @@ export const clear = function () {
   dateFormat = '';
   axisFormat = '';
   todayMarker = '';
+  includes = [];
   excludes = [];
   inclusiveEndDates = false;
   topAxis = false;
@@ -84,6 +86,13 @@ export const getDateFormat = function () {
   return dateFormat;
 };
 
+export const setIncludes = function (txt) {
+  includes = txt.toLowerCase().split(/[\s,]+/);
+};
+
+export const getIncludes = function () {
+  return includes;
+};
 export const setExcludes = function (txt) {
   excludes = txt.toLowerCase().split(/[\s,]+/);
 };
@@ -123,7 +132,10 @@ export const getTasks = function () {
   return tasks;
 };
 
-const isInvalidDate = function (date, dateFormat, excludes) {
+export const isInvalidDate = function (date, dateFormat, excludes, includes) {
+  if (includes.indexOf(date.format(dateFormat.trim())) >= 0) {
+    return false;
+  }
   if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
     return true;
   }
@@ -133,24 +145,24 @@ const isInvalidDate = function (date, dateFormat, excludes) {
   return excludes.indexOf(date.format(dateFormat.trim())) >= 0;
 };
 
-const checkTaskDates = function (task, dateFormat, excludes) {
+const checkTaskDates = function (task, dateFormat, excludes, includes) {
   if (!excludes.length || task.manualEndTime) return;
   let startTime = moment(task.startTime, dateFormat, true);
   startTime.add(1, 'd');
   let endTime = moment(task.endTime, dateFormat, true);
-  let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes);
+  let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes, includes);
   task.endTime = endTime.toDate();
   task.renderEndTime = renderEndTime;
 };
 
-const fixTaskDates = function (startTime, endTime, dateFormat, excludes) {
+const fixTaskDates = function (startTime, endTime, dateFormat, excludes, includes) {
   let invalid = false;
   let renderEndTime = null;
   while (startTime <= endTime) {
     if (!invalid) {
       renderEndTime = endTime.toDate();
     }
-    invalid = isInvalidDate(startTime, dateFormat, excludes);
+    invalid = isInvalidDate(startTime, dateFormat, excludes, includes);
     if (invalid) {
       endTime.add(1, 'd');
     }
@@ -306,7 +318,7 @@ const compileData = function (prevTask, dataStr) {
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
     task.manualEndTime = moment(endTimeData, 'YYYY-MM-DD', true).isValid();
-    checkTaskDates(task, dateFormat, excludes);
+    checkTaskDates(task, dateFormat, excludes, includes);
   }
 
   return task;
@@ -460,7 +472,7 @@ const compileTasks = function () {
           'YYYY-MM-DD',
           true
         ).isValid();
-        checkTaskDates(rawTasks[pos], dateFormat, excludes);
+        checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
 
@@ -618,12 +630,15 @@ export default {
   addTask,
   findTaskById,
   addTaskOrg,
+  setIncludes,
+  getIncludes,
   setExcludes,
   getExcludes,
   setClickEvent,
   setLink,
   bindFunctions,
   durationToDate,
+  isInvalidDate,
 };
 
 function getTaskTags(data, task, tags) {
