@@ -1005,7 +1005,7 @@ Note: currentConfig is set in this function
 
 -   `conf`  the base currentConfig to use as siteConfig
 
-Returns **any** the siteConfig
+Returns **[Object][6]** the siteConfig
 
 ## getSiteConfig
 
@@ -1018,7 +1018,7 @@ Returns **any** the siteConfig
 **Notes**:
 Returns **any** values in siteConfig.
 
-Returns **any** 
+Returns **[Object][6]** the siteConfig
 
 ## setConfig
 
@@ -1066,6 +1066,14 @@ Note: modifies options in-place
 ### Parameters
 
 -   `options`  the potential setConfig parameter
+
+## addDirective
+
+Pushes in a directive to the configuration
+
+### Parameters
+
+-   `directive` **[Object][6]** The directive to push in
 
 ## reset
 
@@ -1185,3 +1193,5 @@ mermaidAPI.initialize({
 [4]: 8.6.0_docs.md
 
 [5]: #mermaidapi-configuration-defaults
+
+[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object

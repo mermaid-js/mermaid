@@ -1,3 +1,8 @@
+/**
+ * Returns the styles given options
+ * @param {{ fontFamily: string; nodeTextColor: string; textColor: string; titleColor: string; mainBkg: string; nodeBorder: string; arrowheadColor: string; lineColor: string; edgeLabelBackground: string; clusterBkg: string; clusterBorder: string; tertiaryColor: string; border2: string; }} options The options for the styles
+ * @returns {string} The resulting styles
+ */
 const getStyles = (options) =>
   `.label {
     font-family: ${options.fontFamily};
@@ -69,9 +74,9 @@ const getStyles = (options) =>
   .cluster span {
     color: ${options.titleColor};
   }
-  // .cluster div {
-  //   color: ${options.titleColor};
-  // }
+  /* .cluster div {
+    color: ${options.titleColor};
+  } */
 
   div.mermaidTooltip {
     position: absolute;
