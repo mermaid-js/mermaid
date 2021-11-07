@@ -20547,8 +20547,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+
 
 
 
@@ -20773,7 +20775,10 @@ var addLinks = function addLinks(actorId, text) {
   var actor = getActor(actorId); // JSON.parse the text
 
   try {
-    var links = JSON.parse(text.text); // add the deserialized text to the actor's links field.
+    var sanitizedText = (0,_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)(text.text, _config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    var links = JSON.parse(sanitizedText); // add the deserialized text to the actor's links field.
 
     insertLinks(actor, links);
   } catch (e) {
@@ -20786,9 +20791,12 @@ var addALink = function addALink(actorId, text) {
 
   try {
     var links = {};
-    var sep = text.text.indexOf('@');
-    var label = text.text.slice(0, sep - 1).trim();
-    var link = text.text.slice(sep + 1).trim();
+    var sanitizedText = (0,_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)(text.text, _config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
+    var sep = sanitizedText.indexOf('@');
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    var label = sanitizedText.slice(0, sep - 1).trim();
+    var link = sanitizedText.slice(sep + 1).trim();
     links[label] = link; // add the deserialized text to the actor's links field.
 
     insertLinks(actor, links);
@@ -20812,7 +20820,8 @@ var addProperties = function addProperties(actorId, text) {
   var actor = getActor(actorId); // JSON.parse the text
 
   try {
-    var properties = JSON.parse(text.text); // add the deserialized text to the actor's property field.
+    var sanitizedText = (0,_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)(text.text, _config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
+    var properties = JSON.parse(sanitizedText); // add the deserialized text to the actor's property field.
 
     insertProperties(actor, properties);
   } catch (e) {
@@ -20981,7 +20990,7 @@ var apply = function apply(param) {
   getTitle: getTitle,
   parseDirective: parseDirective,
   getConfig: function getConfig() {
-    return _config__WEBPACK_IMPORTED_MODULE_2__.getConfig().sequence;
+    return _config__WEBPACK_IMPORTED_MODULE_3__.getConfig().sequence;
   },
   getTitleWrapped: getTitleWrapped,
   clear: clear,
@@ -22115,7 +22124,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getNoteRect": () => (/* binding */ getNoteRect),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _interactionDb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../interactionDb */ "./src/interactionDb.js");
+
 
 var drawRect = function drawRect(elem, rectData) {
   var rectElem = elem.append('rect');
@@ -22139,6 +22150,18 @@ var sanitizeUrl = function sanitizeUrl(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/javascript:/g, '');
 };
 
+var addPopupInteraction = function addPopupInteraction(id, actorCnt) {
+  (0,_interactionDb__WEBPACK_IMPORTED_MODULE_0__.addFunction)(function () {
+    var arr = document.querySelectorAll(id);
+    arr[0].addEventListener('mouseover', function () {
+      popupMenuUpFunc('actor' + actorCnt + '_popup');
+    });
+    arr[0].addEventListener('mouseout', function () {
+      popupMenuDownFunc('actor' + actorCnt + '_popup');
+    });
+  });
+};
+
 var drawPopup = function drawPopup(elem, actor, minMenuWidth, textAttrs, forceMenus) {
   if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
     return {
@@ -22160,8 +22183,7 @@ var drawPopup = function drawPopup(elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('id', 'actor' + actorCnt + '_popup');
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
-  g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
-  g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
+  addPopupInteraction('#actor' + actorCnt + '_popup', actorCnt);
   var actorClass = '';
 
   if (typeof rectData.class !== 'undefined') {
@@ -22223,10 +22245,27 @@ var popupMenu = function popupMenu(popid) {
 var popdownMenu = function popdownMenu(popid) {
   return "var pu = document.getElementById('" + popid + "'); if (pu != null) { pu.style.display = 'none'; }";
 };
+
+var popupMenuUpFunc = function popupMenuUpFunc(popupId) {
+  var pu = document.getElementById(popupId);
+
+  if (pu != null) {
+    pu.style.display = 'block';
+  }
+};
+
+var popupMenuDownFunc = function popupMenuDownFunc(popupId) {
+  var pu = document.getElementById(popupId);
+
+  if (pu != null) {
+    pu.style.display = 'none';
+  }
+};
+
 var drawText = function drawText(elem, textData) {
   var prevTextHeight = 0,
       textHeight = 0;
-  var lines = textData.text.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
+  var lines = textData.text.split(_common_common__WEBPACK_IMPORTED_MODULE_1__["default"].lineBreakRegex);
   var textElems = [];
   var dy = 0;
 
@@ -22390,8 +22429,8 @@ var drawActorTypeParticipant = function drawActorTypeParticipant(elem, actor, co
     actor.actorCnt = actorCnt;
 
     if (actor.links != null) {
-      g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
-      g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
+      g.attr('id', 'root-' + actorCnt);
+      addPopupInteraction('#root-' + actorCnt, actorCnt);
     }
   }
 
@@ -22701,7 +22740,7 @@ var _drawTextCandidateFunc = function () {
     var actorFontSize = conf.actorFontSize,
         actorFontFamily = conf.actorFontFamily,
         actorFontWeight = conf.actorFontWeight;
-    var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
+    var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_1__["default"].lineBreakRegex);
 
     for (var i = 0; i < lines.length; i++) {
       var dy = i * actorFontSize - actorFontSize * (lines.length - 1) / 2;
@@ -22748,7 +22787,7 @@ var _drawMenuItemTextCandidateFunc = function () {
     var actorFontSize = conf.actorFontSize,
         actorFontFamily = conf.actorFontFamily,
         actorFontWeight = conf.actorFontWeight;
-    var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
+    var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_1__["default"].lineBreakRegex);
 
     for (var i = 0; i < lines.length; i++) {
       var dy = i * actorFontSize - actorFontSize * (lines.length - 1) / 2;
@@ -25061,6 +25100,31 @@ var draw = function draw(id, ver) {
 
 /***/ }),
 
+/***/ "./src/interactionDb.js":
+/*!******************************!*\
+  !*** ./src/interactionDb.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "addFunction": () => (/* binding */ addFunction),
+/* harmony export */   "attachFunctions": () => (/* binding */ attachFunctions)
+/* harmony export */ });
+var interactionFunctions = [];
+var addFunction = function addFunction(func) {
+  interactionFunctions.push(func);
+};
+var attachFunctions = function attachFunctions() {
+  interactionFunctions.forEach(function (f) {
+    f();
+  });
+  interactionFunctions = [];
+};
+
+/***/ }),
+
 /***/ "./src/logger.js":
 /*!***********************!*\
   !*** ./src/logger.js ***!
@@ -25440,9 +25504,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
 /* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23__);
 /* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
+/* harmony import */ var _interactionDb__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./interactionDb */ "./src/interactionDb.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 /* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
-/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -25461,6 +25526,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  *
  * @name mermaidAPI
  */
+
 
 
 
@@ -25929,6 +25995,7 @@ var render = function render(id, _txt, cb, container) {
     _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('CB = undefined!');
   }
 
+  (0,_interactionDb__WEBPACK_IMPORTED_MODULE_44__.attachFunctions)();
   var node = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)('#d' + id).node();
 
   if (node !== null && typeof node.remove === 'function') {
@@ -26066,11 +26133,11 @@ function initialize(options) {
 
   _config__WEBPACK_IMPORTED_MODULE_2__.saveConfigFromInitilize(options);
 
-  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_44__["default"][options.theme]) {
+  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_45__["default"][options.theme]) {
     // Todo merge with user options
-    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_44__["default"][options.theme].getThemeVariables(options.themeVariables);
+    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_45__["default"][options.theme].getThemeVariables(options.themeVariables);
   } else {
-    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_44__["default"]["default"].getThemeVariables(options.themeVariables);
+    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_45__["default"]["default"].getThemeVariables(options.themeVariables);
   }
 
   var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_2__.setSiteConfig(options) : _config__WEBPACK_IMPORTED_MODULE_2__.getSiteConfig();
@@ -28007,7 +28074,7 @@ var isSubstringInArray = function isSubstringInArray(str, arr) {
  * Returns a d3 curve given a curve name
  * @param {string | undefined} interpolate The interpolation name
  * @param {*} defaultCurve The default curve to return
- * @returns 
+ * @returns {import('d3-shape').CurveFactory} The curve factory to use
  */
 
 var interpolateToCurve = function interpolateToCurve(interpolate, defaultCurve) {
@@ -28078,7 +28145,7 @@ var distance = function distance(p1, p2) {
   return p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
 };
 /**
- * 
+ * @todo Give this a description
  * @param {Array<Point>} points List of points
  * @returns {Point}
  */
@@ -28418,7 +28485,7 @@ var getTextObj = function getTextObj() {
 /**
  * Adds text to an element
  * @param {SVGElement} elem Element to add text to
- * @param {{ text: string; x: number; y: number; anchor: "start" | "middle" | "end"; fontFamily: string; fontSize: string | number; fontWeight: string | number; fill: string; class: string | undefined; textMargin: number; }} textData 
+ * @param {{ text: string; x: number; y: number; anchor: "start" | "middle" | "end"; fontFamily: string; fontSize: string | number; fontWeight: string | number; fill: string; class: string | undefined; textMargin: number; }} textData
  * @returns {SVGTextElement} Text element with given styling and content
  */
 
@@ -29582,7 +29649,7 @@ module.exports = require("stylis");
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"mermaid","version":"8.13.2","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --progress --color","build:production":"yarn build:development --mode production --config webpack.config.prod.babel.js","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint src","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"percy exec -- cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config webpack.config.e2e.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"yarn build"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^3.1.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.3","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@percy/cli":"^1.0.0-beta.58","@percy/cypress":"^3.1.0","@percy/migrate":"^0.11.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^6.2.2","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"8.7.0","documentation":"13.2.0","eslint":"^8.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"],"husky":{"hooks":{"pre-push":"yarn test"}}}');
+module.exports = JSON.parse('{"name":"mermaid","version":"8.13.3","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --progress --color","build:production":"yarn build:development --mode production --config webpack.config.prod.babel.js","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint src","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"percy exec -- cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config webpack.config.e2e.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"yarn build"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^3.1.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.3","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@percy/cli":"^1.0.0-beta.58","@percy/cypress":"^3.1.0","@percy/migrate":"^0.11.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^6.2.2","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"8.7.0","documentation":"13.2.0","eslint":"^8.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"],"husky":{"hooks":{"pre-push":"yarn test"}}}');
 
 /***/ })
 
