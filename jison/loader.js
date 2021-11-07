@@ -1,5 +1,5 @@
 const { Generator } = require('jison');
-const validate = require('schema-utils');
+const { validate } = require('schema-utils');
 const schema = require('./parser-options-schema.json');
 
 module.exports = function jisonLoader(source) {
