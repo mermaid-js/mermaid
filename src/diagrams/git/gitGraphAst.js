@@ -7,10 +7,17 @@ let curBranch = 'master';
 let direction = 'LR';
 let seq = 0;
 
+/**
+ *
+ */
 function getId() {
   return random({ length: 7 });
 }
 
+/**
+ * @param currentCommit
+ * @param otherCommit
+ */
 function isfastforwardable(currentCommit, otherCommit) {
   log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
   while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit) {
@@ -30,6 +37,10 @@ function isfastforwardable(currentCommit, otherCommit) {
   return currentCommit.id === otherCommit.id;
 }
 
+/**
+ * @param currentCommit
+ * @param otherCommit
+ */
 function isReachableFrom(currentCommit, otherCommit) {
   const currentSeq = currentCommit.seq;
   const otherSeq = otherCommit.seq;
@@ -37,6 +48,10 @@ function isReachableFrom(currentCommit, otherCommit) {
   return false;
 }
 
+/**
+ * @param list
+ * @param fn
+ */
 function uniqBy(list, fn) {
   const recordMap = Object.create(null);
   return list.reduce((out, item) => {
@@ -138,6 +153,11 @@ export const reset = function (commitRef) {
   branches[curBranch] = commit.id;
 };
 
+/**
+ * @param arr
+ * @param key
+ * @param newval
+ */
 function upsert(arr, key, newval) {
   const index = arr.indexOf(key);
   if (index === -1) {
@@ -147,6 +167,9 @@ function upsert(arr, key, newval) {
   }
 }
 
+/**
+ * @param commitArr
+ */
 function prettyPrintCommitHistory(commitArr) {
   const commit = commitArr.reduce((out, commit) => {
     if (out.seq > commit.seq) return out;

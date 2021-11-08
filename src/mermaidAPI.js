@@ -55,21 +55,15 @@ import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import errorRenderer from './errorRenderer';
 import { attachFunctions } from './interactionDb';
-
-// import * as configApi from './config';
-// // , {
-// //   setConfig,
-// //   configApi.getConfig,
-// //   configApi.updateSiteConfig,
-// //   configApi.setSiteConfig,
-// //   configApi.getSiteConfig,
-// //   configApi.defaultConfig
-// // }
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
 import utils, { directiveSanitizer, assignWithDepth } from './utils';
 
+/**
+ * @param text
+ * @returns {any}
+ */
 function parse(text) {
   const cnf = configApi.getConfig();
   const graphInit = utils.detectInit(text, cnf);
@@ -213,12 +207,14 @@ export const decodeEntities = function (text) {
  *      mermaidAPI.render('id1',graphDefinition,cb);
  *  });
  *```
- * @param id the id of the element to be rendered
- * @param _txt the graph definition
- * @param cb callback which is called after rendering is finished with the svg code as inparam.
- * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
+ *
+ * @param {any} id the id of the element to be rendered
+ * @param {any} _txt the graph definition
+ * @param {any} cb callback which is called after rendering is finished with the svg code as inparam.
+ * @param {any} container selector to element in which a div with the graph temporarily will be inserted. In one is
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
  * completed.
+ * @returns {any}
  */
 const render = function (id, _txt, cb, container) {
   configApi.reset();
@@ -227,13 +223,6 @@ const render = function (id, _txt, cb, container) {
   if (graphInit) {
     configApi.addDirective(graphInit);
   }
-  // else {
-  //   configApi.reset();
-  //   const siteConfig = configApi.getSiteConfig();
-  //   configApi.addDirective(siteConfig);
-  // }
-  // console.warn('Render fetching config');
-
   let cnf = configApi.getConfig();
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
@@ -442,17 +431,6 @@ const render = function (id, _txt, cb, container) {
     .selectAll('foreignobject > *')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
-  // if (cnf.arrowMarkerAbsolute) {
-  //   url =
-  //     window.location.protocol +
-  //     '//' +
-  //     window.location.host +
-  //     window.location.pathname +
-  //     window.location.search;
-  //   url = url.replace(/\(/g, '\\(');
-  //   url = url.replace(/\)/g, '\\)');
-  // }
-
   // Fix for when the base tag is used
   let svgCode = select('#d' + id).node().innerHTML;
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
@@ -564,6 +542,9 @@ const handleDirective = function (p, directive, type) {
   }
 };
 
+/**
+ * @param {any} conf
+ */
 function updateRendererConfigs(conf) {
   // Todo remove, all diagrams should get config on demoand from the config object, no need for this
   gitGraphRenderer.setConf(conf.git);
@@ -585,6 +566,9 @@ function updateRendererConfigs(conf) {
   errorRenderer.setConf(conf.class);
 }
 
+/**
+ *
+ */
 function reinitialize() {
   // `mermaidAPI.reinitialize: v${pkg.version}`,
   //   JSON.stringify(options),
@@ -600,6 +584,9 @@ function reinitialize() {
   // log.debug('mermaidAPI.reinitialize: ', config);
 }
 
+/**
+ * @param {any} options
+ */
 function initialize(options) {
   // console.warn(`mermaidAPI.initialize: v${pkg.version} `, options);
 

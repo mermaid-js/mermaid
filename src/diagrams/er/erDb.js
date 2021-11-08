@@ -49,6 +49,7 @@ const addAttributes = function (entityName, attribs) {
 
 /**
  * Add a relationship
+ *
  * @param entA The first entity in the relationship
  * @param rolA The role played by the first entity in relation to the second
  * @param entB The second entity in the relationship

@@ -145,7 +145,8 @@ export const extractDecendants = (id, graph) => {
 /**
  * Validates the graph, checking that all parent child relation points to existing nodes and that
  * edges between nodes also ia correct. When not correct the function logs the discrepancies.
- * @param {graphlib graph} g
+ *
+ * @param graph
  */
 export const validate = (graph) => {
   const edges = graph.edges();
@@ -165,6 +166,7 @@ export const validate = (graph) => {
 
 /**
  * Finds a child that is not a cluster. When faking a edge between a node and a cluster.
+ *
  * @param {Finds a } id
  * @param {*} graph
  */

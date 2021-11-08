@@ -33,6 +33,7 @@ const splitClassNameAndType = function (id) {
 
 /**
  * Function called by parser when a node definition has been found.
+ *
  * @param id
  * @public
  */
@@ -56,6 +57,7 @@ export const addClass = function (id) {
 
 /**
  * Function to lookup domId from id in the graph definition.
+ *
  * @param id
  * @public
  */
@@ -100,6 +102,7 @@ export const addRelation = function (relation) {
 /**
  * Adds an annotation to the specified class
  * Annotations mark special properties of the given type (like 'interface' or 'service')
+ *
  * @param className The class name
  * @param annotation The name of the annotation without any brackets
  * @public
@@ -111,6 +114,7 @@ export const addAnnotation = function (className, annotation) {
 
 /**
  * Adds a member to the specified class
+ *
  * @param className The class name
  * @param member The full name of the member.
  * If the member is enclosed in <<brackets>> it is treated as an annotation
@@ -154,6 +158,7 @@ export const cleanupLabel = function (label) {
 
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
+ *
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
@@ -169,6 +174,7 @@ export const setCssClass = function (ids, className) {
 
 /**
  * Called by parser when a tooltip is found, e.g. a clickable element.
+ *
  * @param ids Comma separated list of ids
  * @param tooltip Tooltip to add
  */
@@ -183,6 +189,7 @@ const setTooltip = function (ids, tooltip) {
 
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
+ *
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
  * @param target Target of the link, _blank by default as originally defined in the svgDraw.js file
@@ -206,6 +213,7 @@ export const setLink = function (ids, linkStr, target) {
 
 /**
  * Called by parser when a click definition is found. Registers an event handler.
+ *
  * @param ids Comma separated list of ids
  * @param functionName Function to be called on click
  * @param functionArgs Function args the function should be called with

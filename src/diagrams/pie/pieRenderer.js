@@ -12,6 +12,7 @@ let conf = configApi.getConfig();
 
 /**
  * Draws a Pie Chart with the data given in text.
+ *
  * @param text
  * @param id
  */

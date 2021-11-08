@@ -63,8 +63,8 @@ const anyComment = /\s*%%.*\n/gm;
  *  f-->g
  *  g-->h
  * ```
- *
  * @param {string} text The text defining the graph
+ * @param {any} cnf
  * @returns {object} the json object representing the init passed to mermaid.initialize()
  */
 export const detectInit = function (text, cnf) {
@@ -111,7 +111,6 @@ export const detectInit = function (text, cnf) {
  *  f-->g
  *  g-->h
  * ```
- *
  * @param {string} text The text defining the graph
  * @param {string|RegExp} type The directive to return (default: null)
  * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matched by the input type
@@ -173,8 +172,8 @@ export const detectDirective = function (text, type = null) {
  *  f-->g
  *  g-->h
  * ```
- *
  * @param {string} text The text defining the graph
+ * @param {any} cnf
  * @returns {string} A graph definition key
  */
 export const detectType = function (text, cnf) {
@@ -252,9 +251,9 @@ const memoize = (fn, resolver) => {
  * @function isSubstringInArray
  * Detects whether a substring in present in a given array
  * @param {string} str The substring to detect
- * @param {array} arr The array to search
+ * @param {Array} arr The array to search
  * @returns {number} the array index containing the substring or -1 if not present
- **/
+ */
 export const isSubstringInArray = function (str, arr) {
   for (let i = 0; i < arr.length; i++) {
     if (arr[i].match(str)) return i;
@@ -393,6 +392,11 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
 
 /**
  * position ['start_left', 'start_right', 'end_left', 'end_right']
+ *
+ * @param {any} terminalMarkerSize
+ * @param {any} position
+ * @param {any} _points
+ * @returns {any}
  */
 const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   // Todo looking to faster cloning method
@@ -486,6 +490,10 @@ export const generateId = () => {
   return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
 };
 
+/**
+ * @param {any} length
+ * @returns {any}
+ */
 function makeid(length) {
   var result = '';
   var characters = '0123456789abcdef';
@@ -520,9 +528,9 @@ export const random = (options) => {
  * <p>
  * If src is a destructured array of objects and dst is not an array, assignWithDepth will apply each element of src to dst
  * in order.
- * @param dst:any - the destination of the merge
- * @param src:any - the source object(s) to merge into destination
- * @param config:{ depth: number, clobber: boolean } - depth: depth to traverse within src and dst for merging -
+ * @param {any} dst - the destination of the merge
+ * @param {any} src - the source object(s) to merge into destination
+ * @param {{ depth: number, clobber: boolean }} config - depth: depth to traverse within src and dst for merging -
  * clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
  * @returns {*}
  */
@@ -679,9 +687,9 @@ const breakString = memoize(
  * If the wrapped text text has greater height, we extend the height, so it's
  * value won't overflow.
  *
- * @return - The height for the given text
- * @param text the text to measure
- * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} text the text to measure
+ * @param {any} config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @returns {any} - The height for the given text
  */
 export const calculateTextHeight = function (text, config) {
   config = Object.assign(
@@ -694,9 +702,9 @@ export const calculateTextHeight = function (text, config) {
 /**
  * This calculates the width of the given text, font size and family.
  *
- * @return - The width for the given text
- * @param text - The text to calculate the width of
- * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} text - The text to calculate the width of
+ * @param {any} config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @returns {any} - The width for the given text
  */
 export const calculateTextWidth = function (text, config) {
   config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
@@ -706,9 +714,9 @@ export const calculateTextWidth = function (text, config) {
 /**
  * This calculates the dimensions of the given text, font size, font family, font weight, and margins.
  *
- * @return - The width for the given text
- * @param text - The text to calculate the width of
- * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ * @param {any} text - The text to calculate the width of
+ * @param {any} config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ * @returns - The width for the given text
  */
 export const calculateTextDimensions = memoize(
   function (text, config) {

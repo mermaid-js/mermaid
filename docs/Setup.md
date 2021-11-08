@@ -228,9 +228,8 @@ Default value: true
 **Notes:**
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-
--   dagre-d3
--   dagre-wrapper - wrapper for dagre implemented in mermaid
+dagre-d3
+dagre-wrapper - wrapper for dagre implemented in mermaid
 
 Default value: 'dagre-d3'
 
@@ -795,12 +794,11 @@ Default value: true
 | --------------- | ----------- | ------- | -------- | ----------------------- |
 | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
 
-**Notes:**
+**Notes**:
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-
--   dagre-d3
--   dagre-wrapper - wrapper for dagre implemented in mermaid
+dagre-d3
+dagre-wrapper - wrapper for dagre implemented in mermaid
 
 Default value: 'dagre-d3'
 
@@ -839,9 +837,8 @@ Default value: true
 **Notes:**
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-
--   dagre-d3
--   dagre-wrapper - wrapper for dagre implemented in mermaid
+dagre-d3
+dagre-wrapper - wrapper for dagre implemented in mermaid
 
 Default value: 'dagre-d3'
 
@@ -999,13 +996,21 @@ Sets the siteConfig. The siteConfig is a protected configuration for repeat use.
 the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
 to the defaultConfig
 Note: currentConfig is set in this function
-\*Default value: At default, will mirror Global Config\*\*
+Default value: At default, will mirror Global Config
 
 ### Parameters
 
--   `conf`  the base currentConfig to use as siteConfig
+-   `conf` **any** the base currentConfig to use as siteConfig
 
 Returns **any** the siteConfig
+
+## parse
+
+### Parameters
+
+-   `text`  
+
+Returns **any** 
 
 ## getSiteConfig
 
@@ -1035,7 +1040,7 @@ siteConfig value.
 
 ### Parameters
 
--   `conf`  the potential currentConfig
+-   `conf` **any** the potential currentConfig
 
 Returns **any** the currentConfig merged with the sanitized conf
 
@@ -1061,11 +1066,12 @@ Returns **any** the currentConfig
 | sanitize | Sets the siteConfig to desired values. | Put Request | None   |
 
 Ensures options parameter does not attempt to override siteConfig secure keys
-Note: modifies options in-place
+**Notes**:
+modifies options in-place
 
 ### Parameters
 
--   `options`  the potential setConfig parameter
+-   `options` **any** the potential setConfig parameter
 
 ## reset
 
@@ -1079,12 +1085,8 @@ Note: modifies options in-place
 | --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
 | conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
 
-\*Notes :
+**Notes**:
 (default: current siteConfig ) (optional, default `getSiteConfig()`)
-
-### Parameters
-
--   `conf`  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
 ## render
 
@@ -1105,12 +1107,28 @@ mermaidAPI.initialize({
 
 ### Parameters
 
--   `id`  the id of the element to be rendered
--   `_txt`  the graph definition
--   `cb`  callback which is called after rendering is finished with the svg code as inparam.
--   `container`  selector to element in which a div with the graph temporarily will be inserted. In one is
+-   `id` **any** the id of the element to be rendered
+-   `_txt` **any** the graph definition
+-   `cb` **any** callback which is called after rendering is finished with the svg code as inparam.
+-   `container` **any** selector to element in which a div with the graph temporarily will be inserted. In one is
     provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
     completed.
+
+Returns **any** 
+
+## updateRendererConfigs
+
+### Parameters
+
+-   `conf` **any** 
+
+## reinitialize
+
+## initialize
+
+### Parameters
+
+-   `options` **any** 
 
 ## 
 

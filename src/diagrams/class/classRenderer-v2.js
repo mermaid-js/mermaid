@@ -25,7 +25,8 @@ const conf = {
 
 /**
  * Function that adds the vertices found during parsing to the graph to be rendered.
- * @param vert Object containing the vertices.
+ *
+ * @param classes
  * @param g The graph that is to be drawn.
  */
 export const addClasses = function (classes, g) {
@@ -40,6 +41,7 @@ export const addClasses = function (classes, g) {
 
     /**
      * Variable for storing the classes for the vertex
+     *
      * @type {string}
      */
     let cssClassStr = '';
@@ -130,8 +132,9 @@ export const addClasses = function (classes, g) {
 
 /**
  * Add edges to graph based on parsed graph defninition
- * @param {Object} edges The edges to add to the graph
- * @param {Object} g The graph object
+ *
+ * @param relations
+ * @param {object} g The graph object
  */
 export const addRelations = function (relations, g) {
   let cnt = 0;
@@ -249,6 +252,7 @@ export const setConf = function (cnf) {
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
  * @param text
  * @param id
  */
@@ -502,6 +506,9 @@ export default {
   setConf,
   draw,
 };
+/**
+ * @param type
+ */
 function getArrowMarker(type) {
   let marker;
   switch (type) {

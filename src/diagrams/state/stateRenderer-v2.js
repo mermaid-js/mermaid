@@ -20,6 +20,8 @@ let nodeDb = {};
 
 /**
  * Returns the all the styles from classDef statements in the graph definition.
+ *
+ * @param {any} text
  * @returns {object} classDef styles
  */
 export const getClasses = function (text) {
@@ -223,8 +225,9 @@ const getDir = (nodes, defaultDir) => {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
 export const draw = function (text, id) {
   log.info('Drawing state diagram (v2)', id);

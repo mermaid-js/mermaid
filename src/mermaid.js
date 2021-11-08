@@ -25,7 +25,7 @@ import utils from './utils';
  *  b-->|No |d(Transform)
  * ```
  * Renders the mermaid diagrams
- * @param nodes a css selector or an array of nodes
+ *
  */
 const init = function () {
   const conf = mermaidAPI.getConfig();

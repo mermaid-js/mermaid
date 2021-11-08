@@ -51,8 +51,9 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
  *to the defaultConfig
  *Note: currentConfig is set in this function
- **Default value: At default, will mirror Global Config**
- * @param conf - the base currentConfig to use as siteConfig
+ *Default value: At default, will mirror Global Config
+ *
+ * @param {any} conf - the base currentConfig to use as siteConfig
  * @returns {*} - the siteConfig
  */
 export const setSiteConfig = (conf) => {
@@ -84,6 +85,7 @@ export const updateSiteConfig = (conf) => {
  *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
  ***Notes**:
  *Returns **any** values in siteConfig.
+ *
  * @returns {*}
  */
 export const getSiteConfig = () => {
@@ -98,7 +100,8 @@ export const getSiteConfig = () => {
  *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
  *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
  *siteConfig value.
- * @param conf - the potential currentConfig
+ *
+ * @param {any} conf - the potential currentConfig
  * @returns {*} - the currentConfig merged with the sanitized conf
  */
 export const setConfig = (conf) => {
@@ -120,6 +123,7 @@ export const setConfig = (conf) => {
  *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
  ***Notes**:
  *Returns **any** the currentConfig
+ *
  * @returns {*} - the currentConfig
  */
 export const getConfig = () => {
@@ -131,8 +135,10 @@ export const getConfig = () => {
  *| --------- | ------------------- | ------- | ------------------ |
  *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
  *Ensures options parameter does not attempt to override siteConfig secure keys
- *Note: modifies options in-place
- * @param options - the potential setConfig parameter
+ ***Notes**:
+ * modifies options in-place
+ *
+ * @param {any} options - the potential setConfig parameter
  */
 export const sanitize = (options) => {
   // Checking that options are not in the list of excluded options
@@ -196,9 +202,9 @@ export const addDirective = (directive) => {
  *| --- | --- | --- | --- | --- |
  *| conf| base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array|
  *
- **Notes :
- (default: current siteConfig ) (optional, default `getSiteConfig()`)
- * @param conf  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
+ ***Notes**:
+ * (default: current siteConfig ) (optional, default `getSiteConfig()`)
+ *
  */
 export const reset = () => {
   // Replace current config with siteConfig

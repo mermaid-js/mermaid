@@ -6,10 +6,10 @@ import common from '../common/common';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
 
-// let conf;
-
 /**
  * Draws a start state as a black circle
+ *
+ * @param {any} g
  */
 export const drawStartState = (g) =>
   g
@@ -23,6 +23,8 @@ export const drawStartState = (g) =>
 
 /**
  * Draws a start state as a black circle
+ *
+ * @param {any} g
  */
 export const drawDivider = (g) =>
   g
@@ -37,6 +39,9 @@ export const drawDivider = (g) =>
 
 /**
  * Draws a an end state as a black circle
+ *
+ * @param {any} g
+ * @param {any} stateDef
  */
 export const drawSimpleState = (g, stateDef) => {
   const state = g
@@ -60,8 +65,10 @@ export const drawSimpleState = (g, stateDef) => {
 
 /**
  * Draws a state with descriptions
+ *
  * @param {*} g
  * @param {*} stateDef
+ * @returns
  */
 export const drawDescrState = (g, stateDef) => {
   const addTspan = function (textEl, txt, isFirst) {
@@ -135,8 +142,10 @@ export const drawDescrState = (g, stateDef) => {
 /**
  * Function that creates an title row and a frame around a substate for a composit state diagram.
  * The function returns a new d3 svg object with updated width and height properties;
+ *
  * @param {*} g The d3 svg object for the substate to framed
  * @param {*} stateDef The info about the
+ * @param {any} altBkg
  */
 export const addTitleAndBox = (g, stateDef, altBkg) => {
   const pad = getConfig().state.padding;
@@ -337,6 +346,7 @@ const _drawLongText = (_text, x, y, g) => {
 
 /**
  * Draws a note to the diagram
+ *
  * @param text - The text of the given note.
  * @param g - The element the note is attached to.
  */
@@ -356,6 +366,7 @@ export const drawNote = (text, g) => {
 /**
  * Starting point for drawing a state. The function finds out the specifics
  * about the state and renders with approprtiate function.
+ *
  * @param {*} elem
  * @param {*} stateDef
  */

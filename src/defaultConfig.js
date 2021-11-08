@@ -123,8 +123,8 @@ const config = {
    * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
    * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
-
-   * **Notes**:
+   *
+   ***Notes**:
    *
    * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
@@ -236,8 +236,8 @@ const config = {
      * **Notes:**
      *
      * Decides which rendering engine that is to be used for the rendering. Legal values are:
-     * * dagre-d3
-     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     * dagre-d3
+     * dagre-wrapper - wrapper for dagre implemented in mermaid
      *
      * Default value: 'dagre-d3'
      */
@@ -903,11 +903,11 @@ top of the chart
      * | --- | --- | --- | --- | --- |
      * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
      *
-     * **Notes:**
+     ***Notes**:
      *
      * Decides which rendering engine that is to be used for the rendering. Legal values are:
-     * * dagre-d3
-     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     * dagre-d3
+     * dagre-wrapper - wrapper for dagre implemented in mermaid
      *
      * Default value: 'dagre-d3'
      */
@@ -972,8 +972,8 @@ top of the chart
      * **Notes:**
      *
      * Decides which rendering engine that is to be used for the rendering. Legal values are:
-     * * dagre-d3
-     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     * dagre-d3
+     * dagre-wrapper - wrapper for dagre implemented in mermaid
      *
      * Default value: 'dagre-d3'
      */

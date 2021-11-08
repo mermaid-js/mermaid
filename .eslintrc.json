@@ -6,15 +6,12 @@
   },
   "parser": "@babel/eslint-parser",
   "parserOptions": {
-      "ecmaFeatures": {
-          "experimentalObjectRestSpread": true,
-          "jsx": true
-      },
-      "sourceType": "module"
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    },
+    "sourceType": "module"
   },
-  "extends": ["prettier", "eslint:recommended"],
-  "plugins": ["prettier"],
-  "rules": {
-    "prettier/prettier": ["error"]
-  }
+  "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "plugin:prettier/recommended"],
+  "plugins": ["jsdoc", "prettier"]
 }

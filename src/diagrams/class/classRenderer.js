@@ -33,6 +33,8 @@ const getGraphId = function (label) {
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param elem
  */
 const insertMarkers = function (elem) {
   elem
@@ -146,6 +148,7 @@ export const setConf = function (cnf) {
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
  * @param text
  * @param id
  */

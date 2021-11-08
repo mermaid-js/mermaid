@@ -14,6 +14,8 @@ const conf = {};
  * Allows the top-level API module to inject config specific to this renderer,
  * storing it in the local conf object. Note that generic config still needs to be
  * retrieved using getConfig() imported from the config module
+ *
+ * @param cnf
  */
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
@@ -24,10 +26,11 @@ export const setConf = function (cnf) {
 
 /**
  * Draw attributes for an entity
+ *
  * @param groupNode the svg group node for the entity
  * @param entityTextNode the svg node for the entity label text
  * @param attributes an array of attributes defined for the entity (each attribute has a type and a name)
- * @return the bounding box of the entity, after attributes have been added
+ * @returns the bounding box of the entity, after attributes have been added
  */
 const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const heightPadding = conf.entityPadding / 3; // Padding internal to attribute boxes
@@ -269,10 +272,11 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
 /**
  * Use D3 to construct the svg elements for the entities
+ *
  * @param svgNode the svg node that contains the diagram
  * @param entities The entities to be drawn
  * @param graph The graph that contains the vertex and edge definitions post-layout
- * @return The first entity that was inserted
+ * @returns The first entity that was inserted
  */
 const drawEntities = function (svgNode, entities, graph) {
   const keys = Object.keys(entities);
@@ -356,9 +360,10 @@ const getEdgeName = function (rel) {
 
 /**
  * Add each relationship to the graph
+ *
  * @param relationships the relationships to be added
  * @param g the graph
- * @return {Array} The array of relationships
+ * @returns {Array} The array of relationships
  */
 const addRelationships = function (relationships, g) {
   relationships.forEach(function (r) {
@@ -370,6 +375,7 @@ const addRelationships = function (relationships, g) {
 let relCnt = 0;
 /**
  * Draw a relationship using edge information from the graph
+ *
  * @param svg the svg node
  * @param rel the relationship to draw in the svg
  * @param g the graph containing the edge information
@@ -502,6 +508,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert) {
 
 /**
  * Draw en E-R diagram in the tag with id: id based on the text definition of the diagram
+ *
  * @param text the text of the diagram
  * @param id the unique id of the DOM node that contains the diagram
  */

@@ -15,8 +15,9 @@ export const setConf = function (cnf) {
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} id
+ * @param {any} ver
  */
 export const draw = (id, ver) => {
   try {
