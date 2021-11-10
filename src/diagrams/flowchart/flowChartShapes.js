@@ -294,9 +294,7 @@ function cylinder(parent, bbox, node) {
   return shapeSvg;
 }
 
-/**
- * @param render
- */
+/** @param render */
 export function addToRender(render) {
   render.shapes().question = question;
   render.shapes().hexagon = hexagon;
@@ -323,9 +321,7 @@ export function addToRender(render) {
   render.shapes().rect_right_inv_arrow = rect_right_inv_arrow;
 }
 
-/**
- * @param addShape
- */
+/** @param addShape */
 export function addToRenderV2(addShape) {
   addShape({ question });
   addShape({ hexagon });

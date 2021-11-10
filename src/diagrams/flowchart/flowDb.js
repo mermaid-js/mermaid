@@ -349,7 +349,7 @@ export const getDirection = function () {
 /**
  * Retrieval function for fetching the found nodes after parsing has completed.
  *
- * @returns {{}|*|vertices}
+ * @returns {{} | any | vertices}
  */
 export const getVertices = function () {
   return vertices;
@@ -358,7 +358,7 @@ export const getVertices = function () {
 /**
  * Retrieval function for fetching the found links after parsing has completed.
  *
- * @returns {{}|*|edges}
+ * @returns {{} | any | edges}
  */
 export const getEdges = function () {
   return edges;
@@ -367,7 +367,7 @@ export const getEdges = function () {
 /**
  * Retrieval function for fetching the found class definitions after parsing has completed.
  *
- * @returns {{}|*|classes}
+ * @returns {{} | any | classes}
  */
 export const getClasses = function () {
   return classes;
@@ -429,10 +429,7 @@ export const clear = function (ver) {
 export const setGen = (ver) => {
   version = ver || 'gen-1';
 };
-/**
- *
- * @returns {string}
- */
+/** @returns {string} */
 export const defaultStyle = function () {
   return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
 };
@@ -451,9 +448,7 @@ export const addSubGraph = function (_id, list, _title) {
   if (_id === _title && _title.match(/\s/)) {
     id = undefined;
   }
-  /**
-   * @param a
-   */
+  /** @param a */
   function uniq(a) {
     const prims = { boolean: {}, number: {}, string: {} };
     const objs = [];
@@ -497,9 +492,7 @@ export const addSubGraph = function (_id, list, _title) {
 
   log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
-  /**
-   * Deletes an id from all subgraphs
-   */
+  /** Deletes an id from all subgraphs */
   // const del = _id => {
   //   subGraphs.forEach(sg => {
   //     const pos = sg.nodes.indexOf(_id);

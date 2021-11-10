@@ -1,6 +1,4 @@
-/**
- * Decorates with functions required by mermaids dagre-wrapper.
- */
+/** Decorates with functions required by mermaids dagre-wrapper. */
 import { log } from '../logger';
 import graphlib from 'graphlib';
 
@@ -167,8 +165,8 @@ export const validate = (graph) => {
 /**
  * Finds a child that is not a cluster. When faking a edge between a node and a cluster.
  *
- * @param {Finds a } id
- * @param {*} graph
+ * @param {Finds a} id
+ * @param {any} graph
  */
 export const findNonClusterChild = (id, graph) => {
   // const node = graph.node(id);

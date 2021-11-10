@@ -17,9 +17,7 @@ export const setConf = function (cnf) {
 
 const actors = {};
 
-/**
- * @param {any} diagram
- */
+/** @param {any} diagram */
 function drawActorLegend(diagram) {
   const conf = getConfig().journey;
   // Draw the actors
@@ -143,9 +141,7 @@ export const bounds = {
     const conf = getConfig().journey;
     const _self = this;
     let cnt = 0;
-    /**
-     * @param {any} type
-     */
+    /** @param {any} type */
     function updateFn(type) {
       return function updateItemBounds(item) {
         cnt++;

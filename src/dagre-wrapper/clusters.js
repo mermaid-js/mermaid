@@ -82,7 +82,7 @@ const rect = (parent, node) => {
  *
  * @param {any} parent
  * @param {any} node
- * @returns {*} shapeSvg
+ * @returns {any} ShapeSvg
  */
 const noteGroup = (parent, node) => {
   // Add outer g element

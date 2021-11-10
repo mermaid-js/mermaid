@@ -1,6 +1,4 @@
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
+/** Setup arrow head and define the marker. The result is appended to the svg. */
 
 import { log } from '../logger';
 

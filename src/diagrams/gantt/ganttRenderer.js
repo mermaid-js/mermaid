@@ -570,7 +570,8 @@ export const draw = function (text, id) {
   }
 
   /**
-   * from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
+   * From this stackexchange question:
+   * http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
    *
    * @param arr
    */
@@ -589,7 +590,8 @@ export const draw = function (text, id) {
   }
 
   /**
-   *from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
+   * From this stackexchange question:
+   * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
    *
    * @param arr
    */
@@ -603,7 +605,7 @@ export const draw = function (text, id) {
   }
 
   /**
-   * get specific from everything
+   * Get specific from everything
    *
    * @param word
    * @param arr

@@ -30,9 +30,7 @@ export const setConf = function (c) {
   apiConfig = c;
 };
 
-/**
- * @param svg
- */
+/** @param svg */
 function svgCreateDefs(svg) {
   svg
     .append('defs')

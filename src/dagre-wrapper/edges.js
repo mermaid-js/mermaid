@@ -311,8 +311,8 @@ export const intersection = (node, outsidePoint, insidePoint) => {
  * and return an update path ending by the border of the node.
  *
  * @param {Array} _points
- * @param {*} boundryNode
- * @returns {Array} points
+ * @param {any} boundryNode
+ * @returns {Array} Points
  */
 const cutPathAtIntersect = (_points, boundryNode) => {
   log.warn('abc88 cutPathAtIntersect', _points, boundryNode);

@@ -51,9 +51,7 @@ export const drawFace = function (element, faceData) {
     .attr('fill', '#666')
     .attr('stroke', '#666');
 
-  /**
-   * @param {any} face
-   */
+  /** @param {any} face */
   function smile(face) {
     const arc = d3arc()
       .startAngle(Math.PI / 2)
@@ -68,9 +66,7 @@ export const drawFace = function (element, faceData) {
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
   }
 
-  /**
-   * @param {any} face
-   */
+  /** @param {any} face */
   function sad(face) {
     const arc = d3arc()
       .startAngle((3 * Math.PI) / 2)
@@ -85,9 +81,7 @@ export const drawFace = function (element, faceData) {
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
   }
 
-  /**
-   * @param {any} face
-   */
+  /** @param {any} face */
   function ambivalent(face) {
     face
       .append('line')

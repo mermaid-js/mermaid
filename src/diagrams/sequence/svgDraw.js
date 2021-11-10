@@ -331,7 +331,7 @@ export const fixLifeLineHeights = (diagram, bounds) => {
  *
  * @param {any} elem - The diagram we'll draw to.
  * @param {any} actor - The actor to draw.
- * @param {any} conf - drawText implementation discriminator object
+ * @param {any} conf - DrawText implementation discriminator object
  */
 const drawActorTypeParticipant = function (elem, actor, conf) {
   const center = actor.x + actor.width / 2;
@@ -504,11 +504,11 @@ export const anchorElement = function (elem) {
 /**
  * Draws an activation in the diagram
  *
- * @param {any} elem - element to append activation rect.
- * @param {any} bounds - activation box bounds.
- * @param {any} verticalPos - precise y cooridnate of bottom activation box edge.
- * @param {any} conf - sequence diagram config object.
- * @param {any} actorActivations - number of activations on the actor.
+ * @param {any} elem - Element to append activation rect.
+ * @param {any} bounds - Activation box bounds.
+ * @param {any} verticalPos - Precise y cooridnate of bottom activation box edge.
+ * @param {any} conf - Sequence diagram config object.
+ * @param {any} actorActivations - Number of activations on the actor.
  */
 export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
   const rect = getNoteRect();
@@ -524,10 +524,10 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
 /**
  * Draws a loop in the diagram
  *
- * @param {any} elem - elemenet to append the loop to.
- * @param {any} loopModel - loopModel of the given loop.
+ * @param {any} elem - Elemenet to append the loop to.
+ * @param {any} loopModel - LoopModel of the given loop.
  * @param {any} labelText - Text within the loop.
- * @param {any} conf - diagrom configuration
+ * @param {any} conf - Diagrom configuration
  * @returns {any}
  */
 export const drawLoop = function (elem, loopModel, labelText, conf) {
@@ -626,8 +626,8 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
 /**
  * Draws a background rectangle
  *
- * @param {any} elem diagram (reference for bounds)
- * @param {any} bounds shape of the rectangle
+ * @param {any} elem Diagram (reference for bounds)
+ * @param {any} bounds Shape of the rectangle
  */
 export const drawBackgroundRect = function (elem, bounds) {
   const rectElem = drawRect(elem, {

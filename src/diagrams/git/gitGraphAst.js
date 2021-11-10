@@ -7,9 +7,6 @@ let curBranch = 'master';
 let direction = 'LR';
 let seq = 0;
 
-/**
- *
- */
 function getId() {
   return random({ length: 7 });
 }
@@ -167,9 +164,7 @@ function upsert(arr, key, newval) {
   }
 }
 
-/**
- * @param commitArr
- */
+/** @param commitArr */
 function prettyPrintCommitHistory(commitArr) {
   const commit = commitArr.reduce((out, commit) => {
     if (out.seq > commit.seq) return out;

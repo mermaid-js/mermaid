@@ -263,7 +263,7 @@ export const addEdges = function (edges, g) {
  * Returns the all the styles from classDef statements in the graph definition.
  *
  * @param text
- * @returns {object} classDef styles
+ * @returns {object} ClassDef styles
  */
 export const getClasses = function (text) {
   log.info('Extracting classes');

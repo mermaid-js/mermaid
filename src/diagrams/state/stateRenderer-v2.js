@@ -22,7 +22,7 @@ let nodeDb = {};
  * Returns the all the styles from classDef statements in the graph definition.
  *
  * @param {any} text
- * @returns {object} classDef styles
+ * @returns {object} ClassDef styles
  */
 export const getClasses = function (text) {
   log.trace('Extracting classes');

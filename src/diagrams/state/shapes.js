@@ -66,8 +66,8 @@ export const drawSimpleState = (g, stateDef) => {
 /**
  * Draws a state with descriptions
  *
- * @param {*} g
- * @param {*} stateDef
+ * @param {any} g
+ * @param {any} stateDef
  * @returns
  */
 export const drawDescrState = (g, stateDef) => {
@@ -135,16 +135,13 @@ export const drawDescrState = (g, stateDef) => {
   return g;
 };
 
-/**
- * Adds the creates a box around the existing content and adds a
- * panel for the id on top of the content.
- */
+/** Adds the creates a box around the existing content and adds a panel for the id on top of the content. */
 /**
  * Function that creates an title row and a frame around a substate for a composit state diagram.
  * The function returns a new d3 svg object with updated width and height properties;
  *
- * @param {*} g The d3 svg object for the substate to framed
- * @param {*} stateDef The info about the
+ * @param {any} g The d3 svg object for the substate to framed
+ * @param {any} stateDef The info about the
  * @param {any} altBkg
  */
 export const addTitleAndBox = (g, stateDef, altBkg) => {
@@ -364,11 +361,11 @@ export const drawNote = (text, g) => {
 };
 
 /**
- * Starting point for drawing a state. The function finds out the specifics
- * about the state and renders with approprtiate function.
+ * Starting point for drawing a state. The function finds out the specifics about the state and
+ * renders with approprtiate function.
  *
- * @param {*} elem
- * @param {*} stateDef
+ * @param {any} elem
+ * @param {any} stateDef
  */
 
 export const drawState = function (elem, stateDef) {

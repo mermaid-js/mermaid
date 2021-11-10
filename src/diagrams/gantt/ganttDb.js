@@ -562,7 +562,8 @@ const setClickFun = function (id, functionName, functionArgs) {
 };
 
 /**
- * The callbackFunction is executed in a click event bound to the task with the specified id or the task's assigned text
+ * The callbackFunction is executed in a click event bound to the task with the specified id or the
+ * task's assigned text
  *
  * @param id The task's id
  * @param callbackFunction A function to be executed when clicked on the task or the task's text

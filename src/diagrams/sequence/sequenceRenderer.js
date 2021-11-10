@@ -97,9 +97,7 @@ export const bounds = {
   updateBounds: function (startx, starty, stopx, stopy) {
     const _self = this;
     let cnt = 0;
-    /**
-     * @param {any} type
-     */
+    /** @param {any} type */
     function updateFn(type) {
       return function updateItemBounds(item) {
         cnt++;
@@ -203,7 +201,9 @@ export const bounds = {
  * Draws an note in the diagram with the attached line
  *
  * @param {any} elem - The diagram to draw to.
- * @param {{x: number, y: number, message: string, width: number}} noteModel - startx: x axis start position, verticalPos: y axis position, messsage: the message to be shown, width: Set this with a custom width to override the default configured width.
+ * @param {{ x: number; y: number; message: string; width: number }} noteModel - Startx: x axis
+ *   start position, verticalPos: y axis position, messsage: the message to be shown, width: Set
+ *   this with a custom width to override the default configured width.
  */
 const drawNote = function (elem, noteModel) {
   bounds.bumpVerticalPos(conf.boxMargin);
@@ -273,8 +273,8 @@ const actorFont = (cnf) => {
 /**
  * Draws a message
  *
- * @param {any} g - the parent of the message element
- * @param {any} msgModel - the model containing fields describing a message
+ * @param {any} g - The parent of the message element
+ * @param {any} msgModel - The model containing fields describing a message
  */
 const drawMessage = function (g, msgModel) {
   bounds.bumpVerticalPos(10);
@@ -786,11 +786,10 @@ export const draw = function (text, id) {
 };
 
 /**
- * Retrieves the max message width of each actor, supports signals (messages, loops)
- * and notes.
+ * Retrieves the max message width of each actor, supports signals (messages, loops) and notes.
  *
- * It will enumerate each given message, and will determine its text width, in relation
- * to the actor it originates from, and destined to.
+ * It will enumerate each given message, and will determine its text width, in relation to the actor
+ * it originates from, and destined to.
  *
  * @param {any} actors - The actors map
  * @param {Array} messages - A list of message objects to iterate
@@ -906,11 +905,10 @@ const getRequiredPopupWidth = function (actor) {
 };
 
 /**
- * This will calculate the optimal margin for each given actor, for a given
- * actor->messageWidth map.
+ * This will calculate the optimal margin for each given actor, for a given actor->messageWidth map.
  *
- * An actor's margin is determined by the width of the actor, the width of the
- * largest message that originates from it, and the configured conf.actorMargin.
+ * An actor's margin is determined by the width of the actor, the width of the largest message that
+ * originates from it, and the configured conf.actorMargin.
  *
  * @param {any} actors - The actors map to calculate margins for
  * @param {any} actorToMessageWidth - A map of actor key -> max message width it holds

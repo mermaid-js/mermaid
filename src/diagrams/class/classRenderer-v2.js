@@ -506,9 +506,7 @@ export default {
   setConf,
   draw,
 };
-/**
- * @param type
- */
+/** @param type */
 function getArrowMarker(type) {
   let marker;
   switch (type) {

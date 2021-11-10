@@ -100,8 +100,8 @@ export const addRelation = function (relation) {
 };
 
 /**
- * Adds an annotation to the specified class
- * Annotations mark special properties of the given type (like 'interface' or 'service')
+ * Adds an annotation to the specified class Annotations mark special properties of the given type
+ * (like 'interface' or 'service')
  *
  * @param className The class name
  * @param annotation The name of the annotation without any brackets
@@ -116,10 +116,9 @@ export const addAnnotation = function (className, annotation) {
  * Adds a member to the specified class
  *
  * @param className The class name
- * @param member The full name of the member.
- * If the member is enclosed in <<brackets>> it is treated as an annotation
- * If the member is ending with a closing bracket ) it is treated as a method
- * Otherwise the member will be treated as a normal property
+ * @param member The full name of the member. If the member is enclosed in <<brackets>> it is
+ *   treated as an annotation If the member is ending with a closing bracket ) it is treated as a
+ *   method Otherwise the member will be treated as a normal property
  * @public
  */
 export const addMember = function (className, member) {
