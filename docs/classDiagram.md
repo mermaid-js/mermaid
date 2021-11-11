@@ -224,7 +224,7 @@ classE o-- classF : association
 
 Relations can go in multiple ways:
 
-```mermaid-code
+```mmd
 classDiagram
     Animal <|--|> Zebra
 ```
@@ -328,7 +328,7 @@ class Color{
 
 Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any class diagram syntax
 
-```mermaid-code
+```mmd
 classDiagram
 %% This whole line is a comment classDiagram class Shape <<interface>>
 class Shape{
@@ -382,7 +382,7 @@ click className href "url" "tooltip"
 
 _URL Link:_
 
-```mermaid-code
+```mmd
 classDiagram
 class Shape
 link Shape "http://www.github.com" "This is a tooltip for a link"
@@ -392,7 +392,7 @@ click Shape2 href "http://www.github.com" "This is a tooltip for a link"
 
 _Callback:_
 
-```mermaid-code
+```mmd
 classDiagram
 class Shape
 callback Shape "callbackFunction" "This is a tooltip for a callback"
@@ -498,14 +498,14 @@ It is also possible to attach a class to a list of nodes in one statement:
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator as per below:
 
-```mermaid-code
+```mmd
 classDiagram
     class Animal:::cssClass
 ```
 
 Or:
 
-```mermaid-code
+```mmd
 classDiagram
     class Animal:::cssClass {
         -int sizeInFeet

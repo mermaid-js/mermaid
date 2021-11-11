@@ -23,7 +23,7 @@ Example of `Initalize` call setting `theme` to `base`:
 When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array.
 
 
-```mermaid-code
+```mmd
 %%{init: {'theme':'base'}}%%
   graph TD
     a --> b
@@ -241,7 +241,7 @@ When adjusting a theme it might be helpful to look at how your preferred theme g
 In the following examples, the directive `init` is used, with the `theme` being declared as `base`. For more information on using directives, read the documentation for [Version 8.6.0](/8.6.0_docs.md)
 
 ### Flowchart
-```mermaid-code
+```mmd
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)

@@ -181,7 +181,7 @@ More info in: https://github.com/mbostock/d3/wiki/Time-Formatting
 
 Comments can be entered within a gantt chart, which will be ignored by the parser. Comments need to be on their own line and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```mermaid-code
+```mmd
 gantt
     title A Gantt Diagram
     %% this is a comment

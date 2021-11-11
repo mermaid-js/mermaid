@@ -48,7 +48,7 @@ For a more detailed introduction to Mermaid and some of it's basic uses, refer t
 
 ### [Flowchart](./flowchart.md?id=flowcharts-basic-syntax)
 
-```mermaid-code
+```mmd
 graph TD;
     A-->B;
     A-->C;
@@ -60,7 +60,7 @@ graph TD;
 
 ### [Sequence diagram](./sequenceDiagram.md)
 
-```mermaid-code
+```mmd
 sequenceDiagram
     participant Alice
     participant Bob
@@ -78,7 +78,7 @@ sequenceDiagram
 
 ### [Gantt diagram](./gantt.md)
 
-```mermaid-code
+```mmd
 gantt
 dateFormat  YYYY-MM-DD
 title Adding GANTT diagram to mermaid
@@ -95,7 +95,7 @@ Future task2               :         des4, after des3, 5d
 
 ### [Class diagram](./classDiagram.md)
 
-```mermaid-code
+```mmd
 classDiagram
 Class01 <|-- AveryLongClass : Cool
 Class03 *-- Class04
@@ -116,7 +116,7 @@ Class08 <--> C2: Cool label
 
 ### Git graph - :exclamation: experimental
 
-```mermaid-code
+```mmd
 gitGraph:
 options
 {
@@ -139,7 +139,7 @@ merge newbranch
 
 ### [Entity Relationship Diagram - :exclamation: experimental](./entityRelationshipDiagram.md)
 
-```mermaid-code
+```mmd
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -151,7 +151,7 @@ erDiagram
 
 ### [User Journey Diagram](./user-journey.md)
 
-```mermaid-code
+```mmd
 journey
     title My working day
     section Go to work
