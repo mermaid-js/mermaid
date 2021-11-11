@@ -7,14 +7,7 @@ Note that practitioners of ER modelling almost always refer to *entity types* si
 
 Mermaid can render ER diagrams
 
-```markdown
-erDiagram
-    CUSTOMER ||--o{ ORDER : places
-    ORDER ||--|{ LINE-ITEM : contains
-    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
-```
-
-```mermaid
+```mermaid-example
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -27,27 +20,7 @@ Relationships between entities are represented by lines with end markers represe
 
 ER diagrams can be used for various purposes, ranging from abstract logical models devoid of any implementation details, through to physical models of relational database tables.  It can be useful to include attribute definitions on ER diagrams to aid comprehension of the purpose and meaning of entities.  These do not necessarily need to be exhaustive; often a small subset of attributes is enough.  Mermaid allows to be defined in terms of their *type* and *name*.
 
-```markdown
-erDiagram
-    CUSTOMER ||--o{ ORDER : places
-    CUSTOMER {
-        string name
-        string custNumber
-        string sector
-    }
-    ORDER ||--|{ LINE-ITEM : contains
-    ORDER {
-        int orderNumber
-        string deliveryAddress
-    }
-    LINE-ITEM {
-        string productCode
-        int quantity
-        float pricePerUnit
-    }
-```
-
-```mermaid
+```mermaid-example
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     CUSTOMER {
@@ -75,7 +48,7 @@ When including attributes on ER diagrams, you must decide whether to include for
 
 Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to label the relationship.  Each statement consists of the following parts:
 
-```markdown
+```
     <first-entity> [<relationship> <second-entity> : <relationship-label>]
 ```
 
@@ -88,7 +61,7 @@ Where:
 
 For example:
 
-```markdown
+```
     PROPERTY ||--|{ ROOM : contains
 ```
 
@@ -117,7 +90,8 @@ Cardinality is a property that describes how many elements of another entity can
 
 Relationships may be classified as either *identifying* or *non-identifying* and these are rendered with either solid or dashed lines respectively. This is relevant when one of the entities in question can not have independent existence without the other.  For example a firm that insures people to drive cars might need to store data on `NAMED-DRIVER`s. In modelling this we might start out by observing that a `CAR` can be driven by many `PERSON` instances, and a `PERSON` can drive many `CAR`s - both entities can exist without the other, so this is a non-identifying relationship that we might specify in Mermaid as: `PERSON }|..|{ CAR : "driver"`.  Note the two dots in the middle of the relationship that will result in a dashed line being drawn between the two entities.  But when this many-to-many relationship is resolved into two one-to-many relationships, we observe that a `NAMED-DRIVER` cannot exist without both a `PERSON` and a `CAR` - the relationships become identifying and would be specified using hyphens, which translate to a solid line:
 
-```
+```mmd
+erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     PERSON ||--o{ NAMED-DRIVER : is
 ```
@@ -126,22 +100,7 @@ Relationships may be classified as either *identifying* or *non-identifying* and
 
 Attributes can be defined for entities by specifying the entity name followed by a block containing multiple `type name` pairs, where a block is delimited by an opening `{` and a closing `}`.  For example:
 
-```
-erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    CAR {
-        string registrationNumber
-        string make
-        string model
-    }
-    PERSON ||--o{ NAMED-DRIVER : is
-    PERSON {
-        string firstName
-        string lastName
-        int age
-    }
-```
-```mermaid
+```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
@@ -158,22 +117,7 @@ erDiagram
 ```
 The attributes are rendered inside the entity boxes:
 
-```
-erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    CAR {
-        string registrationNumber
-        string make
-        string model
-    }
-    PERSON ||--o{ NAMED-DRIVER : is
-    PERSON {
-        string firstName
-        string lastName
-        int age
-    }
-```
-```mermaid
+```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
@@ -195,25 +139,7 @@ The `type` and `name` values must begin with an alphabetic character and may con
 
 Attributes may also have a `key` or comment defined. Keys can be "PK" or "FK", for Primary Key or Foreign Key. And a `comment` is defined by quotes at the end of an attribute. Comments themselves cannot have quote characters in them.
 
-```
-erDiagram
-    CAR ||--o{ NAMED-DRIVER : allows
-    CAR {
-        string allowedDriver FK 'The license of the allowed driver'
-        string registrationNumber
-        string make
-        string model
-    }
-    PERSON ||--o{ NAMED-DRIVER : is
-    PERSON {
-        string driversLicense PK 'The license #'
-        string firstName
-        string lastName
-        int age
-    }
-```
-
-```mermaid
+```mermaid-example
 erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {

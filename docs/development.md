@@ -78,7 +78,7 @@ When running in CI it will take a snapshot of the rendered diagram and compare i
 
 This is what a rendering test looks like:
 
-```
+```js
   it('should render forks and joins', () => {
     imgSnapshotTest(
       `
