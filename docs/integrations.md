@@ -107,6 +107,9 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Inkdrop](http://inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
 - [Vim](https://vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
+- [GNU Emacs](https://www.gnu.org/software/emacs/)
+  - [Major mode for .mmd files](https://github.com/abrochard/mermaid-mode)
+  - [Org-Mode integration](https://github.com/arnm/ob-mermaid)
 - [Brackets](http://brackets.io/)
   - [Mermaid Preview](https://s3.amazonaws.com/extend.brackets/alanhohn.mermaid-preview/alanhohn.mermaid-preview-1.0.2.zip)
 - [Iodide](https://github.com/iodide-project/iodide)
@@ -149,6 +152,7 @@ They also serve as proof of concept, for the variety of things that can be built
 | Mermaid Diagrams | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil) | - | - | - | - |
 |Mermaid Markdown | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-markdown/mboeoikjijmjcjgpccghbcoegikliijg) | - | - | - | - |
 | Monkeys | [🎡🔗](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | - | - | - | - |
+| Mermaid Previewer | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl) | - | - | - | - |
 
 
 ## Other

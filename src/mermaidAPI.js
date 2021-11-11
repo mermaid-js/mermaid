@@ -54,6 +54,7 @@ import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import errorRenderer from './errorRenderer';
+import { attachFunctions } from './interactionDb';
 
 // import * as configApi from './config';
 // // , {
@@ -483,6 +484,7 @@ const render = function (id, _txt, cb, container) {
   } else {
     log.debug('CB = undefined!');
   }
+  attachFunctions();
 
   const node = select('#d' + id).node();
   if (node !== null && typeof node.remove === 'function') {

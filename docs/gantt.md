@@ -50,7 +50,7 @@ gantt
     Future task in critical line        :crit, 5d
     Create tests for renderer           :2d
     Add to mermaid                      :1d
-    functionality added                 :milestone
+    Functionality added                 :milestone, 2014-01-25, 0d
 
     section Documentation
     Describe gantt syntax               :active, a1, after des1, 3d

@@ -1,6 +1,7 @@
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import { log } from '../../logger';
+import { sanitizeText } from '../common/common';
 
 let prevActor = undefined;
 let actors = {};
@@ -219,7 +220,10 @@ export const addLinks = function (actorId, text) {
   const actor = getActor(actorId);
   // JSON.parse the text
   try {
-    const links = JSON.parse(text.text);
+    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    const links = JSON.parse(sanitizedText);
     // add the deserialized text to the actor's links field.
     insertLinks(actor, links);
   } catch (e) {
@@ -232,9 +236,12 @@ export const addALink = function (actorId, text) {
   const actor = getActor(actorId);
   try {
     const links = {};
-    var sep = text.text.indexOf('@');
-    var label = text.text.slice(0, sep - 1).trim();
-    var link = text.text.slice(sep + 1).trim();
+    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    var sep = sanitizedText.indexOf('@');
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    var label = sanitizedText.slice(0, sep - 1).trim();
+    var link = sanitizedText.slice(sep + 1).trim();
 
     links[label] = link;
     // add the deserialized text to the actor's links field.
@@ -259,7 +266,8 @@ export const addProperties = function (actorId, text) {
   const actor = getActor(actorId);
   // JSON.parse the text
   try {
-    const properties = JSON.parse(text.text);
+    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    const properties = JSON.parse(sanitizedText);
     // add the deserialized text to the actor's property field.
     insertProperties(actor, properties);
   } catch (e) {

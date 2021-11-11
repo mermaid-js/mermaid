@@ -898,7 +898,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?35ed").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?35ed").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -1678,7 +1678,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?3c87").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?3c87").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -2710,7 +2710,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?dbae").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?dbae").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -2801,12 +2801,12 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,19,21,28,33],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,24],$Vc=[1,26],$Vd=[1,29],$Ve=[5,7,9,11,12,13,14,15,16,17,18,19,21,28,33];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,5],$V2=[7,9,11,12,13,14,15,16,17,18,19,20,22,29,34],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[1,18],$V7=[1,19],$V8=[1,20],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,25],$Vd=[1,27],$Ve=[1,30],$Vf=[5,7,9,11,12,13,14,15,16,17,18,19,20,22,29,34];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"topAxis":14,"axisFormat":15,"excludes":16,"todayMarker":17,"title":18,"section":19,"clickStatement":20,"taskTxt":21,"taskData":22,"openDirective":23,"typeDirective":24,"closeDirective":25,":":26,"argDirective":27,"click":28,"callbackname":29,"callbackargs":30,"href":31,"clickStatementDebug":32,"open_directive":33,"type_directive":34,"arg_directive":35,"close_directive":36,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"topAxis",15:"axisFormat",16:"excludes",17:"todayMarker",18:"title",19:"section",21:"taskTxt",22:"taskData",26:":",28:"click",29:"callbackname",30:"callbackargs",31:"href",33:"open_directive",34:"type_directive",35:"arg_directive",36:"close_directive"},
-productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[20,2],[20,3],[20,3],[20,4],[20,3],[20,4],[20,2],[32,2],[32,3],[32,3],[32,4],[32,3],[32,4],[32,2],[23,1],[24,1],[27,1],[25,1]],
+symbols_: {"error":2,"start":3,"directive":4,"gantt":5,"document":6,"EOF":7,"line":8,"SPACE":9,"statement":10,"NL":11,"dateFormat":12,"inclusiveEndDates":13,"topAxis":14,"axisFormat":15,"excludes":16,"includes":17,"todayMarker":18,"title":19,"section":20,"clickStatement":21,"taskTxt":22,"taskData":23,"openDirective":24,"typeDirective":25,"closeDirective":26,":":27,"argDirective":28,"click":29,"callbackname":30,"callbackargs":31,"href":32,"clickStatementDebug":33,"open_directive":34,"type_directive":35,"arg_directive":36,"close_directive":37,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"gantt",7:"EOF",9:"SPACE",11:"NL",12:"dateFormat",13:"inclusiveEndDates",14:"topAxis",15:"axisFormat",16:"excludes",17:"includes",18:"todayMarker",19:"title",20:"section",22:"taskTxt",23:"taskData",27:":",29:"click",30:"callbackname",31:"callbackargs",32:"href",34:"open_directive",35:"type_directive",36:"arg_directive",37:"close_directive"},
+productions_: [0,[3,2],[3,3],[6,0],[6,2],[8,2],[8,1],[8,1],[8,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,1],[4,4],[4,6],[21,2],[21,3],[21,3],[21,4],[21,3],[21,4],[21,2],[33,2],[33,3],[33,3],[33,4],[33,3],[33,4],[33,2],[24,1],[25,1],[28,1],[26,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -2843,63 +2843,66 @@ case 13:
 yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
 break;
 case 14:
-yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
+yy.setIncludes($$[$0].substr(9));this.$=$$[$0].substr(9);
 break;
 case 15:
-yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+yy.setTodayMarker($$[$0].substr(12));this.$=$$[$0].substr(12);
 break;
 case 16:
+yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+break;
+case 17:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
-case 18:
+case 19:
 yy.addTask($$[$0-1],$$[$0]);this.$='task';
 break;
-case 22:
+case 23:
 this.$ = $$[$0-1];yy.setClickEvent($$[$0-1], $$[$0], null);
 break;
-case 23:
+case 24:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 24:
+case 25:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], null);yy.setLink($$[$0-2],$$[$0]);
 break;
-case 25:
+case 26:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setLink($$[$0-3],$$[$0]);
 break;
-case 26:
+case 27:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0], null);yy.setLink($$[$0-2],$$[$0-1]);
 break;
-case 27:
+case 28:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-1], $$[$0]);yy.setLink($$[$0-3],$$[$0-2]);
 break;
-case 28:
+case 29:
 this.$ = $$[$0-1];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 29: case 35:
+case 30: case 36:
 this.$=$$[$0-1] + ' ' + $$[$0];
 break;
-case 30: case 31: case 33:
+case 31: case 32: case 34:
 this.$=$$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 32: case 34:
+case 33: case 35:
 this.$=$$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 36:
+case 37:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 37:
+case 38:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 38:
+case 39:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 39:
+case 40:
  yy.parseDirective('}%%', 'close_directive', 'gantt'); 
 break;
 }
 },
-table: [{3:1,4:2,5:$V0,23:4,33:$V1},{1:[3]},{3:6,4:2,5:$V0,23:4,33:$V1},o($V2,[2,3],{6:7}),{24:8,34:[1,9]},{34:[2,36]},{1:[2,1]},{4:25,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:23,21:$Vb,23:4,28:$Vc,33:$V1},{25:27,26:[1,28],36:$Vd},o([26,36],[2,37]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:25,10:30,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:23,21:$Vb,23:4,28:$Vc,33:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),o($V2,[2,17]),{22:[1,31]},o($V2,[2,19]),{29:[1,32],31:[1,33]},{11:[1,34]},{27:35,35:[1,36]},{11:[2,39]},o($V2,[2,5]),o($V2,[2,18]),o($V2,[2,22],{30:[1,37],31:[1,38]}),o($V2,[2,28],{29:[1,39]}),o($Ve,[2,20]),{25:40,36:$Vd},{36:[2,38]},o($V2,[2,23],{31:[1,41]}),o($V2,[2,24]),o($V2,[2,26],{30:[1,42]}),{11:[1,43]},o($V2,[2,25]),o($V2,[2,27]),o($Ve,[2,21])],
-defaultActions: {5:[2,36],6:[2,1],29:[2,39],36:[2,38]},
+table: [{3:1,4:2,5:$V0,24:4,34:$V1},{1:[3]},{3:6,4:2,5:$V0,24:4,34:$V1},o($V2,[2,3],{6:7}),{25:8,35:[1,9]},{35:[2,37]},{1:[2,1]},{4:26,7:[1,10],8:11,9:[1,12],10:13,11:[1,14],12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:$Vb,21:24,22:$Vc,24:4,29:$Vd,34:$V1},{26:28,27:[1,29],37:$Ve},o([27,37],[2,38]),o($V2,[2,8],{1:[2,2]}),o($V2,[2,4]),{4:26,10:31,12:$V3,13:$V4,14:$V5,15:$V6,16:$V7,17:$V8,18:$V9,19:$Va,20:$Vb,21:24,22:$Vc,24:4,29:$Vd,34:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),o($V2,[2,17]),o($V2,[2,18]),{23:[1,32]},o($V2,[2,20]),{30:[1,33],32:[1,34]},{11:[1,35]},{28:36,36:[1,37]},{11:[2,40]},o($V2,[2,5]),o($V2,[2,19]),o($V2,[2,23],{31:[1,38],32:[1,39]}),o($V2,[2,29],{30:[1,40]}),o($Vf,[2,21]),{26:41,37:$Ve},{37:[2,39]},o($V2,[2,24],{32:[1,42]}),o($V2,[2,25]),o($V2,[2,27],{31:[1,43]}),{11:[1,44]},o($V2,[2,26]),o($V2,[2,28]),o($Vf,[2,22])],
+defaultActions: {5:[2,37],6:[2,1],30:[2,40],37:[2,39]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -3378,15 +3381,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 33; 
+case 0: this.begin('open_directive'); return 34; 
 break;
-case 1: this.begin('type_directive'); return 34; 
+case 1: this.begin('type_directive'); return 35; 
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 26; 
+case 2: this.popState(); this.begin('arg_directive'); return 27; 
 break;
-case 3: this.popState(); this.popState(); return 36; 
+case 3: this.popState(); this.popState(); return 37; 
 break;
-case 4:return 35;
+case 4:return 36;
 break;
 case 5:/* skip comments */
 break;
@@ -3406,7 +3409,7 @@ case 12:this.begin("href");
 break;
 case 13:this.popState();
 break;
-case 14:return 31;
+case 14:return 32;
 break;
 case 15:this.begin("callbackname");
 break;
@@ -3414,17 +3417,17 @@ case 16:this.popState();
 break;
 case 17:this.popState(); this.begin("callbackargs");
 break;
-case 18:return 29;
+case 18:return 30;
 break;
 case 19:this.popState();
 break;
-case 20:return 30;
+case 20:return 31;
 break;
 case 21:this.begin("click");
 break;
 case 22:this.popState();
 break;
-case 23:return 28;
+case 23:return 29;
 break;
 case 24:return 5;
 break;
@@ -3436,30 +3439,32 @@ case 27:return 14;
 break;
 case 28:return 15;
 break;
-case 29:return 16;
+case 29:return 17;
 break;
-case 30:return 17;
+case 30:return 16;
 break;
-case 31:return 'date';
+case 31:return 18;
 break;
-case 32:return 18;
+case 32:return 'date';
 break;
 case 33:return 19;
 break;
-case 34:return 21;
+case 34:return 20;
 break;
 case 35:return 22;
 break;
-case 36:return 26;
+case 36:return 23;
 break;
-case 37:return 7;
+case 37:return 27;
 break;
-case 38:return 'INVALID';
+case 38:return 7;
+break;
+case 39:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:topAxis\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%%(?!\{)*[^\n]*)/i,/^(?:[^\}]%%*[^\n]*)/i,/^(?:%%*[^\n]*[\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:topAxis\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:includes\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:todayMarker\s[^\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"callbackargs":{"rules":[19,20],"inclusive":false},"callbackname":{"rules":[16,17,18],"inclusive":false},"href":{"rules":[13,14],"inclusive":false},"click":{"rules":[22,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,15,21,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39],"inclusive":true}}
 });
 return lexer;
 })();
@@ -3481,7 +3486,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?8ed1").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?8ed1").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -4187,7 +4192,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?2b40").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?2b40").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -4819,7 +4824,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?c5f1").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?c5f1").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -5490,7 +5495,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?a3fa").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?a3fa").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -6300,7 +6305,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?ebf4").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?ebf4").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -7197,7 +7202,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?e940").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?e940").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -8044,7 +8049,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?a3b8").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?a3b8").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -8725,7 +8730,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = __webpack_require__(/*! fs */ "?0f62").readFileSync(__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize(args[1]), "utf8");
+    var source = (__webpack_require__(/*! fs */ "?0f62").readFileSync)((__webpack_require__(/*! path */ "./node_modules/path-browserify/index.js").normalize)(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
@@ -8809,7 +8814,7 @@ var updateCurrentConfig = function updateCurrentConfig(siteCfg, _directives) {
  *Note: currentConfig is set in this function
  **Default value: At default, will mirror Global Config**
  * @param conf - the base currentConfig to use as siteConfig
- * @returns {*} - the siteConfig
+ * @returns {Object} - the siteConfig
  */
 
 var setSiteConfig = function setSiteConfig(conf) {
@@ -8838,7 +8843,7 @@ var updateSiteConfig = function updateSiteConfig(conf) {
  *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
  ***Notes**:
  *Returns **any** values in siteConfig.
- * @returns {*}
+ * @returns {Object} - the siteConfig
  */
 
 var getSiteConfig = function getSiteConfig() {
@@ -8919,6 +8924,11 @@ var sanitize = function sanitize(options) {
     }
   });
 };
+/**
+ * Pushes in a directive to the configuration
+ * @param {Object} directive The directive to push in
+ */
+
 var addDirective = function addDirective(directive) {
   if (directive.fontFamily) {
     if (!directive.themeVariables) {
@@ -11912,10 +11922,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "insertPolygonShape": () => (/* binding */ insertPolygonShape)
 /* harmony export */ });
 /* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../createLabel */ "./src/dagre-wrapper/createLabel.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../diagrams/common/common */ "./src/diagrams/common/common.js");
+
 
 
 
@@ -11933,11 +11945,11 @@ var labelHelper = function labelHelper(parent, node, _classes, isNode) {
   var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.domId || node.id); // Create the label and insert it after the rect
 
   var label = shapeSvg.insert('g').attr('class', 'label').attr('style', node.labelStyle);
-  var text = label.node().appendChild((0,_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])(node.labelText, node.labelStyle, false, isNode)); // Get the size of the label
+  var text = label.node().appendChild((0,_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])((0,_diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)((0,_mermaidAPI__WEBPACK_IMPORTED_MODULE_3__.decodeEntities)(node.labelText), (0,_config__WEBPACK_IMPORTED_MODULE_4__.getConfig)()), node.labelStyle, false, isNode)); // Get the size of the label
 
   var bbox = text.getBBox();
 
-  if ((0,_diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__.evaluate)((0,_config__WEBPACK_IMPORTED_MODULE_3__.getConfig)().flowchart.htmlLabels)) {
+  if ((0,_diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__.evaluate)((0,_config__WEBPACK_IMPORTED_MODULE_4__.getConfig)().flowchart.htmlLabels)) {
     var div = text.children[0];
     var dv = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)(text);
     bbox = div.getBoundingClientRect();
@@ -12058,7 +12070,7 @@ var config = {
   /**
    * | Parameter | Description | Type | Required | Values |
    * | --- | --- | --- | --- | --- |
-   * | fontFamily | specifies the font to be used in the rendered diagrams| string | Required | Any Posiable CSS FontFamily |
+   * | fontFamily | specifies the font to be used in the rendered diagrams| string | Required | Any Possible CSS FontFamily |
    *
    * **Notes:**
    * Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
@@ -12097,7 +12109,7 @@ var config = {
   /**
    * | Parameter | Description | Type | Required | Values |
    * | --- | --- | --- | --- | --- |
-   * | startOnLoad | Dictates whether mermaind starts on Page load | boolean | Required | true, false |
+   * | startOnLoad | Dictates whether mermaid starts on Page load | boolean | Required | true, false |
    *
    * **Notes:** Default value: true
    */
@@ -12205,7 +12217,7 @@ var config = {
      *
      * **Notes:**
      *
-     * Default Vaue: 'basis'
+     * Default Value: 'basis'
      */
     curve: 'basis',
     // Only used in new experimental rendering
@@ -12437,7 +12449,7 @@ var config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | actorFontFamily |This sets the font family of the actor's description | string | Required | Any Posiable CSS FontFamily |
+     * | actorFontFamily |This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
      *
      * **Notes:**
      * Default value: "'Open-Sans", "sans-serif"'
@@ -12465,7 +12477,7 @@ var config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | noteFontFamily| This sets the font family of actor-attached notes. | string | Required | Any Posiable CSS FontFamily |
+     * | noteFontFamily| This sets the font family of actor-attached notes. | string | Required | Any Possible CSS FontFamily |
      *
      * **Notes:**
      * Default value: ''"trebuchet ms", verdana, arial, sans-serif'
@@ -12503,7 +12515,7 @@ var config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | messageFontFamily | This sets the font family of actor messages | string | Required | Any Posiable CSS FontFamily |
+     * | messageFontFamily | This sets the font family of actor messages | string | Required | Any Possible CSS FontFamily |
      *
      * **Notes:**
      * Default value: '"trebuchet ms", verdana, arial, sans-serif'
@@ -12661,7 +12673,7 @@ var config = {
     /**
      * | Parameter | Description | Type | Required | Values|
      * | --- | --- | --- | --- | --- |
-     * | sectionFontSize | Font size for secions| Integer | Required | Any Positive Value |
+     * | sectionFontSize | Font size for sections| Integer | Required | Any Positive Value |
      *
      * **Notes:**
      * Default value: 11
@@ -13011,7 +13023,7 @@ var config = {
     /**
      * | Parameter | Description | Type | Required | Values |
      * | --- | --- | --- | --- | --- |
-     * | minEntityWidth | The mimimum width of an entity box | Integer | Required | Any Positive Value  |
+     * | minEntityWidth | The minimum width of an entity box | Integer | Required | Any Positive Value  |
      *
      * **Notes:**
      * Expressed in pixels.
@@ -13619,8 +13631,8 @@ var conf = {
 };
 /**
  * Function that adds the vertices found during parsing to the graph to be rendered.
- * @param vert Object containing the vertices.
- * @param g The graph that is to be drawn.
+ * @param {Object<string, { cssClasses: Array<string>; text: string; id: string; type: string; domId: string; }>} classes Object containing the vertices.
+ * @param {SVGGElement} g The graph that is to be drawn.
  */
 
 var addClasses = function addClasses(classes, g) {
@@ -13818,19 +13830,27 @@ var addRelations = function addRelations(relations, g) {
 
     g.setEdge(edge.id1, edge.id2, edgeData, cnt);
   });
-}; // Todo optimize
+};
+/**
+ * Gets the ID with the same label as in the cache
+ * @param {string} label The label to look for
+ * @returns {string} The resulting ID
+ */
 
 var getGraphId = function getGraphId(label) {
-  var keys = Object.keys(idCache);
+  var foundEntry = Object.entries(idCache).find(function (entry) {
+    return entry[1].label === label;
+  });
 
-  for (var i = 0; i < keys.length; i++) {
-    if (idCache[keys[i]].label === label) {
-      return keys[i];
-    }
+  if (foundEntry) {
+    return foundEntry[0];
   }
-
-  return undefined;
 };
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ * @param {Object} cnf Config to merge
+ */
+
 
 var setConf = function setConf(cnf) {
   var keys = Object.keys(cnf);
@@ -13840,8 +13860,8 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ * @param {string} text
+ * @param {string} id
  */
 
 var drawOld = function drawOld(text, id) {
@@ -14030,10 +14050,11 @@ var draw = function draw(text, id) {
   // });
 
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  setConf: setConf,
-  draw: draw
-});
+/**
+ * Gets the arrow marker for a type index
+ * @param {number} type The type to look for
+ * @returns {"aggregation" | "extension" | "composition" | "dependency"} The arrow marker
+ */
 
 function getArrowMarker(type) {
   var marker;
@@ -14061,6 +14082,11 @@ function getArrowMarker(type) {
 
   return marker;
 }
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  setConf: setConf,
+  draw: draw
+});
 
 /***/ }),
 
@@ -14104,21 +14130,25 @@ var conf = {
   dividerMargin: 10,
   padding: 5,
   textHeight: 10
-}; // Todo optimize
+};
+/**
+ * Gets the ID with the same label as in the cache
+ * @param {string} label The label to look for
+ * @returns {string} The resulting ID
+ */
 
 var getGraphId = function getGraphId(label) {
-  var keys = Object.keys(idCache);
+  var foundEntry = Object.entries(idCache).find(function (entry) {
+    return entry[1].label === label;
+  });
 
-  for (var i = 0; i < keys.length; i++) {
-    if (idCache[keys[i]].label === label) {
-      return keys[i];
-    }
+  if (foundEntry) {
+    return foundEntry[0];
   }
-
-  return undefined;
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ * @param {SVGSVGElement} elem The SVG element to append to
  */
 
 
@@ -14133,6 +14163,11 @@ var insertMarkers = function insertMarkers(elem) {
   elem.append('defs').append('marker').attr('id', 'dependencyStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
   elem.append('defs').append('marker').attr('id', 'dependencyEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ * @param {Object} cnf Config to merge
+ */
+
 
 var setConf = function setConf(cnf) {
   var keys = Object.keys(cnf);
@@ -14142,8 +14177,8 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ * @param {string} text
+ * @param {string} id
  */
 
 var draw = function draw(text, id) {
@@ -14353,6 +14388,12 @@ var drawEdge = function drawEdge(elem, path, relation, conf) {
 
   edgeCount++;
 };
+/**
+ * Renders a class diagram
+ * @param {SVGSVGElement} elem The element to draw it into
+ * @todo Add more information in the JSDOC here
+ */
+
 var drawClass = function drawClass(elem, classDef, conf) {
   _logger__WEBPACK_IMPORTED_MODULE_3__.log.info('Rendering class ' + classDef);
   var id = classDef.id;
@@ -14539,6 +14580,14 @@ var buildLegacyDisplay = function buildLegacyDisplay(text) {
     cssStyle: cssStyle
   };
 };
+/**
+ * Adds a <tspan> for a member in a diagram
+ * @param {SVGElement} textEl The element to append to
+ * @param {string} txt The member
+ * @param {boolean} isFirst
+ * @param {{ padding: string; textHeight: string; }} conf The configuration for the member
+ */
+
 
 var addTspan = function addTspan(textEl, txt, isFirst, conf) {
   var member = parseMember(txt);
@@ -14552,6 +14601,15 @@ var addTspan = function addTspan(textEl, txt, isFirst, conf) {
     tSpan.attr('dy', conf.textHeight);
   }
 };
+/**
+ * Makes generics in typescript syntax
+ * @example <caption>Array of array of strings in typescript syntax</caption>
+ * // returns "Array<Array<string>>"
+ * parseGenericTypes("Array~Array~string~~");
+ * @param {string} text The text to convert
+ * @returns {string} The converted string
+ */
+
 
 var parseGenericTypes = function parseGenericTypes(text) {
   var cleanedText = text;
@@ -14564,6 +14622,12 @@ var parseGenericTypes = function parseGenericTypes(text) {
     return cleanedText;
   }
 };
+/**
+ * Gives the styles for a classifier
+ * @param {"+" | "-" | "#" | "~" | "*" | "$"} classifier The classifier string
+ * @returns {string} Styling for the classifier
+ */
+
 
 var parseClassifier = function parseClassifier(classifier) {
   switch (classifier) {
@@ -14607,12 +14671,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dompurify */ "dompurify");
 /* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dompurify__WEBPACK_IMPORTED_MODULE_0__);
 
+/**
+ * Gets the number of lines in a string
+ * @param {string | undefined} s The string to check the lines for
+ * @returns {number} The number of lines in that string
+ */
+
 var getRows = function getRows(s) {
   if (!s) return 1;
   var str = breakToPlaceholder(s);
   str = str.replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
+/**
+ * Removes script tags from a text
+ * @param {string} txt The text to sanitize
+ * @returns {string} The safer text
+ */
+
 var removeScript = function removeScript(txt) {
   var rs = '';
   var idx = 0;
@@ -14675,20 +14751,49 @@ var sanitizeText = function sanitizeText(text, config) {
   return txt;
 };
 var lineBreakRegex = /<br\s*\/?>/gi;
+/**
+ * Whether or not a text has any linebreaks
+ * @param {string} text The text to test
+ * @returns {boolean} Whether or not the text has breaks
+ */
+
 var hasBreaks = function hasBreaks(text) {
-  return /<br\s*[/]?>/gi.test(text);
+  return lineBreakRegex.test(text);
 };
+/**
+ * Splits on <br> tags
+ * @param {string} text Text to split
+ * @returns {Array<string>} List of lines as strings
+ */
+
 var splitBreaks = function splitBreaks(text) {
-  return text.split(/<br\s*[/]?>/gi);
+  return text.split(lineBreakRegex);
 };
+/**
+ * Converts placeholders to linebreaks in HTML
+ * @param {string} s HTML with placeholders
+ * @returns {string} HTML with breaks instead of placeholders
+ */
 
 var placeholderToBreak = function placeholderToBreak(s) {
   return s.replace(/#br#/g, '<br/>');
 };
+/**
+ * Opposite of `placeholderToBreak`, converts breaks to placeholders
+ * @param {string} s HTML string
+ * @returns {string} String with placeholders
+ */
+
 
 var breakToPlaceholder = function breakToPlaceholder(s) {
   return s.replace(lineBreakRegex, '#br#');
 };
+/**
+ * Gets the current URL
+ * @param {boolean} useAbsolute Whether to return the absolute URL or not
+ * @returns {string} The current URL
+ */
+
 
 var getUrl = function getUrl(useAbsolute) {
   var url = '';
@@ -14701,6 +14806,12 @@ var getUrl = function getUrl(useAbsolute) {
 
   return url;
 };
+/**
+ * Converts a string/boolean into a boolean
+ * @param {string | boolean} val String or boolean to convert
+ * @returns {boolean} The result from the input
+ */
+
 
 var evaluate = function evaluate(val) {
   return val === 'false' || val === false ? false : true;
@@ -17684,8 +17795,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/**
+ * Returns the styles given options
+ * @param {{ fontFamily: string; nodeTextColor: string; textColor: string; titleColor: string; mainBkg: string; nodeBorder: string; arrowheadColor: string; lineColor: string; edgeLabelBackground: string; clusterBkg: string; clusterBorder: string; tertiaryColor: string; border2: string; }} options The options for the styles
+ * @returns {string} The resulting styles
+ */
 var getStyles = function getStyles(options) {
-  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n  .cluster-label text {\n    fill: ").concat(options.titleColor, ";\n  }\n  .cluster-label span {\n    color: ").concat(options.titleColor, ";\n  }\n\n  .label text,span {\n    fill: ").concat(options.nodeTextColor || options.textColor, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 2.0px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n      background-color: ").concat(options.edgeLabelBackground, ";\n      fill: ").concat(options.edgeLabelBackground, ";\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .cluster span {\n    color: ").concat(options.titleColor, ";\n  }\n  // .cluster div {\n  //   color: ").concat(options.titleColor, ";\n  // }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
+  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n  .cluster-label text {\n    fill: ").concat(options.titleColor, ";\n  }\n  .cluster-label span {\n    color: ").concat(options.titleColor, ";\n  }\n\n  .label text,span {\n    fill: ").concat(options.nodeTextColor || options.textColor, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 2.0px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n      background-color: ").concat(options.edgeLabelBackground, ";\n      fill: ").concat(options.edgeLabelBackground, ";\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .cluster span {\n    color: ").concat(options.titleColor, ";\n  }\n  /* .cluster div {\n    color: ").concat(options.titleColor, ";\n  } */\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getStyles);
@@ -17713,6 +17829,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "enableTopAxis": () => (/* binding */ enableTopAxis),
 /* harmony export */   "topAxisEnabled": () => (/* binding */ topAxisEnabled),
 /* harmony export */   "getDateFormat": () => (/* binding */ getDateFormat),
+/* harmony export */   "setIncludes": () => (/* binding */ setIncludes),
+/* harmony export */   "getIncludes": () => (/* binding */ getIncludes),
 /* harmony export */   "setExcludes": () => (/* binding */ setExcludes),
 /* harmony export */   "getExcludes": () => (/* binding */ getExcludes),
 /* harmony export */   "setTitle": () => (/* binding */ setTitle),
@@ -17720,6 +17838,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "addSection": () => (/* binding */ addSection),
 /* harmony export */   "getSections": () => (/* binding */ getSections),
 /* harmony export */   "getTasks": () => (/* binding */ getTasks),
+/* harmony export */   "isInvalidDate": () => (/* binding */ isInvalidDate),
 /* harmony export */   "addTask": () => (/* binding */ addTask),
 /* harmony export */   "findTaskById": () => (/* binding */ findTaskById),
 /* harmony export */   "addTaskOrg": () => (/* binding */ addTaskOrg),
@@ -17758,6 +17877,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 var dateFormat = '';
 var axisFormat = '';
 var todayMarker = '';
+var includes = [];
 var excludes = [];
 var title = '';
 var sections = [];
@@ -17785,6 +17905,7 @@ var clear = function clear() {
   dateFormat = '';
   axisFormat = '';
   todayMarker = '';
+  includes = [];
   excludes = [];
   inclusiveEndDates = false;
   topAxis = false;
@@ -17820,6 +17941,12 @@ var topAxisEnabled = function topAxisEnabled() {
 var getDateFormat = function getDateFormat() {
   return dateFormat;
 };
+var setIncludes = function setIncludes(txt) {
+  includes = txt.toLowerCase().split(/[\s,]+/);
+};
+var getIncludes = function getIncludes() {
+  return includes;
+};
 var setExcludes = function setExcludes(txt) {
   excludes = txt.toLowerCase().split(/[\s,]+/);
 };
@@ -17852,8 +17979,11 @@ var getTasks = function getTasks() {
   tasks = rawTasks;
   return tasks;
 };
+var isInvalidDate = function isInvalidDate(date, dateFormat, excludes, includes) {
+  if (includes.indexOf(date.format(dateFormat.trim())) >= 0) {
+    return false;
+  }
 
-var isInvalidDate = function isInvalidDate(date, dateFormat, excludes) {
   if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
     return true;
   }
@@ -17865,17 +17995,17 @@ var isInvalidDate = function isInvalidDate(date, dateFormat, excludes) {
   return excludes.indexOf(date.format(dateFormat.trim())) >= 0;
 };
 
-var checkTaskDates = function checkTaskDates(task, dateFormat, excludes) {
+var checkTaskDates = function checkTaskDates(task, dateFormat, excludes, includes) {
   if (!excludes.length || task.manualEndTime) return;
   var startTime = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(task.startTime, dateFormat, true);
   startTime.add(1, 'd');
   var endTime = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(task.endTime, dateFormat, true);
-  var renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes);
+  var renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes, includes);
   task.endTime = endTime.toDate();
   task.renderEndTime = renderEndTime;
 };
 
-var fixTaskDates = function fixTaskDates(startTime, endTime, dateFormat, excludes) {
+var fixTaskDates = function fixTaskDates(startTime, endTime, dateFormat, excludes, includes) {
   var invalid = false;
   var renderEndTime = null;
 
@@ -17884,7 +18014,7 @@ var fixTaskDates = function fixTaskDates(startTime, endTime, dateFormat, exclude
       renderEndTime = endTime.toDate();
     }
 
-    invalid = isInvalidDate(startTime, dateFormat, excludes);
+    invalid = isInvalidDate(startTime, dateFormat, excludes, includes);
 
     if (invalid) {
       endTime.add(1, 'd');
@@ -18054,7 +18184,7 @@ var compileData = function compileData(prevTask, dataStr) {
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
     task.manualEndTime = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(endTimeData, 'YYYY-MM-DD', true).isValid();
-    checkTaskDates(task, dateFormat, excludes);
+    checkTaskDates(task, dateFormat, excludes, includes);
   }
 
   return task;
@@ -18204,7 +18334,7 @@ var compileTasks = function compileTasks() {
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true;
         rawTasks[pos].manualEndTime = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(rawTasks[pos].raw.endTime.data, 'YYYY-MM-DD', true).isValid();
-        checkTaskDates(rawTasks[pos], dateFormat, excludes);
+        checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
 
@@ -18381,12 +18511,15 @@ var bindFunctions = function bindFunctions(element) {
   addTask: addTask,
   findTaskById: findTaskById,
   addTaskOrg: addTaskOrg,
+  setIncludes: setIncludes,
+  getIncludes: getIncludes,
   setExcludes: setExcludes,
   getExcludes: getExcludes,
   setClickEvent: setClickEvent,
   setLink: setLink,
   bindFunctions: bindFunctions,
-  durationToDate: durationToDate
+  durationToDate: durationToDate,
+  isInvalidDate: isInvalidDate
 });
 
 function getTaskTags(data, task, tags) {
@@ -18422,21 +18555,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "draw": () => (/* binding */ draw),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
-/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
-/* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
-/* harmony import */ var _ganttDb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ganttDb */ "./src/diagrams/gantt/ganttDb.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment-mini */ "moment-mini");
+/* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment_mini__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "d3");
+/* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
+/* harmony import */ var _parser_gantt__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _ganttDb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ganttDb */ "./src/diagrams/gantt/ganttDb.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 
 
 
 
 
 
-_parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy = _ganttDb__WEBPACK_IMPORTED_MODULE_2__["default"];
+
+_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy = _ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"];
 var setConf = function setConf() {// const keys = Object.keys(cnf);
   // keys.forEach(function(key) {
   //   conf[key] = cnf[key];
@@ -18444,9 +18580,9 @@ var setConf = function setConf() {// const keys = Object.keys(cnf);
 };
 var w;
 var draw = function draw(text, id) {
-  var conf = (0,_config__WEBPACK_IMPORTED_MODULE_3__.getConfig)().gantt;
-  _parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.clear();
-  _parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.parse(text);
+  var conf = (0,_config__WEBPACK_IMPORTED_MODULE_4__.getConfig)().gantt;
+  _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.clear();
+  _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.parse(text);
   var elem = document.getElementById(id);
   w = elem.parentElement.offsetWidth;
 
@@ -18458,16 +18594,16 @@ var draw = function draw(text, id) {
     w = conf.useWidth;
   }
 
-  var taskArray = _parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.getTasks(); // Set height based on number of tasks
+  var taskArray = _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getTasks(); // Set height based on number of tasks
 
   var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding; // Set viewBox
 
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-  var svg = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)("[id=\"".concat(id, "\"]")); // Set timescale
+  var svg = (0,d3__WEBPACK_IMPORTED_MODULE_1__.select)("[id=\"".concat(id, "\"]")); // Set timescale
 
-  var timeScale = (0,d3__WEBPACK_IMPORTED_MODULE_0__.scaleTime)().domain([(0,d3__WEBPACK_IMPORTED_MODULE_0__.min)(taskArray, function (d) {
+  var timeScale = (0,d3__WEBPACK_IMPORTED_MODULE_1__.scaleTime)().domain([(0,d3__WEBPACK_IMPORTED_MODULE_1__.min)(taskArray, function (d) {
     return d.startTime;
-  }), (0,d3__WEBPACK_IMPORTED_MODULE_0__.max)(taskArray, function (d) {
+  }), (0,d3__WEBPACK_IMPORTED_MODULE_1__.max)(taskArray, function (d) {
     return d.endTime;
   })]).rangeRound([0, w - conf.leftPadding - conf.rightPadding]);
   var categories = [];
@@ -18498,15 +18634,16 @@ var draw = function draw(text, id) {
 
   taskArray.sort(taskCompare);
   makeGant(taskArray, w, h);
-  (0,_utils__WEBPACK_IMPORTED_MODULE_4__.configureSvgSize)(svg, h, w, conf.useMaxWidth);
-  svg.append('text').text(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.getTitle()).attr('x', w / 2).attr('y', conf.titleTopMargin).attr('class', 'titleText');
+  (0,_utils__WEBPACK_IMPORTED_MODULE_5__.configureSvgSize)(svg, h, w, conf.useMaxWidth);
+  svg.append('text').text(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getTitle()).attr('x', w / 2).attr('y', conf.titleTopMargin).attr('class', 'titleText');
 
   function makeGant(tasks, pageWidth, pageHeight) {
     var barHeight = conf.barHeight;
     var gap = barHeight + conf.barGap;
     var topPadding = conf.topPadding;
     var leftPadding = conf.leftPadding;
-    var colorScale = (0,d3__WEBPACK_IMPORTED_MODULE_0__.scaleLinear)().domain([0, categories.length]).range(['#00B9FA', '#F95002']).interpolate(d3__WEBPACK_IMPORTED_MODULE_0__.interpolateHcl);
+    var colorScale = (0,d3__WEBPACK_IMPORTED_MODULE_1__.scaleLinear)().domain([0, categories.length]).range(['#00B9FA', '#F95002']).interpolate(d3__WEBPACK_IMPORTED_MODULE_1__.interpolateHcl);
+    drawExcludeDays(gap, topPadding, leftPadding, pageWidth, pageHeight, tasks, _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getExcludes(), _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getIncludes());
     makeGrid(leftPadding, topPadding, pageWidth, pageHeight);
     drawRects(tasks, gap, topPadding, leftPadding, barHeight, colorScale, pageWidth, pageHeight);
     vertLabels(gap, topPadding, leftPadding, barHeight, colorScale);
@@ -18696,12 +18833,60 @@ var draw = function draw(text, id) {
     });
   }
 
+  function drawExcludeDays(theGap, theTopPad, theSidePad, w, h, tasks, excludes, includes) {
+    var minTime = tasks.reduce(function (min, _ref) {
+      var startTime = _ref.startTime;
+      return min ? Math.min(min, startTime) : startTime;
+    }, 0);
+    var maxTime = tasks.reduce(function (max, _ref2) {
+      var endTime = _ref2.endTime;
+      return max ? Math.max(max, endTime) : endTime;
+    }, 0);
+    var dateFormat = _parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getDateFormat();
+    if (!minTime || !maxTime) return;
+    var excludeRanges = [];
+    var range = null;
+    var d = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()(minTime);
+
+    while (d.valueOf() <= maxTime) {
+      if (_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.isInvalidDate(d, dateFormat, excludes, includes)) {
+        if (!range) {
+          range = {
+            start: d.clone(),
+            end: d.clone()
+          };
+        } else {
+          range.end = d.clone();
+        }
+      } else {
+        if (range) {
+          excludeRanges.push(range);
+          range = null;
+        }
+      }
+
+      d.add(1, 'd');
+    }
+
+    var rectangles = svg.append('g').selectAll('rect').data(excludeRanges).enter();
+    rectangles.append('rect').attr('id', function (d) {
+      return 'exclude-' + d.start.format('YYYY-MM-DD');
+    }).attr('x', function (d) {
+      return timeScale(d.start) + theSidePad;
+    }).attr('y', conf.gridLineStartPadding).attr('width', function (d) {
+      var renderEnd = d.end.clone().add(1, 'day');
+      return timeScale(renderEnd) - timeScale(d.start);
+    }).attr('height', h - theTopPad - conf.gridLineStartPadding).attr('transform-origin', function (d, i) {
+      return (timeScale(d.start) + theSidePad + 0.5 * (timeScale(d.end) - timeScale(d.start))).toString() + 'px ' + (i * theGap + 0.5 * h).toString() + 'px';
+    }).attr('class', 'exclude-range');
+  }
+
   function makeGrid(theSidePad, theTopPad, w, h) {
-    var bottomXAxis = (0,d3__WEBPACK_IMPORTED_MODULE_0__.axisBottom)(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat((0,d3__WEBPACK_IMPORTED_MODULE_0__.timeFormat)(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+    var bottomXAxis = (0,d3__WEBPACK_IMPORTED_MODULE_1__.axisBottom)(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat((0,d3__WEBPACK_IMPORTED_MODULE_1__.timeFormat)(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
     svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')').call(bottomXAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10).attr('dy', '1em');
 
-    if (_ganttDb__WEBPACK_IMPORTED_MODULE_2__["default"].topAxisEnabled() || conf.topAxis) {
-      var topXAxis = (0,d3__WEBPACK_IMPORTED_MODULE_0__.axisTop)(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat((0,d3__WEBPACK_IMPORTED_MODULE_0__.timeFormat)(_parser_gantt__WEBPACK_IMPORTED_MODULE_1__.parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+    if (_ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"].topAxisEnabled() || conf.topAxis) {
+      var topXAxis = (0,d3__WEBPACK_IMPORTED_MODULE_1__.axisTop)(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat((0,d3__WEBPACK_IMPORTED_MODULE_1__.timeFormat)(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
       svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + theTopPad + ')').call(topXAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10); // .attr('dy', '1em');
     }
   }
@@ -18716,7 +18901,7 @@ var draw = function draw(text, id) {
 
     svg.append('g') // without doing this, impossible to put grid lines behind text
     .selectAll('text').data(numOccurances).enter().append(function (d) {
-      var rows = d[0].split(_common_common__WEBPACK_IMPORTED_MODULE_5__["default"].lineBreakRegex);
+      var rows = d[0].split(_common_common__WEBPACK_IMPORTED_MODULE_6__["default"].lineBreakRegex);
       var dy = -(rows.length - 1) / 2;
       var svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       svgLabel.setAttribute('dy', dy + 'em');
@@ -18752,7 +18937,7 @@ var draw = function draw(text, id) {
   }
 
   function drawToday(theSidePad, theTopPad, w, h) {
-    var todayMarker = _ganttDb__WEBPACK_IMPORTED_MODULE_2__["default"].getTodayMarker();
+    var todayMarker = _ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"].getTodayMarker();
 
     if (todayMarker === 'off') {
       return;
@@ -18774,7 +18959,7 @@ var draw = function draw(text, id) {
     var result = [];
 
     for (var _i6 = 0, l = arr.length; _i6 < l; ++_i6) {
-      if (!hash.hasOwnProperty(arr[_i6])) {
+      if (!Object.prototype.hasOwnProperty.call(hash, arr[_i6])) {
         // eslint-disable-line
         // it works with objects! in FF, at least
         hash[arr[_i6]] = true;
@@ -18822,7 +19007,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 var getStyles = function getStyles(options) {
-  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ".concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    // text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  // .taskText:not([font-size]) {\n  //   font-size: ").concat(options.ganttFontSize, ";\n  // }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    // font-size: ").concat(options.ganttFontSize, ";\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n");
+  return "\n  .mermaid-main-font {\n    font-family: \"trebuchet ms\", verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n  .exclude-range {\n    fill: ".concat(options.excludeBkgColor, ";\n  }\n\n  .section {\n    stroke: none;\n    opacity: 0.2;\n  }\n\n  .section0 {\n    fill: ").concat(options.sectionBkgColor, ";\n  }\n\n  .section2 {\n    fill: ").concat(options.sectionBkgColor2, ";\n  }\n\n  .section1,\n  .section3 {\n    fill: ").concat(options.altSectionBkgColor, ";\n    opacity: 0.2;\n  }\n\n  .sectionTitle0 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle1 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle2 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle3 {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .sectionTitle {\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    // text-height: 14px;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n\n  /* Grid and axis */\n\n  .grid .tick {\n    stroke: ").concat(options.gridColor, ";\n    opacity: 0.8;\n    shape-rendering: crispEdges;\n    text {\n      font-family: ").concat(options.fontFamily, ";\n      fill: ").concat(options.textColor, ";\n    }\n  }\n\n  .grid path {\n    stroke-width: 0;\n  }\n\n\n  /* Today line */\n\n  .today {\n    fill: none;\n    stroke: ").concat(options.todayLineColor, ";\n    stroke-width: 2px;\n  }\n\n\n  /* Task styling */\n\n  /* Default task */\n\n  .task {\n    stroke-width: 2;\n  }\n\n  .taskText {\n    text-anchor: middle;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n\n  // .taskText:not([font-size]) {\n  //   font-size: ").concat(options.ganttFontSize, ";\n  // }\n\n  .taskTextOutsideRight {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: start;\n    // font-size: ").concat(options.ganttFontSize, ";\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n\n  }\n\n  .taskTextOutsideLeft {\n    fill: ").concat(options.taskTextDarkColor, ";\n    text-anchor: end;\n    // font-size: ").concat(options.ganttFontSize, ";\n  }\n\n  /* Special case clickable */\n  .task.clickable {\n    cursor: pointer;\n  }\n  .taskText.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideLeft.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  .taskTextOutsideRight.clickable {\n    cursor: pointer;\n    fill: ").concat(options.taskTextClickableColor, " !important;\n    font-weight: bold;\n  }\n\n  /* Specific task settings for the sections*/\n\n  .taskText0,\n  .taskText1,\n  .taskText2,\n  .taskText3 {\n    fill: ").concat(options.taskTextColor, ";\n  }\n\n  .task0,\n  .task1,\n  .task2,\n  .task3 {\n    fill: ").concat(options.taskBkgColor, ";\n    stroke: ").concat(options.taskBorderColor, ";\n  }\n\n  .taskTextOutside0,\n  .taskTextOutside2\n  {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n  .taskTextOutside1,\n  .taskTextOutside3 {\n    fill: ").concat(options.taskTextOutsideColor, ";\n  }\n\n\n  /* Active task */\n\n  .active0,\n  .active1,\n  .active2,\n  .active3 {\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke: ").concat(options.activeTaskBorderColor, ";\n  }\n\n  .activeText0,\n  .activeText1,\n  .activeText2,\n  .activeText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Completed task */\n\n  .done0,\n  .done1,\n  .done2,\n  .done3 {\n    stroke: ").concat(options.doneTaskBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneText0,\n  .doneText1,\n  .doneText2,\n  .doneText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n\n  /* Tasks on the critical line */\n\n  .crit0,\n  .crit1,\n  .crit2,\n  .crit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.critBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .activeCrit0,\n  .activeCrit1,\n  .activeCrit2,\n  .activeCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.activeTaskBkgColor, ";\n    stroke-width: 2;\n  }\n\n  .doneCrit0,\n  .doneCrit1,\n  .doneCrit2,\n  .doneCrit3 {\n    stroke: ").concat(options.critBorderColor, ";\n    fill: ").concat(options.doneTaskBkgColor, ";\n    stroke-width: 2;\n    cursor: pointer;\n    shape-rendering: crispEdges;\n  }\n\n  .milestone {\n    transform: rotate(45deg) scale(0.8,0.8);\n  }\n\n  .milestoneText {\n    font-style: italic;\n  }\n  .doneCritText0,\n  .doneCritText1,\n  .doneCritText2,\n  .doneCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .activeCritText0,\n  .activeCritText1,\n  .activeCritText2,\n  .activeCritText3 {\n    fill: ").concat(options.taskTextDarkColor, " !important;\n  }\n\n  .titleText {\n    text-anchor: middle;\n    font-size: 18px;\n    fill: ").concat(options.textColor, "    ;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n");
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getStyles);
@@ -20362,8 +20547,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+
 
 
 
@@ -20588,7 +20775,10 @@ var addLinks = function addLinks(actorId, text) {
   var actor = getActor(actorId); // JSON.parse the text
 
   try {
-    var links = JSON.parse(text.text); // add the deserialized text to the actor's links field.
+    var sanitizedText = (0,_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)(text.text, _config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    var links = JSON.parse(sanitizedText); // add the deserialized text to the actor's links field.
 
     insertLinks(actor, links);
   } catch (e) {
@@ -20601,9 +20791,12 @@ var addALink = function addALink(actorId, text) {
 
   try {
     var links = {};
-    var sep = text.text.indexOf('@');
-    var label = text.text.slice(0, sep - 1).trim();
-    var link = text.text.slice(sep + 1).trim();
+    var sanitizedText = (0,_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)(text.text, _config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
+    var sep = sanitizedText.indexOf('@');
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    var label = sanitizedText.slice(0, sep - 1).trim();
+    var link = sanitizedText.slice(sep + 1).trim();
     links[label] = link; // add the deserialized text to the actor's links field.
 
     insertLinks(actor, links);
@@ -20627,7 +20820,8 @@ var addProperties = function addProperties(actorId, text) {
   var actor = getActor(actorId); // JSON.parse the text
 
   try {
-    var properties = JSON.parse(text.text); // add the deserialized text to the actor's property field.
+    var sanitizedText = (0,_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)(text.text, _config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
+    var properties = JSON.parse(sanitizedText); // add the deserialized text to the actor's property field.
 
     insertProperties(actor, properties);
   } catch (e) {
@@ -20796,7 +20990,7 @@ var apply = function apply(param) {
   getTitle: getTitle,
   parseDirective: parseDirective,
   getConfig: function getConfig() {
-    return _config__WEBPACK_IMPORTED_MODULE_2__.getConfig().sequence;
+    return _config__WEBPACK_IMPORTED_MODULE_3__.getConfig().sequence;
   },
   getTitleWrapped: getTitleWrapped,
   clear: clear,
@@ -21930,7 +22124,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getNoteRect": () => (/* binding */ getNoteRect),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _interactionDb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../interactionDb */ "./src/interactionDb.js");
+
 
 var drawRect = function drawRect(elem, rectData) {
   var rectElem = elem.append('rect');
@@ -21954,6 +22150,18 @@ var sanitizeUrl = function sanitizeUrl(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/javascript:/g, '');
 };
 
+var addPopupInteraction = function addPopupInteraction(id, actorCnt) {
+  (0,_interactionDb__WEBPACK_IMPORTED_MODULE_0__.addFunction)(function () {
+    var arr = document.querySelectorAll(id);
+    arr[0].addEventListener('mouseover', function () {
+      popupMenuUpFunc('actor' + actorCnt + '_popup');
+    });
+    arr[0].addEventListener('mouseout', function () {
+      popupMenuDownFunc('actor' + actorCnt + '_popup');
+    });
+  });
+};
+
 var drawPopup = function drawPopup(elem, actor, minMenuWidth, textAttrs, forceMenus) {
   if (actor.links === undefined || actor.links === null || Object.keys(actor.links).length === 0) {
     return {
@@ -21975,8 +22183,7 @@ var drawPopup = function drawPopup(elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('id', 'actor' + actorCnt + '_popup');
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
-  g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
-  g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
+  addPopupInteraction('#actor' + actorCnt + '_popup', actorCnt);
   var actorClass = '';
 
   if (typeof rectData.class !== 'undefined') {
@@ -22038,10 +22245,27 @@ var popupMenu = function popupMenu(popid) {
 var popdownMenu = function popdownMenu(popid) {
   return "var pu = document.getElementById('" + popid + "'); if (pu != null) { pu.style.display = 'none'; }";
 };
+
+var popupMenuUpFunc = function popupMenuUpFunc(popupId) {
+  var pu = document.getElementById(popupId);
+
+  if (pu != null) {
+    pu.style.display = 'block';
+  }
+};
+
+var popupMenuDownFunc = function popupMenuDownFunc(popupId) {
+  var pu = document.getElementById(popupId);
+
+  if (pu != null) {
+    pu.style.display = 'none';
+  }
+};
+
 var drawText = function drawText(elem, textData) {
   var prevTextHeight = 0,
       textHeight = 0;
-  var lines = textData.text.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
+  var lines = textData.text.split(_common_common__WEBPACK_IMPORTED_MODULE_1__["default"].lineBreakRegex);
   var textElems = [];
   var dy = 0;
 
@@ -22205,8 +22429,8 @@ var drawActorTypeParticipant = function drawActorTypeParticipant(elem, actor, co
     actor.actorCnt = actorCnt;
 
     if (actor.links != null) {
-      g.attr('onmouseover', popupMenu('actor' + actorCnt + '_popup'));
-      g.attr('onmouseout', popdownMenu('actor' + actorCnt + '_popup'));
+      g.attr('id', 'root-' + actorCnt);
+      addPopupInteraction('#root-' + actorCnt, actorCnt);
     }
   }
 
@@ -22516,7 +22740,7 @@ var _drawTextCandidateFunc = function () {
     var actorFontSize = conf.actorFontSize,
         actorFontFamily = conf.actorFontFamily,
         actorFontWeight = conf.actorFontWeight;
-    var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
+    var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_1__["default"].lineBreakRegex);
 
     for (var i = 0; i < lines.length; i++) {
       var dy = i * actorFontSize - actorFontSize * (lines.length - 1) / 2;
@@ -22563,7 +22787,7 @@ var _drawMenuItemTextCandidateFunc = function () {
     var actorFontSize = conf.actorFontSize,
         actorFontFamily = conf.actorFontFamily,
         actorFontWeight = conf.actorFontWeight;
-    var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
+    var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_1__["default"].lineBreakRegex);
 
     for (var i = 0; i < lines.length; i++) {
       var dy = i * actorFontSize - actorFontSize * (lines.length - 1) / 2;
@@ -24829,6 +25053,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var conf = {};
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ * @param {Object} cnf Config to merge
+ */
+
 var setConf = function setConf(cnf) {
   var keys = Object.keys(cnf);
   keys.forEach(function (key) {
@@ -24837,8 +25066,8 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ * @param id The text for the error
+ * @param ver The version
  */
 
 var draw = function draw(id, ver) {
@@ -24871,6 +25100,31 @@ var draw = function draw(id, ver) {
 
 /***/ }),
 
+/***/ "./src/interactionDb.js":
+/*!******************************!*\
+  !*** ./src/interactionDb.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "addFunction": () => (/* binding */ addFunction),
+/* harmony export */   "attachFunctions": () => (/* binding */ attachFunctions)
+/* harmony export */ });
+var interactionFunctions = [];
+var addFunction = function addFunction(func) {
+  interactionFunctions.push(func);
+};
+var attachFunctions = function attachFunctions() {
+  interactionFunctions.forEach(function (f) {
+    f();
+  });
+  interactionFunctions = [];
+};
+
+/***/ }),
+
 /***/ "./src/logger.js":
 /*!***********************!*\
   !*** ./src/logger.js ***!
@@ -24887,6 +25141,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment-mini */ "moment-mini");
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment_mini__WEBPACK_IMPORTED_MODULE_0__);
 
+/**
+ * @typedef {"debug" | "info" | "warn" | "error" | "fatal"} LogLevel A log level
+ */
+
+/**
+ * @type {Object<LogLevel, number>}
+ */
+
 var LEVELS = {
   debug: 1,
   info: 2,
@@ -24901,6 +25163,11 @@ var log = {
   error: function error() {},
   fatal: function fatal() {}
 };
+/**
+ * Sets a log level
+ * @param {LogLevel} [level="fatal"] The level to set the logging to
+ */
+
 var setLogLevel = function setLogLevel() {
   var level = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'fatal';
 
@@ -24945,6 +25212,11 @@ var setLogLevel = function setLogLevel() {
     log.debug = console.debug ? console.debug.bind(console, format('DEBUG'), 'color: lightgreen') : console.log.bind(console, '\x1b[32m', format('DEBUG'));
   }
 };
+/**
+ * Returns a format with the timestamp and the log level
+ * @param {LogLevel} level The level for the log format
+ * @returns {string} The format with the timestamp and log level
+ */
 
 var format = function format(level) {
   var time = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()().format('ss.SSS');
@@ -25232,9 +25504,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
 /* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23__);
 /* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
+/* harmony import */ var _interactionDb__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./interactionDb */ "./src/interactionDb.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 /* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
-/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -25253,6 +25526,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  *
  * @name mermaidAPI
  */
+
 
 
 
@@ -25721,6 +25995,7 @@ var render = function render(id, _txt, cb, container) {
     _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('CB = undefined!');
   }
 
+  (0,_interactionDb__WEBPACK_IMPORTED_MODULE_44__.attachFunctions)();
   var node = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)('#d' + id).node();
 
   if (node !== null && typeof node.remove === 'function') {
@@ -25858,11 +26133,11 @@ function initialize(options) {
 
   _config__WEBPACK_IMPORTED_MODULE_2__.saveConfigFromInitilize(options);
 
-  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_44__["default"][options.theme]) {
+  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_45__["default"][options.theme]) {
     // Todo merge with user options
-    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_44__["default"][options.theme].getThemeVariables(options.themeVariables);
+    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_45__["default"][options.theme].getThemeVariables(options.themeVariables);
   } else {
-    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_44__["default"]["default"].getThemeVariables(options.themeVariables);
+    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_45__["default"]["default"].getThemeVariables(options.themeVariables);
   }
 
   var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_2__.setSiteConfig(options) : _config__WEBPACK_IMPORTED_MODULE_2__.getSiteConfig();
@@ -26179,6 +26454,7 @@ var Theme = /*#__PURE__*/function () {
       this.altSectionBkgColor = this.altSectionBkgColor || 'white';
       this.sectionBkgColor = this.sectionBkgColor || this.secondaryColor;
       this.sectionBkgColor2 = this.sectionBkgColor2 || this.primaryColor;
+      this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
       this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
       this.taskBkgColor = this.taskBkgColor || this.primaryColor;
       this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;
@@ -26680,6 +26956,7 @@ var Theme = /*#__PURE__*/function () {
     this.sectionBkgColor = 'calculated';
     this.altSectionBkgColor = 'calculated';
     this.sectionBkgColor2 = 'calculated';
+    this.excludeBkgColor = '#eeeeee';
     this.taskBorderColor = 'calculated';
     this.taskBkgColor = 'calculated';
     this.taskTextLightColor = 'calculated';
@@ -26969,6 +27246,7 @@ var Theme = /*#__PURE__*/function () {
     this.sectionBkgColor = '#6eaa49';
     this.altSectionBkgColor = 'white';
     this.sectionBkgColor2 = '#6eaa49';
+    this.excludeBkgColor = '#eeeeee';
     this.taskBorderColor = 'calculated';
     this.taskBkgColor = '#487e3a';
     this.taskTextLightColor = 'white';
@@ -27269,6 +27547,7 @@ var Theme = /*#__PURE__*/function () {
     this.sectionBkgColor = 'calculated';
     this.altSectionBkgColor = 'white';
     this.sectionBkgColor2 = 'calculated';
+    this.excludeBkgColor = '#eeeeee';
     this.taskBorderColor = 'calculated';
     this.taskBkgColor = 'calculated';
     this.taskTextLightColor = 'white';
@@ -27686,6 +27965,7 @@ var detectDirective = function detectDirective(text) {
  * ```
  *
  * @param {string} text The text defining the graph
+ * @param {{ class: { defaultRenderer: string } | undefined; state: { defaultRenderer: string } | undefined; flowchart: { defaultRenderer: string } | undefined; }} [cnf]
  * @returns {string} A graph definition key
  */
 
@@ -27749,6 +28029,12 @@ var detectType = function detectType(text, cnf) {
   if (cnf && cnf.flowchart && cnf.flowchart.defaultRenderer === 'dagre-wrapper') return 'flowchart-v2';
   return 'flowchart';
 };
+/**
+ * Caches results of functions based on input
+ * @param {Function} fn Function to run
+ * @param {Function} resolver Function that resolves to an ID given arguments the `fn` takes
+ * @returns {Function} An optimized caching function
+ */
 
 var memoize = function memoize(fn, resolver) {
   var cache = {};
@@ -27784,6 +28070,13 @@ var isSubstringInArray = function isSubstringInArray(str, arr) {
 
   return -1;
 };
+/**
+ * Returns a d3 curve given a curve name
+ * @param {string | undefined} interpolate The interpolation name
+ * @param {*} defaultCurve The default curve to return
+ * @returns {import('d3-shape').CurveFactory} The curve factory to use
+ */
+
 var interpolateToCurve = function interpolateToCurve(interpolate, defaultCurve) {
   if (!interpolate) {
     return defaultCurve;
@@ -27792,6 +28085,13 @@ var interpolateToCurve = function interpolateToCurve(interpolate, defaultCurve) 
   var curveName = "curve".concat(interpolate.charAt(0).toUpperCase() + interpolate.slice(1));
   return d3CurveTypes[curveName] || defaultCurve;
 };
+/**
+ * Formats a URL string
+ * @param {string} linkStr String of the URL
+ * @param {{ securityLevel: string; }} config Configuration passed to MermaidJS
+ * @returns {string | undefined} The formatted URL
+ */
+
 var formatUrl = function formatUrl(linkStr, config) {
   var url = linkStr.trim();
 
@@ -27803,6 +28103,12 @@ var formatUrl = function formatUrl(linkStr, config) {
     return url;
   }
 };
+/**
+ * Runs a function
+ * @param {string} functionName A dot seperated path to the function relative to the `window`
+ * @param  {...any} params Parameters to pass to the function
+ */
+
 var runFunc = function runFunc(functionName) {
   var _obj;
 
@@ -27822,10 +28128,28 @@ var runFunc = function runFunc(functionName) {
 
   (_obj = obj)[fnName].apply(_obj, params);
 };
+/**
+ * @typedef {Object} Point A (x, y) point
+ * @property {number} x The x value
+ * @property {number} y The y value
+ */
+
+/**
+ * Finds the distance between two points using the Distance Formula
+ * @param {Point} p1 The first point
+ * @param {Point} p2 The second point
+ * @returns {number} The distance
+ */
 
 var distance = function distance(p1, p2) {
   return p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
 };
+/**
+ * @todo Give this a description
+ * @param {Array<Point>} points List of points
+ * @returns {Point}
+ */
+
 
 var traverseEdge = function traverseEdge(points) {
   var prevPoint;
@@ -27867,6 +28191,12 @@ var traverseEdge = function traverseEdge(points) {
   });
   return center;
 };
+/**
+ * Alias for `traverseEdge`
+ * @param {Point[]} points List of points
+ * @returns {Point} Return result of `transverseEdge`
+ */
+
 
 var calcLabelPosition = function calcLabelPosition(points) {
   return traverseEdge(points);
@@ -28013,6 +28343,12 @@ var calcTerminalLabelPosition = function calcTerminalLabelPosition(terminalMarke
 
   return cardinalityPosition;
 };
+/**
+ * Gets styles from an array of declarations
+ * @param {Array<string>} arr Declarations
+ * @returns {{ style: string; labelStyle: string; }} The styles grouped as strings
+ */
+
 
 var getStylesFromArray = function getStylesFromArray(arr) {
   var style = '';
@@ -28075,9 +28411,9 @@ var random = function random(options) {
  * <p>
  * If src is a destructured array of objects and dst is not an array, assignWithDepth will apply each element of src to dst
  * in order.
- * @param dst:any - the destination of the merge
- * @param src:any - the source object(s) to merge into destination
- * @param config:{ depth: number, clobber: boolean } - depth: depth to traverse within src and dst for merging -
+ * @param {any} dst - the destination of the merge
+ * @param {any} src - the source object(s) to merge into destination
+ * @param {{ depth: number, clobber: boolean }} [config={ depth: 2, clobber: false }] - depth: depth to traverse within src and dst for merging -
  * clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
  * @returns {*}
  */
@@ -28146,6 +28482,13 @@ var getTextObj = function getTextObj() {
     valign: undefined
   };
 };
+/**
+ * Adds text to an element
+ * @param {SVGElement} elem Element to add text to
+ * @param {{ text: string; x: number; y: number; anchor: "start" | "middle" | "end"; fontFamily: string; fontSize: string | number; fontWeight: string | number; fill: string; class: string | undefined; textMargin: number; }} textData
+ * @returns {SVGTextElement} Text element with given styling and content
+ */
+
 var drawSimpleText = function drawSimpleText(elem, textData) {
   // Remove and ignore br:s
   var nText = textData.text.replace(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex, ' ');
@@ -28374,6 +28717,11 @@ var calculateTextDimensions = memoize(function (text, config) {
 }, function (text, config) {
   return "".concat(text, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily);
 });
+/**
+ * Applys d3 attributes
+ * @param {*} d3Elem d3 Element to apply the attributes onto
+ * @param {Array<[string, string]>} attrs Object.keys equivalent format of key to value mapping of attributes
+ */
 
 var d3Attrs = function d3Attrs(d3Elem, attrs) {
   var _iterator2 = _createForOfIteratorHelper(attrs),
@@ -28390,6 +28738,14 @@ var d3Attrs = function d3Attrs(d3Elem, attrs) {
     _iterator2.f();
   }
 };
+/**
+ * Gives attributes for an SVG's size given arguments
+ * @param {number} height The height of the SVG
+ * @param {number} width The width of the SVG
+ * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
+ * @returns {Map<'height' | 'width' | 'style', string>} Attributes for the SVG
+ */
+
 
 var calculateSvgSizeAttrs = function calculateSvgSizeAttrs(height, width, useMaxWidth) {
   var attrs = new Map();
@@ -28404,6 +28760,14 @@ var calculateSvgSizeAttrs = function calculateSvgSizeAttrs(height, width, useMax
 
   return attrs;
 };
+/**
+ * Applies attributes from `calculateSvgSizeAttrs`
+ * @param {SVGSVGElement} svgElem The SVG Element to configure
+ * @param {number} height The height of the SVG
+ * @param {number} width The width of the SVG
+ * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
+ */
+
 var configureSvgSize = function configureSvgSize(svgElem, height, width, useMaxWidth) {
   var attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
   d3Attrs(svgElem, attrs);
@@ -28426,9 +28790,14 @@ var initIdGeneratior = /*#__PURE__*/function () {
   }]);
 
   return iterator;
-}(); // Source https://github.com/shrpne/entity-decode/blob/master/browser.js
-
+}();
 var decoder;
+/**
+ * Decodes HTML, source: {@link https://github.com/shrpne/entity-decode/blob/v2.0.1/browser.js}
+ * @param {string} html HTML as a string
+ * @returns Unescaped HTML
+ */
+
 var entityDecode = function entityDecode(html) {
   decoder = decoder || document.createElement('div'); // Escape HTML before decoding for HTML Entities
 
@@ -28437,6 +28806,11 @@ var entityDecode = function entityDecode(html) {
   decoder.innerHTML = html;
   return unescape(decoder.textContent);
 };
+/**
+ * Sanitizes directive objects
+ * @param {Object} args Directive's JSON
+ */
+
 var directiveSanitizer = function directiveSanitizer(args) {
   _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('directiveSanitizer called with', args);
 
@@ -29275,7 +29649,7 @@ module.exports = require("stylis");
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"mermaid","version":"8.13.2","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --progress --color","build:production":"yarn build:development --mode production --config webpack.config.prod.babel.js","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint src","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"percy exec -- cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config webpack.config.e2e.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"yarn build"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^3.1.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.3","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@percy/cli":"^1.0.0-beta.58","@percy/cypress":"^3.1.0","@percy/migrate":"^0.11.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^6.2.2","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"8.6.0","documentation":"13.2.0","eslint":"^8.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"],"husky":{"hooks":{"pre-push":"yarn test"}}}');
+module.exports = JSON.parse('{"name":"mermaid","version":"8.13.3","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --progress --color","build:production":"yarn build:development --mode production --config webpack.config.prod.babel.js","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint src","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"percy exec -- cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config webpack.config.e2e.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"yarn build"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^3.1.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.3","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@percy/cli":"^1.0.0-beta.58","@percy/cypress":"^3.1.0","@percy/migrate":"^0.11.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^6.2.2","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"8.7.0","documentation":"13.2.0","eslint":"^8.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"],"husky":{"hooks":{"pre-push":"yarn test"}}}');
 
 /***/ })
 

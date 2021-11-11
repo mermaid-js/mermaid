@@ -1,5 +1,10 @@
 import DOMPurify from 'dompurify';
 
+/**
+ * Gets the number of lines in a string
+ * @param {string | undefined} s The string to check the lines for
+ * @returns {number} The number of lines in that string
+ */
 export const getRows = (s) => {
   if (!s) return 1;
   let str = breakToPlaceholder(s);
@@ -7,6 +12,11 @@ export const getRows = (s) => {
   return str.split('#br#');
 };
 
+/**
+ * Removes script tags from a text
+ * @param {string} txt The text to sanitize
+ * @returns {string} The safer text
+ */
 export const removeScript = (txt) => {
   var rs = '';
   var idx = 0;
@@ -72,20 +82,47 @@ export const sanitizeText = (text, config) => {
 
 export const lineBreakRegex = /<br\s*\/?>/gi;
 
+/**
+ * Whether or not a text has any linebreaks
+ * @param {string} text The text to test
+ * @returns {boolean} Whether or not the text has breaks
+ */
 export const hasBreaks = (text) => {
-  return /<br\s*[/]?>/gi.test(text);
+  return lineBreakRegex.test(text);
 };
 
+/**
+ * Splits on <br> tags
+ * @param {string} text Text to split
+ * @returns {Array<string>} List of lines as strings
+ */
 export const splitBreaks = (text) => {
-  return text.split(/<br\s*[/]?>/gi);
+  return text.split(lineBreakRegex);
 };
+
+/**
+ * Converts placeholders to linebreaks in HTML
+ * @param {string} s HTML with placeholders
+ * @returns {string} HTML with breaks instead of placeholders
+ */
 const placeholderToBreak = (s) => {
   return s.replace(/#br#/g, '<br/>');
 };
+
+/**
+ * Opposite of `placeholderToBreak`, converts breaks to placeholders
+ * @param {string} s HTML string
+ * @returns {string} String with placeholders
+ */
 const breakToPlaceholder = (s) => {
   return s.replace(lineBreakRegex, '#br#');
 };
 
+/**
+ * Gets the current URL
+ * @param {boolean} useAbsolute Whether to return the absolute URL or not
+ * @returns {string} The current URL
+ */
 const getUrl = (useAbsolute) => {
   let url = '';
   if (useAbsolute) {
@@ -102,6 +139,11 @@ const getUrl = (useAbsolute) => {
   return url;
 };
 
+/**
+ * Converts a string/boolean into a boolean
+ * @param {string | boolean} val String or boolean to convert
+ * @returns {boolean} The result from the input
+ */
 export const evaluate = (val) => (val === 'false' || val === false ? false : true);
 
 export default {
