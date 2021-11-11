@@ -1,5 +1,12 @@
 import moment from 'moment-mini';
 
+/**
+ * @typedef {"debug" | "info" | "warn" | "error" | "fatal"} LogLevel A log level
+ */
+
+/**
+ * @type {Object<LogLevel, number>}
+ */
 export const LEVELS = {
   debug: 1,
   info: 2,
@@ -16,6 +23,10 @@ export const log = {
   fatal: () => {},
 };
 
+/**
+ * Sets a log level
+ * @param {LogLevel} [level="fatal"] The level to set the logging to
+ */
 export const setLogLevel = function (level = 'fatal') {
   if (isNaN(level)) {
     level = level.toLowerCase();
@@ -56,6 +67,11 @@ export const setLogLevel = function (level = 'fatal') {
   }
 };
 
+/**
+ * Returns a format with the timestamp and the log level
+ * @param {LogLevel} level The level for the log format
+ * @returns {string} The format with the timestamp and log level
+ */
 const format = (level) => {
   const time = moment().format('ss.SSS');
   return `%c${time} : ${level} : `;

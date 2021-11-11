@@ -35,13 +35,13 @@ The documentation is written in Markdown, for more information about Markdown [s
 
 If you want to preview the documentation site on your machine, you need to install `docsify-cli`:
 
-```
+```sh
 $ npm i docsify-cli -g
-````
+```
 
 If you are more familiar with Yarn, you can use the following command:
 
-```
+```sh
 $ yarn global add docsify-cli
 ```
 
@@ -50,7 +50,7 @@ If the installation is successful, the command `docsify` will be available in yo
 
 You can now run the following command to serve the documentation site:
 
-```
+```sh
 $ docsify serve docs
 ```
 
@@ -85,7 +85,7 @@ The rendering tests are very straightforward to create. There is a function imgS
 When running in ci it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag for review it if it differs.
 
 This is what a rendering test looks like:
-```
+```javascript
   it('should render forks and joins', () => {
     imgSnapshotTest(
       `

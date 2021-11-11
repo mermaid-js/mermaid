@@ -144,6 +144,11 @@ export const drawEdge = function (elem, path, relation, conf) {
   edgeCount++;
 };
 
+/**
+ * Renders a class diagram
+ * @param {SVGSVGElement} elem The element to draw it into
+ * @todo Add more information in the JSDOC here
+ */
 export const drawClass = function (elem, classDef, conf) {
   log.info('Rendering class ' + classDef);
 
@@ -382,6 +387,13 @@ const buildLegacyDisplay = function (text) {
   };
 };
 
+/**
+ * Adds a <tspan> for a member in a diagram
+ * @param {SVGElement} textEl The element to append to
+ * @param {string} txt The member
+ * @param {boolean} isFirst
+ * @param {{ padding: string; textHeight: string; }} conf The configuration for the member
+ */
 const addTspan = function (textEl, txt, isFirst, conf) {
   let member = parseMember(txt);
 
@@ -396,6 +408,14 @@ const addTspan = function (textEl, txt, isFirst, conf) {
   }
 };
 
+/**
+ * Makes generics in typescript syntax
+ * @example <caption>Array of array of strings in typescript syntax</caption>
+ * // returns "Array<Array<string>>"
+ * parseGenericTypes("Array~Array~string~~");
+ * @param {string} text The text to convert
+ * @returns {string} The converted string
+ */
 const parseGenericTypes = function (text) {
   let cleanedText = text;
 
@@ -409,6 +429,11 @@ const parseGenericTypes = function (text) {
   }
 };
 
+/**
+ * Gives the styles for a classifier
+ * @param {"+" | "-" | "#" | "~" | "*" | "$"} classifier The classifier string
+ * @returns {string} Styling for the classifier
+ */
 const parseClassifier = function (classifier) {
   switch (classifier) {
     case '*':

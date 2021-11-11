@@ -8811,14 +8811,11 @@ var updateCurrentConfig = function updateCurrentConfig(siteCfg, _directives) {
  *
  * **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
  * to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
- * will reset siteConfig and current Config to the defaultConfig
+ * will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
+ * function *Default value: At default, will mirror Global Config**
  *
- * Note: currentConfig is set in this function
- *
- * Default value: At default, will mirror Global Config
- *
- * @param {any} conf - The base currentConfig to use as siteConfig
- * @returns {any} - The siteConfig
+ * @param conf - The base currentConfig to use as siteConfig
+ * @returns {object} - The siteConfig
  */
 
 var setSiteConfig = function setSiteConfig(conf) {
@@ -8843,13 +8840,13 @@ var updateSiteConfig = function updateSiteConfig(conf) {
 /**
  * ## getSiteConfig
  *
- * | Function      | Description                                       | Type        | Values                            |
- * | ------------- | ------------------------------------------------- | ----------- | --------------------------------- |
- * | setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in site Config |
+ * | Function      | Description                                       | Type        | Values                           |
+ * | ------------- | ------------------------------------------------- | ----------- | -------------------------------- |
+ * | setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in siteConfig |
  *
  * **Notes**: Returns **any** values in siteConfig.
  *
- * @returns {any}
+ * @returns {object} - The siteConfig
  */
 
 var getSiteConfig = function getSiteConfig() {
@@ -8937,6 +8934,12 @@ var sanitize = function sanitize(options) {
     }
   });
 };
+/**
+ * Pushes in a directive to the configuration
+ *
+ * @param {object} directive The directive to push in
+ */
+
 var addDirective = function addDirective(directive) {
   if (directive.fontFamily) {
     if (!directive.themeVariables) {
@@ -13568,8 +13571,12 @@ var conf = {
 /**
  * Function that adds the vertices found during parsing to the graph to be rendered.
  *
- * @param classes
- * @param g The graph that is to be drawn.
+ * @param {Object<
+ *   string,
+ *   { cssClasses: string[]; text: string; id: string; type: string; domId: string }
+ * >} classes
+ *   Object containing the vertices.
+ * @param {SVGGElement} g The graph that is to be drawn.
  */
 
 var addClasses = function addClasses(classes, g) {
@@ -13769,19 +13776,29 @@ var addRelations = function addRelations(relations, g) {
 
     g.setEdge(edge.id1, edge.id2, edgeData, cnt);
   });
-}; // Todo optimize
+};
+/**
+ * Gets the ID with the same label as in the cache
+ *
+ * @param {string} label The label to look for
+ * @returns {string} The resulting ID
+ */
 
 var getGraphId = function getGraphId(label) {
-  var keys = Object.keys(idCache);
+  var foundEntry = Object.entries(idCache).find(function (entry) {
+    return entry[1].label === label;
+  });
 
-  for (var i = 0; i < keys.length; i++) {
-    if (idCache[keys[i]].label === label) {
-      return keys[i];
-    }
+  if (foundEntry) {
+    return foundEntry[0];
   }
-
-  return undefined;
 };
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ *
+ * @param {object} cnf Config to merge
+ */
+
 
 var setConf = function setConf(cnf) {
   var keys = Object.keys(cnf);
@@ -13792,8 +13809,8 @@ var setConf = function setConf(cnf) {
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  *
- * @param text
- * @param id
+ * @param {string} text
+ * @param {string} id
  */
 
 var drawOld = function drawOld(text, id) {
@@ -13982,11 +13999,12 @@ var draw = function draw(text, id) {
   // });
 
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  setConf: setConf,
-  draw: draw
-});
-/** @param type */
+/**
+ * Gets the arrow marker for a type index
+ *
+ * @param {number} type The type to look for
+ * @returns {'aggregation' | 'extension' | 'composition' | 'dependency'} The arrow marker
+ */
 
 function getArrowMarker(type) {
   var marker;
@@ -14014,6 +14032,11 @@ function getArrowMarker(type) {
 
   return marker;
 }
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  setConf: setConf,
+  draw: draw
+});
 
 /***/ }),
 
@@ -14057,23 +14080,27 @@ var conf = {
   dividerMargin: 10,
   padding: 5,
   textHeight: 10
-}; // Todo optimize
+};
+/**
+ * Gets the ID with the same label as in the cache
+ *
+ * @param {string} label The label to look for
+ * @returns {string} The resulting ID
+ */
 
 var getGraphId = function getGraphId(label) {
-  var keys = Object.keys(idCache);
+  var foundEntry = Object.entries(idCache).find(function (entry) {
+    return entry[1].label === label;
+  });
 
-  for (var i = 0; i < keys.length; i++) {
-    if (idCache[keys[i]].label === label) {
-      return keys[i];
-    }
+  if (foundEntry) {
+    return foundEntry[0];
   }
-
-  return undefined;
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  *
- * @param elem
+ * @param {SVGSVGElement} elem The SVG element to append to
  */
 
 
@@ -14088,6 +14115,12 @@ var insertMarkers = function insertMarkers(elem) {
   elem.append('defs').append('marker').attr('id', 'dependencyStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
   elem.append('defs').append('marker').attr('id', 'dependencyEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ *
+ * @param {object} cnf Config to merge
+ */
+
 
 var setConf = function setConf(cnf) {
   var keys = Object.keys(cnf);
@@ -14098,8 +14131,8 @@ var setConf = function setConf(cnf) {
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  *
- * @param text
- * @param id
+ * @param {string} text
+ * @param {string} id
  */
 
 var draw = function draw(text, id) {
@@ -14309,6 +14342,12 @@ var drawEdge = function drawEdge(elem, path, relation, conf) {
 
   edgeCount++;
 };
+/**
+ * Renders a class diagram
+ * @param {SVGSVGElement} elem The element to draw it into
+ * @todo Add more information in the JSDOC here
+ */
+
 var drawClass = function drawClass(elem, classDef, conf) {
   _logger__WEBPACK_IMPORTED_MODULE_3__.log.info('Rendering class ' + classDef);
   var id = classDef.id;
@@ -14495,6 +14534,14 @@ var buildLegacyDisplay = function buildLegacyDisplay(text) {
     cssStyle: cssStyle
   };
 };
+/**
+ * Adds a <tspan> for a member in a diagram
+ * @param {SVGElement} textEl The element to append to
+ * @param {string} txt The member
+ * @param {boolean} isFirst
+ * @param {{ padding: string; textHeight: string; }} conf The configuration for the member
+ */
+
 
 var addTspan = function addTspan(textEl, txt, isFirst, conf) {
   var member = parseMember(txt);
@@ -14508,6 +14555,15 @@ var addTspan = function addTspan(textEl, txt, isFirst, conf) {
     tSpan.attr('dy', conf.textHeight);
   }
 };
+/**
+ * Makes generics in typescript syntax
+ * @example <caption>Array of array of strings in typescript syntax</caption>
+ * // returns "Array<Array<string>>"
+ * parseGenericTypes("Array~Array~string~~");
+ * @param {string} text The text to convert
+ * @returns {string} The converted string
+ */
+
 
 var parseGenericTypes = function parseGenericTypes(text) {
   var cleanedText = text;
@@ -14520,6 +14576,12 @@ var parseGenericTypes = function parseGenericTypes(text) {
     return cleanedText;
   }
 };
+/**
+ * Gives the styles for a classifier
+ * @param {"+" | "-" | "#" | "~" | "*" | "$"} classifier The classifier string
+ * @returns {string} Styling for the classifier
+ */
+
 
 var parseClassifier = function parseClassifier(classifier) {
   switch (classifier) {
@@ -14563,12 +14625,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dompurify */ "dompurify");
 /* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dompurify__WEBPACK_IMPORTED_MODULE_0__);
 
+/**
+ * Gets the number of lines in a string
+ * @param {string | undefined} s The string to check the lines for
+ * @returns {number} The number of lines in that string
+ */
+
 var getRows = function getRows(s) {
   if (!s) return 1;
   var str = breakToPlaceholder(s);
   str = str.replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
+/**
+ * Removes script tags from a text
+ * @param {string} txt The text to sanitize
+ * @returns {string} The safer text
+ */
+
 var removeScript = function removeScript(txt) {
   var rs = '';
   var idx = 0;
@@ -14631,20 +14705,49 @@ var sanitizeText = function sanitizeText(text, config) {
   return txt;
 };
 var lineBreakRegex = /<br\s*\/?>/gi;
+/**
+ * Whether or not a text has any linebreaks
+ * @param {string} text The text to test
+ * @returns {boolean} Whether or not the text has breaks
+ */
+
 var hasBreaks = function hasBreaks(text) {
-  return /<br\s*[/]?>/gi.test(text);
+  return lineBreakRegex.test(text);
 };
+/**
+ * Splits on <br> tags
+ * @param {string} text Text to split
+ * @returns {Array<string>} List of lines as strings
+ */
+
 var splitBreaks = function splitBreaks(text) {
-  return text.split(/<br\s*[/]?>/gi);
+  return text.split(lineBreakRegex);
 };
+/**
+ * Converts placeholders to linebreaks in HTML
+ * @param {string} s HTML with placeholders
+ * @returns {string} HTML with breaks instead of placeholders
+ */
 
 var placeholderToBreak = function placeholderToBreak(s) {
   return s.replace(/#br#/g, '<br/>');
 };
+/**
+ * Opposite of `placeholderToBreak`, converts breaks to placeholders
+ * @param {string} s HTML string
+ * @returns {string} String with placeholders
+ */
+
 
 var breakToPlaceholder = function breakToPlaceholder(s) {
   return s.replace(lineBreakRegex, '#br#');
 };
+/**
+ * Gets the current URL
+ * @param {boolean} useAbsolute Whether to return the absolute URL or not
+ * @returns {string} The current URL
+ */
+
 
 var getUrl = function getUrl(useAbsolute) {
   var url = '';
@@ -14657,6 +14760,12 @@ var getUrl = function getUrl(useAbsolute) {
 
   return url;
 };
+/**
+ * Converts a string/boolean into a boolean
+ * @param {string | boolean} val String or boolean to convert
+ * @returns {boolean} The result from the input
+ */
+
 
 var evaluate = function evaluate(val) {
   return val === 'false' || val === false ? false : true;
@@ -17758,8 +17867,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/**
+ * Returns the styles given options
+ * @param {{ fontFamily: string; nodeTextColor: string; textColor: string; titleColor: string; mainBkg: string; nodeBorder: string; arrowheadColor: string; lineColor: string; edgeLabelBackground: string; clusterBkg: string; clusterBorder: string; tertiaryColor: string; border2: string; }} options The options for the styles
+ * @returns {string} The resulting styles
+ */
 var getStyles = function getStyles(options) {
-  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n  .cluster-label text {\n    fill: ").concat(options.titleColor, ";\n  }\n  .cluster-label span {\n    color: ").concat(options.titleColor, ";\n  }\n\n  .label text,span {\n    fill: ").concat(options.nodeTextColor || options.textColor, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 2.0px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n      background-color: ").concat(options.edgeLabelBackground, ";\n      fill: ").concat(options.edgeLabelBackground, ";\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .cluster span {\n    color: ").concat(options.titleColor, ";\n  }\n  // .cluster div {\n  //   color: ").concat(options.titleColor, ";\n  // }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
+  return ".label {\n    font-family: ".concat(options.fontFamily, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n  .cluster-label text {\n    fill: ").concat(options.titleColor, ";\n  }\n  .cluster-label span {\n    color: ").concat(options.titleColor, ";\n  }\n\n  .label text,span {\n    fill: ").concat(options.nodeTextColor || options.textColor, ";\n    color: ").concat(options.nodeTextColor || options.textColor, ";\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 2.0px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n      background-color: ").concat(options.edgeLabelBackground, ";\n      fill: ").concat(options.edgeLabelBackground, ";\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.clusterBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  .cluster span {\n    color: ").concat(options.titleColor, ";\n  }\n  /* .cluster div {\n    color: ").concat(options.titleColor, ";\n  } */\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: ").concat(options.fontFamily, ";\n    font-size: 12px;\n    background: ").concat(options.tertiaryColor, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getStyles);
@@ -19090,9 +19204,6 @@ var branches = {
 var curBranch = 'master';
 var direction = 'LR';
 var seq = 0;
-/**
- *
- */
 
 function getId() {
   return (0,_utils__WEBPACK_IMPORTED_MODULE_0__.random)({
@@ -25334,6 +25445,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var conf = {};
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ *
+ * @param {object} cnf Config to merge
+ */
+
 var setConf = function setConf(cnf) {
   var keys = Object.keys(cnf);
   keys.forEach(function (key) {
@@ -25343,8 +25460,8 @@ var setConf = function setConf(cnf) {
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
  *
- * @param {any} id
- * @param {any} ver
+ * @param {string} id The text for the error
+ * @param {string} ver The version
  */
 
 var draw = function draw(id, ver) {
@@ -25418,6 +25535,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment-mini */ "moment-mini");
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment_mini__WEBPACK_IMPORTED_MODULE_0__);
 
+/**
+ * @typedef {"debug" | "info" | "warn" | "error" | "fatal"} LogLevel A log level
+ */
+
+/**
+ * @type {Object<LogLevel, number>}
+ */
+
 var LEVELS = {
   debug: 1,
   info: 2,
@@ -25432,6 +25557,11 @@ var log = {
   error: function error() {},
   fatal: function fatal() {}
 };
+/**
+ * Sets a log level
+ * @param {LogLevel} [level="fatal"] The level to set the logging to
+ */
+
 var setLogLevel = function setLogLevel() {
   var level = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'fatal';
 
@@ -25476,6 +25606,11 @@ var setLogLevel = function setLogLevel() {
     log.debug = console.debug ? console.debug.bind(console, format('DEBUG'), 'color: lightgreen') : console.log.bind(console, '\x1b[32m', format('DEBUG'));
   }
 };
+/**
+ * Returns a format with the timestamp and the log level
+ * @param {LogLevel} level The level for the log format
+ * @returns {string} The format with the timestamp and log level
+ */
 
 var format = function format(level) {
   var time = moment_mini__WEBPACK_IMPORTED_MODULE_0___default()().format('ss.SSS');
@@ -25984,7 +26119,7 @@ var decodeEntities = function decodeEntities(text) {
 /**
  * Function that renders an svg with a graph from a chart definition. Usage example below.
  *
- * ```js
+ * ```javascript
  * mermaidAPI.initialize({
  *   startOnLoad: true,
  * });
@@ -28216,7 +28351,11 @@ var detectDirective = function detectDirective(text) {
  *    g-->h
  * ```
  * @param {string} text The text defining the graph
- * @param {any} cnf
+ * @param {{
+ *   class: { defaultRenderer: string } | undefined;
+ *   state: { defaultRenderer: string } | undefined;
+ *   flowchart: { defaultRenderer: string } | undefined;
+ * }} [cnf]
  * @returns {string} A graph definition key
  */
 
@@ -28280,6 +28419,13 @@ var detectType = function detectType(text, cnf) {
   if (cnf && cnf.flowchart && cnf.flowchart.defaultRenderer === 'dagre-wrapper') return 'flowchart-v2';
   return 'flowchart';
 };
+/**
+ * Caches results of functions based on input
+ *
+ * @param {Function} fn Function to run
+ * @param {Function} resolver Function that resolves to an ID given arguments the `fn` takes
+ * @returns {Function} An optimized caching function
+ */
 
 var memoize = function memoize(fn, resolver) {
   var cache = {};
@@ -28314,6 +28460,14 @@ var isSubstringInArray = function isSubstringInArray(str, arr) {
 
   return -1;
 };
+/**
+ * Returns a d3 curve given a curve name
+ *
+ * @param {string | undefined} interpolate The interpolation name
+ * @param {any} defaultCurve The default curve to return
+ * @returns {import('d3-shape').CurveFactory} The curve factory to use
+ */
+
 var interpolateToCurve = function interpolateToCurve(interpolate, defaultCurve) {
   if (!interpolate) {
     return defaultCurve;
@@ -28322,6 +28476,14 @@ var interpolateToCurve = function interpolateToCurve(interpolate, defaultCurve) 
   var curveName = "curve".concat(interpolate.charAt(0).toUpperCase() + interpolate.slice(1));
   return d3CurveTypes[curveName] || defaultCurve;
 };
+/**
+ * Formats a URL string
+ *
+ * @param {string} linkStr String of the URL
+ * @param {{ securityLevel: string }} config Configuration passed to MermaidJS
+ * @returns {string | undefined} The formatted URL
+ */
+
 var formatUrl = function formatUrl(linkStr, config) {
   var url = linkStr.trim();
 
@@ -28333,6 +28495,13 @@ var formatUrl = function formatUrl(linkStr, config) {
     return url;
   }
 };
+/**
+ * Runs a function
+ *
+ * @param {string} functionName A dot seperated path to the function relative to the `window`
+ * @param {...any} params Parameters to pass to the function
+ */
+
 var runFunc = function runFunc(functionName) {
   var _obj;
 
@@ -28352,10 +28521,29 @@ var runFunc = function runFunc(functionName) {
 
   (_obj = obj)[fnName].apply(_obj, params);
 };
+/**
+ * @typedef {object} Point A (x, y) point
+ * @property {number} x The x value
+ * @property {number} y The y value
+ */
+
+/**
+ * Finds the distance between two points using the Distance Formula
+ *
+ * @param {Point} p1 The first point
+ * @param {Point} p2 The second point
+ * @returns {number} The distance
+ */
 
 var distance = function distance(p1, p2) {
   return p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
 };
+/**
+ * @param {Point[]} points List of points
+ * @returns {Point}
+ * @todo Give this a description
+ */
+
 
 var traverseEdge = function traverseEdge(points) {
   var prevPoint;
@@ -28397,6 +28585,13 @@ var traverseEdge = function traverseEdge(points) {
   });
   return center;
 };
+/**
+ * Alias for `traverseEdge`
+ *
+ * @param {Point[]} points List of points
+ * @returns {Point} Return result of `transverseEdge`
+ */
+
 
 var calcLabelPosition = function calcLabelPosition(points) {
   return traverseEdge(points);
@@ -28548,6 +28743,13 @@ var calcTerminalLabelPosition = function calcTerminalLabelPosition(terminalMarke
 
   return cardinalityPosition;
 };
+/**
+ * Gets styles from an array of declarations
+ *
+ * @param {string[]} arr Declarations
+ * @returns {{ style: string; labelStyle: string }} The styles grouped as strings
+ */
+
 
 var getStylesFromArray = function getStylesFromArray(arr) {
   var style = '';
@@ -28602,19 +28804,31 @@ var random = function random(options) {
  *   effectively merged with src[`k`]<p> Additionally, dissimilar types will not clobber unless the
  *   config.clobber parameter === true. Example:
  *
- *       let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
- *       let config_1 = { foo: 'foo', bar: 'bar' };
- *       let result = assignWithDepth(config_0, config_1);
- *       console.log(result);
- *       //-> result: { foo: { bar: 'bar' }, bar: 'bar' }<p>
+ *   ```js
+ *   let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
+ *   let config_1 = { foo: 'foo', bar: 'bar' };
+ *   let result = assignWithDepth(config_0, config_1);
+ *   console.log(result);
+ *   //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
+ *   ```
  *
- *   Traditional Object.assign would have clobbered foo in config_0 with foo in config_1.<p> If src is
- *   a destructured array of objects and dst is not an array, assignWithDepth will apply each
- *   element of src to dst in order.
+ *   Traditional Object.assign would have clobbered foo in config_0 with foo in config_1. If src is a
+ *   destructured array of objects and dst is not an array, assignWithDepth will apply each element
+ *   of src to dst in order.
+ * @param dst
+ * @param src
+ * @param config
+ * @param dst
+ * @param src
+ * @param config
+ * @param dst
+ * @param src
+ * @param config
  * @param {any} dst - The destination of the merge
  * @param {any} src - The source object(s) to merge into destination
- * @param {{ depth: number; clobber: boolean }} config - Depth: depth to traverse within src and dst
- *   for merging - clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
+ * @param {{ depth: number; clobber: boolean }} [config={ depth: 2, clobber: false }] - Depth: depth
+ *   to traverse within src and dst for merging - clobber: should dissimilar types clobber (default:
+ *   { depth: 2, clobber: false }). Default is `{ depth: 2, clobber: false }`
  * @returns {any}
  */
 
@@ -28682,6 +28896,25 @@ var getTextObj = function getTextObj() {
     valign: undefined
   };
 };
+/**
+ * Adds text to an element
+ *
+ * @param {SVGElement} elem Element to add text to
+ * @param {{
+ *   text: string;
+ *   x: number;
+ *   y: number;
+ *   anchor: 'start' | 'middle' | 'end';
+ *   fontFamily: string;
+ *   fontSize: string | number;
+ *   fontWeight: string | number;
+ *   fill: string;
+ *   class: string | undefined;
+ *   textMargin: number;
+ * }} textData
+ * @returns {SVGTextElement} Text element with given styling and content
+ */
+
 var drawSimpleText = function drawSimpleText(elem, textData) {
   // Remove and ignore br:s
   var nText = textData.text.replace(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex, ' ');
@@ -28910,6 +29143,12 @@ var calculateTextDimensions = memoize(function (text, config) {
 }, function (text, config) {
   return "".concat(text, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily);
 });
+/**
+ * Applys d3 attributes
+ *
+ * @param {any} d3Elem D3 Element to apply the attributes onto
+ * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of attributes
+ */
 
 var d3Attrs = function d3Attrs(d3Elem, attrs) {
   var _iterator2 = _createForOfIteratorHelper(attrs),
@@ -28926,6 +29165,15 @@ var d3Attrs = function d3Attrs(d3Elem, attrs) {
     _iterator2.f();
   }
 };
+/**
+ * Gives attributes for an SVG's size given arguments
+ *
+ * @param {number} height The height of the SVG
+ * @param {number} width The width of the SVG
+ * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
+ * @returns {Map<'height' | 'width' | 'style', string>} Attributes for the SVG
+ */
+
 
 var calculateSvgSizeAttrs = function calculateSvgSizeAttrs(height, width, useMaxWidth) {
   var attrs = new Map();
@@ -28940,6 +29188,15 @@ var calculateSvgSizeAttrs = function calculateSvgSizeAttrs(height, width, useMax
 
   return attrs;
 };
+/**
+ * Applies attributes from `calculateSvgSizeAttrs`
+ *
+ * @param {SVGSVGElement} svgElem The SVG Element to configure
+ * @param {number} height The height of the SVG
+ * @param {number} width The width of the SVG
+ * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
+ */
+
 var configureSvgSize = function configureSvgSize(svgElem, height, width, useMaxWidth) {
   var attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
   d3Attrs(svgElem, attrs);
@@ -28962,9 +29219,15 @@ var initIdGeneratior = /*#__PURE__*/function () {
   }]);
 
   return iterator;
-}(); // Source https://github.com/shrpne/entity-decode/blob/master/browser.js
-
+}();
 var decoder;
+/**
+ * Decodes HTML, source: {@link https://github.com/shrpne/entity-decode/blob/v2.0.1/browser.js}
+ *
+ * @param {string} html HTML as a string
+ * @returns Unescaped HTML
+ */
+
 var entityDecode = function entityDecode(html) {
   decoder = decoder || document.createElement('div'); // Escape HTML before decoding for HTML Entities
 
@@ -28973,6 +29236,12 @@ var entityDecode = function entityDecode(html) {
   decoder.innerHTML = html;
   return unescape(decoder.textContent);
 };
+/**
+ * Sanitizes directive objects
+ *
+ * @param {object} args Directive's JSON
+ */
+
 var directiveSanitizer = function directiveSanitizer(args) {
   _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('directiveSanitizer called with', args);
 

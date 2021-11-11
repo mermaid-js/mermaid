@@ -5,17 +5,11 @@
 
 Mermaid can render Pie Chart diagrams.
 
-```
+```mermaid-example
 pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85
     "Rats" : 15
-```
-```mermaid
-pie title Pets adopted by volunteers
-    "Dogs" : 386
-    "Cats" : 85
-    "Rats" : 35
 ```
 
 
@@ -37,7 +31,7 @@ Drawing a pie chart is really simple in mermaid.
       .
 
 ## Example
-```
+```mermaid-example
 pie
     title Key elements in Product X
     "Calcium" : 42.96
@@ -45,11 +39,3 @@ pie
     "Magnesium" : 10.01
     "Iron" :  5
 ```
-```mermaid
-pie
-title Key elements in Product X
-    "Calcium" : 42.96
-    "Potassium" : 50.05
-    "Magnesium" : 25.01
-    "Iron" :  15
- ```

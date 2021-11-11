@@ -925,17 +925,14 @@ Default value: true
 
 **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
 to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
-will reset siteConfig and current Config to the defaultConfig
-
-Note: currentConfig is set in this function
-
-Default value: At default, will mirror Global Config
+will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
+function \*Default value: At default, will mirror Global Config\*\*
 
 ### Parameters
 
--   `conf` **any** The base currentConfig to use as siteConfig
+-   `conf`  The base currentConfig to use as siteConfig
 
-Returns **any** The siteConfig
+Returns **[object][5]** The siteConfig
 
 ## parse
 
@@ -949,13 +946,13 @@ Returns **any**
 
 ## getSiteConfig
 
-| Function      | Description                                       | Type        | Values                            |
-| ------------- | ------------------------------------------------- | ----------- | --------------------------------- |
-| setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in site Config |
+| Function      | Description                                       | Type        | Values                           |
+| ------------- | ------------------------------------------------- | ----------- | -------------------------------- |
+| setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in siteConfig |
 
 **Notes**: Returns **any** values in siteConfig.
 
-Returns **any** 
+Returns **[object][5]** The siteConfig
 
 ## setConfig
 
@@ -1002,6 +999,14 @@ options in-place
 
 -   `options` **any** The potential setConfig parameter
 
+## addDirective
+
+Pushes in a directive to the configuration
+
+### Parameters
+
+-   `directive` **[object][5]** The directive to push in
+
 ## reset
 
 ## reset
@@ -1021,7 +1026,7 @@ options in-place
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
 
-```js
+```javascript
 mermaidAPI.initialize({
   startOnLoad: true,
 });
@@ -1128,3 +1133,5 @@ Returns **any**
 [3]: 8.6.0_docs.md
 
 [4]: #mermaidapi-configuration-defaults
+
+[5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object

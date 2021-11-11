@@ -269,7 +269,7 @@ renderer.code = function (code, language) {
 
 Another example in coffeescript that also includes the mermaid script tag in the generated markup.
 
-```js
+```coffee
 marked = require 'marked'
 
 module.exports = (options) ->
@@ -370,7 +370,7 @@ approach are:
 * mermaid.startOnLoad
 * mermaid.htmlLabels
 
-```js
+```javascript
 mermaid.startOnLoad = true;
 ```
 
@@ -401,7 +401,7 @@ To set some configuration via the mermaid object. The two parameters that are su
 * mermaid_config.startOnLoad
 * mermaid_config.htmlLabels
 
-```
+```javascript
 mermaid_config.startOnLoad = true;
 ```
 

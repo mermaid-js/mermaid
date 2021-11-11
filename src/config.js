@@ -41,6 +41,7 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
   currentConfig = cfg;
   return cfg;
 };
+
 /**
  * ## setSiteConfig
  *
@@ -50,14 +51,11 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  *
  * **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
  * to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
- * will reset siteConfig and current Config to the defaultConfig
+ * will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
+ * function *Default value: At default, will mirror Global Config**
  *
- * Note: currentConfig is set in this function
- *
- * Default value: At default, will mirror Global Config
- *
- * @param {any} conf - The base currentConfig to use as siteConfig
- * @returns {any} - The siteConfig
+ * @param conf - The base currentConfig to use as siteConfig
+ * @returns {object} - The siteConfig
  */
 export const setSiteConfig = (conf) => {
   siteConfig = assignWithDepth({}, defaultConfig);
@@ -84,13 +82,13 @@ export const updateSiteConfig = (conf) => {
 /**
  * ## getSiteConfig
  *
- * | Function      | Description                                       | Type        | Values                            |
- * | ------------- | ------------------------------------------------- | ----------- | --------------------------------- |
- * | setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in site Config |
+ * | Function      | Description                                       | Type        | Values                           |
+ * | ------------- | ------------------------------------------------- | ----------- | -------------------------------- |
+ * | setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in siteConfig |
  *
  * **Notes**: Returns **any** values in siteConfig.
  *
- * @returns {any}
+ * @returns {object} - The siteConfig
  */
 export const getSiteConfig = () => {
   return assignWithDepth({}, siteConfig);
@@ -185,6 +183,11 @@ export const sanitize = (options) => {
   });
 };
 
+/**
+ * Pushes in a directive to the configuration
+ *
+ * @param {object} directive The directive to push in
+ */
 export const addDirective = (directive) => {
   if (directive.fontFamily) {
     if (!directive.themeVariables) {

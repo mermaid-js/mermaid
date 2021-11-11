@@ -4,7 +4,7 @@
 
 Mermaid can render state diagrams. The syntax tries to be compliant with the syntax used in plantUml as this will make it easier for users to share diagrams between mermaid and plantUml.
 
-```
+```mermaid-example
 stateDiagram-v2
     [*] --> Still
     Still --> [*]
@@ -15,17 +15,9 @@ stateDiagram-v2
     Crash --> [*]
 ```
 
-```mermaid
-stateDiagram-v2
-    [*] --> Still
-    Still --> [*]
+Older renderer:
 
-    Still --> Moving
-    Moving --> Still
-    Moving --> Crash
-    Crash --> [*]
-```
-```mermaid
+```mermaid-example
 stateDiagram
     [*] --> Still
     Still --> [*]
@@ -42,36 +34,21 @@ In state diagrams systems are described in terms of its states and how the syste
 
 A state can be declared in multiple ways. The simplest way is to define a state id as a description.
 
-```markdown
-stateDiagram-v2
-    s1
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     s1
 ```
 
 Another way is by using the state keyword with a description as per below:
 
-```markdown
-stateDiagram-v2
-    state "This is a state description" as s2
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     state "This is a state description" as s2
 ```
 
 Another way to define a state with a description is to define the state id followed by a colon and the description:
 
-```markdown
-stateDiagram-v2
-    s2 : This is a state description
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     s2 : This is a state description
 ```
@@ -82,24 +59,14 @@ Transitions are path/edges when one state passes into another. This is represent
 
 When you define a transition between two states and the states are not already defined the undefined states are defined with the id from the transition. You can later add descriptions to states defined this way.
 
-```
-stateDiagram-v2
-    s1 --> s2
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     s1 --> s2
 ```
 
 It is possible to add text to a transition. To describe what it represents.
 
-```
-stateDiagram-v2
-    s1 --> s2: A transition
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     s1 --> s2: A transition
 ```
@@ -108,13 +75,7 @@ stateDiagram-v2
 
 There are two special states indicating the start and stop of the diagram. These are written with the [\*] syntax and the direction of the transition to it defines it either as a start or a stop state.
 
-```
-stateDiagram-v2
-    [*] --> s1
-    s1 --> [*]
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     [*] --> s1
     s1 --> [*]
@@ -127,16 +88,7 @@ have several internal states. These are called composite states in this terminol
 
 In order to define a composite state you need to use the state keyword followed by an id and the body of the composite state between \{\}. See the example below:
 
-```
-stateDiagram-v2
-    [*] --> First
-    state First {
-        [*] --> second
-        second --> [*]
-    }
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     [*] --> First
     state First {
@@ -147,7 +99,7 @@ stateDiagram-v2
 
 You can do this in several layers:
 
-```
+```mermaid-example
 stateDiagram-v2
     [*] --> First
 
@@ -166,47 +118,9 @@ stateDiagram-v2
     }
 ```
 
-```mermaid
-stateDiagram-v2
-    [*] --> First
-
-    state First {
-        [*] --> Second
-        state Second {
-            [*] --> second2
-            second2 --> Third
-
-            state Third {
-                [*] --> third
-                third --> [*]
-            }
-        }
-    }
-```
-
 You can also define transitions also between composite states:
 
-```
-stateDiagram-v2
-    [*] --> First
-    First --> Second
-    First --> Third
-
-    state First {
-        [*] --> fir
-        fir --> [*]
-    }
-    state Second {
-        [*] --> sec
-        sec --> [*]
-    }
-    state Third {
-        [*] --> thi
-        thi --> [*]
-    }
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     [*] --> First
     First --> Second
@@ -232,16 +146,7 @@ stateDiagram-v2
 
 Sometimes you need to model a choice between two or more paths, you can do so using &lt;&lt;choice&gt;&gt;.
 
-```
-stateDiagram-v2
-    state if_state <<choice>>
-    [*] --> IsPositive
-    IsPositive --> if_state
-    if_state --> False: if n < 0
-    if_state --> True : if n >= 0
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     state if_state <<choice>>
     [*] --> IsPositive
@@ -254,7 +159,7 @@ stateDiagram-v2
 
 It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&lt;join&gt;&gt;.
 
-```
+```mermaid-example
    stateDiagram-v2
     state fork_state <<fork>>
       [*] --> fork_state
@@ -266,21 +171,6 @@ It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&
       State3 --> join_state
       join_state --> State4
       State4 --> [*]
-```
-
-```mermaid
-   stateDiagram-v2
-    state fork_state <<fork>>
-      [*] --> fork_state
-      fork_state --> State2
-      fork_state --> State3
-
-      state join_state <<join>>
-      State2 --> join_state
-      State3 --> join_state
-      join_state --> State4
-      State4 --> [*]
-
 ```
 
 ## Notes
@@ -289,7 +179,7 @@ Sometimes nothing says it better then a Post-it note. That is also the case in s
 
 Here you can choose to put the note to the *right of* or to the *left of* a node.
 
-```
+```mermaid-example
     stateDiagram-v2
         State1: The state with a note
         note right of State1
@@ -300,42 +190,11 @@ Here you can choose to put the note to the *right of* or to the *left of* a node
         note left of State2 : This is the note to the left.
 ```
 
-```mermaid
-    stateDiagram-v2
-    State1: The state with a note
-    note right of State1
-      Important information! You can write
-      notes.
-    end note
-    State1 --> State2
-    note left of State2 : This is the note to the left.
-
-```
-
 ## Concurrency
 
 As in plantUml you can specify concurrency using the -- symbol.
 
-```
-stateDiagram-v2
-    [*] --> Active
-
-    state Active {
-        [*] --> NumLockOff
-        NumLockOff --> NumLockOn : EvNumLockPressed
-        NumLockOn --> NumLockOff : EvNumLockPressed
-        --
-        [*] --> CapsLockOff
-        CapsLockOff --> CapsLockOn : EvCapsLockPressed
-        CapsLockOn --> CapsLockOff : EvCapsLockPressed
-        --
-        [*] --> ScrollLockOff
-        ScrollLockOff --> ScrollLockOn : EvScrollLockPressed
-        ScrollLockOn --> ScrollLockOff : EvScrollLockPressed
-    }
-```
-
-```mermaid
+```mermaid-example
 stateDiagram-v2
     [*] --> Active
 
@@ -358,20 +217,7 @@ stateDiagram-v2
 
 With state diagrams you can use the direction statement to set the direction which the diagram will render like in this example.
 
-```
-stateDiagram
-    direction LR
-    [*] --> A
-    A --> B
-    B --> C
-    state B {
-      direction LR
-      a --> b
-    }
-    B --> D
- ```
- This is how this renders
-```mermaid
+```mermaid-example
 stateDiagram
     direction LR
     [*] --> A
@@ -389,7 +235,7 @@ stateDiagram
 
 Comments can be entered within a state diagram chart, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
-```
+```mmd
 stateDiagram-v2
     [*] --> Still
     Still --> [*]
