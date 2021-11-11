@@ -305,6 +305,17 @@ end
 
 See the example below:
 
+```
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Hello guys!
+    and Alice to John
+        Alice->>John: Hello guys!
+    end
+    Bob-->>Alice: Hi Alice!
+    John-->>Alice: Hi Alice!
+```
+
 ```mermaid
 sequenceDiagram
     par Alice to Bob
@@ -317,6 +328,20 @@ sequenceDiagram
 ```
 
 It is also possible to nest parallel blocks.
+
+```
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Go help John
+    and Alice to John
+        Alice->>John: I want this done today
+        par John to Charlie
+            John->>Charlie: Can we do this today?
+        and John to Diana
+            John->>Diana: Can you help us today?
+        end
+    end
+```
 
 ```mermaid
 sequenceDiagram
@@ -351,6 +376,25 @@ end
 ```
 
 See the examples below:
+
+```
+sequenceDiagram
+    participant Alice
+    participant John
+
+    rect rgb(191, 223, 255)
+    note right of Alice: Alice calls John.
+    Alice->>+John: Hello John, how are you?
+    rect rgb(200, 150, 255)
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    end
+    John-->>-Alice: I feel great!
+    end
+    Alice ->>+ John: Did you want to go to the game tonight?
+    John -->>- Alice: Yeah! See you there.
+
+```
 
 ```mermaid
 sequenceDiagram
