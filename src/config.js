@@ -41,6 +41,7 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
   currentConfig = cfg;
   return cfg;
 };
+
 /**
  *## setSiteConfig
  *| Function | Description         | Type    | Values             |
@@ -53,7 +54,7 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  *Note: currentConfig is set in this function
  **Default value: At default, will mirror Global Config**
  * @param conf - the base currentConfig to use as siteConfig
- * @returns {*} - the siteConfig
+ * @returns {Object} - the siteConfig
  */
 export const setSiteConfig = (conf) => {
   siteConfig = assignWithDepth({}, defaultConfig);
@@ -84,7 +85,7 @@ export const updateSiteConfig = (conf) => {
  *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
  ***Notes**:
  *Returns **any** values in siteConfig.
- * @returns {*}
+ * @returns {Object} - the siteConfig
  */
 export const getSiteConfig = () => {
   return assignWithDepth({}, siteConfig);
@@ -172,6 +173,10 @@ export const sanitize = (options) => {
   });
 };
 
+/**
+ * Pushes in a directive to the configuration
+ * @param {Object} directive The directive to push in
+ */
 export const addDirective = (directive) => {
   if (directive.fontFamily) {
     if (!directive.themeVariables) {

@@ -175,6 +175,7 @@ export const detectDirective = function (text, type = null) {
  * ```
  *
  * @param {string} text The text defining the graph
+ * @param {{ class: { defaultRenderer: string } | undefined; state: { defaultRenderer: string } | undefined; flowchart: { defaultRenderer: string } | undefined; }} [cnf]
  * @returns {string} A graph definition key
  */
 export const detectType = function (text, cnf) {
@@ -234,6 +235,12 @@ export const detectType = function (text, cnf) {
   return 'flowchart';
 };
 
+/**
+ * Caches results of functions based on input
+ * @param {Function} fn Function to run
+ * @param {Function} resolver Function that resolves to an ID given arguments the `fn` takes
+ * @returns {Function} An optimized caching function
+ */
 const memoize = (fn, resolver) => {
   let cache = {};
   return (...args) => {
@@ -262,6 +269,12 @@ export const isSubstringInArray = function (str, arr) {
   return -1;
 };
 
+/**
+ * Returns a d3 curve given a curve name
+ * @param {string | undefined} interpolate The interpolation name
+ * @param {*} defaultCurve The default curve to return
+ * @returns {import('d3-shape').CurveFactory} The curve factory to use
+ */
 export const interpolateToCurve = (interpolate, defaultCurve) => {
   if (!interpolate) {
     return defaultCurve;
@@ -270,6 +283,12 @@ export const interpolateToCurve = (interpolate, defaultCurve) => {
   return d3CurveTypes[curveName] || defaultCurve;
 };
 
+/**
+ * Formats a URL string
+ * @param {string} linkStr String of the URL
+ * @param {{ securityLevel: string; }} config Configuration passed to MermaidJS
+ * @returns {string | undefined} The formatted URL
+ */
 export const formatUrl = (linkStr, config) => {
   let url = linkStr.trim();
 
@@ -282,6 +301,11 @@ export const formatUrl = (linkStr, config) => {
   }
 };
 
+/**
+ * Runs a function
+ * @param {string} functionName A dot seperated path to the function relative to the `window`
+ * @param  {...any} params Parameters to pass to the function
+ */
 export const runFunc = (functionName, ...params) => {
   const arrPaths = functionName.split('.');
 
@@ -297,9 +321,26 @@ export const runFunc = (functionName, ...params) => {
   obj[fnName](...params);
 };
 
+/**
+ * @typedef {Object} Point A (x, y) point
+ * @property {number} x The x value
+ * @property {number} y The y value
+ */
+
+/**
+ * Finds the distance between two points using the Distance Formula
+ * @param {Point} p1 The first point
+ * @param {Point} p2 The second point
+ * @returns {number} The distance
+ */
 const distance = (p1, p2) =>
   p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
 
+/**
+ * @todo Give this a description
+ * @param {Array<Point>} points List of points
+ * @returns {Point}
+ */
 const traverseEdge = (points) => {
   let prevPoint;
   let totalDistance = 0;
@@ -337,6 +378,11 @@ const traverseEdge = (points) => {
   return center;
 };
 
+/**
+ * Alias for `traverseEdge`
+ * @param {Point[]} points List of points
+ * @returns {Point} Return result of `transverseEdge`
+ */
 const calcLabelPosition = (points) => {
   return traverseEdge(points);
 };
@@ -462,6 +508,11 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   return cardinalityPosition;
 };
 
+/**
+ * Gets styles from an array of declarations
+ * @param {Array<string>} arr Declarations
+ * @returns {{ style: string; labelStyle: string; }} The styles grouped as strings
+ */
 export const getStylesFromArray = (arr) => {
   let style = '';
   let labelStyle = '';
@@ -520,9 +571,9 @@ export const random = (options) => {
  * <p>
  * If src is a destructured array of objects and dst is not an array, assignWithDepth will apply each element of src to dst
  * in order.
- * @param dst:any - the destination of the merge
- * @param src:any - the source object(s) to merge into destination
- * @param config:{ depth: number, clobber: boolean } - depth: depth to traverse within src and dst for merging -
+ * @param {any} dst - the destination of the merge
+ * @param {any} src - the source object(s) to merge into destination
+ * @param {{ depth: number, clobber: boolean }} [config={ depth: 2, clobber: false }] - depth: depth to traverse within src and dst for merging -
  * clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
  * @returns {*}
  */
@@ -580,6 +631,12 @@ export const getTextObj = function () {
   };
 };
 
+/**
+ * Adds text to an element
+ * @param {SVGElement} elem Element to add text to
+ * @param {{ text: string; x: number; y: number; anchor: "start" | "middle" | "end"; fontFamily: string; fontSize: string | number; fontWeight: string | number; fill: string; class: string | undefined; textMargin: number; }} textData
+ * @returns {SVGTextElement} Text element with given styling and content
+ */
 export const drawSimpleText = function (elem, textData) {
   // Remove and ignore br:s
   const nText = textData.text.replace(common.lineBreakRegex, ' ');
@@ -770,12 +827,24 @@ export const calculateTextDimensions = memoize(
   (text, config) => `${text}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
 );
 
+/**
+ * Applys d3 attributes
+ * @param {*} d3Elem d3 Element to apply the attributes onto
+ * @param {Array<[string, string]>} attrs Object.keys equivalent format of key to value mapping of attributes
+ */
 const d3Attrs = function (d3Elem, attrs) {
   for (let attr of attrs) {
     d3Elem.attr(attr[0], attr[1]);
   }
 };
 
+/**
+ * Gives attributes for an SVG's size given arguments
+ * @param {number} height The height of the SVG
+ * @param {number} width The width of the SVG
+ * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
+ * @returns {Map<'height' | 'width' | 'style', string>} Attributes for the SVG
+ */
 export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
   let attrs = new Map();
   attrs.set('height', height);
@@ -788,6 +857,13 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
   return attrs;
 };
 
+/**
+ * Applies attributes from `calculateSvgSizeAttrs`
+ * @param {SVGSVGElement} svgElem The SVG Element to configure
+ * @param {number} height The height of the SVG
+ * @param {number} width The width of the SVG
+ * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
+ */
 export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
   const attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
   d3Attrs(svgElem, attrs);
@@ -808,8 +884,13 @@ export const initIdGeneratior = class iterator {
   }
 };
 
-// Source https://github.com/shrpne/entity-decode/blob/master/browser.js
 let decoder;
+
+/**
+ * Decodes HTML, source: {@link https://github.com/shrpne/entity-decode/blob/v2.0.1/browser.js}
+ * @param {string} html HTML as a string
+ * @returns Unescaped HTML
+ */
 export const entityDecode = function (html) {
   decoder = decoder || document.createElement('div');
   // Escape HTML before decoding for HTML Entities
@@ -819,6 +900,10 @@ export const entityDecode = function (html) {
   return unescape(decoder.textContent);
 };
 
+/**
+ * Sanitizes directive objects
+ * @param {Object} args Directive's JSON
+ */
 export const directiveSanitizer = (args) => {
   log.debug('directiveSanitizer called with', args);
   if (typeof args === 'object') {
