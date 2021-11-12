@@ -238,6 +238,45 @@ const rect_right_inv_arrow = (parent, node) => {
   return shapeSvg;
 };
 
+const actor = (parent, node) => {
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
+
+  const w = bbox.width + node.padding;
+  const h = bbox.height + node.padding;
+  const points = [
+    { x: w / 2, y: 0 },
+    { x: w / 2, y: -h },
+    { x: w / 2, y: -h / 1.5 },
+    { x: w / 4, y: -h },
+    { x: w / 2, y: -h / 1.5 },
+    { x: w / 2 + w / 4, y: -h },
+    { x: w / 2, y: -h / 1.5 },
+    { x: w / 2, y: -h / 2.5 },
+    { x: w / 4, y: h / 5 },
+    { x: w / 2, y: -h / 2.5 },
+    { x: w / 2 + w / 4, y: h / 5 },
+    { x: w / 2, y: -h / 2.5 },
+    { x: w / 2, y: -h },
+    { x: w / 1.8, y: -h },
+    { x: w / 1.5, y: -h - h / 3 },
+    { x: w / 1.8, y: -h - h / 2 },
+    { x: w / 2.2, y: -h - h / 2 },
+    { x: w / 3, y: -h - h / 3 },
+    { x: w / 2.2, y: -h },
+    { x: w / 2, y: -h },
+  ];
+
+  const el = insertPolygonShape(shapeSvg, w, h, points);
+  el.attr('style', node.style);
+  updateNodeBounds(node, el);
+
+  node.intersect = function (point) {
+    return intersect.polygon(node, points, point);
+  };
+
+  return shapeSvg;
+};
+
 const cylinder = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
@@ -894,6 +933,7 @@ const shapes = {
   inv_trapezoid,
   rect_right_inv_arrow,
   cylinder,
+  actor,
   start,
   end,
   note,

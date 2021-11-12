@@ -44,7 +44,17 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].styles.length).toBe(0);
     expect(vert['a'].type).toBe('square');
   });
+  it('should handle a single actor', function() {
+    // Silly but syntactically correct
+    const res = flow.parser.parse('graph TD\nA(^Actor^)');
 
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges.length).toBe(0);
+    expect(vert['A'].styles.length).toBe(0);
+    expect(vert['A'].type).toBe('actor');
+  });
   it('should handle a single round square node', function() {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a[A];');
