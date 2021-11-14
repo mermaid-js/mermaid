@@ -139,7 +139,6 @@ They also serve as proof of concept, for the variety of things that can be built
 
 ## Browser Extensions
 
-## Browser Extensions
 | Name | Chrome Web Store | Firefox Add-ons | Opera | Edge | Source/Repository | 
 | -- | -- | -- | -- | -- | -- |
 | GitHub + Mermaid | [🎡🔗](https://chrome.google.com/webstore/detail/github-%20-mermaid/goiiopgdnkogdbjmncgedmgpoajilohe) | [🦊🔗](https://addons.mozilla.org/firefox/addon/github-mermaid/) | - | - |  [🐙🔗](https://github.com/BackMarket/github-mermaid-extension)
