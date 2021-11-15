@@ -8965,10 +8965,11 @@ var addDirective = function addDirective(directive) {
  * | -------- | ---------------------------- | ----------- | -------- | ------ |
  * | reset    | Resets currentConfig to conf | Put Request | Required | None   |
  *
- * | Parameter | Description | Type | Required | Values |
+ * ## conf
  *
- * | --------- | ------------------------------------------------------------ | ---------- | -------- | -------------------------------------------- |
- * | conf | base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array |
+ * | Parameter | Description                                                   | Type       | Required | Values                                       |
+ * | --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+ * | conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
  *
  * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
  */
@@ -14344,7 +14345,10 @@ var drawEdge = function drawEdge(elem, path, relation, conf) {
 };
 /**
  * Renders a class diagram
+ *
  * @param {SVGSVGElement} elem The element to draw it into
+ * @param classDef
+ * @param conf
  * @todo Add more information in the JSDOC here
  */
 
@@ -14536,10 +14540,11 @@ var buildLegacyDisplay = function buildLegacyDisplay(text) {
 };
 /**
  * Adds a <tspan> for a member in a diagram
+ *
  * @param {SVGElement} textEl The element to append to
  * @param {string} txt The member
  * @param {boolean} isFirst
- * @param {{ padding: string; textHeight: string; }} conf The configuration for the member
+ * @param {{ padding: string; textHeight: string }} conf The configuration for the member
  */
 
 
@@ -14557,9 +14562,11 @@ var addTspan = function addTspan(textEl, txt, isFirst, conf) {
 };
 /**
  * Makes generics in typescript syntax
+ *
  * @example <caption>Array of array of strings in typescript syntax</caption>
- * // returns "Array<Array<string>>"
- * parseGenericTypes("Array~Array~string~~");
+ *   // returns "Array<Array<string>>"
+ *   parseGenericTypes('Array~Array~string~~');
+ *
  * @param {string} text The text to convert
  * @returns {string} The converted string
  */
@@ -14578,7 +14585,8 @@ var parseGenericTypes = function parseGenericTypes(text) {
 };
 /**
  * Gives the styles for a classifier
- * @param {"+" | "-" | "#" | "~" | "*" | "$"} classifier The classifier string
+ *
+ * @param {'+' | '-' | '#' | '~' | '*' | '$'} classifier The classifier string
  * @returns {string} Styling for the classifier
  */
 
@@ -14627,6 +14635,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * Gets the number of lines in a string
+ *
  * @param {string | undefined} s The string to check the lines for
  * @returns {number} The number of lines in that string
  */
@@ -14639,6 +14648,7 @@ var getRows = function getRows(s) {
 };
 /**
  * Removes script tags from a text
+ *
  * @param {string} txt The text to sanitize
  * @returns {string} The safer text
  */
@@ -14707,6 +14717,7 @@ var sanitizeText = function sanitizeText(text, config) {
 var lineBreakRegex = /<br\s*\/?>/gi;
 /**
  * Whether or not a text has any linebreaks
+ *
  * @param {string} text The text to test
  * @returns {boolean} Whether or not the text has breaks
  */
@@ -14716,8 +14727,9 @@ var hasBreaks = function hasBreaks(text) {
 };
 /**
  * Splits on <br> tags
+ *
  * @param {string} text Text to split
- * @returns {Array<string>} List of lines as strings
+ * @returns {string[]} List of lines as strings
  */
 
 var splitBreaks = function splitBreaks(text) {
@@ -14725,6 +14737,7 @@ var splitBreaks = function splitBreaks(text) {
 };
 /**
  * Converts placeholders to linebreaks in HTML
+ *
  * @param {string} s HTML with placeholders
  * @returns {string} HTML with breaks instead of placeholders
  */
@@ -14734,6 +14747,7 @@ var placeholderToBreak = function placeholderToBreak(s) {
 };
 /**
  * Opposite of `placeholderToBreak`, converts breaks to placeholders
+ *
  * @param {string} s HTML string
  * @returns {string} String with placeholders
  */
@@ -14744,6 +14758,7 @@ var breakToPlaceholder = function breakToPlaceholder(s) {
 };
 /**
  * Gets the current URL
+ *
  * @param {boolean} useAbsolute Whether to return the absolute URL or not
  * @returns {string} The current URL
  */
@@ -14762,6 +14777,7 @@ var getUrl = function getUrl(useAbsolute) {
 };
 /**
  * Converts a string/boolean into a boolean
+ *
  * @param {string | boolean} val String or boolean to convert
  * @returns {boolean} The result from the input
  */
@@ -17869,7 +17885,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Returns the styles given options
- * @param {{ fontFamily: string; nodeTextColor: string; textColor: string; titleColor: string; mainBkg: string; nodeBorder: string; arrowheadColor: string; lineColor: string; edgeLabelBackground: string; clusterBkg: string; clusterBorder: string; tertiaryColor: string; border2: string; }} options The options for the styles
+ *
+ * @param {{
+ *   fontFamily: string;
+ *   nodeTextColor: string;
+ *   textColor: string;
+ *   titleColor: string;
+ *   mainBkg: string;
+ *   nodeBorder: string;
+ *   arrowheadColor: string;
+ *   lineColor: string;
+ *   edgeLabelBackground: string;
+ *   clusterBkg: string;
+ *   clusterBorder: string;
+ *   tertiaryColor: string;
+ *   border2: string;
+ * }} options
+ *   The options for the styles
  * @returns {string} The resulting styles
  */
 var getStyles = function getStyles(options) {
@@ -25535,13 +25567,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment-mini */ "moment-mini");
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment_mini__WEBPACK_IMPORTED_MODULE_0__);
 
-/**
- * @typedef {"debug" | "info" | "warn" | "error" | "fatal"} LogLevel A log level
- */
+/** @typedef {'debug' | 'info' | 'warn' | 'error' | 'fatal'} LogLevel A log level */
 
-/**
- * @type {Object<LogLevel, number>}
- */
+/** @type {object<LogLevel, number>} */
 
 var LEVELS = {
   debug: 1,
@@ -25559,7 +25587,8 @@ var log = {
 };
 /**
  * Sets a log level
- * @param {LogLevel} [level="fatal"] The level to set the logging to
+ *
+ * @param {LogLevel} [level="fatal"] The level to set the logging to. Default is `"fatal"`
  */
 
 var setLogLevel = function setLogLevel() {
@@ -25608,6 +25637,7 @@ var setLogLevel = function setLogLevel() {
 };
 /**
  * Returns a format with the timestamp and the log level
+ *
  * @param {LogLevel} level The level for the log format
  * @returns {string} The format with the timestamp and log level
  */

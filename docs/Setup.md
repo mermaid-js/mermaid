@@ -1015,10 +1015,11 @@ Pushes in a directive to the configuration
 | -------- | ---------------------------- | ----------- | -------- | ------ |
 | reset    | Resets currentConfig to conf | Put Request | Required | None   |
 
-| Parameter | Description | Type | Required | Values |
+## conf
 
-\| --------- \| ------------------------------------------------------------ \| ---------- \| -------- \| -------------------------------------------- \|
-| conf | base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array |
+| Parameter | Description                                                   | Type       | Required | Values                                       |
+| --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+| conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
 
 **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
