@@ -1,5 +1,6 @@
 import { select } from 'd3';
 import { log } from '../logger'; // eslint-disable-line
+import { getConfig } from '../config';
 import { evaluate } from '../diagrams/common/common';
 // let vertexNode;
 // if (evaluate(getConfig().flowchart.htmlLabels)) {
@@ -25,7 +26,6 @@ import { evaluate } from '../diagrams/common/common';
 //   }
 //   vertexNode = svgLabel;
 // }
-import { getConfig } from '../config';
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {

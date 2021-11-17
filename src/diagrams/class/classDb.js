@@ -25,7 +25,7 @@ const splitClassNameAndType = function (id) {
     let split = id.split('~');
     className = split[0];
 
-    genericType = split[1];
+    genericType = common.sanitizeText(split[1], configApi.getConfig());
   }
 
   return { className: className, type: genericType };

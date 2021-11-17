@@ -78,5 +78,25 @@ describe('XSS', () => {
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   })
+  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+    cy.visit('http://localhost:9000/xss10.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  })
+  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+    cy.visit('http://localhost:9000/xss11.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  })
+  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+    cy.visit('http://localhost:9000/xss12.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  })
+  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+    cy.visit('http://localhost:9000/xss13.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  })
 
 })

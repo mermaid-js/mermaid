@@ -77,6 +77,10 @@ const setupNode = (g, parent, node, altFlag) => {
           nodeDb[node.id].description = node.description;
         }
       }
+      nodeDb[node.id].description = common.sanitizeTextOrArray(
+        nodeDb[node.id].description,
+        getConfig()
+      );
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
@@ -194,7 +198,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
         arrowTypeEnd: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
-        label: item.description,
+        label: common.sanitizeText(item.description, getConfig()),
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
