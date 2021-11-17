@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import { log } from '../logger'; // eslint-disable-line
 import { getConfig } from '../config';
-import { evaluate, sanitizeText } from '../diagrams/common/common';
+import { evaluate } from '../diagrams/common/common';
 // let vertexNode;
 // if (evaluate(getConfig().flowchart.htmlLabels)) {
 //   // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?

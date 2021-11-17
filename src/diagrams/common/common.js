@@ -80,6 +80,13 @@ export const sanitizeText = (text, config) => {
   return txt;
 };
 
+export const sanitizeTextOrArray = (a, config) => {
+  if (typeof a === 'string') return sanitizeText(a, config);
+
+  const f = (x) => sanitizeText(x, config);
+  return a.flat().map(f);
+};
+
 export const lineBreakRegex = /<br\s*\/?>/gi;
 
 /**
@@ -149,6 +156,7 @@ export const evaluate = (val) => (val === 'false' || val === false ? false : tru
 export default {
   getRows,
   sanitizeText,
+  sanitizeTextOrArray,
   hasBreaks,
   splitBreaks,
   lineBreakRegex,

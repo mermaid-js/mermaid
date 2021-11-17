@@ -61,25 +61,26 @@ const setupNode = (g, parent, node, altFlag) => {
       if (Array.isArray(nodeDb[node.id].description)) {
         // There already is an array of strings,add to it
         nodeDb[node.id].shape = 'rectWithTitle';
-        nodeDb[node.id].description.push(common.sanitizeText(node.description, getConfig()));
+        nodeDb[node.id].description.push(node.description);
       } else {
         if (nodeDb[node.id].description.length > 0) {
           // if there is a description already transformit to an array
           nodeDb[node.id].shape = 'rectWithTitle';
           if (nodeDb[node.id].description === node.id) {
             // If the previous description was the is, remove it
-            nodeDb[node.id].description = [common.sanitizeText(node.description, getConfig())];
+            nodeDb[node.id].description = [node.description];
           } else {
-            nodeDb[node.id].description = [
-              common.sanitizeText(nodeDb[node.id].description, getConfig()),
-              common.sanitizeText(node.description, getConfig()),
-            ];
+            nodeDb[node.id].description = [nodeDb[node.id].description, node.description];
           }
         } else {
           nodeDb[node.id].shape = 'rect';
-          nodeDb[node.id].description = common.sanitizeText(node.description, getConfig());
+          nodeDb[node.id].description = node.description;
         }
       }
+      nodeDb[node.id].description = common.sanitizeTextOrArray(
+        nodeDb[node.id].description,
+        getConfig()
+      );
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
@@ -100,7 +101,7 @@ const setupNode = (g, parent, node, altFlag) => {
     const nodeData = {
       labelStyle: '',
       shape: nodeDb[node.id].shape,
-      labelText: common.sanitizeText(nodeDb[node.id].description, getConfig()),
+      labelText: nodeDb[node.id].description,
       // typeof nodeDb[node.id].description === 'object'
       //   ? nodeDb[node.id].description[0]
       //   : nodeDb[node.id].description,
@@ -118,7 +119,7 @@ const setupNode = (g, parent, node, altFlag) => {
       const noteData = {
         labelStyle: '',
         shape: 'note',
-        labelText: common.sanitizeText(node.note.text, getConfig()),
+        labelText: node.note.text,
         classes: 'statediagram-note', //classStr,
         style: '', //styles.style,
         id: node.id + '----note-' + cnt,
@@ -129,7 +130,7 @@ const setupNode = (g, parent, node, altFlag) => {
       const groupData = {
         labelStyle: '',
         shape: 'noteGroup',
-        labelText: common.sanitizeText(node.note.text, getConfig()),
+        labelText: node.note.text,
         classes: nodeDb[node.id].classes, //classStr,
         style: '', //styles.style,
         id: node.id + '----parent',
