@@ -1,6 +1,7 @@
 import { select } from 'd3';
 import { log } from '../logger'; // eslint-disable-line
-import { evaluate } from '../diagrams/common/common';
+import { getConfig } from '../config';
+import { evaluate, sanitizeText } from '../diagrams/common/common';
 // let vertexNode;
 // if (evaluate(getConfig().flowchart.htmlLabels)) {
 //   // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
@@ -25,7 +26,6 @@ import { evaluate } from '../diagrams/common/common';
 //   }
 //   vertexNode = svgLabel;
 // }
-import { getConfig } from '../config';
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {
@@ -85,7 +85,7 @@ function addHtmlLabel(node) {
 }
 
 const createLabel = (_vertexText, style, isTitle, isNode) => {
-  let vertexText = _vertexText || '';
+  let vertexText = sanitizeText(_vertexText || '', getConfig());
   if (typeof vertexText === 'object') vertexText = vertexText[0];
   if (evaluate(getConfig().flowchart.htmlLabels)) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
