@@ -61,20 +61,23 @@ const setupNode = (g, parent, node, altFlag) => {
       if (Array.isArray(nodeDb[node.id].description)) {
         // There already is an array of strings,add to it
         nodeDb[node.id].shape = 'rectWithTitle';
-        nodeDb[node.id].description.push(node.description);
+        nodeDb[node.id].description.push(common.sanitizeText(node.description, getConfig()));
       } else {
         if (nodeDb[node.id].description.length > 0) {
           // if there is a description already transformit to an array
           nodeDb[node.id].shape = 'rectWithTitle';
           if (nodeDb[node.id].description === node.id) {
             // If the previous description was the is, remove it
-            nodeDb[node.id].description = [node.description];
+            nodeDb[node.id].description = [common.sanitizeText(node.description, getConfig())];
           } else {
-            nodeDb[node.id].description = [nodeDb[node.id].description, node.description];
+            nodeDb[node.id].description = [
+              common.sanitizeText(nodeDb[node.id].description, getConfig()),
+              common.sanitizeText(node.description, getConfig()),
+            ];
           }
         } else {
           nodeDb[node.id].shape = 'rect';
-          nodeDb[node.id].description = node.description;
+          nodeDb[node.id].description = common.sanitizeText(node.description, getConfig());
         }
       }
     }
@@ -97,7 +100,7 @@ const setupNode = (g, parent, node, altFlag) => {
     const nodeData = {
       labelStyle: '',
       shape: nodeDb[node.id].shape,
-      labelText: nodeDb[node.id].description,
+      labelText: common.sanitizeText(nodeDb[node.id].description, getConfig()),
       // typeof nodeDb[node.id].description === 'object'
       //   ? nodeDb[node.id].description[0]
       //   : nodeDb[node.id].description,
@@ -115,7 +118,7 @@ const setupNode = (g, parent, node, altFlag) => {
       const noteData = {
         labelStyle: '',
         shape: 'note',
-        labelText: node.note.text,
+        labelText: common.sanitizeText(node.note.text, getConfig()),
         classes: 'statediagram-note', //classStr,
         style: '', //styles.style,
         id: node.id + '----note-' + cnt,
@@ -126,7 +129,7 @@ const setupNode = (g, parent, node, altFlag) => {
       const groupData = {
         labelStyle: '',
         shape: 'noteGroup',
-        labelText: node.note.text,
+        labelText: common.sanitizeText(node.note.text, getConfig()),
         classes: nodeDb[node.id].classes, //classStr,
         style: '', //styles.style,
         id: node.id + '----parent',
@@ -194,7 +197,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
         arrowTypeEnd: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
-        label: item.description,
+        label: common.sanitizeText(item.description, getConfig()),
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
