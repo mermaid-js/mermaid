@@ -20,6 +20,7 @@ const conf = {
 
 /**
  * Gets the ID with the same label as in the cache
+ *
  * @param {string} label The label to look for
  * @returns {string} The resulting ID
  */
@@ -33,6 +34,7 @@ const getGraphId = function (label) {
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
  * @param {SVGSVGElement} elem The SVG element to append to
  */
 const insertMarkers = function (elem) {
@@ -139,7 +141,8 @@ const insertMarkers = function (elem) {
 
 /**
  * Merges the value of `conf` with the passed `cnf`
- * @param {Object} cnf Config to merge
+ *
+ * @param {object} cnf Config to merge
  */
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
@@ -151,6 +154,7 @@ export const setConf = function (cnf) {
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
  * @param {string} text
  * @param {string} id
  */

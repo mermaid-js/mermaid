@@ -55,6 +55,12 @@ export const updateNodeBounds = (node, element) => {
   node.height = bbox.height;
 };
 
+/**
+ * @param parent
+ * @param w
+ * @param h
+ * @param points
+ */
 export function insertPolygonShape(parent, w, h, points) {
   return parent
     .insert('polygon', ':first-child')

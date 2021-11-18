@@ -251,6 +251,10 @@ export const addALink = function (actorId, text) {
   }
 };
 
+/**
+ * @param {any} actor
+ * @param {any} links
+ */
 function insertLinks(actor, links) {
   if (actor.links == null) {
     actor.links = links;
@@ -275,6 +279,10 @@ export const addProperties = function (actorId, text) {
   }
 };
 
+/**
+ * @param {any} actor
+ * @param {any} properties
+ */
 function insertProperties(actor, properties) {
   if (actor.properties == null) {
     actor.properties = properties;

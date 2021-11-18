@@ -1,6 +1,3 @@
-/**
- *
- */
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';

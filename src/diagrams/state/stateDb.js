@@ -117,10 +117,12 @@ let endCnt = 0; // eslint-disable-line
 
 /**
  * Function called by parser when a node definition has been found.
- * @param id
- * @param text
- * @param type
- * @param style
+ *
+ * @param {any} id
+ * @param {any} type
+ * @param {any} doc
+ * @param {any} descr
+ * @param {any} note
  */
 export const addState = function (id, type, doc, descr, note) {
   if (typeof currentDocument.states[id] === 'undefined') {

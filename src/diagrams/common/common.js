@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 
 /**
  * Gets the number of lines in a string
+ *
  * @param {string | undefined} s The string to check the lines for
  * @returns {number} The number of lines in that string
  */
@@ -14,6 +15,7 @@ export const getRows = (s) => {
 
 /**
  * Removes script tags from a text
+ *
  * @param {string} txt The text to sanitize
  * @returns {string} The safer text
  */
@@ -91,6 +93,7 @@ export const lineBreakRegex = /<br\s*\/?>/gi;
 
 /**
  * Whether or not a text has any linebreaks
+ *
  * @param {string} text The text to test
  * @returns {boolean} Whether or not the text has breaks
  */
@@ -100,8 +103,9 @@ export const hasBreaks = (text) => {
 
 /**
  * Splits on <br> tags
+ *
  * @param {string} text Text to split
- * @returns {Array<string>} List of lines as strings
+ * @returns {string[]} List of lines as strings
  */
 export const splitBreaks = (text) => {
   return text.split(lineBreakRegex);
@@ -109,6 +113,7 @@ export const splitBreaks = (text) => {
 
 /**
  * Converts placeholders to linebreaks in HTML
+ *
  * @param {string} s HTML with placeholders
  * @returns {string} HTML with breaks instead of placeholders
  */
@@ -118,6 +123,7 @@ const placeholderToBreak = (s) => {
 
 /**
  * Opposite of `placeholderToBreak`, converts breaks to placeholders
+ *
  * @param {string} s HTML string
  * @returns {string} String with placeholders
  */
@@ -127,6 +133,7 @@ const breakToPlaceholder = (s) => {
 
 /**
  * Gets the current URL
+ *
  * @param {boolean} useAbsolute Whether to return the absolute URL or not
  * @returns {string} The current URL
  */
@@ -148,6 +155,7 @@ const getUrl = (useAbsolute) => {
 
 /**
  * Converts a string/boolean into a boolean
+ *
  * @param {string | boolean} val String or boolean to convert
  * @returns {boolean} The result from the input
  */

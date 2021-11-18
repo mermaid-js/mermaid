@@ -38,34 +38,36 @@ const directiveWithoutOpen =
 const anyComment = /\s*%%.*\n/gm;
 
 /**
- * @function detectInit
- * Detects the init config object from the text
- * ```mermaid
- * %%{init: {"theme": "debug", "logLevel": 1 }}%%
- * graph LR
- *  a-->b
- *  b-->c
- *  c-->d
- *  d-->e
- *  e-->f
- *  f-->g
- *  g-->h
- * ```
- * or
- * ```mermaid
- * %%{initialize: {"theme": "dark", logLevel: "debug" }}%%
- * graph LR
- *  a-->b
- *  b-->c
- *  c-->d
- *  d-->e
- *  e-->f
- *  f-->g
- *  g-->h
+ * @function detectInit Detects the init config object from the text
+ *
+ *   ```mermaid
+ *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
+ *   graph LR
+ *    a-->b
+ *    b-->c
+ *    c-->d
+ *    d-->e
+ *    e-->f
+ *    f-->g
+ *    g-->h
  * ```
  *
+ *   Or
+ *
+ *   ```mermaid
+ *   %%{initialize: {"theme": "dark", logLevel: "debug" }}%%
+ *   graph LR
+ *    a-->b
+ *    b-->c
+ *    c-->d
+ *    d-->e
+ *    e-->f
+ *    f-->g
+ *    g-->h
+ * ```
  * @param {string} text The text defining the graph
- * @returns {object} the json object representing the init passed to mermaid.initialize()
+ * @param {any} cnf
+ * @returns {object} The json object representing the init passed to mermaid.initialize()
  */
 export const detectInit = function (text, cnf) {
   let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
@@ -97,25 +99,25 @@ export const detectInit = function (text, cnf) {
 };
 
 /**
- * @function detectDirective
- * Detects the directive from the text. Text can be single line or multiline. If type is null or omitted
- * the first directive encountered in text will be returned
- * ```mermaid
- * graph LR
- *  %%{somedirective}%%
- *  a-->b
- *  b-->c
- *  c-->d
- *  d-->e
- *  e-->f
- *  f-->g
- *  g-->h
- * ```
+ * @function detectDirective Detects the directive from the text. Text can be single line or
+ *   multiline. If type is null or omitted the first directive encountered in text will be returned
  *
+ *   ```mermaid
+ *   graph LR
+ *    %%{somedirective}%%
+ *    a-->b
+ *    b-->c
+ *    c-->d
+ *    d-->e
+ *    e-->f
+ *    f-->g
+ *    g-->h
+ * ```
  * @param {string} text The text defining the graph
- * @param {string|RegExp} type The directive to return (default: null)
- * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matched by the input type
- *          if a single directive was found, that directive object will be returned.
+ * @param {string | RegExp} type The directive to return (default: null)
+ * @returns {object | Array} An object or Array representing the directive(s): { type: string, args:
+ *   object|null } matched by the input type if a single directive was found, that directive object
+ *   will be returned.
  */
 export const detectDirective = function (text, type = null) {
   try {
@@ -159,23 +161,26 @@ export const detectDirective = function (text, type = null) {
 };
 
 /**
- * @function detectType
- * Detects the type of the graph text. Takes into consideration the possible existence of an %%init
- * directive
- * ```mermaid
- * %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
- * graph LR
- *  a-->b
- *  b-->c
- *  c-->d
- *  d-->e
- *  e-->f
- *  f-->g
- *  g-->h
- * ```
+ * @function detectType Detects the type of the graph text. Takes into consideration the possible
+ *   existence of an %%init directive
  *
+ *   ```mermaid
+ *   %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
+ *   graph LR
+ *    a-->b
+ *    b-->c
+ *    c-->d
+ *    d-->e
+ *    e-->f
+ *    f-->g
+ *    g-->h
+ * ```
  * @param {string} text The text defining the graph
- * @param {{ class: { defaultRenderer: string } | undefined; state: { defaultRenderer: string } | undefined; flowchart: { defaultRenderer: string } | undefined; }} [cnf]
+ * @param {{
+ *   class: { defaultRenderer: string } | undefined;
+ *   state: { defaultRenderer: string } | undefined;
+ *   flowchart: { defaultRenderer: string } | undefined;
+ * }} [cnf]
  * @returns {string} A graph definition key
  */
 export const detectType = function (text, cnf) {
@@ -237,6 +242,7 @@ export const detectType = function (text, cnf) {
 
 /**
  * Caches results of functions based on input
+ *
  * @param {Function} fn Function to run
  * @param {Function} resolver Function that resolves to an ID given arguments the `fn` takes
  * @returns {Function} An optimized caching function
@@ -256,12 +262,11 @@ const memoize = (fn, resolver) => {
 };
 
 /**
- * @function isSubstringInArray
- * Detects whether a substring in present in a given array
+ * @function isSubstringInArray Detects whether a substring in present in a given array
  * @param {string} str The substring to detect
- * @param {array} arr The array to search
- * @returns {number} the array index containing the substring or -1 if not present
- **/
+ * @param {Array} arr The array to search
+ * @returns {number} The array index containing the substring or -1 if not present
+ */
 export const isSubstringInArray = function (str, arr) {
   for (let i = 0; i < arr.length; i++) {
     if (arr[i].match(str)) return i;
@@ -271,8 +276,9 @@ export const isSubstringInArray = function (str, arr) {
 
 /**
  * Returns a d3 curve given a curve name
+ *
  * @param {string | undefined} interpolate The interpolation name
- * @param {*} defaultCurve The default curve to return
+ * @param {any} defaultCurve The default curve to return
  * @returns {import('d3-shape').CurveFactory} The curve factory to use
  */
 export const interpolateToCurve = (interpolate, defaultCurve) => {
@@ -285,8 +291,9 @@ export const interpolateToCurve = (interpolate, defaultCurve) => {
 
 /**
  * Formats a URL string
+ *
  * @param {string} linkStr String of the URL
- * @param {{ securityLevel: string; }} config Configuration passed to MermaidJS
+ * @param {{ securityLevel: string }} config Configuration passed to MermaidJS
  * @returns {string | undefined} The formatted URL
  */
 export const formatUrl = (linkStr, config) => {
@@ -303,8 +310,9 @@ export const formatUrl = (linkStr, config) => {
 
 /**
  * Runs a function
+ *
  * @param {string} functionName A dot seperated path to the function relative to the `window`
- * @param  {...any} params Parameters to pass to the function
+ * @param {...any} params Parameters to pass to the function
  */
 export const runFunc = (functionName, ...params) => {
   const arrPaths = functionName.split('.');
@@ -322,13 +330,14 @@ export const runFunc = (functionName, ...params) => {
 };
 
 /**
- * @typedef {Object} Point A (x, y) point
+ * @typedef {object} Point A (x, y) point
  * @property {number} x The x value
  * @property {number} y The y value
  */
 
 /**
  * Finds the distance between two points using the Distance Formula
+ *
  * @param {Point} p1 The first point
  * @param {Point} p2 The second point
  * @returns {number} The distance
@@ -337,9 +346,9 @@ const distance = (p1, p2) =>
   p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
 
 /**
- * @todo Give this a description
- * @param {Array<Point>} points List of points
+ * @param {Point[]} points List of points
  * @returns {Point}
+ * @todo Give this a description
  */
 const traverseEdge = (points) => {
   let prevPoint;
@@ -380,6 +389,7 @@ const traverseEdge = (points) => {
 
 /**
  * Alias for `traverseEdge`
+ *
  * @param {Point[]} points List of points
  * @returns {Point} Return result of `transverseEdge`
  */
@@ -438,7 +448,12 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
 };
 
 /**
- * position ['start_left', 'start_right', 'end_left', 'end_right']
+ * Position ['start_left', 'start_right', 'end_left', 'end_right']
+ *
+ * @param {any} terminalMarkerSize
+ * @param {any} position
+ * @param {any} _points
+ * @returns {any}
  */
 const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   // Todo looking to faster cloning method
@@ -510,8 +525,9 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
 
 /**
  * Gets styles from an array of declarations
- * @param {Array<string>} arr Declarations
- * @returns {{ style: string; labelStyle: string; }} The styles grouped as strings
+ *
+ * @param {string[]} arr Declarations
+ * @returns {{ style: string; labelStyle: string }} The styles grouped as strings
  */
 export const getStylesFromArray = (arr) => {
   let style = '';
@@ -537,6 +553,10 @@ export const generateId = () => {
   return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
 };
 
+/**
+ * @param {any} length
+ * @returns {any}
+ */
 function makeid(length) {
   var result = '';
   var characters = '0123456789abcdef';
@@ -552,30 +572,39 @@ export const random = (options) => {
 };
 
 /**
- * @function assignWithDepth
- * Extends the functionality of {@link ObjectConstructor.assign} with the ability to merge arbitrary-depth objects
- * For each key in src with path `k` (recursively) performs an Object.assign(dst[`k`], src[`k`]) with
- * a slight change from the typical handling of undefined for dst[`k`]: instead of raising an error,
- * dst[`k`] is auto-initialized to {} and effectively merged with src[`k`]
- * <p>
- * Additionally, dissimilar types will not clobber unless the config.clobber parameter === true. Example:
- * ```
- * let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
- * let config_1 = { foo: 'foo', bar: 'bar' };
- * let result = assignWithDepth(config_0, config_1);
- * console.log(result);
- * //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
- * ```
- * <p>
- * Traditional Object.assign would have clobbered foo in config_0 with foo in config_1.
- * <p>
- * If src is a destructured array of objects and dst is not an array, assignWithDepth will apply each element of src to dst
- * in order.
- * @param {any} dst - the destination of the merge
- * @param {any} src - the source object(s) to merge into destination
- * @param {{ depth: number, clobber: boolean }} [config={ depth: 2, clobber: false }] - depth: depth to traverse within src and dst for merging -
- * clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
- * @returns {*}
+ * @function assignWithDepth Extends the functionality of {@link ObjectConstructor.assign} with the
+ *   ability to merge arbitrary-depth objects For each key in src with path `k` (recursively)
+ *   performs an Object.assign(dst[`k`], src[`k`]) with a slight change from the typical handling of
+ *   undefined for dst[`k`]: instead of raising an error, dst[`k`] is auto-initialized to {} and
+ *   effectively merged with src[`k`]<p> Additionally, dissimilar types will not clobber unless the
+ *   config.clobber parameter === true. Example:
+ *
+ *   ```js
+ *   let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
+ *   let config_1 = { foo: 'foo', bar: 'bar' };
+ *   let result = assignWithDepth(config_0, config_1);
+ *   console.log(result);
+ *   //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
+ *   ```
+ *
+ *   Traditional Object.assign would have clobbered foo in config_0 with foo in config_1. If src is a
+ *   destructured array of objects and dst is not an array, assignWithDepth will apply each element
+ *   of src to dst in order.
+ * @param dst
+ * @param src
+ * @param config
+ * @param dst
+ * @param src
+ * @param config
+ * @param dst
+ * @param src
+ * @param config
+ * @param {any} dst - The destination of the merge
+ * @param {any} src - The source object(s) to merge into destination
+ * @param {{ depth: number; clobber: boolean }} [config={ depth: 2, clobber: false }] - Depth: depth
+ *   to traverse within src and dst for merging - clobber: should dissimilar types clobber (default:
+ *   { depth: 2, clobber: false }). Default is `{ depth: 2, clobber: false }`
+ * @returns {any}
  */
 export const assignWithDepth = function (dst, src, config) {
   const { depth, clobber } = Object.assign({ depth: 2, clobber: false }, config);
@@ -633,8 +662,20 @@ export const getTextObj = function () {
 
 /**
  * Adds text to an element
+ *
  * @param {SVGElement} elem Element to add text to
- * @param {{ text: string; x: number; y: number; anchor: "start" | "middle" | "end"; fontFamily: string; fontSize: string | number; fontWeight: string | number; fill: string; class: string | undefined; textMargin: number; }} textData
+ * @param {{
+ *   text: string;
+ *   x: number;
+ *   y: number;
+ *   anchor: 'start' | 'middle' | 'end';
+ *   fontFamily: string;
+ *   fontSize: string | number;
+ *   fontWeight: string | number;
+ *   fill: string;
+ *   class: string | undefined;
+ *   textMargin: number;
+ * }} textData
  * @returns {SVGTextElement} Text element with given styling and content
  */
 export const drawSimpleText = function (elem, textData) {
@@ -730,15 +771,14 @@ const breakString = memoize(
 );
 
 /**
- * This calculates the text's height, taking into account the wrap breaks and
- * both the statically configured height, width, and the length of the text (in pixels).
+ * This calculates the text's height, taking into account the wrap breaks and both the statically
+ * configured height, width, and the length of the text (in pixels).
  *
- * If the wrapped text text has greater height, we extend the height, so it's
- * value won't overflow.
+ * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
  *
- * @return - The height for the given text
- * @param text the text to measure
- * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} text The text to measure
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @returns {any} - The height for the given text
  */
 export const calculateTextHeight = function (text, config) {
   config = Object.assign(
@@ -751,9 +791,9 @@ export const calculateTextHeight = function (text, config) {
 /**
  * This calculates the width of the given text, font size and family.
  *
- * @return - The width for the given text
- * @param text - The text to calculate the width of
- * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} text - The text to calculate the width of
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @returns {any} - The width for the given text
  */
 export const calculateTextWidth = function (text, config) {
   config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
@@ -763,9 +803,10 @@ export const calculateTextWidth = function (text, config) {
 /**
  * This calculates the dimensions of the given text, font size, font family, font weight, and margins.
  *
- * @return - The width for the given text
- * @param text - The text to calculate the width of
- * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ * @param {any} text - The text to calculate the width of
+ * @param {any} config - The config for fontSize, fontFamily, fontWeight, and margin all impacting
+ *   the resulting size
+ * @returns - The width for the given text
  */
 export const calculateTextDimensions = memoize(
   function (text, config) {
@@ -829,8 +870,9 @@ export const calculateTextDimensions = memoize(
 
 /**
  * Applys d3 attributes
- * @param {*} d3Elem d3 Element to apply the attributes onto
- * @param {Array<[string, string]>} attrs Object.keys equivalent format of key to value mapping of attributes
+ *
+ * @param {any} d3Elem D3 Element to apply the attributes onto
+ * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of attributes
  */
 const d3Attrs = function (d3Elem, attrs) {
   for (let attr of attrs) {
@@ -840,6 +882,7 @@ const d3Attrs = function (d3Elem, attrs) {
 
 /**
  * Gives attributes for an SVG's size given arguments
+ *
  * @param {number} height The height of the SVG
  * @param {number} width The width of the SVG
  * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
@@ -859,6 +902,7 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
 
 /**
  * Applies attributes from `calculateSvgSizeAttrs`
+ *
  * @param {SVGSVGElement} svgElem The SVG Element to configure
  * @param {number} height The height of the SVG
  * @param {number} width The width of the SVG
@@ -888,6 +932,7 @@ let decoder;
 
 /**
  * Decodes HTML, source: {@link https://github.com/shrpne/entity-decode/blob/v2.0.1/browser.js}
+ *
  * @param {string} html HTML as a string
  * @returns Unescaped HTML
  */
@@ -902,7 +947,8 @@ export const entityDecode = function (html) {
 
 /**
  * Sanitizes directive objects
- * @param {Object} args Directive's JSON
+ *
+ * @param {object} args Directive's JSON
  */
 export const directiveSanitizer = (args) => {
   log.debug('directiveSanitizer called with', args);
