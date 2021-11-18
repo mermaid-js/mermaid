@@ -1,6 +1,4 @@
-/**
- * Created by AshishJ on 11-09-2019.
- */
+/** Created by AshishJ on 11-09-2019. */
 import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
 import pieData from './pieDb';
 import pieParser from './parser/pie';
@@ -12,6 +10,7 @@ let conf = configApi.getConfig();
 
 /**
  * Draws a Pie Chart with the data given in text.
+ *
  * @param text
  * @param id
  */

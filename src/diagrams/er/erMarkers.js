@@ -11,6 +11,9 @@ const ERMarkers = {
 
 /**
  * Put the markers into the svg DOM for later use with edge paths
+ *
+ * @param elem
+ * @param conf
  */
 const insertMarkers = function (elem, conf) {
   let marker;

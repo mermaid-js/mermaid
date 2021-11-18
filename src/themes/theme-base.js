@@ -3,7 +3,10 @@ import { mkBorder } from './theme-helpers';
 class Theme {
   constructor() {
     /** # Base variables */
-    /** * background - used to know what the background color is of the diagram. This is used for deducing colors for istance line color. Defaulr value is #f4f4f4. */
+    /**
+     * - Background - used to know what the background color is of the diagram. This is used for
+     *   deducing colors for istance line color. Defaulr value is #f4f4f4.
+     */
     this.background = '#f4f4f4';
     this.darkMode = false;
 

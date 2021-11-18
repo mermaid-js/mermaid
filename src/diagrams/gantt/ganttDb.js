@@ -490,8 +490,9 @@ const compileTasks = function () {
 
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
+ *
  * @param ids Comma separated list of ids
- * @param linkStr URL to create a link for
+ * @param _linkStr URL to create a link for
  */
 export const setLink = function (ids, _linkStr) {
   let linkStr = _linkStr;
@@ -511,6 +512,7 @@ export const setLink = function (ids, _linkStr) {
 
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
+ *
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
@@ -560,7 +562,9 @@ const setClickFun = function (id, functionName, functionArgs) {
 };
 
 /**
- * The callbackFunction is executed in a click event bound to the task with the specified id or the task's assigned text
+ * The callbackFunction is executed in a click event bound to the task with the specified id or the
+ * task's assigned text
+ *
  * @param id The task's id
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
@@ -587,6 +591,7 @@ const pushFun = function (id, callbackFunction) {
 
 /**
  * Called by parser when a click definition is found. Registers an event handler.
+ *
  * @param ids Comma separated list of ids
  * @param functionName Function to be called on click
  * @param functionArgs Function args the function should be called with
@@ -600,6 +605,7 @@ export const setClickEvent = function (ids, functionName, functionArgs) {
 
 /**
  * Binds all functions previously added to fun (specified through click) to the element
+ *
  * @param element
  */
 export const bindFunctions = function (element) {
@@ -641,6 +647,11 @@ export default {
   isInvalidDate,
 };
 
+/**
+ * @param data
+ * @param task
+ * @param tags
+ */
 function getTaskTags(data, task, tags) {
   let matchFound = true;
   while (matchFound) {

@@ -8803,18 +8803,19 @@ var updateCurrentConfig = function updateCurrentConfig(siteCfg, _directives) {
   return cfg;
 };
 /**
- *## setSiteConfig
- *| Function | Description         | Type    | Values             |
- *| --------- | ------------------- | ------- | ------------------ |
- *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
- ***Notes:**
- *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
- *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
- *to the defaultConfig
- *Note: currentConfig is set in this function
- **Default value: At default, will mirror Global Config**
- * @param conf - the base currentConfig to use as siteConfig
- * @returns {Object} - the siteConfig
+ * ## setSiteConfig
+ *
+ * | Function      | Description                           | Type        | Values                                  |
+ * | ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+ * | setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+ *
+ * **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
+ * to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
+ * will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
+ * function *Default value: At default, will mirror Global Config**
+ *
+ * @param conf - The base currentConfig to use as siteConfig
+ * @returns {object} - The siteConfig
  */
 
 var setSiteConfig = function setSiteConfig(conf) {
@@ -8837,29 +8838,33 @@ var updateSiteConfig = function updateSiteConfig(conf) {
   return siteConfig;
 };
 /**
- *## getSiteConfig
- *| Function | Description         | Type    |  Values             |
- *| --------- | ------------------- | ------- |  ------------------ |
- *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
- ***Notes**:
- *Returns **any** values in siteConfig.
- * @returns {Object} - the siteConfig
+ * ## getSiteConfig
+ *
+ * | Function      | Description                                       | Type        | Values                           |
+ * | ------------- | ------------------------------------------------- | ----------- | -------------------------------- |
+ * | setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in siteConfig |
+ *
+ * **Notes**: Returns **any** values in siteConfig.
+ *
+ * @returns {object} - The siteConfig
  */
 
 var getSiteConfig = function getSiteConfig() {
   return (0,_utils__WEBPACK_IMPORTED_MODULE_1__.assignWithDepth)({}, siteConfig);
 };
 /**
- *## setConfig
- *| Function  | Description         | Type    | Values             |
- *| --------- | ------------------- | ------- | ------------------ |
- *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
- ***Notes**:
- *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
- *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
- *siteConfig value.
- * @param conf - the potential currentConfig
- * @returns {*} - the currentConfig merged with the sanitized conf
+ * ## setConfig
+ *
+ * | Function      | Description                           | Type        | Values                                  |
+ * | ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+ * | setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+ *
+ * **Notes**: Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure
+ * keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
+ * corresponding siteConfig value.
+ *
+ * @param {any} conf - The potential currentConfig
+ * @returns {any} - The currentConfig merged with the sanitized conf
  */
 
 var setConfig = function setConfig(conf) {
@@ -8872,26 +8877,31 @@ var setConfig = function setConfig(conf) {
   return getConfig();
 };
 /**
- *   ## getConfig
- *| Function  | Description         | Type    | Return Values            |
- *| --------- | ------------------- | ------- | ------------------ |
- *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
- ***Notes**:
- *Returns **any** the currentConfig
- * @returns {*} - the currentConfig
+ * ## getConfig
+ *
+ * | Function  | Description               | Type        | Return Values                  |
+ * | --------- | ------------------------- | ----------- | ------------------------------ |
+ * | getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
+ *
+ * **Notes**: Returns **any** the currentConfig
+ *
+ * @returns {any} - The currentConfig
  */
 
 var getConfig = function getConfig() {
   return (0,_utils__WEBPACK_IMPORTED_MODULE_1__.assignWithDepth)({}, currentConfig);
 };
 /**
- *## sanitize
- *| Function | Description         | Type    | Values             |
- *| --------- | ------------------- | ------- | ------------------ |
- *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
- *Ensures options parameter does not attempt to override siteConfig secure keys
- *Note: modifies options in-place
- * @param options - the potential setConfig parameter
+ * ## sanitize
+ *
+ * | Function | Description                            | Type        | Values |
+ * | -------- | -------------------------------------- | ----------- | ------ |
+ * | sanitize | Sets the siteConfig to desired values. | Put Request | None   |
+ *
+ * Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
+ * options in-place
+ *
+ * @param {any} options - The potential setConfig parameter
  */
 
 var sanitize = function sanitize(options) {
@@ -8926,7 +8936,8 @@ var sanitize = function sanitize(options) {
 };
 /**
  * Pushes in a directive to the configuration
- * @param {Object} directive The directive to push in
+ *
+ * @param {object} directive The directive to push in
  */
 
 var addDirective = function addDirective(directive) {
@@ -8948,18 +8959,19 @@ var addDirective = function addDirective(directive) {
   updateCurrentConfig(siteConfig, directives);
 };
 /**
- *## reset
- *| Function | Description         | Type    | Required | Values             |
- *| --------- | ------------------- | ------- | -------- | ------------------ |
- *| reset|Resets currentConfig to conf| Put Request | Required | None|
+ * ## reset
  *
- *| Parameter | Description |Type | Required | Values|
- *| --- | --- | --- | --- | --- |
- *| conf| base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array|
+ * | Function | Description                  | Type        | Required | Values |
+ * | -------- | ---------------------------- | ----------- | -------- | ------ |
+ * | reset    | Resets currentConfig to conf | Put Request | Required | None   |
  *
- **Notes :
- (default: current siteConfig ) (optional, default `getSiteConfig()`)
- * @param conf  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
+ * ## conf
+ *
+ * | Parameter | Description                                                   | Type       | Required | Values                                       |
+ * | --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+ * | conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
+ *
+ * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
  */
 
 var reset = function reset() {
@@ -9045,6 +9057,10 @@ var rect = function rect(parent, node) {
 };
 /**
  * Non visiable cluster where the note is group with its
+ *
+ * @param {any} parent
+ * @param {any} node
+ * @returns {any} ShapeSvg
  */
 
 
@@ -9187,59 +9203,24 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  // eslint-disable-line
 
 
- // let vertexNode;
-// if (evaluate(getConfig().flowchart.htmlLabels)) {
-//   // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-//   const node = {
-//     label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, s => `<i class='${s.replace(':', ' ')}'></i>`)
-//   };
-//   vertexNode = addHtmlLabel(svg, node).node();
-//   vertexNode.parentNode.removeChild(vertexNode);
-// } else {
-//   const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-//   svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-//   const rows = vertexText.split(common.lineBreakRegex);
-//   for (let j = 0; j < rows.length; j++) {
-//     const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-//     tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-//     tspan.setAttribute('dy', '1em');
-//     tspan.setAttribute('x', '1');
-//     tspan.textContent = rows[j];
-//     svgLabel.appendChild(tspan);
-//   }
-//   vertexNode = svgLabel;
-// }
+
+/**
+ * @param dom
+ * @param styleFn
+ */
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {
     dom.attr('style', styleFn);
   }
 }
+/**
+ * @param {any} node
+ * @returns {SVGForeignObjectElement} Node
+ */
+
 
 function addHtmlLabel(node) {
-  // var fo = root.append('foreignObject').attr('width', '100000');
-  // var div = fo.append('xhtml:div');
-  // div.attr('xmlns', 'http://www.w3.org/1999/xhtml');
-  // var label = node.label;
-  // switch (typeof label) {
-  //   case 'function':
-  //     div.insert(label);
-  //     break;
-  //   case 'object':
-  //     // Currently we assume this is a DOM object.
-  //     div.insert(function() {
-  //       return label;
-  //     });
-  //     break;
-  //   default:
-  //     div.html(label);
-  // }
-  // applyStyle(div, node.labelStyle);
-  // div.style('display', 'inline-block');
-  // // Fix for firefox
-  // div.style('white-space', 'nowrap');
-  // var client = div.node().getBoundingClientRect();
-  // fo.attr('width', client.width).attr('height', client.height);
   var fo = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'));
   var div = fo.append('xhtml:div');
   var label = node.label;
@@ -9332,7 +9313,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../diagrams/common/common */ "./src/diagrams/common/common.js");
  // eslint-disable-line
 
- // import { line, curveBasis, curveLinear, select } from 'd3';
 
 
 
@@ -9459,6 +9439,10 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
     setTerminalWidth(fo, edge.endLabelRight);
   }
 };
+/**
+ * @param {any} fo
+ * @param {any} value
+ */
 
 function setTerminalWidth(fo, value) {
   if ((0,_config__WEBPACK_IMPORTED_MODULE_3__.getConfig)().flowchart.htmlLabels && fo) {
@@ -9677,9 +9661,10 @@ var intersection = function intersection(node, outsidePoint, insidePoint) {
 /**
  * This function will page a path and node where the last point(s) in the path is inside the node
  * and return an update path ending by the border of the node.
- * @param {*} points
- * @param {*} boundryNode
- * @returns
+ *
+ * @param {Array} _points
+ * @param {any} boundryNode
+ * @returns {Array} Points
  */
 
 var cutPathAtIntersect = function cutPathAtIntersect(_points, boundryNode) {
@@ -10210,6 +10195,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _intersect_ellipse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./intersect-ellipse */ "./src/dagre-wrapper/intersect/intersect-ellipse.js");
 
+/**
+ * @param node
+ * @param rx
+ * @param point
+ */
 
 function intersectCircle(node, rx, point) {
   return (0,_intersect_ellipse__WEBPACK_IMPORTED_MODULE_0__["default"])(node, rx, rx, point);
@@ -10230,6 +10220,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/**
+ * @param node
+ * @param rx
+ * @param ry
+ * @param point
+ */
 function intersectEllipse(node, rx, ry, point) {
   // Formulae from: http://mathworld.wolfram.com/Ellipse-LineIntersection.html
   var cx = node.x;
@@ -10270,9 +10266,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/*
- * Returns the point at which two lines, p and q, intersect or returns
- * undefined if they do not intersect.
+/**
+ * Returns the point at which two lines, p and q, intersect or returns undefined if they do not intersect.
+ *
+ * @param p1
+ * @param p2
+ * @param q1
+ * @param q2
  */
 function intersectLine(p1, p2, q1, q2) {
   // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
@@ -10329,6 +10329,11 @@ function intersectLine(p1, p2, q1, q2) {
     y: y
   };
 }
+/**
+ * @param r1
+ * @param r2
+ */
+
 
 function sameSign(r1, r2) {
   return r1 * r2 > 0;
@@ -10345,6 +10350,10 @@ function sameSign(r1, r2) {
 /***/ ((module) => {
 
 module.exports = intersectNode;
+/**
+ * @param node
+ * @param point
+ */
 
 function intersectNode(node, point) {
   // console.info('Intersect Node');
@@ -10368,9 +10377,13 @@ __webpack_require__.r(__webpack_exports__);
 /* eslint "no-console": off */
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (intersectPolygon);
-/*
- * Returns the point ({x, y}) at which the point argument intersects with the
- * node argument assuming that it has the shape specified by polygon.
+/**
+ * Returns the point ({x, y}) at which the point argument intersects with the node argument assuming
+ * that it has the shape specified by polygon.
+ *
+ * @param node
+ * @param polyPoints
+ * @param point
  */
 
 function intersectPolygon(node, polyPoints, point) {
@@ -10494,9 +10507,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
+/** Setup arrow head and define the marker. The result is appended to the svg. */
  // Only add the number of markers that the diagram needs
 
 var insertMarkers = function insertMarkers(elem, markerArray, type, id) {
@@ -10583,9 +10594,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
 /* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphlib */ "graphlib");
 /* harmony import */ var graphlib__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphlib__WEBPACK_IMPORTED_MODULE_0__);
-/**
- * Decorates with functions required by mermaids dagre-wrapper.
- */
+/** Decorates with functions required by mermaids dagre-wrapper. */
 
 
 var clusterDb = {};
@@ -10697,7 +10706,8 @@ var extractDecendants = function extractDecendants(id, graph) {
 /**
  * Validates the graph, checking that all parent child relation points to existing nodes and that
  * edges between nodes also ia correct. When not correct the function logs the discrepancies.
- * @param {graphlib graph} g
+ *
+ * @param graph
  */
 
 var validate = function validate(graph) {
@@ -10720,8 +10730,9 @@ var validate = function validate(graph) {
 };
 /**
  * Finds a child that is not a cluster. When faking a edge between a node and a cluster.
- * @param {Finds a } id
- * @param {*} graph
+ *
+ * @param {Finds a} id
+ * @param {any} graph
  */
 
 var findNonClusterChild = function findNonClusterChild(id, graph) {
@@ -11971,6 +11982,13 @@ var updateNodeBounds = function updateNodeBounds(node, element) {
   node.width = bbox.width;
   node.height = bbox.height;
 };
+/**
+ * @param parent
+ * @param w
+ * @param h
+ * @param points
+ */
+
 function insertPolygonShape(parent, w, h, points) {
   return parent.insert('polygon', ':first-child').attr('points', points.map(function (d) {
     return d.x + ',' + d.y;
@@ -12008,56 +12026,38 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 /**
- * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
+ * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click
+ * here](8.6.0_docs.md)].**
  *
  * ## **What follows are config instructions for older versions**
  *
  * These are the default options which can be overridden with the initialization call like so:
  *
- * **Example 1:**
- * <pre>
- * mermaid.initialize({
- *   flowchart:{
- *     htmlLabels: false
- *   }
- * });
- * </pre>
+ * **Example 1:**<pre> mermaid.initialize({ flowchart:{ htmlLabels: false } }); </pre>
  *
- * **Example 2:**
- * <pre>
- * &lt;script>
- *   var config = {
- *     startOnLoad:true,
- *     flowchart:{
- *       useMaxWidth:true,
- *       htmlLabels:true,
- *       curve:'cardinal',
- *     },
+ * **Example 2:**<pre> <script> var config = { startOnLoad:true, flowchart:{ useMaxWidth:true,
+ * htmlLabels:true, curve:'cardinal', },
  *
  *     securityLevel:'loose',
- *   };
- *   mermaid.initialize(config);
- * &lt;/script>
- * </pre>
- * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults). A description of each option follows below.
+ *
+ * }; mermaid.initialize(config); </script> </pre>
+ *
+ * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults).
+ * A description of each option follows below.
  *
  * @name Configuration
  */
 
 var config = {
   /**
-   * theme , the CSS style sheet
+   * Theme , the CSS style sheet
    *
-   * | Parameter | Description | Type | Required | Values |
-   * | --- | --- | --- | --- | --- |
-   * | theme | Built in Themes | string | Optional | 'default', 'forest', 'dark', 'neutral', 'null'|
+   * | Parameter | Description     | Type   | Required | Values                                         |
+   * | --------- | --------------- | ------ | -------- | ---------------------------------------------- |
+   * | theme     | Built in Themes | string | Optional | 'default', 'forest', 'dark', 'neutral', 'null' |
    *
-   * **Notes:** To disable any pre-defined mermaid theme, use "null".
-   *
-   * <pre>
-   *  "theme": "forest",
-   *  "themeCSS": ".node rect { fill: red; }"
-   * </pre>
+   * **Notes:** To disable any pre-defined mermaid theme, use "null".<pre> "theme": "forest",
+   * "themeCSS": ".node rect { fill: red; }" </pre>
    */
   theme: 'default',
   themeVariables: _themes__WEBPACK_IMPORTED_MODULE_0__["default"]["default"].getThemeVariables(),
@@ -12067,47 +12067,46 @@ var config = {
   maxTextSize: 50000,
 
   /**
-   * | Parameter | Description | Type | Required | Values |
-   * | --- | --- | --- | --- | --- |
-   * | fontFamily | specifies the font to be used in the rendered diagrams| string | Required | Any Possible CSS FontFamily |
+   * | Parameter  | Description                                            | Type   | Required | Values                      |
+   * | ---------- | ------------------------------------------------------ | ------ | -------- | --------------------------- |
+   * | fontFamily | specifies the font to be used in the rendered diagrams | string | Required | Any Possible CSS FontFamily |
    *
-   * **Notes:**
-   * Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
+   * **Notes:** Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
    */
   fontFamily: '"trebuchet ms", verdana, arial, sans-serif;',
 
   /**
-   * | Parameter | Description | Type | Required | Values |
-   * | --- | --- | --- | --- | --- |
-   * | logLevel |This option decides the amount of logging to be used.| string \| number | Required | 1, 2, 3, 4, 5 |
-   *
+   * | Parameter | Description                                           | Type             | Required | Values        |
+   * | --------- | ----------------------------------------------------- | ---------------- | -------- | ------------- |
+   * | logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 1, 2, 3, 4, 5 |
    *
    * **Notes:**
    *
-   * - debug: 1
-   * - info: 2
-   * - warn: 3
-   * - error: 4
-   * - fatal: 5 (default)
+   * - Debug: 1
+   * - Info: 2
+   * - Warn: 3
+   * - Error: 4
+   * - Fatal: 5 (default)
    */
   logLevel: 5,
 
   /**
-   * | Parameter | Description | Type | Required | Values |
-   * | --- | --- | --- | --- | --- |
-   * | securitylevel | Level of trust for parsed diagram|string | Required | 'strict', 'loose', 'antiscript' |
+   * | Parameter     | Description                       | Type   | Required | Values                          |
+   * | ------------- | --------------------------------- | ------ | -------- | ------------------------------- |
+   * | securitylevel | Level of trust for parsed diagram | string | Required | 'strict', 'loose', 'antiscript' |
    *
    * **Notes**:
    *
    * - **strict**: (**default**) tags in text are encoded, click functionality is disabled
    * - **loose**: tags in text are allowed, click functionality is enabled
-   * - **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
+   * - **antiscript**: html tags in text are allowed, (only script element is removed), click
+   *   functionality is enabled
    */
   securityLevel: 'strict',
 
   /**
-   * | Parameter | Description | Type | Required | Values |
-   * | --- | --- | --- | --- | --- |
+   * | Parameter   | Description                                  | Type    | Required | Values      |
+   * | ----------- | -------------------------------------------- | ------- | -------- | ----------- |
    * | startOnLoad | Dictates whether mermaid starts on Page load | boolean | Required | true, false |
    *
    * **Notes:** Default value: true
@@ -12115,10 +12114,9 @@ var config = {
   startOnLoad: true,
 
   /**
-   * | Parameter | Description |Type | Required |Values|
-   * | --- | --- | --- | --- | --- |
+   * | Parameter           | Description                                                                  | Type    | Required | Values      |
+   * | ------------------- | ---------------------------------------------------------------------------- | ------- | -------- | ----------- |
    * | arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | boolean | Required | true, false |
-   *
    *
    * **Notes**:
    *
@@ -12129,90 +12127,95 @@ var config = {
   arrowMarkerAbsolute: false,
 
   /**
-   * This option controls which currentConfig keys are considered _secure_ and can only be changed via
-   * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
-   * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
+   * This option controls which currentConfig keys are considered *secure* and can only be changed
+   * via call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to the
+   * `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
-    * **Notes**:
+   *
+   * **Notes**:
    *
    * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
 
   /**
-   * This option controls if the generated ids of nodes in the SVG are generated randomly or based on a seed.
-   * If set to false, the IDs are generated based on the current date and thus are not deterministic. This is the default behaviour.
+   * This option controls if the generated ids of nodes in the SVG are generated randomly or based
+   * on a seed. If set to false, the IDs are generated based on the current date and thus are not
+   * deterministic. This is the default behaviour.
    *
    * **Notes**:
    *
-   * This matters if your files are checked into sourcecontrol e.g. git and should not change unless content is changed.
+   * This matters if your files are checked into sourcecontrol e.g. git and should not change unless
+   * content is changed.
    *
    * Default value: false
    */
   deterministicIds: false,
 
   /**
-   * This option is the optional seed for deterministic ids. if set to undefined but deterministicIds is true, a simple number iterator is used.
-   * You can set this attribute to base the seed on a static string.
+   * This option is the optional seed for deterministic ids. if set to undefined but
+   * deterministicIds is true, a simple number iterator is used. You can set this attribute to base
+   * the seed on a static string.
    */
   deterministicIDSeed: undefined,
 
-  /**
-   * The object containing configurations specific for flowcharts
-   */
+  /** The object containing configurations specific for flowcharts */
   flowchart: {
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter      | Description                                     | Type    | Required | Values             |
+     * | -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
      * | diagramPadding | Amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
      *
      * **Notes:**
      *
-     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     * The amount of padding around the diagram as a whole so that embedded diagrams have margins,
+     * expressed in pixels
      *
      * Default value: 8
      */
     diagramPadding: 8,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | boolean| Required | true, false |
+     * | Parameter  | Description                                                                                  | Type    | Required | Values      |
+     * | ---------- | -------------------------------------------------------------------------------------------- | ------- | -------- | ----------- |
+     * | htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | boolean | Required | true, false |
      *
      * **Notes:** Default value: true.
      */
     htmlLabels: true,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter   | Description                                         | Type    | Required | Values              |
+     * | ----------- | --------------------------------------------------- | ------- | -------- | ------------------- |
      * | nodeSpacing | Defines the spacing between nodes on the same level | Integer | Required | Any positive Number |
      *
      * **Notes:**
      *
-     * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
+     * Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the
+     * vertical spacing for LR as well as RL graphs.**
      *
      * Default value: 50
      */
     nodeSpacing: 50,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter   | Description                                           | Type    | Required | Values              |
+     * | ----------- | ----------------------------------------------------- | ------- | -------- | ------------------- |
      * | rankSpacing | Defines the spacing between nodes on different levels | Integer | Required | Any Positive Number |
      *
      * **Notes**:
      *
-     * pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+     * Pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal
+     * spacing for LR as well as RL graphs.
      *
      * Default value 50
      */
     rankSpacing: 50,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | curve | Defines how mermaid renders curves for flowcharts. | string | Required | 'basis', 'linear', 'cardinal'|
+     * | Parameter | Description                                        | Type   | Required | Values                        |
+     * | --------- | -------------------------------------------------- | ------ | -------- | ----------------------------- |
+     * | curve     | Defines how mermaid renders curves for flowcharts. | string | Required | 'basis', 'linear', 'cardinal' |
      *
      * **Notes:**
      *
@@ -12224,9 +12227,9 @@ var config = {
     padding: 15,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See notes | boolean | 4 | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See notes   | boolean | 4        | true, false |
      *
      * **Notes:**
      *
@@ -12238,38 +12241,34 @@ var config = {
     useMaxWidth: true,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
-     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     * | Parameter       | Description | Type    | Required | Values                  |
+     * | --------------- | ----------- | ------- | -------- | ----------------------- |
+     * | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
      *
      * **Notes:**
      *
      * Decides which rendering engine that is to be used for the rendering. Legal values are:
-     * * dagre-d3
-     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     * dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
      *
      * Default value: 'dagre-d3'
      */
     defaultRenderer: 'dagre-d3'
   },
 
-  /**
-   * The object containing configurations specific for sequence diagrams
-   */
+  /** The object containing configurations specific for sequence diagrams */
   sequence: {
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter       | Description                  | Type    | Required | Values             |
+     * | --------------- | ---------------------------- | ------- | -------- | ------------------ |
      * | activationWidth | Width of the activation rect | Integer | Required | Any Positive Value |
-     *
      *
      * **Notes:** Default value :10
      */
     activationWidth: 10,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter      | Description                                          | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------------- | ------- | -------- | ------------------ |
      * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
      *
      * **Notes:** Default value: 50
@@ -12277,108 +12276,99 @@ var config = {
     diagramMarginX: 50,
 
     /**
-     *| Parameter | Description | Type | Required | Values |
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Value |
+     * | Parameter      | Description                                       | Type    | Required | Values             |
+     * | -------------- | ------------------------------------------------- | ------- | -------- | ------------------ |
+     * | diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Value |
      *
      * **Notes:** Default value: 10
      */
     diagramMarginY: 10,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter   | Description           | Type    | Required | Values             |
+     * | ----------- | --------------------- | ------- | -------- | ------------------ |
      * | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 50
+     * **Notes:** Default value: 50
      */
     actorMargin: 50,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | width | Width of actor boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description          | Type    | Required | Values             |
+     * | --------- | -------------------- | ------- | -------- | ------------------ |
+     * | width     | Width of actor boxes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 150
+     * **Notes:** Default value: 150
      */
     width: 150,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | height | Height of actor boxes | Integer | Required | Any Positive Value|
+     * | Parameter | Description           | Type    | Required | Values             |
+     * | --------- | --------------------- | ------- | -------- | ------------------ |
+     * | height    | Height of actor boxes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 65
+     * **Notes:** Default value: 65
      */
     height: 65,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter | Description              | Type    | Required | Values             |
+     * | --------- | ------------------------ | ------- | -------- | ------------------ |
      * | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 10
+     * **Notes:** Default value: 10
      */
     boxMargin: 10,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter     | Description                                  | Type    | Required | Values             |
+     * | ------------- | -------------------------------------------- | ------- | -------- | ------------------ |
      * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 5
+     * **Notes:** Default value: 5
      */
     boxTextMargin: 5,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter  | Description         | Type    | Required | Values             |
+     * | ---------- | ------------------- | ------- | -------- | ------------------ |
      * | noteMargin | margin around notes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 10
+     * **Notes:** Default value: 10
      */
     noteMargin: 10,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter     | Description            | Type    | Required | Values             |
+     * | ------------- | ---------------------- | ------- | -------- | ------------------ |
      * | messageMargin | Space between messages | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 35
+     * **Notes:** Default value: 35
      */
     messageMargin: 35,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter    | Description                 | Type   | Required | Values                    |
+     * | ------------ | --------------------------- | ------ | -------- | ------------------------- |
      * | messageAlign | Multiline message alignment | string | Required | 'left', 'center', 'right' |
      *
-     * **Notes:**
-     * Default value: 'center'
+     * **Notes:** Default value: 'center'
      */
     messageAlign: 'center',
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter    | Description                 | Type    | Required | Values      |
+     * | ------------ | --------------------------- | ------- | -------- | ----------- |
      * | mirrorActors | Mirror actors under diagram | boolean | Required | true, false |
      *
-     * **Notes:**
-     * Default value: true
+     * **Notes:** Default value: true
      */
     mirrorActors: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| forceMenus | forces actor popup menus to always be visible (to support E2E testing). | Boolean| Required | True, False |
+     * | Parameter  | Description                                                             | Type    | Required | Values      |
+     * | ---------- | ----------------------------------------------------------------------- | ------- | -------- | ----------- |
+     * | forceMenus | forces actor popup menus to always be visible (to support E2E testing). | Boolean | Required | True, False |
      *
      * **Notes:**
      *
@@ -12387,8 +12377,8 @@ var config = {
     forceMenus: false,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter       | Description                                | Type    | Required | Values             |
+     * | --------------- | ------------------------------------------ | ------- | -------- | ------------------ |
      * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | Required | Any Positive Value |
      *
      * **Notes:**
@@ -12400,21 +12390,20 @@ var config = {
     bottomMarginAdj: 1,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See Notes | boolean | Required | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See Notes   | boolean | Required | true, false |
      *
-     * **Notes:**
-     * When this flag is set to true, the height and width is set to 100% and is then scaling with the
-     * available space. If set to false, the absolute space required is used.
+     * **Notes:** When this flag is set to true, the height and width is set to 100% and is then
+     * scaling with the available space. If set to false, the absolute space required is used.
      *
      * Default value: true
      */
     useMaxWidth: true,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter   | Description                          | Type    | Required | Values      |
+     * | ----------- | ------------------------------------ | ------- | -------- | ----------- |
      * | rightAngles | display curve arrows as right angles | boolean | Required | true, false |
      *
      * **Notes:**
@@ -12426,138 +12415,123 @@ var config = {
     rightAngles: false,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter           | Description                     | Type    | Required | Values      |
+     * | ------------------- | ------------------------------- | ------- | -------- | ----------- |
      * | showSequenceNumbers | This will show the node numbers | boolean | Required | true, false |
      *
-     * **Notes:**
-     * Default value: false
+     * **Notes:** Default value: false
      */
     showSequenceNumbers: false,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
+     * | Parameter     | Description                                        | Type    | Required | Values             |
+     * | ------------- | -------------------------------------------------- | ------- | -------- | ------------------ |
+     * | actorFontSize | This sets the font size of the actor's description | Integer | Require  | Any Positive Value |
      *
-     ***Notes:**
-     ***Default value 14**..
+     * **Notes:** **Default value 14**..
      */
     actorFontSize: 14,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | actorFontFamily |This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
+     * | Parameter       | Description                                          | Type   | Required | Values                      |
+     * | --------------- | ---------------------------------------------------- | ------ | -------- | --------------------------- |
+     * | actorFontFamily | This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
      *
-     * **Notes:**
-     * Default value: "'Open-Sans", "sans-serif"'
+     * **Notes:** Default value: "'Open-Sans", "sans-serif"'
      */
     actorFontFamily: '"Open-Sans", "sans-serif"',
 
     /**
      * This sets the font weight of the actor's description
      *
-     * **Notes:**
-     * Default value: 400.
+     * **Notes:** Default value: 400.
      */
     actorFontWeight: 400,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter    | Description                                     | Type    | Required | Values             |
+     * | ------------ | ----------------------------------------------- | ------- | -------- | ------------------ |
      * | noteFontSize | This sets the font size of actor-attached notes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 14
+     * **Notes:** Default value: 14
      */
     noteFontSize: 14,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | noteFontFamily| This sets the font family of actor-attached notes. | string | Required | Any Possible CSS FontFamily |
+     * | Parameter      | Description                                        | Type   | Required | Values                      |
+     * | -------------- | -------------------------------------------------- | ------ | -------- | --------------------------- |
+     * | noteFontFamily | This sets the font family of actor-attached notes. | string | Required | Any Possible CSS FontFamily |
      *
-     * **Notes:**
-     * Default value: ''"trebuchet ms", verdana, arial, sans-serif'
+     * **Notes:** Default value: ''"trebuchet ms", verdana, arial, sans-serif'
      */
     noteFontFamily: '"trebuchet ms", verdana, arial, sans-serif',
 
     /**
      * This sets the font weight of the note's description
      *
-     * **Notes:**
-     * Default value: 400
+     * **Notes:** Default value: 400
      */
     noteFontWeight: 400,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | noteAlign | This sets the text alignment of actor-attached notes | string | required | 'left', 'center', 'right'|
+     * | Parameter | Description                                          | Type   | Required | Values                    |
+     * | --------- | ---------------------------------------------------- | ------ | -------- | ------------------------- |
+     * | noteAlign | This sets the text alignment of actor-attached notes | string | required | 'left', 'center', 'right' |
      *
-     * **Notes:**
-     * Default value: 'center'
+     * **Notes:** Default value: 'center'
      */
     noteAlign: 'center',
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter       | Description                               | Type    | Required | Values              |
+     * | --------------- | ----------------------------------------- | ------- | -------- | ------------------- |
      * | messageFontSize | This sets the font size of actor messages | Integer | Required | Any Positive Number |
      *
-     * **Notes:**
-     * Default value: 16
+     * **Notes:** Default value: 16
      */
     messageFontSize: 16,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter         | Description                                 | Type   | Required | Values                      |
+     * | ----------------- | ------------------------------------------- | ------ | -------- | --------------------------- |
      * | messageFontFamily | This sets the font family of actor messages | string | Required | Any Possible CSS FontFamily |
      *
-     * **Notes:**
-     * Default value: '"trebuchet ms", verdana, arial, sans-serif'
+     * **Notes:** Default value: '"trebuchet ms", verdana, arial, sans-serif'
      */
     messageFontFamily: '"trebuchet ms", verdana, arial, sans-serif',
 
     /**
      * This sets the font weight of the message's description
      *
-     * **Notes:**
-     * Default value: 400.
+     * **Notes:** Default value: 400.
      */
     messageFontWeight: 400,
 
     /**
      * This sets the auto-wrap state for the diagram
      *
-     * **Notes:**
-     * Default value: false.
+     * **Notes:** Default value: false.
      */
     wrap: false,
 
     /**
      * This sets the auto-wrap padding for the diagram (sides only)
      *
-     * **Notes:**
-     * Default value: 0.
+     * **Notes:** Default value: 0.
      */
     wrapPadding: 10,
 
     /**
      * This sets the width of the loop-box (loop, alt, opt, par)
      *
-     * **Notes:**
-     * Default value: 50.
+     * **Notes:** Default value: 50.
      */
     labelBoxWidth: 50,
 
     /**
      * This sets the height of the loop-box (loop, alt, opt, par)
      *
-     * **Notes:**
-     * Default value: 20.
+     * **Notes:** Default value: 20.
      */
     labelBoxHeight: 20,
     messageFont: function messageFont() {
@@ -12583,116 +12557,104 @@ var config = {
     }
   },
 
-  /**
-   * The object containing configurations specific for gantt diagrams
-   */
+  /** The object containing configurations specific for gantt diagrams */
   gantt: {
     /**
      * ### titleTopMargin
      *
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
      * | titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 25
+     * **Notes:** Default value: 25
      */
     titleTopMargin: 25,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter | Description                         | Type    | Required | Values             |
+     * | --------- | ----------------------------------- | ------- | -------- | ------------------ |
      * | barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 20
+     * **Notes:** Default value: 20
      */
     barHeight: 20,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | barGap | The margin between the different activities in the gantt diagram | Integer | Optional | Any Positive Value |
+     * | Parameter | Description                                                      | Type    | Required | Values             |
+     * | --------- | ---------------------------------------------------------------- | ------- | -------- | ------------------ |
+     * | barGap    | The margin between the different activities in the gantt diagram | Integer | Optional | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 4
+     * **Notes:** Default value: 4
      */
     barGap: 4,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
+     * | Parameter  | Description                                                                | Type    | Required | Values             |
+     * | ---------- | -------------------------------------------------------------------------- | ------- | -------- | ------------------ |
      * | topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 50
+     * **Notes:** Default value: 50
      */
     topPadding: 50,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
+     * | Parameter    | Description                                                             | Type    | Required | Values             |
+     * | ------------ | ----------------------------------------------------------------------- | ------- | -------- | ------------------ |
      * | rightPadding | The space allocated for the section name to the right of the activities | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 75
+     * **Notes:** Default value: 75
      */
     rightPadding: 75,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
+     * | Parameter   | Description                                                            | Type    | Required | Values             |
+     * | ----------- | ---------------------------------------------------------------------- | ------- | -------- | ------------------ |
      * | leftPadding | The space allocated for the section name to the left of the activities | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 75
+     * **Notes:** Default value: 75
      */
     leftPadding: 75,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
+     * | Parameter            | Description                                  | Type    | Required | Values             |
+     * | -------------------- | -------------------------------------------- | ------- | -------- | ------------------ |
      * | gridLineStartPadding | Vertical starting position of the grid lines | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 35
+     * **Notes:** Default value: 35
      */
     gridLineStartPadding: 35,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
-     * | fontSize | Font size | Integer | Required | Any Positive Value |
+     * | Parameter | Description | Type    | Required | Values             |
+     * | --------- | ----------- | ------- | -------- | ------------------ |
+     * | fontSize  | Font size   | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 11
+     * **Notes:** Default value: 11
      */
     fontSize: 11,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
-     * | sectionFontSize | Font size for sections| Integer | Required | Any Positive Value |
+     * | Parameter       | Description            | Type    | Required | Values             |
+     * | --------------- | ---------------------- | ------- | -------- | ------------------ |
+     * | sectionFontSize | Font size for sections | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 11
+     * **Notes:** Default value: 11
      */
     sectionFontSize: 11,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
-     * | numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
+     * | Parameter           | Description                              | Type    | Required | Values             |
+     * | ------------------- | ---------------------------------------- | ------- | -------- | ------------------ |
+     * | numberSectionStyles | The number of alternating section styles | Integer | 4        | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 4
+     * **Notes:** Default value: 4
      */
     numberSectionStyles: 4,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | axisFormat | Datetime format of the axis | 3 | Required | Date in yy-mm-dd |
+     * | Parameter  | Description                 | Type | Required | Values           |
+     * | ---------- | --------------------------- | ---- | -------- | ---------------- |
+     * | axisFormat | Datetime format of the axis | 3    | Required | Date in yy-mm-dd |
      *
      * **Notes:**
      *
@@ -12703,9 +12665,9 @@ var config = {
     axisFormat: '%Y-%m-%d',
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See notes | boolean | 4 | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See notes   | boolean | 4        | true, false |
      *
      * **Notes:**
      *
@@ -12717,107 +12679,96 @@ var config = {
     useMaxWidth: true,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| topAxis | See notes | Boolean | 4 | True, False |
+     * | Parameter | Description | Type    | Required | Values      |
+     * | --------- | ----------- | ------- | -------- | ----------- |
+     * | topAxis   | See notes   | Boolean | 4        | True, False |
      *
-     ***Notes:** when this flag is set date labels will be added to the
-    top of the chart
+     * **Notes:** when this flag is set date labels will be added to the top of the chart
      *
-     ***Default value false**.
+     * **Default value false**.
      */
     topAxis: false,
     useWidth: undefined
   },
 
-  /**
-   * The object containing configurations specific for journey diagrams
-   */
+  /** The object containing configurations specific for journey diagrams */
   journey: {
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter      | Description                                          | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------------- | ------- | -------- | ------------------ |
      * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 50
+     * **Notes:** Default value: 50
      */
     diagramMarginX: 50,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter      | Description                                        | Type    | Required | Values             |
+     * | -------------- | -------------------------------------------------- | ------- | -------- | ------------------ |
      * | diagramMarginY | Margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 10
+     * **Notes:** Default value: 10
      */
     diagramMarginY: 10,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter   | Description           | Type    | Required | Values             |
+     * | ----------- | --------------------- | ------- | -------- | ------------------ |
      * | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 50
+     * **Notes:** Default value: 50
      */
     leftMargin: 150,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | width | Width of actor boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description          | Type    | Required | Values             |
+     * | --------- | -------------------- | ------- | -------- | ------------------ |
+     * | width     | Width of actor boxes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 150
+     * **Notes:** Default value: 150
      */
     width: 150,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | height | Height of actor boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description           | Type    | Required | Values             |
+     * | --------- | --------------------- | ------- | -------- | ------------------ |
+     * | height    | Height of actor boxes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 65
+     * **Notes:** Default value: 65
      */
     height: 50,
 
     /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     * | Parameter | Description              | Type    | Required | Values             |
+     * | --------- | ------------------------ | ------- | -------- | ------------------ |
+     * | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 10
+     * **Notes:** Default value: 10
      */
     boxMargin: 10,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter     | Description                                  | Type    | Required | Values             |
+     * | ------------- | -------------------------------------------- | ------- | -------- | ------------------ |
      * | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 5
+     * **Notes:** Default value: 5
      */
     boxTextMargin: 5,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter  | Description         | Type    | Required | Values             |
+     * | ---------- | ------------------- | ------- | -------- | ------------------ |
      * | noteMargin | Margin around notes | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Default value: 10
+     * **Notes:** Default value: 10
      */
     noteMargin: 10,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | messageMargin |Space between messages. | Integer | Required | Any Positive Value |
+     * | Parameter     | Description             | Type    | Required | Values             |
+     * | ------------- | ----------------------- | ------- | -------- | ------------------ |
+     * | messageMargin | Space between messages. | Integer | Required | Any Positive Value |
      *
      * **Notes:**
      *
@@ -12828,19 +12779,18 @@ var config = {
     messageMargin: 35,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | messageAlign | Multiline message alignment | 3 | 4 | 'left', 'center', 'right' |
+     * | Parameter    | Description                 | Type | Required | Values                    |
+     * | ------------ | --------------------------- | ---- | -------- | ------------------------- |
+     * | messageAlign | Multiline message alignment | 3    | 4        | 'left', 'center', 'right' |
      *
-     * **Notes:**
-     * Default value: 'center'
+     * **Notes:** Default value: 'center'
      */
     messageAlign: 'center',
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | 4 | Any Positive Value |
+     * | Parameter       | Description                                | Type    | Required | Values             |
+     * | --------------- | ------------------------------------------ | ------- | -------- | ------------------ |
+     * | bottomMarginAdj | Prolongs the edge of the diagram downwards | Integer | 4        | Any Positive Value |
      *
      * **Notes:**
      *
@@ -12851,9 +12801,9 @@ var config = {
     bottomMarginAdj: 1,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See notes | boolean | 4 | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See notes   | boolean | 4        | true, false |
      *
      * **Notes:**
      *
@@ -12865,9 +12815,9 @@ var config = {
     useMaxWidth: true,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | rightAngles | Curved Arrows become Right Angles | 3 | 4 | true, false |
+     * | Parameter   | Description                       | Type | Required | Values      |
+     * | ----------- | --------------------------------- | ---- | -------- | ----------- |
+     * | rightAngles | Curved Arrows become Right Angles | 3    | 4        | true, false |
      *
      * **Notes:**
      *
@@ -12891,9 +12841,9 @@ var config = {
     arrowMarkerAbsolute: false,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See notes | boolean | 4 | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See notes   | boolean | 4        | true, false |
      *
      * **Notes:**
      *
@@ -12905,15 +12855,14 @@ var config = {
     useMaxWidth: true,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
-     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     * | Parameter       | Description | Type    | Required | Values                  |
+     * | --------------- | ----------- | ------- | -------- | ----------------------- |
+     * | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
      *
-     * **Notes:**
+     * **Notes**:
      *
      * Decides which rendering engine that is to be used for the rendering. Legal values are:
-     * * dagre-d3
-     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     * dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
      *
      * Default value: 'dagre-d3'
      */
@@ -12924,9 +12873,9 @@ var config = {
     useWidth: undefined,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See notes | boolean | 4 | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See notes   | boolean | 4        | true, false |
      *
      * **Notes:**
      *
@@ -12958,9 +12907,9 @@ var config = {
     radius: 5,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See notes | boolean | 4 | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See notes   | boolean | 4        | true, false |
      *
      * **Notes:**
      *
@@ -12972,41 +12921,39 @@ var config = {
     useMaxWidth: true,
 
     /**
-     * | Parameter | Description | Type | Required | Values|
-     * | --- | --- | --- | --- | --- |
-     * | defaultRenderer | See notes | boolean | 4 | dagre-d3, dagre-wrapper |
+     * | Parameter       | Description | Type    | Required | Values                  |
+     * | --------------- | ----------- | ------- | -------- | ----------------------- |
+     * | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
      *
      * **Notes:**
      *
      * Decides which rendering engine that is to be used for the rendering. Legal values are:
-     * * dagre-d3
-     * * dagre-wrapper - wrapper for dagre implemented in mermaid
+     * dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
      *
      * Default value: 'dagre-d3'
      */
     defaultRenderer: 'dagre-wrapper'
   },
 
-  /**
-   * The object containing configurations specific for entity relationship diagrams
-   */
+  /** The object containing configurations specific for entity relationship diagrams */
   er: {
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter      | Description                                     | Type    | Required | Values             |
+     * | -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
      * | diagramPadding | Amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
      *
      * **Notes:**
      *
-     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     * The amount of padding around the diagram as a whole so that embedded diagrams have margins,
+     * expressed in pixels
      *
      * Default value: 20
      */
     diagramPadding: 20,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
+     * | Parameter       | Description                              | Type   | Required | Values                 |
+     * | --------------- | ---------------------------------------- | ------ | -------- | ---------------------- |
      * | layoutDirection | Directional bias for layout of entities. | string | Required | "TB", "BT", "LR", "RL" |
      *
      * **Notes:**
@@ -13020,126 +12967,113 @@ var config = {
     layoutDirection: 'TB',
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | minEntityWidth | The minimum width of an entity box | Integer | Required | Any Positive Value  |
+     * | Parameter      | Description                        | Type    | Required | Values             |
+     * | -------------- | ---------------------------------- | ------- | -------- | ------------------ |
+     * | minEntityWidth | The minimum width of an entity box | Integer | Required | Any Positive Value |
      *
-     * **Notes:**
-     * Expressed in pixels.
-     * Default value: 100
+     * **Notes:** Expressed in pixels. Default value: 100
      */
     minEntityWidth: 100,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | minEntityHeight| The minimum height of an entity box | Integer | 4 | Any Positive Value |
+     * | Parameter       | Description                         | Type    | Required | Values             |
+     * | --------------- | ----------------------------------- | ------- | -------- | ------------------ |
+     * | minEntityHeight | The minimum height of an entity box | Integer | 4        | Any Positive Value |
      *
-     * **Notes:**
-     * Expressed in pixels
-     * Default value: 75
+     * **Notes:** Expressed in pixels Default value: 75
      */
     minEntityHeight: 75,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | entityPadding | Minimum internal padding betweentext in box and box borders | Integer | 4 | Any Positive Value |
+     * | Parameter     | Description                                                 | Type    | Required | Values             |
+     * | ------------- | ----------------------------------------------------------- | ------- | -------- | ------------------ |
+     * | entityPadding | Minimum internal padding betweentext in box and box borders | Integer | 4        | Any Positive Value |
      *
      * **Notes:**
      *
-     * The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+     * The minimum internal padding betweentext in an entity box and the enclosing box borders,
+     * expressed in pixels.
      *
      * Default value: 15
      */
     entityPadding: 15,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | stroke | Stroke color of box edges and lines | string | 4 | Any recognized color |
+     * | Parameter | Description                         | Type   | Required | Values               |
+     * | --------- | ----------------------------------- | ------ | -------- | -------------------- |
+     * | stroke    | Stroke color of box edges and lines | string | 4        | Any recognized color |
      *
-     * **Notes:**
-     * Default value: 'gray'
+     * **Notes:** Default value: 'gray'
      */
     stroke: 'gray',
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | fill | Fill color of entity boxes | string | 4 | Any recognized color |
+     * | Parameter | Description                | Type   | Required | Values               |
+     * | --------- | -------------------------- | ------ | -------- | -------------------- |
+     * | fill      | Fill color of entity boxes | string | 4        | Any recognized color |
      *
-     * **Notes:**
-     * Default value: 'honeydew'
+     * **Notes:** Default value: 'honeydew'
      */
     fill: 'honeydew',
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | fontSize | Font Size in pixels | Integer |  | Any Positive Value |
+     * | Parameter | Description         | Type    | Required | Values             |
+     * | --------- | ------------------- | ------- | -------- | ------------------ |
+     * | fontSize  | Font Size in pixels | Integer |          | Any Positive Value |
      *
      * **Notes:**
      *
-     * Font size (expressed as an integer representing a number of pixels)
-     * Default value: 12
+     * Font size (expressed as an integer representing a number of pixels) Default value: 12
      */
     fontSize: 12,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See Notes | boolean | Required | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See Notes   | boolean | Required | true, false |
      *
      * **Notes:**
      *
-     * When this flag is set to true, the diagram width is locked to 100% and
-     * scaled based on available space. If set to false, the diagram reserves its
-     * absolute width.
+     * When this flag is set to true, the diagram width is locked to 100% and scaled based on
+     * available space. If set to false, the diagram reserves its absolute width.
      *
      * Default value: true
      */
     useMaxWidth: true
   },
 
-  /**
-   * The object containing configurations specific for pie diagrams
-   */
+  /** The object containing configurations specific for pie diagrams */
   pie: {
     useWidth: undefined,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See Notes | boolean | Required | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See Notes   | boolean | Required | true, false |
      *
      * **Notes:**
      *
-     * When this flag is set to true, the diagram width is locked to 100% and
-     * scaled based on available space. If set to false, the diagram reserves its
-     * absolute width.
+     * When this flag is set to true, the diagram width is locked to 100% and scaled based on
+     * available space. If set to false, the diagram reserves its absolute width.
      *
      * Default value: true
      */
     useMaxWidth: true
   },
 
-  /**
-   * The object containing configurations specific for req diagrams
-   */
+  /** The object containing configurations specific for req diagrams */
   requirement: {
     useWidth: undefined,
 
     /**
-     * | Parameter | Description | Type | Required | Values |
-     * | --- | --- | --- | --- | --- |
-     * | useMaxWidth | See Notes | boolean | Required | true, false |
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See Notes   | boolean | Required | true, false |
      *
      * **Notes:**
      *
-     * When this flag is set to true, the diagram width is locked to 100% and
-     * scaled based on available space. If set to false, the diagram reserves its
-     * absolute width.
+     * When this flag is set to true, the diagram width is locked to 100% and scaled based on
+     * available space. If set to false, the diagram reserves its absolute width.
      *
      * Default value: true
      */
@@ -13256,6 +13190,7 @@ var splitClassNameAndType = function splitClassNameAndType(id) {
 };
 /**
  * Function called by parser when a node definition has been found.
+ *
  * @param id
  * @public
  */
@@ -13278,6 +13213,7 @@ var addClass = function addClass(id) {
 };
 /**
  * Function to lookup domId from id in the graph definition.
+ *
  * @param id
  * @public
  */
@@ -13315,8 +13251,9 @@ var addRelation = function addRelation(relation) {
   relations.push(relation);
 };
 /**
- * Adds an annotation to the specified class
- * Annotations mark special properties of the given type (like 'interface' or 'service')
+ * Adds an annotation to the specified class Annotations mark special properties of the given type
+ * (like 'interface' or 'service')
+ *
  * @param className The class name
  * @param annotation The name of the annotation without any brackets
  * @public
@@ -13328,11 +13265,11 @@ var addAnnotation = function addAnnotation(className, annotation) {
 };
 /**
  * Adds a member to the specified class
+ *
  * @param className The class name
- * @param member The full name of the member.
- * If the member is enclosed in <<brackets>> it is treated as an annotation
- * If the member is ending with a closing bracket ) it is treated as a method
- * Otherwise the member will be treated as a normal property
+ * @param member The full name of the member. If the member is enclosed in <<brackets>> it is
+ *   treated as an annotation If the member is ending with a closing bracket ) it is treated as a
+ *   method Otherwise the member will be treated as a normal property
  * @public
  */
 
@@ -13371,6 +13308,7 @@ var cleanupLabel = function cleanupLabel(label) {
 };
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
+ *
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
@@ -13387,6 +13325,7 @@ var setCssClass = function setCssClass(ids, className) {
 };
 /**
  * Called by parser when a tooltip is found, e.g. a clickable element.
+ *
  * @param ids Comma separated list of ids
  * @param tooltip Tooltip to add
  */
@@ -13401,6 +13340,7 @@ var setTooltip = function setTooltip(ids, tooltip) {
 };
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
+ *
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
  * @param target Target of the link, _blank by default as originally defined in the svgDraw.js file
@@ -13427,6 +13367,7 @@ var setLink = function setLink(ids, linkStr, target) {
 };
 /**
  * Called by parser when a click definition is found. Registers an event handler.
+ *
  * @param ids Comma separated list of ids
  * @param functionName Function to be called on click
  * @param functionArgs Function args the function should be called with
@@ -13630,7 +13571,12 @@ var conf = {
 };
 /**
  * Function that adds the vertices found during parsing to the graph to be rendered.
- * @param {Object<string, { cssClasses: Array<string>; text: string; id: string; type: string; domId: string; }>} classes Object containing the vertices.
+ *
+ * @param {Object<
+ *   string,
+ *   { cssClasses: string[]; text: string; id: string; type: string; domId: string }
+ * >} classes
+ *   Object containing the vertices.
  * @param {SVGGElement} g The graph that is to be drawn.
  */
 
@@ -13644,6 +13590,7 @@ var addClasses = function addClasses(classes, g) {
     var vertex = classes[id];
     /**
      * Variable for storing the classes for the vertex
+     *
      * @type {string}
      */
 
@@ -13734,8 +13681,9 @@ var addClasses = function addClasses(classes, g) {
 };
 /**
  * Add edges to graph based on parsed graph defninition
- * @param {Object} edges The edges to add to the graph
- * @param {Object} g The graph object
+ *
+ * @param relations
+ * @param {object} g The graph object
  */
 
 var addRelations = function addRelations(relations, g) {
@@ -13832,6 +13780,7 @@ var addRelations = function addRelations(relations, g) {
 };
 /**
  * Gets the ID with the same label as in the cache
+ *
  * @param {string} label The label to look for
  * @returns {string} The resulting ID
  */
@@ -13847,7 +13796,8 @@ var getGraphId = function getGraphId(label) {
 };
 /**
  * Merges the value of `conf` with the passed `cnf`
- * @param {Object} cnf Config to merge
+ *
+ * @param {object} cnf Config to merge
  */
 
 
@@ -13859,6 +13809,7 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
  * @param {string} text
  * @param {string} id
  */
@@ -14051,8 +14002,9 @@ var draw = function draw(text, id) {
 };
 /**
  * Gets the arrow marker for a type index
+ *
  * @param {number} type The type to look for
- * @returns {"aggregation" | "extension" | "composition" | "dependency"} The arrow marker
+ * @returns {'aggregation' | 'extension' | 'composition' | 'dependency'} The arrow marker
  */
 
 function getArrowMarker(type) {
@@ -14132,6 +14084,7 @@ var conf = {
 };
 /**
  * Gets the ID with the same label as in the cache
+ *
  * @param {string} label The label to look for
  * @returns {string} The resulting ID
  */
@@ -14147,6 +14100,7 @@ var getGraphId = function getGraphId(label) {
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
  * @param {SVGSVGElement} elem The SVG element to append to
  */
 
@@ -14164,7 +14118,8 @@ var insertMarkers = function insertMarkers(elem) {
 };
 /**
  * Merges the value of `conf` with the passed `cnf`
- * @param {Object} cnf Config to merge
+ *
+ * @param {object} cnf Config to merge
  */
 
 
@@ -14176,6 +14131,7 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
  * @param {string} text
  * @param {string} id
  */
@@ -14389,7 +14345,10 @@ var drawEdge = function drawEdge(elem, path, relation, conf) {
 };
 /**
  * Renders a class diagram
+ *
  * @param {SVGSVGElement} elem The element to draw it into
+ * @param classDef
+ * @param conf
  * @todo Add more information in the JSDOC here
  */
 
@@ -14581,10 +14540,11 @@ var buildLegacyDisplay = function buildLegacyDisplay(text) {
 };
 /**
  * Adds a <tspan> for a member in a diagram
+ *
  * @param {SVGElement} textEl The element to append to
  * @param {string} txt The member
  * @param {boolean} isFirst
- * @param {{ padding: string; textHeight: string; }} conf The configuration for the member
+ * @param {{ padding: string; textHeight: string }} conf The configuration for the member
  */
 
 
@@ -14602,9 +14562,11 @@ var addTspan = function addTspan(textEl, txt, isFirst, conf) {
 };
 /**
  * Makes generics in typescript syntax
+ *
  * @example <caption>Array of array of strings in typescript syntax</caption>
- * // returns "Array<Array<string>>"
- * parseGenericTypes("Array~Array~string~~");
+ *   // returns "Array<Array<string>>"
+ *   parseGenericTypes('Array~Array~string~~');
+ *
  * @param {string} text The text to convert
  * @returns {string} The converted string
  */
@@ -14623,7 +14585,8 @@ var parseGenericTypes = function parseGenericTypes(text) {
 };
 /**
  * Gives the styles for a classifier
- * @param {"+" | "-" | "#" | "~" | "*" | "$"} classifier The classifier string
+ *
+ * @param {'+' | '-' | '#' | '~' | '*' | '$'} classifier The classifier string
  * @returns {string} Styling for the classifier
  */
 
@@ -14673,6 +14636,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * Gets the number of lines in a string
+ *
  * @param {string | undefined} s The string to check the lines for
  * @returns {number} The number of lines in that string
  */
@@ -14685,6 +14649,7 @@ var getRows = function getRows(s) {
 };
 /**
  * Removes script tags from a text
+ *
  * @param {string} txt The text to sanitize
  * @returns {string} The safer text
  */
@@ -14762,6 +14727,7 @@ var sanitizeTextOrArray = function sanitizeTextOrArray(a, config) {
 var lineBreakRegex = /<br\s*\/?>/gi;
 /**
  * Whether or not a text has any linebreaks
+ *
  * @param {string} text The text to test
  * @returns {boolean} Whether or not the text has breaks
  */
@@ -14771,8 +14737,9 @@ var hasBreaks = function hasBreaks(text) {
 };
 /**
  * Splits on <br> tags
+ *
  * @param {string} text Text to split
- * @returns {Array<string>} List of lines as strings
+ * @returns {string[]} List of lines as strings
  */
 
 var splitBreaks = function splitBreaks(text) {
@@ -14780,6 +14747,7 @@ var splitBreaks = function splitBreaks(text) {
 };
 /**
  * Converts placeholders to linebreaks in HTML
+ *
  * @param {string} s HTML with placeholders
  * @returns {string} HTML with breaks instead of placeholders
  */
@@ -14789,6 +14757,7 @@ var placeholderToBreak = function placeholderToBreak(s) {
 };
 /**
  * Opposite of `placeholderToBreak`, converts breaks to placeholders
+ *
  * @param {string} s HTML string
  * @returns {string} String with placeholders
  */
@@ -14799,6 +14768,7 @@ var breakToPlaceholder = function breakToPlaceholder(s) {
 };
 /**
  * Gets the current URL
+ *
  * @param {boolean} useAbsolute Whether to return the absolute URL or not
  * @returns {string} The current URL
  */
@@ -14817,6 +14787,7 @@ var getUrl = function getUrl(useAbsolute) {
 };
 /**
  * Converts a string/boolean into a boolean
+ *
  * @param {string | boolean} val String or boolean to convert
  * @returns {boolean} The result from the input
  */
@@ -14854,9 +14825,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/**
- *
- */
 
 
 
@@ -14905,6 +14873,7 @@ var addAttributes = function addAttributes(entityName, attribs) {
 };
 /**
  * Add a relationship
+ *
  * @param entA The first entity in the relationship
  * @param rolA The role played by the first entity in relation to the second
  * @param entB The second entity in the relationship
@@ -14984,6 +14953,9 @@ var ERMarkers = {
 };
 /**
  * Put the markers into the svg DOM for later use with edge paths
+ *
+ * @param elem
+ * @param conf
  */
 
 var insertMarkers = function insertMarkers(elem, conf) {
@@ -15051,9 +15023,11 @@ __webpack_require__.r(__webpack_exports__);
 
 var conf = {};
 /**
- * Allows the top-level API module to inject config specific to this renderer,
- * storing it in the local conf object. Note that generic config still needs to be
- * retrieved using getConfig() imported from the config module
+ * Allows the top-level API module to inject config specific to this renderer, storing it in the
+ * local conf object. Note that generic config still needs to be retrieved using getConfig()
+ * imported from the config module
+ *
+ * @param cnf
  */
 
 var setConf = function setConf(cnf) {
@@ -15065,10 +15039,11 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Draw attributes for an entity
- * @param groupNode the svg group node for the entity
- * @param entityTextNode the svg node for the entity label text
- * @param attributes an array of attributes defined for the entity (each attribute has a type and a name)
- * @return the bounding box of the entity, after attributes have been added
+ *
+ * @param groupNode The svg group node for the entity
+ * @param entityTextNode The svg node for the entity label text
+ * @param attributes An array of attributes defined for the entity (each attribute has a type and a name)
+ * @returns The bounding box of the entity, after attributes have been added
  */
 
 var drawAttributes = function drawAttributes(groupNode, entityTextNode, attributes) {
@@ -15193,10 +15168,11 @@ var drawAttributes = function drawAttributes(groupNode, entityTextNode, attribut
 };
 /**
  * Use D3 to construct the svg elements for the entities
- * @param svgNode the svg node that contains the diagram
+ *
+ * @param svgNode The svg node that contains the diagram
  * @param entities The entities to be drawn
  * @param graph The graph that contains the vertex and edge definitions post-layout
- * @return The first entity that was inserted
+ * @returns The first entity that was inserted
  */
 
 
@@ -15245,9 +15221,10 @@ var getEdgeName = function getEdgeName(rel) {
 };
 /**
  * Add each relationship to the graph
- * @param relationships the relationships to be added
- * @param g the graph
- * @return {Array} The array of relationships
+ *
+ * @param relationships The relationships to be added
+ * @param g The graph
+ * @returns {Array} The array of relationships
  */
 
 
@@ -15264,10 +15241,12 @@ var addRelationships = function addRelationships(relationships, g) {
 var relCnt = 0;
 /**
  * Draw a relationship using edge information from the graph
- * @param svg the svg node
- * @param rel the relationship to draw in the svg
- * @param g the graph containing the edge information
- * @param insert the insertion point in the svg DOM (because relationships have markers that need to sit 'behind' opaque entity boxes)
+ *
+ * @param svg The svg node
+ * @param rel The relationship to draw in the svg
+ * @param g The graph containing the edge information
+ * @param insert The insertion point in the svg DOM (because relationships have markers that need to
+ *   sit 'behind' opaque entity boxes)
  */
 
 var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g, insert) {
@@ -15350,8 +15329,9 @@ var drawRelationshipFromLayout = function drawRelationshipFromLayout(svg, rel, g
 };
 /**
  * Draw en E-R diagram in the tag with id: id based on the text definition of the diagram
- * @param text the text of the diagram
- * @param id the unique id of the DOM node that contains the diagram
+ *
+ * @param text The text of the diagram
+ * @param id The unique id of the DOM node that contains the diagram
  */
 
 
@@ -15469,6 +15449,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dagre_d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dagre-d3 */ "dagre-d3");
 /* harmony import */ var dagre_d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dagre_d3__WEBPACK_IMPORTED_MODULE_0__);
 
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
 
 function question(parent, bbox, node) {
   var w = bbox.width;
@@ -15495,6 +15480,12 @@ function question(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function hexagon(parent, bbox, node) {
   var f = 4;
@@ -15528,6 +15519,12 @@ function hexagon(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function rect_left_inv_arrow(parent, bbox, node) {
   var w = bbox.width;
@@ -15556,6 +15553,12 @@ function rect_left_inv_arrow(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function lean_right(parent, bbox, node) {
   var w = bbox.width;
@@ -15581,6 +15584,12 @@ function lean_right(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function lean_left(parent, bbox, node) {
   var w = bbox.width;
@@ -15606,6 +15615,12 @@ function lean_left(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function trapezoid(parent, bbox, node) {
   var w = bbox.width;
@@ -15631,6 +15646,12 @@ function trapezoid(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function inv_trapezoid(parent, bbox, node) {
   var w = bbox.width;
@@ -15656,6 +15677,12 @@ function inv_trapezoid(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function rect_right_inv_arrow(parent, bbox, node) {
   var w = bbox.width;
@@ -15684,6 +15711,12 @@ function rect_right_inv_arrow(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function stadium(parent, bbox, node) {
   var h = bbox.height;
@@ -15696,6 +15729,12 @@ function stadium(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function subroutine(parent, bbox, node) {
   var w = bbox.width;
@@ -15739,6 +15778,12 @@ function subroutine(parent, bbox, node) {
 
   return shapeSvg;
 }
+/**
+ * @param parent
+ * @param bbox
+ * @param node
+ */
+
 
 function cylinder(parent, bbox, node) {
   var w = bbox.width;
@@ -15767,6 +15812,8 @@ function cylinder(parent, bbox, node) {
 
   return shapeSvg;
 }
+/** @param render */
+
 
 function addToRender(render) {
   render.shapes().question = question;
@@ -15787,6 +15834,8 @@ function addToRender(render) {
 
   render.shapes().rect_right_inv_arrow = rect_right_inv_arrow;
 }
+/** @param addShape */
+
 function addToRenderV2(addShape) {
   addShape({
     question: question
@@ -15828,6 +15877,12 @@ function addToRenderV2(addShape) {
     rect_right_inv_arrow: rect_right_inv_arrow
   });
 }
+/**
+ * @param parent
+ * @param w
+ * @param h
+ * @param points
+ */
 
 function insertPolygonShape(parent, w, h, points) {
   return parent.insert('polygon', ':first-child').attr('points', points.map(function (d) {
@@ -15927,6 +15982,7 @@ var parseDirective = function parseDirective(statement, context, type) {
 };
 /**
  * Function to lookup domId from id in the graph definition.
+ *
  * @param id
  * @public
  */
@@ -15944,11 +16000,13 @@ var lookUpDomId = function lookUpDomId(id) {
 };
 /**
  * Function called by parser when a node definition has been found
- * @param id
+ *
+ * @param _id
  * @param text
  * @param type
  * @param style
  * @param classes
+ * @param dir
  */
 
 var addVertex = function addVertex(_id, text, type, style, classes, dir) {
@@ -16016,8 +16074,9 @@ var addVertex = function addVertex(_id, text, type, style, classes, dir) {
 };
 /**
  * Function called by parser when a link/edge definition has been found
- * @param start
- * @param end
+ *
+ * @param _start
+ * @param _end
  * @param type
  * @param linktext
  */
@@ -16063,8 +16122,9 @@ var addLink = function addLink(_start, _end, type, linktext) {
 };
 /**
  * Updates a link's line interpolation algorithm
- * @param pos
- * @param interpolate
+ *
+ * @param positions
+ * @param interp
  */
 
 var updateLinkInterpolate = function updateLinkInterpolate(positions, interp) {
@@ -16078,7 +16138,8 @@ var updateLinkInterpolate = function updateLinkInterpolate(positions, interp) {
 };
 /**
  * Updates a link with a style
- * @param pos
+ *
+ * @param positions
  * @param style
  */
 
@@ -16120,6 +16181,7 @@ var addClass = function addClass(id, style) {
 };
 /**
  * Called by parser when a graph definition is found, stores the direction of the chart.
+ *
  * @param dir
  */
 
@@ -16144,6 +16206,7 @@ var setDirection = function setDirection(dir) {
 };
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
+ *
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
@@ -16223,8 +16286,10 @@ var setClickFun = function setClickFun(id, functionName, functionArgs) {
 };
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
+ *
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
+ * @param target
  */
 
 
@@ -16242,9 +16307,10 @@ var getTooltip = function getTooltip(id) {
 };
 /**
  * Called by parser when a click definition is found. Registers an event handler.
+ *
  * @param ids Comma separated list of ids
  * @param functionName Function to be called on click
- * @param tooltip Tooltip for the clickable element
+ * @param functionArgs
  */
 
 var setClickEvent = function setClickEvent(ids, functionName, functionArgs) {
@@ -16263,7 +16329,8 @@ var getDirection = function getDirection() {
 };
 /**
  * Retrieval function for fetching the found nodes after parsing has completed.
- * @returns {{}|*|vertices}
+ *
+ * @returns {{} | any | vertices}
  */
 
 var getVertices = function getVertices() {
@@ -16271,7 +16338,8 @@ var getVertices = function getVertices() {
 };
 /**
  * Retrieval function for fetching the found links after parsing has completed.
- * @returns {{}|*|edges}
+ *
+ * @returns {{} | any | edges}
  */
 
 var getEdges = function getEdges() {
@@ -16279,7 +16347,8 @@ var getEdges = function getEdges() {
 };
 /**
  * Retrieval function for fetching the found class definitions after parsing has completed.
- * @returns {{}|*|classes}
+ *
+ * @returns {{} | any | classes}
  */
 
 var getClasses = function getClasses() {
@@ -16317,6 +16386,8 @@ var setupToolTips = function setupToolTips(element) {
 funs.push(setupToolTips);
 /**
  * Clears the internal graph db so that a new graph can be parsed.
+ *
+ * @param ver
  */
 
 var clear = function clear(ver) {
@@ -16335,16 +16406,17 @@ var clear = function clear(ver) {
 var setGen = function setGen(ver) {
   version = ver || 'gen-1';
 };
-/**
- *
- * @returns {string}
- */
+/** @returns {string} */
 
 var defaultStyle = function defaultStyle() {
   return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
 };
 /**
  * Clears the internal graph db so that a new graph can be parsed.
+ *
+ * @param _id
+ * @param list
+ * @param _title
  */
 
 var addSubGraph = function addSubGraph(_id, list, _title) {
@@ -16356,6 +16428,8 @@ var addSubGraph = function addSubGraph(_id, list, _title) {
   if (_id === _title && _title.match(/\s/)) {
     id = undefined;
   }
+  /** @param a */
+
 
   function uniq(a) {
     var prims = {
@@ -16419,9 +16493,7 @@ var addSubGraph = function addSubGraph(_id, list, _title) {
     dir: dir
   };
   _logger__WEBPACK_IMPORTED_MODULE_5__.log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
-  /**
-   * Deletes an id from all subgraphs
-   */
+  /** Deletes an id from all subgraphs */
   // const del = _id => {
   //   subGraphs.forEach(sg => {
   //     const pos = sg.nodes.indexOf(_id);
@@ -16681,6 +16753,9 @@ var exists = function exists(allSgs, _id) {
 };
 /**
  * Deletes an id from all subgraphs
+ *
+ * @param sg
+ * @param allSubgraphs
  */
 
 
@@ -16785,8 +16860,10 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Function that adds the vertices found during parsing to the graph to be rendered.
+ *
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
+ * @param svgId
  */
 
 var addVertices = function addVertices(vert, g, svgId) {
@@ -16797,6 +16874,7 @@ var addVertices = function addVertices(vert, g, svgId) {
     var vertex = vert[id];
     /**
      * Variable for storing the classes for the vertex
+     *
      * @type {string}
      */
 
@@ -16950,8 +17028,9 @@ var addVertices = function addVertices(vert, g, svgId) {
 };
 /**
  * Add edges to graph based on parsed graph defninition
- * @param {Object} edges The edges to add to the graph
- * @param {Object} g The graph object
+ *
+ * @param {object} edges The edges to add to the graph
+ * @param {object} g The graph object
  */
 
 var addEdges = function addEdges(edges, g) {
@@ -17105,7 +17184,9 @@ var addEdges = function addEdges(edges, g) {
 };
 /**
  * Returns the all the styles from classDef statements in the graph definition.
- * @returns {object} classDef styles
+ *
+ * @param text
+ * @returns {object} ClassDef styles
  */
 
 var getClasses = function getClasses(text) {
@@ -17125,6 +17206,7 @@ var getClasses = function getClasses(text) {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
  * @param text
  * @param id
  */
@@ -17332,8 +17414,10 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
+ *
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
+ * @param svgId
  */
 
 var addVertices = function addVertices(vert, g, svgId) {
@@ -17344,6 +17428,7 @@ var addVertices = function addVertices(vert, g, svgId) {
     var vertex = vert[id];
     /**
      * Variable for storing the classes for the vertex
+     *
      * @type {string}
      */
 
@@ -17475,8 +17560,9 @@ var addVertices = function addVertices(vert, g, svgId) {
 };
 /**
  * Add edges to graph based on parsed graph defninition
- * @param {Object} edges The edges to add to the graph
- * @param {Object} g The graph object
+ *
+ * @param {object} edges The edges to add to the graph
+ * @param {object} g The graph object
  */
 
 var addEdges = function addEdges(edges, g) {
@@ -17581,7 +17667,9 @@ var addEdges = function addEdges(edges, g) {
 };
 /**
  * Returns the all the styles from classDef statements in the graph definition.
- * @returns {object} classDef styles
+ *
+ * @param text
+ * @returns {object} ClassDef styles
  */
 
 var getClasses = function getClasses(text) {
@@ -17600,6 +17688,7 @@ var getClasses = function getClasses(text) {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
  * @param text
  * @param id
  */
@@ -17807,7 +17896,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /**
  * Returns the styles given options
- * @param {{ fontFamily: string; nodeTextColor: string; textColor: string; titleColor: string; mainBkg: string; nodeBorder: string; arrowheadColor: string; lineColor: string; edgeLabelBackground: string; clusterBkg: string; clusterBorder: string; tertiaryColor: string; border2: string; }} options The options for the styles
+ *
+ * @param {{
+ *   fontFamily: string;
+ *   nodeTextColor: string;
+ *   textColor: string;
+ *   titleColor: string;
+ *   mainBkg: string;
+ *   nodeBorder: string;
+ *   arrowheadColor: string;
+ *   lineColor: string;
+ *   edgeLabelBackground: string;
+ *   clusterBkg: string;
+ *   clusterBorder: string;
+ *   tertiaryColor: string;
+ *   border2: string;
+ * }} options
+ *   The options for the styles
  * @returns {string} The resulting styles
  */
 var getStyles = function getStyles(options) {
@@ -18362,8 +18467,9 @@ var compileTasks = function compileTasks() {
 };
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
+ *
  * @param ids Comma separated list of ids
- * @param linkStr URL to create a link for
+ * @param _linkStr URL to create a link for
  */
 
 
@@ -18387,6 +18493,7 @@ var setLink = function setLink(ids, _linkStr) {
 };
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
+ *
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
@@ -18445,7 +18552,9 @@ var setClickFun = function setClickFun(id, functionName, functionArgs) {
   }
 };
 /**
- * The callbackFunction is executed in a click event bound to the task with the specified id or the task's assigned text
+ * The callbackFunction is executed in a click event bound to the task with the specified id or the
+ * task's assigned text
+ *
  * @param id The task's id
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
@@ -18475,6 +18584,7 @@ var pushFun = function pushFun(id, callbackFunction) {
 };
 /**
  * Called by parser when a click definition is found. Registers an event handler.
+ *
  * @param ids Comma separated list of ids
  * @param functionName Function to be called on click
  * @param functionArgs Function args the function should be called with
@@ -18489,6 +18599,7 @@ var setClickEvent = function setClickEvent(ids, functionName, functionArgs) {
 };
 /**
  * Binds all functions previously added to fun (specified through click) to the element
+ *
  * @param element
  */
 
@@ -18531,6 +18642,11 @@ var bindFunctions = function bindFunctions(element) {
   durationToDate: durationToDate,
   isInvalidDate: isInvalidDate
 });
+/**
+ * @param data
+ * @param task
+ * @param tags
+ */
 
 function getTaskTags(data, task, tags) {
   var matchFound = true;
@@ -18625,6 +18741,10 @@ var draw = function draw(text, id) {
   var catsUnfiltered = categories; // for vert labels
 
   categories = checkUnique(categories);
+  /**
+   * @param a
+   * @param b
+   */
 
   function taskCompare(a, b) {
     var taskA = a.startTime;
@@ -18646,6 +18766,11 @@ var draw = function draw(text, id) {
   makeGant(taskArray, w, h);
   (0,_utils__WEBPACK_IMPORTED_MODULE_5__.configureSvgSize)(svg, h, w, conf.useMaxWidth);
   svg.append('text').text(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getTitle()).attr('x', w / 2).attr('y', conf.titleTopMargin).attr('class', 'titleText');
+  /**
+   * @param tasks
+   * @param pageWidth
+   * @param pageHeight
+   */
 
   function makeGant(tasks, pageWidth, pageHeight) {
     var barHeight = conf.barHeight;
@@ -18659,6 +18784,16 @@ var draw = function draw(text, id) {
     vertLabels(gap, topPadding, leftPadding, barHeight, colorScale);
     drawToday(leftPadding, topPadding, pageWidth, pageHeight);
   }
+  /**
+   * @param theArray
+   * @param theGap
+   * @param theTopPad
+   * @param theSidePad
+   * @param theBarHeight
+   * @param theColorScale
+   * @param w
+   */
+
 
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
     // Draw background rects covering the entire width of the graph, these form the section rows.
@@ -18842,6 +18977,17 @@ var draw = function draw(text, id) {
       }
     });
   }
+  /**
+   * @param theGap
+   * @param theTopPad
+   * @param theSidePad
+   * @param w
+   * @param h
+   * @param tasks
+   * @param excludes
+   * @param includes
+   */
+
 
   function drawExcludeDays(theGap, theTopPad, theSidePad, w, h, tasks, excludes, includes) {
     var minTime = tasks.reduce(function (min, _ref) {
@@ -18890,6 +19036,13 @@ var draw = function draw(text, id) {
       return (timeScale(d.start) + theSidePad + 0.5 * (timeScale(d.end) - timeScale(d.start))).toString() + 'px ' + (i * theGap + 0.5 * h).toString() + 'px';
     }).attr('class', 'exclude-range');
   }
+  /**
+   * @param theSidePad
+   * @param theTopPad
+   * @param w
+   * @param h
+   */
+
 
   function makeGrid(theSidePad, theTopPad, w, h) {
     var bottomXAxis = (0,d3__WEBPACK_IMPORTED_MODULE_1__.axisBottom)(timeScale).tickSize(-h + theTopPad + conf.gridLineStartPadding).tickFormat((0,d3__WEBPACK_IMPORTED_MODULE_1__.timeFormat)(_parser_gantt__WEBPACK_IMPORTED_MODULE_2__.parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
@@ -18900,6 +19053,11 @@ var draw = function draw(text, id) {
       svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + theTopPad + ')').call(topXAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10); // .attr('dy', '1em');
     }
   }
+  /**
+   * @param theGap
+   * @param theTopPad
+   */
+
 
   function vertLabels(theGap, theTopPad) {
     var numOccurances = [];
@@ -18945,6 +19103,13 @@ var draw = function draw(text, id) {
       return 'sectionTitle';
     });
   }
+  /**
+   * @param theSidePad
+   * @param theTopPad
+   * @param w
+   * @param h
+   */
+
 
   function drawToday(theSidePad, theTopPad, w, h) {
     var todayMarker = _ganttDb__WEBPACK_IMPORTED_MODULE_3__["default"].getTodayMarker();
@@ -18961,7 +19126,13 @@ var draw = function draw(text, id) {
     if (todayMarker !== '') {
       todayLine.attr('style', todayMarker.replace(/,/g, ';'));
     }
-  } // from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
+  }
+  /**
+   * From this stackexchange question:
+   * http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
+   *
+   * @param arr
+   */
 
 
   function checkUnique(arr) {
@@ -18978,7 +19149,13 @@ var draw = function draw(text, id) {
     }
 
     return result;
-  } // from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
+  }
+  /**
+   * From this stackexchange question:
+   * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
+   *
+   * @param arr
+   */
 
 
   function getCounts(arr) {
@@ -18991,7 +19168,13 @@ var draw = function draw(text, id) {
     }
 
     return obj;
-  } // get specific from everything
+  }
+  /**
+   * Get specific from everything
+   *
+   * @param word
+   * @param arr
+   */
 
 
   function getCount(word, arr) {
@@ -19070,6 +19253,11 @@ function getId() {
     length: 7
   });
 }
+/**
+ * @param currentCommit
+ * @param otherCommit
+ */
+
 
 function isfastforwardable(currentCommit, otherCommit) {
   _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
@@ -19089,6 +19277,11 @@ function isfastforwardable(currentCommit, otherCommit) {
   _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug(currentCommit.id, otherCommit.id);
   return currentCommit.id === otherCommit.id;
 }
+/**
+ * @param currentCommit
+ * @param otherCommit
+ */
+
 
 function isReachableFrom(currentCommit, otherCommit) {
   var currentSeq = currentCommit.seq;
@@ -19096,6 +19289,11 @@ function isReachableFrom(currentCommit, otherCommit) {
   if (currentSeq > otherSeq) return isfastforwardable(otherCommit, currentCommit);
   return false;
 }
+/**
+ * @param list
+ * @param fn
+ */
+
 
 function uniqBy(list, fn) {
   var recordMap = Object.create(null);
@@ -19200,6 +19398,11 @@ var reset = function reset(commitRef) {
   head = commit;
   branches[curBranch] = commit.id;
 };
+/**
+ * @param arr
+ * @param key
+ * @param newval
+ */
 
 function upsert(arr, key, newval) {
   var index = arr.indexOf(key);
@@ -19210,6 +19413,8 @@ function upsert(arr, key, newval) {
     arr.splice(index, 1, newval);
   }
 }
+/** @param commitArr */
+
 
 function prettyPrintCommitHistory(commitArr) {
   var commit = commitArr.reduce(function (out, commit) {
@@ -19373,11 +19578,19 @@ var apiConfig = {};
 var setConf = function setConf(c) {
   apiConfig = c;
 };
+/** @param svg */
 
 function svgCreateDefs(svg) {
   svg.append('defs').append('g').attr('id', 'def-commit').append('circle').attr('r', config.nodeRadius).attr('cx', 0).attr('cy', 0);
   svg.select('#def-commit').append('foreignObject').attr('width', config.nodeLabel.width).attr('height', config.nodeLabel.height).attr('x', config.nodeLabel.x).attr('y', config.nodeLabel.y).attr('class', 'node-label').attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility').append('p').html('');
 }
+/**
+ * @param svg
+ * @param points
+ * @param colorIdx
+ * @param interpolate
+ */
+
 
 function svgDrawLine(svg, points, colorIdx, interpolate) {
   var curve = (0,_utils__WEBPACK_IMPORTED_MODULE_1__.interpolateToCurve)(interpolate, d3__WEBPACK_IMPORTED_MODULE_0__.curveBasis);
@@ -19388,7 +19601,13 @@ function svgDrawLine(svg, points, colorIdx, interpolate) {
     return Math.round(d.y);
   }).curve(curve);
   svg.append('svg:path').attr('d', lineGen(points)).style('stroke', color).style('stroke-width', config.lineStrokeWidth).style('fill', 'none');
-} // Pass in the element and its pre-transform coords
+}
+/**
+ * Pass in the element and its pre-transform coords
+ *
+ * @param element
+ * @param coords
+ */
 
 
 function getElementCoords(element, coords) {
@@ -19403,6 +19622,14 @@ function getElementCoords(element, coords) {
     height: coords.height
   };
 }
+/**
+ * @param svg
+ * @param fromId
+ * @param toId
+ * @param direction
+ * @param color
+ */
+
 
 function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
   _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('svgDrawLineForCommits: ', fromId, toId);
@@ -19496,10 +19723,22 @@ function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
       break;
   }
 }
+/**
+ * @param svg
+ * @param selector
+ */
+
 
 function cloneNode(svg, selector) {
   return svg.select(selector).node().cloneNode(true);
 }
+/**
+ * @param svg
+ * @param commitid
+ * @param branches
+ * @param direction
+ */
+
 
 function renderCommitHistory(svg, commitid, branches, direction) {
   var commit;
@@ -19559,6 +19798,13 @@ function renderCommitHistory(svg, commitid, branches, direction) {
     branchNum--;
   }
 }
+/**
+ * @param svg
+ * @param commit
+ * @param direction
+ * @param branchColor
+ */
+
 
 function renderLines(svg, commit, direction, branchColor) {
   branchColor = branchColor || 0;
@@ -19660,9 +19906,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-/**
- * Created by knut on 15-01-14.
- */
+/** Created by knut on 15-01-14. */
 
 var message = '';
 var info = false;
@@ -19711,9 +19955,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_info__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./parser/info */ "./src/diagrams/info/parser/info.jison");
 /* harmony import */ var _parser_info__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_parser_info__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-/**
- * Created by knut on 14-12-11.
- */
+/** Created by knut on 14-12-11. */
 
 
 
@@ -19727,23 +19969,25 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
+ * @param {any} version
  */
 
-var draw = function draw(txt, id, ver) {
+var draw = function draw(text, id, version) {
   try {
     var parser = (_parser_info__WEBPACK_IMPORTED_MODULE_1___default().parser);
     parser.yy = _infoDb__WEBPACK_IMPORTED_MODULE_2__["default"];
-    _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('Renering info diagram\n' + txt); // Parse the graph definition
+    _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('Renering info diagram\n' + text); // Parse the graph definition
 
-    parser.parse(txt);
+    parser.parse(text);
     _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('Parsed info diagram'); // Fetch the default direction, use TD if none was found
 
     var svg = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)('#' + id);
     var g = svg.append('g');
     g.append('text') // text label for the x axis
-    .attr('x', 100).attr('y', 40).attr('class', 'version').attr('font-size', '32px').style('text-anchor', 'middle').text('v ' + ver);
+    .attr('x', 100).attr('y', 40).attr('class', 'version').attr('font-size', '32px').style('text-anchor', 'middle').text('v ' + version);
     svg.attr('height', 100);
     svg.attr('width', 400); // svg.attr('viewBox', '0 0 300 150');
   } catch (e) {
@@ -19792,9 +20036,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/**
- *
- */
 
 
 
@@ -19888,9 +20129,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/**
- * Created by AshishJ on 11-09-2019.
- */
+/** Created by AshishJ on 11-09-2019. */
 
 
 
@@ -19900,6 +20139,7 @@ __webpack_require__.r(__webpack_exports__);
 var conf = _config__WEBPACK_IMPORTED_MODULE_1__.getConfig();
 /**
  * Draws a Pie Chart with the data given in text.
+ *
  * @param text
  * @param id
  */
@@ -20814,6 +21054,10 @@ var addALink = function addALink(actorId, text) {
     _logger__WEBPACK_IMPORTED_MODULE_1__.log.error('error while parsing actor link text', e);
   }
 };
+/**
+ * @param {any} actor
+ * @param {any} links
+ */
 
 function insertLinks(actor, links) {
   if (actor.links == null) {
@@ -20838,6 +21082,10 @@ var addProperties = function addProperties(actorId, text) {
     _logger__WEBPACK_IMPORTED_MODULE_1__.log.error('error while parsing actor properties text', e);
   }
 };
+/**
+ * @param {any} actor
+ * @param {any} properties
+ */
 
 function insertProperties(actor, properties) {
   if (actor.properties == null) {
@@ -21138,6 +21386,7 @@ var bounds = {
     var _self = this;
 
     var cnt = 0;
+    /** @param {any} type */
 
     function updateFn(type) {
       return function updateItemBounds(item) {
@@ -21261,8 +21510,11 @@ var bounds = {
 };
 /**
  * Draws an note in the diagram with the attached line
- * @param elem - The diagram to draw to.
- * @param noteModel:{x: number, y: number, message: string, width: number} - startx: x axis start position, verticalPos: y axis position, messsage: the message to be shown, width: Set this with a custom width to override the default configured width.
+ *
+ * @param {any} elem - The diagram to draw to.
+ * @param {{ x: number; y: number; message: string; width: number }} noteModel - Startx: x axis
+ *   start position, verticalPos: y axis position, messsage: the message to be shown, width: Set
+ *   this with a custom width to override the default configured width.
  */
 
 var drawNote = function drawNote(elem, noteModel) {
@@ -21329,8 +21581,9 @@ var actorFont = function actorFont(cnf) {
 };
 /**
  * Draws a message
- * @param g - the parent of the message element
- * @param msgModel - the model containing fields describing a message
+ *
+ * @param {any} g - The parent of the message element
+ * @param {any} msgModel - The model containing fields describing a message
  */
 
 
@@ -21520,6 +21773,14 @@ var activationBounds = function activationBounds(actor, actors) {
   }, actorObj.x + actorObj.width / 2);
   return [left, right];
 };
+/**
+ * @param {any} loopWidths
+ * @param {any} msg
+ * @param {any} preMargin
+ * @param {any} postMargin
+ * @param {any} addLoopFn
+ */
+
 
 function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn) {
   bounds.bumpVerticalPos(preMargin);
@@ -21543,8 +21804,9 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 }
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
 
 
@@ -21573,6 +21835,10 @@ var draw = function draw(text, id) {
   _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].insertArrowCrossHead(diagram);
   _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].insertArrowFilledHead(diagram);
   _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].insertSequenceNumber(diagram);
+  /**
+   * @param {any} msg
+   * @param {any} verticalPos
+   */
 
   function activeEnd(msg, verticalPos) {
     var activationData = bounds.endActivation(msg);
@@ -21752,14 +22018,14 @@ var draw = function draw(text, id) {
   _logger__WEBPACK_IMPORTED_MODULE_6__.log.debug("models:", bounds.models);
 };
 /**
- * Retrieves the max message width of each actor, supports signals (messages, loops)
- * and notes.
+ * Retrieves the max message width of each actor, supports signals (messages, loops) and notes.
  *
- * It will enumerate each given message, and will determine its text width, in relation
- * to the actor it originates from, and destined to.
+ * It will enumerate each given message, and will determine its text width, in relation to the actor
+ * it originates from, and destined to.
  *
- * @param actors - The actors map
- * @param messages - A list of message objects to iterate
+ * @param {any} actors - The actors map
+ * @param {Array} messages - A list of message objects to iterate
+ * @returns {any}
  */
 
 var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, messages) {
@@ -21842,14 +22108,13 @@ var getRequiredPopupWidth = function getRequiredPopupWidth(actor) {
   return requiredPopupWidth;
 };
 /**
- * This will calculate the optimal margin for each given actor, for a given
- * actor->messageWidth map.
+ * This will calculate the optimal margin for each given actor, for a given actor->messageWidth map.
  *
- * An actor's margin is determined by the width of the actor, the width of the
- * largest message that originates from it, and the configured conf.actorMargin.
+ * An actor's margin is determined by the width of the actor, the width of the largest message that
+ * originates from it, and the configured conf.actorMargin.
  *
- * @param actors - The actors map to calculate margins for
- * @param actorToMessageWidth - A map of actor key -> max message width it holds
+ * @param {any} actors - The actors map to calculate margins for
+ * @param {any} actorToMessageWidth - A map of actor key -> max message width it holds
  */
 
 
@@ -22404,6 +22669,14 @@ var drawText = function drawText(elem, textData) {
   return textElems;
 };
 var drawLabel = function drawLabel(elem, txtObject) {
+  /**
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} cut
+   * @returns {any}
+   */
   function genPoints(x, y, width, height, cut) {
     return x + ',' + y + ' ' + (x + width) + ',' + y + ' ' + (x + width) + ',' + (y + height - cut) + ' ' + (x + width - cut * 1.2) + ',' + (y + height) + ' ' + x + ',' + (y + height);
   }
@@ -22422,9 +22695,10 @@ var fixLifeLineHeights = function fixLifeLineHeights(diagram, bounds) {
 };
 /**
  * Draws an actor in the diagram with the attached line
- * @param elem - The diagram we'll draw to.
- * @param actor - The actor to draw.
- * @param conf - drawText implementation discriminator object
+ *
+ * @param {any} elem - The diagram we'll draw to.
+ * @param {any} actor - The actor to draw.
+ * @param {any} conf - DrawText implementation discriminator object
  */
 
 var drawActorTypeParticipant = function drawActorTypeParticipant(elem, actor, conf) {
@@ -22542,11 +22816,12 @@ var anchorElement = function anchorElement(elem) {
 };
 /**
  * Draws an activation in the diagram
- * @param elem - element to append activation rect.
- * @param bounds - activation box bounds.
- * @param verticalPos - precise y cooridnate of bottom activation box edge.
- * @param conf - sequence diagram config object.
- * @param actorActivations - number of activations on the actor.
+ *
+ * @param {any} elem - Element to append activation rect.
+ * @param {any} bounds - Activation box bounds.
+ * @param {any} verticalPos - Precise y cooridnate of bottom activation box edge.
+ * @param {any} conf - Sequence diagram config object.
+ * @param {any} actorActivations - Number of activations on the actor.
  */
 
 var drawActivation = function drawActivation(elem, bounds, verticalPos, conf, actorActivations) {
@@ -22562,10 +22837,12 @@ var drawActivation = function drawActivation(elem, bounds, verticalPos, conf, ac
 };
 /**
  * Draws a loop in the diagram
- * @param elem - elemenet to append the loop to.
- * @param loopModel - loopModel of the given loop.
- * @param labelText - Text within the loop.
- * @param conf - diagrom configuration
+ *
+ * @param {any} elem - Elemenet to append the loop to.
+ * @param {any} loopModel - LoopModel of the given loop.
+ * @param {any} labelText - Text within the loop.
+ * @param {any} conf - Diagrom configuration
+ * @returns {any}
  */
 
 var drawLoop = function drawLoop(elem, loopModel, labelText, conf) {
@@ -22652,8 +22929,9 @@ var drawLoop = function drawLoop(elem, loopModel, labelText, conf) {
 };
 /**
  * Draws a background rectangle
- * @param elem diagram (reference for bounds)
- * @param bounds shape of the rectangle
+ *
+ * @param {any} elem Diagram (reference for bounds)
+ * @param {any} bounds Shape of the rectangle
  */
 
 var drawBackgroundRect = function drawBackgroundRect(elem, bounds) {
@@ -22678,6 +22956,8 @@ var insertClockIcon = function insertClockIcon(elem) {
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param elem
  */
 
 var insertArrowHead = function insertArrowHead(elem) {
@@ -22685,6 +22965,8 @@ var insertArrowHead = function insertArrowHead(elem) {
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param {any} elem
  */
 
 var insertArrowFilledHead = function insertArrowFilledHead(elem) {
@@ -22692,6 +22974,8 @@ var insertArrowFilledHead = function insertArrowFilledHead(elem) {
 };
 /**
  * Setup node number. The result is appended to the svg.
+ *
+ * @param {any} elem
  */
 
 var insertSequenceNumber = function insertSequenceNumber(elem) {
@@ -22699,6 +22983,8 @@ var insertSequenceNumber = function insertSequenceNumber(elem) {
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param {any} elem
  */
 
 var insertArrowCrossHead = function insertArrowCrossHead(elem) {
@@ -22740,11 +23026,31 @@ var getNoteRect = function getNoteRect() {
 };
 
 var _drawTextCandidateFunc = function () {
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   */
   function byText(content, g, x, y, width, height, textAttrs) {
     var text = g.append('text').attr('x', x + width / 2).attr('y', y + height / 2 + 5).style('text-anchor', 'middle').text(content);
 
     _setTextAttrs(text, textAttrs);
   }
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
+
 
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     var actorFontSize = conf.actorFontSize,
@@ -22761,6 +23067,17 @@ var _drawTextCandidateFunc = function () {
       _setTextAttrs(text, textAttrs);
     }
   }
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
+
 
   function byFo(content, g, x, y, width, height, textAttrs, conf) {
     var s = g.append('switch');
@@ -22771,6 +23088,11 @@ var _drawTextCandidateFunc = function () {
 
     _setTextAttrs(text, textAttrs);
   }
+  /**
+   * @param {any} toText
+   * @param {any} fromTextAttrsDict
+   */
+
 
   function _setTextAttrs(toText, fromTextAttrsDict) {
     for (var key in fromTextAttrsDict) {
@@ -22787,11 +23109,31 @@ var _drawTextCandidateFunc = function () {
 }();
 
 var _drawMenuItemTextCandidateFunc = function () {
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   */
   function byText(content, g, x, y, width, height, textAttrs) {
     var text = g.append('text').attr('x', x).attr('y', y).style('text-anchor', 'start').text(content);
 
     _setTextAttrs(text, textAttrs);
   }
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
+
 
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     var actorFontSize = conf.actorFontSize,
@@ -22808,6 +23150,17 @@ var _drawMenuItemTextCandidateFunc = function () {
       _setTextAttrs(text, textAttrs);
     }
   }
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
+
 
   function byFo(content, g, x, y, width, height, textAttrs, conf) {
     var s = g.append('switch');
@@ -22818,6 +23171,11 @@ var _drawMenuItemTextCandidateFunc = function () {
 
     _setTextAttrs(text, textAttrs);
   }
+  /**
+   * @param {any} toText
+   * @param {any} fromTextAttrsDict
+   */
+
 
   function _setTextAttrs(toText, fromTextAttrsDict) {
     for (var key in fromTextAttrsDict) {
@@ -22937,10 +23295,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 
- // let conf;
 
 /**
  * Draws a start state as a black circle
+ *
+ * @param {any} g
  */
 
 var drawStartState = function drawStartState(g) {
@@ -22950,6 +23309,8 @@ var drawStartState = function drawStartState(g) {
 };
 /**
  * Draws a start state as a black circle
+ *
+ * @param {any} g
  */
 
 var drawDivider = function drawDivider(g) {
@@ -22957,6 +23318,9 @@ var drawDivider = function drawDivider(g) {
 };
 /**
  * Draws a an end state as a black circle
+ *
+ * @param {any} g
+ * @param {any} stateDef
  */
 
 var drawSimpleState = function drawSimpleState(g, stateDef) {
@@ -22967,8 +23331,10 @@ var drawSimpleState = function drawSimpleState(g, stateDef) {
 };
 /**
  * Draws a state with descriptions
- * @param {*} g
- * @param {*} stateDef
+ *
+ * @param {any} g
+ * @param {any} stateDef
+ * @returns
  */
 
 var drawDescrState = function drawDescrState(g, stateDef) {
@@ -23004,16 +23370,15 @@ var drawDescrState = function drawDescrState(g, stateDef) {
   g.insert('rect', ':first-child').attr('x', (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().state.padding).attr('y', (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().state.padding).attr('width', width + 2 * (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().state.padding).attr('height', descrBox.height + titleHeight + 2 * (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().state.padding).attr('rx', (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().state.radius);
   return g;
 };
-/**
- * Adds the creates a box around the existing content and adds a
- * panel for the id on top of the content.
- */
+/** Adds the creates a box around the existing content and adds a panel for the id on top of the content. */
 
 /**
  * Function that creates an title row and a frame around a substate for a composit state diagram.
  * The function returns a new d3 svg object with updated width and height properties;
- * @param {*} g The d3 svg object for the substate to framed
- * @param {*} stateDef The info about the
+ *
+ * @param {any} g The d3 svg object for the substate to framed
+ * @param {any} stateDef The info about the
+ * @param {any} altBkg
  */
 
 var addTitleAndBox = function addTitleAndBox(g, stateDef, altBkg) {
@@ -23171,6 +23536,7 @@ var _drawLongText = function _drawLongText(_text, x, y, g) {
 };
 /**
  * Draws a note to the diagram
+ *
  * @param text - The text of the given note.
  * @param g - The element the note is attached to.
  */
@@ -23190,10 +23556,11 @@ var drawNote = function drawNote(text, g) {
   return note;
 };
 /**
- * Starting point for drawing a state. The function finds out the specifics
- * about the state and renders with approprtiate function.
- * @param {*} elem
- * @param {*} stateDef
+ * Starting point for drawing a state. The function finds out the specifics about the state and
+ * renders with approprtiate function.
+ *
+ * @param {any} elem
+ * @param {any} stateDef
  */
 
 var drawState = function drawState(elem, stateDef) {
@@ -23485,10 +23852,12 @@ var endCnt = 0; // eslint-disable-line
 
 /**
  * Function called by parser when a node definition has been found.
- * @param id
- * @param text
- * @param type
- * @param style
+ *
+ * @param {any} id
+ * @param {any} type
+ * @param {any} doc
+ * @param {any} descr
+ * @param {any} note
  */
 
 var addState = function addState(id, type, doc, descr, note) {
@@ -23707,7 +24076,9 @@ var setConf = function setConf(cnf) {
 var nodeDb = {};
 /**
  * Returns the all the styles from classDef statements in the graph definition.
- * @returns {object} classDef styles
+ *
+ * @param {any} text
+ * @returns {object} ClassDef styles
  */
 
 var getClasses = function getClasses(text) {
@@ -23924,8 +24295,9 @@ var getDir = function getDir(nodes, defaultDir) {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
 
 
@@ -24047,10 +24419,11 @@ _parser_stateDiagram__WEBPACK_IMPORTED_MODULE_3__.parser.yy = _stateDb__WEBPACK_
 
 var conf;
 var transformationLog = {};
-var setConf = function setConf() {}; // Todo optimize
-
+var setConf = function setConf() {};
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param {any} elem
  */
 
 var insertMarkers = function insertMarkers(elem) {
@@ -24058,8 +24431,9 @@ var insertMarkers = function insertMarkers(elem) {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
 
 
@@ -24100,7 +24474,7 @@ var getLabelWidth = function getLabelWidth(text) {
 };
 
 var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
-  // // Layout graph, Create a new directed graph
+  // Layout graph, Create a new directed graph
   var graph = new (graphlib__WEBPACK_IMPORTED_MODULE_2___default().Graph)({
     compound: true,
     multigraph: true
@@ -24501,6 +24875,7 @@ var setConf = function setConf(cnf) {
   });
 };
 var actors = {};
+/** @param {any} diagram */
 
 function drawActorLegend(diagram) {
   var conf = (0,_config__WEBPACK_IMPORTED_MODULE_3__.getConfig)().journey; // Draw the actors
@@ -24608,6 +24983,7 @@ var bounds = {
     var _self = this;
 
     var cnt = 0;
+    /** @param {any} type */
 
     function updateFn(type) {
       return function updateItemBounds(item) {
@@ -24792,18 +25168,23 @@ var drawFace = function drawFace(element, faceData) {
   face.append('circle').attr('cx', faceData.cx - radius / 3).attr('cy', faceData.cy - radius / 3).attr('r', 1.5).attr('stroke-width', 2).attr('fill', '#666').attr('stroke', '#666'); //right eye
 
   face.append('circle').attr('cx', faceData.cx + radius / 3).attr('cy', faceData.cy - radius / 3).attr('r', 1.5).attr('stroke-width', 2).attr('fill', '#666').attr('stroke', '#666');
+  /** @param {any} face */
 
   function smile(face) {
     var arc = (0,d3__WEBPACK_IMPORTED_MODULE_0__.arc)().startAngle(Math.PI / 2).endAngle(3 * (Math.PI / 2)).innerRadius(radius / 2).outerRadius(radius / 2.2); //mouth
 
     face.append('path').attr('class', 'mouth').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
   }
+  /** @param {any} face */
+
 
   function sad(face) {
     var arc = (0,d3__WEBPACK_IMPORTED_MODULE_0__.arc)().startAngle(3 * Math.PI / 2).endAngle(5 * (Math.PI / 2)).innerRadius(radius / 2).outerRadius(radius / 2.2); //mouth
 
     face.append('path').attr('class', 'mouth').attr('d', arc).attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
   }
+  /** @param {any} face */
+
 
   function ambivalent(face) {
     face.append('line').attr('class', 'mouth').attr('stroke', 2).attr('x1', faceData.cx - 5).attr('y1', faceData.cy + 7).attr('x2', faceData.cx + 5).attr('y2', faceData.cy + 7).attr('class', 'mouth').attr('stroke-width', '1px').attr('stroke', '#666');
@@ -24857,6 +25238,13 @@ var drawText = function drawText(elem, textData) {
   return textElem;
 };
 var drawLabel = function drawLabel(elem, txtObject) {
+  /**
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} cut
+   */
   function genPoints(x, y, width, height, cut) {
     return x + ',' + y + ' ' + (x + width) + ',' + y + ' ' + (x + width) + ',' + (y + height - cut) + ' ' + (x + width - cut * 1.2) + ',' + (y + height) + ' ' + x + ',' + (y + height);
   }
@@ -24888,9 +25276,10 @@ var drawSection = function drawSection(elem, section, conf) {
 var taskCount = -1;
 /**
  * Draws an actor in the diagram with the attaced line
- * @param elem The HTML element
- * @param task The task to render
- * @param conf The global configuration
+ *
+ * @param {any} elem The HTML element
+ * @param {any} task The task to render
+ * @param {any} conf The global configuration
  */
 
 var drawTask = function drawTask(elem, task, conf) {
@@ -24936,8 +25325,9 @@ var drawTask = function drawTask(elem, task, conf) {
 };
 /**
  * Draws a background rectangle
- * @param elem The html element
- * @param bounds The bounds of the drawing
+ *
+ * @param {any} elem The html element
+ * @param {any} bounds The bounds of the drawing
  */
 
 var drawBackgroundRect = function drawBackgroundRect(elem, bounds) {
@@ -24977,11 +25367,33 @@ var getNoteRect = function getNoteRect() {
 };
 
 var _drawTextCandidateFunc = function () {
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} colour
+   */
   function byText(content, g, x, y, width, height, textAttrs, colour) {
     var text = g.append('text').attr('x', x + width / 2).attr('y', y + height / 2 + 5).style('font-color', colour).style('text-anchor', 'middle').text(content);
 
     _setTextAttrs(text, textAttrs);
   }
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   * @param {any} colour
+   */
+
 
   function byTspan(content, g, x, y, width, height, textAttrs, conf, colour) {
     var taskFontSize = conf.taskFontSize,
@@ -24997,17 +25409,32 @@ var _drawTextCandidateFunc = function () {
       _setTextAttrs(text, textAttrs);
     }
   }
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
+
 
   function byFo(content, g, x, y, width, height, textAttrs, conf) {
     var body = g.append('switch');
     var f = body.append('foreignObject').attr('x', x).attr('y', y).attr('width', width).attr('height', height).attr('position', 'fixed');
     var text = f.append('xhtml:div').style('display', 'table').style('height', '100%').style('width', '100%');
-    text.append('div').attr('class', 'label').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle') // .style('color', colour)
-    .text(content);
+    text.append('div').attr('class', 'label').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle').text(content);
     byTspan(content, body, x, y, width, height, textAttrs, conf);
 
     _setTextAttrs(text, textAttrs);
   }
+  /**
+   * @param {any} toText
+   * @param {any} fromTextAttrsDict
+   */
+
 
   function _setTextAttrs(toText, fromTextAttrsDict) {
     for (var key in fromTextAttrsDict) {
@@ -25059,15 +25486,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
-/**
- * Created by knut on 14-12-11.
- */
+/** Created by knut on 14-12-11. */
 
 
 var conf = {};
 /**
  * Merges the value of `conf` with the passed `cnf`
- * @param {Object} cnf Config to merge
+ *
+ * @param {object} cnf Config to merge
  */
 
 var setConf = function setConf(cnf) {
@@ -25078,8 +25504,9 @@ var setConf = function setConf(cnf) {
 };
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
- * @param id The text for the error
- * @param ver The version
+ *
+ * @param {string} id The text for the error
+ * @param {string} ver The version
  */
 
 var draw = function draw(id, ver) {
@@ -25153,13 +25580,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment-mini */ "moment-mini");
 /* harmony import */ var moment_mini__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment_mini__WEBPACK_IMPORTED_MODULE_0__);
 
-/**
- * @typedef {"debug" | "info" | "warn" | "error" | "fatal"} LogLevel A log level
- */
+/** @typedef {'debug' | 'info' | 'warn' | 'error' | 'fatal'} LogLevel A log level */
 
-/**
- * @type {Object<LogLevel, number>}
- */
+/** @type {object<LogLevel, number>} */
 
 var LEVELS = {
   debug: 1,
@@ -25177,7 +25600,8 @@ var log = {
 };
 /**
  * Sets a log level
- * @param {LogLevel} [level="fatal"] The level to set the logging to
+ *
+ * @param {LogLevel} [level="fatal"] The level to set the logging to. Default is `"fatal"`
  */
 
 var setLogLevel = function setLogLevel() {
@@ -25226,6 +25650,7 @@ var setLogLevel = function setLogLevel() {
 };
 /**
  * Returns a format with the timestamp and the log level
+ *
  * @param {LogLevel} level The level for the log format
  * @returns {string} The format with the timestamp and log level
  */
@@ -25252,23 +25677,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 /**
- * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
- * the diagrams to svg code.
+ * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
+ * functionality and to render the diagrams to svg code.
  */
 
 
 
 /**
  * ## init
+ *
  * Function that goes through the document to find the chart definitions in there and render them.
  *
- * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
- * attribute already set. This way the init function can be triggered several times.
+ * The function tags the processed attributes with the attribute data-processed and ignores found
+ * elements with the attribute already set. This way the init function can be triggered several times.
  *
  * Optionally, `init` can accept in the second argument one of the following:
- * - a DOM Node
- * - an array of DOM nodes (as would come from a jQuery selector)
- * - a W3C selector, a la `.mermaid`
+ *
+ * - A DOM Node
+ * - An array of DOM nodes (as would come from a jQuery selector)
+ * - A W3C selector, a la `.mermaid`
  *
  * ```mermaid
  * graph LR;
@@ -25276,8 +25703,8 @@ __webpack_require__.r(__webpack_exports__);
  *  b-->|Yes|c(Leave element)
  *  b-->|No |d(Transform)
  * ```
+ *
  * Renders the mermaid diagrams
- * @param nodes a css selector or an array of nodes
  */
 
 var init = function init() {
@@ -25398,9 +25825,8 @@ var initialize = function initialize(config) {
   _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].initialize(config); // mermaidAPI.reset();
 };
 /**
- * ##contentLoaded
- * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
- * calls init for rendering the mermaid diagrams on the page.
+ * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
+ * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
  */
 
 
@@ -25524,15 +25950,17 @@ __webpack_require__.r(__webpack_exports__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
- *Edit this Page[![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js)
+ * Edit this
+ * Page[[N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js)
  *
- *This is the API to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
- *
+ * This is the API to be used when optionally handling the integration with the web page, instead of
+ * using the default integration provided by mermaid.js.
  *
  * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
  * definition as text, renders the graph/diagram and returns an svg element for the graph.
  *
- * It is is then up to the user of the API to make use of the svg, either insert it somewhere in the page or do something completely different.
+ * It is is then up to the user of the API to make use of the svg, either insert it somewhere in the
+ * page or do something completely different.
  *
  * In addition to the render function, a number of behavioral configuration options are available.
  *
@@ -25579,20 +26007,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 
- // import * as configApi from './config';
-// // , {
-// //   setConfig,
-// //   configApi.getConfig,
-// //   configApi.updateSiteConfig,
-// //   configApi.setSiteConfig,
-// //   configApi.getSiteConfig,
-// //   configApi.defaultConfig
-// // }
 
 
 
 
 
+/**
+ * @param text
+ * @returns {any}
+ */
 
 function parse(text) {
   var cnf = _config__WEBPACK_IMPORTED_MODULE_2__.getConfig();
@@ -25741,22 +26164,24 @@ var decodeEntities = function decodeEntities(text) {
  *
  * ```javascript
  * mermaidAPI.initialize({
- *      startOnLoad:true
- *  });
- *  $(function(){
- *      const graphDefinition = 'graph TB\na-->b';
- *      const cb = function(svgGraph){
- *          console.log(svgGraph);
- *      };
- *      mermaidAPI.render('id1',graphDefinition,cb);
- *  });
- *```
- * @param id the id of the element to be rendered
- * @param _txt the graph definition
- * @param cb callback which is called after rendering is finished with the svg code as inparam.
- * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
- * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
- * completed.
+ *   startOnLoad: true,
+ * });
+ * $(function () {
+ *   const graphDefinition = 'graph TB\na-->b';
+ *   const cb = function (svgGraph) {
+ *     console.log(svgGraph);
+ *   };
+ *   mermaidAPI.render('id1', graphDefinition, cb);
+ * });
+ * ```
+ *
+ * @param {any} id The id of the element to be rendered
+ * @param {any} _txt The graph definition
+ * @param {any} cb Callback which is called after rendering is finished with the svg code as inparam.
+ * @param {any} container Selector to element in which a div with the graph temporarily will be
+ *   inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
+ *   element will be removed when rendering is completed.
+ * @returns {any}
  */
 
 var render = function render(id, _txt, cb, container) {
@@ -25766,13 +26191,7 @@ var render = function render(id, _txt, cb, container) {
 
   if (graphInit) {
     _config__WEBPACK_IMPORTED_MODULE_2__.addDirective(graphInit);
-  } // else {
-  //   configApi.reset();
-  //   const siteConfig = configApi.getSiteConfig();
-  //   configApi.addDirective(siteConfig);
-  // }
-  // console.warn('Render fetching config');
-
+  }
 
   var cnf = _config__WEBPACK_IMPORTED_MODULE_2__.getConfig(); // Check the maximum allowed text size
 
@@ -25961,17 +26380,7 @@ var render = function render(id, _txt, cb, container) {
     throw e;
   }
 
-  (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // if (cnf.arrowMarkerAbsolute) {
-  //   url =
-  //     window.location.protocol +
-  //     '//' +
-  //     window.location.host +
-  //     window.location.pathname +
-  //     window.location.search;
-  //   url = url.replace(/\(/g, '\\(');
-  //   url = url.replace(/\)/g, '\\)');
-  // }
-  // Fix for when the base tag is used
+  (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // Fix for when the base tag is used
 
   var svgCode = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)('#d' + id).node().innerHTML;
   _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
@@ -26087,6 +26496,8 @@ var handleDirective = function handleDirective(p, directive, type) {
       break;
   }
 };
+/** @param {any} conf */
+
 
 function updateRendererConfigs(conf) {
   // Todo remove, all diagrams should get config on demoand from the config object, no need for this
@@ -26124,6 +26535,8 @@ function reinitialize() {// `mermaidAPI.reinitialize: v${pkg.version}`,
   // setLogLevel(config.logLevel);
   // log.debug('mermaidAPI.reinitialize: ', config);
 }
+/** @param {any} options */
+
 
 function initialize(options) {
   // console.warn(`mermaidAPI.initialize: v${pkg.version} `, options);
@@ -26187,58 +26600,58 @@ _config__WEBPACK_IMPORTED_MODULE_2__.reset(_config__WEBPACK_IMPORTED_MODULE_2__.
  * ```html
  * <script>
  *   var config = {
- *     theme:'default',
- *     logLevel:'fatal',
- *     securityLevel:'strict',
- *     startOnLoad:true,
- *     arrowMarkerAbsolute:false,
+ *     theme: 'default',
+ *     logLevel: 'fatal',
+ *     securityLevel: 'strict',
+ *     startOnLoad: true,
+ *     arrowMarkerAbsolute: false,
  *
- *     er:{
- *       diagramPadding:20,
- *       layoutDirection:'TB',
- *       minEntityWidth:100,
- *       minEntityHeight:75,
- *       entityPadding:15,
- *       stroke:'gray',
- *       fill:'honeydew',
- *       fontSize:12,
- *       useMaxWidth:true,
+ *     er: {
+ *       diagramPadding: 20,
+ *       layoutDirection: 'TB',
+ *       minEntityWidth: 100,
+ *       minEntityHeight: 75,
+ *       entityPadding: 15,
+ *       stroke: 'gray',
+ *       fill: 'honeydew',
+ *       fontSize: 12,
+ *       useMaxWidth: true,
  *     },
- *     flowchart:{
- *       diagramPadding:8,
- *       htmlLabels:true,
- *       curve:'basis',
+ *     flowchart: {
+ *       diagramPadding: 8,
+ *       htmlLabels: true,
+ *       curve: 'basis',
  *     },
- *     sequence:{
- *       diagramMarginX:50,
- *       diagramMarginY:10,
- *       actorMargin:50,
- *       width:150,
- *       height:65,
- *       boxMargin:10,
- *       boxTextMargin:5,
- *       noteMargin:10,
- *       messageMargin:35,
- *       messageAlign:'center',
- *       mirrorActors:true,
- *       bottomMarginAdj:1,
- *       useMaxWidth:true,
- *       rightAngles:false,
- *       showSequenceNumbers:false,
+ *     sequence: {
+ *       diagramMarginX: 50,
+ *       diagramMarginY: 10,
+ *       actorMargin: 50,
+ *       width: 150,
+ *       height: 65,
+ *       boxMargin: 10,
+ *       boxTextMargin: 5,
+ *       noteMargin: 10,
+ *       messageMargin: 35,
+ *       messageAlign: 'center',
+ *       mirrorActors: true,
+ *       bottomMarginAdj: 1,
+ *       useMaxWidth: true,
+ *       rightAngles: false,
+ *       showSequenceNumbers: false,
  *     },
- *     gantt:{
- *       titleTopMargin:25,
- *       barHeight:20,
- *       barGap:4,
- *       topPadding:50,
- *       leftPadding:75,
- *       gridLineStartPadding:35,
- *       fontSize:11,
- *       fontFamily:'"Open-Sans", "sans-serif"',
- *       numberSectionStyles:4,
- *       axisFormat:'%Y-%m-%d',
- *       topAxis:false,
- *     }
+ *     gantt: {
+ *       titleTopMargin: 25,
+ *       barHeight: 20,
+ *       barGap: 4,
+ *       topPadding: 50,
+ *       leftPadding: 75,
+ *       gridLineStartPadding: 35,
+ *       fontSize: 11,
+ *       fontFamily: '"Open-Sans", "sans-serif"',
+ *       numberSectionStyles: 4,
+ *       axisFormat: '%Y-%m-%d',
+ *       topAxis: false,
+ *     },
  *   };
  *   mermaid.initialize(config);
  * </script>
@@ -26383,7 +26796,10 @@ var Theme = /*#__PURE__*/function () {
 
     /** # Base variables */
 
-    /** * background - used to know what the background color is of the diagram. This is used for deducing colors for istance line color. Defaulr value is #f4f4f4. */
+    /**
+     * - Background - used to know what the background color is of the diagram. This is used for
+     *   deducing colors for istance line color. Defaulr value is #f4f4f4.
+     */
     this.background = '#f4f4f4';
     this.darkMode = false; // this.background = '#0c0c0c';
     // this.darkMode = true;
@@ -27834,34 +28250,36 @@ var directive = /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]
 var directiveWithoutOpen = /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 var anyComment = /\s*%%.*\n/gm;
 /**
- * @function detectInit
- * Detects the init config object from the text
- * ```mermaid
- * %%{init: {"theme": "debug", "logLevel": 1 }}%%
- * graph LR
- *  a-->b
- *  b-->c
- *  c-->d
- *  d-->e
- *  e-->f
- *  f-->g
- *  g-->h
- * ```
- * or
- * ```mermaid
- * %%{initialize: {"theme": "dark", logLevel: "debug" }}%%
- * graph LR
- *  a-->b
- *  b-->c
- *  c-->d
- *  d-->e
- *  e-->f
- *  f-->g
- *  g-->h
+ * @function detectInit Detects the init config object from the text
+ *
+ *   ```mermaid
+ *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
+ *   graph LR
+ *    a-->b
+ *    b-->c
+ *    c-->d
+ *    d-->e
+ *    e-->f
+ *    f-->g
+ *    g-->h
  * ```
  *
+ *   Or
+ *
+ *   ```mermaid
+ *   %%{initialize: {"theme": "dark", logLevel: "debug" }}%%
+ *   graph LR
+ *    a-->b
+ *    b-->c
+ *    c-->d
+ *    d-->e
+ *    e-->f
+ *    f-->g
+ *    g-->h
+ * ```
  * @param {string} text The text defining the graph
- * @returns {object} the json object representing the init passed to mermaid.initialize()
+ * @param {any} cnf
+ * @returns {object} The json object representing the init passed to mermaid.initialize()
  */
 
 var detectInit = function detectInit(text, cnf) {
@@ -27896,25 +28314,25 @@ var detectInit = function detectInit(text, cnf) {
   return results;
 };
 /**
- * @function detectDirective
- * Detects the directive from the text. Text can be single line or multiline. If type is null or omitted
- * the first directive encountered in text will be returned
- * ```mermaid
- * graph LR
- *  %%{somedirective}%%
- *  a-->b
- *  b-->c
- *  c-->d
- *  d-->e
- *  e-->f
- *  f-->g
- *  g-->h
- * ```
+ * @function detectDirective Detects the directive from the text. Text can be single line or
+ *   multiline. If type is null or omitted the first directive encountered in text will be returned
  *
+ *   ```mermaid
+ *   graph LR
+ *    %%{somedirective}%%
+ *    a-->b
+ *    b-->c
+ *    c-->d
+ *    d-->e
+ *    e-->f
+ *    f-->g
+ *    g-->h
+ * ```
  * @param {string} text The text defining the graph
- * @param {string|RegExp} type The directive to return (default: null)
- * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matched by the input type
- *          if a single directive was found, that directive object will be returned.
+ * @param {string | RegExp} type The directive to return (default: null)
+ * @returns {object | Array} An object or Array representing the directive(s): { type: string, args:
+ *   object|null } matched by the input type if a single directive was found, that directive object
+ *   will be returned.
  */
 
 var detectDirective = function detectDirective(text) {
@@ -27961,23 +28379,26 @@ var detectDirective = function detectDirective(text) {
   }
 };
 /**
- * @function detectType
- * Detects the type of the graph text. Takes into consideration the possible existence of an %%init
- * directive
- * ```mermaid
- * %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
- * graph LR
- *  a-->b
- *  b-->c
- *  c-->d
- *  d-->e
- *  e-->f
- *  f-->g
- *  g-->h
- * ```
+ * @function detectType Detects the type of the graph text. Takes into consideration the possible
+ *   existence of an %%init directive
  *
+ *   ```mermaid
+ *   %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
+ *   graph LR
+ *    a-->b
+ *    b-->c
+ *    c-->d
+ *    d-->e
+ *    e-->f
+ *    f-->g
+ *    g-->h
+ * ```
  * @param {string} text The text defining the graph
- * @param {{ class: { defaultRenderer: string } | undefined; state: { defaultRenderer: string } | undefined; flowchart: { defaultRenderer: string } | undefined; }} [cnf]
+ * @param {{
+ *   class: { defaultRenderer: string } | undefined;
+ *   state: { defaultRenderer: string } | undefined;
+ *   flowchart: { defaultRenderer: string } | undefined;
+ * }} [cnf]
  * @returns {string} A graph definition key
  */
 
@@ -28043,6 +28464,7 @@ var detectType = function detectType(text, cnf) {
 };
 /**
  * Caches results of functions based on input
+ *
  * @param {Function} fn Function to run
  * @param {Function} resolver Function that resolves to an ID given arguments the `fn` takes
  * @returns {Function} An optimized caching function
@@ -28067,12 +28489,11 @@ var memoize = function memoize(fn, resolver) {
   };
 };
 /**
- * @function isSubstringInArray
- * Detects whether a substring in present in a given array
+ * @function isSubstringInArray Detects whether a substring in present in a given array
  * @param {string} str The substring to detect
- * @param {array} arr The array to search
- * @returns {number} the array index containing the substring or -1 if not present
- **/
+ * @param {Array} arr The array to search
+ * @returns {number} The array index containing the substring or -1 if not present
+ */
 
 
 var isSubstringInArray = function isSubstringInArray(str, arr) {
@@ -28084,8 +28505,9 @@ var isSubstringInArray = function isSubstringInArray(str, arr) {
 };
 /**
  * Returns a d3 curve given a curve name
+ *
  * @param {string | undefined} interpolate The interpolation name
- * @param {*} defaultCurve The default curve to return
+ * @param {any} defaultCurve The default curve to return
  * @returns {import('d3-shape').CurveFactory} The curve factory to use
  */
 
@@ -28099,8 +28521,9 @@ var interpolateToCurve = function interpolateToCurve(interpolate, defaultCurve) 
 };
 /**
  * Formats a URL string
+ *
  * @param {string} linkStr String of the URL
- * @param {{ securityLevel: string; }} config Configuration passed to MermaidJS
+ * @param {{ securityLevel: string }} config Configuration passed to MermaidJS
  * @returns {string | undefined} The formatted URL
  */
 
@@ -28117,8 +28540,9 @@ var formatUrl = function formatUrl(linkStr, config) {
 };
 /**
  * Runs a function
+ *
  * @param {string} functionName A dot seperated path to the function relative to the `window`
- * @param  {...any} params Parameters to pass to the function
+ * @param {...any} params Parameters to pass to the function
  */
 
 var runFunc = function runFunc(functionName) {
@@ -28141,13 +28565,14 @@ var runFunc = function runFunc(functionName) {
   (_obj = obj)[fnName].apply(_obj, params);
 };
 /**
- * @typedef {Object} Point A (x, y) point
+ * @typedef {object} Point A (x, y) point
  * @property {number} x The x value
  * @property {number} y The y value
  */
 
 /**
  * Finds the distance between two points using the Distance Formula
+ *
  * @param {Point} p1 The first point
  * @param {Point} p2 The second point
  * @returns {number} The distance
@@ -28157,9 +28582,9 @@ var distance = function distance(p1, p2) {
   return p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
 };
 /**
- * @todo Give this a description
- * @param {Array<Point>} points List of points
+ * @param {Point[]} points List of points
  * @returns {Point}
+ * @todo Give this a description
  */
 
 
@@ -28205,6 +28630,7 @@ var traverseEdge = function traverseEdge(points) {
 };
 /**
  * Alias for `traverseEdge`
+ *
  * @param {Point[]} points List of points
  * @returns {Point} Return result of `transverseEdge`
  */
@@ -28274,7 +28700,12 @@ var calcCardinalityPosition = function calcCardinalityPosition(isRelationTypePre
   return cardinalityPosition;
 };
 /**
- * position ['start_left', 'start_right', 'end_left', 'end_right']
+ * Position ['start_left', 'start_right', 'end_left', 'end_right']
+ *
+ * @param {any} terminalMarkerSize
+ * @param {any} position
+ * @param {any} _points
+ * @returns {any}
  */
 
 
@@ -28357,8 +28788,9 @@ var calcTerminalLabelPosition = function calcTerminalLabelPosition(terminalMarke
 };
 /**
  * Gets styles from an array of declarations
- * @param {Array<string>} arr Declarations
- * @returns {{ style: string; labelStyle: string; }} The styles grouped as strings
+ *
+ * @param {string[]} arr Declarations
+ * @returns {{ style: string; labelStyle: string }} The styles grouped as strings
  */
 
 
@@ -28387,6 +28819,10 @@ var generateId = function generateId() {
   cnt++;
   return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
 };
+/**
+ * @param {any} length
+ * @returns {any}
+ */
 
 function makeid(length) {
   var result = '';
@@ -28404,30 +28840,39 @@ var random = function random(options) {
   return makeid(options.length);
 };
 /**
- * @function assignWithDepth
- * Extends the functionality of {@link ObjectConstructor.assign} with the ability to merge arbitrary-depth objects
- * For each key in src with path `k` (recursively) performs an Object.assign(dst[`k`], src[`k`]) with
- * a slight change from the typical handling of undefined for dst[`k`]: instead of raising an error,
- * dst[`k`] is auto-initialized to {} and effectively merged with src[`k`]
- * <p>
- * Additionally, dissimilar types will not clobber unless the config.clobber parameter === true. Example:
- * ```
- * let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
- * let config_1 = { foo: 'foo', bar: 'bar' };
- * let result = assignWithDepth(config_0, config_1);
- * console.log(result);
- * //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
- * ```
- * <p>
- * Traditional Object.assign would have clobbered foo in config_0 with foo in config_1.
- * <p>
- * If src is a destructured array of objects and dst is not an array, assignWithDepth will apply each element of src to dst
- * in order.
- * @param {any} dst - the destination of the merge
- * @param {any} src - the source object(s) to merge into destination
- * @param {{ depth: number, clobber: boolean }} [config={ depth: 2, clobber: false }] - depth: depth to traverse within src and dst for merging -
- * clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
- * @returns {*}
+ * @function assignWithDepth Extends the functionality of {@link ObjectConstructor.assign} with the
+ *   ability to merge arbitrary-depth objects For each key in src with path `k` (recursively)
+ *   performs an Object.assign(dst[`k`], src[`k`]) with a slight change from the typical handling of
+ *   undefined for dst[`k`]: instead of raising an error, dst[`k`] is auto-initialized to {} and
+ *   effectively merged with src[`k`]<p> Additionally, dissimilar types will not clobber unless the
+ *   config.clobber parameter === true. Example:
+ *
+ *   ```js
+ *   let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
+ *   let config_1 = { foo: 'foo', bar: 'bar' };
+ *   let result = assignWithDepth(config_0, config_1);
+ *   console.log(result);
+ *   //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
+ *   ```
+ *
+ *   Traditional Object.assign would have clobbered foo in config_0 with foo in config_1. If src is a
+ *   destructured array of objects and dst is not an array, assignWithDepth will apply each element
+ *   of src to dst in order.
+ * @param dst
+ * @param src
+ * @param config
+ * @param dst
+ * @param src
+ * @param config
+ * @param dst
+ * @param src
+ * @param config
+ * @param {any} dst - The destination of the merge
+ * @param {any} src - The source object(s) to merge into destination
+ * @param {{ depth: number; clobber: boolean }} [config={ depth: 2, clobber: false }] - Depth: depth
+ *   to traverse within src and dst for merging - clobber: should dissimilar types clobber (default:
+ *   { depth: 2, clobber: false }). Default is `{ depth: 2, clobber: false }`
+ * @returns {any}
  */
 
 var assignWithDepth = function assignWithDepth(dst, src, config) {
@@ -28496,8 +28941,20 @@ var getTextObj = function getTextObj() {
 };
 /**
  * Adds text to an element
+ *
  * @param {SVGElement} elem Element to add text to
- * @param {{ text: string; x: number; y: number; anchor: "start" | "middle" | "end"; fontFamily: string; fontSize: string | number; fontWeight: string | number; fill: string; class: string | undefined; textMargin: number; }} textData
+ * @param {{
+ *   text: string;
+ *   x: number;
+ *   y: number;
+ *   anchor: 'start' | 'middle' | 'end';
+ *   fontFamily: string;
+ *   fontSize: string | number;
+ *   fontWeight: string | number;
+ *   fill: string;
+ *   class: string | undefined;
+ *   textMargin: number;
+ * }} textData
  * @returns {SVGTextElement} Text element with given styling and content
  */
 
@@ -28609,15 +29066,14 @@ var breakString = memoize(function (word, maxWidth) {
   return "".concat(word, "-").concat(maxWidth, "-").concat(hyphenCharacter, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily);
 });
 /**
- * This calculates the text's height, taking into account the wrap breaks and
- * both the statically configured height, width, and the length of the text (in pixels).
+ * This calculates the text's height, taking into account the wrap breaks and both the statically
+ * configured height, width, and the length of the text (in pixels).
  *
- * If the wrapped text text has greater height, we extend the height, so it's
- * value won't overflow.
+ * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
  *
- * @return - The height for the given text
- * @param text the text to measure
- * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} text The text to measure
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @returns {any} - The height for the given text
  */
 
 var calculateTextHeight = function calculateTextHeight(text, config) {
@@ -28632,9 +29088,9 @@ var calculateTextHeight = function calculateTextHeight(text, config) {
 /**
  * This calculates the width of the given text, font size and family.
  *
- * @return - The width for the given text
- * @param text - The text to calculate the width of
- * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} text - The text to calculate the width of
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @returns {any} - The width for the given text
  */
 
 var calculateTextWidth = function calculateTextWidth(text, config) {
@@ -28648,9 +29104,10 @@ var calculateTextWidth = function calculateTextWidth(text, config) {
 /**
  * This calculates the dimensions of the given text, font size, font family, font weight, and margins.
  *
- * @return - The width for the given text
- * @param text - The text to calculate the width of
- * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ * @param {any} text - The text to calculate the width of
+ * @param {any} config - The config for fontSize, fontFamily, fontWeight, and margin all impacting
+ *   the resulting size
+ * @returns - The width for the given text
  */
 
 var calculateTextDimensions = memoize(function (text, config) {
@@ -28731,8 +29188,9 @@ var calculateTextDimensions = memoize(function (text, config) {
 });
 /**
  * Applys d3 attributes
- * @param {*} d3Elem d3 Element to apply the attributes onto
- * @param {Array<[string, string]>} attrs Object.keys equivalent format of key to value mapping of attributes
+ *
+ * @param {any} d3Elem D3 Element to apply the attributes onto
+ * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of attributes
  */
 
 var d3Attrs = function d3Attrs(d3Elem, attrs) {
@@ -28752,6 +29210,7 @@ var d3Attrs = function d3Attrs(d3Elem, attrs) {
 };
 /**
  * Gives attributes for an SVG's size given arguments
+ *
  * @param {number} height The height of the SVG
  * @param {number} width The width of the SVG
  * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
@@ -28774,6 +29233,7 @@ var calculateSvgSizeAttrs = function calculateSvgSizeAttrs(height, width, useMax
 };
 /**
  * Applies attributes from `calculateSvgSizeAttrs`
+ *
  * @param {SVGSVGElement} svgElem The SVG Element to configure
  * @param {number} height The height of the SVG
  * @param {number} width The width of the SVG
@@ -28806,6 +29266,7 @@ var initIdGeneratior = /*#__PURE__*/function () {
 var decoder;
 /**
  * Decodes HTML, source: {@link https://github.com/shrpne/entity-decode/blob/v2.0.1/browser.js}
+ *
  * @param {string} html HTML as a string
  * @returns Unescaped HTML
  */
@@ -28820,7 +29281,8 @@ var entityDecode = function entityDecode(html) {
 };
 /**
  * Sanitizes directive objects
- * @param {Object} args Directive's JSON
+ *
+ * @param {object} args Directive's JSON
  */
 
 var directiveSanitizer = function directiveSanitizer(args) {
@@ -29661,7 +30123,7 @@ module.exports = require("stylis");
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"mermaid","version":"8.13.4","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --progress --color","build:production":"yarn build:development --mode production --config webpack.config.prod.babel.js","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint src","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"percy exec -- cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config webpack.config.e2e.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"yarn build"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^3.1.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.3","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@percy/cli":"^1.0.0-beta.58","@percy/cypress":"^3.1.0","@percy/migrate":"^0.11.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^6.2.2","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"8.7.0","documentation":"13.2.0","eslint":"^8.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"],"husky":{"hooks":{"pre-push":"yarn test"}}}');
+module.exports = JSON.parse('{"name":"mermaid","version":"8.13.4","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --progress --color","build:production":"yarn build:development --mode production --config webpack.config.prod.babel.js","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint src","lint:fix":"yarn lint --fix","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"percy exec -- cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config webpack.config.e2e.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"yarn build"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^3.1.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.3","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@percy/cli":"^1.0.0-beta.58","@percy/cypress":"^3.1.0","@percy/migrate":"^0.11.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^6.2.2","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"8.7.0","documentation":"13.2.0","eslint":"^8.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-jsdoc":"^37.0.3","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","prettier-plugin-jsdoc":"^0.3.30","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"],"husky":{"hooks":{"pre-push":"yarn test"}}}');
 
 /***/ })
 

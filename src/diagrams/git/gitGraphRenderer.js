@@ -30,6 +30,7 @@ export const setConf = function (c) {
   apiConfig = c;
 };
 
+/** @param svg */
 function svgCreateDefs(svg) {
   svg
     .append('defs')
@@ -52,6 +53,12 @@ function svgCreateDefs(svg) {
     .html('');
 }
 
+/**
+ * @param svg
+ * @param points
+ * @param colorIdx
+ * @param interpolate
+ */
 function svgDrawLine(svg, points, colorIdx, interpolate) {
   const curve = interpolateToCurve(interpolate, curveBasis);
   const color = config.branchColors[colorIdx % config.branchColors.length];
@@ -72,7 +79,12 @@ function svgDrawLine(svg, points, colorIdx, interpolate) {
     .style('fill', 'none');
 }
 
-// Pass in the element and its pre-transform coords
+/**
+ * Pass in the element and its pre-transform coords
+ *
+ * @param element
+ * @param coords
+ */
 function getElementCoords(element, coords) {
   coords = coords || element.node().getBBox();
   const ctm = element.node().getCTM();
@@ -86,6 +98,13 @@ function getElementCoords(element, coords) {
   };
 }
 
+/**
+ * @param svg
+ * @param fromId
+ * @param toId
+ * @param direction
+ * @param color
+ */
 function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
   log.debug('svgDrawLineForCommits: ', fromId, toId);
   const fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'));
@@ -190,10 +209,20 @@ function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
   }
 }
 
+/**
+ * @param svg
+ * @param selector
+ */
 function cloneNode(svg, selector) {
   return svg.select(selector).node().cloneNode(true);
 }
 
+/**
+ * @param svg
+ * @param commitid
+ * @param branches
+ * @param direction
+ */
 function renderCommitHistory(svg, commitid, branches, direction) {
   let commit;
   const numCommits = Object.keys(allCommitsDict).length;
@@ -276,6 +305,12 @@ function renderCommitHistory(svg, commitid, branches, direction) {
   }
 }
 
+/**
+ * @param svg
+ * @param commit
+ * @param direction
+ * @param branchColor
+ */
 function renderLines(svg, commit, direction, branchColor) {
   branchColor = branchColor || 0;
   while (commit.seq > 0 && !commit.lineDrawn) {

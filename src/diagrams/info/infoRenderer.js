@@ -1,6 +1,4 @@
-/**
- * Created by knut on 14-12-11.
- */
+/** Created by knut on 14-12-11. */
 import { select } from 'd3';
 import db from './infoDb';
 import infoParser from './parser/info';
@@ -17,16 +15,18 @@ export const setConf = function (cnf) {
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
+ * @param {any} version
  */
-export const draw = (txt, id, ver) => {
+export const draw = (text, id, version) => {
   try {
     const parser = infoParser.parser;
     parser.yy = db;
-    log.debug('Renering info diagram\n' + txt);
+    log.debug('Renering info diagram\n' + text);
     // Parse the graph definition
-    parser.parse(txt);
+    parser.parse(text);
     log.debug('Parsed info diagram');
     // Fetch the default direction, use TD if none was found
     const svg = select('#' + id);
@@ -39,7 +39,7 @@ export const draw = (txt, id, ver) => {
       .attr('class', 'version')
       .attr('font-size', '32px')
       .style('text-anchor', 'middle')
-      .text('v ' + ver);
+      .text('v ' + version);
 
     svg.attr('height', 100);
     svg.attr('width', 400);

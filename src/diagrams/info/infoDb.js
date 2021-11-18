@@ -1,6 +1,4 @@
-/**
- * Created by knut on 15-01-14.
- */
+/** Created by knut on 15-01-14. */
 import { log } from '../../logger';
 
 var message = '';

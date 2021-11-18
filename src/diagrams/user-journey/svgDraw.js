@@ -51,6 +51,7 @@ export const drawFace = function (element, faceData) {
     .attr('fill', '#666')
     .attr('stroke', '#666');
 
+  /** @param {any} face */
   function smile(face) {
     const arc = d3arc()
       .startAngle(Math.PI / 2)
@@ -65,6 +66,7 @@ export const drawFace = function (element, faceData) {
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
   }
 
+  /** @param {any} face */
   function sad(face) {
     const arc = d3arc()
       .startAngle((3 * Math.PI) / 2)
@@ -79,6 +81,7 @@ export const drawFace = function (element, faceData) {
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
   }
 
+  /** @param {any} face */
   function ambivalent(face) {
     face
       .append('line')
@@ -147,6 +150,13 @@ export const drawText = function (elem, textData) {
 };
 
 export const drawLabel = function (elem, txtObject) {
+  /**
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} cut
+   */
   function genPoints(x, y, width, height, cut) {
     return (
       x +
@@ -209,9 +219,10 @@ export const drawSection = function (elem, section, conf) {
 let taskCount = -1;
 /**
  * Draws an actor in the diagram with the attaced line
- * @param elem The HTML element
- * @param task The task to render
- * @param conf The global configuration
+ *
+ * @param {any} elem The HTML element
+ * @param {any} task The task to render
+ * @param {any} conf The global configuration
  */
 export const drawTask = function (elem, task, conf) {
   const center = task.x + conf.width / 2;
@@ -279,8 +290,9 @@ export const drawTask = function (elem, task, conf) {
 
 /**
  * Draws a background rectangle
- * @param elem The html element
- * @param bounds The bounds of the drawing
+ *
+ * @param {any} elem The html element
+ * @param {any} bounds The bounds of the drawing
  */
 export const drawBackgroundRect = function (elem, bounds) {
   const rectElem = drawRect(elem, {
@@ -321,6 +333,16 @@ export const getNoteRect = function () {
 };
 
 const _drawTextCandidateFunc = (function () {
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} colour
+   */
   function byText(content, g, x, y, width, height, textAttrs, colour) {
     const text = g
       .append('text')
@@ -332,6 +354,17 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   * @param {any} colour
+   */
   function byTspan(content, g, x, y, width, height, textAttrs, conf, colour) {
     const { taskFontSize, taskFontFamily } = conf;
 
@@ -361,6 +394,16 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
   function byFo(content, g, x, y, width, height, textAttrs, conf) {
     const body = g.append('switch');
     const f = body
@@ -383,13 +426,16 @@ const _drawTextCandidateFunc = (function () {
       .style('display', 'table-cell')
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
-      // .style('color', colour)
       .text(content);
 
     byTspan(content, body, x, y, width, height, textAttrs, conf);
     _setTextAttrs(text, textAttrs);
   }
 
+  /**
+   * @param {any} toText
+   * @param {any} fromTextAttrsDict
+   */
   function _setTextAttrs(toText, fromTextAttrsDict) {
     for (const key in fromTextAttrsDict) {
       if (key in fromTextAttrsDict) {

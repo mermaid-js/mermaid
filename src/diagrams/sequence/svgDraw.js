@@ -275,6 +275,14 @@ export const drawText = function (elem, textData) {
 };
 
 export const drawLabel = function (elem, txtObject) {
+  /**
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} cut
+   * @returns {any}
+   */
   function genPoints(x, y, width, height, cut) {
     return (
       x +
@@ -320,9 +328,10 @@ export const fixLifeLineHeights = (diagram, bounds) => {
 
 /**
  * Draws an actor in the diagram with the attached line
- * @param elem - The diagram we'll draw to.
- * @param actor - The actor to draw.
- * @param conf - drawText implementation discriminator object
+ *
+ * @param {any} elem - The diagram we'll draw to.
+ * @param {any} actor - The actor to draw.
+ * @param {any} conf - DrawText implementation discriminator object
  */
 const drawActorTypeParticipant = function (elem, actor, conf) {
   const center = actor.x + actor.width / 2;
@@ -494,11 +503,12 @@ export const anchorElement = function (elem) {
 };
 /**
  * Draws an activation in the diagram
- * @param elem - element to append activation rect.
- * @param bounds - activation box bounds.
- * @param verticalPos - precise y cooridnate of bottom activation box edge.
- * @param conf - sequence diagram config object.
- * @param actorActivations - number of activations on the actor.
+ *
+ * @param {any} elem - Element to append activation rect.
+ * @param {any} bounds - Activation box bounds.
+ * @param {any} verticalPos - Precise y cooridnate of bottom activation box edge.
+ * @param {any} conf - Sequence diagram config object.
+ * @param {any} actorActivations - Number of activations on the actor.
  */
 export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
   const rect = getNoteRect();
@@ -513,10 +523,12 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
 
 /**
  * Draws a loop in the diagram
- * @param elem - elemenet to append the loop to.
- * @param loopModel - loopModel of the given loop.
- * @param labelText - Text within the loop.
- * @param conf - diagrom configuration
+ *
+ * @param {any} elem - Elemenet to append the loop to.
+ * @param {any} loopModel - LoopModel of the given loop.
+ * @param {any} labelText - Text within the loop.
+ * @param {any} conf - Diagrom configuration
+ * @returns {any}
  */
 export const drawLoop = function (elem, loopModel, labelText, conf) {
   const {
@@ -613,8 +625,9 @@ export const drawLoop = function (elem, loopModel, labelText, conf) {
 
 /**
  * Draws a background rectangle
- * @param elem diagram (reference for bounds)
- * @param bounds shape of the rectangle
+ *
+ * @param {any} elem Diagram (reference for bounds)
+ * @param {any} bounds Shape of the rectangle
  */
 export const drawBackgroundRect = function (elem, bounds) {
   const rectElem = drawRect(elem, {
@@ -675,6 +688,8 @@ export const insertClockIcon = function (elem) {
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param elem
  */
 export const insertArrowHead = function (elem) {
   elem
@@ -692,6 +707,8 @@ export const insertArrowHead = function (elem) {
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param {any} elem
  */
 export const insertArrowFilledHead = function (elem) {
   elem
@@ -708,6 +725,8 @@ export const insertArrowFilledHead = function (elem) {
 };
 /**
  * Setup node number. The result is appended to the svg.
+ *
+ * @param {any} elem
  */
 export const insertSequenceNumber = function (elem) {
   elem
@@ -727,6 +746,8 @@ export const insertSequenceNumber = function (elem) {
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param {any} elem
  */
 export const insertArrowCrossHead = function (elem) {
   const defs = elem.append('defs');
@@ -791,6 +812,15 @@ export const getNoteRect = function () {
 };
 
 const _drawTextCandidateFunc = (function () {
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   */
   function byText(content, g, x, y, width, height, textAttrs) {
     const text = g
       .append('text')
@@ -801,6 +831,16 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
@@ -830,6 +870,16 @@ const _drawTextCandidateFunc = (function () {
     }
   }
 
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
   function byFo(content, g, x, y, width, height, textAttrs, conf) {
     const s = g.append('switch');
     const f = s
@@ -856,6 +906,10 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
+  /**
+   * @param {any} toText
+   * @param {any} fromTextAttrsDict
+   */
   function _setTextAttrs(toText, fromTextAttrsDict) {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) { // eslint-disable-line
@@ -870,6 +924,15 @@ const _drawTextCandidateFunc = (function () {
 })();
 
 const _drawMenuItemTextCandidateFunc = (function () {
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   */
   function byText(content, g, x, y, width, height, textAttrs) {
     const text = g
       .append('text')
@@ -880,6 +943,16 @@ const _drawMenuItemTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
@@ -905,6 +978,16 @@ const _drawMenuItemTextCandidateFunc = (function () {
     }
   }
 
+  /**
+   * @param {any} content
+   * @param {any} g
+   * @param {any} x
+   * @param {any} y
+   * @param {any} width
+   * @param {any} height
+   * @param {any} textAttrs
+   * @param {any} conf
+   */
   function byFo(content, g, x, y, width, height, textAttrs, conf) {
     const s = g.append('switch');
     const f = s
@@ -931,6 +1014,10 @@ const _drawMenuItemTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs);
   }
 
+  /**
+   * @param {any} toText
+   * @param {any} fromTextAttrsDict
+   */
   function _setTextAttrs(toText, fromTextAttrsDict) {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) { // eslint-disable-line
