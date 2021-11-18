@@ -6,24 +6,7 @@
 
 Rendering requirements is straightforward.
 
-```
-    requirementDiagram
-
-    requirement test_req {
-    id: 1
-    text: the test text.
-    risk: high
-    verifymethod: test
-    }
-
-    element test_entity {
-    type: simulation
-    }
-
-    test_entity - satisfies -> test_req
-```
-
-```mermaid
+```mermaid-example
     requirementDiagram
 
     requirement test_req {
@@ -44,7 +27,7 @@ Rendering requirements is straightforward.
 
 There are three types of components to a requirement diagram: requirement, element, and relationship.
 
-The grammar for defining each is defined below. Words denoted in angule brackets, such as ```<word>```, are enumerated keywords that have options elaborated in a table. ```user_defined_...``` is use in any place where user input is expected.
+The grammar for defining each is defined below. Words denoted in angle brackets, such as ```<word>```, are enumerated keywords that have options elaborated in a table. ```user_defined_...``` is use in any place where user input is expected.
 
 An important note on user text: all input can be surrounded in quotes or not. For example, both ```Id: "here is an example"``` and ```Id: here is an example``` are both valid. However, users must be careful with unquoted input. The parser will fail if another keyword is detected.
 
@@ -66,7 +49,7 @@ Type, risk, and method are enumerations defined in SysML.
 |---|---|
 | Type | requirement, functionalRequirement, interfaceRequirement, performanceRequirement, physicalRequirement, designConstraint |
 | Risk | Low, Medium, High |
-| VerifcationMethod | Analysis, Inspection, Test, Demonstration |
+| VerificationMethod | Analysis, Inspection, Test, Demonstration |
 
 ### Element
 An element definition contains an element name, type, and document reference. These three are all user defined. The element feature is intended to be lightweight but allow requirements to be connected to portions of other documents.
@@ -103,7 +86,7 @@ Each relationship is labeled in the diagram.
 ## Larger Example
 This example uses all features of the diagram.
 
-```mermaid
+```mermaid-example
     requirementDiagram
 
     requirement test_req {

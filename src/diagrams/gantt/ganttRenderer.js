@@ -1,3 +1,4 @@
+import moment from 'moment-mini';
 import {
   select,
   scaleTime,
@@ -108,6 +109,16 @@ export const draw = function (text, id) {
       .range(['#00B9FA', '#F95002'])
       .interpolate(interpolateHcl);
 
+    drawExcludeDays(
+      gap,
+      topPadding,
+      leftPadding,
+      pageWidth,
+      pageHeight,
+      tasks,
+      parser.yy.getExcludes(),
+      parser.yy.getIncludes()
+    );
     makeGrid(leftPadding, topPadding, pageWidth, pageHeight);
     drawRects(tasks, gap, topPadding, leftPadding, barHeight, colorScale, pageWidth, pageHeight);
     vertLabels(gap, topPadding, leftPadding, barHeight, colorScale);
@@ -341,6 +352,67 @@ export const draw = function (text, id) {
         }
       });
   }
+  function drawExcludeDays(theGap, theTopPad, theSidePad, w, h, tasks, excludes, includes) {
+    const minTime = tasks.reduce(
+      (min, { startTime }) => (min ? Math.min(min, startTime) : startTime),
+      0
+    );
+    const maxTime = tasks.reduce((max, { endTime }) => (max ? Math.max(max, endTime) : endTime), 0);
+    const dateFormat = parser.yy.getDateFormat();
+    if (!minTime || !maxTime) return;
+
+    const excludeRanges = [];
+    let range = null;
+    let d = moment(minTime);
+    while (d.valueOf() <= maxTime) {
+      if (parser.yy.isInvalidDate(d, dateFormat, excludes, includes)) {
+        if (!range) {
+          range = {
+            start: d.clone(),
+            end: d.clone(),
+          };
+        } else {
+          range.end = d.clone();
+        }
+      } else {
+        if (range) {
+          excludeRanges.push(range);
+          range = null;
+        }
+      }
+      d.add(1, 'd');
+    }
+
+    const rectangles = svg.append('g').selectAll('rect').data(excludeRanges).enter();
+
+    rectangles
+      .append('rect')
+      .attr('id', function (d) {
+        return 'exclude-' + d.start.format('YYYY-MM-DD');
+      })
+      .attr('x', function (d) {
+        return timeScale(d.start) + theSidePad;
+      })
+      .attr('y', conf.gridLineStartPadding)
+      .attr('width', function (d) {
+        const renderEnd = d.end.clone().add(1, 'day');
+        return timeScale(renderEnd) - timeScale(d.start);
+      })
+      .attr('height', h - theTopPad - conf.gridLineStartPadding)
+      .attr('transform-origin', function (d, i) {
+        return (
+          (
+            timeScale(d.start) +
+            theSidePad +
+            0.5 * (timeScale(d.end) - timeScale(d.start))
+          ).toString() +
+          'px ' +
+          (i * theGap + 0.5 * h).toString() +
+          'px'
+        );
+      })
+      .attr('class', 'exclude-range');
+  }
 
   function makeGrid(theSidePad, theTopPad, w, h) {
     let bottomXAxis = axisBottom(timeScale)
@@ -458,7 +530,8 @@ export const draw = function (text, id) {
     const hash = {};
     const result = [];
     for (let i = 0, l = arr.length; i < l; ++i) {
-      if (!hash.hasOwnProperty(arr[i])) { // eslint-disable-line
+      if (!Object.prototype.hasOwnProperty.call(hash, arr[i])) {
+        // eslint-disable-line
         // it works with objects! in FF, at least
         hash[arr[i]] = true;
         result.push(arr[i]);

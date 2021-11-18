@@ -23,6 +23,22 @@
 
   <div class="mermaid">
     gantt
+      title Airworks roadmap
+      dateFormat YYYY-MM-DD
+      axisFormat %m-%d %a
+      excludes	weekends, 2021-10-01,2021-10-04,2021-10-05,2021-10-06,2021-10-07
+      includes 2021-10-09
+        
+      section Airworks 3.4.1
+      开发	:b, 2021-10-07, 5d
+      测试	:after b, 4d
+      OK  :milestore
+      section Airworks 3.4.2
+      开发	:a, 2021-10-09, 4d
+      测试	:after a, 4d
+  </div>
+  <div class="mermaid">
+    gantt
     title Exclusive end dates (Manual date should end on 3d)
     dateFormat YYYY-MM-DD
     axisFormat %d

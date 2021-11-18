@@ -12,7 +12,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) (**Native support**)
 - [Joplin](https://joplinapp.org) (**Native support**)
 - [GitHub](https://github.com)
-  - [Github action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
+  - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
   - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitBook](http://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
@@ -37,7 +37,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [WordPress Markdown Editor](https://wordpress.org/plugins/wp-githuber-md)
   - [WP-ReliableMD](https://wordpress.org/plugins/wp-reliablemd/)
 - [Hexo](https://hexo.io)
-  - [hexo-filter-mermid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
+  - [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
   - [hexo-tag-mermaid](https://github.com/JameChou/hexo-tag-mermaid)
   - [hexo-mermaid-diagrams](https://github.com/mslxl/hexo-mermaid-diagrams)
 
@@ -107,6 +107,9 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Inkdrop](http://inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
 - [Vim](https://vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
+- [GNU Emacs](https://www.gnu.org/software/emacs/)
+  - [Major mode for .mmd files](https://github.com/abrochard/mermaid-mode)
+  - [Org-Mode integration](https://github.com/arnm/ob-mermaid)
 - [Brackets](http://brackets.io/)
   - [Mermaid Preview](https://s3.amazonaws.com/extend.brackets/alanhohn.mermaid-preview/alanhohn.mermaid-preview-1.0.2.zip)
 - [Iodide](https://github.com/iodide-project/iodide)
@@ -136,7 +139,6 @@ They also serve as proof of concept, for the variety of things that can be built
 
 ## Browser Extensions
 
-## Browser Extensions
 | Name | Chrome Web Store | Firefox Add-ons | Opera | Edge | Source/Repository | 
 | -- | -- | -- | -- | -- | -- |
 | GitHub + Mermaid | [🎡🔗](https://chrome.google.com/webstore/detail/github-%20-mermaid/goiiopgdnkogdbjmncgedmgpoajilohe) | [🦊🔗](https://addons.mozilla.org/firefox/addon/github-mermaid/) | - | - |  [🐙🔗](https://github.com/BackMarket/github-mermaid-extension)
@@ -149,6 +151,7 @@ They also serve as proof of concept, for the variety of things that can be built
 | Mermaid Diagrams | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-diagrams/phfcghedmopjadpojhmmaffjmfiakfil) | - | - | - | - |
 |Mermaid Markdown | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-markdown/mboeoikjijmjcjgpccghbcoegikliijg) | - | - | - | - |
 | Monkeys | [🎡🔗](https://chrome.google.com/webstore/detail/monkeys-mermaid-for-githu/cplfdpoajbclbgphaphphcldamfkjlgi) | - | - | - | - |
+| Mermaid Previewer | [🎡🔗](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl) | - | - | - | - |
 
 
 ## Other

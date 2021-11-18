@@ -17,7 +17,7 @@ For instance:
 
 There are some jison specific sub steps here where the parser stores the data encountered when parsing the diagram, this data is later used by the renderer. You can during the parsing call a object provided to the parser by the user of the parser. This object can be called during parsing for storing data.
 
-```
+```jison
 statement
 	: 'participant' actor  { $$='actor'; }
 	| signal               { $$='signal'; }

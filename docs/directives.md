@@ -21,7 +21,7 @@ The json object that is passed as {**argument** } must be valid key value pairs 
 Valid Key Value pairs can be found in config. 
 
 The init/initialize directive is parsed earlier in the flow, this allows the incorporation of `%%init%%` directives into the mermaid diagram that is being rendered. Example:
-```
+```mmd
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
 graph >
 A-->B
@@ -31,7 +31,7 @@ will set the `logLevel` to `debug` and the `theme` to `dark` for a flowchart dia
 
 Note: 'init' or 'initialize' are both acceptable as init directives. Also note that `%%init%%` and `%%initialize%%` directives will be grouped together after they are parsed. This means:
 
-```
+```mmd
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 %%{initialize: { 'logLevel': 'fatal', "theme":'dark', 'startOnLoad': true } }%%
 ...
@@ -39,7 +39,7 @@ Note: 'init' or 'initialize' are both acceptable as init directives. Also note t
 
 parsing the above generates the `%%init%%` object below, combining the two directives and carrying over the last value given for `loglevel`:
 
-```
+```json5
 {
   logLevel: 'fatal',
   theme: 'dark',
@@ -54,7 +54,7 @@ This will then be sent to `mermaid.initialize(...)` for rendering.
 
 In this category are any directives that come after the graph type declaration. Essentially, these directives will only be processed after the init directive. Each individual graph type will handle these directives. As an example:
 
-```
+```mmd
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
 sequenceDiagram
 %%{config: { 'fontFamily': 'Menlo', 'fontSize': 18, 'fontWeight': 400} }%%

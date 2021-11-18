@@ -23,7 +23,7 @@ Mermaid 通过减少创建可修改的图表所需要的时间、精力和工具
 你可以访问 [教程](./docs/Tutorials.md) 来查看 Live Editor 的视频教程。
 U也可以查看 [Mermaid 的集成和使用](./docs/integrations.md) 这个清单来检查你的文档工具是否已经集成了 Mermaid 支持。
 
-如果想要查看关于 Mermaid 更详细的介绍及基础使用方式，可以查看如果想要查看关于 Mermaid 更详细的介绍及基础使用方式，可以查看 [入门指引](./docs/n00b-overview.md) and [用法](./docs/usage.md).
+如果想要查看关于 Mermaid 更详细的介绍及基础使用方式，可以查看 [入门指引](./docs/n00b-overview.md) and [用法](./docs/usage.md).
 
 🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [文档](https://mermaidjs.github.io) | 🙌 [贡献](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md) | 📜 [更新日志](./docs/CHANGELOG.md)
 
@@ -31,7 +31,7 @@ U也可以查看 [Mermaid 的集成和使用](./docs/integrations.md) 这个清�
 
 ## 示例
 
-__下面是一些使用 Mermaid 和类 Markdown 语法创建的图表示例。点击[语法](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference) 查看详情__
+__下面是一些使用 Mermaid 和类 Markdown 语法创建的图表示例。点击 [语法](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference) 查看详情__
 <table>
 <!-- <Flowchart> -->
 <tr><td colspan=2 align="center">

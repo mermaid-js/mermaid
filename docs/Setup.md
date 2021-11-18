@@ -70,7 +70,7 @@ theme , the CSS style sheet
 
 | Parameter  | Description                                            | Type   | Required | Values                      |
 | ---------- | ------------------------------------------------------ | ------ | -------- | --------------------------- |
-| fontFamily | specifies the font to be used in the rendered diagrams | string | Required | Any Posiable CSS FontFamily |
+| fontFamily | specifies the font to be used in the rendered diagrams | string | Required | Any Possible CSS FontFamily |
 
 **Notes:**
 Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
@@ -103,9 +103,9 @@ Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
 
 ## startOnLoad
 
-| Parameter   | Description                                   | Type    | Required | Values      |
-| ----------- | --------------------------------------------- | ------- | -------- | ----------- |
-| startOnLoad | Dictates whether mermaind starts on Page load | boolean | Required | true, false |
+| Parameter   | Description                                  | Type    | Required | Values      |
+| ----------- | -------------------------------------------- | ------- | -------- | ----------- |
+| startOnLoad | Dictates whether mermaid starts on Page load | boolean | Required | true, false |
 
 **Notes:** Default value: true
 
@@ -204,7 +204,7 @@ Default value 50
 
 **Notes:**
 
-Default Vaue: 'basis'
+Default Value: 'basis'
 
 ### useMaxWidth
 
@@ -411,7 +411,7 @@ Default value: false
 
 | Parameter       | Description                                          | Type   | Required | Values                      |
 | --------------- | ---------------------------------------------------- | ------ | -------- | --------------------------- |
-| actorFontFamily | This sets the font family of the actor's description | string | Required | Any Posiable CSS FontFamily |
+| actorFontFamily | This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
 
 **Notes:**
 Default value: "'Open-Sans", "sans-serif"'
@@ -436,7 +436,7 @@ Default value: 14
 
 | Parameter      | Description                                        | Type   | Required | Values                      |
 | -------------- | -------------------------------------------------- | ------ | -------- | --------------------------- |
-| noteFontFamily | This sets the font family of actor-attached notes. | string | Required | Any Posiable CSS FontFamily |
+| noteFontFamily | This sets the font family of actor-attached notes. | string | Required | Any Possible CSS FontFamily |
 
 **Notes:**
 Default value: ''"trebuchet ms", verdana, arial, sans-serif'
@@ -470,7 +470,7 @@ Default value: 16
 
 | Parameter         | Description                                 | Type   | Required | Values                      |
 | ----------------- | ------------------------------------------- | ------ | -------- | --------------------------- |
-| messageFontFamily | This sets the font family of actor messages | string | Required | Any Posiable CSS FontFamily |
+| messageFontFamily | This sets the font family of actor messages | string | Required | Any Possible CSS FontFamily |
 
 **Notes:**
 Default value: '"trebuchet ms", verdana, arial, sans-serif'
@@ -590,9 +590,9 @@ Default value: 11
 
 ### sectionFontSize
 
-| Parameter       | Description           | Type    | Required | Values             |
-| --------------- | --------------------- | ------- | -------- | ------------------ |
-| sectionFontSize | Font size for secions | Integer | Required | Any Positive Value |
+| Parameter       | Description            | Type    | Required | Values             |
+| --------------- | ---------------------- | ------- | -------- | ------------------ |
+| sectionFontSize | Font size for sections | Integer | Required | Any Positive Value |
 
 **Notes:**
 Default value: 11
@@ -879,7 +879,7 @@ Default value: 'TB'
 
 | Parameter      | Description                        | Type    | Required | Values             |
 | -------------- | ---------------------------------- | ------- | -------- | ------------------ |
-| minEntityWidth | The mimimum width of an entity box | Integer | Required | Any Positive Value |
+| minEntityWidth | The minimum width of an entity box | Integer | Required | Any Positive Value |
 
 **Notes:**
 Expressed in pixels.
@@ -1005,7 +1005,7 @@ Note: currentConfig is set in this function
 
 -   `conf`  the base currentConfig to use as siteConfig
 
-Returns **any** the siteConfig
+Returns **[Object][6]** the siteConfig
 
 ## getSiteConfig
 
@@ -1018,7 +1018,7 @@ Returns **any** the siteConfig
 **Notes**:
 Returns **any** values in siteConfig.
 
-Returns **any** 
+Returns **[Object][6]** the siteConfig
 
 ## setConfig
 
@@ -1067,6 +1067,14 @@ Note: modifies options in-place
 
 -   `options`  the potential setConfig parameter
 
+## addDirective
+
+Pushes in a directive to the configuration
+
+### Parameters
+
+-   `directive` **[Object][6]** The directive to push in
+
 ## reset
 
 ## reset
@@ -1090,7 +1098,7 @@ Note: modifies options in-place
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
 
-```js
+```javascript
 mermaidAPI.initialize({
      startOnLoad:true
  });
@@ -1185,3 +1193,5 @@ mermaidAPI.initialize({
 [4]: 8.6.0_docs.md
 
 [5]: #mermaidapi-configuration-defaults
+
+[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
