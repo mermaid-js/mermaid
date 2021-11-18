@@ -1,44 +1,42 @@
-/* eslint-env jasmine */
-/* eslint-disable no-eval */
 import { parser } from './gantt';
 import ganttDb from '../ganttDb';
 
 const spyOn = jest.spyOn;
-const parserFnConstructor = str => {
+const parserFnConstructor = (str) => {
   return () => {
     parser.parse(str);
   };
 };
 
-describe('when parsing a gantt diagram it', function() {
-  beforeEach(function() {
+describe('when parsing a gantt diagram it', function () {
+  beforeEach(function () {
     parser.yy = ganttDb;
     parser.yy.clear();
   });
 
-  it('should handle a dateFormat definition', function() {
+  it('should handle a dateFormat definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd';
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
 
-  it('should handle a inclusive end date definition', function() {
+  it('should handle a inclusive end date definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ninclusiveEndDates';
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
-  it('should handle a title definition', function() {
+  it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
-  it('should handle an excludes definition', function() {
+  it('should handle an excludes definition', function () {
     const str =
       'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid\nexcludes weekdays 2019-02-01';
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
-  it('should handle a todayMarker definition', function() {
+  it('should handle a todayMarker definition', function () {
     spyOn(ganttDb, 'setTodayMarker');
     const str =
       'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid\nexcludes weekdays 2019-02-01\ntodayMarker off';
@@ -46,7 +44,7 @@ describe('when parsing a gantt diagram it', function() {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(ganttDb.setTodayMarker).toHaveBeenCalledWith('off');
   });
-  it('should handle a section definition', function() {
+  it('should handle a section definition', function () {
     const str =
       'gantt\n' +
       'dateFormat yyyy-mm-dd\n' +
@@ -56,7 +54,7 @@ describe('when parsing a gantt diagram it', function() {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
-  it('should handle multiline section titles with different line breaks', function() {
+  it('should handle multiline section titles with different line breaks', function () {
     const str =
       'gantt\n' +
       'dateFormat yyyy-mm-dd\n' +
@@ -68,16 +66,16 @@ describe('when parsing a gantt diagram it', function() {
   });
   /**
    * Beslutsflöde inligt nedan. Obs bla bla bla
-   * ```
-   * graph TD
-   * A[Hard pledge] -- text on link -->B(Round edge)
-   * B --> C{to do or not to do}
-   * C -->|Too| D[Result one]
-   * C -->|Doo| E[Result two]
-   ```
-   * params bapa - a unique bapap
+   *
+   *     graph TD
+   *     A[Hard pledge] -- text on link -->B(Round edge)
+   *     B --> C{to do or not to do}
+   *     C -->|Too| D[Result one]
+   *     C -->|Doo| E[Result two]
+   *
+   * Params bapa - a unique bapap
    */
-  it('should handle a task definition', function() {
+  it('should handle a task definition', function () {
     const str =
       'gantt\n' +
       'dateFormat YYYY-MM-DD\n' +
@@ -117,7 +115,7 @@ describe('when parsing a gantt diagram it', function() {
 
     const tasks = parser.yy.getTasks();
 
-    allowedTags.forEach(function(t) {
+    allowedTags.forEach(function (t) {
       if (eval(t)) {
         expect(tasks[0][t]).toBeTruthy();
       } else {
@@ -125,7 +123,7 @@ describe('when parsing a gantt diagram it', function() {
       }
     });
   });
-  it('should parse callback specifier with no args', function() {
+  it('should parse callback specifier with no args', function () {
     spyOn(ganttDb, 'setClickEvent');
     const str =
       'gantt\n' +
@@ -139,7 +137,7 @@ describe('when parsing a gantt diagram it', function() {
     expect(parserFnConstructor(str)).not.toThrow();
     expect(ganttDb.setClickEvent).toHaveBeenCalledWith('cl2', 'ganttTestClick', null);
   });
-  it('should parse callback specifier with arbitrary number of args', function() {
+  it('should parse callback specifier with arbitrary number of args', function () {
     spyOn(ganttDb, 'setClickEvent');
     const str =
       'gantt\n' +
@@ -152,7 +150,10 @@ describe('when parsing a gantt diagram it', function() {
 
     expect(parserFnConstructor(str)).not.toThrow();
     const args = '"test1", "test2", "test3"';
-    expect(ganttDb.setClickEvent).toHaveBeenCalledWith('cl2', 'ganttTestClick', '"test0", test1, test2');
+    expect(ganttDb.setClickEvent).toHaveBeenCalledWith(
+      'cl2',
+      'ganttTestClick',
+      '"test0", test1, test2'
+    );
   });
-
 });

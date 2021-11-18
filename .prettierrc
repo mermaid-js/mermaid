@@ -1,6 +1,0 @@
-{
-  "endOfLine": "auto",
-  "plugins": ["prettier-plugin-jsdoc"],
-  "printWidth": 100,
-  "singleQuote": true
-}

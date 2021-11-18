@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Pie Chart', () => {
@@ -47,17 +46,16 @@ describe('Pie Chart', () => {
       `,
       { pie: { useMaxWidth: true } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        expect(svg).to.have.attr('width', '100%');
-        expect(svg).to.have.attr('height');
-        const height = parseFloat(svg.attr('height'));
-        expect(height).to.eq(450);
-        const style = svg.attr('style');
-        expect(style).to.match(/^max-width: [\d.]+px;$/);
-        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-        expect(maxWidthValue).to.eq(984);
-      });
+    cy.get('svg').should((svg) => {
+      expect(svg).to.have.attr('width', '100%');
+      expect(svg).to.have.attr('height');
+      const height = parseFloat(svg.attr('height'));
+      expect(height).to.eq(450);
+      const style = svg.attr('style');
+      expect(style).to.match(/^max-width: [\d.]+px;$/);
+      const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+      expect(maxWidthValue).to.eq(984);
+    });
   });
   it('should render a pie diagram when useMaxWidth is false', () => {
     renderGraph(
@@ -69,13 +67,12 @@ describe('Pie Chart', () => {
       `,
       { pie: { useMaxWidth: false } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        const height = parseFloat(svg.attr('height'));
-        const width = parseFloat(svg.attr('width'));
-        expect(height).to.eq(450);
-        expect(width).to.eq(984);
-        expect(svg).to.not.have.attr('style');
-      });
+    cy.get('svg').should((svg) => {
+      const height = parseFloat(svg.attr('height'));
+      const width = parseFloat(svg.attr('width'));
+      expect(height).to.eq(450);
+      expect(width).to.eq(984);
+      expect(svg).to.not.have.attr('style');
+    });
   });
 });

@@ -3,16 +3,16 @@ import flow from './flow';
 import { setConfig } from '../../../config';
 
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
 describe('[Edges] when parsing', () => {
-  beforeEach(function() {
+  beforeEach(function () {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
   });
 
-  it('should handle open ended edges', function() {
+  it('should handle open ended edges', function () {
     const res = flow.parser.parse('graph TD;A---B;');
 
     const vert = flow.parser.yy.getVertices();
@@ -21,7 +21,7 @@ describe('[Edges] when parsing', () => {
     expect(edges[0].type).toBe('arrow_open');
   });
 
-  it('should handle cross ended edges', function() {
+  it('should handle cross ended edges', function () {
     const res = flow.parser.parse('graph TD;A--xB;');
 
     const vert = flow.parser.yy.getVertices();
@@ -30,7 +30,7 @@ describe('[Edges] when parsing', () => {
     expect(edges[0].type).toBe('arrow_cross');
   });
 
-  it('should handle open ended edges', function() {
+  it('should handle open ended edges', function () {
     const res = flow.parser.parse('graph TD;A--oB;');
 
     const vert = flow.parser.yy.getVertices();
@@ -39,8 +39,8 @@ describe('[Edges] when parsing', () => {
     expect(edges[0].type).toBe('arrow_circle');
   });
 
-  describe('cross', function() {
-    it('should handle double edged nodes and edges', function() {
+  describe('cross', function () {
+    it('should handle double edged nodes and edges', function () {
       const res = flow.parser.parse('graph TD;\nA x--x B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -57,7 +57,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes with text', function() {
+    it('should handle double edged nodes with text', function () {
       const res = flow.parser.parse('graph TD;\nA x-- text --x B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -74,7 +74,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes and edges on thick arrows', function() {
+    it('should handle double edged nodes and edges on thick arrows', function () {
       const res = flow.parser.parse('graph TD;\nA x==x B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -91,7 +91,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes with text on thick arrows', function() {
+    it('should handle double edged nodes with text on thick arrows', function () {
       const res = flow.parser.parse('graph TD;\nA x== text ==x B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -108,7 +108,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes and edges on dotted arrows', function() {
+    it('should handle double edged nodes and edges on dotted arrows', function () {
       const res = flow.parser.parse('graph TD;\nA x-.-x B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -125,7 +125,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes with text on dotted arrows', function() {
+    it('should handle double edged nodes with text on dotted arrows', function () {
       const res = flow.parser.parse('graph TD;\nA x-. text .-x B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -143,8 +143,8 @@ describe('[Edges] when parsing', () => {
     });
   });
 
-  describe('circle', function() {
-    it('should handle double edged nodes and edges', function() {
+  describe('circle', function () {
+    it('should handle double edged nodes and edges', function () {
       const res = flow.parser.parse('graph TD;\nA o--o B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -161,7 +161,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes with text', function() {
+    it('should handle double edged nodes with text', function () {
       const res = flow.parser.parse('graph TD;\nA o-- text --o B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -178,7 +178,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes and edges on thick arrows', function() {
+    it('should handle double edged nodes and edges on thick arrows', function () {
       const res = flow.parser.parse('graph TD;\nA o==o B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -195,7 +195,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes with text on thick arrows', function() {
+    it('should handle double edged nodes with text on thick arrows', function () {
       const res = flow.parser.parse('graph TD;\nA o== text ==o B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -212,7 +212,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes and edges on dotted arrows', function() {
+    it('should handle double edged nodes and edges on dotted arrows', function () {
       const res = flow.parser.parse('graph TD;\nA o-.-o B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -229,7 +229,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].length).toBe(1);
     });
 
-    it('should handle double edged nodes with text on dotted arrows', function() {
+    it('should handle double edged nodes with text on dotted arrows', function () {
       const res = flow.parser.parse('graph TD;\nA o-. text .-o B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -247,7 +247,7 @@ describe('[Edges] when parsing', () => {
     });
   });
 
-  it('should handle multiple edges', function() {
+  it('should handle multiple edges', function () {
     const res = flow.parser.parse(
       'graph TD;A---|This is the 123 s text|B;\nA---|This is the second edge|B;'
     );
@@ -271,9 +271,9 @@ describe('[Edges] when parsing', () => {
     expect(edges[1].length).toBe(1);
   });
 
-  describe('edge length', function() {
+  describe('edge length', function () {
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle normal edges with length ${length}`, function() {
+      it(`should handle normal edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'-'.repeat(length)}- B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -292,7 +292,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle normal labelled edges with length ${length}`, function() {
+      it(`should handle normal labelled edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -- Label -${'-'.repeat(length)}- B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -311,7 +311,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle normal edges with arrows with length ${length}`, function() {
+      it(`should handle normal edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'-'.repeat(length)}> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -330,7 +330,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle normal labelled edges with arrows with length ${length}`, function() {
+      it(`should handle normal labelled edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -- Label -${'-'.repeat(length)}> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -349,7 +349,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle normal edges with double arrows with length ${length}`, function() {
+      it(`should handle normal edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <-${'-'.repeat(length)}> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -368,7 +368,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle normal labelled edges with double arrows with length ${length}`, function() {
+      it(`should handle normal labelled edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <-- Label -${'-'.repeat(length)}> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -387,7 +387,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle thick edges with length ${length}`, function() {
+      it(`should handle thick edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA =${'='.repeat(length)}= B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -406,7 +406,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle thick labelled edges with length ${length}`, function() {
+      it(`should handle thick labelled edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA == Label =${'='.repeat(length)}= B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -425,7 +425,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle thick edges with arrows with length ${length}`, function() {
+      it(`should handle thick edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA =${'='.repeat(length)}> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -444,7 +444,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle thick labelled edges with arrows with length ${length}`, function() {
+      it(`should handle thick labelled edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA == Label =${'='.repeat(length)}> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -463,7 +463,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle thick edges with double arrows with length ${length}`, function() {
+      it(`should handle thick edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <=${'='.repeat(length)}> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -482,7 +482,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle thick labelled edges with double arrows with length ${length}`, function() {
+      it(`should handle thick labelled edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <== Label =${'='.repeat(length)}> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -501,7 +501,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle dotted edges with length ${length}`, function() {
+      it(`should handle dotted edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'.'.repeat(length)}- B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -520,7 +520,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle dotted labelled edges with length ${length}`, function() {
+      it(`should handle dotted labelled edges with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -. Label ${'.'.repeat(length)}- B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -539,7 +539,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle dotted edges with arrows with length ${length}`, function() {
+      it(`should handle dotted edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -${'.'.repeat(length)}-> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -558,7 +558,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle dotted labelled edges with arrows with length ${length}`, function() {
+      it(`should handle dotted labelled edges with arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA -. Label ${'.'.repeat(length)}-> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -577,7 +577,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle dotted edges with double arrows with length ${length}`, function() {
+      it(`should handle dotted edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <-${'.'.repeat(length)}-> B;`);
 
         const vert = flow.parser.yy.getVertices();
@@ -596,7 +596,7 @@ describe('[Edges] when parsing', () => {
     }
 
     for (let length = 1; length <= 3; ++length) {
-      it(`should handle dotted edges with double arrows with length ${length}`, function() {
+      it(`should handle dotted edges with double arrows with length ${length}`, function () {
         const res = flow.parser.parse(`graph TD;\nA <-. Label ${'.'.repeat(length)}-> B;`);
 
         const vert = flow.parser.yy.getVertices();

@@ -1,27 +1,25 @@
-/* eslint-env jasmine */
-/* eslint-disable no-eval */
 import { parser } from './journey';
 import journeyDb from '../journeyDb';
 
-const parserFnConstructor = str => {
+const parserFnConstructor = (str) => {
   return () => {
     parser.parse(str);
   };
 };
 
-describe('when parsing a journey diagram it', function() {
-  beforeEach(function() {
+describe('when parsing a journey diagram it', function () {
+  beforeEach(function () {
     parser.yy = journeyDb;
     parser.yy.clear();
   });
 
-  it('should handle a title definition', function() {
+  it('should handle a title definition', function () {
     const str = 'journey\ntitle Adding journey diagram functionality to mermaid';
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
 
-  it('should handle a section definition', function() {
+  it('should handle a section definition', function () {
     const str =
       'journey\n' +
       'title Adding journey diagram functionality to mermaid\n' +
@@ -29,7 +27,7 @@ describe('when parsing a journey diagram it', function() {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
-  it('should handle multiline section titles with different line breaks', function() {
+  it('should handle multiline section titles with different line breaks', function () {
     const str =
       'journey\n' +
       'title Adding gantt diagram functionality to mermaid\n' +
@@ -38,7 +36,7 @@ describe('when parsing a journey diagram it', function() {
     expect(parserFnConstructor(str)).not.toThrow();
   });
 
-  it('should handle a task definition', function() {
+  it('should handle a task definition', function () {
     const str =
       'journey\n' +
       'title Adding journey diagram functionality to mermaid\n' +
@@ -62,56 +60,56 @@ describe('when parsing a journey diagram it', function() {
       people: ['Alice', 'Bob', 'Charlie'],
       section: 'Documentation',
       task: 'A task',
-      type: 'Documentation'
+      type: 'Documentation',
     });
     expect(tasks[1]).toEqual({
       score: 3,
       people: ['Bob', 'Charlie'],
       section: 'Documentation',
       type: 'Documentation',
-      task: 'B task'
+      task: 'B task',
     });
     expect(tasks[2]).toEqual({
       score: 5,
       people: [],
       section: 'Documentation',
       type: 'Documentation',
-      task: 'C task'
+      task: 'C task',
     });
     expect(tasks[3]).toEqual({
       score: 5,
       people: ['Charlie', 'Alice'],
       section: 'Documentation',
       task: 'D task',
-      type: 'Documentation'
+      type: 'Documentation',
     });
     expect(tasks[4]).toEqual({
       score: 5,
       people: [''],
       section: 'Documentation',
       type: 'Documentation',
-      task: 'E task'
+      task: 'E task',
     });
     expect(tasks[5]).toEqual({
       score: 5,
       people: [''],
       section: 'Another section',
       type: 'Another section',
-      task: 'P task'
+      task: 'P task',
     });
     expect(tasks[6]).toEqual({
       score: 5,
       people: [''],
       section: 'Another section',
       type: 'Another section',
-      task: 'Q task'
+      task: 'Q task',
     });
     expect(tasks[7]).toEqual({
       score: 5,
       people: [''],
       section: 'Another section',
       type: 'Another section',
-      task: 'R task'
+      task: 'R task',
     });
   });
 });
