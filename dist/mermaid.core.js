@@ -9179,12 +9179,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
-/* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../diagrams/common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../config */ "./src/config.js");
+/* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../diagrams/common/common */ "./src/diagrams/common/common.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 
  // eslint-disable-line
+
 
  // let vertexNode;
 // if (evaluate(getConfig().flowchart.htmlLabels)) {
@@ -9208,8 +9209,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 //   }
 //   vertexNode = svgLabel;
 // }
-
-
 
 function applyStyle(dom, styleFn) {
   if (styleFn) {
@@ -13208,9 +13207,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -13247,7 +13246,7 @@ var splitClassNameAndType = function splitClassNameAndType(id) {
   if (id.indexOf('~') > 0) {
     var split = id.split('~');
     className = split[0];
-    genericType = split[1];
+    genericType = _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].sanitizeText(split[1], _config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
   }
 
   return {
@@ -13308,7 +13307,7 @@ var getRelations = function getRelations() {
   return relations;
 };
 var addRelation = function addRelation(relation) {
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('Adding relation: ' + JSON.stringify(relation));
+  _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('Adding relation: ' + JSON.stringify(relation));
   addClass(relation.id1);
   addClass(relation.id2);
   relation.id1 = splitClassNameAndType(relation.id1).className;
@@ -13396,7 +13395,7 @@ var setTooltip = function setTooltip(ids, tooltip) {
   var config = _config__WEBPACK_IMPORTED_MODULE_3__.getConfig();
   ids.split(',').forEach(function (id) {
     if (typeof tooltip !== 'undefined') {
-      classes[id].tooltip = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(tooltip, config);
+      classes[id].tooltip = _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].sanitizeText(tooltip, config);
     }
   });
 };
@@ -14662,6 +14661,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getRows": () => (/* binding */ getRows),
 /* harmony export */   "removeScript": () => (/* binding */ removeScript),
 /* harmony export */   "sanitizeText": () => (/* binding */ sanitizeText),
+/* harmony export */   "sanitizeTextOrArray": () => (/* binding */ sanitizeTextOrArray),
 /* harmony export */   "lineBreakRegex": () => (/* binding */ lineBreakRegex),
 /* harmony export */   "hasBreaks": () => (/* binding */ hasBreaks),
 /* harmony export */   "splitBreaks": () => (/* binding */ splitBreaks),
@@ -14750,6 +14750,15 @@ var sanitizeText = function sanitizeText(text, config) {
   var txt = dompurify__WEBPACK_IMPORTED_MODULE_0___default().sanitize(sanitizeMore(text, config));
   return txt;
 };
+var sanitizeTextOrArray = function sanitizeTextOrArray(a, config) {
+  if (typeof a === 'string') return sanitizeText(a, config);
+
+  var f = function f(x) {
+    return sanitizeText(x, config);
+  };
+
+  return a.flat().map(f);
+};
 var lineBreakRegex = /<br\s*\/?>/gi;
 /**
  * Whether or not a text has any linebreaks
@@ -14819,6 +14828,7 @@ var evaluate = function evaluate(val) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   getRows: getRows,
   sanitizeText: sanitizeText,
+  sanitizeTextOrArray: sanitizeTextOrArray,
   hasBreaks: hasBreaks,
   splitBreaks: splitBreaks,
   lineBreakRegex: lineBreakRegex,
@@ -23758,6 +23768,8 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
           nodeDb[node.id].description = node.description;
         }
       }
+
+      nodeDb[node.id].description = _common_common__WEBPACK_IMPORTED_MODULE_5__["default"].sanitizeTextOrArray(nodeDb[node.id].description, (0,_config__WEBPACK_IMPORTED_MODULE_6__.getConfig)());
     } // Save data for description and group so that for instance a statement without description overwrites
     // one with description
     // group
@@ -23880,7 +23892,7 @@ var setupDoc = function setupDoc(g, parent, doc, altFlag) {
         arrowTypeEnd: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
-        label: item.description,
+        label: _common_common__WEBPACK_IMPORTED_MODULE_5__["default"].sanitizeText(item.description, (0,_config__WEBPACK_IMPORTED_MODULE_6__.getConfig)()),
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
@@ -25727,7 +25739,7 @@ var decodeEntities = function decodeEntities(text) {
 /**
  * Function that renders an svg with a graph from a chart definition. Usage example below.
  *
- * ```js
+ * ```javascript
  * mermaidAPI.initialize({
  *      startOnLoad:true
  *  });
@@ -29649,7 +29661,7 @@ module.exports = require("stylis");
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"mermaid","version":"8.13.3","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --progress --color","build:production":"yarn build:development --mode production --config webpack.config.prod.babel.js","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint src","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"percy exec -- cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config webpack.config.e2e.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"yarn build"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^3.1.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.3","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@percy/cli":"^1.0.0-beta.58","@percy/cypress":"^3.1.0","@percy/migrate":"^0.11.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^6.2.2","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"8.7.0","documentation":"13.2.0","eslint":"^8.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"],"husky":{"hooks":{"pre-push":"yarn test"}}}');
+module.exports = JSON.parse('{"name":"mermaid","version":"8.13.4","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --progress --color","build:production":"yarn build:development --mode production --config webpack.config.prod.babel.js","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint src","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"percy exec -- cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config webpack.config.e2e.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"yarn build"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^3.1.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.3","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@percy/cli":"^1.0.0-beta.58","@percy/cypress":"^3.1.0","@percy/migrate":"^0.11.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^6.2.2","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"8.7.0","documentation":"13.2.0","eslint":"^8.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"],"husky":{"hooks":{"pre-push":"yarn test"}}}');
 
 /***/ })
 
