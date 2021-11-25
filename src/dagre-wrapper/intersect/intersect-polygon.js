@@ -4,9 +4,13 @@ import intersectLine from './intersect-line';
 
 export default intersectPolygon;
 
-/*
- * Returns the point ({x, y}) at which the point argument intersects with the
- * node argument assuming that it has the shape specified by polygon.
+/**
+ * Returns the point ({x, y}) at which the point argument intersects with the node argument assuming
+ * that it has the shape specified by polygon.
+ *
+ * @param node
+ * @param polyPoints
+ * @param point
  */
 function intersectPolygon(node, polyPoints, point) {
   var x1 = node.x;

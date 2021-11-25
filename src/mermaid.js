@@ -1,6 +1,6 @@
 /**
- * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
- * the diagrams to svg code.
+ * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
+ * functionality and to render the diagrams to svg code.
  */
 import { log } from './logger';
 import mermaidAPI from './mermaidAPI';
@@ -8,15 +8,17 @@ import utils from './utils';
 
 /**
  * ## init
+ *
  * Function that goes through the document to find the chart definitions in there and render them.
  *
- * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
- * attribute already set. This way the init function can be triggered several times.
+ * The function tags the processed attributes with the attribute data-processed and ignores found
+ * elements with the attribute already set. This way the init function can be triggered several times.
  *
  * Optionally, `init` can accept in the second argument one of the following:
- * - a DOM Node
- * - an array of DOM nodes (as would come from a jQuery selector)
- * - a W3C selector, a la `.mermaid`
+ *
+ * - A DOM Node
+ * - An array of DOM nodes (as would come from a jQuery selector)
+ * - A W3C selector, a la `.mermaid`
  *
  * ```mermaid
  * graph LR;
@@ -24,8 +26,8 @@ import utils from './utils';
  *  b-->|Yes|c(Leave element)
  *  b-->|No |d(Transform)
  * ```
+ *
  * Renders the mermaid diagrams
- * @param nodes a css selector or an array of nodes
  */
 const init = function () {
   const conf = mermaidAPI.getConfig();
@@ -145,9 +147,8 @@ const initialize = function (config) {
 };
 
 /**
- * ##contentLoaded
- * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
- * calls init for rendering the mermaid diagrams on the page.
+ * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
+ * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
  */
 const contentLoaded = function () {
   let config;

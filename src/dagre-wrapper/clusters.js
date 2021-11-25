@@ -79,6 +79,10 @@ const rect = (parent, node) => {
 
 /**
  * Non visiable cluster where the note is group with its
+ *
+ * @param {any} parent
+ * @param {any} node
+ * @returns {any} ShapeSvg
  */
 const noteGroup = (parent, node) => {
   // Add outer g element

@@ -28,113 +28,13 @@
     <div>info below</div>
     <div class="flex flex-wrap">
 
-<div class="mermaid2" style="width: 100%; height: 20%;">
-classDiagram
-  direction TB
-  class Student {
-    -idCard : IdCard
-  }
-  class IdCard{
-    -id : int
-    -name : string
-  }
-  class Bike{
-    -id : int
-    -name : string
-  }
-  Student "1" --o "1" IdCard : carries
-  Student "1" --o "1" Bike : rides
-
-</div>
-<div class="mermaid3" style="width: 100%; height: 20%;">
-stateDiagram
-  state CompositeState {
-      YourState123456789012345123456789123456789012345123456789123456789012345123456789123456789012345123456789 --> MyState:a label
-    }
-
-</div>
 <div class="mermaid" style="width: 100%; height: 20%;">
-sequenceDiagram
-  %%{init: {'config': {'wrap': true }}}%%
-  actor Alice as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-  actor Bob
-  participant John as John2
-  participant Mandy
-  Alice->>Bob: Hi Bob
-  Bob->>Alice: Hi Alice
-  Alice->>John: Hi John
-  John->>Mandy: Hi Mandy
-  Mandy ->>Joan: Hi Joan
-
-</div>
-<div class="mermaid" style="width: 100%; height: 20%;">
-%%{int: { "apa":"b", "theme":"forest"}}%%
-sequenceDiagram
-Alice->>Bob: Hi Bob
-Bob->>Alice: Hi Alice
-</div>
-<div class="mermaid">
-sequenceDiagram
-  autonumber
-  par Action 1
-    Alice->>John: Hello John, how are you?
-  and Action 2
-    Alice->>Bob: Hello Bob, how are you?
-  end
-  Alice->>+John: Hello John, how are you?
-  Alice->>+John: John, can you hear me?
-  John-->>-Alice: Hi Alice, I can hear you!
-  Note right of John: John is perceptive
-  John-->>-Alice: I feel great!
-      loop Every minute
-        John-->Alice: Great!
-    end
-</div>
-<div class="mermaid">
-sequenceDiagram
-  %%{init: {'config': {'wrap': true }}}%%
-  actor Alice
-  actor Bob
-  Alice->>Bob: Hi Bob
-  Bob->>Alice: Hi Alice
-</div>
-<div class="mermaid" style="width: 100%; height: 20%;">
-        %%{init: {'config': {'wrap': true }}}%%
-        sequenceDiagram
-        participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-        A->>Bob: Hola
-        Bob-->A: Pasten !
-  </div>
-<div class="mermaid2" style="width: 100%; height: 20%;">
 stateDiagram-v2
-state CS {
-state ACS {
-YourState
-}
-}
-  </div>
-<div class="mermaid2" style="width: 100%; height: 20%;">
-      stateDiagram-v2
-        [*] --> Active
+      [*] --> S1
+      state "Some long name" as S1
 
-        state Active {
-            [*] --> NumLockOff
-            NumLockOff --> NumLockOn : EvNumLockPressed
-            NumLockOn --> NumLockOff : EvNumLockPressed
-            --
-            [*] --> CapsLockOff
-            CapsLockOff --> CapsLockOn : EvCapsLockPressed
-            CapsLockOn --> CapsLockOff : EvCapsLockPressed
-        }
-        state SomethingElse {
-          A --> B
-          B --> A
-        }
+</div>
 
-        Active --> SomethingElse
-        note right of SomethingElse : This is the note to the right.
-
-        SomethingElse --> [*]  </div>
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {

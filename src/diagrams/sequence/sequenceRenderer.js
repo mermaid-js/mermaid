@@ -97,6 +97,7 @@ export const bounds = {
   updateBounds: function (startx, starty, stopx, stopy) {
     const _self = this;
     let cnt = 0;
+    /** @param {any} type */
     function updateFn(type) {
       return function updateItemBounds(item) {
         cnt++;
@@ -198,8 +199,11 @@ export const bounds = {
 
 /**
  * Draws an note in the diagram with the attached line
- * @param elem - The diagram to draw to.
- * @param noteModel:{x: number, y: number, message: string, width: number} - startx: x axis start position, verticalPos: y axis position, messsage: the message to be shown, width: Set this with a custom width to override the default configured width.
+ *
+ * @param {any} elem - The diagram to draw to.
+ * @param {{ x: number; y: number; message: string; width: number }} noteModel - Startx: x axis
+ *   start position, verticalPos: y axis position, messsage: the message to be shown, width: Set
+ *   this with a custom width to override the default configured width.
  */
 const drawNote = function (elem, noteModel) {
   bounds.bumpVerticalPos(conf.boxMargin);
@@ -268,8 +272,9 @@ const actorFont = (cnf) => {
 
 /**
  * Draws a message
- * @param g - the parent of the message element
- * @param msgModel - the model containing fields describing a message
+ *
+ * @param {any} g - The parent of the message element
+ * @param {any} msgModel - The model containing fields describing a message
  */
 const drawMessage = function (g, msgModel) {
   bounds.bumpVerticalPos(10);
@@ -499,6 +504,13 @@ const activationBounds = function (actor, actors) {
   return [left, right];
 };
 
+/**
+ * @param {any} loopWidths
+ * @param {any} msg
+ * @param {any} preMargin
+ * @param {any} postMargin
+ * @param {any} addLoopFn
+ */
 function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn) {
   bounds.bumpVerticalPos(preMargin);
   let heightAdjust = postMargin;
@@ -521,8 +533,9 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
 export const draw = function (text, id) {
   conf = configApi.getConfig().sequence;
@@ -556,6 +569,10 @@ export const draw = function (text, id) {
   svgDraw.insertArrowFilledHead(diagram);
   svgDraw.insertSequenceNumber(diagram);
 
+  /**
+   * @param {any} msg
+   * @param {any} verticalPos
+   */
   function activeEnd(msg, verticalPos) {
     const activationData = bounds.endActivation(msg);
     if (activationData.starty + 18 > verticalPos) {
@@ -769,14 +786,14 @@ export const draw = function (text, id) {
 };
 
 /**
- * Retrieves the max message width of each actor, supports signals (messages, loops)
- * and notes.
+ * Retrieves the max message width of each actor, supports signals (messages, loops) and notes.
  *
- * It will enumerate each given message, and will determine its text width, in relation
- * to the actor it originates from, and destined to.
+ * It will enumerate each given message, and will determine its text width, in relation to the actor
+ * it originates from, and destined to.
  *
- * @param actors - The actors map
- * @param messages - A list of message objects to iterate
+ * @param {any} actors - The actors map
+ * @param {Array} messages - A list of message objects to iterate
+ * @returns {any}
  */
 const getMaxMessageWidthPerActor = function (actors, messages) {
   const maxMessageWidthPerActor = {};
@@ -888,14 +905,13 @@ const getRequiredPopupWidth = function (actor) {
 };
 
 /**
- * This will calculate the optimal margin for each given actor, for a given
- * actor->messageWidth map.
+ * This will calculate the optimal margin for each given actor, for a given actor->messageWidth map.
  *
- * An actor's margin is determined by the width of the actor, the width of the
- * largest message that originates from it, and the configured conf.actorMargin.
+ * An actor's margin is determined by the width of the actor, the width of the largest message that
+ * originates from it, and the configured conf.actorMargin.
  *
- * @param actors - The actors map to calculate margins for
- * @param actorToMessageWidth - A map of actor key -> max message width it holds
+ * @param {any} actors - The actors map to calculate margins for
+ * @param {any} actorToMessageWidth - A map of actor key -> max message width it holds
  */
 const calculateActorMargins = function (actors, actorToMessageWidth) {
   let maxHeight = 0;
