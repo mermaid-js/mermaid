@@ -643,4 +643,15 @@ flowchart RL
       {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
     );
   });
+
+  it('2388: handling default in the node name', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+      default-index.js --> dot.template.js
+      index.js --> module-utl.js
+      `,
+      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+    )
+  })
 });

@@ -51,6 +51,18 @@ describe('when parsing ', function() {
     expect(edges[0].end).toBe('monograph');
   });
 
+  it('should allow default in the node name/id', function() {
+    const res = flow.parser.parse('graph TD\ndefault --> monograph');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(vert['default'].id).toBe('default');
+    expect(vert['monograph'].id).toBe('monograph');
+    expect(edges[0].start).toBe('default');
+    expect(edges[0].end).toBe('monograph');
+  });
+
   describe('special characters should be be handled.', function() {
     const charTest = function(char, result) {
       const res = flow.parser.parse('graph TD;A(' + char + ')-->B;');
