@@ -4,7 +4,7 @@ const schema = require('./parser-options-schema.json');
 
 module.exports = function jisonLoader(source) {
   const options = this.getOptions();
-  validate(schema, options, {
+  (validate.validate || validate)(schema, options, {
     name: 'Jison Loader',
     baseDataPath: 'options',
   });
