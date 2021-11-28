@@ -13,10 +13,21 @@
   </style>
 </head>
 <body>
-  <h2>Sample</h2>
+  <h2>Data Flow Diagram Example</h2>
   <div class="mermaid">
     flowchart LR
       DataStore[|borders:tb|Database] -->|input| Process((System)) -->|output| Entity[Customer];
+  </div>
+
+  <h2>Borders Example</h2>
+  <div class="mermaid">
+    flowchart TD
+      allSides[ stroke all sides ];
+      allSides2[|borders:ltrb| stroke all sides ];
+      rbSides[|borders:rb| stroke right and bottom sides ];
+      ltSides[|borders:lt| stroke left and top sides ];
+      lrSides[|borders:lr| stroke left and right sides ];
+      noSide[|borders:no| stroke no side ];
   </div>
 
   <script src="./mermaid.js"></script>
