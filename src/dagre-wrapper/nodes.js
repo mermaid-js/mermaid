@@ -324,10 +324,15 @@ const rect = (parent, node) => {
     .attr('y', -bbox.height / 2 - halfPadding)
     .attr('width', totalWidth)
     .attr('height', totalHeight);
-  // TODO warn if unknown property is given
+
+  const propKeys = new Set(Object.keys(node.props));
   if (node.props?.borders) {
     applyNodePropertyBorders(rect, node.props.borders, totalWidth, totalHeight);
+    propKeys.delete('borders');
   }
+  propKeys.forEach((propKey) => {
+    log.warn(`Unknown node property ${propKey}`);
+  });
 
   updateNodeBounds(node, rect);
 
