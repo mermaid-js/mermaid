@@ -2,78 +2,59 @@
 
 ## mermaidAPI
 
-Edit this Page[![N|Solid][2]][1]
+Edit this
+Page[\[N|Solid\](img/GitHub-Mark-32px.png)][1]
 
-This is the API to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
+This is the API to be used when optionally handling the integration with the web page, instead of
+using the default integration provided by mermaid.js.
 
-The core of this api is the [**render**][3] function which, given a graph
+The core of this api is the [**render**][2] function which, given a graph
 definition as text, renders the graph/diagram and returns an svg element for the graph.
 
-It is is then up to the user of the API to make use of the svg, either insert it somewhere in the page or do something completely different.
+It is is then up to the user of the API to make use of the svg, either insert it somewhere in the
+page or do something completely different.
 
 In addition to the render function, a number of behavioral configuration options are available.
 
 ## Configuration
 
-**Configuration methods in Mermaid version 8.6.0 have been updated, to learn more\[[click here][4]].**
+**Configuration methods in Mermaid version 8.6.0 have been updated, to learn more\[[click
+here][3]].**
 
 ## **What follows are config instructions for older versions**
 
 These are the default options which can be overridden with the initialization call like so:
 
-**Example 1:**
+**Example 1:**<pre> mermaid.initialize({ flowchart:{ htmlLabels: false } }); </pre>
 
-<pre>
-mermaid.initialize({
-  flowchart:{
-    htmlLabels: false
-  }
-});
-</pre>
-
-**Example 2:**
-
-<pre>
-&lt;script>
-  var config = {
-    startOnLoad:true,
-    flowchart:{
-      useMaxWidth:true,
-      htmlLabels:true,
-      curve:'cardinal',
-    },
+**Example 2:**<pre> <script> var config = { startOnLoad:true, flowchart:{ useMaxWidth:true,
+htmlLabels:true, curve:'cardinal', },
 
     securityLevel:'loose',
-  };
-  mermaid.initialize(config);
-&lt;/script>
-</pre>
 
-A summary of all options and their defaults is found [here][5]. A description of each option follows below.
+}; mermaid.initialize(config); </script> </pre>
+
+A summary of all options and their defaults is found [here][4].
+A description of each option follows below.
 
 ## theme
 
-theme , the CSS style sheet
+Theme , the CSS style sheet
 
 | Parameter | Description     | Type   | Required | Values                                         |
 | --------- | --------------- | ------ | -------- | ---------------------------------------------- |
 | theme     | Built in Themes | string | Optional | 'default', 'forest', 'dark', 'neutral', 'null' |
 
-**Notes:** To disable any pre-defined mermaid theme, use "null".
-
-<pre>
- "theme": "forest",
- "themeCSS": ".node rect { fill: red; }"
-</pre>
+**Notes:** To disable any pre-defined mermaid theme, use "null".<pre> "theme": "forest",
+"themeCSS": ".node rect { fill: red; }" </pre>
 
 ## fontFamily
 
 | Parameter  | Description                                            | Type   | Required | Values                      |
 | ---------- | ------------------------------------------------------ | ------ | -------- | --------------------------- |
-| fontFamily | specifies the font to be used in the rendered diagrams | string | Required | Any Posiable CSS FontFamily |
+| fontFamily | specifies the font to be used in the rendered diagrams | string | Required | Any Possible CSS FontFamily |
 
-**Notes:**
-Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
+**Notes:** Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
 
 ## logLevel
 
@@ -83,11 +64,11 @@ Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
 
 **Notes:**
 
--   debug: 1
--   info: 2
--   warn: 3
--   error: 4
--   fatal: 5 (default)
+-   Debug: 1
+-   Info: 2
+-   Warn: 3
+-   Error: 4
+-   Fatal: 5 (default)
 
 ## securityLevel
 
@@ -99,13 +80,14 @@ Default value: '"trebuchet ms", verdana, arial, sans-serif;'.
 
 -   **strict**: (**default**) tags in text are encoded, click functionality is disabled
 -   **loose**: tags in text are allowed, click functionality is enabled
--   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
+-   **antiscript**: html tags in text are allowed, (only script element is removed), click
+    functionality is enabled
 
 ## startOnLoad
 
-| Parameter   | Description                                   | Type    | Required | Values      |
-| ----------- | --------------------------------------------- | ------- | -------- | ----------- |
-| startOnLoad | Dictates whether mermaind starts on Page load | boolean | Required | true, false |
+| Parameter   | Description                                  | Type    | Required | Values      |
+| ----------- | -------------------------------------------- | ------- | -------- | ----------- |
+| startOnLoad | Dictates whether mermaid starts on Page load | boolean | Required | true, false |
 
 **Notes:** Default value: true
 
@@ -123,9 +105,9 @@ Default value: false
 
 ## secure
 
-This option controls which currentConfig keys are considered _secure_ and can only be changed via
-call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
-the `secure` keys in the current currentConfig. This prevents malicious graph directives from
+This option controls which currentConfig keys are considered _secure_ and can only be changed
+via call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to the
+`secure` keys in the current currentConfig. This prevents malicious graph directives from
 overriding a site's default security.
 
 **Notes**:
@@ -134,19 +116,22 @@ Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
 
 ## deterministicIds
 
-This option controls if the generated ids of nodes in the SVG are generated randomly or based on a seed.
-If set to false, the IDs are generated based on the current date and thus are not deterministic. This is the default behaviour.
+This option controls if the generated ids of nodes in the SVG are generated randomly or based
+on a seed. If set to false, the IDs are generated based on the current date and thus are not
+deterministic. This is the default behaviour.
 
 **Notes**:
 
-This matters if your files are checked into sourcecontrol e.g. git and should not change unless content is changed.
+This matters if your files are checked into sourcecontrol e.g. git and should not change unless
+content is changed.
 
 Default value: false
 
 ## deterministicIDSeed
 
-This option is the optional seed for deterministic ids. if set to undefined but deterministicIds is true, a simple number iterator is used.
-You can set this attribute to base the seed on a static string.
+This option is the optional seed for deterministic ids. if set to undefined but
+deterministicIds is true, a simple number iterator is used. You can set this attribute to base
+the seed on a static string.
 
 ## flowchart
 
@@ -160,7 +145,8 @@ The object containing configurations specific for flowcharts
 
 **Notes:**
 
-The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+The amount of padding around the diagram as a whole so that embedded diagrams have margins,
+expressed in pixels
 
 Default value: 8
 
@@ -180,7 +166,8 @@ Default value: 8
 
 **Notes:**
 
-Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.\*\*
+Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the
+vertical spacing for LR as well as RL graphs.\*\*
 
 Default value: 50
 
@@ -192,7 +179,8 @@ Default value: 50
 
 **Notes**:
 
-pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+Pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal
+spacing for LR as well as RL graphs.
 
 Default value 50
 
@@ -204,7 +192,7 @@ Default value 50
 
 **Notes:**
 
-Default Vaue: 'basis'
+Default Value: 'basis'
 
 ### useMaxWidth
 
@@ -228,9 +216,7 @@ Default value: true
 **Notes:**
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-
--   dagre-d3
--   dagre-wrapper - wrapper for dagre implemented in mermaid
+dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
 
 Default value: 'dagre-d3'
 
@@ -268,8 +254,7 @@ The object containing configurations specific for sequence diagrams
 | ----------- | --------------------- | ------- | -------- | ------------------ |
 | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 50
+**Notes:** Default value: 50
 
 ### width
 
@@ -277,8 +262,7 @@ Default value: 50
 | --------- | -------------------- | ------- | -------- | ------------------ |
 | width     | Width of actor boxes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 150
+**Notes:** Default value: 150
 
 ### height
 
@@ -286,8 +270,7 @@ Default value: 150
 | --------- | --------------------- | ------- | -------- | ------------------ |
 | height    | Height of actor boxes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 65
+**Notes:** Default value: 65
 
 ### boxMargin
 
@@ -295,8 +278,7 @@ Default value: 65
 | --------- | ------------------------ | ------- | -------- | ------------------ |
 | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 10
+**Notes:** Default value: 10
 
 ### boxTextMargin
 
@@ -304,8 +286,7 @@ Default value: 10
 | ------------- | -------------------------------------------- | ------- | -------- | ------------------ |
 | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 5
+**Notes:** Default value: 5
 
 ### noteMargin
 
@@ -313,8 +294,7 @@ Default value: 5
 | ---------- | ------------------- | ------- | -------- | ------------------ |
 | noteMargin | margin around notes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 10
+**Notes:** Default value: 10
 
 ### messageMargin
 
@@ -322,8 +302,7 @@ Default value: 10
 | ------------- | ---------------------- | ------- | -------- | ------------------ |
 | messageMargin | Space between messages | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 35
+**Notes:** Default value: 35
 
 ### messageAlign
 
@@ -331,8 +310,7 @@ Default value: 35
 | ------------ | --------------------------- | ------ | -------- | ------------------------- |
 | messageAlign | Multiline message alignment | string | Required | 'left', 'center', 'right' |
 
-**Notes:**
-Default value: 'center'
+**Notes:** Default value: 'center'
 
 ### mirrorActors
 
@@ -340,8 +318,7 @@ Default value: 'center'
 | ------------ | --------------------------- | ------- | -------- | ----------- |
 | mirrorActors | Mirror actors under diagram | boolean | Required | true, false |
 
-**Notes:**
-Default value: true
+**Notes:** Default value: true
 
 ### forceMenus
 
@@ -371,9 +348,8 @@ Default value: 1
 | ----------- | ----------- | ------- | -------- | ----------- |
 | useMaxWidth | See Notes   | boolean | Required | true, false |
 
-**Notes:**
-When this flag is set to true, the height and width is set to 100% and is then scaling with the
-available space. If set to false, the absolute space required is used.
+**Notes:** When this flag is set to true, the height and width is set to 100% and is then
+scaling with the available space. If set to false, the absolute space required is used.
 
 Default value: true
 
@@ -395,8 +371,7 @@ Default value: false
 | ------------------- | ------------------------------- | ------- | -------- | ----------- |
 | showSequenceNumbers | This will show the node numbers | boolean | Required | true, false |
 
-**Notes:**
-Default value: false
+**Notes:** Default value: false
 
 ### actorFontSize
 
@@ -404,24 +379,21 @@ Default value: false
 | ------------- | -------------------------------------------------- | ------- | -------- | ------------------ |
 | actorFontSize | This sets the font size of the actor's description | Integer | Require  | Any Positive Value |
 
-**Notes:**
-**Default value 14**..
+**Notes:** **Default value 14**..
 
 ### actorFontFamily
 
 | Parameter       | Description                                          | Type   | Required | Values                      |
 | --------------- | ---------------------------------------------------- | ------ | -------- | --------------------------- |
-| actorFontFamily | This sets the font family of the actor's description | string | Required | Any Posiable CSS FontFamily |
+| actorFontFamily | This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
 
-**Notes:**
-Default value: "'Open-Sans", "sans-serif"'
+**Notes:** Default value: "'Open-Sans", "sans-serif"'
 
 ### actorFontWeight
 
 This sets the font weight of the actor's description
 
-**Notes:**
-Default value: 400.
+**Notes:** Default value: 400.
 
 ### noteFontSize
 
@@ -429,24 +401,21 @@ Default value: 400.
 | ------------ | ----------------------------------------------- | ------- | -------- | ------------------ |
 | noteFontSize | This sets the font size of actor-attached notes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 14
+**Notes:** Default value: 14
 
 ### noteFontFamily
 
 | Parameter      | Description                                        | Type   | Required | Values                      |
 | -------------- | -------------------------------------------------- | ------ | -------- | --------------------------- |
-| noteFontFamily | This sets the font family of actor-attached notes. | string | Required | Any Posiable CSS FontFamily |
+| noteFontFamily | This sets the font family of actor-attached notes. | string | Required | Any Possible CSS FontFamily |
 
-**Notes:**
-Default value: ''"trebuchet ms", verdana, arial, sans-serif'
+**Notes:** Default value: ''"trebuchet ms", verdana, arial, sans-serif'
 
 ### noteFontWeight
 
 This sets the font weight of the note's description
 
-**Notes:**
-Default value: 400
+**Notes:** Default value: 400
 
 ### noteAlign
 
@@ -454,8 +423,7 @@ Default value: 400
 | --------- | ---------------------------------------------------- | ------ | -------- | ------------------------- |
 | noteAlign | This sets the text alignment of actor-attached notes | string | required | 'left', 'center', 'right' |
 
-**Notes:**
-Default value: 'center'
+**Notes:** Default value: 'center'
 
 ### messageFontSize
 
@@ -463,52 +431,45 @@ Default value: 'center'
 | --------------- | ----------------------------------------- | ------- | -------- | ------------------- |
 | messageFontSize | This sets the font size of actor messages | Integer | Required | Any Positive Number |
 
-**Notes:**
-Default value: 16
+**Notes:** Default value: 16
 
 ### messageFontFamily
 
 | Parameter         | Description                                 | Type   | Required | Values                      |
 | ----------------- | ------------------------------------------- | ------ | -------- | --------------------------- |
-| messageFontFamily | This sets the font family of actor messages | string | Required | Any Posiable CSS FontFamily |
+| messageFontFamily | This sets the font family of actor messages | string | Required | Any Possible CSS FontFamily |
 
-**Notes:**
-Default value: '"trebuchet ms", verdana, arial, sans-serif'
+**Notes:** Default value: '"trebuchet ms", verdana, arial, sans-serif'
 
 ### messageFontWeight
 
 This sets the font weight of the message's description
 
-**Notes:**
-Default value: 400.
+**Notes:** Default value: 400.
 
 ### wrap
 
 This sets the auto-wrap state for the diagram
 
-**Notes:**
-Default value: false.
+**Notes:** Default value: false.
 
 ### wrapPadding
 
 This sets the auto-wrap padding for the diagram (sides only)
 
-**Notes:**
-Default value: 0.
+**Notes:** Default value: 0.
 
 ### labelBoxWidth
 
 This sets the width of the loop-box (loop, alt, opt, par)
 
-**Notes:**
-Default value: 50.
+**Notes:** Default value: 50.
 
 ### labelBoxHeight
 
 This sets the height of the loop-box (loop, alt, opt, par)
 
-**Notes:**
-Default value: 20.
+**Notes:** Default value: 20.
 
 ## gantt
 
@@ -522,8 +483,7 @@ The object containing configurations specific for gantt diagrams
 | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
 | titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 25
+**Notes:** Default value: 25
 
 ### barHeight
 
@@ -531,8 +491,7 @@ Default value: 25
 | --------- | ----------------------------------- | ------- | -------- | ------------------ |
 | barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 20
+**Notes:** Default value: 20
 
 ### barGap
 
@@ -540,8 +499,7 @@ Default value: 20
 | --------- | ---------------------------------------------------------------- | ------- | -------- | ------------------ |
 | barGap    | The margin between the different activities in the gantt diagram | Integer | Optional | Any Positive Value |
 
-**Notes:**
-Default value: 4
+**Notes:** Default value: 4
 
 ### topPadding
 
@@ -549,8 +507,7 @@ Default value: 4
 | ---------- | -------------------------------------------------------------------------- | ------- | -------- | ------------------ |
 | topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 50
+**Notes:** Default value: 50
 
 ### rightPadding
 
@@ -558,8 +515,7 @@ Default value: 50
 | ------------ | ----------------------------------------------------------------------- | ------- | -------- | ------------------ |
 | rightPadding | The space allocated for the section name to the right of the activities | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 75
+**Notes:** Default value: 75
 
 ### leftPadding
 
@@ -567,8 +523,7 @@ Default value: 75
 | ----------- | ---------------------------------------------------------------------- | ------- | -------- | ------------------ |
 | leftPadding | The space allocated for the section name to the left of the activities | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 75
+**Notes:** Default value: 75
 
 ### gridLineStartPadding
 
@@ -576,8 +531,7 @@ Default value: 75
 | -------------------- | -------------------------------------------- | ------- | -------- | ------------------ |
 | gridLineStartPadding | Vertical starting position of the grid lines | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 35
+**Notes:** Default value: 35
 
 ### fontSize
 
@@ -585,17 +539,15 @@ Default value: 35
 | --------- | ----------- | ------- | -------- | ------------------ |
 | fontSize  | Font size   | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 11
+**Notes:** Default value: 11
 
 ### sectionFontSize
 
-| Parameter       | Description           | Type    | Required | Values             |
-| --------------- | --------------------- | ------- | -------- | ------------------ |
-| sectionFontSize | Font size for secions | Integer | Required | Any Positive Value |
+| Parameter       | Description            | Type    | Required | Values             |
+| --------------- | ---------------------- | ------- | -------- | ------------------ |
+| sectionFontSize | Font size for sections | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 11
+**Notes:** Default value: 11
 
 ### numberSectionStyles
 
@@ -603,8 +555,7 @@ Default value: 11
 | ------------------- | ---------------------------------------- | ------- | -------- | ------------------ |
 | numberSectionStyles | The number of alternating section styles | Integer | 4        | Any Positive Value |
 
-**Notes:**
-Default value: 4
+**Notes:** Default value: 4
 
 ### axisFormat
 
@@ -637,8 +588,7 @@ Default value: true
 | --------- | ----------- | ------- | -------- | ----------- |
 | topAxis   | See notes   | Boolean | 4        | True, False |
 
-**Notes:** when this flag is set date labels will be added to the
-top of the chart
+**Notes:** when this flag is set date labels will be added to the top of the chart
 
 **Default value false**.
 
@@ -652,8 +602,7 @@ The object containing configurations specific for journey diagrams
 | -------------- | ---------------------------------------------------- | ------- | -------- | ------------------ |
 | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 50
+**Notes:** Default value: 50
 
 ### diagramMarginY
 
@@ -661,8 +610,7 @@ Default value: 50
 | -------------- | -------------------------------------------------- | ------- | -------- | ------------------ |
 | diagramMarginY | Margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 10
+**Notes:** Default value: 10
 
 ### leftMargin
 
@@ -670,8 +618,7 @@ Default value: 10
 | ----------- | --------------------- | ------- | -------- | ------------------ |
 | actorMargin | Margin between actors | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 50
+**Notes:** Default value: 50
 
 ### width
 
@@ -679,8 +626,7 @@ Default value: 50
 | --------- | -------------------- | ------- | -------- | ------------------ |
 | width     | Width of actor boxes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 150
+**Notes:** Default value: 150
 
 ### height
 
@@ -688,8 +634,7 @@ Default value: 150
 | --------- | --------------------- | ------- | -------- | ------------------ |
 | height    | Height of actor boxes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 65
+**Notes:** Default value: 65
 
 ### boxMargin
 
@@ -697,8 +642,7 @@ Default value: 65
 | --------- | ------------------------ | ------- | -------- | ------------------ |
 | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 10
+**Notes:** Default value: 10
 
 ### boxTextMargin
 
@@ -706,8 +650,7 @@ Default value: 10
 | ------------- | -------------------------------------------- | ------- | -------- | ------------------ |
 | boxTextMargin | Margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 5
+**Notes:** Default value: 5
 
 ### noteMargin
 
@@ -715,8 +658,7 @@ Default value: 5
 | ---------- | ------------------- | ------- | -------- | ------------------ |
 | noteMargin | Margin around notes | Integer | Required | Any Positive Value |
 
-**Notes:**
-Default value: 10
+**Notes:** Default value: 10
 
 ### messageMargin
 
@@ -736,8 +678,7 @@ Default value: 35
 | ------------ | --------------------------- | ---- | -------- | ------------------------- |
 | messageAlign | Multiline message alignment | 3    | 4        | 'left', 'center', 'right' |
 
-**Notes:**
-Default value: 'center'
+**Notes:** Default value: 'center'
 
 ### bottomMarginAdj
 
@@ -795,12 +736,10 @@ Default value: true
 | --------------- | ----------- | ------- | -------- | ----------------------- |
 | defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
 
-**Notes:**
+**Notes**:
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-
--   dagre-d3
--   dagre-wrapper - wrapper for dagre implemented in mermaid
+dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
 
 Default value: 'dagre-d3'
 
@@ -839,9 +778,7 @@ Default value: true
 **Notes:**
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-
--   dagre-d3
--   dagre-wrapper - wrapper for dagre implemented in mermaid
+dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
 
 Default value: 'dagre-d3'
 
@@ -857,7 +794,8 @@ The object containing configurations specific for entity relationship diagrams
 
 **Notes:**
 
-The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+The amount of padding around the diagram as a whole so that embedded diagrams have margins,
+expressed in pixels
 
 Default value: 20
 
@@ -879,11 +817,9 @@ Default value: 'TB'
 
 | Parameter      | Description                        | Type    | Required | Values             |
 | -------------- | ---------------------------------- | ------- | -------- | ------------------ |
-| minEntityWidth | The mimimum width of an entity box | Integer | Required | Any Positive Value |
+| minEntityWidth | The minimum width of an entity box | Integer | Required | Any Positive Value |
 
-**Notes:**
-Expressed in pixels.
-Default value: 100
+**Notes:** Expressed in pixels. Default value: 100
 
 ### minEntityHeight
 
@@ -891,9 +827,7 @@ Default value: 100
 | --------------- | ----------------------------------- | ------- | -------- | ------------------ |
 | minEntityHeight | The minimum height of an entity box | Integer | 4        | Any Positive Value |
 
-**Notes:**
-Expressed in pixels
-Default value: 75
+**Notes:** Expressed in pixels Default value: 75
 
 ### entityPadding
 
@@ -903,7 +837,8 @@ Default value: 75
 
 **Notes:**
 
-The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+The minimum internal padding betweentext in an entity box and the enclosing box borders,
+expressed in pixels.
 
 Default value: 15
 
@@ -913,8 +848,7 @@ Default value: 15
 | --------- | ----------------------------------- | ------ | -------- | -------------------- |
 | stroke    | Stroke color of box edges and lines | string | 4        | Any recognized color |
 
-**Notes:**
-Default value: 'gray'
+**Notes:** Default value: 'gray'
 
 ### fill
 
@@ -922,8 +856,7 @@ Default value: 'gray'
 | --------- | -------------------------- | ------ | -------- | -------------------- |
 | fill      | Fill color of entity boxes | string | 4        | Any recognized color |
 
-**Notes:**
-Default value: 'honeydew'
+**Notes:** Default value: 'honeydew'
 
 ### fontSize
 
@@ -933,8 +866,7 @@ Default value: 'honeydew'
 
 **Notes:**
 
-Font size (expressed as an integer representing a number of pixels)
-Default value: 12
+Font size (expressed as an integer representing a number of pixels) Default value: 12
 
 ### useMaxWidth
 
@@ -944,9 +876,8 @@ Default value: 12
 
 **Notes:**
 
-When this flag is set to true, the diagram width is locked to 100% and
-scaled based on available space. If set to false, the diagram reserves its
-absolute width.
+When this flag is set to true, the diagram width is locked to 100% and scaled based on
+available space. If set to false, the diagram reserves its absolute width.
 
 Default value: true
 
@@ -962,9 +893,8 @@ The object containing configurations specific for pie diagrams
 
 **Notes:**
 
-When this flag is set to true, the diagram width is locked to 100% and
-scaled based on available space. If set to false, the diagram reserves its
-absolute width.
+When this flag is set to true, the diagram width is locked to 100% and scaled based on
+available space. If set to false, the diagram reserves its absolute width.
 
 Default value: true
 
@@ -980,9 +910,8 @@ The object containing configurations specific for req diagrams
 
 **Notes:**
 
-When this flag is set to true, the diagram width is locked to 100% and
-scaled based on available space. If set to false, the diagram reserves its
-absolute width.
+When this flag is set to true, the diagram width is locked to 100% and scaled based on
+available space. If set to false, the diagram reserves its absolute width.
 
 Default value: true
 
@@ -994,31 +923,36 @@ Default value: true
 | ------------- | ------------------------------------- | ----------- | --------------------------------------- |
 | setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
 
-**Notes:**
-Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
-the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
-to the defaultConfig
-Note: currentConfig is set in this function
-\*Default value: At default, will mirror Global Config\*\*
+**Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
+to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
+will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
+function \*Default value: At default, will mirror Global Config\*\*
 
 ### Parameters
 
--   `conf`  the base currentConfig to use as siteConfig
+-   `conf`  The base currentConfig to use as siteConfig
 
-Returns **any** the siteConfig
+Returns **[object][5]** The siteConfig
 
-## getSiteConfig
+## parse
 
-## getSiteConfig
+### Parameters
 
-| Function      | Description                                       | Type        | Values                            |
-| ------------- | ------------------------------------------------- | ----------- | --------------------------------- |
-| setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig |
-
-**Notes**:
-Returns **any** values in siteConfig.
+-   `text`  
 
 Returns **any** 
+
+## getSiteConfig
+
+## getSiteConfig
+
+| Function      | Description                                       | Type        | Values                           |
+| ------------- | ------------------------------------------------- | ----------- | -------------------------------- |
+| setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in siteConfig |
+
+**Notes**: Returns **any** values in siteConfig.
+
+Returns **[object][5]** The siteConfig
 
 ## setConfig
 
@@ -1028,29 +962,27 @@ Returns **any**
 | ------------- | ------------------------------------- | ----------- | --------------------------------------- |
 | setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
 
-**Notes**:
-Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
-values found in conf with key found in siteConfig.secure will be replaced with the corresponding
-siteConfig value.
+**Notes**: Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure
+keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
+corresponding siteConfig value.
 
 ### Parameters
 
--   `conf`  the potential currentConfig
+-   `conf` **any** The potential currentConfig
 
-Returns **any** the currentConfig merged with the sanitized conf
-
-## getConfig
+Returns **any** The currentConfig merged with the sanitized conf
 
 ## getConfig
 
-| Function  | Description               | Type        | Return Values                 |
-| --------- | ------------------------- | ----------- | ----------------------------- |
-| getConfig | Obtains the currentConfig | Get Request | Any Values from currentConfig |
+## getConfig
 
-**Notes**:
-Returns **any** the currentConfig
+| Function  | Description               | Type        | Return Values                  |
+| --------- | ------------------------- | ----------- | ------------------------------ |
+| getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
 
-Returns **any** the currentConfig
+**Notes**: Returns **any** the currentConfig
+
+Returns **any** The currentConfig
 
 ## sanitize
 
@@ -1060,12 +992,20 @@ Returns **any** the currentConfig
 | -------- | -------------------------------------- | ----------- | ------ |
 | sanitize | Sets the siteConfig to desired values. | Put Request | None   |
 
-Ensures options parameter does not attempt to override siteConfig secure keys
-Note: modifies options in-place
+Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
+options in-place
 
 ### Parameters
 
--   `options`  the potential setConfig parameter
+-   `options` **any** The potential setConfig parameter
+
+## addDirective
+
+Pushes in a directive to the configuration
+
+### Parameters
+
+-   `directive` **[object][5]** The directive to push in
 
 ## reset
 
@@ -1075,42 +1015,53 @@ Note: modifies options in-place
 | -------- | ---------------------------- | ----------- | -------- | ------ |
 | reset    | Resets currentConfig to conf | Put Request | Required | None   |
 
+## conf
+
 | Parameter | Description                                                   | Type       | Required | Values                                       |
 | --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
 | conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
 
-\*Notes :
-(default: current siteConfig ) (optional, default `getSiteConfig()`)
-
-### Parameters
-
--   `conf`  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
+**Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
 ## render
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
 
-```js
+```javascript
 mermaidAPI.initialize({
-     startOnLoad:true
- });
- $(function(){
-     const graphDefinition = 'graph TB\na-->b';
-     const cb = function(svgGraph){
-         console.log(svgGraph);
-     };
-     mermaidAPI.render('id1',graphDefinition,cb);
- });
+  startOnLoad: true,
+});
+$(function () {
+  const graphDefinition = 'graph TB\na-->b';
+  const cb = function (svgGraph) {
+    console.log(svgGraph);
+  };
+  mermaidAPI.render('id1', graphDefinition, cb);
+});
 ```
 
 ### Parameters
 
--   `id`  the id of the element to be rendered
--   `_txt`  the graph definition
--   `cb`  callback which is called after rendering is finished with the svg code as inparam.
--   `container`  selector to element in which a div with the graph temporarily will be inserted. In one is
-    provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
-    completed.
+-   `id` **any** The id of the element to be rendered
+-   `_txt` **any** The graph definition
+-   `cb` **any** Callback which is called after rendering is finished with the svg code as inparam.
+-   `container` **any** Selector to element in which a div with the graph temporarily will be
+      inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
+      element will be removed when rendering is completed.
+
+Returns **any** 
+
+## updateRendererConfigs
+
+### Parameters
+
+-   `conf` **any** 
+
+## initialize
+
+### Parameters
+
+-   `options` **any** 
 
 ## 
 
@@ -1119,58 +1070,58 @@ mermaidAPI.initialize({
 ```html
 <script>
   var config = {
-    theme:'default',
-    logLevel:'fatal',
-    securityLevel:'strict',
-    startOnLoad:true,
-    arrowMarkerAbsolute:false,
+    theme: 'default',
+    logLevel: 'fatal',
+    securityLevel: 'strict',
+    startOnLoad: true,
+    arrowMarkerAbsolute: false,
 
-    er:{
-      diagramPadding:20,
-      layoutDirection:'TB',
-      minEntityWidth:100,
-      minEntityHeight:75,
-      entityPadding:15,
-      stroke:'gray',
-      fill:'honeydew',
-      fontSize:12,
-      useMaxWidth:true,
+    er: {
+      diagramPadding: 20,
+      layoutDirection: 'TB',
+      minEntityWidth: 100,
+      minEntityHeight: 75,
+      entityPadding: 15,
+      stroke: 'gray',
+      fill: 'honeydew',
+      fontSize: 12,
+      useMaxWidth: true,
     },
-    flowchart:{
-      diagramPadding:8,
-      htmlLabels:true,
-      curve:'basis',
+    flowchart: {
+      diagramPadding: 8,
+      htmlLabels: true,
+      curve: 'basis',
     },
-    sequence:{
-      diagramMarginX:50,
-      diagramMarginY:10,
-      actorMargin:50,
-      width:150,
-      height:65,
-      boxMargin:10,
-      boxTextMargin:5,
-      noteMargin:10,
-      messageMargin:35,
-      messageAlign:'center',
-      mirrorActors:true,
-      bottomMarginAdj:1,
-      useMaxWidth:true,
-      rightAngles:false,
-      showSequenceNumbers:false,
+    sequence: {
+      diagramMarginX: 50,
+      diagramMarginY: 10,
+      actorMargin: 50,
+      width: 150,
+      height: 65,
+      boxMargin: 10,
+      boxTextMargin: 5,
+      noteMargin: 10,
+      messageMargin: 35,
+      messageAlign: 'center',
+      mirrorActors: true,
+      bottomMarginAdj: 1,
+      useMaxWidth: true,
+      rightAngles: false,
+      showSequenceNumbers: false,
     },
-    gantt:{
-      titleTopMargin:25,
-      barHeight:20,
-      barGap:4,
-      topPadding:50,
-      leftPadding:75,
-      gridLineStartPadding:35,
-      fontSize:11,
-      fontFamily:'"Open-Sans", "sans-serif"',
-      numberSectionStyles:4,
-      axisFormat:'%Y-%m-%d',
-      topAxis:false,
-    }
+    gantt: {
+      titleTopMargin: 25,
+      barHeight: 20,
+      barGap: 4,
+      topPadding: 50,
+      leftPadding: 75,
+      gridLineStartPadding: 35,
+      fontSize: 11,
+      fontFamily: '"Open-Sans", "sans-serif"',
+      numberSectionStyles: 4,
+      axisFormat: '%Y-%m-%d',
+      topAxis: false,
+    },
   };
   mermaid.initialize(config);
 </script>
@@ -1178,10 +1129,10 @@ mermaidAPI.initialize({
 
 [1]: https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js
 
-[2]: img/GitHub-Mark-32px.png
+[2]: Setup.md?id=render
 
-[3]: Setup.md?id=render
+[3]: 8.6.0_docs.md
 
-[4]: 8.6.0_docs.md
+[4]: #mermaidapi-configuration-defaults
 
-[5]: #mermaidapi-configuration-defaults
+[5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object

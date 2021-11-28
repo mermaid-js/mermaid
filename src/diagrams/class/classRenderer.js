@@ -18,21 +18,24 @@ const conf = {
   textHeight: 10,
 };
 
-// Todo optimize
+/**
+ * Gets the ID with the same label as in the cache
+ *
+ * @param {string} label The label to look for
+ * @returns {string} The resulting ID
+ */
 const getGraphId = function (label) {
-  const keys = Object.keys(idCache);
+  const foundEntry = Object.entries(idCache).find((entry) => entry[1].label === label);
 
-  for (let i = 0; i < keys.length; i++) {
-    if (idCache[keys[i]].label === label) {
-      return keys[i];
-    }
+  if (foundEntry) {
+    return foundEntry[0];
   }
-
-  return undefined;
 };
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param {SVGSVGElement} elem The SVG element to append to
  */
 const insertMarkers = function (elem) {
   elem
@@ -136,6 +139,11 @@ const insertMarkers = function (elem) {
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
 
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ *
+ * @param {object} cnf Config to merge
+ */
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
 
@@ -146,8 +154,9 @@ export const setConf = function (cnf) {
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {string} text
+ * @param {string} id
  */
 export const draw = function (text, id) {
   idCache = {};

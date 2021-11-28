@@ -41,19 +41,21 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
   currentConfig = cfg;
   return cfg;
 };
+
 /**
- *## setSiteConfig
- *| Function | Description         | Type    | Values             |
- *| --------- | ------------------- | ------- | ------------------ |
- *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
- ***Notes:**
- *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
- *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
- *to the defaultConfig
- *Note: currentConfig is set in this function
- **Default value: At default, will mirror Global Config**
- * @param conf - the base currentConfig to use as siteConfig
- * @returns {*} - the siteConfig
+ * ## setSiteConfig
+ *
+ * | Function      | Description                           | Type        | Values                                  |
+ * | ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+ * | setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+ *
+ * **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
+ * to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
+ * will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
+ * function *Default value: At default, will mirror Global Config**
+ *
+ * @param conf - The base currentConfig to use as siteConfig
+ * @returns {object} - The siteConfig
  */
 export const setSiteConfig = (conf) => {
   siteConfig = assignWithDepth({}, defaultConfig);
@@ -78,28 +80,32 @@ export const updateSiteConfig = (conf) => {
   return siteConfig;
 };
 /**
- *## getSiteConfig
- *| Function | Description         | Type    |  Values             |
- *| --------- | ------------------- | ------- |  ------------------ |
- *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
- ***Notes**:
- *Returns **any** values in siteConfig.
- * @returns {*}
+ * ## getSiteConfig
+ *
+ * | Function      | Description                                       | Type        | Values                           |
+ * | ------------- | ------------------------------------------------- | ----------- | -------------------------------- |
+ * | setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values in siteConfig |
+ *
+ * **Notes**: Returns **any** values in siteConfig.
+ *
+ * @returns {object} - The siteConfig
  */
 export const getSiteConfig = () => {
   return assignWithDepth({}, siteConfig);
 };
 /**
- *## setConfig
- *| Function  | Description         | Type    | Values             |
- *| --------- | ------------------- | ------- | ------------------ |
- *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
- ***Notes**:
- *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
- *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
- *siteConfig value.
- * @param conf - the potential currentConfig
- * @returns {*} - the currentConfig merged with the sanitized conf
+ * ## setConfig
+ *
+ * | Function      | Description                           | Type        | Values                                  |
+ * | ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+ * | setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+ *
+ * **Notes**: Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure
+ * keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
+ * corresponding siteConfig value.
+ *
+ * @param {any} conf - The potential currentConfig
+ * @returns {any} - The currentConfig merged with the sanitized conf
  */
 export const setConfig = (conf) => {
   // sanitize(conf);
@@ -114,25 +120,30 @@ export const setConfig = (conf) => {
 };
 
 /**
- *   ## getConfig
- *| Function  | Description         | Type    | Return Values            |
- *| --------- | ------------------- | ------- | ------------------ |
- *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
- ***Notes**:
- *Returns **any** the currentConfig
- * @returns {*} - the currentConfig
+ * ## getConfig
+ *
+ * | Function  | Description               | Type        | Return Values                  |
+ * | --------- | ------------------------- | ----------- | ------------------------------ |
+ * | getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
+ *
+ * **Notes**: Returns **any** the currentConfig
+ *
+ * @returns {any} - The currentConfig
  */
 export const getConfig = () => {
   return assignWithDepth({}, currentConfig);
 };
 /**
- *## sanitize
- *| Function | Description         | Type    | Values             |
- *| --------- | ------------------- | ------- | ------------------ |
- *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
- *Ensures options parameter does not attempt to override siteConfig secure keys
- *Note: modifies options in-place
- * @param options - the potential setConfig parameter
+ * ## sanitize
+ *
+ * | Function | Description                            | Type        | Values |
+ * | -------- | -------------------------------------- | ----------- | ------ |
+ * | sanitize | Sets the siteConfig to desired values. | Put Request | None   |
+ *
+ * Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
+ * options in-place
+ *
+ * @param {any} options - The potential setConfig parameter
  */
 export const sanitize = (options) => {
   // Checking that options are not in the list of excluded options
@@ -172,6 +183,11 @@ export const sanitize = (options) => {
   });
 };
 
+/**
+ * Pushes in a directive to the configuration
+ *
+ * @param {object} directive The directive to push in
+ */
 export const addDirective = (directive) => {
   if (directive.fontFamily) {
     if (!directive.themeVariables) {
@@ -187,18 +203,19 @@ export const addDirective = (directive) => {
 };
 
 /**
- *## reset
- *| Function | Description         | Type    | Required | Values             |
- *| --------- | ------------------- | ------- | -------- | ------------------ |
- *| reset|Resets currentConfig to conf| Put Request | Required | None|
+ * ## reset
  *
- *| Parameter | Description |Type | Required | Values|
- *| --- | --- | --- | --- | --- |
- *| conf| base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array|
+ * | Function | Description                  | Type        | Required | Values |
+ * | -------- | ---------------------------- | ----------- | -------- | ------ |
+ * | reset    | Resets currentConfig to conf | Put Request | Required | None   |
  *
- **Notes :
- (default: current siteConfig ) (optional, default `getSiteConfig()`)
- * @param conf  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
+ * ## conf
+ *
+ * | Parameter | Description                                                   | Type       | Required | Values                                       |
+ * | --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+ * | conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
+ *
+ * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
  */
 export const reset = () => {
   // Replace current config with siteConfig

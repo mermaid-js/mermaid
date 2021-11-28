@@ -29,6 +29,7 @@ export const parseDirective = function (statement, context, type) {
 
 /**
  * Function to lookup domId from id in the graph definition.
+ *
  * @param id
  * @public
  */
@@ -44,11 +45,13 @@ export const lookUpDomId = function (id) {
 
 /**
  * Function called by parser when a node definition has been found
- * @param id
+ *
+ * @param _id
  * @param text
  * @param type
  * @param style
  * @param classes
+ * @param dir
  * @param props
  */
 export const addVertex = function (_id, text, type, style, classes, dir, props = {}) {
@@ -112,8 +115,9 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
 
 /**
  * Function called by parser when a link/edge definition has been found
- * @param start
- * @param end
+ *
+ * @param _start
+ * @param _end
  * @param type
  * @param linktext
  */
@@ -154,8 +158,9 @@ export const addLink = function (_start, _end, type, linktext) {
 
 /**
  * Updates a link's line interpolation algorithm
- * @param pos
- * @param interpolate
+ *
+ * @param positions
+ * @param interp
  */
 export const updateLinkInterpolate = function (positions, interp) {
   positions.forEach(function (pos) {
@@ -169,7 +174,8 @@ export const updateLinkInterpolate = function (positions, interp) {
 
 /**
  * Updates a link with a style
- * @param pos
+ *
+ * @param positions
  * @param style
  */
 export const updateLink = function (positions, style) {
@@ -206,6 +212,7 @@ export const addClass = function (id, style) {
 
 /**
  * Called by parser when a graph definition is found, stores the direction of the chart.
+ *
  * @param dir
  */
 export const setDirection = function (dir) {
@@ -226,6 +233,7 @@ export const setDirection = function (dir) {
 
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
+ *
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
@@ -300,8 +308,10 @@ const setClickFun = function (id, functionName, functionArgs) {
 
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
+ *
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
+ * @param target
  */
 export const setLink = function (ids, linkStr, target) {
   ids.split(',').forEach(function (id) {
@@ -318,9 +328,10 @@ export const getTooltip = function (id) {
 
 /**
  * Called by parser when a click definition is found. Registers an event handler.
+ *
  * @param ids Comma separated list of ids
  * @param functionName Function to be called on click
- * @param tooltip Tooltip for the clickable element
+ * @param functionArgs
  */
 export const setClickEvent = function (ids, functionName, functionArgs) {
   ids.split(',').forEach(function (id) {
@@ -339,7 +350,8 @@ export const getDirection = function () {
 };
 /**
  * Retrieval function for fetching the found nodes after parsing has completed.
- * @returns {{}|*|vertices}
+ *
+ * @returns {{} | any | vertices}
  */
 export const getVertices = function () {
   return vertices;
@@ -347,7 +359,8 @@ export const getVertices = function () {
 
 /**
  * Retrieval function for fetching the found links after parsing has completed.
- * @returns {{}|*|edges}
+ *
+ * @returns {{} | any | edges}
  */
 export const getEdges = function () {
   return edges;
@@ -355,7 +368,8 @@ export const getEdges = function () {
 
 /**
  * Retrieval function for fetching the found class definitions after parsing has completed.
- * @returns {{}|*|classes}
+ *
+ * @returns {{} | any | classes}
  */
 export const getClasses = function () {
   return classes;
@@ -398,6 +412,8 @@ funs.push(setupToolTips);
 
 /**
  * Clears the internal graph db so that a new graph can be parsed.
+ *
+ * @param ver
  */
 export const clear = function (ver) {
   vertices = {};
@@ -415,16 +431,17 @@ export const clear = function (ver) {
 export const setGen = (ver) => {
   version = ver || 'gen-1';
 };
-/**
- *
- * @returns {string}
- */
+/** @returns {string} */
 export const defaultStyle = function () {
   return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
 };
 
 /**
  * Clears the internal graph db so that a new graph can be parsed.
+ *
+ * @param _id
+ * @param list
+ * @param _title
  */
 export const addSubGraph = function (_id, list, _title) {
   // console.log('addSubGraph', _id, list, _title);
@@ -433,6 +450,7 @@ export const addSubGraph = function (_id, list, _title) {
   if (_id === _title && _title.match(/\s/)) {
     id = undefined;
   }
+  /** @param a */
   function uniq(a) {
     const prims = { boolean: {}, number: {}, string: {} };
     const objs = [];
@@ -476,9 +494,7 @@ export const addSubGraph = function (_id, list, _title) {
 
   log.info('Adding', subGraph.id, subGraph.nodes, subGraph.dir);
 
-  /**
-   * Deletes an id from all subgraphs
-   */
+  /** Deletes an id from all subgraphs */
   // const del = _id => {
   //   subGraphs.forEach(sg => {
   //     const pos = sg.nodes.indexOf(_id);
@@ -703,6 +719,9 @@ const exists = (allSgs, _id) => {
 };
 /**
  * Deletes an id from all subgraphs
+ *
+ * @param sg
+ * @param allSubgraphs
  */
 const makeUniq = (sg, allSubgraphs) => {
   const res = [];

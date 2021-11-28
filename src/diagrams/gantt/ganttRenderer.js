@@ -1,3 +1,4 @@
+import moment from 'moment-mini';
 import {
   select,
   scaleTime,
@@ -70,6 +71,10 @@ export const draw = function (text, id) {
 
   categories = checkUnique(categories);
 
+  /**
+   * @param a
+   * @param b
+   */
   function taskCompare(a, b) {
     const taskA = a.startTime;
     const taskB = b.startTime;
@@ -97,6 +102,11 @@ export const draw = function (text, id) {
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText');
 
+  /**
+   * @param tasks
+   * @param pageWidth
+   * @param pageHeight
+   */
   function makeGant(tasks, pageWidth, pageHeight) {
     const barHeight = conf.barHeight;
     const gap = barHeight + conf.barGap;
@@ -108,12 +118,31 @@ export const draw = function (text, id) {
       .range(['#00B9FA', '#F95002'])
       .interpolate(interpolateHcl);
 
+    drawExcludeDays(
+      gap,
+      topPadding,
+      leftPadding,
+      pageWidth,
+      pageHeight,
+      tasks,
+      parser.yy.getExcludes(),
+      parser.yy.getIncludes()
+    );
     makeGrid(leftPadding, topPadding, pageWidth, pageHeight);
     drawRects(tasks, gap, topPadding, leftPadding, barHeight, colorScale, pageWidth, pageHeight);
     vertLabels(gap, topPadding, leftPadding, barHeight, colorScale);
     drawToday(leftPadding, topPadding, pageWidth, pageHeight);
   }
 
+  /**
+   * @param theArray
+   * @param theGap
+   * @param theTopPad
+   * @param theSidePad
+   * @param theBarHeight
+   * @param theColorScale
+   * @param w
+   */
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
@@ -341,7 +370,84 @@ export const draw = function (text, id) {
         }
       });
   }
+  /**
+   * @param theGap
+   * @param theTopPad
+   * @param theSidePad
+   * @param w
+   * @param h
+   * @param tasks
+   * @param excludes
+   * @param includes
+   */
+  function drawExcludeDays(theGap, theTopPad, theSidePad, w, h, tasks, excludes, includes) {
+    const minTime = tasks.reduce(
+      (min, { startTime }) => (min ? Math.min(min, startTime) : startTime),
+      0
+    );
+    const maxTime = tasks.reduce((max, { endTime }) => (max ? Math.max(max, endTime) : endTime), 0);
+    const dateFormat = parser.yy.getDateFormat();
+    if (!minTime || !maxTime) return;
 
+    const excludeRanges = [];
+    let range = null;
+    let d = moment(minTime);
+    while (d.valueOf() <= maxTime) {
+      if (parser.yy.isInvalidDate(d, dateFormat, excludes, includes)) {
+        if (!range) {
+          range = {
+            start: d.clone(),
+            end: d.clone(),
+          };
+        } else {
+          range.end = d.clone();
+        }
+      } else {
+        if (range) {
+          excludeRanges.push(range);
+          range = null;
+        }
+      }
+      d.add(1, 'd');
+    }
+
+    const rectangles = svg.append('g').selectAll('rect').data(excludeRanges).enter();
+
+    rectangles
+      .append('rect')
+      .attr('id', function (d) {
+        return 'exclude-' + d.start.format('YYYY-MM-DD');
+      })
+      .attr('x', function (d) {
+        return timeScale(d.start) + theSidePad;
+      })
+      .attr('y', conf.gridLineStartPadding)
+      .attr('width', function (d) {
+        const renderEnd = d.end.clone().add(1, 'day');
+        return timeScale(renderEnd) - timeScale(d.start);
+      })
+      .attr('height', h - theTopPad - conf.gridLineStartPadding)
+      .attr('transform-origin', function (d, i) {
+        return (
+          (
+            timeScale(d.start) +
+            theSidePad +
+            0.5 * (timeScale(d.end) - timeScale(d.start))
+          ).toString() +
+          'px ' +
+          (i * theGap + 0.5 * h).toString() +
+          'px'
+        );
+      })
+      .attr('class', 'exclude-range');
+  }
+
+  /**
+   * @param theSidePad
+   * @param theTopPad
+   * @param w
+   * @param h
+   */
   function makeGrid(theSidePad, theTopPad, w, h) {
     let bottomXAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
@@ -378,6 +484,10 @@ export const draw = function (text, id) {
     }
   }
 
+  /**
+   * @param theGap
+   * @param theTopPad
+   */
   function vertLabels(theGap, theTopPad) {
     const numOccurances = [];
     let prevGap = 0;
@@ -431,6 +541,12 @@ export const draw = function (text, id) {
       });
   }
 
+  /**
+   * @param theSidePad
+   * @param theTopPad
+   * @param w
+   * @param h
+   */
   function drawToday(theSidePad, theTopPad, w, h) {
     const todayMarker = ganttDb.getTodayMarker();
     if (todayMarker === 'off') {
@@ -453,12 +569,18 @@ export const draw = function (text, id) {
     }
   }
 
-  // from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
+  /**
+   * From this stackexchange question:
+   * http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
+   *
+   * @param arr
+   */
   function checkUnique(arr) {
     const hash = {};
     const result = [];
     for (let i = 0, l = arr.length; i < l; ++i) {
-      if (!hash.hasOwnProperty(arr[i])) { // eslint-disable-line
+      if (!Object.prototype.hasOwnProperty.call(hash, arr[i])) {
+        // eslint-disable-line
         // it works with objects! in FF, at least
         hash[arr[i]] = true;
         result.push(arr[i]);
@@ -467,7 +589,12 @@ export const draw = function (text, id) {
     return result;
   }
 
-  // from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
+  /**
+   * From this stackexchange question:
+   * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
+   *
+   * @param arr
+   */
   function getCounts(arr) {
     let i = arr.length; // const to loop over
     const obj = {}; // obj to store results
@@ -477,7 +604,12 @@ export const draw = function (text, id) {
     return obj;
   }
 
-  // get specific from everything
+  /**
+   * Get specific from everything
+   *
+   * @param word
+   * @param arr
+   */
   function getCount(word, arr) {
     return getCounts(arr)[word] || 0;
   }

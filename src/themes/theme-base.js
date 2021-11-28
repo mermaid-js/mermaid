@@ -3,7 +3,10 @@ import { mkBorder } from './theme-helpers';
 class Theme {
   constructor() {
     /** # Base variables */
-    /** * background - used to know what the background color is of the diagram. This is used for deducing colors for istance line color. Defaulr value is #f4f4f4. */
+    /**
+     * - Background - used to know what the background color is of the diagram. This is used for
+     *   deducing colors for istance line color. Defaulr value is #f4f4f4.
+     */
     this.background = '#f4f4f4';
     this.darkMode = false;
 
@@ -92,6 +95,7 @@ class Theme {
     this.altSectionBkgColor = this.altSectionBkgColor || 'white';
     this.sectionBkgColor = this.sectionBkgColor || this.secondaryColor;
     this.sectionBkgColor2 = this.sectionBkgColor2 || this.primaryColor;
+    this.excludeBkgColor = this.excludeBkgColor || '#eeeeee';
     this.taskBorderColor = this.taskBorderColor || this.primaryBorderColor;
     this.taskBkgColor = this.taskBkgColor || this.primaryColor;
     this.activeTaskBorderColor = this.activeTaskBorderColor || this.primaryColor;

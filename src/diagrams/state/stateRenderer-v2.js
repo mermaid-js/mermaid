@@ -20,7 +20,9 @@ let nodeDb = {};
 
 /**
  * Returns the all the styles from classDef statements in the graph definition.
- * @returns {object} classDef styles
+ *
+ * @param {any} text
+ * @returns {object} ClassDef styles
  */
 export const getClasses = function (text) {
   log.trace('Extracting classes');
@@ -77,6 +79,10 @@ const setupNode = (g, parent, node, altFlag) => {
           nodeDb[node.id].description = node.description;
         }
       }
+      nodeDb[node.id].description = common.sanitizeTextOrArray(
+        nodeDb[node.id].description,
+        getConfig()
+      );
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
@@ -194,7 +200,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
         arrowTypeEnd: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
-        label: item.description,
+        label: common.sanitizeText(item.description, getConfig()),
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
@@ -223,8 +229,9 @@ const getDir = (nodes, defaultDir) => {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
 export const draw = function (text, id) {
   log.info('Drawing state diagram (v2)', id);

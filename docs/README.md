@@ -48,7 +48,7 @@ For a more detailed introduction to Mermaid and some of it's basic uses, refer t
 
 ### [Flowchart](./flowchart.md?id=flowcharts-basic-syntax)
 
-```
+```mmd
 graph TD;
     A-->B;
     A-->C;
@@ -60,7 +60,7 @@ graph TD;
 
 ### [Sequence diagram](./sequenceDiagram.md)
 
-```
+```mmd
 sequenceDiagram
     participant Alice
     participant Bob
@@ -78,7 +78,7 @@ sequenceDiagram
 
 ### [Gantt diagram](./gantt.md)
 
-```
+```mmd
 gantt
 dateFormat  YYYY-MM-DD
 title Adding GANTT diagram to mermaid
@@ -95,7 +95,7 @@ Future task2               :         des4, after des3, 5d
 
 ### [Class diagram](./classDiagram.md)
 
-```
+```mmd
 classDiagram
 Class01 <|-- AveryLongClass : Cool
 Class03 *-- Class04
@@ -116,7 +116,7 @@ Class08 <--> C2: Cool label
 
 ### Git graph - :exclamation: experimental
 
-```
+```mmd
 gitGraph:
 options
 {
@@ -139,7 +139,7 @@ merge newbranch
 
 ### [Entity Relationship Diagram - :exclamation: experimental](./entityRelationshipDiagram.md)
 
-```
+```mmd
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
@@ -151,7 +151,7 @@ erDiagram
 
 ### [User Journey Diagram](./user-journey.md)
 
-```markdown
+```mmd
 journey
     title My working day
     section Go to work
@@ -199,7 +199,7 @@ To Deploy Mermaid:
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({startOnLoad:true});</script>
 ```
-**Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitons and render them into svg charts.**
+**Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitions and render them into svg charts.**
 
  **Examples can be found at** [Other examples](/examples)
 
@@ -229,19 +229,19 @@ Don't hesitate to contact me if you want to get involved!
 
 ### Setup
 
-```
+```sh
 yarn install
 ```
 
 ### Build
 
-```
+```sh
 yarn build:watch
 ```
 
 ### Lint
 
-```
+```sh
 yarn lint
 ```
 
@@ -250,7 +250,7 @@ We recommend you to install [editor plugins](https://eslint.org/docs/user-guide/
 
 ### Test
 
-```
+```sh
 yarn test
 ```
 Manual test in browser: open `dist/index.html`
@@ -261,7 +261,7 @@ For those who have the permission to do so:
 
 Update version number in `package.json`.
 
-```
+```sh
 npm publish
 ```
 

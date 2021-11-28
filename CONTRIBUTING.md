@@ -11,7 +11,7 @@ Here are a few things to know to get you started on the right path.
 We make all changes via pull requests. As we have many pull requests from developers new to mermaid, the current approach is to have *knsv, Knut Sveidqvist* as a main reviewer of changes and merging pull requests. More precisely like this:
 
 * Large changes reviewed by knsv or other developer asked to review by knsv
-* Smaller low-risk changes like dependecies, documentation etc can be merged by active collaborators
+* Smaller low-risk changes like dependencies, documentation etc can be merged by active collaborators
 * documentation (updates to the docs folder is also allowed via direct commits)
 
 To commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and some describing text.
@@ -35,13 +35,13 @@ The documentation is written in Markdown, for more information about Markdown [s
 
 If you want to preview the documentation site on your machine, you need to install `docsify-cli`:
 
-```
+```sh
 $ npm i docsify-cli -g
-````
+```
 
 If you are more familiar with Yarn, you can use the following command:
 
-```
+```sh
 $ yarn global add docsify-cli
 ```
 
@@ -50,7 +50,7 @@ If the installation is successful, the command `docsify` will be available in yo
 
 You can now run the following command to serve the documentation site:
 
-```
+```sh
 $ docsify serve docs
 ```
 
@@ -85,7 +85,7 @@ The rendering tests are very straightforward to create. There is a function imgS
 When running in ci it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag for review it if it differs.
 
 This is what a rendering test looks like:
-```
+```javascript
   it('should render forks and joins', () => {
     imgSnapshotTest(
       `

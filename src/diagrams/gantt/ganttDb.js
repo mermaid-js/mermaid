@@ -8,6 +8,7 @@ import mermaidAPI from '../../mermaidAPI';
 let dateFormat = '';
 let axisFormat = '';
 let todayMarker = '';
+let includes = [];
 let excludes = [];
 let title = '';
 let sections = [];
@@ -38,6 +39,7 @@ export const clear = function () {
   dateFormat = '';
   axisFormat = '';
   todayMarker = '';
+  includes = [];
   excludes = [];
   inclusiveEndDates = false;
   topAxis = false;
@@ -84,6 +86,13 @@ export const getDateFormat = function () {
   return dateFormat;
 };
 
+export const setIncludes = function (txt) {
+  includes = txt.toLowerCase().split(/[\s,]+/);
+};
+
+export const getIncludes = function () {
+  return includes;
+};
 export const setExcludes = function (txt) {
   excludes = txt.toLowerCase().split(/[\s,]+/);
 };
@@ -123,7 +132,10 @@ export const getTasks = function () {
   return tasks;
 };
 
-const isInvalidDate = function (date, dateFormat, excludes) {
+export const isInvalidDate = function (date, dateFormat, excludes, includes) {
+  if (includes.indexOf(date.format(dateFormat.trim())) >= 0) {
+    return false;
+  }
   if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
     return true;
   }
@@ -133,24 +145,24 @@ const isInvalidDate = function (date, dateFormat, excludes) {
   return excludes.indexOf(date.format(dateFormat.trim())) >= 0;
 };
 
-const checkTaskDates = function (task, dateFormat, excludes) {
+const checkTaskDates = function (task, dateFormat, excludes, includes) {
   if (!excludes.length || task.manualEndTime) return;
   let startTime = moment(task.startTime, dateFormat, true);
   startTime.add(1, 'd');
   let endTime = moment(task.endTime, dateFormat, true);
-  let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes);
+  let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes, includes);
   task.endTime = endTime.toDate();
   task.renderEndTime = renderEndTime;
 };
 
-const fixTaskDates = function (startTime, endTime, dateFormat, excludes) {
+const fixTaskDates = function (startTime, endTime, dateFormat, excludes, includes) {
   let invalid = false;
   let renderEndTime = null;
   while (startTime <= endTime) {
     if (!invalid) {
       renderEndTime = endTime.toDate();
     }
-    invalid = isInvalidDate(startTime, dateFormat, excludes);
+    invalid = isInvalidDate(startTime, dateFormat, excludes, includes);
     if (invalid) {
       endTime.add(1, 'd');
     }
@@ -306,7 +318,7 @@ const compileData = function (prevTask, dataStr) {
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
     task.manualEndTime = moment(endTimeData, 'YYYY-MM-DD', true).isValid();
-    checkTaskDates(task, dateFormat, excludes);
+    checkTaskDates(task, dateFormat, excludes, includes);
   }
 
   return task;
@@ -460,7 +472,7 @@ const compileTasks = function () {
           'YYYY-MM-DD',
           true
         ).isValid();
-        checkTaskDates(rawTasks[pos], dateFormat, excludes);
+        checkTaskDates(rawTasks[pos], dateFormat, excludes, includes);
       }
     }
 
@@ -478,8 +490,9 @@ const compileTasks = function () {
 
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
+ *
  * @param ids Comma separated list of ids
- * @param linkStr URL to create a link for
+ * @param _linkStr URL to create a link for
  */
 export const setLink = function (ids, _linkStr) {
   let linkStr = _linkStr;
@@ -499,6 +512,7 @@ export const setLink = function (ids, _linkStr) {
 
 /**
  * Called by parser when a special node is found, e.g. a clickable element.
+ *
  * @param ids Comma separated list of ids
  * @param className Class to add
  */
@@ -548,7 +562,9 @@ const setClickFun = function (id, functionName, functionArgs) {
 };
 
 /**
- * The callbackFunction is executed in a click event bound to the task with the specified id or the task's assigned text
+ * The callbackFunction is executed in a click event bound to the task with the specified id or the
+ * task's assigned text
+ *
  * @param id The task's id
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
@@ -575,6 +591,7 @@ const pushFun = function (id, callbackFunction) {
 
 /**
  * Called by parser when a click definition is found. Registers an event handler.
+ *
  * @param ids Comma separated list of ids
  * @param functionName Function to be called on click
  * @param functionArgs Function args the function should be called with
@@ -588,6 +605,7 @@ export const setClickEvent = function (ids, functionName, functionArgs) {
 
 /**
  * Binds all functions previously added to fun (specified through click) to the element
+ *
  * @param element
  */
 export const bindFunctions = function (element) {
@@ -618,14 +636,22 @@ export default {
   addTask,
   findTaskById,
   addTaskOrg,
+  setIncludes,
+  getIncludes,
   setExcludes,
   getExcludes,
   setClickEvent,
   setLink,
   bindFunctions,
   durationToDate,
+  isInvalidDate,
 };
 
+/**
+ * @param data
+ * @param task
+ * @param tags
+ */
 function getTaskTags(data, task, tags) {
   let matchFound = true;
   while (matchFound) {

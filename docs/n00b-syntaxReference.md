@@ -10,18 +10,7 @@ One would notice that all **Diagrams definitions begin** with a declaration of t
 
 **Example** :  The code below is for an Entity Relationship Diagram, specified by the `erDiagram` declaration. What follows is the definition of the different `Entities` represented in it.
 
-```
-erDiagram
-          CUSTOMER }|..|{ DELIVERY-ADDRESS : has
-          CUSTOMER ||--o{ ORDER : places
-          CUSTOMER ||--o{ INVOICE : "liable for"
-          DELIVERY-ADDRESS ||--o{ ORDER : receives
-          INVOICE ||--|{ ORDER : covers
-          ORDER ||--|{ ORDER-ITEM : includes
-          PRODUCT-CATEGORY ||--|{ PRODUCT : contains
-          PRODUCT ||--o{ ORDER-ITEM : "ordered in"
-```
-```mermaid
+```mermaid-example
 erDiagram
           CUSTOMER }|..|{ DELIVERY-ADDRESS : has
           CUSTOMER ||--o{ ORDER : places
@@ -62,9 +51,10 @@ Configuration is the third part of Mermaid, after deployment and syntax. It deal
 
 If you are interested in altering and customizing your Mermaid Diagrams, you will find the methods and values available for [Configuration](./Setup.md) here. It includes themes.
 This section will introduce the different methods of configuring the behaviors and appearances of Mermaid Diagrams. 
-The following are the most commonly used methods, and they are all tied to Mermaid [Deployment](./n00b-gettingStarted.md) methods. 
+The following are the most commonly used methods, and they are all tied to Mermaid [Deployment](./n00b-gettingStarted.md) methods.
 
-### Configuration Section in the [Live Editor](./Live-Editor.md). 
+### Configuration Section in the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor).
+
 Here you can edit certain values to change the behavior and appearance of the diagram. 
 
 ### [The initialize() call](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted?id=_3-calling-the-javascript-api), 
@@ -72,7 +62,7 @@ Used when Mermaid is called via an API, or through a `<script>` tag.
 
 
 ### [Directives](./directives.md),
-Allows for the limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram. You can pass a directive alongside your defintion inside `%%{ }%%`. It can be done either above or below your diagram definition. 
+Allows for the limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram. You can pass a directive alongside your definition inside `%%{ }%%`. It can be done either above or below your diagram definition. 
 
 ### [Theme Manipulation](./theming.md):
 An application of using Directives to change [Themes](./theming.md). `Theme` is a value within Mermaid's configuration that dictates the color scheme for diagrams. 

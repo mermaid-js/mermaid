@@ -1,13 +1,15 @@
 /**
- *Edit this Page[![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js)
+ * Edit this
+ * Page[[N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js)
  *
- *This is the API to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
- *
+ * This is the API to be used when optionally handling the integration with the web page, instead of
+ * using the default integration provided by mermaid.js.
  *
  * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
  * definition as text, renders the graph/diagram and returns an svg element for the graph.
  *
- * It is is then up to the user of the API to make use of the svg, either insert it somewhere in the page or do something completely different.
+ * It is is then up to the user of the API to make use of the svg, either insert it somewhere in the
+ * page or do something completely different.
  *
  * In addition to the render function, a number of behavioral configuration options are available.
  *
@@ -54,21 +56,16 @@ import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import errorRenderer from './errorRenderer';
-
-// import * as configApi from './config';
-// // , {
-// //   setConfig,
-// //   configApi.getConfig,
-// //   configApi.updateSiteConfig,
-// //   configApi.setSiteConfig,
-// //   configApi.getSiteConfig,
-// //   configApi.defaultConfig
-// // }
+import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
 import utils, { directiveSanitizer, assignWithDepth } from './utils';
 
+/**
+ * @param text
+ * @returns {any}
+ */
 function parse(text) {
   const cnf = configApi.getConfig();
   const graphInit = utils.detectInit(text, cnf);
@@ -200,24 +197,26 @@ export const decodeEntities = function (text) {
 /**
  * Function that renders an svg with a graph from a chart definition. Usage example below.
  *
- * ```js
+ * ```javascript
  * mermaidAPI.initialize({
- *      startOnLoad:true
- *  });
- *  $(function(){
- *      const graphDefinition = 'graph TB\na-->b';
- *      const cb = function(svgGraph){
- *          console.log(svgGraph);
- *      };
- *      mermaidAPI.render('id1',graphDefinition,cb);
- *  });
- *```
- * @param id the id of the element to be rendered
- * @param _txt the graph definition
- * @param cb callback which is called after rendering is finished with the svg code as inparam.
- * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
- * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
- * completed.
+ *   startOnLoad: true,
+ * });
+ * $(function () {
+ *   const graphDefinition = 'graph TB\na-->b';
+ *   const cb = function (svgGraph) {
+ *     console.log(svgGraph);
+ *   };
+ *   mermaidAPI.render('id1', graphDefinition, cb);
+ * });
+ * ```
+ *
+ * @param {any} id The id of the element to be rendered
+ * @param {any} _txt The graph definition
+ * @param {any} cb Callback which is called after rendering is finished with the svg code as inparam.
+ * @param {any} container Selector to element in which a div with the graph temporarily will be
+ *   inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
+ *   element will be removed when rendering is completed.
+ * @returns {any}
  */
 const render = function (id, _txt, cb, container) {
   configApi.reset();
@@ -226,13 +225,6 @@ const render = function (id, _txt, cb, container) {
   if (graphInit) {
     configApi.addDirective(graphInit);
   }
-  // else {
-  //   configApi.reset();
-  //   const siteConfig = configApi.getSiteConfig();
-  //   configApi.addDirective(siteConfig);
-  // }
-  // console.warn('Render fetching config');
-
   let cnf = configApi.getConfig();
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
@@ -441,17 +433,6 @@ const render = function (id, _txt, cb, container) {
     .selectAll('foreignobject > *')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
-  // if (cnf.arrowMarkerAbsolute) {
-  //   url =
-  //     window.location.protocol +
-  //     '//' +
-  //     window.location.host +
-  //     window.location.pathname +
-  //     window.location.search;
-  //   url = url.replace(/\(/g, '\\(');
-  //   url = url.replace(/\)/g, '\\)');
-  // }
-
   // Fix for when the base tag is used
   let svgCode = select('#d' + id).node().innerHTML;
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
@@ -483,6 +464,7 @@ const render = function (id, _txt, cb, container) {
   } else {
     log.debug('CB = undefined!');
   }
+  attachFunctions();
 
   const node = select('#d' + id).node();
   if (node !== null && typeof node.remove === 'function') {
@@ -562,6 +544,7 @@ const handleDirective = function (p, directive, type) {
   }
 };
 
+/** @param {any} conf */
 function updateRendererConfigs(conf) {
   // Todo remove, all diagrams should get config on demoand from the config object, no need for this
   gitGraphRenderer.setConf(conf.git);
@@ -598,6 +581,7 @@ function reinitialize() {
   // log.debug('mermaidAPI.reinitialize: ', config);
 }
 
+/** @param {any} options */
 function initialize(options) {
   // console.warn(`mermaidAPI.initialize: v${pkg.version} `, options);
 
@@ -662,58 +646,58 @@ export default mermaidAPI;
  * ```html
  * <script>
  *   var config = {
- *     theme:'default',
- *     logLevel:'fatal',
- *     securityLevel:'strict',
- *     startOnLoad:true,
- *     arrowMarkerAbsolute:false,
+ *     theme: 'default',
+ *     logLevel: 'fatal',
+ *     securityLevel: 'strict',
+ *     startOnLoad: true,
+ *     arrowMarkerAbsolute: false,
  *
- *     er:{
- *       diagramPadding:20,
- *       layoutDirection:'TB',
- *       minEntityWidth:100,
- *       minEntityHeight:75,
- *       entityPadding:15,
- *       stroke:'gray',
- *       fill:'honeydew',
- *       fontSize:12,
- *       useMaxWidth:true,
+ *     er: {
+ *       diagramPadding: 20,
+ *       layoutDirection: 'TB',
+ *       minEntityWidth: 100,
+ *       minEntityHeight: 75,
+ *       entityPadding: 15,
+ *       stroke: 'gray',
+ *       fill: 'honeydew',
+ *       fontSize: 12,
+ *       useMaxWidth: true,
  *     },
- *     flowchart:{
- *       diagramPadding:8,
- *       htmlLabels:true,
- *       curve:'basis',
+ *     flowchart: {
+ *       diagramPadding: 8,
+ *       htmlLabels: true,
+ *       curve: 'basis',
  *     },
- *     sequence:{
- *       diagramMarginX:50,
- *       diagramMarginY:10,
- *       actorMargin:50,
- *       width:150,
- *       height:65,
- *       boxMargin:10,
- *       boxTextMargin:5,
- *       noteMargin:10,
- *       messageMargin:35,
- *       messageAlign:'center',
- *       mirrorActors:true,
- *       bottomMarginAdj:1,
- *       useMaxWidth:true,
- *       rightAngles:false,
- *       showSequenceNumbers:false,
+ *     sequence: {
+ *       diagramMarginX: 50,
+ *       diagramMarginY: 10,
+ *       actorMargin: 50,
+ *       width: 150,
+ *       height: 65,
+ *       boxMargin: 10,
+ *       boxTextMargin: 5,
+ *       noteMargin: 10,
+ *       messageMargin: 35,
+ *       messageAlign: 'center',
+ *       mirrorActors: true,
+ *       bottomMarginAdj: 1,
+ *       useMaxWidth: true,
+ *       rightAngles: false,
+ *       showSequenceNumbers: false,
  *     },
- *     gantt:{
- *       titleTopMargin:25,
- *       barHeight:20,
- *       barGap:4,
- *       topPadding:50,
- *       leftPadding:75,
- *       gridLineStartPadding:35,
- *       fontSize:11,
- *       fontFamily:'"Open-Sans", "sans-serif"',
- *       numberSectionStyles:4,
- *       axisFormat:'%Y-%m-%d',
- *       topAxis:false,
- *     }
+ *     gantt: {
+ *       titleTopMargin: 25,
+ *       barHeight: 20,
+ *       barGap: 4,
+ *       topPadding: 50,
+ *       leftPadding: 75,
+ *       gridLineStartPadding: 35,
+ *       fontSize: 11,
+ *       fontFamily: '"Open-Sans", "sans-serif"',
+ *       numberSectionStyles: 4,
+ *       axisFormat: '%Y-%m-%d',
+ *       topAxis: false,
+ *     },
  *   };
  *   mermaid.initialize(config);
  * </script>

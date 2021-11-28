@@ -25,8 +25,13 @@ const conf = {
 
 /**
  * Function that adds the vertices found during parsing to the graph to be rendered.
- * @param vert Object containing the vertices.
- * @param g The graph that is to be drawn.
+ *
+ * @param {Object<
+ *   string,
+ *   { cssClasses: string[]; text: string; id: string; type: string; domId: string }
+ * >} classes
+ *   Object containing the vertices.
+ * @param {SVGGElement} g The graph that is to be drawn.
  */
 export const addClasses = function (classes, g) {
   // const svg = select(`[id="${svgId}"]`);
@@ -40,6 +45,7 @@ export const addClasses = function (classes, g) {
 
     /**
      * Variable for storing the classes for the vertex
+     *
      * @type {string}
      */
     let cssClassStr = '';
@@ -130,8 +136,9 @@ export const addClasses = function (classes, g) {
 
 /**
  * Add edges to graph based on parsed graph defninition
- * @param {Object} edges The edges to add to the graph
- * @param {Object} g The graph object
+ *
+ * @param relations
+ * @param {object} g The graph object
  */
 export const addRelations = function (relations, g) {
   let cnt = 0;
@@ -207,7 +214,8 @@ export const addRelations = function (relations, g) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
 
-      if (getConfig().flowchart.htmlLabels) { // eslint-disable-line
+      if (getConfig().flowchart.htmlLabels) {
+        // eslint-disable-line
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
@@ -226,19 +234,25 @@ export const addRelations = function (relations, g) {
   });
 };
 
-// Todo optimize
+/**
+ * Gets the ID with the same label as in the cache
+ *
+ * @param {string} label The label to look for
+ * @returns {string} The resulting ID
+ */
 const getGraphId = function (label) {
-  const keys = Object.keys(idCache);
+  const foundEntry = Object.entries(idCache).find((entry) => entry[1].label === label);
 
-  for (let i = 0; i < keys.length; i++) {
-    if (idCache[keys[i]].label === label) {
-      return keys[i];
-    }
+  if (foundEntry) {
+    return foundEntry[0];
   }
-
-  return undefined;
 };
 
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ *
+ * @param {object} cnf Config to merge
+ */
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
 
@@ -249,8 +263,9 @@ export const setConf = function (cnf) {
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {string} text
+ * @param {string} id
  */
 export const drawOld = function (text, id) {
   idCache = {};
@@ -498,10 +513,12 @@ export const draw = function (text, id) {
   // });
 };
 
-export default {
-  setConf,
-  draw,
-};
+/**
+ * Gets the arrow marker for a type index
+ *
+ * @param {number} type The type to look for
+ * @returns {'aggregation' | 'extension' | 'composition' | 'dependency'} The arrow marker
+ */
 function getArrowMarker(type) {
   let marker;
   switch (type) {
@@ -522,3 +539,8 @@ function getArrowMarker(type) {
   }
   return marker;
 }
+
+export default {
+  setConf,
+  draw,
+};

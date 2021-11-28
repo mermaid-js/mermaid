@@ -19,10 +19,10 @@ const transformationLog = {};
 
 export const setConf = function () {};
 
-// Todo optimize
-
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param {any} elem
  */
 const insertMarkers = function (elem) {
   elem
@@ -40,8 +40,9 @@ const insertMarkers = function (elem) {
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
 export const draw = function (text, id) {
   conf = getConfig().state;
@@ -90,7 +91,7 @@ const getLabelWidth = (text) => {
 };
 
 const renderDoc = (doc, diagram, parentId, altBkg) => {
-  // // Layout graph, Create a new directed graph
+  // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
     compound: true,
     multigraph: true,
