@@ -110,7 +110,7 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
   if (typeof dir !== 'undefined') {
     vertices[id].dir = dir;
   }
-  vertices[id].props = props
+  vertices[id].props = props;
 };
 
 /**
