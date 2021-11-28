@@ -123,9 +123,6 @@ export const addVertices = function (vert, g, svgId) {
       case 'subroutine':
         _shape = 'subroutine';
         break;
-      case 'datastore':
-        _shape = 'datastore';
-        break;
       case 'cylinder':
         _shape = 'cylinder';
         break;

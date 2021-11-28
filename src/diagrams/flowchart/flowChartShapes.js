@@ -176,24 +176,6 @@ function subroutine(parent, bbox, node) {
   return shapeSvg;
 }
 
-function datastore(parent, bbox, node) {
-  const shapeSvg = parent
-    .insert('rect', ':first-child')
-    .attr('class', 'basic label-container')
-    .attr('style', node.style)
-    .attr('rx', node.rx)
-    .attr('ry', node.ry)
-    .attr('x', -bbox.width / 2)
-    .attr('y', -bbox.height / 2)
-    .attr('width', bbox.width)
-    .attr('height', bbox.height)
-    .attr('stroke-dasharray', bbox.width + ' ' + bbox.height);
-  node.intersect = function (point) {
-    return dagreD3.intersect.rect(node, point);
-  };
-  return shapeSvg;
-}
-
 function cylinder(parent, bbox, node) {
   const w = bbox.width;
   const rx = w / 2;
@@ -262,7 +244,6 @@ export function addToRender(render) {
   render.shapes().hexagon = hexagon;
   render.shapes().stadium = stadium;
   render.shapes().subroutine = subroutine;
-  render.shapes().datastore = datastore;
   render.shapes().cylinder = cylinder;
 
   // Add custom shape for box with inverted arrow on left side
@@ -289,7 +270,6 @@ export function addToRenderV2(addShape) {
   addShape({ hexagon });
   addShape({ stadium });
   addShape({ subroutine });
-  addShape({ datastore });
   addShape({ cylinder });
 
   // Add custom shape for box with inverted arrow on left side
