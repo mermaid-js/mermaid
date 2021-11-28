@@ -15,8 +15,8 @@
 <body>
   <h2>Sample</h2>
   <div class="mermaid">
-    graph LR
-      DataStore[|Database|] -->|input| Process((System)) -->|output| Entity[Customer]
+    flowchart LR
+      DataStore[|borders:tb|Database] -->|input| Process((System)) -->|output| Entity[Customer];
   </div>
 
   <script src="./mermaid.js"></script>
