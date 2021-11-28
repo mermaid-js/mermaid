@@ -325,14 +325,16 @@ const rect = (parent, node) => {
     .attr('width', totalWidth)
     .attr('height', totalHeight);
 
-  const propKeys = new Set(Object.keys(node.props));
-  if (node.props?.borders) {
-    applyNodePropertyBorders(rect, node.props.borders, totalWidth, totalHeight);
-    propKeys.delete('borders');
+  if (node.props) {
+    const propKeys = new Set(Object.keys(node.props));
+    if (node.props.borders) {
+      applyNodePropertyBorders(rect, node.props.borders, totalWidth, totalHeight);
+      propKeys.delete('borders');
+    }
+    propKeys.forEach((propKey) => {
+      log.warn(`Unknown node property ${propKey}`);
+    });
   }
-  propKeys.forEach((propKey) => {
-    log.warn(`Unknown node property ${propKey}`);
-  });
 
   updateNodeBounds(node, rect);
 
