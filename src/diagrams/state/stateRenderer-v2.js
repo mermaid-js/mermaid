@@ -83,7 +83,7 @@ const setupNode = (g, parent, node, altFlag) => {
           nodeDb[node.id].description = node.description;
         }
       }
-   }
+    }
 
     // Save data for description and group so that for instance a statement without description overwrites
     // one with description
