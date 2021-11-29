@@ -60,13 +60,29 @@ const setupNode = (g, parent, node, altFlag) => {
 
     // Build of the array of description strings accordinging
     if (node.description) {
-      nodeDb[node.id].shape = 'rect';
-      nodeDb[node.id].description = node.description;
-
-      nodeDb[node.id].description = common.sanitizeTextOrArray(
-        nodeDb[node.id].description,
-        getConfig()
-      );
+      if (Array.isArray(nodeDb[node.id].description)) {
+        // There already is an array of strings,add to it
+        nodeDb[node.id].shape = 'rectWithTitle';
+        nodeDb[node.id].description.push(node.description);
+      } else {
+        if (nodeDb[node.id].description.length > 0) {
+          // if there is a description already transformit to an array
+          nodeDb[node.id].shape = 'rectWithTitle';
+          if (nodeDb[node.id].description === node.id) {
+            // If the previous description was the is, remove it
+            if (Array.isArray(node.description)) {
+              nodeDb[node.id].description = node.description;
+            } else {
+              nodeDb[node.id].description = [node.description];
+            }
+          } else {
+            nodeDb[node.id].description = [nodeDb[node.id].description, node.description];
+          }
+        } else {
+          nodeDb[node.id].shape = 'rect';
+          nodeDb[node.id].description = node.description;
+        }
+      }
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
@@ -84,10 +100,17 @@ const setupNode = (g, parent, node, altFlag) => {
         (altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster');
     }
 
+    let nodeShape = nodeDb[node.id].shape;
+    let nodeLabelText = nodeDb[node.id].description;
+    if (Array.isArray(nodeLabelText) && nodeLabelText.length == 1) {
+      nodeShape = 'rect';
+      nodeLabelText = nodeLabelText[0];
+    }
+
     const nodeData = {
       labelStyle: '',
-      shape: nodeDb[node.id].shape,
-      labelText: nodeDb[node.id].description,
+      shape: nodeShape,
+      labelText: nodeLabelText,
       // typeof nodeDb[node.id].description === 'object'
       //   ? nodeDb[node.id].description[0]
       //   : nodeDb[node.id].description,
