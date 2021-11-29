@@ -1,0 +1,13 @@
+name: Validate PR Labeler Configuration
+on: [push, pull_request]
+
+jobs:
+  pr-labeler:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2.3.4
+      - name: Validate Configuration
+        uses: Yash-Singh1/pr-labeler-config-validator@releases/v0.0.3
+        with:
+          configuration-path: .github/pr-labeler.yml
