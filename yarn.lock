@@ -4807,10 +4807,10 @@ eslint-scope@5.1.1, eslint-scope@^5.1.1:
     esrecurse "^4.3.0"
     estraverse "^4.1.1"
 
-eslint-scope@^7.1.0:
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-7.1.0.tgz#c1f6ea30ac583031f203d65c73e723b01298f153"
-  integrity sha512-aWwkhnS0qAXqNOgKOK0dJ2nvzEbhEvpy8OlJ9kZ0FeZnA6zpjv1/Vei+puGFFX7zkPCkHHXb7IDX3A+7yPrRWg==
+eslint-scope@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-6.0.0.tgz#9cf45b13c5ac8f3d4c50f46a5121f61b3e318978"
+  integrity sha512-uRDL9MWmQCkaFus8RF5K9/L/2fn+80yoW3jkD53l4shjCh26fCtvJGasxjUqP5OT87SYTxCVA3BwTUzuELx9kA==
   dependencies:
     esrecurse "^4.3.0"
     estraverse "^5.2.0"
@@ -4876,7 +4876,7 @@ eslint@^8.2.0:
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
 
-espree@^9.0.0, espree@^9.1.0:
+espree@^9.0.0:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/espree/-/espree-9.1.0.tgz#ba9d3c9b34eeae205724124e31de4543d59fbf74"
   integrity sha512-ZgYLvCS1wxOczBYGcQT9DDWgicXwJ4dbocr9uYN+/eresBAUuBu+O4WzB21ufQ/JqQT8gyp7hJ3z8SHii32mTQ==
@@ -8479,9 +8479,9 @@ prettier-plugin-jsdoc@^0.3.30:
     mdast-util-from-markdown "^0.8.5"
 
 prettier@^2.3.2:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.4.1.tgz#671e11c89c14a4cfc876ce564106c4a6726c9f5c"
-  integrity sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA==
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.5.0.tgz#a6370e2d4594e093270419d9cc47f7670488f893"
+  integrity sha512-FM/zAKgWTxj40rH03VxzIPdXmj39SwSjwG0heUcNFwI+EMZJnY93yAiKXM3dObIKAM5TA88werc8T/EwhB45eg==
 
 pretty-bytes@^5.6.0:
   version "5.6.0"
