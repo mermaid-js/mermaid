@@ -1,18 +1,17 @@
-/* eslint-env jasmine */
 import pieDb from '../pieDb';
 import pie from './pie';
 import { setConfig } from '../../../config';
 
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
-describe('when parsing pie', function() {
-  beforeEach(function() {
+describe('when parsing pie', function () {
+  beforeEach(function () {
     pie.parser.yy = pieDb;
     pie.parser.yy.clear();
   });
-  it('should handle very simple pie', function() {
+  it('should handle very simple pie', function () {
     const res = pie.parser.parse(`pie
 "ash" : 100
 `);
@@ -20,7 +19,7 @@ describe('when parsing pie', function() {
     const section1 = sections['ash'];
     expect(section1).toBe(100);
   });
-  it('should handle simple pie', function() {
+  it('should handle simple pie', function () {
     const res = pie.parser.parse(`pie
 "ash" : 60
 "bat" : 40
@@ -29,7 +28,7 @@ describe('when parsing pie', function() {
     const section1 = sections['ash'];
     expect(section1).toBe(60);
   });
-  it('should handle simple pie with comments', function() {
+  it('should handle simple pie with comments', function () {
     const res = pie.parser.parse(`pie
     %% comments
 "ash" : 60
@@ -40,7 +39,7 @@ describe('when parsing pie', function() {
     expect(section1).toBe(60);
   });
 
-  it('should handle simple pie with a directive', function() {
+  it('should handle simple pie with a directive', function () {
     const res = pie.parser.parse(`%%{init: {'logLevel':0}}%%
 pie
 "ash" : 60
@@ -51,7 +50,7 @@ pie
     expect(section1).toBe(60);
   });
 
-  it('should handle simple pie with a title', function() {
+  it('should handle simple pie with a title', function () {
     const res = pie.parser.parse(`pie title a 60/40 pie
 "ash" : 60
 "bat" : 40
@@ -63,7 +62,7 @@ pie
     expect(title).toBe('a 60/40 pie');
   });
 
-  it('should handle simple pie with positive decimal', function() {
+  it('should handle simple pie with positive decimal', function () {
     const res = pie.parser.parse(`pie
 "ash" : 60.67
 "bat" : 40
@@ -73,7 +72,7 @@ pie
     expect(section1).toBe(60.67);
   });
 
-  it('should handle simple pie with negative decimal', function() {
+  it('should handle simple pie with negative decimal', function () {
     expect(() => {
       pie.parser.parse(`pie
 "ash" : 60.67

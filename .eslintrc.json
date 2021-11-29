@@ -2,6 +2,7 @@
   "env": {
     "browser": true,
     "es6": true,
+    "jest/globals": true,
     "node": true
   },
   "parser": "@babel/eslint-parser",
@@ -13,8 +14,10 @@
     "sourceType": "module"
   },
   "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "plugin:prettier/recommended"],
-  "plugins": ["jsdoc", "prettier"],
+  "plugins": ["jest", "jsdoc", "prettier"],
   "rules": {
+    "no-prototype-builtins": 0,
+    "no-unused-vars": 0,
     "jsdoc/check-indentation": 0,
     "jsdoc/check-alignment": 0,
     "jsdoc/check-line-alignment": 0,

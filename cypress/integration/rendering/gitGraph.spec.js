@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { imgSnapshotTest } from '../../helpers/util.js';
 
 describe('Sequencediagram', () => {

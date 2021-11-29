@@ -1,10 +1,9 @@
-/* eslint-env jasmine */
 const svgDraw = require('./svgDraw');
 const { MockD3 } = require('d3');
 
-describe('svgDraw', function() {
-  describe('drawRect', function() {
-    it('it should append a rectangle', function() {
+describe('svgDraw', function () {
+  describe('drawRect', function () {
+    it('it should append a rectangle', function () {
       const svg = MockD3('svg');
       svgDraw.drawRect(svg, {
         x: 10,
@@ -15,7 +14,7 @@ describe('svgDraw', function() {
         height: '20',
         rx: '10',
         ry: '10',
-        class: 'unitTestRectangleClass'
+        class: 'unitTestRectangleClass',
       });
       expect(svg.__children.length).toBe(1);
       const rect = svg.__children[0];
@@ -40,7 +39,7 @@ describe('svgDraw', function() {
         width: '20',
         height: '20',
         rx: '10',
-        ry: '10'
+        ry: '10',
       });
       expect(svg.__children.length).toBe(1);
       const rect = svg.__children[0];
@@ -49,8 +48,8 @@ describe('svgDraw', function() {
       expect(rect.attr).not.toHaveBeenCalledWith('class', expect.anything());
     });
   });
-  describe('drawText', function() {
-    it('it should append a single element', function() {
+  describe('drawText', function () {
+    it('it should append a single element', function () {
       const svg = MockD3('svg');
       svgDraw.drawText(svg, {
         x: 10,
@@ -74,7 +73,7 @@ describe('svgDraw', function() {
       expect(text.style).toHaveBeenCalledWith('font-size', '10px');
       expect(text.style).toHaveBeenCalledWith('font-weight', '500');
     });
-    it('it should append a multiple elements', function() {
+    it('it should append a multiple elements', function () {
       const svg = MockD3('svg');
       svgDraw.drawText(svg, {
         x: 10,
@@ -101,8 +100,8 @@ describe('svgDraw', function() {
       expect(text3.text).toHaveBeenCalledWith('fine lines');
     });
   });
-  describe('drawBackgroundRect', function() {
-    it('it should append a rect before the previous element within a given bound', function() {
+  describe('drawBackgroundRect', function () {
+    it('it should append a rect before the previous element within a given bound', function () {
       const svg = MockD3('svg');
       const boundingRect = {
         startx: 50,
@@ -110,7 +109,7 @@ describe('svgDraw', function() {
         stopx: 150,
         stopy: 260,
         title: undefined,
-        fill: '#ccc'
+        fill: '#ccc',
       };
       svgDraw.drawBackgroundRect(svg, boundingRect);
       expect(svg.__children.length).toBe(1);
