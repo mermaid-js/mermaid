@@ -3,12 +3,12 @@ import { setConfig } from '../../config';
 
 setConfig({
   flowchart: {
-    htmlLabels: false
-  }
+    htmlLabels: false,
+  },
 });
 
-describe('the flowchart renderer', function() {
-  describe('when adding vertices to a graph', function() {
+describe('the flowchart renderer', function () {
+  describe('when adding vertices to a graph', function () {
     [
       ['round', 'rect', 5],
       ['square', 'rect'],
@@ -25,14 +25,14 @@ describe('the flowchart renderer', function() {
       ['stadium', 'stadium'],
       ['subroutine', 'subroutine'],
       ['cylinder', 'cylinder'],
-      ['group', 'rect']
-    ].forEach(function([type, expectedShape, expectedRadios = 0]) {
-      it(`should add the correct shaped node to the graph for vertex type ${type}`, function() {
+      ['group', 'rect'],
+    ].forEach(function ([type, expectedShape, expectedRadios = 0]) {
+      it(`should add the correct shaped node to the graph for vertex type ${type}`, function () {
         const addedNodes = [];
         const mockG = {
-          setNode: function(id, object) {
+          setNode: function (id, object) {
             addedNodes.push([id, object]);
-          }
+          },
         };
         addVertices(
           {
@@ -41,8 +41,8 @@ describe('the flowchart renderer', function() {
               id: 'my-node-id',
               classes: [],
               styles: [],
-              text: 'my vertex text'
-            }
+              text: 'my vertex text',
+            },
           },
           mockG,
           'svg-id'
@@ -57,18 +57,15 @@ describe('the flowchart renderer', function() {
       });
     });
 
-    [
-      'Multi<br>Line',
-      'Multi<br/>Line',
-      'Multi<br />Line',
-      'Multi<br\t/>Line'
-    ].forEach(function(labelText) {
-      it('should handle multiline texts with different line breaks', function() {
+    ['Multi<br>Line', 'Multi<br/>Line', 'Multi<br />Line', 'Multi<br\t/>Line'].forEach(function (
+      labelText
+    ) {
+      it('should handle multiline texts with different line breaks', function () {
         const addedNodes = [];
         const mockG = {
-          setNode: function(id, object) {
+          setNode: function (id, object) {
             addedNodes.push([id, object]);
-          }
+          },
         };
         addVertices(
           {
@@ -77,8 +74,8 @@ describe('the flowchart renderer', function() {
               id: 'my-node-id',
               classes: [],
               styles: [],
-              text: 'Multi<br>Line'
-            }
+              text: 'Multi<br>Line',
+            },
           },
           mockG,
           'svg-id'
@@ -98,14 +95,18 @@ describe('the flowchart renderer', function() {
       [['fill:#fff'], 'fill:#fff;', ''],
       [['color:#ccc'], '', 'color:#ccc;'],
       [['fill:#fff', 'color:#ccc'], 'fill:#fff;', 'color:#ccc;'],
-      [['fill:#fff', 'color:#ccc', 'text-align:center'], 'fill:#fff;', 'color:#ccc;text-align:center;']
-    ].forEach(function([style, expectedStyle, expectedLabelStyle]) {
-      it(`should add the styles to style and/or labelStyle for style ${style}`, function() {
+      [
+        ['fill:#fff', 'color:#ccc', 'text-align:center'],
+        'fill:#fff;',
+        'color:#ccc;text-align:center;',
+      ],
+    ].forEach(function ([style, expectedStyle, expectedLabelStyle]) {
+      it(`should add the styles to style and/or labelStyle for style ${style}`, function () {
         const addedNodes = [];
         const mockG = {
-          setNode: function(id, object) {
+          setNode: function (id, object) {
             addedNodes.push([id, object]);
-          }
+          },
         };
         addVertices(
           {
@@ -114,8 +115,8 @@ describe('the flowchart renderer', function() {
               id: 'my-node-id',
               classes: [],
               styles: style,
-              text: 'my vertex text'
-            }
+              text: 'my vertex text',
+            },
           },
           mockG,
           'svg-id'
@@ -129,12 +130,12 @@ describe('the flowchart renderer', function() {
       });
     });
 
-    it(`should add default class to all nodes which do not have another class assigned`, function() {
+    it(`should add default class to all nodes which do not have another class assigned`, function () {
       const addedNodes = [];
       const mockG = {
-        setNode: function(id, object) {
+        setNode: function (id, object) {
           addedNodes.push([id, object]);
-        }
+        },
       };
       addVertices(
         {
@@ -143,15 +144,15 @@ describe('the flowchart renderer', function() {
             id: 'defaultNode',
             classes: [],
             styles: [],
-            text: 'my vertex text'
+            text: 'my vertex text',
           },
           v2: {
             type: 'rect',
             id: 'myNode',
             classes: ['myClass'],
             styles: [],
-            text: 'my vertex text'
-          }
+            text: 'my vertex text',
+          },
         },
         mockG,
         'svg-id'
@@ -164,13 +165,13 @@ describe('the flowchart renderer', function() {
     });
   });
 
-  describe('when adding edges to a graph', function() {
-    it('should handle multiline texts and set centered label position', function() {
+  describe('when adding edges to a graph', function () {
+    it('should handle multiline texts and set centered label position', function () {
       const addedEdges = [];
       const mockG = {
-        setEdge: function(s, e, data, c) {
+        setEdge: function (s, e, data, c) {
           addedEdges.push(data);
-        }
+        },
       };
       addEdges(
         [
@@ -181,13 +182,13 @@ describe('the flowchart renderer', function() {
           { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br>Line' },
           { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br/>Line' },
           { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br />Line' },
-          { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br\t/>Line' }
+          { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br\t/>Line' },
         ],
         mockG,
         'svg-id'
       );
 
-      addedEdges.forEach(function(edge) {
+      addedEdges.forEach(function (edge) {
         expect(edge).toHaveProperty('label', 'Multi\nLine');
         expect(edge).toHaveProperty('labelpos', 'c');
       });
@@ -197,22 +198,20 @@ describe('the flowchart renderer', function() {
       [['stroke:DarkGray'], 'stroke:DarkGray;', ''],
       [['color:red'], '', 'fill:red;'],
       [['stroke:DarkGray', 'color:red'], 'stroke:DarkGray;', 'fill:red;'],
-      [['stroke:DarkGray', 'color:red', 'stroke-width:2px'], 'stroke:DarkGray;stroke-width:2px;', 'fill:red;']
-    ].forEach(function([style, expectedStyle, expectedLabelStyle]) {
-      it(`should add the styles to style and/or labelStyle for style ${style}`, function() {
+      [
+        ['stroke:DarkGray', 'color:red', 'stroke-width:2px'],
+        'stroke:DarkGray;stroke-width:2px;',
+        'fill:red;',
+      ],
+    ].forEach(function ([style, expectedStyle, expectedLabelStyle]) {
+      it(`should add the styles to style and/or labelStyle for style ${style}`, function () {
         const addedEdges = [];
         const mockG = {
-          setEdge: function(s, e, data, c) {
+          setEdge: function (s, e, data, c) {
             addedEdges.push(data);
-          }
+          },
         };
-        addEdges(
-          [
-            { style: style, text: 'styling' }
-          ],
-          mockG,
-          'svg-id'
-        );
+        addEdges([{ style: style, text: 'styling' }], mockG, 'svg-id');
 
         expect(addedEdges).toHaveLength(1);
         expect(addedEdges[0]).toHaveProperty('style', expectedStyle);

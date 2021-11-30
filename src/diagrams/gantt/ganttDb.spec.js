@@ -1,13 +1,12 @@
-/* eslint-env jasmine */
 import moment from 'moment-mini';
 import ganttDb from './ganttDb';
 
-describe('when using the ganttDb', function() {
-  beforeEach(function() {
+describe('when using the ganttDb', function () {
+  beforeEach(function () {
     ganttDb.clear();
   });
 
-  describe('when using relative times', function() {
+  describe('when using relative times', function () {
     it.each`
       diff     | date                    | expected
       ${' 1d'} | ${moment('2019-01-01')} | ${moment('2019-01-02').toDate()}
@@ -17,8 +16,8 @@ describe('when using the ganttDb', function() {
     });
   });
 
-  describe('when calling the clear function', function() {
-    beforeEach(function() {
+  describe('when calling the clear function', function () {
+    beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.enableInclusiveEndDates();
       ganttDb.setTodayMarker('off');
@@ -83,7 +82,7 @@ describe('when using the ganttDb', function() {
       expStartDate2,
       expEndDate2,
       expId2,
-      expTask2
+      expTask2,
     }) => {
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.addSection(section);
@@ -99,7 +98,7 @@ describe('when using the ganttDb', function() {
     }
   );
 
-  it('should handle relative start date based on id regardless of sections', function() {
+  it('should handle relative start date based on id regardless of sections', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('testa1');
     ganttDb.addTask('test1', 'id1,2013-01-01,2w');
@@ -119,7 +118,7 @@ describe('when using the ganttDb', function() {
     expect(tasks[2].startTime).toEqual(new Date(2013, 0, 15));
     expect(tasks[2].endTime).toEqual(new Date(2013, 0, 17));
   });
-  it('should ignore weekends', function() {
+  it('should ignore weekends', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.setExcludes('weekends 2019-02-06,friday');
     ganttDb.addSection('weekends skip test');
@@ -176,7 +175,7 @@ describe('when using the ganttDb', function() {
     expect(tasks[6].task).toEqual('test7');
   });
 
-  it('should maintain the order in which tasks are created', function() {
+  it('should maintain the order in which tasks are created', function () {
     ganttDb.setTitle('Project Execution');
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('section A section');
@@ -275,7 +274,9 @@ describe('when using the ganttDb', function() {
     expect(tasks[10].task).toEqual('Describe gantt syntax');
 
     expect(tasks[11].startTime).toEqual(moment('2014-01-11', 'YYYY-MM-DD').toDate());
-    expect(tasks[11].endTime).toEqual(moment('2014-01-11 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
+    expect(tasks[11].endTime).toEqual(
+      moment('2014-01-11 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
+    );
     expect(tasks[11].order).toEqual(11);
     expect(tasks[11].id).toEqual('task7');
     expect(tasks[11].task).toEqual('Add gantt diagram to demo page');
@@ -294,20 +295,25 @@ describe('when using the ganttDb', function() {
     expect(tasks[13].task).toEqual('Describe gantt syntax');
 
     expect(tasks[14].startTime).toEqual(moment('2014-01-16', 'YYYY-MM-DD').toDate());
-    expect(tasks[14].endTime).toEqual(moment('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
+    expect(tasks[14].endTime).toEqual(
+      moment('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
+    );
     expect(tasks[14].order).toEqual(14);
     expect(tasks[14].id).toEqual('task9');
     expect(tasks[14].task).toEqual('Add gantt diagram to demo page');
 
-    expect(tasks[15].startTime).toEqual(moment('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
-    expect(tasks[15].endTime).toEqual(moment('2014-01-18 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
+    expect(tasks[15].startTime).toEqual(
+      moment('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
+    );
+    expect(tasks[15].endTime).toEqual(
+      moment('2014-01-18 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate()
+    );
     expect(tasks[15].order).toEqual(15);
     expect(tasks[15].id).toEqual('task10');
     expect(tasks[15].task).toEqual('Add another diagram to demo page');
   });
 
-
-  it('should work when end date is the 31st', function() {
+  it('should work when end date is the 31st', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('Task endTime is on the 31st day of the month');
     ganttDb.addTask('test1', 'id1,2019-09-30,11d');
@@ -327,14 +333,14 @@ describe('when using the ganttDb', function() {
     expect(tasks[1].task).toEqual('test2');
   });
 
-  describe('when setting inclusive end dates', function() {
-    beforeEach(function() {
+  describe('when setting inclusive end dates', function () {
+    beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.enableInclusiveEndDates();
       ganttDb.addTask('test1', 'id1,2019-02-01,1d');
       ganttDb.addTask('test2', 'id2,2019-02-01,2019-02-03');
     });
-    it('should automatically add one day to all end dates', function() {
+    it('should automatically add one day to all end dates', function () {
       const tasks = ganttDb.getTasks();
       expect(tasks[0].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate());
       expect(tasks[0].endTime).toEqual(moment('2019-02-02', 'YYYY-MM-DD').toDate());

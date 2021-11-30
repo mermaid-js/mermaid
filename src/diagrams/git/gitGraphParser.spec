@@ -1,4 +1,4 @@
-/* eslint-env jasmine */
+
 // Todo reintroduce without cryptoRandomString
 import gitGraphAst from './gitGraphAst';
 import { parser } from './parser/gitGraph';

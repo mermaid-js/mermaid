@@ -1,10 +1,9 @@
-/* eslint-env jest */
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Gantt diagram', () => {
-  beforeEach(()=>{
-    cy.clock((new Date('1010-10-10')).getTime())
-  })
+  beforeEach(() => {
+    cy.clock(new Date('1010-10-10').getTime());
+  });
   it('should render a gantt chart', () => {
     imgSnapshotTest(
       `
@@ -199,18 +198,17 @@ describe('Gantt diagram', () => {
       `,
       { gantt: { useMaxWidth: true } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        expect(svg).to.have.attr('width', '100%');
-        expect(svg).to.have.attr('height');
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        const height = parseFloat(svg.attr('height'));
-        expect(height).to.be.within(484 * .95, 484 * 1.05);
-        const style = svg.attr('style');
-        expect(style).to.match(/^max-width: [\d.]+px;$/);
-        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-        expect(maxWidthValue).to.be.within(984 * .95, 984 * 1.05);
-      });
+    cy.get('svg').should((svg) => {
+      expect(svg).to.have.attr('width', '100%');
+      expect(svg).to.have.attr('height');
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      const height = parseFloat(svg.attr('height'));
+      expect(height).to.be.within(484 * 0.95, 484 * 1.05);
+      const style = svg.attr('style');
+      expect(style).to.match(/^max-width: [\d.]+px;$/);
+      const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+      expect(maxWidthValue).to.be.within(984 * 0.95, 984 * 1.05);
+    });
   });
 
   it('should render a gantt diagram when useMaxWidth is false', () => {
@@ -248,17 +246,16 @@ describe('Gantt diagram', () => {
       `,
       { gantt: { useMaxWidth: false } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        const height = parseFloat(svg.attr('height'));
-        const width = parseFloat(svg.attr('width'));
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        expect(height).to.be.within(484 * .95, 484 * 1.05);
-        expect(width).to.be.within(984 * .95, 984 * 1.05);
-        expect(svg).to.not.have.attr('style');
-      });
+    cy.get('svg').should((svg) => {
+      const height = parseFloat(svg.attr('height'));
+      const width = parseFloat(svg.attr('width'));
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      expect(height).to.be.within(484 * 0.95, 484 * 1.05);
+      expect(width).to.be.within(984 * 0.95, 984 * 1.05);
+      expect(svg).to.not.have.attr('style');
+    });
   });
-    it('should render a gantt diagram with data labels at the top when topAxis is true', () => {
+  it('should render a gantt diagram with data labels at the top when topAxis is true', () => {
     imgSnapshotTest(
       `
     gantt

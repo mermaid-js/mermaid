@@ -1,11 +1,9 @@
-/* eslint-env jest */
-/* global cy */
 import { Base64 } from 'js-base64';
 
 export const mermaidUrl = (graphStr, options, api) => {
   const obj = {
     code: graphStr,
-    mermaid: options
+    mermaid: options,
   };
   const objStr = JSON.stringify(obj);
   let url = 'http://localhost:9000/e2e.html?graph=' + Base64.encodeURI(objStr);

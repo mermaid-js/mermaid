@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 describe('State diagram', () => {
@@ -369,7 +368,8 @@ stateDiagram-v2
         }
     `,
       {
-        logLevel: 0, fontFamily: 'courier'
+        logLevel: 0,
+        fontFamily: 'courier',
       }
     );
   });
@@ -381,7 +381,8 @@ stateDiagram-v2
         a --> b: Stop
     `,
       {
-        logLevel: 0, fontFamily: 'courier',
+        logLevel: 0,
+        fontFamily: 'courier',
       }
     );
   });
@@ -394,7 +395,8 @@ stateDiagram-v2
     note right of MyState : I am a rightie
     `,
       {
-        logLevel: 0, fontFamily: 'courier',
+        logLevel: 0,
+        fontFamily: 'courier',
       }
     );
   });
@@ -414,7 +416,8 @@ stateDiagram-v2
   A --> C
     `,
       {
-        logLevel: 0, fontFamily: 'courier',
+        logLevel: 0,
+        fontFamily: 'courier',
       }
     );
   });
@@ -433,7 +436,8 @@ stateDiagram-v2
   sub1 --> sub4
     `,
       {
-        logLevel: 0, fontFamily: 'courier',
+        logLevel: 0,
+        fontFamily: 'courier',
       }
     );
   });
@@ -447,18 +451,17 @@ stateDiagram-v2
       `,
       { state: { useMaxWidth: true } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        expect(svg).to.have.attr('width', '100%');
-        expect(svg).to.have.attr('height');
-        const height = parseFloat(svg.attr('height'));
-        expect(height).to.be.within(177, 178);
-        const style = svg.attr('style');
-        expect(style).to.match(/^max-width: [\d.]+px;$/);
-        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        expect(maxWidthValue).to.be.within(135 * .95, 135 * 1.05);
-      });
+    cy.get('svg').should((svg) => {
+      expect(svg).to.have.attr('width', '100%');
+      expect(svg).to.have.attr('height');
+      const height = parseFloat(svg.attr('height'));
+      expect(height).to.be.within(177, 178);
+      const style = svg.attr('style');
+      expect(style).to.match(/^max-width: [\d.]+px;$/);
+      const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      expect(maxWidthValue).to.be.within(135 * 0.95, 135 * 1.05);
+    });
   });
   it('v2 should render a state diagram when useMaxWidth is false', () => {
     renderGraph(
@@ -470,14 +473,13 @@ stateDiagram-v2
       `,
       { state: { useMaxWidth: false } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        const height = parseFloat(svg.attr('height'));
-        const width = parseFloat(svg.attr('width'));
-        expect(height).to.be.within(177, 178);
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        expect(width).to.be.within(135 * .95, 135 * 1.05);
-        expect(svg).to.not.have.attr('style');
-      });
+    cy.get('svg').should((svg) => {
+      const height = parseFloat(svg.attr('height'));
+      const width = parseFloat(svg.attr('width'));
+      expect(height).to.be.within(177, 178);
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      expect(width).to.be.within(135 * 0.95, 135 * 1.05);
+      expect(svg).to.not.have.attr('style');
+    });
   });
 });

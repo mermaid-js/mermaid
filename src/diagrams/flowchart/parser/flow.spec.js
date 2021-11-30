@@ -3,16 +3,16 @@ import flow from './flow';
 import { setConfig } from '../../../config';
 
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
-describe('when parsing ', function() {
-  beforeEach(function() {
+describe('when parsing ', function () {
+  beforeEach(function () {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
   });
 
-  it('it should handle a trailing whitespaces after statememnts', function() {
+  it('it should handle a trailing whitespaces after statememnts', function () {
     const res = flow.parser.parse('graph TD;\n\n\n %% Comment\n A-->B; \n B-->C;');
 
     const vert = flow.parser.yy.getVertices();
@@ -27,7 +27,7 @@ describe('when parsing ', function() {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle node names with "end" substring', function() {
+  it('should handle node names with "end" substring', function () {
     const res = flow.parser.parse('graph TD\nendpoint --> sender');
 
     const vert = flow.parser.yy.getVertices();
@@ -39,7 +39,7 @@ describe('when parsing ', function() {
     expect(edges[0].end).toBe('sender');
   });
 
-  it('should handle node names ending with keywords', function() {
+  it('should handle node names ending with keywords', function () {
     const res = flow.parser.parse('graph TD\nblend --> monograph');
 
     const vert = flow.parser.yy.getVertices();
@@ -51,8 +51,8 @@ describe('when parsing ', function() {
     expect(edges[0].end).toBe('monograph');
   });
 
-  describe('special characters should be be handled.', function() {
-    const charTest = function(char, result) {
+  describe('special characters should be be handled.', function () {
+    const charTest = function (char, result) {
       const res = flow.parser.parse('graph TD;A(' + char + ')-->B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -68,7 +68,7 @@ describe('when parsing ', function() {
       flow.parser.yy.clear();
     };
 
-    it("it should be able to parse a '.'", function() {
+    it("it should be able to parse a '.'", function () {
       charTest('.');
       charTest('Start 103a.a1');
     });
@@ -77,27 +77,27 @@ describe('when parsing ', function() {
     //   charTest('_')
     // })
 
-    it("it should be able to parse a ':'", function() {
+    it("it should be able to parse a ':'", function () {
       charTest(':');
     });
 
-    it("it should be able to parse a ','", function() {
+    it("it should be able to parse a ','", function () {
       charTest(',');
     });
 
-    it("it should be able to parse text containing '-'", function() {
+    it("it should be able to parse text containing '-'", function () {
       charTest('a-b');
     });
 
-    it("it should be able to parse a '+'", function() {
+    it("it should be able to parse a '+'", function () {
       charTest('+');
     });
 
-    it("it should be able to parse a '*'", function() {
+    it("it should be able to parse a '*'", function () {
       charTest('*');
     });
 
-    it("it should be able to parse a '<'", function() {
+    it("it should be able to parse a '<'", function () {
       charTest('<', '&lt;');
     });
 
@@ -105,16 +105,15 @@ describe('when parsing ', function() {
     //   charTest('>', '&gt;');
     // });
 
-
     // it("it should be able to parse a '='", function() {
     //   charTest('=', '&equals;');
     // });
-    it("it should be able to parse a '&'", function() {
+    it("it should be able to parse a '&'", function () {
       charTest('&');
     });
   });
 
-  it('should be possible to use direction in node ids', function() {
+  it('should be possible to use direction in node ids', function () {
     let statement = '';
 
     statement = statement + 'graph TD;' + '\n';
@@ -126,7 +125,7 @@ describe('when parsing ', function() {
     expect(vertices['node1TB'].id).toBe('node1TB');
   });
 
-  it('should be possible to use direction in node ids', function() {
+  it('should be possible to use direction in node ids', function () {
     let statement = '';
 
     statement = statement + 'graph TD;A--x|text including URL space|B;';
@@ -135,7 +134,7 @@ describe('when parsing ', function() {
     const classes = flow.parser.yy.getClasses();
     expect(vertices['A'].id).toBe('A');
   });
-  it('should be possible to use numbers as labels', function() {
+  it('should be possible to use numbers as labels', function () {
     let statement = '';
 
     statement = statement + 'graph TB;subgraph "number as labels";1;end;';
