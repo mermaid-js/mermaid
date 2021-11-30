@@ -19,7 +19,7 @@ export const labelHelper = (parent, node, _classes, isNode) => {
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'label').attr('style', node.labelStyle);
 
-  const labelText = typeof node.labelText === 'string' ? node.labelText:node.labelText[0];
+  const labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];
 
   const text = label
     .node()
