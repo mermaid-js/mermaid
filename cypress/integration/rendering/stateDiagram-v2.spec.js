@@ -351,7 +351,7 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
 stateDiagram-v2
-  state "Long state name" as NotShooting {
+  state "Long state name 2" as NotShooting {
     a-->b
   }
     `,
