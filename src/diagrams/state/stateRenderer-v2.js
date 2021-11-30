@@ -70,11 +70,7 @@ const setupNode = (g, parent, node, altFlag) => {
           nodeDb[node.id].shape = 'rectWithTitle';
           if (nodeDb[node.id].description === node.id) {
             // If the previous description was the is, remove it
-            if (Array.isArray(node.description)) {
-              nodeDb[node.id].description = node.description;
-            } else {
-              nodeDb[node.id].description = [node.description];
-            }
+            nodeDb[node.id].description = [node.description];
           } else {
             nodeDb[node.id].description = [nodeDb[node.id].description, node.description];
           }
@@ -83,6 +79,15 @@ const setupNode = (g, parent, node, altFlag) => {
           nodeDb[node.id].description = node.description;
         }
       }
+      nodeDb[node.id].description = common.sanitizeTextOrArray(
+        nodeDb[node.id].description,
+        getConfig()
+      );
+    }
+
+    //
+    if (nodeDb[node.id].description.length === 1 && nodeDb[node.id].shape === 'rectWithTitle') {
+      nodeDb[node.id].shape = 'rect';
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
@@ -100,17 +105,10 @@ const setupNode = (g, parent, node, altFlag) => {
         (altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster');
     }
 
-    let nodeShape = nodeDb[node.id].shape;
-    let nodeLabelText = nodeDb[node.id].description;
-    if (Array.isArray(nodeLabelText) && nodeLabelText.length == 1) {
-      nodeShape = 'rect';
-      nodeLabelText = nodeLabelText[0];
-    }
-
     const nodeData = {
       labelStyle: '',
-      shape: nodeShape,
-      labelText: nodeLabelText,
+      shape: nodeDb[node.id].shape,
+      labelText: nodeDb[node.id].description,
       // typeof nodeDb[node.id].description === 'object'
       //   ? nodeDb[node.id].description[0]
       //   : nodeDb[node.id].description,

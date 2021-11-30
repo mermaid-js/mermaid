@@ -359,6 +359,18 @@ stateDiagram-v2
       }
     );
   });
+  it('v2 state label with names in it', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram-v2
+        Yswsii: Your state with spaces in it
+        [*] --> Yswsii
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
   it('v2 Simplest composite state', () => {
     imgSnapshotTest(
       `

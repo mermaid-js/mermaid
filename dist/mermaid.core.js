@@ -24130,7 +24130,11 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 
           if (nodeDb[node.id].description === node.id) {
             // If the previous description was the is, remove it
-            nodeDb[node.id].description = [node.description];
+            if (Array.isArray(node.description)) {
+              nodeDb[node.id].description = node.description;
+            } else {
+              nodeDb[node.id].description = [node.description];
+            }
           } else {
             nodeDb[node.id].description = [nodeDb[node.id].description, node.description];
           }
@@ -24139,8 +24143,6 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
           nodeDb[node.id].description = node.description;
         }
       }
-
-      nodeDb[node.id].description = _common_common__WEBPACK_IMPORTED_MODULE_5__["default"].sanitizeTextOrArray(nodeDb[node.id].description, (0,_config__WEBPACK_IMPORTED_MODULE_6__.getConfig)());
     } // Save data for description and group so that for instance a statement without description overwrites
     // one with description
     // group
@@ -24154,10 +24156,18 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
       nodeDb[node.id].classes = nodeDb[node.id].classes + ' ' + (altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster');
     }
 
+    var nodeShape = nodeDb[node.id].shape;
+    var nodeLabelText = nodeDb[node.id].description;
+
+    if (Array.isArray(nodeLabelText) && nodeLabelText.length == 1) {
+      nodeShape = 'rect';
+      nodeLabelText = nodeLabelText[0];
+    }
+
     var nodeData = {
       labelStyle: '',
-      shape: nodeDb[node.id].shape,
-      labelText: nodeDb[node.id].description,
+      shape: nodeShape,
+      labelText: nodeLabelText,
       // typeof nodeDb[node.id].description === 'object'
       //   ? nodeDb[node.id].description[0]
       //   : nodeDb[node.id].description,
