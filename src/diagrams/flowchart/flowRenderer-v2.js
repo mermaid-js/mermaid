@@ -152,6 +152,7 @@ export const addVertices = function (vert, g, svgId) {
       width: vertex.type === 'group' ? 500 : undefined,
       dir: vertex.dir,
       type: vertex.type,
+      props: vertex.props,
       padding: getConfig().flowchart.padding,
     });
 
@@ -168,6 +169,7 @@ export const addVertices = function (vert, g, svgId) {
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       dir: vertex.dir,
+      props: vertex.props,
       padding: getConfig().flowchart.padding,
     });
   });

@@ -313,6 +313,8 @@ const rect = (parent, node) => {
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
+  const totalWidth = bbox.width + node.padding;
+  const totalHeight = bbox.height + node.padding;
   rect
     .attr('class', 'basic label-container')
     .attr('style', node.style)
@@ -320,8 +322,19 @@ const rect = (parent, node) => {
     .attr('ry', node.ry)
     .attr('x', -bbox.width / 2 - halfPadding)
     .attr('y', -bbox.height / 2 - halfPadding)
-    .attr('width', bbox.width + node.padding)
-    .attr('height', bbox.height + node.padding);
+    .attr('width', totalWidth)
+    .attr('height', totalHeight);
+
+  if (node.props) {
+    const propKeys = new Set(Object.keys(node.props));
+    if (node.props.borders) {
+      applyNodePropertyBorders(rect, node.props.borders, totalWidth, totalHeight);
+      propKeys.delete('borders');
+    }
+    propKeys.forEach((propKey) => {
+      log.warn(`Unknown node property ${propKey}`);
+    });
+  }
 
   updateNodeBounds(node, rect);
 
@@ -331,6 +344,43 @@ const rect = (parent, node) => {
 
   return shapeSvg;
 };
+
+function applyNodePropertyBorders(rect, borders, totalWidth, totalHeight) {
+  const strokeDashArray = [];
+  const addBorder = (length) => {
+    strokeDashArray.push(length);
+    strokeDashArray.push(0);
+  };
+  const skipBorder = (length) => {
+    strokeDashArray.push(0);
+    strokeDashArray.push(length);
+  };
+  if (borders.includes('t')) {
+    log.debug('add top border');
+    addBorder(totalWidth);
+  } else {
+    skipBorder(totalWidth);
+  }
+  if (borders.includes('r')) {
+    log.debug('add right border');
+    addBorder(totalHeight);
+  } else {
+    skipBorder(totalHeight);
+  }
+  if (borders.includes('b')) {
+    log.debug('add bottom border');
+    addBorder(totalWidth);
+  } else {
+    skipBorder(totalWidth);
+  }
+  if (borders.includes('l')) {
+    log.debug('add left border');
+    addBorder(totalHeight);
+  } else {
+    skipBorder(totalHeight);
+  }
+  rect.attr('stroke-dasharray', strokeDashArray.join(' '));
+}
 
 const rectWithTitle = (parent, node) => {
   // const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
