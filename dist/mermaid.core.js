@@ -11955,7 +11955,8 @@ var labelHelper = function labelHelper(parent, node, _classes, isNode) {
   var shapeSvg = parent.insert('g').attr('class', classes).attr('id', node.domId || node.id); // Create the label and insert it after the rect
 
   var label = shapeSvg.insert('g').attr('class', 'label').attr('style', node.labelStyle);
-  var text = label.node().appendChild((0,_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])((0,_diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)((0,_mermaidAPI__WEBPACK_IMPORTED_MODULE_3__.decodeEntities)(node.labelText), (0,_config__WEBPACK_IMPORTED_MODULE_4__.getConfig)()), node.labelStyle, false, isNode)); // Get the size of the label
+  var labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];
+  var text = label.node().appendChild((0,_createLabel__WEBPACK_IMPORTED_MODULE_1__["default"])((0,_diagrams_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)((0,_mermaidAPI__WEBPACK_IMPORTED_MODULE_3__.decodeEntities)(labelText), (0,_config__WEBPACK_IMPORTED_MODULE_4__.getConfig)()), node.labelStyle, false, isNode)); // Get the size of the label
 
   var bbox = text.getBBox();
 
@@ -24130,11 +24131,7 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
 
           if (nodeDb[node.id].description === node.id) {
             // If the previous description was the is, remove it
-            if (Array.isArray(node.description)) {
-              nodeDb[node.id].description = node.description;
-            } else {
-              nodeDb[node.id].description = [node.description];
-            }
+            nodeDb[node.id].description = [node.description];
           } else {
             nodeDb[node.id].description = [nodeDb[node.id].description, node.description];
           }
@@ -24143,6 +24140,13 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
           nodeDb[node.id].description = node.description;
         }
       }
+
+      nodeDb[node.id].description = _common_common__WEBPACK_IMPORTED_MODULE_5__["default"].sanitizeTextOrArray(nodeDb[node.id].description, (0,_config__WEBPACK_IMPORTED_MODULE_6__.getConfig)());
+    } //
+
+
+    if (nodeDb[node.id].description.length === 1 && nodeDb[node.id].shape === 'rectWithTitle') {
+      nodeDb[node.id].shape = 'rect';
     } // Save data for description and group so that for instance a statement without description overwrites
     // one with description
     // group
@@ -24156,18 +24160,10 @@ var setupNode = function setupNode(g, parent, node, altFlag) {
       nodeDb[node.id].classes = nodeDb[node.id].classes + ' ' + (altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster');
     }
 
-    var nodeShape = nodeDb[node.id].shape;
-    var nodeLabelText = nodeDb[node.id].description;
-
-    if (Array.isArray(nodeLabelText) && nodeLabelText.length == 1) {
-      nodeShape = 'rect';
-      nodeLabelText = nodeLabelText[0];
-    }
-
     var nodeData = {
       labelStyle: '',
-      shape: nodeShape,
-      labelText: nodeLabelText,
+      shape: nodeDb[node.id].shape,
+      labelText: nodeDb[node.id].description,
       // typeof nodeDb[node.id].description === 'object'
       //   ? nodeDb[node.id].description[0]
       //   : nodeDb[node.id].description,

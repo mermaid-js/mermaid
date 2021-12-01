@@ -350,9 +350,21 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
 stateDiagram-v2
-  state "Long state name" as NotShooting {
+  state "Long state name 2" as NotShooting {
     a-->b
   }
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
+  it('v2 state label with names in it', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram-v2
+        Yswsii: Your state with spaces in it
+        [*] --> Yswsii
     `,
       {
         logLevel: 0,
