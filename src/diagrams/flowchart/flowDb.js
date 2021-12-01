@@ -52,8 +52,9 @@ export const lookUpDomId = function (id) {
  * @param style
  * @param classes
  * @param dir
+ * @param props
  */
-export const addVertex = function (_id, text, type, style, classes, dir) {
+export const addVertex = function (_id, text, type, style, classes, dir, props = {}) {
   let txt;
   let id = _id;
   if (typeof id === 'undefined') {
@@ -109,6 +110,7 @@ export const addVertex = function (_id, text, type, style, classes, dir) {
   if (typeof dir !== 'undefined') {
     vertices[id].dir = dir;
   }
+  vertices[id].props = props;
 };
 
 /**

@@ -118,6 +118,7 @@ that id.
 "])"                  return 'STADIUMEND';
 "[["                  return 'SUBROUTINESTART';
 "]]"                  return 'SUBROUTINEEND';
+"[|"                  return 'VERTEX_WITH_PROPS_START';
 "[("                  return 'CYLINDERSTART';
 ")]"                  return 'CYLINDEREND';
 \-                    return 'MINUS';
@@ -380,6 +381,8 @@ vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'stadium');}
     | idString SUBROUTINESTART text SUBROUTINEEND
         {$$ = $1;yy.addVertex($1,$3,'subroutine');}
+    | idString VERTEX_WITH_PROPS_START ALPHA COLON ALPHA PIPE text SQE
+        {$$ = $1;yy.addVertex($1,$7,'rect',undefined,undefined,undefined, Object.fromEntries([[$3, $5]]));}
     | idString CYLINDERSTART text CYLINDEREND
         {$$ = $1;yy.addVertex($1,$3,'cylinder');}
     | idString PS text PE
@@ -559,5 +562,5 @@ alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA |
 
 idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION | AMP;
 
-graphCodeTokens: STADIUMSTART | STADIUMEND | SUBROUTINESTART | SUBROUTINEEND | CYLINDERSTART | CYLINDEREND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
+graphCodeTokens: STADIUMSTART | STADIUMEND | SUBROUTINESTART | SUBROUTINEEND | VERTEX_WITH_PROPS_START | CYLINDERSTART | CYLINDEREND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
 %%
