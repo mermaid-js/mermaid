@@ -120,8 +120,8 @@
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
-          // console.error('Mermaid error: ', err);
-        };
+        // console.error('Mermaid error: ', err);
+      };
       mermaid.initialize({
         // theme: 'dark',
         // theme: 'dark',
@@ -129,7 +129,7 @@
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
         // flowchart: { useMaxWidth: true },
-        graph: { curve: 'cardinal', "htmlLabels": false },
+        graph: { curve: 'cardinal', htmlLabels: false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
@@ -137,7 +137,9 @@
         curve: 'cardinal',
         securityLevel: 'strict',
       });
-      function callback(){alert('It worked');}
+      function callback() {
+  alert('It worked');
+}
     </script>
   </body>
 </html>
