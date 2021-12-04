@@ -262,15 +262,24 @@ requirementDiagram
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
-          // console.error('Mermaid error: ', err);
-        };
+        // console.error('Mermaid error: ', err);
+      };
       mermaid.initialize({
         theme: 'base',
-        themeVariables: { primaryColor: '#9400D3', darkMode: true, background: '#222', textColor:'white', primaryTextColor: '#f4f4f4', nodeBkg: '#ff0000', mainBkg:'#0000ff', tertiaryColor:'#ffffcc' },
+        themeVariables: {
+    primaryColor: '#9400D3',
+    darkMode: true,
+    background: '#222',
+    textColor: 'white',
+    primaryTextColor: '#f4f4f4',
+    nodeBkg: '#ff0000',
+    mainBkg: '#0000ff',
+    tertiaryColor: '#ffffcc',
+  },
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'cardinal', "htmlLabels": false },
+        flowchart: { curve: 'cardinal', htmlLabels: false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
@@ -278,7 +287,9 @@ requirementDiagram
         curve: 'cardinal',
         // securityLevel: 'strict'
       });
-      function callback(){alert('It worked');}
+      function callback() {
+  alert('It worked');
+}
     </script>
   </body>
 </html>
