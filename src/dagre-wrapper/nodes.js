@@ -345,6 +345,12 @@ const rect = (parent, node) => {
   return shapeSvg;
 };
 
+/**
+ * @param rect
+ * @param borders
+ * @param totalWidth
+ * @param totalHeight
+ */
 function applyNodePropertyBorders(rect, borders, totalWidth, totalHeight) {
   const strokeDashArray = [];
   const addBorder = (length) => {
