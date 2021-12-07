@@ -149,7 +149,7 @@ export const addMembers = function (className, members) {
 
 export const cleanupLabel = function (label) {
   if (label.substring(0, 1) === ':') {
-    return label.substr(1).trim();
+    return common.sanitizeText(label.substr(1).trim(), configApi.getConfig());
   } else {
     return label.trim();
   }
