@@ -105,4 +105,9 @@ describe('XSS', () => {
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
+  it('should not allow maniplulating antiscript to run javascript iframes in class diagrams', () => {
+    cy.visit('http://localhost:9000/xss14.html');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
 });
