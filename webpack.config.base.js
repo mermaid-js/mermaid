@@ -3,7 +3,7 @@ import path from 'path';
 const jisonRule = {
   test: /\.jison$/,
   use: {
-    loader: path.resolve(__dirname, './jison/loader'),
+    loader: path.resolve(__dirname, './src/jison/loader'),
     options: {
       'token-stack': true,
     },
