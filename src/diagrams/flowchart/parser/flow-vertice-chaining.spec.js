@@ -3,17 +3,17 @@ import flow from './flow';
 import { setConfig } from '../../../config';
 
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
-describe('when parsing flowcharts', function() {
-  beforeEach(function() {
+describe('when parsing flowcharts', function () {
+  beforeEach(function () {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
-  
-  it('should handle chaining of vertices', function() {
+
+  it('should handle chaining of vertices', function () {
     const res = flow.parser.parse(`
     graph TD
       A-->B-->C;
@@ -35,7 +35,7 @@ describe('when parsing flowcharts', function() {
     expect(edges[1].type).toBe('arrow_point');
     expect(edges[1].text).toBe('');
   });
-  it('should handle chaining of vertices', function() {
+  it('should handle chaining of vertices', function () {
     const res = flow.parser.parse(`
     graph TD
       A & B --> C;
@@ -57,7 +57,7 @@ describe('when parsing flowcharts', function() {
     expect(edges[1].type).toBe('arrow_point');
     expect(edges[1].text).toBe('');
   });
-  it('should multiple vertices in link statement in the begining', function() {
+  it('should multiple vertices in link statement in the begining', function () {
     const res = flow.parser.parse(`
     graph TD
       A-->B & C;
@@ -79,7 +79,7 @@ describe('when parsing flowcharts', function() {
     expect(edges[1].type).toBe('arrow_point');
     expect(edges[1].text).toBe('');
   });
-  it('should multiple vertices in link statement at the end', function() {
+  it('should multiple vertices in link statement at the end', function () {
     const res = flow.parser.parse(`
     graph TD
       A & B--> C & D;
@@ -110,7 +110,7 @@ describe('when parsing flowcharts', function() {
     expect(edges[3].type).toBe('arrow_point');
     expect(edges[3].text).toBe('');
   });
-  it('should handle chaining of vertices at both ends at once', function() {
+  it('should handle chaining of vertices at both ends at once', function () {
     const res = flow.parser.parse(`
     graph TD
       A & B--> C & D;
@@ -141,7 +141,7 @@ describe('when parsing flowcharts', function() {
     expect(edges[3].type).toBe('arrow_point');
     expect(edges[3].text).toBe('');
   });
-  it('should handle chaining and multiple nodes in in link statement FVC ', function() {
+  it('should handle chaining and multiple nodes in in link statement FVC ', function () {
     const res = flow.parser.parse(`
     graph TD
       A --> B & B2 & C --> D2;
@@ -181,7 +181,7 @@ describe('when parsing flowcharts', function() {
     expect(edges[5].type).toBe('arrow_point');
     expect(edges[5].text).toBe('');
   });
-  it('should handle chaining and multiple nodes in in link statement with extra info in statements', function() {
+  it('should handle chaining and multiple nodes in in link statement with extra info in statements', function () {
     const res = flow.parser.parse(`
     graph TD
       A[ h ] -- hello --> B[" test "]:::exClass & C --> D;

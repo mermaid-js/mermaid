@@ -1,6 +1,22 @@
 /**
  * Returns the styles given options
- * @param {{ fontFamily: string; nodeTextColor: string; textColor: string; titleColor: string; mainBkg: string; nodeBorder: string; arrowheadColor: string; lineColor: string; edgeLabelBackground: string; clusterBkg: string; clusterBorder: string; tertiaryColor: string; border2: string; }} options The options for the styles
+ *
+ * @param {{
+ *   fontFamily: string;
+ *   nodeTextColor: string;
+ *   textColor: string;
+ *   titleColor: string;
+ *   mainBkg: string;
+ *   nodeBorder: string;
+ *   arrowheadColor: string;
+ *   lineColor: string;
+ *   edgeLabelBackground: string;
+ *   clusterBkg: string;
+ *   clusterBorder: string;
+ *   tertiaryColor: string;
+ *   border2: string;
+ * }} options
+ *   The options for the styles
  * @returns {string} The resulting styles
  */
 const getStyles = (options) =>

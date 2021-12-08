@@ -1,6 +1,4 @@
-/**
- * Created by knut on 14-12-11.
- */
+/** Created by knut on 14-12-11. */
 import { select } from 'd3';
 import { log } from './logger';
 
@@ -8,7 +6,8 @@ const conf = {};
 
 /**
  * Merges the value of `conf` with the passed `cnf`
- * @param {Object} cnf Config to merge
+ *
+ * @param {object} cnf Config to merge
  */
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
@@ -20,8 +19,9 @@ export const setConf = function (cnf) {
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
- * @param id The text for the error
- * @param ver The version
+ *
+ * @param {string} id The text for the error
+ * @param {string} ver The version
  */
 export const draw = (id, ver) => {
   try {

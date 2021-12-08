@@ -8,18 +8,17 @@ import { setConfig } from '../../../config';
 
 // const clean = DOMPurify.sanitize(dirty);
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
-describe('when parsing directions', function() {
-  beforeEach(function() {
+describe('when parsing directions', function () {
+  beforeEach(function () {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
 
-
-  it('should use default direction from top level', function() {
+  it('should use default direction from top level', function () {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
       a --> b
@@ -34,7 +33,7 @@ describe('when parsing directions', function() {
     expect(subgraph.id).toBe('A');
     expect(subgraph.dir).toBe(undefined);
   });
-  it('should handle a subgraph with a direction', function() {
+  it('should handle a subgraph with a direction', function () {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
       direction BT
@@ -50,7 +49,7 @@ describe('when parsing directions', function() {
     expect(subgraph.id).toBe('A');
     expect(subgraph.dir).toBe('BT');
   });
-  it('should use the last defined direction', function() {
+  it('should use the last defined direction', function () {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
       direction BT
@@ -68,7 +67,7 @@ describe('when parsing directions', function() {
     expect(subgraph.dir).toBe('RL');
   });
 
-  it('should handle nested subgraphs 1', function() {
+  it('should handle nested subgraphs 1', function () {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
       direction RL
@@ -84,8 +83,8 @@ describe('when parsing directions', function() {
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(2);
 
-    const subgraphA = filter(subgraphs,o => o.id === 'A')[0];
-    const subgraphB = filter(subgraphs,o => o.id === 'B')[0];
+    const subgraphA = filter(subgraphs, (o) => o.id === 'A')[0];
+    const subgraphB = filter(subgraphs, (o) => o.id === 'B')[0];
 
     expect(subgraphB.nodes[0]).toBe('c');
     expect(subgraphB.dir).toBe('LR');
@@ -95,5 +94,4 @@ describe('when parsing directions', function() {
     expect(subgraphA.nodes).not.toContain('c');
     expect(subgraphA.dir).toBe('RL');
   });
-
 });

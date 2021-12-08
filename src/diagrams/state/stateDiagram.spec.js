@@ -1,14 +1,13 @@
-/* eslint-env jasmine */
 import { parser } from './parser/stateDiagram';
 import stateDb from './stateDb';
 
-describe('state diagram, ', function() {
-  describe('when parsing an info graph it', function() {
-    beforeEach(function() {
+describe('state diagram, ', function () {
+  describe('when parsing an info graph it', function () {
+    beforeEach(function () {
       parser.yy = stateDb;
     });
 
-    it('super simple', function() {
+    it('super simple', function () {
       const str = `
       stateDiagram
         [*] --> State1
@@ -17,7 +16,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('simple', function() {
+    it('simple', function () {
       const str = `stateDiagram\n
           State1 : this is another string
           [*] --> State1
@@ -26,7 +25,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('simple with directive', function() {
+    it('simple with directive', function () {
       const str = `%%{init: {'logLevel': 0 }}%%
       stateDiagram\n
           State1 : this is another string
@@ -36,7 +35,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle relation definitions', function() {
+    it('should handle relation definitions', function () {
       const str = `stateDiagram\n
         [*] --> State1
         State1 --> [*]
@@ -49,7 +48,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('hide empty description', function() {
+    it('hide empty description', function () {
       const str = `stateDiagram\n
         hide empty description
         [*] --> State1
@@ -64,7 +63,7 @@ describe('state diagram, ', function() {
       parser.parse(str);
     });
 
-    it('handle "as" in state names', function() {
+    it('handle "as" in state names', function () {
       const str = `stateDiagram
       assemble
       state assemble
@@ -72,7 +71,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('handle "as" in state names 1', function() {
+    it('handle "as" in state names 1', function () {
       const str = `stateDiagram
       assemble
       state assemble
@@ -80,7 +79,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('handle "as" in state names 2', function() {
+    it('handle "as" in state names 2', function () {
       const str = `stateDiagram
       assembleas
       state assembleas
@@ -88,7 +87,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('handle "as" in state names 3', function() {
+    it('handle "as" in state names 3', function () {
       const str = `stateDiagram
       state "as" as as
       `;
@@ -96,7 +95,7 @@ describe('state diagram, ', function() {
       parser.parse(str);
     });
 
-    it('scale', function() {
+    it('scale', function () {
       const str = `stateDiagram\n
         scale 350 width
         [*] --> State1
@@ -111,7 +110,7 @@ describe('state diagram, ', function() {
       parser.parse(str);
     });
 
-    it('description after second state', function() {
+    it('description after second state', function () {
       const str = `stateDiagram\n
         scale 350 width
         [*] --> State1 : This is the description with - in it
@@ -120,7 +119,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('shall handle descriptions inkluding minus signs', function() {
+    it('shall handle descriptions inkluding minus signs', function () {
       const str = `stateDiagram\n
         scale 350 width
         [*] --> State1 : This is the description +-!
@@ -129,7 +128,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle state statements', function() {
+    it('should handle state statements', function () {
       const str = `stateDiagram\n
         state Configuring {
           [*] --> NewValueSelection
@@ -141,7 +140,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle recursive state definitions', function() {
+    it('should handle recursive state definitions', function () {
       const str = `stateDiagram\n
         state Configuring {
           [*] --> NewValueSelection
@@ -157,7 +156,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle multiple recursive state definitions', function() {
+    it('should handle multiple recursive state definitions', function () {
       const str = `stateDiagram\n
         scale 350 width
         [*] --> NotShooting
@@ -182,14 +181,14 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle state deifintions with separation of id', function() {
+    it('should handle state deifintions with separation of id', function () {
       const str = `stateDiagram\n
         state "Long state description" as state1
         `;
 
       parser.parse(str);
     });
-    it('should handle state deifintions with separation of id', function() {
+    it('should handle state deifintions with separation of id', function () {
       const str = `stateDiagram
       state "Not Shooting State" as NotShooting {
         state "Idle mode" as Idle
@@ -203,7 +202,7 @@ describe('state diagram, ', function() {
       parser.parse(str);
     });
 
-    it('should State definition with quotes', function() {
+    it('should State definition with quotes', function () {
       const str = `stateDiagram\n
         scale 600 width
 
@@ -226,7 +225,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle fork statements', function() {
+    it('should handle fork statements', function () {
       const str = `stateDiagram\n
         state fork_state <<fork>>
         [*] --> fork_state
@@ -242,7 +241,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle concurrent state', function() {
+    it('should handle concurrent state', function () {
       const str = `stateDiagram\n
         [*] --> Active
 
@@ -263,7 +262,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle concurrent state', function() {
+    it('should handle concurrent state', function () {
       const str = `stateDiagram\n
         [*] --> Active
 
@@ -288,7 +287,7 @@ describe('state diagram, ', function() {
 
     //   parser.parse(str);
     // });
-    it('should handle note statements', function() {
+    it('should handle note statements', function () {
       const str = `stateDiagram\n
         [*] --> Active
         Active --> Inactive
@@ -304,7 +303,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle multiline notes with different line breaks', function() {
+    it('should handle multiline notes with different line breaks', function () {
       const str = `stateDiagram
         State1
         note right of State1
@@ -314,7 +313,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle floating notes', function() {
+    it('should handle floating notes', function () {
       const str = `stateDiagram
         foo: bar
         note "This is a floating note" as N1
@@ -322,7 +321,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle floating notes', function() {
+    it('should handle floating notes', function () {
       const str = `stateDiagram\n
         state foo
         note "This is a floating note" as N1
@@ -330,7 +329,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle notes for composit states', function() {
+    it('should handle notes for composit states', function () {
       const str = `stateDiagram\n
         [*] --> NotShooting
 
@@ -348,9 +347,8 @@ describe('state diagram, ', function() {
       parser.parse(str);
     });
   });
-  describe('when parsing an ignored info graph it', function() {
-
-    xit('should handle if statements', function() {
+  describe('when parsing an ignored info graph it', function () {
+    xit('should handle if statements', function () {
       const str = `stateDiagram\n
       [*] --> "Order Submitted"
       if "Payment Accepted" then

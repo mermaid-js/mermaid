@@ -19,11 +19,13 @@ export const labelHelper = (parent, node, _classes, isNode) => {
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'label').attr('style', node.labelStyle);
 
+  const labelText = typeof node.labelText === 'string' ? node.labelText : node.labelText[0];
+
   const text = label
     .node()
     .appendChild(
       createLabel(
-        sanitizeText(decodeEntities(node.labelText), getConfig()),
+        sanitizeText(decodeEntities(labelText), getConfig()),
         node.labelStyle,
         false,
         isNode
@@ -55,6 +57,12 @@ export const updateNodeBounds = (node, element) => {
   node.height = bbox.height;
 };
 
+/**
+ * @param parent
+ * @param w
+ * @param h
+ * @param points
+ */
 export function insertPolygonShape(parent, w, h, points) {
   return parent
     .insert('polygon', ':first-child')

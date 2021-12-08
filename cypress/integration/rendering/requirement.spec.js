@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { imgSnapshotTest, renderGraph } from '../../helpers/util.js';
 
 describe('Requirement diagram', () => {

@@ -3,16 +3,16 @@ import flow from './flow';
 import { setConfig } from '../../../config';
 
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
 describe('[Singlenodes] when parsing', () => {
-  beforeEach(function() {
+  beforeEach(function () {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
   });
 
-  it('should handle a single node', function() {
+  it('should handle a single node', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;A;');
 
@@ -22,7 +22,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(edges.length).toBe(0);
     expect(vert['A'].styles.length).toBe(0);
   });
-  it('should handle a single node with white space after it (SN1)', function() {
+  it('should handle a single node with white space after it (SN1)', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;A ;');
 
@@ -33,7 +33,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['A'].styles.length).toBe(0);
   });
 
-  it('should handle a single square node', function() {
+  it('should handle a single square node', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a[A];');
 
@@ -45,7 +45,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].type).toBe('square');
   });
 
-  it('should handle a single round square node', function() {
+  it('should handle a single round square node', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a[A];');
 
@@ -57,7 +57,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].type).toBe('square');
   });
 
-  it('should handle a single circle node', function() {
+  it('should handle a single circle node', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a((A));');
 
@@ -68,7 +68,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].type).toBe('circle');
   });
 
-  it('should handle a single round node', function() {
+  it('should handle a single round node', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a(A);');
 
@@ -79,7 +79,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].type).toBe('round');
   });
 
-  it('should handle a single odd node', function() {
+  it('should handle a single odd node', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a>A];');
 
@@ -90,7 +90,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].type).toBe('odd');
   });
 
-  it('should handle a single diamond node', function() {
+  it('should handle a single diamond node', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a{A};');
 
@@ -101,7 +101,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].type).toBe('diamond');
   });
 
-  it('should handle a single diamond node with whitespace after it', function() {
+  it('should handle a single diamond node with whitespace after it', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a{A}   ;');
 
@@ -112,7 +112,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].type).toBe('diamond');
   });
 
-  it('should handle a single diamond node with html in it (SN3)', function() {
+  it('should handle a single diamond node with html in it (SN3)', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a{A <br> end};');
 
@@ -124,7 +124,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].text).toBe('A <br> end');
   });
 
-  it('should handle a single hexagon node', function() {
+  it('should handle a single hexagon node', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a{{A}};');
 
@@ -135,7 +135,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].type).toBe('hexagon');
   });
 
-  it('should handle a single hexagon node with html in it', function() {
+  it('should handle a single hexagon node with html in it', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a{{A <br> end}};');
 
@@ -147,7 +147,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].text).toBe('A <br> end');
   });
 
-  it('should handle a single round node with html in it', function() {
+  it('should handle a single round node with html in it', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a(A <br> end);');
 
@@ -159,7 +159,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].text).toBe('A <br> end');
   });
 
-  it('should handle a single node with alphanumerics starting on a char', function() {
+  it('should handle a single node with alphanumerics starting on a char', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;id1;');
 
@@ -170,7 +170,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['id1'].styles.length).toBe(0);
   });
 
-  it('should handle a single node with a single digit', function() {
+  it('should handle a single node with a single digit', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;1;');
 
@@ -181,7 +181,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['1'].text).toBe('1');
   });
 
-  it('should handle a single node with a single digit in a subgraph', function() {
+  it('should handle a single node with a single digit in a subgraph', function () {
     // Silly but syntactically correct
 
     const res = flow.parser.parse('graph TD;subgraph "hello";1;end;');
@@ -193,7 +193,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['1'].text).toBe('1');
   });
 
-  it('should handle a single node with alphanumerics starting on a num', function() {
+  it('should handle a single node with alphanumerics starting on a num', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;1id;');
 
@@ -204,7 +204,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['1id'].styles.length).toBe(0);
   });
 
-  it('should handle a single node with alphanumerics containing a minus sign', function() {
+  it('should handle a single node with alphanumerics containing a minus sign', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;i-d;');
 
@@ -215,7 +215,7 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['i-d'].styles.length).toBe(0);
   });
 
-  it('should handle a single node with alphanumerics containing a underscore sign', function() {
+  it('should handle a single node with alphanumerics containing a underscore sign', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;i_d;');
 

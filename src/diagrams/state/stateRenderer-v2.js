@@ -20,7 +20,9 @@ let nodeDb = {};
 
 /**
  * Returns the all the styles from classDef statements in the graph definition.
- * @returns {object} classDef styles
+ *
+ * @param {any} text
+ * @returns {object} ClassDef styles
  */
 export const getClasses = function (text) {
   log.trace('Extracting classes');
@@ -81,6 +83,11 @@ const setupNode = (g, parent, node, altFlag) => {
         nodeDb[node.id].description,
         getConfig()
       );
+    }
+
+    //
+    if (nodeDb[node.id].description.length === 1 && nodeDb[node.id].shape === 'rectWithTitle') {
+      nodeDb[node.id].shape = 'rect';
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
@@ -227,8 +234,9 @@ const getDir = (nodes, defaultDir) => {
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
 export const draw = function (text, id) {
   log.info('Drawing state diagram (v2)', id);

@@ -21,8 +21,10 @@ export const setConf = function (cnf) {
 
 /**
  * Function that adds the vertices found during parsing to the graph to be rendered.
+ *
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
+ * @param svgId
  */
 export const addVertices = function (vert, g, svgId) {
   const svg = select(`[id="${svgId}"]`);
@@ -34,6 +36,7 @@ export const addVertices = function (vert, g, svgId) {
 
     /**
      * Variable for storing the classes for the vertex
+     *
      * @type {string}
      */
     let classStr = 'default';
@@ -149,6 +152,7 @@ export const addVertices = function (vert, g, svgId) {
       width: vertex.type === 'group' ? 500 : undefined,
       dir: vertex.dir,
       type: vertex.type,
+      props: vertex.props,
       padding: getConfig().flowchart.padding,
     });
 
@@ -165,6 +169,7 @@ export const addVertices = function (vert, g, svgId) {
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       dir: vertex.dir,
+      props: vertex.props,
       padding: getConfig().flowchart.padding,
     });
   });
@@ -172,8 +177,9 @@ export const addVertices = function (vert, g, svgId) {
 
 /**
  * Add edges to graph based on parsed graph defninition
- * @param {Object} edges The edges to add to the graph
- * @param {Object} g The graph object
+ *
+ * @param {object} edges The edges to add to the graph
+ * @param {object} g The graph object
  */
 export const addEdges = function (edges, g) {
   log.info('abc78 edges = ', edges);
@@ -317,7 +323,9 @@ export const addEdges = function (edges, g) {
 
 /**
  * Returns the all the styles from classDef statements in the graph definition.
- * @returns {object} classDef styles
+ *
+ * @param text
+ * @returns {object} ClassDef styles
  */
 export const getClasses = function (text) {
   log.info('Extracting classes');
@@ -337,6 +345,7 @@ export const getClasses = function (text) {
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
  * @param text
  * @param id
  */

@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 describe('Class diagram', () => {
@@ -31,7 +30,7 @@ describe('Class diagram', () => {
         test()
       }
       `,
-      {logLevel : 1}
+      { logLevel: 1 }
     );
     cy.get('svg');
   });
