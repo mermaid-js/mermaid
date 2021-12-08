@@ -1,4 +1,5 @@
 {
-  "*.{js,jsx}": ["yarn lint:fix", "git add"],
-  "!*.{js,jsx}": ["prettier --write --ignore-unknown", "git add"]
+  "*.{js,html,md}": [
+      "yarn lint:fix" 
+   ]
 }
