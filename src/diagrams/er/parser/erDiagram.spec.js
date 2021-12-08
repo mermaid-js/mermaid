@@ -3,11 +3,10 @@ import erDb from '../erDb';
 import erDiagram from './erDiagram';
 
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
 describe('when parsing ER diagram it...', function () {
-
   beforeEach(function () {
     erDiagram.parser.yy = erDb;
     erDiagram.parser.yy.clear();
@@ -78,7 +77,9 @@ describe('when parsing ER diagram it...', function () {
     const attribute2 = 'string author';
     const attribute3 = 'float price';
 
-    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`);
+    erDiagram.parser.parse(
+      `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`
+    );
     const entities = erDb.getEntities();
     expect(entities[entity].attributes.length).toBe(3);
   });
@@ -89,7 +90,9 @@ describe('when parsing ER diagram it...', function () {
     const attribute2 = 'string author';
     const attribute3 = 'float price';
 
-    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n}\n${entity} {\n${attribute2}\n${attribute3}\n}`);
+    erDiagram.parser.parse(
+      `erDiagram\n${entity} {\n${attribute1}\n}\n${entity} {\n${attribute2}\n${attribute3}\n}`
+    );
     const entities = erDb.getEntities();
     expect(entities[entity].attributes.length).toBe(3);
   });
@@ -196,7 +199,6 @@ describe('when parsing ER diagram it...', function () {
     /* TODO */
   });
 
-
   it('should handle only-one-to-one-or-more relationships', function () {
     erDiagram.parser.parse('erDiagram\nA ||--|{ B : has');
     const rels = erDb.getRelationships();
@@ -215,7 +217,6 @@ describe('when parsing ER diagram it...', function () {
     expect(rels.length).toBe(1);
     expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ZERO_OR_MORE);
     expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
-
   });
 
   it('should handle zero-or-one-to-zero-or-more relationships', function () {

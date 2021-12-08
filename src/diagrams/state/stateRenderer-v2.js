@@ -85,6 +85,11 @@ const setupNode = (g, parent, node, altFlag) => {
       );
     }
 
+    //
+    if (nodeDb[node.id].description.length === 1 && nodeDb[node.id].shape === 'rectWithTitle') {
+      nodeDb[node.id].shape = 'rect';
+    }
+
     // Save data for description and group so that for instance a statement without description overwrites
     // one with description
 
