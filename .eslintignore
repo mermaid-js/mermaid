@@ -1,2 +1,4 @@
 dist/**
-.github/**
+yarn.lock
+demos/**
+**/*.json
