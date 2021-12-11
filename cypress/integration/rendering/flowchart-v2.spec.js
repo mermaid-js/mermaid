@@ -610,7 +610,7 @@ flowchart RL
     imgSnapshotTest(
       `flowchart TB
       a{{"Lorem 'ipsum' dolor 'sit' amet, 'consectetur' adipiscing 'elit'."}}
-      --> b{{"Lorem #quot;ipsum#quot; dolor #quot;sit#quot; amet,#quot;consectetur#quot; adipiscing #quot;elit#quot;."}}    
+      --> b{{"Lorem #quot;ipsum#quot; dolor #quot;sit#quot; amet,#quot;consectetur#quot; adipiscing #quot;elit#quot;."}}
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
@@ -646,7 +646,7 @@ flowchart RL
       default-index.js --> dot.template.js
       index.js --> module-utl.js
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
-    )
-  })
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
 });
