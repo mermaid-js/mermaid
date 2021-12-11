@@ -1,5 +1,5 @@
 {
-  "*.{js,html,md}": [
+  "*.{js,json,html,md}": [
       "yarn lint:fix" 
    ]
 }
