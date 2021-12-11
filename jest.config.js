@@ -4,7 +4,10 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.jsx?$': ['babel-jest', { rootMode: 'upward' }],
-    '^.+\\.jison$': [path.resolve(__dirname, './jison/transformer.js'), { 'token-stack': true }],
+    '^.+\\.jison$': [
+      path.resolve(__dirname, './src/jison/transformer.js'),
+      { 'token-stack': true },
+    ],
   },
   transformIgnorePatterns: ['/node_modules/(?!dagre-d3-renderer/lib).*\\.js'],
   moduleNameMapper: {

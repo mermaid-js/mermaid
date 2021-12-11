@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.13.4",
+  "version": "8.13.5",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "module": "dist/mermaid.esm.min.mjs",
@@ -37,7 +37,8 @@
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn test",
-    "prepare": "yarn build"
+    "prepare": "husky install && yarn build",
+    "pre-commit": "lint-staged"
   },
   "repository": {
     "type": "git",
@@ -71,6 +72,8 @@
     "@babel/eslint-parser": "^7.14.7",
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.14.5",
+    "@commitlint/cli": "^15.0.0",
+    "@commitlint/config-conventional": "^15.0.0",
     "@percy/cli": "^1.0.0-beta.58",
     "@percy/cypress": "^3.1.0",
     "@percy/migrate": "^0.11.0",
@@ -79,7 +82,7 @@
     "concurrently": "^6.2.2",
     "coveralls": "^3.0.2",
     "css-to-string-loader": "^0.1.3",
-    "cypress": "9.0.0",
+    "cypress": "9.1.1",
     "documentation": "13.2.0",
     "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",
@@ -93,6 +96,7 @@
     "jest": "^27.0.6",
     "jison": "^0.4.18",
     "js-base64": "3.7.2",
+    "lint-staged": "^12.1.2",
     "moment": "^2.23.0",
     "path-browserify": "^1.0.1",
     "prettier": "^2.3.2",
@@ -110,10 +114,5 @@
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
-  ],
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn test"
-    }
-  }
+  ]
 }
