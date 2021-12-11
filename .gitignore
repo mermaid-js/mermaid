@@ -4,18 +4,13 @@ node_modules/
 coverage/
 .idea/
 
-dist/*.js
-dist/*.map
+dist/
 
 yarn-error.log
 .npmrc
 token
 
 package-lock.json
-
-dist/classTest.html
-
-dist/sequenceTest.html
 
 .vscode/
 cypress/platform/current.html
