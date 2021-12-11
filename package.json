@@ -115,14 +115,5 @@
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
-<<<<<<< HEAD
-  ],
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn test"
-    }
-  }
-=======
   ]
->>>>>>> develop
 }
