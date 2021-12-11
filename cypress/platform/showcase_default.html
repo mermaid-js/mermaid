@@ -254,22 +254,24 @@ requirementDiagram
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
-          // console.error('Mermaid error: ', err);
-        };
+        // console.error('Mermaid error: ', err);
+      };
       mermaid.initialize({
         // theme: 'dark',
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'cardinal', "htmlLabels": false },
+        flowchart: { curve: 'cardinal', htmlLabels: false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         fontFamily: '"arial", sans-serif',
         curve: 'cardinal',
-        securityLevel: 'strict'
+        securityLevel: 'strict',
       });
-      function callback(){alert('It worked');}
+      function callback() {
+  alert('It worked');
+}
     </script>
   </body>
 </html>
