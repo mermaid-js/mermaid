@@ -21,8 +21,8 @@
     "git graph"
   ],
   "scripts": {
-    "build:development": "webpack --progress --color",
-    "build:production": "yarn build:development --mode production --config webpack.config.prod.babel.js",
+    "build:development": "webpack --mode development --progress --color",
+    "build:production": "webpack --mode production --progress --color",
     "build": "concurrently \"yarn build:development\" \"yarn build:production\"",
     "postbuild": "documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md",
     "build:watch": "yarn build:development --watch",
@@ -33,7 +33,7 @@
     "cypress": "percy exec -- cypress run",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "e2e-upd": "yarn lint && jest e2e -u --config e2e/jest.config.js",
-    "dev": "webpack serve --config webpack.config.e2e.js",
+    "dev": "webpack serve --config ./.webpack/webpack.config.e2e.babel.js",
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn test",
@@ -107,6 +107,7 @@
     "webpack": "^5.53.0",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^4.3.0",
+    "webpack-merge": "^5.8.0",
     "webpack-node-externals": "^3.0.0"
   },
   "files": [

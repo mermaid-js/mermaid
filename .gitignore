@@ -4,7 +4,7 @@ node_modules/
 coverage/
 .idea/
 
-dist/
+dist
 
 yarn-error.log
 .npmrc
