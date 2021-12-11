@@ -13,8 +13,13 @@
     },
     "sourceType": "module"
   },
+<<<<<<< HEAD
   "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "plugin:prettier/recommended"],
   "plugins": ["html", "jest", "jsdoc", "prettier"],
+=======
+  "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "plugin:markdown/recommended", "plugin:prettier/recommended"],
+  "plugins": ["jest", "jsdoc", "prettier"],
+>>>>>>> develop
   "rules": {
     "no-prototype-builtins": 0,
     "no-unused-vars": 0,

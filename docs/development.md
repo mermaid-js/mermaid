@@ -79,9 +79,9 @@ When running in CI it will take a snapshot of the rendered diagram and compare i
 This is what a rendering test looks like:
 
 ```js
-  it('should render forks and joins', () => {
+it('should render forks and joins', () => {
     imgSnapshotTest(
-      `
+        `
     stateDiagram
     state fork_state &lt;&lt;fork&gt;&gt;
       [*] --> fork_state
@@ -94,10 +94,10 @@ This is what a rendering test looks like:
       join_state --> State4
       State4 --> [*]
     `,
-      { logLevel: 0 }
+        { logLevel: 0 }
     );
     cy.get('svg');
-  });
+});
 ```
 
 ### Any Questions or Suggestions?
