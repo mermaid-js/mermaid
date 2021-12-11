@@ -1,0 +1,13 @@
+{
+  "title": "Jison Parser options",
+  "type": "object",
+  "properties": {
+      "token-stack": {
+          "type": "boolean"
+      },
+      "debug": {
+          "type": "boolean"
+      }
+  },
+  "additionalProperties": false
+}
