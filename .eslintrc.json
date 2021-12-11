@@ -14,7 +14,7 @@
     "sourceType": "module"
   },
   "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "plugin:markdown/recommended", "plugin:prettier/recommended"],
-  "plugins": ["jest", "jsdoc", "prettier"],
+  "plugins": ["html", "jest", "jsdoc", "prettier"],
   "rules": {
     "no-prototype-builtins": 0,
     "no-unused-vars": 0,
