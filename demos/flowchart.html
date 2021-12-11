@@ -1088,17 +1088,17 @@
       theme: 'forest',
       logLevel: 3,
       securityLevel: 'loose',
-      flowchart: { curve: 'basis' }
+      flowchart: { curve: 'basis' },
     });
   </script>
   <script>
     function testClick(nodeId) {
-      console.log("clicked", nodeId)
-      var originalBgColor = document.querySelector('body').style.backgroundColor
-      document.querySelector('body').style.backgroundColor = 'yellow'
-      setTimeout(function() {
-        document.querySelector('body').style.backgroundColor = originalBgColor
-      }, 100)
+      console.log('clicked', nodeId);
+      var originalBgColor = document.querySelector('body').style.backgroundColor;
+      document.querySelector('body').style.backgroundColor = 'yellow';
+      setTimeout(function () {
+        document.querySelector('body').style.backgroundColor = originalBgColor;
+      }, 100);
     }
   </script>
 </body>

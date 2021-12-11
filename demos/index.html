@@ -790,31 +790,31 @@
   </script>
   <script>
     function ganttTestClick(a, b, c) {
-      console.log("a:", a)
-      console.log("b:", b)
-      console.log("c:", c)
+      console.log('a:', a);
+      console.log('b:', b);
+      console.log('c:', c);
     }
     function testClick(nodeId) {
-      console.log("clicked", nodeId)
-      var originalBgColor = document.querySelector('body').style.backgroundColor
-      document.querySelector('body').style.backgroundColor = 'yellow'
-      setTimeout(function() {
-        document.querySelector('body').style.backgroundColor = originalBgColor
-      }, 100)
+      console.log('clicked', nodeId);
+      var originalBgColor = document.querySelector('body').style.backgroundColor;
+      document.querySelector('body').style.backgroundColor = 'yellow';
+      setTimeout(function () {
+        document.querySelector('body').style.backgroundColor = originalBgColor;
+      }, 100);
     }
   </script>
   <script>
     const testLineEndings = (test, input) => {
       try {
-        mermaid.render(test, input, () => { });
+        mermaid.render(test, input, () => {});
       } catch (err) {
-        console.error("Error in %s:\n\n%s", test, err);
+        console.error('Error in %s:\n\n%s', test, err);
       }
     };
 
-    testLineEndings("CR", "graph LR\rsubgraph CR\rA --> B\rend");
-    testLineEndings("LF", "graph LR\nsubgraph LF\nA --> B\nend");
-    testLineEndings("CRLF", "graph LR\r\nsubgraph CRLF\r\nA --> B\r\nend");
+    testLineEndings('CR', 'graph LR\rsubgraph CR\rA --> B\rend');
+    testLineEndings('LF', 'graph LR\nsubgraph LF\nA --> B\nend');
+    testLineEndings('CRLF', 'graph LR\r\nsubgraph CRLF\r\nA --> B\r\nend');
   </script>
 </body>
 
