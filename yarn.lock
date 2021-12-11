@@ -5003,6 +5003,13 @@ eslint-plugin-jsdoc@^37.0.3:
     semver "^7.3.5"
     spdx-expression-parse "^3.0.1"
 
+eslint-plugin-markdown@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-markdown/-/eslint-plugin-markdown-2.2.1.tgz#76b8a970099fbffc6cc1ffcad9772b96911c027a"
+  integrity sha512-FgWp4iyYvTFxPwfbxofTvXxgzPsDuSKHQy2S+a8Ve6savbujey+lgrFFbXQA0HPygISpRYWYBjooPzhYSF81iA==
+  dependencies:
+    mdast-util-from-markdown "^0.8.5"
+
 eslint-plugin-prettier@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-4.0.0.tgz#8b99d1e4b8b24a762472b4567992023619cb98e0"
