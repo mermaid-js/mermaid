@@ -1,5 +1,30 @@
 import { imgSnapshotTest } from '../../helpers/util.js';
 
+describe('themeCSS balancing, it', () => {
+  it('should not allow unbalanced CSS definitions', () => {
+    imgSnapshotTest(
+      `
+  %%{init: { 'themeCSS': '} * { background: red }' } }%%
+  flowchart TD
+    a --> b
+          `,
+      {}
+    );
+    cy.get('svg');
+  });
+  it('should not allow unbalanced CSS definitions 2', () => {
+    imgSnapshotTest(
+      `
+  %%{init: { 'themeCSS': '\u007D * { background: red }' } }%%
+  flowchart TD
+    a2 --> b2
+          `,
+      {}
+    );
+    cy.get('svg');
+  });
+});
+
 describe('Pie Chart', () => {
   // beforeEach(()=>{
   //   cy.clock((new Date('2014-06-09')).getTime());
