@@ -12,10 +12,21 @@
   </style>
 </head>
 <body>
-  <div class="mermaid">
+  <div class="mermaid2">
   %%{init: { 'themeCSS': '} * { background: lightblue }' } }%%
   flowchart TD
     a --> b
+  </div>
+  <div class="mermaid">
+   %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
+    flowchart LR
+    subgraph A
+        a --> b
+    end
+    subgraph B
+        i -->f
+    end
+    A --> B
   </div>
   <script src="./mermaid.js"></script>
   <script>
