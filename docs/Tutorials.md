@@ -37,30 +37,29 @@ https://codepen.io/janzeteachesit/pen/OWWZKN
 
 https://codepen.io/Ryuno-Ki/pen/LNxwgR
 
-## Python Integration with mermaid-js
-Here's an example of python integration with mermaid-js which uses the mermaid.ink service. 
-This is also working with colab and jupyter lab notebooks.
+## Jupyter Integration with mermaid-js
+
+Here's an example of Python integration with mermaid-js which uses the mermaid.ink service, that displays the graph in a Jupyter notebook.
 
 ```python
 import base64
-import requests, io
-from PIL import Image
+from IPython.display import Image, display
 import matplotlib.pyplot as plt
 
-graph = """
+def mm(graph):
+  graphbytes = graph.encode("ascii")
+  base64_bytes = base64.b64encode(graphbytes)
+  base64_string = base64_bytes.decode("ascii")
+  display(Image(url="https://mermaid.ink/img/" + base64_string))
+
+mm("""
 graph LR;
     A--> B & C & D;
     B--> A & E;
     C--> A & E;
     D--> A & E;
     E--> B & C & D;
-"""
-
-graphbytes = graph.encode("ascii")
-base64_bytes = base64.b64encode(graphbytes)
-base64_string = base64_bytes.decode("ascii")
-img = Image.open(io.BytesIO(requests.get('https://mermaid.ink/img/' + base64_string).content))
-plt.imshow(img)
+""")
 ```
 
 **Output**
