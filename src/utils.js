@@ -974,6 +974,11 @@ export const directiveSanitizer = (args) => {
           log.debug('sanitize deleting constr option', key);
           delete args[key];
         }
+
+        if (key.indexOf('themeCSS') >= 0) {
+          log.debug('sanitizing themeCss option');
+          args[key] = sanitizeCss(args[key]);
+        }
         if (configKeys.indexOf(key) < 0) {
           log.debug('sanitize deleting option', key);
           delete args[key];
@@ -986,6 +991,16 @@ export const directiveSanitizer = (args) => {
       });
     }
   }
+};
+export const sanitizeCss = (str) => {
+  const stringsearch = 'o';
+  const startCnt = (str.match(/\{/g) || []).length;
+  const endCnt = (str.match(/\}/g) || []).length;
+  if (startCnt !== endCnt) {
+    return '{ /* ERROR: Unbalanced CSS */ }';
+  }
+  // Todo add more checks here
+  return str;
 };
 
 export default {
@@ -1013,4 +1028,5 @@ export default {
   entityDecode,
   initIdGeneratior,
   directiveSanitizer,
+  sanitizeCss,
 };

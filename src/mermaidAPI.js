@@ -60,7 +60,7 @@ import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
-import utils, { directiveSanitizer, assignWithDepth } from './utils';
+import utils, { directiveSanitizer, assignWithDepth, sanitizeCss } from './utils';
 
 /**
  * @param text
@@ -223,6 +223,7 @@ const render = function (id, _txt, cb, container) {
   let txt = _txt;
   const graphInit = utils.detectInit(txt);
   if (graphInit) {
+    directiveSanitizer(graphInit);
     configApi.addDirective(graphInit);
   }
   let cnf = configApi.getConfig();
@@ -532,6 +533,9 @@ const handleDirective = function (p, directive, type) {
       if (p && p['setWrap']) {
         p.setWrap(directive.type === 'wrap');
       }
+      break;
+    case 'themeCss':
+      log.warn('themeCss encountered');
       break;
     default:
       log.warn(

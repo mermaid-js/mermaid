@@ -185,8 +185,8 @@ style N stroke:#0000ff,fill:#ccccff,color:#0000ff
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
-          // console.error('Mermaid error: ', err);
-        };
+        // console.error('Mermaid error: ', err);
+      };
       mermaid.initialize({
         theme: 'neutral',
         arrowMarkerAbsolute: true,
@@ -195,7 +195,7 @@ style N stroke:#0000ff,fill:#ccccff,color:#0000ff
         flowchart: { nodeSpacing: 10, curve: 'cardinal', htmlLabels: true },
         htmlLabels: true,
         // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorFontFamily: 'courier',actorMargin: 50, showSequenceNumbers: false },
+        sequence: { actorFontFamily: 'courier', actorMargin: 50, showSequenceNumbers: false },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         // fontFamily: '"times", sans-serif',
         // fontFamily: 'courier',
@@ -204,7 +204,9 @@ style N stroke:#0000ff,fill:#ccccff,color:#0000ff
         securityLevel: 'loose',
         // themeVariables: {relationLabelColor: 'red'}
       });
-      function callback(){alert('It worked');}
+      function callback() {
+  alert('It worked');
+}
     </script>
   </body>
 </html>

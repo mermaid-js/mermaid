@@ -1,0 +1,16 @@
+name: Update Browserslist
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npx browserslist@latest --update-db
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: ${{ github.actor }}
+          author_email: ${{ github.actor }}@users.noreply.github.com
+          message: 'Update Browserslist'

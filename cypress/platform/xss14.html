@@ -46,8 +46,8 @@
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
-          // console.error('Mermaid error: ', err);
-        };
+        // console.error('Mermaid error: ', err);
+      };
       mermaid.initialize({
         theme: 'forest',
         arrowMarkerAbsolute: true,
@@ -58,11 +58,13 @@
         },
         flowchart: {
           // defaultRenderer: 'dagre-wrapper',
-          nodeSpacing: 10, curve: 'cardinal', htmlLabels: true
+          nodeSpacing: 10,
+    curve: 'cardinal',
+    htmlLabels: true,
         },
         htmlLabels: true,
         // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorFontFamily: 'courier',actorMargin: 50, showSequenceNumbers: false },
+        sequence: { actorFontFamily: 'courier', actorMargin: 50, showSequenceNumbers: false },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         // fontFamily: '"times", sans-serif',
         // fontFamily: 'courier',
@@ -70,34 +72,36 @@
         curve: 'basis',
         securityLevel: 'antiscript',
         startOnLoad: false,
-        secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
+        secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
         // themeVariables: {relationLabelColor: 'red'}
       });
-      function callback(){alert('It worked');}
-      function xssAttack(){
-        const div = document.createElement('div')
-        div.id = 'the-malware'
-        div.className = 'malware'
-        div.innerHTML = 'XSS Succeeded'
+      function callback() {
+  alert('It worked');
+}
+      function xssAttack() {
+        const div = document.createElement('div');
+        div.id = 'the-malware';
+        div.className = 'malware';
+        div.innerHTML = 'XSS Succeeded';
         document.getElementsByTagName('body')[0].appendChild(div);
         throw new Error('XSS Succeded');
       }
 
-      var diagram = "classDiagram\n"
-diagram += "classA <-- classB : <ifr";
+      var diagram = 'classDiagram\n';
+diagram += 'classA <-- classB : <ifr';
 diagram += "ame/srcdoc='<scr";
-diagram += "ipt>parent.xssAttack(`XSS`)</";
+diagram += 'ipt>parent.xssAttack(`XSS`)</';
 diagram += "script>'>";
 
-    //   var diagram = "stateDiagram-v2\n";
-    //  diagram += "<img/src='1'/onerror"
-    //  diagram += "=xssAttack()> --> B";
-  console.log(diagram);
-  // document.querySelector('#diagram').innerHTML = diagram;
-  mermaid.render('diagram', diagram, (res) => {
-    console.log(res);
-    document.querySelector('#res').innerHTML = res;
-  });
+//   var diagram = "stateDiagram-v2\n";
+//  diagram += "<img/src='1'/onerror"
+//  diagram += "=xssAttack()> --> B";
+console.log(diagram);
+// document.querySelector('#diagram').innerHTML = diagram;
+mermaid.render('diagram', diagram, (res) => {
+  console.log(res);
+  document.querySelector('#res').innerHTML = res;
+});
     </script>
   </body>
 </html>
