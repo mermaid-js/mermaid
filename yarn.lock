@@ -1092,9 +1092,9 @@
   integrity sha512-+l6FlG1j73t4wh78W41StbcCz0/9a1/y+vxfnjtHl060kSmcgMfGzK9MEkLvrCOXfhp9RCX+d88sm6rOqxEIEQ==
 
 "@babel/register@^7.14.5":
-  version "7.16.0"
-  resolved "https://registry.yarnpkg.com/@babel/register/-/register-7.16.0.tgz#f5d2aa14df37cf7146b9759f7c53818360f24ec6"
-  integrity sha512-lzl4yfs0zVXnooeLE0AAfYaT7F3SPA8yB2Bj4W1BiZwLbMS3MZH35ZvCWSRHvneUugwuM+Wsnrj7h0F7UmU3NQ==
+  version "7.16.5"
+  resolved "https://registry.yarnpkg.com/@babel/register/-/register-7.16.5.tgz#657d28b7ca68190de8f6159245b5ed1cfa181640"
+  integrity sha512-NpluD+cToBiZiDsG3y9rtIcqDyivsahpaM9csfyfiq1qQWduSmihUZ+ruIqqSDGjZKZMJfgAElo9x2YWlOQuRw==
   dependencies:
     clone-deep "^4.0.1"
     find-cache-dir "^2.0.0"
