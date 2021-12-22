@@ -1,5 +1,7 @@
 name: Update Browserslist
 on:
+  schedule:
+    - cron: '0 7 * * 1'
   workflow_dispatch:
 
 jobs:
