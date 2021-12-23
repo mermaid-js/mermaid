@@ -70,7 +70,7 @@
         // fontFamily: 'courier',
         fontSize: 18,
         curve: 'basis',
-        securityLevel: 'strict  ',
+        securityLevel: 'strict',
         startOnLoad: false,
         secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
         // themeVariables: {relationLabelColor: 'red'}
@@ -90,7 +90,7 @@
       var diagram = `sequenceDiagram
     participant John
     links John: {"XSS": "javas`;
-diagram += 'cript:alert(window.opener.document.domain)"}';
+diagram += `cript:alert('AudioParam')"}`;
 
 //   var diagram = "stateDiagram-v2\n";
 //  diagram += "<img/src='1'/onerror"

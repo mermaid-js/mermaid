@@ -13,6 +13,24 @@ export const getRows = (s) => {
   return str.split('#br#');
 };
 
+export const removeEscapes = (text) => {
+  let newStr = text.replace(/\\u[\dA-F]{4}/gi, function (match) {
+    return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+  });
+
+  console.log(newStr);
+
+  newStr = newStr.replace(/\\x([0-9a-f]{2})/gi, (_, c) => String.fromCharCode(parseInt(c, 16)));
+  newStr = newStr.replace(/\\[\d\d\d]{3}/gi, function (match) {
+    return String.fromCharCode(parseInt(match.replace(/\\/g, ''), 8));
+  });
+  newStr = newStr.replace(/\\[\d\d\d]{2}/gi, function (match) {
+    return String.fromCharCode(parseInt(match.replace(/\\/g, ''), 8));
+  });
+
+  return newStr;
+};
+
 /**
  * Removes script tags from a text
  *
@@ -40,13 +58,12 @@ export const removeScript = (txt) => {
       break;
     }
   }
-
-  rs = rs.replace(/script>/gi, '#');
-  rs = rs.replace(/script>/gi, '#');
-  rs = rs.replace(/javascript:/gi, '#');
-  rs = rs.replace(/onerror=/gi, 'onerror:');
-  rs = rs.replace(/<iframe/gi, '');
-  return rs;
+  let decodedText = removeEscapes(rs);
+  decodedText = decodedText.replace(/script>/gi, '#');
+  decodedText = decodedText.replace(/javascript:/gi, '#');
+  decodedText = decodedText.replace(/onerror=/gi, 'onerror:');
+  decodedText = decodedText.replace(/<iframe/gi, '');
+  return decodedText;
 };
 
 const sanitizeMore = (text, config) => {
@@ -62,7 +79,7 @@ const sanitizeMore = (text, config) => {
   if (htmlLabels) {
     const level = config.securityLevel;
 
-    if (level === 'antiscript') {
+    if (level === 'antiscript' || level === 'strict') {
       txt = removeScript(txt);
     } else if (level !== 'loose') {
       // eslint-disable-line
@@ -171,4 +188,5 @@ export default {
   removeScript,
   getUrl,
   evaluate,
+  removeEscapes,
 };
