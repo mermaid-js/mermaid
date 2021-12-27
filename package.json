@@ -73,7 +73,7 @@
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.14.5",
     "@commitlint/cli": "^15.0.0",
-    "@commitlint/config-conventional": "^15.0.0",
+    "@commitlint/config-conventional": "^16.0.0",
     "@percy/cli": "^1.0.0-beta.58",
     "@percy/cypress": "^3.1.0",
     "@percy/migrate": "^0.11.0",
