@@ -74,7 +74,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Flowcharts](https://www.dokuwiki.org/plugin:flowcharts?s[]=mermaid)
   - [ComboStrap](https://combostrap.com/mermaid)
 - [TiddlyWiki](https://tiddlywiki.com/)
-  - [mermaid-tw5-plugin](https://github.com/michaeljmcd/mermaid-tw5-plugin)
+  - [mermaid-tw5: full js library](https://github.com/efurlanm/mermaid-tw5)
+  - [tw5-mermaid: wrapper for Mermaid Live](https://github.com/jasonmhoule/tw5-mermaid)
 
 ## Editor Plugins
 

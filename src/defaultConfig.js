@@ -37,6 +37,7 @@ const config = {
   themeCSS: undefined,
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
   maxTextSize: 50000,
+  darkMode: false,
 
   /**
    * | Parameter  | Description                                            | Type   | Required | Values                      |
