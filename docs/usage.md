@@ -50,7 +50,8 @@ The easiest way to integrate mermaid on a web page requires three elements:
 
 2. The `mermaidAPI` call, in a separate `script` tag. Example:
     ```html
-    <script>mermaid.initialize({startOnLoad:true});</script>
+    <script>mermaid.initialize({startOnLoad:true});
+    </script>
     ```
 
 3. A graph definition, inside `<div>` tags labeled `class=mermaid`. Example:
@@ -82,7 +83,8 @@ locate the graph definitions inside the `div` tags with `class="mermaid"` and re
       B-->D(fa:fa-spinner);
   </div>
  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
- <script>mermaid.initialize({startOnLoad:true});</script>
+ <script>mermaid.initialize({startOnLoad:true});
+</script>
 </body>
 </html>
 ```
@@ -203,20 +205,10 @@ The example below show an outline of how this could be used. The example just lo
 <script src="mermaid.js"></script>
 
 <script>
-    mermaid.mermaidAPI.initialize({
-        startOnLoad:false
-    });
-    $(function(){
-        // Example of using the API
-        var element = document.querySelector("#graphDiv");
-
-        var insertSvg = function(svgCode, bindFunctions){
-            element.innerHTML = svgCode;
-        };
-
-        var graphDefinition = 'graph TB\na-->b';
-        var graph = mermaid.mermaidAPI.render('graphDiv', graphDefinition, insertSvg);
-    });
+    mermaid.mermaidAPI.initialize({ startOnLoad:false }); $(function(){ // Example of using the API var
+element = document.querySelector("#graphDiv"); var insertSvg = function(svgCode, bindFunctions){
+    element.innerHTML = svgCode; }; var graphDefinition = 'graph TB\na-->b'; var graph =
+mermaid.mermaidAPI.render('graphDiv', graphDefinition, insertSvg); });
 </script>
 ```
 
@@ -345,13 +337,7 @@ on what kind of integration you use.
 ```html
 <script src="../dist/mermaid.js"></script>
 <script>
-    var config = {
-        startOnLoad:true,
-        flowchart:{
-            useMaxWidth:false,
-            htmlLabels:true
-        }
-    };
+    var config = { startOnLoad:true, flowchart:{ useMaxWidth:false, htmlLabels:true } };
     mermaid.initialize(config);
 </script>
 ```

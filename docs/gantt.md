@@ -331,17 +331,9 @@ Beginners tip, a full example using interactive links in an html context:
   </div>
 
   <script>
-    var printArguments = function(arg1, arg2, arg3) {
-      alert('printArguments called with arguments: ' + arg1 + ', ' + arg2 + ', ' + arg3);
-    }
-    var printTask = function(taskId) {
-      alert('taskId: ' + taskId);
-    }
-    var config = {
-      startOnLoad:true,
-      securityLevel:'loose',
-    };
-    mermaid.initialize(config);
+    var printArguments = function(arg1, arg2, arg3) { alert('printArguments called with arguments: ' +
+arg1 + ', ' + arg2 + ', ' + arg3); }; var printTask = function(taskId) { alert('taskId: ' + taskId);
+    }; var config = { startOnLoad:true, securityLevel:'loose', }; mermaid.initialize(config);
   </script>
 </body>
 ```
