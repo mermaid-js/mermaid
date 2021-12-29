@@ -1,5 +1,6 @@
 import common from '../common/common';
 import { addFunction } from '../../interactionDb';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -19,12 +20,12 @@ export const drawRect = function (elem, rectData) {
   return rectElem;
 };
 
-const sanitizeUrl = function (s) {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/javascript:/g, '');
-};
+// const sanitizeUrl = function (s) {
+//   return s
+//     .replace(/&/g, '&amp;')
+//     .replace(/</g, '&lt;')
+//     .replace(/javascript:/g, '');
+// };
 
 const addPopupInteraction = (id, actorCnt) => {
   addFunction(() => {
@@ -1055,4 +1056,5 @@ export default {
   popupMenu,
   popdownMenu,
   fixLifeLineHeights,
+  sanitizeUrl,
 };
