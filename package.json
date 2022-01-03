@@ -79,7 +79,7 @@
     "@percy/migrate": "^0.11.0",
     "babel-jest": "^27.0.6",
     "babel-loader": "^8.2.2",
-    "concurrently": "^6.2.2",
+    "concurrently": "^7.0.0",
     "coveralls": "^3.0.2",
     "css-to-string-loader": "^0.1.3",
     "cypress": "9.2.0",
