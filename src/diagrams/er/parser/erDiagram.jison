@@ -98,8 +98,8 @@ attributes
 attribute
     : attributeType attributeName { $$ = { attributeType: $1, attributeName: $2 }; }
     | attributeType attributeName attributeKeyType { $$ = { attributeType: $1, attributeName: $2, attributeKeyType: $3 }; }
-    | attributeType attributeName COMMENT { $$ = { attributeType: $1, attributeName: $2, attributeComment: $3 }; }
-    | attributeType attributeName attributeKeyType COMMENT { $$ = { attributeType: $1, attributeName: $2, attributeKeyType: $3, attributeComment: $4 }; }
+    | attributeType attributeName attributeComment { $$ = { attributeType: $1, attributeName: $2, attributeComment: $3 }; }
+    | attributeType attributeName attributeKeyType attributeComment { $$ = { attributeType: $1, attributeName: $2, attributeKeyType: $3, attributeComment: $4 }; }
     ;
 
 attributeType
@@ -112,6 +112,10 @@ attributeName
 
 attributeKeyType
     : ATTRIBUTE_KEY { $$=$1; }
+    ;
+
+attributeComment
+    : COMMENT { $$=$1.replace(/"/g, ''); }
     ;
 
 relSpec
