@@ -46,14 +46,6 @@ sequenceDiagram
     Bob->>Alice: Hi Alice
 ```
 
-```mermaid-example
-sequenceDiagram
-    actor Alice
-    actor Bob
-    Alice->>Bob: Hi Bob
-    Bob->>Alice: Hi Alice
-```
-
 ### Aliases
 
 The actor can have a convenient identifier and a descriptive label.
