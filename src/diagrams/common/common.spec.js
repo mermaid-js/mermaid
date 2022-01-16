@@ -1,4 +1,4 @@
-import { removeScript, removeEscapes } from './common';
+import { sanitizeText, removeScript, removeEscapes } from './common';
 
 describe('when securityLevel is antiscript, all script must be removed', function () {
   it('should remove all script block, script inline.', function () {
@@ -67,5 +67,17 @@ describe('remove escape code in text', function () {
 
     const result = removeEscapes(labelString);
     expect(result).toEqual('script:');
+  });
+});
+
+describe('Sanitize text', function () {
+  it('should remove script tag', function () {
+    const maliciousStr = 'javajavascript:script:alert(1)';
+    const result = sanitizeText(maliciousStr, {
+      securityLevel: 'strict',
+      flowchart: { htmlLabels: true },
+    });
+    console.log('result', result);
+    expect(result).not.toContain('javascript:alert(1)');
   });
 });

@@ -35,7 +35,7 @@ const config = {
   theme: 'default',
   themeVariables: theme['default'].getThemeVariables(),
   themeCSS: undefined,
-  /* **maxTextSize** - The maximum allowed size of the users text diamgram */
+  /* **maxTextSize** - The maximum allowed size of the users text diagram */
   maxTextSize: 50000,
   darkMode: false,
 

@@ -59,6 +59,7 @@ describe('when parsing ER diagram it...', function () {
     const entities = erDb.getEntities();
     expect(Object.keys(entities).length).toBe(1);
     expect(entities[entity].attributes.length).toBe(1);
+    expect(entities[entity].attributes[0].attributeComment).toBe('comment');
   });
 
   it('should allow an entity with a single attribute to be defined with a key and a comment', function () {

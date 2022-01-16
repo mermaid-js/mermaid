@@ -11,6 +11,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) (**Native support**)
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) (**Native support**)
 - [Joplin](https://joplinapp.org) (**Native support**)
+- [Notion](https://notion.so) (**Native support**)
 - [GitHub](https://github.com)
   - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
   - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
@@ -74,7 +75,8 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Flowcharts](https://www.dokuwiki.org/plugin:flowcharts?s[]=mermaid)
   - [ComboStrap](https://combostrap.com/mermaid)
 - [TiddlyWiki](https://tiddlywiki.com/)
-  - [mermaid-tw5-plugin](https://github.com/michaeljmcd/mermaid-tw5-plugin)
+  - [mermaid-tw5: full js library](https://github.com/efurlanm/mermaid-tw5)
+  - [tw5-mermaid: wrapper for Mermaid Live](https://github.com/jasonmhoule/tw5-mermaid)
 
 ## Editor Plugins
 

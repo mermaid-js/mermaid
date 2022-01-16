@@ -43,7 +43,7 @@ __The following are some examples of the diagrams, charts and graphs that can be
 </td></tr>
 <tr>
     <td><pre>
-graph TD
+flowchart TD
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
 C -->|One| D[Result 1]

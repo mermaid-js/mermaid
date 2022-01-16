@@ -96,6 +96,16 @@ export const addRelation = function (relation) {
   relation.id1 = splitClassNameAndType(relation.id1).className;
   relation.id2 = splitClassNameAndType(relation.id2).className;
 
+  relation.relationTitle1 = common.sanitizeText(
+    relation.relationTitle1.trim(),
+    configApi.getConfig()
+  );
+
+  relation.relationTitle2 = common.sanitizeText(
+    relation.relationTitle2.trim(),
+    configApi.getConfig()
+  );
+
   relations.push(relation);
 };
 
