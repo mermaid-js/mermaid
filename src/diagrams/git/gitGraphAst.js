@@ -17,7 +17,9 @@ function getId() {
  */
 function isfastforwardable(currentCommit, otherCommit) {
   log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
-  while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit) {
+  let cnt = 0;
+  while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit && cnt < 1000) {
+    cnt++;
     // only if other branch has more commits
     if (otherCommit.parent == null) break;
     if (Array.isArray(otherCommit.parent)) {

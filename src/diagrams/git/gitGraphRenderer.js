@@ -227,7 +227,9 @@ function renderCommitHistory(svg, commitid, branches, direction) {
   let commit;
   const numCommits = Object.keys(allCommitsDict).length;
   if (typeof commitid === 'string') {
+    let cnt = 0;
     do {
+      cnt++;
       commit = allCommitsDict[commitid];
       log.debug('in renderCommitHistory', commit.id, commit.seq);
       if (svg.select('#node-' + commitid).size() > 0) {
@@ -293,7 +295,7 @@ function renderCommitHistory(svg, commitid, branches, direction) {
           .text(', ' + commit.message);
       }
       commitid = commit.parent;
-    } while (commitid && allCommitsDict[commitid]);
+    } while (commitid && allCommitsDict[commitid] && cnt < 1000);
   }
 
   if (Array.isArray(commitid)) {
@@ -313,7 +315,9 @@ function renderCommitHistory(svg, commitid, branches, direction) {
  */
 function renderLines(svg, commit, direction, branchColor) {
   branchColor = branchColor || 0;
-  while (commit.seq > 0 && !commit.lineDrawn) {
+  let cnt = 0;
+  while (commit.seq > 0 && !commit.lineDrawn && cnt < 1000) {
+    cnt++;
     if (typeof commit.parent === 'string') {
       svgDrawLineForCommits(svg, commit.id, commit.parent, direction, branchColor);
       commit.lineDrawn = true;
