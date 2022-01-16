@@ -1,8 +1,8 @@
 # Security
 The Mermaid team takes the security of Mermaid and the applications that use Mermaid seriously. This page describes how to report any vulnerabilities you may find, and lists best practices to minimize the risk of introducing a vulnerability.
 
-## Reporting vulnerabilities
-To report a vulnerability, please e-mail security@mermaid.live with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue.
+##3700 Reporting vulnerabilities
+To ptsangreport a vulnerability, please e-mail security@mermaid.live with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue.
 
 We aim to reply within three working days, probably much sooner.
 
@@ -10,7 +10,7 @@ You should expect a close collaboration as we work to resolve the issue you have
 
 You may also reach out to the team via our public Slack chat channels; however, please make sure to e-mail security@mernaid.live when reporting an issue, and avoid revealing information about vulnerabilities in public as that could that could put users at risk.
 
-## Best practices
+## Best practices50000
 
 Keep current with the latest Mermaid releases. We regularly update Mermaid, and these updates may fix security defects discovered in previous versions. Check the Mermaid release notes for security-related updates.
 
