@@ -139,16 +139,15 @@ export const addMember = function (className, member) {
 
   if (typeof member === 'string') {
     // Member can contain white spaces, we trim them out
-    // const memberString = sanitizeText(member.trim());
     const memberString = member.trim();
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
       // Remove leading and trailing brackets
-      theClass.annotations.push(memberString.substring(2, memberString.length - 2));
+      theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
-      theClass.methods.push(memberString);
+      theClass.methods.push(sanitizeText(memberString));
     } else if (memberString) {
-      theClass.members.push(memberString);
+      theClass.members.push(sanitizeText(memberString));
     }
   }
 };
