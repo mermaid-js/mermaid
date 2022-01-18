@@ -163,7 +163,7 @@ export const cleanupLabel = function (label) {
   if (label.substring(0, 1) === ':') {
     return common.sanitizeText(label.substr(1).trim(), configApi.getConfig());
   } else {
-    return label.trim();
+    return sanitizeText(label.trim());
   }
 };
 
