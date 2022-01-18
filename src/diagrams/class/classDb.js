@@ -13,6 +13,8 @@ let classCounter = 0;
 
 let funs = [];
 
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
+
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
@@ -137,6 +139,7 @@ export const addMember = function (className, member) {
 
   if (typeof member === 'string') {
     // Member can contain white spaces, we trim them out
+    // const memberString = sanitizeText(member.trim());
     const memberString = member.trim();
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {

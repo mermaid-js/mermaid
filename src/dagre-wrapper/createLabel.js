@@ -1,7 +1,9 @@
 import { select } from 'd3';
 import { log } from '../logger'; // eslint-disable-line
 import { getConfig } from '../config';
-import { evaluate } from '../diagrams/common/common';
+import { sanitizeText, evaluate } from '../diagrams/common/common';
+
+const sanitizeTxt = (txt) => sanitizeText(txt, getConfig());
 
 /**
  * @param dom
@@ -42,7 +44,7 @@ function addHtmlLabel(node) {
 }
 
 const createLabel = (_vertexText, style, isTitle, isNode) => {
-  let vertexText = _vertexText || '';
+  let vertexText = sanitizeTxt(_vertexText || '');
   if (typeof vertexText === 'object') vertexText = vertexText[0];
   if (evaluate(getConfig().flowchart.htmlLabels)) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
