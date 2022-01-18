@@ -54,7 +54,7 @@ This will then be sent to `mermaid.initialize(...)` for rendering.
 
 In this category are any directives that come after the graph type declaration. Essentially, these directives will only be processed after the init directive. Each individual graph type will handle these directives. As an example:
 
-```mmd
+```
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
 sequenceDiagram
 %%{config: { 'fontFamily': 'Menlo', 'fontSize': 18, 'fontWeight': 400} }%%
