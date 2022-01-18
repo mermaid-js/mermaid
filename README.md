@@ -210,6 +210,9 @@ Mermaid is a growing community and is always accepting new contributors. There's
 
 Detailed information about how to contribute can be found in the [contribution guide](CONTRIBUTING.md)
 
+## Reporting vulnerabilities
+To report a vulnerability, please e-mail security@mermaid.live with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue.
+
 ## Appreciation
 A quick note from Knut Sveidqvist:
 >*Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!*
