@@ -285,7 +285,7 @@ const render = function (id, _txt, cb, container) {
 
     // Remove previous tpm element if it exists
     let element;
-    if (cnf.securityLevel === 'sandbox') {
+    if (cnf.securityLevel !== 'sandbox') {
       element = document.querySelector('#' + 'd' + id);
     } else {
       element = document.querySelector('#' + 'i' + id);
