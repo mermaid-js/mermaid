@@ -363,7 +363,7 @@ export const drawOld = function (text, id) {
 };
 
 export const draw = function (text, id) {
-  log.info('Drawing class');
+  log.info('Drawing class - ', id);
   classDb.clear();
   // const parser = classDb.parser;
   // parser.yy = classDb;
@@ -379,6 +379,7 @@ export const draw = function (text, id) {
   //let dir = 'TD';
 
   const conf = getConfig().flowchart;
+  const securityLevel = getConfig().securityLevel;
   log.info('config:', conf);
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
@@ -430,11 +431,19 @@ export const draw = function (text, id) {
   // flowChartShapes.addToRenderV2(addShape);
 
   // Set up an SVG group so that we can translate the final graph.
-  const svg = select(`[id="${id}"]`);
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const svg = root.select(`[id="${id}"]`);
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   // Run the renderer. This is what draws the final graph.
-  const element = select('#' + id + ' g');
+  const element = root.select('#' + id + ' g');
   render(element, g, ['aggregation', 'extension', 'composition', 'dependency'], 'classDiagram', id);
 
   // element.selectAll('g.node').attr('title', function() {
@@ -462,14 +471,15 @@ export const draw = function (text, id) {
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
-    const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
+    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+    const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];
 
       // Get dimensions of label
       const dim = label.getBBox();
 
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      const rect = doc.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);

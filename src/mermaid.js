@@ -83,6 +83,7 @@ const init = function () {
   let txt;
 
   for (let i = 0; i < nodes.length; i++) {
+    // element is the current div with mermaid class
     const element = nodes[i];
 
     /*! Check if previously processed */
