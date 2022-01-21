@@ -25,13 +25,14 @@
     </style>
   </head>
   <body>
+    <div id="apa" style="background: aliceblue; width: 150px; height: 75px;">APA</div>
       <div class="mermaid2" style="width: 100%;">
 pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85
     "Rats" : 15
       </div>
-      <div class="mermaid" style="width: 100%;">
+      <div class="mermaid2" style="width: 100%;">
 gantt
        dateFormat                :YYYY-MM-DD
        title                     Adding GANTT diagram functionality to mermaid
@@ -80,6 +81,20 @@ checkout master
 commit
 commit
 merge newbranch
+      </div>
+      <div class="mermaid" style="width: 100%;">
+sequenceDiagram
+        participant a as Alice
+        participant j as John
+        note right of a: Hello world!
+        properties a: {"class": "internal-service-actor", "type": "@clock"}
+        properties j: {"class": "external-service-actor", "type": "@computer"}
+        links a: {"Repo": "https://www.contoso.com/repo", "Swagger": "https://www.contoso.com/swagger"}
+        links j: {"Repo": "https://www.contoso.com/repo"}
+        links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
+        link a: Contacts @ https://contacts.contoso.com/?contact=alice@contoso.com
+        a->>j: Hello John, how are you?
+        j-->>a: Great!
       </div>
       <div class="mermaid2" style="width: 100%;">
 journey
@@ -198,7 +213,7 @@ requirementDiagram
   },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorFontFamily: 'courier', actorMargin: 50, showSequenceNumbers: false },
-        // sequenceDiagram: { actorMargin: 300 } // deprecated
+        // sequenceDiagram: { actorMargin: 300, forceMenus: false }, // deprecated
         // fontFamily: '"times", sans-serif',
         // fontFamily: 'courier',
         state: {
@@ -209,7 +224,7 @@ requirementDiagram
         logLevel: 0,
         fontSize: 18,
         curve: 'cardinal',
-        // securityLevel: 'sandbox',
+        securityLevel: 'sandbox',
         // themeVariables: {relationLabelColor: 'red'}
       });
       function callback() {

@@ -452,13 +452,20 @@ export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
   bounds.bumpVerticalPos(maxHeight);
 };
 
-export const drawActorsPopup = function (diagram, actors, actorKeys) {
+export const drawActorsPopup = function (diagram, actors, actorKeys, doc) {
   var maxHeight = 0;
   var maxWidth = 0;
   for (let i = 0; i < actorKeys.length; i++) {
     const actor = actors[actorKeys[i]];
     const minMenuWidth = getRequiredPopupWidth(actor);
-    var menuDimensions = svgDraw.drawPopup(diagram, actor, minMenuWidth, conf, conf.forceMenus);
+    var menuDimensions = svgDraw.drawPopup(
+      diagram,
+      actor,
+      minMenuWidth,
+      conf,
+      conf.forceMenus,
+      doc
+    );
     if (menuDimensions.height > maxHeight) {
       maxHeight = menuDimensions.height;
     }
@@ -557,7 +564,7 @@ export const draw = function (text, id) {
   bounds.init();
   log.debug(`C:${JSON.stringify(conf, null, 2)}`);
 
-  const diagram = select(`[id="${id}"]`);
+  const diagram = root.select(`[id="${id}"]`);
 
   // Fetch data from the parsing
   const actors = parser.yy.getActors();
@@ -745,7 +752,7 @@ export const draw = function (text, id) {
   }
 
   // only draw popups for the top row of actors.
-  var requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys);
+  var requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys, doc);
 
   const { bounds: box } = bounds.getBounds();
 

@@ -30,6 +30,8 @@ export const drawRect = function (elem, rectData) {
 const addPopupInteraction = (id, actorCnt) => {
   addFunction(() => {
     const arr = document.querySelectorAll(id);
+    // This will be the case when running in sandboxed mode
+    if (arr.length === 0) return;
     arr[0].addEventListener('mouseover', function () {
       popupMenuUpFunc('actor' + actorCnt + '_popup');
     });
