@@ -6,6 +6,7 @@ import classDb, { lookUpDomId } from './classDb';
 import { parser } from './parser/classDiagram';
 import svgDraw from './svgDraw';
 import { configureSvgSize } from '../../utils';
+import { getConfig } from '../../config';
 
 parser.yy = classDb;
 
@@ -165,8 +166,20 @@ export const draw = function (text, id) {
 
   log.info('Rendering diagram ' + text);
 
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and ocument for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
   // Fetch the default direction, use TD if none was found
-  const diagram = select(`[id='${id}']`);
+  const diagram = root.select(`[id='${id}']`);
   diagram.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
   insertMarkers(diagram);
 
@@ -220,14 +233,16 @@ export const draw = function (text, id) {
   g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
       log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
-      select('#' + lookUpDomId(v)).attr(
-        'transform',
-        'translate(' +
-          (g.node(v).x - g.node(v).width / 2) +
-          ',' +
-          (g.node(v).y - g.node(v).height / 2) +
-          ' )'
-      );
+      root
+        .select('#' + lookUpDomId(v))
+        .attr(
+          'transform',
+          'translate(' +
+            (g.node(v).x - g.node(v).width / 2) +
+            ',' +
+            (g.node(v).y - g.node(v).height / 2) +
+            ' )'
+        );
     }
   });
 

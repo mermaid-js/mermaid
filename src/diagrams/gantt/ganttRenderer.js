@@ -29,7 +29,19 @@ export const draw = function (text, id) {
   parser.yy.clear();
   parser.parse(text);
 
-  const elem = document.getElementById(id);
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and ocument for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
+  const elem = doc.getElementById(id);
   w = elem.parentElement.offsetWidth;
 
   if (typeof w === 'undefined') {
@@ -47,7 +59,7 @@ export const draw = function (text, id) {
 
   // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-  const svg = select(`[id="${id}"]`);
+  const svg = root.select(`[id="${id}"]`);
 
   // Set timescale
   const timeScale = scaleTime()
@@ -505,11 +517,11 @@ export const draw = function (text, id) {
         const rows = d[0].split(common.lineBreakRegex);
         const dy = -(rows.length - 1) / 2;
 
-        const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
         svgLabel.setAttribute('dy', dy + 'em');
 
         for (let j = 0; j < rows.length; j++) {
-          const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
           tspan.setAttribute('alignment-baseline', 'central');
           tspan.setAttribute('x', '10');
           if (j > 0) tspan.setAttribute('dy', '1em');

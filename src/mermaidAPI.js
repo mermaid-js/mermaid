@@ -240,6 +240,7 @@ const render = function (id, _txt, cb, container) {
     const iframe = select('body')
       .append('iframe')
       .attr('id', 'i' + id)
+      .attr('style', 'width: 100%; height: 100%;')
       .attr('sandbox', '');
     // const iframeBody = ;
     root = select(iframe.nodes()[0].contentDocument.body);
@@ -258,6 +259,7 @@ const render = function (id, _txt, cb, container) {
       const iframe = select(container)
         .append('iframe')
         .attr('id', 'i' + id)
+        .attr('style', 'width: 100%; height: 100%;')
         .attr('sandbox', '');
       // const iframeBody = ;
       root = select(iframe.nodes()[0].contentDocument.body);
@@ -492,7 +494,10 @@ const render = function (id, _txt, cb, container) {
   // Fix for when the base tag is used
   let svgCode = root.select('#d' + id).node().innerHTML;
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
-  if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
+  if (
+    (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') &&
+    cnf.arrowMarkerAbsolute !== 'sandbox'
+  ) {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 

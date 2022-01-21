@@ -22,11 +22,24 @@ export const draw = (txt, id) => {
     const parser = pieParser.parser;
     parser.yy = pieData;
     log.debug('Rendering info diagram\n' + txt);
+
+    const securityLevel = configApi.getConfig().securityLevel;
+    // Handle root and ocument for when rendering in sanbox mode
+    let sandboxElement;
+    if (securityLevel === 'sandbox') {
+      sandboxElement = select('#i' + id);
+    }
+    const root =
+      securityLevel === 'sandbox'
+        ? select(sandboxElement.nodes()[0].contentDocument.body)
+        : select('body');
+    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
     // Parse the Pie Chart definition
     parser.yy.clear();
     parser.parse(txt);
     log.debug('Parsed info diagram');
-    const elem = document.getElementById(id);
+    const elem = doc.getElementById(id);
     width = elem.parentElement.offsetWidth;
 
     if (typeof width === 'undefined') {
@@ -40,7 +53,7 @@ export const draw = (txt, id) => {
       width = conf.pie.useWidth;
     }
 
-    const diagram = select('#' + id);
+    const diagram = root.select('#' + id);
     configureSvgSize(diagram, height, width, conf.pie.useMaxWidth);
 
     // Set viewBox
