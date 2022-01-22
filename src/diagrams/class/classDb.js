@@ -143,8 +143,8 @@ export const addMember = function (className, member) {
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
       // Remove leading and trailing brackets
-      theClass.annotations.push(memberString.substring(2, memberString.length - 2));
-      // theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
+      // theClass.annotations.push(memberString.substring(2, memberString.length - 2));
+      theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
       theClass.methods.push(sanitizeText(memberString));
     } else if (memberString) {

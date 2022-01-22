@@ -233,24 +233,23 @@ const render = function (id, _txt, cb, container) {
   }
 
   // let d3Iframe;
-  let root;
-  if (cnf.securityLevel === 'sandbox') {
-    // IF we are in sandboxed mode, we do everyting mermaid related
-    // in a sandboxed div
-    const iframe = select('body')
-      .append('iframe')
-      .attr('id', 'i' + id)
-      .attr('style', 'width: 100%; height: 100%;')
-      .attr('sandbox', '');
-    // const iframeBody = ;
-    root = select(iframe.nodes()[0].contentDocument.body);
-    root.node().style.margin = 0;
-  } else {
-    root = select('body');
-  }
+  let root = select('body');
 
   // In regular execurtion the container will be the div with a mermaid class
   if (typeof container !== 'undefined') {
+    if (cnf.securityLevel === 'sandbox') {
+      // IF we are in sandboxed mode, we do everyting mermaid related
+      // in a sandboxed div
+      const iframe = select('body')
+        .append('iframe')
+        .attr('id', 'i' + id)
+        .attr('style', 'width: 100%; height: 100%;')
+        .attr('sandbox', '');
+      // const iframeBody = ;
+      root = select(iframe.nodes()[0].contentDocument.body);
+      root.node().style.margin = 0;
+    }
+
     // A container was provided by the caller
     container.innerHTML = '';
 
@@ -309,6 +308,21 @@ const render = function (id, _txt, cb, container) {
 
     // Add the tmp div used for rendering with the id `d${id}`
     // d+id it will contain a svg with the id "id"
+
+    if (cnf.securityLevel === 'sandbox') {
+      // IF we are in sandboxed mode, we do everyting mermaid related
+      // in a sandboxed div
+      const iframe = select('body')
+        .append('iframe')
+        .attr('id', 'i' + id)
+        .attr('style', 'width: 100%; height: 100%;')
+        .attr('sandbox', '');
+      // const iframeBody = ;
+      root = select(iframe.nodes()[0].contentDocument.body);
+      root.node().style.margin = 0;
+    } else {
+      root = select('body');
+    }
 
     // This is the temporary div
     root
