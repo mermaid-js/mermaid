@@ -13,6 +13,8 @@ let classCounter = 0;
 
 let funs = [];
 
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
+
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
@@ -141,11 +143,11 @@ export const addMember = function (className, member) {
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
       // Remove leading and trailing brackets
-      theClass.annotations.push(memberString.substring(2, memberString.length - 2));
+      theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
-      theClass.methods.push(memberString);
+      theClass.methods.push(sanitizeText(memberString));
     } else if (memberString) {
-      theClass.members.push(memberString);
+      theClass.members.push(sanitizeText(memberString));
     }
   }
 };
@@ -161,7 +163,7 @@ export const cleanupLabel = function (label) {
   if (label.substring(0, 1) === ':') {
     return common.sanitizeText(label.substr(1).trim(), configApi.getConfig());
   } else {
-    return label.trim();
+    return sanitizeText(label.trim());
   }
 };
 

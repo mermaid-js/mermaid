@@ -18,8 +18,6 @@ export const removeEscapes = (text) => {
     return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
   });
 
-  console.log(newStr);
-
   newStr = newStr.replace(/\\x([0-9a-f]{2})/gi, (_, c) => String.fromCharCode(parseInt(c, 16)));
   newStr = newStr.replace(/\\[\d\d\d]{3}/gi, function (match) {
     return String.fromCharCode(parseInt(match.replace(/\\/g, ''), 8));

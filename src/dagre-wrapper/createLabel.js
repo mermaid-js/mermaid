@@ -1,7 +1,9 @@
 import { select } from 'd3';
 import { log } from '../logger'; // eslint-disable-line
 import { getConfig } from '../config';
-import { evaluate } from '../diagrams/common/common';
+import { sanitizeText, evaluate } from '../diagrams/common/common';
+
+const sanitizeTxt = (txt) => sanitizeText(txt, getConfig());
 
 /**
  * @param dom
