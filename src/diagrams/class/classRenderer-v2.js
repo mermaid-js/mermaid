@@ -17,6 +17,8 @@ parser.yy = classDb;
 let idCache = {};
 const padding = 20;
 
+const sanitizeText = (txt) => common.sanitizeText(txt, getConfig());
+
 const conf = {
   dividerMargin: 10,
   padding: 5,
@@ -103,7 +105,7 @@ export const addClasses = function (classes, g) {
     g.setNode(vertex.id, {
       labelStyle: styles.labelStyle,
       shape: _shape,
-      labelText: vertexText,
+      labelText: sanitizeText(vertexText),
       classData: vertex,
       rx: radious,
       ry: radious,
