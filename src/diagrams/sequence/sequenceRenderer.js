@@ -564,7 +564,8 @@ export const draw = function (text, id) {
   bounds.init();
   log.debug(`C:${JSON.stringify(conf, null, 2)}`);
 
-  const diagram = root.select(`[id="${id}"]`);
+  const diagram =
+    securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : select(`[id="${id}"]`);
 
   // Fetch data from the parsing
   const actors = parser.yy.getActors();

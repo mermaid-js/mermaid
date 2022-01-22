@@ -28,10 +28,13 @@ export const setConf = function (cnf) {
  * @param svgId
  * @param root
  * @param doc
+ * @param _doc
  */
-export const addVertices = function (vert, g, svgId, root, doc) {
+export const addVertices = function (vert, g, svgId, root, _doc) {
   const securityLevel = getConfig().securityLevel;
-  const svg = root.select(`[id="${svgId}"]`);
+
+  const svg = !root ? select(`[id="${svgId}"]`) : root.select(`[id="${svgId}"]`);
+  const doc = !_doc ? document : _doc;
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
