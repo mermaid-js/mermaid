@@ -244,6 +244,7 @@ const render = function (id, _txt, cb, container) {
       .attr('sandbox', '');
     // const iframeBody = ;
     root = select(iframe.nodes()[0].contentDocument.body);
+    root.node().style.margin = 0;
   } else {
     root = select('body');
   }
@@ -263,6 +264,7 @@ const render = function (id, _txt, cb, container) {
         .attr('sandbox', '');
       // const iframeBody = ;
       root = select(iframe.nodes()[0].contentDocument.body);
+      root.node().style.margin = 0;
     } else {
       root = select(container);
     }
@@ -493,6 +495,7 @@ const render = function (id, _txt, cb, container) {
 
   // Fix for when the base tag is used
   let svgCode = root.select('#d' + id).node().innerHTML;
+
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
   if (
     (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') &&
@@ -527,8 +530,15 @@ const render = function (id, _txt, cb, container) {
     //     svgCode = `<iframe src="data:text/html;base64,V2VsY29tZSB0byA8Yj5iYXNlNjQuZ3VydTwvYj4h">
     //   The “iframe” tag is not supported by your browser.
     // </iframe>`;
-    svgCode = `<iframe style="width:100%;height:100%;" src="data:text/html;base64,${btoa(
-      svgCode
+    let svgEl = root.select('#d' + id + ' svg').node();
+    let width = '100%';
+    let height = '100%';
+    if (svgEl) {
+      width = svgEl.viewBox.baseVal.width + 'px';
+      height = svgEl.viewBox.baseVal.height + 'px';
+    }
+    svgCode = `<iframe style="width:${width};height:${height};border:0;margin:0;" src="data:text/html;base64,${btoa(
+      '<body style="margin:0">' + svgCode + '</body>'
     )}" sandbox>
   The “iframe” tag is not supported by your browser.
 </iframe>`;
