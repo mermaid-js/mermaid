@@ -40,7 +40,7 @@ __下面是一些使用 Mermaid 和类 Markdown 语法创建的图表示例。�
 </td></tr>
 <tr>
     <td><pre>
-graph TD
+flowchart TD
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
 C -->|One| D[Result 1]
