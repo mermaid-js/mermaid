@@ -207,6 +207,10 @@ Mermaid 是一个不断发展中的社区，并且还在接收新的贡献者。
 
 关于如何贡献的详细信息可以在 [贡献指南](CONTRIBUTING.md) 中找到。
 
+## 报告漏洞
+
+如果想要报告漏洞，请发送邮件到 security@mermaid.live, 并附上问题的描述、复现问题的步骤、受影响的版本，以及解决问题的方案（如果有的话）。
+
 ## 鸣谢
 来自 Knut Sveidqvist:
 >*特别感谢 [d3](http://d3js.org/) 和 [dagre-d3](https://github.com/cpettitt/dagre-d3) 这两个优秀的项目，它们提供了图形布局和绘图工具库! *
