@@ -185,6 +185,10 @@ export const draw = function (text, id) {
     // Draw the rects representing the tasks
     const rectangles = svg.append('g').selectAll('rect').data(theArray).enter();
 
+    const links = ganttDb.getLinks();
+
+    // Render the tasks with links
+    // Render the other tasks
     rectangles
       .append('rect')
       .attr('id', function (d) {
@@ -381,6 +385,32 @@ export const draw = function (text, id) {
           return classStr + ' taskText taskText' + secNum + ' ' + taskType + ' width-' + textWidth;
         }
       });
+
+    const securityLevel = getConfig().securityLevel;
+
+    // Wrap the tasks in an a tag for working links without javascript
+    if (securityLevel === 'sandbox') {
+      let sandboxElement;
+      sandboxElement = select('#i' + id);
+      const root = select(sandboxElement.nodes()[0].contentDocument.body);
+      const doc = sandboxElement.nodes()[0].contentDocument;
+
+      rectangles
+        .filter(function (d) {
+          return typeof links[d.id] !== 'undefined';
+        })
+        .each(function (o) {
+          var taskRect = doc.querySelector('#' + o.id);
+          var taskText = doc.querySelector('#' + o.id + '-text');
+          const oldParent = taskRect.parentNode;
+          var Link = doc.createElement('a');
+          Link.setAttribute('xlink:href', links[o.id]);
+          Link.setAttribute('target', '_top');
+          oldParent.appendChild(Link);
+          Link.appendChild(taskRect);
+          Link.appendChild(taskText);
+        });
+    }
   }
   /**
    * @param theGap
