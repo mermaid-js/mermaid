@@ -967,10 +967,13 @@ export const insertNode = (elem, node, dir) => {
 
   // Add link when appropriate
   if (node.link) {
-    newEl = elem
-      .insert('svg:a')
-      .attr('xlink:href', node.link)
-      .attr('target', node.linkTarget || '_blank');
+    let target;
+    if (getConfig().securityLevel === 'sandbox') {
+      target = '_top';
+    } else if (node.linkTarget) {
+      target = node.linkTarget || '_blank';
+    }
+    newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
     el = shapes[node.shape](newEl, node, dir);
   } else {
     el = shapes[node.shape](elem, node, dir);

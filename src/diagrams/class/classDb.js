@@ -213,7 +213,9 @@ export const setLink = function (ids, linkStr, target) {
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof classes[id] !== 'undefined') {
       classes[id].link = utils.formatUrl(linkStr, config);
-      if (typeof target === 'string') {
+      if (config.securityLevel === 'sandbox') {
+        classes[id].linkTarget = '_top';
+      } else if (typeof target === 'string') {
         classes[id].linkTarget = target;
       } else {
         classes[id].linkTarget = '_blank';

@@ -10,6 +10,7 @@ let axisFormat = '';
 let todayMarker = '';
 let includes = [];
 let excludes = [];
+let links = {};
 let title = '';
 let sections = [];
 let tasks = [];
@@ -44,6 +45,7 @@ export const clear = function () {
   inclusiveEndDates = false;
   topAxis = false;
   lastOrder = 0;
+  links = {};
 };
 
 export const setAxisFormat = function (txt) {
@@ -99,6 +101,10 @@ export const setExcludes = function (txt) {
 
 export const getExcludes = function () {
   return excludes;
+};
+
+export const getLinks = function () {
+  return links;
 };
 
 export const setTitle = function (txt) {
@@ -505,6 +511,7 @@ export const setLink = function (ids, _linkStr) {
       pushFun(id, () => {
         window.open(linkStr, '_self');
       });
+      links[id] = linkStr;
     }
   });
   setClass(ids, 'clickable');
@@ -642,6 +649,7 @@ export default {
   getExcludes,
   setClickEvent,
   setLink,
+  getLinks,
   bindFunctions,
   durationToDate,
   isInvalidDate,

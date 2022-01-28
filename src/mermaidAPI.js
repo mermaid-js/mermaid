@@ -518,32 +518,12 @@ const render = function (id, _txt, cb, container) {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 
-  // const iframe = document.createElement('iframe');
-  // iframe.setAttribute('frameBorder', '0');
-  // iframe.setAttribute('id', id);
-  // iframe.setAttribute('sanbox', '');
-  // iframe.setAttribute('src', 'about:blank');
-  // iframe.contentWindow.document.body = svgCode;
-  // element.innerHTML = '';
-  // // element.appendChild(iframe);
-  // // element.innerHTML = '<iframe sandbox>' + svgCode + '</iframe>';
-
   svgCode = decodeEntities(svgCode);
 
   // Fix for when the br tag is used
   svgCode = svgCode.replace(/<br>/g, '<br/>');
 
   if (cnf.securityLevel === 'sandbox') {
-    // const newSvgCode =
-    //   '<iframe id="' +
-    //   id +
-    //   '" sandbox src="data:text/html;base64,' +
-    //   btoa(btoa(unescape(encodeURIComponent(svgCode)))) +
-    //   '"></iframe>';
-    // svgCode = newSvgCode;
-    //     svgCode = `<iframe src="data:text/html;base64,V2VsY29tZSB0byA8Yj5iYXNlNjQuZ3VydTwvYj4h">
-    //   The “iframe” tag is not supported by your browser.
-    // </iframe>`;
     let svgEl = root.select('#d' + id + ' svg').node();
     let width = '100%';
     let height = '100%';
@@ -553,7 +533,7 @@ const render = function (id, _txt, cb, container) {
     }
     svgCode = `<iframe style="width:${width};height:${height};border:0;margin:0;" src="data:text/html;base64,${btoa(
       '<body style="margin:0">' + svgCode + '</body>'
-    )}" sandbox>
+    )}" sandbox="allow-top-navigation-by-user-activation allow-popups">
   The “iframe” tag is not supported by your browser.
 </iframe>`;
   }
