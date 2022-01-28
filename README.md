@@ -50,7 +50,13 @@ C -->|One| D[Result 1]
 C -->|Two| E[Result 2]
     </pre></td>
     <td align="center">
-        <img src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-flow.png" />
+    <div class="mermaid">
+    flowchart TD
+        A[Hard] -->|Text| B(Round)
+        B --> C{Decision}
+        C -->|One| D[Result 1]
+        C -->|Two| E[Result 2]
+    </div>
     </td>
 </tr>
 <!-- </Flowchart> -->
