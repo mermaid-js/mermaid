@@ -88,7 +88,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-html": "^6.2.0",
-    "eslint-plugin-jest": "^25.2.4",
+    "eslint-plugin-jest": "^26.0.0",
     "eslint-plugin-jsdoc": "^37.0.3",
     "eslint-plugin-markdown": "^2.2.1",
     "eslint-plugin-prettier": "^4.0.0",
