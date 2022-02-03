@@ -528,7 +528,7 @@ const render = function (id, _txt, cb, container) {
     let width = '100%';
     let height = '100%';
     if (svgEl) {
-      width = svgEl.viewBox.baseVal.width + 'px';
+      // width = svgEl.viewBox.baseVal.width + 'px';
       height = svgEl.viewBox.baseVal.height + 'px';
     }
     svgCode = `<iframe style="width:${width};height:${height};border:0;margin:0;" src="data:text/html;base64,${btoa(

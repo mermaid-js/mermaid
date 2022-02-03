@@ -216,7 +216,7 @@ export const setLink = function (ids, linkStr, target) {
       if (config.securityLevel === 'sandbox') {
         classes[id].linkTarget = '_top';
       } else if (typeof target === 'string') {
-        classes[id].linkTarget = target;
+        classes[id].linkTarget = sanitizeText(target);
       } else {
         classes[id].linkTarget = '_blank';
       }

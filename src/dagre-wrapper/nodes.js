@@ -6,7 +6,9 @@ import intersect from './intersect/index.js';
 import createLabel from './createLabel';
 import note from './shapes/note';
 import { parseMember } from '../diagrams/class/svgDraw';
-import { evaluate } from '../diagrams/common/common';
+import { evaluate, sanitizeText as sanitize } from '../diagrams/common/common';
+
+const sanitizeText = (txt) => sanitize(txt, getConfig());
 
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);

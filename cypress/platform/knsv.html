@@ -14,6 +14,7 @@
         font-family: 'Arial';
         /* font-size: 18px !important; */
         width: 100%;
+        display: flex;
         }
       h1 { color: grey;}
       .mermaid2,.mermaid3 {
@@ -25,7 +26,7 @@
     </style>
   </head>
   <body>
-      <div class="mermaid2" style="width: 100%;">
+      <div class="mermaid2" style="width: 50%;">
 pie title Pets adopted by volunteers
     "Dogs" : 386
     "Cats" : 85
@@ -63,7 +64,7 @@ commit
 commit
 merge newbranch
       </div>
-      <div class="mermaid2" style="width: 100%;">
+      <div class="mermaid" style="width: 50%;">
 sequenceDiagram
         participant a as Alice
         participant j as John
@@ -75,8 +76,7 @@ sequenceDiagram
         links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
         link a: Contacts @ https://contacts.contoso.com/?contact=alice@contoso.com
         a->>j: Hello John, how are you?
-        j-->>a: Great!
-      </div>
+        j-->>a: Great!      </div>
       <div class="mermaid2" style="width: 100%;">
 journey
             title My working day
@@ -144,21 +144,13 @@ requirementDiagram
           a1-->a2-->a3
         end
       </div>
-      <div class="mermaid2" style="width: 100%;">
- flowchart TB
-      Function-->URL
+      <div class="mermaid" style="width: 50%;">
+ flowchart LR
+      Function-->URL-->A-->B-->C
       click Function clickByFlow "Add a div"
       click URL "https://mermaid-js.github.io/mermaid/#/" "Visit <strong>mermaid docs</strong>" _blank
       </div>
       <div class="mermaid2" style="width: 100%;">
-  classDiagram-v2
-    class Test
-    class ShapeLink
-    link ShapeLink "https://mermaid-js.github.io/mermaid/#/" "This is a tooltip for a link"
-    class ShapeCallback
-    callback ShapeCallback "clickByClass" "This is a tooltip for a callback"
-  </div>
-      <div class="mermaid" style="width: 100%;">
       gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %d/%m
@@ -264,7 +256,12 @@ class Class10 {
     htmlLabels: true,
   },
         // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorFontFamily: 'courier', actorMargin: 50, showSequenceNumbers: false },
+        sequence: {
+    actorFontFamily: 'courier',
+    actorMargin: 50,
+    showSequenceNumbers: false,
+    // forceMenus: true,
+  },
         // sequenceDiagram: { actorMargin: 300, forceMenus: false }, // deprecated
         // fontFamily: '"times", sans-serif',
         // fontFamily: 'courier',
@@ -276,7 +273,7 @@ class Class10 {
         logLevel: 0,
         fontSize: 18,
         curve: 'cardinal',
-        securityLevel: 'sandbox',
+        // securityLevel: 'sandbox',
         // themeVariables: {relationLabelColor: 'red'}
       });
       function callback() {
