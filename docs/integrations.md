@@ -132,7 +132,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [jSDoc](https://jsdoc.app/)
   - [jsdoc-mermaid](https://github.com/Jellyvision/jsdoc-mermaid)
 - [MkDocs](https://mkdocs.org)
-  - [MarkdownMermaid](https://github.com/sebastienwarin/mkdocs-mermaid-plugin)
+  - [mkdocs-mermaid2-plugin](https://github.com/fralau/mkdocs-mermaid2-plugin)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
 - [Docsy Hugo Theme](https://www.docsy.dev/docs/adding-content/lookandfeel/#diagrams-with-mermaid) (Native support in theme)

@@ -40,7 +40,7 @@ __下面是一些使用 Mermaid 和类 Markdown 语法创建的图表示例。�
 </td></tr>
 <tr>
     <td><pre>
-graph TD
+flowchart TD
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
 C -->|One| D[Result 1]
@@ -206,6 +206,10 @@ pie
 Mermaid 是一个不断发展中的社区，并且还在接收新的贡献者。有很多不同的方式可以参与进来，而且我们还在寻找额外的帮助。如果你想知道如何开始贡献，请查看 [这个 issue](https://github.com/mermaid-js/mermaid/issues/866)。
 
 关于如何贡献的详细信息可以在 [贡献指南](CONTRIBUTING.md) 中找到。
+
+## 报告漏洞
+
+如果想要报告漏洞，请发送邮件到 security@mermaid.live, 并附上问题的描述、复现问题的步骤、受影响的版本，以及解决问题的方案（如果有的话）。
 
 ## 鸣谢
 来自 Knut Sveidqvist:
