@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 describe('Flowchart v2', () => {
@@ -29,7 +28,7 @@ describe('Flowchart v2', () => {
     );
   });
 
-    it('3: a link with correct arrowhead to a subgraph', () => {
+  it('3: a link with correct arrowhead to a subgraph', () => {
     imgSnapshotTest(
       `flowchart TD
         P1
@@ -69,7 +68,7 @@ describe('Flowchart v2', () => {
       `flowchart TD
         a["<strong>Haiya</strong>"]---->b
       `,
-      {htmlLabels: false, flowchart: {htmlLabels: false}}
+      { htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
   it('6: should render non-escaped with html labels', () => {
@@ -77,7 +76,7 @@ describe('Flowchart v2', () => {
       `flowchart TD
         a["<strong>Haiya</strong>"]===>b
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
   it('7: should render a flowchart when useMaxWidth is true (default)', () => {
@@ -91,18 +90,17 @@ describe('Flowchart v2', () => {
       `,
       { flowchart: { useMaxWidth: true } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        expect(svg).to.have.attr('width', '100%');
-        expect(svg).to.have.attr('height');
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        const height = parseFloat(svg.attr('height'));
-        expect(height).to.be.within(446 * .95, 446 * 1.05);
-        const style = svg.attr('style');
-        expect(style).to.match(/^max-width: [\d.]+px;$/);
-        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-        expect(maxWidthValue).to.be.within(300 * .95-1, 300 * 1.05);
-      });
+    cy.get('svg').should((svg) => {
+      expect(svg).to.have.attr('width', '100%');
+      expect(svg).to.have.attr('height');
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      const height = parseFloat(svg.attr('height'));
+      expect(height).to.be.within(446 * 0.95, 446 * 1.05);
+      const style = svg.attr('style');
+      expect(style).to.match(/^max-width: [\d.]+px;$/);
+      const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+      expect(maxWidthValue).to.be.within(290 * 0.95 - 1, 290 * 1.05);
+    });
   });
   it('8: should render a flowchart when useMaxWidth is false', () => {
     renderGraph(
@@ -115,15 +113,14 @@ describe('Flowchart v2', () => {
       `,
       { flowchart: { useMaxWidth: false } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        const height = parseFloat(svg.attr('height'));
-        const width = parseFloat(svg.attr('width'));
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        expect(height).to.be.within(446 * .95, 446 * 1.05);
-        expect(width).to.be.within(300 * .95-1, 300 * 1.05);
-        expect(svg).to.not.have.attr('style');
-      });
+    cy.get('svg').should((svg) => {
+      const height = parseFloat(svg.attr('height'));
+      const width = parseFloat(svg.attr('width'));
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      expect(height).to.be.within(446 * 0.95, 446 * 1.05);
+      expect(width).to.be.within(290 * 0.95 - 1, 290 * 1.05);
+      expect(svg).to.not.have.attr('style');
+    });
   });
 
   it('V2 - 16: Render Stadium shape', () => {
@@ -141,7 +138,7 @@ describe('Flowchart v2', () => {
       class A someclass;
       class C someclass;
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -156,7 +153,7 @@ describe('Flowchart v2', () => {
         b
         end
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
 
@@ -171,7 +168,7 @@ describe('Flowchart v2', () => {
         b
         end
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
 
@@ -192,7 +189,7 @@ describe('Flowchart v2', () => {
         B
     end
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
 
@@ -222,7 +219,7 @@ describe('Flowchart v2', () => {
   routeur --> subnet1 & subnet2
   subnet1 & subnet2 --> nat --> internet
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
 
@@ -236,7 +233,7 @@ describe('Flowchart v2', () => {
      subcontainer-child--> subcontainer-sibling
   end
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
 
@@ -258,10 +255,9 @@ end
 sub_one --> sub_two
 _one --> b
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-
 
   it('56: handle nested subgraphs with outgoing links 3', () => {
     imgSnapshotTest(
@@ -275,7 +271,7 @@ _one --> b
     end
     process_B-->|via_AWSBatch|container_Beta
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
   it('57: handle nested subgraphs with outgoing links 4', () => {
@@ -288,10 +284,9 @@ subgraph B
 b
 end
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
-
 
   it('57: handle nested subgraphs with outgoing links 2', () => {
     imgSnapshotTest(
@@ -310,7 +305,23 @@ end
     three --> two
     two --> c2
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('57.x: handle nested subgraphs with outgoing links 5', () => {
+    imgSnapshotTest(
+      `%% this does not produce the desired result
+flowchart TB
+  subgraph container_Beta
+    process_C-->Process_D
+  end
+  subgraph container_Alpha
+    process_A-->process_B
+    process_B-->|via_AWSBatch|container_Beta
+    process_A-->|messages|process_C
+  end
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
   it('58: handle styling with style expressions', () => {
@@ -321,7 +332,7 @@ end
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
   it('59: handle styling of subgraphs and links', () => {
@@ -343,7 +354,37 @@ flowchart TD
   class T TestSub
   linkStyle 0,1 color:orange, stroke: orange;
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('60: handle styling for all node shapes - v2', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+      A[red text] -->|default style| B(blue text)
+      C([red text]) -->|default style| D[[blue text]]
+      E[(red text)] -->|default style| F((blue text))
+      G>red text] -->|default style| H{blue text}
+      I{{red text}} -->|default style| J[/blue text/]
+      K[\\ red text\\] -->|default style| L[/blue text\\]
+      M[\\ red text/] -->|default style| N[blue text];
+      linkStyle default color:Sienna;
+      style A stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style B stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style C stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style D stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style E stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style F stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style G stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style H stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style I stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style J stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style K stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style L stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      style M stroke:#ff0000,fill:#ffcccc,color:#ff0000;
+      style N stroke:#0000ff,fill:#ccccff,color:#0000ff;
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose', logLevel: 2 }
     );
   });
   it('61: fontawesome icons in edge labels', () => {
@@ -352,9 +393,260 @@ flowchart TD
       flowchart TD
         C -->|fa:fa-car Car| F[fa:fa-car Car]
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('62: should render styled subgraphs', () => {
+    imgSnapshotTest(
+      `
+      flowchart TB
+      A
+      B
+      subgraph foo[Foo SubGraph]
+        C
+        D
+      end
+      subgraph bar[Bar SubGraph]
+        E
+        F
+      end
+      G
+
+      A-->B
+      B-->C
+      C-->D
+      B-->D
+      D-->E
+      E-->A
+      E-->F
+      F-->D
+      F-->G
+      B-->G
+      G-->D
+
+      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
+      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('63: title on subgraphs should be themable', () => {
+    imgSnapshotTest(
+      `
+      %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
+      flowchart LR
+      subgraph A
+          a --> b
+      end
+      subgraph B
+          i -->f
+      end
+      A --> B
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('65: text-color from classes', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+        classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
+        Lorem --> Ipsum --> Dolor
+        class Lorem,Dolor dark
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('66: More nested subgraph cases (TB)', () => {
+    imgSnapshotTest(
+      `
+flowchart TB
+    subgraph two
+    b1
+    end
+    subgraph three
+    c2
+    end
+
+    three --> two
+    two --> c2
+
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('67: More nested subgraph cases (RL)', () => {
+    imgSnapshotTest(
+      `
+flowchart RL
+    subgraph two
+    b1
+    end
+    subgraph three
+    c2
+    end
+
+    three --> two
+    two --> c2
+
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('68: More nested subgraph cases (BT)', () => {
+    imgSnapshotTest(
+      `
+flowchart BT
+    subgraph two
+    b1
+    end
+    subgraph three
+    c2
+    end
+
+    three --> two
+    two --> c2
+
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('69: More nested subgraph cases (LR)', () => {
+    imgSnapshotTest(
+      `
+flowchart LR
+    subgraph two
+    b1
+    end
+    subgraph three
+    c2
+    end
+
+    three --> two
+    two --> c2
+
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('70: Handle nested subgraph cases (TB) link out and link between subgraphs', () => {
+    imgSnapshotTest(
+      `
+flowchart TB
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('71: Handle nested subgraph cases (RL) link out and link between subgraphs', () => {
+    imgSnapshotTest(
+      `
+flowchart RL
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('72: Handle nested subgraph cases (BT) link out and link between subgraphs', () => {
+    imgSnapshotTest(
+      `
+flowchart BT
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('74: Handle nested subgraph cases (RL) link out and link between subgraphs', () => {
+    imgSnapshotTest(
+      `
+flowchart RL
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('74: Handle labels for multiple edges from and to the same couple of nodes', () => {
+    imgSnapshotTest(
+      `
+flowchart RL
+    subgraph one
+      a1 -- l1 --> a2
+      a1 -- l2 --> a2
+    end
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
 
+  it('76: handle unicode encoded character with HTML labels true', () => {
+    imgSnapshotTest(
+      `flowchart TB
+      a{{"Lorem 'ipsum' dolor 'sit' amet, 'consectetur' adipiscing 'elit'."}}
+      --> b{{"Lorem #quot;ipsum#quot; dolor #quot;sit#quot; amet,#quot;consectetur#quot; adipiscing #quot;elit#quot;."}}
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
 
+  it('2050: handling of different rendering direction in subgraphs', () => {
+    imgSnapshotTest(
+      `
+    flowchart LR
+
+      subgraph TOP
+        direction TB
+        subgraph B1
+            direction RL
+            i1 -->f1
+        end
+        subgraph B2
+            direction BT
+            i2 -->f2
+        end
+      end
+      A --> TOP --> B
+      B1 --> B2
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+
+  it('2388: handling default in the node name', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+      default-index.js --> dot.template.js
+      index.js --> module-utl.js
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
 });

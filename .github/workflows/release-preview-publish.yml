@@ -9,11 +9,11 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Setup Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2
       with:
-        node-version: 10.x
+        node-version: 16.x
     - name: Install Yarn
       run: npm i yarn --global
 
@@ -25,7 +25,7 @@ jobs:
 
     - name: Publish
       run: |
-        PREVIEW_VERSION=$(git rev-list --count --first-parent HEAD)
+        PREVIEW_VERSION=8
         VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
         echo $VERSION
         npm version --no-git-tag-version --allow-same-version $VERSION

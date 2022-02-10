@@ -4,14 +4,14 @@ import stateDb from './stateDb';
 import utils from '../../utils';
 import common from '../common/common';
 import { getConfig } from '../../config';
-import { logger } from '../../logger';
-
-// let conf;
+import { log } from '../../logger';
 
 /**
  * Draws a start state as a black circle
+ *
+ * @param {any} g
  */
-export const drawStartState = g =>
+export const drawStartState = (g) =>
   g
     .append('circle')
     // .style('stroke', 'black')
@@ -23,8 +23,10 @@ export const drawStartState = g =>
 
 /**
  * Draws a start state as a black circle
+ *
+ * @param {any} g
  */
-export const drawDivider = g =>
+export const drawDivider = (g) =>
   g
     .append('line')
     .style('stroke', 'grey')
@@ -37,6 +39,9 @@ export const drawDivider = g =>
 
 /**
  * Draws a an end state as a black circle
+ *
+ * @param {any} g
+ * @param {any} stateDef
  */
 export const drawSimpleState = (g, stateDef) => {
   const state = g
@@ -60,11 +65,13 @@ export const drawSimpleState = (g, stateDef) => {
 
 /**
  * Draws a state with descriptions
- * @param {*} g
- * @param {*} stateDef
+ *
+ * @param {any} g
+ * @param {any} stateDef
+ * @returns
  */
 export const drawDescrState = (g, stateDef) => {
-  const addTspan = function(textEl, txt, isFirst) {
+  const addTspan = function (textEl, txt, isFirst) {
     const tSpan = textEl
       .append('tspan')
       .attr('x', 2 * getConfig().state.padding)
@@ -98,7 +105,7 @@ export const drawDescrState = (g, stateDef) => {
 
   let isFirst = true;
   let isSecond = true;
-  stateDef.descriptions.forEach(function(descr) {
+  stateDef.descriptions.forEach(function (descr) {
     if (!isFirst) {
       addTspan(description, descr, isSecond);
       isSecond = false;
@@ -128,15 +135,14 @@ export const drawDescrState = (g, stateDef) => {
   return g;
 };
 
-/**
- * Adds the creates a box around the existing content and adds a
- * panel for the id on top of the content.
- */
+/** Adds the creates a box around the existing content and adds a panel for the id on top of the content. */
 /**
  * Function that creates an title row and a frame around a substate for a composit state diagram.
  * The function returns a new d3 svg object with updated width and height properties;
- * @param {*} g The d3 svg object for the substate to framed
- * @param {*} stateDef The info about the
+ *
+ * @param {any} g The d3 svg object for the substate to framed
+ * @param {any} stateDef The info about the
+ * @param {any} altBkg
  */
 export const addTitleAndBox = (g, stateDef, altBkg) => {
   const pad = getConfig().state.padding;
@@ -239,7 +245,7 @@ export const addTitleAndBox = (g, stateDef, altBkg) => {
   return g;
 };
 
-const drawEndState = g => {
+const drawEndState = (g) => {
   g.append('circle')
     // .style('stroke', 'black')
     // .style('fill', 'white')
@@ -284,7 +290,7 @@ const drawForkJoinState = (g, stateDef) => {
     .attr('y', getConfig().state.padding);
 };
 
-export const drawText = function(elem, textData) {
+export const drawText = function (elem, textData) {
   // Remove and ignore br:s
   const nText = textData.text.replace(common.lineBreakRegex, ' ');
 
@@ -337,16 +343,14 @@ const _drawLongText = (_text, x, y, g) => {
 
 /**
  * Draws a note to the diagram
+ *
  * @param text - The text of the given note.
  * @param g - The element the note is attached to.
  */
 
 export const drawNote = (text, g) => {
   g.attr('class', 'state-note');
-  const note = g
-    .append('rect')
-    .attr('x', 0)
-    .attr('y', getConfig().state.padding);
+  const note = g.append('rect').attr('x', 0).attr('y', getConfig().state.padding);
   const rectElem = g.append('g');
 
   const { textWidth, textHeight } = _drawLongText(text, 0, 0, rectElem);
@@ -357,25 +361,23 @@ export const drawNote = (text, g) => {
 };
 
 /**
- * Starting point for drawing a state. The function finds out the specifics
- * about the state and renders with approprtiate function.
- * @param {*} elem
- * @param {*} stateDef
+ * Starting point for drawing a state. The function finds out the specifics about the state and
+ * renders with approprtiate function.
+ *
+ * @param {any} elem
+ * @param {any} stateDef
  */
 
-export const drawState = function(elem, stateDef) {
+export const drawState = function (elem, stateDef) {
   const id = stateDef.id;
   const stateInfo = {
     id: id,
     label: stateDef.id,
     width: 0,
-    height: 0
+    height: 0,
   };
 
-  const g = elem
-    .append('g')
-    .attr('id', id)
-    .attr('class', 'stateGroup');
+  const g = elem.append('g').attr('id', id).attr('class', 'stateGroup');
 
   if (stateDef.type === 'start') drawStartState(g);
   if (stateDef.type === 'end') drawEndState(g);
@@ -396,8 +398,8 @@ export const drawState = function(elem, stateDef) {
 };
 
 let edgeCount = 0;
-export const drawEdge = function(elem, path, relation) {
-  const getRelationType = function(type) {
+export const drawEdge = function (elem, path, relation) {
+  const getRelationType = function (type) {
     switch (type) {
       case stateDb.relationType.AGGREGATION:
         return 'aggregation';
@@ -410,17 +412,17 @@ export const drawEdge = function(elem, path, relation) {
     }
   };
 
-  path.points = path.points.filter(p => !Number.isNaN(p.y));
+  path.points = path.points.filter((p) => !Number.isNaN(p.y));
 
   // The data for our line
   const lineData = path.points;
 
   // This is the accessor function we talked about above
   const lineFunction = line()
-    .x(function(d) {
+    .x(function (d) {
       return d.x;
     })
-    .y(function(d) {
+    .y(function (d) {
       return d.y;
     })
     .curve(curveBasis);
@@ -471,12 +473,12 @@ export const drawEdge = function(elem, path, relation) {
       maxWidth = Math.max(maxWidth, boundstmp.width);
       minX = Math.min(minX, boundstmp.x);
 
-      logger.info(boundstmp.x, x, y + titleHeight);
+      log.info(boundstmp.x, x, y + titleHeight);
 
       if (titleHeight === 0) {
         const titleBox = title.node().getBBox();
         titleHeight = titleBox.height;
-        logger.info('Title height', titleHeight, y);
+        log.info('Title height', titleHeight, y);
       }
       titleRows.push(title);
     }
@@ -499,7 +501,7 @@ export const drawEdge = function(elem, path, relation) {
       .attr('width', maxWidth + getConfig().state.padding)
       .attr('height', boxHeight + getConfig().state.padding);
 
-    logger.info(bounds);
+    log.info(bounds);
 
     //label.attr('transform', '0 -' + (bounds.y / 2));
 

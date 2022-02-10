@@ -1,26 +1,31 @@
-/**
- * Created by knut on 14-12-11.
- */
+/** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import { logger } from './logger';
+import { log } from './logger';
 
 const conf = {};
-export const setConf = function(cnf) {
+
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ *
+ * @param {object} cnf Config to merge
+ */
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
 
-  keys.forEach(function(key) {
+  keys.forEach(function (key) {
     conf[key] = cnf[key];
   });
 };
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {string} id The text for the error
+ * @param {string} ver The version
  */
 export const draw = (id, ver) => {
   try {
-    logger.debug('Renering svg for syntax error\n');
+    log.debug('Renering svg for syntax error\n');
 
     const svg = select('#' + id);
 
@@ -87,12 +92,12 @@ export const draw = (id, ver) => {
     svg.attr('width', 400);
     svg.attr('viewBox', '768 0 512 512');
   } catch (e) {
-    logger.error('Error while rendering info diagram');
-    logger.error(e.message);
+    log.error('Error while rendering info diagram');
+    log.error(e.message);
   }
 };
 
 export default {
   setConf,
-  draw
+  draw,
 };

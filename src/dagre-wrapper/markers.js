@@ -1,18 +1,16 @@
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
+/** Setup arrow head and define the marker. The result is appended to the svg. */
 
-import { logger } from '../logger';
+import { log } from '../logger';
 
 // Only add the number of markers that the diagram needs
 const insertMarkers = (elem, markerArray, type, id) => {
-  markerArray.forEach(markerName => {
+  markerArray.forEach((markerName) => {
     markers[markerName](elem, type, id);
   });
 };
 
 const extension = (elem, type, id) => {
-  logger.trace('Making markers for ', id);
+  log.trace('Making markers for ', id);
   elem
     .append('defs')
     .append('marker')
@@ -255,6 +253,6 @@ const markers = {
   point,
   circle,
   cross,
-  barb
+  barb,
 };
 export default insertMarkers;

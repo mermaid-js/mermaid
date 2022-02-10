@@ -1,8 +1,11 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `
   .mermaid-main-font {
-    font-family: "trebuchet ms", verdana, arial;
+    font-family: "trebuchet ms", verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
+  }
+  .exclude-range {
+    fill: ${options.excludeBkgColor};
   }
 
   .section {
@@ -42,9 +45,9 @@ const getStyles = options =>
 
   .sectionTitle {
     text-anchor: start;
-    font-size: 11px;
-    text-height: 14px;
-    font-family: 'trebuchet ms', verdana, arial;
+    // font-size: ${options.ganttFontSize};
+    // text-height: 14px;
+    font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
 
   }
@@ -86,19 +89,19 @@ const getStyles = options =>
 
   .taskText {
     text-anchor: middle;
-    font-family: 'trebuchet ms', verdana, arial;
+    font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
   }
 
-  .taskText:not([font-size]) {
-    font-size: 11px;
-  }
+  // .taskText:not([font-size]) {
+  //   font-size: ${options.ganttFontSize};
+  // }
 
   .taskTextOutsideRight {
     fill: ${options.taskTextDarkColor};
     text-anchor: start;
-    font-size: 11px;
-    font-family: 'trebuchet ms', verdana, arial;
+    // font-size: ${options.ganttFontSize};
+    font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
 
   }
@@ -106,7 +109,7 @@ const getStyles = options =>
   .taskTextOutsideLeft {
     fill: ${options.taskTextDarkColor};
     text-anchor: end;
-    font-size: 11px;
+    // font-size: ${options.ganttFontSize};
   }
 
   /* Special case clickable */
@@ -253,7 +256,7 @@ const getStyles = options =>
     text-anchor: middle;
     font-size: 18px;
     fill: ${options.textColor}    ;
-    font-family: 'trebuchet ms', verdana, arial;
+    font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
   }
 `;

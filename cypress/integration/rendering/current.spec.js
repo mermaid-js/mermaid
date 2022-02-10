@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { imgSnapshotTest } from '../../helpers/util';
 
 describe('State diagram', () => {

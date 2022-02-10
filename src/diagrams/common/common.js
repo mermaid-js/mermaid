@@ -1,11 +1,41 @@
-export const getRows = s => {
+import DOMPurify from 'dompurify';
+
+/**
+ * Gets the number of lines in a string
+ *
+ * @param {string | undefined} s The string to check the lines for
+ * @returns {number} The number of lines in that string
+ */
+export const getRows = (s) => {
   if (!s) return 1;
   let str = breakToPlaceholder(s);
   str = str.replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
 
-export const removeScript = txt => {
+export const removeEscapes = (text) => {
+  let newStr = text.replace(/\\u[\dA-F]{4}/gi, function (match) {
+    return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+  });
+
+  newStr = newStr.replace(/\\x([0-9a-f]{2})/gi, (_, c) => String.fromCharCode(parseInt(c, 16)));
+  newStr = newStr.replace(/\\[\d\d\d]{3}/gi, function (match) {
+    return String.fromCharCode(parseInt(match.replace(/\\/g, ''), 8));
+  });
+  newStr = newStr.replace(/\\[\d\d\d]{2}/gi, function (match) {
+    return String.fromCharCode(parseInt(match.replace(/\\/g, ''), 8));
+  });
+
+  return newStr;
+};
+
+/**
+ * Removes script tags from a text
+ *
+ * @param {string} txt The text to sanitize
+ * @returns {string} The safer text
+ */
+export const removeScript = (txt) => {
   var rs = '';
   var idx = 0;
 
@@ -26,10 +56,15 @@ export const removeScript = txt => {
       break;
     }
   }
-  return rs;
+  let decodedText = removeEscapes(rs);
+  decodedText = decodedText.replace(/script>/gi, '#');
+  decodedText = decodedText.replace(/javascript:/gi, '#');
+  decodedText = decodedText.replace(/onerror=/gi, 'onerror:');
+  decodedText = decodedText.replace(/<iframe/gi, '');
+  return decodedText;
 };
 
-export const sanitizeText = (text, config) => {
+const sanitizeMore = (text, config) => {
   let txt = text;
   let htmlLabels = true;
   if (
@@ -42,7 +77,7 @@ export const sanitizeText = (text, config) => {
   if (htmlLabels) {
     const level = config.securityLevel;
 
-    if (level === 'antiscript') {
+    if (level === 'antiscript' || level === 'strict') {
       txt = removeScript(txt);
     } else if (level !== 'loose') {
       // eslint-disable-line
@@ -56,29 +91,100 @@ export const sanitizeText = (text, config) => {
   return txt;
 };
 
+export const sanitizeText = (text, config) => {
+  if (!text) return text;
+  const txt = DOMPurify.sanitize(sanitizeMore(text, config));
+  return txt;
+};
+
+export const sanitizeTextOrArray = (a, config) => {
+  if (typeof a === 'string') return sanitizeText(a, config);
+
+  const f = (x) => sanitizeText(x, config);
+  return a.flat().map(f);
+};
+
 export const lineBreakRegex = /<br\s*\/?>/gi;
 
-export const hasBreaks = text => {
-  return /<br\s*[/]?>/gi.test(text);
+/**
+ * Whether or not a text has any linebreaks
+ *
+ * @param {string} text The text to test
+ * @returns {boolean} Whether or not the text has breaks
+ */
+export const hasBreaks = (text) => {
+  return lineBreakRegex.test(text);
 };
 
-export const splitBreaks = text => {
-  return text.split(/<br\s*[/]?>/gi);
+/**
+ * Splits on <br> tags
+ *
+ * @param {string} text Text to split
+ * @returns {string[]} List of lines as strings
+ */
+export const splitBreaks = (text) => {
+  return text.split(lineBreakRegex);
 };
 
-const breakToPlaceholder = s => {
+/**
+ * Converts placeholders to linebreaks in HTML
+ *
+ * @param {string} s HTML with placeholders
+ * @returns {string} HTML with breaks instead of placeholders
+ */
+const placeholderToBreak = (s) => {
+  return s.replace(/#br#/g, '<br/>');
+};
+
+/**
+ * Opposite of `placeholderToBreak`, converts breaks to placeholders
+ *
+ * @param {string} s HTML string
+ * @returns {string} String with placeholders
+ */
+const breakToPlaceholder = (s) => {
   return s.replace(lineBreakRegex, '#br#');
 };
 
-const placeholderToBreak = s => {
-  return s.replace(/#br#/g, '<br/>');
+/**
+ * Gets the current URL
+ *
+ * @param {boolean} useAbsolute Whether to return the absolute URL or not
+ * @returns {string} The current URL
+ */
+const getUrl = (useAbsolute) => {
+  let url = '';
+  if (useAbsolute) {
+    url =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
+  }
+
+  return url;
 };
+
+/**
+ * Converts a string/boolean into a boolean
+ *
+ * @param {string | boolean} val String or boolean to convert
+ * @returns {boolean} The result from the input
+ */
+export const evaluate = (val) => (val === 'false' || val === false ? false : true);
 
 export default {
   getRows,
   sanitizeText,
+  sanitizeTextOrArray,
   hasBreaks,
   splitBreaks,
   lineBreakRegex,
-  removeScript
+  removeScript,
+  getUrl,
+  evaluate,
+  removeEscapes,
 };

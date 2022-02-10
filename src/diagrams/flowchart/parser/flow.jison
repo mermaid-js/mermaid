@@ -9,6 +9,10 @@
 %x string
 %x dir
 %x vertex
+%x click
+%x href
+%x callbackname
+%x callbackargs
 %x open_directive
 %x type_directive
 %x arg_directive
@@ -31,7 +35,42 @@
 "interpolate"         return 'INTERPOLATE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
-"click"               return 'CLICK';
+
+/*
+---interactivity command---
+'href' adds a link to the specified node. 'href' can only be specified when the
+line was introduced with 'click'.
+'href "<link>"' attaches the specified link to the node that was specified by 'click'.
+*/
+"href"[\s]+["]          this.begin("href");
+<href>["]               this.popState();
+<href>[^"]*             return 'HREF';
+
+/*
+---interactivity command---
+'call' adds a callback to the specified node. 'call' can only be specified when
+the line was introduced with 'click'.
+'call <callbackname>(<args>)' attaches the function 'callbackname' with the specified
+arguments to the node that was specified by 'click'.
+Function arguments are optional: 'call <callbackname>()' simply executes 'callbackname' without any arguments.
+*/
+"call"[\s]+             this.begin("callbackname");
+<callbackname>\([\s]*\) this.popState();
+<callbackname>\(        this.popState(); this.begin("callbackargs");
+<callbackname>[^(]*     return 'CALLBACKNAME';
+<callbackargs>\)        this.popState();
+<callbackargs>[^)]*     return 'CALLBACKARGS';
+
+/*
+'click' is the keyword to introduce a line that contains interactivity commands.
+'click' must be followed by an existing node-id. All commands are attached to
+that id.
+'click <id>' can be followed by href or call commands in any desired order
+*/
+"click"[\s]+            this.begin("click");
+<click>[\s\n]           this.popState();
+<click>[^\s\n]*         return 'CLICK';
+
 "graph"                {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
@@ -53,6 +92,12 @@
 <dir>\s*">"              {   this.popState();  return 'DIR'; }
 <dir>\s*"^"              {   this.popState();  return 'DIR'; }
 <dir>\s*"v"              {   this.popState();  return 'DIR'; }
+
+.*direction\s+TB[^\n]*                                      return 'direction_tb';
+.*direction\s+BT[^\n]*                                      return 'direction_bt';
+.*direction\s+RL[^\n]*                                      return 'direction_rl';
+.*direction\s+LR[^\n]*                                      return 'direction_lr';
+
 [0-9]+                { return 'NUM';}
 \#                    return 'BRKT';
 ":::"                 return 'STYLE_SEPARATOR';
@@ -73,6 +118,7 @@
 "])"                  return 'STADIUMEND';
 "[["                  return 'SUBROUTINESTART';
 "]]"                  return 'SUBROUTINEEND';
+"[|"                  return 'VERTEX_WITH_PROPS_START';
 "[("                  return 'CYLINDERSTART';
 ")]"                  return 'CYLINDEREND';
 \-                    return 'MINUS';
@@ -85,7 +131,7 @@
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
 "^"                   return 'UP';
-"\|"                   return 'SEP';
+"\|"                  return 'SEP';
 "v"                   return 'DOWN';
 [A-Za-z]+             return 'ALPHA';
 "\\]"                 return 'TRAPEND';
@@ -288,6 +334,7 @@ statement
     // {$$=yy.addSubGraph($3,$5,$3);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$3,undefined);}
+    | direction
     ;
 
 separator: NEWLINE | SEMI | EOF ;
@@ -334,6 +381,8 @@ vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'stadium');}
     | idString SUBROUTINESTART text SUBROUTINEEND
         {$$ = $1;yy.addVertex($1,$3,'subroutine');}
+    | idString VERTEX_WITH_PROPS_START ALPHA COLON ALPHA PIPE text SQE
+        {$$ = $1;yy.addVertex($1,$7,'rect',undefined,undefined,undefined, Object.fromEntries([[$3, $5]]));}
     | idString CYLINDERSTART text CYLINDEREND
         {$$ = $1;yy.addVertex($1,$3,'cylinder');}
     | idString PS text PE
@@ -411,12 +460,20 @@ classStatement:CLASS SPACE alphaNum SPACE alphaNum
     ;
 
 clickStatement
-    : CLICK SPACE alphaNum SPACE alphaNum                         {$$ = $1;yy.setClickEvent($3, $5, undefined);}
-    | CLICK SPACE alphaNum SPACE alphaNum SPACE STR               {$$ = $1;yy.setClickEvent($3, $5, $7)       ;}
-    | CLICK SPACE alphaNum SPACE STR                              {$$ = $1;yy.setLink($3, $5, undefined, undefined);}
-    | CLICK SPACE alphaNum SPACE STR SPACE STR                    {$$ = $1;yy.setLink($3, $5, $7, undefined       );}
-    | CLICK SPACE alphaNum SPACE STR SPACE LINK_TARGET            {$$ = $1;yy.setLink($3, $5, undefined, $7       );}
-    | CLICK SPACE alphaNum SPACE STR SPACE STR SPACE LINK_TARGET  {$$ = $1;yy.setLink($3, $5, $7, $9              );}
+    : CLICK CALLBACKNAME                           {$$ = $1;yy.setClickEvent($1, $2);}
+    | CLICK CALLBACKNAME SPACE STR                 {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
+    | CLICK CALLBACKNAME CALLBACKARGS              {$$ = $1;yy.setClickEvent($1, $2, $3);}
+    | CLICK CALLBACKNAME CALLBACKARGS SPACE STR    {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setTooltip($1, $5);}
+    | CLICK HREF                                   {$$ = $1;yy.setLink($1, $2);}
+    | CLICK HREF SPACE STR                         {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
+    | CLICK HREF SPACE LINK_TARGET                 {$$ = $1;yy.setLink($1, $2, $4);}
+    | CLICK HREF SPACE STR SPACE LINK_TARGET       {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
+    | CLICK alphaNum                               {$$ = $1;yy.setClickEvent($1, $2);}
+    | CLICK alphaNum SPACE STR                     {$$ = $1;yy.setClickEvent($1, $2);yy.setTooltip($1, $4);}
+    | CLICK STR                                    {$$ = $1;yy.setLink($1, $2);}
+    | CLICK STR SPACE STR                          {$$ = $1;yy.setLink($1, $2);yy.setTooltip($1, $4);}
+    | CLICK STR SPACE LINK_TARGET                  {$$ = $1;yy.setLink($1, $2, $4);}
+    | CLICK STR SPACE STR SPACE LINK_TARGET        {$$ = $1;yy.setLink($1, $2, $6);yy.setTooltip($1, $4);}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
@@ -490,9 +547,20 @@ alphaNumStatement
         {$$='-';}
     ;
 
+direction
+    : direction_tb
+    { $$={stmt:'dir', value:'TB'};}
+    | direction_bt
+    { $$={stmt:'dir', value:'BT'};}
+    | direction_rl
+    { $$={stmt:'dir', value:'RL'};}
+    | direction_lr
+    { $$={stmt:'dir', value:'LR'};}
+    ;
+
 alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
 
-idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION | AMP;
+idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION | AMP | DEFAULT;
 
-graphCodeTokens: STADIUMSTART | STADIUMEND | SUBROUTINESTART | SUBROUTINEEND | CYLINDERSTART | CYLINDEREND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
+graphCodeTokens: STADIUMSTART | STADIUMEND | SUBROUTINESTART | SUBROUTINEEND | VERTEX_WITH_PROPS_START | CYLINDERSTART | CYLINDEREND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
 %%

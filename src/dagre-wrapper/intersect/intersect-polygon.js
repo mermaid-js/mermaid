@@ -4,9 +4,13 @@ import intersectLine from './intersect-line';
 
 export default intersectPolygon;
 
-/*
- * Returns the point ({x, y}) at which the point argument intersects with the
- * node argument assuming that it has the shape specified by polygon.
+/**
+ * Returns the point ({x, y}) at which the point argument intersects with the node argument assuming
+ * that it has the shape specified by polygon.
+ *
+ * @param node
+ * @param polyPoints
+ * @param point
  */
 function intersectPolygon(node, polyPoints, point) {
   var x1 = node.x;
@@ -17,7 +21,7 @@ function intersectPolygon(node, polyPoints, point) {
   var minX = Number.POSITIVE_INFINITY;
   var minY = Number.POSITIVE_INFINITY;
   if (typeof polyPoints.forEach === 'function') {
-    polyPoints.forEach(function(entry) {
+    polyPoints.forEach(function (entry) {
       minX = Math.min(minX, entry.x);
       minY = Math.min(minY, entry.y);
     });
@@ -50,7 +54,7 @@ function intersectPolygon(node, polyPoints, point) {
 
   if (intersections.length > 1) {
     // More intersections, find the one nearest to edge end point
-    intersections.sort(function(p, q) {
+    intersections.sort(function (p, q) {
       var pdx = p.x - point.x;
       var pdy = p.y - point.y;
       var distp = Math.sqrt(pdx * pdx + pdy * pdy);

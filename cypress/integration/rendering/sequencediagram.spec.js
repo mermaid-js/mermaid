@@ -29,7 +29,7 @@ context('Sequence diagram', () => {
         Alice -->> John: Parallel message 2
         end
       `,
-      {sequence:{actorFontFamily:'courier'}}
+      { sequence: { actorFontFamily: 'courier' } }
     );
   });
   it('should handle different line breaks', () => {
@@ -48,6 +48,26 @@ context('Sequence diagram', () => {
       note right of 4: multiline<br />using #lt;br /#gt;
       4->>1: multiline<br />using #lt;br /#gt;
       note right of 1: multiline<br \t/>using #lt;br \t/#gt;
+    `,
+      {}
+    );
+  });
+  it('should handle line breaks and wrap annotations', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      participant Alice
+      participant Bob
+      participant John as John<br/>Second Line
+      Alice ->> Bob: Hello Bob, how are you?
+      Bob-->>John: How about you John?
+      Note right of John: John thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+      Bob-->Alice: Checking with John...
+      Note over John:wrap: John looks like he's still thinking, so Bob prods him a bit.
+      Bob-x John: Hey John -<br/>we're still waiting to know<br/>how you're doing
+      Note over John:nowrap: John's trying hard not to break his train of thought.
+      Bob-x John:wrap: John! Are you still debating about how you're doing? How long does it take??
+      Note over John: After a few more moments, John<br/>finally snaps out of it.
     `,
       {}
     );
@@ -127,7 +147,7 @@ context('Sequence diagram', () => {
         A->>Bob: Hola
         Bob-->A: Pasten !
       `,
-        {logLevel: 0}
+        { logLevel: 0 }
       );
     });
     it('should wrap (inline) long actor descriptions', () => {
@@ -138,7 +158,7 @@ context('Sequence diagram', () => {
         A->>Bob: Hola
         Bob-->A: Pasten !
       `,
-        {logLevel: 0}
+        { logLevel: 0 }
       );
     });
     it('should wrap (directive) long actor descriptions', () => {
@@ -149,6 +169,18 @@ context('Sequence diagram', () => {
         participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
         Bob-->A: Pasten !
+      `,
+        {}
+      );
+    });
+    it('should be possible to use actor symbols instead of boxes', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          actor Alice
+          actor Bob
+          Alice->>Bob: Hi Bob
+          Bob->>Alice: Hi Alice
       `,
         {}
       );
@@ -495,17 +527,17 @@ context('Sequence diagram', () => {
     });
     it('should render with an init directive', () => {
       imgSnapshotTest(
-`%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrap": true }}}%%
+        `%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrap": true }}}%%
           sequenceDiagram
           Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
           Note left of Alice: Bob thinks
           Bob->>Alice: Fine!`,
         {}
-      )
+      );
     });
   });
   context('directives', () => {
-      it('should override config with directive settings', () => {
+    it('should override config with directive settings', () => {
       imgSnapshotTest(
         `
         %%{init: { "config": { "mirrorActors": true }}}%%
@@ -514,10 +546,13 @@ context('Sequence diagram', () => {
         note left of Alice: config set to mirrorActors: false<br/>directive set to mirrorActors: true
         Bob->>Alice: Short as well
       `,
-        { logLevel:0,  sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' } }
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
       );
     });
-      it('should override config with directive settings', () => {
+    it('should override config with directive settings', () => {
       imgSnapshotTest(
         `
         %%{init: { "config": { "mirrorActors": false, "wrap": true }}}%%
@@ -526,7 +561,53 @@ context('Sequence diagram', () => {
         note left of Alice: config: mirrorActors=true<br/>directive: mirrorActors=false
         Bob->>Alice: Short as well
       `,
-        { logLevel:0,  sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+        { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+      );
+    });
+  });
+  context('links', () => {
+    it('should support actor links and properties EXPERIMENTAL: USE WITH CAUTION', () => {
+      //Be aware that the syntax for "properties" is likely to be changed.
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "mirrorActors": true, "forceMenus": true }}}%%
+        sequenceDiagram
+        participant a as Alice
+        participant j as John
+        note right of a: Hello world!
+        properties a: {"class": "internal-service-actor", "type": "@clock"}
+        properties j: {"class": "external-service-actor", "type": "@computer"}
+        links a: {"Repo": "https://www.contoso.com/repo", "Swagger": "https://www.contoso.com/swagger"}
+        links j: {"Repo": "https://www.contoso.com/repo"}
+        links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
+        link a: Contacts @ https://contacts.contoso.com/?contact=alice@contoso.com
+        a->>j: Hello John, how are you?
+        j-->>a: Great!
+      `,
+        { logLevel: 0, sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+      );
+    });
+    it('should support actor links and properties when not mirrored EXPERIMENTAL: USE WITH CAUTION', () => {
+      //Be aware that the syntax for "properties" is likely to be changed.
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "mirrorActors": false, "forceMenus": true, "wrap": true }}}%%
+        sequenceDiagram
+        participant a as Alice
+        participant j as John
+        note right of a: Hello world!
+        properties a: {"class": "internal-service-actor", "type": "@clock"}
+        properties j: {"class": "external-service-actor", "type": "@computer"}
+        links a: {"Repo": "https://www.contoso.com/repo", "Swagger": "https://www.contoso.com/swagger"}
+        links j: {"Repo": "https://www.contoso.com/repo"}
+        links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
+        a->>j: Hello John, how are you?
+        j-->>a: Great!
+      `,
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
       );
     });
   });
@@ -559,18 +640,17 @@ context('Sequence diagram', () => {
       `,
         { sequence: { useMaxWidth: true } }
       );
-      cy.get('svg')
-        .should((svg) => {
-          expect(svg).to.have.attr('width', '100%');
-          expect(svg).to.have.attr('height');
-          const height = parseFloat(svg.attr('height'));
-          expect(height).to.eq(920);
-          const style = svg.attr('style');
-          expect(style).to.match(/^max-width: [\d.]+px;$/);
-          const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-          // use within because the absolute value can be slightly different depending on the environment ±5%
-          expect(maxWidthValue).to.be.within(820 * .95, 820 * 1.05);
-        });
+      cy.get('svg').should((svg) => {
+        expect(svg).to.have.attr('width', '100%');
+        expect(svg).to.have.attr('height');
+        const height = parseFloat(svg.attr('height'));
+        expect(height).to.be.within(920, 960);
+        const style = svg.attr('style');
+        expect(style).to.match(/^max-width: [\d.]+px;$/);
+        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(maxWidthValue).to.be.within(820 * 0.95, 820 * 1.05);
+      });
     });
     it('should render a sequence diagram when useMaxWidth is false', () => {
       renderGraph(
@@ -600,15 +680,14 @@ context('Sequence diagram', () => {
       `,
         { sequence: { useMaxWidth: false } }
       );
-      cy.get('svg')
-        .should((svg) => {
-          const height = parseFloat(svg.attr('height'));
-          const width = parseFloat(svg.attr('width'));
-          expect(height).to.eq(920);
-          // use within because the absolute value can be slightly different depending on the environment ±5%
-          expect(width).to.be.within(820 * .95, 820 * 1.05);
-          expect(svg).to.not.have.attr('style');
-        });
+      cy.get('svg').should((svg) => {
+        const height = parseFloat(svg.attr('height'));
+        const width = parseFloat(svg.attr('width'));
+        expect(height).to.be.within(920, 960);
+        // use within because the absolute value can be slightly different depending on the environment ±5%
+        expect(width).to.be.within(820 * 0.95, 820 * 1.05);
+        expect(svg).to.not.have.attr('style');
+      });
     });
   });
 });

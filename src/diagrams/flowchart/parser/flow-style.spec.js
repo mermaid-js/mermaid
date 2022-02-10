@@ -3,18 +3,18 @@ import flow from './flow';
 import { setConfig } from '../../../config';
 
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
 describe('[Style] when parsing', () => {
-  beforeEach(function() {
+  beforeEach(function () {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
 
   // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
-  it('should handle styles for vertices', function() {
+  it('should handle styles for vertices', function () {
     const res = flow.parser.parse('graph TD;style Q background:#fff;');
 
     const vert = flow.parser.yy.getVertices();
@@ -27,7 +27,7 @@ describe('[Style] when parsing', () => {
   });
 
   // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
-  it('should handle styles for edges', function() {
+  it('should handle styles for edges', function () {
     const res = flow.parser.parse('graph TD;a-->b;\nstyle #0 stroke: #f66;');
 
     const edges = flow.parser.yy.getEdges();
@@ -35,7 +35,7 @@ describe('[Style] when parsing', () => {
     expect(edges.length).toBe(1);
   });
 
-  it('should handle multiple styles for a vortex', function() {
+  it('should handle multiple styles for a vortex', function () {
     const res = flow.parser.parse('graph TD;style R background:#fff,border:1px solid red;');
 
     const vert = flow.parser.yy.getVertices();
@@ -46,7 +46,7 @@ describe('[Style] when parsing', () => {
     expect(vert['R'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should handle multiple styles in a graph', function() {
+  it('should handle multiple styles in a graph', function () {
     const res = flow.parser.parse(
       'graph TD;style S background:#aaa;\nstyle T background:#bbb,border:1px solid red;'
     );
@@ -61,7 +61,7 @@ describe('[Style] when parsing', () => {
     expect(vert['T'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should handle styles and graph definitons in a graph', function() {
+  it('should handle styles and graph definitions in a graph', function () {
     const res = flow.parser.parse(
       'graph TD;S-->T;\nstyle S background:#aaa;\nstyle T background:#bbb,border:1px solid red;'
     );
@@ -76,7 +76,7 @@ describe('[Style] when parsing', () => {
     expect(vert['T'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should handle styles and graph definitons in a graph', function() {
+  it('should handle styles and graph definitions in a graph', function () {
     const res = flow.parser.parse('graph TD;style T background:#bbb,border:1px solid red;');
     // const res = flow.parser.parse('graph TD;style T background: #bbb;');
 
@@ -87,8 +87,10 @@ describe('[Style] when parsing', () => {
     expect(vert['T'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should keep node label text (if already defined) when a style is applied', function() {
-    const res = flow.parser.parse('graph TD;A(( ));B((Test));C;style A background:#fff;style D border:1px solid red;');
+  it('should keep node label text (if already defined) when a style is applied', function () {
+    const res = flow.parser.parse(
+      'graph TD;A(( ));B((Test));C;style A background:#fff;style D border:1px solid red;'
+    );
 
     const vert = flow.parser.yy.getVertices();
 
@@ -98,7 +100,7 @@ describe('[Style] when parsing', () => {
     expect(vert['D'].text).toBe('D');
   });
 
-  it('should be possible to declare a class', function() {
+  it('should be possible to declare a class', function () {
     const res = flow.parser.parse(
       'graph TD;classDef exClass background:#bbb,border:1px solid red;'
     );
@@ -111,7 +113,7 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should be possible to declare a class with a dot in the style', function() {
+  it('should be possible to declare a class with a dot in the style', function () {
     const res = flow.parser.parse(
       'graph TD;classDef exClass background:#bbb,border:1.5px solid red;'
     );
@@ -123,7 +125,7 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[0]).toBe('background:#bbb');
     expect(classes['exClass'].styles[1]).toBe('border:1.5px solid red');
   });
-  it('should be possible to declare a class with a space in the style', function() {
+  it('should be possible to declare a class with a space in the style', function () {
     const res = flow.parser.parse(
       'graph TD;classDef exClass background:  #bbb,border:1.5px solid red;'
     );
@@ -135,7 +137,7 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[0]).toBe('background:  #bbb');
     expect(classes['exClass'].styles[1]).toBe('border:1.5px solid red');
   });
-  it('should be possible to apply a class to a vertex', function() {
+  it('should be possible to apply a class to a vertex', function () {
     let statement = '';
 
     statement = statement + 'graph TD;' + '\n';
@@ -151,7 +153,7 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[0]).toBe('background:#bbb');
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
   });
-  it('should be possible to apply a class to a vertex with an id containing _', function() {
+  it('should be possible to apply a class to a vertex with an id containing _', function () {
     let statement = '';
 
     statement = statement + 'graph TD;' + '\n';
@@ -167,7 +169,7 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[0]).toBe('background:#bbb');
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
   });
-  it('should be possible to apply a class to a vertex directly', function() {
+  it('should be possible to apply a class to a vertex directly', function () {
     let statement = '';
 
     statement = statement + 'graph TD;' + '\n';
@@ -184,7 +186,7 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should be possible to apply a class to a vertex directly : usecase A[text].class ', function() {
+  it('should be possible to apply a class to a vertex directly : usecase A[text].class ', function () {
     let statement = '';
 
     statement = statement + 'graph TD;' + '\n';
@@ -201,7 +203,7 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should be possible to apply a class to a vertex directly : usecase A[text].class-->B[test2] ', function() {
+  it('should be possible to apply a class to a vertex directly : usecase A[text].class-->B[test2] ', function () {
     let statement = '';
 
     statement = statement + 'graph TD;' + '\n';
@@ -218,7 +220,7 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
   });
 
-  it('should be possible to apply a class to a vertex directly 2', function() {
+  it('should be possible to apply a class to a vertex directly 2', function () {
     let statement = '';
 
     statement = statement + 'graph TD;' + '\n';
@@ -234,7 +236,7 @@ describe('[Style] when parsing', () => {
     expect(classes['exClass'].styles[0]).toBe('background:#bbb');
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
   });
-  it('should be possible to apply a class to a comma separated list of vertices', function() {
+  it('should be possible to apply a class to a comma separated list of vertices', function () {
     let statement = '';
 
     statement = statement + 'graph TD;' + '\n';
@@ -254,7 +256,7 @@ describe('[Style] when parsing', () => {
     expect(vertices['b'].classes[0]).toBe('exClass');
   });
 
-  it('should handle style definitions with more then 1 digit in a row', function() {
+  it('should handle style definitions with more then 1 digit in a row', function () {
     const res = flow.parser.parse(
       'graph TD\n' +
         'A-->B1\n' +
@@ -277,7 +279,7 @@ describe('[Style] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
   });
 
-  it('should handle multi-numbered style definitons with more then 1 digit in a row', function() {
+  it('should handle multi-numbered style definitions with more then 1 digit in a row', function () {
     const res = flow.parser.parse(
       'graph TD\n' +
         'A-->B1\n' +
@@ -301,7 +303,7 @@ describe('[Style] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
   });
 
-  it('should handle classDefs with style in classes', function() {
+  it('should handle classDefs with style in classes', function () {
     const res = flow.parser.parse('graph TD\nA-->B\nclassDef exClass font-style:bold;');
 
     const vert = flow.parser.yy.getVertices();
@@ -310,7 +312,7 @@ describe('[Style] when parsing', () => {
     expect(edges[0].type).toBe('arrow_point');
   });
 
-  it('should handle classDefs with % in classes', function() {
+  it('should handle classDefs with % in classes', function () {
     const res = flow.parser.parse(
       'graph TD\nA-->B\nclassDef exClass fill:#f96,stroke:#333,stroke-width:4px,font-size:50%,font-style:bold;'
     );

@@ -4,16 +4,16 @@ import filter from 'lodash/filter';
 import { setConfig } from '../../../config';
 
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
-describe('when parsing subgraphs', function() {
-  beforeEach(function() {
+describe('when parsing subgraphs', function () {
+  beforeEach(function () {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
     flow.parser.yy.setGen('gen-2');
   });
-  it('should handle subgraph with tab indentation', function() {
+  it('should handle subgraph with tab indentation', function () {
     const res = flow.parser.parse('graph TB\nsubgraph One\n\ta1-->a2\nend');
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
@@ -25,7 +25,7 @@ describe('when parsing subgraphs', function() {
     expect(subgraph.title).toBe('One');
     expect(subgraph.id).toBe('One');
   });
-  it('should handle subgraph with chaining nodes indentation', function() {
+  it('should handle subgraph with chaining nodes indentation', function () {
     const res = flow.parser.parse('graph TB\nsubgraph One\n\ta1-->a2-->a3\nend');
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
@@ -38,7 +38,7 @@ describe('when parsing subgraphs', function() {
     expect(subgraph.id).toBe('One');
   });
 
-  it('should handle subgraph with multiple words in title', function() {
+  it('should handle subgraph with multiple words in title', function () {
     const res = flow.parser.parse('graph TB\nsubgraph "Some Title"\n\ta1-->a2\nend');
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
@@ -50,7 +50,7 @@ describe('when parsing subgraphs', function() {
     expect(subgraph.id).toBe('subGraph0');
   });
 
-  it('should handle subgraph with id and title notation', function() {
+  it('should handle subgraph with id and title notation', function () {
     const res = flow.parser.parse('graph TB\nsubgraph some-id[Some Title]\n\ta1-->a2\nend');
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
@@ -62,7 +62,7 @@ describe('when parsing subgraphs', function() {
     expect(subgraph.id).toBe('some-id');
   });
 
-  xit('should handle subgraph without id and space in title', function() {
+  xit('should handle subgraph without id and space in title', function () {
     const res = flow.parser.parse('graph TB\nsubgraph Some Title\n\ta1-->a2\nend');
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
@@ -74,7 +74,7 @@ describe('when parsing subgraphs', function() {
     expect(subgraph.id).toBe('some-id');
   });
 
-  it('should handle subgraph id starting with a number', function() {
+  it('should handle subgraph id starting with a number', function () {
     const res = flow.parser.parse(`graph TD
     A[Christmas] -->|Get money| B(Go shopping)
     subgraph 1test
@@ -89,7 +89,7 @@ describe('when parsing subgraphs', function() {
     expect(subgraph.id).toBe('1test');
   });
 
-  it('should handle subgraphs1', function() {
+  it('should handle subgraphs1', function () {
     const res = flow.parser.parse('graph TD;A-->B;subgraph myTitle;c-->d;end;');
 
     const vert = flow.parser.yy.getVertices();
@@ -97,7 +97,7 @@ describe('when parsing subgraphs', function() {
 
     expect(edges[0].type).toBe('arrow_point');
   });
-  it('should handle subgraphs with title in quotes', function() {
+  it('should handle subgraphs with title in quotes', function () {
     const res = flow.parser.parse('graph TD;A-->B;subgraph "title in quotes";c-->d;end;');
 
     const vert = flow.parser.yy.getVertices();
@@ -111,7 +111,7 @@ describe('when parsing subgraphs', function() {
 
     expect(edges[0].type).toBe('arrow_point');
   });
-  it('should handle subgraphs in old style that was broken', function() {
+  it('should handle subgraphs in old style that was broken', function () {
     const res = flow.parser.parse('graph TD;A-->B;subgraph old style that is broken;c-->d;end;');
 
     const vert = flow.parser.yy.getVertices();
@@ -125,7 +125,7 @@ describe('when parsing subgraphs', function() {
 
     expect(edges[0].type).toBe('arrow_point');
   });
-  it('should handle subgraphs with dashes in the title', function() {
+  it('should handle subgraphs with dashes in the title', function () {
     const res = flow.parser.parse('graph TD;A-->B;subgraph a-b-c;c-->d;end;');
 
     const vert = flow.parser.yy.getVertices();
@@ -139,7 +139,7 @@ describe('when parsing subgraphs', function() {
 
     expect(edges[0].type).toBe('arrow_point');
   });
-  it('should handle subgraphs with id and title in brackets', function() {
+  it('should handle subgraphs with id and title in brackets', function () {
     const res = flow.parser.parse('graph TD;A-->B;subgraph uid1[text of doom];c-->d;end;');
 
     const vert = flow.parser.yy.getVertices();
@@ -154,7 +154,7 @@ describe('when parsing subgraphs', function() {
 
     expect(edges[0].type).toBe('arrow_point');
   });
-  it('should handle subgraphs with id and title in brackets and quotes', function() {
+  it('should handle subgraphs with id and title in brackets and quotes', function () {
     const res = flow.parser.parse('graph TD;A-->B;subgraph uid2["text of doom"];c-->d;end;');
 
     const vert = flow.parser.yy.getVertices();
@@ -169,7 +169,7 @@ describe('when parsing subgraphs', function() {
 
     expect(edges[0].type).toBe('arrow_point');
   });
-  it('should handle subgraphs with id and title in brackets without spaces', function() {
+  it('should handle subgraphs with id and title in brackets without spaces', function () {
     const res = flow.parser.parse('graph TD;A-->B;subgraph uid2[textofdoom];c-->d;end;');
 
     const vert = flow.parser.yy.getVertices();
@@ -185,7 +185,7 @@ describe('when parsing subgraphs', function() {
     expect(edges[0].type).toBe('arrow_point');
   });
 
-  it('should handle subgraphs2', function() {
+  it('should handle subgraphs2', function () {
     const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\n\n c-->d \nend\n');
 
     const vert = flow.parser.yy.getVertices();
@@ -194,7 +194,7 @@ describe('when parsing subgraphs', function() {
     expect(edges[0].type).toBe('arrow_point');
   });
 
-  it('should handle subgraphs3', function() {
+  it('should handle subgraphs3', function () {
     const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle   \n\n    c-->d \nend\n');
 
     const vert = flow.parser.yy.getVertices();
@@ -203,7 +203,7 @@ describe('when parsing subgraphs', function() {
     expect(edges[0].type).toBe('arrow_point');
   });
 
-  it('should handle nested subgraphs', function() {
+  it('should handle nested subgraphs', function () {
     const str =
       'graph TD\n' +
       'A-->B\n' +
@@ -215,7 +215,7 @@ describe('when parsing subgraphs', function() {
     const res = flow.parser.parse(str);
   });
 
-  it('should handle subgraphs4', function() {
+  it('should handle subgraphs4', function () {
     const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\nc-->d\nend;');
 
     const vert = flow.parser.yy.getVertices();
@@ -224,7 +224,7 @@ describe('when parsing subgraphs', function() {
     expect(edges[0].type).toBe('arrow_point');
   });
 
-  it('should handle subgraphs5', function() {
+  it('should handle subgraphs5', function () {
     const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\nc-- text -->d\nd-->e\n end;');
 
     const vert = flow.parser.yy.getVertices();
@@ -232,7 +232,7 @@ describe('when parsing subgraphs', function() {
 
     expect(edges[0].type).toBe('arrow_point');
   });
-  it('should handle subgraphs with multi node statements in it', function() {
+  it('should handle subgraphs with multi node statements in it', function () {
     const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\na & b --> c & e\n end;');
 
     const vert = flow.parser.yy.getVertices();
@@ -240,7 +240,7 @@ describe('when parsing subgraphs', function() {
 
     expect(edges[0].type).toBe('arrow_point');
   });
-  it('should handle nested subgraphs 1', function() {
+  it('should handle nested subgraphs 1', function () {
     const res = flow.parser.parse(`flowchart TB
     subgraph A
     b-->B
@@ -254,8 +254,8 @@ describe('when parsing subgraphs', function() {
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(2);
 
-    const subgraphA = filter(subgraphs,o => o.id === 'A')[0];
-    const subgraphB = filter(subgraphs,o => o.id === 'B')[0];
+    const subgraphA = filter(subgraphs, (o) => o.id === 'A')[0];
+    const subgraphB = filter(subgraphs, (o) => o.id === 'B')[0];
 
     expect(subgraphB.nodes[0]).toBe('c');
     expect(subgraphA.nodes).toContain('B');
@@ -263,7 +263,7 @@ describe('when parsing subgraphs', function() {
     expect(subgraphA.nodes).toContain('a');
     expect(subgraphA.nodes).not.toContain('c');
   });
-  it('should handle nested subgraphs 2', function() {
+  it('should handle nested subgraphs 2', function () {
     const res = flow.parser.parse(`flowchart TB
     b-->B
     a-->c
@@ -279,8 +279,8 @@ describe('when parsing subgraphs', function() {
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(2);
 
-    const subgraphA = filter(subgraphs,o => o.id === 'A')[0];
-    const subgraphB = filter(subgraphs,o => o.id === 'B')[0];
+    const subgraphA = filter(subgraphs, (o) => o.id === 'A')[0];
+    const subgraphB = filter(subgraphs, (o) => o.id === 'B')[0];
 
     expect(subgraphB.nodes[0]).toBe('c');
     expect(subgraphA.nodes).toContain('B');
@@ -288,7 +288,7 @@ describe('when parsing subgraphs', function() {
     expect(subgraphA.nodes).toContain('a');
     expect(subgraphA.nodes).not.toContain('c');
   });
-  it('should handle nested subgraphs 3', function() {
+  it('should handle nested subgraphs 3', function () {
     const res = flow.parser.parse(`flowchart TB
     subgraph B
       c
@@ -302,8 +302,8 @@ describe('when parsing subgraphs', function() {
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(2);
 
-    const subgraphA = filter(subgraphs,o => o.id === 'A')[0];
-    const subgraphB = filter(subgraphs,o => o.id === 'B')[0];
+    const subgraphA = filter(subgraphs, (o) => o.id === 'A')[0];
+    const subgraphB = filter(subgraphs, (o) => o.id === 'B')[0];
     expect(subgraphB.nodes[0]).toBe('c');
     expect(subgraphA.nodes).toContain('B');
     expect(subgraphA.nodes).toContain('b');

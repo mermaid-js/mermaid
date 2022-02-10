@@ -1,11 +1,11 @@
 import { line, curveBasis } from 'd3';
 import { lookUpDomId, relationType } from './classDb';
 import utils from '../../utils';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 
 let edgeCount = 0;
-export const drawEdge = function(elem, path, relation, conf) {
-  const getRelationType = function(type) {
+export const drawEdge = function (elem, path, relation, conf) {
+  const getRelationType = function (type) {
     switch (type) {
       case relationType.AGGREGATION:
         return 'aggregation';
@@ -18,17 +18,17 @@ export const drawEdge = function(elem, path, relation, conf) {
     }
   };
 
-  path.points = path.points.filter(p => !Number.isNaN(p.y));
+  path.points = path.points.filter((p) => !Number.isNaN(p.y));
 
   // The data for our line
   const lineData = path.points;
 
   // This is the accessor function we talked about above
   const lineFunction = line()
-    .x(function(d) {
+    .x(function (d) {
       return d.x;
     })
-    .y(function(d) {
+    .y(function (d) {
       return d.y;
     })
     .curve(curveBasis);
@@ -88,8 +88,8 @@ export const drawEdge = function(elem, path, relation, conf) {
       path.points[l - 1]
     );
 
-    logger.debug('cardinality_1_point ' + JSON.stringify(cardinality_1_point));
-    logger.debug('cardinality_2_point ' + JSON.stringify(cardinality_2_point));
+    log.debug('cardinality_1_point ' + JSON.stringify(cardinality_1_point));
+    log.debug('cardinality_2_point ' + JSON.stringify(cardinality_2_point));
 
     p1_card_x = cardinality_1_point.x;
     p1_card_y = cardinality_1_point.y;
@@ -119,7 +119,7 @@ export const drawEdge = function(elem, path, relation, conf) {
       .attr('height', bounds.height + conf.padding);
   }
 
-  logger.info('Rendering relation ' + JSON.stringify(relation));
+  log.info('Rendering relation ' + JSON.stringify(relation));
   if (typeof relation.relationTitle1 !== 'undefined' && relation.relationTitle1 !== 'none') {
     const g = elem.append('g').attr('class', 'cardinality');
     g.append('text')
@@ -144,22 +144,27 @@ export const drawEdge = function(elem, path, relation, conf) {
   edgeCount++;
 };
 
-export const drawClass = function(elem, classDef, conf) {
-  logger.info('Rendering class ' + classDef);
+/**
+ * Renders a class diagram
+ *
+ * @param {SVGSVGElement} elem The element to draw it into
+ * @param classDef
+ * @param conf
+ * @todo Add more information in the JSDOC here
+ */
+export const drawClass = function (elem, classDef, conf) {
+  log.info('Rendering class ' + classDef);
 
   const id = classDef.id;
   const classInfo = {
     id: id,
     label: classDef.id,
     width: 0,
-    height: 0
+    height: 0,
   };
 
   // add class group
-  const g = elem
-    .append('g')
-    .attr('id', lookUpDomId(id))
-    .attr('class', 'classGroup');
+  const g = elem.append('g').attr('id', lookUpDomId(id)).attr('class', 'classGroup');
 
   // add title
   let title;
@@ -167,7 +172,7 @@ export const drawClass = function(elem, classDef, conf) {
     title = g
       .append('svg:a')
       .attr('xlink:href', classDef.link)
-      .attr('target', '_blank')
+      .attr('target', classDef.linkTarget)
       .append('text')
       .attr('y', conf.textHeight + conf.padding)
       .attr('x', 0);
@@ -180,7 +185,7 @@ export const drawClass = function(elem, classDef, conf) {
 
   // add annotations
   let isFirst = true;
-  classDef.annotations.forEach(function(member) {
+  classDef.annotations.forEach(function (member) {
     const titleText2 = title.append('tspan').text('«' + member + '»');
     if (!isFirst) titleText2.attr('dy', conf.textHeight);
     isFirst = false;
@@ -192,10 +197,7 @@ export const drawClass = function(elem, classDef, conf) {
     classTitleString += '<' + classDef.type + '>';
   }
 
-  const classTitle = title
-    .append('tspan')
-    .text(classTitleString)
-    .attr('class', 'title');
+  const classTitle = title.append('tspan').text(classTitleString).attr('class', 'title');
 
   // If class has annotations the title needs to have an offset of the text height
   if (!isFirst) classTitle.attr('dy', conf.textHeight);
@@ -216,7 +218,7 @@ export const drawClass = function(elem, classDef, conf) {
     .attr('class', 'classText');
 
   isFirst = true;
-  classDef.members.forEach(function(member) {
+  classDef.members.forEach(function (member) {
     addTspan(members, member, isFirst, conf);
     isFirst = false;
   });
@@ -238,7 +240,7 @@ export const drawClass = function(elem, classDef, conf) {
 
   isFirst = true;
 
-  classDef.methods.forEach(function(method) {
+  classDef.methods.forEach(function (method) {
     addTspan(methods, method, isFirst, conf);
     isFirst = false;
   });
@@ -262,7 +264,7 @@ export const drawClass = function(elem, classDef, conf) {
 
   // Center title
   // We subtract the width of each text element from the class box width and divide it by 2
-  title.node().childNodes.forEach(function(x) {
+  title.node().childNodes.forEach(function (x) {
     x.setAttribute('x', (rectWidth - x.getBBox().width) / 2);
   });
 
@@ -279,8 +281,8 @@ export const drawClass = function(elem, classDef, conf) {
   return classInfo;
 };
 
-export const parseMember = function(text) {
-  const fieldRegEx = /(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)/;
+export const parseMember = function (text) {
+  const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+) *(\*|\$)?$/;
   const methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
 
   let fieldMatch = text.match(fieldRegEx);
@@ -295,7 +297,8 @@ export const parseMember = function(text) {
   }
 };
 
-const buildFieldDisplay = function(parsedText) {
+const buildFieldDisplay = function (parsedText) {
+  let cssStyle = '';
   let displayText = '';
 
   try {
@@ -303,19 +306,21 @@ const buildFieldDisplay = function(parsedText) {
     let fieldType = parsedText[2] ? parsedText[2].trim() : '';
     let genericType = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
     let fieldName = parsedText[4] ? parsedText[4].trim() : '';
+    let classifier = parsedText[5] ? parsedText[5].trim() : '';
 
     displayText = visibility + fieldType + genericType + ' ' + fieldName;
+    cssStyle = parseClassifier(classifier);
   } catch (err) {
     displayText = parsedText;
   }
 
   return {
     displayText: displayText,
-    cssStyle: ''
+    cssStyle: cssStyle,
   };
 };
 
-const buildMethodDisplay = function(parsedText) {
+const buildMethodDisplay = function (parsedText) {
   let cssStyle = '';
   let displayText = '';
 
@@ -327,7 +332,6 @@ const buildMethodDisplay = function(parsedText) {
     let returnType = parsedText[5] ? ' : ' + parseGenericTypes(parsedText[5]).trim() : '';
 
     displayText = visibility + methodName + '(' + parameters + ')' + returnType;
-
     cssStyle = parseClassifier(classifier);
   } catch (err) {
     displayText = parsedText;
@@ -335,11 +339,11 @@ const buildMethodDisplay = function(parsedText) {
 
   return {
     displayText: displayText,
-    cssStyle: cssStyle
+    cssStyle: cssStyle,
   };
 };
 
-const buildLegacyDisplay = function(text) {
+const buildLegacyDisplay = function (text) {
   // if for some reason we dont have any match, use old format to parse text
   let displayText = '';
   let cssStyle = '';
@@ -382,17 +386,22 @@ const buildLegacyDisplay = function(text) {
 
   return {
     displayText: displayText,
-    cssStyle: cssStyle
+    cssStyle: cssStyle,
   };
 };
 
-const addTspan = function(textEl, txt, isFirst, conf) {
+/**
+ * Adds a <tspan> for a member in a diagram
+ *
+ * @param {SVGElement} textEl The element to append to
+ * @param {string} txt The member
+ * @param {boolean} isFirst
+ * @param {{ padding: string; textHeight: string }} conf The configuration for the member
+ */
+const addTspan = function (textEl, txt, isFirst, conf) {
   let member = parseMember(txt);
 
-  const tSpan = textEl
-    .append('tspan')
-    .attr('x', conf.padding)
-    .text(member.displayText);
+  const tSpan = textEl.append('tspan').attr('x', conf.padding).text(member.displayText);
 
   if (member.cssStyle !== '') {
     tSpan.attr('style', member.cssStyle);
@@ -403,7 +412,17 @@ const addTspan = function(textEl, txt, isFirst, conf) {
   }
 };
 
-const parseGenericTypes = function(text) {
+/**
+ * Makes generics in typescript syntax
+ *
+ * @example <caption>Array of array of strings in typescript syntax</caption>
+ *   // returns "Array<Array<string>>"
+ *   parseGenericTypes('Array~Array~string~~');
+ *
+ * @param {string} text The text to convert
+ * @returns {string} The converted string
+ */
+const parseGenericTypes = function (text) {
   let cleanedText = text;
 
   if (text.indexOf('~') != -1) {
@@ -416,7 +435,13 @@ const parseGenericTypes = function(text) {
   }
 };
 
-const parseClassifier = function(classifier) {
+/**
+ * Gives the styles for a classifier
+ *
+ * @param {'+' | '-' | '#' | '~' | '*' | '$'} classifier The classifier string
+ * @returns {string} Styling for the classifier
+ */
+const parseClassifier = function (classifier) {
   switch (classifier) {
     case '*':
       return 'font-style:italic;';
@@ -430,5 +455,5 @@ const parseClassifier = function(classifier) {
 export default {
   drawClass,
   drawEdge,
-  parseMember
+  parseMember,
 };

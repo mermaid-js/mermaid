@@ -1,0 +1,18 @@
+name: Update Browserslist
+on:
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npx browserslist@latest --update-db
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v8.0.1
+        with:
+          author_name: ${{ github.actor }}
+          author_email: ${{ github.actor }}@users.noreply.github.com
+          message: 'chore: update browsers list'

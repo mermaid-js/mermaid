@@ -13,5 +13,5 @@ export default {
   circle,
   ellipse,
   polygon,
-  rect
+  rect,
 };

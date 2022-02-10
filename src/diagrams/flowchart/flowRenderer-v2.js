@@ -7,12 +7,12 @@ import { getConfig } from '../../config';
 
 import { render } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
-import { logger } from '../../logger';
-import common from '../common/common';
+import { log } from '../../logger';
+import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 
 const conf = {};
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
   for (let i = 0; i < keys.length; i++) {
     conf[keys[i]] = cnf[keys[i]];
@@ -21,19 +21,22 @@ export const setConf = function(cnf) {
 
 /**
  * Function that adds the vertices found during parsing to the graph to be rendered.
+ *
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
+ * @param svgId
  */
-export const addVertices = function(vert, g, svgId) {
+export const addVertices = function (vert, g, svgId) {
   const svg = select(`[id="${svgId}"]`);
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function(id) {
+  keys.forEach(function (id) {
     const vertex = vert[id];
 
     /**
      * Variable for storing the classes for the vertex
+     *
      * @type {string}
      */
     let classStr = 'default';
@@ -48,13 +51,13 @@ export const addVertices = function(vert, g, svgId) {
 
     // We create a SVG label, either by delegating to addHtmlLabel or manually
     let vertexNode;
-    if (getConfig().flowchart.htmlLabels) {
+    if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
         label: vertexText.replace(
           /fa[lrsb]?:fa-[\w-]+/g,
-          s => `<i class='${s.replace(':', ' ')}'></i>`
-        )
+          (s) => `<i class='${s.replace(':', ' ')}'></i>`
+        ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
@@ -147,11 +150,13 @@ export const addVertices = function(vert, g, svgId) {
       domId: flowDb.lookUpDomId(vertex.id),
       haveCallback: vertex.haveCallback,
       width: vertex.type === 'group' ? 500 : undefined,
+      dir: vertex.dir,
       type: vertex.type,
-      padding: getConfig().flowchart.padding
+      props: vertex.props,
+      padding: getConfig().flowchart.padding,
     });
 
-    logger.info('setNode', {
+    log.info('setNode', {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
@@ -163,18 +168,23 @@ export const addVertices = function(vert, g, svgId) {
       domId: flowDb.lookUpDomId(vertex.id),
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
-      padding: getConfig().flowchart.padding
+      dir: vertex.dir,
+      props: vertex.props,
+      padding: getConfig().flowchart.padding,
     });
   });
 };
 
 /**
  * Add edges to graph based on parsed graph defninition
- * @param {Object} edges The edges to add to the graph
- * @param {Object} g The graph object
+ *
+ * @param {object} edges The edges to add to the graph
+ * @param {object} g The graph object
  */
-export const addEdges = function(edges, g) {
+export const addEdges = function (edges, g) {
+  log.info('abc78 edges = ', edges);
   let cnt = 0;
+  let linkIdCnt = {};
 
   let defaultStyle;
   let defaultLabelStyle;
@@ -185,11 +195,21 @@ export const addEdges = function(edges, g) {
     defaultLabelStyle = defaultStyles.labelStyle;
   }
 
-  edges.forEach(function(edge) {
+  edges.forEach(function (edge) {
     cnt++;
 
     // Identify Link
-    var linkId = 'L-' + edge.start + '-' + edge.end;
+    var linkIdBase = 'L-' + edge.start + '-' + edge.end;
+    // count the links from+to the same node to give unique id
+    if (typeof linkIdCnt[linkIdBase] === 'undefined') {
+      linkIdCnt[linkIdBase] = 0;
+      log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+    } else {
+      linkIdCnt[linkIdBase]++;
+      log.info('abc78 new entry', linkIdBase, linkIdCnt[linkIdBase]);
+    }
+    let linkId = linkIdBase + '-' + linkIdCnt[linkIdBase];
+    log.info('abc78 new link id to be used is', linkIdBase, linkId, linkIdCnt[linkIdBase]);
     var linkNameStart = 'LS-' + edge.start;
     var linkNameEnd = 'LE-' + edge.end;
 
@@ -278,7 +298,7 @@ export const addEdges = function(edges, g) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
     }
-    // if (getConfig().flowchart.htmlLabels && false) {
+    // if (evaluate(getConfig().flowchart.htmlLabels) && false) {
     //   // eslint-disable-line
     //   edgeData.labelType = 'html';
     //   edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
@@ -303,10 +323,12 @@ export const addEdges = function(edges, g) {
 
 /**
  * Returns the all the styles from classDef statements in the graph definition.
- * @returns {object} classDef styles
+ *
+ * @param text
+ * @returns {object} ClassDef styles
  */
-export const getClasses = function(text) {
-  logger.info('Extracting classes');
+export const getClasses = function (text) {
+  log.info('Extracting classes');
   flowDb.clear();
   const parser = flow.parser;
   parser.yy = flowDb;
@@ -323,12 +345,13 @@ export const getClasses = function(text) {
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ *
  * @param text
  * @param id
  */
 
-export const draw = function(text, id) {
-  logger.info('Drawing flowchart');
+export const draw = function (text, id) {
+  log.info('Drawing flowchart');
   flowDb.clear();
   flowDb.setGen('gen-2');
   const parser = flow.parser;
@@ -338,7 +361,7 @@ export const draw = function(text, id) {
   // try {
   parser.parse(text);
   // } catch (err) {
-  // logger.debug('Parsing failed');
+  // log.debug('Parsing failed');
   // }
 
   // Fetch the default direction, use TD if none was found
@@ -354,26 +377,26 @@ export const draw = function(text, id) {
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
     multigraph: true,
-    compound: true
+    compound: true,
   })
     .setGraph({
       rankdir: dir,
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
-      marginy: 8
+      marginy: 8,
     })
-    .setDefaultEdgeLabel(function() {
+    .setDefaultEdgeLabel(function () {
       return {};
     });
 
   let subG;
   const subGraphs = flowDb.getSubGraphs();
-  logger.info('Subgraphs - ', subGraphs);
+  log.info('Subgraphs - ', subGraphs);
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
-    logger.info('Subgraph - ', subG);
-    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
+    log.info('Subgraph - ', subG);
+    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
   }
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition
@@ -381,7 +404,7 @@ export const draw = function(text, id) {
 
   const edges = flowDb.getEdges();
 
-  logger.info(edges);
+  log.info(edges);
   let i = 0;
   for (i = subGraphs.length - 1; i >= 0; i--) {
     // for (let i = 0; i < subGraphs.length; i++) {
@@ -390,7 +413,7 @@ export const draw = function(text, id) {
     selectAll('cluster').append('text');
 
     for (let j = 0; j < subG.nodes.length; j++) {
-      logger.info('Setting up subgraphs', subG.nodes[j], subG.id);
+      log.info('Setting up subgraphs', subG.nodes[j], subG.id);
       g.setParent(subG.nodes[j], subG.id);
     }
   }
@@ -412,7 +435,7 @@ export const draw = function(text, id) {
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
-  logger.debug(
+  log.debug(
     `new ViewBox 0 0 ${width} ${height}`,
     `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
   );
@@ -449,7 +472,7 @@ export const draw = function(text, id) {
 
   // If node has a link, wrap it in an anchor SVG object.
   const keys = Object.keys(vert);
-  keys.forEach(function(key) {
+  keys.forEach(function (key) {
     const vertex = vert[key];
 
     if (vertex.link) {
@@ -463,20 +486,20 @@ export const draw = function(text, id) {
           link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
         }
 
-        const linkNode = node.insert(function() {
+        const linkNode = node.insert(function () {
           return link;
         }, ':first-child');
 
         const shape = node.select('.label-container');
         if (shape) {
-          linkNode.append(function() {
+          linkNode.append(function () {
             return shape.node();
           });
         }
 
         const label = node.select('.label');
         if (label) {
-          linkNode.append(function() {
+          linkNode.append(function () {
             return label.node();
           });
         }
@@ -490,5 +513,5 @@ export default {
   addVertices,
   addEdges,
   getClasses,
-  draw
+  draw,
 };

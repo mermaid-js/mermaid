@@ -1,19 +1,20 @@
 /* eslint-disable */
 import { curveBasis, line, select } from 'd3';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
-import { logger } from '../../logger'; // eslint-disable-line
 // import db from './gitGraphAst';
 import * as db from './mockDb';
 import gitGraphParser from './parser/gitGraph';
-import { getConfig } from '../../config';
+import { log } from '../../logger';
 /* eslint-disable */
-
+import { getConfig } from '../../config';
 let allCommitsDict = {};
 let branchNum;
+
 // let apiConfig = {};
 // export const setConf = function(c) {
 //   apiConfig = c;
 // };
+/** @param svg */
 function svgCreateDefs(svg) {
   const config = getConfig().gitGraph;
   svg
@@ -37,17 +38,48 @@ function svgCreateDefs(svg) {
     .html('');
 }
 
+/**
+ * @param svg
+ * @param points
+ * @param colorIdx
+ * @param interpolate
+ */
+/**
+// Pass in the element and its pre-transform coords
+ *
+ * @param element
+ * @param coords
+ */
+ 
+/**
+ * @param svg
+ * @param fromId
+ * @param toId
+ * @param direction
+ * @param color
+ */
+
 const drawText = (txt) => {
   const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     // svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
     let rows = [];
+
+
+
+
     if (typeof txt === 'string') {
       rows = txt.split(/\\n|\n|<br\s*\/?>/gi);
     } else if (Array.isArray(txt)) {
       rows = txt;
+
+
     } else {
       rows = [];
-    }
+
+
+
+
+            }
 
     for (let j = 0; j < rows.length; j++) {
       const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
@@ -58,9 +90,19 @@ const drawText = (txt) => {
       tspan.textContent = rows[j].trim();
       svgLabel.appendChild(tspan);
   }
+/**
+ * @param svg
+ * @param selector
+ */
   return svgLabel;
 }
 
+/**
+ * @param svg
+ * @param commitid
+ * @param branches
+ * @param direction
+ */
 const drawBranches = (svg, branches) => {
   const g = svg.append('g')
   let pos = 0;
@@ -82,7 +124,7 @@ const drawBranches = (svg, branches) => {
       const label = branchLabel.insert('g').attr('class', 'label');
       label.node().appendChild(labelElement);
       let bbox = labelElement.getBBox();
-      logger.info(bbox);
+      //logger.info(bbox);
       bkg.attr('class', 'branchLabelBkg label' + index)
         .attr('rx', 4)
         .attr('ry', 4)
@@ -95,9 +137,16 @@ const drawBranches = (svg, branches) => {
       bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - bbox.height/2) + ')');
       pos += 50;
     })
+
 }
 
-export const draw = function(txt, id, ver) {
+/**
+ * @param svg
+ * @param commit
+ * @param direction
+ * @param branchColor
+ */
+export const draw = function (txt, id, ver) {
   const config = getConfig().gitGraph;
 
   // try {
@@ -105,7 +154,7 @@ export const draw = function(txt, id, ver) {
   parser.yy = db;
   parser.yy.clear();
 
-  logger.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
+    log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
   // // Parse the graph definition
   // parser.parse(txt + '\n');
 
@@ -113,7 +162,7 @@ export const draw = function(txt, id, ver) {
   const direction = db.getDirection();
   allCommitsDict = db.getCommits();
   const branches = db.getBranchesAsObjArray();
-  logger.debug('effective options', config, branches);
+  log.debug('effective options', config, branches);
 
   const diagram = select(`[id="${id}"]`);
   svgCreateDefs(diagram);
@@ -127,10 +176,10 @@ export const draw = function(txt, id, ver) {
 
   configureSvgSize(diagram, height, width, config.useMaxWidth);
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
-  logger.debug(`viewBox ${vBox}`);
+ // logger.debug(`viewBox ${vBox}`);
   diagram.attr('viewBox', vBox);
 };
 
 export default {
-  draw
+  draw,
 };

@@ -3,13 +3,13 @@ import { select } from 'd3';
 import stateDb from './stateDb';
 import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
-
 import { render } from '../../dagre-wrapper/index.js';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
+import common from '../common/common';
 
 const conf = {};
-export const setConf = function(cnf) {
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
   for (let i = 0; i < keys.length; i++) {
     conf[keys[i]] = cnf[keys[i]];
@@ -20,10 +20,12 @@ let nodeDb = {};
 
 /**
  * Returns the all the styles from classDef statements in the graph definition.
- * @returns {object} classDef styles
+ *
+ * @param {any} text
+ * @returns {object} ClassDef styles
  */
-export const getClasses = function(text) {
-  logger.trace('Extracting classes');
+export const getClasses = function (text) {
+  log.trace('Extracting classes');
   stateDb.clear();
   const parser = state.parser;
   parser.yy = stateDb;
@@ -51,8 +53,8 @@ const setupNode = (g, parent, node, altFlag) => {
       nodeDb[node.id] = {
         id: node.id,
         shape,
-        description: node.id,
-        classes: 'statediagram-state'
+        description: common.sanitizeText(node.id, getConfig()),
+        classes: 'statediagram-state',
       };
     }
 
@@ -77,6 +79,15 @@ const setupNode = (g, parent, node, altFlag) => {
           nodeDb[node.id].description = node.description;
         }
       }
+      nodeDb[node.id].description = common.sanitizeTextOrArray(
+        nodeDb[node.id].description,
+        getConfig()
+      );
+    }
+
+    //
+    if (nodeDb[node.id].description.length === 1 && nodeDb[node.id].shape === 'rectWithTitle') {
+      nodeDb[node.id].shape = 'rect';
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
@@ -84,8 +95,9 @@ const setupNode = (g, parent, node, altFlag) => {
 
     // group
     if (!nodeDb[node.id].type && node.doc) {
-      logger.info('Setting cluser for ', node.id);
+      log.info('Setting cluster for ', node.id, getDir(node));
       nodeDb[node.id].type = 'group';
+      nodeDb[node.id].dir = getDir(node);
       nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
       nodeDb[node.id].classes =
         nodeDb[node.id].classes +
@@ -97,12 +109,16 @@ const setupNode = (g, parent, node, altFlag) => {
       labelStyle: '',
       shape: nodeDb[node.id].shape,
       labelText: nodeDb[node.id].description,
+      // typeof nodeDb[node.id].description === 'object'
+      //   ? nodeDb[node.id].description[0]
+      //   : nodeDb[node.id].description,
       classes: nodeDb[node.id].classes, //classStr,
       style: '', //styles.style,
       id: node.id,
+      dir: nodeDb[node.id].dir,
       domId: 'state-' + node.id + '-' + cnt,
       type: nodeDb[node.id].type,
-      padding: 15 //getConfig().flowchart.padding
+      padding: 15, //getConfig().flowchart.padding
     };
 
     if (node.note) {
@@ -113,10 +129,10 @@ const setupNode = (g, parent, node, altFlag) => {
         labelText: node.note.text,
         classes: 'statediagram-note', //classStr,
         style: '', //styles.style,
-        id: node.id + '----note',
+        id: node.id + '----note-' + cnt,
         domId: 'state-' + node.id + '----note-' + cnt,
         type: nodeDb[node.id].type,
-        padding: 15 //getConfig().flowchart.padding
+        padding: 15, //getConfig().flowchart.padding
       };
       const groupData = {
         labelStyle: '',
@@ -127,7 +143,7 @@ const setupNode = (g, parent, node, altFlag) => {
         id: node.id + '----parent',
         domId: 'state-' + node.id + '----parent-' + cnt,
         type: 'group',
-        padding: 0 //getConfig().flowchart.padding
+        padding: 0, //getConfig().flowchart.padding
       };
       cnt++;
 
@@ -155,7 +171,7 @@ const setupNode = (g, parent, node, altFlag) => {
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
-        thickness: 'normal'
+        thickness: 'normal',
       });
     } else {
       g.setNode(node.id, nodeData);
@@ -164,20 +180,20 @@ const setupNode = (g, parent, node, altFlag) => {
 
   if (parent) {
     if (parent.id !== 'root') {
-      logger.info('Setting node ', node.id, ' to be child of its parent ', parent.id);
+      log.trace('Setting node ', node.id, ' to be child of its parent ', parent.id);
       g.setParent(node.id, parent.id);
     }
   }
   if (node.doc) {
-    logger.info('Adding nodes children ');
+    log.trace('Adding nodes children ');
     setupDoc(g, node, node.doc, !altFlag);
   }
 };
 let cnt = 0;
 const setupDoc = (g, parent, doc, altFlag) => {
-  cnt = 0;
-  logger.trace('items', doc);
-  doc.forEach(item => {
+  // cnt = 0;
+  log.trace('items', doc);
+  doc.forEach((item) => {
     if (item.stmt === 'state' || item.stmt === 'default') {
       setupNode(g, parent, item, altFlag);
     } else if (item.stmt === 'relation') {
@@ -189,12 +205,12 @@ const setupDoc = (g, parent, doc, altFlag) => {
         arrowTypeEnd: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
-        label: item.description,
+        label: common.sanitizeText(item.description, getConfig()),
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
         thickness: 'normal',
-        classes: 'transition'
+        classes: 'transition',
       };
       let startId = item.state1.id;
       let endId = item.state2.id;
@@ -204,14 +220,26 @@ const setupDoc = (g, parent, doc, altFlag) => {
     }
   });
 };
-
+const getDir = (nodes, defaultDir) => {
+  let dir = defaultDir || 'TB';
+  if (nodes.doc) {
+    for (let i = 0; i < nodes.doc.length; i++) {
+      const node = nodes.doc[i];
+      if (node.stmt === 'dir') {
+        dir = node.value;
+      }
+    }
+  }
+  return dir;
+};
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
-export const draw = function(text, id) {
-  logger.info('Drawing state diagram (v2)', id);
+export const draw = function (text, id) {
+  log.info('Drawing state diagram (v2)', id);
   stateDb.clear();
   nodeDb = {};
   const parser = state.parser;
@@ -230,25 +258,26 @@ export const draw = function(text, id) {
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
 
+  log.info(stateDb.getRootDocV2());
+  stateDb.extract(stateDb.getRootDocV2());
+  log.info(stateDb.getRootDocV2());
+
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
     multigraph: true,
-    compound: true
+    compound: true,
   })
     .setGraph({
-      rankdir: 'TB',
+      rankdir: getDir(stateDb.getRootDocV2()),
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
-      marginy: 8
+      marginy: 8,
     })
-    .setDefaultEdgeLabel(function() {
+    .setDefaultEdgeLabel(function () {
       return {};
     });
 
-  logger.info(stateDb.getRootDocV2());
-  stateDb.extract(stateDb.getRootDocV2());
-  logger.info(stateDb.getRootDocV2());
   setupNode(g, undefined, stateDb.getRootDocV2(), true);
 
   // Set up an SVG group so that we can translate the final graph.
@@ -274,31 +303,31 @@ export const draw = function(text, id) {
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
-  logger.debug(`viewBox ${vBox}`);
+  log.debug(`viewBox ${vBox}`);
   svg.attr('viewBox', vBox);
 
   // Add label rects for non html labels
-  if (!conf.htmlLabels) {
-    const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
-    for (let k = 0; k < labels.length; k++) {
-      const label = labels[k];
+  // if (!evaluate(conf.htmlLabels) || true) {
+  const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
+  for (let k = 0; k < labels.length; k++) {
+    const label = labels[k];
 
-      // Get dimensions of label
-      const dim = label.getBBox();
+    // Get dimensions of label
+    const dim = label.getBBox();
 
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('rx', 0);
-      rect.setAttribute('ry', 0);
-      rect.setAttribute('width', dim.width);
-      rect.setAttribute('height', dim.height);
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('rx', 0);
+    rect.setAttribute('ry', 0);
+    rect.setAttribute('width', dim.width);
+    rect.setAttribute('height', dim.height);
 
-      label.insertBefore(rect, label.firstChild);
-    }
+    label.insertBefore(rect, label.firstChild);
+    // }
   }
 };
 
 export default {
   setConf,
   getClasses,
-  draw
+  draw,
 };

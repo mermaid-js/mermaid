@@ -36,23 +36,23 @@ mermaid.initialize({
   startOnLoad: false,
   securityLevel: 'loose',
   flowchart: {
-    htmlLabels: true
+    htmlLabels: true,
   },
   gantt: {
     axisFormatter: [
       [
         '%Y-%m-%d',
-        d => {
+        (d) => {
           return d.getDay() === 1;
-        }
-      ]
-    ]
-  }
+        },
+      ],
+    ],
+  },
 });
 mermaid.render(
   'the-id-of-the-svg',
   code,
-  svg => {
+  (svg) => {
     console.log(svg);
     const elem = document.querySelector('#graph-to-be');
     elem.innerHTML = svg;

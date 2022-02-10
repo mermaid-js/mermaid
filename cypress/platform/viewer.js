@@ -2,11 +2,10 @@ import { Base64 } from 'js-base64';
 import mermaid2 from '../../src/mermaid';
 
 /**
- * ##contentLoaded
- * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
- * calls init for rendering the mermaid diagrams on the page.
+ * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
+ * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
  */
-const contentLoaded = function() {
+const contentLoaded = function () {
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
@@ -38,8 +37,12 @@ const contentLoaded = function() {
   }
 };
 
+/**
+ * @param current
+ * @param update
+ */
 function merge(current, update) {
-  Object.keys(update).forEach(function(key) {
+  Object.keys(update).forEach(function (key) {
     // if update[key] exist, and it's not a string or array,
     // we go in one level deeper
     if (
@@ -58,7 +61,7 @@ function merge(current, update) {
   return current;
 }
 
-const contentLoadedApi = function() {
+const contentLoadedApi = function () {
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
@@ -125,7 +128,7 @@ if (typeof document !== 'undefined') {
    */
   window.addEventListener(
     'load',
-    function() {
+    function () {
       if (this.location.href.match('xss.html')) {
         this.console.log('Using api');
         contentLoadedApi();

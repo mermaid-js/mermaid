@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `.actor {
     stroke: ${options.actorBorder};
     fill: ${options.actorBkg};
@@ -94,6 +94,26 @@ const getStyles = options =>
   .activation2 {
     fill: ${options.activationBkgColor};
     stroke: ${options.activationBorderColor};
+  }
+
+  .actorPopupMenu {
+    position: absolute;
+  }
+
+  .actorPopupMenuPanel {
+    position: absolute;
+    fill: ${options.actorBkg};
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));
+}
+  .actor-man line {
+    stroke: ${options.actorBorder};
+    fill: ${options.actorBkg};
+  }
+  .actor-man circle, line {
+    stroke: ${options.actorBorder};
+    fill: ${options.actorBkg};
+    stroke-width: 2px;
   }
 `;
 

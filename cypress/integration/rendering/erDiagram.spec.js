@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
 describe('Entity Relationship Diagram', () => {
@@ -9,7 +8,7 @@ describe('Entity Relationship Diagram', () => {
         CUSTOMER ||--o{ ORDER : places
         ORDER ||--|{ LINE-ITEM : contains
       `,
-      {logLevel : 1}
+      { logLevel: 1 }
     );
     cy.get('svg');
   });
@@ -22,7 +21,7 @@ describe('Entity Relationship Diagram', () => {
         CUSTOMER ||--o{ ORDER : places
         ORDER ||--|{ LINE-ITEM : contains
       `,
-      {logLevel : 1}
+      { logLevel: 1 }
     );
     cy.get('svg');
   });
@@ -34,7 +33,7 @@ describe('Entity Relationship Diagram', () => {
         CUSTOMER ||--|{ ADDRESS : "invoiced at"
         CUSTOMER ||--|{ ADDRESS : "receives goods at"
       `,
-      {logLevel : 1}
+      { logLevel: 1 }
     );
     cy.get('svg');
   });
@@ -47,7 +46,7 @@ describe('Entity Relationship Diagram', () => {
         B ||--|{ C : likes
         C ||--|{ A : likes
       `,
-      {logLevel : 1}
+      { logLevel: 1 }
     );
     cy.get('svg');
   });
@@ -65,7 +64,7 @@ describe('Entity Relationship Diagram', () => {
         PRODUCT-CATEGORY ||--|{ PRODUCT : contains
         PRODUCT ||--o{ ORDER-ITEM : "ordered in"
       `,
-      {logLevel : 1}
+      { logLevel: 1 }
     );
     cy.get('svg');
   });
@@ -73,18 +72,18 @@ describe('Entity Relationship Diagram', () => {
   it('should render multiple ER diagrams', () => {
     imgSnapshotTest(
       [
-      `
+        `
     erDiagram
         CUSTOMER ||--o{ ORDER : places
         ORDER ||--|{ LINE-ITEM : contains
       `,
-      `
+        `
     erDiagram
         CUSTOMER ||--o{ ORDER : places
         ORDER ||--|{ LINE-ITEM : contains
-      `
+      `,
       ],
-      {logLevel : 1}
+      { logLevel: 1 }
     );
     cy.get('svg');
   });
@@ -97,7 +96,7 @@ describe('Entity Relationship Diagram', () => {
         BOOK }|..|{ GENRE : " "
         AUTHOR }|..|{ GENRE : "  "
       `,
-      {logLevel : 1}
+      { logLevel: 1 }
     );
     cy.get('svg');
   });
@@ -111,16 +110,15 @@ describe('Entity Relationship Diagram', () => {
       `,
       { er: { useMaxWidth: true } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        expect(svg).to.have.attr('width', '100%');
-        expect(svg).to.have.attr('height', '465');
-        const style = svg.attr('style');
-        expect(style).to.match(/^max-width: [\d.]+px;$/);
-        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        expect(maxWidthValue).to.be.within(140 * .95, 140 * 1.05);
-      });
+    cy.get('svg').should((svg) => {
+      expect(svg).to.have.attr('width', '100%');
+      expect(svg).to.have.attr('height', '465');
+      const style = svg.attr('style');
+      expect(style).to.match(/^max-width: [\d.]+px;$/);
+      const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      expect(maxWidthValue).to.be.within(140 * 0.95, 140 * 1.05);
+    });
   });
 
   it('should render an ER when useMaxWidth is false', () => {
@@ -132,13 +130,114 @@ describe('Entity Relationship Diagram', () => {
       `,
       { er: { useMaxWidth: false } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        const width = parseFloat(svg.attr('width'));
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        expect(width).to.be.within(140 * .95, 140 * 1.05);
-        expect(svg).to.have.attr('height', '465');
-        expect(svg).to.not.have.attr('style');
-      });
+    cy.get('svg').should((svg) => {
+      const width = parseFloat(svg.attr('width'));
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      expect(width).to.be.within(140 * 0.95, 140 * 1.05);
+      expect(svg).to.have.attr('height', '465');
+      expect(svg).to.not.have.attr('style');
+    });
+  });
+
+  it('should render entities that have no relationships', () => {
+    renderGraph(
+      `
+    erDiagram
+        DEAD_PARROT
+        HERMIT
+        RECLUSE
+        SOCIALITE }o--o{ SOCIALITE : "interacts with"
+        RECLUSE }o--o{ SOCIALITE : avoids
+      `,
+      { er: { useMaxWidth: false } }
+    );
+    cy.get('svg');
+  });
+
+  it('should render entities with and without attributes', () => {
+    renderGraph(
+      `
+    erDiagram
+        BOOK { string title }
+        AUTHOR }|..|{ BOOK : writes
+        BOOK { float price }
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
+  });
+
+  it('should render entities and attributes with big and small entity names', () => {
+    renderGraph(
+      `
+    erDiagram
+        PRIVATE_FINANCIAL_INSTITUTION { 
+          string name
+          int    turnover
+        }
+        PRIVATE_FINANCIAL_INSTITUTION ||..|{ EMPLOYEE : employs
+        EMPLOYEE { bool officer_of_firm }
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
+  });
+
+  it('should render entities with keys', () => {
+    renderGraph(
+      `
+    erDiagram
+      AUTHOR_WITH_LONG_ENTITY_NAME {
+        string name PK
+      }
+      AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+      BOOK { 
+          float price
+          string author FK 
+          string title PK
+        }
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
+  });
+
+  it('should render entities with comments', () => {
+    renderGraph(
+      `
+    erDiagram
+      AUTHOR_WITH_LONG_ENTITY_NAME {
+        string name "comment"
+      }
+      AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+      BOOK { 
+          string author 
+          string title "author comment"
+          float price "price comment"
+        }
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
+  });
+
+  it('should render entities with keys and comments', () => {
+    renderGraph(
+      `
+    erDiagram
+      AUTHOR_WITH_LONG_ENTITY_NAME {
+        string name PK "comment"
+      }
+      AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+      BOOK { 
+          string description
+          float price "price comment"
+          string title PK "title comment"
+          string author FK 
+        }
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
   });
 });

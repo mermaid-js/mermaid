@@ -1,7 +1,7 @@
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
-import common from '../common/common';
-import { logger } from '../../logger';
+import { log } from '../../logger';
+import { sanitizeText } from '../common/common';
 
 let prevActor = undefined;
 let actors = {};
@@ -12,25 +12,33 @@ let titleWrapped = false;
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
 
-export const parseDirective = function(statement, context, type) {
+export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
 
-export const addActor = function(id, name, description) {
+export const addActor = function (id, name, description, type) {
   // Don't allow description nulling
   const old = actors[id];
   if (old && name === old.name && description == null) return;
 
   // Don't allow null descriptions, either
   if (description == null || description.text == null) {
-    description = { text: name, wrap: null };
+    description = { text: name, wrap: null, type };
+  }
+  if (type == null || description.text == null) {
+    description = { text: name, wrap: null, type };
   }
 
   actors[id] = {
     name: name,
     description: description.text,
     wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
-    prevActor: prevActor
+    prevActor: prevActor,
+    links: {},
+    properties: {},
+    actorCnt: null,
+    rectData: null,
+    type: type || 'participant',
   };
   if (prevActor && actors[prevActor]) {
     actors[prevActor].nextActor = id;
@@ -39,7 +47,7 @@ export const addActor = function(id, name, description) {
   prevActor = id;
 };
 
-const activationCount = part => {
+const activationCount = (part) => {
   let i;
   let count = 0;
   for (i = 0; i < messages.length; i++) {
@@ -57,17 +65,17 @@ const activationCount = part => {
   return count;
 };
 
-export const addMessage = function(idFrom, idTo, message, answer) {
+export const addMessage = function (idFrom, idTo, message, answer) {
   messages.push({
     from: idFrom,
     to: idTo,
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
-    answer: answer
+    answer: answer,
   });
 };
 
-export const addSignal = function(
+export const addSignal = function (
   idFrom,
   idTo,
   message = { text: undefined, wrap: undefined },
@@ -83,7 +91,7 @@ export const addSignal = function(
         token: '->>-',
         line: '1',
         loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
-        expected: ["'ACTIVE_PARTICIPANT'"]
+        expected: ["'ACTIVE_PARTICIPANT'"],
       };
       throw error;
     }
@@ -93,60 +101,58 @@ export const addSignal = function(
     to: idTo,
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
-    type: messageType
+    type: messageType,
   });
   return true;
 };
 
-export const getMessages = function() {
+export const getMessages = function () {
   return messages;
 };
 
-export const getActors = function() {
+export const getActors = function () {
   return actors;
 };
-export const getActor = function(id) {
+export const getActor = function (id) {
   return actors[id];
 };
-export const getActorKeys = function() {
+export const getActorKeys = function () {
   return Object.keys(actors);
 };
-export const getTitle = function() {
+export const getTitle = function () {
   return title;
 };
-export const getTitleWrapped = function() {
+export const getTitleWrapped = function () {
   return titleWrapped;
 };
-export const enableSequenceNumbers = function() {
+export const enableSequenceNumbers = function () {
   sequenceNumbersEnabled = true;
 };
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
 
-export const setWrap = function(wrapSetting) {
+export const setWrap = function (wrapSetting) {
   wrapEnabled = wrapSetting;
 };
 
 export const autoWrap = () => wrapEnabled;
 
-export const clear = function() {
+export const clear = function () {
   actors = {};
   messages = [];
 };
 
-export const parseMessage = function(str) {
+export const parseMessage = function (str) {
   const _str = str.trim();
   const message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap:
-      _str.match(/^[:]?(?:no)?wrap:/) === null
-        ? common.hasBreaks(_str) || undefined
-        : _str.match(/^[:]?wrap:/) !== null
+      _str.match(/^[:]?wrap:/) !== null
         ? true
         : _str.match(/^[:]?nowrap:/) !== null
         ? false
-        : undefined
+        : undefined,
   };
-  logger.debug('parseMessage:', message);
+  log.debug('parseMessage:', message);
   return message;
 };
 
@@ -171,26 +177,28 @@ export const LINETYPE = {
   PAR_AND: 20,
   PAR_END: 21,
   RECT_START: 22,
-  RECT_END: 23
+  RECT_END: 23,
+  SOLID_POINT: 24,
+  DOTTED_POINT: 25,
 };
 
 export const ARROWTYPE = {
   FILLED: 0,
-  OPEN: 1
+  OPEN: 1,
 };
 
 export const PLACEMENT = {
   LEFTOF: 0,
   RIGHTOF: 1,
-  OVER: 2
+  OVER: 2,
 };
 
-export const addNote = function(actor, placement, message) {
+export const addNote = function (actor, placement, message) {
   const note = {
     actor: actor,
     placement: placement,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
   };
 
   // Coerce actor into a [to, from, ...] array
@@ -203,24 +211,135 @@ export const addNote = function(actor, placement, message) {
     message: message.text,
     wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: LINETYPE.NOTE,
-    placement: placement
+    placement: placement,
   });
 };
 
-export const setTitle = function(titleWrap) {
+export const addLinks = function (actorId, text) {
+  // find the actor
+  const actor = getActor(actorId);
+  // JSON.parse the text
+  try {
+    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    const links = JSON.parse(sanitizedText);
+    // add the deserialized text to the actor's links field.
+    insertLinks(actor, links);
+  } catch (e) {
+    log.error('error while parsing actor link text', e);
+  }
+};
+
+export const addALink = function (actorId, text) {
+  // find the actor
+  const actor = getActor(actorId);
+  try {
+    const links = {};
+    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    var sep = sanitizedText.indexOf('@');
+    sanitizedText = sanitizedText.replace(/&amp;/g, '&');
+    sanitizedText = sanitizedText.replace(/&equals;/g, '=');
+    var label = sanitizedText.slice(0, sep - 1).trim();
+    var link = sanitizedText.slice(sep + 1).trim();
+
+    links[label] = link;
+    // add the deserialized text to the actor's links field.
+    insertLinks(actor, links);
+  } catch (e) {
+    log.error('error while parsing actor link text', e);
+  }
+};
+
+/**
+ * @param {any} actor
+ * @param {any} links
+ */
+function insertLinks(actor, links) {
+  if (actor.links == null) {
+    actor.links = links;
+  } else {
+    for (let key in links) {
+      actor.links[key] = links[key];
+    }
+  }
+}
+
+export const addProperties = function (actorId, text) {
+  // find the actor
+  const actor = getActor(actorId);
+  // JSON.parse the text
+  try {
+    let sanitizedText = sanitizeText(text.text, configApi.getConfig());
+    const properties = JSON.parse(sanitizedText);
+    // add the deserialized text to the actor's property field.
+    insertProperties(actor, properties);
+  } catch (e) {
+    log.error('error while parsing actor properties text', e);
+  }
+};
+
+/**
+ * @param {any} actor
+ * @param {any} properties
+ */
+function insertProperties(actor, properties) {
+  if (actor.properties == null) {
+    actor.properties = properties;
+  } else {
+    for (let key in properties) {
+      actor.properties[key] = properties[key];
+    }
+  }
+}
+
+export const addDetails = function (actorId, text) {
+  // find the actor
+  const actor = getActor(actorId);
+  const elem = document.getElementById(text.text);
+
+  // JSON.parse the text
+  try {
+    const text = elem.innerHTML;
+    const details = JSON.parse(text);
+    // add the deserialized text to the actor's property field.
+    if (details['properties']) {
+      insertProperties(actor, details['properties']);
+    }
+
+    if (details['links']) {
+      insertLinks(actor, details['links']);
+    }
+  } catch (e) {
+    log.error('error while parsing actor details text', e);
+  }
+};
+
+export const getActorProperty = function (actor, key) {
+  if (typeof actor !== 'undefined' && typeof actor.properties !== 'undefined') {
+    return actor.properties[key];
+  }
+
+  return undefined;
+};
+
+export const setTitle = function (titleWrap) {
   title = titleWrap.text;
   titleWrapped = (titleWrap.wrap === undefined && autoWrap()) || !!titleWrap.wrap;
 };
 
-export const apply = function(param) {
+export const apply = function (param) {
   if (param instanceof Array) {
-    param.forEach(function(item) {
+    param.forEach(function (item) {
       apply(item);
     });
   } else {
     switch (param.type) {
+      case 'addParticipant':
+        addActor(param.actor, param.actor, param.description, 'participant');
+        break;
       case 'addActor':
-        addActor(param.actor, param.actor, param.description);
+        addActor(param.actor, param.actor, param.description, 'actor');
         break;
       case 'activeStart':
         addSignal(param.actor, undefined, undefined, param.signalType);
@@ -230,6 +349,18 @@ export const apply = function(param) {
         break;
       case 'addNote':
         addNote(param.actor, param.placement, param.text);
+        break;
+      case 'addLinks':
+        addLinks(param.actor, param.text);
+        break;
+      case 'addALink':
+        addALink(param.actor, param.text);
+        break;
+      case 'addProperties':
+        addProperties(param.actor, param.text);
+        break;
+      case 'addDetails':
+        addDetails(param.actor, param.text);
         break;
       case 'addMessage':
         addSignal(param.from, param.to, param.msg, param.signalType);
@@ -281,6 +412,9 @@ export default {
   addActor,
   addMessage,
   addSignal,
+  addLinks,
+  addDetails,
+  addProperties,
   autoWrap,
   setWrap,
   enableSequenceNumbers,
@@ -289,6 +423,7 @@ export default {
   getActors,
   getActor,
   getActorKeys,
+  getActorProperty,
   getTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
@@ -300,5 +435,5 @@ export default {
   PLACEMENT,
   addNote,
   setTitle,
-  apply
+  apply,
 };

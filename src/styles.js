@@ -5,6 +5,7 @@ import gantt from './diagrams/gantt/styles';
 import git from './diagrams/git/styles';
 import info from './diagrams/info/styles';
 import pie from './diagrams/pie/styles';
+import requirement from './diagrams/requirement/styles';
 import sequence from './diagrams/sequence/styles';
 import stateDiagram from './diagrams/state/styles';
 import journey from './diagrams/user-journey/styles';
@@ -23,7 +24,8 @@ const themes = {
   info,
   pie,
   er,
-  journey
+  journey,
+  requirement,
 };
 
 export const calcThemeVariables = (theme, userOverRides) => theme.calcColors(userOverRides);
@@ -65,6 +67,7 @@ const getStyles = (type, userStyles, options) => {
 
   .marker {
     fill: ${options.lineColor};
+    stroke: ${options.lineColor};
   }
   .marker.cross {
     stroke: ${options.lineColor};
@@ -78,8 +81,6 @@ const getStyles = (type, userStyles, options) => {
   ${themes[type](options)}
 
   ${userStyles}
-
-  ${type} { fill: apa;}
 `;
 };
 

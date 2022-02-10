@@ -1,7 +1,17 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `
   .entityBox {
     fill: ${options.mainBkg};
+    stroke: ${options.nodeBorder};
+  }
+
+  .attributeBoxOdd {
+    fill: #ffffff;
+    stroke: ${options.nodeBorder};
+  }
+
+  .attributeBoxEven {
+    fill: #f2f2f2;
     stroke: ${options.nodeBorder};
   }
 

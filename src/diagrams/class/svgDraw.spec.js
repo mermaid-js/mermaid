@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 import svgDraw from './svgDraw';
 
 describe('class member Renderer, ', function () {
@@ -51,7 +50,7 @@ describe('class member Renderer, ', function () {
       expect(actual.cssStyle).toBe('');
     });
 
-    it('should handle abstract classifier', function () {
+    it('should handle abstract method classifier', function () {
       const str = 'foo()*';
       let actual = svgDraw.parseMember(str);
 
@@ -59,7 +58,7 @@ describe('class member Renderer, ', function () {
       expect(actual.cssStyle).toBe('font-style:italic;');
     });
 
-    it('should handle static classifier', function () {
+    it('should handle static method classifier', function () {
       const str = 'foo()$';
       let actual = svgDraw.parseMember(str);
 
@@ -78,7 +77,7 @@ describe('class member Renderer, ', function () {
     it('should handle simple method declaration with parameters', function () {
       const str = 'foo(int id)';
       let actual = svgDraw.parseMember(str);
-      
+
       expect(actual.displayText).toBe('foo(int id)');
       expect(actual.cssStyle).toBe('');
     });
@@ -86,7 +85,7 @@ describe('class member Renderer, ', function () {
     it('should handle simple method declaration with multiple parameters', function () {
       const str = 'foo(int id, object thing)';
       let actual = svgDraw.parseMember(str);
-      
+
       expect(actual.displayText).toBe('foo(int id, object thing)');
       expect(actual.cssStyle).toBe('');
     });
@@ -155,6 +154,14 @@ describe('class member Renderer, ', function () {
 
       expect(actual.displayText).toBe('List<int> ids');
       expect(actual.cssStyle).toBe('');
+    });
+
+    it('should handle static field classifier', function () {
+      const str = 'String foo$';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('String foo');
+      expect(actual.cssStyle).toBe('text-decoration:underline;');
     });
   });
 });

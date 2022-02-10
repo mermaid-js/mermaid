@@ -1,12 +1,10 @@
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
+/** Setup arrow head and define the marker. The result is appended to the svg. */
 
-// import { logger } from '../logger';
+// import { log } from '../logger';
 
 // Only add the number of markers that the diagram needs
 const insertPatterns = (elem, patternArray, type, id) => {
-  patternArray.forEach(patternName => {
+  patternArray.forEach((patternName) => {
     patterns[patternName](elem, type, id);
   });
 };
@@ -49,6 +47,6 @@ const dots = (elem, type) => {
 
 // TODO rename the class diagram markers to something shape descriptive and semanitc free
 const patterns = {
-  dots
+  dots,
 };
 export default insertPatterns;

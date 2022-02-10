@@ -6,17 +6,31 @@
 
 /* lexical grammar */
 %lex
-%x string generic struct open_directive type_directive arg_directive
+%x string
+%x bqstring
+%x generic
+%x struct
+%x href
+%x callback_name
+%x callback_args
+%x open_directive
+%x type_directive
+%x arg_directive
 
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
+.*direction\s+TB[^\n]*                                          return 'direction_tb';
+.*direction\s+BT[^\n]*                                          return 'direction_bt';
+.*direction\s+RL[^\n]*                                          return 'direction_rl';
+.*direction\s+LR[^\n]*                                          return 'direction_lr';
 <open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%\%(?!\{)*[^\n]*(\r?\n?)+                                      /* skip comments */
 \%\%[^\n]*(\r?\n)*                                              /* skip comments */
-(\r?\n)+                return 'NEWLINE';
+
+\s*(\r?\n)+                return 'NEWLINE';
 \s+                     /* skip whitespace */
 "classDiagram-v2"       return 'CLASS_DIAGRAM';
 "classDiagram"          return 'CLASS_DIAGRAM';
@@ -31,6 +45,7 @@
 "cssClass"            return 'CSSCLASS';
 "callback"            return 'CALLBACK';
 "link"                return 'LINK';
+"click"               return 'CLICK';
 "<<"                  return 'ANNOTATION_START';
 ">>"                  return 'ANNOTATION_END';
 [~]                   this.begin("generic");
@@ -40,6 +55,39 @@
 <string>["]           this.popState();
 <string>[^"]*         return "STR";
 
+[`]                   this.begin("bqstring");
+<bqstring>[`]         this.popState();
+<bqstring>[^`]+       return "BQUOTE_STR";
+
+/*
+---interactivity command---
+'href' adds a link to the specified node. 'href' can only be specified when the
+line was introduced with 'click'.
+'href "<link>"' attaches the specified link to the node that was specified by 'click'.
+*/
+"href"[\s]+["]          this.begin("href");
+<href>["]               this.popState();
+<href>[^"]*             return 'HREF';
+
+/*
+---interactivity command---
+'call' adds a callback to the specified node. 'call' can only be specified when
+the line was introduced with 'click'.
+'call <callback_name>(<callback_args>)' attaches the function 'callback_name' with the specified
+arguments to the node that was specified by 'click'.
+Function arguments are optional: 'call <callback_name>()' simply executes 'callback_name' without any arguments.
+*/
+"call"[\s]+              this.begin("callback_name");
+<callback_name>\([\s]*\) this.popState();
+<callback_name>\(        this.popState(); this.begin("callback_args");
+<callback_name>[^(]*     return 'CALLBACK_NAME';
+<callback_args>\)        this.popState();
+<callback_args>[^)]*     return 'CALLBACK_ARGS';
+
+"_self"               return 'LINK_TARGET';
+"_blank"              return 'LINK_TARGET';
+"_parent"             return 'LINK_TARGET';
+"_top"                return 'LINK_TARGET';
 
 \s*\<\|               return 'EXTENSION';
 \s*\|\>               return 'EXTENSION';
@@ -137,7 +185,19 @@
 
 start
     : mermaidDoc
+    | direction
     | directive start
+    ;
+
+direction
+    : direction_tb
+    { yy.setDirection('TB');}
+    | direction_bt
+    { yy.setDirection('BT');}
+    | direction_rl
+    { yy.setDirection('RL');}
+    | direction_lr
+    { yy.setDirection('LR');}
     ;
 
 mermaidDoc
@@ -177,9 +237,10 @@ statements
 
 className
     : alphaNumToken { $$=$1; }
+    | classLiteralName { $$=$1; }
     | alphaNumToken className { $$=$1+$2; }
-    | alphaNumToken GENERICTYPE className { $$=$1+'~'+$2+$3; }
     | alphaNumToken GENERICTYPE { $$=$1+'~'+$2; }
+    | classLiteralName GENERICTYPE { $$=$1+'~'+$2; }
     ;
 
 statement
@@ -191,6 +252,7 @@ statement
     | clickStatement
     | cssClassStatement
     | directive
+    | direction
     ;
 
 classStatement
@@ -201,7 +263,7 @@ classStatement
     ;
 
 annotationStatement
-    : ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
+    :ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
     ;
 
 members
@@ -243,10 +305,20 @@ lineType
     ;
 
 clickStatement
-    : CALLBACK className STR        {$$ = $1;yy.setClickEvent($2, $3, undefined);}
-    | CALLBACK className STR STR    {$$ = $1;yy.setClickEvent($2, $3, $4);}
-    | LINK className STR            {$$ = $1;yy.setLink($2, $3, undefined);}
-    | LINK className STR STR        {$$ = $1;yy.setLink($2, $3, $4);}
+    : CALLBACK className STR                            {$$ = $1;yy.setClickEvent($2, $3);}
+    | CALLBACK className STR STR                        {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
+    | LINK className STR                                {$$ = $1;yy.setLink($2, $3);}
+    | LINK className STR LINK_TARGET                    {$$ = $1;yy.setLink($2, $3,$4);}
+    | LINK className STR STR                            {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
+    | LINK className STR STR LINK_TARGET                {$$ = $1;yy.setLink($2, $3, $5);yy.setTooltip($2, $4);}
+    | CLICK className CALLBACK_NAME                     {$$ = $1;yy.setClickEvent($2, $3);}
+    | CLICK className CALLBACK_NAME STR                 {$$ = $1;yy.setClickEvent($2, $3);yy.setTooltip($2, $4);}
+    | CLICK className CALLBACK_NAME CALLBACK_ARGS       {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | CLICK className CALLBACK_NAME CALLBACK_ARGS STR   {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setTooltip($2, $5);}
+    | CLICK className HREF                              {$$ = $1;yy.setLink($2, $3);}
+    | CLICK className HREF LINK_TARGET                  {$$ = $1;yy.setLink($2, $3, $4);}
+    | CLICK className HREF STR                          {$$ = $1;yy.setLink($2, $3);yy.setTooltip($2, $4);}
+    | CLICK className HREF STR LINK_TARGET              {$$ = $1;yy.setLink($2, $3, $5);yy.setTooltip($2, $4);}
     ;
 
 cssClassStatement
@@ -260,5 +332,7 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
 alphaNumToken  : UNICODE_TEXT | NUM | ALPHA;
+
+classLiteralName : BQUOTE_STR;
 
 %%

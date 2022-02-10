@@ -1,12 +1,36 @@
-/* eslint-env jest */
 import { imgSnapshotTest } from '../../helpers/util.js';
 
-describe('Pie Chart', () => {
-    // beforeEach(()=>{
-    //   cy.clock((new Date('2014-06-09')).getTime());
-    // });
+describe('themeCSS balancing, it', () => {
+  it('should not allow unbalanced CSS definitions', () => {
+    imgSnapshotTest(
+      `
+  %%{init: { 'themeCSS': '} * { background: red }' } }%%
+  flowchart TD
+    a --> b
+          `,
+      {}
+    );
+    cy.get('svg');
+  });
+  it('should not allow unbalanced CSS definitions 2', () => {
+    imgSnapshotTest(
+      `
+  %%{init: { 'themeCSS': '\u007D * { background: red }' } }%%
+  flowchart TD
+    a2 --> b2
+          `,
+      {}
+    );
+    cy.get('svg');
+  });
+});
 
-  ['default', 'forest', 'dark', 'neutral'].forEach(theme=>{
+describe('Pie Chart', () => {
+  // beforeEach(()=>{
+  //   cy.clock((new Date('2014-06-09')).getTime());
+  // });
+
+  ['default', 'forest', 'dark', 'neutral'].forEach((theme) => {
     describe(theme, () => {
       it('should render a pie diagram', () => {
         imgSnapshotTest(
@@ -16,7 +40,7 @@ describe('Pie Chart', () => {
           "Ice-Hockey" : 80
           "Football" : 90
           `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
       });
@@ -39,7 +63,7 @@ describe('Pie Chart', () => {
             G
           end
           `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
       });
@@ -62,7 +86,7 @@ describe('Pie Chart', () => {
             G
           end
           `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
       });
@@ -88,7 +112,7 @@ describe('Pie Chart', () => {
 
 
           `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
       });
@@ -135,10 +159,10 @@ describe('Pie Chart', () => {
         classM ..|> classN : Realization
         classO .. classP : Link(Dashed)
           `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
-    });
+      });
       it('should render a state diagram', () => {
         imgSnapshotTest(
           `
@@ -167,10 +191,10 @@ stateDiagram
         Active --> SomethingElse
         note right of SomethingElse : This is the note to the right.
           `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
-    });
+      });
       it('should render a state diagram (v2)', () => {
         imgSnapshotTest(
           `
@@ -199,10 +223,10 @@ stateDiagram-v2
         Active --> SomethingElse2
         note right of SomethingElse2 : This is the note to the right.
           `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
-    });
+      });
       it('should render a er diagram', () => {
         imgSnapshotTest(
           `
@@ -217,10 +241,10 @@ erDiagram
         PRODUCT ||--o{ ORDER-ITEM : "ordered in"
 
           `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
-    });
+      });
       it('should render a user journey diagram', () => {
         imgSnapshotTest(
           `
@@ -235,12 +259,12 @@ erDiagram
               Go downstairs: 5: Me
               Sit down: 5: Me
                         `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
-    });
+      });
       it('should render a gantt diagram', () => {
-        cy.clock((new Date('2014-01-06')).getTime());
+        cy.clock(new Date('2014-01-06').getTime());
         imgSnapshotTest(
           `
       gantt
@@ -271,10 +295,10 @@ erDiagram
        Add gantt diagram to demo page      :20h
        Add another diagram to demo page    :48h
        `,
-          {theme}
+          { theme }
         );
         cy.get('svg');
-    });
+      });
     });
   });
 });

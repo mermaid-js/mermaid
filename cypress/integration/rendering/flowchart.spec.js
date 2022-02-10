@@ -1,7 +1,6 @@
-/* eslint-env jest */
 import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
-describe('Flowchart', () => {
+describe('Graph', () => {
   it('1: should render a simple flowchart no htmlLabels', () => {
     imgSnapshotTest(
       `graph TD
@@ -38,7 +37,7 @@ describe('Flowchart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[Car]
       `,
-      {fontFamily: 'courier'}
+      { fontFamily: 'courier' }
     );
   });
 
@@ -53,7 +52,7 @@ describe('Flowchart', () => {
       C -->|Two| E[\\iPhone\\]
       C -->|Three| F[Car]
       `,
-      { fontFamily: 'courier'}
+      { fontFamily: 'courier' }
     );
   });
 
@@ -69,7 +68,7 @@ describe('Flowchart', () => {
       classDef processHead fill:#888888,color:white,font-weight:bold,stroke-width:3px,stroke:#001f3f
       class 1A,1B,D,E processHead
       `,
-      {fontFamily: 'courier'}
+      { fontFamily: 'courier' }
     );
   });
 
@@ -98,7 +97,7 @@ describe('Flowchart', () => {
       35(SAM.CommonFA.PopulationFME)-->39(SAM.CommonFA.ChargeDetails)
       36(SAM.CommonFA.PremetricCost)-->39(SAM.CommonFA.ChargeDetails)
       `,
-       { fontFamily: 'courier' }
+      { fontFamily: 'courier' }
     );
   });
 
@@ -169,7 +168,7 @@ describe('Flowchart', () => {
       9a072290_1ec3_e711_8c5a_005056ad0002-->d6072290_1ec3_e711_8c5a_005056ad0002
       9a072290_1ec3_e711_8c5a_005056ad0002-->71082290_1ec3_e711_8c5a_005056ad0002
       `,
-       { fontFamily: 'courier' }
+      { fontFamily: 'courier' }
     );
   });
 
@@ -178,7 +177,7 @@ describe('Flowchart', () => {
       `
     graph TB;subgraph "number as labels";1;end;
       `,
-       { fontFamily: 'courier' }
+      { fontFamily: 'courier' }
     );
   });
 
@@ -190,7 +189,7 @@ describe('Flowchart', () => {
         a1-->a2
       end
       `,
-       { fontFamily: 'courier' }
+      { fontFamily: 'courier' }
     );
   });
 
@@ -202,7 +201,7 @@ describe('Flowchart', () => {
         a1-->a2
       end
       `,
-       { fontFamily: 'courier' }
+      { fontFamily: 'courier' }
     );
   });
 
@@ -234,10 +233,10 @@ describe('Flowchart', () => {
       B-->G
       G-->D
 
-      style foo fill:#F99,stroke-width:2px,stroke:#F0F
-      style bar fill:#999,stroke-width:10px,stroke:#0F0
+      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
+      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
       `,
-       { fontFamily: 'courier' }
+      { fontFamily: 'courier' }
     );
   });
 
@@ -339,7 +338,7 @@ describe('Flowchart', () => {
       sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4DA958A0-26D9-4D47-93A7-70F39FD7D51A;
       sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4FC27B48-A6F9-460A-A675-021F5854FE22;
       `,
-       { fontFamily: 'courier' }
+      { fontFamily: 'courier' }
     );
   });
 
@@ -357,7 +356,7 @@ describe('Flowchart', () => {
         listUrl: false,
         listId: 'color styling',
         fontFamily: 'courier',
-        logLevel: 0
+        logLevel: 0,
       }
     );
   });
@@ -379,8 +378,9 @@ describe('Flowchart', () => {
       `,
       {
         listUrl: false,
-        listId: 'color styling', fontFamily: 'courier',
-        logLevel: 0
+        listId: 'color styling',
+        fontFamily: 'courier',
+        logLevel: 0,
       }
     );
   });
@@ -395,7 +395,7 @@ describe('Flowchart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -414,7 +414,7 @@ describe('Flowchart', () => {
       class A someclass;
       class C someclass;
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -431,7 +431,7 @@ describe('Flowchart', () => {
         linkStyle 1 stroke:DarkGray,stroke-width:2px
         linkStyle 2 stroke:DarkGray,stroke-width:2px
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -440,7 +440,7 @@ describe('Flowchart', () => {
       `graph LR
         a --> b --> c
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -449,7 +449,7 @@ describe('Flowchart', () => {
       `graph LR
         a --> b & c--> d
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -459,7 +459,7 @@ describe('Flowchart', () => {
       A[ h ] -- hello --> B[" test "]:::exClass & C --> D;
       classDef exClass background:#bbb,border:1px solid red;
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -481,7 +481,7 @@ describe('Flowchart', () => {
       click B testClick "click test"
       classDef someclass fill:#f96;
       class A someclass;`,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -522,7 +522,7 @@ describe('Flowchart', () => {
       linkStyle 1 stroke:greenyellow,stroke-width:2px
       style C fill:greenyellow,stroke:green,stroke-width:4px
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -545,7 +545,7 @@ describe('Flowchart', () => {
       click F "javascript:alert('test')" "script test"
       `,
       { securityLevel: 'loose', fontFamily: 'courier' }
-      );
+    );
   });
 
   it('26: Set text color of nodes and links according to styles when html labels are enabled', () => {
@@ -584,7 +584,7 @@ describe('Flowchart', () => {
       click B "index.html#link-clicked" "link test"
       click D testClick "click test"
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -616,7 +616,7 @@ describe('Flowchart', () => {
       class A myClass1
       class D myClass2
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -640,7 +640,7 @@ describe('Flowchart', () => {
       classDef redBg fill:#622;
       classDef whiteTxt color: white;
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -652,7 +652,7 @@ describe('Flowchart', () => {
       eat --> sleep
       work --> eat
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -671,7 +671,7 @@ describe('Flowchart', () => {
       class A someclass;
       class C someclass;
       `,
-      { flowchart: { htmlLabels: false } , fontFamily: 'courier'}
+      { flowchart: { htmlLabels: false }, fontFamily: 'courier' }
     );
   });
 
@@ -694,7 +694,7 @@ describe('Flowchart', () => {
       `graph TD
       A[Christmas]
       `,
-      {  }
+      {}
     );
   });
 
@@ -712,7 +712,7 @@ describe('Flowchart', () => {
       C -----> E4
       C ======> E5
       `,
-      {  }
+      {}
     );
   });
   it('36: should render escaped without html labels', () => {
@@ -720,7 +720,7 @@ describe('Flowchart', () => {
       `graph TD
         a["<strong>Haiya</strong>"]-->b
       `,
-      {htmlLabels: false, flowchart: {htmlLabels: false}}
+      { htmlLabels: false, flowchart: { htmlLabels: false } }
     );
   });
   it('37: should render non-escaped with html labels', () => {
@@ -728,7 +728,7 @@ describe('Flowchart', () => {
       `graph TD
         a["<strong>Haiya</strong>"]-->b
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
   it('38: should render a flowchart when useMaxWidth is true (default)', () => {
@@ -742,18 +742,17 @@ describe('Flowchart', () => {
       `,
       { flowchart: { useMaxWidth: true } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        expect(svg).to.have.attr('width', '100%');
-        expect(svg).to.have.attr('height');
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        const height = parseFloat(svg.attr('height'));
-        expect(height).to.be.within(446 * .95, 446 * 1.05);
-        const style = svg.attr('style');
-        expect(style).to.match(/^max-width: [\d.]+px;$/);
-        const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
-        expect(maxWidthValue).to.be.within(300 * .95, 300 * 1.05);
-      });
+    cy.get('svg').should((svg) => {
+      expect(svg).to.have.attr('width', '100%');
+      expect(svg).to.have.attr('height');
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      const height = parseFloat(svg.attr('height'));
+      expect(height).to.be.within(446 * 0.95, 446 * 1.05);
+      const style = svg.attr('style');
+      expect(style).to.match(/^max-width: [\d.]+px;$/);
+      const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
+      expect(maxWidthValue).to.be.within(300 * 0.95, 300 * 1.05);
+    });
   });
   it('39: should render a flowchart when useMaxWidth is false', () => {
     renderGraph(
@@ -766,15 +765,14 @@ describe('Flowchart', () => {
       `,
       { flowchart: { useMaxWidth: false } }
     );
-    cy.get('svg')
-      .should((svg) => {
-        const height = parseFloat(svg.attr('height'));
-        const width = parseFloat(svg.attr('width'));
-        // use within because the absolute value can be slightly different depending on the environment ±5%
-        expect(height).to.be.within(446 * .95, 446 * 1.05);
-        expect(width).to.be.within(300 * .95, 300 * 1.05);
-        expect(svg).to.not.have.attr('style');
-      });
+    cy.get('svg').should((svg) => {
+      const height = parseFloat(svg.attr('height'));
+      const width = parseFloat(svg.attr('width'));
+      // use within because the absolute value can be slightly different depending on the environment ±5%
+      expect(height).to.be.within(446 * 0.95, 446 * 1.05);
+      expect(width).to.be.within(300 * 0.95, 300 * 1.05);
+      expect(svg).to.not.have.attr('style');
+    });
   });
   it('58: handle styling with style expressions', () => {
     imgSnapshotTest(
@@ -784,7 +782,31 @@ describe('Flowchart', () => {
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('60: handle styling for all node shapes', () => {
+    imgSnapshotTest(
+      `
+      graph LR
+      A[red text] -->|default style| B(blue text)
+      C([red text]) -->|default style| D[[blue text]]
+      E[(red text)] -->|default style| F((blue text))
+      G>red text] -->|default style| H{blue text}
+      I{{red text}} -->|default style| J[/blue text/]
+      linkStyle default color:Sienna;
+      style A stroke:#ff0000,fill:#ffcccc,color:#ff0000
+      style B stroke:#0000ff,fill:#ccccff,color:#0000ff
+      style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
+      style D stroke:#0000ff,fill:#ccccff,color:#0000ff
+      style E stroke:#ff0000,fill:#ffcccc,color:#ff0000
+      style F stroke:#0000ff,fill:#ccccff,color:#0000ff
+      style G stroke:#ff0000,fill:#ffcccc,color:#ff0000
+      style H stroke:#0000ff,fill:#ccccff,color:#0000ff
+      style I stroke:#ff0000,fill:#ffcccc,color:#ff0000
+      style J stroke:#0000ff,fill:#ccccff,color:#0000ff
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
   it('61: fontawesome icons in edge labels', () => {
@@ -793,8 +815,80 @@ describe('Flowchart', () => {
 graph TD
   C -->|fa:fa-car Car| F[fa:fa-car Car]
       `,
-      {htmlLabels: true, flowchart: {htmlLabels: true}, securityLevel: 'loose'}
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
   });
+  it('62: fontawesome icons in edge labels', () => {
+    imgSnapshotTest(
+      `
+    graph TB
+      subgraph bar[Bar]
+        F
+      end
+      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('63: fontawesome icons in edge labels', () => {
+    imgSnapshotTest(
+      `
+    graph TB
+      A
+      B
+      subgraph foo[Foo SubGraph]
+        C
+        D
+      end
+      subgraph bar[Bar SubGraph]
+        E
+        F
+      end
+      G
 
+      A-->B
+      B-->C
+      C-->D
+      B-->D
+      D-->E
+      E-->A
+      E-->F
+      F-->D
+      F-->G
+      B-->G
+      G-->D
+
+      style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
+      style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('64: fontawesome icons in edge labels', () => {
+    imgSnapshotTest(
+      `
+    %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
+    flowchart LR
+    subgraph A
+        a --> b
+    end
+    subgraph B
+        i -->f
+    end
+    A --> B
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('65: text-color from classes', () => {
+    imgSnapshotTest(
+      `
+      flowchart LR
+        classDef dark fill:#000,stroke:#000,stroke-width:4px,color:#fff
+        Lorem --> Ipsum --> Dolor
+        class Lorem,Dolor dark
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
 });

@@ -4,15 +4,13 @@ node_modules/
 coverage/
 .idea/
 
+dist
+
 yarn-error.log
 .npmrc
 token
 
 package-lock.json
-
-dist/classTest.html
-
-dist/sequenceTest.html
 
 .vscode/
 cypress/platform/current.html
@@ -21,3 +19,4 @@ local/
 
 _site
 Gemfile.lock
+/.vs

@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `g.classGroup text {
   fill: ${options.nodeBorder};
   fill: ${options.classText};
@@ -10,6 +10,19 @@ const getStyles = options =>
     font-weight: bolder;
   }
 
+}
+
+.nodeLabel, .edgeLabel {
+  color: ${options.classText};
+}
+.edgeLabel .label rect {
+  fill: ${options.mainBkg};
+}
+.label text {
+  fill: ${options.classText};
+}
+.edgeLabel .label span {
+  background: ${options.mainBkg};
 }
 
 .classTitle {

@@ -33,6 +33,7 @@
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
 "participant"                                                   { this.begin('ID'); return 'participant'; }
+"actor"                                                   			{ this.begin('ID'); return 'participant_actor'; }
 <ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)           { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
@@ -47,22 +48,28 @@
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
 "right of"                                                      return 'right_of';
+"links"                                                         return 'links';
+"link"                                                          return 'link';
+"properties"                                                    return 'properties';
+"details"                                                       return 'details';
 "over"                                                          return 'over';
 "note"                                                          return 'note';
 "activate"                                                      { this.begin('ID'); return 'activate'; }
 "deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
 "title"                                                         return 'title';
 "sequenceDiagram"                                               return 'SD';
-"autonumber" 			                                        return 'autonumber';
+"autonumber"                                                    return 'autonumber';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
-[^\+\->:\n,;]+((?!(\-x|\-\-x))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
+[^\+\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"                                                           return 'SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
 "->"                                                            return 'SOLID_OPEN_ARROW';
 "-->"                                                           return 'DOTTED_OPEN_ARROW';
 \-[x]                                                           return 'SOLID_CROSS';
 \-\-[x]                                                         return 'DOTTED_CROSS';
+\-[\)]                                                          return 'SOLID_POINT';
+\-\-[\)]                                                        return 'DOTTED_POINT';
 ":"(?:(?:no)?wrap:)?[^#\n;]+                                    return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
@@ -101,13 +108,19 @@ directive
   ;
 
 statement
-	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.description=yy.parseMessage($4); $$=$2;}
-	| 'participant' actor 'NEWLINE' {$$=$2;}
+	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.type='addParticipant';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant' actor 'NEWLINE' {$2.type='addParticipant';$$=$2;}
+	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.type='addActor';$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant_actor' actor 'NEWLINE' {$2.type='addActor'; $$=$2;}
 	| signal 'NEWLINE'
 	| autonumber {yy.enableSequenceNumbers()}
 	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
 	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NEWLINE'
+	| links_statement 'NEWLINE'
+	| link_statement 'NEWLINE'
+	| properties_statement 'NEWLINE'
+	| details_statement 'NEWLINE'
 	| title text2 'NEWLINE' {$$=[{type:'setTitle', text:$2}]}
 	| 'loop' restOfLine document end
 	{
@@ -168,6 +181,34 @@ note_statement
 		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text:$4}];}
 	;
 
+links_statement
+	: 'links' actor text2
+	{
+		$$ = [$2, {type:'addLinks', actor:$2.actor, text:$3}];
+  }
+	;
+
+link_statement
+	: 'link' actor text2
+	{
+		$$ = [$2, {type:'addALink', actor:$2.actor, text:$3}];
+  }
+	;
+
+properties_statement
+	: 'properties' actor text2
+	{
+		$$ = [$2, {type:'addProperties', actor:$2.actor, text:$3}];
+  }
+	;
+
+details_statement
+	: 'details' actor text2
+	{
+		$$ = [$2, {type:'addDetails', actor:$2.actor, text:$3}];
+  }
+	;
+
 spaceList
     : SPACE spaceList
     | SPACE
@@ -195,9 +236,13 @@ signal
 	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
 	;
 
-actor
-	: ACTOR {$$={type: 'addActor', actor:$1}}
-	;
+// actor
+// 	: actor_participant
+// 	| actor_actor
+// 	;
+
+actor: ACTOR {$$={ type: 'addParticipant', actor:$1}};
+// actor_actor: ACTOR {$$={type: 'addActor', actor:$1}};
 
 signaltype
 	: SOLID_OPEN_ARROW  { $$ = yy.LINETYPE.SOLID_OPEN; }
@@ -206,6 +251,8 @@ signaltype
 	| DOTTED_ARROW      { $$ = yy.LINETYPE.DOTTED; }
 	| SOLID_CROSS       { $$ = yy.LINETYPE.SOLID_CROSS; }
 	| DOTTED_CROSS      { $$ = yy.LINETYPE.DOTTED_CROSS; }
+	| SOLID_POINT { $$ = yy.LINETYPE.SOLID_POINT; }
+	| DOTTED_POINT { $$ = yy.LINETYPE.DOTTED_POINT; }
 	;
 
 text2

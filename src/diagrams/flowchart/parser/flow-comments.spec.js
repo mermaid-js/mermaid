@@ -3,16 +3,16 @@ import flow from './flow';
 import { setConfig } from '../../../config';
 
 setConfig({
-  securityLevel: 'strict'
+  securityLevel: 'strict',
 });
 
 describe('[Comments] when parsing', () => {
-  beforeEach(function() {
+  beforeEach(function () {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
   });
 
-  it('should handle comments', function() {
+  it('should handle comments', function () {
     const res = flow.parser.parse('graph TD;\n%% Comment\n A-->B;');
 
     const vert = flow.parser.yy.getVertices();
@@ -27,7 +27,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle comments at the start', function() {
+  it('should handle comments at the start', function () {
     const res = flow.parser.parse('%% Comment\ngraph TD;\n A-->B;');
 
     const vert = flow.parser.yy.getVertices();
@@ -42,7 +42,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle comments at the end', function() {
+  it('should handle comments at the end', function () {
     const res = flow.parser.parse('graph TD;\n A-->B\n %% Comment at the end\n');
 
     const vert = flow.parser.yy.getVertices();
@@ -57,7 +57,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle comments at the end no trailing newline', function() {
+  it('should handle comments at the end no trailing newline', function () {
     const res = flow.parser.parse('graph TD;\n A-->B\n%% Commento');
 
     const vert = flow.parser.yy.getVertices();
@@ -72,7 +72,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle comments at the end many trailing newlines', function() {
+  it('should handle comments at the end many trailing newlines', function () {
     const res = flow.parser.parse('graph TD;\n A-->B\n%% Commento\n\n\n');
 
     const vert = flow.parser.yy.getVertices();
@@ -87,7 +87,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle no trailing newlines', function() {
+  it('should handle no trailing newlines', function () {
     const res = flow.parser.parse('graph TD;\n A-->B');
 
     const vert = flow.parser.yy.getVertices();
@@ -102,7 +102,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle many trailing newlines', function() {
+  it('should handle many trailing newlines', function () {
     const res = flow.parser.parse('graph TD;\n A-->B\n\n');
 
     const vert = flow.parser.yy.getVertices();
@@ -117,7 +117,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle a comment with blank rows in-between', function() {
+  it('should handle a comment with blank rows in-between', function () {
     const res = flow.parser.parse('graph TD;\n\n\n %% Comment\n A-->B;');
 
     const vert = flow.parser.yy.getVertices();
@@ -132,7 +132,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle a comment with mermaid flowchart code in them', function() {
+  it('should handle a comment with mermaid flowchart code in them', function () {
     const res = flow.parser.parse(
       'graph TD;\n\n\n %% Test od>Odd shape]-->|Two line<br>edge comment|ro;\n A-->B;'
     );

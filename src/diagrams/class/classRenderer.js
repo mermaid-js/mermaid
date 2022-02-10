@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import classDb, { lookUpDomId } from './classDb';
 import { parser } from './parser/classDiagram';
 import svgDraw from './svgDraw';
@@ -15,26 +15,29 @@ const padding = 20;
 const conf = {
   dividerMargin: 10,
   padding: 5,
-  textHeight: 10
+  textHeight: 10,
 };
 
-// Todo optimize
-const getGraphId = function(label) {
-  const keys = Object.keys(idCache);
+/**
+ * Gets the ID with the same label as in the cache
+ *
+ * @param {string} label The label to look for
+ * @returns {string} The resulting ID
+ */
+const getGraphId = function (label) {
+  const foundEntry = Object.entries(idCache).find((entry) => entry[1].label === label);
 
-  for (let i = 0; i < keys.length; i++) {
-    if (idCache[keys[i]].label === label) {
-      return keys[i];
-    }
+  if (foundEntry) {
+    return foundEntry[0];
   }
-
-  return undefined;
 };
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param {SVGSVGElement} elem The SVG element to append to
  */
-const insertMarkers = function(elem) {
+const insertMarkers = function (elem) {
   elem
     .append('defs')
     .append('marker')
@@ -136,25 +139,31 @@ const insertMarkers = function(elem) {
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
 
-export const setConf = function(cnf) {
+/**
+ * Merges the value of `conf` with the passed `cnf`
+ *
+ * @param {object} cnf Config to merge
+ */
+export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
 
-  keys.forEach(function(key) {
+  keys.forEach(function (key) {
     conf[key] = cnf[key];
   });
 };
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {string} text
+ * @param {string} id
  */
-export const draw = function(text, id) {
+export const draw = function (text, id) {
   idCache = {};
   parser.yy.clear();
   parser.parse(text);
 
-  logger.info('Rendering diagram ' + text);
+  log.info('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
   const diagram = select(`[id='${id}']`);
@@ -163,16 +172,16 @@ export const draw = function(text, id) {
 
   // Layout graph, Create a new directed graph
   const g = new graphlib.Graph({
-    multigraph: true
+    multigraph: true,
   });
 
   // Set an object for the graph label
   g.setGraph({
-    isMultiGraph: true
+    isMultiGraph: true,
   });
 
   // Default to assigning a new object as a label for each new edge.
-  g.setDefaultEdgeLabel(function() {
+  g.setDefaultEdgeLabel(function () {
     return {};
   });
 
@@ -189,28 +198,28 @@ export const draw = function(text, id) {
     // our nodes.
     g.setNode(node.id, node);
 
-    logger.info('Org height: ' + node.height);
+    log.info('Org height: ' + node.height);
   }
 
   const relations = classDb.getRelations();
-  relations.forEach(function(relation) {
-    logger.info(
+  relations.forEach(function (relation) {
+    log.info(
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
     );
     g.setEdge(
       getGraphId(relation.id1),
       getGraphId(relation.id2),
       {
-        relation: relation
+        relation: relation,
       },
       relation.title || 'DEFAULT'
     );
   });
 
   dagre.layout(g);
-  g.nodes().forEach(function(v) {
+  g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
-      logger.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
+      log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       select('#' + lookUpDomId(v)).attr(
         'transform',
         'translate(' +
@@ -222,9 +231,9 @@ export const draw = function(text, id) {
     }
   });
 
-  g.edges().forEach(function(e) {
+  g.edges().forEach(function (e) {
     if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
-      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
+      log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
       svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
     }
   });
@@ -237,11 +246,11 @@ export const draw = function(text, id) {
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
-  logger.debug(`viewBox ${vBox}`);
+  log.debug(`viewBox ${vBox}`);
   diagram.attr('viewBox', vBox);
 };
 
 export default {
   setConf,
-  draw
+  draw,
 };

@@ -5,7 +5,7 @@ const getStyles = options =>
   .branch-label {
     fill: lightgrey;
     color: lightgrey;
-    font-family: 'trebuchet ms', verdana, arial;
+    font-family: 'trebuchet ms', verdana, arial, sans-serif;
     font-family: var(--mermaid-font-family);
   }
   .branch {

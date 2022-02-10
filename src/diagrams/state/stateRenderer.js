@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
-import { logger } from '../../logger';
+import { log } from '../../logger';
 import stateDb from './stateDb';
 import common from '../common/common';
 import { parser } from './parser/stateDiagram';
@@ -17,14 +17,14 @@ let conf;
 
 const transformationLog = {};
 
-export const setConf = function() {};
-
-// Todo optimize
+export const setConf = function () {};
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
+ *
+ * @param {any} elem
  */
-const insertMarkers = function(elem) {
+const insertMarkers = function (elem) {
   elem
     .append('defs')
     .append('marker')
@@ -40,14 +40,15 @@ const insertMarkers = function(elem) {
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
+ *
+ * @param {any} text
+ * @param {any} id
  */
-export const draw = function(text, id) {
+export const draw = function (text, id) {
   conf = getConfig().state;
   parser.yy.clear();
   parser.parse(text);
-  logger.debug('Rendering diagram ' + text);
+  log.debug('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
   const diagram = select(`[id='${id}']`);
@@ -58,12 +59,12 @@ export const draw = function(text, id) {
     multigraph: true,
     compound: true,
     // acyclicer: 'greedy',
-    rankdir: 'RL'
+    rankdir: 'RL',
     // ranksep: '20'
   });
 
   // Default to assigning a new object as a label for each new edge.
-  graph.setDefaultEdgeLabel(function() {
+  graph.setDefaultEdgeLabel(function () {
     return {};
   });
 
@@ -85,15 +86,15 @@ export const draw = function(text, id) {
     `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
   );
 };
-const getLabelWidth = text => {
+const getLabelWidth = (text) => {
   return text ? text.length * conf.fontSizeFactor : 1;
 };
 
 const renderDoc = (doc, diagram, parentId, altBkg) => {
-  // // Layout graph, Create a new directed graph
+  // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
     compound: true,
-    multigraph: true
+    multigraph: true,
   });
 
   let i;
@@ -115,7 +116,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
       ranker: 'tight-tree',
       ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
       nodeSep: edgeFreeDoc ? 1 : 50,
-      isMultiGraph: true
+      isMultiGraph: true,
       // ranksep: 5,
       // nodesep: 1
     });
@@ -131,12 +132,12 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
       nodeSep: edgeFreeDoc ? 1 : 50,
       ranker: 'tight-tree',
       // ranker: 'network-simplex'
-      isMultiGraph: true
+      isMultiGraph: true,
     });
   }
 
   // Default to assigning a new object as a label for each new edge.
-  graph.setDefaultEdgeLabel(function() {
+  graph.setDefaultEdgeLabel(function () {
     return {};
   });
 
@@ -157,10 +158,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
 
     let node;
     if (stateDef.doc) {
-      let sub = diagram
-        .append('g')
-        .attr('id', stateDef.id)
-        .attr('class', 'stateGroup');
+      let sub = diagram.append('g').attr('id', stateDef.id).attr('class', 'stateGroup');
       node = renderDoc(stateDef.doc, sub, stateDef.id, !altBkg);
 
       if (first) {
@@ -187,7 +185,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
         descriptions: [],
         id: stateDef.id + '-note',
         note: stateDef.note,
-        type: 'note'
+        type: 'note',
       };
       const note = drawState(diagram, noteDef, graph);
 
@@ -210,11 +208,11 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
     }
   }
 
-  logger.debug('Count=', graph.nodeCount(), graph);
+  log.debug('Count=', graph.nodeCount(), graph);
   let cnt = 0;
-  relations.forEach(function(relation) {
+  relations.forEach(function (relation) {
     cnt++;
-    logger.debug('Setting edge', relation);
+    log.debug('Setting edge', relation);
     graph.setEdge(
       relation.id1,
       relation.id2,
@@ -222,7 +220,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
         relation: relation,
         width: getLabelWidth(relation.title),
         height: conf.labelHeight * common.getRows(relation.title).length,
-        labelpos: 'c'
+        labelpos: 'c',
       },
       'id' + cnt
     );
@@ -230,12 +228,12 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
 
   dagre.layout(graph);
 
-  logger.debug('Graph after layout', graph.nodes());
+  log.debug('Graph after layout', graph.nodes());
   const svgElem = diagram.node();
 
-  graph.nodes().forEach(function(v) {
+  graph.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
-      logger.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      log.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
       select('#' + svgElem.id + ' #' + v).attr(
         'transform',
         'translate(' +
@@ -251,7 +249,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
         graph.node(v).x - graph.node(v).width / 2
       );
       const dividers = document.querySelectorAll('#' + svgElem.id + ' #' + v + ' .divider');
-      dividers.forEach(divider => {
+      dividers.forEach((divider) => {
         const parent = divider.parentElement;
         let pWidth = 0;
         let pShift = 0;
@@ -266,15 +264,15 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
         divider.setAttribute('x2', pWidth - pShift - 8);
       });
     } else {
-      logger.debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      log.debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     }
   });
 
   let stateBox = svgElem.getBBox();
 
-  graph.edges().forEach(function(e) {
+  graph.edges().forEach(function (e) {
     if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
-      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+      log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
       drawEdge(diagram, graph.edge(e), graph.edge(e).relation);
     }
   });
@@ -285,17 +283,17 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
     id: parentId ? parentId : 'root',
     label: parentId ? parentId : 'root',
     width: 0,
-    height: 0
+    height: 0,
   };
 
   stateInfo.width = stateBox.width + 2 * conf.padding;
   stateInfo.height = stateBox.height + 2 * conf.padding;
 
-  logger.debug('Doc rendered', stateInfo, graph);
+  log.debug('Doc rendered', stateInfo, graph);
   return stateInfo;
 };
 
 export default {
   setConf,
-  draw
+  draw,
 };

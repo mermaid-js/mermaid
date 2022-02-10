@@ -1,11 +1,39 @@
-const getStyles = options =>
+/**
+ * Returns the styles given options
+ *
+ * @param {{
+ *   fontFamily: string;
+ *   nodeTextColor: string;
+ *   textColor: string;
+ *   titleColor: string;
+ *   mainBkg: string;
+ *   nodeBorder: string;
+ *   arrowheadColor: string;
+ *   lineColor: string;
+ *   edgeLabelBackground: string;
+ *   clusterBkg: string;
+ *   clusterBorder: string;
+ *   tertiaryColor: string;
+ *   border2: string;
+ * }} options
+ *   The options for the styles
+ * @returns {string} The resulting styles
+ */
+const getStyles = (options) =>
   `.label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};
   }
+  .cluster-label text {
+    fill: ${options.titleColor};
+  }
+  .cluster-label span {
+    color: ${options.titleColor};
+  }
 
-  .label text {
+  .label text,span {
     fill: ${options.nodeTextColor || options.textColor};
+    color: ${options.nodeTextColor || options.textColor};
   }
 
   .node rect,
@@ -31,7 +59,7 @@ const getStyles = options =>
 
   .edgePath .path {
     stroke: ${options.lineColor};
-    stroke-width: 1.5px;
+    stroke-width: 2.0px;
   }
 
   .flowchart-link {
@@ -58,6 +86,13 @@ const getStyles = options =>
   .cluster text {
     fill: ${options.titleColor};
   }
+
+  .cluster span {
+    color: ${options.titleColor};
+  }
+  /* .cluster div {
+    color: ${options.titleColor};
+  } */
 
   div.mermaidTooltip {
     position: absolute;
