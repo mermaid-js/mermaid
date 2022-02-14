@@ -169,3 +169,5 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
 - [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)
+- [ExDoc](https://github.com/elixir-lang/ex_doc)
+  - [Rendering Mermaid graphs](https://github.com/elixir-lang/ex_doc#rendering-mermaid-graphs)
