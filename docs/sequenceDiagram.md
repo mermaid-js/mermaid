@@ -300,9 +300,7 @@ It is possible to get a sequence number attached to each arrow in a sequence dia
 
 ```html
     <script>
-      mermaid.initialize({
-        sequence: { showSequenceNumbers: true },
-      });
+      mermaid.initialize({ sequence: { showSequenceNumbers: true }, });
     </script>
 ```
 
@@ -493,8 +491,8 @@ mermaid.sequenceConfig = {
 | mirrorActors      | Turns on/off the rendering of actors below the diagram as well as above it                                                                 | false                          |
 | bottomMarginAdj   | Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists. | 1                              |
 | actorFontSize     | Sets the font size for the actor's description                                                                                             | 14                             |
-| actorFontFamily   | Sets the font family for the actor's description                                                                                           | "Open-Sans", "sans-serif"      |
-| actorFontWeight   | Sets the font weight for the actor's description                                                                                           | "Open-Sans", "sans-serif"      |
+| actorFontFamily   | Sets the font family for the actor's description                                                                                           | "Open Sans", sans-serif      |
+| actorFontWeight   | Sets the font weight for the actor's description                                                                                           | "Open Sans", sans-serif      |
 | noteFontSize      | Sets the font size for actor-attached notes                                                                                                | 14                             |
 | noteFontFamily    | Sets the font family for actor-attached notes                                                                                              | "trebuchet ms", verdana, arial |
 | noteFontWeight    | Sets the font weight for actor-attached notes                                                                                              | "trebuchet ms", verdana, arial |

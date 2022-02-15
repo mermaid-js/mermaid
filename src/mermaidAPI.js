@@ -697,7 +697,7 @@ export default mermaidAPI;
  *       leftPadding: 75,
  *       gridLineStartPadding: 35,
  *       fontSize: 11,
- *       fontFamily: '"Open-Sans", "sans-serif"',
+ *       fontFamily: '"Open Sans", sans-serif',
  *       numberSectionStyles: 4,
  *       axisFormat: '%Y-%m-%d',
  *       topAxis: false,
