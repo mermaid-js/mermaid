@@ -5,6 +5,15 @@ labels:
   - "Type: Bug / Error"
 
 body:
+  - type: markdown
+    attributes:
+      value: |-
+        ## Before you submit...
+        We like to help you, but in order to do that should you make a few things first:
+        
+        - Use a clear and concise title
+        - Fill out the text fields with as much detail as possible.
+        - Never be shy to give us screenshots and/or code samples. It will help!
   - type: textarea
     attributes:
       label: Description
