@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+#  - name: GitHub Discussions
+#    url: https://github.com/mermaid-js/mermaid/discussions
+#    about: Ask the Community questions or share your own graphs in our discussions.
+  - name: Slack
+    url: https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE
+    about: Join our Community on Slack for Help and a casual chat.
+  - name: Documentation
+    url: https://mermaid-js.github.io
+    about: Read our documentation for all that Mermaid.js can offer.
+  - name: Live Editor
+    url: https://mermaid.live
+    about: Try the live editor to preview graphs in no time.
