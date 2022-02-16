@@ -1002,8 +1002,6 @@ export const insertNode = (elem, node, dir) => {
   let newEl;
   let el;
 
-  console.log(shapes);
-
   // Add link when appropriate
   if (node.link) {
     newEl = elem
