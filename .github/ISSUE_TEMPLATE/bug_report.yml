@@ -1,0 +1,59 @@
+name: Bug Report
+description: Create a report to help us improve
+labels:
+  - "Status: Triage"
+  - "Type: Bug / Error"
+
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: Give a clear and concise description of what the bug is.
+      placeholder: When I do ... does ... happen.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Give a step-by-step example on how to reproduce the bug.
+      placeholder: |-
+        1. Do this
+        2. Do that
+        3. ...
+        4. Bug!
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your issue.
+  - type: textarea
+    attributes:
+      label: Code Sample
+      description: |-
+        If applicable, add the code sample or a link to the [Live Editor](https://mermaid.live).
+        Any text pasted here will be rendered as a Code block.
+      render: text
+  - type: textarea
+    attributes:
+      label: Setup
+      description: |-
+        Please fill out the below info.
+        Note that you only need to fill out one and not both sections.
+      value: |-
+        **Desktop**
+        
+        - OS and Version: [Windows, Linux, Mac, ...]
+        - Browser and Version: [Chrome, Edge, Firefox]
+        
+        **Smartphone**
+        
+        - Device: [Samsung, iPhone, ...]
+        - OS and Version: [Android, iOS, ...]
+        - Browser and Version: [Chrome, Safari, ...]
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: Anything else to add?
