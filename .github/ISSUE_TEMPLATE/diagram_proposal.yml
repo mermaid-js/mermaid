@@ -8,10 +8,15 @@ body:
   - type: markdown
     attributes:
       value: |-
-        Thank you for suggesting a new Diagram type for Mermaid.js!
+        ## Before you submit...
+        First of all, thank you for proposing a new Diagram to us.
+        We are always happy about new ideas to improve Mermaid.js wherever possible.
         
-        We are always excited for new ideas to make the library more advanced and useful for people.
-        Please take your time to fill out the below sections with as much detail as you can.
+        To get the fastest and best response possible, make sure you do the following:
+        
+        - Use a clear and concise title
+        - Fill out the text fields with as much detail as possible.
+        - Never be shy to give us screenshots and/or code samples. It will help!
   - type: textarea
     attributes:
       label: Proposal
