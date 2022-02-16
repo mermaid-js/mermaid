@@ -1,0 +1,37 @@
+name: Diagram Proposal
+description: Suggest a new Diagram Type to add to Mermaid.
+labels:
+  - "Status: Triage"
+  - "Type: Enhancement"
+
+body:
+  - type: markdown
+    attributes:
+      value: |-
+        Thank you for suggesting a new Diagram type for Mermaid.js!
+        
+        We are always excited for new ideas to make the library more advanced and useful for people.
+        Please take your time to fill out the below sections with as much detail as you can.
+  - type: textarea
+    attributes:
+      label: Proposal
+      description: A clear and concise description of what should be added to Mermaid.js.
+      placeholder: Mermaid.js should add ... because ...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Use Cases
+      description: If applicable, give some use cases for where this diagram would be useful.
+      placeholder: The Diagram could be used for ...
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to show possible examples of how the diagram may look like.
+  - type: textarea
+    attributes:
+      label: Code Sample
+      description: |-
+        If applicable, add a code sample for how to implement this new diagram.
+        The text will automatically be rendered as JavaScript code.
+      render: javascript
