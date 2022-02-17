@@ -410,9 +410,9 @@ const config = {
      * | --------------- | ---------------------------------------------------- | ------ | -------- | --------------------------- |
      * | actorFontFamily | This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
      *
-     * **Notes:** Default value: "'Open-Sans", "sans-serif"'
+     * **Notes:** Default value: "'Open Sans", sans-serif'
      */
-    actorFontFamily: '"Open-Sans", "sans-serif"',
+    actorFontFamily: '"Open Sans", sans-serif',
 
     /**
      * This sets the font weight of the actor's description
@@ -802,7 +802,7 @@ const config = {
      */
     rightAngles: false,
     taskFontSize: 14,
-    taskFontFamily: '"Open-Sans", "sans-serif"',
+    taskFontFamily: '"Open Sans", sans-serif',
     taskMargin: 50,
     // width of activation box
     activationWidth: 10,
