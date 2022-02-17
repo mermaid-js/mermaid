@@ -4,6 +4,7 @@ import db from './gitGraphAst';
 import gitGraphParser from './parser/gitGraph';
 import { log } from '../../logger';
 import { interpolateToCurve } from '../../utils';
+import { getConfig } from '../../config';
 
 let allCommitsDict = {};
 let branchNum;
@@ -338,6 +339,18 @@ export const draw = function (txt, id, ver) {
     parser.yy = db;
     parser.yy.clear();
 
+    const securityLevel = getConfig().securityLevel;
+    // Handle root and ocument for when rendering in sanbox mode
+    let sandboxElement;
+    if (securityLevel === 'sandbox') {
+      sandboxElement = select('#i' + id);
+    }
+    const root =
+      securityLevel === 'sandbox'
+        ? select(sandboxElement.nodes()[0].contentDocument.body)
+        : select('body');
+    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
     log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
     // Parse the graph definition
     parser.parse(txt + '\n');
@@ -352,7 +365,7 @@ export const draw = function (txt, id, ver) {
       config.nodeLabel.width = '100%';
       config.nodeLabel.y = -1 * 2 * config.nodeRadius;
     }
-    const svg = select(`[id="${id}"]`);
+    const svg = root.select(`[id="${id}"]`);
     svgCreateDefs(svg);
     branchNum = 1;
     for (let branch in branches) {

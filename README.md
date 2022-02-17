@@ -215,6 +215,14 @@ Mermaid is a growing community and is always accepting new contributors. There's
 
 Detailed information about how to contribute can be found in the [contribution guide](CONTRIBUTING.md)
 
+## Security and safe diagrams
+
+For public sites, it can be precarious to retrieve text from users on the internet, storing that content for presentation in a browser at a later stage. The reason is that the user content can contain embedded malicious scripts that will run when the data is presented. For Mermaid this is a risk, specially as mermaid diagrams contain many characters that are used in html which makes the standard sanitation unusable as it also breaks the diagrams. We still make an effort to sanitise the incoming code and keep refining the process but  it is hard to guarantee that there are no loop holes.
+
+As an extra level of security for sites with external users we are happy to introduce a new security level in which the diagram is rendered in a sandboxed iframe preventing javascript in the code from  being executed. This is a great step forward for better security.
+
+*Unfortunately you can not have a cake and eat it at the same time which in this case means that some of the interactive functionality gets blocked along with the possible malicious code.*
+
 ## Reporting vulnerabilities
 To report a vulnerability, please e-mail security@mermaid.live with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue.
 

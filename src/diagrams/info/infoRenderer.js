@@ -3,6 +3,7 @@ import { select } from 'd3';
 import db from './infoDb';
 import infoParser from './parser/info';
 import { log } from '../../logger';
+import { getConfig } from '../../config';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -25,11 +26,24 @@ export const draw = (text, id, version) => {
     const parser = infoParser.parser;
     parser.yy = db;
     log.debug('Renering info diagram\n' + text);
+
+    const securityLevel = getConfig().securityLevel;
+    // Handle root and ocument for when rendering in sanbox mode
+    let sandboxElement;
+    if (securityLevel === 'sandbox') {
+      sandboxElement = select('#i' + id);
+    }
+    const root =
+      securityLevel === 'sandbox'
+        ? select(sandboxElement.nodes()[0].contentDocument.body)
+        : select('body');
+    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
     // Parse the graph definition
     parser.parse(text);
     log.debug('Parsed info diagram');
     // Fetch the default direction, use TD if none was found
-    const svg = select('#' + id);
+    const svg = root.select('#' + id);
 
     const g = svg.append('g');
 

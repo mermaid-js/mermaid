@@ -6,7 +6,9 @@ import intersect from './intersect/index.js';
 import createLabel from './createLabel';
 import note from './shapes/note';
 import { parseMember } from '../diagrams/class/svgDraw';
-import { evaluate } from '../diagrams/common/common';
+import { evaluate, sanitizeText as sanitize } from '../diagrams/common/common';
+
+const sanitizeText = (txt) => sanitize(txt, getConfig());
 
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
@@ -967,10 +969,13 @@ export const insertNode = (elem, node, dir) => {
 
   // Add link when appropriate
   if (node.link) {
-    newEl = elem
-      .insert('svg:a')
-      .attr('xlink:href', node.link)
-      .attr('target', node.linkTarget || '_blank');
+    let target;
+    if (getConfig().securityLevel === 'sandbox') {
+      target = '_top';
+    } else if (node.linkTarget) {
+      target = node.linkTarget || '_blank';
+    }
+    newEl = elem.insert('svg:a').attr('xlink:href', node.link).attr('target', target);
     el = shapes[node.shape](newEl, node, dir);
   } else {
     el = shapes[node.shape](elem, node, dir);
