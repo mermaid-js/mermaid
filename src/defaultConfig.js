@@ -1064,6 +1064,25 @@ const config = {
     rect_padding: 10,
     line_height: 20,
   },
+  gitGraph: {
+    diagramPadding: 8,
+    nodeSpacing: 150,
+    nodeFillColor: 'yellow',
+    nodeStrokeWidth: 2,
+    nodeStrokeColor: 'grey',
+    lineStrokeWidth: 4,
+    branchOffset: 50,
+    lineColor: 'grey',
+    leftMargin: 50,
+    branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
+    nodeRadius: 10,
+    nodeLabel: {
+      width: 75,
+      height: 100,
+      x: -25,
+      y: 0,
+    },
+  },
 };
 
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
