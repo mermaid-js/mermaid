@@ -26,7 +26,6 @@ describe('the flowchart renderer', function () {
       ['subroutine', 'subroutine'],
       ['cylinder', 'cylinder'],
       ['group', 'rect'],
-      ['doublecircle', 'doublecircle'],
     ].forEach(function ([type, expectedShape, expectedRadios = 0]) {
       it(`should add the correct shaped node to the graph for vertex type ${type}`, function () {
         const addedNodes = [];
