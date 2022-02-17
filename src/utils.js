@@ -209,7 +209,7 @@ export const detectType = function (text, cnf) {
     return 'state';
   }
 
-  if (text.match(/^\s*gitGraph/)) {
+  if (text.match(/^\s*gitGraph/) || text.match(/^\s*railroadDiagram/)) {
     return 'git';
   }
   if (text.match(/^\s*flowchart/)) {
