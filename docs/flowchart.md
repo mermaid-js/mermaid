@@ -145,7 +145,7 @@ flowchart TD
 
 ```mermaid-example
 flowchart TD
-    id1()(This is the text in the circle)()
+    id1(((This is the text in the circle)))
 ```
 
 ## Links between nodes

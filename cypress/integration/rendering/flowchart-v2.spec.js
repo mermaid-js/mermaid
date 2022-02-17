@@ -368,7 +368,7 @@ flowchart TD
       I{{red text}} -->|default style| J[/blue text/]
       K[\\ red text\\] -->|default style| L[/blue text\\]
       M[\\ red text/] -->|default style| N[blue text];
-      O()(red text)() -->|default style| P()(blue text)();
+      O(((red text))) -->|default style| P(((blue text)));
       linkStyle default color:Sienna;
       style A stroke:#ff0000,fill:#ffcccc,color:#ff0000;
       style B stroke:#0000ff,fill:#ccccff,color:#0000ff;

@@ -161,7 +161,7 @@ describe('[Singlenodes] when parsing', () => {
 
   it('should handle a single double circle node', function () {
     // Silly but syntactically correct
-    const res = flow.parser.parse('graph TD;a()(A)();');
+    const res = flow.parser.parse('graph TD;a(((A)));');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
@@ -172,7 +172,7 @@ describe('[Singlenodes] when parsing', () => {
 
   it('should handle a single double circle node with whitespace after it', function () {
     // Silly but syntactically correct
-    const res = flow.parser.parse('graph TD;a()(A)()   ;');
+    const res = flow.parser.parse('graph TD;a(((A)))   ;');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
@@ -183,7 +183,7 @@ describe('[Singlenodes] when parsing', () => {
 
   it('should handle a single double circle node with html in it (SN3)', function () {
     // Silly but syntactically correct
-    const res = flow.parser.parse('graph TD;a()(A <br> end)();');
+    const res = flow.parser.parse('graph TD;a(((A <br> end)));');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();

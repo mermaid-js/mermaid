@@ -121,8 +121,8 @@ that id.
 "[|"                  return 'VERTEX_WITH_PROPS_START';
 "[("                  return 'CYLINDERSTART';
 ")]"                  return 'CYLINDEREND';
-"()("                 return 'DOUBLECIRCLESTART';
-")()"                 return 'DOUBLECIRCLEEND';
+"((("                 return 'DOUBLECIRCLESTART';
+")))"                 return 'DOUBLECIRCLEEND';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 [\_]                  return 'UNDERSCORE';
