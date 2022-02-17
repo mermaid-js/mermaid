@@ -180,6 +180,7 @@ export const LINETYPE = {
   RECT_END: 23,
   SOLID_POINT: 24,
   DOTTED_POINT: 25,
+  PAR_OVER_START: 26,
 };
 
 export const ARROWTYPE = {

@@ -168,6 +168,7 @@ export const bounds = {
       wrap: title.wrap,
       width: title.width,
       height: 0,
+      overlap: title.type === parser.yy.LINETYPE.PAR_OVER_START,
       fill: fill,
     };
   },
@@ -177,6 +178,11 @@ export const bounds = {
   endLoop: function () {
     return this.sequenceItems.pop();
   },
+  isLoopOverlap: function () {
+    return this.sequenceItems.length
+      ? this.sequenceItems[this.sequenceItems.length - 1].overlap
+      : false;
+  },
   addSectionToLoop: function (message) {
     const loop = this.sequenceItems.pop();
     loop.sections = loop.sections || [];
@@ -185,9 +191,19 @@ export const bounds = {
     loop.sectionTitles.push(message);
     this.sequenceItems.push(loop);
   },
+  saveVerticalPos: function () {
+    if (this.isLoopOverlap()) {
+      this.savedVerticalPos = this.verticalPos;
+    }
+  },
+  resetVerticalPos: function () {
+    if (this.isLoopOverlap()) {
+      this.verticalPos = this.savedVerticalPos;
+    }
+  },
   bumpVerticalPos: function (bump) {
     this.verticalPos = this.verticalPos + bump;
-    this.data.stopy = this.verticalPos;
+    this.data.stopy = Math.max(this.data.stopy, this.verticalPos);
   },
   getVerticalPos: function () {
     return this.verticalPos;
@@ -617,6 +633,7 @@ export const draw = function (text, id) {
 
     switch (msg.type) {
       case parser.yy.LINETYPE.NOTE:
+        bounds.resetVerticalPos();
         noteModel = msg.noteModel;
         drawNote(diagram, noteModel);
         break;
@@ -692,6 +709,7 @@ export const draw = function (text, id) {
         bounds.models.addLoop(loopModel);
         break;
       case parser.yy.LINETYPE.PAR_START:
+      case parser.yy.LINETYPE.PAR_OVER_START:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -699,6 +717,7 @@ export const draw = function (text, id) {
           conf.boxMargin + conf.boxTextMargin,
           (message) => bounds.newLoop(message)
         );
+        bounds.saveVerticalPos();
         break;
       case parser.yy.LINETYPE.PAR_AND:
         adjustLoopHeightForWrap(
@@ -718,6 +737,7 @@ export const draw = function (text, id) {
       default:
         try {
           // lastMsg = msg
+          bounds.resetVerticalPos();
           msgModel = msg.msgModel;
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
@@ -1110,6 +1130,7 @@ const calculateLoopBounds = function (messages, actors) {
       case parser.yy.LINETYPE.ALT_START:
       case parser.yy.LINETYPE.OPT_START:
       case parser.yy.LINETYPE.PAR_START:
+      case parser.yy.LINETYPE.PAR_OVER_START:
         stack.push({
           id: msg.id,
           msg: msg.message,

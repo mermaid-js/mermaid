@@ -812,6 +812,29 @@ end`;
     expect(messages[1].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
+  it('it should handle par_over statements', function () {
+    const str = `
+sequenceDiagram
+par_over Parallel overlap
+Alice ->> Bob: Message
+Note left of Alice: Alice note
+Note right of Bob: Bob note
+end`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+
+    expect(actors.Alice.description).toBe('Alice');
+    expect(actors.Bob.description).toBe('Bob');
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(5);
+    expect(messages[0].message).toBe('Parallel overlap');
+    expect(messages[1].from).toBe('Alice');
+    expect(messages[2].from).toBe('Alice');
+    expect(messages[3].from).toBe('Bob');
+  });
   it('it should handle special characters in signals', function () {
     const str = 'sequenceDiagram\n' + 'Alice->Bob: -:<>,;# comment';
 
