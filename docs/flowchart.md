@@ -4,7 +4,7 @@
 
 All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact.
 
-It can also accomodate different arrow types, multi directional arrows, and linking to and from subgraphs.
+It can also accommodate different arrow types, multi directional arrows, and linking to and from subgraphs.
 
 > **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).**
 Node
