@@ -387,7 +387,7 @@ Default value: false
 | --------------- | ---------------------------------------------------- | ------ | -------- | --------------------------- |
 | actorFontFamily | This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
 
-**Notes:** Default value: "'Open-Sans", "sans-serif"'
+**Notes:** Default value: "'Open Sans", sans-serif'
 
 ### actorFontWeight
 
@@ -938,9 +938,9 @@ Returns **[object][5]** The siteConfig
 
 ### Parameters
 
--   `text`  
+-   `text`
 
-Returns **any** 
+Returns **any**
 
 ## getSiteConfig
 
@@ -1049,81 +1049,36 @@ $(function () {
       inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
       element will be removed when rendering is completed.
 
-Returns **any** 
+Returns **any**
 
 ## updateRendererConfigs
 
 ### Parameters
 
--   `conf` **any** 
+-   `conf` **any**
 
 ## initialize
 
 ### Parameters
 
--   `options` **any** 
+-   `options` **any**
 
-## 
+##
 
 ## mermaidAPI configuration defaults
 
 ```html
 <script>
-  var config = {
-    theme: 'default',
-    logLevel: 'fatal',
-    securityLevel: 'strict',
-    startOnLoad: true,
-    arrowMarkerAbsolute: false,
-
-    er: {
-      diagramPadding: 20,
-      layoutDirection: 'TB',
-      minEntityWidth: 100,
-      minEntityHeight: 75,
-      entityPadding: 15,
-      stroke: 'gray',
-      fill: 'honeydew',
-      fontSize: 12,
-      useMaxWidth: true,
-    },
-    flowchart: {
-      diagramPadding: 8,
-      htmlLabels: true,
-      curve: 'basis',
-    },
-    sequence: {
-      diagramMarginX: 50,
-      diagramMarginY: 10,
-      actorMargin: 50,
-      width: 150,
-      height: 65,
-      boxMargin: 10,
-      boxTextMargin: 5,
-      noteMargin: 10,
-      messageMargin: 35,
-      messageAlign: 'center',
-      mirrorActors: true,
-      bottomMarginAdj: 1,
-      useMaxWidth: true,
-      rightAngles: false,
-      showSequenceNumbers: false,
-    },
-    gantt: {
-      titleTopMargin: 25,
-      barHeight: 20,
-      barGap: 4,
-      topPadding: 50,
-      leftPadding: 75,
-      gridLineStartPadding: 35,
-      fontSize: 11,
-      fontFamily: '"Open-Sans", "sans-serif"',
-      numberSectionStyles: 4,
-      axisFormat: '%Y-%m-%d',
-      topAxis: false,
-    },
-  };
-  mermaid.initialize(config);
+  var config = { theme: 'default', logLevel: 'fatal', securityLevel: 'strict', startOnLoad: true,
+  arrowMarkerAbsolute: false, er: { diagramPadding: 20, layoutDirection: 'TB', minEntityWidth: 100,
+  minEntityHeight: 75, entityPadding: 15, stroke: 'gray', fill: 'honeydew', fontSize: 12, useMaxWidth:
+true, }, flowchart: { diagramPadding: 8, htmlLabels: true, curve: 'basis', }, sequence: {
+  diagramMarginX: 50, diagramMarginY: 10, actorMargin: 50, width: 150, height: 65, boxMargin: 10,
+  boxTextMargin: 5, noteMargin: 10, messageMargin: 35, messageAlign: 'center', mirrorActors: true,
+  bottomMarginAdj: 1, useMaxWidth: true, rightAngles: false, showSequenceNumbers: false, }, gantt: {
+  titleTopMargin: 25, barHeight: 20, barGap: 4, topPadding: 50, leftPadding: 75, gridLineStartPadding:
+35, fontSize: 11, fontFamily: '"Open Sans", sans-serif', numberSectionStyles: 4, axisFormat:
+'%Y-%m-%d', topAxis: false, }, }; mermaid.initialize(config);
 </script>
 ```
 

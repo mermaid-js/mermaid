@@ -149,7 +149,7 @@ Rendering in Mermaid is initalized by `mermaid.initialize()` call. You can place
         And here is another:
         <div class="mermaid">
             graph TD 
-            A[Client] -->|tcp_123| 
+            A[Client] -->|tcp_123| B
             B(Load Balancer) 
             B -->|tcp_456| C[Server1] 
             B -->|tcp_456| D[Server2]

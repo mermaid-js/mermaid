@@ -1,3 +1,0 @@
-- git graph requires a blank line at the end. why?
-- Create a desktop client
-- Do the rendering in an iframe to avoid global CSS to affect rendering.

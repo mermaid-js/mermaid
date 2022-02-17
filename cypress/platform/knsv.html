@@ -12,119 +12,59 @@
         /* background: rgb(221, 208, 208); */
         /* background:#333; */
         font-family: 'Arial';
+        /* font-size: 18px !important; */
+        width: 100%;
         }
       h1 { color: grey;}
-      .mermaid2 {
+      .mermaid2,.mermaid3 {
         display: none;
+      }
+      .mermaid svg {
+        /* font-size: 18px !important; */
       }
     </style>
   </head>
   <body>
-    <h1>info below</h1>
-    <div class="flex">
-      <div class="mermaid2" style="width: 50%; height: 400px;">
-graph TD
-  A[Christmas] ==> D
-  A[Christmas] -->|Get money| B(Go shopping)
-  A[Christmas] ==> C
-  subgraph T ["Test"]
-    A
-    B
-    C
-  end
-  classDef Test fill:#F84E68,stroke:#333,color:white;
-  class A,T Test
-  classDef TestSub fill:green;
-  class T TestSub
-  linkStyle 0,1 color:orange, stroke: orange;
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 400px;">
-flowchart TD
-  A[Christmas] ==> D
-  A[Christmas] -->|Get money| B(Go shopping)
-  A[Christmas] ==> C
-  subgraph T ["Test"]
-    A
-    B
-    C
-  end
+    <div>info below</div>
+    <div class="flex flex-wrap">
 
-  classDef Test fill:#F84E68,stroke:#333,color:white;
-  class A,T Test
-  classDef TestSub fill:green;
-  class T TestSub
-  linkStyle 0,1 color:orange, stroke: orange;
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-graph TD
-  C -->|fa:fa-car Car| F[fa:fa-car Car]
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-flowchart TD
-  C -->|fa:fa-car Car| F[fa:fa-car Car]
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-        %%{init: {"fontFamily": "arial2"}}%%
-graph TD
-      A[Christmas]
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-flowchart TD
-      L1 --- L2
-      L2 --- C
-      M1 ---> C
-      R1 .-> R2
-      R2 <.-> C
-      C -->|Label 1| E1
-      C <-- Label 2 ---> E2
-      C ----> E3
-      C <-...-> E4
-      C ======> E5
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-graph TD
-      L1 --- L2
-      L2 --- C
-      M1 ---> C
-      R1 .-> R2
-      R2 <.-> C
-      C -->|Label 1| E1
-      C -- Label 2 ---> E2
-      C ----> E3
-      C -----> E4
-      C ======> E5
-      </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
-sequenceDiagram
-    participant John
-    participant Alice
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
-      </div>
+<div class="mermaid" style="width: 100%; height: 20%;">
+stateDiagram-v2
+      [*] --> S1
+      state "Some long name" as S1
 
+</div>
 
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
-          // console.error('Mermaid error: ', err);
-        };
+        // console.error('Mermaid error: ', err);
+      };
       mermaid.initialize({
-        // theme: 'forest',
-        // themeVariables:{primaryColor: '#ff0000'},
-        // arrowMarkerAbsolute: true,
+        // theme: 'dark',
+        theme: 'forest',
+        arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
-        logLevel: 0,
-        flowchart: { curve: 'cardinal', htmlLabels: true },
-        htmlLabels: true,
+        flowchart: { nodeSpacing: 10, curve: 'cardinal', htmlLabels: false },
         // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { showSequenceNumbers: true },
+        sequence: { actorFontFamily: 'courier', actorMargin: 50, showSequenceNumbers: false },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
-        // fontFamily: '"arial", sans-serif',
-        fontFamily: 'courier',
+        // fontFamily: '"times", sans-serif',
+        // fontFamily: 'courier',
+        state: {
+          nodeSpacing: 50,
+          rankSpacing: 50,
+          defaultRenderer: 'dagre-wrapper',
+        },
+        logLevel: 0,
+        fontSize: 18,
         curve: 'cardinal',
-        securityLevel: 'loose'
+        securityLevel: 'strict',
+        // themeVariables: {relationLabelColor: 'red'}
       });
-      function callback(){alert('It worked');}
+      function callback() {
+  alert('It worked');
+}
     </script>
   </body>
 </html>

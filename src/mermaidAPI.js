@@ -551,6 +551,7 @@ const handleDirective = function (p, directive, type) {
 /** @param {any} conf */
 function updateRendererConfigs(conf) {
   // Todo remove, all diagrams should get config on demoand from the config object, no need for this
+
   // gitGraphRenderer.setConf(conf.git); // Todo Remove all  of these
   flowRenderer.setConf(conf.flowchart);
   flowRendererV2.setConf(conf.flowchart);
@@ -697,7 +698,7 @@ export default mermaidAPI;
  *       leftPadding: 75,
  *       gridLineStartPadding: 35,
  *       fontSize: 11,
- *       fontFamily: '"Open-Sans", "sans-serif"',
+ *       fontFamily: '"Open Sans", sans-serif',
  *       numberSectionStyles: 4,
  *       axisFormat: '%Y-%m-%d',
  *       topAxis: false,
