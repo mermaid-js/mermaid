@@ -9,7 +9,7 @@ export const getCommits = () => {
       parent: null,
       tag: 'v0.1',
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000002': {
       id: '0000002',
@@ -19,7 +19,7 @@ export const getCommits = () => {
       parent: '0000001',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000003': {
       id: '0000003',
@@ -29,7 +29,7 @@ export const getCommits = () => {
       parent: '0000002',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000004': {
       id: '0000004',
@@ -39,17 +39,17 @@ export const getCommits = () => {
       parent: '0000001',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000005': {
       id: '0000005',
       seq: 5,
       message: '',
-      branch: 'delevop',
+      branch: 'develop',
       parent: '0000002',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000006': {
       id: '0000006',
@@ -59,7 +59,7 @@ export const getCommits = () => {
       parent: '0000003',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000007': {
       id: '0000007',
@@ -69,7 +69,7 @@ export const getCommits = () => {
       parent: '0000004',
       tag: 'v0.2',
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000008': {
       id: '0000008',
@@ -79,7 +79,7 @@ export const getCommits = () => {
       parent: '0000006',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000009': {
       id: '0000009',
@@ -89,17 +89,17 @@ export const getCommits = () => {
       parent: '0000005',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000010': {
       id: '0000010',
       seq: 10,
       message: '',
-      branch: 'master',
+      branch: 'develop',
       parent: ['0000004', '0000005'],
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000011': {
       id: '0000011',
@@ -109,7 +109,7 @@ export const getCommits = () => {
       parent: '0000009',
       tag: null,
       commitType: 'normal',
-      note: ''
+      note: '',
     },
     '0000012': {
       id: '0000012',
@@ -119,7 +119,7 @@ export const getCommits = () => {
       parent: '0000008',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000013': {
       id: '0000013',
@@ -129,7 +129,7 @@ export const getCommits = () => {
       parent: ['0000010', '0000011'],
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000014': {
       id: '0000014',
@@ -139,7 +139,7 @@ export const getCommits = () => {
       parent: '0000013',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000015': {
       id: '0000015',
@@ -149,7 +149,7 @@ export const getCommits = () => {
       parent: '0000007',
       tag: null,
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000016': {
       id: '0000016',
@@ -159,7 +159,7 @@ export const getCommits = () => {
       parent: ['0000014', '0000015'],
       tag: 'v1.0',
       commitType: 'normal',
-      note: null
+      note: null,
     },
     '0000017': {
       id: '0000017',
@@ -169,28 +169,28 @@ export const getCommits = () => {
       parent: ['0000013', '0000016'],
       tag: null,
       commitType: 'normal',
-      note: null
-    }
+      note: null,
+    },
   };
 };
 export const clear = () => {};
 export const getBranchesAsObjArray = () => [
   {
-    name: 'master'
+    name: 'master',
   },
   {
-    name: 'hotfix'
+    name: 'hotfix',
   },
   {
-    name: 'release'
+    name: 'release',
   },
   {
-    name: 'develop'
+    name: 'develop',
   },
   {
-    name: 'featureA'
+    name: 'featureA',
   },
   {
-    name: 'featureB'
-  }
+    name: 'featureB',
+  },
 ];
