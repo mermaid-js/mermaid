@@ -10,6 +10,16 @@ import { getConfig } from '../../config';
 let allCommitsDict = {};
 let branchNum;
 
+let branchPos = {};
+let commitPos = {};
+let maxPos = 0;
+const clear = () => {
+  branchPos = {};
+  commitPos = {};
+  allCommitsDict = {};
+  maxPos = 0;
+};
+
 // let apiConfig = {};
 // export const setConf = function(c) {
 //   apiConfig = c;
@@ -50,7 +60,7 @@ function svgCreateDefs(svg) {
  * @param element
  * @param coords
  */
- 
+
 /**
  * @param svg
  * @param fromId
@@ -64,22 +74,13 @@ const drawText = (txt) => {
     // svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
     let rows = [];
 
-
-
-
     if (typeof txt === 'string') {
       rows = txt.split(/\\n|\n|<br\s*\/?>/gi);
     } else if (Array.isArray(txt)) {
       rows = txt;
-
-
     } else {
       rows = [];
-
-
-
-
-            }
+    }
 
     for (let j = 0; j < rows.length; j++) {
       const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
@@ -97,6 +98,39 @@ const drawText = (txt) => {
   return svgLabel;
 }
 
+
+const drawCommits = (svg, commits) => {
+  const gBullets = svg.append('g').attr('class', 'commit-bullets');
+  const gLabels = svg.append('g').attr('class', 'commit-labels');
+  let pos = 0;
+
+  const keys = Object.keys(commits);
+  keys.forEach((key, index) => {
+    const commit = commits[key];
+
+    log.debug('drawCommits (commitm branchPos)', commit, branchPos);
+    const y = branchPos[commit.branch].pos;
+    const line = gBullets.append('circle');
+    line.attr('cx', pos + 10);
+    line.attr('cy', y);
+    line.attr('r', 10);
+    line.attr('class', 'commit commit-'+commit.type + ' ' + commit.id + ' commit' + branchPos[commit.branch].index);
+    commitPos[commit.id] = {x: pos + 10, y: y};
+
+    const text = gLabels.append('text')
+      // .attr('x', pos + 10)
+      .attr('y', y + 25)
+      .attr('class', 'commit-label')
+      .text(commit.id);
+    let bbox = text.node().getBBox();
+    text.attr('x', pos + 10 - bbox.width / 2);
+    pos +=50;
+    if(pos>maxPos) {
+      maxPos = pos;
+    }
+  });
+}
+
 /**
  * @param svg
  * @param commitid
@@ -105,12 +139,12 @@ const drawText = (txt) => {
  */
 const drawBranches = (svg, branches) => {
   const g = svg.append('g')
-  let pos = 0;
     branches.forEach((branch, index) => {
+      const pos = branchPos[branch.name].pos;
       const line = g.append('line');
       line.attr('x1', 0);
       line.attr('y1', pos);
-      line.attr('x2', 500);
+      line.attr('x2', maxPos);
       line.attr('y2', pos);
       line.attr('class', 'branch branch'+index)
 
@@ -135,7 +169,6 @@ const drawBranches = (svg, branches) => {
 
       label.attr('transform', 'translate(' + (-bbox.width -14) + ', ' + (pos - bbox.height/2-1) + ')');
       bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - bbox.height/2) + ')');
-      pos += 50;
     })
 
 }
@@ -147,6 +180,7 @@ const drawBranches = (svg, branches) => {
  * @param branchColor
  */
 export const draw = function (txt, id, ver) {
+  clear();
   const config = getConfig().gitGraph;
 
   // try {
@@ -162,11 +196,24 @@ export const draw = function (txt, id, ver) {
   const direction = db.getDirection();
   allCommitsDict = db.getCommits();
   const branches = db.getBranchesAsObjArray();
+
+  // Position branches vertically
+  let pos=0;
+  branches.forEach((branch, index) => {
+    branchPos[branch.name] = {pos, index};
+    pos+=50;
+  });
+
+
+
+  log.debug('brach pos ', branchPos);
   log.debug('effective options', config, branches);
+  log.debug('commits', allCommitsDict);
 
   const diagram = select(`[id="${id}"]`);
   svgCreateDefs(diagram);
 
+  drawCommits(diagram, allCommitsDict);
   drawBranches(diagram, branches);
 
   const padding = config.diagramPadding;
