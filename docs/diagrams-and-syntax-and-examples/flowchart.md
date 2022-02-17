@@ -255,7 +255,7 @@ graph TB
     B --> D
 ```
 
-### Beta: New arrow types
+### New arrow types
 
 When using flowchart instead of graph there are new types of arrows supported as per below:
 
@@ -266,7 +266,7 @@ flowchart LR
 ```
 
 
-### Beta: Multi directional arrows
+### Multi directional arrows
 
 When using flowchart instead of graph there is the possibility to use multidirectional arrows.
 
@@ -377,9 +377,9 @@ graph TB
     end
  ```
 
-## Beta: flowcharts
+## flowcharts
 
-With the graphtype flowcharts it is also possible to set edges to and from subgraphs as in the graph below.
+With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the graph below.
 
 ```mermaid-example
 flowchart TB
