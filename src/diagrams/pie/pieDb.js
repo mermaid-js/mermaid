@@ -4,6 +4,7 @@ import * as configApi from '../../config';
 
 let sections = {};
 let title = '';
+let description = '';
 let showData = false;
 
 export const parseDirective = function (statement, context, type) {
@@ -33,6 +34,15 @@ const getShowData = function () {
 const getTitle = function () {
   return title;
 };
+
+const setAccDescription = function (txt) {
+  description = txt;
+};
+
+const getAccDescription = function () {
+  return description;
+};
+
 const cleanupValue = function (value) {
   if (value.substring(0, 1) === ':') {
     value = value.substring(1).trim();
@@ -62,5 +72,7 @@ export default {
   getTitle,
   setShowData,
   getShowData,
+  getAccDescription,
+  setAccDescription,
   // parseError
 };
