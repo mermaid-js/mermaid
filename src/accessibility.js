@@ -20,6 +20,6 @@ export default function addSVGAccessibilityFields(yy_parser, svg, id) {
 
   svg
     .insert('title', ':first-child')
-    .attr('id', 'chart-desc-' + id)
+    .attr('id', 'chart-title-' + id)
     .text(title_string);
 }
