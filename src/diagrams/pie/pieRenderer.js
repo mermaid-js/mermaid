@@ -5,6 +5,7 @@ import pieParser from './parser/pie';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 import * as configApi from '../../config';
+import addSVGAccessibilityFields from '../../accessibility';
 
 let conf = configApi.getConfig();
 
@@ -56,6 +57,7 @@ export const draw = (txt, id) => {
     const diagram = root.select('#' + id);
     configureSvgSize(diagram, height, width, conf.pie.useMaxWidth);
 
+    addSVGAccessibilityFields(parser.yy, diagram, id);
     // Set viewBox
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
