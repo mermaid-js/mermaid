@@ -2,14 +2,27 @@
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/theming.md)
 
-With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of the diagram themes. The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls.
+With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of themes. The intent is to increase the customizability and ease of Styling for mermaid diagrams.  
 
-Themes follow and build upon the Levels of Configuration and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
+The theme can be altered by changing the root level variable `theme` variable in the configuration. To change it for the whole site you must use the `initialize` call. To do it for just for a single diagram you can use the `%%init%%` directive
 
-**These Theming Configurations, similar to directives, will also be made applicable in the Live-Editor, to maximize customizability.
+Themes follow and build upon the Levels of Configuration, and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
+
+## Deployable Themes
+The following are a list of **Deployable themes**, sample `%%init%%` directives and `initialize` calls. 
+1. **Base**- Designed to modified, as the name implies it is supposed to be used as the base for making custom themes.
+
+2. **Forest**- A theme full of light greens that is easy on the eyes.
+
+3. **Dark**- A theme that would go well with other dark colored elements.
+
+4. **Default**- The default theme for all diagrams. 
+
+5. **Neutral**- The theme to be used for black and white printing
+
 
 ## Site-wide Themes
-Site-wide themes are still declared via `initialize` by site owners.
+Site-wide themes are declared via `initialize` by site owners.
 
 Example of `Initalize` call setting `theme` to `base`:
 ```javascript
@@ -49,8 +62,9 @@ Here is an example of how `%%init%%` can set the theme to 'base', this assumes t
             G
           end
 ```
+# List of Themes 
 
-# Making a Custom Theme  with `themeVariables`
+# Customizing Themes  with `themeVariables`
 
 The easiest way to make a custom theme is to start with the base theme, and just modify theme variables through `themeVariables`, via `%%init%%`.
 
@@ -59,7 +73,7 @@ The easiest way to make a custom theme is to start with the base theme, and just
 | themeVariables | Array containing objects, modifiable with the `%%init%%` directive | Array | Required | primaryColor, lineColor, textColor |
 
 
-## Here is an example of overriding `primaryColor` through `themeVariables` and giving everything a different look, using `%%init%%`.
+**Here is an example of overriding `primaryColor` through `themeVariables` and giving everything a different look, using `%%init%%`.**
 
 ```mermaid-example
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%

@@ -452,13 +452,20 @@ export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
   bounds.bumpVerticalPos(maxHeight);
 };
 
-export const drawActorsPopup = function (diagram, actors, actorKeys) {
+export const drawActorsPopup = function (diagram, actors, actorKeys, doc) {
   var maxHeight = 0;
   var maxWidth = 0;
   for (let i = 0; i < actorKeys.length; i++) {
     const actor = actors[actorKeys[i]];
     const minMenuWidth = getRequiredPopupWidth(actor);
-    var menuDimensions = svgDraw.drawPopup(diagram, actor, minMenuWidth, conf, conf.forceMenus);
+    var menuDimensions = svgDraw.drawPopup(
+      diagram,
+      actor,
+      minMenuWidth,
+      conf,
+      conf.forceMenus,
+      doc
+    );
     if (menuDimensions.height > maxHeight) {
       maxHeight = menuDimensions.height;
     }
@@ -539,13 +546,26 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
  */
 export const draw = function (text, id) {
   conf = configApi.getConfig().sequence;
+  const securityLevel = configApi.getConfig().securityLevel;
+  // Handle root and ocument for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
   parser.yy.clear();
   parser.yy.setWrap(conf.wrap);
   parser.parse(text + '\n');
   bounds.init();
   log.debug(`C:${JSON.stringify(conf, null, 2)}`);
 
-  const diagram = select(`[id="${id}"]`);
+  const diagram =
+    securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : select(`[id="${id}"]`);
 
   // Fetch data from the parsing
   const actors = parser.yy.getActors();
@@ -733,7 +753,7 @@ export const draw = function (text, id) {
   }
 
   // only draw popups for the top row of actors.
-  var requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys);
+  var requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys, doc);
 
   const { bounds: box } = bounds.getBounds();
 

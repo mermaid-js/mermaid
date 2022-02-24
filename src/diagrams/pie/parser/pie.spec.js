@@ -62,6 +62,37 @@ pie
     expect(title).toBe('a 60/40 pie');
   });
 
+  it('should handle simple pie without an acc description', function () {
+    const res = pie.parser.parse(`pie title a neat chart
+"ash" : 60
+"bat" : 40
+`);
+
+    const sections = pieDb.getSections();
+    const title = pieDb.getTitle();
+    const description = pieDb.getAccDescription();
+    const section1 = sections['ash'];
+    expect(section1).toBe(60);
+    expect(title).toBe('a neat chart');
+    expect(description).toBe('');
+  });
+
+  it('should handle simple pie with an acc description', function () {
+    const res = pie.parser.parse(`pie title a neat chart
+    accDescription a neat description
+"ash" : 60
+"bat" : 40
+`);
+
+    const sections = pieDb.getSections();
+    const title = pieDb.getTitle();
+    const description = pieDb.getAccDescription();
+    const section1 = sections['ash'];
+    expect(section1).toBe(60);
+    expect(title).toBe('a neat chart');
+    expect(description).toBe('a neat description');
+  });
+
   it('should handle simple pie with positive decimal', function () {
     const res = pie.parser.parse(`pie
 "ash" : 60.67

@@ -54,8 +54,20 @@ export const draw = function (text, id) {
   parser.yy.clear();
   parser.parse(text + '\n');
 
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and ocument for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
   bounds.init();
-  const diagram = select('#' + id);
+  const diagram = root.select('#' + id);
   diagram.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   svgDraw.initGraphics(diagram);

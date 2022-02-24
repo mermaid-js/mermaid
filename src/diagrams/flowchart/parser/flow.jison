@@ -121,6 +121,8 @@ that id.
 "[|"                  return 'VERTEX_WITH_PROPS_START';
 "[("                  return 'CYLINDERSTART';
 ")]"                  return 'CYLINDEREND';
+"((("                 return 'DOUBLECIRCLESTART';
+")))"                 return 'DOUBLECIRCLEEND';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 [\_]                  return 'UNDERSCORE';
@@ -373,6 +375,8 @@ node: vertex
 
 vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
+    | idString DOUBLECIRCLESTART text DOUBLECIRCLEEND
+        {$$ = $1;yy.addVertex($1,$3,'doublecircle');}
     | idString PS PS text PE PE
         {$$ = $1;yy.addVertex($1,$4,'circle');}
     | idString '(-' text '-)'

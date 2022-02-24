@@ -159,6 +159,40 @@ describe('[Singlenodes] when parsing', () => {
     expect(vert['a'].text).toBe('A <br> end');
   });
 
+  it('should handle a single double circle node', function () {
+    // Silly but syntactically correct
+    const res = flow.parser.parse('graph TD;a(((A)));');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges.length).toBe(0);
+    expect(vert['a'].type).toBe('doublecircle');
+  });
+
+  it('should handle a single double circle node with whitespace after it', function () {
+    // Silly but syntactically correct
+    const res = flow.parser.parse('graph TD;a(((A)))   ;');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges.length).toBe(0);
+    expect(vert['a'].type).toBe('doublecircle');
+  });
+
+  it('should handle a single double circle node with html in it (SN3)', function () {
+    // Silly but syntactically correct
+    const res = flow.parser.parse('graph TD;a(((A <br> end)));');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges.length).toBe(0);
+    expect(vert['a'].type).toBe('doublecircle');
+    expect(vert['a'].text).toBe('A <br> end');
+  });
+
   it('should handle a single node with alphanumerics starting on a char', function () {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;id1;');

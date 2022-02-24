@@ -1057,6 +1057,10 @@ Returns **any**
 
 -   `conf` **any**
 
+## reinitialize
+
+To be removed
+
 ## initialize
 
 ### Parameters
