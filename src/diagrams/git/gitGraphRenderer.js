@@ -108,7 +108,7 @@ const drawCommits = (svg, commits) => {
   keys.forEach((key, index) => {
     const commit = commits[key];
 
-    log.debug('drawCommits (commitm branchPos)', commit, branchPos);
+    // log.debug('drawCommits (commit branchPos)', commit, branchPos);
     const y = branchPos[commit.branch].pos;
     const line = gBullets.append('circle');
     line.attr('cx', pos + 10);
@@ -127,6 +127,60 @@ const drawCommits = (svg, commits) => {
     pos +=50;
     if(pos>maxPos) {
       maxPos = pos;
+    }
+  });
+}
+
+const drawArrow = (svg, commit1, commit2) => {
+  const conf = getConfig();
+  // const config = getConfig().gitGraph;
+  // const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  // line.setAttribute('x1', commitPos[commit1.id].x);
+  // line.setAttribute('y1', commitPos[commit1.id].y);
+  // line.setAttribute('x2', commitPos[commit2.id].x);
+  // line.setAttribute('y2', commitPos[commit2.id].y);
+  // line.setAttribute('class', 'commit-line');
+  // line.setAttribute('stroke-width', config.arrow.strokeWidth);
+  // line.setAttribute('stroke', config.arrow.stroke);
+  // line.setAttribute('marker-end', 'url(#arrowhead)');
+  // return line;
+
+  const p1 = commitPos[commit1.id];
+  const p2 = commitPos[commit2.id];
+  log.debug('drawArrow', p1, p2);
+
+  let url = '';
+  if (conf.arrowMarkerAbsolute) {
+    url =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
+  }
+
+  const arrow = svg.append('line').attr('x1', p1.x)
+      .attr('y1', p1.y)
+      .attr('x2', p2.x)
+      .attr('y2', p2.y)
+      .attr('class', 'arrow')
+      .attr('marker-end', 'url(' + url + '#arrowhead)');
+}
+
+const drawArrows = (svg, commits) => {
+  const gArrows = svg.append('g').attr('class', 'commit-arrows');
+  let pos = 0;
+
+  const k = Object.keys(commits);
+  console.log('drawArrows', k);
+  k.forEach((key, index) => {
+    const commit = commits[key];
+    if(commit.parents && commit.parents.length>0) {
+      commit.parents.forEach((parent) => {
+        drawArrow(gArrows, commits[parent], commit);
+      });
     }
   });
 }
@@ -213,8 +267,24 @@ export const draw = function (txt, id, ver) {
   const diagram = select(`[id="${id}"]`);
   svgCreateDefs(diagram);
 
+    diagram
+    .append('defs')
+    .append('marker')
+    .attr('id', 'arrowhead')
+    .attr('refX',24)
+    .attr('refY', 10)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .attr('markerWidth', 24)
+    .attr('markerHeight', 24)
+    .attr('orient', 'auto')
+    // .attr('stroke', 'red')
+    // .attr('fill', 'red')
+    .append('path')
+    .attr('d', 'M 0 0 L 20 10 L 0 20 z'); // this is actual shape for arrowhead
+
   drawCommits(diagram, allCommitsDict);
   drawBranches(diagram, branches);
+  drawArrows(diagram, allCommitsDict);
 
   const padding = config.diagramPadding;
   const svgBounds = diagram.node().getBBox();

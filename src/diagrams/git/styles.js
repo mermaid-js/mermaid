@@ -1,4 +1,4 @@
-const getStyles = options =>
+const getStyles = (options) =>
   `
   .commit-id,
   .commit-msg,
@@ -36,6 +36,11 @@ const getStyles = options =>
   .label5  { fill: ${options.fillType5}; }
   .label6  { fill: ${options.fillType6}; }
   .label7  { fill: ${options.fillType7}; }
+
+  // .arrow { stroke : ${options.tertiaryColor}; stroke-width: 8; stroke-linecap: round; }
+  .arrow { stroke : #cc33cc; stroke-width: 8; stroke-linecap: round; }
+  // #arrowhead { fill: ${options.tertiaryColor};}
+  #arrowhead { fill: #990099;}
   .branchLabel  { }
   }
 `;
