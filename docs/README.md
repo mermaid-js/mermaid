@@ -268,6 +268,18 @@ npm publish
 
 The above command generates files into the `dist` folder and publishes them to npmjs.org.
 
+## Related projects
+
+- [Command Line Interface](https://github.com/mermaid-js/mermaid-cli)
+- [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
+- [HTTP Server](https://github.com/TomWright/mermaid-server)
+
+## Contributors [![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
+
+Mermaid is a growing community and is always accepting new contributors. There's a lot of different ways to help out and we're always looking for extra hands! Look at [this issue](https://github.com/mermaid-js/mermaid/issues/866) if you want to know where to start helping out.
+
+Detailed information about how to contribute can be found in the [contribution guide](CONTRIBUTING.md)
+
 ## Security and safe diagrams
 
 For public sites, it can be precarious to retrieve text from users on the internet, storing that content for presentation in a browser at a later stage. The reason is that the user content can contain embedded malicious scripts that will run when the data is presented. For Mermaid this is a risk, specially as mermaid diagrams contain many characters that are used in html which makes the standard sanitation unusable as it also breaks the diagrams. We still make an effort to sanitise the incoming code and keep refining the process but  it is hard to guarantee that there are no loop holes.
@@ -276,13 +288,17 @@ As an extra level of security for sites with external users we are happy to intr
 
 *Unfortunately you can not have a cake and eat it at the same time which in this case means that some of the interactive functionality gets blocked along with the possible malicious code.*
 
+## Reporting vulnerabilities
+To report a vulnerability, please e-mail security@mermaid.live with a description of the issue, the steps you took to create the issue, affected versions, and if known, mitigations for the issue.
 
-## Credits
+## Appreciation
+A quick note from Knut Sveidqvist:
+>*Many thanks to the [d3](https://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!*
+>*Thanks also to the [js-sequence-diagram](https://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams. Thanks to Jessica Peter for inspiration and starting point for gantt rendering.*
+>*Thank you to [Tyler Long](https://github.com/tylerlong) who has been a collaborator since April 2017.*
+>
+>*Thank you to the ever-growing list of [contributors](https://github.com/knsv/mermaid/graphs/contributors) that brought the project this far!*
 
-Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!
+---
 
-Thanks also to the [js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams. Thanks to Jessica Peter for the inspiration and for the starting point of gantt rendering.
-
-_Mermaid was created by Knut Sveidqvist for easier documentation._
-
-Here is the full list of the projects [contributors](https://github.com/knsv/mermaid/graphs/contributors).
+*Mermaid was created by Knut Sveidqvist for easier documentation.*

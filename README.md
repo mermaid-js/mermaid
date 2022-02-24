@@ -203,6 +203,18 @@ pie
       Sit down: 3: Me
 ```
 
+### Release
+
+For those who have the permission to do so:
+
+Update version number in `package.json`.
+
+```sh
+npm publish
+```
+
+The above command generates files into the `dist` folder and publishes them to npmjs.org.
+
 ## Related projects
 
 - [Command Line Interface](https://github.com/mermaid-js/mermaid-cli)
