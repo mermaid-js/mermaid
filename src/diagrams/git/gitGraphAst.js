@@ -7,45 +7,48 @@ let curBranch = 'master';
 let direction = 'LR';
 let seq = 0;
 
+/**
+ *
+ */
 function getId() {
   return random({ length: 7 });
 }
 
-/**
- * @param currentCommit
- * @param otherCommit
- */
-function isfastforwardable(currentCommit, otherCommit) {
-  log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
-  let cnt = 0;
-  while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit && cnt < 1000) {
-    cnt++;
-    // only if other branch has more commits
-    if (otherCommit.parent == null) break;
-    if (Array.isArray(otherCommit.parent)) {
-      log.debug('In merge commit:', otherCommit.parent);
-      return (
-        isfastforwardable(currentCommit, commits[otherCommit.parent[0]]) ||
-        isfastforwardable(currentCommit, commits[otherCommit.parent[1]])
-      );
-    } else {
-      otherCommit = commits[otherCommit.parent];
-    }
-  }
-  log.debug(currentCommit.id, otherCommit.id);
-  return currentCommit.id === otherCommit.id;
-}
+// /**
+//  * @param currentCommit
+//  * @param otherCommit
+//  */
+// function isfastforwardable(currentCommit, otherCommit) {
+//   log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
+//   let cnt = 0;
+//   while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit && cnt < 1000) {
+//     cnt++;
+//     // only if other branch has more commits
+//     if (otherCommit.parent == null) break;
+//     if (Array.isArray(otherCommit.parent)) {
+//       log.debug('In merge commit:', otherCommit.parent);
+//       return (
+//         isfastforwardable(currentCommit, commits[otherCommit.parent[0]]) ||
+//         isfastforwardable(currentCommit, commits[otherCommit.parent[1]])
+//       );
+//     } else {
+//       otherCommit = commits[otherCommit.parent];
+//     }
+//   }
+//   log.debug(currentCommit.id, otherCommit.id);
+//   return currentCommit.id === otherCommit.id;
+// }
 
 /**
  * @param currentCommit
  * @param otherCommit
  */
-function isReachableFrom(currentCommit, otherCommit) {
-  const currentSeq = currentCommit.seq;
-  const otherSeq = otherCommit.seq;
-  if (currentSeq > otherSeq) return isfastforwardable(otherCommit, currentCommit);
-  return false;
-}
+// function isReachableFrom(currentCommit, otherCommit) {
+//   const currentSeq = currentCommit.seq;
+//   const otherSeq = otherCommit.seq;
+//   if (currentSeq > otherSeq) return isfastforwardable(otherCommit, currentCommit);
+//   return false;
+// }
 
 /**
  * @param list
@@ -82,14 +85,15 @@ export const getOptions = function () {
   return options;
 };
 
-export const commit = function(msg, id, type, tag) {
+export const commit = function (msg, id, type, tag) {
   const commit = {
-    id: id ? id : getId(),
+    id: id ? id : seq + '-' + getId(),
     message: msg,
     seq: seq++,
     type: type ? type : commitType.NORMAL,
     tag: tag ? tag : '',
-    parent: head == null ? null : head.id,
+    parents: head == null ? [] : [head.id],
+    branch: curBranch,
   };
   head = commit;
   commits[commit.id] = commit;
@@ -105,25 +109,26 @@ export const branch = function (name) {
 export const merge = function (otherBranch) {
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
-  if (isReachableFrom(currentCommit, otherCommit)) {
-    log.debug('Already merged');
-    return;
-  }
-  if (isfastforwardable(currentCommit, otherCommit)) {
-    branches[curBranch] = branches[otherBranch];
-    head = commits[branches[curBranch]];
-  } else {
-    // create merge commit
-    const commit = {
-      id: getId(),
-      message: 'merged branch ' + otherBranch + ' into ' + curBranch,
-      seq: seq++,
-      parent: [head == null ? null : head.id, branches[otherBranch]],
-    };
-    head = commit;
-    commits[commit.id] = commit;
-    branches[curBranch] = commit.id;
-  }
+  // if (isReachableFrom(currentCommit, otherCommit)) {
+  //   log.debug('Already merged');
+  //   return;
+  // }
+  // if (isfastforwardable(currentCommit, otherCommit)) {
+  //   branches[curBranch] = branches[otherBranch];
+  //   head = commits[branches[curBranch]];
+  // } else {
+  // create merge commit
+  const commit = {
+    id: seq + '-' + getId(),
+    message: 'merged branch ' + otherBranch + ' into ' + curBranch,
+    seq: seq++,
+    parents: [head == null ? null : head.id, branches[otherBranch]],
+    branch: curBranch,
+  };
+  head = commit;
+  commits[commit.id] = commit;
+  branches[curBranch] = commit.id;
+  // }
   log.debug(branches);
   log.debug('in mergeBranch');
 };
@@ -135,24 +140,24 @@ export const checkout = function (branch) {
   head = commits[id];
 };
 
-export const reset = function (commitRef) {
-  log.debug('in reset', commitRef);
-  const ref = commitRef.split(':')[0];
-  let parentCount = parseInt(commitRef.split(':')[1]);
-  let commit = ref === 'HEAD' ? head : commits[branches[ref]];
-  log.debug(commit, parentCount);
-  while (parentCount > 0) {
-    commit = commits[commit.parent];
-    parentCount--;
-    if (!commit) {
-      const err = 'Critical error - unique parent commit not found during reset';
-      log.error(err);
-      throw err;
-    }
-  }
-  head = commit;
-  branches[curBranch] = commit.id;
-};
+// export const reset = function (commitRef) {
+//   log.debug('in reset', commitRef);
+//   const ref = commitRef.split(':')[0];
+//   let parentCount = parseInt(commitRef.split(':')[1]);
+//   let commit = ref === 'HEAD' ? head : commits[branches[ref]];
+//   log.debug(commit, parentCount);
+//   while (parentCount > 0) {
+//     commit = commits[commit.parent];
+//     parentCount--;
+//     if (!commit) {
+//       const err = 'Critical error - unique parent commit not found during reset';
+//       log.error(err);
+//       throw err;
+//     }
+//   }
+//   head = commit;
+//   branches[curBranch] = commit.id;
+// };
 
 /**
  * @param arr
@@ -187,14 +192,14 @@ function prettyPrintCommitHistory(commitArr) {
     if (branches[branch] === commit.id) label.push(branch);
   }
   log.debug(label.join(' '));
-  if (Array.isArray(commit.parent)) {
-    const newCommit = commits[commit.parent[0]];
+  if (commit.parents && commit.parents.length == 2) {
+    const newCommit = commits[commit.parents[0]];
     upsert(commitArr, commit, newCommit);
-    commitArr.push(commits[commit.parent[1]]);
-  } else if (commit.parent == null) {
+    commitArr.push(commits[commit.parents[1]]);
+  } else if (commit.parents.length == 0) {
     return;
   } else {
-    const nextCommit = commits[commit.parent];
+    const nextCommit = commits[commit.parents];
     upsert(commitArr, commit, nextCommit);
   }
   commitArr = uniqBy(commitArr, (c) => c.id);
@@ -218,7 +223,8 @@ export const clear = function () {
 export const getBranchesAsObjArray = function () {
   const branchArr = [];
   for (let branch in branches) {
-    branchArr.push({ name: branch, commit: commits[branches[branch]] });
+    // branchArr.push({ name: branch, commit: commits[branches[branch]] });
+    branchArr.push({ name: branch });
   }
   return branchArr;
 };
@@ -236,7 +242,7 @@ export const getCommitsArray = function () {
   commitArr.forEach(function (o) {
     log.debug(o.id);
   });
-  commitArr.sort((a, b) => b.seq - a.seq);
+  commitArr.sort((a, b) => a.seq - b.seq);
   return commitArr;
 };
 export const getCurrentBranch = function () {
@@ -252,7 +258,7 @@ export const getHead = function () {
 export const commitType = {
   NORMAL: 0,
   REVERSE: 1,
-  HIGHLIGHT: 2
+  HIGHLIGHT: 2,
 };
 
 export default {
@@ -263,7 +269,7 @@ export default {
   branch,
   merge,
   checkout,
-  reset,
+  //reset,
   prettyPrint,
   clear,
   getBranchesAsObjArray,
@@ -273,5 +279,5 @@ export default {
   getCurrentBranch,
   getDirection,
   getHead,
-  commitType
+  commitType,
 };

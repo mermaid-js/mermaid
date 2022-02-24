@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { curveBasis, line, select } from 'd3';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
-// import db from './gitGraphAst';
-import * as db from './mockDb';
+import db from './gitGraphAst';
+//import * as db from './mockDb';
 import gitGraphParser from './parser/gitGraph';
 import { log } from '../../logger';
 /* eslint-disable */
@@ -244,7 +244,7 @@ export const draw = function (txt, id, ver) {
 
     log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
   // // Parse the graph definition
-  // parser.parse(txt + '\n');
+  parser.parse(txt + '\n');
 
   // config = Object.assign(config, apiConfig, db.getOptions());
   const direction = db.getDirection();
