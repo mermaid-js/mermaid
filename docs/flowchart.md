@@ -141,6 +141,13 @@ flowchart TD
     B[\Go shopping/]
 ```
 
+### Double circle
+
+```mermaid-example
+flowchart TD
+    id1(((This is the text in the circle)))
+```
+
 ## Links between nodes
 
 Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.

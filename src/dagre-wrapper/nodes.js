@@ -554,6 +554,42 @@ const circle = (parent, node) => {
   return shapeSvg;
 };
 
+const doublecircle = (parent, node) => {
+  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, undefined, true);
+  const gap = 5;
+  const circleGroup = shapeSvg.insert('g', ':first-child');
+  const outerCircle = circleGroup.insert('circle');
+  const innerCircle = circleGroup.insert('circle');
+
+  // center the circle around its coordinate
+  outerCircle
+    .attr('style', node.style)
+    .attr('rx', node.rx)
+    .attr('ry', node.ry)
+    .attr('r', bbox.width / 2 + halfPadding + gap)
+    .attr('width', bbox.width + node.padding + gap * 2)
+    .attr('height', bbox.height + node.padding + gap * 2);
+
+  innerCircle
+    .attr('style', node.style)
+    .attr('rx', node.rx)
+    .attr('ry', node.ry)
+    .attr('r', bbox.width / 2 + halfPadding)
+    .attr('width', bbox.width + node.padding)
+    .attr('height', bbox.height + node.padding);
+
+  log.info('DoubleCircle main');
+
+  updateNodeBounds(node, outerCircle);
+
+  node.intersect = function (point) {
+    log.info('DoubleCircle intersect', node, bbox.width / 2 + halfPadding + gap, point);
+    return intersect.circle(node, bbox.width / 2 + halfPadding + gap, point);
+  };
+
+  return shapeSvg;
+};
+
 const subroutine = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
@@ -943,6 +979,7 @@ const shapes = {
   rectWithTitle,
   choice,
   circle,
+  doublecircle,
   stadium,
   hexagon,
   rect_left_inv_arrow,

@@ -133,6 +133,9 @@ export const addVertices = function (vert, g, svgId, root, doc) {
       case 'group':
         _shape = 'rect';
         break;
+      case 'doublecircle':
+        _shape = 'doublecircle';
+        break;
       default:
         _shape = 'rect';
     }
