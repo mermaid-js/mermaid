@@ -3626,7 +3626,7 @@ commander@^5.1.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
   integrity sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==
 
-commander@^8.3.0:
+commander@^8.0.0, commander@^8.3.0:
   version "8.3.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-8.3.0.tgz#4837ea1b2da67b9c616a67afbb0fafee567bca66"
   integrity sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==
@@ -7634,6 +7634,13 @@ jsprim@^2.0.2:
     extsprintf "1.3.0"
     json-schema "0.4.0"
     verror "1.10.0"
+
+katex@^0.15.2:
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/katex/-/katex-0.15.2.tgz#c05ece41ab497597b17abca2cecde3e4c0127f9d"
+  integrity sha512-FfZ/f6f8bQdLmJ3McXDNTkKenQkoXkItpW0I9bsG2wgb+8JAY5bwpXFtI8ZVrg5hc1wo1X/UIhdkVMpok46tEQ==
+  dependencies:
+    commander "^8.0.0"
 
 khroma@^1.4.1:
   version "1.4.1"
