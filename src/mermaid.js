@@ -5,6 +5,7 @@
 import { log } from './logger';
 import mermaidAPI from './mermaidAPI';
 import utils from './utils';
+import 'katex/dist/katex.css';
 
 /**
  * ## init

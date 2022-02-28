@@ -1,5 +1,6 @@
 import graphlib from 'graphlib';
 import { select, curveLinear, selectAll } from 'd3';
+import katex from 'katex';
 
 import flowDb from './flowDb';
 import flow from './parser/flow';
@@ -56,10 +57,11 @@ export const addVertices = function (vert, g, svgId, root, doc) {
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
-        label: vertexText.replace(
-          /fa[lrsb]?:fa-[\w-]+/g,
-          (s) => `<i class='${s.replace(':', ' ')}'></i>`
-        ),
+        label: vertexText
+          .replace(/fa[lrsb]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
+          .replace(/\$\$(.*)\$\$/g, (r, c) =>
+            katex.renderToString(c, { throwOnError: true, displayMode: true }).replace(/\n/g, ' ')
+          ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
@@ -139,11 +141,15 @@ export const addVertices = function (vert, g, svgId, root, doc) {
       default:
         _shape = 'rect';
     }
+    const labelText = vertexText.replace(/\$\$(.*)\$\$/g, (r, c) =>
+      katex.renderToString(c, { throwOnError: true, displayMode: true }).replace(/\n/g, ' ')
+    );
+    console.log(labelText);
     // Add the node
     g.setNode(vertex.id, {
       labelStyle: styles.labelStyle,
       shape: _shape,
-      labelText: vertexText,
+      labelText,
       rx: radious,
       ry: radious,
       class: classStr,
@@ -164,7 +170,7 @@ export const addVertices = function (vert, g, svgId, root, doc) {
     log.info('setNode', {
       labelStyle: styles.labelStyle,
       shape: _shape,
-      labelText: vertexText,
+      labelText,
       rx: radious,
       ry: radious,
       class: classStr,
@@ -309,7 +315,11 @@ export const addEdges = function (edges, g) {
     //   edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
     // } else {
     edgeData.labelType = 'text';
-    edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
+    edgeData.label = edge.text
+      .replace(common.lineBreakRegex, '\n')
+      .replace(/\$\$(.*)\$\$/g, (r, c) =>
+        katex.renderToString(c, { throwOnError: true, displayMode: true }).replace(/\n/g, ' ')
+      );
 
     if (typeof edge.style === 'undefined') {
       edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none;';

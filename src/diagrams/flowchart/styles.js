@@ -46,6 +46,12 @@ const getStyles = (options) =>
     stroke-width: 1px;
   }
 
+  .node .katex path {
+    fill: #000;
+    stroke: #000;
+    stroke-width: 1px;
+  }
+
   .node .label {
     text-align: center;
   }

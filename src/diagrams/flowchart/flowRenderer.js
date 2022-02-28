@@ -1,5 +1,6 @@
 import graphlib from 'graphlib';
 import { select, curveLinear, selectAll } from 'd3';
+import katex from 'katex';
 
 import flowDb from './flowDb';
 import flow from './parser/flow';
@@ -61,10 +62,11 @@ export const addVertices = function (vert, g, svgId, root, _doc) {
     if (evaluate(getConfig().flowchart.htmlLabels)) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = {
-        label: vertexText.replace(
-          /fa[lrsb]?:fa-[\w-]+/g,
-          (s) => `<i class='${s.replace(':', ' ')}'></i>`
-        ),
+        label: vertexText
+          .replace(/fa[lrsb]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
+          .replace(/\$\$(.*)\$\$/g, (r, c) =>
+            katex.renderToString(c, { throwOnError: true, displayMode: true }).replace(/\n/g, ' ')
+          ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
@@ -73,7 +75,6 @@ export const addVertices = function (vert, g, svgId, root, _doc) {
       svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
 
       const rows = vertexText.split(common.lineBreakRegex);
-
       for (let j = 0; j < rows.length; j++) {
         const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
         tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
@@ -240,10 +241,13 @@ export const addEdges = function (edges, g) {
 
       if (evaluate(getConfig().flowchart.htmlLabels)) {
         edgeData.labelType = 'html';
-        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text.replace(
-          /fa[lrsb]?:fa-[\w-]+/g,
-          (s) => `<i class='${s.replace(':', ' ')}'></i>`
-        )}</span>`;
+        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text
+          .replace(/fa[lrsb]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
+          .replace(/\$\$(.*)\$\$/g, (r, c) =>
+            katex
+              .renderToString(c, { output: 'mathml', throwOnError: true, displayMode: true })
+              .replace(/\n/g, ' ')
+          )}</span>`;
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
@@ -438,7 +442,6 @@ export const draw = function (text, id) {
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
-
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
