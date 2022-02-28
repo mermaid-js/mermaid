@@ -40,6 +40,14 @@ export default {
         use: ['css-to-string-loader', 'css-loader', 'sass-loader'],
       },
       {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+      },
+      {
         test: /\.jison$/,
         use: {
           loader: path.resolve(__dirname, './loaders/jison.js'),
