@@ -20,8 +20,8 @@ Mermaid is a Javascript based diagramming and charting tool that uses Markdown-i
 Diagramming and documentation costs precious developer time and gets outdated quickly.
 But not having diagrams or docs ruins productivity and hurts organizational learning.<br/>
 Mermaid addresses this problem by enabling users to create easily modifiable diagrams, it can also be made part of production scripts (and other pieces of code).<br/>
-So less time is spent on documenting as a separate task. <br/>
-Even non-programmers can create diagrams through the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).<br/>
+ <br/>
+Mermaid allows even non-programmers to easily create detailed and diagrams through the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).<br/>
 [Tutorials](./docs/Tutorials.md) has video tutorials.
 Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/integrations.md).
 
