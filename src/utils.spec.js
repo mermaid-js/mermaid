@@ -250,7 +250,7 @@ describe('when formatting urls', function () {
 
     config.securityLevel = 'strict';
     result = utils.formatUrl(url, config);
-    expect(result).toEqual('about:blank');
+    expect(result).toEqual(url);
   });
   it('should handle mailto', function () {
     const url = 'mailto:user@user.user';
