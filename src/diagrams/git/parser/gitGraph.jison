@@ -21,6 +21,7 @@
 "commit"                               return 'COMMIT';
 "id:"                                  return 'COMMIT_ID';
 "type:"                                return 'COMMIT_TYPE';
+"msg:"                                 return 'COMMIT_MSG';
 "NORMAL"                               return 'NORMAL';
 "REVERSE"                              return 'REVERSE';
 "HIGHLIGHT"                            return 'HIGHLIGHT';                       
@@ -83,15 +84,89 @@ statement
     ;
 commitStatement
     : COMMIT commit_arg {yy.commit($2)}
-    | COMMIT COMMIT_ID STR {yy.commit('',$3,yy.commitType.NORMAL,'')}
-    | COMMIT COMMIT_TYPE commitType {yy.commit('','',$3,'')}
     | COMMIT COMMIT_TAG STR {yy.commit('','',yy.commitType.NORMAL,$3)}
+    | COMMIT COMMIT_TYPE commitType {yy.commit('','',$3,'')}
     | COMMIT COMMIT_TAG STR COMMIT_TYPE commitType {yy.commit('','',$5,$3)}
     | COMMIT COMMIT_TYPE commitType COMMIT_TAG STR  {yy.commit('','',$3,$5)}
-    | COMMIT COMMIT_ID STR COMMIT_TYPE commitType {yy.commit('',$3,$5,'')}
+    | COMMIT COMMIT_ID STR {yy.commit('',$3,yy.commitType.NORMAL,'')}
     | COMMIT COMMIT_ID STR COMMIT_TAG STR {yy.commit('',$3,yy.commitType.NORMAL,$5)}
+    | COMMIT COMMIT_TAG STR COMMIT_ID STR {yy.commit('',$5,yy.commitType.NORMAL,$3)}
+    | COMMIT COMMIT_ID STR COMMIT_TYPE commitType {yy.commit('',$3,$5,'')}
+    | COMMIT COMMIT_TYPE commitType COMMIT_ID STR {yy.commit('',$5,$3,'')}
     | COMMIT COMMIT_ID STR COMMIT_TYPE commitType COMMIT_TAG STR {yy.commit('',$3,$5,$7)}
     | COMMIT COMMIT_ID STR COMMIT_TAG STR COMMIT_TYPE commitType  {yy.commit('',$3,$7,$5)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_ID STR COMMIT_TAG STR {yy.commit('',$5,$3,$7)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_TAG STR COMMIT_ID STR  {yy.commit('',$7,$3,$5)}
+    | COMMIT COMMIT_TAG STR COMMIT_TYPE commitType COMMIT_ID STR {yy.commit('',$7,$5,$3)}
+    | COMMIT COMMIT_TAG STR COMMIT_ID STR COMMIT_TYPE commitType  {yy.commit('',$5,$7,$3)}
+    | COMMIT COMMIT_MSG STR {yy.commit($3,'',yy.commitType.NORMAL,'')}
+    | COMMIT COMMIT_TAG STR COMMIT_MSG STR {yy.commit($5,'',yy.commitType.NORMAL,$3)}
+    | COMMIT COMMIT_MSG STR COMMIT_TAG STR {yy.commit($3,'',yy.commitType.NORMAL,$5)}
+    | COMMIT COMMIT_MSG STR COMMIT_TYPE commitType {yy.commit($3,'',$5,'')}
+    | COMMIT COMMIT_TYPE commitType COMMIT_MSG STR  {yy.commit($5,'',$3,'')}
+    | COMMIT COMMIT_ID STR COMMIT_MSG STR {yy.commit($5,$3,yy.commitType.NORMAL,'')}
+    | COMMIT COMMIT_MSG STR COMMIT_ID STR {yy.commit($3,$5,yy.commitType.NORMAL,'')}
+    
+    | COMMIT COMMIT_MSG STR COMMIT_TYPE commitType COMMIT_TAG STR {yy.commit($3,'',$5,$7)}
+    | COMMIT COMMIT_MSG STR COMMIT_TAG STR COMMIT_TYPE commitType {yy.commit($3,'',$7,$5)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_MSG STR COMMIT_TAG STR {yy.commit($5,'',$3,$7)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_TAG STR COMMIT_MSG STR {yy.commit($7,'',$3,$5)}
+    | COMMIT COMMIT_TAG STR COMMIT_TYPE commitType COMMIT_MSG STR {yy.commit($7,'',$5,$3)}
+    | COMMIT COMMIT_TAG STR COMMIT_MSG STR COMMIT_TYPE commitType {yy.commit($5,'',$7,$3)}
+
+    | COMMIT COMMIT_MSG STR COMMIT_TYPE commitType COMMIT_ID STR {yy.commit($3,$7,$5,'')}
+    | COMMIT COMMIT_MSG STR COMMIT_ID STR COMMIT_TYPE commitType {yy.commit($3,$5,$7,'')}
+    | COMMIT COMMIT_TYPE commitType COMMIT_MSG STR COMMIT_ID STR {yy.commit($5,$7,$3,'')}
+    | COMMIT COMMIT_TYPE commitType COMMIT_ID STR COMMIT_MSG STR {yy.commit($7,$5,$3,'')}
+    | COMMIT COMMIT_ID STR COMMIT_TYPE commitType COMMIT_MSG STR {yy.commit($7,$3,$5,'')}
+    | COMMIT COMMIT_ID STR COMMIT_MSG STR COMMIT_TYPE commitType {yy.commit($5,$3,$7,'')}
+
+    | COMMIT COMMIT_MSG STR COMMIT_TAG STR COMMIT_ID STR {yy.commit($3,$7,yy.commitType.NORMAL,$5)}
+    | COMMIT COMMIT_MSG STR COMMIT_ID STR COMMIT_TAG STR {yy.commit($3,$5,yy.commitType.NORMAL,$7)}
+    | COMMIT COMMIT_TAG STR COMMIT_MSG STR COMMIT_ID STR {yy.commit($5,$7,yy.commitType.NORMAL,$3)}
+    | COMMIT COMMIT_TAG STR COMMIT_ID STR COMMIT_MSG STR {yy.commit($7,$5,yy.commitType.NORMAL,$3)}
+    | COMMIT COMMIT_ID STR COMMIT_TAG STR COMMIT_MSG STR {yy.commit($7,$3,yy.commitType.NORMAL,$5)}
+    | COMMIT COMMIT_ID STR COMMIT_MSG STR COMMIT_TAG STR {yy.commit($5,$3,yy.commitType.NORMAL,$7)}
+
+    | COMMIT COMMIT_MSG STR COMMIT_ID STR COMMIT_TYPE commitType COMMIT_TAG STR {yy.commit($3,$5,$7,$9)}
+    | COMMIT COMMIT_MSG STR COMMIT_ID STR COMMIT_TAG STR COMMIT_TYPE commitType {yy.commit($3,$5,$9,$7)}
+    | COMMIT COMMIT_MSG STR COMMIT_TYPE commitType COMMIT_ID STR COMMIT_TAG STR {yy.commit($3,$7,$5,$9)}
+    | COMMIT COMMIT_MSG STR COMMIT_TYPE commitType COMMIT_TAG STR COMMIT_ID STR {yy.commit($3,$9,$5,$7)}
+    | COMMIT COMMIT_MSG STR COMMIT_TAG STR COMMIT_ID STR COMMIT_TYPE commitType {yy.commit($3,$7,$9,$5)}
+    | COMMIT COMMIT_MSG STR COMMIT_TAG STR COMMIT_TYPE commitType COMMIT_ID STR {yy.commit($3,$9,$7,$5)}
+
+    | COMMIT COMMIT_ID STR COMMIT_MSG STR COMMIT_TYPE commitType COMMIT_TAG STR {yy.commit($5,$3,$7,$9)}
+    | COMMIT COMMIT_ID STR COMMIT_MSG STR COMMIT_TAG STR COMMIT_TYPE commitType {yy.commit($5,$3,$9,$7)}
+    | COMMIT COMMIT_ID STR COMMIT_TYPE commitType COMMIT_MSG STR COMMIT_TAG STR {yy.commit($7,$3,$5,$9)}
+    | COMMIT COMMIT_ID STR COMMIT_TYPE commitType COMMIT_TAG STR COMMIT_MSG STR {yy.commit($9,$3,$5,$7)}
+    | COMMIT COMMIT_ID STR COMMIT_TAG STR COMMIT_MSG STR COMMIT_TYPE commitType {yy.commit($7,$3,$9,$5)}
+    | COMMIT COMMIT_ID STR COMMIT_TAG STR COMMIT_TYPE commitType COMMIT_MSG STR {yy.commit($9,$3,$7,$5)}
+
+    | COMMIT COMMIT_TAG STR COMMIT_ID STR COMMIT_TYPE commitType COMMIT_MSG STR {yy.commit($9,$5,$7,$3)}
+    | COMMIT COMMIT_TAG STR COMMIT_ID STR COMMIT_MSG STR COMMIT_TYPE commitType {yy.commit($7,$5,$9,$3)}
+    | COMMIT COMMIT_TAG STR COMMIT_TYPE commitType COMMIT_ID STR COMMIT_MSG STR {yy.commit($9,$7,$5,$3)}
+    | COMMIT COMMIT_TAG STR COMMIT_TYPE commitType COMMIT_MSG STR COMMIT_ID STR {yy.commit($7,$9,$5,$3)}
+    | COMMIT COMMIT_TAG STR COMMIT_MSG STR COMMIT_ID STR COMMIT_TYPE commitType {yy.commit($5,$7,$9,$3)}
+    | COMMIT COMMIT_TAG STR COMMIT_MSG STR COMMIT_TYPE commitType COMMIT_ID STR {yy.commit($5,$9,$7,$3)}
+
+    | COMMIT COMMIT_TYPE commitType COMMIT_ID STR COMMIT_MSG STR COMMIT_TAG STR {yy.commit($7,$5,$3,$9)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_ID STR COMMIT_TAG STR COMMIT_MSG STR {yy.commit($9,$5,$3,$7)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_TAG STR COMMIT_MSG STR COMMIT_ID STR {yy.commit($7,$9,$3,$5)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_TAG STR COMMIT_ID STR COMMIT_MSG STR {yy.commit($9,$7,$3,$5)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_MSG STR COMMIT_ID STR COMMIT_TAG STR {yy.commit($5,$7,$3,$9)}
+    | COMMIT COMMIT_TYPE commitType COMMIT_MSG STR COMMIT_TAG STR COMMIT_ID STR {yy.commit($5,$9,$3,$7)}
+
+
+    // | COMMIT COMMIT_ID STR {yy.commit('',$3,yy.commitType.NORMAL,'')}
+    // | COMMIT COMMIT_TYPE commitType {yy.commit('','',$3,'')}
+    // | COMMIT COMMIT_TAG STR {yy.commit('','',yy.commitType.NORMAL,$3)}
+    // | COMMIT COMMIT_MSG STR {yy.commit($3,'',yy.commitType.NORMAL,'')}
+    // | COMMIT COMMIT_TAG STR COMMIT_TYPE commitType {yy.commit('','',$5,$3)}
+    // | COMMIT COMMIT_TYPE commitType COMMIT_TAG STR  {yy.commit('','',$3,$5)}
+    // | COMMIT COMMIT_ID STR COMMIT_TYPE commitType {yy.commit('',$3,$5,'')}
+    // | COMMIT COMMIT_ID STR COMMIT_TAG STR {yy.commit('',$3,yy.commitType.NORMAL,$5)}
+    // | COMMIT COMMIT_ID STR COMMIT_TYPE commitType COMMIT_TAG STR {yy.commit('',$3,$5,$7)}
+    // | COMMIT COMMIT_ID STR COMMIT_TAG STR COMMIT_TYPE commitType  {yy.commit('',$3,$7,$5)}
     ;
 commit_arg
     : /* empty */ {$$ = ""}
