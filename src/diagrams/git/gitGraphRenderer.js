@@ -10,6 +10,8 @@ import { getConfig } from '../../config';
 let allCommitsDict = {};
 let branchNum;
 
+const commitType = db.commitType;
+
 let branchPos = {};
 let commitPos = {};
 let maxPos = 0;
@@ -111,13 +113,40 @@ const drawCommits = (svg, commits, modifyGraph) => {
     // log.debug('drawCommits (commit branchPos)', commit, branchPos);
     const y = branchPos[commit.branch].pos;
 
+    console.log(commit);
+
     // Don't draw the commits now but calculate the positioning which is used by the branmch lines etc.
     if (modifyGraph) {
-      const line = gBullets.append('circle');
-      line.attr('cx', pos + 10);
-      line.attr('cy', y);
-      line.attr('r', 10);
-      line.attr('class', 'commit commit-'+commit.type + ' ' + commit.id + ' commit' + branchPos[commit.branch].index);
+      let typeClass;
+      switch(commit.type) {
+        case commitType.NORMAL:
+          typeClass = 'commit-normal';
+          break;
+          case commitType.REVERSE:
+          typeClass = 'commit-reverse';
+          break;
+        case commitType.HIGHLIGHT:
+          typeClass = 'commit-highlight';
+          break;
+        case commitType.MERGE:
+          typeClass = 'commit-merge';
+          break;
+        default:
+          typeClass = 'commit-normal';
+      }
+
+      const circle = gBullets.append('circle');
+      circle.attr('cx', pos + 10);
+      circle.attr('cy', y);
+      circle.attr('r', commit.type === commitType.MERGE ? 9:10);
+      circle.attr('class', 'commit ' + commit.id  + ' commit' + branchPos[commit.branch].index);
+      if(commit.type === commitType.MERGE) {
+        const circle2 = gBullets.append('circle');
+        circle2.attr('cx', pos + 10);
+        circle2.attr('cy', y);
+        circle2.attr('r', 6);
+        circle2.attr('class', 'commit '+typeClass + ' ' + commit.id  + ' commit' + branchPos[commit.branch].index);
+      }
     }
     commitPos[commit.id] = {x: pos + 10, y: y};
 

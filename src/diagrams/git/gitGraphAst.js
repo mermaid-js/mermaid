@@ -7,9 +7,6 @@ let curBranch = 'master';
 let direction = 'LR';
 let seq = 0;
 
-/**
- *
- */
 function getId() {
   return random({ length: 7 });
 }

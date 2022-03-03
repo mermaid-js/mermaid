@@ -177,6 +177,35 @@ class Theme {
       this.relationLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
+
+    /* git */
+    this.git0 = this.git0 || this.primaryColor;
+    this.git1 = this.git1 || this.secondaryColor;
+    this.git2 = this.git2 || this.tertiaryColor;
+    this.git3 = this.git3 || adjust(this.primaryColor, { h: -30 });
+    this.git4 = this.git4 || adjust(this.primaryColor, { h: -60 });
+    this.git5 = this.git5 || adjust(this.primaryColor, { h: -90 });
+    this.git6 = this.git6 || adjust(this.primaryColor, { h: +60 });
+    this.git7 = this.git7 || adjust(this.primaryColor, { h: +120 });
+    if (this.darkMode) {
+      this.git0 = lighten(this.git0, 25);
+      this.git1 = lighten(this.git1, 25);
+      this.git2 = lighten(this.git2, 25);
+      this.git3 = lighten(this.git3, 25);
+      this.git4 = lighten(this.git4, 25);
+      this.git5 = lighten(this.git5, 25);
+      this.git6 = lighten(this.git6, 25);
+      this.git7 = lighten(this.git7, 25);
+    } else {
+      this.git0 = darken(this.git0, 25);
+      this.git1 = darken(this.git1, 25);
+      this.git2 = darken(this.git2, 25);
+      this.git3 = darken(this.git3, 25);
+      this.git4 = darken(this.git4, 25);
+      this.git5 = darken(this.git5, 25);
+      this.git6 = darken(this.git6, 25);
+      this.git7 = darken(this.git7, 25);
+    }
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
