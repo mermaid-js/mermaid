@@ -39,10 +39,13 @@
        commit
        branch b2
        commit
-       
+
     </div>
     <div class="mermaid" style="width: 100%; height: 20%;">
       gitGraph:
+      commit
+      branch hotfix
+      checkout hotfix
       commit
       branch develop
       checkout develop
@@ -51,9 +54,6 @@
       checkout featureB
       commit
       checkout master
-      branch hotfix
-      checkout hotfix
-      commit
       checkout develop
       commit
       checkout featureB
@@ -82,7 +82,7 @@
       merge master
       checkout develop
       merge release
-      
+
    </div>
     <div class="mermaid2" style="width: 100%; height: 20%;">
       gitGraph:

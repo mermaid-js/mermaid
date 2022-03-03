@@ -38,7 +38,7 @@ const getStyles = (options) =>
   .label7  { fill: ${options.fillType7}; }
 
   // .arrow { stroke : ${options.tertiaryColor}; stroke-width: 8; stroke-linecap: round; }
-  .arrow { stroke : #cc33cc; stroke-width: 8; stroke-linecap: round; }
+  .arrow { stroke : #cc33cc; stroke-width: 8; stroke-linecap: round; fill: none}
   // #arrowhead { fill: ${options.tertiaryColor};}
   #arrowhead { fill: #990099;}
   .branchLabel  { }

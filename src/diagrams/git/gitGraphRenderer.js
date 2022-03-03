@@ -133,17 +133,6 @@ const drawCommits = (svg, commits) => {
 
 const drawArrow = (svg, commit1, commit2) => {
   const conf = getConfig();
-  // const config = getConfig().gitGraph;
-  // const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  // line.setAttribute('x1', commitPos[commit1.id].x);
-  // line.setAttribute('y1', commitPos[commit1.id].y);
-  // line.setAttribute('x2', commitPos[commit2.id].x);
-  // line.setAttribute('y2', commitPos[commit2.id].y);
-  // line.setAttribute('class', 'commit-line');
-  // line.setAttribute('stroke-width', config.arrow.strokeWidth);
-  // line.setAttribute('stroke', config.arrow.stroke);
-  // line.setAttribute('marker-end', 'url(#arrowhead)');
-  // return line;
 
   const p1 = commitPos[commit1.id];
   const p2 = commitPos[commit2.id];
@@ -161,10 +150,21 @@ const drawArrow = (svg, commit1, commit2) => {
     url = url.replace(/\)/g, '\\)');
   }
 
-  const arrow = svg.append('line').attr('x1', p1.x)
-      .attr('y1', p1.y)
-      .attr('x2', p2.x)
-      .attr('y2', p2.y)
+  let arc = '';
+  let radius = 0;
+  let offset = 0
+  if(p1.y < p2.y) {
+    arc = 'A 20 20, 0, 0, 0,';
+    radius = 20;
+    offset = 20;
+  }
+  if(p1.y > p2.y) {
+    arc = 'A 20 20, 0, 0, 1,';
+    radius = -20;
+    offset = 20;
+  }
+
+  const arrow = svg.append('path').attr('d', `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc} ${p1.x + offset} ${p2.y} L ${p2.x} ${p2.y}`)
       .attr('class', 'arrow')
       .attr('marker-end', 'url(' + url + '#arrowhead)');
 }
@@ -176,6 +176,7 @@ const drawArrows = (svg, commits) => {
   const k = Object.keys(commits);
   console.log('drawArrows', k);
   k.forEach((key, index) => {
+    // if(index>3) return;
     const commit = commits[key];
     if(commit.parents && commit.parents.length>0) {
       commit.parents.forEach((parent) => {
