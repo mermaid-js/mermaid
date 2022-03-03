@@ -7,9 +7,6 @@ let curBranch = 'master';
 let direction = 'LR';
 let seq = 0;
 
-/**
- *
- */
 function getId() {
   return random({ length: 7 });
 }
@@ -124,6 +121,7 @@ export const merge = function (otherBranch) {
     seq: seq++,
     parents: [head == null ? null : head.id, branches[otherBranch]],
     branch: curBranch,
+    type: commitType.MERGE,
   };
   head = commit;
   commits[commit.id] = commit;
@@ -259,6 +257,7 @@ export const commitType = {
   NORMAL: 0,
   REVERSE: 1,
   HIGHLIGHT: 2,
+  MERGE: 3,
 };
 
 export default {
