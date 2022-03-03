@@ -49,13 +49,16 @@
       commit
       branch develop
       checkout develop
-      commit
+      commit id:"ash" tag:"abc"
       branch featureB
       checkout featureB
-      commit
+      commit type:HIGHLIGHT
       checkout master
+      branch hotfix
+      checkout hotfix
+      commit type:NORMAL
       checkout develop
-      commit
+      commit type:REVERSE
       checkout featureB
       commit
       checkout master

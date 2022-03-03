@@ -258,6 +258,8 @@ export const draw = function (text, id) {
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
 
+  const securityLevel = getConfig().securityLevel;
+
   log.info(stateDb.getRootDocV2());
   stateDb.extract(stateDb.getRootDocV2());
   log.info(stateDb.getRootDocV2());
@@ -281,10 +283,20 @@ export const draw = function (text, id) {
   setupNode(g, undefined, stateDb.getRootDocV2(), true);
 
   // Set up an SVG group so that we can translate the final graph.
-  const svg = select(`[id="${id}"]`);
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+  const svg = root.select(`[id="${id}"]`);
 
   // Run the renderer. This is what draws the final graph.
-  const element = select('#' + id + ' g');
+
+  const element = root.select('#' + id + ' g');
   render(element, g, ['barb'], 'statediagram', id);
 
   const padding = 8;

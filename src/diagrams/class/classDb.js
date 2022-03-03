@@ -143,6 +143,7 @@ export const addMember = function (className, member) {
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
       // Remove leading and trailing brackets
+      // theClass.annotations.push(memberString.substring(2, memberString.length - 2));
       theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
       theClass.methods.push(sanitizeText(memberString));
@@ -212,8 +213,10 @@ export const setLink = function (ids, linkStr, target) {
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof classes[id] !== 'undefined') {
       classes[id].link = utils.formatUrl(linkStr, config);
-      if (typeof target === 'string') {
-        classes[id].linkTarget = target;
+      if (config.securityLevel === 'sandbox') {
+        classes[id].linkTarget = '_top';
+      } else if (typeof target === 'string') {
+        classes[id].linkTarget = sanitizeText(target);
       } else {
         classes[id].linkTarget = '_blank';
       }

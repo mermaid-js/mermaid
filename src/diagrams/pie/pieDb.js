@@ -1,9 +1,12 @@
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
+import common from '../common/common';
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
 
 let sections = {};
 let title = '';
+let description = '';
 let showData = false;
 
 export const parseDirective = function (statement, context, type) {
@@ -11,6 +14,7 @@ export const parseDirective = function (statement, context, type) {
 };
 
 const addSection = function (id, value) {
+  id = common.sanitizeText(id, configApi.getConfig());
   if (typeof sections[id] === 'undefined') {
     sections[id] = value;
     log.debug('Added new section :', id);
@@ -19,7 +23,7 @@ const addSection = function (id, value) {
 const getSections = () => sections;
 
 const setTitle = function (txt) {
-  title = txt;
+  title = common.sanitizeText(txt, configApi.getConfig());
 };
 
 const setShowData = function (toggle) {
@@ -33,6 +37,15 @@ const getShowData = function () {
 const getTitle = function () {
   return title;
 };
+
+const setAccDescription = function (txt) {
+  description = common.sanitizeText(txt, configApi.getConfig());
+};
+
+const getAccDescription = function () {
+  return description;
+};
+
 const cleanupValue = function (value) {
   if (value.substring(0, 1) === ':') {
     value = value.substring(1).trim();
@@ -62,5 +75,7 @@ export default {
   getTitle,
   setShowData,
   getShowData,
+  getAccDescription,
+  setAccDescription,
   // parseError
 };

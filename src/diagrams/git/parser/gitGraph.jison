@@ -27,7 +27,7 @@
 "tag:"                                 return 'COMMIT_TAG';
 "branch"                               return 'BRANCH';
 "merge"                                return 'MERGE';
-"reset"                                return 'RESET';
+// "reset"                                return 'RESET';
 "checkout"                             return 'CHECKOUT';
 "LR"                                   return 'DIR';
 "BT"                                   return 'DIR';
@@ -79,7 +79,7 @@ statement
     | BRANCH ID {yy.branch($2)}
     | CHECKOUT ID {yy.checkout($2)}
     | MERGE ID {yy.merge($2)}
-    | RESET reset_arg {yy.reset($2)}
+    // | RESET reset_arg {yy.reset($2)}
     ;
 commitStatement
     : COMMIT commit_arg {yy.commit($2)}
@@ -102,11 +102,11 @@ commitType
     | REVERSE   { $$=yy.commitType.REVERSE;}
     | HIGHLIGHT { $$=yy.commitType.HIGHLIGHT;}
     ;    
-reset_arg
-    : 'HEAD' reset_parents{$$ = $1+ ":" + $2 }
-    | ID reset_parents{$$ = $1+ ":"  + yy.count; yy.count = 0}
-    ;
-reset_parents
-    : /* empty */ {yy.count = 0}
-    | CARET reset_parents { yy.count += 1 }
-    ;
+// reset_arg
+//     : 'HEAD' reset_parents{$$ = $1+ ":" + $2 }
+//     | ID reset_parents{$$ = $1+ ":"  + yy.count; yy.count = 0}
+//     ;
+// reset_parents
+//     : /* empty */ {yy.count = 0}
+//     | CARET reset_parents { yy.count += 1 }
+//     ;

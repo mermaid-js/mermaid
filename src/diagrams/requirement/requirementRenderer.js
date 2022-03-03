@@ -8,6 +8,7 @@ import common from '../common/common';
 import { parser } from './parser/requirementDiagram';
 import requirementDb from './requirementDb';
 import markers from './requirementMarkers';
+import { getConfig } from '../../config';
 
 const conf = {};
 let relCnt = 0;
@@ -321,7 +322,19 @@ export const draw = (text, id) => {
   parser.yy.clear();
   parser.parse(text);
 
-  const svg = select(`[id='${id}']`);
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and ocument for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
+  const svg = root.select(`[id='${id}']`);
   markers.insertLineEndings(svg, conf);
 
   const g = new graphlib.Graph({
