@@ -99,7 +99,7 @@ const drawText = (txt) => {
 }
 
 
-const drawCommits = (svg, commits) => {
+const drawCommits = (svg, commits, modifyGraph) => {
   const gBullets = svg.append('g').attr('class', 'commit-bullets');
   const gLabels = svg.append('g').attr('class', 'commit-labels');
   let pos = 0;
@@ -110,20 +110,26 @@ const drawCommits = (svg, commits) => {
 
     // log.debug('drawCommits (commit branchPos)', commit, branchPos);
     const y = branchPos[commit.branch].pos;
-    const line = gBullets.append('circle');
-    line.attr('cx', pos + 10);
-    line.attr('cy', y);
-    line.attr('r', 10);
-    line.attr('class', 'commit commit-'+commit.type + ' ' + commit.id + ' commit' + branchPos[commit.branch].index);
+
+    // Don't draw the commits now but calculate the positioning which is used by the branmch lines etc.
+    if (modifyGraph) {
+      const line = gBullets.append('circle');
+      line.attr('cx', pos + 10);
+      line.attr('cy', y);
+      line.attr('r', 10);
+      line.attr('class', 'commit commit-'+commit.type + ' ' + commit.id + ' commit' + branchPos[commit.branch].index);
+    }
     commitPos[commit.id] = {x: pos + 10, y: y};
 
-    const text = gLabels.append('text')
-      // .attr('x', pos + 10)
-      .attr('y', y + 25)
-      .attr('class', 'commit-label')
-      .text(commit.id);
-    let bbox = text.node().getBBox();
-    text.attr('x', pos + 10 - bbox.width / 2);
+    if (modifyGraph) {
+      const text = gLabels.append('text')
+        // .attr('x', pos + 10)
+        .attr('y', y + 25)
+        .attr('class', 'commit-label')
+        .text(commit.id);
+      let bbox = text.node().getBBox();
+      text.attr('x', pos + 10 - bbox.width / 2);
+    }
     pos +=50;
     if(pos>maxPos) {
       maxPos = pos;
@@ -153,20 +159,34 @@ const drawArrow = (svg, commit1, commit2) => {
   let arc = '';
   let radius = 0;
   let offset = 0
+  let colorClassNum;
+  let lineDef;
   if(p1.y < p2.y) {
     arc = 'A 20 20, 0, 0, 0,';
     radius = 20;
     offset = 20;
+  // Figure out the color of the arrow,arrows going down take the color from the destination branch
+    colorClassNum = branchPos[commit2.branch].index;
+
+    lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc} ${p1.x + offset} ${p2.y} L ${p2.x} ${p2.y}`;
   }
   if(p1.y > p2.y) {
-    arc = 'A 20 20, 0, 0, 1,';
-    radius = -20;
+    arc = 'A 20 20, 0, 0, 0,';
+    radius = 20;
     offset = 20;
+  // Arrows going up take the color from the source branch
+    colorClassNum = branchPos[commit1.branch].index;
+    lineDef = `M ${p1.x} ${p1.y} L ${p2.x-radius} ${p1.y} ${arc} ${p2.x} ${p1.y-offset} L ${p2.x} ${p2.y}`;
   }
 
-  const arrow = svg.append('path').attr('d', `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc} ${p1.x + offset} ${p2.y} L ${p2.x} ${p2.y}`)
-      .attr('class', 'arrow')
-      .attr('marker-end', 'url(' + url + '#arrowhead)');
+  if(p1.y === p2.y) {
+    colorClassNum = branchPos[commit1.branch].index
+    lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc} ${p1.x + offset} ${p2.y} L ${p2.x} ${p2.y}`;
+  }
+
+  const arrow = svg.append('path').attr('d', lineDef)
+      .attr('class', 'arrow arrow' +  colorClassNum)
+      // .attr('marker-end', 'url(' + url + '#arrowhead)');
 }
 
 const drawArrows = (svg, commits) => {
@@ -278,14 +298,13 @@ export const draw = function (txt, id, ver) {
     .attr('markerWidth', 24)
     .attr('markerHeight', 24)
     .attr('orient', 'auto')
-    // .attr('stroke', 'red')
-    // .attr('fill', 'red')
     .append('path')
     .attr('d', 'M 0 0 L 20 10 L 0 20 z'); // this is actual shape for arrowhead
 
-  drawCommits(diagram, allCommitsDict);
+  drawCommits(diagram, allCommitsDict, false);
   drawBranches(diagram, branches);
   drawArrows(diagram, allCommitsDict);
+  drawCommits(diagram, allCommitsDict, true);
 
   const padding = config.diagramPadding;
   const svgBounds = diagram.node().getBBox();
