@@ -18,10 +18,10 @@ Mermaid 是一个基于 Javascript 的图表绘制工具，通过解析类 Markd
 > Doc-Rot 是 Mermaid 致力于解决的一个难题。
 
 绘图和编写文档花费了开发者宝贵的开发时间，而且随着业务的变更，它很快就会过期。 但是如果缺少了图表或文档，对于生产力和团队新人的业务学习都会产生巨大的阻碍。 <br/>
-Mermaid 通过减少创建可修改的图表所需要的时间、精力和工具来解决这一难题，从而提高了内容的智能化和可重用性。 作为一个基于文本的绘图工具， Mermaid 天生就易于维护和更新，它也可以作为生产脚本（或其他代码）的一部分，使得文档编写变得更加简单。 有了它之后，开发者可以从维护文档这个与开发割离且麻烦的任务中解放出来。 <br/>
-即使是从未接触过编程的非专业人员也可以通过 [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/)来创建图表。<br/>
-你可以访问 [教程](./docs/Tutorials.md) 来查看 Live Editor 的视频教程。
-U也可以查看 [Mermaid 的集成和使用](./docs/integrations.md) 这个清单来检查你的文档工具是否已经集成了 Mermaid 支持。
+Mermaid 通过允许用户创建便于修改的图表来解决这一难题，它也可以作为生产脚本（或其他代码）的一部分。<br/>
+<br/>
+Mermaid 甚至能让非程序员也能通过 [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/) 轻松创建详细的图表。<br/>
+你可以访问 [教程](./docs/Tutorials.md) 来查看 Live Editor 的视频教程，也可以查看 [Mermaid 的集成和使用](./docs/integrations.md) 这个清单来检查你的文档工具是否已经集成了 Mermaid 支持。
 
 如果想要查看关于 Mermaid 更详细的介绍及基础使用方式，可以查看 [入门指引](./docs/n00b-overview.md) and [用法](./docs/usage.md).
 
@@ -31,7 +31,7 @@ U也可以查看 [Mermaid 的集成和使用](./docs/integrations.md) 这个清�
 
 ## 示例
 
-__下面是一些使用 Mermaid 和类 Markdown 语法创建的图表示例。点击 [语法](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference) 查看详情__
+__下面是一些可以使用 Mermaid 创建的图表示例。点击 [语法](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference) 查看详情。__
 <table>
 <!-- <Flowchart> -->
 
