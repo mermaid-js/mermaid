@@ -938,9 +938,9 @@ Returns **[object][5]** The siteConfig
 
 ### Parameters
 
--   `text`
+-   `text`  
 
-Returns **any**
+Returns **any** 
 
 ## getSiteConfig
 
@@ -1049,13 +1049,13 @@ $(function () {
       inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
       element will be removed when rendering is completed.
 
-Returns **any**
+Returns **any** 
 
 ## updateRendererConfigs
 
 ### Parameters
 
--   `conf` **any**
+-   `conf` **any** 
 
 ## reinitialize
 
@@ -1065,9 +1065,9 @@ To be removed
 
 ### Parameters
 
--   `options` **any**
+-   `options` **any** 
 
-##
+## 
 
 ## mermaidAPI configuration defaults
 
