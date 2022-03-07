@@ -938,9 +938,9 @@ Returns **[object][5]** The siteConfig
 
 ### Parameters
 
--   `text`
+-   `text`  
 
-Returns **any**
+Returns **any** 
 
 ## getSiteConfig
 
@@ -1019,7 +1019,7 @@ Pushes in a directive to the configuration
 
 | Parameter | Description                                                   | Type       | Required | Values                                       |
 | --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
-| conf      | base set of values, which currentConfig could be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
+| conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
 
 **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
@@ -1049,13 +1049,13 @@ $(function () {
       inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
       element will be removed when rendering is completed.
 
-Returns **any**
+Returns **any** 
 
 ## updateRendererConfigs
 
 ### Parameters
 
--   `conf` **any**
+-   `conf` **any** 
 
 ## reinitialize
 
@@ -1065,9 +1065,9 @@ To be removed
 
 ### Parameters
 
--   `options` **any**
+-   `options` **any** 
 
-##
+## 
 
 ## mermaidAPI configuration defaults
 
