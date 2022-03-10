@@ -14,12 +14,14 @@ const commitType = db.commitType;
 
 let branchPos = {};
 let commitPos = {};
+let lanes = [];
 let maxPos = 0;
 const clear = () => {
   branchPos = {};
   commitPos = {};
   allCommitsDict = {};
   maxPos = 0;
+  lanes = []
 };
 
 // let apiConfig = {};
@@ -214,6 +216,30 @@ const hasOverlappingCommits = (commit1, commit2, allCommits) => {
   // }
   return overlappingComits.length > 0;
 }
+/**
+ *
+ */
+const findLane = (y1, y2, _depth) => {
+  const depth = _depth || 0;
+
+  const candidate =  y1 + Math.abs(y1 - y2) / 2;
+  if(depth > 5) {
+    return candidate;
+  }
+
+  let ok = true;
+  for(let i = 0; i < lanes.length; i++) {
+    if(Math.abs(lanes[i] - candidate) < 10) {
+      ok = false;
+    }
+  }
+  if(ok) {
+    lanes.push(candidate);
+    return candidate;
+  }
+  const diff = math.abs(y1 - y2);
+  return findLane(y1, y2-(diff/5), depth);
+}
 
 const drawArrow = (svg, commit1, commit2, allCommits) => {
   const conf = getConfig();
@@ -249,7 +275,7 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
     // Figure out the color of the arrow,arrows going down take the color from the destination branch
       colorClassNum = branchPos[commit2.branch].index;
 
-      const lineY = p1.y + Math.abs(p1.y - p2.y) / 2;
+      const lineY = findLane(p1.y, p2.y);
 
       lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY-radius} ${arc} ${p1.x + offset} ${lineY} L ${p2.x-radius} ${lineY} ${arc2} ${p2.x} ${lineY+offset} L ${p2.x} ${p2.y}`;
   } else {
@@ -315,6 +341,8 @@ const drawBranches = (svg, branches) => {
       line.attr('x2', maxPos);
       line.attr('y2', pos);
       line.attr('class', 'branch branch'+index)
+
+      lanes.push(pos);
 
       // Create the actual text element
       const labelElement = drawText(branch.name);
