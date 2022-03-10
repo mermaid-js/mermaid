@@ -112,9 +112,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
 
     // log.debug('drawCommits (commit branchPos)', commit, branchPos);
     const y = branchPos[commit.branch].pos;
-
-    console.log(commit);
-
+    const x  = pos + 10;
     // Don't draw the commits now but calculate the positioning which is used by the branmch lines etc.
     if (modifyGraph) {
       let typeClass;
@@ -135,17 +133,38 @@ const drawCommits = (svg, commits, modifyGraph) => {
           typeClass = 'commit-normal';
       }
 
-      const circle = gBullets.append('circle');
-      circle.attr('cx', pos + 10);
-      circle.attr('cy', y);
-      circle.attr('r', commit.type === commitType.MERGE ? 9:10);
-      circle.attr('class', 'commit ' + commit.id  + ' commit' + branchPos[commit.branch].index);
-      if(commit.type === commitType.MERGE) {
-        const circle2 = gBullets.append('circle');
-        circle2.attr('cx', pos + 10);
-        circle2.attr('cy', y);
-        circle2.attr('r', 6);
-        circle2.attr('class', 'commit '+typeClass + ' ' + commit.id  + ' commit' + branchPos[commit.branch].index);
+      if (commit.type === commitType.HIGHLIGHT) {
+        const circle = gBullets.append('rect');
+        circle.attr('x', x-10);
+        circle.attr('y', y-10);
+        circle.attr('height', 20);
+        circle.attr('width', 20);
+        circle.attr('class', 'commit ' + commit.id  + ' commit-highlight' + branchPos[commit.branch].index + ' ' + typeClass+'-outer');
+        gBullets.append('rect')
+        .attr('x', x-6)
+        .attr('y', y-6)
+        .attr('height', 12)
+        .attr('width', 12)
+        .attr('class', 'commit ' + commit.id  + ' commit' + branchPos[commit.branch].index + ' ' + typeClass+'-inner');
+      } else {
+        const circle = gBullets.append('circle');
+        circle.attr('cx', x);
+        circle.attr('cy', y);
+        circle.attr('r', commit.type === commitType.MERGE ? 9:10);
+        circle.attr('class', 'commit ' + commit.id  + ' commit' + branchPos[commit.branch].index);
+        if(commit.type === commitType.MERGE) {
+          const circle2 = gBullets.append('circle');
+          circle2.attr('cx', x);
+          circle2.attr('cy', y);
+          circle2.attr('r', 6);
+          circle2.attr('class', 'commit '+typeClass + ' ' + commit.id  + ' commit' + branchPos[commit.branch].index);
+        }
+        if(commit.type === commitType.REVERSE) {
+          const cross = gBullets.append('path');
+          cross
+            .attr('d', `M ${x-5},${y-5}L${x+5},${y+5}M${x-5},${y+5}L${x+5},${y-5}`)
+            .attr('class', 'commit '+typeClass + ' ' + commit.id  + ' commit' + branchPos[commit.branch].index);
+        }
       }
     }
     commitPos[commit.id] = {x: pos + 10, y: y};
@@ -166,12 +185,43 @@ const drawCommits = (svg, commits, modifyGraph) => {
   });
 }
 
-const drawArrow = (svg, commit1, commit2) => {
+/**
+ * Detect if there are other commits between commit1s x-position and commit2s x-position on the same branch as commit2.
+ * @param {*} commit1
+ * @param {*} commit2
+ * @returns
+ */
+const hasOverlappingCommits = (commit1, commit2, allCommits) => {
+  const commit1Pos = commitPos[commit2.id];
+  const commit2Pos = commitPos[commit1.id];
+    // if(commit1.id.match('4-')) {
+    //   log.info('Ugge 1', commit1, commit2);
+    // }
+
+  // Find commits on the same branch as commit2
+  const keys = Object.keys(allCommits);
+  const overlappingComits = keys.filter((key) => {
+    // if(commit1.id.match('4-') && allCommits[key].branch === commit2.branch) {
+    //   log.info('Ugge seq of the commit', allCommits[key].seq, ' commit 1 seq', commit1.seq ,' commit2 seq' ,commit2.seq);
+    // }
+    return allCommits[key].branch === commit2.branch && allCommits[key].seq > commit1.seq && allCommits[key].seq < commit2.seq
+  });
+
+
+
+  // if (commit1Pos.x === commit2Pos.x) {
+  //   return commit1Pos.y === commit2Pos.y;
+  // }
+  return overlappingComits.length > 0;
+}
+
+const drawArrow = (svg, commit1, commit2, allCommits) => {
   const conf = getConfig();
 
   const p1 = commitPos[commit1.id];
   const p2 = commitPos[commit2.id];
-  log.debug('drawArrow', p1, p2);
+  const overlappingCommits = hasOverlappingCommits(commit1, commit2, allCommits);
+  log.debug('drawArrow', p1, p2, overlappingCommits, commit1.id, commit2.id);
 
   let url = '';
   if (conf.arrowMarkerAbsolute) {
@@ -186,33 +236,47 @@ const drawArrow = (svg, commit1, commit2) => {
   }
 
   let arc = '';
+  let arc2 = '';
   let radius = 0;
   let offset = 0
-  let colorClassNum;
+  let colorClassNum = branchPos[commit2.branch].index
   let lineDef;
-  if(p1.y < p2.y) {
-    arc = 'A 20 20, 0, 0, 0,';
-    radius = 20;
-    offset = 20;
-  // Figure out the color of the arrow,arrows going down take the color from the destination branch
-    colorClassNum = branchPos[commit2.branch].index;
+  if(overlappingCommits) {
+      arc = 'A 10 10, 0, 0, 0,';
+      arc2 = 'A 10 10, 0, 0, 1,';
+      radius = 10;
+      offset = 10;
+    // Figure out the color of the arrow,arrows going down take the color from the destination branch
+      colorClassNum = branchPos[commit2.branch].index;
 
-    lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc} ${p1.x + offset} ${p2.y} L ${p2.x} ${p2.y}`;
-  }
-  if(p1.y > p2.y) {
-    arc = 'A 20 20, 0, 0, 0,';
-    radius = 20;
-    offset = 20;
-  // Arrows going up take the color from the source branch
-    colorClassNum = branchPos[commit1.branch].index;
-    lineDef = `M ${p1.x} ${p1.y} L ${p2.x-radius} ${p1.y} ${arc} ${p2.x} ${p1.y-offset} L ${p2.x} ${p2.y}`;
-  }
+      const lineY = p1.y + Math.abs(p1.y - p2.y) / 2;
 
-  if(p1.y === p2.y) {
-    colorClassNum = branchPos[commit1.branch].index
-    lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc} ${p1.x + offset} ${p2.y} L ${p2.x} ${p2.y}`;
-  }
+      lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY-radius} ${arc} ${p1.x + offset} ${lineY} L ${p2.x-radius} ${lineY} ${arc2} ${p2.x} ${lineY+offset} L ${p2.x} ${p2.y}`;
+  } else {
 
+    if(p1.y < p2.y) {
+      arc = 'A 20 20, 0, 0, 0,';
+      radius = 20;
+      offset = 20;
+    // Figure out the color of the arrow,arrows going down take the color from the destination branch
+      colorClassNum = branchPos[commit2.branch].index;
+
+      lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc} ${p1.x + offset} ${p2.y} L ${p2.x} ${p2.y}`;
+    }
+    if(p1.y > p2.y) {
+      arc = 'A 20 20, 0, 0, 0,';
+      radius = 20;
+      offset = 20;
+    // Arrows going up take the color from the source branch
+      colorClassNum = branchPos[commit1.branch].index;
+      lineDef = `M ${p1.x} ${p1.y} L ${p2.x-radius} ${p1.y} ${arc} ${p2.x} ${p1.y-offset} L ${p2.x} ${p2.y}`;
+    }
+
+    if(p1.y === p2.y) {
+      colorClassNum = branchPos[commit1.branch].index
+      lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc} ${p1.x + offset} ${p2.y} L ${p2.x} ${p2.y}`;
+    }
+  }
   const arrow = svg.append('path').attr('d', lineDef)
       .attr('class', 'arrow arrow' +  colorClassNum)
       // .attr('marker-end', 'url(' + url + '#arrowhead)');
@@ -229,7 +293,7 @@ const drawArrows = (svg, commits) => {
     const commit = commits[key];
     if(commit.parents && commit.parents.length>0) {
       commit.parents.forEach((parent) => {
-        drawArrow(gArrows, commits[parent], commit);
+        drawArrow(gArrows, commits[parent], commit, commits);
       });
     }
   });

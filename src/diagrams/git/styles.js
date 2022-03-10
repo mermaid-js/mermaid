@@ -22,8 +22,27 @@ const getStyles = (options) =>
   .commit5 { stroke: ${options.git5}; fill: ${options.git5}; }
   .commit6 { stroke: ${options.git6}; fill: ${options.git6}; }
   .commit7 { stroke: ${options.git7}; fill: ${options.git7}; }
+  .commit-highlight0 { stroke: ${options.gitInv0}; fill: ${options.gitInv0}; }
+  .commit-highlight1 { stroke: ${options.gitInv1}; fill: ${options.gitInv1}; }
+  .commit-highlight2 { stroke: ${options.gitInv2}; fill: ${options.gitInv2}; }
+  .commit-highlight3 { stroke: ${options.gitInv3}; fill: ${options.gitInv3}; }
+  .commit-highlight4 { stroke: ${options.gitInv4}; fill: ${options.gitInv4}; }
+  .commit-highlight5 { stroke: ${options.gitInv5}; fill: ${options.gitInv5}; }
+  .commit-highlight6 { stroke: ${options.gitInv6}; fill: ${options.gitInv6}; }
+  .commit-highlight7 { stroke: ${options.gitInv7}; fill: ${options.gitInv7}; }
 
   .commit-merge {
+    stroke: ${options.primaryColor};
+    fill: ${options.primaryColor};
+  }
+  .commit-reverse {
+    stroke: ${options.primaryColor};
+    fill: ${options.primaryColor};
+    stroke-width: 3;
+  }
+  .commit-highlight-outer {
+  }
+  .commit-highlight-inner {
     stroke: ${options.primaryColor};
     fill: ${options.primaryColor};
   }
