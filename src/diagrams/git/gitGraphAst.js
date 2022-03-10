@@ -99,8 +99,10 @@ export const commit = function (msg, id, type, tag) {
 };
 
 export const branch = function (name) {
-  branches[name] = head != null ? head.id : null;
-  log.debug('in createBranch');
+  if (!branches[name]) {
+    branches[name] = head != null ? head.id : null;
+    log.debug('in createBranch');
+  }
 };
 
 export const merge = function (otherBranch) {
