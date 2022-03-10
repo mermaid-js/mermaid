@@ -135,6 +135,10 @@ export const merge = function (otherBranch) {
 
 export const checkout = function (branch) {
   log.debug('in checkout');
+  if (!branches[branch]) {
+    branches[branch] = head != null ? head.id : null;
+    log.debug('in createBranch');
+  }
   curBranch = branch;
   const id = branches[curBranch];
   head = commits[id];
