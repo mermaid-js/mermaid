@@ -139,6 +139,7 @@ export const autoWrap = () => wrapEnabled;
 export const clear = function () {
   actors = {};
   messages = [];
+  sequenceNumbersEnabled = false;
 };
 
 export const parseMessage = function (str) {
