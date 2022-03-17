@@ -240,7 +240,7 @@ const findLane = (y1, y2, _depth) => {
     lanes.push(candidate);
     return candidate;
   }
-  const diff = math.abs(y1 - y2);
+  const diff = Math.abs(y1 - y2);
   return findLane(y1, y2-(diff/5), depth);
 }
 
