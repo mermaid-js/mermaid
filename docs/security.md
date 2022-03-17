@@ -19,4 +19,4 @@ Keep your application’s dependencies up to date. Make sure you upgrade your pa
 
 ## Configuring DomPurify
 
-By default Mermaid uses a baseline DomPurify config. It is possible to override the options passed to dompurify by adding a `dompurifyConfig` key to the Mermaid options. This could potentially break the output of Mermaid so use this with caution.
+By default Mermaid uses a baseline [DOMPurify](https://github.com/cure53/DOMPurify) config. It is possible to override the options passed to DOMPurify by adding a `dompurifyConfig` key to the Mermaid options. This could potentially break the output of Mermaid so use this with caution.
