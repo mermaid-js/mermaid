@@ -1,7 +1,7 @@
 import { imgSnapshotTest } from '../../helpers/util.js';
 
 describe('Git Graph diagram', () => {
-  it('1: should render a simple gitgraph with commit on master branch', () => {
+  it('1: should render a simple gitgraph with commit on main branch', () => {
     imgSnapshotTest(
       `gitGraph
        commit
@@ -11,7 +11,7 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-  it('2: should render a simple gitgraph with commit on master branch with Id', () => {
+  it('2: should render a simple gitgraph with commit on main branch with Id', () => {
     imgSnapshotTest(
       `gitGraph
        commit id: "One"
@@ -21,7 +21,7 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-  it('3: should render a simple gitgraph with different commitTypes on master branch ', () => {
+  it('3: should render a simple gitgraph with different commitTypes on main branch ', () => {
     imgSnapshotTest(
       `gitGraph
        commit id: "Normal Commit"
@@ -31,7 +31,7 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-  it('4: should render a simple gitgraph with tags commitTypes on master branch ', () => {
+  it('4: should render a simple gitgraph with tags commitTypes on main branch ', () => {
     imgSnapshotTest(
       `gitGraph
        commit id: "Normal Commit with tag" teg: "v1.0.0"
@@ -50,7 +50,7 @@ describe('Git Graph diagram', () => {
        checkout develop
        commit
        commit
-       checkout master
+       checkout main
        commit 
        commit 
       `,
@@ -66,7 +66,7 @@ describe('Git Graph diagram', () => {
        checkout develop
        commit
        commit
-       checkout master
+       checkout main
        merge develop
        commit 
        commit 
@@ -82,21 +82,21 @@ describe('Git Graph diagram', () => {
        branch nice_feature
        checkout nice_feature
        commit
-       checkout master
+       checkout main
        commit
        checkout nice_feature
        branch very_nice_feature
        checkout very_nice_feature
        commit
-       checkout master
+       checkout main
        commit
        checkout nice_feature
        commit
-       checkout master
+       checkout main
        merge nice_feature
        checkout very_nice_feature
        commit
-       checkout master
+       checkout main
        commit 
       `,
       {}
