@@ -2,8 +2,8 @@ import { log } from '../../logger';
 import { random } from '../../utils';
 let commits = {};
 let head = null;
-let branches = { master: head };
-let curBranch = 'master';
+let branches = { main: head };
+let curBranch = 'main';
 let direction = 'LR';
 let seq = 0;
 
@@ -101,13 +101,85 @@ export const commit = function (msg, id, type, tag) {
 export const branch = function (name) {
   if (!branches[name]) {
     branches[name] = head != null ? head.id : null;
+    checkout(name);
     log.debug('in createBranch');
+  } else {
+    let error = new Error(
+      'Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ' +
+        name +
+        '")'
+    );
+    error.hash = {
+      text: 'branch ' + name,
+      token: 'branch ' + name,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['"checkout ' + name + '"'],
+    };
+    throw error;
   }
 };
 
 export const merge = function (otherBranch) {
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
+  if (curBranch === otherBranch) {
+    let error = new Error('Incorrect usage of "merge". Cannot merge a branch to itself');
+    error.hash = {
+      text: 'merge ' + otherBranch,
+      token: 'merge ' + otherBranch,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['branch abc'],
+    };
+    throw error;
+  } else if (!currentCommit) {
+    let error = new Error(
+      'Incorrect usage of "merge". Current branch (' + curBranch + ')has no commits'
+    );
+    error.hash = {
+      text: 'merge ' + otherBranch,
+      token: 'merge ' + otherBranch,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['commit'],
+    };
+    throw error;
+  } else if (!branches[otherBranch]) {
+    let error = new Error(
+      'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') does not exist'
+    );
+    error.hash = {
+      text: 'merge ' + otherBranch,
+      token: 'merge ' + otherBranch,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['branch ' + otherBranch],
+    };
+    throw error;
+  } else if (!otherCommit) {
+    let error = new Error(
+      'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') has no commits'
+    );
+    error.hash = {
+      text: 'merge ' + otherBranch,
+      token: 'merge ' + otherBranch,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['"commit"'],
+    };
+    throw error;
+  } else if (currentCommit === otherCommit) {
+    let error = new Error('Incorrect usage of "merge". Both branches have same head');
+    error.hash = {
+      text: 'merge ' + otherBranch,
+      token: 'merge ' + otherBranch,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['branch abc'],
+    };
+    throw error;
+  }
   // if (isReachableFrom(currentCommit, otherCommit)) {
   //   log.debug('Already merged');
   //   return;
@@ -136,12 +208,24 @@ export const merge = function (otherBranch) {
 export const checkout = function (branch) {
   log.debug('in checkout');
   if (!branches[branch]) {
-    branches[branch] = head != null ? head.id : null;
-    log.debug('in createBranch');
+    let error = new Error(
+      'Trying to checkout branch which is not yet created. (Help try using "branch ' + branch + '")'
+    );
+    error.hash = {
+      text: 'checkout ' + branch,
+      token: 'checkout ' + branch,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['"branch ' + branch + '"'],
+    };
+    throw error;
+    //branches[branch] = head != null ? head.id : null;
+    //log.debug('in createBranch');
+  } else {
+    curBranch = branch;
+    const id = branches[curBranch];
+    head = commits[id];
   }
-  curBranch = branch;
-  const id = branches[curBranch];
-  head = commits[id];
 };
 
 // export const reset = function (commitRef) {
@@ -219,8 +303,8 @@ export const prettyPrint = function () {
 export const clear = function () {
   commits = {};
   head = null;
-  branches = { master: head };
-  curBranch = 'master';
+  branches = { main: head };
+  curBranch = 'main';
   seq = 0;
 };
 

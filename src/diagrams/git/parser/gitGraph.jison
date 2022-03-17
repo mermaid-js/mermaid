@@ -52,7 +52,8 @@
 %% /* language grammar */
 
 start
-    : GG ':' document EOF{ return $3; }
+    : GG document EOF{ return $3; }
+    | GG ':' document EOF{ return $3; }
     | GG DIR ':' document EOF {yy.setDirection($2); return $4;}
     ;
 
@@ -71,7 +72,7 @@ body
     | body line {$1.push($2); $$=$1;}
     ;
 line
-    : statement NL{$$ =$1}
+    : statement {$$ =$1}
     | NL
     ;
 
