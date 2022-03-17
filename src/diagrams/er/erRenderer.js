@@ -7,6 +7,7 @@ import { getConfig } from '../../config';
 import { log } from '../../logger';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 
@@ -637,6 +638,8 @@ export const draw = function (text, id) {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
+
+  addSVGAccessibilityFields(parser.yy, svg, id);
 }; // draw
 
 export default {

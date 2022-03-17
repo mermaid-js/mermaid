@@ -56,7 +56,8 @@
 "note"                                                          return 'note';
 "activate"                                                      { this.begin('ID'); return 'activate'; }
 "deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
-"title"                                                         return 'title';
+"title"\s[^#\n;]+                                               return 'title';
+"title:"\s[^#\n;]+                                              return 'legacy_title';
 "accDescription"\s[^#\n;]+       				return 'accDescription';
 "sequenceDiagram"                                               return 'SD';
 "autonumber"                                                    return 'autonumber';
@@ -122,7 +123,8 @@ statement
 	| link_statement 'NEWLINE'
 	| properties_statement 'NEWLINE'
 	| details_statement 'NEWLINE'
-	| title text2 'NEWLINE' {$$=[{type:'setTitle', text:$2}]}
+	| title {yy.setTitle($1.substring(6));$$=$1.substring(6);}
+	| legacy_title {yy.setTitle($1.substring(7));$$=$1.substring(7);}
 	| accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);}
 	| 'loop' restOfLine document end
 	{
