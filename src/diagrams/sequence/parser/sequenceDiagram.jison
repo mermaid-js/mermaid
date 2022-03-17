@@ -33,7 +33,7 @@
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
 "participant"                                                   { this.begin('ID'); return 'participant'; }
-"actor"                                                   			{ this.begin('ID'); return 'participant_actor'; }
+"actor"                                                   	{ this.begin('ID'); return 'participant_actor'; }
 <ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)           { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
@@ -57,6 +57,7 @@
 "activate"                                                      { this.begin('ID'); return 'activate'; }
 "deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
 "title"                                                         return 'title';
+"accDescription"\s[^#\n;]+       				return 'accDescription';
 "sequenceDiagram"                                               return 'SD';
 "autonumber"                                                    return 'autonumber';
 ","                                                             return ',';
@@ -122,6 +123,7 @@ statement
 	| properties_statement 'NEWLINE'
 	| details_statement 'NEWLINE'
 	| title text2 'NEWLINE' {$$=[{type:'setTitle', text:$2}]}
+	| accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);}
 	| 'loop' restOfLine document end
 	{
 		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});

@@ -8,6 +8,7 @@ let actors = {};
 let messages = [];
 const notes = [];
 let title = '';
+let description = '';
 let titleWrapped = false;
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
@@ -408,6 +409,14 @@ export const apply = function (param) {
   }
 };
 
+const setAccDescription = function (description_lex) {
+  description = description_lex;
+};
+
+const getAccDescription = function () {
+  return description;
+};
+
 export default {
   addActor,
   addMessage,
@@ -436,4 +445,6 @@ export default {
   addNote,
   setTitle,
   apply,
+  setAccDescription,
+  getAccDescription,
 };
