@@ -505,7 +505,7 @@ defined in the linkStyle statement will belong to the fourth link in the graph:
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ```
 
-You can specify default to apply to all links, or you can give a list of link order numbers seperated by a comma.
+You can specify default to apply to all links, or you can give a list of link order numbers separated by a comma.
 
 Instead of giving a styles option, you can also use custom d3 curve types with the following syntax:
 

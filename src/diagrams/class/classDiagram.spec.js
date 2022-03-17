@@ -746,7 +746,7 @@ foo()
       parser.parse(str);
 
       const testClass = parser.yy.getClass('Class1');
-      expect(testClass.link).toBe('about:blank'); //('google.com'); security needs to be set to 'loose' for this to work right
+      expect(testClass.link).toBe('google.com');
       expect(testClass.cssClasses.length).toBe(1);
       expect(testClass.cssClasses[0]).toBe('clickable');
     });
@@ -760,7 +760,7 @@ foo()
       parser.parse(str);
 
       const testClass = parser.yy.getClass('Class1');
-      expect(testClass.link).toBe('about:blank'); //('google.com'); security needs to be set to 'loose' for this to work right
+      expect(testClass.link).toBe('google.com');
       expect(testClass.cssClasses.length).toBe(1);
       expect(testClass.cssClasses[0]).toBe('clickable');
     });
@@ -774,7 +774,7 @@ foo()
       parser.parse(str);
 
       const testClass = parser.yy.getClass('Class1');
-      expect(testClass.link).toBe('about:blank'); //('google.com'); security needs to be set to 'loose' for this to work right
+      expect(testClass.link).toBe('google.com');
       expect(testClass.tooltip).toBe('A tooltip');
       expect(testClass.cssClasses.length).toBe(1);
       expect(testClass.cssClasses[0]).toBe('clickable');
@@ -789,7 +789,7 @@ foo()
       parser.parse(str);
 
       const testClass = parser.yy.getClass('Class1');
-      expect(testClass.link).toBe('about:blank'); //('google.com'); security needs to be set to 'loose' for this to work right
+      expect(testClass.link).toBe('google.com');
       expect(testClass.tooltip).toBe('A tooltip');
       expect(testClass.cssClasses.length).toBe(1);
       expect(testClass.cssClasses[0]).toBe('clickable');

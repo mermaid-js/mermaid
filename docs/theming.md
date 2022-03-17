@@ -24,7 +24,7 @@ The following are a list of **Deployable themes**, sample `%%init%%` directives 
 ## Site-wide Themes
 Site-wide themes are declared via `initialize` by site owners.
 
-Example of `Initalize` call setting `theme` to `base`:
+Example of `Initialize` call setting `theme` to `base`:
 ```javascript
     mermaidAPI.initialize({
         'securityLevel': 'loose', 'theme': 'base'

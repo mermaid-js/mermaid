@@ -6,7 +6,7 @@
  Gantt Charts will record each scheduled task as one continuous bar that extends from the left to the right. The x axis represents time and the y records the different tasks and the order in which they are to be completed.
 
 
- It is important to remember that when a date, day, or collection of dates specific to a task are "excluded", the Gantt Chart will accomodate those changes by extending an equal number of days, towards the right, not by creating a gap inside the task.
+ It is important to remember that when a date, day, or collection of dates specific to a task are "excluded", the Gantt Chart will accommodate those changes by extending an equal number of days, towards the right, not by creating a gap inside the task.
  As shown here ![](./img/Gantt-excluded-days-within.png)
 
 
@@ -111,7 +111,7 @@ The default input date format is `YYYY-MM-DD`. You can define your custom ``date
 dateFormat YYYY-MM-DD
 ```
 
-The following formating options are supported:
+The following formatting options are supported:
 
 ```
 Input       Example             Description:
@@ -146,7 +146,7 @@ The default output date format is YYYY-MM-DD. You can define your custom ``axisF
 axisFormat  %Y-%m-%d
 ```
 
-The following formating strings are supported:
+The following formatting strings are supported:
 
 ```
 %a - abbreviated weekday name.
