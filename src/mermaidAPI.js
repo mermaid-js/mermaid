@@ -94,6 +94,7 @@ function parse(text) {
       parser.parser.yy = flowDb;
       break;
     case 'sequence':
+      sequenceDb.clear();
       parser = sequenceParser;
       parser.parser.yy = sequenceDb;
       break;

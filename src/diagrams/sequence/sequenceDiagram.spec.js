@@ -1619,4 +1619,24 @@ participant Alice
       models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin
     );
   });
+  it('it should hide sequence numbers when autonumber is removed when autonumber is enabled', function () {
+    const str1 = `
+sequenceDiagram
+autonumber
+Alice->Bob:Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!`;
+
+    mermaidAPI.parse(str1);
+    expect(parser.yy.showSequenceNumbers()).toBe(true);
+
+    const str2 = `
+sequenceDiagram
+Alice->Bob:Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!`;
+
+    mermaidAPI.parse(str2);
+    expect(parser.yy.showSequenceNumbers()).toBe(false);
+  });
 });

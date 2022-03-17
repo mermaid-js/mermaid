@@ -21,7 +21,7 @@ sequenceDiagram
 
 ## Initialize
 
-Intialize call is calloed **only once**. It is called by the site integrator in order to override the default configuration on a site level.
+Initialize call is called **only once**. It is called by the site integrator in order to override the default configuration on a site level.
 
 ## configApi.reset
 
