@@ -255,6 +255,51 @@ requirementDiagram
     test_req - contains -> test_req3
     test_req <- copies - test_entity2
       </div>
+    <div class="mermaid" class="width height">
+      gitGraph:
+      commit
+      branch hotfix
+      checkout hotfix
+      commit
+      branch develop
+      checkout develop
+      commit id:"ash" tag:"abc"
+      branch featureB
+      checkout featureB
+      commit type:HIGHLIGHT
+      checkout master
+      branch hotfix
+      checkout hotfix
+      commit type:NORMAL
+      checkout develop
+      commit type:REVERSE
+      checkout featureB
+      commit
+      checkout master
+      merge hotfix
+      checkout featureB
+      commit
+      checkout develop
+      branch featureA
+      commit
+      checkout develop
+      merge hotfix
+      checkout featureA
+      commit
+      checkout featureB
+      commit
+      checkout develop
+      merge featureA
+      branch release
+      checkout release
+      commit
+      checkout master
+      commit
+      checkout release
+      merge master
+      checkout develop
+      merge release
+   </div>
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {

@@ -42,7 +42,7 @@ class Theme {
     // The || is to make sure that if the variable has been defiend by a user override that value is to be used
 
     /* Main */
-    this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#ddd' : '#333'); // invert(this.primaryColor);
+    this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#eee' : '#333'); // invert(this.primaryColor);
     this.secondaryColor = this.secondaryColor || adjust(this.primaryColor, { h: -120 });
     this.tertiaryColor = this.tertiaryColor || adjust(this.primaryColor, { h: 180, l: 5 });
 
@@ -214,6 +214,16 @@ class Theme {
     this.gitInv5 = invert(this.git5);
     this.gitInv6 = invert(this.git6);
     this.gitInv7 = invert(this.git7);
+    this.branchLabelColor =
+      this.branchLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
+    this.gitBranchLabel0 = this.gitBranchLabel0 || this.branchLabelColor;
+    this.gitBranchLabel1 = this.gitBranchLabel1 || this.branchLabelColor;
+    this.gitBranchLabel2 = this.gitBranchLabel2 || this.branchLabelColor;
+    this.gitBranchLabel3 = this.gitBranchLabel3 || this.branchLabelColor;
+    this.gitBranchLabel4 = this.gitBranchLabel4 || this.branchLabelColor;
+    this.gitBranchLabel5 = this.gitBranchLabel5 || this.branchLabelColor;
+    this.gitBranchLabel6 = this.gitBranchLabel6 || this.branchLabelColor;
+    this.gitBranchLabel7 = this.gitBranchLabel7 || this.branchLabelColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

@@ -258,8 +258,53 @@ requirementDiagram
     test_req - contains -> test_req3
     test_req <- copies - test_entity2
       </div>
-
-  <script src="./mermaid.js"></script>
+    <div class="mermaid" class="width height">
+      %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "darkMode":true}}}%%
+      gitGraph:
+      commit
+      branch hotfix
+      checkout hotfix
+      commit
+      branch develop
+      checkout develop
+      commit id:"ash" tag:"abc"
+      branch featureB
+      checkout featureB
+      commit type:HIGHLIGHT
+      checkout master
+      branch hotfix
+      checkout hotfix
+      commit type:NORMAL
+      checkout develop
+      commit type:REVERSE
+      checkout featureB
+      commit
+      checkout master
+      merge hotfix
+      checkout featureB
+      commit
+      checkout develop
+      branch featureA
+      commit
+      checkout develop
+      merge hotfix
+      checkout featureA
+      commit
+      checkout featureB
+      commit
+      checkout develop
+      merge featureA
+      branch release
+      checkout release
+      commit
+      checkout master
+      commit
+      checkout release
+      merge master
+      checkout develop
+      merge release
+   </div>
+    <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
@@ -267,15 +312,15 @@ requirementDiagram
       mermaid.initialize({
         theme: 'base',
         themeVariables: {
-    primaryColor: '#9400D3',
-    darkMode: true,
-    background: '#222',
-    textColor: 'white',
-    primaryTextColor: '#f4f4f4',
-    nodeBkg: '#ff0000',
-    mainBkg: '#0000ff',
-    tertiaryColor: '#ffffcc',
-  },
+          primaryColor: '#9400D3',
+          darkMode: true,
+          background: '#222',
+          textColor: 'white',
+          primaryTextColor: '#f4f4f4',
+          nodeBkg: '#ff0000',
+          mainBkg: '#0000ff',
+          tertiaryColor: '#ffffcc',
+        },
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,

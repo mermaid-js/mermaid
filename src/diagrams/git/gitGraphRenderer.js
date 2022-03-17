@@ -358,7 +358,7 @@ const drawBranches = (svg, branches) => {
       const branchLabel = g.insert('g').attr('class', 'branchLabel');
 
       // Create inner g, label, this will be positioned now for centering the text
-      const label = branchLabel.insert('g').attr('class', 'label');
+      const label = branchLabel.insert('g').attr('class', 'label branch-label'+index);
       label.node().appendChild(labelElement);
       let bbox = labelElement.getBBox();
       bkg.attr('class', 'branchLabelBkg label' + index)
