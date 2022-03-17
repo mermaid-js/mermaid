@@ -36,7 +36,7 @@ or
 <link rel="stylesheet" href="mermaid.forest.min.css">
 ```
 
-Now it is not needed to do so. And there are no more CSS files in distrubtion files.
+Now it is not needed to do so. And there are no more CSS files in distribution files.
 
 You just
 
