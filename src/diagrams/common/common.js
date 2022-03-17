@@ -93,7 +93,12 @@ const sanitizeMore = (text, config) => {
 
 export const sanitizeText = (text, config) => {
   if (!text) return text;
-  const txt = DOMPurify.sanitize(sanitizeMore(text, config));
+  let txt = '';
+  if (config['dompurifyConfig']) {
+    txt = DOMPurify.sanitize(sanitizeMore(text, config), config['dompurifyConfig']);
+  } else {
+    txt = DOMPurify.sanitize(sanitizeMore(text, config));
+  }
   return txt;
 };
 
