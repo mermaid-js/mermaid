@@ -109,7 +109,10 @@ const drawCommits = (svg, commits, modifyGraph) => {
   let pos = 0;
 
   const keys = Object.keys(commits);
-  keys.forEach((key, index) => {
+  const sortedKeys = keys.sort((a, b) => {
+    return commits[a].seq - commits[b].seq;
+  })
+  sortedKeys.forEach((key, index) => {
     const commit = commits[key];
 
     // log.debug('drawCommits (commit branchPos)', commit, branchPos);
@@ -275,9 +278,14 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
     // Figure out the color of the arrow,arrows going down take the color from the destination branch
       colorClassNum = branchPos[commit2.branch].index;
 
-      const lineY = findLane(p1.y, p2.y);
+      const lineY = p1.y < p2.y ? findLane(p1.y, p2.y):findLane(p2.y, p1.y);
 
-      lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY-radius} ${arc} ${p1.x + offset} ${lineY} L ${p2.x-radius} ${lineY} ${arc2} ${p2.x} ${lineY+offset} L ${p2.x} ${p2.y}`;
+      if(p1.y < p2.y) {
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY-radius} ${arc} ${p1.x + offset} ${lineY} L ${p2.x-radius} ${lineY} ${arc2} ${p2.x} ${lineY+offset} L ${p2.x} ${p2.y}`;
+      } else {
+        lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${lineY+radius} ${arc2} ${p1.x + offset} ${lineY} L ${p2.x-radius} ${lineY} ${arc} ${p2.x} ${lineY-offset} L ${p2.x} ${p2.y}`;
+      }
+
   } else {
 
     if(p1.y < p2.y) {
@@ -315,7 +323,6 @@ const drawArrows = (svg, commits) => {
   const k = Object.keys(commits);
   console.log('drawArrows', k);
   k.forEach((key, index) => {
-    // if(index>3) return;
     const commit = commits[key];
     if(commit.parents && commit.parents.length>0) {
       commit.parents.forEach((parent) => {
@@ -354,7 +361,6 @@ const drawBranches = (svg, branches) => {
       const label = branchLabel.insert('g').attr('class', 'label');
       label.node().appendChild(labelElement);
       let bbox = labelElement.getBBox();
-      //logger.info(bbox);
       bkg.attr('class', 'branchLabelBkg label' + index)
         .attr('rx', 4)
         .attr('ry', 4)
