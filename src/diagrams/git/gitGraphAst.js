@@ -99,7 +99,7 @@ export const commit = function (msg, id, type, tag) {
 };
 
 export const branch = function (name) {
-  if (!branches[name]) {
+  if (typeof branches[name] === 'undefined') {
     branches[name] = head != null ? head.id : null;
     checkout(name);
     log.debug('in createBranch');
@@ -133,7 +133,7 @@ export const merge = function (otherBranch) {
       expected: ['branch abc'],
     };
     throw error;
-  } else if (!currentCommit) {
+  } else if (typeof currentCommit === 'undefined' || !currentCommit) {
     let error = new Error(
       'Incorrect usage of "merge". Current branch (' + curBranch + ')has no commits'
     );
@@ -145,7 +145,7 @@ export const merge = function (otherBranch) {
       expected: ['commit'],
     };
     throw error;
-  } else if (!branches[otherBranch]) {
+  } else if (typeof branches[otherBranch] === 'undefined') {
     let error = new Error(
       'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') does not exist'
     );
@@ -157,7 +157,7 @@ export const merge = function (otherBranch) {
       expected: ['branch ' + otherBranch],
     };
     throw error;
-  } else if (!otherCommit) {
+  } else if (typeof otherCommit === 'undefined' || !otherCommit) {
     let error = new Error(
       'Incorrect usage of "merge". Branch to be merged (' + otherBranch + ') has no commits'
     );
@@ -206,8 +206,8 @@ export const merge = function (otherBranch) {
 };
 
 export const checkout = function (branch) {
-  log.debug('in checkout');
-  if (!branches[branch]) {
+  console.info(branches);
+  if (typeof branches[branch] === 'undefined') {
     let error = new Error(
       'Trying to checkout branch which is not yet created. (Help try using "branch ' + branch + '")'
     );
@@ -224,6 +224,9 @@ export const checkout = function (branch) {
   } else {
     curBranch = branch;
     const id = branches[curBranch];
+    console.log(id);
+    console.log('hi');
+    console.log(commits);
     head = commits[id];
   }
 };
