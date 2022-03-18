@@ -351,7 +351,7 @@ links <actor>: <json-formatted link-name link-url pairs>
 
 An example is below:
 
-```mmd
+```mermaid-example
 sequenceDiagram
     participant Alice
     participant John
