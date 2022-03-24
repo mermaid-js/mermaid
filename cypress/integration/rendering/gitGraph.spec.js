@@ -25,8 +25,8 @@ describe('Git Graph diagram', () => {
     imgSnapshotTest(
       `gitGraph
        commit id: "Normal Commit"
-       commit id: "Reverse Commit" commitType: REVERSE
-       commit id: "Hightlight Commit" commitType: HIGHLIGHT
+       commit id: "Reverse Commit" type: REVERSE
+       commit id: "Hightlight Commit" type: HIGHLIGHT
       `,
       {}
     );
@@ -34,9 +34,9 @@ describe('Git Graph diagram', () => {
   it('4: should render a simple gitgraph with tags commitTypes on main branch ', () => {
     imgSnapshotTest(
       `gitGraph
-       commit id: "Normal Commit with tag" teg: "v1.0.0"
-       commit id: "Reverse Commit with tag" commitType: REVERSE tag: "RC_1"
-       commit id: "Hightlight Commit" commitType: HIGHLIGHT  tag: "8.8.4"
+       commit id: "Normal Commit with tag" tag: "v1.0.0"
+       commit id: "Reverse Commit with tag" type: REVERSE tag: "RC_1"
+       commit id: "Hightlight Commit" type: HIGHLIGHT  tag: "8.8.4"
       `,
       {}
     );
@@ -44,15 +44,15 @@ describe('Git Graph diagram', () => {
   it('5: should render a simple gitgraph with two branches', () => {
     imgSnapshotTest(
       `gitGraph
-       commit 
+       commit
        commit
        branch develop
        checkout develop
        commit
        commit
        checkout main
-       commit 
-       commit 
+       commit
+       commit
       `,
       {}
     );
@@ -60,7 +60,7 @@ describe('Git Graph diagram', () => {
   it('6: should render a simple gitgraph with two branches and merge commit', () => {
     imgSnapshotTest(
       `gitGraph
-       commit 
+       commit
        commit
        branch develop
        checkout develop
@@ -68,8 +68,8 @@ describe('Git Graph diagram', () => {
        commit
        checkout main
        merge develop
-       commit 
-       commit 
+       commit
+       commit
       `,
       {}
     );
@@ -77,7 +77,7 @@ describe('Git Graph diagram', () => {
   it('7: should render a simple gitgraph with three branches and merge commit', () => {
     imgSnapshotTest(
       `gitGraph
-       commit 
+       commit
        commit
        branch nice_feature
        checkout nice_feature
@@ -97,7 +97,7 @@ describe('Git Graph diagram', () => {
        checkout very_nice_feature
        commit
        checkout main
-       commit 
+       commit
       `,
       {}
     );
