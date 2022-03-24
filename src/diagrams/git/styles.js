@@ -27,6 +27,9 @@ const getStyles = (options) =>
     stroke-dasharray: 2;
   }
   .commit-labels { font-size: 10px; fill: ${options.textColor};}
+  .tag-label { font-size: 10px; fill: ${options.tagLabelColor};}
+  .tag-label-bkg { fill: ${options.tagLabelBkg}; }
+  .tag-hole { fill: ${options.tagLabelColor}; opacity: 0.5; stroke-linejoin: round;}
 
   .commit-merge {
     stroke: ${options.primaryColor};

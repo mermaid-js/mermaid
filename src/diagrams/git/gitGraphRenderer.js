@@ -115,7 +115,6 @@ const drawCommits = (svg, commits, modifyGraph) => {
   sortedKeys.forEach((key, index) => {
     const commit = commits[key];
 
-    // log.debug('drawCommits (commit branchPos)', commit, branchPos);
     const y = branchPos[commit.branch].pos;
     const x  = pos + 10;
     // Don't draw the commits now but calculate the positioning which is used by the branmch lines etc.
@@ -176,12 +175,51 @@ const drawCommits = (svg, commits, modifyGraph) => {
 
     if (modifyGraph) {
       const text = gLabels.append('text')
-        // .attr('x', pos + 10)
+        .attr('x', pos)
         .attr('y', y + 25)
         .attr('class', 'commit-label')
         .text(commit.id);
-      let bbox = text.node().getBBox();
-      text.attr('x', pos + 10 - bbox.width / 2);
+        let bbox = text.node().getBBox();
+        text.attr('x', pos + 10 - bbox.width / 2);
+        console.log('commit', commit.id, 'tag', commit.tag);
+        if(commit.tag) {
+          const rect = gLabels.insert('polygon');
+          const hole = gLabels.append('circle');
+          const tag = gLabels.append('text')
+          // .attr('x', pos )
+          .attr('y', y - 16)
+          .attr('class', 'tag-label')
+          .text(commit.tag);
+          let tagBbox = tag.node().getBBox();
+          tag.attr('x', pos + 10 - tagBbox.width / 2);
+
+          const px=4;
+          const py=2;
+          const h2 = tagBbox.height/2
+          const ly = y - 19.2  ;
+          rect
+            .attr('class', 'tag-label-bkg')
+            // .attr('rx', 2)
+            // .attr('ry', 2)
+            // .attr('x', pos + 10 - tagBbox.width / 2 - 4)
+            // .attr('y', y - 15 - tagBbox.height/2 - 7)
+            // .attr('width', tagBbox.width + 8)
+            // .attr('height', tagBbox.height + 4);
+            .attr('points', `
+            ${pos - tagBbox.width / 2 - px},${ly +py}
+            ${pos - tagBbox.width / 2 - px},${ly -py}
+            ${pos + 10 - tagBbox.width / 2 - px},${ly - h2 - py}
+            ${pos + 10 + tagBbox.width / 2 + px},${ly - h2 - py}
+            ${pos + 10 + tagBbox.width / 2 + px},${ly + h2 + py }
+            ${pos + 10 - tagBbox.width / 2 - px},${ly + h2 + py}`);
+
+          hole
+            .attr('cx', pos - tagBbox.width / 2)
+            .attr('cy', ly)
+            .attr('r', 1.5)
+            .attr('class', 'tag-hole');
+
+      }
     }
     pos +=50;
     if(pos>maxPos) {

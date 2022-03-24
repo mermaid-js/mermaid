@@ -224,6 +224,9 @@ class Theme {
     this.gitBranchLabel5 = this.gitBranchLabel5 || this.branchLabelColor;
     this.gitBranchLabel6 = this.gitBranchLabel6 || this.branchLabelColor;
     this.gitBranchLabel7 = this.gitBranchLabel7 || this.branchLabelColor;
+
+    this.tagLabelColor = this.tagLabelColor || this.darkMode ? this.branchLabelColor : 'white';
+    this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
