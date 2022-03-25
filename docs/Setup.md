@@ -926,7 +926,7 @@ Default value: true
 **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
 to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
 will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
-function \*Default value: At default, will mirror Global Config\*\*
+function _Default value: At default, will mirror Global Config_
 
 ### Parameters
 

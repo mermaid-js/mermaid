@@ -264,7 +264,7 @@ requirementDiagram
     test_req - contains -> test_req3
     test_req <- copies - test_entity2
       </div>
-    <div class="mermaid" class="width height">
+    <div class="mermaid" style="width: 100%; height: 20%;">
       gitGraph:
       commit
       branch hotfix
@@ -272,19 +272,18 @@ requirementDiagram
       commit
       branch develop
       checkout develop
-      commit id:"ash" tag:"abc"
+      commit id:"An id" tag:"A tag"
       branch featureB
       checkout featureB
       commit type:HIGHLIGHT
-      checkout master
-      branch hotfix
+      checkout main
       checkout hotfix
       commit type:NORMAL
       checkout develop
       commit type:REVERSE
       checkout featureB
       commit
-      checkout master
+      checkout main
       merge hotfix
       checkout featureB
       commit
@@ -302,10 +301,10 @@ requirementDiagram
       branch release
       checkout release
       commit
-      checkout master
+      checkout main
       commit
       checkout release
-      merge master
+      merge main
       checkout develop
       merge release
    </div>

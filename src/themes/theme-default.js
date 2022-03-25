@@ -244,6 +244,12 @@ class Theme {
     this.gitBranchLabel5 = this.labelTextColor;
     this.gitBranchLabel6 = this.labelTextColor;
     this.gitBranchLabel7 = this.labelTextColor;
+
+    this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
+    this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
+    this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+    this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+    this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

@@ -263,19 +263,18 @@ requirementDiagram
       commit
       branch develop
       checkout develop
-      commit id:"ash" tag:"abc"
+      commit id:"An id" tag:"A tag"
       branch featureB
       checkout featureB
       commit type:HIGHLIGHT
-      checkout master
-      branch hotfix
+      checkout main
       checkout hotfix
       commit type:NORMAL
       checkout develop
       commit type:REVERSE
       checkout featureB
       commit
-      checkout master
+      checkout main
       merge hotfix
       checkout featureB
       commit
@@ -293,10 +292,10 @@ requirementDiagram
       branch release
       checkout release
       commit
-      checkout master
+      checkout main
       commit
       checkout release
-      merge master
+      merge main
       checkout develop
       merge release
    </div>

@@ -9,7 +9,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        /* background:#111; */
+        background:#111;
         /* background:#333; */
         font-family: 'Arial';
         }
@@ -26,7 +26,7 @@
   </head>
   <body>
     <h1>info below</h1>
-    <div class="mermaid" style="width: 100%; height: 20%;">
+    <div class="mermaid2" style="width: 100%; height: 20%;">
        gitGraph:
        commit "Ashish"
        branch newbranch
@@ -43,14 +43,14 @@
 
     </div>
     <div class="mermaid" style="width: 100%; height: 20%;">
-      gitGraph:
+      gitGraph
       commit
       branch hotfix
       checkout hotfix
       commit
       branch develop
       checkout develop
-      commit id:"ash" tag:"abc"
+      commit id:"An id" tag:"A tag"
       branch featureB
       checkout featureB
       commit type:HIGHLIGHT
@@ -101,14 +101,13 @@
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'base',
+        theme: 'dark',
         themeVariables: {
           // primaryColor: '#9400D3',
-          darkMode: false,
+          // darkMode: false,
           // background: '#222',
           // textColor: 'white',
           // primaryTextColor: '#f4f4f4',
-
           // nodeBkg: '#ff0000',
           // mainBkg: '#0000ff',
           // tertiaryColor: '#ffffcc',

@@ -206,6 +206,12 @@ class Theme {
     this.gitInv5 = invert(this.git5);
     this.gitInv6 = invert(this.git6);
     this.gitInv7 = invert(this.git7);
+
+    this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
+    this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
+    this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+    this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+    this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

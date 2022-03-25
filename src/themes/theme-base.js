@@ -225,8 +225,11 @@ class Theme {
     this.gitBranchLabel6 = this.gitBranchLabel6 || this.branchLabelColor;
     this.gitBranchLabel7 = this.gitBranchLabel7 || this.branchLabelColor;
 
-    this.tagLabelColor = this.tagLabelColor || this.darkMode ? this.branchLabelColor : 'white';
+    this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
     this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
+    this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+    this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+    this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

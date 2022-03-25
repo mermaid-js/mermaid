@@ -173,51 +173,57 @@ const drawCommits = (svg, commits, modifyGraph) => {
     }
     commitPos[commit.id] = {x: pos + 10, y: y};
 
+    // The first iteration over the commits are for positioning purposes, this
+    // is required for drawing the lines. The circles and labels is drawn after the labels
+    // placing them on top of the lines.
     if (modifyGraph) {
+      const px=4;
+      const py=2;
+      const labelBkg = gLabels.insert('rect')
+        .attr('class', 'commit-label-bkg');
+
       const text = gLabels.append('text')
         .attr('x', pos)
         .attr('y', y + 25)
         .attr('class', 'commit-label')
         .text(commit.id);
-        let bbox = text.node().getBBox();
-        text.attr('x', pos + 10 - bbox.width / 2);
-        console.log('commit', commit.id, 'tag', commit.tag);
-        if(commit.tag) {
-          const rect = gLabels.insert('polygon');
-          const hole = gLabels.append('circle');
-          const tag = gLabels.append('text')
-          // .attr('x', pos )
-          .attr('y', y - 16)
-          .attr('class', 'tag-label')
-          .text(commit.tag);
-          let tagBbox = tag.node().getBBox();
-          tag.attr('x', pos + 10 - tagBbox.width / 2);
+      let bbox = text.node().getBBox();
+      console.log(bbox);
+      // Now we have the label, lets position the background
+      labelBkg
+        .attr('x', pos + 10 - bbox.width / 2 - py)
+        .attr('y', y + 13.5)
+        .attr('width', bbox.width + 2 * py)
+        .attr('height', bbox.height + 2 * py);
+      text.attr('x', pos + 10 - bbox.width / 2);
+      if(commit.tag) {
+        const rect = gLabels.insert('polygon');
+        const hole = gLabels.append('circle');
+        const tag = gLabels.append('text')
+        // Note that we are delaying setting the x position until we know the width of the text
+        .attr('y', y - 16)
+        .attr('class', 'tag-label')
+        .text(commit.tag);
+        let tagBbox = tag.node().getBBox();
+        tag.attr('x', pos + 10 - tagBbox.width / 2);
 
-          const px=4;
-          const py=2;
-          const h2 = tagBbox.height/2
-          const ly = y - 19.2  ;
-          rect
-            .attr('class', 'tag-label-bkg')
-            // .attr('rx', 2)
-            // .attr('ry', 2)
-            // .attr('x', pos + 10 - tagBbox.width / 2 - 4)
-            // .attr('y', y - 15 - tagBbox.height/2 - 7)
-            // .attr('width', tagBbox.width + 8)
-            // .attr('height', tagBbox.height + 4);
-            .attr('points', `
-            ${pos - tagBbox.width / 2 - px},${ly +py}
-            ${pos - tagBbox.width / 2 - px},${ly -py}
-            ${pos + 10 - tagBbox.width / 2 - px},${ly - h2 - py}
-            ${pos + 10 + tagBbox.width / 2 + px},${ly - h2 - py}
-            ${pos + 10 + tagBbox.width / 2 + px},${ly + h2 + py }
-            ${pos + 10 - tagBbox.width / 2 - px},${ly + h2 + py}`);
+        const h2 = tagBbox.height/2
+        const ly = y - 19.2  ;
+        rect
+          .attr('class', 'tag-label-bkg')
+          .attr('points', `
+          ${pos - tagBbox.width / 2 - px/2},${ly + py}
+          ${pos - tagBbox.width / 2 - px/2},${ly - py}
+          ${pos + 10 - tagBbox.width / 2 - px},${ly - h2 - py}
+          ${pos + 10 + tagBbox.width / 2 + px},${ly - h2 - py}
+          ${pos + 10 + tagBbox.width / 2 + px},${ly + h2 + py }
+          ${pos + 10 - tagBbox.width / 2 - px},${ly + h2 + py}`);
 
-          hole
-            .attr('cx', pos - tagBbox.width / 2)
-            .attr('cy', ly)
-            .attr('r', 1.5)
-            .attr('class', 'tag-hole');
+        hole
+          .attr('cx', pos - tagBbox.width / 2 + px/2)
+          .attr('cy', ly)
+          .attr('r', 1.5)
+          .attr('class', 'tag-hole');
 
       }
     }
@@ -237,24 +243,13 @@ const drawCommits = (svg, commits, modifyGraph) => {
 const hasOverlappingCommits = (commit1, commit2, allCommits) => {
   const commit1Pos = commitPos[commit2.id];
   const commit2Pos = commitPos[commit1.id];
-    // if(commit1.id.match('4-')) {
-    //   log.info('Ugge 1', commit1, commit2);
-    // }
 
   // Find commits on the same branch as commit2
   const keys = Object.keys(allCommits);
   const overlappingComits = keys.filter((key) => {
-    // if(commit1.id.match('4-') && allCommits[key].branch === commit2.branch) {
-    //   log.info('Ugge seq of the commit', allCommits[key].seq, ' commit 1 seq', commit1.seq ,' commit2 seq' ,commit2.seq);
-    // }
     return allCommits[key].branch === commit2.branch && allCommits[key].seq > commit1.seq && allCommits[key].seq < commit2.seq
   });
 
-
-
-  // if (commit1Pos.x === commit2Pos.x) {
-  //   return commit1Pos.y === commit2Pos.y;
-  // }
   return overlappingComits.length > 0;
 }
 /**
@@ -330,7 +325,8 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
       arc = 'A 20 20, 0, 0, 0,';
       radius = 20;
       offset = 20;
-    // Figure out the color of the arrow,arrows going down take the color from the destination branch
+
+      // Figure out the color of the arrow,arrows going down take the color from the destination branch
       colorClassNum = branchPos[commit2.branch].index;
 
       lineDef = `M ${p1.x} ${p1.y} L ${p1.x} ${p2.y-radius} ${arc} ${p1.x + offset} ${p2.y} L ${p2.x} ${p2.y}`;
@@ -339,7 +335,8 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
       arc = 'A 20 20, 0, 0, 0,';
       radius = 20;
       offset = 20;
-    // Arrows going up take the color from the source branch
+
+      // Arrows going up take the color from the source branch
       colorClassNum = branchPos[commit1.branch].index;
       lineDef = `M ${p1.x} ${p1.y} L ${p2.x-radius} ${p1.y} ${arc} ${p2.x} ${p1.y-offset} L ${p2.x} ${p2.y}`;
     }
@@ -351,7 +348,6 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
   }
   const arrow = svg.append('path').attr('d', lineDef)
       .attr('class', 'arrow arrow' +  colorClassNum)
-      // .attr('marker-end', 'url(' + url + '#arrowhead)');
 }
 
 const drawArrows = (svg, commits) => {
@@ -359,7 +355,6 @@ const drawArrows = (svg, commits) => {
   let pos = 0;
 
   const k = Object.keys(commits);
-  console.log('drawArrows', k);
   k.forEach((key, index) => {
     const commit = commits[key];
     if(commit.parents && commit.parents.length>0) {
