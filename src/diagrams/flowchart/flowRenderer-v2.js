@@ -142,7 +142,9 @@ export const addVertices = function (vert, g, svgId, root, doc) {
         _shape = 'rect';
     }
     const labelText = vertexText.replace(/\$\$(.*)\$\$/g, (r, c) =>
-      katex.renderToString(c, { throwOnError: true, displayMode: true }).replace(/\n/g, ' ')
+      katex
+        .renderToString(c, { throwOnError: true, displayMode: true, output: 'html' })
+        .replace(/\n/g, ' ')
     );
     console.log(labelText);
     // Add the node

@@ -65,7 +65,9 @@ export const addVertices = function (vert, g, svgId, root, _doc) {
         label: vertexText
           .replace(/fa[lrsb]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
           .replace(/\$\$(.*)\$\$/g, (r, c) =>
-            katex.renderToString(c, { throwOnError: true, displayMode: true }).replace(/\n/g, ' ')
+            katex
+              .renderToString(c, { throwOnError: true, displayMode: true, output: 'html' })
+              .replace(/\n/g, ' ')
           ),
       };
       vertexNode = addHtmlLabel(svg, node).node();
@@ -245,7 +247,7 @@ export const addEdges = function (edges, g) {
           .replace(/fa[lrsb]?:fa-[\w-]+/g, (s) => `<i class='${s.replace(':', ' ')}'></i>`)
           .replace(/\$\$(.*)\$\$/g, (r, c) =>
             katex
-              .renderToString(c, { output: 'mathml', throwOnError: true, displayMode: true })
+              .renderToString(c, { throwOnError: true, displayMode: true, output: 'html' })
               .replace(/\n/g, ' ')
           )}</span>`;
       } else {
