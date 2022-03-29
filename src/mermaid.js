@@ -5,6 +5,7 @@
 import { log } from './logger';
 import mermaidAPI from './mermaidAPI';
 import utils from './utils';
+import FontFaceObserver from 'fontfaceobserver';
 import 'katex/dist/katex.css';
 
 /**
@@ -172,6 +173,53 @@ const contentLoaded = function () {
   }
 };
 
+/**
+ * ##contentLoaded Callback function that is called when page is loaded. This functions attempts to
+ * pre-load the Katex fonts before configuring mermaid and calling init. Failure to pre-load fonts
+ * could cause nodes to be improperly sized.
+ */
+const loadKatexFont = function () {
+  const fontArray = [
+    { name: 'KaTeX_AMS', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Caligraphic', options: { weight: 700, style: 'normal' } },
+    { name: 'KaTeX_Caligraphic', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Fraktur', options: { weight: 700, style: 'normal' } },
+    { name: 'KaTeX_Fraktur', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Main', options: { weight: 700, style: 'normal' } },
+    { name: 'KaTeX_Main', options: { weight: 700, style: 'italic' } },
+    { name: 'KaTeX_Main', options: { weight: 400, style: 'italic' } },
+    { name: 'KaTeX_Main', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Math', options: { weight: 700, style: 'italic' } },
+    { name: 'KaTeX_Math', options: { weight: 400, style: 'italic' } },
+    { name: 'KaTeX_SansSerif', options: { weight: 700, style: 'normal' } },
+    { name: 'KaTeX_SansSerif', options: { weight: 400, style: 'italic' } },
+    { name: 'KaTeX_SansSerif', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Script', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Size1', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Size2', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Size3', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Size4', options: { weight: 400, style: 'normal' } },
+    { name: 'KaTeX_Typewriter', options: { weight: 400, style: 'normal' } },
+  ];
+
+  const observers = fontArray.map(function (fontObj) {
+    return new FontFaceObserver(fontObj.name, fontObj.options).load();
+  });
+
+  Promise.all(observers).then(
+    function (fonts) {
+      fonts.forEach(function (font) {
+        log.warn(font.family + ' (weight: ' + font.weight + ') loaded successfully');
+      });
+      contentLoaded();
+    },
+    function (err) {
+      log.error('Some fonts failed to load: ' + err);
+      contentLoaded();
+    }
+  );
+};
+
 if (typeof document !== 'undefined') {
   /*!
    * Wait for document loaded before starting the execution
@@ -179,7 +227,7 @@ if (typeof document !== 'undefined') {
   window.addEventListener(
     'load',
     function () {
-      contentLoaded();
+      loadKatexFont();
     },
     false
   );

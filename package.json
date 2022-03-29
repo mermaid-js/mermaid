@@ -62,6 +62,7 @@
     "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
     "dompurify": "2.3.6",
+    "fontfaceobserver": "^2.1.0",
     "graphlib": "^2.1.8",
     "katex": "^0.15.2",
     "khroma": "^1.4.1",
