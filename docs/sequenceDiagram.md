@@ -12,6 +12,13 @@ sequenceDiagram
     Alice-)John: See you later!
 ```
 
+```mermaid
+sequenceDiagram
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
+
 ```note
 A note on nodes, the word "end" could potentially break the diagram, due to the way that the mermaid language is scripted.
 
@@ -35,10 +42,27 @@ sequenceDiagram
     Bob->>Alice: Hi Alice
 ```
 
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->>Bob: Hi Bob
+    Bob->>Alice: Hi Alice
+```
+
 ### Actors
 
 If you specifically want to use the actor symbol instead of a rectangle with text you can do so by using actor statements as per below.
+
 ```mermaid-example
+sequenceDiagram
+    actor Alice
+    actor Bob
+    Alice->>Bob: Hi Bob
+    Bob->>Alice: Hi Alice
+```
+
+```mermaid
 sequenceDiagram
     actor Alice
     actor Bob
@@ -51,6 +75,14 @@ sequenceDiagram
 The actor can have a convenient identifier and a descriptive label.
 
 ```mermaid-example
+sequenceDiagram
+    participant A as Alice
+    participant J as John
+    A->>J: Hello John, how are you?
+    J->>A: Great!
+```
+
+```mermaid
 sequenceDiagram
     participant A as Alice
     participant J as John
@@ -91,6 +123,14 @@ sequenceDiagram
     deactivate John
 ```
 
+```mermaid
+sequenceDiagram
+    Alice->>John: Hello John, how are you?
+    activate John
+    John-->>Alice: Great!
+    deactivate John
+```
+
 There is also a shortcut notation by appending `+`/`-` suffix to the message arrow:
 
 ```mermaid-example
@@ -99,9 +139,23 @@ sequenceDiagram
     John-->>-Alice: Great!
 ```
 
+```mermaid
+sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    John-->>-Alice: Great!
+```
+
 Activations can be stacked for same actor:
 
 ```mermaid-example
+sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!
+```
+
+```mermaid
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
     Alice->>+John: John, can you hear me?
@@ -122,9 +176,21 @@ sequenceDiagram
     Note right of John: Text in note
 ```
 
+```mermaid
+sequenceDiagram
+    participant John
+    Note right of John: Text in note
+```
+
 It is also possible to create notes spanning two participants:
 
 ```mermaid-example
+sequenceDiagram
+    Alice->John: Hello John, how are you?
+    Note over Alice,John: A typical interaction
+```
+
+```mermaid
 sequenceDiagram
     Alice->John: Hello John, how are you?
     Note over Alice,John: A typical interaction
@@ -143,6 +209,14 @@ end
 See the example below:
 
 ```mermaid-example
+sequenceDiagram
+    Alice->John: Hello John, how are you?
+    loop Every minute
+        John-->Alice: Great!
+    end
+```
+
+```mermaid
 sequenceDiagram
     Alice->John: Hello John, how are you?
     loop Every minute
@@ -185,6 +259,19 @@ sequenceDiagram
     end
 ```
 
+```mermaid
+sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    alt is sick
+        Bob->>Alice: Not so good :(
+    else is well
+        Bob->>Alice: Feeling fresh like a daisy
+    end
+    opt Extra response
+        Bob->>Alice: Thanks for asking
+    end
+```
+
 ## Parallel
 
 It is possible to show actions that are happening in parallel.
@@ -214,9 +301,34 @@ sequenceDiagram
     John-->>Alice: Hi Alice!
 ```
 
+```mermaid
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Hello guys!
+    and Alice to John
+        Alice->>John: Hello guys!
+    end
+    Bob-->>Alice: Hi Alice!
+    John-->>Alice: Hi Alice!
+```
+
 It is also possible to nest parallel blocks.
 
 ```mermaid-example
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Go help John
+    and Alice to John
+        Alice->>John: I want this done today
+        par John to Charlie
+            John->>Charlie: Can we do this today?
+        and John to Diana
+            John->>Diana: Can you help us today?
+        end
+    end
+```
+
+```mermaid
 sequenceDiagram
     par Alice to Bob
         Alice->>Bob: Go help John
@@ -269,6 +381,25 @@ sequenceDiagram
 
 ```
 
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant John
+
+    rect rgb(191, 223, 255)
+    note right of Alice: Alice calls John.
+    Alice->>+John: Hello John, how are you?
+    rect rgb(200, 150, 255)
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    end
+    John-->>-Alice: I feel great!
+    end
+    Alice ->>+ John: Did you want to go to the game tonight?
+    John -->>- Alice: Yeah! See you there.
+
+```
+
 ## Comments
 
 Comments can be entered within a sequence diagram, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
@@ -280,11 +411,24 @@ sequenceDiagram
     John-->>Alice: Great!
 ```
 
+```mermaid
+sequenceDiagram
+    Alice->>John: Hello John, how are you?
+    %% this is a comment
+    John-->>Alice: Great!
+```
+
 ## Entity codes to escape characters
 
 It is possible to escape characters using the syntax exemplified here.
 
 ```mermaid-example
+sequenceDiagram
+    A->>B: I #9829; you!
+    B->>A: I #9829; you #infin; times more!
+```
+
+```mermaid
 sequenceDiagram
     A->>B: I #9829; you!
     B->>A: I #9829; you #infin; times more!
@@ -319,6 +463,19 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
+```mermaid
+sequenceDiagram
+    autonumber
+    Alice->>John: Hello John, how are you?
+    loop Healthcheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts!
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!
+```
+
 ## Actor Menus
 
 Actors can have popup-menus containing individualized links to external pages.  For example, if an actor represented a web service, useful links might include a link to the service health dashboard, repo containing the code for the service, or a wiki page describing the service.
@@ -328,6 +485,19 @@ This can be configured by adding one or more link lines with the format:
 link <actor>: <link-label> @ <link-url>
 ```
 ```mmd
+sequenceDiagram
+    participant Alice
+    participant John
+    link Alice: Dashboard @ https://dashboard.contoso.com/alice
+    link Alice: Wiki @ https://wiki.contoso.com/alice
+    link John: Dashboard @ https://dashboard.contoso.com/john
+    link John: Wiki @ https://wiki.contoso.com/john
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
+
+```mermaid
 sequenceDiagram
     participant Alice
     participant John
@@ -352,6 +522,17 @@ links <actor>: <json-formatted link-name link-url pairs>
 An example is below:
 
 ```mermaid-example
+sequenceDiagram
+    participant Alice
+    participant John
+    links Alice: {"Dashboard": "https://dashboard.contoso.com/alice", "Wiki": "https://wiki.contoso.com/alice"}
+    links John: {"Dashboard": "https://dashboard.contoso.com/john", "Wiki": "https://wiki.contoso.com/john"}
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
+
+```mermaid
 sequenceDiagram
     participant Alice
     participant John
