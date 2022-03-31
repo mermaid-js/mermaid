@@ -228,7 +228,7 @@ class Theme {
       this.git6 = darken(this.git6, 25);
       this.git7 = darken(this.git7, 25);
     }
-    this.gitInv0 = invert(this.git0);
+    this.gitInv0 = darken(invert(this.git0), 25);
     this.gitInv1 = invert(this.git1);
     this.gitInv2 = invert(this.git2);
     this.gitInv3 = invert(this.git3);

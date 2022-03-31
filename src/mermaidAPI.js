@@ -423,7 +423,7 @@ const render = function (id, _txt, cb, container) {
   try {
     switch (graphType) {
       case 'git':
-        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         //gitGraphRenderer.setConf(cnf.git);
         gitGraphRenderer.draw(txt, id, false);
         break;

@@ -7,9 +7,11 @@ import gitGraphParser from './parser/gitGraph';
 import { log } from '../../logger';
 /* eslint-disable */
 import { getConfig } from '../../config';
+//import * as configApi from '../../config';
 let allCommitsDict = {};
 let branchNum;
 
+//let conf = configApi.getConfig();
 const commitType = db.commitType;
 
 let branchPos = {};
@@ -416,8 +418,8 @@ const drawBranches = (svg, branches) => {
  */
 export const draw = function (txt, id, ver) {
   clear();
-  const config = getConfig().gitGraph;
-
+  const conf = getConfig();
+  const config = conf.gitGraph;
   // try {
   const parser = gitGraphParser.parser;
   parser.yy = db;
@@ -471,7 +473,7 @@ export const draw = function (txt, id, ver) {
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 
-  configureSvgSize(diagram, height, width, config.useMaxWidth);
+  configureSvgSize(diagram, height, width, conf.useMaxWidth);
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
  // logger.debug(`viewBox ${vBox}`);
   diagram.attr('viewBox', vBox);

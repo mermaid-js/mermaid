@@ -23,7 +23,7 @@ const getStyles = (options) =>
 
   .branch {
     stroke-width: 1;
-    stroke: black;
+    stroke: ${options.lineColor};
     stroke-dasharray: 2;
   }
   .commit-label { font-size: 10px; fill: ${options.commitLabelColor};}

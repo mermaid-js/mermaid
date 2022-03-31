@@ -1,5 +1,7 @@
 import { log } from '../../logger';
 import { random } from '../../utils';
+import mermaidAPI from '../../mermaidAPI';
+import * as configApi from '../../config';
 let commits = {};
 let head = null;
 let branches = { main: head };
@@ -10,6 +12,10 @@ let seq = 0;
 function getId() {
   return random({ length: 7 });
 }
+
+export const parseDirective = function (statement, context, type) {
+  mermaidAPI.parseDirective(this, statement, context, type);
+};
 
 // /**
 //  * @param currentCommit
@@ -354,6 +360,8 @@ export const commitType = {
 };
 
 export default {
+  parseDirective,
+  getConfig: () => configApi.getConfig().gitGraph,
   setDirection,
   setOptions,
   getOptions,

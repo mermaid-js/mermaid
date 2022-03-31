@@ -26,8 +26,9 @@
   </head>
   <body>
     <h1>info below</h1>
-    <div class="mermaid" style="width: 100%; height: 20%;">
-       gitGraph:
+    <div class="mermaid2" style="width: 100%; height: 20%;">
+      %%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
+       gitGraph
        commit "Ashish"
        branch newbranch
        checkout newbranch
@@ -43,33 +44,32 @@
 
     </div>
     <div class="mermaid" style="width: 100%; height: 20%;">
-      gitGraph:
-      commit
+      gitGraph
+      commit type:HIGHLIGHT
       branch hotfix
       checkout hotfix
-      commit
+      commit type:HIGHLIGHT
       branch develop
       checkout develop
-      commit id:"ash" tag:"abc"
+      commit id:"ash" tag:"abc" type:HIGHLIGHT
       branch featureB
       checkout featureB
       commit type:HIGHLIGHT
       checkout main
       checkout hotfix
-      commit type:NORMAL
+      commit type:HIGHLIGHT
       checkout develop
       commit type:REVERSE
       checkout featureB
-      commit
+      commit type:HIGHLIGHT
       checkout main
       merge hotfix
       checkout featureB
-      commit
+      commit type:HIGHLIGHT
       checkout develop
       branch featureA
-      commit
+      commit type:HIGHLIGHT
       checkout develop
-      merge hotfix
       checkout featureA
       commit
       checkout featureB
@@ -78,7 +78,7 @@
       merge featureA
       branch release
       checkout release
-      commit
+      commit type:HIGHLIGHT
       checkout main
       commit
       checkout release
@@ -101,18 +101,18 @@
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'base',
-        themeVariables: {
-          primaryColor: '#9400D3',
-          darkMode: true,
-          // background: '#222',
-          textColor: 'white',
-          primaryTextColor: '#f4f4f4',
+        theme: 'dark',
+  //     themeVariables: {
+  //       primaryColor: '#9400D3',
+  //       darkMode: true,
+  //       background: '#222',
+  //       //   textColor: 'white',
+  //       //   primaryTextColor: '#f4f4f4',
 
-          // nodeBkg: '#ff0000',
-          // mainBkg: '#0000ff',
-          // tertiaryColor: '#ffffcc',
-        },
+  //       //   // nodeBkg: '#ff0000',
+  //       //   // mainBkg: '#0000ff',
+  // //   // tertiaryColor: '#ffffcc',
+  //     },
         // theme: 'forest',
         // theme: 'neutral',
         // theme: 'dark',

@@ -81,8 +81,11 @@ Let us see how these different commit type look with the help of the following d
 ```mermaid-example
     gitGraph
        commit id: "Normal"
+       commit
        commit id: "Reverse" type: REVERSE
+       commit
        commit id: "Hightlight" type: HIGHLIGHT
+       commit
 ```
 
 In this example, we have specified different types to each commit. Also, see how we have clubbed both `id` and `type` together at the time of declaring our commits.
@@ -96,12 +99,16 @@ Let us see how this works with the help of the following diagram:
 
 ```mermaid-example
     gitGraph
+       commit
        commit id: "Normal" tag: "v1.0.0"
+       commit
        commit id: "Reverse" type: REVERSE tag: "RC_1"
+       commit
        commit id: "Hightlight" type: HIGHLIGHT tag: "8.8.4"
+       commit
 ```
 
-In this example, we have given custom tags to the commits. Also, see how we have combined all thress attributes in a single commit declaration. You can mix-match these attributes as you like.
+In this example, we have given custom tags to the commits. Also, see how we have combined all these attributes in a single commit declaration. You can mix-match these attributes as you like.
 
 ### Create a new branch
 In Mermaid, in-order to create a new branch, you make use of the `branch` keyword. You also need to provide a name of the new branch. The name has to be unique and cannot be that of an existing branch. Usage example: `branch develop`
@@ -174,3 +181,257 @@ Then we created the `develop` branch, and all three commits afterwards are put o
 After this we made use of the `checkout` keyword to set the current branch as `main`, and all commit that follow are registered against the current branch, i.e. `main`.
 After this we merge the `develop` branch onto the current branch `main`, resulting in a merge commit.
 Since the current branch at this point is still `main`, the last two commits are registered against that.
+
+
+## Themes
+Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about themeing your diagram [here](./theming.md).
+
+Following are the different pre-defined theme options:
+- `base`
+- `forest`
+- `dark`
+- `default`
+- `neutral`
+
+**NOTE**: To change theme you can either use the `initialize` call or *directives*. Learn more about [directives](./directives.md)
+Let's put them to use, add see how our sample diagram looks like in different themes:
+
+### Base Theme
+
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'base' } }%%
+      gitGraph
+        commit
+        branch hotfix
+        checkout hotfix
+        commit
+        branch develop
+        checkout develop
+        commit id:"ash" tag:"abc"
+        branch featureB
+        checkout featureB
+        commit type:HIGHLIGHT
+        checkout main
+        checkout hotfix
+        commit type:NORMAL
+        checkout develop
+        commit type:REVERSE
+        checkout featureB
+        commit
+        checkout main
+        merge hotfix
+        checkout featureB
+        commit
+        checkout develop
+        branch featureA
+        commit
+        checkout develop
+        merge hotfix
+        checkout featureA
+        commit
+        checkout featureB
+        commit
+        checkout develop
+        merge featureA
+        branch release
+        checkout release
+        commit
+        checkout main
+        commit
+        checkout release
+        merge main
+        checkout develop
+        merge release
+ ```
+
+ ### Forest Theme
+
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
+      gitGraph
+        commit
+        branch hotfix
+        checkout hotfix
+        commit
+        branch develop
+        checkout develop
+        commit id:"ash" tag:"abc"
+        branch featureB
+        checkout featureB
+        commit type:HIGHLIGHT
+        checkout main
+        checkout hotfix
+        commit type:NORMAL
+        checkout develop
+        commit type:REVERSE
+        checkout featureB
+        commit
+        checkout main
+        merge hotfix
+        checkout featureB
+        commit
+        checkout develop
+        branch featureA
+        commit
+        checkout develop
+        merge hotfix
+        checkout featureA
+        commit
+        checkout featureB
+        commit
+        checkout develop
+        merge featureA
+        branch release
+        checkout release
+        commit
+        checkout main
+        commit
+        checkout release
+        merge main
+        checkout develop
+        merge release
+ ```
+### Default Theme
+
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
+      gitGraph
+        commit type:HIGHLIGHT
+        branch hotfix
+        checkout hotfix
+        commit
+        branch develop
+        checkout develop
+        commit id:"ash" tag:"abc"
+        branch featureB
+        checkout featureB
+        commit type:HIGHLIGHT
+        checkout main
+        checkout hotfix
+        commit type:NORMAL
+        checkout develop
+        commit type:REVERSE
+        checkout featureB
+        commit
+        checkout main
+        merge hotfix
+        checkout featureB
+        commit
+        checkout develop
+        branch featureA
+        commit
+        checkout develop
+        merge hotfix
+        checkout featureA
+        commit
+        checkout featureB
+        commit
+        checkout develop
+        merge featureA
+        branch release
+        checkout release
+        commit
+        checkout main
+        commit
+        checkout release
+        merge main
+        checkout develop
+        merge release
+ ```
+### Dark Theme
+
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
+      gitGraph
+        commit
+        branch hotfix
+        checkout hotfix
+        commit
+        branch develop
+        checkout develop
+        commit id:"ash" tag:"abc"
+        branch featureB
+        checkout featureB
+        commit type:HIGHLIGHT
+        checkout main
+        checkout hotfix
+        commit type:NORMAL
+        checkout develop
+        commit type:REVERSE
+        checkout featureB
+        commit
+        checkout main
+        merge hotfix
+        checkout featureB
+        commit
+        checkout develop
+        branch featureA
+        commit
+        checkout develop
+        merge hotfix
+        checkout featureA
+        commit
+        checkout featureB
+        commit
+        checkout develop
+        merge featureA
+        branch release
+        checkout release
+        commit
+        checkout main
+        commit
+        checkout release
+        merge main
+        checkout develop
+        merge release
+ ```
+
+ ### Neutral Theme
+
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
+      gitGraph
+        commit
+        branch hotfix
+        checkout hotfix
+        commit
+        branch develop
+        checkout develop
+        commit id:"ash" tag:"abc"
+        branch featureB
+        checkout featureB
+        commit type:HIGHLIGHT
+        checkout main
+        checkout hotfix
+        commit type:NORMAL
+        checkout develop
+        commit type:REVERSE
+        checkout featureB
+        commit
+        checkout main
+        merge hotfix
+        checkout featureB
+        commit
+        checkout develop
+        branch featureA
+        commit
+        checkout develop
+        merge hotfix
+        checkout featureA
+        commit
+        checkout featureB
+        commit
+        checkout develop
+        merge featureA
+        branch release
+        checkout release
+        commit
+        checkout main
+        commit
+        checkout release
+        merge main
+        checkout develop
+        merge release
+ ```
+
+ ## Customize using Theme Variables
