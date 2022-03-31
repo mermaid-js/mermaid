@@ -2,6 +2,7 @@ import { log } from '../../logger';
 import { random } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
+import common from '../common/common';
 let commits = {};
 let head = null;
 let branches = { main: head };
@@ -89,6 +90,10 @@ export const getOptions = function () {
 };
 
 export const commit = function (msg, id, type, tag) {
+  log.debug('Entering commit:', msg, id, type, tag);
+  id = common.sanitizeText(id, configApi.getConfig());
+  msg = common.sanitizeText(msg, configApi.getConfig());
+  tag = common.sanitizeText(tag, configApi.getConfig());
   const commit = {
     id: id ? id : seq + '-' + getId(),
     message: msg,
@@ -105,6 +110,7 @@ export const commit = function (msg, id, type, tag) {
 };
 
 export const branch = function (name) {
+  name = common.sanitizeText(name, configApi.getConfig());
   if (typeof branches[name] === 'undefined') {
     branches[name] = head != null ? head.id : null;
     checkout(name);
@@ -127,6 +133,7 @@ export const branch = function (name) {
 };
 
 export const merge = function (otherBranch) {
+  otherBranch = common.sanitizeText(otherBranch, configApi.getConfig());
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
   if (curBranch === otherBranch) {
@@ -212,6 +219,7 @@ export const merge = function (otherBranch) {
 };
 
 export const checkout = function (branch) {
+  branch = common.sanitizeText(branch, configApi.getConfig());
   console.info(branches);
   if (typeof branches[branch] === 'undefined') {
     let error = new Error(
