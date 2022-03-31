@@ -181,23 +181,25 @@ const drawCommits = (svg, commits, modifyGraph) => {
     if (modifyGraph) {
       const px=4;
       const py=2;
-      const labelBkg = gLabels.insert('rect')
-        .attr('class', 'commit-label-bkg');
+      if(commit.type !== commitType.MERGE) {
+        const labelBkg = gLabels.insert('rect')
+          .attr('class', 'commit-label-bkg');
 
-      const text = gLabels.append('text')
-        .attr('x', pos)
-        .attr('y', y + 25)
-        .attr('class', 'commit-label')
-        .text(commit.id);
-      let bbox = text.node().getBBox();
-      console.log(bbox);
-      // Now we have the label, lets position the background
-      labelBkg
-        .attr('x', pos + 10 - bbox.width / 2 - py)
-        .attr('y', y + 13.5)
-        .attr('width', bbox.width + 2 * py)
-        .attr('height', bbox.height + 2 * py);
-      text.attr('x', pos + 10 - bbox.width / 2);
+        const text = gLabels.append('text')
+          .attr('x', pos)
+          .attr('y', y + 25)
+          .attr('class', 'commit-label')
+          .text(commit.id);
+        let bbox = text.node().getBBox();
+
+        // Now we have the label, lets position the background
+        labelBkg
+          .attr('x', pos + 10 - bbox.width / 2 - py)
+          .attr('y', y + 13.5)
+          .attr('width', bbox.width + 2 * py)
+          .attr('height', bbox.height + 2 * py);
+        text.attr('x', pos + 10 - bbox.width / 2);
+      }
       if(commit.tag) {
         const rect = gLabels.insert('polygon');
         const hole = gLabels.append('circle');
