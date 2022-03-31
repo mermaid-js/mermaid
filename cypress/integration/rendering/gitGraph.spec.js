@@ -4,9 +4,9 @@ describe('Git Graph diagram', () => {
   it('1: should render a simple gitgraph with commit on main branch', () => {
     imgSnapshotTest(
       `gitGraph
-       commit
-       commit
-       commit
+       commit id: "1"
+       commit id: "2"
+       commit id: "3"
       `,
       {}
     );
@@ -44,15 +44,15 @@ describe('Git Graph diagram', () => {
   it('5: should render a simple gitgraph with two branches', () => {
     imgSnapshotTest(
       `gitGraph
-       commit
-       commit
+       commit id: "1"
+       commit id: "2"
        branch develop
        checkout develop
-       commit
-       commit
+       commit id: "3"
+       commit id: "4"
        checkout main
-       commit
-       commit
+       commit id: "5"
+       commit id: "6"
       `,
       {}
     );
@@ -60,16 +60,16 @@ describe('Git Graph diagram', () => {
   it('6: should render a simple gitgraph with two branches and merge commit', () => {
     imgSnapshotTest(
       `gitGraph
-       commit
-       commit
+       commit id: "1"
+       commit id: "2"
        branch develop
        checkout develop
-       commit
-       commit
+       commit id: "3"
+       commit id: "4"
        checkout main
        merge develop
-       commit
-       commit
+       commit id: "5"
+       commit id: "6"
       `,
       {}
     );
@@ -77,27 +77,27 @@ describe('Git Graph diagram', () => {
   it('7: should render a simple gitgraph with three branches and merge commit', () => {
     imgSnapshotTest(
       `gitGraph
-       commit
-       commit
+       commit id: "1"
+       commit id: "2"
        branch nice_feature
        checkout nice_feature
-       commit
+       commit id: "3"
        checkout main
-       commit
+       commit id: "4"
        checkout nice_feature
        branch very_nice_feature
        checkout very_nice_feature
-       commit
+       commit id: "5"
        checkout main
-       commit
+       commit id: "6"
        checkout nice_feature
-       commit
+       commit id: "7"
        checkout main
        merge nice_feature
        checkout very_nice_feature
-       commit
+       commit id: "8"
        checkout main
-       commit
+       commit id: "9"
       `,
       {}
     );
