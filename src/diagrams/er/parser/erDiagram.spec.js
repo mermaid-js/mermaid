@@ -181,6 +181,17 @@ describe('when parsing ER diagram it...', function () {
     expect(Object.keys(erDb.getEntities()).length).toBe(1);
   });
 
+  it('should allow for a title and acc description', function () {
+    const teacherRole = 'is teacher of';
+    const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
+
+    erDiagram.parser.parse(
+      `erDiagram\ntitle graph title\n accDescription this graph is about stuff\n${line1}`
+    );
+    expect(erDb.getTitle()).toBe('graph title');
+    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
+  });
+
   it('should allow more than one relationship between the same two entities', function () {
     const line1 = 'CAR ||--o{ PERSON : "insured for"';
     const line2 = 'CAR }o--|| PERSON : "owned by"';

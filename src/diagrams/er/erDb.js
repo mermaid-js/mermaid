@@ -5,6 +5,7 @@ import * as configApi from '../../config';
 let entities = {};
 let relationships = [];
 let title = '';
+let description = '';
 
 const Cardinality = {
   ZERO_OR_ONE: 'ZERO_OR_ONE',
@@ -75,6 +76,14 @@ const getTitle = function () {
   return title;
 };
 
+const setAccDescription = function (txt) {
+  description = txt;
+};
+
+const getAccDescription = function () {
+  return description;
+};
+
 const clear = function () {
   entities = {};
   relationships = [];
@@ -94,4 +103,6 @@ export default {
   clear,
   setTitle,
   getTitle,
+  setAccDescription,
+  getAccDescription,
 };

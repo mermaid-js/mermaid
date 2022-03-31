@@ -60,7 +60,7 @@ Bob-->Alice: I am good thanks!`;
     mermaidAPI.parse(str);
     expect(parser.yy.showSequenceNumbers()).toBe(true);
   });
-  it('it should handle a sequenceDiagram definition with a title', function () {
+  it('it should handle a sequenceDiagram definition with a title:', function () {
     const str = `
 sequenceDiagram
 title: Diagram Title
@@ -73,6 +73,7 @@ Bob-->Alice: I am good thanks!`;
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
 
+    expect(parser.yy.getAccDescription()).toBe('');
     const messages = parser.yy.getMessages();
     const title = parser.yy.getTitle();
 
@@ -81,6 +82,52 @@ Bob-->Alice: I am good thanks!`;
     expect(messages[2].from).toBe('Bob');
     expect(title).toBe('Diagram Title');
   });
+
+  it('it should handle a sequenceDiagram definition with a title without a :', function () {
+    const str = `
+sequenceDiagram
+title Diagram Title
+Alice->Bob:Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+    expect(actors.Alice.description).toBe('Alice');
+    actors.Bob.description = 'Bob';
+
+    expect(parser.yy.getAccDescription()).toBe('');
+    const messages = parser.yy.getMessages();
+    const title = parser.yy.getTitle();
+
+    expect(messages.length).toBe(3);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[2].from).toBe('Bob');
+    expect(title).toBe('Diagram Title');
+  });
+
+  it('it should handle a sequenceDiagram definition with a accDescription', function () {
+    const str = `
+sequenceDiagram
+accDescription Accessibility Description
+Alice->Bob:Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+    expect(actors.Alice.description).toBe('Alice');
+    actors.Bob.description = 'Bob';
+
+    expect(parser.yy.getAccDescription()).toBe('Accessibility Description');
+    const messages = parser.yy.getMessages();
+    const title = parser.yy.getTitle();
+
+    expect(messages.length).toBe(3);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[2].from).toBe('Bob');
+  });
+
   it('it should space in actor names', function () {
     const str = `
 sequenceDiagram
@@ -1586,6 +1633,7 @@ participant Alice
 
     renderer.bounds.init();
     mermaidAPI.parse(str);
+
     renderer.draw(str, 'tst');
 
     const { bounds, models } = renderer.bounds.getBounds();
