@@ -20,3 +20,6 @@ local/
 _site
 Gemfile.lock
 /.vs
+
+cypress/screenshots/
+cypress/snaphots/
