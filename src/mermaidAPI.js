@@ -499,7 +499,7 @@ const render = function (id, _txt, cb, container) {
     }
   } catch (e) {
     // errorRenderer.setConf(cnf.class);
-    errorRenderer.draw(id, pkg.version);
+    errorRenderer.draw(id, pkg.version, e);
     throw e;
   }
 
