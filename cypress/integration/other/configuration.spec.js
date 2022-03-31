@@ -111,7 +111,9 @@ describe('Configuration', () => {
       cy.visit(url);
 
       cy.get('svg');
-      cy.percySnapshot();
+      cy.matchImageSnapshot(
+        'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
+      );
     });
   });
 });

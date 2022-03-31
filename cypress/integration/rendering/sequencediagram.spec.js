@@ -552,7 +552,7 @@ context('Sequence diagram', () => {
         }
       );
     });
-    it('should override config with directive settings', () => {
+    it('should override config with directive settings 2', () => {
       imgSnapshotTest(
         `
         %%{init: { "config": { "mirrorActors": false, "wrap": true }}}%%
