@@ -47,7 +47,11 @@ export const imgSnapshotTest = (graphStr, _options, api) => {
 
   cy.visit(url);
   cy.get('svg');
-  cy.percySnapshot();
+  // cy.percySnapshot();
+  // Default name to test title
+  const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
+
+  cy.matchImageSnapshot(name);
 };
 
 export const renderGraph = (graphStr, options, api) => {

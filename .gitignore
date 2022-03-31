@@ -22,4 +22,4 @@ Gemfile.lock
 /.vs
 
 cypress/screenshots/
-cypress/snaphots/
+cypress/snapshots/
