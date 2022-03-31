@@ -12,7 +12,13 @@ let allCommitsDict = {};
 let branchNum;
 
 //let conf = configApi.getConfig();
-const commitType = db.commitType;
+//const commitType = db.commitType;
+const commitType = {
+  NORMAL: 0,
+  REVERSE: 1,
+  HIGHLIGHT: 2,
+  MERGE: 3,
+};
 
 let branchPos = {};
 let commitPos = {};
