@@ -423,8 +423,8 @@ const render = function (id, _txt, cb, container) {
   try {
     switch (graphType) {
       case 'git':
-        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        gitGraphRenderer.setConf(cnf.git);
+        // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        //gitGraphRenderer.setConf(cnf.git);
         gitGraphRenderer.draw(txt, id, false);
         break;
       case 'flowchart':
@@ -644,7 +644,8 @@ const handleDirective = function (p, directive, type) {
 /** @param {any} conf */
 function updateRendererConfigs(conf) {
   // Todo remove, all diagrams should get config on demoand from the config object, no need for this
-  gitGraphRenderer.setConf(conf.git);
+
+  // gitGraphRenderer.setConf(conf.git); // Todo Remove all  of these
   flowRenderer.setConf(conf.flowchart);
   flowRendererV2.setConf(conf.flowchart);
   if (typeof conf['sequenceDiagram'] !== 'undefined') {

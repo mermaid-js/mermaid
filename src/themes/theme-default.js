@@ -1,4 +1,4 @@
-import { invert, lighten, rgba, adjust } from 'khroma';
+import { invert, lighten, rgba, adjust, darken } from 'khroma';
 import { mkBorder } from './theme-helpers';
 
 class Theme {
@@ -199,6 +199,57 @@ class Theme {
     this.relationColor = this.relationColor || this.lineColor;
     this.relationLabelBackground = this.relationLabelBackground || this.labelBackground;
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
+
+    /* git */
+    this.git0 = this.git0 || this.primaryColor;
+    this.git1 = this.git1 || this.secondaryColor;
+    this.git2 = this.git2 || this.tertiaryColor;
+    this.git3 = this.git3 || adjust(this.primaryColor, { h: -30 });
+    this.git4 = this.git4 || adjust(this.primaryColor, { h: -60 });
+    this.git5 = this.git5 || adjust(this.primaryColor, { h: -90 });
+    this.git6 = this.git6 || adjust(this.primaryColor, { h: +60 });
+    this.git7 = this.git7 || adjust(this.primaryColor, { h: +120 });
+    if (this.darkMode) {
+      this.git0 = lighten(this.git0, 25);
+      this.git1 = lighten(this.git1, 25);
+      this.git2 = lighten(this.git2, 25);
+      this.git3 = lighten(this.git3, 25);
+      this.git4 = lighten(this.git4, 25);
+      this.git5 = lighten(this.git5, 25);
+      this.git6 = lighten(this.git6, 25);
+      this.git7 = lighten(this.git7, 25);
+    } else {
+      this.git0 = darken(this.git0, 25);
+      this.git1 = darken(this.git1, 25);
+      this.git2 = darken(this.git2, 25);
+      this.git3 = darken(this.git3, 25);
+      this.git4 = darken(this.git4, 25);
+      this.git5 = darken(this.git5, 25);
+      this.git6 = darken(this.git6, 25);
+      this.git7 = darken(this.git7, 25);
+    }
+    this.gitInv0 = darken(invert(this.git0), 25);
+    this.gitInv1 = invert(this.git1);
+    this.gitInv2 = invert(this.git2);
+    this.gitInv3 = invert(this.git3);
+    this.gitInv4 = invert(this.git4);
+    this.gitInv5 = invert(this.git5);
+    this.gitInv6 = invert(this.git6);
+    this.gitInv7 = invert(this.git7);
+    this.gitBranchLabel0 = invert(this.labelTextColor);
+    this.gitBranchLabel1 = this.labelTextColor;
+    this.gitBranchLabel2 = this.labelTextColor;
+    this.gitBranchLabel3 = invert(this.labelTextColor);
+    this.gitBranchLabel4 = this.labelTextColor;
+    this.gitBranchLabel5 = this.labelTextColor;
+    this.gitBranchLabel6 = this.labelTextColor;
+    this.gitBranchLabel7 = this.labelTextColor;
+
+    this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
+    this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
+    this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+    this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+    this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

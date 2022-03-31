@@ -115,7 +115,7 @@ sequenceDiagram
     participant account as Account Service
     participant mail as Mail Service
     participant db as Storage
-    
+
     Note over web,db: The user must be logged in to submit blog posts
     web->>+account: Logs in using credentials
     account->>db: Query stored accounts
@@ -129,7 +129,7 @@ sequenceDiagram
         Note over web,db: When the user is authenticated, they can now submit new posts
         web->>+blog: Submit new post
         blog->>db: Store post data
-        
+
         par Notifications
             blog--)mail: Send mail to blog subscribers
             blog--)db: Store in-site notifications
@@ -138,4 +138,21 @@ sequenceDiagram
         end
     end
 
+```
+
+A commit flow diagram.
+```mermaid
+gitGraph:
+    commit "Ashish"
+    branch newbranch
+    checkout newbranch
+    commit id:"1111"
+    commit tag:"test"
+    checkout main
+    commit type: HIGHLIGHT
+    commit
+    merge newbranch
+    commit
+    branch b2
+    commit
 ```
