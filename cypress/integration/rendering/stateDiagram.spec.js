@@ -148,7 +148,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a simple state diagrams', () => {
+  it('should render a simple state diagrams 2', () => {
     imgSnapshotTest(
       `
     stateDiagram

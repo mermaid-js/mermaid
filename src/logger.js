@@ -2,7 +2,7 @@ import moment from 'moment-mini';
 
 /** @typedef {'debug' | 'info' | 'warn' | 'error' | 'fatal'} LogLevel A log level */
 
-/** @type {object<LogLevel, number>} */
+/** @type {Object<LogLevel, number>} */
 export const LEVELS = {
   debug: 1,
   info: 2,
