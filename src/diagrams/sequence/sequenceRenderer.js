@@ -272,20 +272,65 @@ const actorFont = (cnf) => {
 };
 
 /**
- * Draws a message
+ * Process a message by adding its dimensions to the bound. It returns the Y coordinate of the
+ * message so it can be drawn later. We do not draw the message at this point so the arrowhead can
+ * be on top of the activation box.
  *
- * @param {any} g - The parent of the message element
+ * @param {any} diagram - The parent of the message element
  * @param {any} msgModel - The model containing fields describing a message
+ * @returns {number} LineStarty - The Y coordinate at which the message line starts
  */
-const drawMessage = function (g, msgModel) {
+const boundMessage = function (diagram, msgModel) {
   bounds.bumpVerticalPos(10);
-  const { startx, stopx, starty, message, type, sequenceIndex } = msgModel;
+  const { startx, stopx, message } = msgModel;
   const lines = common.splitBreaks(message).length;
   let textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const lineHeight = textDims.height / lines;
   msgModel.height += lineHeight;
 
   bounds.bumpVerticalPos(lineHeight);
+
+  let lineStarty;
+  let totalOffset = textDims.height - 10;
+  let textWidth = textDims.width;
+
+  if (startx === stopx) {
+    lineStarty = bounds.getVerticalPos() + totalOffset;
+    if (!conf.rightAngles) {
+      totalOffset += conf.boxMargin;
+      lineStarty = bounds.getVerticalPos() + totalOffset;
+    }
+    totalOffset += 30;
+    const dx = Math.max(textWidth / 2, conf.width / 2);
+    bounds.insert(
+      startx - dx,
+      bounds.getVerticalPos() - 10 + totalOffset,
+      stopx + dx,
+      bounds.getVerticalPos() + 30 + totalOffset
+    );
+  } else {
+    totalOffset += conf.boxMargin;
+    lineStarty = bounds.getVerticalPos() + totalOffset;
+    bounds.insert(startx, lineStarty - 10, stopx, lineStarty);
+  }
+  bounds.bumpVerticalPos(totalOffset);
+  msgModel.height += totalOffset;
+  msgModel.stopy = msgModel.starty + msgModel.height;
+  bounds.insert(msgModel.fromBounds, msgModel.starty, msgModel.toBounds, msgModel.stopy);
+
+  return lineStarty;
+};
+
+/**
+ * Draws a message. Note that the bounds have previously been updated by boundMessage.
+ *
+ * @param {any} diagram - The parent of the message element
+ * @param {any} msgModel - The model containing fields describing a message
+ * @param {float} lineStarty - The Y coordinate at which the message line starts
+ */
+const drawMessage = function (diagram, msgModel, lineStarty) {
+  const { startx, stopx, starty, message, type, sequenceIndex } = msgModel;
+  let textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDraw.getTextObj();
   textObj.x = startx;
   textObj.y = starty + 10;
@@ -301,17 +346,14 @@ const drawMessage = function (g, msgModel) {
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
 
-  drawText(g, textObj);
-
-  let totalOffset = textDims.height - 10;
+  drawText(diagram, textObj);
 
   let textWidth = textDims.width;
 
-  let line, lineStarty;
+  let line;
   if (startx === stopx) {
-    lineStarty = bounds.getVerticalPos() + totalOffset;
     if (conf.rightAngles) {
-      line = g
+      line = diagram
         .append('path')
         .attr(
           'd',
@@ -320,10 +362,7 @@ const drawMessage = function (g, msgModel) {
           } H ${startx}`
         );
     } else {
-      totalOffset += conf.boxMargin;
-
-      lineStarty = bounds.getVerticalPos() + totalOffset;
-      line = g
+      line = diagram
         .append('path')
         .attr(
           'd',
@@ -345,24 +384,12 @@ const drawMessage = function (g, msgModel) {
             (lineStarty + 20)
         );
     }
-
-    totalOffset += 30;
-    const dx = Math.max(textWidth / 2, conf.width / 2);
-    bounds.insert(
-      startx - dx,
-      bounds.getVerticalPos() - 10 + totalOffset,
-      stopx + dx,
-      bounds.getVerticalPos() + 30 + totalOffset
-    );
   } else {
-    totalOffset += conf.boxMargin;
-    lineStarty = bounds.getVerticalPos() + totalOffset;
-    line = g.append('line');
+    line = diagram.append('line');
     line.attr('x1', startx);
     line.attr('y1', lineStarty);
     line.attr('x2', stopx);
     line.attr('y2', lineStarty);
-    bounds.insert(startx, lineStarty - 10, stopx, lineStarty);
   }
   // Make an SVG Container
   // Draw the line
@@ -407,7 +434,8 @@ const drawMessage = function (g, msgModel) {
   // add node number
   if (sequenceDb.showSequenceNumbers() || conf.showSequenceNumbers) {
     line.attr('marker-start', 'url(' + url + '#sequencenumber)');
-    g.append('text')
+    diagram
+      .append('text')
       .attr('x', startx)
       .attr('y', lineStarty + 4)
       .attr('font-family', 'sans-serif')
@@ -417,10 +445,6 @@ const drawMessage = function (g, msgModel) {
       .attr('class', 'sequenceNumber')
       .text(sequenceIndex);
   }
-  bounds.bumpVerticalPos(totalOffset);
-  msgModel.height += totalOffset;
-  msgModel.stopy = msgModel.starty + msgModel.height;
-  bounds.insert(msgModel.fromBounds, msgModel.starty, msgModel.toBounds, msgModel.stopy);
 };
 
 export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
@@ -613,6 +637,7 @@ export const draw = function (text, id) {
 
   // Draw the messages/signals
   let sequenceIndex = 1;
+  let messagesToDraw = Array();
   messages.forEach(function (msg) {
     let loopModel, noteModel, msgModel;
 
@@ -722,7 +747,8 @@ export const draw = function (text, id) {
           msgModel = msg.msgModel;
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
-          drawMessage(diagram, msgModel);
+          let lineStarty = boundMessage(diagram, msgModel);
+          messagesToDraw.push({ messageModel: msgModel, lineStarty: lineStarty });
           bounds.models.addMessage(msgModel);
         } catch (e) {
           log.error('error while drawing message', e);
@@ -745,6 +771,8 @@ export const draw = function (text, id) {
       sequenceIndex++;
     }
   });
+
+  messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStarty));
 
   if (conf.mirrorActors) {
     // Draw actors below diagram
