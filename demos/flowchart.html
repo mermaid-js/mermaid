@@ -11,7 +11,6 @@
         font-family: 'Courier New', Courier, monospace !important;
       }
   </style>
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous"> -->
 </head>
 <body>
   <h1>Comparison "graph vs. flowchart"</h1>
@@ -1083,13 +1082,12 @@
   </div>
   
   <h2>Sample 20</h2>
-
   <h3>graph</h3>
   <div class="mermaid">
     graph LR
     A["$$f(\relax{x}) = \int_{-\infty}^\infty \hat{f}(\xi)\,e^{2 \pi i \xi x}\,d\xi$$"] -->|"$$\Bigg(\bigg(\Big(\big((\frac{-b\pm\sqrt{b^2-4ac}}{2a})\big)\Big)\bigg)\Bigg)$$"| B("$$1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}} {1+\frac{e^{-6\pi}} {1+\frac{e^{-8\pi}} {1+\cdots}}}}$$")
     A -->|"$$\overbrace{a+b+c}^{\text{note}}$$"| C("$$\phase{-78^\circ}$$")
-    B -->|"$$\begin{alignat}{2} 10&x+&3&y=2\\ 3&x+&13&y=4\end{alignat}$$"| D("$$x = \begin{cases} a &\text{if } b \\ c &\text{if } d \end{cases}$$")
+    B --> D("$$x = \begin{cases} a &\text{if } b \\ c &\text{if } d \end{cases}$$")
     C --> E("$$x(t)=c_1\begin{bmatrix}-\cos{t}+\sin{t}\\ 2\cos{t} \end{bmatrix}e^{2t}$$")
   </div>
 
@@ -1098,10 +1096,37 @@
     flowchart LR
     A["$$f(\relax{x}) = \int_{-\infty}^\infty \hat{f}(\xi)\,e^{2 \pi i \xi x}\,d\xi$$"] -->|"$$\Bigg(\bigg(\Big(\big((\frac{-b\pm\sqrt{b^2-4ac}}{2a})\big)\Big)\bigg)\Bigg)$$"| B("$$1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}} {1+\frac{e^{-6\pi}} {1+\frac{e^{-8\pi}} {1+\cdots}}}}$$")
     A -->|"$$\overbrace{a+b+c}^{\text{note}}$$"| C("$$\phase{-78^\circ}$$")
-    B -->|"$$\begin{alignat}{2} 10&x+&3&y=2\\ 3&x+&13&y=4\end{alignat}$$"| D("$$x = \begin{cases} a &\text{if } b \\ c &\text{if } d \end{cases}$$")
+    B --> D("$$x = \begin{cases} a &\text{if } b \\ c &\text{if } d \end{cases}$$")
     C --> E("$$x(t)=c_1\begin{bmatrix}-\cos{t}+\sin{t}\\ 2\cos{t} \end{bmatrix}e^{2t}$$")
   </div>
   <hr/>
+
+  <h2>Sample 21</h2>
+  <h3>graph</h3>
+  <div class="mermaid">
+    graph LR
+    A["$$\alpha\beta\gamma\delta\epsilon\zeta\eta\theta\iota\kappa\lambda\mu\nu\xi\omicron\pi\rho\sigma\tau\upsilon\phi\chi\psi\omega$$"] --> B["$$\Alpha\Beta\Gamma\Delta\Epsilon\Zeta\Eta\Theta\Iota\Kappa\Lambda\Mu\Nu\Xi\Omicron\Pi\Rho\Sigma\Tau\Upsilon\Phi\Chi\Psi\Omega$$"]
+  </div>
+
+  <h3>flowchart</h3>
+  <div class="mermaid">
+    graph LR
+    A["$$\alpha\beta\gamma\delta\epsilon\zeta\eta\theta\iota\kappa\lambda\mu\nu\xi\omicron\pi\rho\sigma\tau\upsilon\phi\chi\psi\omega$$"] --> B["$$\Alpha\Beta\Gamma\Delta\Epsilon\Zeta\Eta\Theta\Iota\Kappa\Lambda\Mu\Nu\Xi\Omicron\Pi\Rho\Sigma\Tau\Upsilon\Phi\Chi\Psi\Omega$$"]
+  </div>
+  <hr/>
+
+  <h2>Sample 22</h2>
+  <h3>graph</h3>
+  <div class="mermaid">
+    graph LR
+    A["$$\forall\complement\therefore\emptyset\exists\subset\because\empty\exist\supset\mapsto\varnothing\nexists\mid\to\implies\in\land\gets\impliedby\isin\lor\leftrightarrow\iff\notin\ni\notni\lnot$$"] --> B["$$\nabla\Im\Reals\jmath\partial\image\wp\aleph\Game\weierp\alef\Finv\N\Z\alefsym\cnums\natnums\beth\Complex\R\gimel\ell\Re\daleth\hbar\real\eth\hslash\reals$$"]
+  </div>
+
+  <h3>flowchart</h3>
+  <div class="mermaid">
+    graph LR
+    A["$$\forall\complement\therefore\emptyset\exists\subset\because\empty\exist\supset\mapsto\varnothing\nexists\mid\to\implies\in\land\gets\impliedby\isin\lor\leftrightarrow\iff\notin\ni\notni\lnot$$"] --> B["$$\nabla\Im\Reals\jmath\partial\image\wp\aleph\Game\weierp\alef\Finv\N\Z\alefsym\cnums\natnums\beth\Complex\R\gimel\ell\Re\daleth\hbar\real\eth\hslash\reals$$"]
+  </div>
   
 
   <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
