@@ -48,7 +48,7 @@ The docs are located in the `docs` folder and are written in Markdown. Just pick
 
 > **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**.
 
-The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from the `master` branch. Updates commited to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
+The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
 
 ## How to Contribute to Documentation
 
@@ -97,7 +97,8 @@ it('should render forks and joins', () => {
         { logLevel: 0 }
     );
     cy.get('svg');
-});
+});
+
 ```
 
 ### Any Questions or Suggestions?

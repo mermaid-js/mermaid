@@ -118,7 +118,7 @@ c. The `mermaid.initialize()` call, which dictates the appearance of diagrams an
 ```
 
 **Notes**:
-Rendering in Mermaid is initalized by `mermaid.initialize()` call. You can place `mermaid.initialize()` inside `mermaid.min.js` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<div>` tags may have loaded on the execution of `mermaid.min.js` file.
+Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can place `mermaid.initialize()` inside `mermaid.min.js` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<div>` tags may have loaded on the execution of `mermaid.min.js` file.
 
 `startOnLoad` is one of the parameters that can be defined by `mermaid.initialize()`
 
@@ -149,7 +149,7 @@ Rendering in Mermaid is initalized by `mermaid.initialize()` call. You can place
         And here is another:
         <div class="mermaid">
             graph TD 
-            A[Client] -->|tcp_123| 
+            A[Client] -->|tcp_123| B
             B(Load Balancer) 
             B -->|tcp_456| C[Server1] 
             B -->|tcp_456| D[Server2]

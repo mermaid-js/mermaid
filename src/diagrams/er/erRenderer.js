@@ -7,6 +7,7 @@ import { getConfig } from '../../config';
 import { log } from '../../logger';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 
@@ -545,6 +546,17 @@ export const draw = function (text, id) {
   erDb.clear();
   const parser = erParser.parser;
   parser.yy = erDb;
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and ocument for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   // Parse the text to populate erDb
   try {
@@ -554,7 +566,7 @@ export const draw = function (text, id) {
   }
 
   // Get a reference to the svg node that contains the text
-  const svg = select(`[id='${id}']`);
+  const svg = root.select(`[id='${id}']`);
 
   // Add cardinality marker definitions to the svg
   erMarkers.insertMarkers(svg, conf);
@@ -626,6 +638,8 @@ export const draw = function (text, id) {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
+
+  addSVGAccessibilityFields(parser.yy, svg, id);
 }; // draw
 
 export default {

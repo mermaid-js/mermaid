@@ -134,7 +134,7 @@ graph TD
       const url = 'http://localhost:9000/theme-directives.html';
       cy.visit(url);
       cy.get('svg');
-      cy.percySnapshot();
+      cy.matchImageSnapshot('conf-and-directives.spec-when-rendering-several-diagrams-diagram-1');
     });
   });
 });

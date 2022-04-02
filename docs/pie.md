@@ -16,13 +16,14 @@ pie title Pets adopted by volunteers
 ## Syntax
 Drawing a pie chart is really simple in mermaid.
 - Start with `pie` keyword to begin the diagram
+    - `showData` to render the actual data values after the legend text. This is ***OPTIONAL*** 
 - Followed by `title` keyword and its value in string to give a title to the pie-chart. This is ***OPTIONAL***
 - Followed by dataSet
     - `label` for a section in the pie diagram within `" "` quotes.
     - Followed by `:` colon as separator
     - Followed by `positive numeric value` (supported upto two decimal places)
 
-[pie]
+[pie] [showData] (OPTIONAL)
      [title] [titlevalue]  (OPTIONAL)
       "[datakey1]" : [dataValue1]
       "[datakey2]" : [dataValue2]
@@ -32,7 +33,7 @@ Drawing a pie chart is really simple in mermaid.
 
 ## Example
 ```mermaid-example
-pie
+pie showData
     title Key elements in Product X
     "Calcium" : 42.96
     "Potassium" : 50.05

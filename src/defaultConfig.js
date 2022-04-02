@@ -100,7 +100,7 @@ const config = {
   arrowMarkerAbsolute: false,
 
   /**
-   * This option controls which currentConfig keys are considered *secure* and can only be changed
+   * This option controls which currentConfig keys are considered _secure_ and can only be changed
    * via call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to the
    * `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
@@ -410,9 +410,9 @@ const config = {
      * | --------------- | ---------------------------------------------------- | ------ | -------- | --------------------------- |
      * | actorFontFamily | This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
      *
-     * **Notes:** Default value: "'Open-Sans", "sans-serif"'
+     * **Notes:** Default value: "'Open Sans", sans-serif'
      */
-    actorFontFamily: '"Open-Sans", "sans-serif"',
+    actorFontFamily: '"Open Sans", sans-serif',
 
     /**
      * This sets the font weight of the actor's description
@@ -802,7 +802,7 @@ const config = {
      */
     rightAngles: false,
     taskFontSize: 14,
-    taskFontFamily: '"Open-Sans", "sans-serif"',
+    taskFontFamily: '"Open Sans", sans-serif',
     taskMargin: 50,
     // width of activation box
     activationWidth: 10,
@@ -1063,6 +1063,25 @@ const config = {
     fontSize: 14,
     rect_padding: 10,
     line_height: 20,
+  },
+  gitGraph: {
+    diagramPadding: 8,
+    nodeSpacing: 150,
+    nodeFillColor: 'yellow',
+    nodeStrokeWidth: 2,
+    nodeStrokeColor: 'grey',
+    lineStrokeWidth: 4,
+    branchOffset: 50,
+    lineColor: 'grey',
+    leftMargin: 50,
+    branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
+    nodeRadius: 10,
+    nodeLabel: {
+      width: 75,
+      height: 100,
+      x: -25,
+      y: 0,
+    },
   },
 };
 

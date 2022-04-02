@@ -8,6 +8,7 @@
 
 %x string
 %x title
+%x accDescription
 %x open_directive
 %x type_directive
 %x arg_directive
@@ -26,6 +27,8 @@
 [\s]+ 		                                                      /* ignore */
 title                                                           { this.begin("title");return 'title'; }
 <title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
+accDescription                                                  { this.begin("accDescription");return 'accDescription'; }
+<accDescription>(?!\n|;|#)*[^\n]*                               { this.popState(); return "description_value"; }
 ["]                                                             { this.begin("string"); }
 <string>["]                                                     { this.popState(); }
 <string>[^"]*                                                   { return "txt"; }
@@ -33,7 +36,6 @@ title                                                           { this.begin("ti
 "showData"                                                      return 'showData';
 ":"[\s]*[\d]+(?:\.[\d]+)?                                       return "value";
 <<EOF>>                                                         return 'EOF';
-
 
 /lex
 
@@ -61,6 +63,7 @@ statement
   :
 	| txt value          { yy.addSection($1,yy.cleanupValue($2)); }
 	| title title_value  { $$=$2.trim();yy.setTitle($$); }
+  | accDescription description_value  { $$=$2.trim();yy.setAccDescription($$); }
 	| directive
 	;
 
