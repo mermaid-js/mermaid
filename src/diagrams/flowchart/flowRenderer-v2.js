@@ -146,7 +146,6 @@ export const addVertices = function (vert, g, svgId, root, doc) {
         .renderToString(c, { throwOnError: true, displayMode: true, output: 'html' })
         .replace(/\n/g, ' ')
     );
-    console.log(labelText);
     // Add the node
     g.setNode(vertex.id, {
       labelStyle: styles.labelStyle,
