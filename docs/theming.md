@@ -2,7 +2,7 @@
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/theming.md)
 
-With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of themes. The intent is to increase the customizability and ease of Styling for mermaid diagrams.  
+With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of themes. The intent is to increase the customizability and ease of styling for mermaid diagrams.  
 
 The theme can be altered by changing the root level variable `theme` variable in the configuration. To change it for the whole site you must use the `initialize` call. To do it for just for a single diagram you can use the `%%init%%` directive
 
@@ -24,7 +24,7 @@ The following are a list of **Deployable themes**, sample `%%init%%` directives 
 ## Site-wide Themes
 Site-wide themes are declared via `initialize` by site owners.
 
-Example of `Initalize` call setting `theme` to `base`:
+Example of `Initialize` call setting `theme` to `base`:
 ```javascript
     mermaidAPI.initialize({
         'securityLevel': 'loose', 'theme': 'base'
@@ -99,7 +99,7 @@ Leaving it empty will set all variable values to default.
 
 ## Color and Color Calculation:
 
-Color definitions have certain interactions in mermaid, this is in order to ensure visibility for diagrams. mermaid will adjust some variables automatically, when colors are changed in order to compensate and maintain readability.
+Color definitions have certain interactions in mermaid, this is in order to ensure visibility for diagrams. Mermaid will adjust some variables automatically, when colors are changed in order to compensate and maintain readability.
 
 **The Default Value Column** to the right of the Variable column will denote the Variable paired/associated with the Variable on the left and the nature of this pairing or association. If it for instance says primaryColor it means that it gets primaryColor as default value. If it says "based on primaryColor" it means that it is calculated/ derived from primaryColor. This calculation can be primary color inversion, a change of hue, darkening or lightening by 10%, etc.
 
