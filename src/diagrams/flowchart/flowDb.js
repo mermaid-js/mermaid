@@ -17,6 +17,8 @@ let tooltips = {};
 let subCount = 0;
 let firstGraphFlag = true;
 let direction;
+let title = 'Flow chart';
+let description = '';
 
 let version; // As in graph
 
@@ -25,6 +27,22 @@ let funs = [];
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
+};
+
+const setTitle = function (txt) {
+  title = txt;
+};
+
+const getTitle = function () {
+  return title;
+};
+
+const setAccDescription = function (txt) {
+  description = txt;
+};
+
+const getAccDescription = function () {
+  return description;
 };
 
 /**
@@ -736,6 +754,10 @@ const makeUniq = (sg, allSubgraphs) => {
 export default {
   parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
   addVertex,
   lookUpDomId,
   addLink,
