@@ -926,7 +926,7 @@ Default value: true
 **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
 to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
 will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
-function \*Default value: At default, will mirror Global Config\*\*
+function _Default value: At default, will mirror Global Config_
 
 ### Parameters
 
@@ -1073,16 +1073,61 @@ To be removed
 
 ```html
 <script>
-  var config = { theme: 'default', logLevel: 'fatal', securityLevel: 'strict', startOnLoad: true,
-  arrowMarkerAbsolute: false, er: { diagramPadding: 20, layoutDirection: 'TB', minEntityWidth: 100,
-  minEntityHeight: 75, entityPadding: 15, stroke: 'gray', fill: 'honeydew', fontSize: 12, useMaxWidth:
-true, }, flowchart: { diagramPadding: 8, htmlLabels: true, curve: 'basis', }, sequence: {
-  diagramMarginX: 50, diagramMarginY: 10, actorMargin: 50, width: 150, height: 65, boxMargin: 10,
-  boxTextMargin: 5, noteMargin: 10, messageMargin: 35, messageAlign: 'center', mirrorActors: true,
-  bottomMarginAdj: 1, useMaxWidth: true, rightAngles: false, showSequenceNumbers: false, }, gantt: {
-  titleTopMargin: 25, barHeight: 20, barGap: 4, topPadding: 50, leftPadding: 75, gridLineStartPadding:
-35, fontSize: 11, fontFamily: '"Open Sans", sans-serif', numberSectionStyles: 4, axisFormat:
-'%Y-%m-%d', topAxis: false, }, }; mermaid.initialize(config);
+  var config = {
+    theme: 'default',
+    logLevel: 'fatal',
+    securityLevel: 'strict',
+    startOnLoad: true,
+    arrowMarkerAbsolute: false,
+
+    er: {
+      diagramPadding: 20,
+      layoutDirection: 'TB',
+      minEntityWidth: 100,
+      minEntityHeight: 75,
+      entityPadding: 15,
+      stroke: 'gray',
+      fill: 'honeydew',
+      fontSize: 12,
+      useMaxWidth: true,
+    },
+    flowchart: {
+      diagramPadding: 8,
+      htmlLabels: true,
+      curve: 'basis',
+    },
+    sequence: {
+      diagramMarginX: 50,
+      diagramMarginY: 10,
+      actorMargin: 50,
+      width: 150,
+      height: 65,
+      boxMargin: 10,
+      boxTextMargin: 5,
+      noteMargin: 10,
+      messageMargin: 35,
+      messageAlign: 'center',
+      mirrorActors: true,
+      bottomMarginAdj: 1,
+      useMaxWidth: true,
+      rightAngles: false,
+      showSequenceNumbers: false,
+    },
+    gantt: {
+      titleTopMargin: 25,
+      barHeight: 20,
+      barGap: 4,
+      topPadding: 50,
+      leftPadding: 75,
+      gridLineStartPadding: 35,
+      fontSize: 11,
+      fontFamily: '"Open Sans", sans-serif',
+      numberSectionStyles: 4,
+      axisFormat: '%Y-%m-%d',
+      topAxis: false,
+    },
+  };
+  mermaid.initialize(config);
 </script>
 ```
 

@@ -6,6 +6,7 @@ import common from '../common/common';
 import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import utils, { assignWithDepth, configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = sequenceDb;
 
@@ -727,6 +728,7 @@ export const draw = function (text, id) {
           log.error('error while drawing message', e);
         }
     }
+
     // Increment sequence counter if msg.type is a line (and not another event like activation or note, etc)
     if (
       [
@@ -802,6 +804,8 @@ export const draw = function (text, id) {
       ' ' +
       (height + extraVertForTitle)
   );
+
+  addSVGAccessibilityFields(parser.yy, diagram, id);
   log.debug(`models:`, bounds.models);
 };
 

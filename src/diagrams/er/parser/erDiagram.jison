@@ -2,8 +2,14 @@
 
 %options case-insensitive
 %x open_directive type_directive arg_directive block
+%x title
+%x accDescription
 
 %%
+title                                                           { this.begin("title");return 'title'; }
+<title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
+accDescription                                                  { this.begin("accDescription");return 'accDescription'; }
+<accDescription>(?!\n|;|#)*[^\n]*                               { this.popState(); return "description_value"; }
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 <open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
@@ -84,6 +90,8 @@ statement
       }
     | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); }
     | entityName { yy.addEntity($1); }
+    | title title_value  { $$=$2.trim();yy.setTitle($$); }
+    | accDescription description_value  { $$=$2.trim();yy.setAccDescription($$); }
     ;
 
 entityName

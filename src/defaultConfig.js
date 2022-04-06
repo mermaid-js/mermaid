@@ -100,7 +100,7 @@ const config = {
   arrowMarkerAbsolute: false,
 
   /**
-   * This option controls which currentConfig keys are considered *secure* and can only be changed
+   * This option controls which currentConfig keys are considered _secure_ and can only be changed
    * via call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to the
    * `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
@@ -1063,6 +1063,25 @@ const config = {
     fontSize: 14,
     rect_padding: 10,
     line_height: 20,
+  },
+  gitGraph: {
+    diagramPadding: 8,
+    nodeSpacing: 150,
+    nodeFillColor: 'yellow',
+    nodeStrokeWidth: 2,
+    nodeStrokeColor: 'grey',
+    lineStrokeWidth: 4,
+    branchOffset: 50,
+    lineColor: 'grey',
+    leftMargin: 50,
+    branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
+    nodeRadius: 10,
+    nodeLabel: {
+      width: 75,
+      height: 100,
+      x: -25,
+      y: 0,
+    },
   },
 };
 

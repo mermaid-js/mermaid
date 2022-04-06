@@ -5,12 +5,10 @@ name: Check if README and docs/README are in sync
 on:
   push:
     branches:
-      - master
-      - develop
+      - gh-pages
   pull_request:
     branches:
-      - master
-      - develop
+      - gh-pages
 
 jobs:
   check:

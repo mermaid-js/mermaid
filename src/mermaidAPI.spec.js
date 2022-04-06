@@ -113,6 +113,12 @@ describe('when using mermaidAPI and ', function () {
       expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
     });
   });
+  describe('dompurify config', function () {
+    it('should allow dompurify config to be set', function () {
+      mermaidAPI.initialize({ dompurifyConfig: { ADD_ATTR: ['onclick'] } });
+      expect(mermaidAPI.getConfig().dompurifyConfig.ADD_ATTR).toEqual(['onclick']);
+    });
+  });
   describe('checking validity of input ', function () {
     it('it should throw for an invalid definiton', function () {
       expect(() => mermaidAPI.parse('this is not a mermaid diagram definition')).toThrow();

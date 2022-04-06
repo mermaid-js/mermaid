@@ -8,7 +8,7 @@ let actors = {};
 let messages = [];
 const notes = [];
 let title = '';
-let titleWrapped = false;
+let description = '';
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
 
@@ -122,9 +122,6 @@ export const getActorKeys = function () {
 export const getTitle = function () {
   return title;
 };
-export const getTitleWrapped = function () {
-  return titleWrapped;
-};
 export const enableSequenceNumbers = function () {
   sequenceNumbersEnabled = true;
 };
@@ -139,6 +136,7 @@ export const autoWrap = () => wrapEnabled;
 export const clear = function () {
   actors = {};
   messages = [];
+  sequenceNumbersEnabled = false;
 };
 
 export const parseMessage = function (str) {
@@ -323,9 +321,9 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
-export const setTitle = function (titleWrap) {
-  title = titleWrap.text;
-  titleWrapped = (titleWrap.wrap === undefined && autoWrap()) || !!titleWrap.wrap;
+export const setTitle = function (txt) {
+  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  title = sanitizedText;
 };
 
 export const apply = function (param) {
@@ -408,6 +406,15 @@ export const apply = function (param) {
   }
 };
 
+const setAccDescription = function (description_lex) {
+  let sanitizedText = sanitizeText(description_lex, configApi.getConfig());
+  description = sanitizedText;
+};
+
+const getAccDescription = function () {
+  return description;
+};
+
 export default {
   addActor,
   addMessage,
@@ -427,7 +434,6 @@ export default {
   getTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
-  getTitleWrapped,
   clear,
   parseMessage,
   LINETYPE,
@@ -436,4 +442,6 @@ export default {
   addNote,
   setTitle,
   apply,
+  setAccDescription,
+  getAccDescription,
 };
