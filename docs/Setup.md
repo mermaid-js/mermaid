@@ -756,19 +756,6 @@ available space if not the absolute space required is used.
 
 Default value: true
 
-## useMaxWidth
-
-| Parameter   | Description | Type    | Required | Values      |
-| ----------- | ----------- | ------- | -------- | ----------- |
-| useMaxWidth | See notes   | boolean | 4        | true, false |
-
-**Notes:**
-
-When this flag is set the height and width is set to 100% and is then scaling with the
-available space if not the absolute space required is used.
-
-Default value: true
-
 ## defaultRenderer
 
 | Parameter       | Description | Type    | Required | Values                  |
