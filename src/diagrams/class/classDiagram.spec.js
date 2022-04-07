@@ -543,6 +543,21 @@ foo()
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
+    it('should have a title and accDescription', function () {
+      const str =
+        'classDiagram\n' +
+        'class Car~T~\n' +
+        'title My Title\n' +
+        'accDescription My Description\n';
+      'Car : -List~Wheel~ wheels\n' +
+        'Car : +setWheels(List~Wheel~ wheels)\n' +
+        'Car : +getWheels() List~Wheel~';
+
+      parser.parse(str);
+      expect(parser.yy.getTitle()).toBe('My Title');
+      expect(parser.yy.getAccDescription()).toBe('My Description');
+    });
+
     it('should handle relation definitions AGGREGATION and dotted line', function () {
       const str = 'classDiagram\n' + 'Class01 o.. Class02';
 

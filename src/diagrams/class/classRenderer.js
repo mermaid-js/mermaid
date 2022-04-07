@@ -7,6 +7,7 @@ import { parser } from './parser/classDiagram';
 import svgDraw from './svgDraw';
 import { configureSvgSize } from '../../utils';
 import { getConfig } from '../../config';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = classDb;
 
@@ -263,6 +264,7 @@ export const draw = function (text, id) {
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
   log.debug(`viewBox ${vBox}`);
   diagram.attr('viewBox', vBox);
+  addSVGAccessibilityFields(parser.yy, diagram, id);
 };
 
 export default {
