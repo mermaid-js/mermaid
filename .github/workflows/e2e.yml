@@ -42,7 +42,7 @@ jobs:
     - name: Run E2E Tests
       run: yarn e2e
       env:
-        PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+#        PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
         CYPRESS_CACHE_FOLDER: .cache/Cypress
 
     #- name: Post Upload Test Results
