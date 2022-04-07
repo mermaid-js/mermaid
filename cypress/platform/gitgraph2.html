@@ -43,7 +43,7 @@
 
     </div>
     <div class="mermaid" style="width: 100%; height: 20%;">
-      %%{init: {  "gitGraph": { "showBranches": false, "mainBranchName": "APA" }}}%%
+      %%{init: {  "gitGraph": { "showBranches": true, "mainBranchName": "APA" }}}%%
       gitGraph
       commit
       branch hotfix
@@ -55,14 +55,14 @@
       branch featureB
       checkout featureB
       commit type:HIGHLIGHT
-      checkout main
+      checkout APA
       checkout hotfix
       commit type:NORMAL
       checkout develop
       commit type:REVERSE
       checkout featureB
       commit
-      checkout main
+      checkout APA
       merge hotfix
       checkout featureB
       commit
@@ -80,10 +80,10 @@
       branch release
       checkout release
       commit
-      checkout main
+      checkout APA
       commit
       checkout release
-      merge main
+      merge APA
       checkout develop
       merge release
 

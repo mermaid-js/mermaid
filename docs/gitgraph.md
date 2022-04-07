@@ -3,7 +3,7 @@
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/gitgraph.md)
 > A Git Graph is a pictorial representation of git commits and git actions(commands) on various branches.
 
-These kind of diagram are particularyly helpful to developers and devops teams to share their Git branching strategies. For example, it makes it easier to visualize how git flow works.
+These kind of diagram are particularly helpful to developers and devops teams to share their Git branching strategies. For example, it makes it easier to visualize how git flow works.
 
 Mermaid can render Git diagrams
 
@@ -28,11 +28,11 @@ In Mermaid, we support the basic git operations like:
 - *merge* : To merge an existing branch onto the current branch.
 
 With the help of these key git commands, you will be able to draw a gitgraph in Mermaid very easily and quickly.
-Entity names are often capitalised, although there is no accepted standard on this, and it is not required in Mermaid.
+Entity names are often capitalized, although there is no accepted standard on this, and it is not required in Mermaid.
 
 
 ## Syntax
-Mermaid syntax for Gitgraph is very straigth-forward and simple. It follows a declarative-approach, where each commit is drawn on the timeline in the diagram, in order of its occurance/presence in code. Basically, it follows the insertion order for each command.
+Mermaid syntax for Gitgraph is very straight-forward and simple. It follows a declarative-approach, where each commit is drawn on the timeline in the diagram, in order of its occurrences/presence in code. Basically, it follows the insertion order for each command.
 
 First thing you do is to declare your diagram type using the **gitgraph** keyword. This `gitgraph` keyword, tells Mermaid that you wish to draw a gitgraph, and parse the diagram code accordingly.
 
@@ -84,7 +84,7 @@ Let us see how these different commit type look with the help of the following d
        commit
        commit id: "Reverse" type: REVERSE
        commit
-       commit id: "Hightlight" type: HIGHLIGHT
+       commit id: "Highlight" type: HIGHLIGHT
        commit
 ```
 
@@ -104,7 +104,7 @@ Let us see how this works with the help of the following diagram:
        commit
        commit id: "Reverse" type: REVERSE tag: "RC_1"
        commit
-       commit id: "Hightlight" type: HIGHLIGHT tag: "8.8.4"
+       commit id: "Highlight" type: HIGHLIGHT tag: "8.8.4"
        commit
 ```
 
@@ -182,9 +182,145 @@ After this we made use of the `checkout` keyword to set the current branch as `m
 After this we merge the `develop` branch onto the current branch `main`, resulting in a merge commit.
 Since the current branch at this point is still `main`, the last two commits are registered against that.
 
+## Gitgraph specific configuration options
+In Mermaid, you have the option to configure the gitgraph diagram. You can configure the following options:
+- `showBranches` : Boolean, default is `true`. If set to `false`, the branches are not shown in the diagram.
+- `showCommitLabel` : Boolean, default is `true`. If set to `false`, the commit labels are not shown in the diagram.
+- `mainBranchName` : String, default is `main`. The name of the default/root branch.
+
+Let's look at them one by one.
+## Hiding Branch names and lines
+Sometimes you may want to hide the branch names and lines from the diagram. You can do this by using the `showBranches` keyword. Bye default its value is `true`. You can set it to false using directives
+
+Usage example:
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': false}} }%%
+      gitGraph
+        commit
+        branch hotfix
+        checkout hotfix
+        commit
+        branch develop
+        checkout develop
+        commit id:"ash" tag:"abc"
+        branch featureB
+        checkout featureB
+        commit type:HIGHLIGHT
+        checkout main
+        checkout hotfix
+        commit type:NORMAL
+        checkout develop
+        commit type:REVERSE
+        checkout featureB
+        commit
+        checkout main
+        merge hotfix
+        checkout featureB
+        commit
+        checkout develop
+        branch featureA
+        commit
+        checkout develop
+        merge hotfix
+        checkout featureA
+        commit
+        checkout featureB
+        commit
+        checkout develop
+        merge featureA
+        branch release
+        checkout release
+        commit
+        checkout main
+        commit
+        checkout release
+        merge main
+        checkout develop
+        merge release
+ ```
+
+## Hiding commit labels
+Sometimes you may want to hide the commit labels from the diagram. You can do this by using the `showCommitLabel` keyword. By default its value is `true`. You can set it to `false` using directives.
+
+
+Usage example:
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': false,'showCommitLabel': false}} }%%
+      gitGraph
+        commit
+        branch hotfix
+        checkout hotfix
+        commit
+        branch develop
+        checkout develop
+        commit id:"ash"
+        branch featureB
+        checkout featureB
+        commit type:HIGHLIGHT
+        checkout main
+        checkout hotfix
+        commit type:NORMAL
+        checkout develop
+        commit type:REVERSE
+        checkout featureB
+        commit
+        checkout main
+        merge hotfix
+        checkout featureB
+        commit
+        checkout develop
+        branch featureA
+        commit
+        checkout develop
+        merge hotfix
+        checkout featureA
+        commit
+        checkout featureB
+        commit
+        checkout develop
+        merge featureA
+        branch release
+        checkout release
+        commit
+        checkout main
+        commit
+        checkout release
+        merge main
+        checkout develop
+        merge release
+ ```
+
+## Customizing the main/default branch name
+Sometimes you may want to customize the name of the main/default branch. You can do this by using the `mainBranchName` keyword. By default its value is `main`. You can set it to any string using directives.
+
+Usage example:
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true,'mainBranchName': 'MetroLine1'}} }%%
+      gitGraph
+        commit id:"NewYork"
+        commit id:"Dallas"
+        branch MetroLine2
+        commit id:"LosAngeles"
+        commit id:"Chicago"
+        commit id:"Houston"
+        branch MetroLine3
+        commit id:"Phoenix"
+        commit type: HIGHLIGHT id:"Denver"
+        commit id:"Boston"
+        checkout MetroLine1
+        commit id:"Atlanta"
+        merge MetroLine3
+        commit id:"Miami"
+        commit id:"Washington"
+        merge MetroLine2
+        commit id:"Boston"
+        commit id:"Detroit"
+        commit type:REVERSE id:"SanFrancisco"
+ ```
+Looks at the imaginary rail road map created using these Mermaid. Here, we have changed the default main branch name to `MetroLine1`.
 
 ## Themes
-Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about themeing your diagram [here](./theming.md).
+Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](./theming.md).
 
 Following are the different pre-defined theme options:
 - `base`
@@ -434,4 +570,172 @@ Let's put them to use, add see how our sample diagram looks like in different th
         merge release
  ```
 
- ## Customize using Theme Variables
+## Customize using Theme Variables
+Mermaid allows you to customize your diagram using theme variables which govern the look and feel of various elements of the diagram.
+
+For understanding let us take a sample diagram with theme `default`, the default values of the theme variables is picked automatically from the theme. Later on we will see how to override the default values of the theme variables.
+
+See how the default theme is used to set the colors for the branches:
+
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+```
+
+### Customizing branch colors
+You can customize the branch colors using the `git0` to `git7` theme variables. Mermaid allows you to set the colors for up-to 8 branches, where `git0` variable will drive the value of the first branch, `git1` will drive the value of the second branch and so on.
+
+NOTE: Default values for these theme variables are picked from the selected theme. If you want to override the default values, you can use the `initialize` call to add your custom theme variable values.
+
+Example:
+
+Now let's override the default values for the `git0` to `git3` variables:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'git0': '#ff0000',
+              'git1': '#00ff00',
+              'git2': '#0000ff',
+              'git3': '#ff00ff',
+              'git4': '#00ffff',
+              'git5': '#ffff00',
+              'git6': '#ff00ff',
+              'git7': '#00ffff'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the branch colors are changed to the values specified in the theme variables.
+### Customizing branch label colors
+You can customize the branch label colors using the `gitBranchLabel0` to `gitBranchLabel7` theme variables. Mermaid allows you to set the colors for up-to 8 branches, where `gitBranchLabel0` variable will drive the value of the first branch label, `gitBranchLabel1` will drive the value of the second branch label and so on.
+
+Lets see how the default theme is used to set the colors for the branch labels:
+
+Now let's override the default values for the `gitBranchLabel0` to `gitBranchLabel2` variables:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'gitBranchLabel0': '#ff0000',
+              'gitBranchLabel1': '#00ff00',
+              'gitBranchLabel2': '#0000ff'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the branch label colors are changed to the values specified in the theme variables.
+
+
+### Customizing Commit colors
+You can customize commit using the `commitLabelColor` and `commitLabelBackground` theme variables for changes in the commit label color and background color respectively.
+
+Example:
+Now let's override the default values for the `commitLabelColor` to `commitLabelBackground` variables:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'commitLabelColor': '#ff0000',
+              'commitLabelBackground': '#00ff00'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the commit label color and background color are changed to the values specified in the theme variables.
+### Customizing Tag colors
+You can customize tag using the `tagLabelColor`,`tagLabelBackground` and `tagLabelBorder`  theme variables for changes in the tag label color,tag label background color and tag label border respectively.
+Example:
+Now let's override the default values for the `tagLabelColor`, `tagLabelBackground` and to `tagLabelBorder` variables:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'tagLabelColor': '#ff0000',
+              'tagLabelBackground': '#00ff00',
+              'tagLabelBorder': '#0000ff'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the tag colors are changed to the values specified in the theme variables.
+### Customizing Highlight commit colors
+You can customize the highlight commit colors in relation to the branch it is on using the `gitInv0` to `gitInv7` theme variables. Mermaid allows you to set the colors for up-to 8 branches specific highlight commit, where `gitInv0` variable will drive the value of the first branch's highlight commits, `gitInv1` will drive the value of the second branch's highlight commit label and so on.
+
+Example:
+
+Now let's override the default values for the `git0` to `git3` variables:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'gitInv0': '#ff0000'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+Se how the highlight commit color on the first branch is changed to the value specified in the theme variable `gitInv0`.
+
+
+

@@ -197,14 +197,14 @@ class Theme {
     this.git5 = lighten(this.pie6 || adjust(this.primaryColor, { h: -90 }), 10);
     this.git6 = lighten(this.pie7 || adjust(this.primaryColor, { h: +60 }), 10);
     this.git7 = lighten(this.pie8 || adjust(this.primaryColor, { h: +120 }), 20);
-    this.gitInv0 = invert(this.git0);
-    this.gitInv1 = invert(this.git1);
-    this.gitInv2 = invert(this.git2);
-    this.gitInv3 = invert(this.git3);
-    this.gitInv4 = invert(this.git4);
-    this.gitInv5 = invert(this.git5);
-    this.gitInv6 = invert(this.git6);
-    this.gitInv7 = invert(this.git7);
+    this.gitInv0 = this.gitInv0 || invert(this.git0);
+    this.gitInv1 = this.gitInv1 || invert(this.git1);
+    this.gitInv2 = this.gitInv2 || invert(this.git2);
+    this.gitInv3 = this.gitInv3 || invert(this.git3);
+    this.gitInv4 = this.gitInv4 || invert(this.git4);
+    this.gitInv5 = this.gitInv5 || invert(this.git5);
+    this.gitInv6 = this.gitInv6 || invert(this.git6);
+    this.gitInv7 = this.gitInv7 || invert(this.git7);
 
     this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
     this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
