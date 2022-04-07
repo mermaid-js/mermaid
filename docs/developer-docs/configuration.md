@@ -26,5 +26,3 @@ Initialize call is called **only once**. It is called by the site integrator in 
 ## configApi.reset
 
 This method resets the configuration for a diagram to the site configuration, the configuration provided by the site integrator. Before each rendering of a diagram reset is called in the very beginning of render.
-
-##
