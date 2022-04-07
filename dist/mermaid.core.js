@@ -13283,24 +13283,6 @@ var config = {
      */
     defaultRenderer: 'dagre-wrapper'
   },
-  git: {
-    arrowMarkerAbsolute: false,
-    useWidth: undefined,
-
-    /**
-     * | Parameter   | Description | Type    | Required | Values      |
-     * | ----------- | ----------- | ------- | -------- | ----------- |
-     * | useMaxWidth | See notes   | boolean | 4        | true, false |
-     *
-     * **Notes:**
-     *
-     * When this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     *
-     * Default value: true
-     */
-    useMaxWidth: true
-  },
   state: {
     dividerMargin: 10,
     sizeUnit: 5,
@@ -13505,26 +13487,19 @@ var config = {
   },
   gitGraph: {
     diagramPadding: 8,
-    nodeSpacing: 150,
-    nodeFillColor: 'yellow',
-    nodeStrokeWidth: 2,
-    nodeStrokeColor: 'grey',
-    lineStrokeWidth: 4,
-    branchOffset: 50,
-    lineColor: 'grey',
-    leftMargin: 50,
-    branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
-    nodeRadius: 10,
     nodeLabel: {
       width: 75,
       height: 100,
       x: -25,
       y: 0
-    }
+    },
+    mainBranchName: 'main',
+    showCommitLabel: true,
+    showBranches: true
   }
 };
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
 var keyify = function keyify(obj) {
   var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
@@ -19792,33 +19767,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "setDirection": () => (/* binding */ setDirection),
 /* harmony export */   "setOptions": () => (/* binding */ setOptions)
 /* harmony export */ });
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 
 
 
 
 
+
+var mainBranchName = (0,_config__WEBPACK_IMPORTED_MODULE_0__.getConfig)().gitGraph.mainBranchName;
 var commits = {};
 var head = null;
-var branches = {
-  main: head
-};
-var curBranch = 'main';
+var branches = {};
+branches[mainBranchName] = head;
+var curBranch = mainBranchName;
 var direction = 'LR';
 var seq = 0;
 
 function getId() {
-  return (0,_utils__WEBPACK_IMPORTED_MODULE_0__.random)({
+  return (0,_utils__WEBPACK_IMPORTED_MODULE_1__.random)({
     length: 7
   });
 }
 
 var parseDirective = function parseDirective(statement, context, type) {
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parseDirective(this, statement, context, type);
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__["default"].parseDirective(this, statement, context, type);
 }; // /**
 //  * @param currentCommit
 //  * @param otherCommit
@@ -19879,24 +19855,24 @@ var setDirection = function setDirection(dir) {
 };
 var options = {};
 var setOptions = function setOptions(rawOptString) {
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('options str', rawOptString);
+  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('options str', rawOptString);
   rawOptString = rawOptString && rawOptString.trim();
   rawOptString = rawOptString || '{}';
 
   try {
     options = JSON.parse(rawOptString);
   } catch (e) {
-    _logger__WEBPACK_IMPORTED_MODULE_2__.log.error('error while parsing gitGraph options', e.message);
+    _logger__WEBPACK_IMPORTED_MODULE_3__.log.error('error while parsing gitGraph options', e.message);
   }
 };
 var getOptions = function getOptions() {
   return options;
 };
 var commit = function commit(msg, id, type, tag) {
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('Entering commit:', msg, id, type, tag);
-  id = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(id, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
-  msg = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(msg, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
-  tag = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(tag, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
+  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('Entering commit:', msg, id, type, tag);
+  id = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(id, _config__WEBPACK_IMPORTED_MODULE_0__.getConfig());
+  msg = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(msg, _config__WEBPACK_IMPORTED_MODULE_0__.getConfig());
+  tag = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(tag, _config__WEBPACK_IMPORTED_MODULE_0__.getConfig());
   var commit = {
     id: id ? id : seq + '-' + getId(),
     message: msg,
@@ -19909,15 +19885,15 @@ var commit = function commit(msg, id, type, tag) {
   head = commit;
   commits[commit.id] = commit;
   branches[curBranch] = commit.id;
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('in pushCommit ' + commit.id);
+  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('in pushCommit ' + commit.id);
 };
 var branch = function branch(name) {
-  name = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(name, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
+  name = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(name, _config__WEBPACK_IMPORTED_MODULE_0__.getConfig());
 
   if (typeof branches[name] === 'undefined') {
     branches[name] = head != null ? head.id : null;
     checkout(name);
-    _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('in createBranch');
+    _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('in createBranch');
   } else {
     var error = new Error('Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ' + name + '")');
     error.hash = {
@@ -19936,7 +19912,7 @@ var branch = function branch(name) {
   }
 };
 var merge = function merge(otherBranch) {
-  otherBranch = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(otherBranch, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
+  otherBranch = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(otherBranch, _config__WEBPACK_IMPORTED_MODULE_0__.getConfig());
   var currentCommit = commits[branches[curBranch]];
   var otherCommit = commits[branches[otherBranch]];
 
@@ -20042,12 +20018,11 @@ var merge = function merge(otherBranch) {
   commits[commit.id] = commit;
   branches[curBranch] = commit.id; // }
 
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug(branches);
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('in mergeBranch');
+  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug(branches);
+  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('in mergeBranch');
 };
 var checkout = function checkout(branch) {
-  branch = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(branch, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
-  console.info(branches);
+  branch = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(branch, _config__WEBPACK_IMPORTED_MODULE_0__.getConfig());
 
   if (typeof branches[branch] === 'undefined') {
     var error = new Error('Trying to checkout branch which is not yet created. (Help try using "branch ' + branch + '")');
@@ -20068,9 +20043,6 @@ var checkout = function checkout(branch) {
   } else {
     curBranch = branch;
     var id = branches[curBranch];
-    console.log(id);
-    console.log('hi');
-    console.log(commits);
     head = commits[id];
   }
 }; // export const reset = function (commitRef) {
@@ -20129,7 +20101,7 @@ function prettyPrintCommitHistory(commitArr) {
     if (branches[_branch] === commit.id) label.push(_branch);
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug(label.join(' '));
+  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug(label.join(' '));
 
   if (commit.parents && commit.parents.length == 2) {
     var newCommit = commits[commit.parents[0]];
@@ -20149,17 +20121,17 @@ function prettyPrintCommitHistory(commitArr) {
 }
 
 var prettyPrint = function prettyPrint() {
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug(commits);
+  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug(commits);
   var node = getCommitsArray()[0];
   prettyPrintCommitHistory([node]);
 };
 var clear = function clear() {
   commits = {};
   head = null;
-  branches = {
-    main: head
-  };
-  curBranch = 'main';
+  var mainBranch = (0,_config__WEBPACK_IMPORTED_MODULE_0__.getConfig)().gitGraph.mainBranchName;
+  branches = {};
+  branches[mainBranch] = null;
+  curBranch = mainBranch;
   seq = 0;
 };
 var getBranchesAsObjArray = function getBranchesAsObjArray() {
@@ -20185,7 +20157,7 @@ var getCommitsArray = function getCommitsArray() {
     return commits[key];
   });
   commitArr.forEach(function (o) {
-    _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug(o.id);
+    _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug(o.id);
   });
   commitArr.sort(function (a, b) {
     return a.seq - b.seq;
@@ -20210,7 +20182,7 @@ var commitType = {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   parseDirective: parseDirective,
   getConfig: function getConfig() {
-    return _config__WEBPACK_IMPORTED_MODULE_4__.getConfig().gitGraph;
+    return _config__WEBPACK_IMPORTED_MODULE_0__.getConfig().gitGraph;
   },
   setDirection: setDirection,
   setOptions: setOptions,
@@ -20249,26 +20221,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-/* harmony import */ var _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
-/* harmony import */ var _parser_gitGraph__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
-/* harmony import */ var _parser_gitGraph__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_parser_gitGraph__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _gitGraphAst__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
+/* harmony import */ var _parser_gitGraph__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
+/* harmony import */ var _parser_gitGraph__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_parser_gitGraph__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* eslint-disable */
-
-
- //import * as db from './mockDb';
 
 
 
-/* eslint-disable */
 
- //import * as configApi from '../../config';
+
 
 var allCommitsDict = {};
-var branchNum; //let conf = configApi.getConfig();
-//const commitType = db.commitType;
-
+var branchNum;
 var commitType = {
   NORMAL: 0,
   REVERSE: 1,
@@ -20286,46 +20251,18 @@ var clear = function clear() {
   allCommitsDict = {};
   maxPos = 0;
   lanes = [];
-}; // let apiConfig = {};
-// export const setConf = function(c) {
-//   apiConfig = c;
-// };
-
-/** @param svg */
-
-
-function svgCreateDefs(svg) {
-  var config = (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().gitGraph;
-  svg.append('defs').append('g').attr('id', 'def-commit').append('circle').attr('r', config.nodeRadius).attr('cx', 0).attr('cy', 0);
-  svg.select('#def-commit').append('foreignObject').attr('width', config.nodeLabel.width).attr('height', config.nodeLabel.height).attr('x', config.nodeLabel.x).attr('y', config.nodeLabel.y).attr('class', 'node-label').attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility').append('p').html('');
-}
+};
 /**
- * @param svg
- * @param points
- * @param colorIdx
- * @param interpolate
- */
-
-/**
-// Pass in the element and its pre-transform coords
+ * Draws a text, used for labels of the branches
  *
- * @param element
- * @param coords
- */
-
-/**
- * @param svg
- * @param fromId
- * @param toId
- * @param direction
- * @param color
+ * @param {string} txt The text
+ * @returns {SVGElement}
  */
 
 
 var drawText = function drawText(txt) {
-  var svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text'); // svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
-
-  var rows = [];
+  var svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  var rows = []; // Handling of new lines in the label
 
   if (typeof txt === 'string') {
     rows = txt.split(/\\n|\n|<br\s*\/?>/gi);
@@ -20352,8 +20289,19 @@ var drawText = function drawText(txt) {
 
   return svgLabel;
 };
+/**
+ * Draws the commits with its symbol and labels. The function has tywo modes, one which only
+ * calculates the positions and one that does the actual drawing. This for a simple way getting the
+ * vertical leyering rcorrect in the graph.
+ *
+ * @param {any} svg
+ * @param {any} commits
+ * @param {any} modifyGraph
+ */
+
 
 var drawCommits = function drawCommits(svg, commits, modifyGraph) {
+  var gitGraphConfig = (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().gitGraph;
   var gBullets = svg.append('g').attr('class', 'commit-bullets');
   var gLabels = svg.append('g').attr('class', 'commit-labels');
   var pos = 0;
@@ -20364,7 +20312,7 @@ var drawCommits = function drawCommits(svg, commits, modifyGraph) {
   sortedKeys.forEach(function (key, index) {
     var commit = commits[key];
     var y = branchPos[commit.branch].pos;
-    var x = pos + 10; // Don't draw the commits now but calculate the positioning which is used by the branmch lines etc.
+    var x = pos + 10; // Don't draw the commits now but calculate the positioning which is used by the branch lines etc.
 
     if (modifyGraph) {
       var typeClass;
@@ -20433,9 +20381,9 @@ var drawCommits = function drawCommits(svg, commits, modifyGraph) {
 
     if (modifyGraph) {
       var px = 4;
-      var py = 2;
+      var py = 2; // Draw the commit label
 
-      if (commit.type !== commitType.MERGE) {
+      if (commit.type !== commitType.MERGE && gitGraphConfig.showCommitLabel) {
         var labelBkg = gLabels.insert('rect').attr('class', 'commit-label-bkg');
         var text = gLabels.append('text').attr('x', pos).attr('y', y + 25).attr('class', 'commit-label').text(commit.id);
         var bbox = text.node().getBBox(); // Now we have the label, lets position the background
@@ -20466,9 +20414,12 @@ var drawCommits = function drawCommits(svg, commits, modifyGraph) {
   });
 };
 /**
- * Detect if there are other commits between commit1s x-position and commit2s x-position on the same branch as commit2.
- * @param {*} commit1
- * @param {*} commit2
+ * Detect if there are other commits between commit1s x-position and commit2s x-position on the same
+ * branch as commit2.
+ *
+ * @param {any} commit1
+ * @param {any} commit2
+ * @param allCommits
  * @returns
  */
 
@@ -20484,7 +20435,13 @@ var hasOverlappingCommits = function hasOverlappingCommits(commit1, commit2, all
   return overlappingComits.length > 0;
 };
 /**
+ * This function find a lane in the y-axis that is not overlapping with any other lanes. This is
+ * used for drawing the lines between commits.
  *
+ * @param {any} y1
+ * @param {any} y2
+ * @param {any} _depth
+ * @returns
  */
 
 
@@ -20512,13 +20469,22 @@ var findLane = function findLane(y1, y2, _depth) {
   var diff = Math.abs(y1 - y2);
   return findLane(y1, y2 - diff / 5, depth);
 };
+/**
+ * This function draw trhe lines between the commits. They were arrows initially.
+ *
+ * @param {any} svg
+ * @param {any} commit1
+ * @param {any} commit2
+ * @param {any} allCommits
+ */
+
 
 var drawArrow = function drawArrow(svg, commit1, commit2, allCommits) {
   var conf = (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)();
   var p1 = commitPos[commit1.id];
   var p2 = commitPos[commit2.id];
-  var overlappingCommits = hasOverlappingCommits(commit1, commit2, allCommits);
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('drawArrow', p1, p2, overlappingCommits, commit1.id, commit2.id);
+  var overlappingCommits = hasOverlappingCommits(commit1, commit2, allCommits); // log.debug('drawArrow', p1, p2, overlappingCommits, commit1.id, commit2.id);
+
   var url = '';
 
   if (conf.arrowMarkerAbsolute) {
@@ -20591,6 +20557,8 @@ var drawArrows = function drawArrows(svg, commits) {
   });
 };
 /**
+ * This function adds the branches and the branches' labels to the svg.
+ *
  * @param svg
  * @param commitid
  * @param branches
@@ -20599,6 +20567,7 @@ var drawArrows = function drawArrows(svg, commits) {
 
 
 var drawBranches = function drawBranches(svg, branches) {
+  var gitGraphConfig = (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().gitGraph;
   var g = svg.append('g');
   branches.forEach(function (branch, index) {
     var pos = branchPos[branch.name].pos;
@@ -20608,9 +20577,10 @@ var drawBranches = function drawBranches(svg, branches) {
     line.attr('x2', maxPos);
     line.attr('y2', pos);
     line.attr('class', 'branch branch' + index);
-    lanes.push(pos); // Create the actual text element
+    lanes.push(pos);
+    var name = index === 0 ? gitGraphConfig.mainBranchName : branch.name; // Create the actual text element
 
-    var labelElement = drawText(branch.name); // Create outer g, edgeLabel, this will be positioned after graph layout
+    var labelElement = drawText(name); // Create outer g, edgeLabel, this will be positioned after graph layout
 
     var bkg = g.insert('rect');
     var branchLabel = g.insert('g').attr('class', 'branchLabel'); // Create inner g, label, this will be positioned now for centering the text
@@ -20628,24 +20598,26 @@ var drawBranches = function drawBranches(svg, branches) {
  * @param commit
  * @param direction
  * @param branchColor
+ * @param txt
+ * @param id
+ * @param ver
  */
 
 
 var draw = function draw(txt, id, ver) {
   clear();
   var conf = (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)();
-  var config = conf.gitGraph; // try {
+  var gitGraphConfig = (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().gitGraph; // try {
 
-  var parser = (_parser_gitGraph__WEBPACK_IMPORTED_MODULE_3___default().parser);
-  parser.yy = _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__["default"];
+  var parser = (_parser_gitGraph__WEBPACK_IMPORTED_MODULE_2___default().parser);
+  parser.yy = _gitGraphAst__WEBPACK_IMPORTED_MODULE_3__["default"];
   parser.yy.clear();
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver); // // Parse the graph definition
+  _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver); // // Parse the graph definition
 
-  parser.parse(txt + '\n'); // config = Object.assign(config, apiConfig, db.getOptions());
-
-  var direction = _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__["default"].getDirection();
-  allCommitsDict = _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__["default"].getCommits();
-  var branches = _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__["default"].getBranchesAsObjArray(); // Position branches vertically
+  parser.parse(txt + '\n');
+  var direction = _gitGraphAst__WEBPACK_IMPORTED_MODULE_3__["default"].getDirection();
+  allCommitsDict = _gitGraphAst__WEBPACK_IMPORTED_MODULE_3__["default"].getCommits();
+  var branches = _gitGraphAst__WEBPACK_IMPORTED_MODULE_3__["default"].getBranchesAsObjArray(); // Position branches vertically
 
   var pos = 0;
   branches.forEach(function (branch, index) {
@@ -20655,24 +20627,21 @@ var draw = function draw(txt, id, ver) {
     };
     pos += 50;
   });
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('brach pos ', branchPos);
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('effective options', config, branches);
-  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('commits', allCommitsDict);
   var diagram = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)("[id=\"".concat(id, "\"]"));
-  svgCreateDefs(diagram);
-  diagram.append('defs').append('marker').attr('id', 'arrowhead').attr('refX', 24).attr('refY', 10).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 24).attr('markerHeight', 24).attr('orient', 'auto').append('path').attr('d', 'M 0 0 L 20 10 L 0 20 z'); // this is actual shape for arrowhead
-
   drawCommits(diagram, allCommitsDict, false);
-  drawBranches(diagram, branches);
+
+  if (gitGraphConfig.showBranches) {
+    drawBranches(diagram, branches);
+  }
+
   drawArrows(diagram, allCommitsDict);
   drawCommits(diagram, allCommitsDict, true);
-  var padding = config.diagramPadding;
+  var padding = gitGraphConfig.diagramPadding;
   var svgBounds = diagram.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
   (0,_utils__WEBPACK_IMPORTED_MODULE_5__.configureSvgSize)(diagram, height, width, conf.useMaxWidth);
-  var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height); // logger.debug(`viewBox ${vBox}`);
-
+  var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height);
   diagram.attr('viewBox', vBox);
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -26956,7 +26925,7 @@ function parse(text) {
 
   if (graphInit) {
     reinitialize(graphInit);
-    _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('reinit ', graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_4__.log.info('reinit ', graphInit);
   }
 
   var graphType = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].detectType(text, cnf);
@@ -26964,7 +26933,7 @@ function parse(text) {
   _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('Type ' + graphType);
 
   switch (graphType) {
-    case 'git':
+    case 'gitGraph':
       parser = (_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_5___default());
       parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_6__["default"];
       break;
@@ -27128,7 +27097,8 @@ var render = function render(id, _txt, cb, container) {
     _config__WEBPACK_IMPORTED_MODULE_2__.addDirective(graphInit);
   }
 
-  var cnf = _config__WEBPACK_IMPORTED_MODULE_2__.getConfig(); // Check the maximum allowed text size
+  var cnf = _config__WEBPACK_IMPORTED_MODULE_2__.getConfig();
+  _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug(cnf); // Check the maximum allowed text size
 
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -27280,7 +27250,7 @@ var render = function render(id, _txt, cb, container) {
 
   try {
     switch (graphType) {
-      case 'git':
+      case 'gitGraph':
         // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         //gitGraphRenderer.setConf(cnf.git);
         _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_29__["default"].draw(txt, id, false);
@@ -27719,7 +27689,7 @@ var themes = {
   class: _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_3__["default"],
   stateDiagram: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_4__["default"],
   state: _diagrams_state_styles__WEBPACK_IMPORTED_MODULE_4__["default"],
-  git: _diagrams_git_styles__WEBPACK_IMPORTED_MODULE_5__["default"],
+  gitGraph: _diagrams_git_styles__WEBPACK_IMPORTED_MODULE_5__["default"],
   info: _diagrams_info_styles__WEBPACK_IMPORTED_MODULE_6__["default"],
   pie: _diagrams_pie_styles__WEBPACK_IMPORTED_MODULE_7__["default"],
   er: _diagrams_er_styles__WEBPACK_IMPORTED_MODULE_8__["default"],
@@ -28054,14 +28024,14 @@ var Theme = /*#__PURE__*/function () {
         this.git7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.darken)(this.git7, 25);
       }
 
-      this.gitInv0 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0);
-      this.gitInv1 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
-      this.gitInv2 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
-      this.gitInv3 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
-      this.gitInv4 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
-      this.gitInv5 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
-      this.gitInv6 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
-      this.gitInv7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
+      this.gitInv0 = this.gitInv0 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0);
+      this.gitInv1 = this.gitInv1 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
+      this.gitInv2 = this.gitInv2 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
+      this.gitInv3 = this.gitInv3 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
+      this.gitInv4 = this.gitInv4 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
+      this.gitInv5 = this.gitInv5 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
+      this.gitInv6 = this.gitInv6 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
+      this.gitInv7 = this.gitInv7 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
       this.branchLabelColor = this.branchLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
       this.gitBranchLabel0 = this.gitBranchLabel0 || this.branchLabelColor;
       this.gitBranchLabel1 = this.gitBranchLabel1 || this.branchLabelColor;
@@ -28354,14 +28324,14 @@ var Theme = /*#__PURE__*/function () {
       this.git7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.lighten)(this.pie8 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.adjust)(this.primaryColor, {
         h: +120
       }), 20);
-      this.gitInv0 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0);
-      this.gitInv1 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
-      this.gitInv2 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
-      this.gitInv3 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
-      this.gitInv4 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
-      this.gitInv5 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
-      this.gitInv6 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
-      this.gitInv7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
+      this.gitInv0 = this.gitInv0 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0);
+      this.gitInv1 = this.gitInv1 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
+      this.gitInv2 = this.gitInv2 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
+      this.gitInv3 = this.gitInv3 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
+      this.gitInv4 = this.gitInv4 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
+      this.gitInv5 = this.gitInv5 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
+      this.gitInv6 = this.gitInv6 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
+      this.gitInv7 = this.gitInv7 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
       this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
       this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
       this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
@@ -28706,22 +28676,22 @@ var Theme = /*#__PURE__*/function () {
         this.git7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.darken)(this.git7, 25);
       }
 
-      this.gitInv0 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.darken)((0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0), 25);
-      this.gitInv1 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
-      this.gitInv2 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
-      this.gitInv3 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
-      this.gitInv4 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
-      this.gitInv5 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
-      this.gitInv6 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
-      this.gitInv7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
-      this.gitBranchLabel0 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.labelTextColor);
-      this.gitBranchLabel1 = this.labelTextColor;
-      this.gitBranchLabel2 = this.labelTextColor;
-      this.gitBranchLabel3 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.labelTextColor);
-      this.gitBranchLabel4 = this.labelTextColor;
-      this.gitBranchLabel5 = this.labelTextColor;
-      this.gitBranchLabel6 = this.labelTextColor;
-      this.gitBranchLabel7 = this.labelTextColor;
+      this.gitInv0 = this.gitInv0 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.darken)((0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0), 25);
+      this.gitInv1 = this.gitInv1 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
+      this.gitInv2 = this.gitInv2 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
+      this.gitInv3 = this.gitInv3 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
+      this.gitInv4 = this.gitInv4 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
+      this.gitInv5 = this.gitInv5 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
+      this.gitInv6 = this.gitInv6 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
+      this.gitInv7 = this.gitInv7 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
+      this.gitBranchLabel0 = this.gitBranchLabel0 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.labelTextColor);
+      this.gitBranchLabel1 = this.gitBranchLabel1 || this.labelTextColor;
+      this.gitBranchLabel2 = this.gitBranchLabel2 || this.labelTextColor;
+      this.gitBranchLabel3 = this.gitBranchLabel3 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.labelTextColor);
+      this.gitBranchLabel4 = this.gitBranchLabel4 || this.labelTextColor;
+      this.gitBranchLabel5 = this.gitBranchLabel5 || this.labelTextColor;
+      this.gitBranchLabel6 = this.gitBranchLabel6 || this.labelTextColor;
+      this.gitBranchLabel7 = this.gitBranchLabel7 || this.labelTextColor;
       this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
       this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
       this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
@@ -29034,14 +29004,14 @@ var Theme = /*#__PURE__*/function () {
         this.git7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.darken)(this.git7, 25);
       }
 
-      this.gitInv0 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0);
-      this.gitInv1 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
-      this.gitInv2 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
-      this.gitInv3 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
-      this.gitInv4 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
-      this.gitInv5 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
-      this.gitInv6 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
-      this.gitInv7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
+      this.gitInv0 = this.gitInv0 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0);
+      this.gitInv1 = this.gitInv1 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
+      this.gitInv2 = this.gitInv2 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
+      this.gitInv3 = this.gitInv3 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
+      this.gitInv4 = this.gitInv4 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
+      this.gitInv5 = this.gitInv5 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
+      this.gitInv6 = this.gitInv6 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
+      this.gitInv7 = this.gitInv7 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
       this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
       this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
       this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
@@ -29373,14 +29343,14 @@ var Theme = /*#__PURE__*/function () {
       this.git7 = this.pie8 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.adjust)(this.primaryColor, {
         h: +120
       });
-      this.gitInv0 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0);
-      this.gitInv1 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
-      this.gitInv2 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
-      this.gitInv3 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
-      this.gitInv4 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
-      this.gitInv5 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
-      this.gitInv6 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
-      this.gitInv7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
+      this.gitInv0 = this.gitInv0 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0);
+      this.gitInv1 = this.gitInv1 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
+      this.gitInv2 = this.gitInv2 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
+      this.gitInv3 = this.gitInv3 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
+      this.gitInv4 = this.gitInv4 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git4);
+      this.gitInv5 = this.gitInv5 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git5);
+      this.gitInv6 = this.gitInv6 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git6);
+      this.gitInv7 = this.gitInv7 || (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git7);
       this.branchLabelColor = this.branchLabelColor || this.labelTextColor;
       this.gitBranchLabel0 = this.branchLabelColor;
       this.gitBranchLabel1 = 'white';
@@ -29702,7 +29672,7 @@ var detectType = function detectType(text, cnf) {
   }
 
   if (text.match(/^\s*gitGraph/)) {
-    return 'git';
+    return 'gitGraph';
   }
 
   if (text.match(/^\s*flowchart/)) {
@@ -31411,7 +31381,7 @@ module.exports = require("stylis");
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"mermaid","version":"8.14.0","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --mode development --progress --color","build:production":"webpack --mode production --progress --color","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint ./ --ext js,html","lint:fix":"yarn lint --fix","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config ./.webpack/webpack.config.e2e.babel.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"husky install && yarn build","pre-commit":"lint-staged"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^6.0.0","cypress-image-snapshot":"^4.0.1","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.6","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@commitlint/cli":"^16.0.0","@commitlint/config-conventional":"^16.0.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^7.0.0","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"9.5.2","documentation":"13.2.0","eslint":"^8.2.0","eslint-config-prettier":"^8.3.0","eslint-plugin-cypress":"^2.12.1","eslint-plugin-html":"^6.2.0","eslint-plugin-jest":"^26.0.0","eslint-plugin-jsdoc":"^38.0.3","eslint-plugin-markdown":"^2.2.1","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","lint-staged":"^12.1.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","prettier-plugin-jsdoc":"^0.3.30","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-merge":"^5.8.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"]}');
+module.exports = JSON.parse('{"name":"mermaid","version":"9.0.0","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --mode development --progress --color","build:production":"webpack --mode production --progress --color","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint ./ --ext js,html","lint:fix":"yarn lint --fix","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config ./.webpack/webpack.config.e2e.babel.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"husky install && yarn build","pre-commit":"lint-staged"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^6.0.0","cypress-image-snapshot":"^4.0.1","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.6","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@commitlint/cli":"^16.0.0","@commitlint/config-conventional":"^16.0.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^7.0.0","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"9.5.2","documentation":"13.2.0","eslint":"^8.2.0","eslint-config-prettier":"^8.3.0","eslint-plugin-cypress":"^2.12.1","eslint-plugin-html":"^6.2.0","eslint-plugin-jest":"^26.0.0","eslint-plugin-jsdoc":"^38.0.3","eslint-plugin-markdown":"^2.2.1","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","lint-staged":"^12.1.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","prettier-plugin-jsdoc":"^0.3.30","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-merge":"^5.8.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"]}');
 
 /***/ })
 

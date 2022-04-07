@@ -26,24 +26,28 @@
   </head>
   <body>
     <h1>info below</h1>
-    <div class="mermaid2" style="width: 100%; height: 20%;">
-      %%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
+    <div class="mermaid" style="width: 100%; height: 20%;">
+    %%{init: { "logLevel": "debug", "theme": "default" , "gitGraph" : {"showBranches":"false"},"themeVariables": {
+              "gitBranchLabel0": "#ff0000",
+              "gitBranchLabel1": "#00ff00",
+              "gitBranchLabel2": "#0000ff",
+              "git0": "#550055"
+       } } }%%
        gitGraph
-       commit "Ashish"
-       branch newbranch
-       checkout newbranch
-       commit id:"1111"
-       commit tag:"test"
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
        checkout main
        commit type: HIGHLIGHT
        commit
-       merge newbranch
+       merge develop
        commit
-       branch b2
+       branch featureA
        commit
 
     </div>
-    <div class="mermaid" style="width: 100%; height: 20%;">
+    <div class="mermaid2" style="width: 100%; height: 20%;">
       gitGraph
       commit type:HIGHLIGHT
       branch hotfix
@@ -101,18 +105,19 @@
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'dark',
-  //     themeVariables: {
-  //       primaryColor: '#9400D3',
-  //       darkMode: true,
-  //       background: '#222',
-  //       //   textColor: 'white',
-  //       //   primaryTextColor: '#f4f4f4',
+        //theme: 'dark',
+        themeVariables: {
+    commitLabelColor: '#9400D3',
+    commitLabelBackground: '#FFFFFF',
+    //       darkMode: true,
+    //       background: '#222',
+    //       //   textColor: 'white',
+    //       //   primaryTextColor: '#f4f4f4',
 
-  //       //   // nodeBkg: '#ff0000',
-  //       //   // mainBkg: '#0000ff',
-  // //   // tertiaryColor: '#ffffcc',
-  //     },
+    //       //   // nodeBkg: '#ff0000',
+    //       //   // mainBkg: '#0000ff',
+    // //   // tertiaryColor: '#ffffcc',
+  },
         // theme: 'forest',
         // theme: 'neutral',
         // theme: 'dark',
