@@ -220,7 +220,6 @@ export const merge = function (otherBranch) {
 
 export const checkout = function (branch) {
   branch = common.sanitizeText(branch, configApi.getConfig());
-  console.info(branches);
   if (typeof branches[branch] === 'undefined') {
     let error = new Error(
       'Trying to checkout branch which is not yet created. (Help try using "branch ' + branch + '")'
@@ -238,9 +237,6 @@ export const checkout = function (branch) {
   } else {
     curBranch = branch;
     const id = branches[curBranch];
-    console.log(id);
-    console.log('hi');
-    console.log(commits);
     head = commits[id];
   }
 };
