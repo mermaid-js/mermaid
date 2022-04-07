@@ -4,6 +4,10 @@ import { log } from '../../logger';
 import * as configApi from '../../config';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
+import common from '../common/common';
+
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
+
 
 let dateFormat = '';
 let axisFormat = '';
@@ -108,7 +112,8 @@ export const getLinks = function () {
 };
 
 export const setTitle = function (txt) {
-  title = txt;
+  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  title = sanitizedText;
 };
 
 export const getTitle = function () {
