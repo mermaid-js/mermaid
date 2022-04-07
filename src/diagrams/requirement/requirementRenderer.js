@@ -378,7 +378,7 @@ export const draw = (text, id) => {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
-  // Adds title and description to the flow chart
+  // Adds title and description to the requirements diagram
   addSVGAccessibilityFields(parser.yy, svg, id);
 };
 
