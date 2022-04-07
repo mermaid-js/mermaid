@@ -345,8 +345,34 @@ const setDirection = (dir) => {
   direction = dir;
 };
 
+let title = '';
+
+export const setTitle = function (txt) {
+  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  title = sanitizedText;
+};
+
+export const getTitle = function () {
+  return title;
+};
+
+let accDescription = '';
+
+export const setAccDescription = function (txt) {
+  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  accDescription = sanitizedText;
+};
+
+export const getAccDescription = function () {
+  return accDescription;
+};
+
 export default {
   parseDirective,
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
   getConfig: () => configApi.getConfig().class,
   addClass,
   bindFunctions,

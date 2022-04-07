@@ -11,6 +11,7 @@ import { render } from '../../dagre-wrapper/index.js';
 import { curveLinear } from 'd3';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 import common from '../common/common';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = classDb;
 
@@ -397,6 +398,7 @@ export const draw = function (text, id) {
     }
   }
 
+  addSVGAccessibilityFields(parser.yy, svg, id);
   // If node has a link, wrap it in an anchor SVG object.
   // const keys = Object.keys(classes);
   // keys.forEach(function(key) {

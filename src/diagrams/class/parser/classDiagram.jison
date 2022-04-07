@@ -29,6 +29,8 @@
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%\%(?!\{)*[^\n]*(\r?\n?)+                                      /* skip comments */
 \%\%[^\n]*(\r?\n)*                                              /* skip comments */
+"title"\s[^#\n;]+       return 'title';
+"accDescription"\s[^#\n;]+       return 'accDescription';
 
 \s*(\r?\n)+                return 'NEWLINE';
 \s+                     /* skip whitespace */
@@ -253,6 +255,9 @@ statement
     | cssClassStatement
     | directive
     | direction
+    | title {yy.setTitle($1.substring(6));$$=$1.substring(6);}
+	| accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);}
+
     ;
 
 classStatement
