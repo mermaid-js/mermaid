@@ -24,6 +24,20 @@ describe('state diagram, ', function () {
       `;
 
       parser.parse(str);
+      const description = stateDb.getAccDescription();
+      expect(description).toBe('');
+    });
+    it.only('simple with accDescription', function () {
+      const str = `stateDiagram\n
+          accDescription a simple description of the diagram
+          State1 : this is another string
+          [*] --> State1
+          State1 --> [*]
+      `;
+
+      parser.parse(str);
+      const description = stateDb.getAccDescription();
+      expect(description).toBe('a simple description of the diagram');
     });
     it('simple with directive', function () {
       const str = `%%{init: {'logLevel': 0 }}%%

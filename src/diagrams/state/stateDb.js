@@ -115,6 +115,16 @@ let startCnt = 0;
 let endCnt = 0; // eslint-disable-line
 // let stateCnt = 0;
 
+let description = '';
+
+const setAccDescription = function (txt) {
+  description = txt;
+};
+
+const getAccDescription = function () {
+  return description;
+};
+
 /**
  * Function called by parser when a node definition has been found.
  *
@@ -280,4 +290,6 @@ export default {
   getRootDocV2,
   extract,
   trimColon,
+  getAccDescription,
+  setAccDescription,
 };

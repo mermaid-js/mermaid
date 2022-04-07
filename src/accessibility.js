@@ -12,7 +12,10 @@ export default function addSVGAccessibilityFields(yy_parser, svg, id) {
   if (typeof svg.insert == 'undefined') {
     return;
   }
-  let title_string = yy_parser.getTitle();
+  let title_string = ''
+  if (yy_parser.getTitle !== undefined) {
+    title_string = yy_parser.getTitle();
+  };
   let description = yy_parser.getAccDescription();
   svg.attr('role', 'img').attr('aria-labelledby', 'chart-title-' + id + ' chart-desc-' + id);
   svg
