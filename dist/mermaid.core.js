@@ -989,12 +989,12 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,5],$V2=[6,9,11,23,41],$V3=[1,17],$V4=[1,20],$V5=[1,25],$V6=[1,26],$V7=[1,27],$V8=[1,28],$V9=[1,37],$Va=[23,38,39],$Vb=[4,6,9,11,23,41],$Vc=[34,35,36,37],$Vd=[22,29],$Ve=[1,55];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,5],$V2=[6,9,11,23,25,27,45],$V3=[1,17],$V4=[1,18],$V5=[1,19],$V6=[1,22],$V7=[1,27],$V8=[1,28],$V9=[1,29],$Va=[1,30],$Vb=[1,41],$Vc=[27,42,43],$Vd=[4,6,9,11,23,25,27,45],$Ve=[38,39,40,41],$Vf=[22,33],$Vg=[1,59];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"ER_DIAGRAM":4,"document":5,"EOF":6,"directive":7,"line":8,"SPACE":9,"statement":10,"NEWLINE":11,"openDirective":12,"typeDirective":13,"closeDirective":14,":":15,"argDirective":16,"entityName":17,"relSpec":18,"role":19,"BLOCK_START":20,"attributes":21,"BLOCK_STOP":22,"ALPHANUM":23,"attribute":24,"attributeType":25,"attributeName":26,"attributeKeyType":27,"attributeComment":28,"ATTRIBUTE_WORD":29,"ATTRIBUTE_KEY":30,"COMMENT":31,"cardinality":32,"relType":33,"ZERO_OR_ONE":34,"ZERO_OR_MORE":35,"ONE_OR_MORE":36,"ONLY_ONE":37,"NON_IDENTIFYING":38,"IDENTIFYING":39,"WORD":40,"open_directive":41,"type_directive":42,"arg_directive":43,"close_directive":44,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"ER_DIAGRAM",6:"EOF",9:"SPACE",11:"NEWLINE",15:":",20:"BLOCK_START",22:"BLOCK_STOP",23:"ALPHANUM",29:"ATTRIBUTE_WORD",30:"ATTRIBUTE_KEY",31:"COMMENT",34:"ZERO_OR_ONE",35:"ZERO_OR_MORE",36:"ONE_OR_MORE",37:"ONLY_ONE",38:"NON_IDENTIFYING",39:"IDENTIFYING",40:"WORD",41:"open_directive",42:"type_directive",43:"arg_directive",44:"close_directive"},
-productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,5],[10,4],[10,3],[10,1],[17,1],[21,1],[21,2],[24,2],[24,3],[24,3],[24,4],[25,1],[26,1],[27,1],[28,1],[18,3],[32,1],[32,1],[32,1],[32,1],[33,1],[33,1],[19,1],[19,1],[12,1],[13,1],[16,1],[14,1]],
+symbols_: {"error":2,"start":3,"ER_DIAGRAM":4,"document":5,"EOF":6,"directive":7,"line":8,"SPACE":9,"statement":10,"NEWLINE":11,"openDirective":12,"typeDirective":13,"closeDirective":14,":":15,"argDirective":16,"entityName":17,"relSpec":18,"role":19,"BLOCK_START":20,"attributes":21,"BLOCK_STOP":22,"title":23,"title_value":24,"accDescription":25,"description_value":26,"ALPHANUM":27,"attribute":28,"attributeType":29,"attributeName":30,"attributeKeyType":31,"attributeComment":32,"ATTRIBUTE_WORD":33,"ATTRIBUTE_KEY":34,"COMMENT":35,"cardinality":36,"relType":37,"ZERO_OR_ONE":38,"ZERO_OR_MORE":39,"ONE_OR_MORE":40,"ONLY_ONE":41,"NON_IDENTIFYING":42,"IDENTIFYING":43,"WORD":44,"open_directive":45,"type_directive":46,"arg_directive":47,"close_directive":48,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"ER_DIAGRAM",6:"EOF",9:"SPACE",11:"NEWLINE",15:":",20:"BLOCK_START",22:"BLOCK_STOP",23:"title",24:"title_value",25:"accDescription",26:"description_value",27:"ALPHANUM",33:"ATTRIBUTE_WORD",34:"ATTRIBUTE_KEY",35:"COMMENT",38:"ZERO_OR_ONE",39:"ZERO_OR_MORE",40:"ONE_OR_MORE",41:"ONLY_ONE",42:"NON_IDENTIFYING",43:"IDENTIFYING",44:"WORD",45:"open_directive",46:"type_directive",47:"arg_directive",48:"close_directive"},
+productions_: [0,[3,3],[3,2],[5,0],[5,2],[8,2],[8,1],[8,1],[8,1],[7,4],[7,6],[10,1],[10,5],[10,4],[10,3],[10,1],[10,2],[10,2],[17,1],[21,1],[21,2],[28,2],[28,3],[28,3],[28,4],[29,1],[30,1],[31,1],[32,1],[18,3],[36,1],[36,1],[36,1],[36,1],[37,1],[37,1],[19,1],[19,1],[12,1],[13,1],[16,1],[14,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -1038,78 +1038,84 @@ case 15:
  yy.addEntity($$[$0]); 
 break;
 case 16:
- this.$ = $$[$0]; /*console.log('Entity: ' + $$[$0]);*/ 
+ this.$=$$[$0].trim();yy.setTitle(this.$); 
 break;
 case 17:
- this.$ = [$$[$0]]; 
+ this.$=$$[$0].trim();yy.setAccDescription(this.$); 
 break;
 case 18:
- $$[$0].push($$[$0-1]); this.$=$$[$0]; 
+ this.$ = $$[$0]; /*console.log('Entity: ' + $$[$0]);*/ 
 break;
 case 19:
- this.$ = { attributeType: $$[$0-1], attributeName: $$[$0] }; 
+ this.$ = [$$[$0]]; 
 break;
 case 20:
- this.$ = { attributeType: $$[$0-2], attributeName: $$[$0-1], attributeKeyType: $$[$0] }; 
+ $$[$0].push($$[$0-1]); this.$=$$[$0]; 
 break;
 case 21:
- this.$ = { attributeType: $$[$0-2], attributeName: $$[$0-1], attributeComment: $$[$0] }; 
+ this.$ = { attributeType: $$[$0-1], attributeName: $$[$0] }; 
 break;
 case 22:
+ this.$ = { attributeType: $$[$0-2], attributeName: $$[$0-1], attributeKeyType: $$[$0] }; 
+break;
+case 23:
+ this.$ = { attributeType: $$[$0-2], attributeName: $$[$0-1], attributeComment: $$[$0] }; 
+break;
+case 24:
  this.$ = { attributeType: $$[$0-3], attributeName: $$[$0-2], attributeKeyType: $$[$0-1], attributeComment: $$[$0] }; 
 break;
-case 23: case 24: case 25:
+case 25: case 26: case 27:
  this.$=$$[$0]; 
 break;
-case 26:
+case 28:
  this.$=$$[$0].replace(/"/g, ''); 
 break;
-case 27:
+case 29:
 
         this.$ = { cardA: $$[$0], relType: $$[$0-1], cardB: $$[$0-2] };
         /*console.log('relSpec: ' + $$[$0] + $$[$0-1] + $$[$0-2]);*/
       
 break;
-case 28:
+case 30:
  this.$ = yy.Cardinality.ZERO_OR_ONE; 
 break;
-case 29:
+case 31:
  this.$ = yy.Cardinality.ZERO_OR_MORE; 
 break;
-case 30:
+case 32:
  this.$ = yy.Cardinality.ONE_OR_MORE; 
 break;
-case 31:
+case 33:
  this.$ = yy.Cardinality.ONLY_ONE; 
 break;
-case 32:
+case 34:
  this.$ = yy.Identification.NON_IDENTIFYING;  
 break;
-case 33:
+case 35:
  this.$ = yy.Identification.IDENTIFYING; 
 break;
-case 34:
+case 36:
  this.$ = $$[$0].replace(/"/g, ''); 
 break;
-case 35:
+case 37:
  this.$ = $$[$0]; 
 break;
-case 36:
+case 38:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 37:
+case 39:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 38:
+case 40:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 39:
+case 41:
  yy.parseDirective('}%%', 'close_directive', 'er'); 
 break;
 }
 },
-table: [{3:1,4:$V0,7:3,12:4,41:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,41:$V1},{13:8,42:[1,9]},{42:[2,36]},{6:[1,10],7:15,8:11,9:[1,12],10:13,11:[1,14],12:4,17:16,23:$V3,41:$V1},{1:[2,2]},{14:18,15:[1,19],44:$V4},o([15,44],[2,37]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:15,10:21,12:4,17:16,23:$V3,41:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),o($V2,[2,15],{18:22,32:24,20:[1,23],34:$V5,35:$V6,36:$V7,37:$V8}),o([6,9,11,15,20,23,34,35,36,37,41],[2,16]),{11:[1,29]},{16:30,43:[1,31]},{11:[2,39]},o($V2,[2,5]),{17:32,23:$V3},{21:33,22:[1,34],24:35,25:36,29:$V9},{33:38,38:[1,39],39:[1,40]},o($Va,[2,28]),o($Va,[2,29]),o($Va,[2,30]),o($Va,[2,31]),o($Vb,[2,9]),{14:41,44:$V4},{44:[2,38]},{15:[1,42]},{22:[1,43]},o($V2,[2,14]),{21:44,22:[2,17],24:35,25:36,29:$V9},{26:45,29:[1,46]},{29:[2,23]},{32:47,34:$V5,35:$V6,36:$V7,37:$V8},o($Vc,[2,32]),o($Vc,[2,33]),{11:[1,48]},{19:49,23:[1,51],40:[1,50]},o($V2,[2,13]),{22:[2,18]},o($Vd,[2,19],{27:52,28:53,30:[1,54],31:$Ve}),o([22,29,30,31],[2,24]),{23:[2,27]},o($Vb,[2,10]),o($V2,[2,12]),o($V2,[2,34]),o($V2,[2,35]),o($Vd,[2,20],{28:56,31:$Ve}),o($Vd,[2,21]),o([22,29,31],[2,25]),o($Vd,[2,26]),o($Vd,[2,22])],
-defaultActions: {5:[2,36],7:[2,2],20:[2,39],31:[2,38],37:[2,23],44:[2,18],47:[2,27]},
+table: [{3:1,4:$V0,7:3,12:4,45:$V1},{1:[3]},o($V2,[2,3],{5:6}),{3:7,4:$V0,7:3,12:4,45:$V1},{13:8,46:[1,9]},{46:[2,38]},{6:[1,10],7:15,8:11,9:[1,12],10:13,11:[1,14],12:4,17:16,23:$V3,25:$V4,27:$V5,45:$V1},{1:[2,2]},{14:20,15:[1,21],48:$V6},o([15,48],[2,39]),o($V2,[2,8],{1:[2,1]}),o($V2,[2,4]),{7:15,10:23,12:4,17:16,23:$V3,25:$V4,27:$V5,45:$V1},o($V2,[2,6]),o($V2,[2,7]),o($V2,[2,11]),o($V2,[2,15],{18:24,36:26,20:[1,25],38:$V7,39:$V8,40:$V9,41:$Va}),{24:[1,31]},{26:[1,32]},o([6,9,11,15,20,23,25,27,38,39,40,41,45],[2,18]),{11:[1,33]},{16:34,47:[1,35]},{11:[2,41]},o($V2,[2,5]),{17:36,27:$V5},{21:37,22:[1,38],28:39,29:40,33:$Vb},{37:42,42:[1,43],43:[1,44]},o($Vc,[2,30]),o($Vc,[2,31]),o($Vc,[2,32]),o($Vc,[2,33]),o($V2,[2,16]),o($V2,[2,17]),o($Vd,[2,9]),{14:45,48:$V6},{48:[2,40]},{15:[1,46]},{22:[1,47]},o($V2,[2,14]),{21:48,22:[2,19],28:39,29:40,33:$Vb},{30:49,33:[1,50]},{33:[2,25]},{36:51,38:$V7,39:$V8,40:$V9,41:$Va},o($Ve,[2,34]),o($Ve,[2,35]),{11:[1,52]},{19:53,27:[1,55],44:[1,54]},o($V2,[2,13]),{22:[2,20]},o($Vf,[2,21],{31:56,32:57,34:[1,58],35:$Vg}),o([22,33,34,35],[2,26]),{27:[2,29]},o($Vd,[2,10]),o($V2,[2,12]),o($V2,[2,36]),o($V2,[2,37]),o($Vf,[2,22],{32:60,35:$Vg}),o($Vf,[2,23]),o([22,33,35],[2,27]),o($Vf,[2,28]),o($Vf,[2,24])],
+defaultActions: {5:[2,38],7:[2,2],22:[2,41],35:[2,40],41:[2,25],48:[2,20],51:[2,29]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -1588,78 +1594,86 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 41; 
+case 0: this.begin("title");return 23; 
 break;
-case 1: this.begin('type_directive'); return 42; 
+case 1: this.popState(); return "title_value"; 
 break;
-case 2: this.popState(); this.begin('arg_directive'); return 15; 
+case 2: this.begin("accDescription");return 25; 
 break;
-case 3: this.popState(); this.popState(); return 44; 
+case 3: this.popState(); return "description_value"; 
 break;
-case 4:return 43;
+case 4: this.begin('open_directive'); return 45; 
 break;
-case 5:/* skip comments */
+case 5: this.begin('type_directive'); return 46; 
 break;
-case 6:/* skip comments */
+case 6: this.popState(); this.begin('arg_directive'); return 15; 
 break;
-case 7:return 11;
+case 7: this.popState(); this.popState(); return 48; 
 break;
-case 8:/* skip whitespace */
+case 8:return 47;
 break;
-case 9:return 9;
+case 9:/* skip comments */
 break;
-case 10:return 40;
+case 10:/* skip comments */
 break;
-case 11:return 4;
+case 11:return 11;
 break;
-case 12: this.begin("block"); return 20; 
+case 12:/* skip whitespace */
 break;
-case 13:/* skip whitespace in block */
+case 13:return 9;
 break;
-case 14:return 30
+case 14:return 44;
 break;
-case 15:return 29
+case 15:return 4;
 break;
-case 16:return 31;
+case 16: this.begin("block"); return 20; 
 break;
-case 17:/* nothing */
+case 17:/* skip whitespace in block */
 break;
-case 18: this.popState(); return 22; 
+case 18:return 34
 break;
-case 19:return yy_.yytext[0];
+case 19:return 33
 break;
-case 20:return 34;
+case 20:return 35;
 break;
-case 21:return 35;
+case 21:/* nothing */
 break;
-case 22:return 36;
+case 22: this.popState(); return 22; 
 break;
-case 23:return 37;
+case 23:return yy_.yytext[0];
 break;
-case 24:return 34;
+case 24:return 38;
 break;
-case 25:return 35;
+case 25:return 39;
 break;
-case 26:return 36;
+case 26:return 40;
 break;
-case 27:return 38;
+case 27:return 41;
 break;
-case 28:return 39;
+case 28:return 38;
 break;
-case 29:return 38;
+case 29:return 39;
 break;
-case 30:return 38;
+case 30:return 40;
 break;
-case 31:return 23;
+case 31:return 42;
 break;
-case 32:return yy_.yytext[0];
+case 32:return 43;
 break;
-case 33:return 6;
+case 33:return 42;
+break;
+case 34:return 42;
+break;
+case 35:return 27;
+break;
+case 36:return yy_.yytext[0];
+break;
+case 37:return 6;
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\{)/i,/^(?:\s+)/i,/^(?:(?:PK)|(?:FK))/i,/^(?:[A-Za-z][A-Za-z0-9\-_]*)/i,/^(?:"[^"]*")/i,/^(?:[\n]+)/i,/^(?:\})/i,/^(?:.)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-_]*)/i,/^(?:.)/i,/^(?:$)/i],
-conditions: {"open_directive":{"rules":[1],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"block":{"rules":[13,14,15,16,17,18,19],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,20,21,22,23,24,25,26,27,28,29,30,31,32,33],"inclusive":true}}
+rules: [/^(?:title\b)/i,/^(?:(?!\n||)*[^\n]*)/i,/^(?:accDescription\b)/i,/^(?:(?!\n||)*[^\n]*)/i,/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:[\s]+)/i,/^(?:"[^"]*")/i,/^(?:erDiagram\b)/i,/^(?:\{)/i,/^(?:\s+)/i,/^(?:(?:PK)|(?:FK))/i,/^(?:[A-Za-z][A-Za-z0-9\-_]*)/i,/^(?:"[^"]*")/i,/^(?:[\n]+)/i,/^(?:\})/i,/^(?:.)/i,/^(?:\|o\b)/i,/^(?:\}o\b)/i,/^(?:\}\|)/i,/^(?:\|\|)/i,/^(?:o\|)/i,/^(?:o\{)/i,/^(?:\|\{)/i,/^(?:\.\.)/i,/^(?:--)/i,/^(?:\.-)/i,/^(?:-\.)/i,/^(?:[A-Za-z][A-Za-z0-9\-_]*)/i,/^(?:.)/i,/^(?:$)/i],
+conditions: {"accDescription":{"rules":[3],"inclusive":false},"title":{"rules":[1],"inclusive":false},"open_directive":{"rules":[5],"inclusive":false},"type_directive":{"rules":[6,7],"inclusive":false},"arg_directive":{"rules":[7,8],"inclusive":false},"block":{"rules":[17,18,19,20,21,22,23],"inclusive":false},"INITIAL":{"rules":[0,2,4,9,10,11,12,13,14,15,16,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true}}
 });
 return lexer;
 })();
@@ -3592,264 +3606,276 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[2,4],$V1=[1,7],$V2=[6,12,16,18,19,20],$V3=[6,11,12,16,18,19,20],$V4=[1,35],$V5=[1,36],$V6=[1,37],$V7=[6,12,16,18,19,20,22,26,27];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,7],$V2=[1,5],$V3=[1,9],$V4=[1,6],$V5=[2,6],$V6=[1,16],$V7=[6,8,14,18,20,21,22,37,41],$V8=[8,14,18,20,21,22],$V9=[8,13,14,18,20,21,22],$Va=[1,26],$Vb=[6,8,14,37,41],$Vc=[8,14,41],$Vd=[1,53],$Ve=[1,54],$Vf=[1,55],$Vg=[8,14,24,28,29,41];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"GG":4,"document":5,"EOF":6,":":7,"DIR":8,"options":9,"body":10,"OPT":11,"NL":12,"line":13,"statement":14,"commitStatement":15,"BRANCH":16,"ID":17,"CHECKOUT":18,"MERGE":19,"COMMIT":20,"commit_arg":21,"COMMIT_TAG":22,"STR":23,"COMMIT_TYPE":24,"commitType":25,"COMMIT_ID":26,"COMMIT_MSG":27,"NORMAL":28,"REVERSE":29,"HIGHLIGHT":30,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"GG",6:"EOF",7:":",8:"DIR",11:"OPT",12:"NL",16:"BRANCH",17:"ID",18:"CHECKOUT",19:"MERGE",20:"COMMIT",22:"COMMIT_TAG",23:"STR",24:"COMMIT_TYPE",26:"COMMIT_ID",27:"COMMIT_MSG",28:"NORMAL",29:"REVERSE",30:"HIGHLIGHT"},
-productions_: [0,[3,3],[3,4],[3,5],[5,0],[5,2],[9,2],[9,1],[10,0],[10,2],[13,1],[13,1],[14,1],[14,2],[14,2],[14,2],[15,2],[15,3],[15,3],[15,5],[15,5],[15,3],[15,5],[15,5],[15,5],[15,5],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,3],[15,5],[15,5],[15,5],[15,5],[15,5],[15,5],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,7],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[15,9],[21,0],[21,1],[25,1],[25,1],[25,1]],
+symbols_: {"error":2,"start":3,"eol":4,"directive":5,"GG":6,"document":7,"EOF":8,":":9,"DIR":10,"options":11,"body":12,"OPT":13,"NL":14,"line":15,"statement":16,"commitStatement":17,"BRANCH":18,"ID":19,"CHECKOUT":20,"MERGE":21,"COMMIT":22,"commit_arg":23,"COMMIT_TAG":24,"STR":25,"COMMIT_TYPE":26,"commitType":27,"COMMIT_ID":28,"COMMIT_MSG":29,"NORMAL":30,"REVERSE":31,"HIGHLIGHT":32,"openDirective":33,"typeDirective":34,"closeDirective":35,"argDirective":36,"open_directive":37,"type_directive":38,"arg_directive":39,"close_directive":40,";":41,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"GG",8:"EOF",9:":",10:"DIR",13:"OPT",14:"NL",18:"BRANCH",19:"ID",20:"CHECKOUT",21:"MERGE",22:"COMMIT",24:"COMMIT_TAG",25:"STR",26:"COMMIT_TYPE",28:"COMMIT_ID",29:"COMMIT_MSG",30:"NORMAL",31:"REVERSE",32:"HIGHLIGHT",37:"open_directive",38:"type_directive",39:"arg_directive",40:"close_directive",41:";"},
+productions_: [0,[3,2],[3,2],[3,3],[3,4],[3,5],[7,0],[7,2],[11,2],[11,1],[12,0],[12,2],[15,2],[15,1],[16,1],[16,2],[16,2],[16,2],[17,2],[17,3],[17,3],[17,5],[17,5],[17,3],[17,5],[17,5],[17,5],[17,5],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,3],[17,5],[17,5],[17,5],[17,5],[17,5],[17,5],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[23,0],[23,1],[27,1],[27,1],[27,1],[5,3],[5,5],[33,1],[34,1],[36,1],[35,1],[4,1],[4,1],[4,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1:
+case 3:
  return $$[$0]; 
 break;
-case 2:
+case 4:
  return $$[$0-1]; 
 break;
-case 3:
+case 5:
 yy.setDirection($$[$0-3]); return $$[$0-1];
 break;
-case 5:
+case 7:
  yy.setOptions($$[$0-1]); this.$ = $$[$0]
 break;
-case 6:
+case 8:
 $$[$0-1] +=$$[$0]; this.$=$$[$0-1]
 break;
-case 8:
+case 10:
 this.$ = []
 break;
-case 9:
+case 11:
 $$[$0-1].push($$[$0]); this.$=$$[$0-1];
 break;
-case 10:
-this.$ =$$[$0]
-break;
-case 13:
-yy.branch($$[$0])
-break;
-case 14:
-yy.checkout($$[$0])
+case 12:
+this.$ =$$[$0-1]
 break;
 case 15:
-yy.merge($$[$0])
+yy.branch($$[$0])
 break;
 case 16:
-yy.commit($$[$0])
+yy.checkout($$[$0])
 break;
 case 17:
-yy.commit('','',yy.commitType.NORMAL,$$[$0])
+yy.merge($$[$0])
 break;
 case 18:
-yy.commit('','',$$[$0],'')
+yy.commit($$[$0])
 break;
 case 19:
-yy.commit('','',$$[$0],$$[$0-2])
+yy.commit('','',yy.commitType.NORMAL,$$[$0])
 break;
 case 20:
-yy.commit('','',$$[$0-2],$$[$0])
+yy.commit('','',$$[$0],'')
 break;
 case 21:
-yy.commit('',$$[$0],yy.commitType.NORMAL,'')
+yy.commit('','',$$[$0],$$[$0-2])
 break;
 case 22:
-yy.commit('',$$[$0-2],yy.commitType.NORMAL,$$[$0])
+yy.commit('','',$$[$0-2],$$[$0])
 break;
 case 23:
-yy.commit('',$$[$0],yy.commitType.NORMAL,$$[$0-2])
+yy.commit('',$$[$0],yy.commitType.NORMAL,'')
 break;
 case 24:
-yy.commit('',$$[$0-2],$$[$0],'')
+yy.commit('',$$[$0-2],yy.commitType.NORMAL,$$[$0])
 break;
 case 25:
-yy.commit('',$$[$0],$$[$0-2],'')
+yy.commit('',$$[$0],yy.commitType.NORMAL,$$[$0-2])
 break;
 case 26:
-yy.commit('',$$[$0-4],$$[$0-2],$$[$0])
+yy.commit('',$$[$0-2],$$[$0],'')
 break;
 case 27:
-yy.commit('',$$[$0-4],$$[$0],$$[$0-2])
+yy.commit('',$$[$0],$$[$0-2],'')
 break;
 case 28:
-yy.commit('',$$[$0-2],$$[$0-4],$$[$0])
+yy.commit('',$$[$0-4],$$[$0-2],$$[$0])
 break;
 case 29:
-yy.commit('',$$[$0],$$[$0-4],$$[$0-2])
+yy.commit('',$$[$0-4],$$[$0],$$[$0-2])
 break;
 case 30:
-yy.commit('',$$[$0],$$[$0-2],$$[$0-4])
+yy.commit('',$$[$0-2],$$[$0-4],$$[$0])
 break;
 case 31:
-yy.commit('',$$[$0-2],$$[$0],$$[$0-4])
+yy.commit('',$$[$0],$$[$0-4],$$[$0-2])
 break;
 case 32:
-yy.commit($$[$0],'',yy.commitType.NORMAL,'')
+yy.commit('',$$[$0],$$[$0-2],$$[$0-4])
 break;
 case 33:
-yy.commit($$[$0],'',yy.commitType.NORMAL,$$[$0-2])
+yy.commit('',$$[$0-2],$$[$0],$$[$0-4])
 break;
 case 34:
-yy.commit($$[$0-2],'',yy.commitType.NORMAL,$$[$0])
+yy.commit($$[$0],'',yy.commitType.NORMAL,'')
 break;
 case 35:
-yy.commit($$[$0-2],'',$$[$0],'')
+yy.commit($$[$0],'',yy.commitType.NORMAL,$$[$0-2])
 break;
 case 36:
-yy.commit($$[$0],'',$$[$0-2],'')
+yy.commit($$[$0-2],'',yy.commitType.NORMAL,$$[$0])
 break;
 case 37:
-yy.commit($$[$0],$$[$0-2],yy.commitType.NORMAL,'')
+yy.commit($$[$0-2],'',$$[$0],'')
 break;
 case 38:
-yy.commit($$[$0-2],$$[$0],yy.commitType.NORMAL,'')
+yy.commit($$[$0],'',$$[$0-2],'')
 break;
 case 39:
-yy.commit($$[$0-4],'',$$[$0-2],$$[$0])
+yy.commit($$[$0],$$[$0-2],yy.commitType.NORMAL,'')
 break;
 case 40:
-yy.commit($$[$0-4],'',$$[$0],$$[$0-2])
+yy.commit($$[$0-2],$$[$0],yy.commitType.NORMAL,'')
 break;
 case 41:
-yy.commit($$[$0-2],'',$$[$0-4],$$[$0])
+yy.commit($$[$0-4],'',$$[$0-2],$$[$0])
 break;
 case 42:
-yy.commit($$[$0],'',$$[$0-4],$$[$0-2])
+yy.commit($$[$0-4],'',$$[$0],$$[$0-2])
 break;
 case 43:
-yy.commit($$[$0],'',$$[$0-2],$$[$0-4])
+yy.commit($$[$0-2],'',$$[$0-4],$$[$0])
 break;
 case 44:
-yy.commit($$[$0-2],'',$$[$0],$$[$0-4])
+yy.commit($$[$0],'',$$[$0-4],$$[$0-2])
 break;
 case 45:
-yy.commit($$[$0-4],$$[$0],$$[$0-2],'')
+yy.commit($$[$0],'',$$[$0-2],$$[$0-4])
 break;
 case 46:
-yy.commit($$[$0-4],$$[$0-2],$$[$0],'')
+yy.commit($$[$0-2],'',$$[$0],$$[$0-4])
 break;
 case 47:
-yy.commit($$[$0-2],$$[$0],$$[$0-4],'')
+yy.commit($$[$0-4],$$[$0],$$[$0-2],'')
 break;
 case 48:
-yy.commit($$[$0],$$[$0-2],$$[$0-4],'')
+yy.commit($$[$0-4],$$[$0-2],$$[$0],'')
 break;
 case 49:
-yy.commit($$[$0],$$[$0-4],$$[$0-2],'')
+yy.commit($$[$0-2],$$[$0],$$[$0-4],'')
 break;
 case 50:
-yy.commit($$[$0-2],$$[$0-4],$$[$0],'')
+yy.commit($$[$0],$$[$0-2],$$[$0-4],'')
 break;
 case 51:
-yy.commit($$[$0-4],$$[$0],yy.commitType.NORMAL,$$[$0-2])
+yy.commit($$[$0],$$[$0-4],$$[$0-2],'')
 break;
 case 52:
-yy.commit($$[$0-4],$$[$0-2],yy.commitType.NORMAL,$$[$0])
+yy.commit($$[$0-2],$$[$0-4],$$[$0],'')
 break;
 case 53:
-yy.commit($$[$0-2],$$[$0],yy.commitType.NORMAL,$$[$0-4])
+yy.commit($$[$0-4],$$[$0],yy.commitType.NORMAL,$$[$0-2])
 break;
 case 54:
-yy.commit($$[$0],$$[$0-2],yy.commitType.NORMAL,$$[$0-4])
+yy.commit($$[$0-4],$$[$0-2],yy.commitType.NORMAL,$$[$0])
 break;
 case 55:
-yy.commit($$[$0],$$[$0-4],yy.commitType.NORMAL,$$[$0-2])
+yy.commit($$[$0-2],$$[$0],yy.commitType.NORMAL,$$[$0-4])
 break;
 case 56:
-yy.commit($$[$0-2],$$[$0-4],yy.commitType.NORMAL,$$[$0])
+yy.commit($$[$0],$$[$0-2],yy.commitType.NORMAL,$$[$0-4])
 break;
 case 57:
-yy.commit($$[$0-6],$$[$0-4],$$[$0-2],$$[$0])
+yy.commit($$[$0],$$[$0-4],yy.commitType.NORMAL,$$[$0-2])
 break;
 case 58:
-yy.commit($$[$0-6],$$[$0-4],$$[$0],$$[$0-2])
+yy.commit($$[$0-2],$$[$0-4],yy.commitType.NORMAL,$$[$0])
 break;
 case 59:
-yy.commit($$[$0-6],$$[$0-2],$$[$0-4],$$[$0])
+yy.commit($$[$0-6],$$[$0-4],$$[$0-2],$$[$0])
 break;
 case 60:
-yy.commit($$[$0-6],$$[$0],$$[$0-4],$$[$0-2])
+yy.commit($$[$0-6],$$[$0-4],$$[$0],$$[$0-2])
 break;
 case 61:
-yy.commit($$[$0-6],$$[$0-2],$$[$0],$$[$0-4])
+yy.commit($$[$0-6],$$[$0-2],$$[$0-4],$$[$0])
 break;
 case 62:
-yy.commit($$[$0-6],$$[$0],$$[$0-2],$$[$0-4])
+yy.commit($$[$0-6],$$[$0],$$[$0-4],$$[$0-2])
 break;
 case 63:
-yy.commit($$[$0-4],$$[$0-6],$$[$0-2],$$[$0])
+yy.commit($$[$0-6],$$[$0-2],$$[$0],$$[$0-4])
 break;
 case 64:
-yy.commit($$[$0-4],$$[$0-6],$$[$0],$$[$0-2])
+yy.commit($$[$0-6],$$[$0],$$[$0-2],$$[$0-4])
 break;
 case 65:
-yy.commit($$[$0-2],$$[$0-6],$$[$0-4],$$[$0])
+yy.commit($$[$0-4],$$[$0-6],$$[$0-2],$$[$0])
 break;
 case 66:
-yy.commit($$[$0],$$[$0-6],$$[$0-4],$$[$0-2])
+yy.commit($$[$0-4],$$[$0-6],$$[$0],$$[$0-2])
 break;
 case 67:
-yy.commit($$[$0-2],$$[$0-6],$$[$0],$$[$0-4])
+yy.commit($$[$0-2],$$[$0-6],$$[$0-4],$$[$0])
 break;
 case 68:
-yy.commit($$[$0],$$[$0-6],$$[$0-2],$$[$0-4])
+yy.commit($$[$0],$$[$0-6],$$[$0-4],$$[$0-2])
 break;
 case 69:
-yy.commit($$[$0],$$[$0-4],$$[$0-2],$$[$0-6])
+yy.commit($$[$0-2],$$[$0-6],$$[$0],$$[$0-4])
 break;
 case 70:
-yy.commit($$[$0-2],$$[$0-4],$$[$0],$$[$0-6])
+yy.commit($$[$0],$$[$0-6],$$[$0-2],$$[$0-4])
 break;
 case 71:
-yy.commit($$[$0],$$[$0-2],$$[$0-4],$$[$0-6])
+yy.commit($$[$0],$$[$0-4],$$[$0-2],$$[$0-6])
 break;
 case 72:
-yy.commit($$[$0-2],$$[$0],$$[$0-4],$$[$0-6])
+yy.commit($$[$0-2],$$[$0-4],$$[$0],$$[$0-6])
 break;
 case 73:
-yy.commit($$[$0-4],$$[$0-2],$$[$0],$$[$0-6])
+yy.commit($$[$0],$$[$0-2],$$[$0-4],$$[$0-6])
 break;
 case 74:
-yy.commit($$[$0-4],$$[$0],$$[$0-2],$$[$0-6])
+yy.commit($$[$0-2],$$[$0],$$[$0-4],$$[$0-6])
 break;
 case 75:
-yy.commit($$[$0-2],$$[$0-4],$$[$0-6],$$[$0])
+yy.commit($$[$0-4],$$[$0-2],$$[$0],$$[$0-6])
 break;
 case 76:
-yy.commit($$[$0],$$[$0-4],$$[$0-6],$$[$0-2])
+yy.commit($$[$0-4],$$[$0],$$[$0-2],$$[$0-6])
 break;
 case 77:
-yy.commit($$[$0-2],$$[$0],$$[$0-6],$$[$0-4])
+yy.commit($$[$0-2],$$[$0-4],$$[$0-6],$$[$0])
 break;
 case 78:
-yy.commit($$[$0],$$[$0-2],$$[$0-6],$$[$0-4])
+yy.commit($$[$0],$$[$0-4],$$[$0-6],$$[$0-2])
 break;
 case 79:
-yy.commit($$[$0-4],$$[$0-2],$$[$0-6],$$[$0])
+yy.commit($$[$0-2],$$[$0],$$[$0-6],$$[$0-4])
 break;
 case 80:
-yy.commit($$[$0-4],$$[$0],$$[$0-6],$$[$0-2])
+yy.commit($$[$0],$$[$0-2],$$[$0-6],$$[$0-4])
 break;
 case 81:
-this.$ = ""
+yy.commit($$[$0-4],$$[$0-2],$$[$0-6],$$[$0])
 break;
 case 82:
-this.$=$$[$0]
+yy.commit($$[$0-4],$$[$0],$$[$0-6],$$[$0-2])
 break;
 case 83:
- this.$=yy.commitType.NORMAL;
+this.$ = ""
 break;
 case 84:
- this.$=yy.commitType.REVERSE;
+this.$=$$[$0]
 break;
 case 85:
+ this.$=yy.commitType.NORMAL;
+break;
+case 86:
+ this.$=yy.commitType.REVERSE;
+break;
+case 87:
  this.$=yy.commitType.HIGHLIGHT;
+break;
+case 90:
+ yy.parseDirective('%%{', 'open_directive'); 
+break;
+case 91:
+ yy.parseDirective($$[$0], 'type_directive'); 
+break;
+case 92:
+ $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
+break;
+case 93:
+ yy.parseDirective('}%%', 'close_directive', 'gitGraph'); 
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},{5:3,6:$V0,7:[1,4],8:[1,5],9:6,12:$V1},{6:[1,8]},{5:9,6:$V0,9:6,12:$V1},{7:[1,10]},o($V2,[2,8],{10:11,11:[1,12]}),o($V3,[2,7]),{1:[2,1]},{6:[1,13]},{5:14,6:$V0,9:6,12:$V1},{6:[2,5],12:[1,17],13:15,14:16,15:18,16:[1,19],18:[1,20],19:[1,21],20:[1,22]},o($V3,[2,6]),{1:[2,2]},{6:[1,23]},o($V2,[2,9]),o($V2,[2,10]),o($V2,[2,11]),o($V2,[2,12]),{17:[1,24]},{17:[1,25]},{17:[1,26]},o($V2,[2,81],{21:27,22:[1,28],23:[1,32],24:[1,29],26:[1,30],27:[1,31]}),{1:[2,3]},o($V2,[2,13]),o($V2,[2,14]),o($V2,[2,15]),o($V2,[2,16]),{23:[1,33]},{25:34,28:$V4,29:$V5,30:$V6},{23:[1,38]},{23:[1,39]},o($V2,[2,82]),o($V2,[2,17],{24:[1,40],26:[1,41],27:[1,42]}),o($V2,[2,18],{22:[1,43],26:[1,44],27:[1,45]}),o($V7,[2,83]),o($V7,[2,84]),o($V7,[2,85]),o($V2,[2,21],{22:[1,46],24:[1,47],27:[1,48]}),o($V2,[2,32],{22:[1,49],24:[1,50],26:[1,51]}),{25:52,28:$V4,29:$V5,30:$V6},{23:[1,53]},{23:[1,54]},{23:[1,55]},{23:[1,56]},{23:[1,57]},{23:[1,58]},{25:59,28:$V4,29:$V5,30:$V6},{23:[1,60]},{23:[1,61]},{25:62,28:$V4,29:$V5,30:$V6},{23:[1,63]},o($V2,[2,19],{26:[1,64],27:[1,65]}),o($V2,[2,23],{24:[1,66],27:[1,67]}),o($V2,[2,33],{24:[1,68],26:[1,69]}),o($V2,[2,20],{26:[1,70],27:[1,71]}),o($V2,[2,25],{22:[1,72],27:[1,73]}),o($V2,[2,36],{22:[1,74],26:[1,75]}),o($V2,[2,22],{24:[1,76],27:[1,77]}),o($V2,[2,24],{22:[1,78],27:[1,79]}),o($V2,[2,37],{22:[1,81],24:[1,80]}),o($V2,[2,34],{24:[1,82],26:[1,83]}),o($V2,[2,35],{22:[1,84],26:[1,85]}),o($V2,[2,38],{22:[1,87],24:[1,86]}),{23:[1,88]},{23:[1,89]},{25:90,28:$V4,29:$V5,30:$V6},{23:[1,91]},{25:92,28:$V4,29:$V5,30:$V6},{23:[1,93]},{23:[1,94]},{23:[1,95]},{23:[1,96]},{23:[1,97]},{23:[1,98]},{23:[1,99]},{25:100,28:$V4,29:$V5,30:$V6},{23:[1,101]},{23:[1,102]},{23:[1,103]},{25:104,28:$V4,29:$V5,30:$V6},{23:[1,105]},{25:106,28:$V4,29:$V5,30:$V6},{23:[1,107]},{23:[1,108]},{23:[1,109]},{25:110,28:$V4,29:$V5,30:$V6},{23:[1,111]},o($V2,[2,30],{27:[1,112]}),o($V2,[2,43],{26:[1,113]}),o($V2,[2,31],{27:[1,114]}),o($V2,[2,54],{24:[1,115]}),o($V2,[2,44],{26:[1,116]}),o($V2,[2,53],{24:[1,117]}),o($V2,[2,29],{27:[1,118]}),o($V2,[2,42],{26:[1,119]}),o($V2,[2,28],{27:[1,120]}),o($V2,[2,48],{22:[1,121]}),o($V2,[2,41],{26:[1,122]}),o($V2,[2,47],{22:[1,123]}),o($V2,[2,27],{27:[1,124]}),o($V2,[2,55],{24:[1,125]}),o($V2,[2,26],{27:[1,126]}),o($V2,[2,49],{22:[1,127]}),o($V2,[2,50],{22:[1,128]}),o($V2,[2,56],{24:[1,129]}),o($V2,[2,40],{26:[1,130]}),o($V2,[2,51],{24:[1,131]}),o($V2,[2,39],{26:[1,132]}),o($V2,[2,45],{22:[1,133]}),o($V2,[2,46],{22:[1,134]}),o($V2,[2,52],{24:[1,135]}),{23:[1,136]},{23:[1,137]},{23:[1,138]},{25:139,28:$V4,29:$V5,30:$V6},{23:[1,140]},{25:141,28:$V4,29:$V5,30:$V6},{23:[1,142]},{23:[1,143]},{23:[1,144]},{23:[1,145]},{23:[1,146]},{23:[1,147]},{23:[1,148]},{25:149,28:$V4,29:$V5,30:$V6},{23:[1,150]},{23:[1,151]},{23:[1,152]},{25:153,28:$V4,29:$V5,30:$V6},{23:[1,154]},{25:155,28:$V4,29:$V5,30:$V6},{23:[1,156]},{23:[1,157]},{23:[1,158]},{25:159,28:$V4,29:$V5,30:$V6},o($V2,[2,71]),o($V2,[2,72]),o($V2,[2,69]),o($V2,[2,70]),o($V2,[2,74]),o($V2,[2,73]),o($V2,[2,78]),o($V2,[2,77]),o($V2,[2,76]),o($V2,[2,75]),o($V2,[2,80]),o($V2,[2,79]),o($V2,[2,68]),o($V2,[2,67]),o($V2,[2,66]),o($V2,[2,65]),o($V2,[2,63]),o($V2,[2,64]),o($V2,[2,62]),o($V2,[2,61]),o($V2,[2,60]),o($V2,[2,59]),o($V2,[2,57]),o($V2,[2,58])],
-defaultActions: {8:[2,1],13:[2,2],23:[2,3]},
+table: [{3:1,4:2,5:3,6:$V0,8:$V1,14:$V2,33:8,37:$V3,41:$V4},{1:[3]},{3:10,4:2,5:3,6:$V0,8:$V1,14:$V2,33:8,37:$V3,41:$V4},{3:11,4:2,5:3,6:$V0,8:$V1,14:$V2,33:8,37:$V3,41:$V4},{7:12,8:$V5,9:[1,13],10:[1,14],11:15,14:$V6},o($V7,[2,94]),o($V7,[2,95]),o($V7,[2,96]),{34:17,38:[1,18]},{38:[2,90]},{1:[2,1]},{1:[2,2]},{8:[1,19]},{7:20,8:$V5,11:15,14:$V6},{9:[1,21]},o($V8,[2,10],{12:22,13:[1,23]}),o($V9,[2,9]),{9:[1,25],35:24,40:$Va},o([9,40],[2,91]),{1:[2,3]},{8:[1,27]},{7:28,8:$V5,11:15,14:$V6},{8:[2,7],14:[1,31],15:29,16:30,17:32,18:[1,33],20:[1,34],21:[1,35],22:[1,36]},o($V9,[2,8]),o($Vb,[2,88]),{36:37,39:[1,38]},o($Vb,[2,93]),{1:[2,4]},{8:[1,39]},o($V8,[2,11]),{4:40,8:$V1,14:$V2,41:$V4},o($V8,[2,13]),o($Vc,[2,14]),{19:[1,41]},{19:[1,42]},{19:[1,43]},o($Vc,[2,83],{23:44,24:[1,45],25:[1,49],26:[1,46],28:[1,47],29:[1,48]}),{35:50,40:$Va},{40:[2,92]},{1:[2,5]},o($V8,[2,12]),o($Vc,[2,15]),o($Vc,[2,16]),o($Vc,[2,17]),o($Vc,[2,18]),{25:[1,51]},{27:52,30:$Vd,31:$Ve,32:$Vf},{25:[1,56]},{25:[1,57]},o($Vc,[2,84]),o($Vb,[2,89]),o($Vc,[2,19],{26:[1,58],28:[1,59],29:[1,60]}),o($Vc,[2,20],{24:[1,61],28:[1,62],29:[1,63]}),o($Vg,[2,85]),o($Vg,[2,86]),o($Vg,[2,87]),o($Vc,[2,23],{24:[1,64],26:[1,65],29:[1,66]}),o($Vc,[2,34],{24:[1,67],26:[1,68],28:[1,69]}),{27:70,30:$Vd,31:$Ve,32:$Vf},{25:[1,71]},{25:[1,72]},{25:[1,73]},{25:[1,74]},{25:[1,75]},{25:[1,76]},{27:77,30:$Vd,31:$Ve,32:$Vf},{25:[1,78]},{25:[1,79]},{27:80,30:$Vd,31:$Ve,32:$Vf},{25:[1,81]},o($Vc,[2,21],{28:[1,82],29:[1,83]}),o($Vc,[2,25],{26:[1,84],29:[1,85]}),o($Vc,[2,35],{26:[1,86],28:[1,87]}),o($Vc,[2,22],{28:[1,88],29:[1,89]}),o($Vc,[2,27],{24:[1,90],29:[1,91]}),o($Vc,[2,38],{24:[1,92],28:[1,93]}),o($Vc,[2,24],{26:[1,94],29:[1,95]}),o($Vc,[2,26],{24:[1,96],29:[1,97]}),o($Vc,[2,39],{24:[1,99],26:[1,98]}),o($Vc,[2,36],{26:[1,100],28:[1,101]}),o($Vc,[2,37],{24:[1,102],28:[1,103]}),o($Vc,[2,40],{24:[1,105],26:[1,104]}),{25:[1,106]},{25:[1,107]},{27:108,30:$Vd,31:$Ve,32:$Vf},{25:[1,109]},{27:110,30:$Vd,31:$Ve,32:$Vf},{25:[1,111]},{25:[1,112]},{25:[1,113]},{25:[1,114]},{25:[1,115]},{25:[1,116]},{25:[1,117]},{27:118,30:$Vd,31:$Ve,32:$Vf},{25:[1,119]},{25:[1,120]},{25:[1,121]},{27:122,30:$Vd,31:$Ve,32:$Vf},{25:[1,123]},{27:124,30:$Vd,31:$Ve,32:$Vf},{25:[1,125]},{25:[1,126]},{25:[1,127]},{27:128,30:$Vd,31:$Ve,32:$Vf},{25:[1,129]},o($Vc,[2,32],{29:[1,130]}),o($Vc,[2,45],{28:[1,131]}),o($Vc,[2,33],{29:[1,132]}),o($Vc,[2,56],{26:[1,133]}),o($Vc,[2,46],{28:[1,134]}),o($Vc,[2,55],{26:[1,135]}),o($Vc,[2,31],{29:[1,136]}),o($Vc,[2,44],{28:[1,137]}),o($Vc,[2,30],{29:[1,138]}),o($Vc,[2,50],{24:[1,139]}),o($Vc,[2,43],{28:[1,140]}),o($Vc,[2,49],{24:[1,141]}),o($Vc,[2,29],{29:[1,142]}),o($Vc,[2,57],{26:[1,143]}),o($Vc,[2,28],{29:[1,144]}),o($Vc,[2,51],{24:[1,145]}),o($Vc,[2,52],{24:[1,146]}),o($Vc,[2,58],{26:[1,147]}),o($Vc,[2,42],{28:[1,148]}),o($Vc,[2,53],{26:[1,149]}),o($Vc,[2,41],{28:[1,150]}),o($Vc,[2,47],{24:[1,151]}),o($Vc,[2,48],{24:[1,152]}),o($Vc,[2,54],{26:[1,153]}),{25:[1,154]},{25:[1,155]},{25:[1,156]},{27:157,30:$Vd,31:$Ve,32:$Vf},{25:[1,158]},{27:159,30:$Vd,31:$Ve,32:$Vf},{25:[1,160]},{25:[1,161]},{25:[1,162]},{25:[1,163]},{25:[1,164]},{25:[1,165]},{25:[1,166]},{27:167,30:$Vd,31:$Ve,32:$Vf},{25:[1,168]},{25:[1,169]},{25:[1,170]},{27:171,30:$Vd,31:$Ve,32:$Vf},{25:[1,172]},{27:173,30:$Vd,31:$Ve,32:$Vf},{25:[1,174]},{25:[1,175]},{25:[1,176]},{27:177,30:$Vd,31:$Ve,32:$Vf},o($Vc,[2,73]),o($Vc,[2,74]),o($Vc,[2,71]),o($Vc,[2,72]),o($Vc,[2,76]),o($Vc,[2,75]),o($Vc,[2,80]),o($Vc,[2,79]),o($Vc,[2,78]),o($Vc,[2,77]),o($Vc,[2,82]),o($Vc,[2,81]),o($Vc,[2,70]),o($Vc,[2,69]),o($Vc,[2,68]),o($Vc,[2,67]),o($Vc,[2,65]),o($Vc,[2,66]),o($Vc,[2,64]),o($Vc,[2,63]),o($Vc,[2,62]),o($Vc,[2,61]),o($Vc,[2,59]),o($Vc,[2,60])],
+defaultActions: {9:[2,90],10:[2,1],11:[2,2],19:[2,3],27:[2,4],38:[2,92],39:[2,5]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -4327,66 +4353,76 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/*{console.log('New line');return 12;}*/ return 12;
+case 0: this.begin('open_directive'); return 37; 
 break;
-case 1:/* skip all whitespace */
+case 1: this.begin('type_directive'); return 38; 
 break;
-case 2:/* skip comments */
+case 2: this.popState(); this.begin('arg_directive'); return 9; 
 break;
-case 3:/* skip comments */
+case 3: this.popState(); this.popState(); return 40; 
 break;
-case 4:return 4;
+case 4:return 39;
 break;
-case 5:return 20;
+case 5:/*{console.log('New line');return 14;}*/ return 14;
 break;
-case 6:return 26;
+case 6:/* skip all whitespace */
 break;
-case 7:return 24;
+case 7:/* skip comments */
 break;
-case 8:return 27;
+case 8:/* skip comments */
 break;
-case 9:return 28;
+case 9:return 6;
 break;
-case 10:return 29;
+case 10:return 22;
 break;
-case 11:return 30;                       
+case 11:return 28;
 break;
-case 12:return 22;
+case 12:return 26;
 break;
-case 13:return 16;
+case 13:return 29;
 break;
-case 14:return 19;
+case 14:return 30;
 break;
-case 15:return 18;
+case 15:return 31;
 break;
-case 16:return 8;
+case 16:return 32;
 break;
-case 17:return 8;
+case 17:return 24;
 break;
-case 18:return 7;
+case 18:return 18;
 break;
-case 19:return 'CARET'
+case 19:return 21;
 break;
-case 20:this.begin("options");
+case 20:return 20;
 break;
-case 21:this.popState();
+case 21:return 10;
 break;
-case 22:return 11;
+case 22:return 10;
 break;
-case 23:this.begin("string");
+case 23:return 9;
 break;
-case 24:this.popState();
+case 24:return 'CARET'
 break;
-case 25:return 23;
+case 25:this.begin("options");
 break;
-case 26:return 17;
+case 26:this.popState();
 break;
-case 27:return 6;
+case 27:return 13;
+break;
+case 28:this.begin("string");
+break;
+case 29:this.popState();
+break;
+case 30:return 25;
+break;
+case 31:return 19;
+break;
+case 32:return 8;
 break;
 }
 },
-rules: [/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:id:)/i,/^(?:type:)/i,/^(?:msg:)/i,/^(?:NORMAL\b)/i,/^(?:REVERSE\b)/i,/^(?:HIGHLIGHT\b)/i,/^(?:tag:)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:\^)/i,/^(?:options\r?\n)/i,/^(?:end\r?\n)/i,/^(?:[^\n]+\r?\n)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][-_\.a-zA-Z0-9]*[-_a-zA-Z0-9])/i,/^(?:$)/i],
-conditions: {"options":{"rules":[21,22],"inclusive":false},"string":{"rules":[24,25],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,23,26,27],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:id:)/i,/^(?:type:)/i,/^(?:msg:)/i,/^(?:NORMAL\b)/i,/^(?:REVERSE\b)/i,/^(?:HIGHLIGHT\b)/i,/^(?:tag:)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:\^)/i,/^(?:options\r?\n)/i,/^(?:end\r?\n)/i,/^(?:[^\n]+\r?\n)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][-_\.a-zA-Z0-9]*[-_a-zA-Z0-9])/i,/^(?:$)/i],
+conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"options":{"rules":[26,27],"inclusive":false},"string":{"rules":[29,30],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,28,31,32],"inclusive":true}}
 });
 return lexer;
 })();
@@ -6619,12 +6655,12 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,19],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,29],$Vd=[1,30],$Ve=[1,31],$Vf=[1,32],$Vg=[1,33],$Vh=[1,34],$Vi=[1,37],$Vj=[1,38],$Vk=[1,39],$Vl=[1,40],$Vm=[1,41],$Vn=[1,42],$Vo=[1,45],$Vp=[1,4,5,16,20,22,23,24,30,32,33,34,35,36,38,40,41,42,46,47,48,49,57,67],$Vq=[1,58],$Vr=[4,5,16,20,22,23,24,30,32,33,34,35,36,38,42,46,47,48,49,57,67],$Vs=[4,5,16,20,22,23,24,30,32,33,34,35,36,38,41,42,46,47,48,49,57,67],$Vt=[4,5,16,20,22,23,24,30,32,33,34,35,36,38,40,42,46,47,48,49,57,67],$Vu=[55,56,57],$Vv=[1,4,5,7,16,20,22,23,24,30,32,33,34,35,36,38,40,41,42,46,47,48,49,57,67];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,19],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,29],$Vd=[1,30],$Ve=[1,31],$Vf=[1,32],$Vg=[1,33],$Vh=[1,34],$Vi=[1,35],$Vj=[1,36],$Vk=[1,39],$Vl=[1,40],$Vm=[1,41],$Vn=[1,42],$Vo=[1,43],$Vp=[1,44],$Vq=[1,47],$Vr=[1,4,5,16,20,22,23,24,30,31,32,33,34,35,36,37,39,41,42,43,48,49,50,51,59,69],$Vs=[4,5,16,20,22,23,24,30,31,32,33,34,35,36,37,39,43,48,49,50,51,59,69],$Vt=[4,5,16,20,22,23,24,30,31,32,33,34,35,36,37,39,42,43,48,49,50,51,59,69],$Vu=[4,5,16,20,22,23,24,30,31,32,33,34,35,36,37,39,41,43,48,49,50,51,59,69],$Vv=[57,58,59],$Vw=[1,104],$Vx=[1,4,5,7,16,20,22,23,24,30,31,32,33,34,35,36,37,39,41,42,43,48,49,50,51,59,69];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"participant_actor":20,"signal":21,"autonumber":22,"activate":23,"deactivate":24,"note_statement":25,"links_statement":26,"link_statement":27,"properties_statement":28,"details_statement":29,"title":30,"text2":31,"loop":32,"end":33,"rect":34,"opt":35,"alt":36,"else_sections":37,"par":38,"par_sections":39,"and":40,"else":41,"note":42,"placement":43,"over":44,"actor_pair":45,"links":46,"link":47,"properties":48,"details":49,"spaceList":50,",":51,"left_of":52,"right_of":53,"signaltype":54,"+":55,"-":56,"ACTOR":57,"SOLID_OPEN_ARROW":58,"DOTTED_OPEN_ARROW":59,"SOLID_ARROW":60,"DOTTED_ARROW":61,"SOLID_CROSS":62,"DOTTED_CROSS":63,"SOLID_POINT":64,"DOTTED_POINT":65,"TXT":66,"open_directive":67,"type_directive":68,"arg_directive":69,"close_directive":70,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",20:"participant_actor",22:"autonumber",23:"activate",24:"deactivate",30:"title",32:"loop",33:"end",34:"rect",35:"opt",36:"alt",38:"par",40:"and",41:"else",42:"note",44:"over",46:"links",47:"link",48:"properties",49:"details",51:",",52:"left_of",53:"right_of",55:"+",56:"-",57:"ACTOR",58:"SOLID_OPEN_ARROW",59:"DOTTED_OPEN_ARROW",60:"SOLID_ARROW",61:"DOTTED_ARROW",62:"SOLID_CROSS",63:"DOTTED_CROSS",64:"SOLID_POINT",65:"DOTTED_POINT",66:"TXT",67:"open_directive",68:"type_directive",69:"arg_directive",70:"close_directive"},
-productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,5],[10,3],[10,2],[10,1],[10,3],[10,3],[10,2],[10,2],[10,2],[10,2],[10,2],[10,3],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[39,1],[39,4],[37,1],[37,4],[25,4],[25,4],[26,3],[27,3],[28,3],[29,3],[50,2],[50,1],[45,3],[45,1],[43,1],[43,1],[21,5],[21,5],[21,4],[17,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[31,1],[11,1],[12,1],[15,1],[13,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"participant_actor":20,"signal":21,"autonumber":22,"activate":23,"deactivate":24,"note_statement":25,"links_statement":26,"link_statement":27,"properties_statement":28,"details_statement":29,"title":30,"legacy_title":31,"accDescription":32,"loop":33,"end":34,"rect":35,"opt":36,"alt":37,"else_sections":38,"par":39,"par_sections":40,"and":41,"else":42,"note":43,"placement":44,"text2":45,"over":46,"actor_pair":47,"links":48,"link":49,"properties":50,"details":51,"spaceList":52,",":53,"left_of":54,"right_of":55,"signaltype":56,"+":57,"-":58,"ACTOR":59,"SOLID_OPEN_ARROW":60,"DOTTED_OPEN_ARROW":61,"SOLID_ARROW":62,"DOTTED_ARROW":63,"SOLID_CROSS":64,"DOTTED_CROSS":65,"SOLID_POINT":66,"DOTTED_POINT":67,"TXT":68,"open_directive":69,"type_directive":70,"arg_directive":71,"close_directive":72,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",20:"participant_actor",22:"autonumber",23:"activate",24:"deactivate",30:"title",31:"legacy_title",32:"accDescription",33:"loop",34:"end",35:"rect",36:"opt",37:"alt",39:"par",41:"and",42:"else",43:"note",46:"over",48:"links",49:"link",50:"properties",51:"details",53:",",54:"left_of",55:"right_of",57:"+",58:"-",59:"ACTOR",60:"SOLID_OPEN_ARROW",61:"DOTTED_OPEN_ARROW",62:"SOLID_ARROW",63:"DOTTED_ARROW",64:"SOLID_CROSS",65:"DOTTED_CROSS",66:"SOLID_POINT",67:"DOTTED_POINT",68:"TXT",69:"open_directive",70:"type_directive",71:"arg_directive",72:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,5],[10,3],[10,2],[10,1],[10,3],[10,3],[10,2],[10,2],[10,2],[10,2],[10,2],[10,1],[10,1],[10,1],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[40,1],[40,4],[38,1],[38,4],[25,4],[25,4],[26,3],[27,3],[28,3],[29,3],[52,2],[52,1],[47,3],[47,1],[44,1],[44,1],[21,5],[21,5],[21,4],[17,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[45,1],[11,1],[12,1],[15,1],[13,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -6667,27 +6703,33 @@ case 19:
 this.$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-1]};
 break;
 case 25:
-this.$=[{type:'setTitle', text:$$[$0-1]}]
+yy.setTitle($$[$0].substring(6));this.$=$$[$0].substring(6);
 break;
 case 26:
+yy.setTitle($$[$0].substring(7));this.$=$$[$0].substring(7);
+break;
+case 27:
+yy.setAccDescription($$[$0].substring(15));this.$=$$[$0].substring(15);
+break;
+case 28:
 
 		$$[$0-1].unshift({type: 'loopStart', loopText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.LOOP_START});
 		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
 		this.$=$$[$0-1];
 break;
-case 27:
+case 29:
 
 		$$[$0-1].unshift({type: 'rectStart', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_START });
 		$$[$0-1].push({type: 'rectEnd', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_END });
 		this.$=$$[$0-1];
 break;
-case 28:
+case 30:
 
 		$$[$0-1].unshift({type: 'optStart', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_START});
 		$$[$0-1].push({type: 'optEnd', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_END});
 		this.$=$$[$0-1];
 break;
-case 29:
+case 31:
 
 		// Alt start
 		$$[$0-1].unshift({type: 'altStart', altText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.ALT_START});
@@ -6696,7 +6738,7 @@ case 29:
 		$$[$0-1].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
 		this.$=$$[$0-1];
 break;
-case 30:
+case 32:
 
 		// Parallel start
 		$$[$0-1].unshift({type: 'parStart', parText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.PAR_START});
@@ -6705,17 +6747,17 @@ case 30:
 		$$[$0-1].push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		this.$=$$[$0-1];
 break;
-case 33:
+case 35:
  this.$ = $$[$0-3].concat([{type: 'and', parText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
 break;
-case 35:
+case 37:
  this.$ = $$[$0-3].concat([{type: 'else', altText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
 break;
-case 36:
+case 38:
 
 		this.$ = [$$[$0-1], {type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
-case 37:
+case 39:
 
 		// Coerce actor_pair into a [to, from, ...] array
 		$$[$0-2] = [].concat($$[$0-1], $$[$0-1]).slice(0, 2);
@@ -6723,97 +6765,97 @@ case 37:
 		$$[$0-2][1] = $$[$0-2][1].actor;
 		this.$ = [$$[$0-1], {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$$[$0-2].slice(0, 2), text:$$[$0]}];
 break;
-case 38:
+case 40:
 
 		this.$ = [$$[$0-1], {type:'addLinks', actor:$$[$0-1].actor, text:$$[$0]}];
   
 break;
-case 39:
+case 41:
 
 		this.$ = [$$[$0-1], {type:'addALink', actor:$$[$0-1].actor, text:$$[$0]}];
   
 break;
-case 40:
+case 42:
 
 		this.$ = [$$[$0-1], {type:'addProperties', actor:$$[$0-1].actor, text:$$[$0]}];
   
 break;
-case 41:
+case 43:
 
 		this.$ = [$$[$0-1], {type:'addDetails', actor:$$[$0-1].actor, text:$$[$0]}];
   
 break;
-case 44:
+case 46:
  this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 45:
+case 47:
  this.$ = $$[$0]; 
 break;
-case 46:
+case 48:
  this.$ = yy.PLACEMENT.LEFTOF; 
 break;
-case 47:
+case 49:
  this.$ = yy.PLACEMENT.RIGHTOF; 
 break;
-case 48:
+case 50:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]}
 	             ]
 break;
-case 49:
+case 51:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-4]}
 	             ]
 break;
-case 50:
+case 52:
  this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
-case 51:
+case 53:
 this.$={ type: 'addParticipant', actor:$$[$0]}
 break;
-case 52:
+case 54:
  this.$ = yy.LINETYPE.SOLID_OPEN; 
 break;
-case 53:
+case 55:
  this.$ = yy.LINETYPE.DOTTED_OPEN; 
 break;
-case 54:
+case 56:
  this.$ = yy.LINETYPE.SOLID; 
 break;
-case 55:
+case 57:
  this.$ = yy.LINETYPE.DOTTED; 
 break;
-case 56:
+case 58:
  this.$ = yy.LINETYPE.SOLID_CROSS; 
 break;
-case 57:
+case 59:
  this.$ = yy.LINETYPE.DOTTED_CROSS; 
 break;
-case 58:
+case 60:
  this.$ = yy.LINETYPE.SOLID_POINT; 
 break;
-case 59:
+case 61:
  this.$ = yy.LINETYPE.DOTTED_POINT; 
 break;
-case 60:
+case 62:
 this.$ = yy.parseMessage($$[$0].trim().substring(1)) 
 break;
-case 61:
+case 63:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 62:
+case 64:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 63:
+case 65:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 64:
+case 66:
  yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:6,67:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:6,67:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:6,67:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,11:6,67:$V3},o([1,4,5,16,20,22,23,24,30,32,34,35,36,38,42,46,47,48,49,57,67],$V4,{8:11}),{12:12,68:[1,13]},{68:[2,61]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{13:43,14:[1,44],70:$Vo},o([14,70],[2,62]),o($Vp,[2,6]),{6:35,10:46,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},o($Vp,[2,8]),o($Vp,[2,9]),{17:47,57:$Vn},{17:48,57:$Vn},{5:[1,49]},o($Vp,[2,17]),{17:50,57:$Vn},{17:51,57:$Vn},{5:[1,52]},{5:[1,53]},{5:[1,54]},{5:[1,55]},{5:[1,56]},{31:57,66:$Vq},{19:[1,59]},{19:[1,60]},{19:[1,61]},{19:[1,62]},{19:[1,63]},o($Vp,[2,31]),{54:64,58:[1,65],59:[1,66],60:[1,67],61:[1,68],62:[1,69],63:[1,70],64:[1,71],65:[1,72]},{43:73,44:[1,74],52:[1,75],53:[1,76]},{17:77,57:$Vn},{17:78,57:$Vn},{17:79,57:$Vn},{17:80,57:$Vn},o([5,18,51,58,59,60,61,62,63,64,65,66],[2,51]),{5:[1,81]},{15:82,69:[1,83]},{5:[2,64]},o($Vp,[2,7]),{5:[1,85],18:[1,84]},{5:[1,87],18:[1,86]},o($Vp,[2,16]),{5:[1,88]},{5:[1,89]},o($Vp,[2,20]),o($Vp,[2,21]),o($Vp,[2,22]),o($Vp,[2,23]),o($Vp,[2,24]),{5:[1,90]},{5:[2,60]},o($Vr,$V4,{8:91}),o($Vr,$V4,{8:92}),o($Vr,$V4,{8:93}),o($Vs,$V4,{37:94,8:95}),o($Vt,$V4,{39:96,8:97}),{17:100,55:[1,98],56:[1,99],57:$Vn},o($Vu,[2,52]),o($Vu,[2,53]),o($Vu,[2,54]),o($Vu,[2,55]),o($Vu,[2,56]),o($Vu,[2,57]),o($Vu,[2,58]),o($Vu,[2,59]),{17:101,57:$Vn},{17:103,45:102,57:$Vn},{57:[2,46]},{57:[2,47]},{31:104,66:$Vq},{31:105,66:$Vq},{31:106,66:$Vq},{31:107,66:$Vq},o($Vv,[2,10]),{13:108,70:$Vo},{70:[2,63]},{19:[1,109]},o($Vp,[2,13]),{19:[1,110]},o($Vp,[2,15]),o($Vp,[2,18]),o($Vp,[2,19]),o($Vp,[2,25]),{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[1,111],34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[1,112],34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[1,113],34:$Ve,35:$Vf,36:$Vg,38:$Vh,42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{33:[1,114]},{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[2,34],34:$Ve,35:$Vf,36:$Vg,38:$Vh,41:[1,115],42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{33:[1,116]},{4:$V5,5:$V6,6:35,9:14,10:16,11:6,16:$V7,17:36,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,32:$Vd,33:[2,32],34:$Ve,35:$Vf,36:$Vg,38:$Vh,40:[1,117],42:$Vi,46:$Vj,47:$Vk,48:$Vl,49:$Vm,57:$Vn,67:$V3},{17:118,57:$Vn},{17:119,57:$Vn},{31:120,66:$Vq},{31:121,66:$Vq},{31:122,66:$Vq},{51:[1,123],66:[2,45]},{5:[2,38]},{5:[2,39]},{5:[2,40]},{5:[2,41]},{5:[1,124]},{5:[1,125]},{5:[1,126]},o($Vp,[2,26]),o($Vp,[2,27]),o($Vp,[2,28]),o($Vp,[2,29]),{19:[1,127]},o($Vp,[2,30]),{19:[1,128]},{31:129,66:$Vq},{31:130,66:$Vq},{5:[2,50]},{5:[2,36]},{5:[2,37]},{17:131,57:$Vn},o($Vv,[2,11]),o($Vp,[2,12]),o($Vp,[2,14]),o($Vs,$V4,{8:95,37:132}),o($Vt,$V4,{8:97,39:133}),{5:[2,48]},{5:[2,49]},{66:[2,44]},{33:[2,35]},{33:[2,33]}],
-defaultActions: {7:[2,61],8:[2,1],9:[2,2],10:[2,3],45:[2,64],58:[2,60],75:[2,46],76:[2,47],83:[2,63],104:[2,38],105:[2,39],106:[2,40],107:[2,41],120:[2,50],121:[2,36],122:[2,37],129:[2,48],130:[2,49],131:[2,44],132:[2,35],133:[2,33]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:6,69:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:6,69:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:6,69:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,11:6,69:$V3},o([1,4,5,16,20,22,23,24,30,31,32,33,35,36,37,39,43,48,49,50,51,59,69],$V4,{8:11}),{12:12,70:[1,13]},{70:[2,63]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{13:45,14:[1,46],72:$Vq},o([14,72],[2,64]),o($Vr,[2,6]),{6:37,10:48,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},o($Vr,[2,8]),o($Vr,[2,9]),{17:49,59:$Vp},{17:50,59:$Vp},{5:[1,51]},o($Vr,[2,17]),{17:52,59:$Vp},{17:53,59:$Vp},{5:[1,54]},{5:[1,55]},{5:[1,56]},{5:[1,57]},{5:[1,58]},o($Vr,[2,25]),o($Vr,[2,26]),o($Vr,[2,27]),{19:[1,59]},{19:[1,60]},{19:[1,61]},{19:[1,62]},{19:[1,63]},o($Vr,[2,33]),{56:64,60:[1,65],61:[1,66],62:[1,67],63:[1,68],64:[1,69],65:[1,70],66:[1,71],67:[1,72]},{44:73,46:[1,74],54:[1,75],55:[1,76]},{17:77,59:$Vp},{17:78,59:$Vp},{17:79,59:$Vp},{17:80,59:$Vp},o([5,18,53,60,61,62,63,64,65,66,67,68],[2,53]),{5:[1,81]},{15:82,71:[1,83]},{5:[2,66]},o($Vr,[2,7]),{5:[1,85],18:[1,84]},{5:[1,87],18:[1,86]},o($Vr,[2,16]),{5:[1,88]},{5:[1,89]},o($Vr,[2,20]),o($Vr,[2,21]),o($Vr,[2,22]),o($Vr,[2,23]),o($Vr,[2,24]),o($Vs,$V4,{8:90}),o($Vs,$V4,{8:91}),o($Vs,$V4,{8:92}),o($Vt,$V4,{38:93,8:94}),o($Vu,$V4,{40:95,8:96}),{17:99,57:[1,97],58:[1,98],59:$Vp},o($Vv,[2,54]),o($Vv,[2,55]),o($Vv,[2,56]),o($Vv,[2,57]),o($Vv,[2,58]),o($Vv,[2,59]),o($Vv,[2,60]),o($Vv,[2,61]),{17:100,59:$Vp},{17:102,47:101,59:$Vp},{59:[2,48]},{59:[2,49]},{45:103,68:$Vw},{45:105,68:$Vw},{45:106,68:$Vw},{45:107,68:$Vw},o($Vx,[2,10]),{13:108,72:$Vq},{72:[2,65]},{19:[1,109]},o($Vr,[2,13]),{19:[1,110]},o($Vr,[2,15]),o($Vr,[2,18]),o($Vr,[2,19]),{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[1,111],35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[1,112],35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[1,113],35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{34:[1,114]},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[2,36],35:$Vg,36:$Vh,37:$Vi,39:$Vj,42:[1,115],43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{34:[1,116]},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[2,34],35:$Vg,36:$Vh,37:$Vi,39:$Vj,41:[1,117],43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{17:118,59:$Vp},{17:119,59:$Vp},{45:120,68:$Vw},{45:121,68:$Vw},{45:122,68:$Vw},{53:[1,123],68:[2,47]},{5:[2,40]},{5:[2,62]},{5:[2,41]},{5:[2,42]},{5:[2,43]},{5:[1,124]},{5:[1,125]},{5:[1,126]},o($Vr,[2,28]),o($Vr,[2,29]),o($Vr,[2,30]),o($Vr,[2,31]),{19:[1,127]},o($Vr,[2,32]),{19:[1,128]},{45:129,68:$Vw},{45:130,68:$Vw},{5:[2,52]},{5:[2,38]},{5:[2,39]},{17:131,59:$Vp},o($Vx,[2,11]),o($Vr,[2,12]),o($Vr,[2,14]),o($Vt,$V4,{8:94,38:132}),o($Vu,$V4,{8:96,40:133}),{5:[2,50]},{5:[2,51]},{68:[2,46]},{34:[2,37]},{34:[2,35]}],
+defaultActions: {7:[2,63],8:[2,1],9:[2,2],10:[2,3],47:[2,66],75:[2,48],76:[2,49],83:[2,65],103:[2,40],104:[2,62],105:[2,41],106:[2,42],107:[2,43],120:[2,52],121:[2,38],122:[2,39],129:[2,50],130:[2,51],131:[2,46],132:[2,37],133:[2,35]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -7292,15 +7334,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 67; 
+case 0: this.begin('open_directive'); return 69; 
 break;
-case 1: this.begin('type_directive'); return 68; 
+case 1: this.begin('type_directive'); return 70; 
 break;
 case 2: this.popState(); this.begin('arg_directive'); return 14; 
 break;
-case 3: this.popState(); this.popState(); return 70; 
+case 3: this.popState(); this.popState(); return 72; 
 break;
-case 4:return 69;
+case 4:return 71;
 break;
 case 5:return 5;
 break;
@@ -7318,45 +7360,45 @@ case 11: this.begin('ID'); return 16;
 break;
 case 12: this.begin('ID'); return 20; 
 break;
-case 13: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 57; 
+case 13: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 59; 
 break;
 case 14: this.popState(); this.popState(); this.begin('LINE'); return 18; 
 break;
 case 15: this.popState(); this.popState(); return 5; 
 break;
-case 16: this.begin('LINE'); return 32; 
+case 16: this.begin('LINE'); return 33; 
 break;
-case 17: this.begin('LINE'); return 34; 
+case 17: this.begin('LINE'); return 35; 
 break;
-case 18: this.begin('LINE'); return 35; 
+case 18: this.begin('LINE'); return 36; 
 break;
-case 19: this.begin('LINE'); return 36; 
+case 19: this.begin('LINE'); return 37; 
 break;
-case 20: this.begin('LINE'); return 41; 
+case 20: this.begin('LINE'); return 42; 
 break;
-case 21: this.begin('LINE'); return 38; 
+case 21: this.begin('LINE'); return 39; 
 break;
-case 22: this.begin('LINE'); return 40; 
+case 22: this.begin('LINE'); return 41; 
 break;
 case 23: this.popState(); return 19; 
 break;
-case 24:return 33;
+case 24:return 34;
 break;
-case 25:return 52;
+case 25:return 54;
 break;
-case 26:return 53;
+case 26:return 55;
 break;
-case 27:return 46;
+case 27:return 48;
 break;
-case 28:return 47;
+case 28:return 49;
 break;
-case 29:return 48;
+case 29:return 50;
 break;
-case 30:return 49;
+case 30:return 51;
 break;
-case 31:return 44;
+case 31:return 46;
 break;
-case 32:return 42;
+case 32:return 43;
 break;
 case 33: this.begin('ID'); return 23; 
 break;
@@ -7364,27 +7406,27 @@ case 34: this.begin('ID'); return 24;
 break;
 case 35:return 30;
 break;
-case 36:return 7;
+case 36:return 31;
 break;
-case 37:return 22;
+case 37:return 32;
 break;
-case 38:return 51;
+case 38:return 7;
 break;
-case 39:return 5;
+case 39:return 22;
 break;
-case 40: yy_.yytext = yy_.yytext.trim(); return 57; 
+case 40:return 53;
 break;
-case 41:return 60;
+case 41:return 5;
 break;
-case 42:return 61;
+case 42: yy_.yytext = yy_.yytext.trim(); return 59; 
 break;
-case 43:return 58;
+case 43:return 62;
 break;
-case 44:return 59;
+case 44:return 63;
 break;
-case 45:return 62;
+case 45:return 60;
 break;
-case 46:return 63;
+case 46:return 61;
 break;
 case 47:return 64;
 break;
@@ -7392,18 +7434,22 @@ case 48:return 65;
 break;
 case 49:return 66;
 break;
-case 50:return 55;
+case 50:return 67;
 break;
-case 51:return 56;
+case 51:return 68;
 break;
-case 52:return 5;
+case 52:return 57;
 break;
-case 53:return 'INVALID';
+case 53:return 58;
+break;
+case 54:return 5;
+break;
+case 55:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:actor\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:links\b)/i,/^(?:link\b)/i,/^(?:properties\b)/i,/^(?:details\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x|-\)|--\)))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?:-[\)])/i,/^(?:--[\)])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,13],"inclusive":false},"ALIAS":{"rules":[7,8,14,15],"inclusive":false},"LINE":{"rules":[7,8,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,12,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:actor\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:links\b)/i,/^(?:link\b)/i,/^(?:properties\b)/i,/^(?:details\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:title:\s[^#\n;]+)/i,/^(?:accDescription\s[^#\n;]+)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x|-\)|--\)))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?:-[\)])/i,/^(?:--[\)])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,13],"inclusive":false},"ALIAS":{"rules":[7,8,14,15],"inclusive":false},"LINE":{"rules":[7,8,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,12,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55],"inclusive":true}}
 });
 return lexer;
 })();
@@ -8985,6 +9031,10 @@ __webpack_require__.r(__webpack_exports__);
  * @param id
  */
 function addSVGAccessibilityFields(yy_parser, svg, id) {
+  if (typeof svg.insert == 'undefined') {
+    return;
+  }
+
   var title_string = yy_parser.getTitle();
   var description = yy_parser.getAccDescription();
   svg.attr('role', 'img').attr('aria-labelledby', 'chart-title-' + id + ' chart-desc-' + id);
@@ -15207,6 +15257,7 @@ __webpack_require__.r(__webpack_exports__);
 var entities = {};
 var relationships = [];
 var title = '';
+var description = '';
 var Cardinality = {
   ZERO_OR_ONE: 'ZERO_OR_ONE',
   ZERO_OR_MORE: 'ZERO_OR_MORE',
@@ -15281,6 +15332,14 @@ var getTitle = function getTitle() {
   return title;
 };
 
+var setAccDescription = function setAccDescription(txt) {
+  description = txt;
+};
+
+var getAccDescription = function getAccDescription() {
+  return description;
+};
+
 var clear = function clear() {
   entities = {};
   relationships = [];
@@ -15301,7 +15360,9 @@ var clear = function clear() {
   getRelationships: getRelationships,
   clear: clear,
   setTitle: setTitle,
-  getTitle: getTitle
+  getTitle: getTitle,
+  setAccDescription: setAccDescription,
+  getAccDescription: getAccDescription
 });
 
 /***/ }),
@@ -15388,6 +15449,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _erMarkers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./erMarkers */ "./src/diagrams/er/erMarkers.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _accessibility__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../accessibility */ "./src/accessibility.js");
+
 
 
 
@@ -15807,6 +15870,7 @@ var draw = function draw(text, id) {
   var height = svgBounds.height + padding * 2;
   (0,_utils__WEBPACK_IMPORTED_MODULE_8__.configureSvgSize)(svg, height, width, conf.useMaxWidth);
   svg.attr('viewBox', "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height));
+  (0,_accessibility__WEBPACK_IMPORTED_MODULE_9__["default"])(parser.yy, svg, id);
 }; // draw
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -19723,12 +19787,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getHead": () => (/* binding */ getHead),
 /* harmony export */   "getOptions": () => (/* binding */ getOptions),
 /* harmony export */   "merge": () => (/* binding */ merge),
+/* harmony export */   "parseDirective": () => (/* binding */ parseDirective),
 /* harmony export */   "prettyPrint": () => (/* binding */ prettyPrint),
 /* harmony export */   "setDirection": () => (/* binding */ setDirection),
 /* harmony export */   "setOptions": () => (/* binding */ setOptions)
 /* harmony export */ });
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+
+
+
 
 
 var commits = {};
@@ -19744,7 +19815,11 @@ function getId() {
   return (0,_utils__WEBPACK_IMPORTED_MODULE_0__.random)({
     length: 7
   });
-} // /**
+}
+
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parseDirective(this, statement, context, type);
+}; // /**
 //  * @param currentCommit
 //  * @param otherCommit
 //  */
@@ -19785,7 +19860,6 @@ function getId() {
  * @param fn
  */
 
-
 function uniqBy(list, fn) {
   var recordMap = Object.create(null);
   return list.reduce(function (out, item) {
@@ -19805,20 +19879,24 @@ var setDirection = function setDirection(dir) {
 };
 var options = {};
 var setOptions = function setOptions(rawOptString) {
-  _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('options str', rawOptString);
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('options str', rawOptString);
   rawOptString = rawOptString && rawOptString.trim();
   rawOptString = rawOptString || '{}';
 
   try {
     options = JSON.parse(rawOptString);
   } catch (e) {
-    _logger__WEBPACK_IMPORTED_MODULE_1__.log.error('error while parsing gitGraph options', e.message);
+    _logger__WEBPACK_IMPORTED_MODULE_2__.log.error('error while parsing gitGraph options', e.message);
   }
 };
 var getOptions = function getOptions() {
   return options;
 };
 var commit = function commit(msg, id, type, tag) {
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('Entering commit:', msg, id, type, tag);
+  id = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(id, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
+  msg = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(msg, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
+  tag = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(tag, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
   var commit = {
     id: id ? id : seq + '-' + getId(),
     message: msg,
@@ -19831,13 +19909,15 @@ var commit = function commit(msg, id, type, tag) {
   head = commit;
   commits[commit.id] = commit;
   branches[curBranch] = commit.id;
-  _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('in pushCommit ' + commit.id);
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('in pushCommit ' + commit.id);
 };
 var branch = function branch(name) {
+  name = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(name, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
+
   if (typeof branches[name] === 'undefined') {
     branches[name] = head != null ? head.id : null;
     checkout(name);
-    _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('in createBranch');
+    _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('in createBranch');
   } else {
     var error = new Error('Trying to create an existing branch. (Help: Either use a new name if you want create a new branch or try using "checkout ' + name + '")');
     error.hash = {
@@ -19856,6 +19936,7 @@ var branch = function branch(name) {
   }
 };
 var merge = function merge(otherBranch) {
+  otherBranch = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(otherBranch, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
   var currentCommit = commits[branches[curBranch]];
   var otherCommit = commits[branches[otherBranch]];
 
@@ -19961,10 +20042,11 @@ var merge = function merge(otherBranch) {
   commits[commit.id] = commit;
   branches[curBranch] = commit.id; // }
 
-  _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug(branches);
-  _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('in mergeBranch');
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug(branches);
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('in mergeBranch');
 };
 var checkout = function checkout(branch) {
+  branch = _common_common__WEBPACK_IMPORTED_MODULE_3__["default"].sanitizeText(branch, _config__WEBPACK_IMPORTED_MODULE_4__.getConfig());
   console.info(branches);
 
   if (typeof branches[branch] === 'undefined') {
@@ -20047,7 +20129,7 @@ function prettyPrintCommitHistory(commitArr) {
     if (branches[_branch] === commit.id) label.push(_branch);
   }
 
-  _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug(label.join(' '));
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug(label.join(' '));
 
   if (commit.parents && commit.parents.length == 2) {
     var newCommit = commits[commit.parents[0]];
@@ -20067,7 +20149,7 @@ function prettyPrintCommitHistory(commitArr) {
 }
 
 var prettyPrint = function prettyPrint() {
-  _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug(commits);
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug(commits);
   var node = getCommitsArray()[0];
   prettyPrintCommitHistory([node]);
 };
@@ -20103,7 +20185,7 @@ var getCommitsArray = function getCommitsArray() {
     return commits[key];
   });
   commitArr.forEach(function (o) {
-    _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug(o.id);
+    _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug(o.id);
   });
   commitArr.sort(function (a, b) {
     return a.seq - b.seq;
@@ -20126,6 +20208,10 @@ var commitType = {
   MERGE: 3
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  parseDirective: parseDirective,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_4__.getConfig().gitGraph;
+  },
   setDirection: setDirection,
   setOptions: setOptions,
   getOptions: getOptions,
@@ -20163,11 +20249,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-/* harmony import */ var _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
-/* harmony import */ var _parser_gitGraph__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
-/* harmony import */ var _parser_gitGraph__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_parser_gitGraph__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
+/* harmony import */ var _parser_gitGraph__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
+/* harmony import */ var _parser_gitGraph__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_parser_gitGraph__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* eslint-disable */
 
 
@@ -20177,10 +20263,18 @@ __webpack_require__.r(__webpack_exports__);
 
 /* eslint-disable */
 
+ //import * as configApi from '../../config';
 
 var allCommitsDict = {};
-var branchNum;
-var commitType = _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"].commitType;
+var branchNum; //let conf = configApi.getConfig();
+//const commitType = db.commitType;
+
+var commitType = {
+  NORMAL: 0,
+  REVERSE: 1,
+  HIGHLIGHT: 2,
+  MERGE: 3
+};
 var branchPos = {};
 var commitPos = {};
 var lanes = [];
@@ -20201,7 +20295,7 @@ var clear = function clear() {
 
 
 function svgCreateDefs(svg) {
-  var config = (0,_config__WEBPACK_IMPORTED_MODULE_2__.getConfig)().gitGraph;
+  var config = (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)().gitGraph;
   svg.append('defs').append('g').attr('id', 'def-commit').append('circle').attr('r', config.nodeRadius).attr('cx', 0).attr('cy', 0);
   svg.select('#def-commit').append('foreignObject').attr('width', config.nodeLabel.width).attr('height', config.nodeLabel.height).attr('x', config.nodeLabel.x).attr('y', config.nodeLabel.y).attr('class', 'node-label').attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility').append('p').html('');
 }
@@ -20333,32 +20427,33 @@ var drawCommits = function drawCommits(svg, commits, modifyGraph) {
     commitPos[commit.id] = {
       x: pos + 10,
       y: y
-    };
+    }; // The first iteration over the commits are for positioning purposes, this
+    // is required for drawing the lines. The circles and labels is drawn after the labels
+    // placing them on top of the lines.
 
     if (modifyGraph) {
-      var text = gLabels.append('text').attr('x', pos).attr('y', y + 25).attr('class', 'commit-label').text(commit.id);
-      var bbox = text.node().getBBox();
-      text.attr('x', pos + 10 - bbox.width / 2);
-      console.log('commit', commit.id, 'tag', commit.tag);
+      var px = 4;
+      var py = 2;
+
+      if (commit.type !== commitType.MERGE) {
+        var labelBkg = gLabels.insert('rect').attr('class', 'commit-label-bkg');
+        var text = gLabels.append('text').attr('x', pos).attr('y', y + 25).attr('class', 'commit-label').text(commit.id);
+        var bbox = text.node().getBBox(); // Now we have the label, lets position the background
+
+        labelBkg.attr('x', pos + 10 - bbox.width / 2 - py).attr('y', y + 13.5).attr('width', bbox.width + 2 * py).attr('height', bbox.height + 2 * py);
+        text.attr('x', pos + 10 - bbox.width / 2);
+      }
 
       if (commit.tag) {
         var rect = gLabels.insert('polygon');
         var hole = gLabels.append('circle');
-        var tag = gLabels.append('text') // .attr('x', pos )
+        var tag = gLabels.append('text') // Note that we are delaying setting the x position until we know the width of the text
         .attr('y', y - 16).attr('class', 'tag-label').text(commit.tag);
         var tagBbox = tag.node().getBBox();
         tag.attr('x', pos + 10 - tagBbox.width / 2);
-        var px = 4;
-        var py = 2;
         var h2 = tagBbox.height / 2;
         var ly = y - 19.2;
-        rect.attr('class', 'tag-label-bkg') // .attr('rx', 2)
-        // .attr('ry', 2)
-        // .attr('x', pos + 10 - tagBbox.width / 2 - 4)
-        // .attr('y', y - 15 - tagBbox.height/2 - 7)
-        // .attr('width', tagBbox.width + 8)
-        // .attr('height', tagBbox.height + 4);
-        .attr('points', "\n            ".concat(pos - tagBbox.width / 2 - px / 2, ",").concat(ly + py, "\n            ").concat(pos - tagBbox.width / 2 - px / 2, ",").concat(ly - py, "\n            ").concat(pos + 10 - tagBbox.width / 2 - px, ",").concat(ly - h2 - py, "\n            ").concat(pos + 10 + tagBbox.width / 2 + px, ",").concat(ly - h2 - py, "\n            ").concat(pos + 10 + tagBbox.width / 2 + px, ",").concat(ly + h2 + py, "\n            ").concat(pos + 10 - tagBbox.width / 2 - px, ",").concat(ly + h2 + py));
+        rect.attr('class', 'tag-label-bkg').attr('points', "\n          ".concat(pos - tagBbox.width / 2 - px / 2, ",").concat(ly + py, "\n          ").concat(pos - tagBbox.width / 2 - px / 2, ",").concat(ly - py, "\n          ").concat(pos + 10 - tagBbox.width / 2 - px, ",").concat(ly - h2 - py, "\n          ").concat(pos + 10 + tagBbox.width / 2 + px, ",").concat(ly - h2 - py, "\n          ").concat(pos + 10 + tagBbox.width / 2 + px, ",").concat(ly + h2 + py, "\n          ").concat(pos + 10 - tagBbox.width / 2 - px, ",").concat(ly + h2 + py));
         hole.attr('cx', pos - tagBbox.width / 2 + px / 2).attr('cy', ly).attr('r', 1.5).attr('class', 'tag-hole');
       }
     }
@@ -20380,21 +20475,12 @@ var drawCommits = function drawCommits(svg, commits, modifyGraph) {
 
 var hasOverlappingCommits = function hasOverlappingCommits(commit1, commit2, allCommits) {
   var commit1Pos = commitPos[commit2.id];
-  var commit2Pos = commitPos[commit1.id]; // if(commit1.id.match('4-')) {
-  //   log.info('Ugge 1', commit1, commit2);
-  // }
-  // Find commits on the same branch as commit2
+  var commit2Pos = commitPos[commit1.id]; // Find commits on the same branch as commit2
 
   var keys = Object.keys(allCommits);
   var overlappingComits = keys.filter(function (key) {
-    // if(commit1.id.match('4-') && allCommits[key].branch === commit2.branch) {
-    //   log.info('Ugge seq of the commit', allCommits[key].seq, ' commit 1 seq', commit1.seq ,' commit2 seq' ,commit2.seq);
-    // }
     return allCommits[key].branch === commit2.branch && allCommits[key].seq > commit1.seq && allCommits[key].seq < commit2.seq;
-  }); // if (commit1Pos.x === commit2Pos.x) {
-  //   return commit1Pos.y === commit2Pos.y;
-  // }
-
+  });
   return overlappingComits.length > 0;
 };
 /**
@@ -20428,11 +20514,11 @@ var findLane = function findLane(y1, y2, _depth) {
 };
 
 var drawArrow = function drawArrow(svg, commit1, commit2, allCommits) {
-  var conf = (0,_config__WEBPACK_IMPORTED_MODULE_2__.getConfig)();
+  var conf = (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)();
   var p1 = commitPos[commit1.id];
   var p2 = commitPos[commit2.id];
   var overlappingCommits = hasOverlappingCommits(commit1, commit2, allCommits);
-  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('drawArrow', p1, p2, overlappingCommits, commit1.id, commit2.id);
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('drawArrow', p1, p2, overlappingCommits, commit1.id, commit2.id);
   var url = '';
 
   if (conf.arrowMarkerAbsolute) {
@@ -20487,14 +20573,13 @@ var drawArrow = function drawArrow(svg, commit1, commit2, allCommits) {
     }
   }
 
-  var arrow = svg.append('path').attr('d', lineDef).attr('class', 'arrow arrow' + colorClassNum); // .attr('marker-end', 'url(' + url + '#arrowhead)');
+  var arrow = svg.append('path').attr('d', lineDef).attr('class', 'arrow arrow' + colorClassNum);
 };
 
 var drawArrows = function drawArrows(svg, commits) {
   var gArrows = svg.append('g').attr('class', 'commit-arrows');
   var pos = 0;
   var k = Object.keys(commits);
-  console.log('drawArrows', k);
   k.forEach(function (key, index) {
     var commit = commits[key];
 
@@ -20548,18 +20633,19 @@ var drawBranches = function drawBranches(svg, branches) {
 
 var draw = function draw(txt, id, ver) {
   clear();
-  var config = (0,_config__WEBPACK_IMPORTED_MODULE_2__.getConfig)().gitGraph; // try {
+  var conf = (0,_config__WEBPACK_IMPORTED_MODULE_1__.getConfig)();
+  var config = conf.gitGraph; // try {
 
-  var parser = (_parser_gitGraph__WEBPACK_IMPORTED_MODULE_4___default().parser);
-  parser.yy = _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"];
+  var parser = (_parser_gitGraph__WEBPACK_IMPORTED_MODULE_3___default().parser);
+  parser.yy = _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__["default"];
   parser.yy.clear();
-  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver); // // Parse the graph definition
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver); // // Parse the graph definition
 
   parser.parse(txt + '\n'); // config = Object.assign(config, apiConfig, db.getOptions());
 
-  var direction = _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"].getDirection();
-  allCommitsDict = _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"].getCommits();
-  var branches = _gitGraphAst__WEBPACK_IMPORTED_MODULE_1__["default"].getBranchesAsObjArray(); // Position branches vertically
+  var direction = _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__["default"].getDirection();
+  allCommitsDict = _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__["default"].getCommits();
+  var branches = _gitGraphAst__WEBPACK_IMPORTED_MODULE_4__["default"].getBranchesAsObjArray(); // Position branches vertically
 
   var pos = 0;
   branches.forEach(function (branch, index) {
@@ -20569,9 +20655,9 @@ var draw = function draw(txt, id, ver) {
     };
     pos += 50;
   });
-  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('brach pos ', branchPos);
-  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('effective options', config, branches);
-  _logger__WEBPACK_IMPORTED_MODULE_3__.log.debug('commits', allCommitsDict);
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('brach pos ', branchPos);
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('effective options', config, branches);
+  _logger__WEBPACK_IMPORTED_MODULE_2__.log.debug('commits', allCommitsDict);
   var diagram = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)("[id=\"".concat(id, "\"]"));
   svgCreateDefs(diagram);
   diagram.append('defs').append('marker').attr('id', 'arrowhead').attr('refX', 24).attr('refY', 10).attr('markerUnits', 'userSpaceOnUse').attr('markerWidth', 24).attr('markerHeight', 24).attr('orient', 'auto').append('path').attr('d', 'M 0 0 L 20 10 L 0 20 z'); // this is actual shape for arrowhead
@@ -20584,7 +20670,7 @@ var draw = function draw(txt, id, ver) {
   var svgBounds = diagram.node().getBBox();
   var width = svgBounds.width + padding * 2;
   var height = svgBounds.height + padding * 2;
-  (0,_utils__WEBPACK_IMPORTED_MODULE_5__.configureSvgSize)(diagram, height, width, config.useMaxWidth);
+  (0,_utils__WEBPACK_IMPORTED_MODULE_5__.configureSvgSize)(diagram, height, width, conf.useMaxWidth);
   var vBox = "".concat(svgBounds.x - padding, " ").concat(svgBounds.y - padding, " ").concat(width, " ").concat(height); // logger.debug(`viewBox ${vBox}`);
 
   diagram.attr('viewBox', vBox);
@@ -20609,7 +20695,7 @@ __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
   return "\n  .commit-id,\n  .commit-msg,\n  .branch-label {\n    fill: lightgrey;\n    color: lightgrey;\n    font-family: 'trebuchet ms', verdana, arial, sans-serif;\n    font-family: var(--mermaid-font-family);\n  }\n  ".concat([0, 1, 2, 3, 4, 5, 6, 7].map(function (i) {
     return "\n        .branch-label".concat(i, " { fill: ").concat(options['gitBranchLabel' + i], "; }\n        .commit").concat(i, " { stroke: ").concat(options['git' + i], "; fill: ").concat(options['git' + i], "; }\n        .commit-highlight").concat(i, " { stroke: ").concat(options['gitInv' + i], "; fill: ").concat(options['gitInv' + i], "; }\n        .label").concat(i, "  { fill: ").concat(options['git' + i], "; }\n        .arrow").concat(i, " { stroke: ").concat(options['git' + i], "; }\n        ");
-  }).join('\n'), "\n\n  .branch {\n    stroke-width: 1;\n    stroke: black;\n    stroke-dasharray: 2;\n  }\n  .commit-labels { font-size: 10px; fill: ").concat(options.textColor, ";}\n  .tag-label { font-size: 10px; fill: ").concat(options.tagLabelColor, ";}\n  .tag-label-bkg { fill: ").concat(options.tagLabelBackground, "; stroke: ").concat(options.tagLabelBorder, "; }\n  .tag-hole { fill: ").concat(options.textColor, "; }\n\n  .commit-merge {\n    stroke: ").concat(options.primaryColor, ";\n    fill: ").concat(options.primaryColor, ";\n  }\n  .commit-reverse {\n    stroke: ").concat(options.primaryColor, ";\n    fill: ").concat(options.primaryColor, ";\n    stroke-width: 3;\n  }\n  .commit-highlight-outer {\n  }\n  .commit-highlight-inner {\n    stroke: ").concat(options.primaryColor, ";\n    fill: ").concat(options.primaryColor, ";\n  }\n\n  .arrow { stroke-width: 8; stroke-linecap: round; fill: none}\n  }\n");
+  }).join('\n'), "\n\n  .branch {\n    stroke-width: 1;\n    stroke: ").concat(options.lineColor, ";\n    stroke-dasharray: 2;\n  }\n  .commit-label { font-size: 10px; fill: ").concat(options.commitLabelColor, ";}\n  .commit-label-bkg { font-size: 10px; fill: ").concat(options.commitLabelBackground, "; opacity: 0.5; }\n  .tag-label { font-size: 10px; fill: ").concat(options.tagLabelColor, ";}\n  .tag-label-bkg { fill: ").concat(options.tagLabelBackground, "; stroke: ").concat(options.tagLabelBorder, "; }\n  .tag-hole { fill: ").concat(options.textColor, "; }\n\n  .commit-merge {\n    stroke: ").concat(options.primaryColor, ";\n    fill: ").concat(options.primaryColor, ";\n  }\n  .commit-reverse {\n    stroke: ").concat(options.primaryColor, ";\n    fill: ").concat(options.primaryColor, ";\n    stroke-width: 3;\n  }\n  .commit-highlight-outer {\n  }\n  .commit-highlight-inner {\n    stroke: ").concat(options.primaryColor, ";\n    fill: ").concat(options.primaryColor, ";\n  }\n\n  .arrow { stroke-width: 8; stroke-linecap: round; fill: none}\n  }\n");
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getStyles);
@@ -21572,7 +21658,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getActors": () => (/* binding */ getActors),
 /* harmony export */   "getMessages": () => (/* binding */ getMessages),
 /* harmony export */   "getTitle": () => (/* binding */ getTitle),
-/* harmony export */   "getTitleWrapped": () => (/* binding */ getTitleWrapped),
 /* harmony export */   "parseDirective": () => (/* binding */ parseDirective),
 /* harmony export */   "parseMessage": () => (/* binding */ parseMessage),
 /* harmony export */   "setTitle": () => (/* binding */ setTitle),
@@ -21592,7 +21677,7 @@ var actors = {};
 var messages = [];
 var notes = [];
 var title = '';
-var titleWrapped = false;
+var description = '';
 var sequenceNumbersEnabled = false;
 var wrapEnabled = false;
 var parseDirective = function parseDirective(statement, context, type) {
@@ -21720,9 +21805,6 @@ var getActorKeys = function getActorKeys() {
 };
 var getTitle = function getTitle() {
   return title;
-};
-var getTitleWrapped = function getTitleWrapped() {
-  return titleWrapped;
 };
 var enableSequenceNumbers = function enableSequenceNumbers() {
   sequenceNumbersEnabled = true;
@@ -21908,9 +21990,9 @@ var getActorProperty = function getActorProperty(actor, key) {
 
   return undefined;
 };
-var setTitle = function setTitle(titleWrap) {
-  title = titleWrap.text;
-  titleWrapped = titleWrap.wrap === undefined && autoWrap() || !!titleWrap.wrap;
+var setTitle = function setTitle(txt) {
+  var sanitizedText = (0,_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)(txt, _config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
+  title = sanitizedText;
 };
 var apply = function apply(param) {
   if (param instanceof Array) {
@@ -22013,6 +22095,16 @@ var apply = function apply(param) {
     }
   }
 };
+
+var setAccDescription = function setAccDescription(description_lex) {
+  var sanitizedText = (0,_common_common__WEBPACK_IMPORTED_MODULE_2__.sanitizeText)(description_lex, _config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
+  description = sanitizedText;
+};
+
+var getAccDescription = function getAccDescription() {
+  return description;
+};
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   addActor: addActor,
   addMessage: addMessage,
@@ -22034,7 +22126,6 @@ var apply = function apply(param) {
   getConfig: function getConfig() {
     return _config__WEBPACK_IMPORTED_MODULE_3__.getConfig().sequence;
   },
-  getTitleWrapped: getTitleWrapped,
   clear: clear,
   parseMessage: parseMessage,
   LINETYPE: LINETYPE,
@@ -22042,7 +22133,9 @@ var apply = function apply(param) {
   PLACEMENT: PLACEMENT,
   addNote: addNote,
   setTitle: setTitle,
-  apply: apply
+  apply: apply,
+  setAccDescription: setAccDescription,
+  getAccDescription: getAccDescription
 });
 
 /***/ }),
@@ -22073,6 +22166,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sequenceDb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../config */ "./src/config.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
+/* harmony import */ var _accessibility__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../accessibility */ "./src/accessibility.js");
+
 
 
 
@@ -22809,6 +22904,7 @@ var draw = function draw(text, id) {
   (0,_utils__WEBPACK_IMPORTED_MODULE_5__.configureSvgSize)(diagram, height, width, conf.useMaxWidth);
   var extraVertForTitle = title ? 40 : 0;
   diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle));
+  (0,_accessibility__WEBPACK_IMPORTED_MODULE_8__["default"])(_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy, diagram, id);
   _logger__WEBPACK_IMPORTED_MODULE_6__.log.debug("models:", bounds.models);
 };
 /**
@@ -26417,7 +26513,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /** @typedef {'debug' | 'info' | 'warn' | 'error' | 'fatal'} LogLevel A log level */
 
-/** @type {object<LogLevel, number>} */
+/** @type {Object<LogLevel, number>} */
 
 var LEVELS = {
   debug: 1,
@@ -27185,8 +27281,8 @@ var render = function render(id, _txt, cb, container) {
   try {
     switch (graphType) {
       case 'git':
-        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute; //gitGraphRenderer.setConf(cnf.git);
-
+        // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        //gitGraphRenderer.setConf(cnf.git);
         _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_29__["default"].draw(txt, id, false);
         break;
 
@@ -27978,6 +28074,8 @@ var Theme = /*#__PURE__*/function () {
       this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
       this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
       this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+      this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+      this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     }
   }, {
     key: "calculate",
@@ -28267,6 +28365,8 @@ var Theme = /*#__PURE__*/function () {
       this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
       this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
       this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+      this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+      this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     }
   }, {
     key: "calculate",
@@ -28606,7 +28706,7 @@ var Theme = /*#__PURE__*/function () {
         this.git7 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.darken)(this.git7, 25);
       }
 
-      this.gitInv0 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0);
+      this.gitInv0 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.darken)((0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git0), 25);
       this.gitInv1 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git1);
       this.gitInv2 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git2);
       this.gitInv3 = (0,khroma__WEBPACK_IMPORTED_MODULE_0__.invert)(this.git3);
@@ -28625,6 +28725,8 @@ var Theme = /*#__PURE__*/function () {
       this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
       this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
       this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+      this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+      this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     }
   }, {
     key: "calculate",
@@ -28943,6 +29045,8 @@ var Theme = /*#__PURE__*/function () {
       this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
       this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
       this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+      this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+      this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     }
   }, {
     key: "calculate",
@@ -29289,6 +29393,8 @@ var Theme = /*#__PURE__*/function () {
       this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
       this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
       this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+      this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+      this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     }
   }, {
     key: "calculate",
@@ -31305,7 +31411,7 @@ module.exports = require("stylis");
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"mermaid","version":"8.14.0","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --mode development --progress --color","build:production":"webpack --mode production --progress --color","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint ./ --ext js,html","lint:fix":"yarn lint --fix","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"percy exec -- cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config ./.webpack/webpack.config.e2e.babel.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"husky install && yarn build","pre-commit":"lint-staged"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^6.0.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.6","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@commitlint/cli":"^16.0.0","@commitlint/config-conventional":"^16.0.0","@percy/cli":"^1.0.0-beta.58","@percy/cypress":"^3.1.0","@percy/migrate":"^0.11.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^7.0.0","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"9.5.2","documentation":"13.2.0","eslint":"^8.2.0","eslint-config-prettier":"^8.3.0","eslint-plugin-cypress":"^2.12.1","eslint-plugin-html":"^6.2.0","eslint-plugin-jest":"^26.0.0","eslint-plugin-jsdoc":"^38.0.3","eslint-plugin-markdown":"^2.2.1","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","lint-staged":"^12.1.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","prettier-plugin-jsdoc":"^0.3.30","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-merge":"^5.8.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"]}');
+module.exports = JSON.parse('{"name":"mermaid","version":"8.14.0","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --mode development --progress --color","build:production":"webpack --mode production --progress --color","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint ./ --ext js,html","lint:fix":"yarn lint --fix","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config ./.webpack/webpack.config.e2e.babel.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"husky install && yarn build","pre-commit":"lint-staged"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^6.0.0","caniuse-lite":"^1.0.30001325","cypress-image-snapshot":"^4.0.1","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.6","graphlib":"^2.1.8","khroma":"^1.4.1","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@commitlint/cli":"^16.0.0","@commitlint/config-conventional":"^16.0.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^7.0.0","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"9.5.2","documentation":"13.2.0","eslint":"^8.2.0","eslint-config-prettier":"^8.3.0","eslint-plugin-cypress":"^2.12.1","eslint-plugin-html":"^6.2.0","eslint-plugin-jest":"^26.0.0","eslint-plugin-jsdoc":"^38.0.3","eslint-plugin-markdown":"^2.2.1","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","lint-staged":"^12.1.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","prettier-plugin-jsdoc":"^0.3.30","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-merge":"^5.8.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"]}');
 
 /***/ })
 

@@ -844,25 +844,6 @@ const config = {
      */
     defaultRenderer: 'dagre-wrapper',
   },
-  git: {
-    arrowMarkerAbsolute: false,
-
-    useWidth: undefined,
-
-    /**
-     * | Parameter   | Description | Type    | Required | Values      |
-     * | ----------- | ----------- | ------- | -------- | ----------- |
-     * | useMaxWidth | See notes   | boolean | 4        | true, false |
-     *
-     * **Notes:**
-     *
-     * When this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     *
-     * Default value: true
-     */
-    useMaxWidth: true,
-  },
   state: {
     dividerMargin: 10,
     sizeUnit: 5,
@@ -1066,27 +1047,20 @@ const config = {
   },
   gitGraph: {
     diagramPadding: 8,
-    nodeSpacing: 150,
-    nodeFillColor: 'yellow',
-    nodeStrokeWidth: 2,
-    nodeStrokeColor: 'grey',
-    lineStrokeWidth: 4,
-    branchOffset: 50,
-    lineColor: 'grey',
-    leftMargin: 50,
-    branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
-    nodeRadius: 10,
     nodeLabel: {
       width: 75,
       height: 100,
       x: -25,
       y: 0,
     },
+    mainBranchName: 'main',
+    showCommitLabel: true,
+    showBranches: true,
   },
 };
 
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
 const keyify = (obj, prefix = '') =>
   Object.keys(obj).reduce((res, el) => {
