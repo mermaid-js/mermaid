@@ -4,6 +4,7 @@ import { log } from '../../logger';
 import * as configApi from '../../config';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
+import common from '../common/common';
 
 let dateFormat = '';
 let axisFormat = '';
@@ -23,6 +24,10 @@ let topAxis = false;
 
 // The serial order of the task in the script
 let lastOrder = 0;
+
+const sanitizeText = function (txt) {
+  return common.sanitizeText(txt, configApi.getConfig());
+};
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
@@ -109,7 +114,7 @@ export const getLinks = function () {
 };
 
 export const setTitle = function (txt) {
-  title = txt;
+  title = sanitizeText(txt);
 };
 
 export const getTitle = function () {
@@ -117,7 +122,7 @@ export const getTitle = function () {
 };
 
 export const setAccDescription = function (txt) {
-  accDescription = txt;
+  accDescription = sanitizeText(txt);
 };
 
 export const getAccDescription = function () {
