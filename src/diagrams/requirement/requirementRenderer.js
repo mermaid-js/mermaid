@@ -9,6 +9,7 @@ import { parser } from './parser/requirementDiagram';
 import requirementDb from './requirementDb';
 import markers from './requirementMarkers';
 import { getConfig } from '../../config';
+import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 let relCnt = 0;
@@ -377,6 +378,8 @@ export const draw = (text, id) => {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
+  // Adds title and description to the flow chart
+  addSVGAccessibilityFields(parser.yy, svg, id);
 };
 
 export default {

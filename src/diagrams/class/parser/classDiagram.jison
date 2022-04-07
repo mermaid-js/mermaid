@@ -185,6 +185,7 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 
 start
     : mermaidDoc
+    | statments
     | direction
     | directive start
     ;
