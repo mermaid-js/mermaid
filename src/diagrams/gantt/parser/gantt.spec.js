@@ -156,4 +156,21 @@ describe('when parsing a gantt diagram it', function () {
       '"test0", test1, test2'
     );
   });
+
+  it('should allow for a title and accDescription', function () {
+    const expectedTitle = 'Gantt Diagram';
+    const expectedAccDescription = 'Tasks for Q4';
+    const ganttString =
+      'gantt\n' +
+      `title ${expectedTitle}\n` +
+      `accDescription ${expectedAccDescription}\n` +
+      'dateFormat  YYYY-MM-DD\n' +
+      'section Section\n' +
+      'A task :a1, 2014-01-01, 30d\n';
+
+    const output = parser.parse(ganttString);
+
+    expect(ganttDb.getTitle()).toBe(expectedTitle);
+    expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
+  });
 });

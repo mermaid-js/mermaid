@@ -65,22 +65,23 @@ that id.
 <click>[\s\n]           this.popState();
 <click>[^\s\n]*         return 'click';
 
-"gantt"                 return 'gantt';
-"dateFormat"\s[^#\n;]+  return 'dateFormat';
-"inclusiveEndDates"     return 'inclusiveEndDates';
-"topAxis"               return 'topAxis';
-"axisFormat"\s[^#\n;]+  return 'axisFormat';
-"includes"\s[^#\n;]+    return 'includes';
-"excludes"\s[^#\n;]+    return 'excludes';
-"todayMarker"\s[^\n;]+  return 'todayMarker';
-\d\d\d\d"-"\d\d"-"\d\d  return 'date';
-"title"\s[^#\n;]+       return 'title';
-"section"\s[^#:\n;]+    return 'section';
-[^#:\n;]+               return 'taskTxt';
-":"[^#\n;]+             return 'taskData';
-":"                     return ':';
-<<EOF>>                 return 'EOF';
-.                       return 'INVALID';
+"gantt"                     return 'gantt';
+"dateFormat"\s[^#\n;]+      return 'dateFormat';
+"inclusiveEndDates"         return 'inclusiveEndDates';
+"topAxis"                   return 'topAxis';
+"axisFormat"\s[^#\n;]+      return 'axisFormat';
+"includes"\s[^#\n;]+        return 'includes';
+"excludes"\s[^#\n;]+        return 'excludes';
+"todayMarker"\s[^\n;]+      return 'todayMarker';
+\d\d\d\d"-"\d\d"-"\d\d      return 'date';
+"title"\s[^#\n;]+           return 'title';
+"accDescription"\s[^#\n;]+  return 'accDescription'
+"section"\s[^#:\n;]+        return 'section';
+[^#:\n;]+                   return 'taskTxt';
+":"[^#\n;]+                 return 'taskData';
+":"                         return ':';
+<<EOF>>                     return 'EOF';
+.                           return 'INVALID';
 
 /lex
 
@@ -116,6 +117,7 @@ statement
   | includes {yy.setIncludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
   | title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
+  | accDescription {yy.setAccDescription($1.substr(15));$$=$1.substr(15);}
   | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
   | clickStatement
   | taskTxt taskData {yy.addTask($1,$2);$$='task';}

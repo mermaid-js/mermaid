@@ -12,6 +12,7 @@ let includes = [];
 let excludes = [];
 let links = {};
 let title = '';
+let accDescription = '';
 let sections = [];
 let tasks = [];
 let currentSection = '';
@@ -113,6 +114,14 @@ export const setTitle = function (txt) {
 
 export const getTitle = function () {
   return title;
+};
+
+export const setAccDescription = function (txt) {
+  accDescription = txt;
+};
+
+export const getAccDescription = function () {
+  return accDescription;
 };
 
 export const addSection = function (txt) {
@@ -637,6 +646,8 @@ export default {
   getTodayMarker,
   setTitle,
   getTitle,
+  setAccDescription,
+  getAccDescription,
   addSection,
   getSections,
   getTasks,
