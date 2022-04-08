@@ -20,6 +20,7 @@
 %x STATE_ID
 %x ALIAS
 %x SCALE
+%x title
 %x accDescription
 %x NOTE
 %x NOTE_ID
@@ -59,6 +60,8 @@
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
 
+title                                                           { this.begin("title");return 'title'; }
+<title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
 accDescription                                                  { this.begin("accDescription");return 'accDescription'; }
 <accDescription>(?!\n|;|#)*[^\n]*                               { this.popState(); return "description_value"; }
 
@@ -197,6 +200,7 @@ statement
     | note NOTE_TEXT AS ID
   	| directive
     | direction
+    | title title_value  { $$=$2.trim();yy.setTitle($$); }
     | accDescription description_value  { $$=$2.trim();yy.setAccDescription($$); }
     ;
 
