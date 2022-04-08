@@ -2,7 +2,6 @@ import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import common from '../common/common';
-const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
 
 let sections = {};
 let title = '';

@@ -6,9 +6,6 @@ import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 
-const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
-
-
 let dateFormat = '';
 let axisFormat = '';
 let todayMarker = '';
@@ -112,7 +109,7 @@ export const getLinks = function () {
 };
 
 export const setTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
   title = sanitizedText;
 };
 

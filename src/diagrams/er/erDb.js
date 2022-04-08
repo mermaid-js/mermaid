@@ -8,8 +8,6 @@ let relationships = [];
 let title = '';
 let description = '';
 
-const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
-
 const Cardinality = {
   ZERO_OR_ONE: 'ZERO_OR_ONE',
   ZERO_OR_MORE: 'ZERO_OR_MORE',
@@ -72,7 +70,7 @@ const getRelationships = () => relationships;
 
 // Keep this - TODO: revisit...allow the diagram to have a title
 const setTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
   title = sanitizedText;
 };
 
@@ -81,7 +79,7 @@ const getTitle = function () {
 };
 
 const setAccDescription = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
   description = sanitizedText;
 };
 
