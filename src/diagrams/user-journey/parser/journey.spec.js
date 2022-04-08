@@ -22,7 +22,7 @@ describe('when parsing a journey diagram it', function () {
   it('it should handle an accDescription', function () {
     const str =
       'journey\n' +
-      'accDescription A user journey for family shopping\n'+
+      'accDescription A user journey for family shopping\n' +
       'title Adding journey diagram functionality to mermaid\n' +
       'section Order from website';
 

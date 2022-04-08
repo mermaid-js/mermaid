@@ -31,13 +31,12 @@ describe('when using the journeyDb', function () {
       journeyDb.addTask('test2', '1: id2');
       journeyDb.clear();
     });
-
     it.each`
-      fn               | expected
-      ${'getTasks'}    | ${[]}
-      ${'getTitle'}    | ${''}
-      ${'getAccDescription'}    | ${''}
-      ${'getSections'} | ${[]}
+      fn                     | expected
+      ${'getTasks'}          | ${[]}
+      ${'getTitle'}          | ${''}
+      ${'getAccDescription'} | ${''}
+      ${'getSections'}       | ${[]}
     `('should clear $fn', ({ fn, expected }) => {
       expect(journeyDb[fn]()).toEqual(expected);
     });
