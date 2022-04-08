@@ -36,6 +36,7 @@ describe('when using the journeyDb', function () {
       fn               | expected
       ${'getTasks'}    | ${[]}
       ${'getTitle'}    | ${''}
+      ${'getAccDescription'}    | ${''}
       ${'getSections'} | ${[]}
     `('should clear $fn', ({ fn, expected }) => {
       expect(journeyDb[fn]()).toEqual(expected);
@@ -44,6 +45,7 @@ describe('when using the journeyDb', function () {
 
   describe('tasks and actors should be added', function () {
     journeyDb.setTitle('Shopping');
+    journeyDb.setAccDescription('A user journey for family shopping');
     journeyDb.addSection('Journey to the shops');
     journeyDb.addTask('Get car keys', ':5:Dad');
     journeyDb.addTask('Go to car', ':3:Dad, Mum, Child#1, Child#2');
@@ -52,6 +54,7 @@ describe('when using the journeyDb', function () {
     journeyDb.addTask('Go shopping', ':5:Mum');
 
     expect(journeyDb.getTitle()).toEqual('Shopping');
+    expect(journeyDb.getAccDescription()).toEqual('A user journey for family shopping');
     expect(journeyDb.getTasks()).toEqual([
       {
         score: 5,

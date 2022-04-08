@@ -19,6 +19,16 @@ describe('when parsing a journey diagram it', function () {
     expect(parserFnConstructor(str)).not.toThrow();
   });
 
+  it('it should handle an accDescription', function () {
+    const str =
+      'journey\n' +
+      'accDescription A user journey for family shopping\n'+
+      'title Adding journey diagram functionality to mermaid\n' +
+      'section Order from website';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+  });
+
   it('should handle a section definition', function () {
     const str =
       'journey\n' +
