@@ -27,7 +27,7 @@ describe('state diagram, ', function () {
       const description = stateDb.getAccDescription();
       expect(description).toBe('');
     });
-    it.only('simple with accDescription', function () {
+    it('simple with accDescription', function () {
       const str = `stateDiagram\n
           accDescription a simple description of the diagram
           State1 : this is another string
@@ -38,6 +38,18 @@ describe('state diagram, ', function () {
       parser.parse(str);
       const description = stateDb.getAccDescription();
       expect(description).toBe('a simple description of the diagram');
+    });
+    it('simple with title', function () {
+      const str = `stateDiagram\n
+          title a simple title of the diagram
+          State1 : this is another string
+          [*] --> State1
+          State1 --> [*]
+      `;
+
+      parser.parse(str);
+      const title = stateDb.getTitle();
+      expect(title).toBe('a simple title of the diagram');
     });
     it('simple with directive', function () {
       const str = `%%{init: {'logLevel': 0 }}%%
@@ -133,7 +145,7 @@ describe('state diagram, ', function () {
 
       parser.parse(str);
     });
-    it('shall handle descriptions inkluding minus signs', function () {
+    it('shall handle descriptions including minus signs', function () {
       const str = `stateDiagram\n
         scale 350 width
         [*] --> State1 : This is the description +-!

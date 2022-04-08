@@ -4,6 +4,8 @@ import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import * as configApi from '../../config';
 
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
+
 const clone = (o) => JSON.parse(JSON.stringify(o));
 let rootDoc = [];
 
@@ -115,10 +117,19 @@ let startCnt = 0;
 let endCnt = 0; // eslint-disable-line
 // let stateCnt = 0;
 
+let title = 'State diagram';
 let description = '';
 
+const setTitle = function (txt) {
+  title = sanitizeText(txt);
+};
+
+const getTitle = function () {
+  return title;
+};
+
 const setAccDescription = function (txt) {
-  description = txt;
+  description = sanitizeText(txt);
 };
 
 const getAccDescription = function () {
@@ -290,6 +301,8 @@ export default {
   getRootDocV2,
   extract,
   trimColon,
+  getTitle,
+  setTitle,
   getAccDescription,
   setAccDescription,
 };
