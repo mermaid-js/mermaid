@@ -21,6 +21,7 @@ export const clear = function () {
   tasks.length = 0;
   currentSection = '';
   title = '';
+  description = '';
   rawTasks.length = 0;
 };
 
