@@ -30,7 +30,7 @@ jobs:
       run: yarn build
 
     - name: Upload Build as Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: dist
         path: dist
