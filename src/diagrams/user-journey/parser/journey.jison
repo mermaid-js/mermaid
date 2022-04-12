@@ -25,6 +25,7 @@
 
 "journey"               return 'journey';
 "title"\s[^#\n;]+       return 'title';
+"accDescription"\s[^#\n;]+       				return 'accDescription';
 "section"\s[^#:\n;]+    return 'section';
 [^#:\n;]+               return 'taskName';
 ":"[^#\n;]+             return 'taskData';
@@ -64,6 +65,7 @@ directive
 
 statement
   : title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
+  | accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);}
   | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
   | taskName taskData {yy.addTask($1, $2);$$='task';}
   | directive
