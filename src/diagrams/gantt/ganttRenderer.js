@@ -15,6 +15,7 @@ import common from '../common/common';
 import ganttDb from './ganttDb';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = ganttDb;
 export const setConf = function () {
@@ -113,6 +114,8 @@ export const draw = function (text, id) {
     .attr('x', w / 2)
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText');
+
+  addSVGAccessibilityFields(parser.yy, svg, id);
 
   /**
    * @param tasks

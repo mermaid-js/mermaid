@@ -71,4 +71,4 @@ graph LR;
 
 **Output**
 
-![image](img/python-mermaid-integration.png)
+![Example graph of the Python integration](img/python-mermaid-integration.png)

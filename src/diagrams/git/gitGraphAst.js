@@ -2,11 +2,15 @@ import { log } from '../../logger';
 import { random } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
+import { getConfig } from '../../config';
 import common from '../common/common';
+
+let mainBranchName = getConfig().gitGraph.mainBranchName;
 let commits = {};
 let head = null;
-let branches = { main: head };
-let curBranch = 'main';
+let branches = {};
+branches[mainBranchName] = head;
+let curBranch = mainBranchName;
 let direction = 'LR';
 let seq = 0;
 
@@ -220,7 +224,6 @@ export const merge = function (otherBranch) {
 
 export const checkout = function (branch) {
   branch = common.sanitizeText(branch, configApi.getConfig());
-  console.info(branches);
   if (typeof branches[branch] === 'undefined') {
     let error = new Error(
       'Trying to checkout branch which is not yet created. (Help try using "branch ' + branch + '")'
@@ -238,9 +241,6 @@ export const checkout = function (branch) {
   } else {
     curBranch = branch;
     const id = branches[curBranch];
-    console.log(id);
-    console.log('hi');
-    console.log(commits);
     head = commits[id];
   }
 };
@@ -320,8 +320,10 @@ export const prettyPrint = function () {
 export const clear = function () {
   commits = {};
   head = null;
-  branches = { main: head };
-  curBranch = 'main';
+  let mainBranch = getConfig().gitGraph.mainBranchName;
+  branches = {};
+  branches[mainBranch] = null;
+  curBranch = mainBranch;
   seq = 0;
 };
 

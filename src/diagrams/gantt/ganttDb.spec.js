@@ -32,6 +32,7 @@ describe('when using the ganttDb', function () {
       fn                        | expected
       ${'getTasks'}             | ${[]}
       ${'getTitle'}             | ${''}
+      ${'getAccDescription'}    | ${''}
       ${'getDateFormat'}        | ${''}
       ${'getAxisFormat'}        | ${''}
       ${'getTodayMarker'}       | ${''}

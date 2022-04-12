@@ -210,7 +210,7 @@ export const detectType = function (text, cnf) {
   }
 
   if (text.match(/^\s*gitGraph/)) {
-    return 'git';
+    return 'gitGraph';
   }
   if (text.match(/^\s*flowchart/)) {
     return 'flowchart-v2';

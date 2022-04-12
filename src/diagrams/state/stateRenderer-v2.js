@@ -7,6 +7,7 @@ import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 import common from '../common/common';
+import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -336,6 +337,7 @@ export const draw = function (text, id) {
     label.insertBefore(rect, label.firstChild);
     // }
   }
+  addSVGAccessibilityFields(parser.yy, svg, id);
 };
 
 export default {

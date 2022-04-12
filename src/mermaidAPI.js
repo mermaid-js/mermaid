@@ -72,14 +72,14 @@ function parse(text) {
   const graphInit = utils.detectInit(text, cnf);
   if (graphInit) {
     reinitialize(graphInit);
-    log.debug('reinit ', graphInit);
+    log.info('reinit ', graphInit);
   }
   const graphType = utils.detectType(text, cnf);
   let parser;
 
   log.debug('Type ' + graphType);
   switch (graphType) {
-    case 'git':
+    case 'gitGraph':
       parser = gitGraphParser;
       parser.parser.yy = gitGraphAst;
       break;
@@ -229,6 +229,9 @@ const render = function (id, _txt, cb, container) {
     configApi.addDirective(graphInit);
   }
   let cnf = configApi.getConfig();
+
+  log.debug(cnf);
+
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -422,7 +425,7 @@ const render = function (id, _txt, cb, container) {
 
   try {
     switch (graphType) {
-      case 'git':
+      case 'gitGraph':
         // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         //gitGraphRenderer.setConf(cnf.git);
         gitGraphRenderer.draw(txt, id, false);

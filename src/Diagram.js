@@ -49,7 +49,7 @@ class Diagram {
     this.type = utils.detectType(txt, cnf);
     log.debug('Type ' + this.type);
     switch (this.type) {
-      case 'git':
+      case 'gitGraph':
         this.parser = gitGraphParser;
         this.parser.parser.yy = gitGraphAst;
         this.db = gitGraphAst;

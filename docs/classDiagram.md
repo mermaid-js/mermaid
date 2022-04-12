@@ -217,7 +217,7 @@ It is possible to add a label text to a relation:
 classDiagram
 classA <|-- classB : implements
 classC *-- classD : composition
-classE o-- classF : association
+classE o-- classF : aggregation
 ```
 
 ### Two-way relations

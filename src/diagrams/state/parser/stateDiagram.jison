@@ -20,6 +20,8 @@
 %x STATE_ID
 %x ALIAS
 %x SCALE
+%x title
+%x accDescription
 %x NOTE
 %x NOTE_ID
 %x NOTE_TEXT
@@ -57,6 +59,11 @@
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
+
+title                                                           { this.begin("title");return 'title'; }
+<title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
+accDescription                                                  { this.begin("accDescription");return 'accDescription'; }
+<accDescription>(?!\n|;|#)*[^\n]*                               { this.popState(); return "description_value"; }
 
 <INITIAL,struct>"state"\s+            { /*console.log('Starting STATE zxzx'+yy.getDirection());*/this.pushState('STATE'); }
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
@@ -193,6 +200,8 @@ statement
     | note NOTE_TEXT AS ID
   	| directive
     | direction
+    | title title_value  { $$=$2.trim();yy.setTitle($$); }
+    | accDescription description_value  { $$=$2.trim();yy.setAccDescription($$); }
     ;
 
 directive

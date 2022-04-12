@@ -7,6 +7,8 @@
 /* lexical grammar */
 %lex
 %x string
+%x title
+%x accDescription
 %x dir
 %x vertex
 %x click
@@ -26,6 +28,10 @@
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%\%(?!\{)[^\n]*                                                /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
+title                                                           { this.begin("title");return 'title'; }
+<title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
+accDescription                                                  { this.begin("accDescription");return 'accDescription'; }
+<accDescription>(?!\n|;|#)*[^\n]*                               { this.popState(); return "description_value"; }
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";
@@ -337,6 +343,8 @@ statement
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$3,undefined);}
     | direction
+    | title title_value  { $$=$2.trim();yy.setTitle($$); }
+    | accDescription description_value  { $$=$2.trim();yy.setAccDescription($$); }
     ;
 
 separator: NEWLINE | SEMI | EOF ;

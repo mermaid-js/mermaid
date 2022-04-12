@@ -214,7 +214,7 @@ Alice->Bob: hi`;
   it('should handle a graph definition for gitGraph', function () {
     const str = '  \n  gitGraph TB:\nbfs1:queue';
     const type = utils.detectType(str);
-    expect(type).toBe('git');
+    expect(type).toBe('gitGraph');
   });
 });
 describe('when finding substring in array ', function () {

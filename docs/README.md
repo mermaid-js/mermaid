@@ -7,14 +7,14 @@ It is a Javascript based diagramming and charting tool that renders Markdown-ins
 >If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](./n00b-syntaxReference.md).
 
 
-![banner](img/header.png)
+<img src="img/header.png" alt="" />
 
 <!-- **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/README.md) -->
 
 [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
 
-<!-- Mermaidn book banner -->
-[![banner](img/book-banner-post-release.jpg)](https://mermaid-js.github.io/mermaid/landing/)
+<!-- Mermaid book banner -->
+[![Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!](img/book-banner-post-release.jpg)](https://mermaid-js.github.io/mermaid/landing/)
 
 
 <!-- <Main description> -->
@@ -41,7 +41,7 @@ For a more detailed introduction to Mermaid and some of its more basic uses, loo
 **Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project 🙏**
 
 
-# Diagram Types
+## Diagram Types
 
 ### [Flowchart](./flowchart.md?id=flowcharts-basic-syntax)
 
@@ -161,7 +161,7 @@ journey
 ```
 ![Journey diagram](img/user-journey.png)
 
-# Installation
+## Installation
 
 **In depth guides and examples can be found at [Getting Started](/n00b-gettingStarted) and [Usage](/usage).**
 
@@ -188,7 +188,7 @@ To Deploy Mermaid:
 4. You can then add mermaid as a dev dependency using this command:
     `yarn add --dev mermaid`
 
-## [Mermaid API](./Setup.md):
+### [Mermaid API](./Setup.md):
 
 **To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:**
 
@@ -201,7 +201,7 @@ To Deploy Mermaid:
 
  **Examples can be found at** [Other examples](/examples)
 
-# Sibling projects
+## Sibling projects
 
 - [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
 - [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
