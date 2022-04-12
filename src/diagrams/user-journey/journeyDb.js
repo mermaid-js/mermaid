@@ -1,5 +1,6 @@
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
+import common from '../common/common';
 
 let title = '';
 let currentSection = '';
@@ -21,7 +22,9 @@ export const clear = function () {
 };
 
 export const setTitle = function (txt) {
-  title = txt;
+  let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
+  title = sanitizedText;
+
 };
 
 export const getTitle = function () {
