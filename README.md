@@ -40,6 +40,8 @@ __The following are some examples of the diagrams, charts and graphs that can be
 
 ```
 flowchart LR
+title Example flow chart
+accDescripton Flow chart showing examples of node usage
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
 C -->|One| D[Result 1]
@@ -47,6 +49,8 @@ C -->|Two| E[Result 2]
 ```
 ```mermaid
 flowchart LR
+title Example flow chart
+accDescripton Flow chart showing examples of node usage
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
 C -->|One| D[Result 1]
