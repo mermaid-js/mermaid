@@ -21,7 +21,7 @@ describe('when parsing a sequenceDiagram', function () {
     parser.yy = sequenceDb;
     parser.yy.clear();
   });
-  it('it should handle a sequenceDiagram definition', function () {
+  it('should handle a sequenceDiagram definition', function () {
     const str = `
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?

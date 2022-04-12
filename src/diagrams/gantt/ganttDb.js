@@ -13,6 +13,7 @@ let includes = [];
 let excludes = [];
 let links = {};
 let title = '';
+let accDescription = '';
 let sections = [];
 let tasks = [];
 let currentSection = '';
@@ -23,6 +24,10 @@ let topAxis = false;
 
 // The serial order of the task in the script
 let lastOrder = 0;
+
+const sanitizeText = function (txt) {
+  return common.sanitizeText(txt, configApi.getConfig());
+};
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
@@ -109,12 +114,19 @@ export const getLinks = function () {
 };
 
 export const setTitle = function (txt) {
-  let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
-  title = sanitizedText;
+  title = sanitizeText(txt);
 };
 
 export const getTitle = function () {
   return title;
+};
+
+export const setAccDescription = function (txt) {
+  accDescription = sanitizeText(txt);
+};
+
+export const getAccDescription = function () {
+  return accDescription;
 };
 
 export const addSection = function (txt) {
@@ -639,6 +651,8 @@ export default {
   getTodayMarker,
   setTitle,
   getTitle,
+  setAccDescription,
+  getAccDescription,
   addSection,
   getSections,
   getTasks,

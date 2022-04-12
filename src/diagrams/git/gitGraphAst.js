@@ -2,11 +2,15 @@ import { log } from '../../logger';
 import { random } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
+import { getConfig } from '../../config';
 import common from '../common/common';
+
+let mainBranchName = getConfig().gitGraph.mainBranchName;
 let commits = {};
 let head = null;
-let branches = { main: head };
-let curBranch = 'main';
+let branches = {};
+branches[mainBranchName] = head;
+let curBranch = mainBranchName;
 let direction = 'LR';
 let seq = 0;
 
@@ -316,8 +320,10 @@ export const prettyPrint = function () {
 export const clear = function () {
   commits = {};
   head = null;
-  branches = { main: head };
-  curBranch = 'main';
+  let mainBranch = getConfig().gitGraph.mainBranchName;
+  branches = {};
+  branches[mainBranch] = null;
+  curBranch = mainBranch;
   seq = 0;
 };
 

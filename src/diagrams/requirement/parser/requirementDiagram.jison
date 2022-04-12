@@ -21,6 +21,9 @@
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 
+"title"\s[^#\n;]+       return 'title';
+"accDescription"\s[^#\n;]+       return 'accDescription';
+
 (\r?\n)+                               return 'NEWLINE';
 \s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
@@ -90,7 +93,9 @@ start
 
 directive
   : openDirective typeDirective closeDirective
-  | openDirective typeDirective ':' argDirective closeDirective;
+  | openDirective typeDirective ':' argDirective closeDirective
+  | title  {yy.setTitle($1.substring(6));$$=$1.substring(6);}
+	| accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);};
 
 openDirective
   : open_directive { yy.parseDirective('%%{', 'open_directive'); };
@@ -190,6 +195,7 @@ relationship
       { $$=yy.Relationships.REFINES;}
   | TRACES
       { $$=yy.Relationships.TRACES;};
+
 
 requirementName: unqString | qString;
 id : unqString | qString;

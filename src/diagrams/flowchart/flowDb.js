@@ -17,14 +17,34 @@ let tooltips = {};
 let subCount = 0;
 let firstGraphFlag = true;
 let direction;
+let title = 'Flow chart';
+let description = '';
 
 let version; // As in graph
 
 // Functions to be run after graph rendering
 let funs = [];
 
+const sanitizeText = (txt) => common.sanitizeText(txt, config);
+
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
+};
+
+const setTitle = function (txt) {
+  title = sanitizeText(txt);
+};
+
+const getTitle = function () {
+  return title;
+};
+
+const setAccDescription = function (txt) {
+  description = sanitizeText(txt);
+};
+
+const getAccDescription = function () {
+  return description;
 };
 
 /**
@@ -77,7 +97,7 @@ export const addVertex = function (_id, text, type, style, classes, dir, props =
   vertexCounter++;
   if (typeof text !== 'undefined') {
     config = configApi.getConfig();
-    txt = common.sanitizeText(text.trim(), config);
+    txt = sanitizeText(text.trim());
 
     // strip quotes if string starts and ends with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
@@ -132,7 +152,7 @@ export const addSingleLink = function (_start, _end, type, linktext) {
   linktext = type.text;
 
   if (typeof linktext !== 'undefined') {
-    edge.text = common.sanitizeText(linktext.trim(), config);
+    edge.text = sanitizeText(linktext.trim());
 
     // strip quotes if string starts and exnds with a quote
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
@@ -255,7 +275,7 @@ export const setClass = function (ids, className) {
 const setTooltip = function (ids, tooltip) {
   ids.split(',').forEach(function (id) {
     if (typeof tooltip !== 'undefined') {
-      tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = common.sanitizeText(tooltip, config);
+      tooltips[version === 'gen-1' ? lookUpDomId(id) : id] = sanitizeText(tooltip);
     }
   });
 };
@@ -488,7 +508,7 @@ export const addSubGraph = function (_id, list, _title) {
   id = id || 'subGraph' + subCount;
   // if (id[0].match(/\d/)) id = lookUpDomId(id);
   title = title || '';
-  title = common.sanitizeText(title, config);
+  title = sanitizeText(title);
   subCount = subCount + 1;
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [], dir };
 
@@ -736,6 +756,10 @@ const makeUniq = (sg, allSubgraphs) => {
 export default {
   parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
   addVertex,
   lookUpDomId,
   addLink,

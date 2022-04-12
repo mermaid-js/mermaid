@@ -11,6 +11,7 @@ import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 import flowChartShapes from './flowChartShapes';
+import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -158,7 +159,7 @@ export const addVertices = function (vert, g, svgId, root, _doc) {
 };
 
 /**
- * Add edges to graph based on parsed graph defninition
+ * Add edges to graph based on parsed graph definition
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
@@ -350,7 +351,7 @@ export const draw = function (text, id) {
     flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
   }
 
-  // Fetch the verices/nodes and edges/links from the parsed graph definition
+  // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const vert = flowDb.getVertices();
   log.warn('Get vertices', vert);
 
@@ -425,6 +426,9 @@ export const draw = function (text, id) {
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   log.warn(g);
+
+  // Adds title and description to the flow chart
+  addSVGAccessibilityFields(parser.yy, svg, id);
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
