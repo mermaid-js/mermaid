@@ -6,14 +6,14 @@ describe('state diagram, ', function () {
     beforeEach(function () {
       parser.yy = stateDb;
     });
-    
+
     it('super simple', function () {
       const str = `
       stateDiagram-v2
       [*] --> State1
       State1 --> [*]
       `;
-      
+
       parser.parse(str);
     });
     it('simple', function () {
@@ -22,7 +22,7 @@ describe('state diagram, ', function () {
       [*] --> State1
       State1 --> [*]
       `;
-      
+
       parser.parse(str);
       const description = stateDb.getAccDescription();
       expect(description).toBe('');
@@ -34,7 +34,7 @@ describe('state diagram, ', function () {
       [*] --> State1
       State1 --> [*]
       `;
-      
+
       parser.parse(str);
       const description = stateDb.getAccDescription();
       expect(description).toBe('a simple description of the diagram');
@@ -46,7 +46,7 @@ describe('state diagram, ', function () {
       [*] --> State1
       State1 --> [*]
       `;
-      
+
       parser.parse(str);
       const title = stateDb.getTitle();
       expect(title).toBe('a simple title of the diagram');
@@ -58,7 +58,7 @@ describe('state diagram, ', function () {
       [*] --> State1
       State1 --> [*]
       `;
-      
+
       parser.parse(str);
     });
     it('should handle relation definitions', function () {
@@ -67,11 +67,11 @@ describe('state diagram, ', function () {
       State1 --> [*]
       State1 : this is a string
       State1 : this is another string
-      
+
       State1 --> State2
       State2 --> [*]
       `;
-      
+
       parser.parse(str);
     });
     it('hide empty description', function () {
@@ -81,20 +81,20 @@ describe('state diagram, ', function () {
       State1 --> [*]
       State1 : this is a string
       State1 : this is another string
-      
+
       State1 --> State2
       State2 --> [*]
       `;
-      
+
       parser.parse(str);
     });
-    
+
     it('handle "as" in state names', function () {
       const str = `stateDiagram-v2
       assemble
       state assemble
       `;
-      
+
       parser.parse(str);
     });
     it('handle "as" in state names 1', function () {
@@ -102,7 +102,7 @@ describe('state diagram, ', function () {
       assemble
       state assemble
       `;
-      
+
       parser.parse(str);
     });
     it('handle "as" in state names 2', function () {
@@ -110,17 +110,17 @@ describe('state diagram, ', function () {
       assembleas
       state assembleas
       `;
-      
+
       parser.parse(str);
     });
     it('handle "as" in state names 3', function () {
       const str = `stateDiagram-v2
       state "as" as as
       `;
-      
+
       parser.parse(str);
     });
-    
+
     it('scale', function () {
       const str = `stateDiagram-v2\n
       scale 350 width
@@ -128,30 +128,30 @@ describe('state diagram, ', function () {
       State1 --> [*]
       State1 : this is a string with - in it
       State1 : this is another string
-      
+
       State1 --> State2
       State2 --> [*]
       `;
-      
+
       parser.parse(str);
     });
-    
+
     it('description after second state', function () {
       const str = `stateDiagram-v2\n
       scale 350 width
       [*] --> State1 : This is the description with - in it
       State1 --> [*]
       `;
-      
+
       parser.parse(str);
-    })
+    });
     it('shall handle descriptions including minus signs', function () {
       const str = `stateDiagram-v2\n
       scale 350 width
       [*] --> State1 : This is the description +-!
       State1 --> [*]
       `;
-      
+
       parser.parse(str);
     });
     it('should handle state statements', function () {
@@ -163,7 +163,7 @@ describe('state diagram, ', function () {
         NewValuePreview --> NewValueSelection : EvNewValueSaved1
       }
       `;
-      
+
       parser.parse(str);
     });
     it('should handle recursive state definitions', function () {
@@ -173,45 +173,45 @@ describe('state diagram, ', function () {
         NewValueSelection --> NewValuePreview : EvNewValue
         NewValuePreview --> NewValueSelection : EvNewValueRejected
         NewValuePreview --> NewValueSelection : EvNewValueSaved
-        
+
         state NewValuePreview {
           State1 --> State2
         }
       }
       `;
-      
+
       parser.parse(str);
     });
     it('should handle multiple recursive state definitions', function () {
       const str = `stateDiagram-v2\n
       scale 350 width
       [*] --> NotShooting
-      
+
       state NotShooting {
         [*] --> Idle
         Idle --> Configuring : EvConfig
         Configuring --> Idle : EvConfig
       }
-      
+
       state Configuring {
         [*] --> NewValueSelection
         NewValueSelection --> NewValuePreview : EvNewValue
         NewValuePreview --> NewValueSelection : EvNewValueRejected
         NewValuePreview --> NewValueSelection : EvNewValueSaved
-        
+
         state NewValuePreview {
           State1 --> State2
         }
       }
       `;
-      
+
       parser.parse(str);
     });
     it('should handle state deifintions with separation of id', function () {
       const str = `stateDiagram-v2\n
       state "Long state description" as state1
       `;
-      
+
       parser.parse(str);
     });
     it('should handle state deifintions with separation of id', function () {
@@ -224,14 +224,14 @@ describe('state diagram, ', function () {
         Configuring --> Idle : EvConfig
       }
       `;
-      
+
       parser.parse(str);
     });
-    
+
     it('should State definition with quotes', function () {
       const str = `stateDiagram-v2\n
       scale 600 width
-      
+
       [*] --> State1
       State1 --> State2 : Succeeded
       State1 --> [*] : Aborted
@@ -248,7 +248,7 @@ describe('state diagram, ', function () {
       State3 --> [*] : Succeeded / Save Result
       State3 --> [*] : Aborted
       `;
-      
+
       parser.parse(str);
     });
     it('should handle fork statements', function () {
@@ -257,20 +257,20 @@ describe('state diagram, ', function () {
       [*] --> fork_state
       fork_state --> State2
       fork_state --> State3
-      
+
       state join_state <<join>>
       State2 --> join_state
       State3 --> join_state
       join_state --> State4
       State4 --> [*]
       `;
-      
+
       parser.parse(str);
     });
     it('should handle concurrent state', function () {
       const str = `stateDiagram-v2\n
       [*] --> Active
-      
+
       state Active {
         [*] --> NumLockOff
         NumLockOff --> NumLockOn : EvNumLockPressed
@@ -285,13 +285,13 @@ describe('state diagram, ', function () {
         ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
       }
       `;
-      
+
       parser.parse(str);
     });
     it('should handle concurrent state', function () {
       const str = `stateDiagram-v2\n
       [*] --> Active
-      
+
       state Active {
         [*] --> NumLockOff
         --
@@ -300,7 +300,7 @@ describe('state diagram, ', function () {
         [*] --> ScrollLockOff
       }
       `;
-      
+
       parser.parse(str);
     });
     // it('should handle arrow directions definitions', function() {
@@ -310,23 +310,23 @@ describe('state diagram, ', function () {
     //     Second --> Third
     //     Third -left-> Last
     //   `;
-    
+
     //   parser.parse(str);
     // });
     it('should handle note statements', function () {
       const str = `stateDiagram-v2\n
       [*] --> Active
       Active --> Inactive
-      
+
       note left of Active : this is a short<br/>note
-      
+
       note right of Inactive
       A note can also
       be defined on
       several lines
       end note
       `;
-      
+
       parser.parse(str);
     });
     it('should handle multiline notes with different line breaks', function () {
@@ -336,7 +336,7 @@ describe('state diagram, ', function () {
       Line1<br>Line2<br/>Line3<br />Line4<br	/>Line5
       end note
       `;
-      
+
       parser.parse(str);
     });
     it('should handle floating notes', function () {
@@ -344,7 +344,7 @@ describe('state diagram, ', function () {
       foo: bar
       note "This is a floating note" as N1
       `;
-      
+
       parser.parse(str);
     });
     it('should handle floating notes', function () {
@@ -352,13 +352,13 @@ describe('state diagram, ', function () {
       state foo
       note "This is a floating note" as N1
       `;
-      
+
       parser.parse(str);
     });
     it('should handle notes for composit states', function () {
       const str = `stateDiagram-v2\n
       [*] --> NotShooting
-      
+
       state "Not Shooting State" as NotShooting {
         state "Idle mode" as Idle
         state "Configuring mode" as Configuring
@@ -366,10 +366,10 @@ describe('state diagram, ', function () {
         Idle --> Configuring : EvConfig
         Configuring --> Idle : EvConfig
       }
-      
+
       note right of NotShooting : This is a note on a composite state
       `;
-      
+
       parser.parse(str);
     });
   });
