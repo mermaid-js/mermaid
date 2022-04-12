@@ -24,7 +24,6 @@ export const clear = function () {
 export const setTitle = function (txt) {
   let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
   title = sanitizedText;
-
 };
 
 export const getTitle = function () {
