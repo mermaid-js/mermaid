@@ -15,7 +15,7 @@ import common from '../common/common';
 import ganttDb from './ganttDb';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
-import addSVGAccessibilityFields from '../../accessibility'
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = ganttDb;
 export const setConf = function () {

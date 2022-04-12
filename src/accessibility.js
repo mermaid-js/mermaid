@@ -4,8 +4,7 @@
  * which is generally not displayed and the accDescription is the description element on the chart,
  * which is never displayed.
  *
- * The following charts display their title as a visual and accessibility element:
- * gantt
+ * The following charts display their title as a visual and accessibility element: gantt
  *
  * @param yy_parser
  * @param svg
