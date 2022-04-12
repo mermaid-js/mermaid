@@ -9,6 +9,7 @@ import { parser } from './parser/stateDiagram';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = stateDb;
 
@@ -97,6 +98,7 @@ export const draw = function (text, id) {
     'viewBox',
     `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
   );
+  addSVGAccessibilityFields(parser.yy, diagram, id);
 };
 const getLabelWidth = (text) => {
   return text ? text.length * conf.fontSizeFactor : 1;

@@ -4,6 +4,8 @@ import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import * as configApi from '../../config';
 
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
+
 const clone = (o) => JSON.parse(JSON.stringify(o));
 let rootDoc = [];
 
@@ -114,6 +116,25 @@ let currentDocument = documents.root;
 let startCnt = 0;
 let endCnt = 0; // eslint-disable-line
 // let stateCnt = 0;
+
+let title = 'State diagram';
+let description = '';
+
+const setTitle = function (txt) {
+  title = sanitizeText(txt);
+};
+
+const getTitle = function () {
+  return title;
+};
+
+const setAccDescription = function (txt) {
+  description = sanitizeText(txt);
+};
+
+const getAccDescription = function () {
+  return description;
+};
 
 /**
  * Function called by parser when a node definition has been found.
@@ -280,4 +301,8 @@ export default {
   getRootDocV2,
   extract,
   trimColon,
+  getTitle,
+  setTitle,
+  getAccDescription,
+  setAccDescription,
 };
