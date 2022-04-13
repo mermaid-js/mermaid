@@ -82,6 +82,7 @@ function parse(text) {
     case 'gitGraph':
       parser = gitGraphParser;
       parser.parser.yy = gitGraphAst;
+      parser.parser.yy.clear();
       break;
     case 'flowchart':
       flowDb.clear();
