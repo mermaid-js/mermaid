@@ -140,7 +140,7 @@ sequenceDiagram
 
 ```
 
-A commit flow diagram.
+## A commit flow diagram.
 ```mermaid
 gitGraph:
     commit "Ashish"
