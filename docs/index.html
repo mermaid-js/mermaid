@@ -96,7 +96,7 @@
         markdown: {
           renderer: {
             code: function (code, lang) {
-              if (lang.startsWith('mermaid') || lang === 'mmd') {
+              if (lang && (lang.startsWith('mermaid') || lang === 'mmd')) {
                 var resultingHTML = '';
 
                 if (lang === 'mmd' || lang === 'mermaid-example') {
