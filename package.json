@@ -63,7 +63,7 @@
     "dagre-d3": "^0.6.4",
     "dompurify": "2.3.6",
     "graphlib": "^2.1.8",
-    "khroma": "^1.4.1",
+    "khroma": "^2.0.0",
     "moment-mini": "^2.24.0",
     "stylis": "^4.0.10"
   },
