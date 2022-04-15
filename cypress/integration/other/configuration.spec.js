@@ -110,10 +110,11 @@ describe('Configuration', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
 
-      cy.get('svg');
-      cy.matchImageSnapshot(
-        'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
-      );
+      cy.get('svg').then((svgs) => {
+        svgs[0].matchImageSnapshot(
+          'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
+        );
+      });
     });
   });
 });
