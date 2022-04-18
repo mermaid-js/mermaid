@@ -6,6 +6,8 @@ English | [简体中文](./README.zh-CN.md)
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/2019) in the category "The most exciting use of technology"!!!**
 
+
+
 **Thanks to all involved, people committing pull requests, people answering questions! 🙏**
 
 <a href="https://mermaid-js.github.io/mermaid/landing/"><img src="https://github.com/mermaid-js/mermaid/blob/master/docs/img/book-banner-post-release.jpg" alt="Explore Mermaid.js in depth, with real-world examples, tips & tricks from the creator... The first official book on Mermaid is available for purchase. Check it out!"></a>
@@ -39,9 +41,8 @@ __The following are some examples of the diagrams, charts and graphs that can be
 ### Flowchart [<a href="https://mermaid-js.github.io/mermaid/#/flowchart">docs</a> - <a href="https://mermaidjs.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVERcbiAgICBBW0hhcmRdIC0tPnxUZXh0fCBCKFJvdW5kKVxuICAgIEIgLS0-IEN7RGVjaXNpb259XG4gICAgQyAtLT58T25lfCBEW1Jlc3VsdCAxXVxuICAgIEMgLS0-fFR3b3wgRVtSZXN1bHQgMl0iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ">live editor</a>]
 
 ```
-flowchart LR
-title Example flow chart
-accDescripton Flow chart showing examples of node usage
+flowchart LR 
+
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
 C -->|One| D[Result 1]
