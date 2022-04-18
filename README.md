@@ -49,8 +49,7 @@ C -->|Two| E[Result 2]
 ```
 ```mermaid
 flowchart LR
-title Example flow chart
-accDescripton Flow chart showing examples of node usage
+
 A[Hard] -->|Text| B(Round)
 B --> C{Decision}
 C -->|One| D[Result 1]
