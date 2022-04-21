@@ -6694,12 +6694,12 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,19],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,29],$Vd=[1,30],$Ve=[1,31],$Vf=[1,32],$Vg=[1,33],$Vh=[1,34],$Vi=[1,35],$Vj=[1,36],$Vk=[1,39],$Vl=[1,40],$Vm=[1,41],$Vn=[1,42],$Vo=[1,43],$Vp=[1,44],$Vq=[1,47],$Vr=[1,4,5,16,20,22,23,24,30,31,32,33,34,35,36,37,39,41,42,43,48,49,50,51,59,69],$Vs=[4,5,16,20,22,23,24,30,31,32,33,34,35,36,37,39,43,48,49,50,51,59,69],$Vt=[4,5,16,20,22,23,24,30,31,32,33,34,35,36,37,39,42,43,48,49,50,51,59,69],$Vu=[4,5,16,20,22,23,24,30,31,32,33,34,35,36,37,39,41,43,48,49,50,51,59,69],$Vv=[57,58,59],$Vw=[1,104],$Vx=[1,4,5,7,16,20,22,23,24,30,31,32,33,34,35,36,37,39,41,42,43,48,49,50,51,59,69];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,7],$V4=[2,5],$V5=[1,15],$V6=[1,17],$V7=[1,18],$V8=[1,19],$V9=[1,21],$Va=[1,22],$Vb=[1,23],$Vc=[1,29],$Vd=[1,30],$Ve=[1,31],$Vf=[1,32],$Vg=[1,33],$Vh=[1,34],$Vi=[1,35],$Vj=[1,36],$Vk=[1,39],$Vl=[1,40],$Vm=[1,41],$Vn=[1,42],$Vo=[1,43],$Vp=[1,44],$Vq=[1,47],$Vr=[1,4,5,16,20,22,25,26,32,33,34,35,36,37,38,39,41,43,44,45,50,51,52,53,61,71],$Vs=[4,5,16,20,22,25,26,32,33,34,35,36,37,38,39,41,45,50,51,52,53,61,71],$Vt=[4,5,16,20,22,25,26,32,33,34,35,36,37,38,39,41,44,45,50,51,52,53,61,71],$Vu=[4,5,16,20,22,25,26,32,33,34,35,36,37,38,39,41,43,45,50,51,52,53,61,71],$Vv=[59,60,61],$Vw=[1,110],$Vx=[1,4,5,7,16,20,22,25,26,32,33,34,35,36,37,38,39,41,43,44,45,50,51,52,53,61,71];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"participant_actor":20,"signal":21,"autonumber":22,"activate":23,"deactivate":24,"note_statement":25,"links_statement":26,"link_statement":27,"properties_statement":28,"details_statement":29,"title":30,"legacy_title":31,"accDescription":32,"loop":33,"end":34,"rect":35,"opt":36,"alt":37,"else_sections":38,"par":39,"par_sections":40,"and":41,"else":42,"note":43,"placement":44,"text2":45,"over":46,"actor_pair":47,"links":48,"link":49,"properties":50,"details":51,"spaceList":52,",":53,"left_of":54,"right_of":55,"signaltype":56,"+":57,"-":58,"ACTOR":59,"SOLID_OPEN_ARROW":60,"DOTTED_OPEN_ARROW":61,"SOLID_ARROW":62,"DOTTED_ARROW":63,"SOLID_CROSS":64,"DOTTED_CROSS":65,"SOLID_POINT":66,"DOTTED_POINT":67,"TXT":68,"open_directive":69,"type_directive":70,"arg_directive":71,"close_directive":72,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",20:"participant_actor",22:"autonumber",23:"activate",24:"deactivate",30:"title",31:"legacy_title",32:"accDescription",33:"loop",34:"end",35:"rect",36:"opt",37:"alt",39:"par",41:"and",42:"else",43:"note",46:"over",48:"links",49:"link",50:"properties",51:"details",53:",",54:"left_of",55:"right_of",57:"+",58:"-",59:"ACTOR",60:"SOLID_OPEN_ARROW",61:"DOTTED_OPEN_ARROW",62:"SOLID_ARROW",63:"DOTTED_ARROW",64:"SOLID_CROSS",65:"DOTTED_CROSS",66:"SOLID_POINT",67:"DOTTED_POINT",68:"TXT",69:"open_directive",70:"type_directive",71:"arg_directive",72:"close_directive"},
-productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,5],[10,3],[10,2],[10,1],[10,3],[10,3],[10,2],[10,2],[10,2],[10,2],[10,2],[10,1],[10,1],[10,1],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[40,1],[40,4],[38,1],[38,4],[25,4],[25,4],[26,3],[27,3],[28,3],[29,3],[52,2],[52,1],[47,3],[47,1],[44,1],[44,1],[21,5],[21,5],[21,4],[17,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[45,1],[11,1],[12,1],[15,1],[13,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NEWLINE":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"openDirective":11,"typeDirective":12,"closeDirective":13,":":14,"argDirective":15,"participant":16,"actor":17,"AS":18,"restOfLine":19,"participant_actor":20,"signal":21,"autonumber":22,"NUM":23,"off":24,"activate":25,"deactivate":26,"note_statement":27,"links_statement":28,"link_statement":29,"properties_statement":30,"details_statement":31,"title":32,"legacy_title":33,"accDescription":34,"loop":35,"end":36,"rect":37,"opt":38,"alt":39,"else_sections":40,"par":41,"par_sections":42,"and":43,"else":44,"note":45,"placement":46,"text2":47,"over":48,"actor_pair":49,"links":50,"link":51,"properties":52,"details":53,"spaceList":54,",":55,"left_of":56,"right_of":57,"signaltype":58,"+":59,"-":60,"ACTOR":61,"SOLID_OPEN_ARROW":62,"DOTTED_OPEN_ARROW":63,"SOLID_ARROW":64,"DOTTED_ARROW":65,"SOLID_CROSS":66,"DOTTED_CROSS":67,"SOLID_POINT":68,"DOTTED_POINT":69,"TXT":70,"open_directive":71,"type_directive":72,"arg_directive":73,"close_directive":74,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NEWLINE",7:"SD",14:":",16:"participant",18:"AS",19:"restOfLine",20:"participant_actor",22:"autonumber",23:"NUM",24:"off",25:"activate",26:"deactivate",32:"title",33:"legacy_title",34:"accDescription",35:"loop",36:"end",37:"rect",38:"opt",39:"alt",41:"par",43:"and",44:"else",45:"note",48:"over",50:"links",51:"link",52:"properties",53:"details",55:",",56:"left_of",57:"right_of",59:"+",60:"-",61:"ACTOR",62:"SOLID_OPEN_ARROW",63:"DOTTED_OPEN_ARROW",64:"SOLID_ARROW",65:"DOTTED_ARROW",66:"SOLID_CROSS",67:"DOTTED_CROSS",68:"SOLID_POINT",69:"DOTTED_POINT",70:"TXT",71:"open_directive",72:"type_directive",73:"arg_directive",74:"close_directive"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,4],[6,6],[10,5],[10,3],[10,5],[10,3],[10,2],[10,4],[10,3],[10,3],[10,2],[10,3],[10,3],[10,2],[10,2],[10,2],[10,2],[10,2],[10,1],[10,1],[10,1],[10,4],[10,4],[10,4],[10,4],[10,4],[10,1],[42,1],[42,4],[40,1],[40,4],[27,4],[27,4],[28,3],[29,3],[30,3],[31,3],[54,2],[54,1],[49,3],[49,1],[46,1],[46,1],[21,5],[21,5],[21,4],[17,1],[58,1],[58,1],[58,1],[58,1],[58,1],[58,1],[58,1],[58,1],[47,1],[11,1],[12,1],[15,1],[13,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -6733,42 +6733,51 @@ case 15:
 $$[$0-1].type='addActor'; this.$=$$[$0-1];
 break;
 case 17:
-yy.enableSequenceNumbers()
+ this.$= {type:'sequenceIndex',sequenceIndex: Number($$[$0-2]), sequenceIndexStep:Number($$[$0-1]), sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};
 break;
 case 18:
-this.$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]};
+ this.$ = {type:'sequenceIndex',sequenceIndex: Number($$[$0-1]), sequenceIndexStep:1, sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};
 break;
 case 19:
+ this.$ = {type:'sequenceIndex', sequenceVisible:false, signalType:yy.LINETYPE.AUTONUMBER};
+break;
+case 20:
+this.$ = {type:'sequenceIndex', sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER}; 
+break;
+case 21:
+this.$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]};
+break;
+case 22:
 this.$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-1]};
 break;
-case 25:
+case 28:
 yy.setTitle($$[$0].substring(6));this.$=$$[$0].substring(6);
 break;
-case 26:
+case 29:
 yy.setTitle($$[$0].substring(7));this.$=$$[$0].substring(7);
 break;
-case 27:
+case 30:
 yy.setAccDescription($$[$0].substring(15));this.$=$$[$0].substring(15);
 break;
-case 28:
+case 31:
 
 		$$[$0-1].unshift({type: 'loopStart', loopText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.LOOP_START});
 		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
 		this.$=$$[$0-1];
 break;
-case 29:
+case 32:
 
 		$$[$0-1].unshift({type: 'rectStart', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_START });
 		$$[$0-1].push({type: 'rectEnd', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_END });
 		this.$=$$[$0-1];
 break;
-case 30:
+case 33:
 
 		$$[$0-1].unshift({type: 'optStart', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_START});
 		$$[$0-1].push({type: 'optEnd', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_END});
 		this.$=$$[$0-1];
 break;
-case 31:
+case 34:
 
 		// Alt start
 		$$[$0-1].unshift({type: 'altStart', altText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.ALT_START});
@@ -6777,7 +6786,7 @@ case 31:
 		$$[$0-1].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
 		this.$=$$[$0-1];
 break;
-case 32:
+case 35:
 
 		// Parallel start
 		$$[$0-1].unshift({type: 'parStart', parText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.PAR_START});
@@ -6786,17 +6795,17 @@ case 32:
 		$$[$0-1].push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		this.$=$$[$0-1];
 break;
-case 35:
+case 38:
  this.$ = $$[$0-3].concat([{type: 'and', parText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
 break;
-case 37:
+case 40:
  this.$ = $$[$0-3].concat([{type: 'else', altText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
 break;
-case 38:
+case 41:
 
 		this.$ = [$$[$0-1], {type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
-case 39:
+case 42:
 
 		// Coerce actor_pair into a [to, from, ...] array
 		$$[$0-2] = [].concat($$[$0-1], $$[$0-1]).slice(0, 2);
@@ -6804,97 +6813,97 @@ case 39:
 		$$[$0-2][1] = $$[$0-2][1].actor;
 		this.$ = [$$[$0-1], {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$$[$0-2].slice(0, 2), text:$$[$0]}];
 break;
-case 40:
+case 43:
 
 		this.$ = [$$[$0-1], {type:'addLinks', actor:$$[$0-1].actor, text:$$[$0]}];
   
 break;
-case 41:
+case 44:
 
 		this.$ = [$$[$0-1], {type:'addALink', actor:$$[$0-1].actor, text:$$[$0]}];
   
 break;
-case 42:
+case 45:
 
 		this.$ = [$$[$0-1], {type:'addProperties', actor:$$[$0-1].actor, text:$$[$0]}];
   
 break;
-case 43:
+case 46:
 
 		this.$ = [$$[$0-1], {type:'addDetails', actor:$$[$0-1].actor, text:$$[$0]}];
   
 break;
-case 46:
+case 49:
  this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 47:
+case 50:
  this.$ = $$[$0]; 
 break;
-case 48:
+case 51:
  this.$ = yy.PLACEMENT.LEFTOF; 
 break;
-case 49:
+case 52:
  this.$ = yy.PLACEMENT.RIGHTOF; 
 break;
-case 50:
+case 53:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]}
 	             ]
 break;
-case 51:
+case 54:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-4]}
 	             ]
 break;
-case 52:
+case 55:
  this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
-case 53:
+case 56:
 this.$={ type: 'addParticipant', actor:$$[$0]}
 break;
-case 54:
+case 57:
  this.$ = yy.LINETYPE.SOLID_OPEN; 
 break;
-case 55:
+case 58:
  this.$ = yy.LINETYPE.DOTTED_OPEN; 
 break;
-case 56:
+case 59:
  this.$ = yy.LINETYPE.SOLID; 
 break;
-case 57:
+case 60:
  this.$ = yy.LINETYPE.DOTTED; 
 break;
-case 58:
+case 61:
  this.$ = yy.LINETYPE.SOLID_CROSS; 
 break;
-case 59:
+case 62:
  this.$ = yy.LINETYPE.DOTTED_CROSS; 
 break;
-case 60:
+case 63:
  this.$ = yy.LINETYPE.SOLID_POINT; 
 break;
-case 61:
+case 64:
  this.$ = yy.LINETYPE.DOTTED_POINT; 
 break;
-case 62:
+case 65:
 this.$ = yy.parseMessage($$[$0].trim().substring(1)) 
 break;
-case 63:
+case 66:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 64:
+case 67:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 65:
+case 68:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 66:
+case 69:
  yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:6,69:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:6,69:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:6,69:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,11:6,69:$V3},o([1,4,5,16,20,22,23,24,30,31,32,33,35,36,37,39,43,48,49,50,51,59,69],$V4,{8:11}),{12:12,70:[1,13]},{70:[2,63]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{13:45,14:[1,46],72:$Vq},o([14,72],[2,64]),o($Vr,[2,6]),{6:37,10:48,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},o($Vr,[2,8]),o($Vr,[2,9]),{17:49,59:$Vp},{17:50,59:$Vp},{5:[1,51]},o($Vr,[2,17]),{17:52,59:$Vp},{17:53,59:$Vp},{5:[1,54]},{5:[1,55]},{5:[1,56]},{5:[1,57]},{5:[1,58]},o($Vr,[2,25]),o($Vr,[2,26]),o($Vr,[2,27]),{19:[1,59]},{19:[1,60]},{19:[1,61]},{19:[1,62]},{19:[1,63]},o($Vr,[2,33]),{56:64,60:[1,65],61:[1,66],62:[1,67],63:[1,68],64:[1,69],65:[1,70],66:[1,71],67:[1,72]},{44:73,46:[1,74],54:[1,75],55:[1,76]},{17:77,59:$Vp},{17:78,59:$Vp},{17:79,59:$Vp},{17:80,59:$Vp},o([5,18,53,60,61,62,63,64,65,66,67,68],[2,53]),{5:[1,81]},{15:82,71:[1,83]},{5:[2,66]},o($Vr,[2,7]),{5:[1,85],18:[1,84]},{5:[1,87],18:[1,86]},o($Vr,[2,16]),{5:[1,88]},{5:[1,89]},o($Vr,[2,20]),o($Vr,[2,21]),o($Vr,[2,22]),o($Vr,[2,23]),o($Vr,[2,24]),o($Vs,$V4,{8:90}),o($Vs,$V4,{8:91}),o($Vs,$V4,{8:92}),o($Vt,$V4,{38:93,8:94}),o($Vu,$V4,{40:95,8:96}),{17:99,57:[1,97],58:[1,98],59:$Vp},o($Vv,[2,54]),o($Vv,[2,55]),o($Vv,[2,56]),o($Vv,[2,57]),o($Vv,[2,58]),o($Vv,[2,59]),o($Vv,[2,60]),o($Vv,[2,61]),{17:100,59:$Vp},{17:102,47:101,59:$Vp},{59:[2,48]},{59:[2,49]},{45:103,68:$Vw},{45:105,68:$Vw},{45:106,68:$Vw},{45:107,68:$Vw},o($Vx,[2,10]),{13:108,72:$Vq},{72:[2,65]},{19:[1,109]},o($Vr,[2,13]),{19:[1,110]},o($Vr,[2,15]),o($Vr,[2,18]),o($Vr,[2,19]),{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[1,111],35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[1,112],35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[1,113],35:$Vg,36:$Vh,37:$Vi,39:$Vj,43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{34:[1,114]},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[2,36],35:$Vg,36:$Vh,37:$Vi,39:$Vj,42:[1,115],43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{34:[1,116]},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,23:$Va,24:$Vb,25:24,26:25,27:26,28:27,29:28,30:$Vc,31:$Vd,32:$Ve,33:$Vf,34:[2,34],35:$Vg,36:$Vh,37:$Vi,39:$Vj,41:[1,117],43:$Vk,48:$Vl,49:$Vm,50:$Vn,51:$Vo,59:$Vp,69:$V3},{17:118,59:$Vp},{17:119,59:$Vp},{45:120,68:$Vw},{45:121,68:$Vw},{45:122,68:$Vw},{53:[1,123],68:[2,47]},{5:[2,40]},{5:[2,62]},{5:[2,41]},{5:[2,42]},{5:[2,43]},{5:[1,124]},{5:[1,125]},{5:[1,126]},o($Vr,[2,28]),o($Vr,[2,29]),o($Vr,[2,30]),o($Vr,[2,31]),{19:[1,127]},o($Vr,[2,32]),{19:[1,128]},{45:129,68:$Vw},{45:130,68:$Vw},{5:[2,52]},{5:[2,38]},{5:[2,39]},{17:131,59:$Vp},o($Vx,[2,11]),o($Vr,[2,12]),o($Vr,[2,14]),o($Vt,$V4,{8:94,38:132}),o($Vu,$V4,{8:96,40:133}),{5:[2,50]},{5:[2,51]},{68:[2,46]},{34:[2,37]},{34:[2,35]}],
-defaultActions: {7:[2,63],8:[2,1],9:[2,2],10:[2,3],47:[2,66],75:[2,48],76:[2,49],83:[2,65],103:[2,40],104:[2,62],105:[2,41],106:[2,42],107:[2,43],120:[2,52],121:[2,38],122:[2,39],129:[2,50],130:[2,51],131:[2,46],132:[2,37],133:[2,35]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:6,71:$V3},{1:[3]},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:6,71:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:6,71:$V3},{3:10,4:$V0,5:$V1,6:4,7:$V2,11:6,71:$V3},o([1,4,5,16,20,22,25,26,32,33,34,35,37,38,39,41,45,50,51,52,53,61,71],$V4,{8:11}),{12:12,72:[1,13]},{72:[2,66]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,25:$Va,26:$Vb,27:24,28:25,29:26,30:27,31:28,32:$Vc,33:$Vd,34:$Ve,35:$Vf,37:$Vg,38:$Vh,39:$Vi,41:$Vj,45:$Vk,50:$Vl,51:$Vm,52:$Vn,53:$Vo,61:$Vp,71:$V3},{13:45,14:[1,46],74:$Vq},o([14,74],[2,67]),o($Vr,[2,6]),{6:37,10:48,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,25:$Va,26:$Vb,27:24,28:25,29:26,30:27,31:28,32:$Vc,33:$Vd,34:$Ve,35:$Vf,37:$Vg,38:$Vh,39:$Vi,41:$Vj,45:$Vk,50:$Vl,51:$Vm,52:$Vn,53:$Vo,61:$Vp,71:$V3},o($Vr,[2,8]),o($Vr,[2,9]),{17:49,61:$Vp},{17:50,61:$Vp},{5:[1,51]},{5:[1,54],23:[1,52],24:[1,53]},{17:55,61:$Vp},{17:56,61:$Vp},{5:[1,57]},{5:[1,58]},{5:[1,59]},{5:[1,60]},{5:[1,61]},o($Vr,[2,28]),o($Vr,[2,29]),o($Vr,[2,30]),{19:[1,62]},{19:[1,63]},{19:[1,64]},{19:[1,65]},{19:[1,66]},o($Vr,[2,36]),{58:67,62:[1,68],63:[1,69],64:[1,70],65:[1,71],66:[1,72],67:[1,73],68:[1,74],69:[1,75]},{46:76,48:[1,77],56:[1,78],57:[1,79]},{17:80,61:$Vp},{17:81,61:$Vp},{17:82,61:$Vp},{17:83,61:$Vp},o([5,18,55,62,63,64,65,66,67,68,69,70],[2,56]),{5:[1,84]},{15:85,73:[1,86]},{5:[2,69]},o($Vr,[2,7]),{5:[1,88],18:[1,87]},{5:[1,90],18:[1,89]},o($Vr,[2,16]),{5:[1,92],23:[1,91]},{5:[1,93]},o($Vr,[2,20]),{5:[1,94]},{5:[1,95]},o($Vr,[2,23]),o($Vr,[2,24]),o($Vr,[2,25]),o($Vr,[2,26]),o($Vr,[2,27]),o($Vs,$V4,{8:96}),o($Vs,$V4,{8:97}),o($Vs,$V4,{8:98}),o($Vt,$V4,{40:99,8:100}),o($Vu,$V4,{42:101,8:102}),{17:105,59:[1,103],60:[1,104],61:$Vp},o($Vv,[2,57]),o($Vv,[2,58]),o($Vv,[2,59]),o($Vv,[2,60]),o($Vv,[2,61]),o($Vv,[2,62]),o($Vv,[2,63]),o($Vv,[2,64]),{17:106,61:$Vp},{17:108,49:107,61:$Vp},{61:[2,51]},{61:[2,52]},{47:109,70:$Vw},{47:111,70:$Vw},{47:112,70:$Vw},{47:113,70:$Vw},o($Vx,[2,10]),{13:114,74:$Vq},{74:[2,68]},{19:[1,115]},o($Vr,[2,13]),{19:[1,116]},o($Vr,[2,15]),{5:[1,117]},o($Vr,[2,18]),o($Vr,[2,19]),o($Vr,[2,21]),o($Vr,[2,22]),{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,25:$Va,26:$Vb,27:24,28:25,29:26,30:27,31:28,32:$Vc,33:$Vd,34:$Ve,35:$Vf,36:[1,118],37:$Vg,38:$Vh,39:$Vi,41:$Vj,45:$Vk,50:$Vl,51:$Vm,52:$Vn,53:$Vo,61:$Vp,71:$V3},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,25:$Va,26:$Vb,27:24,28:25,29:26,30:27,31:28,32:$Vc,33:$Vd,34:$Ve,35:$Vf,36:[1,119],37:$Vg,38:$Vh,39:$Vi,41:$Vj,45:$Vk,50:$Vl,51:$Vm,52:$Vn,53:$Vo,61:$Vp,71:$V3},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,25:$Va,26:$Vb,27:24,28:25,29:26,30:27,31:28,32:$Vc,33:$Vd,34:$Ve,35:$Vf,36:[1,120],37:$Vg,38:$Vh,39:$Vi,41:$Vj,45:$Vk,50:$Vl,51:$Vm,52:$Vn,53:$Vo,61:$Vp,71:$V3},{36:[1,121]},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,25:$Va,26:$Vb,27:24,28:25,29:26,30:27,31:28,32:$Vc,33:$Vd,34:$Ve,35:$Vf,36:[2,39],37:$Vg,38:$Vh,39:$Vi,41:$Vj,44:[1,122],45:$Vk,50:$Vl,51:$Vm,52:$Vn,53:$Vo,61:$Vp,71:$V3},{36:[1,123]},{4:$V5,5:$V6,6:37,9:14,10:16,11:6,16:$V7,17:38,20:$V8,21:20,22:$V9,25:$Va,26:$Vb,27:24,28:25,29:26,30:27,31:28,32:$Vc,33:$Vd,34:$Ve,35:$Vf,36:[2,37],37:$Vg,38:$Vh,39:$Vi,41:$Vj,43:[1,124],45:$Vk,50:$Vl,51:$Vm,52:$Vn,53:$Vo,61:$Vp,71:$V3},{17:125,61:$Vp},{17:126,61:$Vp},{47:127,70:$Vw},{47:128,70:$Vw},{47:129,70:$Vw},{55:[1,130],70:[2,50]},{5:[2,43]},{5:[2,65]},{5:[2,44]},{5:[2,45]},{5:[2,46]},{5:[1,131]},{5:[1,132]},{5:[1,133]},o($Vr,[2,17]),o($Vr,[2,31]),o($Vr,[2,32]),o($Vr,[2,33]),o($Vr,[2,34]),{19:[1,134]},o($Vr,[2,35]),{19:[1,135]},{47:136,70:$Vw},{47:137,70:$Vw},{5:[2,55]},{5:[2,41]},{5:[2,42]},{17:138,61:$Vp},o($Vx,[2,11]),o($Vr,[2,12]),o($Vr,[2,14]),o($Vt,$V4,{8:100,40:139}),o($Vu,$V4,{8:102,42:140}),{5:[2,53]},{5:[2,54]},{70:[2,49]},{36:[2,40]},{36:[2,38]}],
+defaultActions: {7:[2,66],8:[2,1],9:[2,2],10:[2,3],47:[2,69],78:[2,51],79:[2,52],86:[2,68],109:[2,43],110:[2,65],111:[2,44],112:[2,45],113:[2,46],127:[2,55],128:[2,41],129:[2,42],136:[2,53],137:[2,54],138:[2,49],139:[2,40],140:[2,38]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -7373,15 +7382,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 69; 
+case 0: this.begin('open_directive'); return 71; 
 break;
-case 1: this.begin('type_directive'); return 70; 
+case 1: this.begin('type_directive'); return 72; 
 break;
 case 2: this.popState(); this.begin('arg_directive'); return 14; 
 break;
-case 3: this.popState(); this.popState(); return 72; 
+case 3: this.popState(); this.popState(); return 74; 
 break;
-case 4:return 71;
+case 4:return 73;
 break;
 case 5:return 5;
 break;
@@ -7395,81 +7404,81 @@ case 9:/* skip comments */
 break;
 case 10:/* skip comments */
 break;
-case 11: this.begin('ID'); return 16; 
+case 11:return 23;
 break;
-case 12: this.begin('ID'); return 20; 
+case 12: this.begin('ID'); return 16; 
 break;
-case 13: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 59; 
+case 13: this.begin('ID'); return 20; 
 break;
-case 14: this.popState(); this.popState(); this.begin('LINE'); return 18; 
+case 14: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 61; 
 break;
-case 15: this.popState(); this.popState(); return 5; 
+case 15: this.popState(); this.popState(); this.begin('LINE'); return 18; 
 break;
-case 16: this.begin('LINE'); return 33; 
+case 16: this.popState(); this.popState(); return 5; 
 break;
 case 17: this.begin('LINE'); return 35; 
 break;
-case 18: this.begin('LINE'); return 36; 
+case 18: this.begin('LINE'); return 37; 
 break;
-case 19: this.begin('LINE'); return 37; 
+case 19: this.begin('LINE'); return 38; 
 break;
-case 20: this.begin('LINE'); return 42; 
+case 20: this.begin('LINE'); return 39; 
 break;
-case 21: this.begin('LINE'); return 39; 
+case 21: this.begin('LINE'); return 44; 
 break;
 case 22: this.begin('LINE'); return 41; 
 break;
-case 23: this.popState(); return 19; 
+case 23: this.begin('LINE'); return 43; 
 break;
-case 24:return 34;
+case 24: this.popState(); return 19; 
 break;
-case 25:return 54;
+case 25:return 36;
 break;
-case 26:return 55;
+case 26:return 56;
 break;
-case 27:return 48;
+case 27:return 57;
 break;
-case 28:return 49;
+case 28:return 50;
 break;
-case 29:return 50;
+case 29:return 51;
 break;
-case 30:return 51;
+case 30:return 52;
 break;
-case 31:return 46;
+case 31:return 53;
 break;
-case 32:return 43;
+case 32:return 48;
 break;
-case 33: this.begin('ID'); return 23; 
+case 33:return 45;
 break;
-case 34: this.begin('ID'); return 24; 
+case 34: this.begin('ID'); return 25; 
 break;
-case 35:return 30;
+case 35: this.begin('ID'); return 26; 
 break;
-case 36:return 31;
+case 36:return 32;
 break;
-case 37:return 32;
+case 37:return 33;
 break;
-case 38:return 7;
+case 38:return 34;
 break;
-case 39:return 22;
+case 39:return 7;
 break;
-case 40:return 53;
+case 40:return 22;
 break;
-case 41:return 5;
+case 41:return 24;
 break;
-case 42: yy_.yytext = yy_.yytext.trim(); return 59; 
+case 42:return 55;
 break;
-case 43:return 62;
+case 43:return 5;
 break;
-case 44:return 63;
+case 44: yy_.yytext = yy_.yytext.trim(); return 61; 
 break;
-case 45:return 60;
+case 45:return 64;
 break;
-case 46:return 61;
+case 46:return 65;
 break;
-case 47:return 64;
+case 47:return 62;
 break;
-case 48:return 65;
+case 48:return 63;
 break;
 case 49:return 66;
 break;
@@ -7477,18 +7486,22 @@ case 50:return 67;
 break;
 case 51:return 68;
 break;
-case 52:return 57;
+case 52:return 69;
 break;
-case 53:return 58;
+case 53:return 70;
 break;
-case 54:return 5;
+case 54:return 59;
 break;
-case 55:return 'INVALID';
+case 55:return 60;
+break;
+case 56:return 5;
+break;
+case 57:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:actor\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:links\b)/i,/^(?:link\b)/i,/^(?:properties\b)/i,/^(?:details\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:title:\s[^#\n;]+)/i,/^(?:accDescription\s[^#\n;]+)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x|-\)|--\)))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?:-[\)])/i,/^(?:--[\)])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,13],"inclusive":false},"ALIAS":{"rules":[7,8,14,15],"inclusive":false},"LINE":{"rules":[7,8,23],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,12,16,17,18,19,20,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:[0-9]+)/i,/^(?:participant\b)/i,/^(?:actor\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:links\b)/i,/^(?:link\b)/i,/^(?:properties\b)/i,/^(?:details\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:title:\s[^#\n;]+)/i,/^(?:accDescription\s[^#\n;]+)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:off\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+((?!(-x|--x|-\)|--\)))[\-]*[^\+\->:\n,;]+)*)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?:-[\)])/i,/^(?:--[\)])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"open_directive":{"rules":[1,8],"inclusive":false},"type_directive":{"rules":[2,3,8],"inclusive":false},"arg_directive":{"rules":[3,4,8],"inclusive":false},"ID":{"rules":[7,8,14],"inclusive":false},"ALIAS":{"rules":[7,8,15,16],"inclusive":false},"LINE":{"rules":[7,8,24],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,12,13,17,18,19,20,21,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57],"inclusive":true}}
 });
 return lexer;
 })();
@@ -21801,6 +21814,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "autoWrap": () => (/* binding */ autoWrap),
 /* harmony export */   "clear": () => (/* binding */ clear),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "disableSequenceNumbers": () => (/* binding */ disableSequenceNumbers),
 /* harmony export */   "enableSequenceNumbers": () => (/* binding */ enableSequenceNumbers),
 /* harmony export */   "getActor": () => (/* binding */ getActor),
 /* harmony export */   "getActorKeys": () => (/* binding */ getActorKeys),
@@ -21959,6 +21973,9 @@ var getTitle = function getTitle() {
 var enableSequenceNumbers = function enableSequenceNumbers() {
   sequenceNumbersEnabled = true;
 };
+var disableSequenceNumbers = function disableSequenceNumbers() {
+  sequenceNumbersEnabled = false;
+};
 var showSequenceNumbers = function showSequenceNumbers() {
   return sequenceNumbersEnabled;
 };
@@ -22006,7 +22023,8 @@ var LINETYPE = {
   RECT_START: 22,
   RECT_END: 23,
   SOLID_POINT: 24,
-  DOTTED_POINT: 25
+  DOTTED_POINT: 25,
+  AUTONUMBER: 26
 };
 var ARROWTYPE = {
   FILLED: 0,
@@ -22151,6 +22169,20 @@ var apply = function apply(param) {
     });
   } else {
     switch (param.type) {
+      case 'sequenceIndex':
+        messages.push({
+          from: undefined,
+          to: undefined,
+          message: {
+            start: param.sequenceIndex,
+            step: param.sequenceIndexStep,
+            visible: param.sequenceVisible
+          },
+          wrap: false,
+          type: param.signalType
+        });
+        break;
+
       case 'addParticipant':
         addActor(param.actor, param.actor, param.description, 'participant');
         break;
@@ -22265,6 +22297,7 @@ var getAccDescription = function getAccDescription() {
   autoWrap: autoWrap,
   setWrap: setWrap,
   enableSequenceNumbers: enableSequenceNumbers,
+  disableSequenceNumbers: disableSequenceNumbers,
   showSequenceNumbers: showSequenceNumbers,
   getMessages: getMessages,
   getActors: getActors,
@@ -22671,7 +22704,8 @@ var drawMessage = function drawMessage(diagram, msgModel, lineStarty) {
       starty = msgModel.starty,
       message = msgModel.message,
       type = msgModel.type,
-      sequenceIndex = msgModel.sequenceIndex;
+      sequenceIndex = msgModel.sequenceIndex,
+      sequenceVisible = msgModel.sequenceVisible;
   var textDims = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].calculateTextDimensions(message, messageFont(conf));
   var textObj = _svgDraw__WEBPACK_IMPORTED_MODULE_3__["default"].getTextObj();
   textObj.x = startx;
@@ -22740,7 +22774,7 @@ var drawMessage = function drawMessage(diagram, msgModel, lineStarty) {
   } // add node number
 
 
-  if (_sequenceDb__WEBPACK_IMPORTED_MODULE_2__["default"].showSequenceNumbers() || conf.showSequenceNumbers) {
+  if (sequenceVisible || conf.showSequenceNumbers) {
     line.attr('marker-start', 'url(' + url + '#sequencenumber)');
     diagram.append('text').attr('x', startx).attr('y', lineStarty + 4).attr('font-family', 'sans-serif').attr('font-size', '12px').attr('text-anchor', 'middle').attr('textLength', '16px').attr('class', 'sequenceNumber').text(sequenceIndex);
   }
@@ -22920,6 +22954,7 @@ var draw = function draw(text, id) {
 
 
   var sequenceIndex = 1;
+  var sequenceIndexStep = 1;
   var messagesToDraw = Array();
   messages.forEach(function (msg) {
     var loopModel, noteModel, msgModel;
@@ -23015,12 +23050,19 @@ var draw = function draw(text, id) {
         bounds.models.addLoop(loopModel);
         break;
 
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.LINETYPE.AUTONUMBER:
+        sequenceIndex = msg.message.start || sequenceIndex;
+        sequenceIndexStep = msg.message.step || sequenceIndexStep;
+        if (msg.message.visible) _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.enableSequenceNumbers();else _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.disableSequenceNumbers();
+        break;
+
       default:
         try {
           // lastMsg = msg
           msgModel = msg.msgModel;
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
+          msgModel.sequenceVisible = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.showSequenceNumbers();
           var lineStarty = boundMessage(diagram, msgModel);
           messagesToDraw.push({
             messageModel: msgModel,
@@ -23035,7 +23077,7 @@ var draw = function draw(text, id) {
 
 
     if ([_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.LINETYPE.SOLID_OPEN, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.LINETYPE.DOTTED_OPEN, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.LINETYPE.SOLID, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.LINETYPE.DOTTED, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.LINETYPE.SOLID_CROSS, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.LINETYPE.DOTTED_CROSS, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.LINETYPE.SOLID_POINT, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_1__.parser.yy.LINETYPE.DOTTED_POINT].includes(msg.type)) {
-      sequenceIndex++;
+      sequenceIndex = sequenceIndex + sequenceIndexStep;
     }
   });
   messagesToDraw.forEach(function (e) {
@@ -26846,8 +26888,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
-/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
@@ -26881,9 +26923,20 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 var init = function init() {
-  var _this = this;
+  try {
+    initThrowsErrors();
+  } catch (e) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__.log.warn('Syntax Error rendering');
+    _logger__WEBPACK_IMPORTED_MODULE_0__.log.warn(e);
 
-  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
+    if (this.parseError) {
+      this.parseError(e);
+    }
+  }
+};
+
+var initThrowsErrors = function initThrowsErrors() {
+  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
 
   var nodes;
 
@@ -26903,31 +26956,31 @@ var init = function init() {
 
   if (typeof arguments[arguments.length - 1] === 'function') {
     callback = arguments[arguments.length - 1];
-    _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Callback function found');
+    _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Callback function found');
   } else {
     if (typeof conf.mermaid !== 'undefined') {
       if (typeof conf.mermaid.callback === 'function') {
         callback = conf.mermaid.callback;
-        _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Callback function found');
+        _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Callback function found');
       } else {
-        _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('No Callback function found');
+        _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('No Callback function found');
       }
     }
   }
 
   nodes = nodes === undefined ? document.querySelectorAll('.mermaid') : typeof nodes === 'string' ? document.querySelectorAll(nodes) : nodes instanceof window.Node ? [nodes] : nodes; // Last case  - sequence config was passed pick next
 
-  _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Start On Load before: ' + mermaid.startOnLoad);
+  _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Start On Load before: ' + mermaid.startOnLoad);
 
   if (typeof mermaid.startOnLoad !== 'undefined') {
-    _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Start On Load inner: ' + mermaid.startOnLoad);
-    _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].updateSiteConfig({
+    _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Start On Load inner: ' + mermaid.startOnLoad);
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].updateSiteConfig({
       startOnLoad: mermaid.startOnLoad
     });
   }
 
   if (typeof mermaid.ganttConfig !== 'undefined') {
-    _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].updateSiteConfig({
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].updateSiteConfig({
       gantt: mermaid.ganttConfig
     });
   }
@@ -26954,27 +27007,18 @@ var init = function init() {
     var init = _utils__WEBPACK_IMPORTED_MODULE_2__["default"].detectInit(txt);
 
     if (init) {
-      _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Detected early reinit: ', init);
+      _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Detected early reinit: ', init);
     }
 
-    try {
-      _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].render(id, txt, function (svgCode, bindFunctions) {
-        element.innerHTML = svgCode;
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].render(id, txt, function (svgCode, bindFunctions) {
+      element.innerHTML = svgCode;
 
-        if (typeof callback !== 'undefined') {
-          callback(id);
-        }
-
-        if (bindFunctions) bindFunctions(element);
-      }, element);
-    } catch (e) {
-      _logger__WEBPACK_IMPORTED_MODULE_1__.log.warn('Syntax Error rendering');
-      _logger__WEBPACK_IMPORTED_MODULE_1__.log.warn(e);
-
-      if (_this.parseError) {
-        _this.parseError(e);
+      if (typeof callback !== 'undefined') {
+        callback(id);
       }
-    }
+
+      if (bindFunctions) bindFunctions(element);
+    }, element);
   };
 
   for (var i = 0; i < nodes.length; i++) {
@@ -26996,7 +27040,7 @@ var initialize = function initialize(config) {
     }
   }
 
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].initialize(config); // mermaidAPI.reset();
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize(config); // mermaidAPI.reset();
 };
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
@@ -27009,15 +27053,15 @@ var contentLoaded = function contentLoaded() {
 
   if (mermaid.startOnLoad) {
     // No config found, do check API config
-    config = _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].getConfig();
+    config = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig();
 
     if (config.startOnLoad) {
       mermaid.init();
     }
   } else {
     if (typeof mermaid.startOnLoad === 'undefined') {
-      _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('In start, no config');
-      config = _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].getConfig();
+      _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('In start, no config');
+      config = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig();
 
       if (config.startOnLoad) {
         mermaid.init();
@@ -27038,9 +27082,9 @@ if (typeof document !== 'undefined') {
 var mermaid = {
   startOnLoad: true,
   htmlLabels: true,
-  mermaidAPI: _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"],
-  parse: _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parse,
-  render: _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].render,
+  mermaidAPI: _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"],
+  parse: _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parse,
+  render: _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].render,
   init: init,
   initialize: initialize,
   contentLoaded: contentLoaded
@@ -31655,7 +31699,7 @@ module.exports = require("stylis");
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"mermaid","version":"9.0.0","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --mode development --progress --color","build:production":"webpack --mode production --progress --color","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint ./ --ext js,html","lint:fix":"yarn lint --fix","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config ./.webpack/webpack.config.e2e.babel.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"husky install && yarn build","pre-commit":"lint-staged"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^6.0.0","caniuse-lite":"^1.0.30001332","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.6","graphlib":"^2.1.8","khroma":"^2.0.0","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@commitlint/cli":"^16.0.0","@commitlint/config-conventional":"^16.0.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^7.0.0","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"9.5.3","cypress-image-snapshot":"^4.0.1","documentation":"13.2.0","eslint":"^8.2.0","eslint-config-prettier":"^8.3.0","eslint-plugin-cypress":"^2.12.1","eslint-plugin-html":"^6.2.0","eslint-plugin-jest":"^26.0.0","eslint-plugin-jsdoc":"^39.1.0","eslint-plugin-markdown":"^2.2.1","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","lint-staged":"^12.1.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","prettier-plugin-jsdoc":"^0.3.30","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-merge":"^5.8.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"]}');
+module.exports = JSON.parse('{"name":"mermaid","version":"9.0.0","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --mode development --progress --color","build:production":"webpack --mode production --progress --color","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint ./ --ext js,html","lint:fix":"yarn lint --fix","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config ./.webpack/webpack.config.e2e.babel.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"husky install && yarn build","pre-commit":"lint-staged"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^6.0.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.6","graphlib":"^2.1.8","khroma":"^2.0.0","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@commitlint/cli":"^16.0.0","@commitlint/config-conventional":"^16.0.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^7.0.0","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"9.5.4","cypress-image-snapshot":"^4.0.1","documentation":"^13.2.5","eslint":"^8.2.0","eslint-config-prettier":"^8.3.0","eslint-plugin-cypress":"^2.12.1","eslint-plugin-html":"^6.2.0","eslint-plugin-jest":"^26.0.0","eslint-plugin-jsdoc":"^39.1.0","eslint-plugin-markdown":"^2.2.1","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","lint-staged":"^12.1.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","prettier-plugin-jsdoc":"^0.3.30","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.72.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-merge":"^5.8.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"]}');
 
 /***/ })
 

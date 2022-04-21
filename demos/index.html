@@ -385,8 +385,7 @@
     A -->|Get money| B1[(Go shopping 1)]
     A -->|Get money| B2[(Go shopping 2)]
     A -->|Get money| B3[(Go shopping 3)]
-    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or
- something to get around?)]
+    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
     B1 --> C
     B2 --> C
     B3 --> C
@@ -400,10 +399,10 @@
   </div>
   <div class="mermaid">
     graph LR
-    A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
+    A1[Multi<br />Line] -->|Multi<br />Line| B1(Multi<br />Line)
     C1[Multi<br />Line] -->|Multi<br />Line| D1(Multi<br />Line)
     E1[Multi<br />Line] -->|Multi<br />Line| F1(Multi<br />Line)
-    A2[Multi<br>Line] -->|Multi<br>Line| B2(Multi<br>Line)
+    A2[Multi<br />Line] -->|Multi<br />Line| B2(Multi<br />Line)
     C2[Multi<br />Line] -->|Multi<br />Line| D2(Multi<br />Line)
     E2[Multi<br />Line] -->|Multi<br />Line| F2(Multi<br />Line)
     linkStyle 0 stroke:DarkGray,stroke-width:2px
@@ -463,68 +462,64 @@
     class D myClass2
   </div>
 
-  <hr />
-
+ <hr/>
   <div class="mermaid">
-    sequenceDiagram
-    accDescription Hello friends
-    participant Alice
-    participant Bob
-    participant John as John<br />Second Line
-    rect rgb(200, 220, 100)
-    rect rgb(200, 255, 200)
-    Alice ->> Bob: Hello Bob, how are you?
-    Bob-->>John: How about you John?
-    end
-    Bob--x Alice: I am good thanks!
-    Bob-x John: I am good thanks!
-    Note right of John: John thinks a long<br />long time, so long<br />that the text does<br />not fit on a row.
-    Bob-->Alice: Checking with John...
-    Note over John:wrap: John looks like he's still thinking, so Bob prods him a bit.
-    Bob-x John: Hey John - we're still waiting to know<br />how you're doing
-    Note over John:nowrap: John's trying hard not to break his train of thought.
-    Bob-x John:wrap: John! Are you still debating about how you're doing? How long does it take??
-    Note over John: After a few more moments, John<br />finally snaps out of it.
-    end
-    alt either this
-    Alice->>John: Yes
-    else or this
-    Alice->>John: No
-    else or this will happen
-    Alice->John: Maybe
-    end
-    par this happens in parallel
-    Alice -->> Bob: Parallel message 1
-    and
-    Alice -->> John: Parallel message 2
-    end
+		sequenceDiagram
+		title FancySequenceDiagram with autonumbering
+		accDescription Test a description
+		participant Alice
+		participant Bob
+		participant John as John<br />Second Line
+		autonumber 10 10
+		rect rgb(200, 220, 100)
+		rect rgb(200, 255, 200)
+		Alice ->> Bob: Hello Bob, how are you?
+		Bob-->>John: How about you John?
+		end
+		Bob--x Alice: I am good thanks!
+		Bob-x John: I am good thanks!
+		Note right of John: John thinks a long<br />long time, so long<br />that the text does<br />not fit on a row.
+		Bob-->Alice: Checking with John...
+		Note over John:wrap: John looks like he's still thinking, so Bob prods him a bit.
+		Bob-x John: Hey John - we're still waiting to know<br />how you're doing
+		Note over John:nowrap: John's trying hard not to break his train of thought.
+		Bob-x John:wrap: John! Are you still debating about how you're doing? How long does it take??
+		Note over John: After a few more moments, John<br />finally snaps out of it.
+		end
+		autonumber off
+		alt either this
+		Alice->>+John: Yes
+    	John-->>-Alice: OK
+		else or this
+		autonumber
+		Alice->>John: No
+		else or this will happen
+		Alice->John: Maybe
+		end
+		autonumber 200
+		par this happens in parallel
+		Alice -->> Bob: Parallel message 1
+		and
+		Alice -->> John: Parallel message 2
+		end
   </div>
+  <hr/>
   <div class="mermaid">
     sequenceDiagram
-    participant 1 as multiline<br>using #lt;br#gt;
-    participant 2 as multiline<br />using #lt;br/#gt;
-    participant 3 as multiline<br />using #lt;br /#gt;
-    participant 4 as multiline<br />using #lt;br /#gt;
+    participant 1 as multiline<br />using #lt;br#gt;
+    participant 2 as multiline<br />using #lt;br#gt;
+    participant 3 as multiline<br />using #lt;br#gt;
+    participant 4 as multiline<br />using #lt;br#gt;
     1->>2: multiline<br>using #lt;br#gt;
-    note right of 2: multiline<br>using #lt;br#gt;
-    2->>3: multiline<br />using #lt;br/#gt;
+    note right of 2: multiline<br />using #lt;br#gt;
+    2->>3: multiline<br />using #lt;br#gt;
     note right of 3: multiline<br />using #lt;br/#gt;
-    3->>4: multiline<br />using #lt;br /#gt;
-    note right of 4: multiline<br />using #lt;br /#gt;
-    4->>1: multiline<br />using #lt;br /#gt;
-    note right of 1: multiline<br />using #lt;br /#gt;
+    3->>4: multiline<br />using #lt;br#gt;
+    note right of 4: multiline<br />using #lt;br#gt;
+    4->>1: multiline<br />using #lt;br#gt;
+    note right of 1: multiline<br />using #lt;br#gt;
   </div>
-  <div class="mermaid">
-    sequenceDiagram
-    autonumber
-    Alice->>John: Hello John,<br>how are you?
-    Alice->>John: John,<br />can you hear me?
-    John-->>Alice: Hi Alice,<br />I can hear you!
-    John-->>Alice: I feel great!
-  </div>
-
-  <hr />
-
+  <hr/>
   <div class="mermaid">
     gantt
     dateFormat YYYY-MM-DD
@@ -596,24 +591,18 @@
   </div>
 
   <hr />
-
+  <h1>GitGraph not working correctly replaced</h1>
   <div class="mermaid">
-    gitGraph:
-    options
-    {
-    "nodeSpacing": 150,
-    "nodeRadius": 10
-    }
-    end
+    gitGraph
     commit
-    branch newbranch
-    checkout newbranch
+    commit
+    branch master
+    checkout master
     commit
     commit
     checkout master
     commit
     commit
-    merge newbranch
   </div>
 
   <hr />

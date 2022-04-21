@@ -35,6 +35,7 @@
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 "actor"                                                   	{ this.begin('ID'); return 'participant_actor'; }
 <ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)           { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
+[0-9]+(?=[ \n]+)                								return 'NUM';
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
 "loop"                                                          { this.begin('LINE'); return 'loop'; }
@@ -58,9 +59,10 @@
 "deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
 "title"\s[^#\n;]+                                               return 'title';
 "title:"\s[^#\n;]+                                              return 'legacy_title';
-"accDescription"\s[^#\n;]+       				return 'accDescription';
+"accDescription"\s[^#\n;]+       								return 'accDescription';
 "sequenceDiagram"                                               return 'SD';
 "autonumber"                                                    return 'autonumber';
+"off"															return 'off';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
 [^\+\->:\n,;]+((?!(\-x|\-\-x|\-\)|\-\-\)))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
@@ -115,7 +117,10 @@ statement
 	| 'participant_actor' actor 'AS' restOfLine 'NEWLINE' {$2.type='addActor';$2.description=yy.parseMessage($4); $$=$2;}
 	| 'participant_actor' actor 'NEWLINE' {$2.type='addActor'; $$=$2;}
 	| signal 'NEWLINE'
-	| autonumber {yy.enableSequenceNumbers()}
+	| autonumber NUM NUM 'NEWLINE' { $$= {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:Number($3), sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};}
+	| autonumber NUM 'NEWLINE' { $$ = {type:'sequenceIndex',sequenceIndex: Number($2), sequenceIndexStep:1, sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER};}
+	| autonumber off 'NEWLINE' { $$ = {type:'sequenceIndex', sequenceVisible:false, signalType:yy.LINETYPE.AUTONUMBER};}
+	| autonumber 'NEWLINE'  {$$ = {type:'sequenceIndex', sequenceVisible:true, signalType:yy.LINETYPE.AUTONUMBER}; }
 	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
 	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NEWLINE'

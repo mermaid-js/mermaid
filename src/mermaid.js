@@ -29,177 +29,178 @@ import utils from './utils';
  *
  * Renders the mermaid diagrams
  */
-const init = function () {
-  try {
-    initThrowsErrors();
-  } catch (e) {
-    log.warn('Syntax Error rendering');
-    log.warn(e);
-    if (this.parseError) {
-      this.parseError(e);
-    }
-  }
-};
-
-const initThrowsErrors = function () {
-  const conf = mermaidAPI.getConfig();
-  // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
-  let nodes;
-  if (arguments.length >= 2) {
-    /*! sequence config was passed as #1 */
-    if (typeof arguments[0] !== 'undefined') {
-      mermaid.sequenceConfig = arguments[0];
-    }
-
-    nodes = arguments[1];
-  } else {
-    nodes = arguments[0];
-  }
-
-  // if last argument is a function this is the callback function
-  let callback;
-  if (typeof arguments[arguments.length - 1] === 'function') {
-    callback = arguments[arguments.length - 1];
-    log.debug('Callback function found');
-  } else {
-    if (typeof conf.mermaid !== 'undefined') {
-      if (typeof conf.mermaid.callback === 'function') {
-        callback = conf.mermaid.callback;
-        log.debug('Callback function found');
-      } else {
-        log.debug('No Callback function found');
-      }
-    }
-  }
-  nodes =
-    nodes === undefined
-      ? document.querySelectorAll('.mermaid')
-      : typeof nodes === 'string'
-      ? document.querySelectorAll(nodes)
-      : nodes instanceof window.Node
-      ? [nodes]
-      : nodes; // Last case  - sequence config was passed pick next
-
-  log.debug('Start On Load before: ' + mermaid.startOnLoad);
-  if (typeof mermaid.startOnLoad !== 'undefined') {
-    log.debug('Start On Load inner: ' + mermaid.startOnLoad);
-    mermaidAPI.updateSiteConfig({ startOnLoad: mermaid.startOnLoad });
-  }
-
-  if (typeof mermaid.ganttConfig !== 'undefined') {
-    mermaidAPI.updateSiteConfig({ gantt: mermaid.ganttConfig });
-  }
-
-  const idGeneratior = new utils.initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed);
-
-  let txt;
-
-  for (let i = 0; i < nodes.length; i++) {
-    // element is the current div with mermaid class
-    const element = nodes[i];
-
-    /*! Check if previously processed */
-    if (!element.getAttribute('data-processed')) {
-      element.setAttribute('data-processed', true);
-    } else {
-      continue;
-    }
-
-    const id = `mermaid-${idGeneratior.next()}`;
-
-    // Fetch the graph definition including tags
-    txt = element.innerHTML;
-
-    // transforms the html to pure text
-    txt = utils
-      .entityDecode(txt)
-      .trim()
-      .replace(/<br\s*\/?>/gi, '<br/>');
-
-    const init = utils.detectInit(txt);
-    if (init) {
-      log.debug('Detected early reinit: ', init);
-    }
-
-    mermaidAPI.render(
-      id,
-      txt,
-      (svgCode, bindFunctions) => {
-        element.innerHTML = svgCode;
-        if (typeof callback !== 'undefined') {
-          callback(id);
+const init = function() {
+    try {
+        initThrowsErrors();
+    } catch (e) {
+        log.warn('Syntax Error rendering');
+        log.warn(e);
+        if (this.parseError) {
+            this.parseError(e);
         }
-        if (bindFunctions) bindFunctions(element);
-      },
-      element
-    );
-  }
+    }
 };
 
-const initialize = function (config) {
-  // mermaidAPI.reset();
-  if (typeof config.mermaid !== 'undefined') {
-    if (typeof config.mermaid.startOnLoad !== 'undefined') {
-      mermaid.startOnLoad = config.mermaid.startOnLoad;
+const initThrowsErrors = function() {
+    const conf = mermaidAPI.getConfig();
+    // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
+    let nodes;
+    if (arguments.length >= 2) {
+        /*! sequence config was passed as #1 */
+        if (typeof arguments[0] !== 'undefined') {
+            mermaid.sequenceConfig = arguments[0];
+        }
+
+        nodes = arguments[1];
+    } else {
+        nodes = arguments[0];
     }
-    if (typeof config.mermaid.htmlLabels !== 'undefined') {
-      mermaid.htmlLabels =
-        config.mermaid.htmlLabels === 'false' || config.mermaid.htmlLabels === false ? false : true;
+
+    // if last argument is a function this is the callback function
+    let callback;
+    if (typeof arguments[arguments.length - 1] === 'function') {
+        callback = arguments[arguments.length - 1];
+        log.debug('Callback function found');
+    } else {
+        if (typeof conf.mermaid !== 'undefined') {
+            if (typeof conf.mermaid.callback === 'function') {
+                callback = conf.mermaid.callback;
+                log.debug('Callback function found');
+            } else {
+                log.debug('No Callback function found');
+            }
+        }
     }
-  }
-  mermaidAPI.initialize(config);
-  // mermaidAPI.reset();
+    nodes =
+        nodes === undefined ?
+        document.querySelectorAll('.mermaid') :
+        typeof nodes === 'string' ?
+        document.querySelectorAll(nodes) :
+        nodes instanceof window.Node ?
+        [nodes] :
+        nodes; // Last case  - sequence config was passed pick next
+
+    log.debug('Start On Load before: ' + mermaid.startOnLoad);
+    if (typeof mermaid.startOnLoad !== 'undefined') {
+        log.debug('Start On Load inner: ' + mermaid.startOnLoad);
+        mermaidAPI.updateSiteConfig({ startOnLoad: mermaid.startOnLoad });
+    }
+
+    if (typeof mermaid.ganttConfig !== 'undefined') {
+        mermaidAPI.updateSiteConfig({ gantt: mermaid.ganttConfig });
+    }
+
+    const idGeneratior = new utils.initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed);
+
+    let txt;
+
+    for (let i = 0; i < nodes.length; i++) {
+        // element is the current div with mermaid class
+        const element = nodes[i];
+
+        /*! Check if previously processed */
+        if (!element.getAttribute('data-processed')) {
+            element.setAttribute('data-processed', true);
+        } else {
+            continue;
+        }
+
+        const id = `mermaid-${idGeneratior.next()}`;
+
+        // Fetch the graph definition including tags
+        txt = element.innerHTML;
+
+        // transforms the html to pure text
+        txt = utils
+            .entityDecode(txt)
+            .trim()
+            .replace(/<br\s*\/?>/gi, '<br/>')
+            .replace(/\r/g, ''); // parser problems on CRLF ignore all CR and leave LF
+
+        const init = utils.detectInit(txt);
+        if (init) {
+            log.debug('Detected early reinit: ', init);
+        }
+
+        mermaidAPI.render(
+            id,
+            txt,
+            (svgCode, bindFunctions) => {
+                element.innerHTML = svgCode;
+                if (typeof callback !== 'undefined') {
+                    callback(id);
+                }
+                if (bindFunctions) bindFunctions(element);
+            },
+            element
+        );
+    }
+};
+
+const initialize = function(config) {
+    // mermaidAPI.reset();
+    if (typeof config.mermaid !== 'undefined') {
+        if (typeof config.mermaid.startOnLoad !== 'undefined') {
+            mermaid.startOnLoad = config.mermaid.startOnLoad;
+        }
+        if (typeof config.mermaid.htmlLabels !== 'undefined') {
+            mermaid.htmlLabels =
+                config.mermaid.htmlLabels === 'false' || config.mermaid.htmlLabels === false ? false : true;
+        }
+    }
+    mermaidAPI.initialize(config);
+    // mermaidAPI.reset();
 };
 
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
  */
-const contentLoaded = function () {
-  let config;
+const contentLoaded = function() {
+    let config;
 
-  if (mermaid.startOnLoad) {
-    // No config found, do check API config
-    config = mermaidAPI.getConfig();
-    if (config.startOnLoad) {
-      mermaid.init();
+    if (mermaid.startOnLoad) {
+        // No config found, do check API config
+        config = mermaidAPI.getConfig();
+        if (config.startOnLoad) {
+            mermaid.init();
+        }
+    } else {
+        if (typeof mermaid.startOnLoad === 'undefined') {
+            log.debug('In start, no config');
+            config = mermaidAPI.getConfig();
+            if (config.startOnLoad) {
+                mermaid.init();
+            }
+        }
     }
-  } else {
-    if (typeof mermaid.startOnLoad === 'undefined') {
-      log.debug('In start, no config');
-      config = mermaidAPI.getConfig();
-      if (config.startOnLoad) {
-        mermaid.init();
-      }
-    }
-  }
 };
 
 if (typeof document !== 'undefined') {
-  /*!
-   * Wait for document loaded before starting the execution
-   */
-  window.addEventListener(
-    'load',
-    function () {
-      contentLoaded();
-    },
-    false
-  );
+    /*!
+     * Wait for document loaded before starting the execution
+     */
+    window.addEventListener(
+        'load',
+        function() {
+            contentLoaded();
+        },
+        false
+    );
 }
 
 const mermaid = {
-  startOnLoad: true,
-  htmlLabels: true,
+    startOnLoad: true,
+    htmlLabels: true,
 
-  mermaidAPI,
-  parse: mermaidAPI.parse,
-  render: mermaidAPI.render,
+    mermaidAPI,
+    parse: mermaidAPI.parse,
+    render: mermaidAPI.render,
 
-  init,
-  initialize,
+    init,
+    initialize,
 
-  contentLoaded,
+    contentLoaded,
 };
 
 export default mermaid;
