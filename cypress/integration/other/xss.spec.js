@@ -115,4 +115,18 @@ describe('XSS', () => {
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
+  it('should sanitize colons properly', () => {
+    cy.visit('http://localhost:9000/xss20.html');
+    cy.wait(1000);
+    cy.get('a').click('');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
+  it('should sanitize colons properly', () => {
+    cy.visit('http://localhost:9000/xss21.html');
+    cy.wait(1000);
+    cy.get('a').click('');
+    cy.wait(1000);
+    cy.get('#the-malware').should('not.exist');
+  });
 });
