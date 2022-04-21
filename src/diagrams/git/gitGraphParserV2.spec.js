@@ -336,6 +336,20 @@ describe('when parsing a gitGraph', function () {
     expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
   });
 
+  it('should allow _-./ characters in branch names', function () {
+    const str = `gitGraph:
+    commit
+    branch azAZ_-./test
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getCurrentBranch()).toBe('azAZ_-./test');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
+  });
+
   it('should handle new branch checkout', function () {
     const str = `gitGraph:
     commit
