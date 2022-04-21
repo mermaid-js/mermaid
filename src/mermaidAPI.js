@@ -62,6 +62,7 @@ import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
 import utils, { directiveSanitizer, assignWithDepth, sanitizeCss } from './utils';
+import DOMPurify from 'dompurify';
 
 /**
  * @param text
@@ -542,6 +543,10 @@ const render = function (id, _txt, cb, container) {
     )}" sandbox="allow-top-navigation-by-user-activation allow-popups">
   The “iframe” tag is not supported by your browser.
 </iframe>`;
+  } else {
+    if (cnf.securityLevel !== 'loose') {
+      svgCode = DOMPurify.sanitize(svgCode, { ADD_TAGS: ['foreignobject'] });
+    }
   }
 
   if (typeof cb !== 'undefined') {
