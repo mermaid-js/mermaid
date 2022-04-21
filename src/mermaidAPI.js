@@ -545,7 +545,10 @@ const render = function (id, _txt, cb, container) {
 </iframe>`;
   } else {
     if (cnf.securityLevel !== 'loose') {
-      svgCode = DOMPurify.sanitize(svgCode, { ADD_TAGS: ['foreignobject'] });
+      svgCode = DOMPurify.sanitize(svgCode, {
+        ADD_TAGS: ['foreignobject'],
+        ADD_ATTR: ['dominant-baseline'],
+      });
     }
   }
 
