@@ -81,6 +81,7 @@ function parse(text) {
   log.debug('Type ' + graphType);
   switch (graphType) {
     case 'gitGraph':
+      gitGraphAst.clear();
       parser = gitGraphParser;
       parser.parser.yy = gitGraphAst;
       break;
