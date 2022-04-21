@@ -89,11 +89,17 @@ line
 
 statement
     : commitStatement
+    | mergeStatement
     | BRANCH ID {yy.branch($2)}
     | CHECKOUT ID {yy.checkout($2)}
-    | MERGE ID {yy.merge($2)}
     // | RESET reset_arg {yy.reset($2)}
     ;
+
+mergeStatement
+    : MERGE ID {yy.merge($2)}
+    | MERGE ID COMMIT_TAG STR {yy.merge($2, $4)}
+    ;
+
 commitStatement
     : COMMIT commit_arg {yy.commit($2)}
     | COMMIT COMMIT_TAG STR {yy.commit('','',yy.commitType.NORMAL,$3)}
