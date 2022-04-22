@@ -80,7 +80,7 @@
     "coveralls": "^3.0.2",
     "css-to-string-loader": "^0.1.3",
     "cypress": "9.5.3",
-    "cypress-image-snapshot": "^4.0.1",
+    "cypress-plugin-snapshots": "^1.4.4",
     "documentation": "13.2.0",
     "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",

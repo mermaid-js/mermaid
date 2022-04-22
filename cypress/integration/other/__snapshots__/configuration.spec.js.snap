@@ -1,0 +1,3 @@
+exports[`Configuration > arrowMarkerAbsolute > should not taint the initial configuration when using multiple directives #0`] = `
+[ {}, {} ]
+`;

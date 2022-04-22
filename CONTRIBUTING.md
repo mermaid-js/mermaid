@@ -78,7 +78,7 @@ This is important so that, if someone else does a change to the grammar that doe
 
 This tests the rendering and visual appearance of the diagram. This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
 
-To start working with the e2e tests, run `yarn dev` to start the dev server, after that start cypress by running `cypress open` in the mermaid folder. (Make sure you have path to cypress in order, the binary is located in node_modules/.bin).
+To start working with the e2e tests, run `yarn dev` to start the dev server, after that start cypress by running `cypress open` in the mermaid folder. (Make sure you have path to cypress in order, the binary is located in node_modules/.bin). Also, make sure to set `env.cypress-plugin-snapshots.updateSnapshots` to `true` temporarily if you are using snapshots.
 
 The rendering tests are very straightforward to create. There is a function imgSnapshotTest. This function takes a diagram in text form, the mermaid options and renders that diagram in cypress.
 

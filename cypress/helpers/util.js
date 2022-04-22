@@ -1,3 +1,4 @@
+/// <reference types="Cypress" />
 import { Base64 } from 'js-base64';
 
 export const mermaidUrl = (graphStr, options, api) => {
@@ -18,7 +19,7 @@ export const mermaidUrl = (graphStr, options, api) => {
   return url;
 };
 
-export const imgSnapshotTest = (graphStr, _options, api) => {
+export const imgSnapshotTest = async (graphStr, _options, api) => {
   cy.log(_options);
   const options = Object.assign(_options);
   if (!options.fontFamily) {
@@ -45,13 +46,21 @@ export const imgSnapshotTest = (graphStr, _options, api) => {
   cy.log(options);
   const url = mermaidUrl(graphStr, options, api);
 
-  cy.visit(url);
-  cy.get('svg');
-  // cy.percySnapshot();
-  // Default name to test title
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
-
-  cy.matchImageSnapshot(name);
+  cy.visit(url);
+  const existsSvg = () =>
+    new Promise((resolve) =>
+      cy.get('svg').then((el) => (Cypress.dom.isElement(el) ? resolve(true) : resolve(false)))
+    );
+  let svgExists = await existsSvg();
+  let times = 0;
+  while (!svgExists && times < 15) {
+    cy.wait(100);
+    svgExists = await existsSvg();
+    ++times;
+  }
+  cy.get('svg').toMatchSnapshot(name);
+  // cy.percySnapshot();
 };
 
 export const renderGraph = (graphStr, options, api) => {

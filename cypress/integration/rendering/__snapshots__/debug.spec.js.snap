@@ -1,0 +1,170 @@
+exports[`Flowchart > 34: testing the label width in percy #0`] = `
+<svg
+  id="mermaid-1650652060915"
+  width="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  role="img"
+  aria-labelledby="chart-title-mermaid-1650652060915 chart-desc-mermaid-1650652060915"
+  height="54"
+  style="max-width: 108.015625px;"
+  viewBox="0 0 108.015625 54"
+>
+  <title id="chart-title-mermaid-1650652060915">Flow chart</title>
+  <desc id="chart-desc-mermaid-1650652060915"></desc>
+  <style>
+    #mermaid-1650652060915 {
+      font-family: "Noto Sans SC", sans-serif;
+      font-size: 16px;
+      fill: #000000;
+    }
+    #mermaid-1650652060915 .error-icon {
+      fill: #552222;
+    }
+    #mermaid-1650652060915 .error-text {
+      fill: #552222;
+      stroke: #552222;
+    }
+    #mermaid-1650652060915 .edge-thickness-normal {
+      stroke-width: 2px;
+    }
+    #mermaid-1650652060915 .edge-thickness-thick {
+      stroke-width: 3.5px;
+    }
+    #mermaid-1650652060915 .edge-pattern-solid {
+      stroke-dasharray: 0;
+    }
+    #mermaid-1650652060915 .edge-pattern-dashed {
+      stroke-dasharray: 3;
+    }
+    #mermaid-1650652060915 .edge-pattern-dotted {
+      stroke-dasharray: 2;
+    }
+    #mermaid-1650652060915 .marker {
+      fill: #000000;
+      stroke: #000000;
+    }
+    #mermaid-1650652060915 .marker.cross {
+      stroke: #000000;
+    }
+    #mermaid-1650652060915 svg {
+      font-family: "Noto Sans SC", sans-serif;
+      font-size: 16px;
+    }
+    #mermaid-1650652060915 .label {
+      font-family: "Noto Sans SC", sans-serif;
+      color: #000000;
+    }
+    #mermaid-1650652060915 .cluster-label text {
+      fill: #333;
+    }
+    #mermaid-1650652060915 .cluster-label span {
+      color: #333;
+    }
+    #mermaid-1650652060915 .label text,
+    #mermaid-1650652060915 span {
+      fill: #000000;
+      color: #000000;
+    }
+    #mermaid-1650652060915 .node rect,
+    #mermaid-1650652060915 .node circle,
+    #mermaid-1650652060915 .node ellipse,
+    #mermaid-1650652060915 .node polygon,
+    #mermaid-1650652060915 .node path {
+      fill: #cde498;
+      stroke: #13540c;
+      stroke-width: 1px;
+    }
+    #mermaid-1650652060915 .node .label {
+      text-align: center;
+    }
+    #mermaid-1650652060915 .node.clickable {
+      cursor: pointer;
+    }
+    #mermaid-1650652060915 .arrowheadPath {
+      fill: green;
+    }
+    #mermaid-1650652060915 .edgePath .path {
+      stroke: #000000;
+      stroke-width: 2px;
+    }
+    #mermaid-1650652060915 .flowchart-link {
+      stroke: #000000;
+      fill: none;
+    }
+    #mermaid-1650652060915 .edgeLabel {
+      background-color: #e8e8e8;
+      text-align: center;
+    }
+    #mermaid-1650652060915 .edgeLabel rect {
+      opacity: 0.5;
+      background-color: #e8e8e8;
+      fill: #e8e8e8;
+    }
+    #mermaid-1650652060915 .cluster rect {
+      fill: #cdffb2;
+      stroke: #6eaa49;
+      stroke-width: 1px;
+    }
+    #mermaid-1650652060915 .cluster text {
+      fill: #333;
+    }
+    #mermaid-1650652060915 .cluster span {
+      color: #333;
+    }
+    #mermaid-1650652060915 div.mermaidTooltip {
+      position: absolute;
+      text-align: center;
+      max-width: 200px;
+      padding: 2px;
+      font-family: "Noto Sans SC", sans-serif;
+      font-size: 12px;
+      background: hsl(78.1578947368, 58.4615384615%, 84.5098039216%);
+      border: 1px solid #6eaa49;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 100;
+    }
+    #mermaid-1650652060915 :root {
+      --mermaid-font-family: "Noto Sans SC", sans-serif;
+    }
+  </style>
+  <g>
+    <g class="output">
+      <g class="clusters"></g>
+      <g class="edgePaths"></g>
+      <g class="edgeLabels"></g>
+      <g class="nodes">
+        <g
+          class="node default"
+          id="flowchart-A-1"
+          transform="translate(54.0078125,27)"
+          style="opacity: 1;"
+        >
+          <rect
+            rx="0"
+            ry="0"
+            x="-46.0078125"
+            y="-19"
+            width="92.015625"
+            height="38"
+            class="label-container"
+          ></rect>
+          <g class="label" transform="translate(0,0)">
+            <g transform="translate(-36.0078125,-9)">
+              <foreignObject width="72.015625" height="18"
+                ><div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  style="display: inline-block; white-space: nowrap;"
+                >
+                  Christmas
+                </div></foreignObject
+              >
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+`;

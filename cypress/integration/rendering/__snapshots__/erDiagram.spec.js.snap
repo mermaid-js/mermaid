@@ -1,0 +1,2264 @@
+exports[`Entity Relationship Diagram > should render a simple ER diagram #0`] = `
+<svg
+  id="mermaid-1650652068118"
+  width="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  height="465"
+  style="max-width: 140px;"
+  viewBox="0 0 140 465"
+  role="img"
+  aria-labelledby="chart-title-mermaid-1650652068118 chart-desc-mermaid-1650652068118"
+>
+  <title id="chart-title-mermaid-1650652068118"></title>
+  <desc id="chart-desc-mermaid-1650652068118"></desc>
+  <style>
+    #mermaid-1650652068118 {
+      font-family: courier;
+      font-size: 16px;
+      fill: #333;
+    }
+    #mermaid-1650652068118 .error-icon {
+      fill: #552222;
+    }
+    #mermaid-1650652068118 .error-text {
+      fill: #552222;
+      stroke: #552222;
+    }
+    #mermaid-1650652068118 .edge-thickness-normal {
+      stroke-width: 2px;
+    }
+    #mermaid-1650652068118 .edge-thickness-thick {
+      stroke-width: 3.5px;
+    }
+    #mermaid-1650652068118 .edge-pattern-solid {
+      stroke-dasharray: 0;
+    }
+    #mermaid-1650652068118 .edge-pattern-dashed {
+      stroke-dasharray: 3;
+    }
+    #mermaid-1650652068118 .edge-pattern-dotted {
+      stroke-dasharray: 2;
+    }
+    #mermaid-1650652068118 .marker {
+      fill: #333333;
+      stroke: #333333;
+    }
+    #mermaid-1650652068118 .marker.cross {
+      stroke: #333333;
+    }
+    #mermaid-1650652068118 svg {
+      font-family: courier;
+      font-size: 16px;
+    }
+    #mermaid-1650652068118 .entityBox {
+      fill: #ececff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652068118 .attributeBoxOdd {
+      fill: #ffffff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652068118 .attributeBoxEven {
+      fill: #f2f2f2;
+      stroke: #9370db;
+    }
+    #mermaid-1650652068118 .relationshipLabelBox {
+      fill: hsl(80, 100%, 96.2745098039%);
+      opacity: 0.7;
+      background-color: hsl(80, 100%, 96.2745098039%);
+    }
+    #mermaid-1650652068118 .relationshipLabelBox rect {
+      opacity: 0.5;
+    }
+    #mermaid-1650652068118 .relationshipLine {
+      stroke: #333333;
+    }
+    #mermaid-1650652068118 :root {
+      --mermaid-font-family: courier;
+    }
+  </style>
+  <g></g>
+  <defs>
+    <marker
+      id="ONLY_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M9,0 L9,18 M15,0 L15,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONLY_ONE_END"
+      refX="18"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M3,0 L3,18 M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="21" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_END"
+      refX="30"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M21,0 L21,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M0,18 Q 18,0 36,18 Q 18,36 0,18 M42,9 L42,27"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_END"
+      refX="27"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M3,9 L3,27 M9,18 Q27,0 45,18 Q27,36 9,18"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="48" cy="18" r="6"></circle>
+      <path stroke="gray" fill="none" d="M0,18 Q18,0 36,18 Q18,36 0,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_END"
+      refX="39"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="18" r="6"></circle>
+      <path
+        stroke="gray"
+        fill="none"
+        d="M21,18 Q39,0 57,18 Q39,36 21,18"
+      ></path>
+    </marker>
+  </defs>
+  <path
+    class="er relationshipLine"
+    d="M70,95L70,103.33333333333333C70,111.66666666666667,70,128.33333333333334,70,145C70,161.66666666666666,70,178.33333333333334,70,186.66666666666666L70,195"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ZERO_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M70,270L70,278.3333333333333C70,286.6666666666667,70,303.3333333333333,70,320C70,336.6666666666667,70,353.3333333333333,70,361.6666666666667L70,370"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <g id="CUSTOMER" transform="translate(20,20 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-CUSTOMER"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      CUSTOMER
+    </text>
+  </g>
+  <g id="ORDER" transform="translate(20,195 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-ORDER"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      ORDER
+    </text>
+  </g>
+  <g id="LINE-ITEM" transform="translate(20,370 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-LINE-ITEM"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      LINE-ITEM
+    </text>
+  </g>
+  <rect
+    class="er relationshipLabelBox"
+    x="48.390625"
+    y="137.9921875"
+    width="43.21875"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel1"
+    x="70"
+    y="145"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    places
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="41.1875"
+    y="312.9921875"
+    width="57.625"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel2"
+    x="70"
+    y="320"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    contains
+  </text>
+</svg>
+`;
+
+exports[`Entity Relationship Diagram > should render an ER diagram with a recursive relationship #0`] = `
+<svg
+  id="mermaid-1650652069710"
+  width="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  height="465"
+  style="max-width: 260.78125px;"
+  viewBox="0 0 260.78125 465"
+  role="img"
+  aria-labelledby="chart-title-mermaid-1650652069710 chart-desc-mermaid-1650652069710"
+>
+  <title id="chart-title-mermaid-1650652069710"></title>
+  <desc id="chart-desc-mermaid-1650652069710"></desc>
+  <style>
+    #mermaid-1650652069710 {
+      font-family: courier;
+      font-size: 16px;
+      fill: #333;
+    }
+    #mermaid-1650652069710 .error-icon {
+      fill: #552222;
+    }
+    #mermaid-1650652069710 .error-text {
+      fill: #552222;
+      stroke: #552222;
+    }
+    #mermaid-1650652069710 .edge-thickness-normal {
+      stroke-width: 2px;
+    }
+    #mermaid-1650652069710 .edge-thickness-thick {
+      stroke-width: 3.5px;
+    }
+    #mermaid-1650652069710 .edge-pattern-solid {
+      stroke-dasharray: 0;
+    }
+    #mermaid-1650652069710 .edge-pattern-dashed {
+      stroke-dasharray: 3;
+    }
+    #mermaid-1650652069710 .edge-pattern-dotted {
+      stroke-dasharray: 2;
+    }
+    #mermaid-1650652069710 .marker {
+      fill: #333333;
+      stroke: #333333;
+    }
+    #mermaid-1650652069710 .marker.cross {
+      stroke: #333333;
+    }
+    #mermaid-1650652069710 svg {
+      font-family: courier;
+      font-size: 16px;
+    }
+    #mermaid-1650652069710 .entityBox {
+      fill: #ececff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652069710 .attributeBoxOdd {
+      fill: #ffffff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652069710 .attributeBoxEven {
+      fill: #f2f2f2;
+      stroke: #9370db;
+    }
+    #mermaid-1650652069710 .relationshipLabelBox {
+      fill: hsl(80, 100%, 96.2745098039%);
+      opacity: 0.7;
+      background-color: hsl(80, 100%, 96.2745098039%);
+    }
+    #mermaid-1650652069710 .relationshipLabelBox rect {
+      opacity: 0.5;
+    }
+    #mermaid-1650652069710 .relationshipLine {
+      stroke: #333333;
+    }
+    #mermaid-1650652069710 :root {
+      --mermaid-font-family: courier;
+    }
+  </style>
+  <g></g>
+  <defs>
+    <marker
+      id="ONLY_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M9,0 L9,18 M15,0 L15,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONLY_ONE_END"
+      refX="18"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M3,0 L3,18 M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="21" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_END"
+      refX="30"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M21,0 L21,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M0,18 Q 18,0 36,18 Q 18,36 0,18 M42,9 L42,27"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_END"
+      refX="27"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M3,9 L3,27 M9,18 Q27,0 45,18 Q27,36 9,18"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="48" cy="18" r="6"></circle>
+      <path stroke="gray" fill="none" d="M0,18 Q18,0 36,18 Q18,36 0,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_END"
+      refX="39"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="18" r="6"></circle>
+      <path
+        stroke="gray"
+        fill="none"
+        d="M21,18 Q39,0 57,18 Q39,36 21,18"
+      ></path>
+    </marker>
+  </defs>
+  <path
+    class="er relationshipLine"
+    d="M120,41.875L131.66666666666666,38.229166666666664C143.33333333333334,34.583333333333336,166.66666666666666,27.291666666666668,181.25,23.645833333333332C195.83333333333334,20,201.66666666666666,20,207.5,26.25C213.33333333333334,32.5,219.16666666666666,45,219.16666666666666,57.5C219.16666666666666,70,213.33333333333334,82.5,207.5,88.75C201.66666666666666,95,195.83333333333334,95,181.25,91.35416666666667C166.66666666666666,87.70833333333333,143.33333333333334,80.41666666666667,131.66666666666666,76.77083333333333L120,73.125"
+    stroke="gray"
+    fill="none"
+    stroke-dasharray="8,8"
+    marker-end="url(#ZERO_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M70,95L70,103.33333333333333C70,111.66666666666667,70,128.33333333333334,70,145C70,161.66666666666666,70,178.33333333333334,70,186.66666666666666L70,195"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ZERO_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M70,270L70,278.3333333333333C70,286.6666666666667,70,303.3333333333333,70,320C70,336.6666666666667,70,353.3333333333333,70,361.6666666666667L70,370"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <g id="CUSTOMER" transform="translate(20,20 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-CUSTOMER"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      CUSTOMER
+    </text>
+  </g>
+  <g id="ORDER" transform="translate(20,195 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-ORDER"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      ORDER
+    </text>
+  </g>
+  <g id="LINE-ITEM" transform="translate(20,370 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-LINE-ITEM"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      LINE-ITEM
+    </text>
+  </g>
+  <rect
+    class="er relationshipLabelBox"
+    x="197.5572967529297"
+    y="50.49217987060547"
+    width="43.21875"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel1"
+    x="219.1666717529297"
+    y="57.49999237060547"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    refers
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="48.390625"
+    y="137.9921875"
+    width="43.21875"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel2"
+    x="70"
+    y="145"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    places
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="41.1875"
+    y="312.9921875"
+    width="57.625"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel3"
+    x="70"
+    y="320"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    contains
+  </text>
+</svg>
+`;
+
+exports[`Entity Relationship Diagram > should render an ER diagram with multiple relationships between the same two entities #0`] = `
+<svg
+  id="mermaid-1650652071125"
+  width="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  height="290"
+  style="max-width: 221.78125px;"
+  viewBox="-30.09375 0 221.78125 290"
+  role="img"
+  aria-labelledby="chart-title-mermaid-1650652071125 chart-desc-mermaid-1650652071125"
+>
+  <title id="chart-title-mermaid-1650652071125"></title>
+  <desc id="chart-desc-mermaid-1650652071125"></desc>
+  <style>
+    #mermaid-1650652071125 {
+      font-family: courier;
+      font-size: 16px;
+      fill: #333;
+    }
+    #mermaid-1650652071125 .error-icon {
+      fill: #552222;
+    }
+    #mermaid-1650652071125 .error-text {
+      fill: #552222;
+      stroke: #552222;
+    }
+    #mermaid-1650652071125 .edge-thickness-normal {
+      stroke-width: 2px;
+    }
+    #mermaid-1650652071125 .edge-thickness-thick {
+      stroke-width: 3.5px;
+    }
+    #mermaid-1650652071125 .edge-pattern-solid {
+      stroke-dasharray: 0;
+    }
+    #mermaid-1650652071125 .edge-pattern-dashed {
+      stroke-dasharray: 3;
+    }
+    #mermaid-1650652071125 .edge-pattern-dotted {
+      stroke-dasharray: 2;
+    }
+    #mermaid-1650652071125 .marker {
+      fill: #333333;
+      stroke: #333333;
+    }
+    #mermaid-1650652071125 .marker.cross {
+      stroke: #333333;
+    }
+    #mermaid-1650652071125 svg {
+      font-family: courier;
+      font-size: 16px;
+    }
+    #mermaid-1650652071125 .entityBox {
+      fill: #ececff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652071125 .attributeBoxOdd {
+      fill: #ffffff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652071125 .attributeBoxEven {
+      fill: #f2f2f2;
+      stroke: #9370db;
+    }
+    #mermaid-1650652071125 .relationshipLabelBox {
+      fill: hsl(80, 100%, 96.2745098039%);
+      opacity: 0.7;
+      background-color: hsl(80, 100%, 96.2745098039%);
+    }
+    #mermaid-1650652071125 .relationshipLabelBox rect {
+      opacity: 0.5;
+    }
+    #mermaid-1650652071125 .relationshipLine {
+      stroke: #333333;
+    }
+    #mermaid-1650652071125 :root {
+      --mermaid-font-family: courier;
+    }
+  </style>
+  <g></g>
+  <defs>
+    <marker
+      id="ONLY_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M9,0 L9,18 M15,0 L15,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONLY_ONE_END"
+      refX="18"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M3,0 L3,18 M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="21" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_END"
+      refX="30"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M21,0 L21,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M0,18 Q 18,0 36,18 Q 18,36 0,18 M42,9 L42,27"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_END"
+      refX="27"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M3,9 L3,27 M9,18 Q27,0 45,18 Q27,36 9,18"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="48" cy="18" r="6"></circle>
+      <path stroke="gray" fill="none" d="M0,18 Q18,0 36,18 Q18,36 0,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_END"
+      refX="39"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="18" r="6"></circle>
+      <path
+        stroke="gray"
+        fill="none"
+        d="M21,18 Q39,0 57,18 Q39,36 21,18"
+      ></path>
+    </marker>
+  </defs>
+  <path
+    class="er relationshipLine"
+    d="M48.57142857142857,95L43.8095238095238,103.33333333333333C39.047619047619044,111.66666666666667,29.523809523809522,128.33333333333334,29.52380952380952,145C29.523809523809522,161.66666666666666,39.047619047619044,178.33333333333334,43.8095238095238,186.66666666666666L48.57142857142857,195"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M91.42857142857143,95L96.19047619047619,103.33333333333333C100.95238095238096,111.66666666666667,110.47619047619048,128.33333333333334,110.47619047619048,145C110.47619047619048,161.66666666666666,100.95238095238096,178.33333333333334,96.19047619047619,186.66666666666666L91.42857142857143,195"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <g id="CUSTOMER" transform="translate(20,20 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-CUSTOMER"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      CUSTOMER
+    </text>
+  </g>
+  <g id="ADDRESS" transform="translate(20,195 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-ADDRESS"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      ADDRESS
+    </text>
+  </g>
+  <rect
+    class="er relationshipLabelBox"
+    x="-10.093378067016602"
+    y="137.9921875"
+    width="79.234375"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel1"
+    x="29.5238094329834"
+    y="145"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    invoiced at
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="49.26525115966797"
+    y="137.9921875"
+    width="122.421875"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel2"
+    x="110.47618865966797"
+    y="145"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    receives goods at
+  </text>
+</svg>
+`;
+
+exports[`Entity Relationship Diagram > should render a cyclical ER diagram #0`] = `
+<svg
+  id="mermaid-1650652072515"
+  width="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  height="465"
+  style="max-width: 258.015625px;"
+  viewBox="0 0 258.015625 465"
+  role="img"
+  aria-labelledby="chart-title-mermaid-1650652072515 chart-desc-mermaid-1650652072515"
+>
+  <title id="chart-title-mermaid-1650652072515"></title>
+  <desc id="chart-desc-mermaid-1650652072515"></desc>
+  <style>
+    #mermaid-1650652072515 {
+      font-family: courier;
+      font-size: 16px;
+      fill: #333;
+    }
+    #mermaid-1650652072515 .error-icon {
+      fill: #552222;
+    }
+    #mermaid-1650652072515 .error-text {
+      fill: #552222;
+      stroke: #552222;
+    }
+    #mermaid-1650652072515 .edge-thickness-normal {
+      stroke-width: 2px;
+    }
+    #mermaid-1650652072515 .edge-thickness-thick {
+      stroke-width: 3.5px;
+    }
+    #mermaid-1650652072515 .edge-pattern-solid {
+      stroke-dasharray: 0;
+    }
+    #mermaid-1650652072515 .edge-pattern-dashed {
+      stroke-dasharray: 3;
+    }
+    #mermaid-1650652072515 .edge-pattern-dotted {
+      stroke-dasharray: 2;
+    }
+    #mermaid-1650652072515 .marker {
+      fill: #333333;
+      stroke: #333333;
+    }
+    #mermaid-1650652072515 .marker.cross {
+      stroke: #333333;
+    }
+    #mermaid-1650652072515 svg {
+      font-family: courier;
+      font-size: 16px;
+    }
+    #mermaid-1650652072515 .entityBox {
+      fill: #ececff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652072515 .attributeBoxOdd {
+      fill: #ffffff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652072515 .attributeBoxEven {
+      fill: #f2f2f2;
+      stroke: #9370db;
+    }
+    #mermaid-1650652072515 .relationshipLabelBox {
+      fill: hsl(80, 100%, 96.2745098039%);
+      opacity: 0.7;
+      background-color: hsl(80, 100%, 96.2745098039%);
+    }
+    #mermaid-1650652072515 .relationshipLabelBox rect {
+      opacity: 0.5;
+    }
+    #mermaid-1650652072515 .relationshipLine {
+      stroke: #333333;
+    }
+    #mermaid-1650652072515 :root {
+      --mermaid-font-family: courier;
+    }
+  </style>
+  <g></g>
+  <defs>
+    <marker
+      id="ONLY_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M9,0 L9,18 M15,0 L15,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONLY_ONE_END"
+      refX="18"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M3,0 L3,18 M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="21" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_END"
+      refX="30"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M21,0 L21,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M0,18 Q 18,0 36,18 Q 18,36 0,18 M42,9 L42,27"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_END"
+      refX="27"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M3,9 L3,27 M9,18 Q27,0 45,18 Q27,36 9,18"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="48" cy="18" r="6"></circle>
+      <path stroke="gray" fill="none" d="M0,18 Q18,0 36,18 Q18,36 0,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_END"
+      refX="39"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="18" r="6"></circle>
+      <path
+        stroke="gray"
+        fill="none"
+        d="M21,18 Q39,0 57,18 Q39,36 21,18"
+      ></path>
+    </marker>
+  </defs>
+  <path
+    class="er relationshipLine"
+    d="M112.85714285714286,95L105.71428571428572,103.33333333333333C98.57142857142857,111.66666666666667,84.28571428571429,128.33333333333334,77.14285714285715,145C70,161.66666666666666,70,178.33333333333334,70,186.66666666666666L70,195"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M70,270L70,278.3333333333333C70,286.6666666666667,70,303.3333333333333,77.14285714285715,320C84.28571428571429,336.6666666666667,98.57142857142857,353.3333333333333,105.71428571428572,361.6666666666667L112.85714285714286,370"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M177.14285714285714,370L184.2857142857143,361.6666666666667C191.42857142857142,353.3333333333333,205.7142857142857,336.6666666666667,212.85714285714286,313.75C220,290.8333333333333,220,261.6666666666667,220,232.5C220,203.33333333333334,220,174.16666666666666,212.85714285714286,151.25C205.7142857142857,128.33333333333334,191.42857142857142,111.66666666666667,184.2857142857143,103.33333333333333L177.14285714285714,95"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <g id="A" transform="translate(95,20 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-A"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      A
+    </text>
+  </g>
+  <g id="B" transform="translate(20,195 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-B"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      B
+    </text>
+  </g>
+  <g id="C" transform="translate(95,370 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-C"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      C
+    </text>
+  </g>
+  <rect
+    class="er relationshipLabelBox"
+    x="61.418418884277344"
+    y="133.11778259277344"
+    width="36.015625"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel1"
+    x="79.42623138427734"
+    y="140.12559509277344"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    likes
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="61.41865539550781"
+    y="317.8664855957031"
+    width="36.015625"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel2"
+    x="79.42646789550781"
+    y="324.8742980957031"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    likes
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="201.984375"
+    y="225.4921875"
+    width="36.03125"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel3"
+    x="220"
+    y="232.5"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    likes
+  </text>
+</svg>
+`;
+
+exports[`Entity Relationship Diagram > should render a not-so-simple ER diagram #0`] = `
+<svg
+  id="mermaid-1650652073950"
+  width="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  height="640"
+  style="max-width: 752.046875px;"
+  viewBox="-121.609375 0 752.046875 640"
+  role="img"
+  aria-labelledby="chart-title-mermaid-1650652073950 chart-desc-mermaid-1650652073950"
+>
+  <title id="chart-title-mermaid-1650652073950"></title>
+  <desc id="chart-desc-mermaid-1650652073950"></desc>
+  <style>
+    #mermaid-1650652073950 {
+      font-family: courier;
+      font-size: 16px;
+      fill: #333;
+    }
+    #mermaid-1650652073950 .error-icon {
+      fill: #552222;
+    }
+    #mermaid-1650652073950 .error-text {
+      fill: #552222;
+      stroke: #552222;
+    }
+    #mermaid-1650652073950 .edge-thickness-normal {
+      stroke-width: 2px;
+    }
+    #mermaid-1650652073950 .edge-thickness-thick {
+      stroke-width: 3.5px;
+    }
+    #mermaid-1650652073950 .edge-pattern-solid {
+      stroke-dasharray: 0;
+    }
+    #mermaid-1650652073950 .edge-pattern-dashed {
+      stroke-dasharray: 3;
+    }
+    #mermaid-1650652073950 .edge-pattern-dotted {
+      stroke-dasharray: 2;
+    }
+    #mermaid-1650652073950 .marker {
+      fill: #333333;
+      stroke: #333333;
+    }
+    #mermaid-1650652073950 .marker.cross {
+      stroke: #333333;
+    }
+    #mermaid-1650652073950 svg {
+      font-family: courier;
+      font-size: 16px;
+    }
+    #mermaid-1650652073950 .entityBox {
+      fill: #ececff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652073950 .attributeBoxOdd {
+      fill: #ffffff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652073950 .attributeBoxEven {
+      fill: #f2f2f2;
+      stroke: #9370db;
+    }
+    #mermaid-1650652073950 .relationshipLabelBox {
+      fill: hsl(80, 100%, 96.2745098039%);
+      opacity: 0.7;
+      background-color: hsl(80, 100%, 96.2745098039%);
+    }
+    #mermaid-1650652073950 .relationshipLabelBox rect {
+      opacity: 0.5;
+    }
+    #mermaid-1650652073950 .relationshipLine {
+      stroke: #333333;
+    }
+    #mermaid-1650652073950 :root {
+      --mermaid-font-family: courier;
+    }
+  </style>
+  <g></g>
+  <defs>
+    <marker
+      id="ONLY_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M9,0 L9,18 M15,0 L15,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONLY_ONE_END"
+      refX="18"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M3,0 L3,18 M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="21" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_END"
+      refX="30"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M21,0 L21,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M0,18 Q 18,0 36,18 Q 18,36 0,18 M42,9 L42,27"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_END"
+      refX="27"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M3,9 L3,27 M9,18 Q27,0 45,18 Q27,36 9,18"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="48" cy="18" r="6"></circle>
+      <path stroke="gray" fill="none" d="M0,18 Q18,0 36,18 Q18,36 0,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_END"
+      refX="39"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="18" r="6"></circle>
+      <path
+        stroke="gray"
+        fill="none"
+        d="M21,18 Q39,0 57,18 Q39,36 21,18"
+      ></path>
+    </marker>
+  </defs>
+  <path
+    class="er relationshipLine"
+    d="M92.609375,95L92.609375,103.33333333333333C92.609375,111.66666666666667,92.609375,128.33333333333334,92.609375,145C92.609375,161.66666666666666,92.609375,178.33333333333334,92.609375,186.66666666666666L92.609375,195"
+    stroke="gray"
+    fill="none"
+    stroke-dasharray="8,8"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONE_OR_MORE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M42.609375,82.84624785009504L22.174479166666668,93.20520654174588C1.7395833333333333,103.5641652333967,-39.130208333333336,124.28208261669835,-59.565104166666664,149.22437464168252C-80,174.16666666666666,-80,203.33333333333334,-80,232.5C-80,261.6666666666667,-80,290.8333333333333,-59.565104166666664,315.7756253583175C-39.130208333333336,340.71791738330165,1.7395833333333333,361.43583476660325,22.174479166666668,371.79479345825416L42.609375,382.15375214990496"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ZERO_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M142.609375,77.15326033550923L171.37760416666666,88.46105027959102C200.14583333333334,99.76884022367283,257.6822916666667,122.3844201118364,286.4505208333333,142.02554338925154C315.21875,161.66666666666666,315.21875,178.33333333333334,315.21875,186.66666666666666L315.21875,195"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ZERO_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M92.609375,270L92.609375,278.3333333333333C92.609375,286.6666666666667,92.609375,303.3333333333333,92.609375,320C92.609375,336.6666666666667,92.609375,353.3333333333333,92.609375,361.6666666666667L92.609375,370"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ZERO_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M315.21875,270L315.21875,278.3333333333333C315.21875,286.6666666666667,315.21875,303.3333333333333,286.4505208333333,322.97445661074846C257.6822916666667,342.6155798881636,200.14583333333334,365.23115977632716,171.37760416666666,376.538949720409L142.609375,387.84673966449077"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M92.609375,445L92.609375,453.3333333333333C92.609375,461.6666666666667,92.609375,478.3333333333333,121.20833333333333,497.90792213565425C149.80729166666666,517.4825109379752,207.00520833333334,539.9650218759505,235.60416666666666,551.206277344938L264.203125,562.4475328139257"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M537.828125,270L537.828125,278.3333333333333C537.828125,286.6666666666667,537.828125,303.3333333333333,537.828125,320C537.828125,336.6666666666667,537.828125,353.3333333333333,537.828125,361.6666666666667L537.828125,370"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M537.828125,445L537.828125,453.3333333333333C537.828125,461.6666666666667,537.828125,478.3333333333333,509.2291666666667,497.90792213565425C480.6302083333333,517.4825109379752,423.4322916666667,539.9650218759505,394.8333333333333,551.206277344938L366.234375,562.4475328139257"
+    stroke="gray"
+    fill="none"
+    marker-end="url(#ZERO_OR_MORE_END)"
+    marker-start="url(#ONLY_ONE_START)"
+  ></path>
+  <g id="CUSTOMER" transform="translate(42.609375,20 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-CUSTOMER"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      CUSTOMER
+    </text>
+  </g>
+  <g id="DELIVERY-ADDRESS" transform="translate(20,195 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="145.21875"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-DELIVERY-ADDRESS"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(72.609375,37.5)"
+    >
+      DELIVERY-ADDRESS
+    </text>
+  </g>
+  <g id="ORDER" transform="translate(42.609375,370 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-ORDER"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      ORDER
+    </text>
+  </g>
+  <g id="INVOICE" transform="translate(265.21875,195 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-INVOICE"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      INVOICE
+    </text>
+  </g>
+  <g id="ORDER-ITEM" transform="translate(264.203125,545 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="102.03125"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-ORDER-ITEM"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(51.015625,37.5)"
+    >
+      ORDER-ITEM
+    </text>
+  </g>
+  <g id="PRODUCT-CATEGORY" transform="translate(465.21875,195 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="145.21875"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-PRODUCT-CATEGORY"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(72.609375,37.5)"
+    >
+      PRODUCT-CATEGORY
+    </text>
+  </g>
+  <g id="PRODUCT" transform="translate(487.828125,370 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-PRODUCT"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      PRODUCT
+    </text>
+  </g>
+  <rect
+    class="er relationshipLabelBox"
+    x="81.796875"
+    y="137.9921875"
+    width="21.625"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel1"
+    x="92.609375"
+    y="145"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    has
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="-101.609375"
+    y="225.49220275878906"
+    width="43.21875"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel2"
+    x="-80"
+    y="232.50001525878906"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    places
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="209.1717529296875"
+    y="112.51569366455078"
+    width="72.03125"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel3"
+    x="245.1873779296875"
+    y="119.52350616455078"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    liable for
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="63.796875"
+    y="312.9921875"
+    width="57.625"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel4"
+    x="92.609375"
+    y="320"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    receives
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="223.5780029296875"
+    y="338.46868896484375"
+    width="43.21875"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel5"
+    x="245.1873779296875"
+    y="345.47650146484375"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    covers
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="133.31163024902344"
+    y="513.257080078125"
+    width="57.625"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel6"
+    x="162.12413024902344"
+    y="520.264892578125"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    includes
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="509.015625"
+    y="312.9921875"
+    width="57.625"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel7"
+    x="537.828125"
+    y="320"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    contains
+  </text>
+  <rect
+    class="er relationshipLabelBox"
+    x="432.29779052734375"
+    y="513.2570190429688"
+    width="72.03125"
+    height="14.015625"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel8"
+    x="468.31341552734375"
+    y="520.2648315429688"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  >
+    ordered in
+  </text>
+</svg>
+`;
+
+exports[`Entity Relationship Diagram > should render multiple ER diagrams #0`] = `
+[ {}, {} ]
+`;
+
+exports[`Entity Relationship Diagram > should render an ER diagram with blank or empty labels #0`] = `
+<svg
+  id="mermaid-1650652076760"
+  width="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  height="465"
+  style="max-width: 240px;"
+  viewBox="-25 0 240 465"
+  role="img"
+  aria-labelledby="chart-title-mermaid-1650652076760 chart-desc-mermaid-1650652076760"
+>
+  <title id="chart-title-mermaid-1650652076760"></title>
+  <desc id="chart-desc-mermaid-1650652076760"></desc>
+  <style>
+    #mermaid-1650652076760 {
+      font-family: courier;
+      font-size: 16px;
+      fill: #333;
+    }
+    #mermaid-1650652076760 .error-icon {
+      fill: #552222;
+    }
+    #mermaid-1650652076760 .error-text {
+      fill: #552222;
+      stroke: #552222;
+    }
+    #mermaid-1650652076760 .edge-thickness-normal {
+      stroke-width: 2px;
+    }
+    #mermaid-1650652076760 .edge-thickness-thick {
+      stroke-width: 3.5px;
+    }
+    #mermaid-1650652076760 .edge-pattern-solid {
+      stroke-dasharray: 0;
+    }
+    #mermaid-1650652076760 .edge-pattern-dashed {
+      stroke-dasharray: 3;
+    }
+    #mermaid-1650652076760 .edge-pattern-dotted {
+      stroke-dasharray: 2;
+    }
+    #mermaid-1650652076760 .marker {
+      fill: #333333;
+      stroke: #333333;
+    }
+    #mermaid-1650652076760 .marker.cross {
+      stroke: #333333;
+    }
+    #mermaid-1650652076760 svg {
+      font-family: courier;
+      font-size: 16px;
+    }
+    #mermaid-1650652076760 .entityBox {
+      fill: #ececff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652076760 .attributeBoxOdd {
+      fill: #ffffff;
+      stroke: #9370db;
+    }
+    #mermaid-1650652076760 .attributeBoxEven {
+      fill: #f2f2f2;
+      stroke: #9370db;
+    }
+    #mermaid-1650652076760 .relationshipLabelBox {
+      fill: hsl(80, 100%, 96.2745098039%);
+      opacity: 0.7;
+      background-color: hsl(80, 100%, 96.2745098039%);
+    }
+    #mermaid-1650652076760 .relationshipLabelBox rect {
+      opacity: 0.5;
+    }
+    #mermaid-1650652076760 .relationshipLine {
+      stroke: #333333;
+    }
+    #mermaid-1650652076760 :root {
+      --mermaid-font-family: courier;
+    }
+  </style>
+  <g></g>
+  <defs>
+    <marker
+      id="ONLY_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M9,0 L9,18 M15,0 L15,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONLY_ONE_END"
+      refX="18"
+      refY="9"
+      markerWidth="18"
+      markerHeight="18"
+      orient="auto"
+    >
+      <path stroke="gray" fill="none" d="M3,0 L3,18 M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_START"
+      refX="0"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="21" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M9,0 L9,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_ONE_END"
+      refX="30"
+      refY="9"
+      markerWidth="30"
+      markerHeight="18"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="9" r="6"></circle>
+      <path stroke="gray" fill="none" d="M21,0 L21,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M0,18 Q 18,0 36,18 Q 18,36 0,18 M42,9 L42,27"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ONE_OR_MORE_END"
+      refX="27"
+      refY="18"
+      markerWidth="45"
+      markerHeight="36"
+      orient="auto"
+    >
+      <path
+        stroke="gray"
+        fill="none"
+        d="M3,9 L3,27 M9,18 Q27,0 45,18 Q27,36 9,18"
+      ></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_START"
+      refX="18"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="48" cy="18" r="6"></circle>
+      <path stroke="gray" fill="none" d="M0,18 Q18,0 36,18 Q18,36 0,18"></path>
+    </marker>
+  </defs>
+  <defs>
+    <marker
+      id="ZERO_OR_MORE_END"
+      refX="39"
+      refY="18"
+      markerWidth="57"
+      markerHeight="36"
+      orient="auto"
+    >
+      <circle stroke="gray" fill="white" cx="9" cy="18" r="6"></circle>
+      <path
+        stroke="gray"
+        fill="none"
+        d="M21,18 Q39,0 57,18 Q39,36 21,18"
+      ></path>
+    </marker>
+  </defs>
+  <path
+    class="er relationshipLine"
+    d="M102.14285714285714,95L109.28571428571428,103.33333333333333C116.42857142857143,111.66666666666667,130.7142857142857,128.33333333333334,137.85714285714286,145C145,161.66666666666666,145,178.33333333333334,145,186.66666666666666L145,195"
+    stroke="gray"
+    fill="none"
+    stroke-dasharray="8,8"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONE_OR_MORE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M37.857142857142854,95L30.71428571428571,103.33333333333333C23.57142857142857,111.66666666666667,9.285714285714285,128.33333333333334,2.1428571428571423,151.25C-5,174.16666666666666,-5,203.33333333333334,-5,232.5C-5,261.6666666666667,-5,290.8333333333333,2.1428571428571423,313.75C9.285714285714285,336.6666666666667,23.57142857142857,353.3333333333333,30.71428571428571,361.6666666666667L37.857142857142854,370"
+    stroke="gray"
+    fill="none"
+    stroke-dasharray="8,8"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONE_OR_MORE_START)"
+  ></path>
+  <path
+    class="er relationshipLine"
+    d="M145,270L145,278.3333333333333C145,286.6666666666667,145,303.3333333333333,137.85714285714286,320C130.7142857142857,336.6666666666667,116.42857142857143,353.3333333333333,109.28571428571428,361.6666666666667L102.14285714285714,370"
+    stroke="gray"
+    fill="none"
+    stroke-dasharray="8,8"
+    marker-end="url(#ONE_OR_MORE_END)"
+    marker-start="url(#ONE_OR_MORE_START)"
+  ></path>
+  <g id="BOOK" transform="translate(20,20 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-BOOK"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      BOOK
+    </text>
+  </g>
+  <g id="AUTHOR" transform="translate(95,195 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-AUTHOR"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      AUTHOR
+    </text>
+  </g>
+  <g id="GENRE" transform="translate(20,370 )">
+    <rect
+      class="er entityBox"
+      fill="honeydew"
+      fill-opacity="100%"
+      stroke="gray"
+      x="0"
+      y="0"
+      width="100"
+      height="75"
+    ></rect>
+    <text
+      class="er entityLabel"
+      id="entity-GENRE"
+      x="0"
+      y="0"
+      dominant-baseline="middle"
+      text-anchor="middle"
+      style="font-family: courier; font-size: 12px"
+      transform="translate(50,37.5)"
+    >
+      GENRE
+    </text>
+  </g>
+  <rect
+    class="er relationshipLabelBox"
+    x="135.5735626220703"
+    y="140.12570190429688"
+    width="0"
+    height="0"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel1"
+    x="135.5735626220703"
+    y="140.12570190429688"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  ></text>
+  <rect
+    class="er relationshipLabelBox"
+    x="-5"
+    y="232.50001525878906"
+    width="0"
+    height="0"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel2"
+    x="-5"
+    y="232.50001525878906"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  ></text>
+  <rect
+    class="er relationshipLabelBox"
+    x="135.57354736328125"
+    y="324.8742980957031"
+    width="0"
+    height="0"
+    fill="white"
+    fill-opacity="85%"
+  ></rect>
+  <text
+    class="er relationshipLabel"
+    id="rel3"
+    x="135.57354736328125"
+    y="324.8742980957031"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    style="font-family: courier; font-size: 12px"
+  ></text>
+</svg>
+`;

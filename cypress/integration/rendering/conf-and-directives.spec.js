@@ -133,8 +133,9 @@ graph TD
     it('diagrams should not taint later diagrams', () => {
       const url = 'http://localhost:9000/theme-directives.html';
       cy.visit(url);
-      cy.get('svg');
-      cy.matchImageSnapshot('conf-and-directives.spec-when-rendering-several-diagrams-diagram-1');
+      cy.wait(1000);
+      cy.get('svg').toMatchSnapshot();
+      // cy.matchImageSnapshot('conf-and-directives.spec-when-rendering-several-diagrams-diagram-1');
     });
   });
 });

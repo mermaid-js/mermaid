@@ -1,3 +1,5 @@
+/// <reference types="Cypress" />
+
 import { renderGraph } from '../../helpers/util';
 describe('Configuration', () => {
   describe('arrowMarkerAbsolute', () => {
@@ -110,10 +112,11 @@ describe('Configuration', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
 
-      cy.get('svg');
-      cy.matchImageSnapshot(
-        'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
-      );
+      cy.wait(1000);
+      cy.get('svg').toMatchSnapshot();
+      // cy.matchImageSnapshot(
+      //   'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
+      // );
     });
   });
 });
