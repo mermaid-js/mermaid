@@ -1,6 +1,12 @@
 name: E2E
 
-on: [push, pull_request]
+on:
+  push: {}
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
 
 jobs:
   build:
