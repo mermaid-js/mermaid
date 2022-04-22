@@ -3635,12 +3635,12 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,7],$V2=[1,5],$V3=[1,9],$V4=[1,6],$V5=[2,6],$V6=[1,16],$V7=[6,8,14,18,20,21,22,37,41],$V8=[8,14,18,20,21,22],$V9=[8,13,14,18,20,21,22],$Va=[1,26],$Vb=[6,8,14,37,41],$Vc=[8,14,41],$Vd=[1,53],$Ve=[1,54],$Vf=[1,55],$Vg=[8,14,24,28,29,41];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,7],$V2=[1,5],$V3=[1,9],$V4=[1,6],$V5=[2,6],$V6=[1,16],$V7=[6,8,14,19,21,22,25,38,42],$V8=[8,14,19,21,22,25],$V9=[8,13,14,19,21,22,25],$Va=[1,26],$Vb=[6,8,14,38,42],$Vc=[8,14,42],$Vd=[1,54],$Ve=[1,55],$Vf=[1,56],$Vg=[8,14,23,29,30,42];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"eol":4,"directive":5,"GG":6,"document":7,"EOF":8,":":9,"DIR":10,"options":11,"body":12,"OPT":13,"NL":14,"line":15,"statement":16,"commitStatement":17,"BRANCH":18,"ID":19,"CHECKOUT":20,"MERGE":21,"COMMIT":22,"commit_arg":23,"COMMIT_TAG":24,"STR":25,"COMMIT_TYPE":26,"commitType":27,"COMMIT_ID":28,"COMMIT_MSG":29,"NORMAL":30,"REVERSE":31,"HIGHLIGHT":32,"openDirective":33,"typeDirective":34,"closeDirective":35,"argDirective":36,"open_directive":37,"type_directive":38,"arg_directive":39,"close_directive":40,";":41,"$accept":0,"$end":1},
-terminals_: {2:"error",6:"GG",8:"EOF",9:":",10:"DIR",13:"OPT",14:"NL",18:"BRANCH",19:"ID",20:"CHECKOUT",21:"MERGE",22:"COMMIT",24:"COMMIT_TAG",25:"STR",26:"COMMIT_TYPE",28:"COMMIT_ID",29:"COMMIT_MSG",30:"NORMAL",31:"REVERSE",32:"HIGHLIGHT",37:"open_directive",38:"type_directive",39:"arg_directive",40:"close_directive",41:";"},
-productions_: [0,[3,2],[3,2],[3,3],[3,4],[3,5],[7,0],[7,2],[11,2],[11,1],[12,0],[12,2],[15,2],[15,1],[16,1],[16,2],[16,2],[16,2],[17,2],[17,3],[17,3],[17,5],[17,5],[17,3],[17,5],[17,5],[17,5],[17,5],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,3],[17,5],[17,5],[17,5],[17,5],[17,5],[17,5],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[23,0],[23,1],[27,1],[27,1],[27,1],[5,3],[5,5],[33,1],[34,1],[36,1],[35,1],[4,1],[4,1],[4,1]],
+symbols_: {"error":2,"start":3,"eol":4,"directive":5,"GG":6,"document":7,"EOF":8,":":9,"DIR":10,"options":11,"body":12,"OPT":13,"NL":14,"line":15,"statement":16,"commitStatement":17,"mergeStatement":18,"BRANCH":19,"ID":20,"CHECKOUT":21,"MERGE":22,"COMMIT_TAG":23,"STR":24,"COMMIT":25,"commit_arg":26,"COMMIT_TYPE":27,"commitType":28,"COMMIT_ID":29,"COMMIT_MSG":30,"NORMAL":31,"REVERSE":32,"HIGHLIGHT":33,"openDirective":34,"typeDirective":35,"closeDirective":36,"argDirective":37,"open_directive":38,"type_directive":39,"arg_directive":40,"close_directive":41,";":42,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"GG",8:"EOF",9:":",10:"DIR",13:"OPT",14:"NL",19:"BRANCH",20:"ID",21:"CHECKOUT",22:"MERGE",23:"COMMIT_TAG",24:"STR",25:"COMMIT",27:"COMMIT_TYPE",29:"COMMIT_ID",30:"COMMIT_MSG",31:"NORMAL",32:"REVERSE",33:"HIGHLIGHT",38:"open_directive",39:"type_directive",40:"arg_directive",41:"close_directive",42:";"},
+productions_: [0,[3,2],[3,2],[3,3],[3,4],[3,5],[7,0],[7,2],[11,2],[11,1],[12,0],[12,2],[15,2],[15,1],[16,1],[16,1],[16,2],[16,2],[18,2],[18,4],[17,2],[17,3],[17,3],[17,5],[17,5],[17,3],[17,5],[17,5],[17,5],[17,5],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,3],[17,5],[17,5],[17,5],[17,5],[17,5],[17,5],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,7],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[17,9],[26,0],[26,1],[28,1],[28,1],[28,1],[5,3],[5,5],[34,1],[35,1],[37,1],[36,1],[4,1],[4,1],[4,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -3670,241 +3670,244 @@ break;
 case 12:
 this.$ =$$[$0-1]
 break;
-case 15:
+case 16:
 yy.branch($$[$0])
 break;
-case 16:
+case 17:
 yy.checkout($$[$0])
 break;
-case 17:
+case 18:
 yy.merge($$[$0])
 break;
-case 18:
-yy.commit($$[$0])
-break;
 case 19:
-yy.commit('','',yy.commitType.NORMAL,$$[$0])
+yy.merge($$[$0-2], $$[$0])
 break;
 case 20:
-yy.commit('','',$$[$0],'')
+yy.commit($$[$0])
 break;
 case 21:
-yy.commit('','',$$[$0],$$[$0-2])
+yy.commit('','',yy.commitType.NORMAL,$$[$0])
 break;
 case 22:
-yy.commit('','',$$[$0-2],$$[$0])
+yy.commit('','',$$[$0],'')
 break;
 case 23:
-yy.commit('',$$[$0],yy.commitType.NORMAL,'')
+yy.commit('','',$$[$0],$$[$0-2])
 break;
 case 24:
-yy.commit('',$$[$0-2],yy.commitType.NORMAL,$$[$0])
+yy.commit('','',$$[$0-2],$$[$0])
 break;
 case 25:
-yy.commit('',$$[$0],yy.commitType.NORMAL,$$[$0-2])
+yy.commit('',$$[$0],yy.commitType.NORMAL,'')
 break;
 case 26:
-yy.commit('',$$[$0-2],$$[$0],'')
+yy.commit('',$$[$0-2],yy.commitType.NORMAL,$$[$0])
 break;
 case 27:
-yy.commit('',$$[$0],$$[$0-2],'')
+yy.commit('',$$[$0],yy.commitType.NORMAL,$$[$0-2])
 break;
 case 28:
-yy.commit('',$$[$0-4],$$[$0-2],$$[$0])
+yy.commit('',$$[$0-2],$$[$0],'')
 break;
 case 29:
-yy.commit('',$$[$0-4],$$[$0],$$[$0-2])
+yy.commit('',$$[$0],$$[$0-2],'')
 break;
 case 30:
-yy.commit('',$$[$0-2],$$[$0-4],$$[$0])
+yy.commit('',$$[$0-4],$$[$0-2],$$[$0])
 break;
 case 31:
-yy.commit('',$$[$0],$$[$0-4],$$[$0-2])
+yy.commit('',$$[$0-4],$$[$0],$$[$0-2])
 break;
 case 32:
-yy.commit('',$$[$0],$$[$0-2],$$[$0-4])
+yy.commit('',$$[$0-2],$$[$0-4],$$[$0])
 break;
 case 33:
-yy.commit('',$$[$0-2],$$[$0],$$[$0-4])
+yy.commit('',$$[$0],$$[$0-4],$$[$0-2])
 break;
 case 34:
-yy.commit($$[$0],'',yy.commitType.NORMAL,'')
+yy.commit('',$$[$0],$$[$0-2],$$[$0-4])
 break;
 case 35:
-yy.commit($$[$0],'',yy.commitType.NORMAL,$$[$0-2])
+yy.commit('',$$[$0-2],$$[$0],$$[$0-4])
 break;
 case 36:
-yy.commit($$[$0-2],'',yy.commitType.NORMAL,$$[$0])
+yy.commit($$[$0],'',yy.commitType.NORMAL,'')
 break;
 case 37:
-yy.commit($$[$0-2],'',$$[$0],'')
+yy.commit($$[$0],'',yy.commitType.NORMAL,$$[$0-2])
 break;
 case 38:
-yy.commit($$[$0],'',$$[$0-2],'')
+yy.commit($$[$0-2],'',yy.commitType.NORMAL,$$[$0])
 break;
 case 39:
-yy.commit($$[$0],$$[$0-2],yy.commitType.NORMAL,'')
+yy.commit($$[$0-2],'',$$[$0],'')
 break;
 case 40:
-yy.commit($$[$0-2],$$[$0],yy.commitType.NORMAL,'')
+yy.commit($$[$0],'',$$[$0-2],'')
 break;
 case 41:
-yy.commit($$[$0-4],'',$$[$0-2],$$[$0])
+yy.commit($$[$0],$$[$0-2],yy.commitType.NORMAL,'')
 break;
 case 42:
-yy.commit($$[$0-4],'',$$[$0],$$[$0-2])
+yy.commit($$[$0-2],$$[$0],yy.commitType.NORMAL,'')
 break;
 case 43:
-yy.commit($$[$0-2],'',$$[$0-4],$$[$0])
+yy.commit($$[$0-4],'',$$[$0-2],$$[$0])
 break;
 case 44:
-yy.commit($$[$0],'',$$[$0-4],$$[$0-2])
+yy.commit($$[$0-4],'',$$[$0],$$[$0-2])
 break;
 case 45:
-yy.commit($$[$0],'',$$[$0-2],$$[$0-4])
+yy.commit($$[$0-2],'',$$[$0-4],$$[$0])
 break;
 case 46:
-yy.commit($$[$0-2],'',$$[$0],$$[$0-4])
+yy.commit($$[$0],'',$$[$0-4],$$[$0-2])
 break;
 case 47:
-yy.commit($$[$0-4],$$[$0],$$[$0-2],'')
+yy.commit($$[$0],'',$$[$0-2],$$[$0-4])
 break;
 case 48:
-yy.commit($$[$0-4],$$[$0-2],$$[$0],'')
+yy.commit($$[$0-2],'',$$[$0],$$[$0-4])
 break;
 case 49:
-yy.commit($$[$0-2],$$[$0],$$[$0-4],'')
+yy.commit($$[$0-4],$$[$0],$$[$0-2],'')
 break;
 case 50:
-yy.commit($$[$0],$$[$0-2],$$[$0-4],'')
+yy.commit($$[$0-4],$$[$0-2],$$[$0],'')
 break;
 case 51:
-yy.commit($$[$0],$$[$0-4],$$[$0-2],'')
+yy.commit($$[$0-2],$$[$0],$$[$0-4],'')
 break;
 case 52:
-yy.commit($$[$0-2],$$[$0-4],$$[$0],'')
+yy.commit($$[$0],$$[$0-2],$$[$0-4],'')
 break;
 case 53:
-yy.commit($$[$0-4],$$[$0],yy.commitType.NORMAL,$$[$0-2])
+yy.commit($$[$0],$$[$0-4],$$[$0-2],'')
 break;
 case 54:
-yy.commit($$[$0-4],$$[$0-2],yy.commitType.NORMAL,$$[$0])
+yy.commit($$[$0-2],$$[$0-4],$$[$0],'')
 break;
 case 55:
-yy.commit($$[$0-2],$$[$0],yy.commitType.NORMAL,$$[$0-4])
+yy.commit($$[$0-4],$$[$0],yy.commitType.NORMAL,$$[$0-2])
 break;
 case 56:
-yy.commit($$[$0],$$[$0-2],yy.commitType.NORMAL,$$[$0-4])
+yy.commit($$[$0-4],$$[$0-2],yy.commitType.NORMAL,$$[$0])
 break;
 case 57:
-yy.commit($$[$0],$$[$0-4],yy.commitType.NORMAL,$$[$0-2])
+yy.commit($$[$0-2],$$[$0],yy.commitType.NORMAL,$$[$0-4])
 break;
 case 58:
-yy.commit($$[$0-2],$$[$0-4],yy.commitType.NORMAL,$$[$0])
+yy.commit($$[$0],$$[$0-2],yy.commitType.NORMAL,$$[$0-4])
 break;
 case 59:
-yy.commit($$[$0-6],$$[$0-4],$$[$0-2],$$[$0])
+yy.commit($$[$0],$$[$0-4],yy.commitType.NORMAL,$$[$0-2])
 break;
 case 60:
-yy.commit($$[$0-6],$$[$0-4],$$[$0],$$[$0-2])
+yy.commit($$[$0-2],$$[$0-4],yy.commitType.NORMAL,$$[$0])
 break;
 case 61:
-yy.commit($$[$0-6],$$[$0-2],$$[$0-4],$$[$0])
+yy.commit($$[$0-6],$$[$0-4],$$[$0-2],$$[$0])
 break;
 case 62:
-yy.commit($$[$0-6],$$[$0],$$[$0-4],$$[$0-2])
+yy.commit($$[$0-6],$$[$0-4],$$[$0],$$[$0-2])
 break;
 case 63:
-yy.commit($$[$0-6],$$[$0-2],$$[$0],$$[$0-4])
+yy.commit($$[$0-6],$$[$0-2],$$[$0-4],$$[$0])
 break;
 case 64:
-yy.commit($$[$0-6],$$[$0],$$[$0-2],$$[$0-4])
+yy.commit($$[$0-6],$$[$0],$$[$0-4],$$[$0-2])
 break;
 case 65:
-yy.commit($$[$0-4],$$[$0-6],$$[$0-2],$$[$0])
+yy.commit($$[$0-6],$$[$0-2],$$[$0],$$[$0-4])
 break;
 case 66:
-yy.commit($$[$0-4],$$[$0-6],$$[$0],$$[$0-2])
+yy.commit($$[$0-6],$$[$0],$$[$0-2],$$[$0-4])
 break;
 case 67:
-yy.commit($$[$0-2],$$[$0-6],$$[$0-4],$$[$0])
+yy.commit($$[$0-4],$$[$0-6],$$[$0-2],$$[$0])
 break;
 case 68:
-yy.commit($$[$0],$$[$0-6],$$[$0-4],$$[$0-2])
+yy.commit($$[$0-4],$$[$0-6],$$[$0],$$[$0-2])
 break;
 case 69:
-yy.commit($$[$0-2],$$[$0-6],$$[$0],$$[$0-4])
+yy.commit($$[$0-2],$$[$0-6],$$[$0-4],$$[$0])
 break;
 case 70:
-yy.commit($$[$0],$$[$0-6],$$[$0-2],$$[$0-4])
+yy.commit($$[$0],$$[$0-6],$$[$0-4],$$[$0-2])
 break;
 case 71:
-yy.commit($$[$0],$$[$0-4],$$[$0-2],$$[$0-6])
+yy.commit($$[$0-2],$$[$0-6],$$[$0],$$[$0-4])
 break;
 case 72:
-yy.commit($$[$0-2],$$[$0-4],$$[$0],$$[$0-6])
+yy.commit($$[$0],$$[$0-6],$$[$0-2],$$[$0-4])
 break;
 case 73:
-yy.commit($$[$0],$$[$0-2],$$[$0-4],$$[$0-6])
+yy.commit($$[$0],$$[$0-4],$$[$0-2],$$[$0-6])
 break;
 case 74:
-yy.commit($$[$0-2],$$[$0],$$[$0-4],$$[$0-6])
+yy.commit($$[$0-2],$$[$0-4],$$[$0],$$[$0-6])
 break;
 case 75:
-yy.commit($$[$0-4],$$[$0-2],$$[$0],$$[$0-6])
+yy.commit($$[$0],$$[$0-2],$$[$0-4],$$[$0-6])
 break;
 case 76:
-yy.commit($$[$0-4],$$[$0],$$[$0-2],$$[$0-6])
+yy.commit($$[$0-2],$$[$0],$$[$0-4],$$[$0-6])
 break;
 case 77:
-yy.commit($$[$0-2],$$[$0-4],$$[$0-6],$$[$0])
+yy.commit($$[$0-4],$$[$0-2],$$[$0],$$[$0-6])
 break;
 case 78:
-yy.commit($$[$0],$$[$0-4],$$[$0-6],$$[$0-2])
+yy.commit($$[$0-4],$$[$0],$$[$0-2],$$[$0-6])
 break;
 case 79:
-yy.commit($$[$0-2],$$[$0],$$[$0-6],$$[$0-4])
+yy.commit($$[$0-2],$$[$0-4],$$[$0-6],$$[$0])
 break;
 case 80:
-yy.commit($$[$0],$$[$0-2],$$[$0-6],$$[$0-4])
+yy.commit($$[$0],$$[$0-4],$$[$0-6],$$[$0-2])
 break;
 case 81:
-yy.commit($$[$0-4],$$[$0-2],$$[$0-6],$$[$0])
+yy.commit($$[$0-2],$$[$0],$$[$0-6],$$[$0-4])
 break;
 case 82:
-yy.commit($$[$0-4],$$[$0],$$[$0-6],$$[$0-2])
+yy.commit($$[$0],$$[$0-2],$$[$0-6],$$[$0-4])
 break;
 case 83:
-this.$ = ""
+yy.commit($$[$0-4],$$[$0-2],$$[$0-6],$$[$0])
 break;
 case 84:
-this.$=$$[$0]
+yy.commit($$[$0-4],$$[$0],$$[$0-6],$$[$0-2])
 break;
 case 85:
- this.$=yy.commitType.NORMAL;
+this.$ = ""
 break;
 case 86:
- this.$=yy.commitType.REVERSE;
+this.$=$$[$0]
 break;
 case 87:
+ this.$=yy.commitType.NORMAL;
+break;
+case 88:
+ this.$=yy.commitType.REVERSE;
+break;
+case 89:
  this.$=yy.commitType.HIGHLIGHT;
 break;
-case 90:
+case 92:
  yy.parseDirective('%%{', 'open_directive'); 
 break;
-case 91:
+case 93:
  yy.parseDirective($$[$0], 'type_directive'); 
 break;
-case 92:
+case 94:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
-case 93:
+case 95:
  yy.parseDirective('}%%', 'close_directive', 'gitGraph'); 
 break;
 }
 },
-table: [{3:1,4:2,5:3,6:$V0,8:$V1,14:$V2,33:8,37:$V3,41:$V4},{1:[3]},{3:10,4:2,5:3,6:$V0,8:$V1,14:$V2,33:8,37:$V3,41:$V4},{3:11,4:2,5:3,6:$V0,8:$V1,14:$V2,33:8,37:$V3,41:$V4},{7:12,8:$V5,9:[1,13],10:[1,14],11:15,14:$V6},o($V7,[2,94]),o($V7,[2,95]),o($V7,[2,96]),{34:17,38:[1,18]},{38:[2,90]},{1:[2,1]},{1:[2,2]},{8:[1,19]},{7:20,8:$V5,11:15,14:$V6},{9:[1,21]},o($V8,[2,10],{12:22,13:[1,23]}),o($V9,[2,9]),{9:[1,25],35:24,40:$Va},o([9,40],[2,91]),{1:[2,3]},{8:[1,27]},{7:28,8:$V5,11:15,14:$V6},{8:[2,7],14:[1,31],15:29,16:30,17:32,18:[1,33],20:[1,34],21:[1,35],22:[1,36]},o($V9,[2,8]),o($Vb,[2,88]),{36:37,39:[1,38]},o($Vb,[2,93]),{1:[2,4]},{8:[1,39]},o($V8,[2,11]),{4:40,8:$V1,14:$V2,41:$V4},o($V8,[2,13]),o($Vc,[2,14]),{19:[1,41]},{19:[1,42]},{19:[1,43]},o($Vc,[2,83],{23:44,24:[1,45],25:[1,49],26:[1,46],28:[1,47],29:[1,48]}),{35:50,40:$Va},{40:[2,92]},{1:[2,5]},o($V8,[2,12]),o($Vc,[2,15]),o($Vc,[2,16]),o($Vc,[2,17]),o($Vc,[2,18]),{25:[1,51]},{27:52,30:$Vd,31:$Ve,32:$Vf},{25:[1,56]},{25:[1,57]},o($Vc,[2,84]),o($Vb,[2,89]),o($Vc,[2,19],{26:[1,58],28:[1,59],29:[1,60]}),o($Vc,[2,20],{24:[1,61],28:[1,62],29:[1,63]}),o($Vg,[2,85]),o($Vg,[2,86]),o($Vg,[2,87]),o($Vc,[2,23],{24:[1,64],26:[1,65],29:[1,66]}),o($Vc,[2,34],{24:[1,67],26:[1,68],28:[1,69]}),{27:70,30:$Vd,31:$Ve,32:$Vf},{25:[1,71]},{25:[1,72]},{25:[1,73]},{25:[1,74]},{25:[1,75]},{25:[1,76]},{27:77,30:$Vd,31:$Ve,32:$Vf},{25:[1,78]},{25:[1,79]},{27:80,30:$Vd,31:$Ve,32:$Vf},{25:[1,81]},o($Vc,[2,21],{28:[1,82],29:[1,83]}),o($Vc,[2,25],{26:[1,84],29:[1,85]}),o($Vc,[2,35],{26:[1,86],28:[1,87]}),o($Vc,[2,22],{28:[1,88],29:[1,89]}),o($Vc,[2,27],{24:[1,90],29:[1,91]}),o($Vc,[2,38],{24:[1,92],28:[1,93]}),o($Vc,[2,24],{26:[1,94],29:[1,95]}),o($Vc,[2,26],{24:[1,96],29:[1,97]}),o($Vc,[2,39],{24:[1,99],26:[1,98]}),o($Vc,[2,36],{26:[1,100],28:[1,101]}),o($Vc,[2,37],{24:[1,102],28:[1,103]}),o($Vc,[2,40],{24:[1,105],26:[1,104]}),{25:[1,106]},{25:[1,107]},{27:108,30:$Vd,31:$Ve,32:$Vf},{25:[1,109]},{27:110,30:$Vd,31:$Ve,32:$Vf},{25:[1,111]},{25:[1,112]},{25:[1,113]},{25:[1,114]},{25:[1,115]},{25:[1,116]},{25:[1,117]},{27:118,30:$Vd,31:$Ve,32:$Vf},{25:[1,119]},{25:[1,120]},{25:[1,121]},{27:122,30:$Vd,31:$Ve,32:$Vf},{25:[1,123]},{27:124,30:$Vd,31:$Ve,32:$Vf},{25:[1,125]},{25:[1,126]},{25:[1,127]},{27:128,30:$Vd,31:$Ve,32:$Vf},{25:[1,129]},o($Vc,[2,32],{29:[1,130]}),o($Vc,[2,45],{28:[1,131]}),o($Vc,[2,33],{29:[1,132]}),o($Vc,[2,56],{26:[1,133]}),o($Vc,[2,46],{28:[1,134]}),o($Vc,[2,55],{26:[1,135]}),o($Vc,[2,31],{29:[1,136]}),o($Vc,[2,44],{28:[1,137]}),o($Vc,[2,30],{29:[1,138]}),o($Vc,[2,50],{24:[1,139]}),o($Vc,[2,43],{28:[1,140]}),o($Vc,[2,49],{24:[1,141]}),o($Vc,[2,29],{29:[1,142]}),o($Vc,[2,57],{26:[1,143]}),o($Vc,[2,28],{29:[1,144]}),o($Vc,[2,51],{24:[1,145]}),o($Vc,[2,52],{24:[1,146]}),o($Vc,[2,58],{26:[1,147]}),o($Vc,[2,42],{28:[1,148]}),o($Vc,[2,53],{26:[1,149]}),o($Vc,[2,41],{28:[1,150]}),o($Vc,[2,47],{24:[1,151]}),o($Vc,[2,48],{24:[1,152]}),o($Vc,[2,54],{26:[1,153]}),{25:[1,154]},{25:[1,155]},{25:[1,156]},{27:157,30:$Vd,31:$Ve,32:$Vf},{25:[1,158]},{27:159,30:$Vd,31:$Ve,32:$Vf},{25:[1,160]},{25:[1,161]},{25:[1,162]},{25:[1,163]},{25:[1,164]},{25:[1,165]},{25:[1,166]},{27:167,30:$Vd,31:$Ve,32:$Vf},{25:[1,168]},{25:[1,169]},{25:[1,170]},{27:171,30:$Vd,31:$Ve,32:$Vf},{25:[1,172]},{27:173,30:$Vd,31:$Ve,32:$Vf},{25:[1,174]},{25:[1,175]},{25:[1,176]},{27:177,30:$Vd,31:$Ve,32:$Vf},o($Vc,[2,73]),o($Vc,[2,74]),o($Vc,[2,71]),o($Vc,[2,72]),o($Vc,[2,76]),o($Vc,[2,75]),o($Vc,[2,80]),o($Vc,[2,79]),o($Vc,[2,78]),o($Vc,[2,77]),o($Vc,[2,82]),o($Vc,[2,81]),o($Vc,[2,70]),o($Vc,[2,69]),o($Vc,[2,68]),o($Vc,[2,67]),o($Vc,[2,65]),o($Vc,[2,66]),o($Vc,[2,64]),o($Vc,[2,63]),o($Vc,[2,62]),o($Vc,[2,61]),o($Vc,[2,59]),o($Vc,[2,60])],
-defaultActions: {9:[2,90],10:[2,1],11:[2,2],19:[2,3],27:[2,4],38:[2,92],39:[2,5]},
+table: [{3:1,4:2,5:3,6:$V0,8:$V1,14:$V2,34:8,38:$V3,42:$V4},{1:[3]},{3:10,4:2,5:3,6:$V0,8:$V1,14:$V2,34:8,38:$V3,42:$V4},{3:11,4:2,5:3,6:$V0,8:$V1,14:$V2,34:8,38:$V3,42:$V4},{7:12,8:$V5,9:[1,13],10:[1,14],11:15,14:$V6},o($V7,[2,96]),o($V7,[2,97]),o($V7,[2,98]),{35:17,39:[1,18]},{39:[2,92]},{1:[2,1]},{1:[2,2]},{8:[1,19]},{7:20,8:$V5,11:15,14:$V6},{9:[1,21]},o($V8,[2,10],{12:22,13:[1,23]}),o($V9,[2,9]),{9:[1,25],36:24,41:$Va},o([9,41],[2,93]),{1:[2,3]},{8:[1,27]},{7:28,8:$V5,11:15,14:$V6},{8:[2,7],14:[1,31],15:29,16:30,17:32,18:33,19:[1,34],21:[1,35],22:[1,37],25:[1,36]},o($V9,[2,8]),o($Vb,[2,90]),{37:38,40:[1,39]},o($Vb,[2,95]),{1:[2,4]},{8:[1,40]},o($V8,[2,11]),{4:41,8:$V1,14:$V2,42:$V4},o($V8,[2,13]),o($Vc,[2,14]),o($Vc,[2,15]),{20:[1,42]},{20:[1,43]},o($Vc,[2,85],{26:44,23:[1,45],24:[1,49],27:[1,46],29:[1,47],30:[1,48]}),{20:[1,50]},{36:51,41:$Va},{41:[2,94]},{1:[2,5]},o($V8,[2,12]),o($Vc,[2,16]),o($Vc,[2,17]),o($Vc,[2,20]),{24:[1,52]},{28:53,31:$Vd,32:$Ve,33:$Vf},{24:[1,57]},{24:[1,58]},o($Vc,[2,86]),o($Vc,[2,18],{23:[1,59]}),o($Vb,[2,91]),o($Vc,[2,21],{27:[1,60],29:[1,61],30:[1,62]}),o($Vc,[2,22],{23:[1,63],29:[1,64],30:[1,65]}),o($Vg,[2,87]),o($Vg,[2,88]),o($Vg,[2,89]),o($Vc,[2,25],{23:[1,66],27:[1,67],30:[1,68]}),o($Vc,[2,36],{23:[1,69],27:[1,70],29:[1,71]}),{24:[1,72]},{28:73,31:$Vd,32:$Ve,33:$Vf},{24:[1,74]},{24:[1,75]},{24:[1,76]},{24:[1,77]},{24:[1,78]},{24:[1,79]},{28:80,31:$Vd,32:$Ve,33:$Vf},{24:[1,81]},{24:[1,82]},{28:83,31:$Vd,32:$Ve,33:$Vf},{24:[1,84]},o($Vc,[2,19]),o($Vc,[2,23],{29:[1,85],30:[1,86]}),o($Vc,[2,27],{27:[1,87],30:[1,88]}),o($Vc,[2,37],{27:[1,89],29:[1,90]}),o($Vc,[2,24],{29:[1,91],30:[1,92]}),o($Vc,[2,29],{23:[1,93],30:[1,94]}),o($Vc,[2,40],{23:[1,95],29:[1,96]}),o($Vc,[2,26],{27:[1,97],30:[1,98]}),o($Vc,[2,28],{23:[1,99],30:[1,100]}),o($Vc,[2,41],{23:[1,102],27:[1,101]}),o($Vc,[2,38],{27:[1,103],29:[1,104]}),o($Vc,[2,39],{23:[1,105],29:[1,106]}),o($Vc,[2,42],{23:[1,108],27:[1,107]}),{24:[1,109]},{24:[1,110]},{28:111,31:$Vd,32:$Ve,33:$Vf},{24:[1,112]},{28:113,31:$Vd,32:$Ve,33:$Vf},{24:[1,114]},{24:[1,115]},{24:[1,116]},{24:[1,117]},{24:[1,118]},{24:[1,119]},{24:[1,120]},{28:121,31:$Vd,32:$Ve,33:$Vf},{24:[1,122]},{24:[1,123]},{24:[1,124]},{28:125,31:$Vd,32:$Ve,33:$Vf},{24:[1,126]},{28:127,31:$Vd,32:$Ve,33:$Vf},{24:[1,128]},{24:[1,129]},{24:[1,130]},{28:131,31:$Vd,32:$Ve,33:$Vf},{24:[1,132]},o($Vc,[2,34],{30:[1,133]}),o($Vc,[2,47],{29:[1,134]}),o($Vc,[2,35],{30:[1,135]}),o($Vc,[2,58],{27:[1,136]}),o($Vc,[2,48],{29:[1,137]}),o($Vc,[2,57],{27:[1,138]}),o($Vc,[2,33],{30:[1,139]}),o($Vc,[2,46],{29:[1,140]}),o($Vc,[2,32],{30:[1,141]}),o($Vc,[2,52],{23:[1,142]}),o($Vc,[2,45],{29:[1,143]}),o($Vc,[2,51],{23:[1,144]}),o($Vc,[2,31],{30:[1,145]}),o($Vc,[2,59],{27:[1,146]}),o($Vc,[2,30],{30:[1,147]}),o($Vc,[2,53],{23:[1,148]}),o($Vc,[2,54],{23:[1,149]}),o($Vc,[2,60],{27:[1,150]}),o($Vc,[2,44],{29:[1,151]}),o($Vc,[2,55],{27:[1,152]}),o($Vc,[2,43],{29:[1,153]}),o($Vc,[2,49],{23:[1,154]}),o($Vc,[2,50],{23:[1,155]}),o($Vc,[2,56],{27:[1,156]}),{24:[1,157]},{24:[1,158]},{24:[1,159]},{28:160,31:$Vd,32:$Ve,33:$Vf},{24:[1,161]},{28:162,31:$Vd,32:$Ve,33:$Vf},{24:[1,163]},{24:[1,164]},{24:[1,165]},{24:[1,166]},{24:[1,167]},{24:[1,168]},{24:[1,169]},{28:170,31:$Vd,32:$Ve,33:$Vf},{24:[1,171]},{24:[1,172]},{24:[1,173]},{28:174,31:$Vd,32:$Ve,33:$Vf},{24:[1,175]},{28:176,31:$Vd,32:$Ve,33:$Vf},{24:[1,177]},{24:[1,178]},{24:[1,179]},{28:180,31:$Vd,32:$Ve,33:$Vf},o($Vc,[2,75]),o($Vc,[2,76]),o($Vc,[2,73]),o($Vc,[2,74]),o($Vc,[2,78]),o($Vc,[2,77]),o($Vc,[2,82]),o($Vc,[2,81]),o($Vc,[2,80]),o($Vc,[2,79]),o($Vc,[2,84]),o($Vc,[2,83]),o($Vc,[2,72]),o($Vc,[2,71]),o($Vc,[2,70]),o($Vc,[2,69]),o($Vc,[2,67]),o($Vc,[2,68]),o($Vc,[2,66]),o($Vc,[2,65]),o($Vc,[2,64]),o($Vc,[2,63]),o($Vc,[2,61]),o($Vc,[2,62])],
+defaultActions: {9:[2,92],10:[2,1],11:[2,2],19:[2,3],27:[2,4],39:[2,94],40:[2,5]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -4382,15 +4385,15 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: this.begin('open_directive'); return 37; 
+case 0: this.begin('open_directive'); return 38; 
 break;
-case 1: this.begin('type_directive'); return 38; 
+case 1: this.begin('type_directive'); return 39; 
 break;
 case 2: this.popState(); this.begin('arg_directive'); return 9; 
 break;
-case 3: this.popState(); this.popState(); return 40; 
+case 3: this.popState(); this.popState(); return 41; 
 break;
-case 4:return 39;
+case 4:return 40;
 break;
 case 5:/*{console.log('New line');return 14;}*/ return 14;
 break;
@@ -4402,27 +4405,27 @@ case 8:/* skip comments */
 break;
 case 9:return 6;
 break;
-case 10:return 22;
+case 10:return 25;
 break;
-case 11:return 28;
+case 11:return 29;
 break;
-case 12:return 26;
+case 12:return 27;
 break;
-case 13:return 29;
+case 13:return 30;
 break;
-case 14:return 30;
+case 14:return 31;
 break;
-case 15:return 31;
+case 15:return 32;
 break;
-case 16:return 32;
+case 16:return 33;
 break;
-case 17:return 24;
+case 17:return 23;
 break;
-case 18:return 18;
+case 18:return 19;
 break;
-case 19:return 21;
+case 19:return 22;
 break;
-case 20:return 20;
+case 20:return 21;
 break;
 case 21:return 10;
 break;
@@ -4442,15 +4445,15 @@ case 28:this.begin("string");
 break;
 case 29:this.popState();
 break;
-case 30:return 25;
+case 30:return 24;
 break;
-case 31:return 19;
+case 31:return 20;
 break;
 case 32:return 8;
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:id:)/i,/^(?:type:)/i,/^(?:msg:)/i,/^(?:NORMAL\b)/i,/^(?:REVERSE\b)/i,/^(?:HIGHLIGHT\b)/i,/^(?:tag:)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:\^)/i,/^(?:options\r?\n)/i,/^(?:end\r?\n)/i,/^(?:[^\n]+\r?\n)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][-_\.a-zA-Z0-9]*[-_a-zA-Z0-9])/i,/^(?:$)/i],
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:id:)/i,/^(?:type:)/i,/^(?:msg:)/i,/^(?:NORMAL\b)/i,/^(?:REVERSE\b)/i,/^(?:HIGHLIGHT\b)/i,/^(?:tag:)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:\^)/i,/^(?:options\r?\n)/i,/^(?:end\r?\n)/i,/^(?:[^\n]+\r?\n)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][-_\./a-zA-Z0-9]*[-_a-zA-Z0-9])/i,/^(?:$)/i],
 conditions: {"close_directive":{"rules":[],"inclusive":false},"arg_directive":{"rules":[3,4],"inclusive":false},"type_directive":{"rules":[2,3],"inclusive":false},"open_directive":{"rules":[1],"inclusive":false},"options":{"rules":[26,27],"inclusive":false},"string":{"rules":[29,30],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,28,31,32],"inclusive":true}}
 });
 return lexer;
@@ -15163,6 +15166,7 @@ var removeScript = function removeScript(txt) {
   var decodedText = removeEscapes(rs);
   decodedText = decodedText.replace(/script>/gi, '#');
   decodedText = decodedText.replace(/javascript:/gi, '#');
+  decodedText = decodedText.replace(/javascript&colon/gi, '#');
   decodedText = decodedText.replace(/onerror=/gi, 'onerror:');
   decodedText = decodedText.replace(/<iframe/gi, '');
   return decodedText;
@@ -20062,7 +20066,7 @@ var branch = function branch(name) {
     throw error;
   }
 };
-var merge = function merge(otherBranch) {
+var merge = function merge(otherBranch, tag) {
   otherBranch = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].sanitizeText(otherBranch, _config__WEBPACK_IMPORTED_MODULE_0__.getConfig());
   var currentCommit = commits[branches[curBranch]];
   var otherCommit = commits[branches[otherBranch]];
@@ -20163,7 +20167,8 @@ var merge = function merge(otherBranch) {
     seq: seq++,
     parents: [head == null ? null : head.id, branches[otherBranch]],
     branch: curBranch,
-    type: commitType.MERGE
+    type: commitType.MERGE,
+    tag: tag ? tag : ''
   };
   head = commit;
   commits[commit.id] = commit;
@@ -26846,8 +26851,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
-/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
@@ -26881,9 +26886,20 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 var init = function init() {
-  var _this = this;
+  try {
+    initThrowsErrors();
+  } catch (e) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__.log.warn('Syntax Error rendering');
+    _logger__WEBPACK_IMPORTED_MODULE_0__.log.warn(e);
 
-  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
+    if (this.parseError) {
+      this.parseError(e);
+    }
+  }
+};
+
+var initThrowsErrors = function initThrowsErrors() {
+  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
 
   var nodes;
 
@@ -26903,31 +26919,31 @@ var init = function init() {
 
   if (typeof arguments[arguments.length - 1] === 'function') {
     callback = arguments[arguments.length - 1];
-    _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Callback function found');
+    _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Callback function found');
   } else {
     if (typeof conf.mermaid !== 'undefined') {
       if (typeof conf.mermaid.callback === 'function') {
         callback = conf.mermaid.callback;
-        _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Callback function found');
+        _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Callback function found');
       } else {
-        _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('No Callback function found');
+        _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('No Callback function found');
       }
     }
   }
 
   nodes = nodes === undefined ? document.querySelectorAll('.mermaid') : typeof nodes === 'string' ? document.querySelectorAll(nodes) : nodes instanceof window.Node ? [nodes] : nodes; // Last case  - sequence config was passed pick next
 
-  _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Start On Load before: ' + mermaid.startOnLoad);
+  _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Start On Load before: ' + mermaid.startOnLoad);
 
   if (typeof mermaid.startOnLoad !== 'undefined') {
-    _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Start On Load inner: ' + mermaid.startOnLoad);
-    _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].updateSiteConfig({
+    _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Start On Load inner: ' + mermaid.startOnLoad);
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].updateSiteConfig({
       startOnLoad: mermaid.startOnLoad
     });
   }
 
   if (typeof mermaid.ganttConfig !== 'undefined') {
-    _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].updateSiteConfig({
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].updateSiteConfig({
       gantt: mermaid.ganttConfig
     });
   }
@@ -26954,27 +26970,18 @@ var init = function init() {
     var init = _utils__WEBPACK_IMPORTED_MODULE_2__["default"].detectInit(txt);
 
     if (init) {
-      _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('Detected early reinit: ', init);
+      _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('Detected early reinit: ', init);
     }
 
-    try {
-      _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].render(id, txt, function (svgCode, bindFunctions) {
-        element.innerHTML = svgCode;
+    _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].render(id, txt, function (svgCode, bindFunctions) {
+      element.innerHTML = svgCode;
 
-        if (typeof callback !== 'undefined') {
-          callback(id);
-        }
-
-        if (bindFunctions) bindFunctions(element);
-      }, element);
-    } catch (e) {
-      _logger__WEBPACK_IMPORTED_MODULE_1__.log.warn('Syntax Error rendering');
-      _logger__WEBPACK_IMPORTED_MODULE_1__.log.warn(e);
-
-      if (_this.parseError) {
-        _this.parseError(e);
+      if (typeof callback !== 'undefined') {
+        callback(id);
       }
-    }
+
+      if (bindFunctions) bindFunctions(element);
+    }, element);
   };
 
   for (var i = 0; i < nodes.length; i++) {
@@ -26996,7 +27003,7 @@ var initialize = function initialize(config) {
     }
   }
 
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].initialize(config); // mermaidAPI.reset();
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize(config); // mermaidAPI.reset();
 };
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
@@ -27009,15 +27016,15 @@ var contentLoaded = function contentLoaded() {
 
   if (mermaid.startOnLoad) {
     // No config found, do check API config
-    config = _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].getConfig();
+    config = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig();
 
     if (config.startOnLoad) {
       mermaid.init();
     }
   } else {
     if (typeof mermaid.startOnLoad === 'undefined') {
-      _logger__WEBPACK_IMPORTED_MODULE_1__.log.debug('In start, no config');
-      config = _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].getConfig();
+      _logger__WEBPACK_IMPORTED_MODULE_0__.log.debug('In start, no config');
+      config = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig();
 
       if (config.startOnLoad) {
         mermaid.init();
@@ -27038,9 +27045,9 @@ if (typeof document !== 'undefined') {
 var mermaid = {
   startOnLoad: true,
   htmlLabels: true,
-  mermaidAPI: _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"],
-  parse: _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parse,
-  render: _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].render,
+  mermaidAPI: _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"],
+  parse: _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].parse,
+  render: _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].render,
   init: init,
   initialize: initialize,
   contentLoaded: contentLoaded
@@ -27066,61 +27073,63 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! stylis */ "stylis");
 /* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(stylis__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _package_json__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ../package.json */ "./package.json");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./config */ "./src/config.js");
-/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
-/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
-/* harmony import */ var _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/class/classRenderer-v2 */ "./src/diagrams/class/classRenderer-v2.js");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
-/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
-/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _package_json__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ../package.json */ "./package.json");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./config */ "./src/config.js");
+/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
+/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
+/* harmony import */ var _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/class/classRenderer-v2 */ "./src/diagrams/class/classRenderer-v2.js");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
+/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_22__);
+/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
+/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_12__);
 /* harmony import */ var _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/git/gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
-/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
-/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_19__);
-/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
-/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
-/* harmony import */ var _diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/requirement/parser/requirementDiagram */ "./src/diagrams/requirement/parser/requirementDiagram.jison");
-/* harmony import */ var _diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(_diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_25__);
-/* harmony import */ var _diagrams_requirement_requirementDb__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/requirement/requirementDb */ "./src/diagrams/requirement/requirementDb.js");
-/* harmony import */ var _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./diagrams/requirement/requirementRenderer */ "./src/diagrams/requirement/requirementRenderer.js");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
-/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
-/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
-/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
-/* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
-/* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23__);
-/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
-/* harmony import */ var _interactionDb__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./interactionDb */ "./src/interactionDb.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
-/* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
-/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
+/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_18__);
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_20__);
+/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
+/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
+/* harmony import */ var _diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/requirement/parser/requirementDiagram */ "./src/diagrams/requirement/parser/requirementDiagram.jison");
+/* harmony import */ var _diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_26___default = /*#__PURE__*/__webpack_require__.n(_diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_26__);
+/* harmony import */ var _diagrams_requirement_requirementDb__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./diagrams/requirement/requirementDb */ "./src/diagrams/requirement/requirementDb.js");
+/* harmony import */ var _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./diagrams/requirement/requirementRenderer */ "./src/diagrams/requirement/requirementRenderer.js");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
+/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
+/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
+/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
+/* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
+/* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_24__);
+/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
+/* harmony import */ var _interactionDb__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./interactionDb */ "./src/interactionDb.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
+/* harmony import */ var _themes__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./themes */ "./src/themes/index.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! dompurify */ "dompurify");
+/* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(dompurify__WEBPACK_IMPORTED_MODULE_2__);
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 /**
@@ -27187,103 +27196,104 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
 
 
 
+
 /**
  * @param text
  * @returns {any}
  */
 
 function parse(text) {
-  var cnf = _config__WEBPACK_IMPORTED_MODULE_2__.getConfig();
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].detectInit(text, cnf);
+  var cnf = _config__WEBPACK_IMPORTED_MODULE_3__.getConfig();
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectInit(text, cnf);
 
   if (graphInit) {
     reinitialize(graphInit);
-    _logger__WEBPACK_IMPORTED_MODULE_4__.log.info('reinit ', graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_5__.log.info('reinit ', graphInit);
   }
 
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].detectType(text, cnf);
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectType(text, cnf);
   var parser;
-  _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('Type ' + graphType);
+  _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('Type ' + graphType);
 
   switch (graphType) {
     case 'gitGraph':
-      parser = (_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_5___default());
+      _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_6__["default"].clear();
+      parser = (_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_7___default());
       parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_6__["default"];
-      parser.parser.yy.clear();
       break;
 
     case 'flowchart':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_7__["default"].clear();
-      parser = (_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default());
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_7__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].clear();
+      parser = (_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9___default());
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"];
       break;
 
     case 'flowchart-v2':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_7__["default"].clear();
-      parser = (_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default());
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_7__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].clear();
+      parser = (_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9___default());
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"];
       break;
 
     case 'sequence':
-      _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_9__["default"].clear();
-      parser = (_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_10___default());
-      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_9__["default"];
+      _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_10__["default"].clear();
+      parser = (_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11___default());
+      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_10__["default"];
       break;
 
     case 'gantt':
-      parser = (_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_11___default());
-      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_12__["default"];
+      parser = (_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_12___default());
+      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_13__["default"];
       break;
 
     case 'class':
-      parser = (_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_13___default());
-      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_14__["default"];
+      parser = (_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_14___default());
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_15__["default"];
       break;
 
     case 'classDiagram':
-      parser = (_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_13___default());
-      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_14__["default"];
+      parser = (_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_14___default());
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_15__["default"];
       break;
 
     case 'state':
-      parser = (_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_15___default());
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_16__["default"];
+      parser = (_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_16___default());
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_17__["default"];
       break;
 
     case 'stateDiagram':
-      parser = (_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_15___default());
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_16__["default"];
+      parser = (_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_16___default());
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_17__["default"];
       break;
 
     case 'info':
-      _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('info info info');
-      parser = (_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_17___default());
-      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_18__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('info info info');
+      parser = (_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_18___default());
+      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_19__["default"];
       break;
 
     case 'pie':
-      _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('pie');
-      parser = (_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_19___default());
-      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_20__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('pie');
+      parser = (_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_20___default());
+      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_21__["default"];
       break;
 
     case 'er':
-      _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('er');
-      parser = (_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_21___default());
-      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_22__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('er');
+      parser = (_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_22___default());
+      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_23__["default"];
       break;
 
     case 'journey':
-      _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('Journey');
-      parser = (_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_23___default());
-      parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_24__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('Journey');
+      parser = (_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_24___default());
+      parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_25__["default"];
       break;
 
     case 'requirement':
     case 'requirementDiagram':
-      _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('RequirementDiagram');
-      parser = (_diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_25___default());
-      parser.parser.yy = _diagrams_requirement_requirementDb__WEBPACK_IMPORTED_MODULE_26__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('RequirementDiagram');
+      parser = (_diagrams_requirement_parser_requirementDiagram__WEBPACK_IMPORTED_MODULE_26___default());
+      parser.parser.yy = _diagrams_requirement_requirementDb__WEBPACK_IMPORTED_MODULE_27__["default"];
       break;
   }
 
@@ -27362,17 +27372,17 @@ var decodeEntities = function decodeEntities(text) {
  */
 
 var render = function render(id, _txt, cb, container) {
-  _config__WEBPACK_IMPORTED_MODULE_2__.reset();
+  _config__WEBPACK_IMPORTED_MODULE_3__.reset();
   var txt = _txt;
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].detectInit(txt);
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectInit(txt);
 
   if (graphInit) {
-    (0,_utils__WEBPACK_IMPORTED_MODULE_3__.directiveSanitizer)(graphInit);
-    _config__WEBPACK_IMPORTED_MODULE_2__.addDirective(graphInit);
+    (0,_utils__WEBPACK_IMPORTED_MODULE_4__.directiveSanitizer)(graphInit);
+    _config__WEBPACK_IMPORTED_MODULE_3__.addDirective(graphInit);
   }
 
-  var cnf = _config__WEBPACK_IMPORTED_MODULE_2__.getConfig();
-  _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug(cnf); // Check the maximum allowed text size
+  var cnf = _config__WEBPACK_IMPORTED_MODULE_3__.getConfig();
+  _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug(cnf); // Check the maximum allowed text size
 
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -27460,7 +27470,7 @@ var render = function render(id, _txt, cb, container) {
   txt = encodeEntities(txt); // Get the tmp element containing the the svg
 
   var element = root.select('#d' + id).node();
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].detectType(txt, cnf); // insert inline style into svg
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].detectType(txt, cnf); // insert inline style into svg
 
   var svg = element.firstChild;
   var firstChild = svg.firstChild;
@@ -27482,7 +27492,7 @@ var render = function render(id, _txt, cb, container) {
 
 
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].getClasses(txt);
+    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].getClasses(txt);
     var htmlLabels = cnf.htmlLabels || cnf.flowchart.htmlLabels;
 
     for (var className in classes) {
@@ -27508,7 +27518,7 @@ var render = function render(id, _txt, cb, container) {
     return (0,stylis__WEBPACK_IMPORTED_MODULE_1__.serialize)((0,stylis__WEBPACK_IMPORTED_MODULE_1__.compile)("".concat(selector, "{").concat(styles, "}")), stylis__WEBPACK_IMPORTED_MODULE_1__.stringify);
   };
 
-  var rules = stylis("#".concat(id), (0,_styles__WEBPACK_IMPORTED_MODULE_28__["default"])(graphType, userStyles, cnf.themeVariables));
+  var rules = stylis("#".concat(id), (0,_styles__WEBPACK_IMPORTED_MODULE_29__["default"])(graphType, userStyles, cnf.themeVariables));
   var style1 = document.createElement('style');
   style1.innerHTML = "#".concat(id, " ") + rules;
   svg.insertBefore(style1, firstChild); // Verify that the generated svgs are ok before removing this
@@ -27527,19 +27537,19 @@ var render = function render(id, _txt, cb, container) {
       case 'gitGraph':
         // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         //gitGraphRenderer.setConf(cnf.git);
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_29__["default"].draw(txt, id, false);
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart-v2':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_30__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_31__["default"].draw(txt, id, false);
         break;
 
       case 'sequence':
@@ -27547,82 +27557,82 @@ var render = function render(id, _txt, cb, container) {
 
         if (cnf.sequenceDiagram) {
           // backwards compatibility
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
           console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.');
         } else {
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(cnf.sequence);
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf(cnf.sequence);
         }
 
-        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].draw(txt, id);
+        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].draw(txt, id);
         break;
 
       case 'gantt':
         cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf(cnf.gantt);
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].draw(txt, id);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_33__["default"].setConf(cnf.gantt);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_33__["default"].draw(txt, id);
         break;
 
       case 'class':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_33__["default"].setConf(cnf.class);
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_33__["default"].draw(txt, id);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_34__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_34__["default"].draw(txt, id);
         break;
 
       case 'classDiagram':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_34__["default"].setConf(cnf.class);
-        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_34__["default"].draw(txt, id);
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer_v2__WEBPACK_IMPORTED_MODULE_35__["default"].draw(txt, id);
         break;
 
       case 'state':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(cnf.state);
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].draw(txt, id);
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].draw(txt, id);
         break;
 
       case 'stateDiagram':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(cnf.state);
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__["default"].draw(txt, id);
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_37__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_37__["default"].draw(txt, id);
         break;
 
       case 'info':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_37__["default"].setConf(cnf.class);
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_37__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_38__.version);
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(cnf.class);
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_39__.version);
         break;
 
       case 'pie':
         //cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         //pieRenderer.setConf(cnf.pie);
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_38__.version);
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_40__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_39__.version);
         break;
 
       case 'er':
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_40__["default"].setConf(cnf.er);
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_40__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_38__.version);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_41__["default"].setConf(cnf.er);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_41__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_39__.version);
         break;
 
       case 'journey':
-        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_41__["default"].setConf(cnf.journey);
-        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_41__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_38__.version);
+        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_42__["default"].setConf(cnf.journey);
+        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_42__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_39__.version);
         break;
 
       case 'requirement':
-        _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_42__["default"].setConf(cnf.requirement);
-        _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_42__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_38__.version);
+        _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_43__["default"].setConf(cnf.requirement);
+        _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_43__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_39__.version);
         break;
     }
   } catch (e) {
     // errorRenderer.setConf(cnf.class);
-    _errorRenderer__WEBPACK_IMPORTED_MODULE_43__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_38__.version);
+    _errorRenderer__WEBPACK_IMPORTED_MODULE_44__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_39__.version);
     throw e;
   }
 
   root.select("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // Fix for when the base tag is used
 
   var svgCode = root.select('#d' + id).node().innerHTML;
-  _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
 
   if ((!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') && cnf.arrowMarkerAbsolute !== 'sandbox') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -27643,32 +27653,39 @@ var render = function render(id, _txt, cb, container) {
     }
 
     svgCode = "<iframe style=\"width:".concat(width, ";height:").concat(height, ";border:0;margin:0;\" src=\"data:text/html;base64,").concat(btoa('<body style="margin:0">' + svgCode + '</body>'), "\" sandbox=\"allow-top-navigation-by-user-activation allow-popups\">\n  The \u201Ciframe\u201D tag is not supported by your browser.\n</iframe>");
+  } else {
+    if (cnf.securityLevel !== 'loose') {
+      svgCode = dompurify__WEBPACK_IMPORTED_MODULE_2___default().sanitize(svgCode, {
+        ADD_TAGS: ['foreignobject'],
+        ADD_ATTR: ['dominant-baseline']
+      });
+    }
   }
 
   if (typeof cb !== 'undefined') {
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
-        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_7__["default"].bindFunctions);
+        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_8__["default"].bindFunctions);
         break;
 
       case 'gantt':
-        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_12__["default"].bindFunctions);
+        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_13__["default"].bindFunctions);
         break;
 
       case 'class':
       case 'classDiagram':
-        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_14__["default"].bindFunctions);
+        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_15__["default"].bindFunctions);
         break;
 
       default:
         cb(svgCode);
     }
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('CB = undefined!');
+    _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('CB = undefined!');
   }
 
-  (0,_interactionDb__WEBPACK_IMPORTED_MODULE_44__.attachFunctions)();
+  (0,_interactionDb__WEBPACK_IMPORTED_MODULE_45__.attachFunctions)();
   var tmpElementSelector = cnf.securityLevel === 'sandbox' ? '#i' + id : '#d' + id;
   var node = (0,d3__WEBPACK_IMPORTED_MODULE_0__.select)(tmpElementSelector).node();
 
@@ -27706,13 +27723,13 @@ var parseDirective = function parseDirective(p, statement, context, type) {
       }
     }
   } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_4__.log.error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
-    _logger__WEBPACK_IMPORTED_MODULE_4__.log.error(error.message);
+    _logger__WEBPACK_IMPORTED_MODULE_5__.log.error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
+    _logger__WEBPACK_IMPORTED_MODULE_5__.log.error(error.message);
   }
 };
 
 var handleDirective = function handleDirective(p, directive, type) {
-  _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug("Directive type=".concat(directive.type, " with args:"), directive.args);
+  _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug("Directive type=".concat(directive.type, " with args:"), directive.args);
 
   switch (directive.type) {
     case 'init':
@@ -27728,11 +27745,11 @@ var handleDirective = function handleDirective(p, directive, type) {
             delete directive.args[prop];
           }
         });
-        _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('sanitize in handleDirective', directive.args);
-        (0,_utils__WEBPACK_IMPORTED_MODULE_3__.directiveSanitizer)(directive.args);
-        _logger__WEBPACK_IMPORTED_MODULE_4__.log.debug('sanitize in handleDirective (done)', directive.args);
+        _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('sanitize in handleDirective', directive.args);
+        (0,_utils__WEBPACK_IMPORTED_MODULE_4__.directiveSanitizer)(directive.args);
+        _logger__WEBPACK_IMPORTED_MODULE_5__.log.debug('sanitize in handleDirective (done)', directive.args);
         reinitialize(directive.args);
-        _config__WEBPACK_IMPORTED_MODULE_2__.addDirective(directive.args);
+        _config__WEBPACK_IMPORTED_MODULE_3__.addDirective(directive.args);
         break;
       }
 
@@ -27745,11 +27762,11 @@ var handleDirective = function handleDirective(p, directive, type) {
       break;
 
     case 'themeCss':
-      _logger__WEBPACK_IMPORTED_MODULE_4__.log.warn('themeCss encountered');
+      _logger__WEBPACK_IMPORTED_MODULE_5__.log.warn('themeCss encountered');
       break;
 
     default:
-      _logger__WEBPACK_IMPORTED_MODULE_4__.log.warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+      _logger__WEBPACK_IMPORTED_MODULE_5__.log.warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
       break;
   }
 };
@@ -27759,24 +27776,24 @@ var handleDirective = function handleDirective(p, directive, type) {
 function updateRendererConfigs(conf) {
   // Todo remove, all diagrams should get config on demoand from the config object, no need for this
   // gitGraphRenderer.setConf(conf.git); // Todo Remove all  of these
-  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.flowchart);
-  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(conf.flowchart);
+  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].setConf(conf.flowchart);
+  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(conf.flowchart);
 
   if (typeof conf['sequenceDiagram'] !== 'undefined') {
-    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf((0,_utils__WEBPACK_IMPORTED_MODULE_3__.assignWithDepth)(conf.sequence, conf['sequenceDiagram']));
+    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf((0,_utils__WEBPACK_IMPORTED_MODULE_4__.assignWithDepth)(conf.sequence, conf['sequenceDiagram']));
   }
 
-  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(conf.sequence);
-  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf(conf.gantt);
-  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_33__["default"].setConf(conf.class);
-  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(conf.state);
-  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(conf.state);
-  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_37__["default"].setConf(conf.class); // pieRenderer.setConf(conf.class);
+  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_32__["default"].setConf(conf.sequence);
+  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_33__["default"].setConf(conf.gantt);
+  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_34__["default"].setConf(conf.class);
+  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(conf.state);
+  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_37__["default"].setConf(conf.state);
+  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(conf.class); // pieRenderer.setConf(conf.class);
 
-  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_40__["default"].setConf(conf.er);
-  _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_41__["default"].setConf(conf.journey);
-  _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_42__["default"].setConf(conf.requirement);
-  _errorRenderer__WEBPACK_IMPORTED_MODULE_43__["default"].setConf(conf.class);
+  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_41__["default"].setConf(conf.er);
+  _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_42__["default"].setConf(conf.journey);
+  _diagrams_requirement_requirementRenderer__WEBPACK_IMPORTED_MODULE_43__["default"].setConf(conf.requirement);
+  _errorRenderer__WEBPACK_IMPORTED_MODULE_44__["default"].setConf(conf.class);
 }
 /** To be removed */
 
@@ -27815,18 +27832,18 @@ function initialize(options) {
   } // Set default options
 
 
-  _config__WEBPACK_IMPORTED_MODULE_2__.saveConfigFromInitilize(options);
+  _config__WEBPACK_IMPORTED_MODULE_3__.saveConfigFromInitilize(options);
 
-  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_45__["default"][options.theme]) {
+  if (options && options.theme && _themes__WEBPACK_IMPORTED_MODULE_46__["default"][options.theme]) {
     // Todo merge with user options
-    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_45__["default"][options.theme].getThemeVariables(options.themeVariables);
+    options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_46__["default"][options.theme].getThemeVariables(options.themeVariables);
   } else {
-    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_45__["default"]["default"].getThemeVariables(options.themeVariables);
+    if (options) options.themeVariables = _themes__WEBPACK_IMPORTED_MODULE_46__["default"]["default"].getThemeVariables(options.themeVariables);
   }
 
-  var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_2__.setSiteConfig(options) : _config__WEBPACK_IMPORTED_MODULE_2__.getSiteConfig();
+  var config = _typeof(options) === 'object' ? _config__WEBPACK_IMPORTED_MODULE_3__.setSiteConfig(options) : _config__WEBPACK_IMPORTED_MODULE_3__.getSiteConfig();
   updateRendererConfigs(config);
-  (0,_logger__WEBPACK_IMPORTED_MODULE_4__.setLogLevel)(config.logLevel); // log.debug('mermaidAPI.initialize: ', config);
+  (0,_logger__WEBPACK_IMPORTED_MODULE_5__.setLogLevel)(config.logLevel); // log.debug('mermaidAPI.initialize: ', config);
 }
 
 var mermaidAPI = Object.freeze({
@@ -27835,23 +27852,23 @@ var mermaidAPI = Object.freeze({
   parseDirective: parseDirective,
   initialize: initialize,
   reinitialize: reinitialize,
-  getConfig: _config__WEBPACK_IMPORTED_MODULE_2__.getConfig,
-  setConfig: _config__WEBPACK_IMPORTED_MODULE_2__.setConfig,
-  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_2__.getSiteConfig,
-  updateSiteConfig: _config__WEBPACK_IMPORTED_MODULE_2__.updateSiteConfig,
+  getConfig: _config__WEBPACK_IMPORTED_MODULE_3__.getConfig,
+  setConfig: _config__WEBPACK_IMPORTED_MODULE_3__.setConfig,
+  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_3__.getSiteConfig,
+  updateSiteConfig: _config__WEBPACK_IMPORTED_MODULE_3__.updateSiteConfig,
   reset: function reset() {
     // console.warn('reset');
-    _config__WEBPACK_IMPORTED_MODULE_2__.reset(); // const siteConfig = configApi.getSiteConfig();
+    _config__WEBPACK_IMPORTED_MODULE_3__.reset(); // const siteConfig = configApi.getSiteConfig();
     // updateRendererConfigs(siteConfig);
   },
   globalReset: function globalReset() {
-    _config__WEBPACK_IMPORTED_MODULE_2__.reset(_config__WEBPACK_IMPORTED_MODULE_2__.defaultConfig);
-    updateRendererConfigs(_config__WEBPACK_IMPORTED_MODULE_2__.getConfig());
+    _config__WEBPACK_IMPORTED_MODULE_3__.reset(_config__WEBPACK_IMPORTED_MODULE_3__.defaultConfig);
+    updateRendererConfigs(_config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
   },
-  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_2__.defaultConfig
+  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_3__.defaultConfig
 });
-(0,_logger__WEBPACK_IMPORTED_MODULE_4__.setLogLevel)(_config__WEBPACK_IMPORTED_MODULE_2__.getConfig().logLevel);
-_config__WEBPACK_IMPORTED_MODULE_2__.reset(_config__WEBPACK_IMPORTED_MODULE_2__.getConfig());
+(0,_logger__WEBPACK_IMPORTED_MODULE_5__.setLogLevel)(_config__WEBPACK_IMPORTED_MODULE_3__.getConfig().logLevel);
+_config__WEBPACK_IMPORTED_MODULE_3__.reset(_config__WEBPACK_IMPORTED_MODULE_3__.getConfig());
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (mermaidAPI);
 /**
  * ## mermaidAPI configuration defaults
@@ -31655,7 +31672,7 @@ module.exports = require("stylis");
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"mermaid","version":"9.0.0","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --mode development --progress --color","build:production":"webpack --mode production --progress --color","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint ./ --ext js,html","lint:fix":"yarn lint --fix","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config ./.webpack/webpack.config.e2e.babel.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"husky install && yarn build","pre-commit":"lint-staged"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^6.0.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.6","graphlib":"^2.1.8","khroma":"^2.0.0","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@commitlint/cli":"^16.0.0","@commitlint/config-conventional":"^16.0.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^7.0.0","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"9.5.3","cypress-image-snapshot":"^4.0.1","cypress-plugin-snapshots":"^1.4.4","documentation":"13.2.0","eslint":"^8.2.0","eslint-config-prettier":"^8.3.0","eslint-plugin-cypress":"^2.12.1","eslint-plugin-html":"^6.2.0","eslint-plugin-jest":"^26.0.0","eslint-plugin-jsdoc":"^39.1.0","eslint-plugin-markdown":"^2.2.1","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","lint-staged":"^12.1.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","prettier-plugin-jsdoc":"^0.3.30","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-merge":"^5.8.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"]}');
+module.exports = JSON.parse('{"name":"mermaid","version":"9.0.1","description":"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.","main":"dist/mermaid.core.js","module":"dist/mermaid.esm.min.mjs","exports":{".":{"require":"./dist/mermaid.core.js","import":"./dist/mermaid.esm.min.mjs"},"./*":"./*"},"keywords":["diagram","markdown","flowchart","sequence diagram","gantt","class diagram","git graph"],"scripts":{"build:development":"webpack --mode development --progress --color","build:production":"webpack --mode production --progress --color","build":"concurrently \\"yarn build:development\\" \\"yarn build:production\\"","postbuild":"documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md","build:watch":"yarn build:development --watch","release":"yarn build","lint":"eslint ./ --ext js,html","lint:fix":"yarn lint --fix","e2e:depr":"yarn lint && jest e2e --config e2e/jest.config.js","cypress":"cypress run","e2e":"start-server-and-test dev http://localhost:9000/ cypress","e2e-upd":"yarn lint && jest e2e -u --config e2e/jest.config.js","dev":"webpack serve --config ./.webpack/webpack.config.e2e.babel.js","test":"yarn lint && jest src/.*","test:watch":"jest --watch src","prepublishOnly":"yarn build && yarn test","prepare":"husky install && yarn build","pre-commit":"lint-staged"},"repository":{"type":"git","url":"https://github.com/knsv/mermaid"},"author":"Knut Sveidqvist","license":"MIT","standard":{"ignore":["**/parser/*.js","dist/**/*.js","cypress/**/*.js"],"globals":["page"]},"dependencies":{"@braintree/sanitize-url":"^6.0.0","d3":"^7.0.0","dagre":"^0.8.5","dagre-d3":"^0.6.4","dompurify":"2.3.6","graphlib":"^2.1.8","khroma":"^2.0.0","moment-mini":"^2.24.0","stylis":"^4.0.10"},"devDependencies":{"@babel/core":"^7.14.6","@babel/eslint-parser":"^7.14.7","@babel/preset-env":"^7.14.7","@babel/register":"^7.14.5","@commitlint/cli":"^16.0.0","@commitlint/config-conventional":"^16.0.0","babel-jest":"^27.0.6","babel-loader":"^8.2.2","concurrently":"^7.0.0","coveralls":"^3.0.2","css-to-string-loader":"^0.1.3","cypress":"9.5.4","cypress-plugin-snapshots":"^1.4.4","documentation":"13.2.0","eslint":"^8.2.0","eslint-config-prettier":"^8.3.0","eslint-plugin-cypress":"^2.12.1","eslint-plugin-html":"^6.2.0","eslint-plugin-jest":"^26.0.0","eslint-plugin-jsdoc":"^39.1.0","eslint-plugin-markdown":"^2.2.1","eslint-plugin-prettier":"^4.0.0","husky":"^7.0.1","identity-obj-proxy":"^3.0.0","jest":"^27.0.6","jison":"^0.4.18","js-base64":"3.7.2","lint-staged":"^12.1.2","moment":"^2.23.0","path-browserify":"^1.0.1","prettier":"^2.3.2","prettier-plugin-jsdoc":"^0.3.30","start-server-and-test":"^1.12.6","terser-webpack-plugin":"^5.2.4","webpack":"^5.53.0","webpack-cli":"^4.7.2","webpack-dev-server":"^4.3.0","webpack-merge":"^5.8.0","webpack-node-externals":"^3.0.0"},"files":["dist"],"sideEffects":["**/*.css","**/*.scss"]}');
 
 /***/ })
 
