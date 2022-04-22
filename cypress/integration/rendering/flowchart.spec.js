@@ -689,7 +689,7 @@ describe('Graph', () => {
     );
   });
 
-  it('34: testing the label width in percy', () => {
+  it('34: testing the label width', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas]

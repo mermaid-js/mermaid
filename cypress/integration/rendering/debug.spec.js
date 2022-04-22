@@ -1,7 +1,7 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
 describe('Flowchart', () => {
-  it('34: testing the label width in percy', () => {
+  it('34: testing the label width', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas]
