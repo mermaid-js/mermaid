@@ -2,6 +2,9 @@ name: E2E
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
