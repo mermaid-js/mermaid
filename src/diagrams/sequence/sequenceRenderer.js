@@ -461,7 +461,7 @@ export const drawActors = function (
       newActors.add(message.from);
       newActors.add(message.to);
     });
-    actorKeys = actorKeys.filter((actorKey) => newActors.includes(actorKey));
+    actorKeys = actorKeys.filter((actorKey) => newActors.has(actorKey));
   }
 
   // Draw the actors

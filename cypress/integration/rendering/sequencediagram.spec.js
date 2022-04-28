@@ -614,16 +614,14 @@ context('Sequence diagram', () => {
       //Be aware that the syntax for "properties" is likely to be changed.
       imgSnapshotTest(
         `
-        %%{init: { "config": { "hideUnusedParticipants": true }}}%%
+        %%{init: { "config": { "sequence": {"hideUnusedParticipants": true }}}}%%
         sequenceDiagram
         participant a
       `,
         {
           logLevel: 0,
           sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' },
-        },
-        false,
-        (svg) => expect(svg.get('rect')).to.be.empty()
+        }
       );
     });
   });

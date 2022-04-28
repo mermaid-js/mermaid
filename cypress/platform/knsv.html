@@ -26,58 +26,16 @@
     </style>
   </head>
   <body>
-      <div class="mermaid2" style="width: 50%;">
-pie title Pets adopted by volunteers
-    "Dogs" : 386
-    "Cats" : 85
-    "Rats" : 15
-      </div>
-      <div class="mermaid2" style="width: 100%;">
-gantt
-       title                     Adding GANTT diagram functionality to mermaid
-       excludes                  :excludes the named dates/days from being included in a charted task..
-       section Screening
-       Lexplore                  :active, des1, 2023-01-06,2023-01-08
-       H4                        :active,  des2, 2024-01-09, 3d
-       Future task               :         des3, after des2, 5d
-       Future task2              :         des4, after des3, 5d
 
-      </div>
-      <div class="mermaid2" style="width: 100%;">
-info
-      </div>
-      <div class="mermaid2" style="width: 100%;">
-gitGraph:
-options
-{
-    "nodeSpacing": 150,
-    "nodeRadius": 10
-}
-end
-commit
-branch newbranch
-checkout newbranch
-commit
-commit
-checkout master
-commit
-commit
-merge newbranch
-      </div>
+
+
+
       <div class="mermaid" style="width: 50%;">
-sequenceDiagram
-        title: with colon:
-        participant a as Alice
-        participant j as John
-        note right of a: Hello world!
-        properties a: {"class": "internal-service-actor", "type": "@clock"}
-        properties j: {"class": "external-service-actor", "type": "@computer"}
-        links a: {"Repo": "https://www.contoso.com/repo", "Swagger": "https://www.contoso.com/swagger"}
-        links j: {"Repo": "https://www.contoso.com/repo"}
-        links a: {"Dashboard": "https://www.contoso.com/dashboard", "On-Call": "https://www.contoso.com/oncall"}
-        link a: Contacts @ https://contacts.contoso.com/?contact=alice@contoso.com
-        a->>j: Hello John, how are you?
-        j-->>a: Great!      </div>
+      %%{init: { 'logLevel': 'debug', 'theme': 'base', 'sequence': {'hideUnusedParticipants': true, 'showCommitLabel':true,'mainBranchName': 'MetroLine1'}} }%%
+
+        sequenceDiagram
+        participant a
+        </div>
       <div class="mermaid2" style="width: 100%;">
 journey
             title My working day
@@ -144,12 +102,6 @@ requirementDiagram
         subgraph One
           a1-->a2-->a3
         end
-      </div>
-      <div class="mermaid" style="width: 50%;">
- flowchart LR
-      Function-->URL-->A-->B-->C
-      click Function clickByFlow "Add a div"
-      click URL "https://mermaid-js.github.io/mermaid/#/" "Visit <strong>mermaid docs</strong>" _blank
       </div>
       <div class="mermaid2" style="width: 100%;">
       gantt
@@ -257,13 +209,14 @@ class Class10 {
     htmlLabels: true,
   },
         // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: {
-    actorFontFamily: 'courier',
-    actorMargin: 50,
-    showSequenceNumbers: false,
-    // forceMenus: true,
-  },
-        // sequenceDiagram: { actorMargin: 300, forceMenus: false }, // deprecated
+  //       sequence: {
+  //   actorFontFamily: 'courier',
+  //   actorMargin: 50,
+  //   showSequenceNumbers: false,
+  //   // hideUnusedParticipants: true,
+  //   // forceMenus: true,
+  // },
+  //       // sequenceDiagram: { actorMargin: 300, forceMenus: false }, // deprecated
         // fontFamily: '"times", sans-serif',
         // fontFamily: 'courier',
         state: {
