@@ -59,6 +59,7 @@ export const removeScript = (txt) => {
   let decodedText = removeEscapes(rs);
   decodedText = decodedText.replace(/script>/gi, '#');
   decodedText = decodedText.replace(/javascript:/gi, '#');
+  decodedText = decodedText.replace(/javascript&colon/gi, '#');
   decodedText = decodedText.replace(/onerror=/gi, 'onerror:');
   decodedText = decodedText.replace(/<iframe/gi, '');
   return decodedText;

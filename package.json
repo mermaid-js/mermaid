@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "9.0.0",
+  "version": "9.0.1",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "module": "dist/mermaid.esm.min.mjs",
@@ -63,7 +63,7 @@
     "dagre-d3": "^0.6.4",
     "dompurify": "2.3.6",
     "graphlib": "^2.1.8",
-    "khroma": "^1.4.1",
+    "khroma": "^2.0.0",
     "moment-mini": "^2.24.0",
     "stylis": "^4.0.10"
   },
@@ -79,7 +79,7 @@
     "concurrently": "^7.0.0",
     "coveralls": "^3.0.2",
     "css-to-string-loader": "^0.1.3",
-    "cypress": "9.5.3",
+    "cypress": "9.5.4",
     "cypress-image-snapshot": "^4.0.1",
     "documentation": "13.2.0",
     "eslint": "^8.2.0",

@@ -255,7 +255,7 @@ describe('when parsing a gitGraph', function () {
   it('should handle a gitGraph commit with custom  type,tag, msg, commit id,', function () {
     const str = `gitGraph:
     commit type:REVERSE tag: "test tag" msg: "test msg" id: "1111"
-    
+
     `;
 
     parser.parse(str);
@@ -336,6 +336,20 @@ describe('when parsing a gitGraph', function () {
     expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
   });
 
+  it('should allow _-./ characters in branch names', function () {
+    const str = `gitGraph:
+    commit
+    branch azAZ_-./test
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getCurrentBranch()).toBe('azAZ_-./test');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
+  });
+
   it('should handle new branch checkout', function () {
     const str = `gitGraph:
     commit
@@ -405,6 +419,41 @@ describe('when parsing a gitGraph', function () {
     expect(commits[commit3].parents).toStrictEqual([commits[commit2].id]);
     expect(commits[commit4].branch).toBe('main');
     expect(commits[commit4].parents).toStrictEqual([commits[commit1].id, commits[commit3].id]);
+    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
+      { name: 'main' },
+      { name: 'testBranch' },
+    ]);
+  });
+
+  it('should handle merge tags', function () {
+    const str = `gitGraph:
+    commit
+    branch testBranch
+    checkout testBranch
+    commit
+    checkout main
+    merge testBranch tag: "merge-tag"
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(3);
+    expect(parser.yy.getCurrentBranch()).toBe('main');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
+    const commit1 = Object.keys(commits)[0];
+    const commit2 = Object.keys(commits)[1];
+    const commit3 = Object.keys(commits)[2];
+
+    expect(commits[commit1].branch).toBe('main');
+    expect(commits[commit1].parents).toStrictEqual([]);
+
+    expect(commits[commit2].branch).toBe('testBranch');
+    expect(commits[commit2].parents).toStrictEqual([commits[commit1].id]);
+
+    expect(commits[commit3].branch).toBe('main');
+    expect(commits[commit3].parents).toStrictEqual([commits[commit1].id, commits[commit2].id]);
+    expect(commits[commit3].tag).toBe('merge-tag');
     expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
       { name: 'main' },
       { name: 'testBranch' },

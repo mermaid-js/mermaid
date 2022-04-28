@@ -9,7 +9,7 @@ module.exports = {
       { 'token-stack': true },
     ],
   },
-  transformIgnorePatterns: ['/node_modules/(?!dagre-d3-renderer/lib).*\\.js'],
+  transformIgnorePatterns: ['/node_modules/(?!dagre-d3-renderer/lib|khroma).*\\.js'],
   moduleNameMapper: {
     '\\.(css|scss)$': 'identity-obj-proxy',
   },

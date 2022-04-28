@@ -136,7 +136,7 @@ export const branch = function (name) {
   }
 };
 
-export const merge = function (otherBranch) {
+export const merge = function (otherBranch, tag) {
   otherBranch = common.sanitizeText(otherBranch, configApi.getConfig());
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
@@ -213,6 +213,7 @@ export const merge = function (otherBranch) {
     parents: [head == null ? null : head.id, branches[otherBranch]],
     branch: curBranch,
     type: commitType.MERGE,
+    tag: tag ? tag : '',
   };
   head = commit;
   commits[commit.id] = commit;

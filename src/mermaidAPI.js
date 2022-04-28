@@ -62,6 +62,7 @@ import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
 import utils, { directiveSanitizer, assignWithDepth, sanitizeCss } from './utils';
+import DOMPurify from 'dompurify';
 
 /**
  * @param text
@@ -80,9 +81,9 @@ function parse(text) {
   log.debug('Type ' + graphType);
   switch (graphType) {
     case 'gitGraph':
+      gitGraphAst.clear();
       parser = gitGraphParser;
       parser.parser.yy = gitGraphAst;
-      parser.parser.yy.clear();
       break;
     case 'flowchart':
       flowDb.clear();
@@ -223,7 +224,7 @@ export const decodeEntities = function (text) {
  */
 const render = function (id, _txt, cb, container) {
   configApi.reset();
-  let txt = _txt;
+  let txt = _txt.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(txt);
   if (graphInit) {
     directiveSanitizer(graphInit);
@@ -542,6 +543,13 @@ const render = function (id, _txt, cb, container) {
     )}" sandbox="allow-top-navigation-by-user-activation allow-popups">
   The “iframe” tag is not supported by your browser.
 </iframe>`;
+  } else {
+    if (cnf.securityLevel !== 'loose') {
+      svgCode = DOMPurify.sanitize(svgCode, {
+        ADD_TAGS: ['foreignobject'],
+        ADD_ATTR: ['dominant-baseline'],
+      });
+    }
   }
 
   if (typeof cb !== 'undefined') {
