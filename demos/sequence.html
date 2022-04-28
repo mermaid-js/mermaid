@@ -24,6 +24,7 @@
 		participant Alice
 		participant Bob
 		participant John as John<br />Second Line
+		autonumber 10 10
 		rect rgb(200, 220, 100)
 		rect rgb(200, 255, 200)
 		Alice ->> Bob: Hello Bob, how are you?
@@ -39,14 +40,17 @@
 		Bob-x John:wrap: John! Are you still debating about how you're doing? How long does it take??
 		Note over John: After a few more moments, John<br />finally snaps out of it.
 		end
+		autonumber off
 		alt either this
 		Alice->>+John: Yes
     John-->>-Alice: OK
 		else or this
+		autonumber
 		Alice->>John: No
 		else or this will happen
 		Alice->John: Maybe
 		end
+		autonumber 200
 		par this happens in parallel
 		Alice -->> Bob: Parallel message 1
 		and

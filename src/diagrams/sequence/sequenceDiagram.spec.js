@@ -47,6 +47,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
+    renderer.draw(str, 'tst'); // needs to be rendered for the correct value of visibility autonumbers
     expect(parser.yy.showSequenceNumbers()).toBe(false);
   });
   it('it should show sequence numbers when autonumber is enabled', function () {
@@ -58,6 +59,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
+    renderer.draw(str, 'tst'); // needs to be rendered for the correct value of visibility autonumbers
     expect(parser.yy.showSequenceNumbers()).toBe(true);
   });
   it('it should handle a sequenceDiagram definition with a title:', function () {
@@ -1676,6 +1678,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str1);
+    renderer.draw(str1, 'tst'); // needs to be rendered for the correct value of visibility autonumbers
     expect(parser.yy.showSequenceNumbers()).toBe(true);
 
     const str2 = `
@@ -1685,6 +1688,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str2);
+    renderer.draw(str2, 'tst');
     expect(parser.yy.showSequenceNumbers()).toBe(false);
   });
 });
