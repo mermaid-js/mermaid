@@ -53,8 +53,8 @@ describe('Requirement diagram', () => {
     renderGraph(
       `
     requirementDiagram
-    title: ${expectedTitle}
-    accDescription: ${expectedAccDescription}
+    title ${expectedTitle}
+    accDescription ${expectedAccDescription}
 
     requirement test_req {
     id: 1
