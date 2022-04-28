@@ -16,4 +16,3 @@ jobs:
         tests: "./cypress/integration/**/**.spec.js"
         token: ${{ secrets.GITHUB_TOKEN }}
         has-tests-label: true
-

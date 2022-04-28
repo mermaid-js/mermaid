@@ -447,7 +447,23 @@ const drawMessage = function (diagram, msgModel, lineStarty) {
   }
 };
 
-export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
+export const drawActors = function (
+  diagram,
+  actors,
+  actorKeys,
+  verticalPos,
+  configuration,
+  messages
+) {
+  if (configuration.hideUnusedParticipants === true) {
+    const newActors = new Set();
+    messages.forEach((message) => {
+      newActors.add(message.from);
+      newActors.add(message.to);
+    });
+    actorKeys = actorKeys.filter((actorKey) => newActors.includes(actorKey));
+  }
+
   // Draw the actors
   let prevWidth = 0;
   let prevMargin = 0;
@@ -605,7 +621,7 @@ export const draw = function (text, id) {
   svgDraw.insertDatabaseIcon(diagram);
   svgDraw.insertClockIcon(diagram);
 
-  drawActors(diagram, actors, actorKeys, 0);
+  drawActors(diagram, actors, actorKeys, 0, conf, messages);
   const loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor);
 
   // The arrow head definition is attached to the svg once
@@ -785,7 +801,7 @@ export const draw = function (text, id) {
   if (conf.mirrorActors) {
     // Draw actors below diagram
     bounds.bumpVerticalPos(conf.boxMargin * 2);
-    drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
+    drawActors(diagram, actors, actorKeys, bounds.getVerticalPos(), conf, messages);
     bounds.bumpVerticalPos(conf.boxMargin);
     fixLifeLineHeights(diagram, bounds.getVerticalPos());
   }

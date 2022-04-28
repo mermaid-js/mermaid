@@ -3,8 +3,6 @@ import { log } from './logger';
 import theme from './themes';
 import config from './defaultConfig';
 
-// debugger;
-
 export const defaultConfig = Object.freeze(config);
 
 let siteConfig = assignWithDepth({}, defaultConfig);

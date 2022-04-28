@@ -18,7 +18,7 @@ export const mermaidUrl = (graphStr, options, api) => {
   return url;
 };
 
-export const imgSnapshotTest = (graphStr, _options, api) => {
+export const imgSnapshotTest = (graphStr, _options, api = false, validation) => {
   cy.log(_options);
   const options = Object.assign(_options);
   if (!options.fontFamily) {
@@ -46,8 +46,8 @@ export const imgSnapshotTest = (graphStr, _options, api) => {
   const url = mermaidUrl(graphStr, options, api);
 
   cy.visit(url);
+  if (validation) cy.get('svg').should(validation);
   cy.get('svg');
-  // cy.percySnapshot();
   // Default name to test title
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
