@@ -69,6 +69,7 @@ import DOMPurify from 'dompurify';
  * @returns {any}
  */
 function parse(text) {
+  text = text + '\n';
   const cnf = configApi.getConfig();
   const graphInit = utils.detectInit(text, cnf);
   if (graphInit) {
