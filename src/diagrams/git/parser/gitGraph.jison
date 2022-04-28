@@ -43,9 +43,9 @@
 "BT"                                    return 'DIR';
 ":"                                     return ':';
 "^"                                     return 'CARET'
-"options"\r?\n                          this.begin("options");
-<options>"end"\r?\n                     this.popState();
-<options>[^\n]+\r?\n                    return 'OPT';
+"options"\r?\n                          this.begin("options"); //
+<options>[ \r\n\t]+"end"                this.popState();       // not used anymore in the renderer, fixed for backward compatibility
+<options>[\s\S]+(?=[ \r\n\t]+"end")     return 'OPT';          //
 ["]                                     this.begin("string");
 <string>["]                             this.popState();
 <string>[^"]*                           return 'STR';
