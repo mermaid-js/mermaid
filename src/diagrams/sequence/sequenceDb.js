@@ -125,6 +125,9 @@ export const getTitle = function () {
 export const enableSequenceNumbers = function () {
   sequenceNumbersEnabled = true;
 };
+export const disableSequenceNumbers = function () {
+  sequenceNumbersEnabled = false;
+};
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
 
 export const setWrap = function (wrapSetting) {
@@ -178,6 +181,7 @@ export const LINETYPE = {
   RECT_END: 23,
   SOLID_POINT: 24,
   DOTTED_POINT: 25,
+  AUTONUMBER: 26,
 };
 
 export const ARROWTYPE = {
@@ -333,6 +337,19 @@ export const apply = function (param) {
     });
   } else {
     switch (param.type) {
+      case 'sequenceIndex':
+        messages.push({
+          from: undefined,
+          to: undefined,
+          message: {
+            start: param.sequenceIndex,
+            step: param.sequenceIndexStep,
+            visible: param.sequenceVisible,
+          },
+          wrap: false,
+          type: param.signalType,
+        });
+        break;
       case 'addParticipant':
         addActor(param.actor, param.actor, param.description, 'participant');
         break;
@@ -425,6 +442,7 @@ export default {
   autoWrap,
   setWrap,
   enableSequenceNumbers,
+  disableSequenceNumbers,
   showSequenceNumbers,
   getMessages,
   getActors,
