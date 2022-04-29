@@ -230,6 +230,7 @@ const config = {
 
   /** The object containing configurations specific for sequence diagrams */
   sequence: {
+    hideUnusedParticipants: false,
     /**
      * | Parameter       | Description                  | Type    | Required | Values             |
      * | --------------- | ---------------------------- | ------- | -------- | ------------------ |

@@ -5,6 +5,7 @@
 	"extends": ["plugin:cypress/recommended"],
 	"plugins": ["cypress"],
 	"rules":{
-		"cypress/no-unnecessary-waiting": 0 
+		"cypress/no-unnecessary-waiting": "off",
+		"cypress/no-async-tests": "off"
 	}
 }

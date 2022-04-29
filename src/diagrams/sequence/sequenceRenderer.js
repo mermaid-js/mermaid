@@ -329,7 +329,7 @@ const boundMessage = function (diagram, msgModel) {
  * @param {float} lineStarty - The Y coordinate at which the message line starts
  */
 const drawMessage = function (diagram, msgModel, lineStarty) {
-  const { startx, stopx, starty, message, type, sequenceIndex } = msgModel;
+  const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   let textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDraw.getTextObj();
   textObj.x = startx;
@@ -432,7 +432,7 @@ const drawMessage = function (diagram, msgModel, lineStarty) {
   }
 
   // add node number
-  if (sequenceDb.showSequenceNumbers() || conf.showSequenceNumbers) {
+  if (sequenceVisible || conf.showSequenceNumbers) {
     line.attr('marker-start', 'url(' + url + '#sequencenumber)');
     diagram
       .append('text')
@@ -447,7 +447,23 @@ const drawMessage = function (diagram, msgModel, lineStarty) {
   }
 };
 
-export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
+export const drawActors = function (
+  diagram,
+  actors,
+  actorKeys,
+  verticalPos,
+  configuration,
+  messages
+) {
+  if (configuration.hideUnusedParticipants === true) {
+    const newActors = new Set();
+    messages.forEach((message) => {
+      newActors.add(message.from);
+      newActors.add(message.to);
+    });
+    actorKeys = actorKeys.filter((actorKey) => newActors.has(actorKey));
+  }
+
   // Draw the actors
   let prevWidth = 0;
   let prevMargin = 0;
@@ -605,7 +621,7 @@ export const draw = function (text, id) {
   svgDraw.insertDatabaseIcon(diagram);
   svgDraw.insertClockIcon(diagram);
 
-  drawActors(diagram, actors, actorKeys, 0);
+  drawActors(diagram, actors, actorKeys, 0, conf, messages);
   const loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor);
 
   // The arrow head definition is attached to the svg once
@@ -637,6 +653,7 @@ export const draw = function (text, id) {
 
   // Draw the messages/signals
   let sequenceIndex = 1;
+  let sequenceIndexStep = 1;
   let messagesToDraw = Array();
   messages.forEach(function (msg) {
     let loopModel, noteModel, msgModel;
@@ -741,12 +758,19 @@ export const draw = function (text, id) {
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
+      case parser.yy.LINETYPE.AUTONUMBER:
+        sequenceIndex = msg.message.start || sequenceIndex;
+        sequenceIndexStep = msg.message.step || sequenceIndexStep;
+        if (msg.message.visible) parser.yy.enableSequenceNumbers();
+        else parser.yy.disableSequenceNumbers();
+        break;
       default:
         try {
           // lastMsg = msg
           msgModel = msg.msgModel;
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
+          msgModel.sequenceVisible = parser.yy.showSequenceNumbers();
           let lineStarty = boundMessage(diagram, msgModel);
           messagesToDraw.push({ messageModel: msgModel, lineStarty: lineStarty });
           bounds.models.addMessage(msgModel);
@@ -768,7 +792,7 @@ export const draw = function (text, id) {
         parser.yy.LINETYPE.DOTTED_POINT,
       ].includes(msg.type)
     ) {
-      sequenceIndex++;
+      sequenceIndex = sequenceIndex + sequenceIndexStep;
     }
   });
 
@@ -777,7 +801,7 @@ export const draw = function (text, id) {
   if (conf.mirrorActors) {
     // Draw actors below diagram
     bounds.bumpVerticalPos(conf.boxMargin * 2);
-    drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
+    drawActors(diagram, actors, actorKeys, bounds.getVerticalPos(), conf, messages);
     bounds.bumpVerticalPos(conf.boxMargin);
     fixLifeLineHeights(diagram, bounds.getVerticalPos());
   }

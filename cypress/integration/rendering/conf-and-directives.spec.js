@@ -134,9 +134,9 @@ graph TD
       const url = 'http://localhost:9000/theme-directives.html';
       cy.visit(url);
       const existsSvg = () =>
-      new Promise((resolve) =>
-        cy.get('svg').then((el) => (Cypress.dom.isElement(el) ? resolve(true) : resolve(false)))
-      );
+        new Promise((resolve) =>
+          cy.get('svg').then((el) => (Cypress.dom.isElement(el) ? resolve(true) : resolve(false)))
+        );
       let svgExists = await existsSvg();
       let times = 0;
       while (!svgExists && times < 15) {
@@ -144,7 +144,7 @@ graph TD
         svgExists = await existsSvg();
         ++times;
       }
-        cy.get('svg').each(($el) => {
+      cy.get('svg').each(($el) => {
         cy.wrap($el).toMatchImageSnapshot(name);
       });
       // cy.matchImageSnapshot('conf-and-directives.spec-when-rendering-several-diagrams-diagram-1');

@@ -610,6 +610,20 @@ context('Sequence diagram', () => {
         }
       );
     });
+    it("shouldn't display unused participants", () => {
+      //Be aware that the syntax for "properties" is likely to be changed.
+      imgSnapshotTest(
+        `
+        %%{init: { "config": { "sequence": {"hideUnusedParticipants": true }}}}%%
+        sequenceDiagram
+        participant a
+      `,
+        {
+          logLevel: 0,
+          sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' },
+        }
+      );
+    });
   });
   context('svg size', () => {
     it('should render a sequence diagram when useMaxWidth is true (default)', () => {

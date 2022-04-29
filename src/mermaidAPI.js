@@ -69,6 +69,7 @@ import DOMPurify from 'dompurify';
  * @returns {any}
  */
 function parse(text) {
+  text = text + '\n';
   const cnf = configApi.getConfig();
   const graphInit = utils.detectInit(text, cnf);
   if (graphInit) {
@@ -224,7 +225,7 @@ export const decodeEntities = function (text) {
  */
 const render = function (id, _txt, cb, container) {
   configApi.reset();
-  let txt = _txt;
+  let txt = _txt.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(txt);
   if (graphInit) {
     directiveSanitizer(graphInit);

@@ -385,8 +385,7 @@
     A -->|Get money| B1[(Go shopping 1)]
     A -->|Get money| B2[(Go shopping 2)]
     A -->|Get money| B3[(Go shopping 3)]
-    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or
- something to get around?)]
+    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
     B1 --> C
     B2 --> C
     B3 --> C
@@ -518,8 +517,10 @@
     sequenceDiagram
     autonumber
     Alice->>John: Hello John,<br>how are you?
+    autonumber 50 10
     Alice->>John: John,<br />can you hear me?
     John-->>Alice: Hi Alice,<br />I can hear you!
+    autonumber off
     John-->>Alice: I feel great!
   </div>
 
@@ -601,10 +602,11 @@
     gitGraph:
     options
     {
-    "nodeSpacing": 150,
-    "nodeRadius": 10
+    "nodeSpacing": 50, 
+    "nodeRadius": 5
     }
     end
+    branch master
     commit
     branch newbranch
     checkout newbranch
