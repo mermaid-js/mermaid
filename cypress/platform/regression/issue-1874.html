@@ -1,30 +1,30 @@
 <html>
   <head>
     <script src="http://localhost:9000/mermaid.js"></script>
-  <script>
-      mermaid.initialize({
-        theme: 'base',
-        themeVariables: {},
-        startOnLoad: true,
-      });
-  </script>
 
   </head>
   <body>
   <h1>Example</h1>
-  <div class="mermaid">
+  <div class="mermaid" id="first">
 %%{init:{"theme":"base", "sequence": {"mirrorActors":false},"themeVariables": {"actorBkg":"red"}}}%%
 sequenceDiagram
     Bert->>+Ernie: Start looking for the cookie!
     Ernie-->>-Bert: Found it!
     Note left of Ernie: Cookies are good
   </div>
-  <div class="mermaid">
+  <div class="mermaid" id="second">
 %%{init:{"theme":"base", "themeVariables": {}}}%%
 sequenceDiagram
     Bert->>+Ernie: Start looking for the cookie!
     Ernie-->>-Bert: Found it!
     Note left of Ernie: Cookies are good
   </div>
+  <script>
+    mermaid.initialize({
+      theme: 'base',
+      themeVariables: {},
+      startOnLoad: true,
+    });
+</script>
 </body>
 </html>

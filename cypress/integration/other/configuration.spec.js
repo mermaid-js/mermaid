@@ -113,7 +113,8 @@ describe('Configuration', () => {
       cy.visit(url);
 
       cy.wait(1000);
-      cy.get('svg').toMatchSnapshot();
+      cy.get('#first svg').toMatchSnapshot();
+      cy.get('#second svg').toMatchSnapshot();
       // cy.matchImageSnapshot(
       //   'configuration.spec-should-not-taint-initial-configuration-when-using-multiple-directives'
       // );
