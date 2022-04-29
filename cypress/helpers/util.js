@@ -59,7 +59,9 @@ export const imgSnapshotTest = async (graphStr, _options, api) => {
     svgExists = await existsSvg();
     ++times;
   }
-  cy.get('svg').toMatchSnapshot(name);
+  cy.get('svg').each(($el) => {
+    cy.wrap($el).toMatchImageSnapshot(name);
+  });
   // cy.percySnapshot();
 };
 

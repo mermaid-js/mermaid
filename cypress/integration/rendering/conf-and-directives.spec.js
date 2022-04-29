@@ -130,11 +130,23 @@ graph TD
     cy.get('svg');
   });
   describe('when rendering several diagrams', () => {
-    it('diagrams should not taint later diagrams', () => {
+    it('diagrams should not taint later diagrams', async () => {
       const url = 'http://localhost:9000/theme-directives.html';
       cy.visit(url);
-      cy.wait(1000);
-      cy.get('svg').toMatchSnapshot();
+      const existsSvg = () =>
+      new Promise((resolve) =>
+        cy.get('svg').then((el) => (Cypress.dom.isElement(el) ? resolve(true) : resolve(false)))
+      );
+      let svgExists = await existsSvg();
+      let times = 0;
+      while (!svgExists && times < 15) {
+        cy.wait(100);
+        svgExists = await existsSvg();
+        ++times;
+      }
+        cy.get('svg').each(($el) => {
+        cy.wrap($el).toMatchImageSnapshot(name);
+      });
       // cy.matchImageSnapshot('conf-and-directives.spec-when-rendering-several-diagrams-diagram-1');
     });
   });

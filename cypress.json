@@ -6,7 +6,7 @@
     ],
     "env": {
         "cypress-plugin-snapshots": {
-            "updateSnapshots": false
+            "updateSnapshots": true
         }
     }      
 }
