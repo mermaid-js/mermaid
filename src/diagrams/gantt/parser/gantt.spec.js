@@ -175,7 +175,7 @@ describe('when parsing a gantt diagram it', function () {
   it('should allow for a accessibility title and multiline description (accDescr)', function () {
     const expectedTitle = 'Gantt Diagram';
     const expectedAccDescription = `Tasks for Q4 row1
-    row2`;
+row2`;
     const ganttString = `gantt
        accTitle: ${expectedTitle}
        accDescr {
