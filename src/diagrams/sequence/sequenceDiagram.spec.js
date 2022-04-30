@@ -108,26 +108,34 @@ Bob-->Alice: I am good thanks!`;
     expect(title).toBe('Diagram Title');
   });
 
-  it('it should handle a sequenceDiagram definition with a accDescription', function () {
+  it('it should handle a sequenceDiagram definition with a accessibility title and description (accDescr)', function () {
     const str = `
 sequenceDiagram
-accDescription Accessibility Description
+accTitle: This is the title
+accDescr: Accessibility Description
 Alice->Bob:Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
+`;
 
     mermaidAPI.parse(str);
-    const actors = parser.yy.getActors();
-    expect(actors.Alice.description).toBe('Alice');
-    actors.Bob.description = 'Bob';
-
+    expect(parser.yy.getTitle()).toBe('This is the title');
     expect(parser.yy.getAccDescription()).toBe('Accessibility Description');
     const messages = parser.yy.getMessages();
-    const title = parser.yy.getTitle();
+  });
+  it('it should handle a sequenceDiagram definition with a accessibility title and multiline description (accDescr)', function () {
+    const str = `
+sequenceDiagram
+accTitle: This is the title
+accDescr {
+Accessibility
+Description
+}
+Alice->Bob:Hello Bob, how are you?
+`;
 
-    expect(messages.length).toBe(3);
-    expect(messages[0].from).toBe('Alice');
-    expect(messages[2].from).toBe('Bob');
+    mermaidAPI.parse(str);
+    expect(parser.yy.getTitle()).toBe('This is the title');
+    expect(parser.yy.getAccDescription()).toBe('Accessibility\nDescription');
+    const messages = parser.yy.getMessages();
   });
 
   it('it should space in actor names', function () {

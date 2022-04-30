@@ -2,6 +2,13 @@ import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let prevActor = undefined;
 let actors = {};
@@ -119,9 +126,6 @@ export const getActor = function (id) {
 export const getActorKeys = function () {
   return Object.keys(actors);
 };
-export const getTitle = function () {
-  return title;
-};
 export const enableSequenceNumbers = function () {
   sequenceNumbersEnabled = true;
 };
@@ -140,6 +144,7 @@ export const clear = function () {
   actors = {};
   messages = [];
   sequenceNumbersEnabled = false;
+  commonClear();
 };
 
 export const parseMessage = function (str) {
@@ -325,11 +330,6 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
-export const setTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
-  title = sanitizedText;
-};
-
 export const apply = function (param) {
   if (param instanceof Array) {
     param.forEach(function (item) {
@@ -421,15 +421,6 @@ export const apply = function (param) {
         break;
     }
   }
-};
-
-const setAccDescription = function (description_lex) {
-  let sanitizedText = sanitizeText(description_lex, configApi.getConfig());
-  description = sanitizedText;
-};
-
-const getAccDescription = function () {
-  return description;
 };
 
 export default {
