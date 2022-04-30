@@ -4,6 +4,13 @@ import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import { getConfig } from '../../config';
 import common from '../common/common';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let mainBranchName = getConfig().gitGraph.mainBranchName;
 let commits = {};
@@ -14,6 +21,9 @@ let curBranch = mainBranchName;
 let direction = 'LR';
 let seq = 0;
 
+/**
+ *
+ */
 function getId() {
   return random({ length: 7 });
 }
@@ -326,6 +336,7 @@ export const clear = function () {
   branches[mainBranch] = null;
   curBranch = mainBranch;
   seq = 0;
+  commonClear();
 };
 
 export const getBranchesAsObjArray = function () {
@@ -390,5 +401,9 @@ export default {
   getCurrentBranch,
   getDirection,
   getHead,
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
   commitType,
 };

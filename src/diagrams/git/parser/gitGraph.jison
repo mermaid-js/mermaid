@@ -13,6 +13,9 @@
 %x type_directive
 %x arg_directive
 %x close_directive
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %options case-insensitive
 
 
@@ -22,6 +25,13 @@
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                               { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                                     return "acc_descr_multiline_value";
 (\r?\n)+                               /*{console.log('New line');return 'NL';}*/ return 'NL';
 \s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
@@ -90,6 +100,9 @@ line
 statement
     : commitStatement
     | mergeStatement
+    | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
     | BRANCH ID {yy.branch($2)}
     | CHECKOUT ID {yy.checkout($2)}
     // | RESET reset_arg {yy.reset($2)}
