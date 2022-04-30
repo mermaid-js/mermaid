@@ -101,9 +101,9 @@ start
 directive
   : openDirective typeDirective closeDirective
   | openDirective typeDirective ':' argDirective closeDirective
-  | acc_title acc_title_value  { console.log('acc_title');$$=$2.trim();yy.setTitle($$); }
-  | acc_descr acc_descr_value  { console.log('acc_descr');$$=$2.trim();yy.setAccDescription($$); }
-  | acc_descr_multiline_value { console.log('acc_descr_multiline_value');$$=$1.trim();yy.setAccDescription($$); }
+  | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+  | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+  | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
   ;
 openDirective
   : open_directive { yy.parseDirective('%%{', 'open_directive'); };
