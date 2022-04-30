@@ -4,7 +4,13 @@ import * as configApi from '../../config';
 import common from '../common/common';
 import mermaidAPI from '../../mermaidAPI';
 import { log } from '../../logger';
-import { setTitle, getTitle, getAccDescription, setAccDescription } from '../../commonDb';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 const MERMAID_DOM_ID_PREFIX = 'flowchart-';
 let vertexCounter = 0;
@@ -18,8 +24,6 @@ let tooltips = {};
 let subCount = 0;
 let firstGraphFlag = true;
 let direction;
-let title = 'Flow chart';
-let description = '';
 
 let version; // As in graph
 
@@ -31,18 +35,6 @@ const sanitizeText = (txt) => common.sanitizeText(txt, config);
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
-
-// const getTitle = function () {
-//   return title;
-// };
-
-// const setAccDescription = function (txt) {
-//   description = sanitizeText(txt).replace(/\n\s+/g, '\n');
-// };
-
-// const getAccDescription = function () {
-//   return description;
-// };
 
 /**
  * Function to lookup domId from id in the graph definition.
@@ -444,8 +436,7 @@ export const clear = function (ver) {
   tooltips = [];
   firstGraphFlag = true;
   version = ver || 'gen-1';
-  title = '';
-  description = '';
+  commonClear();
 };
 export const setGen = (ver) => {
   version = ver || 'gen-1';
