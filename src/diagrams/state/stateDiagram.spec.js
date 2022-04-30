@@ -27,9 +27,9 @@ describe('state diagram, ', function () {
       const description = stateDb.getAccDescription();
       expect(description).toBe('');
     });
-    it('simple with accDescription', function () {
+    it('simple with accDescription (accDescr)', function () {
       const str = `stateDiagram\n
-          accDescription a simple description of the diagram
+          accDescr: a simple description of the diagram
           State1 : this is another string
           [*] --> State1
           State1 --> [*]
@@ -39,9 +39,24 @@ describe('state diagram, ', function () {
       const description = stateDb.getAccDescription();
       expect(description).toBe('a simple description of the diagram');
     });
-    it('simple with title', function () {
+    it('simple with multiline accDescription (accDescr)', function () {
       const str = `stateDiagram\n
-          title a simple title of the diagram
+          accDescr {
+             a simple description of the diagram
+            using multiple lines
+          }
+          State1 : this is another string
+          [*] --> State1
+          State1 --> [*]
+      `;
+
+      parser.parse(str);
+      const description = stateDb.getAccDescription();
+      expect(description).toBe('a simple description of the diagram\nusing multiple lines');
+    });
+    it('simple with title  (accDescr)', function () {
+      const str = `stateDiagram\n
+          accTitle: a simple title of the diagram
           State1 : this is another string
           [*] --> State1
           State1 --> [*]
