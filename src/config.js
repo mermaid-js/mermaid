@@ -27,7 +27,7 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
 
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
-  if (sumOfDirectives.theme) {
+  if (sumOfDirectives.theme && theme[sumOfDirectives.theme]) {
     const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
       tmpConfigFromInitialize.themeVariables || {},
@@ -59,7 +59,7 @@ export const setSiteConfig = (conf) => {
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
 
-  if (conf.theme) {
+  if (conf.theme && theme[conf.theme]) {
     siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
   }
 
