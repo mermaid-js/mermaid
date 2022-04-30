@@ -16,7 +16,9 @@
 %x open_directive
 %x type_directive
 %x arg_directive
-
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 .*direction\s+TB[^\n]*                                          return 'direction_tb';
@@ -29,8 +31,13 @@
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%\%(?!\{)*[^\n]*(\r?\n?)+                                      /* skip comments */
 \%\%[^\n]*(\r?\n)*                                              /* skip comments */
-"title"\s[^#\n;]+       return 'title';
-"accDescription"\s[^#\n;]+       return 'accDescription';
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 
 \s*(\r?\n)+                return 'NEWLINE';
 \s+                     /* skip whitespace */
@@ -256,9 +263,9 @@ statement
     | cssClassStatement
     | directive
     | direction
-    | title {yy.setTitle($1.substring(6));$$=$1.substring(6);}
-	| accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);}
-
+    | acc_title acc_title_value  { console.log('acc_title');$$=$2.trim();yy.setTitle($$); }
+    | acc_descr acc_descr_value  { console.log('acc_descr');$$=$2.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { console.log('acc_descr_multiline_value');$$=$1.trim();yy.setAccDescription($$); }
     ;
 
 classStatement
