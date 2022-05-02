@@ -79,7 +79,7 @@
     "concurrently": "^7.0.0",
     "coveralls": "^3.0.2",
     "css-to-string-loader": "^0.1.3",
-    "cypress": "9.5.4",
+    "cypress": "9.6.0",
     "cypress-image-snapshot": "^4.0.1",
     "documentation": "13.2.0",
     "eslint": "^8.2.0",
