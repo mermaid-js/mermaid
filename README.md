@@ -23,7 +23,10 @@ Diagramming and documentation costs precious developer time and gets outdated qu
 But not having diagrams or docs ruins productivity and hurts organizational learning.<br/>
 Mermaid addresses this problem by enabling users to create easily modifiable diagrams, it can also be made part of production scripts (and other pieces of code).<br/>
  <br/>
-Mermaid allows even non-programmers to easily create detailed charts and diagrams through the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).<br/>
+
+Mermaid allows even non-programmers to easily create detailed diagrams through the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor/).<br/>
+[Tutorials](./docs/Tutorials.md) has video tutorials.
+Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/integrations.md).
 
 You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/integrations.md).
 
