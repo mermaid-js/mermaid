@@ -29,7 +29,7 @@ statement
 In the extract of the grammar above, it is defined that a call to the setTitle method in the data object will be done when parsing and the title keyword is encountered.
 
 ```tip
-Make sure that the `parseError` function for the parser is defined and calling `mermaidPAI.parseError`. This way a common way of detecting parse errors is provided for the end-user.
+Make sure that the `parseError` function for the parser is defined and calling `mermaid.parseError`. This way a common way of detecting parse errors is provided for the end-user.
 ```
 
 For more info look in the example diagram type:
@@ -38,7 +38,7 @@ The `yy` object has the following function:
 
 ```javascript
 exports.parseError = function(err, hash){
-   mermaidAPI.parseError(err, hash)
+   mermaid.parseError(err, hash)
 };
 ```
 
