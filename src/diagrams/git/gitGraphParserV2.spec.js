@@ -364,6 +364,46 @@ describe('when parsing a gitGraph', function () {
     expect(parser.yy.getDirection()).toBe('LR');
     expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
   });
+  it('should handle new branch checkout with order', function () {
+    const str = `gitGraph:
+    commit
+    branch test1 order: 3
+    branch test2 order: 2
+    branch test3 order: 1
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getCurrentBranch()).toBe('test3');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(4);
+    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
+      { name: 'main' },
+      { name: 'test3' },
+      { name: 'test2' },
+      { name: 'test1' },
+    ]);
+  });
+  it('should handle new branch checkout with and without order', function () {
+    const str = `gitGraph:
+    commit
+    branch test1 order: 1
+    branch test2
+    branch test3
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getCurrentBranch()).toBe('test3');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(4);
+    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([
+      { name: 'main' },
+      { name: 'test2' },
+      { name: 'test3' },
+      { name: 'test1' },
+    ]);
+  });
 
   it('should handle new branch checkout & commit', function () {
     const str = `gitGraph:
