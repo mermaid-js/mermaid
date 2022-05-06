@@ -14,7 +14,7 @@
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
   - [Requirement Diagram](requirementDiagram.md)
-  - [Gitgraph (Git) Diagram 🔥🔥🔥](gitgraph.md)
+  - [Gitgraph (Git) Diagram 🔥](gitgraph.md)
   - [Other Examples](examples.md)
 
 - ⚙️ Deployment and Configuration

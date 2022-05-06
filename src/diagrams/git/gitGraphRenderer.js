@@ -418,7 +418,7 @@ const drawBranches = (svg, branches) => {
 
     lanes.push(pos);
 
-    let name = index === 0 ? gitGraphConfig.mainBranchName : branch.name;
+    let name = branch.name;
 
     // Create the actual text element
     const labelElement = drawText(name);

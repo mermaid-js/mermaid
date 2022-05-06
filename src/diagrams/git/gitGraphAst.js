@@ -13,19 +13,17 @@ import {
 } from '../../commonDb';
 
 let mainBranchName = getConfig().gitGraph.mainBranchName;
+let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
 let commits = {};
 let head = null;
 let branchesConfig = {};
-branchesConfig[mainBranchName] = { name: mainBranchName, order: 0 };
+branchesConfig[mainBranchName] = { name: mainBranchName, order: mainBranchOrder };
 let branches = {};
 branches[mainBranchName] = head;
 let curBranch = mainBranchName;
 let direction = 'LR';
 let seq = 0;
 
-/**
- *
- */
 function getId() {
   return random({ length: 7 });
 }
@@ -335,10 +333,11 @@ export const clear = function () {
   commits = {};
   head = null;
   let mainBranch = getConfig().gitGraph.mainBranchName;
+  let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
   branches = {};
   branches[mainBranch] = null;
   branchesConfig = {};
-  branchesConfig[mainBranch] = { name: mainBranch, order: 0 };
+  branchesConfig[mainBranch] = { name: mainBranch, order: mainBranchOrder };
   curBranch = mainBranch;
   seq = 0;
   commonClear();
