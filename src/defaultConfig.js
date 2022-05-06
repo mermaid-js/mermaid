@@ -1055,6 +1055,7 @@ const config = {
       y: 0,
     },
     mainBranchName: 'main',
+    mainBranchOrder: 0,
     showCommitLabel: true,
     showBranches: true,
   },

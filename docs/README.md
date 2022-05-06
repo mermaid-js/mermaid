@@ -111,28 +111,20 @@ Class08 <--> C2: Cool label
 
 ![Class diagram](img/class.png)
 
-### Git graph - :exclamation: experimental
+### Git graph
 
-```mmd
-gitGraph:
-options
-{
-    "nodeSpacing": 150,
-    "nodeRadius": 10
-}
-end
-commit
-branch newbranch
-checkout newbranch
-commit
-commit
-checkout master
-commit
-commit
-merge newbranch
-
+```mermaid-example
+    gitGraph
+       commit
+       commit
+       branch develop
+       commit
+       commit
+       commit
+       checkout main
+       commit
+       commit
 ```
-![Git graph](img/git.png)
 
 ### [Entity Relationship Diagram - :exclamation: experimental](./entityRelationshipDiagram.md)
 

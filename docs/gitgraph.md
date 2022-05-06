@@ -187,6 +187,7 @@ In Mermaid, you have the option to configure the gitgraph diagram. You can confi
 - `showBranches` : Boolean, default is `true`. If set to `false`, the branches are not shown in the diagram.
 - `showCommitLabel` : Boolean, default is `true`. If set to `false`, the commit labels are not shown in the diagram.
 - `mainBranchName` : String, default is `main`. The name of the default/root branch.
+- `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meanig, by default `main` branch is the first in the order.
 
 Let's look at them one by one.
 ## Hiding Branch names and lines
@@ -290,7 +291,7 @@ Usage example:
         merge release
  ```
 
-## Customizing the main/default branch name
+## Customizing main branch name
 Sometimes you may want to customize the name of the main/default branch. You can do this by using the `mainBranchName` keyword. By default its value is `main`. You can set it to any string using directives.
 
 Usage example:
@@ -312,12 +313,59 @@ Usage example:
         merge MetroLine3
         commit id:"Miami"
         commit id:"Washington"
-        merge MetroLine2
+        merge MetroLine2 tag:"MY JUNCTION"
         commit id:"Boston"
         commit id:"Detroit"
         commit type:REVERSE id:"SanFrancisco"
  ```
 Look at the imaginary railroad map created using Mermaid. Here, we have changed the default main branch name to `MetroLine1`.
+
+## Customizing branch ordering
+In Mermaid, by default the branches are shown in the order of their defintion or appearance in the diagram code.
+
+Sometimes you may want to customize the order of the branches. You can do this by using the `order` keyword next the branch definiton. You can set it to a positive number.
+
+Mermaid follows the given precendence order of the `order` keyword.
+- Main branch is always shown first as it has default order value of `0`. (unless its order is modified and changed from `0` using the `mainBranchOrder` keyword in the config)
+- Next, All branches without an `order` are shown in the order of their appearance in the diagram code.
+- Next, All branches with an `order` are shown in the order of their `order` value.
+
+To fully control the order of all the branches, you must define `order` for all the branches.
+
+Usage example:
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true}} }%%
+      gitGraph
+      commit
+      branch test1 order: 3
+      branch test2 order: 2
+      branch test3 order: 1
+
+ ```
+Look at the diagram, all the branches are following the order defined.
+
+
+Usage example:
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel':true,'mainBranchOrder': 2}} }%%
+      gitGraph
+      commit
+      branch test1 order: 3
+      branch test2
+      branch test3
+      branch test4 order: 1
+
+ ```
+Look at the diagram, here, all the branches without a specified order are drawn in their order of definition.
+Then, `test4` branch is drawn becuase the order of `1`.
+Then, `main` branch is drawn becuase the order of `2`.
+And, lastly `test1`is drawn becuase the order of `3`.
+
+NOTE: Becuase we have overriden the `mainBranchOrder` to `2`, the `main` branch is not drawn in the begining, instead follows the ordering.
+
+
+
+Here, we have changed the default main branch name to `MetroLine1`.
 
 ## Themes
 Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](./theming.md).
