@@ -46,6 +46,7 @@ accDescr\s*"{"\s*                                               { this.begin("ac
 "HIGHLIGHT"                             return 'HIGHLIGHT';
 "tag:"                                  return 'COMMIT_TAG';
 "branch"                                return 'BRANCH';
+"order:"                                return 'ORDER';
 "merge"                                 return 'MERGE';
 // "reset"                                 return 'RESET';
 "checkout"                              return 'CHECKOUT';
@@ -59,6 +60,7 @@ accDescr\s*"{"\s*                                               { this.begin("ac
 ["]                                     this.begin("string");
 <string>["]                             this.popState();
 <string>[^"]*                           return 'STR';
+[0-9]+                                  return 'NUM';
 [a-zA-Z][-_\./a-zA-Z0-9]*[-_a-zA-Z0-9]  return 'ID';
 <<EOF>>                                 return 'EOF';
 
@@ -103,9 +105,13 @@ statement
     | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
-    | BRANCH ID {yy.branch($2)}
+    | branchStatement
     | CHECKOUT ID {yy.checkout($2)}
     // | RESET reset_arg {yy.reset($2)}
+    ;
+branchStatement
+    : BRANCH ID {yy.branch($2)}
+    | BRANCH ID ORDER NUM {yy.branch($2, $4)}
     ;
 
 mergeStatement
