@@ -77,7 +77,7 @@ Bob-->Alice: I am good thanks!`;
 
     expect(parser.yy.getAccDescription()).toBe('');
     const messages = parser.yy.getMessages();
-    const title = parser.yy.getTitle();
+    const title = parser.yy.getDiagramTitle();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
@@ -100,7 +100,7 @@ Bob-->Alice: I am good thanks!`;
 
     expect(parser.yy.getAccDescription()).toBe('');
     const messages = parser.yy.getMessages();
-    const title = parser.yy.getTitle();
+    const title = parser.yy.getDiagramTitle();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
@@ -111,12 +111,14 @@ Bob-->Alice: I am good thanks!`;
   it('it should handle a sequenceDiagram definition with a accessibility title and description (accDescr)', function () {
     const str = `
 sequenceDiagram
+title: Diagram Title
 accTitle: This is the title
 accDescr: Accessibility Description
 Alice->Bob:Hello Bob, how are you?
 `;
 
     mermaidAPI.parse(str);
+    expect(parser.yy.getDiagramTitle()).toBe('Diagram Title');
     expect(parser.yy.getTitle()).toBe('This is the title');
     expect(parser.yy.getAccDescription()).toBe('Accessibility Description');
     const messages = parser.yy.getMessages();
