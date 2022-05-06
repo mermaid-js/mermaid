@@ -406,7 +406,7 @@ const setupToolTips = function (element) {
 
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
-        .html(el.attr('title'))
+        .text(el.attr('title'))
         .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
         .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
       el.classed('hover', true);

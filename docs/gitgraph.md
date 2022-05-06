@@ -36,7 +36,7 @@ Mermaid syntax for Gitgraph is very straight-forward and simple. It follows a de
 
 First thing you do is to declare your diagram type using the **gitgraph** keyword. This `gitgraph` keyword, tells Mermaid that you wish to draw a gitgraph, and parse the diagram code accordingly.
 
-Each gitgraph, is initialized with ***main*** branch. So unless you create a different branch, by-default the commits will go to the main branch. This is driven with how git works, where in the begging you always start with the main branch (formerly called as ***master*** branch). And by-default, `main` branch is set as your ***current branch***.
+Each gitgraph, is initialized with ***main*** branch. So unless you create a different branch, by-default the commits will go to the main branch. This is driven with how git works, where in the beginning you always start with the main branch (formerly called as ***master*** branch). And by-default, `main` branch is set as your ***current branch***.
 
 
 You make use of ***commit*** keyword to register a commit on the current branch. Let see how this works:
@@ -48,7 +48,7 @@ A simple gitgraph showing three commits on the default (***main***) branch:
        commit
        commit
 ```
-If you look closely at the previous example, you can see the default branch `main` along with three commits. Also, notice, the by-default each commit has been given a unique & random Id. What if you would want to give your own custom ID to a commit? Yes, it is possible to do that with Mermaid.
+If you look closely at the previous example, you can see the default branch `main` along with three commits. Also, notice that by default each commit has been given a unique & random Id. What if you would want to give your own custom ID to a commit? Yes, it is possible to do that with Mermaid.
 
 ### Adding custom commit id
 
@@ -63,7 +63,7 @@ Let us see how this works with the help of the following diagram:
        commit id: "Gamma"
 ```
 
-In this example, we have given our custom id's to the commits.
+In this example, we have given our custom IDs to the commits.
 
 ### Modifying commit type
 
@@ -88,7 +88,7 @@ Let us see how these different commit type look with the help of the following d
        commit
 ```
 
-In this example, we have specified different types to each commit. Also, see how we have clubbed both `id` and `type` together at the time of declaring our commits.
+In this example, we have specified different types to each commit. Also, see how we have included both `id` and `type` together at the time of declaring our commits.
 
 ### Adding Tags
 
@@ -178,7 +178,7 @@ Let see modify our previous example to merge our two branches:
 ```
 In this example, see how we started with default `main` branch, and pushed to commits on that.
 Then we created the `develop` branch, and all three commits afterwards are put on the `develop` branch as it became the current branch.
-After this we made use of the `checkout` keyword to set the current branch as `main`, and all commit that follow are registered against the current branch, i.e. `main`.
+After this we made use of the `checkout` keyword to set the current branch as `main`, and all commits that follow are registered against the current branch, i.e. `main`.
 After this we merge the `develop` branch onto the current branch `main`, resulting in a merge commit.
 Since the current branch at this point is still `main`, the last two commits are registered against that.
 
@@ -317,7 +317,7 @@ Usage example:
         commit id:"Detroit"
         commit type:REVERSE id:"SanFrancisco"
  ```
-Looks at the imaginary rail road map created using these Mermaid. Here, we have changed the default main branch name to `MetroLine1`.
+Look at the imaginary railroad map created using Mermaid. Here, we have changed the default main branch name to `MetroLine1`.
 
 ## Themes
 Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](./theming.md).
@@ -735,7 +735,7 @@ Now let's override the default values for the `git0` to `git3` variables:
        commit
 
 ```
-Se how the highlight commit color on the first branch is changed to the value specified in the theme variable `gitInv0`.
+See how the highlight commit color on the first branch is changed to the value specified in the theme variable `gitInv0`.
 
 
 

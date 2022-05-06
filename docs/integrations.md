@@ -6,7 +6,10 @@ They also serve as proof of concept, for the variety of things that can be built
 
 
 ## Productivity
-
+- [GitHub](https://github.com) (**Native support**)
+  - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) (**Native support**)
+  - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
+  - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) (**Native support**)
 - [Gitea](https://gitea.io) (**Native support**)
 - [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) (**Native support**)
@@ -14,10 +17,6 @@ They also serve as proof of concept, for the variety of things that can be built
 - [Joplin](https://joplinapp.org) (**Native support**)
 - [Notion](https://notion.so) (**Native support**)
 - [Observable](https://observablehq.com/@observablehq/mermaid) (**Native support**)
-- [GitHub](https://github.com) (**Native support**)
-  - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
-  - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
-  - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) (**Native support**)
 - [GitBook](http://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
