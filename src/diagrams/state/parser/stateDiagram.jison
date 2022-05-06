@@ -20,8 +20,9 @@
 %x STATE_ID
 %x ALIAS
 %x SCALE
-%x title
-%x accDescription
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %x NOTE
 %x NOTE_ID
 %x NOTE_TEXT
@@ -60,10 +61,13 @@
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
 
-title                                                           { this.begin("title");return 'title'; }
-<title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
-accDescription                                                  { this.begin("accDescription");return 'accDescription'; }
-<accDescription>(?!\n|;|#)*[^\n]*                               { this.popState(); return "description_value"; }
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 
 <INITIAL,struct>"state"\s+            { /*console.log('Starting STATE zxzx'+yy.getDirection());*/this.pushState('STATE'); }
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
@@ -200,9 +204,9 @@ statement
     | note NOTE_TEXT AS ID
   	| directive
     | direction
-    | title title_value  { $$=$2.trim();yy.setTitle($$); }
-    | accDescription description_value  { $$=$2.trim();yy.setAccDescription($$); }
-    ;
+    | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    ;
 
 directive
     : openDirective typeDirective closeDirective

@@ -2,14 +2,18 @@
 
 %options case-insensitive
 %x open_directive type_directive arg_directive block
-%x title
-%x accDescription
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 
 %%
-title                                                           { this.begin("title");return 'title'; }
-<title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
-accDescription                                                  { this.begin("accDescription");return 'accDescription'; }
-<accDescription>(?!\n|;|#)*[^\n]*                               { this.popState(); return "description_value"; }
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 <open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
@@ -91,7 +95,9 @@ statement
     | entityName BLOCK_START BLOCK_STOP { yy.addEntity($1); }
     | entityName { yy.addEntity($1); }
     | title title_value  { $$=$2.trim();yy.setTitle($$); }
-    | accDescription description_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
     ;
 
 entityName

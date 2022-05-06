@@ -72,22 +72,38 @@ describe('when parsing requirement diagram it...', function () {
     expect(Object.keys(requirementDb.getRelationships()).length).toBe(0);
   });
 
-  it('will use a title and accDescription', function () {
+  it('will use a accessibility title and description (accDescr)', function () {
     const expectedTitle = 'test title';
     const expectedAccDescription = 'my chart description';
-    const expectedDocRef = 'test_ref';
 
-    let lines = [
-      `requirementDiagram`,
-      ``,
-      `title ${expectedTitle}`,
-      `accDescription ${expectedAccDescription}`,
-      `element test_name {`,
-      `type: test_type`,
-      `docref: test_ref`,
-      `}`,
-    ];
-    let doc = lines.join('\n');
+    const doc = `requirementDiagram
+      accTitle: ${expectedTitle}
+      accDescr: ${expectedAccDescription}
+      element test_name {
+      type: test_type
+      docref: test_ref
+      }`;
+
+    reqDiagram.parser.parse(doc);
+
+    expect(requirementDb.getTitle()).toBe(expectedTitle);
+    expect(requirementDb.getAccDescription()).toBe(expectedAccDescription);
+  });
+
+  it('will use a accessibility title and multiline description (accDescr)', function () {
+    const expectedTitle = 'test title';
+    const expectedAccDescription = `my chart description
+line 2`;
+
+    const doc = `requirementDiagram
+      accTitle: ${expectedTitle}
+      accDescr {
+        ${expectedAccDescription}
+      }
+      element test_name {
+      type: test_type
+      docref: test_ref
+      }`;
 
     reqDiagram.parser.parse(doc);
 

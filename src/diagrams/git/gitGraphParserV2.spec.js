@@ -656,4 +656,29 @@ describe('when parsing a gitGraph', function () {
       );
     }
   });
+  describe('accessibility', () => {
+    it('should handle a title and a description (accDescr)', () => {
+      const str = `gitGraph:
+      accTitle: This is a title
+      accDescr: This is a description
+    commit
+    `;
+      parser.parse(str);
+      expect(parser.yy.getTitle()).toBe('This is a title');
+      expect(parser.yy.getAccDescription()).toBe('This is a description');
+    });
+    it('should handle a title and a multiline description (accDescr)', () => {
+      const str = `gitGraph:
+      accTitle: This is a title
+      accDescr {
+        This is a description
+        using multiple lines
+      }
+    commit
+    `;
+      parser.parse(str);
+      expect(parser.yy.getTitle()).toBe('This is a title');
+      expect(parser.yy.getAccDescription()).toBe('This is a description\nusing multiple lines');
+    });
+  });
 });

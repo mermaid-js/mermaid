@@ -4,6 +4,13 @@ import * as configApi from '../../config';
 import common from '../common/common';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 
@@ -77,6 +84,7 @@ export const clear = function () {
   classes = {};
   funs = [];
   funs.push(setupToolTips);
+  commonClear();
 };
 
 export const getClass = function (id) {
@@ -134,6 +142,7 @@ export const addAnnotation = function (className, annotation) {
  * @public
  */
 export const addMember = function (className, member) {
+  console.log(className, member);
   const validatedClassName = splitClassNameAndType(className).className;
   const theClass = classes[validatedClassName];
 
@@ -343,28 +352,6 @@ let direction = 'TB';
 const getDirection = () => direction;
 const setDirection = (dir) => {
   direction = dir;
-};
-
-let title = '';
-
-export const setTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
-  title = sanitizedText;
-};
-
-export const getTitle = function () {
-  return title;
-};
-
-let accDescription = '';
-
-export const setAccDescription = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
-  accDescription = sanitizedText;
-};
-
-export const getAccDescription = function () {
-  return accDescription;
 };
 
 export default {

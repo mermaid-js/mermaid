@@ -5,6 +5,13 @@ import * as configApi from '../../config';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let dateFormat = '';
 let axisFormat = '';
@@ -52,6 +59,7 @@ export const clear = function () {
   topAxis = false;
   lastOrder = 0;
   links = {};
+  commonClear();
 };
 
 export const setAxisFormat = function (txt) {
@@ -111,22 +119,6 @@ export const getExcludes = function () {
 
 export const getLinks = function () {
   return links;
-};
-
-export const setTitle = function (txt) {
-  title = sanitizeText(txt);
-};
-
-export const getTitle = function () {
-  return title;
-};
-
-export const setAccDescription = function (txt) {
-  accDescription = sanitizeText(txt);
-};
-
-export const getAccDescription = function () {
-  return accDescription;
 };
 
 export const addSection = function (txt) {

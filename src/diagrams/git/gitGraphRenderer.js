@@ -4,6 +4,8 @@ import db from './gitGraphAst';
 import gitGraphParser from './parser/gitGraph';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
+import addSVGAccessibilityFields from '../../accessibility';
+
 let allCommitsDict = {};
 let branchNum;
 
@@ -479,6 +481,9 @@ export const draw = function (txt, id, ver) {
   });
 
   const diagram = select(`[id="${id}"]`);
+
+  // Adds title and description to the flow chart
+  addSVGAccessibilityFields(parser.yy, diagram, id);
 
   drawCommits(diagram, allCommitsDict, false);
   if (gitGraphConfig.showBranches) {

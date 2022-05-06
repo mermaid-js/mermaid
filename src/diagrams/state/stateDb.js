@@ -3,6 +3,13 @@ import { generateId } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import * as configApi from '../../config';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
 
@@ -120,22 +127,6 @@ let endCnt = 0; // eslint-disable-line
 let title = 'State diagram';
 let description = '';
 
-const setTitle = function (txt) {
-  title = sanitizeText(txt);
-};
-
-const getTitle = function () {
-  return title;
-};
-
-const setAccDescription = function (txt) {
-  description = sanitizeText(txt);
-};
-
-const getAccDescription = function () {
-  return description;
-};
-
 /**
  * Function called by parser when a node definition has been found.
  *
@@ -191,6 +182,7 @@ export const clear = function () {
   startCnt = 0;
   endCnt = 0; // eslint-disable-line
   classes = [];
+  commonClear();
 };
 
 export const getState = function (id) {

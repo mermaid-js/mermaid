@@ -157,10 +157,10 @@ describe('parsing a flow chart', function () {
     expect(vertices['1'].id).toBe('1');
   });
 
-  it('should add title and description to flow chart', function () {
+  it('should add accTitle and accDescr to flow chart', function () {
     const flowChart = `graph LR
-      title Big decisions
-      accDescription Flow chart of the decision making process
+      accTitle: Big decisions
+      accDescr: Flow chart of the decision making process
       A[Hard] -->|Text| B(Round)
       B --> C{Decision}
       C -->|One| D[Result 1]
@@ -170,5 +170,28 @@ describe('parsing a flow chart', function () {
     flow.parser.parse(flowChart);
     expect(flow.parser.yy.getTitle()).toBe('Big decisions');
     expect(flow.parser.yy.getAccDescription()).toBe('Flow chart of the decision making process');
+  });
+  it('should add accTitle and a multi line accDescr to flow chart', function () {
+    const flowChart = `graph LR
+      accTitle: Big decisions
+
+      accDescr {
+        Flow chart of the decision making process
+        with a second line
+      }
+
+      A[Hard] -->|Text| B(Round)
+      B --> C{Decision}
+      C -->|One| D[Result 1]
+      C -->|Two| E[Result 2]
+`;
+
+    flow.parser.parse(flowChart);
+    expect(flow.parser.yy.getTitle()).toBe('Big decisions');
+    console.log(flow.parser.yy.getAccDescription());
+    expect(flow.parser.yy.getAccDescription()).toBe(
+      `Flow chart of the decision making process
+with a second line`
+    );
   });
 });

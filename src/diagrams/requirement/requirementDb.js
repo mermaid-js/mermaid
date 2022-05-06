@@ -2,6 +2,13 @@ import * as configApi from '../../config';
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let relations = [];
 let latestRequirement = {};
@@ -137,24 +144,7 @@ const clear = () => {
   requirements = {};
   latestElement = {};
   elements = {};
-};
-
-export const setTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
-  title = sanitizedText;
-};
-
-export const getTitle = function () {
-  return title;
-};
-
-export const setAccDescription = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
-  accDescription = sanitizedText;
-};
-
-export const getAccDescription = function () {
-  return accDescription;
+  commonClear();
 };
 
 export default {

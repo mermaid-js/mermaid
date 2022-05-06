@@ -7,8 +7,9 @@
 /* lexical grammar */
 %lex
 %x string
-%x title
-%x accDescription
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %x dir
 %x vertex
 %x click
@@ -28,10 +29,14 @@
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%\%(?!\{)[^\n]*                                                /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
-title                                                           { this.begin("title");return 'title'; }
-<title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
-accDescription                                                  { this.begin("accDescription");return 'accDescription'; }
-<accDescription>(?!\n|;|#)*[^\n]*                               { this.popState(); return "description_value"; }
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
+// <acc_descr_multiline>.*[^\n]*                    {  return "acc_descr_line"}
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";
@@ -343,26 +348,12 @@ statement
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$3,undefined);}
     | direction
-    | title title_value  { $$=$2.trim();yy.setTitle($$); }
-    | accDescription description_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
     ;
 
 separator: NEWLINE | SEMI | EOF ;
-
-// verticeStatement:
-//     vertex link vertex
-//         { yy.addLink($1,$3,$2);$$ = [$1,$3];}
-//     | vertex link vertex STYLE_SEPARATOR idString
-//        { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
-//     | vertex STYLE_SEPARATOR idString link vertex
-//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
-//     | vertex STYLE_SEPARATOR idString link vertex STYLE_SEPARATOR idString
-//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}
-//     |vertex
-//         {$$ = [$1];}
-//     |vertex STYLE_SEPARATOR idString
-//         {$$ = [$1];yy.setClass($1,$3)}
-//    ;
 
 
 verticeStatement: verticeStatement link node

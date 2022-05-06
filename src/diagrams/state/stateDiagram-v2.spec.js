@@ -29,7 +29,7 @@ describe('state diagram, ', function () {
     });
     it('simple with accDescription', function () {
       const str = `stateDiagram-v2\n
-      accDescription a simple description of the diagram
+      accDescr: a simple description of the diagram
       State1 : this is another string
       [*] --> State1
       State1 --> [*]
@@ -41,7 +41,7 @@ describe('state diagram, ', function () {
     });
     it('simple with title', function () {
       const str = `stateDiagram-v2\n
-      title a simple title of the diagram
+      accTitle: a simple title of the diagram
       State1 : this is another string
       [*] --> State1
       State1 --> [*]

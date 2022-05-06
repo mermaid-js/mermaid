@@ -18,7 +18,9 @@
 
 // Directive states
 %x open_directive type_directive arg_directive
-
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %%
 
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
@@ -59,7 +61,13 @@
 "deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
 "title"\s[^#\n;]+                                               return 'title';
 "title:"\s[^#\n;]+                                              return 'legacy_title';
-"accDescription"\s[^#\n;]+       								return 'accDescription';
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 "sequenceDiagram"                                               return 'SD';
 "autonumber"                                                    return 'autonumber';
 "off"															return 'off';
@@ -130,7 +138,9 @@ statement
 	| details_statement 'NEWLINE'
 	| title {yy.setTitle($1.substring(6));$$=$1.substring(6);}
 	| legacy_title {yy.setTitle($1.substring(7));$$=$1.substring(7);}
-	| accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);}
+  | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+  | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+  | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
 	| 'loop' restOfLine document end
 	{
 		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});

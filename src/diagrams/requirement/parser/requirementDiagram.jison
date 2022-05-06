@@ -13,7 +13,9 @@
 %x type_directive
 %x arg_directive
 %x close_directive
-
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 <open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
@@ -22,8 +24,13 @@
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 
 "title"\s[^#\n;]+       return 'title';
-"accDescription"\s[^#\n;]+       return 'accDescription';
-
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 (\r?\n)+                               return 'NEWLINE';
 \s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
@@ -94,9 +101,10 @@ start
 directive
   : openDirective typeDirective closeDirective
   | openDirective typeDirective ':' argDirective closeDirective
-  | title  {yy.setTitle($1.substring(6));$$=$1.substring(6);}
-	| accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);};
-
+  | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+  | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+  | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
+  ;
 openDirective
   : open_directive { yy.parseDirective('%%{', 'open_directive'); };
 

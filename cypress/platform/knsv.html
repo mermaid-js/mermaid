@@ -31,10 +31,23 @@
 
 
       <div class="mermaid" style="width: 50%;">
-      %%{init: { 'logLevel': 'debug', 'theme': 'base', 'sequence': {'hideUnusedParticipants': true, 'showCommitLabel':true,'mainBranchName': 'MetroLine1'}} }%%
+graph LR
+      subgraph id1 [title is set]
+        A-->B
+      end
+      subgraph id2 [title]
+        E
+      end
 
-        sequenceDiagram
-        participant a
+      B-->C
+
+      subgraph id3
+      C-->D
+      end
+      class id3,id2,A redBg;
+      class id3,A whiteTxt;
+      classDef redBg fill:#622;
+      classDef whiteTxt color: white;
         </div>
       <div class="mermaid2" style="width: 100%;">
 journey

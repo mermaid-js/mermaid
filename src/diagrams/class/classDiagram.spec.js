@@ -543,19 +543,32 @@ foo()
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
-    it('should have a title and accDescription', function () {
-      const str =
-        'classDiagram\n' +
-        'class Car~T~\n' +
-        'title My Title\n' +
-        'accDescription My Description\n';
-      'Car : -List~Wheel~ wheels\n' +
-        'Car : +setWheels(List~Wheel~ wheels)\n' +
-        'Car : +getWheels() List~Wheel~';
+    it('should handle accTitle and accDescr', function () {
+      const str = `classDiagram
+            accTitle: My Title
+            accDescr: My Description
+
+            Class01 <|-- Class02
+            `;
 
       parser.parse(str);
       expect(parser.yy.getTitle()).toBe('My Title');
       expect(parser.yy.getAccDescription()).toBe('My Description');
+    });
+    it('should handle accTitle and multiline accDescr', function () {
+      const str = `classDiagram
+            accTitle: My Title
+            accDescr {
+              This is mu multi
+              line description
+            }
+
+            Class01 <|-- Class02
+            `;
+
+      parser.parse(str);
+      expect(parser.yy.getTitle()).toBe('My Title');
+      expect(parser.yy.getAccDescription()).toBe('This is mu multi\nline description');
     });
 
     it('should handle relation definitions AGGREGATION and dotted line', function () {
