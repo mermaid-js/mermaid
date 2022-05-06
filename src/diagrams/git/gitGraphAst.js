@@ -8,6 +8,8 @@ import common from '../common/common';
 let mainBranchName = getConfig().gitGraph.mainBranchName;
 let commits = {};
 let head = null;
+let branchesConfig = {};
+branchesConfig[mainBranchName] = { name: mainBranchName, order: 0 };
 let branches = {};
 branches[mainBranchName] = head;
 let curBranch = mainBranchName;
@@ -113,10 +115,11 @@ export const commit = function (msg, id, type, tag) {
   log.debug('in pushCommit ' + commit.id);
 };
 
-export const branch = function (name) {
+export const branch = function (name, order) {
   name = common.sanitizeText(name, configApi.getConfig());
   if (typeof branches[name] === 'undefined') {
     branches[name] = head != null ? head.id : null;
+    branchesConfig[name] = { name, order: order ? parseInt(order, 10) : null };
     checkout(name);
     log.debug('in createBranch');
   } else {
@@ -324,17 +327,25 @@ export const clear = function () {
   let mainBranch = getConfig().gitGraph.mainBranchName;
   branches = {};
   branches[mainBranch] = null;
+  branchesConfig = {};
+  branchesConfig[mainBranch] = { name: mainBranch, order: 0 };
   curBranch = mainBranch;
   seq = 0;
 };
 
 export const getBranchesAsObjArray = function () {
-  const branchArr = [];
-  for (let branch in branches) {
-    // branchArr.push({ name: branch, commit: commits[branches[branch]] });
-    branchArr.push({ name: branch });
-  }
-  return branchArr;
+  const branchesArray = Object.values(branchesConfig)
+    .map((branchConfig, i) => {
+      if (branchConfig.order !== null) return branchConfig;
+      return {
+        ...branchConfig,
+        order: parseFloat(`0.${i}`, 10),
+      };
+    })
+    .sort((a, b) => a.order - b.order)
+    .map(({ name }) => ({ name }));
+
+  return branchesArray;
 };
 
 export const getBranches = function () {
