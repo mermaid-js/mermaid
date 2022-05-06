@@ -52,6 +52,15 @@ const clear = function () {
   commonClear();
 };
 
+export const setPieTitle = function (txt) {
+  let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
+  title = sanitizedText;
+};
+
+export const getPieTitle = function () {
+  return title;
+};
+
 export default {
   parseDirective,
   getConfig: () => configApi.getConfig().pie,
@@ -61,6 +70,8 @@ export default {
   clear,
   setTitle,
   getTitle,
+  setPieTitle,
+  getPieTitle,
   setShowData,
   getShowData,
   getAccDescription,

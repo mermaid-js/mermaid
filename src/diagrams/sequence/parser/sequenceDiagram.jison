@@ -136,8 +136,8 @@ statement
 	| link_statement 'NEWLINE'
 	| properties_statement 'NEWLINE'
 	| details_statement 'NEWLINE'
-	| title {yy.setTitle($1.substring(6));$$=$1.substring(6);}
-	| legacy_title {yy.setTitle($1.substring(7));$$=$1.substring(7);}
+	| title {yy.setDiagramTitle($1.substring(6));$$=$1.substring(6);}
+	| legacy_title {yy.setDiagramTitle($1.substring(7));$$=$1.substring(7);}
   | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
   | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }

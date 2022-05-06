@@ -298,8 +298,8 @@ describe('Gantt diagram', () => {
     renderGraph(
       `
       gantt
-      title ${expectedTitle}
-      accDescription ${expectedAccDescription}
+      accTitle: ${expectedTitle}
+      accDescr: ${expectedAccDescription}
       dateFormat  YYYY-MM-DD
       section Section
       A task :a1, 2014-01-01, 30d

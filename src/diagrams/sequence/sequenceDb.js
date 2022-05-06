@@ -14,7 +14,7 @@ let prevActor = undefined;
 let actors = {};
 let messages = [];
 const notes = [];
-let title = '';
+let diagramTitle = '';
 let description = '';
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
@@ -144,6 +144,7 @@ export const clear = function () {
   actors = {};
   messages = [];
   sequenceNumbersEnabled = false;
+  diagramTitle = '';
   commonClear();
 };
 
@@ -330,6 +331,15 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
+export const setDiagramTitle = function (txt) {
+  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  diagramTitle = sanitizedText;
+};
+
+export const getDiagramTitle = function () {
+  return diagramTitle;
+};
+
 export const apply = function (param) {
   if (param instanceof Array) {
     param.forEach(function (item) {
@@ -441,6 +451,7 @@ export default {
   getActorKeys,
   getActorProperty,
   getTitle,
+  getDiagramTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
   clear,
@@ -450,6 +461,7 @@ export default {
   PLACEMENT,
   addNote,
   setTitle,
+  setDiagramTitle,
   apply,
   setAccDescription,
   getAccDescription,

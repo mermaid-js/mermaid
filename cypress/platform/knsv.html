@@ -31,23 +31,24 @@
 
 
       <div class="mermaid" style="width: 50%;">
-graph LR
-      subgraph id1 [title is set]
-        A-->B
-      end
-      subgraph id2 [title]
-        E
-      end
+        sequenceDiagram
+          accTitle: This is a title
+          accDescr: This is a description
 
-      B-->C
-
-      subgraph id3
-      C-->D
-      end
-      class id3,id2,A redBg;
-      class id3,A whiteTxt;
-      classDef redBg fill:#622;
-      classDef whiteTxt color: white;
+          autonumber
+          par Action 1
+            Alice->>John: Hello John, how are you?
+          and Action 2
+            Alice->>Bob: Hello Bob, how are you?
+          end
+          Alice->>+John: Hello John, how are you?
+          Alice->>+John: John, can you hear me?
+          John-->>-Alice: Hi Alice, I can hear you!
+          Note right of John: John is perceptive
+          John-->>-Alice: I feel great!
+              loop Every minute
+                John-->Alice: Great!
+            end
         </div>
       <div class="mermaid2" style="width: 100%;">
 journey

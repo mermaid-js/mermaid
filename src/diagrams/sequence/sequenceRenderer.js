@@ -612,7 +612,7 @@ export const draw = function (text, id) {
   const actors = parser.yy.getActors();
   const actorKeys = parser.yy.getActorKeys();
   const messages = parser.yy.getMessages();
-  const title = parser.yy.getTitle();
+  const title = parser.yy.getDiagramTitle();
 
   const maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages);
   conf.height = calculateActorMargins(actors, maxMessageWidthPerActor);
