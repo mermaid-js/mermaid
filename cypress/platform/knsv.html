@@ -31,24 +31,11 @@
 
 
       <div class="mermaid" style="width: 50%;">
-        sequenceDiagram
-          accTitle: This is a title
-          accDescr: This is a description
+graph TD
+    A -->|000| B
+    B -->|111| C
 
-          autonumber
-          par Action 1
-            Alice->>John: Hello John, how are you?
-          and Action 2
-            Alice->>Bob: Hello Bob, how are you?
-          end
-          Alice->>+John: Hello John, how are you?
-          Alice->>+John: John, can you hear me?
-          John-->>-Alice: Hi Alice, I can hear you!
-          Note right of John: John is perceptive
-          John-->>-Alice: I feel great!
-              loop Every minute
-                John-->Alice: Great!
-            end
+    linkStyle 1 stroke:#ff3,stroke-width:4px,color:red;
         </div>
       <div class="mermaid2" style="width: 100%;">
 journey
@@ -216,10 +203,10 @@ class Class10 {
     nodeSpacing: 10,
     curve: 'cardinal',
     htmlLabels: true,
-    defaultRenderer: 'dagre-d3',
+    // defaultRenderer: 'dagre-d3',
   },
   class: {
-    defaultRenderer: 'dagre-d3',
+    // defaultRenderer: 'dagre-d3',
     htmlLabels: true,
   },
         // gantt: { axisFormat: '%m/%d/%Y' },
@@ -236,7 +223,6 @@ class Class10 {
         state: {
           nodeSpacing: 50,
           rankSpacing: 50,
-          defaultRenderer: 'dagre-d3',
         },
         logLevel: 0,
         fontSize: 18,
