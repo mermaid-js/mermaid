@@ -63,99 +63,120 @@ import getStyles from './styles';
 import theme from './themes';
 import utils, { directiveSanitizer, assignWithDepth, sanitizeCss } from './utils';
 import DOMPurify from 'dompurify';
+import mermaid from './mermaid';
 
 /**
  * @param text
  * @returns {any}
  */
 function parse(text) {
-  text = text + '\n';
-  const cnf = configApi.getConfig();
-  const graphInit = utils.detectInit(text, cnf);
-  if (graphInit) {
-    reinitialize(graphInit);
-    log.info('reinit ', graphInit);
-  }
-  const graphType = utils.detectType(text, cnf);
-  let parser;
+  var parseEncounteredException = false;
+  try {
+    text = text + '\n';
+    const cnf = configApi.getConfig();
+    const graphInit = utils.detectInit(text, cnf);
+    if (graphInit) {
+      reinitialize(graphInit);
+      log.info('reinit ', graphInit);
+    }
+    const graphType = utils.detectType(text, cnf);
+    let parser;
 
-  log.debug('Type ' + graphType);
-  switch (graphType) {
-    case 'gitGraph':
-      gitGraphAst.clear();
-      parser = gitGraphParser;
-      parser.parser.yy = gitGraphAst;
-      break;
-    case 'flowchart':
-      flowDb.clear();
-      parser = flowParser;
-      parser.parser.yy = flowDb;
-      break;
-    case 'flowchart-v2':
-      flowDb.clear();
-      parser = flowParser;
-      parser.parser.yy = flowDb;
-      break;
-    case 'sequence':
-      sequenceDb.clear();
-      parser = sequenceParser;
-      parser.parser.yy = sequenceDb;
-      break;
-    case 'gantt':
-      parser = ganttParser;
-      parser.parser.yy = ganttDb;
-      break;
-    case 'class':
-      parser = classParser;
-      parser.parser.yy = classDb;
-      break;
-    case 'classDiagram':
-      parser = classParser;
-      parser.parser.yy = classDb;
-      break;
-    case 'state':
-      parser = stateParser;
-      parser.parser.yy = stateDb;
-      break;
-    case 'stateDiagram':
-      parser = stateParser;
-      parser.parser.yy = stateDb;
-      break;
-    case 'info':
-      log.debug('info info info');
-      parser = infoParser;
-      parser.parser.yy = infoDb;
-      break;
-    case 'pie':
-      log.debug('pie');
-      parser = pieParser;
-      parser.parser.yy = pieDb;
-      break;
-    case 'er':
-      log.debug('er');
-      parser = erParser;
-      parser.parser.yy = erDb;
-      break;
-    case 'journey':
-      log.debug('Journey');
-      parser = journeyParser;
-      parser.parser.yy = journeyDb;
-      break;
-    case 'requirement':
-    case 'requirementDiagram':
-      log.debug('RequirementDiagram');
-      parser = requirementParser;
-      parser.parser.yy = requirementDb;
-      break;
-  }
-  parser.parser.yy.graphType = graphType;
-  parser.parser.yy.parseError = (str, hash) => {
-    const error = { str, hash };
-    throw error;
-  };
+    log.debug('Type ' + graphType);
+    switch (graphType) {
+      case 'gitGraph':
+        gitGraphAst.clear();
+        parser = gitGraphParser;
+        parser.parser.yy = gitGraphAst;
+        break;
+      case 'flowchart':
+        flowDb.clear();
+        parser = flowParser;
+        parser.parser.yy = flowDb;
+        break;
+      case 'flowchart-v2':
+        flowDb.clear();
+        parser = flowParser;
+        parser.parser.yy = flowDb;
+        break;
+      case 'sequence':
+        sequenceDb.clear();
+        parser = sequenceParser;
+        parser.parser.yy = sequenceDb;
+        break;
+      case 'gantt':
+        parser = ganttParser;
+        parser.parser.yy = ganttDb;
+        break;
+      case 'class':
+        parser = classParser;
+        parser.parser.yy = classDb;
+        break;
+      case 'classDiagram':
+        parser = classParser;
+        parser.parser.yy = classDb;
+        break;
+      case 'state':
+        parser = stateParser;
+        parser.parser.yy = stateDb;
+        break;
+      case 'stateDiagram':
+        parser = stateParser;
+        parser.parser.yy = stateDb;
+        break;
+      case 'info':
+        log.debug('info info info');
+        parser = infoParser;
+        parser.parser.yy = infoDb;
+        break;
+      case 'pie':
+        log.debug('pie');
+        parser = pieParser;
+        parser.parser.yy = pieDb;
+        break;
+      case 'er':
+        log.debug('er');
+        parser = erParser;
+        parser.parser.yy = erDb;
+        break;
+      case 'journey':
+        log.debug('Journey');
+        parser = journeyParser;
+        parser.parser.yy = journeyDb;
+        break;
+      case 'requirement':
+      case 'requirementDiagram':
+        log.debug('RequirementDiagram');
+        parser = requirementParser;
+        parser.parser.yy = requirementDb;
+        break;
+    }
+    parser.parser.yy.graphType = graphType;
+    parser.parser.yy.parseError = (str, hash) => {
+      const error = { str, hash };
+      throw error;
+    };
 
-  parser.parse(text);
-  return parser;
+    parser.parse(text);
+  } catch (error) {
+    parseEncounteredException = true;
+    // Is this the correct way to access mermiad's parseError()
+    // method ? (or global.mermaid.parseError()) ?
+    if (mermaid.parseError) {
+      if (error.str != undefined) {
+        // handle case where error string and hash were
+        // wrapped in object like`const error = { str, hash };`
+        mermaid.parseError(error.str, error.hash);
+      } else {
+        // assume it is just error string and pass it on
+        mermaid.parseError(error);
+      }
+    } else {
+      // No mermaid.parseError() handler defined, so re-throw it
+      throw error;
+    }
+  }
+  return !parseEncounteredException;
 }
 
 export const encodeEntities = function (text) {

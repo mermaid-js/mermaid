@@ -188,18 +188,38 @@ if (typeof document !== 'undefined') {
   );
 }
 
+/**
+ * ## setParseErrorHandler  Alternativet to directly setting parseError using:
+ *
+ * ```js
+ * mermaid.parseError = function(err,hash){=
+ *   forExampleDisplayErrorInGui(err);  // do something with the error
+ * };
+ * ```
+ *
+ * This is provided for environments where the mermaid object can't directly have a new member added
+ * to it (eg. dart interop wrapper). (Initially there is no parseError member of mermaid).
+ *
+ * @param {function (err, hash)} newParseErrorHandler New parseError() callback.
+ */
+const setParseErrorHandler = function (newParseErrorHandler) {
+  mermaid.parseError = newParseErrorHandler;
+};
+
 const mermaid = {
   startOnLoad: true,
   htmlLabels: true,
 
   mermaidAPI,
-  parse: mermaidAPI.parse,
-  render: mermaidAPI.render,
+  parse: mermaidAPI != undefined ? mermaidAPI.parse : null,
+  render: mermaidAPI != undefined ? mermaidAPI.render : null,
 
   init,
   initialize,
 
   contentLoaded,
+
+  setParseErrorHandler,
 };
 
 export default mermaid;
