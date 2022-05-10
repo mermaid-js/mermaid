@@ -42,16 +42,32 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
   if (!options.fontSize) {
     options.fontSize = '16px';
   }
-  cy.log(options);
+  const useAppli = Cypress.env('useAppli');
+  const branch = Cypress.env('codeBranch');
+  cy.log('Hello ' + useAppli ? 'Appli' : 'image-snapshot');
+  const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
+
+  if (useAppli) {
+    cy.eyesOpen({
+      appName: 'Mermaid-' + branch,
+      testName: name,
+      batchName: branch,
+    });
+  }
+
   const url = mermaidUrl(graphStr, options, api);
 
   cy.visit(url);
   if (validation) cy.get('svg').should(validation);
   cy.get('svg');
   // Default name to test title
-  const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
-  cy.matchImageSnapshot(name);
+  if (useAppli) {
+    cy.eyesCheckWindow('Click!');
+    cy.eyesClose();
+  } else {
+    cy.matchImageSnapshot(name);
+  }
 };
 
 export const renderGraph = (graphStr, options, api) => {
