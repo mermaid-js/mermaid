@@ -1,0 +1,1 @@
+import "@applitools/eyes-cypress"
