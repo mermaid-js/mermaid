@@ -241,7 +241,9 @@ export const addEdges = function (edges, g) {
 
       if (evaluate(getConfig().flowchart.htmlLabels)) {
         edgeData.labelType = 'html';
-        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text.replace(
+        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}" style="${
+          edgeData.labelStyle
+        }">${edge.text.replace(
           /fa[lrsb]?:fa-[\w-]+/g,
           (s) => `<i class='${s.replace(':', ' ')}'></i>`
         )}</span>`;
