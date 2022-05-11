@@ -402,7 +402,9 @@ click Shape2 call callbackFunction() "This is a tooltip for a callback"
 
 ```html
 <script>
-    var callbackFunction = function(){ alert('A callback was triggered'); }
+    var callbackFunction = function () {
+      alert('A callback was triggered');
+    };
 </script>
 ```
 
@@ -452,8 +454,14 @@ Beginners tip, a full example using interactive links in an html context:
   </div>
 
   <script>
-    var callback = function(){ alert('A callback was triggered'); }; var config = { startOnLoad:true,
-    securityLevel:'loose', }; mermaid.initialize(config);
+    var callback = function () {
+        alert('A callback was triggered');
+    };
+    var config = {
+        startOnLoad: true,
+        securityLevel: 'loose'
+    };
+    mermaid.initialize(config);
   </script>
 </body>
 ```

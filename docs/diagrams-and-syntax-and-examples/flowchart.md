@@ -414,7 +414,9 @@ Examples of tooltip usage below:
 
 ```html
 <script>
-  var callback = function(){ alert('A callback was triggered'); };
+  var callback = function () {
+    alert('A callback was triggered');
+  };
 </script>
 ```
 
@@ -462,8 +464,18 @@ Beginners tip, a full example using interactive links in a html context:
   </div>
 
   <script>
-    var callback = function(){ alert('A callback was triggered'); }; var config = { startOnLoad:true,
-    flowchart:{ useMaxWidth:true, htmlLabels:true, curve:'cardinal', }, securityLevel:'loose', };
+    var callback = function () {
+        alert('A callback was triggered');
+    };
+    var config = {
+        startOnLoad: true,
+        flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'cardinal'
+        }
+        securityLevel:'loose'
+    };
     mermaid.initialize(config);
   </script>
 </body>
@@ -565,14 +577,12 @@ below:
 
 **Example style**
 
-```html
-<style>
-    .cssClass > rect{
-        fill:#FF0000;
-        stroke:#FFFF00;
-        stroke-width:4px;
-    }
-</style>
+```css
+.cssClass > rect {
+    fill: #FF0000;
+    stroke: #FFFF00;
+    stroke-width: 4px;
+}
 ```
 
 **Example definition**
