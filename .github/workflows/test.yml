@@ -1,4 +1,4 @@
-name: Build
+name: Unit Tests
 
 on: [push, pull_request]
 
@@ -29,11 +29,6 @@ jobs:
       env:
         CYPRESS_CACHE_FOLDER: .cache/Cypress
 
-    - name: Run Build
-      run: yarn build
-
-    - name: Upload Build as Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: dist
-        path: dist
+    - name: Run Unit Tests
+      run: |
+        yarn ci --coverage

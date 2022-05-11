@@ -1,4 +1,4 @@
-name: Build
+name: Lint
 
 on: [push, pull_request]
 
@@ -6,7 +6,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -29,11 +29,5 @@ jobs:
       env:
         CYPRESS_CACHE_FOLDER: .cache/Cypress
 
-    - name: Run Build
-      run: yarn build
-
-    - name: Upload Build as Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: dist
-        path: dist
+    - name: Run Linting
+      run: yarn lint
