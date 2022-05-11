@@ -17,7 +17,7 @@
     />
     <!-- <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css"> -->
     <link rel="stylesheet" href="theme.css" />
-    <script src="//cdn.jsdelivr.net/npm/mermaid@8.13.0/dist/mermaid.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.0/dist/mermaid.min.js"></script>
     <!-- <script src="http://localhost:9000/mermaid.js"></script> -->
     <script>
       // prettier-ignore
@@ -96,7 +96,7 @@
         markdown: {
           renderer: {
             code: function (code, lang) {
-              if (lang.startsWith('mermaid') || lang === 'mmd') {
+              if (lang && (lang.startsWith('mermaid') || lang === 'mmd')) {
                 var resultingHTML = '';
 
                 if (lang === 'mmd' || lang === 'mermaid-example') {
@@ -163,5 +163,6 @@
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/ga.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-coffeescript.min.js"></script>
   </body>
 </html>

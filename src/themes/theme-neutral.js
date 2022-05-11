@@ -219,6 +219,41 @@ class Theme {
     this.relationColor = this.relationColor || this.lineColor;
     this.relationLabelBackground = this.relationLabelBackground || this.edgeLabelBackground;
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
+
+    /* git */
+    this.git0 = darken(this.pie1, 25) || this.primaryColor;
+    this.git1 = this.pie2 || this.secondaryColor;
+    this.git2 = this.pie3 || this.tertiaryColor;
+    this.git3 = this.pie4 || adjust(this.primaryColor, { h: -30 });
+    this.git4 = this.pie5 || adjust(this.primaryColor, { h: -60 });
+    this.git5 = this.pie6 || adjust(this.primaryColor, { h: -90 });
+    this.git6 = this.pie7 || adjust(this.primaryColor, { h: +60 });
+    this.git7 = this.pie8 || adjust(this.primaryColor, { h: +120 });
+
+    this.gitInv0 = this.gitInv0 || invert(this.git0);
+    this.gitInv1 = this.gitInv1 || invert(this.git1);
+    this.gitInv2 = this.gitInv2 || invert(this.git2);
+    this.gitInv3 = this.gitInv3 || invert(this.git3);
+    this.gitInv4 = this.gitInv4 || invert(this.git4);
+    this.gitInv5 = this.gitInv5 || invert(this.git5);
+    this.gitInv6 = this.gitInv6 || invert(this.git6);
+    this.gitInv7 = this.gitInv7 || invert(this.git7);
+
+    this.branchLabelColor = this.branchLabelColor || this.labelTextColor;
+    this.gitBranchLabel0 = this.branchLabelColor;
+    this.gitBranchLabel1 = 'white';
+    this.gitBranchLabel2 = this.branchLabelColor;
+    this.gitBranchLabel3 = 'white';
+    this.gitBranchLabel4 = this.branchLabelColor;
+    this.gitBranchLabel5 = this.branchLabelColor;
+    this.gitBranchLabel6 = this.branchLabelColor;
+    this.gitBranchLabel7 = this.branchLabelColor;
+
+    this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
+    this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
+    this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+    this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+    this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

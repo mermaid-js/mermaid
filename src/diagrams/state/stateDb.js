@@ -3,6 +3,15 @@ import { generateId } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import * as configApi from '../../config';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
+
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
 let rootDoc = [];
@@ -115,6 +124,9 @@ let startCnt = 0;
 let endCnt = 0; // eslint-disable-line
 // let stateCnt = 0;
 
+let title = 'State diagram';
+let description = '';
+
 /**
  * Function called by parser when a node definition has been found.
  *
@@ -170,6 +182,7 @@ export const clear = function () {
   startCnt = 0;
   endCnt = 0; // eslint-disable-line
   classes = [];
+  commonClear();
 };
 
 export const getState = function (id) {
@@ -280,4 +293,8 @@ export default {
   getRootDocV2,
   extract,
   trimColon,
+  getTitle,
+  setTitle,
+  getAccDescription,
+  setAccDescription,
 };

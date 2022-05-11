@@ -1,12 +1,24 @@
 import * as configApi from '../../config';
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
+import common from '../common/common';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let relations = [];
 let latestRequirement = {};
 let requirements = {};
 let latestElement = {};
 let elements = {};
+let title = '';
+let accDescription = '';
+
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
 
 const RequirementType = {
   REQUIREMENT: 'Requirement',
@@ -132,6 +144,7 @@ const clear = () => {
   requirements = {};
   latestElement = {};
   elements = {};
+  commonClear();
 };
 
 export default {
@@ -149,6 +162,10 @@ export default {
   setNewReqText,
   setNewReqRisk,
   setNewReqVerifyMethod,
+  setTitle,
+  getTitle,
+  setAccDescription,
+  getAccDescription,
 
   addElement,
   getElements,

@@ -7,7 +7,7 @@ class Theme {
     this.secondaryColor = lighten(this.primaryColor, 16);
 
     this.tertiaryColor = adjust(this.primaryColor, { h: -160 });
-    this.primaryBorderColor = mkBorder(this.primaryColor, this.darkMode);
+    this.primaryBorderColor = invert(this.background);
     this.secondaryBorderColor = mkBorder(this.secondaryColor, this.darkMode);
     this.tertiaryBorderColor = mkBorder(this.tertiaryColor, this.darkMode);
     this.primaryTextColor = invert(this.primaryColor);
@@ -187,6 +187,30 @@ class Theme {
       this.relationLabelBackground ||
       (this.darkMode ? darken(this.secondaryColor, 30) : this.secondaryColor);
     this.relationLabelColor = this.relationLabelColor || this.actorTextColor;
+
+    /* git */
+    this.git0 = lighten(this.secondaryColor, 20);
+    this.git1 = lighten(this.pie2 || this.secondaryColor, 20);
+    this.git2 = lighten(this.pie3 || this.tertiaryColor, 20);
+    this.git3 = lighten(this.pie4 || adjust(this.primaryColor, { h: -30 }), 20);
+    this.git4 = lighten(this.pie5 || adjust(this.primaryColor, { h: -60 }), 20);
+    this.git5 = lighten(this.pie6 || adjust(this.primaryColor, { h: -90 }), 10);
+    this.git6 = lighten(this.pie7 || adjust(this.primaryColor, { h: +60 }), 10);
+    this.git7 = lighten(this.pie8 || adjust(this.primaryColor, { h: +120 }), 20);
+    this.gitInv0 = this.gitInv0 || invert(this.git0);
+    this.gitInv1 = this.gitInv1 || invert(this.git1);
+    this.gitInv2 = this.gitInv2 || invert(this.git2);
+    this.gitInv3 = this.gitInv3 || invert(this.git3);
+    this.gitInv4 = this.gitInv4 || invert(this.git4);
+    this.gitInv5 = this.gitInv5 || invert(this.git5);
+    this.gitInv6 = this.gitInv6 || invert(this.git6);
+    this.gitInv7 = this.gitInv7 || invert(this.git7);
+
+    this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
+    this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
+    this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+    this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
+    this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

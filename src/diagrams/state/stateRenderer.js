@@ -9,6 +9,7 @@ import { parser } from './parser/stateDiagram';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = stateDb;
 
@@ -46,12 +47,24 @@ const insertMarkers = function (elem) {
  */
 export const draw = function (text, id) {
   conf = getConfig().state;
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and ocument for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
   parser.yy.clear();
   parser.parse(text);
   log.debug('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
-  const diagram = select(`[id='${id}']`);
+  const diagram = root.select(`[id='${id}']`);
   insertMarkers(diagram);
 
   // Layout graph, Create a new directed graph
@@ -69,7 +82,7 @@ export const draw = function (text, id) {
   });
 
   const rootDoc = stateDb.getRootDoc();
-  renderDoc(rootDoc, diagram, undefined, false);
+  renderDoc(rootDoc, diagram, undefined, false, root, doc);
 
   const padding = conf.padding;
   const bounds = diagram.node().getBBox();
@@ -85,12 +98,13 @@ export const draw = function (text, id) {
     'viewBox',
     `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
   );
+  addSVGAccessibilityFields(parser.yy, diagram, id);
 };
 const getLabelWidth = (text) => {
   return text ? text.length * conf.fontSizeFactor : 1;
 };
 
-const renderDoc = (doc, diagram, parentId, altBkg) => {
+const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument) => {
   // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
     compound: true,
@@ -159,7 +173,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
     let node;
     if (stateDef.doc) {
       let sub = diagram.append('g').attr('id', stateDef.id).attr('class', 'stateGroup');
-      node = renderDoc(stateDef.doc, sub, stateDef.id, !altBkg);
+      node = renderDoc(stateDef.doc, sub, stateDef.id, !altBkg, root, domDocument);
 
       if (first) {
         // first = false;
@@ -234,21 +248,22 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
   graph.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
       log.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
-      select('#' + svgElem.id + ' #' + v).attr(
-        'transform',
-        'translate(' +
-          (graph.node(v).x - graph.node(v).width / 2) +
-          ',' +
-          (graph.node(v).y +
-            (transformationLog[v] ? transformationLog[v].y : 0) -
-            graph.node(v).height / 2) +
-          ' )'
-      );
-      select('#' + svgElem.id + ' #' + v).attr(
-        'data-x-shift',
-        graph.node(v).x - graph.node(v).width / 2
-      );
-      const dividers = document.querySelectorAll('#' + svgElem.id + ' #' + v + ' .divider');
+      root
+        .select('#' + svgElem.id + ' #' + v)
+        .attr(
+          'transform',
+          'translate(' +
+            (graph.node(v).x - graph.node(v).width / 2) +
+            ',' +
+            (graph.node(v).y +
+              (transformationLog[v] ? transformationLog[v].y : 0) -
+              graph.node(v).height / 2) +
+            ' )'
+        );
+      root
+        .select('#' + svgElem.id + ' #' + v)
+        .attr('data-x-shift', graph.node(v).x - graph.node(v).width / 2);
+      const dividers = domDocument.querySelectorAll('#' + svgElem.id + ' #' + v + ' .divider');
       dividers.forEach((divider) => {
         const parent = divider.parentElement;
         let pWidth = 0;

@@ -1,4 +1,4 @@
-const svgDraw = require('./svgDraw');
+const svgDraw = require('./svgDraw').default;
 const { MockD3 } = require('d3');
 
 describe('svgDraw', function () {
@@ -122,6 +122,18 @@ describe('svgDraw', function () {
       expect(rect.attr).toHaveBeenCalledWith('fill', '#ccc');
       expect(rect.attr).toHaveBeenCalledWith('class', 'rect');
       expect(rect.lower).toHaveBeenCalled();
+    });
+  });
+  describe('sanitizeUrl', function () {
+    it('it should sanitize malicious urls', function () {
+      const maliciousStr = 'javascript:script:alert(1)';
+      const result = svgDraw.sanitizeUrl(maliciousStr);
+      expect(result).not.toContain('javascript:alert(1)');
+    });
+    it('it should not sanitize non dangerous urls', function () {
+      const maliciousStr = 'javajavascript:script:alert(1)';
+      const result = svgDraw.sanitizeUrl(maliciousStr);
+      expect(result).not.toContain('javascript:alert(1)');
     });
   });
 });

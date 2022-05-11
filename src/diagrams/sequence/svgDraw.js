@@ -1,5 +1,6 @@
 import common from '../common/common';
 import { addFunction } from '../../interactionDb';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -19,16 +20,18 @@ export const drawRect = function (elem, rectData) {
   return rectElem;
 };
 
-const sanitizeUrl = function (s) {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/javascript:/g, '');
-};
+// const sanitizeUrl = function (s) {
+//   return s
+//     .replace(/&/g, '&amp;')
+//     .replace(/</g, '&lt;')
+//     .replace(/javascript:/g, '');
+// };
 
 const addPopupInteraction = (id, actorCnt) => {
   addFunction(() => {
     const arr = document.querySelectorAll(id);
+    // This will be the case when running in sandboxed mode
+    if (arr.length === 0) return;
     arr[0].addEventListener('mouseover', function () {
       popupMenuUpFunc('actor' + actorCnt + '_popup');
     });
@@ -1055,4 +1058,5 @@ export default {
   popupMenu,
   popdownMenu,
   fixLifeLineHeights,
+  sanitizeUrl,
 };

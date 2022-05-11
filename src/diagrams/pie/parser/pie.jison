@@ -12,7 +12,9 @@
 %x type_directive
 %x arg_directive
 %x close_directive
-
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 <open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
@@ -26,6 +28,14 @@
 [\s]+ 		                                                      /* ignore */
 title                                                           { this.begin("title");return 'title'; }
 <title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
+
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 ["]                                                             { this.begin("string"); }
 <string>["]                                                     { this.popState(); }
 <string>[^"]*                                                   { return "txt"; }
@@ -33,7 +43,6 @@ title                                                           { this.begin("ti
 "showData"                                                      return 'showData';
 ":"[\s]*[\d]+(?:\.[\d]+)?                                       return "value";
 <<EOF>>                                                         return 'EOF';
-
 
 /lex
 
@@ -60,7 +69,10 @@ line
 statement
   :
 	| txt value          { yy.addSection($1,yy.cleanupValue($2)); }
-	| title title_value  { $$=$2.trim();yy.setTitle($$); }
+	| title title_value  { $$=$2.trim();yy.setPieTitle($$); }
+  | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+  | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+  | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
 	| directive
 	;
 

@@ -59,6 +59,7 @@ describe('when parsing ER diagram it...', function () {
     const entities = erDb.getEntities();
     expect(Object.keys(entities).length).toBe(1);
     expect(entities[entity].attributes.length).toBe(1);
+    expect(entities[entity].attributes[0].attributeComment).toBe('comment');
   });
 
   it('should allow an entity with a single attribute to be defined with a key and a comment', function () {
@@ -178,6 +179,36 @@ describe('when parsing ER diagram it...', function () {
   it('should allow recursive relationships', function () {
     erDiagram.parser.parse('erDiagram\nNODE ||--o{ NODE : "leads to"');
     expect(Object.keys(erDb.getEntities()).length).toBe(1);
+  });
+
+  it('should allow for a accessibility title and description (accDescr)', function () {
+    const teacherRole = 'is teacher of';
+    const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
+
+    erDiagram.parser.parse(
+      `erDiagram
+      accTitle: graph title
+      accDescr: this graph is about stuff
+      ${line1}`
+    );
+    expect(erDb.getTitle()).toBe('graph title');
+    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
+  });
+
+  it('should allow for a accessibility title and multi line description (accDescr)', function () {
+    const teacherRole = 'is teacher of';
+    const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
+
+    erDiagram.parser.parse(
+      `erDiagram
+      accTitle: graph title
+      accDescr {
+        this graph is about stuff
+      }\n
+      ${line1}`
+    );
+    expect(erDb.getTitle()).toBe('graph title');
+    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
   });
 
   it('should allow more than one relationship between the same two entities', function () {

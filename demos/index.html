@@ -20,6 +20,15 @@
   </div>
 
   <hr />
+  <div class="mermaid">
+    pie
+      title Key elements in Product X
+      accDescription This is a pie chart showing the key elements in Product X.
+      "Calcium" : 42.96
+      "Potassium" : 50.05
+      "Magnesium" : 10.01
+      "Iron" :  5
+  </div>
 
   <div class="mermaid">
     gantt
@@ -28,7 +37,7 @@
       axisFormat %m-%d %a
       excludes	weekends, 2021-10-01,2021-10-04,2021-10-05,2021-10-06,2021-10-07
       includes 2021-10-09
-        
+
       section Airworks 3.4.1
       开发	:b, 2021-10-07, 5d
       测试	:after b, 4d
@@ -376,8 +385,7 @@
     A -->|Get money| B1[(Go shopping 1)]
     A -->|Get money| B2[(Go shopping 2)]
     A -->|Get money| B3[(Go shopping 3)]
-    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or
- something to get around?)]
+    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
     B1 --> C
     B2 --> C
     B3 --> C
@@ -458,6 +466,7 @@
 
   <div class="mermaid">
     sequenceDiagram
+    accDescription Hello friends
     participant Alice
     participant Bob
     participant John as John<br />Second Line
@@ -508,8 +517,10 @@
     sequenceDiagram
     autonumber
     Alice->>John: Hello John,<br>how are you?
+    autonumber 50 10
     Alice->>John: John,<br />can you hear me?
     John-->>Alice: Hi Alice,<br />I can hear you!
+    autonumber off
     John-->>Alice: I feel great!
   </div>
 
@@ -591,10 +602,11 @@
     gitGraph:
     options
     {
-    "nodeSpacing": 150,
-    "nodeRadius": 10
+    "nodeSpacing": 50, 
+    "nodeRadius": 5
     }
     end
+    branch master
     commit
     branch newbranch
     checkout newbranch
@@ -610,7 +622,7 @@
 
   <div class="mermaid">
     classDiagram
-    Class01 <|-- AveryLongClass : Cool 
+    Class01 <|-- AveryLongClass : Cool
 
     &lt;&lt;interface&gt;&gt; Class01
     Class03 "0" *-- "0..n" Class04
@@ -647,7 +659,7 @@
 
   <div class="mermaid">
     classDiagram
-    Class01~T~ <|-- AveryLongClass : Cool 
+    Class01~T~ <|-- AveryLongClass : Cool
     &lt;&lt;interface&gt;&gt; Class01
     Class03~T~ "0" *-- "0..n" Class04
     Class05 "1" o-- "many" Class06
@@ -670,6 +682,7 @@
 
   <div class="mermaid">
     stateDiagram
+    accDescription This is a state diagram showing one state
     State1
   </div>
 
@@ -777,6 +790,43 @@
 
   <script src="./mermaid.js"></script>
   <script>
+    const ALLOWED_TAGS = [
+      'a',
+  'b',
+  'blockquote',
+  'br',
+  'dd',
+  'div',
+  'dl',
+      'dt',
+  'em',
+  'foreignObject',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+      'h5',
+  'h6',
+  'h7',
+  'h8',
+  'hr',
+  'i',
+  'li',
+  'ul',
+  'ol',
+  'p',
+      'pre',
+  'span',
+  'strike',
+  'strong',
+  'table',
+  'tbody',
+      'td',
+  'tfoot',
+  'th',
+  'thead',
+  'tr',
+    ];
     mermaid.initialize({
       theme: 'forest',
       // themeCSS: '.node rect { fill: red; }',
@@ -785,6 +835,13 @@
       flowchart: { curve: 'basis' },
       gantt: { axisFormat: '%m/%d/%Y' },
       sequence: { actorMargin: 50 },
+      dompurifyConfig: {
+        USE_PROFILES: {
+          svg: true,
+        },
+        ADD_TAGS: ALLOWED_TAGS,
+        ADD_ATTR: ['transform-origin'],
+      },
       // sequenceDiagram: { actorMargin: 300 } // deprecated
     });
   </script>

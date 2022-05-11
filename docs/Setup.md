@@ -387,7 +387,7 @@ Default value: false
 | --------------- | ---------------------------------------------------- | ------ | -------- | --------------------------- |
 | actorFontFamily | This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
 
-**Notes:** Default value: "'Open-Sans", "sans-serif"'
+**Notes:** Default value: "'Open Sans", sans-serif'
 
 ### actorFontWeight
 
@@ -756,19 +756,6 @@ available space if not the absolute space required is used.
 
 Default value: true
 
-## useMaxWidth
-
-| Parameter   | Description | Type    | Required | Values      |
-| ----------- | ----------- | ------- | -------- | ----------- |
-| useMaxWidth | See notes   | boolean | 4        | true, false |
-
-**Notes:**
-
-When this flag is set the height and width is set to 100% and is then scaling with the
-available space if not the absolute space required is used.
-
-Default value: true
-
 ## defaultRenderer
 
 | Parameter       | Description | Type    | Required | Values                  |
@@ -926,7 +913,7 @@ Default value: true
 **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
 to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
 will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
-function \*Default value: At default, will mirror Global Config\*\*
+function _Default value: At default, will mirror Global Config_
 
 ### Parameters
 
@@ -1057,6 +1044,10 @@ Returns **any**
 
 -   `conf` **any** 
 
+## reinitialize
+
+To be removed
+
 ## initialize
 
 ### Parameters
@@ -1117,7 +1108,7 @@ Returns **any**
       leftPadding: 75,
       gridLineStartPadding: 35,
       fontSize: 11,
-      fontFamily: '"Open-Sans", "sans-serif"',
+      fontFamily: '"Open Sans", sans-serif',
       numberSectionStyles: 4,
       axisFormat: '%Y-%m-%d',
       topAxis: false,

@@ -10,6 +10,7 @@ import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -25,9 +26,11 @@ export const setConf = function (cnf) {
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  * @param svgId
+ * @param root
+ * @param doc
  */
-export const addVertices = function (vert, g, svgId) {
-  const svg = select(`[id="${svgId}"]`);
+export const addVertices = function (vert, g, svgId, root, doc) {
+  const svg = root.select(`[id="${svgId}"]`);
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
@@ -62,13 +65,13 @@ export const addVertices = function (vert, g, svgId) {
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
     } else {
-      const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
       svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
 
       const rows = vertexText.split(common.lineBreakRegex);
 
       for (let j = 0; j < rows.length; j++) {
-        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
         tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
         tspan.setAttribute('dy', '1em');
         tspan.setAttribute('x', '1');
@@ -131,6 +134,9 @@ export const addVertices = function (vert, g, svgId) {
       case 'group':
         _shape = 'rect';
         break;
+      case 'doublecircle':
+        _shape = 'doublecircle';
+        break;
       default:
         _shape = 'rect';
     }
@@ -176,7 +182,7 @@ export const addVertices = function (vert, g, svgId) {
 };
 
 /**
- * Add edges to graph based on parsed graph defninition
+ * Add edges to graph based on parsed graph definition
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
@@ -374,6 +380,18 @@ export const draw = function (text, id) {
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
 
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and document for when rendering in sandbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
     multigraph: true,
@@ -399,7 +417,7 @@ export const draw = function (text, id) {
     flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
   }
 
-  // Fetch the verices/nodes and edges/links from the parsed graph definition
+  // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const vert = flowDb.getVertices();
 
   const edges = flowDb.getEdges();
@@ -417,18 +435,21 @@ export const draw = function (text, id) {
       g.setParent(subG.nodes[j], subG.id);
     }
   }
-  addVertices(vert, g, id);
+  addVertices(vert, g, id, root, doc);
   addEdges(edges, g);
 
   // Add custom shapes
   // flowChartShapes.addToRenderV2(addShape);
 
   // Set up an SVG group so that we can translate the final graph.
-  const svg = select(`[id="${id}"]`);
+  const svg = root.select(`[id="${id}"]`);
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
+  // Adds title and description to the flow chart
+  addSVGAccessibilityFields(parser.yy, svg, id);
+
   // Run the renderer. This is what draws the final graph.
-  const element = select('#' + id + ' g');
+  const element = root.select('#' + id + ' g');
   render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
 
   const padding = conf.diagramPadding;
@@ -452,14 +473,14 @@ export const draw = function (text, id) {
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
-    const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
+    const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];
 
       // Get dimensions of label
       const dim = label.getBBox();
 
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      const rect = doc.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
@@ -478,11 +499,13 @@ export const draw = function (text, id) {
     if (vertex.link) {
       const node = select('#' + id + ' [id="' + key + '"]');
       if (node) {
-        const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+        const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
         link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
-        if (vertex.linkTarget) {
+        if (securityLevel === 'sandbox') {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
+        } else if (vertex.linkTarget) {
           link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
         }
 

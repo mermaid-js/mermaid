@@ -41,7 +41,7 @@ A single instance of a class in the diagram contains three compartments:
 
 - The top compartment contains the name of the class. It is printed in bold and centered, and the first letter is capitalized. It may also contain optional annotation text describing the nature of the class.
 - The middle compartment contains the attributes of the class. They are left-aligned and the first letter is lowercase.
-    The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
+- The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
 ```mermaid-example
 classDiagram
@@ -217,7 +217,7 @@ It is possible to add a label text to a relation:
 classDiagram
 classA <|-- classB : implements
 classC *-- classD : composition
-classE o-- classF : association
+classE o-- classF : aggregation
 ```
 
 ### Two-way relations

@@ -2,13 +2,20 @@ import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let prevActor = undefined;
 let actors = {};
 let messages = [];
 const notes = [];
-let title = '';
-let titleWrapped = false;
+let diagramTitle = '';
+let description = '';
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
 
@@ -119,14 +126,11 @@ export const getActor = function (id) {
 export const getActorKeys = function () {
   return Object.keys(actors);
 };
-export const getTitle = function () {
-  return title;
-};
-export const getTitleWrapped = function () {
-  return titleWrapped;
-};
 export const enableSequenceNumbers = function () {
   sequenceNumbersEnabled = true;
+};
+export const disableSequenceNumbers = function () {
+  sequenceNumbersEnabled = false;
 };
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
 
@@ -139,6 +143,9 @@ export const autoWrap = () => wrapEnabled;
 export const clear = function () {
   actors = {};
   messages = [];
+  sequenceNumbersEnabled = false;
+  diagramTitle = '';
+  commonClear();
 };
 
 export const parseMessage = function (str) {
@@ -180,6 +187,7 @@ export const LINETYPE = {
   RECT_END: 23,
   SOLID_POINT: 24,
   DOTTED_POINT: 25,
+  AUTONUMBER: 26,
 };
 
 export const ARROWTYPE = {
@@ -323,9 +331,13 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
-export const setTitle = function (titleWrap) {
-  title = titleWrap.text;
-  titleWrapped = (titleWrap.wrap === undefined && autoWrap()) || !!titleWrap.wrap;
+export const setDiagramTitle = function (txt) {
+  let sanitizedText = sanitizeText(txt, configApi.getConfig());
+  diagramTitle = sanitizedText;
+};
+
+export const getDiagramTitle = function () {
+  return diagramTitle;
 };
 
 export const apply = function (param) {
@@ -335,6 +347,19 @@ export const apply = function (param) {
     });
   } else {
     switch (param.type) {
+      case 'sequenceIndex':
+        messages.push({
+          from: undefined,
+          to: undefined,
+          message: {
+            start: param.sequenceIndex,
+            step: param.sequenceIndexStep,
+            visible: param.sequenceVisible,
+          },
+          wrap: false,
+          type: param.signalType,
+        });
+        break;
       case 'addParticipant':
         addActor(param.actor, param.actor, param.description, 'participant');
         break;
@@ -418,6 +443,7 @@ export default {
   autoWrap,
   setWrap,
   enableSequenceNumbers,
+  disableSequenceNumbers,
   showSequenceNumbers,
   getMessages,
   getActors,
@@ -425,9 +451,9 @@ export default {
   getActorKeys,
   getActorProperty,
   getTitle,
+  getDiagramTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
-  getTitleWrapped,
   clear,
   parseMessage,
   LINETYPE,
@@ -435,5 +461,8 @@ export default {
   PLACEMENT,
   addNote,
   setTitle,
+  setDiagramTitle,
   apply,
+  setAccDescription,
+  getAccDescription,
 };

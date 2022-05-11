@@ -11,11 +11,14 @@ import { render } from '../../dagre-wrapper/index.js';
 import { curveLinear } from 'd3';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 import common from '../common/common';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = classDb;
 
 let idCache = {};
 const padding = 20;
+
+const sanitizeText = (txt) => common.sanitizeText(txt, getConfig());
 
 const conf = {
   dividerMargin: 10,
@@ -103,7 +106,7 @@ export const addClasses = function (classes, g) {
     g.setNode(vertex.id, {
       labelStyle: styles.labelStyle,
       shape: _shape,
-      labelText: vertexText,
+      labelText: sanitizeText(vertexText),
       classData: vertex,
       rx: radious,
       ry: radious,
@@ -267,101 +270,8 @@ export const setConf = function (cnf) {
  * @param {string} text
  * @param {string} id
  */
-export const drawOld = function (text, id) {
-  idCache = {};
-  parser.yy.clear();
-  parser.parse(text);
-
-  log.info('Rendering diagram ' + text);
-
-  // Fetch the default direction, use TD if none was found
-  const diagram = select(`[id='${id}']`);
-  // insertMarkers(diagram);
-
-  // Layout graph, Create a new directed graph
-  const g = new graphlib.Graph({
-    multigraph: true,
-  });
-
-  // Set an object for the graph label
-  g.setGraph({
-    isMultiGraph: true,
-  });
-
-  // Default to assigning a new object as a label for each new edge.
-  g.setDefaultEdgeLabel(function () {
-    return {};
-  });
-
-  const classes = classDb.getClasses();
-  log.info('classes:');
-  log.info(classes);
-  const keys = Object.keys(classes);
-  for (let i = 0; i < keys.length; i++) {
-    const classDef = classes[keys[i]];
-    const node = svgDraw.drawClass(diagram, classDef, conf);
-    idCache[node.id] = node;
-
-    // Add nodes to the graph. The first argument is the node id. The second is
-    // metadata about the node. In this case we're going to add labels to each of
-    // our nodes.
-    g.setNode(node.id, node);
-
-    log.info('Org height: ' + node.height);
-  }
-
-  const relations = classDb.getRelations();
-  log.info('relations:', relations);
-  relations.forEach(function (relation) {
-    log.info(
-      'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
-    );
-    g.setEdge(
-      getGraphId(relation.id1),
-      getGraphId(relation.id2),
-      {
-        relation: relation,
-      },
-      relation.title || 'DEFAULT'
-    );
-  });
-
-  dagre.layout(g);
-  g.nodes().forEach(function (v) {
-    if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
-      log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
-      select('#' + lookUpDomId(v)).attr(
-        'transform',
-        'translate(' +
-          (g.node(v).x - g.node(v).width / 2) +
-          ',' +
-          (g.node(v).y - g.node(v).height / 2) +
-          ' )'
-      );
-    }
-  });
-
-  g.edges().forEach(function (e) {
-    if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
-      log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
-      svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
-    }
-  });
-
-  const svgBounds = diagram.node().getBBox();
-  const width = svgBounds.width + padding * 2;
-  const height = svgBounds.height + padding * 2;
-
-  configureSvgSize(diagram, height, width, conf.useMaxWidth);
-
-  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
-  log.debug(`viewBox ${vBox}`);
-  diagram.attr('viewBox', vBox);
-};
-
 export const draw = function (text, id) {
-  log.info('Drawing class');
+  log.info('Drawing class - ', id);
   classDb.clear();
   // const parser = classDb.parser;
   // parser.yy = classDb;
@@ -377,6 +287,7 @@ export const draw = function (text, id) {
   //let dir = 'TD';
 
   const conf = getConfig().flowchart;
+  const securityLevel = getConfig().securityLevel;
   log.info('config:', conf);
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
@@ -428,11 +339,19 @@ export const draw = function (text, id) {
   // flowChartShapes.addToRenderV2(addShape);
 
   // Set up an SVG group so that we can translate the final graph.
-  const svg = select(`[id="${id}"]`);
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const svg = root.select(`[id="${id}"]`);
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   // Run the renderer. This is what draws the final graph.
-  const element = select('#' + id + ' g');
+  const element = root.select('#' + id + ' g');
   render(element, g, ['aggregation', 'extension', 'composition', 'dependency'], 'classDiagram', id);
 
   // element.selectAll('g.node').attr('title', function() {
@@ -460,14 +379,15 @@ export const draw = function (text, id) {
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
-    const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
+    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+    const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];
 
       // Get dimensions of label
       const dim = label.getBBox();
 
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      const rect = doc.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
@@ -478,6 +398,7 @@ export const draw = function (text, id) {
     }
   }
 
+  addSVGAccessibilityFields(parser.yy, svg, id);
   // If node has a link, wrap it in an anchor SVG object.
   // const keys = Object.keys(classes);
   // keys.forEach(function(key) {

@@ -7,6 +7,7 @@ import { getConfig } from '../../config';
 import { log } from '../../logger';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 
@@ -40,7 +41,6 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const attributeNodes = []; // Intermediate storage for attribute nodes created so that we can do a second pass
   let hasKeyType = false;
   let hasComment = false;
-  let maxWidth = 0;
   let maxTypeWidth = 0;
   let maxNameWidth = 0;
   let maxKeyWidth = 0;
@@ -48,9 +48,19 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
   let cumulativeHeight = labelBBox.height + heightPadding * 2;
   let attrNum = 1;
 
+  // Check to see if any of the attributes has a key or a comment
+  attributes.forEach((item) => {
+    if (item.attributeKeyType !== undefined) {
+      hasKeyType = true;
+    }
+
+    if (item.attributeComment !== undefined) {
+      hasComment = true;
+    }
+  });
+
   attributes.forEach((item) => {
     const attrPrefix = `${entityTextNode.node().id}-attr-${attrNum}`;
-    let nodeWidth = 0;
     let nodeHeight = 0;
 
     // Add a text node for the attribute type
@@ -91,16 +101,14 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     const nameBBox = nameNode.node().getBBox();
     maxTypeWidth = Math.max(maxTypeWidth, typeBBox.width);
     maxNameWidth = Math.max(maxNameWidth, nameBBox.width);
-    nodeWidth += typeBBox.width;
-    nodeWidth += nameBBox.width;
 
     nodeHeight = Math.max(typeBBox.height, nameBBox.height);
 
-    if (hasKeyType || item.attributeKeyType !== undefined) {
+    if (hasKeyType) {
       const keyTypeNode = groupNode
         .append('text')
         .attr('class', 'er entityLabel')
-        .attr('id', `${attrPrefix}-name`)
+        .attr('id', `${attrPrefix}-key`)
         .attr('x', 0)
         .attr('y', 0)
         .attr('dominant-baseline', 'middle')
@@ -113,17 +121,15 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
       attributeNode.kn = keyTypeNode;
       const keyTypeBBox = keyTypeNode.node().getBBox();
-      nodeWidth += keyTypeBBox.width;
-      maxKeyWidth = Math.max(maxKeyWidth, nodeWidth);
+      maxKeyWidth = Math.max(maxKeyWidth, keyTypeBBox.width);
       nodeHeight = Math.max(nodeHeight, keyTypeBBox.height);
-      hasKeyType = true;
     }
 
-    if (hasComment || item.attributeComment !== undefined) {
+    if (hasComment) {
       const commentNode = groupNode
         .append('text')
         .attr('class', 'er entityLabel')
-        .attr('id', `${attrPrefix}-name`)
+        .attr('id', `${attrPrefix}-comment`)
         .attr('x', 0)
         .attr('y', 0)
         .attr('dominant-baseline', 'middle')
@@ -136,25 +142,35 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
 
       attributeNode.cn = commentNode;
       const commentNodeBBox = commentNode.node().getBBox();
-      nodeWidth += commentNodeBBox.width;
-      maxCommentWidth = Math.max(nodeWidth, nameBBox.width);
+      maxCommentWidth = Math.max(maxCommentWidth, commentNodeBBox.width);
       nodeHeight = Math.max(nodeHeight, commentNodeBBox.height);
-      hasComment = true;
     }
 
     attributeNode.height = nodeHeight;
     // Keep a reference to the nodes so that we can iterate through them later
     attributeNodes.push(attributeNode);
-    maxWidth = Math.max(maxWidth, nodeWidth);
     cumulativeHeight += nodeHeight + heightPadding * 2;
     attrNum += 1;
   });
+
+  let widthPaddingFactor = 4;
+  if (hasKeyType) {
+    widthPaddingFactor += 2;
+  }
+  if (hasComment) {
+    widthPaddingFactor += 2;
+  }
+
+  const maxWidth = maxTypeWidth + maxNameWidth + maxKeyWidth + maxCommentWidth;
 
   // Calculate the new bounding box of the overall entity, now that attributes have been added
   const bBox = {
     width: Math.max(
       conf.minEntityWidth,
-      Math.max(labelBBox.width + conf.entityPadding * 2, maxWidth + widthPadding * 4)
+      Math.max(
+        labelBBox.width + conf.entityPadding * 2,
+        maxWidth + widthPadding * widthPaddingFactor
+      )
     ),
     height:
       attributes.length > 0
@@ -162,10 +178,13 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         : Math.max(conf.minEntityHeight, labelBBox.height + conf.entityPadding * 2),
   };
 
-  // There might be some spare width for padding out attributes if the entity name is very long
-  const spareWidth = Math.max(0, bBox.width - maxWidth - widthPadding * 4);
-
   if (attributes.length > 0) {
+    // There might be some spare width for padding out attributes if the entity name is very long
+    const spareColumnWidth = Math.max(
+      0,
+      (bBox.width - maxWidth - widthPadding * widthPaddingFactor) / (widthPaddingFactor / 2)
+    );
+
     // Position the entity label near the top of the entity bounding box
     entityTextNode.attr(
       'transform',
@@ -180,9 +199,10 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       // Calculate the alignment y co-ordinate for the type/name of the attribute
       const alignY = heightOffset + heightPadding + attributeNode.height / 2;
 
-      // Position the type of the attribute
+      // Position the type attribute
       attributeNode.tn.attr('transform', 'translate(' + widthPadding + ',' + alignY + ')');
 
+      // TODO Handle spareWidth in attr('width')
       // Insert a rectangle for the type
       const typeRect = groupNode
         .insert('rect', '#' + attributeNode.tn.node().id)
@@ -192,65 +212,73 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         .attr('stroke', conf.stroke)
         .attr('x', 0)
         .attr('y', heightOffset)
-        .attr('width', maxTypeWidth * 2 + spareWidth / 2)
-        .attr('height', attributeNode.tn.node().getBBox().height + heightPadding * 2);
+        .attr('width', maxTypeWidth + widthPadding * 2 + spareColumnWidth)
+        .attr('height', attributeNode.height + heightPadding * 2);
 
-      // Position the name of the attribute
+      const nameXOffset = parseFloat(typeRect.attr('x')) + parseFloat(typeRect.attr('width'));
+
+      // Position the name attribute
       attributeNode.nn.attr(
         'transform',
-        'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'
+        'translate(' + (nameXOffset + widthPadding) + ',' + alignY + ')'
       );
 
       // Insert a rectangle for the name
-      groupNode
+      const nameRect = groupNode
         .insert('rect', '#' + attributeNode.nn.node().id)
         .attr('class', `er ${attribStyle}`)
         .attr('fill', conf.fill)
         .attr('fill-opacity', '100%')
         .attr('stroke', conf.stroke)
-        .attr('x', `${typeRect.attr('x') + typeRect.attr('width')}`)
+        .attr('x', nameXOffset)
         .attr('y', heightOffset)
-        .attr('width', maxNameWidth + widthPadding * 2 + spareWidth / 2)
-        .attr('height', attributeNode.nn.node().getBBox().height + heightPadding * 2);
+        .attr('width', maxNameWidth + widthPadding * 2 + spareColumnWidth)
+        .attr('height', attributeNode.height + heightPadding * 2);
+
+      let keyTypeAndCommentXOffset =
+        parseFloat(nameRect.attr('x')) + parseFloat(nameRect.attr('width'));
 
       if (hasKeyType) {
-        // Position the name of the attribute
+        // Position the key type attribute
         attributeNode.kn.attr(
           'transform',
-          'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'
+          'translate(' + (keyTypeAndCommentXOffset + widthPadding) + ',' + alignY + ')'
         );
 
-        // Insert a rectangle for the name
-        groupNode
+        // Insert a rectangle for the key type
+        const keyTypeRect = groupNode
           .insert('rect', '#' + attributeNode.kn.node().id)
           .attr('class', `er ${attribStyle}`)
           .attr('fill', conf.fill)
           .attr('fill-opacity', '100%')
           .attr('stroke', conf.stroke)
-          .attr('x', `${typeRect.attr('x') + typeRect.attr('width')}`)
+          .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
-          .attr('width', maxKeyWidth + widthPadding * 2 + spareWidth / 2)
-          .attr('height', attributeNode.kn.node().getBBox().height + heightPadding * 2);
+          .attr('width', maxKeyWidth + widthPadding * 2 + spareColumnWidth)
+          .attr('height', attributeNode.height + heightPadding * 2);
+
+        keyTypeAndCommentXOffset =
+          parseFloat(keyTypeRect.attr('x')) + parseFloat(keyTypeRect.attr('width'));
       }
 
       if (hasComment) {
-        // Position the name of the attribute
+        // Position the comment attribute
         attributeNode.cn.attr(
           'transform',
-          'translate(' + (parseFloat(typeRect.attr('width')) + widthPadding) + ',' + alignY + ')'
+          'translate(' + (keyTypeAndCommentXOffset + widthPadding) + ',' + alignY + ')'
         );
 
-        // Insert a rectangle for the name
+        // Insert a rectangle for the comment
         groupNode
           .insert('rect', '#' + attributeNode.cn.node().id)
           .attr('class', `er ${attribStyle}`)
           .attr('fill', conf.fill)
           .attr('fill-opacity', '100%')
           .attr('stroke', conf.stroke)
-          .attr('x', `${typeRect.attr('x') + typeRect.attr('width')}`)
+          .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
-          .attr('width', maxCommentWidth + widthPadding * 2 + spareWidth / 2)
-          .attr('height', attributeNode.cn.node().getBBox().height + heightPadding * 2);
+          .attr('width', maxCommentWidth + widthPadding * 2 + spareColumnWidth)
+          .attr('height', attributeNode.height + heightPadding * 2);
       }
 
       // Increment the height offset to move to the next row
@@ -518,6 +546,17 @@ export const draw = function (text, id) {
   erDb.clear();
   const parser = erParser.parser;
   parser.yy = erDb;
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and ocument for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   // Parse the text to populate erDb
   try {
@@ -527,7 +566,7 @@ export const draw = function (text, id) {
   }
 
   // Get a reference to the svg node that contains the text
-  const svg = select(`[id='${id}']`);
+  const svg = root.select(`[id='${id}']`);
 
   // Add cardinality marker definitions to the svg
   erMarkers.insertMarkers(svg, conf);
@@ -599,6 +638,8 @@ export const draw = function (text, id) {
   configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
+
+  addSVGAccessibilityFields(parser.yy, svg, id);
 }; // draw
 
 export default {

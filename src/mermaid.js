@@ -30,6 +30,18 @@ import utils from './utils';
  * Renders the mermaid diagrams
  */
 const init = function () {
+  try {
+    initThrowsErrors();
+  } catch (e) {
+    log.warn('Syntax Error rendering');
+    log.warn(e);
+    if (this.parseError) {
+      this.parseError(e);
+    }
+  }
+};
+
+const initThrowsErrors = function () {
   const conf = mermaidAPI.getConfig();
   // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   let nodes;
@@ -83,6 +95,7 @@ const init = function () {
   let txt;
 
   for (let i = 0; i < nodes.length; i++) {
+    // element is the current div with mermaid class
     const element = nodes[i];
 
     /*! Check if previously processed */
@@ -108,26 +121,18 @@ const init = function () {
       log.debug('Detected early reinit: ', init);
     }
 
-    try {
-      mermaidAPI.render(
-        id,
-        txt,
-        (svgCode, bindFunctions) => {
-          element.innerHTML = svgCode;
-          if (typeof callback !== 'undefined') {
-            callback(id);
-          }
-          if (bindFunctions) bindFunctions(element);
-        },
-        element
-      );
-    } catch (e) {
-      log.warn('Syntax Error rendering');
-      log.warn(e);
-      if (this.parseError) {
-        this.parseError(e);
-      }
-    }
+    mermaidAPI.render(
+      id,
+      txt,
+      (svgCode, bindFunctions) => {
+        element.innerHTML = svgCode;
+        if (typeof callback !== 'undefined') {
+          callback(id);
+        }
+        if (bindFunctions) bindFunctions(element);
+      },
+      element
+    );
   }
 };
 
@@ -183,18 +188,38 @@ if (typeof document !== 'undefined') {
   );
 }
 
+/**
+ * ## setParseErrorHandler  Alternativet to directly setting parseError using:
+ *
+ * ```js
+ * mermaid.parseError = function(err,hash){=
+ *   forExampleDisplayErrorInGui(err);  // do something with the error
+ * };
+ * ```
+ *
+ * This is provided for environments where the mermaid object can't directly have a new member added
+ * to it (eg. dart interop wrapper). (Initially there is no parseError member of mermaid).
+ *
+ * @param {function (err, hash)} newParseErrorHandler New parseError() callback.
+ */
+const setParseErrorHandler = function (newParseErrorHandler) {
+  mermaid.parseError = newParseErrorHandler;
+};
+
 const mermaid = {
   startOnLoad: true,
   htmlLabels: true,
 
   mermaidAPI,
-  parse: mermaidAPI.parse,
-  render: mermaidAPI.render,
+  parse: mermaidAPI != undefined ? mermaidAPI.parse : null,
+  render: mermaidAPI != undefined ? mermaidAPI.render : null,
 
   init,
   initialize,
 
   contentLoaded,
+
+  setParseErrorHandler,
 };
 
 export default mermaid;

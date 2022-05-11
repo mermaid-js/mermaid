@@ -4,6 +4,13 @@ import * as configApi from '../../config';
 import common from '../common/common';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 
@@ -12,6 +19,8 @@ let classes = {};
 let classCounter = 0;
 
 let funs = [];
+
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
@@ -75,6 +84,7 @@ export const clear = function () {
   classes = {};
   funs = [];
   funs.push(setupToolTips);
+  commonClear();
 };
 
 export const getClass = function (id) {
@@ -95,6 +105,16 @@ export const addRelation = function (relation) {
 
   relation.id1 = splitClassNameAndType(relation.id1).className;
   relation.id2 = splitClassNameAndType(relation.id2).className;
+
+  relation.relationTitle1 = common.sanitizeText(
+    relation.relationTitle1.trim(),
+    configApi.getConfig()
+  );
+
+  relation.relationTitle2 = common.sanitizeText(
+    relation.relationTitle2.trim(),
+    configApi.getConfig()
+  );
 
   relations.push(relation);
 };
@@ -131,11 +151,12 @@ export const addMember = function (className, member) {
 
     if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
       // Remove leading and trailing brackets
-      theClass.annotations.push(memberString.substring(2, memberString.length - 2));
+      // theClass.annotations.push(memberString.substring(2, memberString.length - 2));
+      theClass.annotations.push(sanitizeText(memberString.substring(2, memberString.length - 2)));
     } else if (memberString.indexOf(')') > 0) {
-      theClass.methods.push(memberString);
+      theClass.methods.push(sanitizeText(memberString));
     } else if (memberString) {
-      theClass.members.push(memberString);
+      theClass.members.push(sanitizeText(memberString));
     }
   }
 };
@@ -151,7 +172,7 @@ export const cleanupLabel = function (label) {
   if (label.substring(0, 1) === ':') {
     return common.sanitizeText(label.substr(1).trim(), configApi.getConfig());
   } else {
-    return label.trim();
+    return sanitizeText(label.trim());
   }
 };
 
@@ -200,8 +221,10 @@ export const setLink = function (ids, linkStr, target) {
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof classes[id] !== 'undefined') {
       classes[id].link = utils.formatUrl(linkStr, config);
-      if (typeof target === 'string') {
-        classes[id].linkTarget = target;
+      if (config.securityLevel === 'sandbox') {
+        classes[id].linkTarget = '_top';
+      } else if (typeof target === 'string') {
+        classes[id].linkTarget = sanitizeText(target);
       } else {
         classes[id].linkTarget = '_blank';
       }
@@ -311,7 +334,7 @@ const setupToolTips = function (element) {
 
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
-        .html(el.attr('title'))
+        .text(el.attr('title'))
         .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
         .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
       el.classed('hover', true);
@@ -332,6 +355,10 @@ const setDirection = (dir) => {
 
 export default {
   parseDirective,
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
   getConfig: () => configApi.getConfig().class,
   addClass,
   bindFunctions,

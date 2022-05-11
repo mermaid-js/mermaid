@@ -3,8 +3,6 @@ import { log } from './logger';
 import theme from './themes';
 import config from './defaultConfig';
 
-// debugger;
-
 export const defaultConfig = Object.freeze(config);
 
 let siteConfig = assignWithDepth({}, defaultConfig);
@@ -29,7 +27,7 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
 
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
-  if (sumOfDirectives.theme) {
+  if (sumOfDirectives.theme && theme[sumOfDirectives.theme]) {
     const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
       tmpConfigFromInitialize.themeVariables || {},
@@ -52,7 +50,7 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  * **Notes:** Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls
  * to reset() will reset the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig)
  * will reset siteConfig and currentConfig to the defaultConfig Note: currentConfig is set in this
- * function *Default value: At default, will mirror Global Config**
+ * function _Default value: At default, will mirror Global Config_
  *
  * @param conf - The base currentConfig to use as siteConfig
  * @returns {object} - The siteConfig
@@ -61,7 +59,7 @@ export const setSiteConfig = (conf) => {
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
 
-  if (conf.theme) {
+  if (conf.theme && theme[conf.theme]) {
     siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
   }
 

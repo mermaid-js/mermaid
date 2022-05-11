@@ -183,11 +183,58 @@ describe('Entity Relationship Diagram', () => {
     cy.get('svg');
   });
 
+  it('should render entities with keys', () => {
+    renderGraph(
+      `
+    erDiagram
+      AUTHOR_WITH_LONG_ENTITY_NAME {
+        string name PK
+      }
+      AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+      BOOK { 
+          float price
+          string author FK 
+          string title PK
+        }
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
+  });
+
+  it('should render entities with comments', () => {
+    renderGraph(
+      `
+    erDiagram
+      AUTHOR_WITH_LONG_ENTITY_NAME {
+        string name "comment"
+      }
+      AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+      BOOK { 
+          string author 
+          string title "author comment"
+          float price "price comment"
+        }
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
+  });
+
   it('should render entities with keys and comments', () => {
     renderGraph(
       `
     erDiagram
-        BOOK { string title PK "comment"}
+      AUTHOR_WITH_LONG_ENTITY_NAME {
+        string name PK "comment"
+      }
+      AUTHOR_WITH_LONG_ENTITY_NAME }|..|{ BOOK : writes
+      BOOK { 
+          string description
+          float price "price comment"
+          string title PK "title comment"
+          string author FK 
+        }
       `,
       { logLevel: 1 }
     );

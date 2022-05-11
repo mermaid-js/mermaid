@@ -95,7 +95,10 @@ c. The `mermaid.initialize()` call, which dictates the appearance of diagrams an
 <body>
     Here is a mermaid diagram:
     <div class="mermaid">
-        graph TD A[Client] --> B[Load Balancer] B --> C[Server01] B --> D[Server02]
+        graph TD 
+        A[Client] --> B[Load Balancer] 
+        B --> C[Server01] 
+        B --> D[Server02]
     </div>
 </body>
 ```
@@ -115,7 +118,7 @@ c. The `mermaid.initialize()` call, which dictates the appearance of diagrams an
 ```
 
 **Notes**:
-Rendering in Mermaid is initalized by `mermaid.initialize()` call. You can place `mermaid.initialize()` inside `mermaid.min.js` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<div>` tags may have loaded on the execution of `mermaid.min.js` file.
+Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can place `mermaid.initialize()` inside `mermaid.min.js` for brevity. However, doing the opposite lets you control when it starts looking for `<div>`tags inside the web page with `mermaid.initialize()`. This is useful when you think that not all `<div>` tags may have loaded on the execution of `mermaid.min.js` file.
 
 `startOnLoad` is one of the parameters that can be defined by `mermaid.initialize()`
 
@@ -137,13 +140,19 @@ Rendering in Mermaid is initalized by `mermaid.initialize()` call. You can place
 
         Here is one mermaid diagram:
         <div class="mermaid">
-            graph TD A[Client] --> B[Load Balancer] B --> C[Server1] B --> D[Server2]
+            graph TD 
+            A[Client] --> B[Load Balancer] 
+            B --> C[Server1] 
+            B --> D[Server2]
         </div>
 
         And here is another:
         <div class="mermaid">
-            graph TD A[Client] -->|tcp_123| B(Load Balancer) B -->|tcp_456| C[Server1] B
-            -->|tcp_456| D[Server2]
+            graph TD 
+            A[Client] -->|tcp_123| B
+            B(Load Balancer) 
+            B -->|tcp_456| C[Server1] 
+            B -->|tcp_456| D[Server2]
         </div>
     </body>
 </html>
@@ -159,10 +168,16 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
     </head>
     <body>
         <div class="mermaid">
-            graph LR A --- B B-->C[fa:fa-ban forbidden] B-->D(fa:fa-spinner);
+            graph LR 
+            A --- B 
+            B-->C[fa:fa-ban forbidden] 
+            B-->D(fa:fa-spinner);
         </div>
         <div class="mermaid">
-            graph TD A[Client] --> B[Load Balancer] B --> C[Server1] B --> D[Server2]
+            graph TD 
+            A[Client] --> B[Load Balancer] 
+            B --> C[Server1] 
+            B --> D[Server2]
         </div>
         <script src="The\Path\In\Your\Package\mermaid.js"></script>
         <script>

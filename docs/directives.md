@@ -3,41 +3,85 @@
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/directives.md)
 
 ## Directives
-Directives gives a diagram author the capability to alter the appearance of a diagram before rendering by changing the applied configuration. 
+Directives gives a diagram author the capability to alter the appearance of a diagram before rendering by changing the applied configuration.
 
-Directives are divided into two sets or orders, by priority in parsing. The first set, containing 'init' or 'initialize' directives are loaded ahead of any other directive. While the other set, containing all other kinds of directives are parsed and factored into the rendering, only after 'init' and the desired graph-type are declared.
+The significance of having directives is that you have them available while writing the diagram, and can modify the defualt global and diagram specific configurations. So, directives are applied on top of the default configurations. The beauty of directives is that you can use them to alter configuration settings for a specific diagram, i.e. at an individual level.
 
-### Init
+While directives allow you to change most of the default configuation settings, there are some that are not available, that too for security reasons. Also, you do have the *option to define the set of configurations* that you would allow to be available to the diagram author for overriding with help of directives.
 
-| Parameter | Description |Type | Required | Values|
-| --- | --- | --- | --- | --- |
-| init | modifies configurations| Directive| Optional | Any parameters not included in the secure array|
+## Types of Directives options
+Mermaid basically supports two types of configuration options to be overridden by directives.
+1) *General/Top Level configurations* : These are the configurations that are available and applied to all the diagram. **Some of the most important top-level** configurations are:
+  - theme
+  - fontFamily
+  - logLevel
+  - securityLevel
+  - startOnLoad
+  - secure
+
+
+2) *Diagram specific configurations* : These are the configurations that are available and applied to a specific diagram. For each diagram there are specific configuration that will alter how that particular diagram looks and behaves.
+ For example, `mirrroActors` is a configuration that is specific to the `SequenceDiagram` and alter whether the actors are mirrored or not. So this config is available only for the `SequenceDiagram` type.
+
+**NOTE:** These options listed here are not all the configuration options. To get hold of all the configuration options, please refer to the [defaultConfig.js](https://github.com/mermaid-js/mermaid/blob/develop/src/defaultConfig.js) in the source code.
+```
+Soon we plan to publish a complete list of top-level configurations & all the diagram specific configurations,
+with their possible values in the docs
+```
+ ## Declaring directives
+Now that we have defined the types of configurations that are available, we can learn how to declare directives.
+A directive always starts and end `%%` sign with directive text in between, like `%% {directive_text} %%`.
+
+Here the structure of a directive text is like a nested key-value pair map or a JSON object with root being *init*. Where all the general configurations are defined in the top level, and all the diagram specific configurations are defined one level deeper with diagram type as key/root for that section.
+
+Following code snippet shows the structure of a directive:
+```
+%%{
+  init: {
+    "theme": "dark",
+    "fontFamily": "monospace",
+    "logLevel": "info",
+    "flowchart": {
+      "htmlLabels": true,
+      "curve": "linear"
+    },
+    "sequence": {
+      "mirrorActors": true
+    }
+  }
+}%%
+```
+You can also define the directives in a single line, like this:
+```
+%%{init: { **insert argument here**}}%%
+```
+For example, the following code snippet:
+```
+%%{init: { "sequence": { "mirrorActors":false }}}%%
+```
 
 **Notes:**
-
-init would be an argument-directive: %%{init: { **insert argument here**}}%%
-
 The json object that is passed as {**argument** } must be valid key value pairs and encased in quotation marks or it will be ignored.
-Valid Key Value pairs can be found in config. 
+Valid Key Value pairs can be found in config.
 
-The init/initialize directive is parsed earlier in the flow, this allows the incorporation of `%%init%%` directives into the mermaid diagram that is being rendered. Example:
-```mmd
+Example with a simple graph:
+```mermaid-example
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
-graph >
+graph LR
 A-->B
 ```
 
-will set the `logLevel` to `debug` and the `theme` to `dark` for a flowchart diagram, changing the appearance of the diagram itself. 
+Here the directive declaration will set the `logLevel` to `debug` and the `theme` to `dark` for a rendered mermaid diagram, changing the appearance of the diagram itself.
 
-Note: 'init' or 'initialize' are both acceptable as init directives. Also note that `%%init%%` and `%%initialize%%` directives will be grouped together after they are parsed. This means:
+Note: You can use 'init' or 'initialize' as both acceptable as init directives. Also note that `%%init%%` and `%%initialize%%` directives will be grouped together after they are parsed. This means:
 
-```mmd
+```mmd2
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
 %%{initialize: { 'logLevel': 'fatal', "theme":'dark', 'startOnLoad': true } }%%
 ...
 ```
 
-parsing the above generates the `%%init%%` object below, combining the two directives and carrying over the last value given for `loglevel`:
+parsing the above generates a single `%%init%%` JSON object below, combining the two directives and carrying over the last value given for `loglevel`:
 
 ```json5
 {
@@ -49,36 +93,150 @@ parsing the above generates the `%%init%%` object below, combining the two direc
 
 This will then be sent to `mermaid.initialize(...)` for rendering.
 
+## Directive Examples
+More directive examples for diagram specific configuration overrides
+Now that the concept of directives has been explained, Let us see some more examples for directives usage:
 
-### Other directives
+### Changing Theme via directive
+The following code snippet changes theme to forest:
 
-In this category are any directives that come after the graph type declaration. Essentially, these directives will only be processed after the init directive. Each individual graph type will handle these directives. As an example:
 
-```mmd
-%%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
-sequenceDiagram
-%%{config: { 'fontFamily': 'Menlo', 'fontSize': 18, 'fontWeight': 400} }%%
-Alice->>Bob: Hi Bob
-Bob->>Alice: Hi Alice
+```%%{init: { "theme": "forest" } }%%```
+
+Possible themes value are: `default`,`base`, `dark`, `forest` and `neutral`.
+Default Value is `default`.
+
+Example:
+```mermaid-example
+%%{init: { "theme": "forest" } }%%
+graph TD
+A(Forest) --> B[/Another/]
+A --> C[End]
+  subgraph section
+  B
+  C
+  end
+
 ```
-## Chronology
-This will set the `logLevel` to `debug` and `theme` to `dark` for a sequence diagram. Then, during processing, the config for the sequence diagram is set by the `config` directive. This directive is handled in the `sequenceDb.js`. In this example, the fontFamily, fontSize, and fontWeight are all set for this sequence diagram.
 
-### Wrapping
-
-## Wrap
-
-| Parameter | Description |Type | Required | Values|
-| --- | --- | --- | --- | --- |
-| wrap | a callable text-wrap function| Directive| Optional | %%{wrap}%%|
+### Changing fontFamily via directive
+The following code snippet changes theme to forest:
 
 
-#### Backwards Compatibility
+```%%{init: { "fontFamily": "Trebuchet MS, Verdana, Arial, Sans-Serif" } }%%```
 
-Init directives and any other non-multiline directives should be backwards compatible, because they will be treated as comments in prior versions of mermaid-js.
+Example:
+```mermaid-example
+%%{init: { "fontFamily": "Trebuchet MS, Verdana, Arial, Sans-Serif" } }%%
+graph TD
+A(Forest) --> B[/Another/]
+A --> C[End]
+  subgraph section
+  B
+  C
+  end
 
-Multiline directives, however, will pose an issue and will render an error. This is unavoidable.
+```
 
-# example 
+### Changing logLevel via directive
+The following code snippet changes theme to forest:
+
+
+```%%{init: { "logLevel": 2 } }%%```
+
+Possible logLevel values are:
+- `1` for *debug*,
+- `2` for *info*
+- `3` for *warn*
+- `4` for *error*
+- `5` for *only fatal errors*
+
+Default Value is `5`.
+
+Example:
+```mermaid-example
+%%{init: { "logLevel": 2 } }%%
+graph TD
+A(Forest) --> B[/Another/]
+A --> C[End]
+  subgraph section
+  B
+  C
+  end
+```
+
+### Changing flowchart config via directive
+Some common flowchart configurations are:
+- *htmlLabels*: true/false
+- *curve*: linear/curve
+- *diagramPadding*: number
+- *useMaxWidth*: number
+
+For complete list of flowchart configurations, see [defaultConfig.js](https://github.com/mermaid-js/mermaid/blob/develop/src/defaultConfig.js) in the source code.
+*Soon we plan to publis a complete list all diagram specific configurations updated in the docs*
+
+The following code snippet changes flowchart config:
+
+
+```%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%```
+
+Here were are overriding only the flowchart config, and not the general config, where HtmlLabels is set to true and curve is set to linear.
+
+```mermaid-example
+%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
+graph TD
+A(Forest) --> B[/Another/]
+A --> C[End]
+  subgraph section
+  B
+  C
+  end
+```
+### Changing Sequence diagram config via directive
+Some common sequence configurations are:
+- *width*: number
+- *height*: number
+- *messgageAlign*: left, center, right
+- *mirrorActors*: boolean
+- *useMaxWidth*: boolean
+- *rightAngles*: boolean
+- *showSequenceNumbers*: boolean
+- *wrap*: boolean
+
+For complete list of sequeue diagram configurations, see *defaultConfig.js* in the source code.
+*Soon we plan to publis a complete list all diagram specific configurations updated in the docs*
+
+So, `wrap` by default has a value of `false` for sequence diagrams.
+
+Let us see an example:
+
+```mermaid-example
+sequenceDiagram
+
+Alice->Bob: Hello Bob, how are you?
+Bob->Alice: Fine, How did you mother like the book I suggested? And did you catch with the new book about alien invansion?
+Alice->Bob: Good.
+Bob->Alice: Cool
+```
+
+Now let us enble wrap for sequence diagrams.
+
+The following code snippet changes sequence diagram config for `wrap` to `true`:
+
+
+```%%{init: { "sequence": { "wrap": true} } }%%```
+
+Using in the diagram above, the wrap will be enabled.
+
+```mermaid-example
+%%{init: { "sequence": { "wrap": true, "width":300 } } }%%
+sequenceDiagram
+Alice->Bob: Hello Bob, how are you?
+Bob->Alice: Fine, How did you mother like the book I suggested? And did you catch with the new book about alien invansion?
+Alice->Bob: Good.
+Bob->Alice: Cool
+```
+
+
 
 

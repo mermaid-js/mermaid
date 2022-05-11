@@ -37,6 +37,13 @@ https://codepen.io/janzeteachesit/pen/OWWZKN
 
 https://codepen.io/Ryuno-Ki/pen/LNxwgR
 
+## Mermaid in open source docs
+
+[K8s.io Diagram Guide](https://kubernetes.io/docs/contribute/style/diagram-guide/)
+
+[K8s.dev blog: Improve your documentation with Mermaid.js diagrams](https://www.kubernetes.dev/blog/2021/12/01/improve-your-documentation-with-mermaid.js-diagrams/)
+
+
 ## Jupyter Integration with mermaid-js
 
 Here's an example of Python integration with mermaid-js which uses the mermaid.ink service, that displays the graph in a Jupyter notebook.
@@ -64,4 +71,4 @@ graph LR;
 
 **Output**
 
-![image](img/python-mermaid-integration.png)
+![Example graph of the Python integration](img/python-mermaid-integration.png)

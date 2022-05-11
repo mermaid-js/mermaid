@@ -36,6 +36,8 @@ describe('Pie Chart', () => {
         imgSnapshotTest(
           `
         pie title Sports in Sweden
+          accTitle: This is a title
+          accDescr: This is a description
           "Bandy" : 40
           "Ice-Hockey" : 80
           "Football" : 90
@@ -49,6 +51,8 @@ describe('Pie Chart', () => {
           `
         %%{init: { 'logLevel': 0} }%%
         graph TD
+          accTitle: This is a title
+          accDescr: This is a description
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
           B --> G[/Another/]
@@ -72,6 +76,9 @@ describe('Pie Chart', () => {
           `
         %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         flowchart TD
+          accTitle: This is a title
+          accDescr: This is a description
+
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
           B --> G[Another]
@@ -95,6 +102,9 @@ describe('Pie Chart', () => {
           `
         %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         sequenceDiagram
+          accTitle: This is a title
+          accDescr: This is a description
+
           autonumber
           par Action 1
             Alice->>John: Hello John, how are you?
@@ -122,6 +132,9 @@ describe('Pie Chart', () => {
           `
         %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         classDiagram
+          accTitle: This is a title
+          accDescr: This is a description
+
           Animal "*" <|-- "1" Duck
           Animal "1" <|-- "10" Fish
           Animal <|-- Zebra
@@ -168,6 +181,9 @@ describe('Pie Chart', () => {
           `
         %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
 stateDiagram
+        accTitle: This is a title
+        accDescr: This is a description
+
         [*] --> Active
 
         state Active {
@@ -200,6 +216,9 @@ stateDiagram
           `
         %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
 stateDiagram-v2
+        accTitle: This is a title
+        accDescr: This is a description
+
         [*] --> Active
 
         state Active {
@@ -231,6 +250,9 @@ stateDiagram-v2
         imgSnapshotTest(
           `
 erDiagram
+          accTitle: This is a title
+          accDescr: This is a description
+
         CUSTOMER }|..|{ DELIVERY-ADDRESS : has
         CUSTOMER ||--o{ ORDER : places
         CUSTOMER ||--o{ INVOICE : "liable for"
@@ -250,6 +272,9 @@ erDiagram
           `
         %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         journey
+            accTitle: This is a title
+            accDescr: This is a description
+
             title My working day
             section Go to work
               Make tea: 5: Me
@@ -268,6 +293,9 @@ erDiagram
         imgSnapshotTest(
           `
       gantt
+       accTitle: This is a title
+       accDescr: This is a description
+
        dateFormat                :YYYY-MM-DD
        title                     :Adding GANTT diagram functionality to mermaid
        excludes                  :excludes the named dates/days from being included in a charted task..

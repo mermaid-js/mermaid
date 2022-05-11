@@ -291,4 +291,36 @@ describe('Gantt diagram', () => {
       { gantt: { topAxis: true } }
     );
   });
+
+  it('should render accessibility tags', function () {
+    const expectedTitle = 'Gantt Diagram';
+    const expectedAccDescription = 'Tasks for Q4';
+    renderGraph(
+      `
+      gantt
+      accTitle: ${expectedTitle}
+      accDescr: ${expectedAccDescription}
+      dateFormat  YYYY-MM-DD
+      section Section
+      A task :a1, 2014-01-01, 30d
+      `,
+      {}
+    );
+    cy.get('svg').should((svg) => {
+      const el = svg.get(0);
+      const children = Array.from(el.children);
+
+      const titleEl = children.find(function (node) {
+        return node.tagName === 'title';
+      });
+      const descriptionEl = children.find(function (node) {
+        return node.tagName === 'desc';
+      });
+
+      expect(titleEl).to.exist;
+      expect(titleEl.textContent).to.equal(expectedTitle);
+      expect(descriptionEl).to.exist;
+      expect(descriptionEl.textContent).to.equal(expectedAccDescription);
+    });
+  });
 });

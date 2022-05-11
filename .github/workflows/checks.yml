@@ -1,0 +1,24 @@
+on:
+  push: {}
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
+
+name: Static analysis
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: check tests
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: testomatio/check-tests@stable
+      with:
+        framework: cypress
+        tests: "./cypress/integration/**/**.spec.js"
+        token: ${{ secrets.GITHUB_TOKEN }}
+        has-tests-label: true

@@ -21,7 +21,7 @@ describe('when parsing a sequenceDiagram', function () {
     parser.yy = sequenceDb;
     parser.yy.clear();
   });
-  it('it should handle a sequenceDiagram definition', function () {
+  it('should handle a sequenceDiagram definition', function () {
     const str = `
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
@@ -47,6 +47,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
+    renderer.draw(str, 'tst'); // needs to be rendered for the correct value of visibility autonumbers
     expect(parser.yy.showSequenceNumbers()).toBe(false);
   });
   it('it should show sequence numbers when autonumber is enabled', function () {
@@ -58,9 +59,10 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
+    renderer.draw(str, 'tst'); // needs to be rendered for the correct value of visibility autonumbers
     expect(parser.yy.showSequenceNumbers()).toBe(true);
   });
-  it('it should handle a sequenceDiagram definition with a title', function () {
+  it('it should handle a sequenceDiagram definition with a title:', function () {
     const str = `
 sequenceDiagram
 title: Diagram Title
@@ -73,14 +75,71 @@ Bob-->Alice: I am good thanks!`;
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
 
+    expect(parser.yy.getAccDescription()).toBe('');
     const messages = parser.yy.getMessages();
-    const title = parser.yy.getTitle();
+    const title = parser.yy.getDiagramTitle();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
     expect(title).toBe('Diagram Title');
   });
+
+  it('it should handle a sequenceDiagram definition with a title without a :', function () {
+    const str = `
+sequenceDiagram
+title Diagram Title
+Alice->Bob:Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+    expect(actors.Alice.description).toBe('Alice');
+    actors.Bob.description = 'Bob';
+
+    expect(parser.yy.getAccDescription()).toBe('');
+    const messages = parser.yy.getMessages();
+    const title = parser.yy.getDiagramTitle();
+
+    expect(messages.length).toBe(3);
+    expect(messages[0].from).toBe('Alice');
+    expect(messages[2].from).toBe('Bob');
+    expect(title).toBe('Diagram Title');
+  });
+
+  it('it should handle a sequenceDiagram definition with a accessibility title and description (accDescr)', function () {
+    const str = `
+sequenceDiagram
+title: Diagram Title
+accTitle: This is the title
+accDescr: Accessibility Description
+Alice->Bob:Hello Bob, how are you?
+`;
+
+    mermaidAPI.parse(str);
+    expect(parser.yy.getDiagramTitle()).toBe('Diagram Title');
+    expect(parser.yy.getTitle()).toBe('This is the title');
+    expect(parser.yy.getAccDescription()).toBe('Accessibility Description');
+    const messages = parser.yy.getMessages();
+  });
+  it('it should handle a sequenceDiagram definition with a accessibility title and multiline description (accDescr)', function () {
+    const str = `
+sequenceDiagram
+accTitle: This is the title
+accDescr {
+Accessibility
+Description
+}
+Alice->Bob:Hello Bob, how are you?
+`;
+
+    mermaidAPI.parse(str);
+    expect(parser.yy.getTitle()).toBe('This is the title');
+    expect(parser.yy.getAccDescription()).toBe('Accessibility\nDescription');
+    const messages = parser.yy.getMessages();
+  });
+
   it('it should space in actor names', function () {
     const str = `
 sequenceDiagram
@@ -364,7 +423,6 @@ deactivate Bob`;
     try {
       mermaidAPI.parse(str);
     } catch (e) {
-      console.log(e.hash);
       error = true;
     }
     expect(error).toBe(true);
@@ -965,7 +1023,6 @@ link a: Endpoint @ https://alice.contoso.com
 link a: Swagger @ https://swagger.contoso.com
 link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 `;
-    console.log(str);
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
@@ -990,7 +1047,6 @@ participant c as Charlie
 properties a: {"class": "internal-service-actor", "icon": "@clock"}
 properties b: {"class": "external-service-actor", "icon": "@computer"}
 `;
-    console.log(str);
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
@@ -1586,6 +1642,7 @@ participant Alice
 
     renderer.bounds.init();
     mermaidAPI.parse(str);
+
     renderer.draw(str, 'tst');
 
     const { bounds, models } = renderer.bounds.getBounds();
@@ -1618,5 +1675,27 @@ participant Alice
     expect(bounds.stopy).toBe(
       models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin
     );
+  });
+  it('it should hide sequence numbers when autonumber is removed when autonumber is enabled', function () {
+    const str1 = `
+sequenceDiagram
+autonumber
+Alice->Bob:Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!`;
+
+    mermaidAPI.parse(str1);
+    renderer.draw(str1, 'tst'); // needs to be rendered for the correct value of visibility autonumbers
+    expect(parser.yy.showSequenceNumbers()).toBe(true);
+
+    const str2 = `
+sequenceDiagram
+Alice->Bob:Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!`;
+
+    mermaidAPI.parse(str2);
+    renderer.draw(str2, 'tst');
+    expect(parser.yy.showSequenceNumbers()).toBe(false);
   });
 });

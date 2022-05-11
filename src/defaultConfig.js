@@ -35,7 +35,7 @@ const config = {
   theme: 'default',
   themeVariables: theme['default'].getThemeVariables(),
   themeCSS: undefined,
-  /* **maxTextSize** - The maximum allowed size of the users text diamgram */
+  /* **maxTextSize** - The maximum allowed size of the users text diagram */
   maxTextSize: 50000,
   darkMode: false,
 
@@ -100,7 +100,7 @@ const config = {
   arrowMarkerAbsolute: false,
 
   /**
-   * This option controls which currentConfig keys are considered *secure* and can only be changed
+   * This option controls which currentConfig keys are considered _secure_ and can only be changed
    * via call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to the
    * `secure` keys in the current currentConfig. This prevents malicious graph directives from
    * overriding a site's default security.
@@ -230,6 +230,7 @@ const config = {
 
   /** The object containing configurations specific for sequence diagrams */
   sequence: {
+    hideUnusedParticipants: false,
     /**
      * | Parameter       | Description                  | Type    | Required | Values             |
      * | --------------- | ---------------------------- | ------- | -------- | ------------------ |
@@ -410,9 +411,9 @@ const config = {
      * | --------------- | ---------------------------------------------------- | ------ | -------- | --------------------------- |
      * | actorFontFamily | This sets the font family of the actor's description | string | Required | Any Possible CSS FontFamily |
      *
-     * **Notes:** Default value: "'Open-Sans", "sans-serif"'
+     * **Notes:** Default value: "'Open Sans", sans-serif'
      */
-    actorFontFamily: '"Open-Sans", "sans-serif"',
+    actorFontFamily: '"Open Sans", sans-serif',
 
     /**
      * This sets the font weight of the actor's description
@@ -802,7 +803,7 @@ const config = {
      */
     rightAngles: false,
     taskFontSize: 14,
-    taskFontFamily: '"Open-Sans", "sans-serif"',
+    taskFontFamily: '"Open Sans", sans-serif',
     taskMargin: 50,
     // width of activation box
     activationWidth: 10,
@@ -843,25 +844,6 @@ const config = {
      * Default value: 'dagre-d3'
      */
     defaultRenderer: 'dagre-wrapper',
-  },
-  git: {
-    arrowMarkerAbsolute: false,
-
-    useWidth: undefined,
-
-    /**
-     * | Parameter   | Description | Type    | Required | Values      |
-     * | ----------- | ----------- | ------- | -------- | ----------- |
-     * | useMaxWidth | See notes   | boolean | 4        | true, false |
-     *
-     * **Notes:**
-     *
-     * When this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     *
-     * Default value: true
-     */
-    useMaxWidth: true,
   },
   state: {
     dividerMargin: 10,
@@ -1064,10 +1046,23 @@ const config = {
     rect_padding: 10,
     line_height: 20,
   },
+  gitGraph: {
+    diagramPadding: 8,
+    nodeLabel: {
+      width: 75,
+      height: 100,
+      x: -25,
+      y: 0,
+    },
+    mainBranchName: 'main',
+    mainBranchOrder: 0,
+    showCommitLabel: true,
+    showBranches: true,
+  },
 };
 
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
 const keyify = (obj, prefix = '') =>
   Object.keys(obj).reduce((res, el) => {

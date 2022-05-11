@@ -11,6 +11,7 @@ import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
 import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
 import flowChartShapes from './flowChartShapes';
+import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -26,9 +27,15 @@ export const setConf = function (cnf) {
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  * @param svgId
+ * @param root
+ * @param doc
+ * @param _doc
  */
-export const addVertices = function (vert, g, svgId) {
-  const svg = select(`[id="${svgId}"]`);
+export const addVertices = function (vert, g, svgId, root, _doc) {
+  const securityLevel = getConfig().securityLevel;
+
+  const svg = !root ? select(`[id="${svgId}"]`) : root.select(`[id="${svgId}"]`);
+  const doc = !_doc ? document : _doc;
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
@@ -63,13 +70,13 @@ export const addVertices = function (vert, g, svgId) {
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
     } else {
-      const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      const svgLabel = doc.createElementNS('http://www.w3.org/2000/svg', 'text');
       svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
 
       const rows = vertexText.split(common.lineBreakRegex);
 
       for (let j = 0; j < rows.length; j++) {
-        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
         tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
         tspan.setAttribute('dy', '1em');
         tspan.setAttribute('x', '1');
@@ -152,7 +159,7 @@ export const addVertices = function (vert, g, svgId) {
 };
 
 /**
- * Add edges to graph based on parsed graph defninition
+ * Add edges to graph based on parsed graph definition
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
@@ -234,7 +241,9 @@ export const addEdges = function (edges, g) {
 
       if (evaluate(getConfig().flowchart.htmlLabels)) {
         edgeData.labelType = 'html';
-        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text.replace(
+        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}" style="${
+          edgeData.labelStyle
+        }">${edge.text.replace(
           /fa[lrsb]?:fa-[\w-]+/g,
           (s) => `<i class='${s.replace(':', ' ')}'></i>`
         )}</span>`;
@@ -293,6 +302,17 @@ export const draw = function (text, id) {
   const parser = flow.parser;
   parser.yy = flowDb;
 
+  const securityLevel = getConfig().securityLevel;
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
   // Parse the graph definition
   // try {
   parser.parse(text);
@@ -333,7 +353,7 @@ export const draw = function (text, id) {
     flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
   }
 
-  // Fetch the verices/nodes and edges/links from the parsed graph definition
+  // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const vert = flowDb.getVertices();
   log.warn('Get vertices', vert);
 
@@ -355,7 +375,7 @@ export const draw = function (text, id) {
       g.setParent(flowDb.lookUpDomId(subG.nodes[j]), flowDb.lookUpDomId(subG.id));
     }
   }
-  addVertices(vert, g, id);
+  addVertices(vert, g, id, root, doc);
   addEdges(edges, g);
 
   // Create the renderer
@@ -404,13 +424,16 @@ export const draw = function (text, id) {
   };
 
   // Set up an SVG group so that we can translate the final graph.
-  const svg = select(`[id="${id}"]`);
+  const svg = root.select(`[id="${id}"]`);
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   log.warn(g);
 
+  // Adds title and description to the flow chart
+  addSVGAccessibilityFields(parser.yy, svg, id);
+
   // Run the renderer. This is what draws the final graph.
-  const element = select('#' + id + ' g');
+  const element = root.select('#' + id + ' g');
   render(element, g);
 
   element.selectAll('g.node').attr('title', function () {
@@ -436,10 +459,10 @@ export const draw = function (text, id) {
   for (i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i];
     if (subG.title !== 'undefined') {
-      const clusterRects = document.querySelectorAll(
+      const clusterRects = doc.querySelectorAll(
         '#' + id + ' [id="' + flowDb.lookUpDomId(subG.id) + '"] rect'
       );
-      const clusterEl = document.querySelectorAll(
+      const clusterEl = doc.querySelectorAll(
         '#' + id + ' [id="' + flowDb.lookUpDomId(subG.id) + '"]'
       );
 
@@ -459,14 +482,14 @@ export const draw = function (text, id) {
 
   // Add label rects for non html labels
   if (!evaluate(conf.htmlLabels) || true) { // eslint-disable-line
-    const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
+    const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];
 
       // Get dimensions of label
       const dim = label.getBBox();
 
-      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      const rect = doc.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
@@ -483,13 +506,15 @@ export const draw = function (text, id) {
     const vertex = vert[key];
 
     if (vertex.link) {
-      const node = select('#' + id + ' [id="' + flowDb.lookUpDomId(key) + '"]');
+      const node = root.select('#' + id + ' [id="' + flowDb.lookUpDomId(key) + '"]');
       if (node) {
-        const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+        const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
         link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
-        if (vertex.linkTarget) {
+        if (securityLevel === 'sandbox') {
+          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
+        } else if (vertex.linkTarget) {
           link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
         }
 

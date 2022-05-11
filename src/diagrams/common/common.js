@@ -18,8 +18,6 @@ export const removeEscapes = (text) => {
     return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
   });
 
-  console.log(newStr);
-
   newStr = newStr.replace(/\\x([0-9a-f]{2})/gi, (_, c) => String.fromCharCode(parseInt(c, 16)));
   newStr = newStr.replace(/\\[\d\d\d]{3}/gi, function (match) {
     return String.fromCharCode(parseInt(match.replace(/\\/g, ''), 8));
@@ -59,10 +57,11 @@ export const removeScript = (txt) => {
     }
   }
   let decodedText = removeEscapes(rs);
-  decodedText = decodedText.replace(/script>/gi, '#');
-  decodedText = decodedText.replace(/javascript:/gi, '#');
-  decodedText = decodedText.replace(/onerror=/gi, 'onerror:');
-  decodedText = decodedText.replace(/<iframe/gi, '');
+  decodedText = decodedText.replaceAll(/script>/gi, '#');
+  decodedText = decodedText.replaceAll(/javascript:/gi, '#');
+  decodedText = decodedText.replaceAll(/javascript&colon/gi, '#');
+  decodedText = decodedText.replaceAll(/onerror=/gi, 'onerror:');
+  decodedText = decodedText.replaceAll(/<iframe/gi, '');
   return decodedText;
 };
 
@@ -95,7 +94,12 @@ const sanitizeMore = (text, config) => {
 
 export const sanitizeText = (text, config) => {
   if (!text) return text;
-  const txt = DOMPurify.sanitize(sanitizeMore(text, config));
+  let txt = '';
+  if (config['dompurifyConfig']) {
+    txt = DOMPurify.sanitize(sanitizeMore(text, config), config['dompurifyConfig']);
+  } else {
+    txt = DOMPurify.sanitize(sanitizeMore(text, config));
+  }
   return txt;
 };
 

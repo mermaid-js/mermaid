@@ -4,10 +4,10 @@
 
 All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, the arrows or lines. The mermaid code defines the way that these **nodes** and **edges** are made and interact.
 
-It can also accomodate different arrow types, multi directional arrows, and linking to and from subgraphs.
+It can also accommodate different arrow types, multi directional arrows, and linking to and from subgraphs.
 
 > **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).**
-Node
+
 ### A node (default)
 
 ```mermaid-example
@@ -139,6 +139,13 @@ flowchart TD
 ```mermaid-example
 flowchart TD
     B[\Go shopping/]
+```
+
+### Double circle
+
+```mermaid-example
+flowchart TD
+    id1(((This is the text in the circle)))
 ```
 
 ## Links between nodes
@@ -281,11 +288,11 @@ to node _E_, so that it spans two more ranks than regular links:
 
 ```mermaid-example
 flowchart TD
-    A[Start] --> B{Is it?};
-    B -->|Yes| C[OK];
-    C --> D[Rethink];
-    D --> B;
-    B ---->|No| E[End];
+    A[Start] --> B{Is it?}
+    B -->|Yes| C[OK]
+    C --> D[Rethink]
+    D --> B
+    B ---->|No| E[End]
 ```
 
 > **Note** Links may still be made longer than the requested number of ranks
@@ -297,11 +304,11 @@ the previous one:
 
 ```mermaid-example
 flowchart TD
-    A[Start] --> B{Is it?};
-    B -- Yes --> C[OK];
-    C --> D[Rethink];
-    D --> B;
-    B -- No ----> E[End];
+    A[Start] --> B{Is it?}
+    B -- Yes --> C[OK]
+    C --> D[Rethink]
+    D --> B
+    B -- No ----> E[End]
 ```
 
 For dotted or thick links, the characters to add are equals signs or dots,
@@ -370,9 +377,9 @@ flowchart TB
     end
  ```
 
-## Beta: flowcharts
+## flowcharts
 
-With the graphtype flowcharts it is also possible to set edges to and from subgraphs as in the flowchart below.
+With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the flowchart below.
 
 ```mermaid-example
 flowchart TB
@@ -435,10 +442,10 @@ Examples of tooltip usage below:
 The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class `.mermaidTooltip`.
 
 ```mermaid-example
-flowchart LR;
-    A-->B;
-    B-->C;
-    C-->D;
+flowchart LR
+    A-->B
+    B-->C
+    C-->D
     click A callback "Tooltip for a callback"
     click B "http://www.github.com" "This is a tooltip for a link"
     click A call callback() "Tooltip for a callback"
@@ -451,11 +458,11 @@ flowchart LR;
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
 ```mermaid-example
-flowchart LR;
-    A-->B;
-    B-->C;
-    C-->D;
-    D-->E;
+flowchart LR
+    A-->B
+    B-->C
+    C-->D
+    D-->E
     click A "http://www.github.com" _blank
     click B "http://www.github.com" "Open this in a new tab" _blank
     click C href "http://www.github.com" _blank
@@ -466,10 +473,10 @@ Beginners tip, a full example using interactive links in a html context:
 ```html
 <body>
   <div class="mermaid">
-    flowchart LR;
-        A-->B;
-        B-->C;
-        C-->D;
+    flowchart LR
+        A-->B
+        B-->C
+        C-->D
         click A callback "Tooltip"
         click B "http://www.github.com" "This is a link"
         click C call callback() "Tooltip"
@@ -574,9 +581,9 @@ below:
 
 ```mermaid-example
 flowchart LR;
-    A-->B[AAA<span>BBB</span>];
-    B-->D;
-    class A cssClass;
+    A-->B[AAA<span>BBB</span>]
+    B-->D
+    class A cssClass
 ```
 
 
@@ -600,7 +607,7 @@ flowchart TD
     B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
     B-->D(fa:fa-spinner);
-    B-->E(A fa:fa-camera-retro perhaps?);
+    B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
 

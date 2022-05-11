@@ -42,6 +42,7 @@ import infoParser from './diagrams/info/parser/info';
 import pieParser from './diagrams/pie/parser/pie';
 import pieDb from './diagrams/pie/pieDb';
 import pieRenderer from './diagrams/pie/pieRenderer';
+import addSVGAccessibilityFields from './diagrams/pie/pieRenderer';
 import requirementParser from './diagrams/requirement/parser/requirementDiagram';
 import requirementDb from './diagrams/requirement/requirementDb';
 import requirementRenderer from './diagrams/requirement/requirementRenderer';
@@ -61,96 +62,121 @@ import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
 import utils, { directiveSanitizer, assignWithDepth, sanitizeCss } from './utils';
+import DOMPurify from 'dompurify';
+import mermaid from './mermaid';
 
 /**
  * @param text
  * @returns {any}
  */
 function parse(text) {
-  const cnf = configApi.getConfig();
-  const graphInit = utils.detectInit(text, cnf);
-  if (graphInit) {
-    reinitialize(graphInit);
-    log.debug('reinit ', graphInit);
-  }
-  const graphType = utils.detectType(text, cnf);
-  let parser;
+  var parseEncounteredException = false;
+  try {
+    text = text + '\n';
+    const cnf = configApi.getConfig();
+    const graphInit = utils.detectInit(text, cnf);
+    if (graphInit) {
+      reinitialize(graphInit);
+      log.info('reinit ', graphInit);
+    }
+    const graphType = utils.detectType(text, cnf);
+    let parser;
 
-  log.debug('Type ' + graphType);
-  switch (graphType) {
-    case 'git':
-      parser = gitGraphParser;
-      parser.parser.yy = gitGraphAst;
-      break;
-    case 'flowchart':
-      flowDb.clear();
-      parser = flowParser;
-      parser.parser.yy = flowDb;
-      break;
-    case 'flowchart-v2':
-      flowDb.clear();
-      parser = flowParser;
-      parser.parser.yy = flowDb;
-      break;
-    case 'sequence':
-      parser = sequenceParser;
-      parser.parser.yy = sequenceDb;
-      break;
-    case 'gantt':
-      parser = ganttParser;
-      parser.parser.yy = ganttDb;
-      break;
-    case 'class':
-      parser = classParser;
-      parser.parser.yy = classDb;
-      break;
-    case 'classDiagram':
-      parser = classParser;
-      parser.parser.yy = classDb;
-      break;
-    case 'state':
-      parser = stateParser;
-      parser.parser.yy = stateDb;
-      break;
-    case 'stateDiagram':
-      parser = stateParser;
-      parser.parser.yy = stateDb;
-      break;
-    case 'info':
-      log.debug('info info info');
-      parser = infoParser;
-      parser.parser.yy = infoDb;
-      break;
-    case 'pie':
-      log.debug('pie');
-      parser = pieParser;
-      parser.parser.yy = pieDb;
-      break;
-    case 'er':
-      log.debug('er');
-      parser = erParser;
-      parser.parser.yy = erDb;
-      break;
-    case 'journey':
-      log.debug('Journey');
-      parser = journeyParser;
-      parser.parser.yy = journeyDb;
-      break;
-    case 'requirement':
-    case 'requirementDiagram':
-      log.debug('RequirementDiagram');
-      parser = requirementParser;
-      parser.parser.yy = requirementDb;
-      break;
-  }
-  parser.parser.yy.graphType = graphType;
-  parser.parser.yy.parseError = (str, hash) => {
-    const error = { str, hash };
-    throw error;
-  };
+    log.debug('Type ' + graphType);
+    switch (graphType) {
+      case 'gitGraph':
+        gitGraphAst.clear();
+        parser = gitGraphParser;
+        parser.parser.yy = gitGraphAst;
+        break;
+      case 'flowchart':
+        flowDb.clear();
+        parser = flowParser;
+        parser.parser.yy = flowDb;
+        break;
+      case 'flowchart-v2':
+        flowDb.clear();
+        parser = flowParser;
+        parser.parser.yy = flowDb;
+        break;
+      case 'sequence':
+        sequenceDb.clear();
+        parser = sequenceParser;
+        parser.parser.yy = sequenceDb;
+        break;
+      case 'gantt':
+        parser = ganttParser;
+        parser.parser.yy = ganttDb;
+        break;
+      case 'class':
+        parser = classParser;
+        parser.parser.yy = classDb;
+        break;
+      case 'classDiagram':
+        parser = classParser;
+        parser.parser.yy = classDb;
+        break;
+      case 'state':
+        parser = stateParser;
+        parser.parser.yy = stateDb;
+        break;
+      case 'stateDiagram':
+        parser = stateParser;
+        parser.parser.yy = stateDb;
+        break;
+      case 'info':
+        log.debug('info info info');
+        parser = infoParser;
+        parser.parser.yy = infoDb;
+        break;
+      case 'pie':
+        log.debug('pie');
+        parser = pieParser;
+        parser.parser.yy = pieDb;
+        break;
+      case 'er':
+        log.debug('er');
+        parser = erParser;
+        parser.parser.yy = erDb;
+        break;
+      case 'journey':
+        log.debug('Journey');
+        parser = journeyParser;
+        parser.parser.yy = journeyDb;
+        break;
+      case 'requirement':
+      case 'requirementDiagram':
+        log.debug('RequirementDiagram');
+        parser = requirementParser;
+        parser.parser.yy = requirementDb;
+        break;
+    }
+    parser.parser.yy.graphType = graphType;
+    parser.parser.yy.parseError = (str, hash) => {
+      const error = { str, hash };
+      throw error;
+    };
 
-  parser.parse(text);
-  return parser;
+    parser.parse(text);
+  } catch (error) {
+    parseEncounteredException = true;
+    // Is this the correct way to access mermiad's parseError()
+    // method ? (or global.mermaid.parseError()) ?
+    if (mermaid.parseError) {
+      if (error.str != undefined) {
+        // handle case where error string and hash were
+        // wrapped in object like`const error = { str, hash };`
+        mermaid.parseError(error.str, error.hash);
+      } else {
+        // assume it is just error string and pass it on
+        mermaid.parseError(error);
+      }
+    } else {
+      // No mermaid.parseError() handler defined, so re-throw it
+      throw error;
+    }
+  }
+  return !parseEncounteredException;
 }
 
 export const encodeEntities = function (text) {
@@ -220,22 +246,58 @@ export const decodeEntities = function (text) {
  */
 const render = function (id, _txt, cb, container) {
   configApi.reset();
-  let txt = _txt;
+  let txt = _txt.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(txt);
   if (graphInit) {
     directiveSanitizer(graphInit);
     configApi.addDirective(graphInit);
   }
   let cnf = configApi.getConfig();
+
+  log.debug(cnf);
+
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
+  // let d3Iframe;
+  let root = select('body');
+
+  // In regular execurtion the container will be the div with a mermaid class
   if (typeof container !== 'undefined') {
+    if (cnf.securityLevel === 'sandbox') {
+      // IF we are in sandboxed mode, we do everyting mermaid related
+      // in a sandboxed div
+      const iframe = select('body')
+        .append('iframe')
+        .attr('id', 'i' + id)
+        .attr('style', 'width: 100%; height: 100%;')
+        .attr('sandbox', '');
+      // const iframeBody = ;
+      root = select(iframe.nodes()[0].contentDocument.body);
+      root.node().style.margin = 0;
+    }
+
+    // A container was provided by the caller
     container.innerHTML = '';
 
-    select(container)
+    if (cnf.securityLevel === 'sandbox') {
+      // IF we are in sandboxed mode, we do everyting mermaid related
+      // in a sandboxed div
+      const iframe = select(container)
+        .append('iframe')
+        .attr('id', 'i' + id)
+        .attr('style', 'width: 100%; height: 100%;')
+        .attr('sandbox', '');
+      // const iframeBody = ;
+      root = select(iframe.nodes()[0].contentDocument.body);
+      root.node().style.margin = 0;
+    } else {
+      root = select(container);
+    }
+
+    root
       .append('div')
       .attr('id', 'd' + id)
       .attr('style', 'font-family: ' + cnf.fontFamily)
@@ -245,18 +307,57 @@ const render = function (id, _txt, cb, container) {
       .attr('xmlns', 'http://www.w3.org/2000/svg')
       .append('g');
   } else {
+    // No container was provided
+    // If there is an existsing element with the id, we remove it
+    // this likley a previously rendered diagram
     const existingSvg = document.getElementById(id);
     if (existingSvg) {
       existingSvg.remove();
     }
-    const element = document.querySelector('#' + 'd' + id);
+
+    // Remove previous tpm element if it exists
+    let element;
+    if (cnf.securityLevel !== 'sandbox') {
+      element = document.querySelector('#' + 'd' + id);
+    } else {
+      element = document.querySelector('#' + 'i' + id);
+    }
     if (element) {
       element.remove();
     }
 
-    select('body')
+    // if (cnf.securityLevel === 'sandbox') {
+    //   const iframe = select('body')
+    //     .append('iframe')
+    //     .attr('id', 'i' + id)
+    //     .attr('sandbox', '');
+    //   // const iframeBody = ;
+    //   root = select(iframe.nodes()[0].contentDocument.body);
+    // }
+
+    // Add the tmp div used for rendering with the id `d${id}`
+    // d+id it will contain a svg with the id "id"
+
+    if (cnf.securityLevel === 'sandbox') {
+      // IF we are in sandboxed mode, we do everyting mermaid related
+      // in a sandboxed div
+      const iframe = select('body')
+        .append('iframe')
+        .attr('id', 'i' + id)
+        .attr('style', 'width: 100%; height: 100%;')
+        .attr('sandbox', '');
+      // const iframeBody = ;
+      root = select(iframe.nodes()[0].contentDocument.body);
+      root.node().style.margin = 0;
+    } else {
+      root = select('body');
+    }
+
+    // This is the temporary div
+    root
       .append('div')
       .attr('id', 'd' + id)
+      // this is the seed of the svg to be rendered
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
@@ -264,10 +365,10 @@ const render = function (id, _txt, cb, container) {
       .append('g');
   }
 
-  window.txt = txt;
   txt = encodeEntities(txt);
 
-  const element = select('#d' + id).node();
+  // Get the tmp element containing the the svg
+  const element = root.select('#d' + id).node();
   const graphType = utils.detectType(txt, cnf);
 
   // insert inline style into svg
@@ -348,9 +449,9 @@ const render = function (id, _txt, cb, container) {
 
   try {
     switch (graphType) {
-      case 'git':
-        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        gitGraphRenderer.setConf(cnf.git);
+      case 'gitGraph':
+        // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        //gitGraphRenderer.setConf(cnf.git);
         gitGraphRenderer.draw(txt, id, false);
         break;
       case 'flowchart':
@@ -430,14 +531,19 @@ const render = function (id, _txt, cb, container) {
     throw e;
   }
 
-  select(`[id="${id}"]`)
+  root
+    .select(`[id="${id}"]`)
     .selectAll('foreignobject > *')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
   // Fix for when the base tag is used
-  let svgCode = select('#d' + id).node().innerHTML;
+  let svgCode = root.select('#d' + id).node().innerHTML;
+
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
-  if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
+  if (
+    (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') &&
+    cnf.arrowMarkerAbsolute !== 'sandbox'
+  ) {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 
@@ -445,6 +551,28 @@ const render = function (id, _txt, cb, container) {
 
   // Fix for when the br tag is used
   svgCode = svgCode.replace(/<br>/g, '<br/>');
+
+  if (cnf.securityLevel === 'sandbox') {
+    let svgEl = root.select('#d' + id + ' svg').node();
+    let width = '100%';
+    let height = '100%';
+    if (svgEl) {
+      // width = svgEl.viewBox.baseVal.width + 'px';
+      height = svgEl.viewBox.baseVal.height + 'px';
+    }
+    svgCode = `<iframe style="width:${width};height:${height};border:0;margin:0;" src="data:text/html;base64,${btoa(
+      '<body style="margin:0">' + svgCode + '</body>'
+    )}" sandbox="allow-top-navigation-by-user-activation allow-popups">
+  The “iframe” tag is not supported by your browser.
+</iframe>`;
+  } else {
+    if (cnf.securityLevel !== 'loose') {
+      svgCode = DOMPurify.sanitize(svgCode, {
+        ADD_TAGS: ['foreignobject'],
+        ADD_ATTR: ['dominant-baseline'],
+      });
+    }
+  }
 
   if (typeof cb !== 'undefined') {
     switch (graphType) {
@@ -467,11 +595,10 @@ const render = function (id, _txt, cb, container) {
   }
   attachFunctions();
 
-  const node = select('#d' + id).node();
+  const tmpElementSelector = cnf.securityLevel === 'sandbox' ? '#i' + id : '#d' + id;
+  const node = select(tmpElementSelector).node();
   if (node !== null && typeof node.remove === 'function') {
-    select('#d' + id)
-      .node()
-      .remove();
+    select(tmpElementSelector).node().remove();
   }
 
   return svgCode;
@@ -551,7 +678,8 @@ const handleDirective = function (p, directive, type) {
 /** @param {any} conf */
 function updateRendererConfigs(conf) {
   // Todo remove, all diagrams should get config on demoand from the config object, no need for this
-  gitGraphRenderer.setConf(conf.git);
+
+  // gitGraphRenderer.setConf(conf.git); // Todo Remove all  of these
   flowRenderer.setConf(conf.flowchart);
   flowRendererV2.setConf(conf.flowchart);
   if (typeof conf['sequenceDiagram'] !== 'undefined') {
@@ -570,6 +698,7 @@ function updateRendererConfigs(conf) {
   errorRenderer.setConf(conf.class);
 }
 
+/** To be removed */
 function reinitialize() {
   // `mermaidAPI.reinitialize: v${pkg.version}`,
   //   JSON.stringify(options),
@@ -697,7 +826,7 @@ export default mermaidAPI;
  *       leftPadding: 75,
  *       gridLineStartPadding: 35,
  *       fontSize: 11,
- *       fontFamily: '"Open-Sans", "sans-serif"',
+ *       fontFamily: '"Open Sans", sans-serif',
  *       numberSectionStyles: 4,
  *       axisFormat: '%Y-%m-%d',
  *       topAxis: false,

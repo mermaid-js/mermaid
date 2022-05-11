@@ -16,7 +16,17 @@
 //   // `config` is the resolved Cypress config
 // }
 
+const { addMatchImageSnapshotPlugin } = require('cypress-image-snapshot/plugin');
+require('@applitools/eyes-cypress')(module);
+
 module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
+  addMatchImageSnapshotPlugin(on, config);
+  // copy any needed variables from process.env to config.env
+  config.env.useAppli = process.env.USE_APPLI ? true : false;
+  config.env.codeBranch = process.env.APPLI_BRANCH;
+
+  // do not forget to return the changed config object!
+  return config;
 };
+
+require('@applitools/eyes-cypress')(module);

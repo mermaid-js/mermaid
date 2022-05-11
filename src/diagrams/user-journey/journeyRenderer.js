@@ -4,6 +4,7 @@ import journeyDb from './journeyDb';
 import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = journeyDb;
 
@@ -54,8 +55,20 @@ export const draw = function (text, id) {
   parser.yy.clear();
   parser.parse(text + '\n');
 
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and ocument for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
+  }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
   bounds.init();
-  const diagram = select('#' + id);
+  const diagram = root.select('#' + id);
   diagram.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   svgDraw.initGraphics(diagram);
@@ -88,6 +101,7 @@ export const draw = function (text, id) {
       .attr('font-weight', 'bold')
       .attr('y', 25);
   }
+
   const height = box.stopy - box.starty + 2 * conf.diagramMarginY;
   const width = LEFT_MARGIN + box.stopx + 2 * conf.diagramMarginX;
 
@@ -108,6 +122,8 @@ export const draw = function (text, id) {
   diagram.attr('viewBox', `${box.startx} -25 ${width} ${height + extraVertForTitle}`);
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
   diagram.attr('height', height + extraVertForTitle + 25);
+
+  addSVGAccessibilityFields(parser.yy, diagram, id);
 };
 
 export const bounds = {

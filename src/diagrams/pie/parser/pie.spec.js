@@ -56,10 +56,59 @@ pie
 "bat" : 40
 `);
     const sections = pieDb.getSections();
-    const title = pieDb.getTitle();
+    const title = pieDb.getPieTitle();
     const section1 = sections['ash'];
     expect(section1).toBe(60);
     expect(title).toBe('a 60/40 pie');
+  });
+
+  it('should handle simple pie without an acc description  (accDescr)', function () {
+    const res = pie.parser.parse(`pie title a neat chart
+"ash" : 60
+"bat" : 40
+`);
+
+    const sections = pieDb.getSections();
+    const title = pieDb.getPieTitle();
+    const description = pieDb.getAccDescription();
+    const section1 = sections['ash'];
+    expect(section1).toBe(60);
+    expect(title).toBe('a neat chart');
+    expect(description).toBe('');
+  });
+
+  it('should handle simple pie with an acc description (accDescr)', function () {
+    const res = pie.parser.parse(`pie title a neat chart
+    accDescr: a neat description
+"ash" : 60
+"bat" : 40
+`);
+
+    const sections = pieDb.getSections();
+    const title = pieDb.getPieTitle();
+    const description = pieDb.getAccDescription();
+    const section1 = sections['ash'];
+    expect(section1).toBe(60);
+    expect(title).toBe('a neat chart');
+    expect(description).toBe('a neat description');
+  });
+  it('should handle simple pie with a multiline acc description (accDescr)', function () {
+    const res = pie.parser.parse(`pie title a neat chart
+    accDescr {
+      a neat description
+      on multiple lines
+    }
+"ash" : 60
+"bat" : 40
+`);
+
+    const sections = pieDb.getSections();
+    const title = pieDb.getPieTitle();
+    const description = pieDb.getAccDescription();
+    const section1 = sections['ash'];
+    expect(section1).toBe(60);
+    expect(title).toBe('a neat chart');
+    expect(description).toBe('a neat description\non multiple lines');
   });
 
   it('should handle simple pie with positive decimal', function () {

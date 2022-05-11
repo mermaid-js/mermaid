@@ -1,10 +1,19 @@
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
+import common from '../common/common';
+import {
+  setTitle,
+  getTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let entities = {};
 let relationships = [];
 let title = '';
+let description = '';
 
 const Cardinality = {
   ZERO_OR_ONE: 'ZERO_OR_ONE',
@@ -66,19 +75,11 @@ const addRelationship = function (entA, rolA, entB, rSpec) {
 
 const getRelationships = () => relationships;
 
-// Keep this - TODO: revisit...allow the diagram to have a title
-const setTitle = function (txt) {
-  title = txt;
-};
-
-const getTitle = function () {
-  return title;
-};
-
 const clear = function () {
   entities = {};
   relationships = [];
   title = '';
+  commonClear();
 };
 
 export default {
@@ -94,4 +95,6 @@ export default {
   clear,
   setTitle,
   getTitle,
+  setAccDescription,
+  getAccDescription,
 };
