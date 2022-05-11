@@ -102,6 +102,7 @@ statement
 
 entityName
     : 'ALPHANUM' { $$ = $1; /*console.log('Entity: ' + $1);*/ }
+    | 'ALPHANUM' '.' entityName { $$ = $1 + $2 + $3; }
     ;
 
 attributes

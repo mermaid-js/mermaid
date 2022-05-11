@@ -426,4 +426,10 @@ describe('when parsing ER diagram it...', function () {
     const rels = erDb.getRelationships();
     expect(rels[0].roleA).toBe('places');
   });
+
+  it('should allow an entity name with a dot', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER.PROP ||--|{ ORDER : places');
+    const rels = erDb.getRelationships();
+    expect(rels[0].entityA).toBe('CUSTOMER.PROP');
+  });
 });
