@@ -142,7 +142,6 @@ export const addAnnotation = function (className, annotation) {
  * @public
  */
 export const addMember = function (className, member) {
-  console.log(className, member);
   const validatedClassName = splitClassNameAndType(className).className;
   const theClass = classes[validatedClassName];
 

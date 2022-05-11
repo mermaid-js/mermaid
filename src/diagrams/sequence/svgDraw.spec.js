@@ -128,13 +128,11 @@ describe('svgDraw', function () {
     it('it should sanitize malicious urls', function () {
       const maliciousStr = 'javascript:script:alert(1)';
       const result = svgDraw.sanitizeUrl(maliciousStr);
-      console.log('result', result);
       expect(result).not.toContain('javascript:alert(1)');
     });
     it('it should not sanitize non dangerous urls', function () {
       const maliciousStr = 'javajavascript:script:alert(1)';
       const result = svgDraw.sanitizeUrl(maliciousStr);
-      console.log('result', result);
       expect(result).not.toContain('javascript:alert(1)');
     });
   });

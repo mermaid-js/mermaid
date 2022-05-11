@@ -188,7 +188,6 @@ describe('parsing a flow chart', function () {
 
     flow.parser.parse(flowChart);
     expect(flow.parser.yy.getTitle()).toBe('Big decisions');
-    console.log(flow.parser.yy.getAccDescription());
     expect(flow.parser.yy.getAccDescription()).toBe(
       `Flow chart of the decision making process
 with a second line`

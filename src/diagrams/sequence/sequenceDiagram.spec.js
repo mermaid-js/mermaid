@@ -423,7 +423,6 @@ deactivate Bob`;
     try {
       mermaidAPI.parse(str);
     } catch (e) {
-      console.log(e.hash);
       error = true;
     }
     expect(error).toBe(true);
@@ -1024,7 +1023,6 @@ link a: Endpoint @ https://alice.contoso.com
 link a: Swagger @ https://swagger.contoso.com
 link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 `;
-    console.log(str);
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
@@ -1049,7 +1047,6 @@ participant c as Charlie
 properties a: {"class": "internal-service-actor", "icon": "@clock"}
 properties b: {"class": "external-service-actor", "icon": "@computer"}
 `;
-    console.log(str);
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
