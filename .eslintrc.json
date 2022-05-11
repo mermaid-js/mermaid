@@ -25,6 +25,7 @@
     "jsdoc/newline-after-description": "off",
     "jsdoc/tag-lines": "off",
     "cypress/no-async-tests": "off",
+    "json/*": ["error", "allowComments"],
     "no-empty": ["error", { "allowEmptyCatch": true }]
   },
   "overrides": [
