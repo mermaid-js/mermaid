@@ -97,8 +97,7 @@ it('should render forks and joins', () => {
         { logLevel: 0 }
     );
     cy.get('svg');
-});
-
+});
 ```
 
 ### Any Questions or Suggestions?

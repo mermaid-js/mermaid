@@ -13,8 +13,8 @@
     },
     "sourceType": "module"
   },
-  "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "plugin:markdown/recommended", "plugin:prettier/recommended"],
-  "plugins": ["html", "jest", "jsdoc", "prettier"],
+  "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "plugin:json/recommended", "plugin:markdown/recommended", "plugin:prettier/recommended"],
+  "plugins": ["html", "jest", "jsdoc", "json", "prettier"],
   "rules": {
     "no-prototype-builtins": "off",
     "no-unused-vars": "off",
@@ -25,6 +25,7 @@
     "jsdoc/newline-after-description": "off",
     "jsdoc/tag-lines": "off",
     "cypress/no-async-tests": "off",
+    "json/*": ["error", "allowComments"],
     "no-empty": ["error", { "allowEmptyCatch": true }]
   },
   "overrides": [
