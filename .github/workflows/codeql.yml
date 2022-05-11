@@ -7,6 +7,10 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ develop ]
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
 
 jobs:
   analyze:

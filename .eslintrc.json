@@ -16,14 +16,15 @@
   "extends": ["eslint:recommended", "plugin:jsdoc/recommended", "plugin:markdown/recommended", "plugin:prettier/recommended"],
   "plugins": ["html", "jest", "jsdoc", "prettier"],
   "rules": {
-    "no-prototype-builtins": 0,
-    "no-unused-vars": 0,
-    "jsdoc/check-indentation": 0,
-    "jsdoc/check-alignment": 0,
-    "jsdoc/check-line-alignment": 0,
-    "jsdoc/multiline-blocks": 0,
-    "jsdoc/newline-after-description": 0,
-    "jsdoc/tag-lines": 0,
+    "no-prototype-builtins": "off",
+    "no-unused-vars": "off",
+    "jsdoc/check-indentation": "off",
+    "jsdoc/check-alignment": "off",
+    "jsdoc/check-line-alignment": "off",
+    "jsdoc/multiline-blocks": "off",
+    "jsdoc/newline-after-description": "off",
+    "jsdoc/tag-lines": "off",
+    "cypress/no-async-tests": "off",
     "no-empty": ["error", { "allowEmptyCatch": true }]
   },
   "overrides": [
