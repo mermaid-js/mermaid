@@ -450,6 +450,7 @@ graph LR;
 ```
 
 Beginners tip, a full example using interactive links in a html context:
+
 ```html
 <body>
   <div class="mermaid">
@@ -473,8 +474,8 @@ Beginners tip, a full example using interactive links in a html context:
             useMaxWidth: true,
             htmlLabels: true,
             curve: 'cardinal'
-        }
-        securityLevel:'loose'
+        },
+        securityLevel: 'loose'
     };
     mermaid.initialize(config);
   </script>
@@ -646,6 +647,6 @@ mermaid.flowchartConfig can be set to a JSON string with config parameters or th
 
 ```javascript
 mermaid.flowchartConfig = {
-    width: 100%
+    width: '100%'
 }
 ```
