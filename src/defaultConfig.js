@@ -1059,6 +1059,166 @@ const config = {
     showCommitLabel: true,
     showBranches: true,
   },
+
+  /** The object containing configurations specific for c4 diagrams */
+  c4: {
+    useWidth: undefined,
+
+    /**
+     * | Parameter      | Description                                          | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------------- | ------- | -------- | ------------------ |
+     * | diagramMarginX | Margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 50
+     */
+    diagramMarginX: 50,
+
+    /**
+     * | Parameter      | Description                                       | Type    | Required | Values             |
+     * | -------------- | ------------------------------------------------- | ------- | -------- | ------------------ |
+     * | diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    diagramMarginY: 10,
+
+    /**
+     * | Parameter   | Description           | Type    | Required | Values             |
+     * | ----------- | --------------------- | ------- | -------- | ------------------ |
+     * | actorMargin | Margin between persons | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 50
+     */
+    c4ShapeMargin: 50,
+
+    c4ShapePadding: 20,
+
+    /**
+     * | Parameter | Description          | Type    | Required | Values             |
+     * | --------- | -------------------- | ------- | -------- | ------------------ |
+     * | width     | Width of person boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 215
+     */
+    width: 216,
+
+    /**
+     * | Parameter | Description           | Type    | Required | Values             |
+     * | --------- | --------------------- | ------- | -------- | ------------------ |
+     * | height    | Height of person boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 65
+     */
+    height: 60,
+
+    /**
+     * | Parameter | Description              | Type    | Required | Values             |
+     * | --------- | ------------------------ | ------- | -------- | ------------------ |
+     * | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    boxMargin: 10,
+
+    /**
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See Notes   | boolean | Required | true, false |
+     *
+     * **Notes:** When this flag is set to true, the height and width is set to 100% and is then
+     * scaling with the available space. If set to false, the absolute space required is used.
+     *
+     * Default value: true
+     */
+    useMaxWidth: true,
+
+    c4ShapeInRow: 4,
+    nextLinePaddingX: 0,
+
+    c4BoundaryInRow: 2,
+
+
+    personFontSize: 14,
+    personFontFamily: '"Open Sans", sans-serif',
+    personFontWeight: "normal",
+
+    systemFontSize: 14,
+    systemFontFamily: '"Open Sans", sans-serif',
+    systemFontWeight: "normal",
+
+    boundaryFontSize: 14,
+    boundaryFontFamily: '"Open Sans", sans-serif',
+    boundaryFontWeight: "normal",
+
+    messageFontSize: 12,
+    messageFontFamily: '"Open Sans", sans-serif',
+    messageFontWeight: "normal",
+
+    /**
+     * This sets the auto-wrap state for the diagram
+     *
+     * **Notes:** Default value: true.
+     */
+    wrap: true,
+
+    /**
+     * This sets the auto-wrap padding for the diagram (sides only)
+     *
+     * **Notes:** Default value: 0.
+     */
+    wrapPadding: 10,
+
+    personFont: function () {
+      return {
+        fontFamily: this.personFontFamily,
+        fontSize: this.personFontSize,
+        fontWeight: this.personFontWeight,
+      };
+    },
+
+    systemFont: function () {
+      return {
+        fontFamily: this.systemFontFamily,
+        fontSize: this.systemFontSize,
+        fontWeight: this.systemFontWeight,
+      };
+    },
+
+    boundaryFont: function () {
+      return {
+        fontFamily: this.boundaryFontFamily,
+        fontSize: this.boundaryFontSize,
+        fontWeight: this.boundaryFontWeight,
+      };
+    },
+
+    messageFont: function () {
+      return {
+        fontFamily: this.messageFontFamily,
+        fontSize: this.messageFontSize,
+        fontWeight: this.messageFontWeight,
+      };
+    },
+
+    // ' Colors
+    // ' ##################################
+    person_bg_color: "#08427B",
+    person_border_color: "#073B6F",
+    external_person_bg_color: "#686868",
+    external_person_border_color: "#8A8A8A",
+    system_bg_color: "#1168BD",
+    system_border_color: "#3C7FC0",
+    system_db_bg_color: "#1168BD",
+    system_db_border_color: "#3C7FC0",
+    system_queue_bg_color: "#1168BD",
+    system_queue_border_color: "#3C7FC0",
+    external_system_bg_color: "#999999",
+    external_system_border_color: "#8A8A8A",
+    external_system_db_bg_color: "#999999",
+    external_system_db_border_color: "#8A8A8A",
+    external_system_queue_bg_color: "#999999",
+    external_system_queue_border_color: "#8A8A8A",
+  },  
 };
 
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;

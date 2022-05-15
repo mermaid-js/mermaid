@@ -78,6 +78,11 @@ class Theme {
     this.taskTextDarkColor = 'calculated';
     this.todayLineColor = '#DB5757';
 
+    /* C4 Context Diagram variables */
+
+    this.personBorder = 'calculated';
+    this.personBkg = 'calculated';
+    
     /* state colors */
     this.labelColor = 'calculated';
 

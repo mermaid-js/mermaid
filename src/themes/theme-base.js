@@ -113,6 +113,11 @@ class Theme {
     this.taskTextDarkColor = this.taskTextDarkColor || this.textColor;
     this.taskTextClickableColor = this.taskTextClickableColor || '#003163';
 
+    /* Sequence Diagram variables */
+
+    this.personBorder = this.personBorder || this.primaryBorderColor;
+    this.personBkg = this.personBkg || this.mainBkg;
+
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;

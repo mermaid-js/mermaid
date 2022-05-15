@@ -89,6 +89,11 @@ class Theme {
     this.critBorderColor = 'calculated';
     this.todayLineColor = 'calculated';
 
+    /* C4 Context Diagram variables */
+
+    this.personBorder = 'calculated';
+    this.personBkg = 'calculated';
+    
     /* state colors */
     this.labelColor = 'black';
 
