@@ -3,7 +3,7 @@ import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import common from '../common/common';
 import {
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,
@@ -93,7 +93,7 @@ export default {
   addRelationship,
   getRelationships,
   clear,
-  setTitle,
+  setAccTitle,
   getTitle,
   setAccDescription,
   getAccDescription,

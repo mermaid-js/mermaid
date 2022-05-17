@@ -9,7 +9,7 @@ export const clear = function () {
   description = '';
 };
 
-export const setTitle = function (txt) {
+export const setAccTitle = function (txt) {
   title = sanitizeText(txt).replace(/^\s+/g, '');
 };
 
@@ -26,7 +26,7 @@ export const getAccDescription = function () {
 };
 
 export default {
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,

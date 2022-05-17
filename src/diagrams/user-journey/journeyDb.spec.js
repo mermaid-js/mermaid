@@ -43,7 +43,7 @@ describe('when using the journeyDb', function () {
   });
 
   describe('tasks and actors should be added', function () {
-    journeyDb.setTitle('Shopping');
+    journeyDb.setAccTitle('Shopping');
     journeyDb.setAccDescription('A user journey for family shopping');
     journeyDb.addSection('Journey to the shops');
     journeyDb.addTask('Get car keys', ':5:Dad');

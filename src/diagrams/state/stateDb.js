@@ -4,7 +4,7 @@ import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import * as configApi from '../../config';
 import {
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,
@@ -294,7 +294,7 @@ export default {
   extract,
   trimColon,
   getTitle,
-  setTitle,
+  setAccTitle,
   getAccDescription,
   setAccDescription,
 };

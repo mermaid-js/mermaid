@@ -177,7 +177,7 @@ describe('when using the ganttDb', function () {
   });
 
   it('should maintain the order in which tasks are created', function () {
-    ganttDb.setTitle('Project Execution');
+    ganttDb.setAccTitle('Project Execution');
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('section A section');
     ganttDb.addTask('Completed task', 'done,    des1, 2014-01-06,2014-01-08');

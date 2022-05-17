@@ -5,7 +5,7 @@ import common from '../common/common';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import {
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,
@@ -355,7 +355,7 @@ const setDirection = (dir) => {
 
 export default {
   parseDirective,
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,

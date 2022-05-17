@@ -6,7 +6,7 @@ import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import {
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,
@@ -641,7 +641,7 @@ export default {
   getAxisFormat,
   setTodayMarker,
   getTodayMarker,
-  setTitle,
+  setAccTitle,
   getTitle,
   setAccDescription,
   getAccDescription,

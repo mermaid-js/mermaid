@@ -2,7 +2,7 @@ import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import common from '../common/common';
 import {
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,
@@ -126,7 +126,7 @@ export default {
   parseDirective,
   getConfig: () => configApi.getConfig().journey,
   clear,
-  setTitle,
+  setAccTitle,
   getTitle,
   setAccDescription,
   getAccDescription,
