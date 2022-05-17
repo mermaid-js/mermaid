@@ -8,28 +8,27 @@ The class diagram is the main building block of object-oriented modeling. It is 
 Mermaid can render class diagrams.
 
 ```mermaid-example
- classDiagram
-      Animal <|-- Duck
-      Animal <|-- Fish
-      Animal <|-- Zebra
-      Animal : +int age
-      Animal : +String gender
-      Animal: +isMammal()
-      Animal: +mate()
-      class Duck{
-          +String beakColor
-          +swim()
-          +quack()
-      }
-      class Fish{
-          -int sizeInFeet
-          -canEat()
-      }
-      class Zebra{
-          +bool is_wild
-          +run()
-      }
-
+classDiagram
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal <|-- Zebra
+    Animal : +int age
+    Animal : +String gender
+    Animal: +isMammal()
+    Animal: +mate()
+    class Duck{
+        +String beakColor
+        +swim()
+        +quack()
+    }
+    class Fish{
+        -int sizeInFeet
+        -canEat()
+    }
+    class Zebra{
+        +bool is_wild
+        +run()
+    }
 ```
 
 ## Syntax
@@ -79,12 +78,12 @@ There are two ways to define the members of a class, and regardless of whichever
 - Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
 
 ```mermaid-example
- classDiagram
- class BankAccount
- BankAccount : +String owner
- BankAccount : +BigDecimal balance
- BankAccount : +deposit(amount)
- BankAccount : +withdrawal(amount)
+classDiagram
+class BankAccount
+BankAccount : +String owner
+BankAccount : +BigDecimal balance
+BankAccount : +deposit(amount)
+BankAccount : +withdrawal(amount)
 ```
 
 - Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
