@@ -408,13 +408,15 @@ const drawBranches = (svg, branches) => {
   const gitGraphConfig = getConfig().gitGraph;
   const g = svg.append('g');
   branches.forEach((branch, index) => {
+    let adjustIndexForTheme = index >= 8 ? index - 8 : index;
+
     const pos = branchPos[branch.name].pos;
     const line = g.append('line');
     line.attr('x1', 0);
     line.attr('y1', pos);
     line.attr('x2', maxPos);
     line.attr('y2', pos);
-    line.attr('class', 'branch branch' + index);
+    line.attr('class', 'branch branch' + adjustIndexForTheme);
 
     lanes.push(pos);
 
@@ -427,11 +429,11 @@ const drawBranches = (svg, branches) => {
     const branchLabel = g.insert('g').attr('class', 'branchLabel');
 
     // Create inner g, label, this will be positioned now for centering the text
-    const label = branchLabel.insert('g').attr('class', 'label branch-label' + index);
+    const label = branchLabel.insert('g').attr('class', 'label branch-label' + adjustIndexForTheme);
     label.node().appendChild(labelElement);
     let bbox = labelElement.getBBox();
     bkg
-      .attr('class', 'branchLabelBkg label' + index)
+      .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
       .attr('rx', 4)
       .attr('ry', 4)
       .attr('x', -bbox.width - 4)
