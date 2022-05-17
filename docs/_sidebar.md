@@ -24,6 +24,7 @@
   - [Mermaid API Configuration](Setup.md)
   - [Directives](directives.md)
   - [Theming](theming.md)
+  - [Accessibility](accessibility.md)
   - [Mermaid CLI](mermaidCLI.md)
   - [Advanced usage](n00b-advanced.md)
 
