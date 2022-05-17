@@ -408,8 +408,8 @@ const drawBranches = (svg, branches) => {
   const gitGraphConfig = getConfig().gitGraph;
   const g = svg.append('g');
   branches.forEach((branch, index) => {
+    let adjustIndexForTheme = index >= 8 ? index - 8 : index;
 
-    let adjustIndexForTheme = (index>=8?index-8:index);
     const pos = branchPos[branch.name].pos;
     const line = g.append('line');
     line.attr('x1', 0);
