@@ -3,7 +3,7 @@ import * as configApi from '../../config';
 import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
 import {
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,
@@ -417,8 +417,8 @@ export const apply = function (param) {
       case 'altEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
-      case 'setTitle':
-        setTitle(param.text);
+      case 'setAccTitle':
+        setAccTitle(param.text);
         break;
       case 'parStart':
         addSignal(undefined, undefined, param.parText, param.signalType);
@@ -460,7 +460,7 @@ export default {
   ARROWTYPE,
   PLACEMENT,
   addNote,
-  setTitle,
+  setAccTitle,
   setDiagramTitle,
   apply,
   setAccDescription,

@@ -31,7 +31,6 @@ const themes = {
 export const calcThemeVariables = (theme, userOverRides) => theme.calcColors(userOverRides);
 
 const getStyles = (type, userStyles, options) => {
-  //console.warn('options in styles: ', options);
   return ` {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};

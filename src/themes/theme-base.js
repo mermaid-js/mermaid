@@ -10,33 +10,15 @@ class Theme {
     this.background = '#f4f4f4';
     this.darkMode = false;
 
-    // this.background = '#0c0c0c';
-    // this.darkMode = true;
     this.primaryColor = '#fff4dd';
-    // this.background = '#0c0c0c';
-    // this.primaryColor = '#1f1f00';
 
     this.noteBkgColor = '#fff5ad';
     this.noteTextColor = '#333';
 
     // dark
 
-    // this.primaryColor = '#034694';
-    // this.primaryColor = '#f2ee7e';
-    // this.primaryColor = '#9f33be';
-    // this.primaryColor = '#f0fff0';
-    // this.primaryColor = '#fa255e';
-    // this.primaryColor = '#ECECFF';
-
-    // this.secondaryColor = '#c39ea0';
-    // this.tertiaryColor = '#f8e5e5';
-
-    // this.secondaryColor = '#dfdfde';
-    // this.tertiaryColor = '#CCCCFF';
-
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
-    // this.updateColors();
   }
   updateColors() {
     // The || is to make sure that if the variable has been defiend by a user override that value is to be used

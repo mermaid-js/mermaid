@@ -5,7 +5,7 @@ import * as configApi from '../../config';
 import { getConfig } from '../../config';
 import common from '../common/common';
 import {
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,
@@ -25,6 +25,7 @@ let direction = 'LR';
 let seq = 0;
 
 function getId() {
+  // eslint-disable-line
   return random({ length: 7 });
 }
 
@@ -411,7 +412,7 @@ export default {
   getCurrentBranch,
   getDirection,
   getHead,
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,

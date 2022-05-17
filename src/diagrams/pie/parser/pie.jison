@@ -70,7 +70,7 @@ statement
   :
 	| txt value          { yy.addSection($1,yy.cleanupValue($2)); }
 	| title title_value  { $$=$2.trim();yy.setPieTitle($$); }
-  | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+  | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
 	| directive

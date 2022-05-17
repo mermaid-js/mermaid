@@ -15,9 +15,9 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:jsdoc/recommended",
+    //"plugin:jsdoc/recommended",
     "plugin:json/recommended",
-    "plugin:markdown/recommended",
+    // "plugin:markdown/recommended",
     "plugin:prettier/recommended"
   ],
   "plugins": ["html", "jest", "jsdoc", "json", "prettier"],

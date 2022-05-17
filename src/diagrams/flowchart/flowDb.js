@@ -5,7 +5,7 @@ import common from '../common/common';
 import mermaidAPI from '../../mermaidAPI';
 import { log } from '../../logger';
 import {
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,
@@ -746,7 +746,7 @@ const makeUniq = (sg, allSubgraphs) => {
 export default {
   parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
-  setTitle,
+  setAccTitle,
   getTitle,
   getAccDescription,
   setAccDescription,
