@@ -36,6 +36,7 @@ class Bounds {
     this.nextData.stopx = undefined;
     this.nextData.starty = undefined;
     this.nextData.stopy = undefined;
+    this.nextData.cnt = 0;
 
     setConf(parser.yy.getConfig());
   }
@@ -56,17 +57,26 @@ class Bounds {
   }
 
   insert(c4Shape) {
-    let _startx = this.nextData.stopx + c4Shape.margin * 2;
+    this.nextData.cnt = this.nextData.cnt + 1;
+    let _startx =
+      this.nextData.startx === this.nextData.stopx
+        ? this.nextData.stopx + c4Shape.margin
+        : this.nextData.stopx + c4Shape.margin * 2;
     let _stopx = _startx + c4Shape.width;
     let _starty = this.nextData.starty + c4Shape.margin * 2;
     let _stopy = _starty + c4Shape.height;
-    if (_startx >= this.data.widthLimit || _stopx >= this.data.widthLimit) {
-      _startx = this.nextData.startx + c4Shape.margin * 2 + conf.nextLinePaddingX;
+    if (
+      _startx >= this.data.widthLimit ||
+      _stopx >= this.data.widthLimit ||
+      this.nextData.cnt > conf.c4ShapeInRow
+    ) {
+      _startx = this.nextData.startx + c4Shape.margin + conf.nextLinePaddingX;
       _starty = this.nextData.stopy + c4Shape.margin * 2;
 
       this.nextData.stopx = _stopx = _startx + c4Shape.width;
       this.nextData.starty = this.nextData.stopy;
       this.nextData.stopy = _stopy = _starty + c4Shape.height;
+      this.nextData.cnt = 1;
     }
 
     c4Shape.x = _startx;
@@ -84,12 +94,20 @@ class Bounds {
   }
 
   init() {
+    this.name = '';
     this.data = {
       startx: undefined,
       stopx: undefined,
       starty: undefined,
       stopy: undefined,
       widthLimit: undefined,
+    };
+    this.nextData = {
+      startx: undefined,
+      stopx: undefined,
+      starty: undefined,
+      stopy: undefined,
+      cnt: 0,
     };
     setConf(parser.yy.getConfig());
   }
@@ -100,19 +118,25 @@ class Bounds {
   }
 }
 
-const personFont = (cnf) => {
-  return {
-    fontFamily: cnf.personFontFamily,
-    fontSize: cnf.personFontSize,
-    fontWeight: cnf.personFontWeight,
-  };
+export const setConf = function (cnf) {
+  assignWithDepth(conf, cnf);
+
+  if (cnf.fontFamily) {
+    conf.personFontFamily = conf.systemFontFamily = conf.messageFontFamily = cnf.fontFamily;
+  }
+  if (cnf.fontSize) {
+    conf.personFontSize = conf.systemFontSize = conf.messageFontSize = cnf.fontSize;
+  }
+  if (cnf.fontWeight) {
+    conf.personFontWeight = conf.systemFontWeight = conf.messageFontWeight = cnf.fontWeight;
+  }
 };
 
-const systemFont = (cnf) => {
+const c4ShapeFont = (cnf, typeC4Shape) => {
   return {
-    fontFamily: cnf.systemFontFamily,
-    fontSize: cnf.systemFontSize,
-    fontWeight: cnf.systemFontWeight,
+    fontFamily: cnf[typeC4Shape + 'FontFamily'],
+    fontSize: cnf[typeC4Shape + 'FontSize'],
+    fontWeight: cnf[typeC4Shape + 'FontWeight'],
   };
 };
 
@@ -139,16 +163,18 @@ const messageFont = (cnf) => {
  * @param textConf
  * @param textLimitWidth
  */
-function setC4ShapeText(textType, c4Shape, c4ShapeTextWrap, textConf, textLimitWidth) {
+function calcC4ShapeTextWH(textType, c4Shape, c4ShapeTextWrap, textConf, textLimitWidth) {
   if (!c4Shape[textType].width) {
     if (c4ShapeTextWrap) {
       c4Shape[textType].text = wrapLabel(c4Shape[textType].text, textLimitWidth, textConf);
-      c4Shape[textType].labelLines = c4Shape[textType].text.split(common.lineBreakRegex).length;
+      c4Shape[textType].textLines = c4Shape[textType].text.split(common.lineBreakRegex).length;
+      // c4Shape[textType].width = calculateTextWidth(c4Shape[textType].text, textConf);
       c4Shape[textType].width = textLimitWidth;
-      c4Shape[textType].height = c4Shape[textType].labelLines * (textConf.fontSize + 2);
+      // c4Shape[textType].height = c4Shape[textType].textLines * textConf.fontSize;
+      c4Shape[textType].height = calculateTextHeight(c4Shape[textType].text, textConf);
     } else {
       let lines = c4Shape[textType].text.split(common.lineBreakRegex);
-      c4Shape[textType].labelLines = lines.length;
+      c4Shape[textType].textLines = lines.length;
       let lineHeight = 0;
       c4Shape[textType].height = 0;
       c4Shape[textType].width = 0;
@@ -160,7 +186,7 @@ function setC4ShapeText(textType, c4Shape, c4ShapeTextWrap, textConf, textLimitW
         lineHeight = calculateTextHeight(lines[i], textConf);
         c4Shape[textType].height = c4Shape[textType].height + lineHeight;
       }
-      // c4Shapes[textType].height = c4Shapes[textType].labelLines * textConf.fontSize;
+      // c4Shapes[textType].height = c4Shapes[textType].textLines * textConf.fontSize;
     }
   }
 }
@@ -178,110 +204,102 @@ export const drawBoundary = function (diagram, boundary, bounds) {
   boundaryLabelConf.fontSize = boundaryLabelConf.fontSize + 2;
   boundaryLabelConf.fontWeight = 'bold';
   let textLimitWidth = calculateTextWidth(boundary.label.text, boundaryLabelConf);
-  setC4ShapeText('label', boundary, boundaryTextWrap, boundaryLabelConf, textLimitWidth);
+  calcC4ShapeTextWH('label', boundary, boundaryTextWrap, boundaryLabelConf, textLimitWidth);
 
   svgDraw.drawBoundary(diagram, boundary, conf);
 };
 
-export const drawPersonOrSystemArray = function (
-  currentBounds,
-  diagram,
-  personOrSystemArray,
-  personOrSystemKeys
-) {
-  // Draw the personOrSystemArray
+export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, c4ShapeKeys) {
+  // Upper Y is relative point
+  let Y = 0;
+  // Draw the c4ShapeArray
+  for (let i = 0; i < c4ShapeKeys.length; i++) {
+    Y = 0;
+    const c4Shape = c4ShapeArray[c4ShapeKeys[i]];
 
-  // let prevWidth = currentBounds.data.stopx;
-  // let prevMarginX = conf.c4ShapeMargin;
-  // let prevMarginY = conf.c4ShapeMargin;
-  // let maxHeight = currentBounds.data.starty;
+    // calc c4 shape type width and height
 
-  for (let i = 0; i < personOrSystemKeys.length; i++) {
-    const personOrSystem = personOrSystemArray[personOrSystemKeys[i]];
+    let c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
+    c4ShapeTypeConf.fontSize = c4ShapeTypeConf.fontSize - 2;
+    c4Shape.typeC4Shape.width = calculateTextWidth(
+      '<<' + c4Shape.typeC4Shape.text + '>>',
+      c4ShapeTypeConf
+    );
+    c4Shape.typeC4Shape.height = c4ShapeTypeConf.fontSize + 2;
+    c4Shape.typeC4Shape.Y = conf.c4ShapePadding;
+    Y = c4Shape.typeC4Shape.Y + c4Shape.typeC4Shape.height - 4;
 
-    let imageWidth = 0,
-      imageHeight = 0;
-    switch (personOrSystem.type) {
+    // set image width and height c4Shape.x + c4Shape.width / 2 - 24, c4Shape.y + 28
+    // let imageWidth = 0,
+    //   imageHeight = 0,
+    //   imageY = 0;
+    //
+    c4Shape.image = { width: 0, height: 0, Y: 0 };
+    switch (c4Shape.typeC4Shape.text) {
       case 'person':
       case 'external_person':
-        imageWidth = 48;
-        imageHeight = 48;
+        c4Shape.image.width = 48;
+        c4Shape.image.height = 48;
+        c4Shape.image.Y = Y;
+        Y = c4Shape.image.Y + c4Shape.image.height;
         break;
     }
-
-    if (!personOrSystem.typeLabelWidth) {
-      let personOrSystemTypeConf = personFont(conf);
-      personOrSystemTypeConf.fontSize = personOrSystemTypeConf.fontSize - 2;
-      personOrSystem.typeLabelWidth = calculateTextWidth(
-        '<<' + personOrSystem.type + '>>',
-        personOrSystemTypeConf
-      );
-      personOrSystem.typeLabelHeight = personOrSystemTypeConf.fontSize + 2;
-
-      switch (personOrSystem.type) {
-        case 'system_db':
-        case 'external_system_db':
-          personOrSystem.typeLabelY = conf.c4ShapePadding;
-          break;
-        default:
-          personOrSystem.typeLabelY = conf.c4ShapePadding - 5;
-          break;
-      }
+    if (c4Shape.sprite) {
+      c4Shape.image.width = 48;
+      c4Shape.image.height = 48;
+      c4Shape.image.Y = Y;
+      Y = c4Shape.image.Y + c4Shape.image.height;
     }
 
-    let personOrSystemTextWrap = personOrSystem.wrap && conf.wrap;
+    // Y = conf.c4ShapePadding + c4Shape.image.height;
+
+    let c4ShapeTextWrap = c4Shape.wrap && conf.wrap;
     let textLimitWidth = conf.width - conf.c4ShapePadding * 2;
 
-    let personOrSystemLabelConf = personFont(conf);
-    personOrSystemLabelConf.fontSize = personOrSystemLabelConf.fontSize + 2;
-    personOrSystemLabelConf.fontWeight = 'bold';
+    let c4ShapeLabelConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
+    c4ShapeLabelConf.fontSize = c4ShapeLabelConf.fontSize + 2;
+    c4ShapeLabelConf.fontWeight = 'bold';
+    calcC4ShapeTextWH('label', c4Shape, c4ShapeTextWrap, c4ShapeLabelConf, textLimitWidth);
+    c4Shape['label'].Y = Y + 8;
+    Y = c4Shape['label'].Y + c4Shape['label'].height;
 
-    setC4ShapeText(
-      'label',
-      personOrSystem,
-      personOrSystemTextWrap,
-      personOrSystemLabelConf,
-      textLimitWidth
-    );
-    personOrSystem['label'].Y =
-      conf.c4ShapePadding + personOrSystem.typeLabelHeight + imageHeight + 10;
+    if (c4Shape.type && c4Shape.type.text !== '') {
+      c4Shape.type.text = '[' + c4Shape.type.text + ']';
+      let c4ShapeTypeConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
+      calcC4ShapeTextWH('type', c4Shape, c4ShapeTextWrap, c4ShapeTypeConf, textLimitWidth);
+      c4Shape['type'].Y = Y + 5;
+      Y = c4Shape['type'].Y + c4Shape['type'].height;
+    } else if (c4Shape.techn && c4Shape.techn.text !== '') {
+      c4Shape.techn.text = '[' + c4Shape.techn.text + ']';
+      let c4ShapeTechnConf = c4ShapeFont(conf, c4Shape.techn.text);
+      calcC4ShapeTextWH('techn', c4Shape, c4ShapeTextWrap, c4ShapeTechnConf, textLimitWidth);
+      c4Shape['techn'].Y = Y + 5;
+      Y = c4Shape['techn'].Y + c4Shape['techn'].height;
+    }
 
-    let personOrSystemDescrConf = personFont(conf);
-    setC4ShapeText(
-      'descr',
-      personOrSystem,
-      personOrSystemTextWrap,
-      personOrSystemDescrConf,
-      textLimitWidth
-    );
-    personOrSystem['descr'].Y =
-      conf.c4ShapePadding +
-      personOrSystem.typeLabelHeight +
-      imageHeight +
-      5 +
-      personOrSystem.label.height +
-      conf.personFontSize +
-      2;
+    let rectHeight = Y;
+    let rectWidth = c4Shape.label.width;
 
-    // Add some rendering data to the object
-    let rectWidth =
-      Math.max(personOrSystem.label.width, personOrSystem.descr.width) + conf.c4ShapePadding * 2;
-    let rectHeight =
-      conf.c4ShapePadding +
-      personOrSystem.typeLabelHeight +
-      imageHeight +
-      personOrSystem.label.height +
-      conf.personFontSize +
-      2 +
-      personOrSystem.descr.height;
+    if (c4Shape.descr && c4Shape.descr.text !== '') {
+      let c4ShapeDescrConf = c4ShapeFont(conf, c4Shape.typeC4Shape.text);
+      calcC4ShapeTextWH('descr', c4Shape, c4ShapeTextWrap, c4ShapeDescrConf, textLimitWidth);
+      c4Shape['descr'].Y = Y + 20;
+      Y = c4Shape['descr'].Y + c4Shape['descr'].height;
 
-    personOrSystem.width = Math.max(personOrSystem.width || conf.width, rectWidth, conf.width);
-    personOrSystem.height = Math.max(personOrSystem.height || conf.height, rectHeight, conf.height);
-    personOrSystem.margin = personOrSystem.margin || conf.c4ShapeMargin;
+      rectWidth = Math.max(c4Shape.label.width, c4Shape.descr.width);
+      rectHeight = Y - c4Shape['descr'].textLines * 5;
+    }
 
-    currentBounds.insert(personOrSystem);
+    rectWidth = rectWidth + conf.c4ShapePadding;
+    // let rectHeight =
 
-    const height = svgDraw.drawPersonOrSystem(diagram, personOrSystem, conf);
+    c4Shape.width = Math.max(c4Shape.width || conf.width, rectWidth, conf.width);
+    c4Shape.height = Math.max(c4Shape.height || conf.height, rectHeight, conf.height);
+    c4Shape.margin = c4Shape.margin || conf.c4ShapeMargin;
+
+    currentBounds.insert(c4Shape);
+
+    const height = svgDraw.drawC4Shape(diagram, c4Shape, conf);
   }
 
   currentBounds.bumpLastMargin(conf.c4ShapeMargin);
@@ -391,20 +409,24 @@ let getIntersectPoints = function (fromNode, endNode) {
 };
 
 export const drawRels = function (diagram, rels, getC4ShapeObj) {
+  let i = 0;
   for (let rel of rels) {
+    i = i + 1;
     let relTextWrap = rel.wrap && conf.wrap;
     let relConf = messageFont(conf);
+    let diagramType = parser.yy.getC4Type();
+    if (diagramType === 'C4Dynamic') rel.label.text = i + ': ' + rel.label.text;
     let textLimitWidth = calculateTextWidth(rel.label.text, relConf);
-    setC4ShapeText('label', rel, relTextWrap, relConf, textLimitWidth);
+    calcC4ShapeTextWH('label', rel, relTextWrap, relConf, textLimitWidth);
 
     if (rel.techn && rel.techn.text !== '') {
       textLimitWidth = calculateTextWidth(rel.techn.text, relConf);
-      setC4ShapeText('techn', rel, relTextWrap, relConf, textLimitWidth);
+      calcC4ShapeTextWH('techn', rel, relTextWrap, relConf, textLimitWidth);
     }
 
     if (rel.descr && rel.descr.text !== '') {
       textLimitWidth = calculateTextWidth(rel.descr.text, relConf);
-      setC4ShapeText('descr', rel, relTextWrap, relConf, textLimitWidth);
+      calcC4ShapeTextWH('descr', rel, relTextWrap, relConf, textLimitWidth);
     }
 
     let fromNode = getC4ShapeObj(rel.from);
@@ -416,20 +438,6 @@ export const drawRels = function (diagram, rels, getC4ShapeObj) {
   svgDraw.drawRels(diagram, rels, conf);
 };
 
-export const setConf = function (cnf) {
-  assignWithDepth(conf, cnf);
-
-  if (cnf.fontFamily) {
-    conf.personFontFamily = conf.systemFontFamily = conf.messageFontFamily = cnf.fontFamily;
-  }
-  if (cnf.fontSize) {
-    conf.personFontSize = conf.systemFontSize = conf.messageFontSize = cnf.fontSize;
-  }
-  if (cnf.fontWeight) {
-    conf.personFontWeight = conf.systemFontWeight = conf.messageFontWeight = cnf.fontWeight;
-  }
-};
-
 /**
  * @param diagram
  * @param parentBoundaryAlias
@@ -439,16 +447,70 @@ export const setConf = function (cnf) {
 function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentBoundarys) {
   let currentBounds = new Bounds();
   // Calculate the width limit of the boundar.  label/type 的长度，
-  currentBounds.data.widthLimit = Math.min(
-    conf.width * conf.c4ShapeInRow + conf.c4ShapeMargin * (conf.c4ShapeInRow + 1),
-    parentBounds.data.widthLimit / Math.min(conf.c4BoundaryInRow, currentBoundarys.length)
-  );
+  currentBounds.data.widthLimit =
+    parentBounds.data.widthLimit / Math.min(conf.c4BoundaryInRow, currentBoundarys.length);
+  // Math.min(
+  //   conf.width * conf.c4ShapeInRow + conf.c4ShapeMargin * conf.c4ShapeInRow * 2,
+  //   parentBounds.data.widthLimit / Math.min(conf.c4BoundaryInRow, currentBoundarys.length)
+  // );
   for (let i = 0; i < currentBoundarys.length; i++) {
     let currentBoundary = currentBoundarys[i];
-    if (i == 0) {
+    let Y = 0;
+    currentBoundary.image = { width: 0, height: 0, Y: 0 };
+    if (currentBoundary.sprite) {
+      currentBoundary.image.width = 48;
+      currentBoundary.image.height = 48;
+      currentBoundary.image.Y = Y;
+      Y = currentBoundary.image.Y + currentBoundary.image.height;
+    }
+
+    let currentBoundaryTextWrap = currentBoundary.wrap && conf.wrap;
+
+    let currentBoundaryLabelConf = boundaryFont(conf);
+    currentBoundaryLabelConf.fontSize = currentBoundaryLabelConf.fontSize + 2;
+    currentBoundaryLabelConf.fontWeight = 'bold';
+    calcC4ShapeTextWH(
+      'label',
+      currentBoundary,
+      currentBoundaryTextWrap,
+      currentBoundaryLabelConf,
+      currentBounds.data.widthLimit
+    );
+    currentBoundary['label'].Y = Y + 8;
+    Y = currentBoundary['label'].Y + currentBoundary['label'].height;
+
+    if (currentBoundary.type && currentBoundary.type.text !== '') {
+      currentBoundary.type.text = '[' + currentBoundary.type.text + ']';
+      let currentBoundaryTypeConf = boundaryFont(conf);
+      calcC4ShapeTextWH(
+        'type',
+        currentBoundary,
+        currentBoundaryTextWrap,
+        currentBoundaryTypeConf,
+        currentBounds.data.widthLimit
+      );
+      currentBoundary['type'].Y = Y + 5;
+      Y = currentBoundary['type'].Y + currentBoundary['type'].height;
+    }
+
+    if (currentBoundary.descr && currentBoundary.descr.text !== '') {
+      let currentBoundaryDescrConf = boundaryFont(conf);
+      currentBoundaryDescrConf.fontSize = currentBoundaryDescrConf.fontSize - 2;
+      calcC4ShapeTextWH(
+        'descr',
+        currentBoundary,
+        currentBoundaryTextWrap,
+        currentBoundaryDescrConf,
+        currentBounds.data.widthLimit
+      );
+      currentBoundary['descr'].Y = Y + 20;
+      Y = currentBoundary['descr'].Y + currentBoundary['descr'].height;
+    }
+
+    if (i == 0 || i % conf.c4BoundaryInRow === 0) {
       // Calculate the drawing start point of the currentBoundarys.
       let _x = parentBounds.data.startx + conf.diagramMarginX;
-      let _y = parentBounds.data.stopy + conf.diagramMarginY;
+      let _y = parentBounds.data.stopy + conf.diagramMarginY + Y;
 
       currentBounds.setData(_x, _x, _y, _y);
     } else {
@@ -462,11 +524,11 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
       currentBounds.setData(_x, _x, _y, _y);
     }
     currentBounds.name = currentBoundary.alias;
-    let currentPersonOrSystemArray = parser.yy.getPersonOrSystemArray(currentBoundary.alias);
-    let currentPersonOrSystemKeys = parser.yy.getPersonOrSystemKeys(currentBoundary.alias);
+    let currentPersonOrSystemArray = parser.yy.getC4ShapeArray(currentBoundary.alias);
+    let currentPersonOrSystemKeys = parser.yy.getC4ShapeKeys(currentBoundary.alias);
 
     if (currentPersonOrSystemKeys.length > 0) {
-      drawPersonOrSystemArray(
+      drawC4ShapeArray(
         currentBounds,
         diagram,
         currentPersonOrSystemArray,
@@ -545,11 +607,11 @@ export const draw = function (text, id) {
   const title = parser.yy.getTitle();
   const c4type = parser.yy.getC4Type();
   let currentBoundarys = parser.yy.getBoundarys('');
-  switch (c4type) {
-    case 'C4Context':
-      drawInsideBoundary(diagram, '', screenBounds, currentBoundarys);
-      break;
-  }
+  // switch (c4type) {
+  //   case 'C4Context':
+  drawInsideBoundary(diagram, '', screenBounds, currentBoundarys);
+  //     break;
+  // }
 
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram);
@@ -557,7 +619,7 @@ export const draw = function (text, id) {
   svgDraw.insertArrowCrossHead(diagram);
   svgDraw.insertArrowFilledHead(diagram);
 
-  drawRels(diagram, parser.yy.getRels(), parser.yy.getPersonOrSystem);
+  drawRels(diagram, parser.yy.getRels(), parser.yy.getC4Shape);
 
   screenBounds.data.stopx = globalBoundaryMaxX;
   screenBounds.data.stopy = globalBoundaryMaxY;
@@ -578,7 +640,7 @@ export const draw = function (text, id) {
       .append('text')
       .text(title)
       .attr('x', (box.stopx - box.startx) / 2 - 4 * conf.diagramMarginX)
-      .attr('y', -25);
+      .attr('y', box.starty + conf.diagramMarginY);
   }
 
   configureSvgSize(diagram, height, width, conf.useMaxWidth);
@@ -601,7 +663,7 @@ export const draw = function (text, id) {
 };
 
 export default {
-  drawPersonOrSystemArray,
+  drawPersonOrSystemArray: drawC4ShapeArray,
   drawBoundary,
   setConf,
   draw,

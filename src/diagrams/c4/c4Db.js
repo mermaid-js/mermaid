@@ -3,7 +3,7 @@ import * as configApi from '../../config';
 import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
 
-let personOrSystemArray = [];
+let c4ShapeArray = [];
 let boundaryParseStack = [''];
 let currentBoundaryParse = 'global';
 let parentBoundaryParse = '';
@@ -11,7 +11,7 @@ let boundarys = [
   {
     alias: 'global',
     label: { text: 'global' },
-    type: 'global',
+    type: { text: 'global' },
     tags: null,
     link: null,
     parentBoundary: '',
@@ -21,14 +21,14 @@ let rels = [];
 let title = '';
 let wrapEnabled = false;
 let description = '';
-let c4Type = 'C4Context';
+var c4Type;
 
 export const getC4Type = function () {
   return c4Type;
 };
 
-export const setC4Type = function (c4Type) {
-  let sanitizedText = sanitizeText(c4Type, configApi.getConfig());
+export const setC4Type = function (c4TypeParam) {
+  let sanitizedText = sanitizeText(c4TypeParam, configApi.getConfig());
   c4Type = sanitizedText;
 };
 
@@ -84,17 +84,17 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
 };
 
 //type, alias, label, ?descr, ?sprite, ?tags, $link
-export const addPersonOrSystem = function (type, alias, label, descr, sprite, tags, link) {
+export const addPersonOrSystem = function (typeC4Shape, alias, label, descr, sprite, tags, link) {
   // Don't allow label nulling
   if (alias === null || label === null) return;
 
   let personOrSystem = {};
-  const old = personOrSystemArray.find((personOrSystem) => personOrSystem.alias === alias);
+  const old = c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias);
   if (old && alias === old.alias) {
     personOrSystem = old;
   } else {
     personOrSystem.alias = alias;
-    personOrSystemArray.push(personOrSystem);
+    c4ShapeArray.push(personOrSystem);
   }
 
   // Don't allow null labels, either
@@ -114,12 +114,94 @@ export const addPersonOrSystem = function (type, alias, label, descr, sprite, ta
   personOrSystem.sprite = sprite;
   personOrSystem.tags = tags;
   personOrSystem.link = link;
-  personOrSystem.type = type;
+  personOrSystem.typeC4Shape = { text: typeC4Shape };
   personOrSystem.parentBoundary = currentBoundaryParse;
 };
 
+//type, alias, label, ?techn, ?descr ?sprite, ?tags, $link
+export const addContainer = function (typeC4Shape, alias, label, techn, descr, sprite, tags, link) {
+  // Don't allow label nulling
+  if (alias === null || label === null) return;
+
+  let container = {};
+  const old = c4ShapeArray.find((container) => container.alias === alias);
+  if (old && alias === old.alias) {
+    container = old;
+  } else {
+    container.alias = alias;
+    c4ShapeArray.push(container);
+  }
+
+  // Don't allow null labels, either
+  if (label === undefined || label === null) {
+    container.label = { text: '' };
+  } else {
+    container.label = { text: label };
+  }
+
+  if (techn === undefined || techn === null) {
+    container.techn = { text: '' };
+  } else {
+    container.techn = { text: techn };
+  }
+
+  if (descr === undefined || descr === null) {
+    container.descr = { text: '' };
+  } else {
+    container.descr = { text: descr };
+  }
+
+  container.sprite = sprite;
+  container.tags = tags;
+  container.link = link;
+  container.wrap = autoWrap();
+  container.typeC4Shape = { text: typeC4Shape };
+  container.parentBoundary = currentBoundaryParse;
+};
+
+//type, alias, label, ?techn, ?descr ?sprite, ?tags, $link
+export const addComponent = function (typeC4Shape, alias, label, techn, descr, sprite, tags, link) {
+  // Don't allow label nulling
+  if (alias === null || label === null) return;
+
+  let component = {};
+  const old = c4ShapeArray.find((component) => component.alias === alias);
+  if (old && alias === old.alias) {
+    component = old;
+  } else {
+    component.alias = alias;
+    c4ShapeArray.push(component);
+  }
+
+  // Don't allow null labels, either
+  if (label === undefined || label === null) {
+    component.label = { text: '' };
+  } else {
+    component.label = { text: label };
+  }
+
+  if (techn === undefined || techn === null) {
+    component.techn = { text: '' };
+  } else {
+    component.techn = { text: techn };
+  }
+
+  if (descr === undefined || descr === null) {
+    component.descr = { text: '' };
+  } else {
+    component.descr = { text: descr };
+  }
+
+  component.sprite = sprite;
+  component.tags = tags;
+  component.link = link;
+  component.wrap = autoWrap();
+  component.typeC4Shape = { text: typeC4Shape };
+  component.parentBoundary = currentBoundaryParse;
+};
+
 //alias, label, ?type, ?tags, $link
-export const addBoundary = function (alias, label, type, tags, link) {
+export const addPersonOrSystemBoundary = function (alias, label, type, tags, link) {
   // if (parentBoundary === null) return;
 
   // Don't allow label nulling
@@ -147,11 +229,104 @@ export const addBoundary = function (alias, label, type, tags, link) {
     boundary.type = { text: type };
   }
 
-  boundary.wrap = autoWrap();
   boundary.tags = tags;
   boundary.link = link;
-  boundary.type = type;
   boundary.parentBoundary = currentBoundaryParse;
+  boundary.wrap = autoWrap();
+
+  parentBoundaryParse = currentBoundaryParse;
+  currentBoundaryParse = alias;
+  boundaryParseStack.push(parentBoundaryParse);
+};
+
+//alias, label, ?type, ?tags, $link
+export const addContainerBoundary = function (alias, label, type, tags, link) {
+  // if (parentBoundary === null) return;
+
+  // Don't allow label nulling
+  if (alias === null || label === null) return;
+
+  let boundary = {};
+  const old = boundarys.find((boundary) => boundary.alias === alias);
+  if (old && alias === old.alias) {
+    boundary = old;
+  } else {
+    boundary.alias = alias;
+    boundarys.push(boundary);
+  }
+
+  // Don't allow null labels, either
+  if (label === undefined || label === null) {
+    boundary.label = { text: '' };
+  } else {
+    boundary.label = { text: label };
+  }
+
+  if (type === undefined || type === null) {
+    boundary.type = { text: 'container' };
+  } else {
+    boundary.type = { text: type };
+  }
+
+  boundary.tags = tags;
+  boundary.link = link;
+  boundary.parentBoundary = currentBoundaryParse;
+  boundary.wrap = autoWrap();
+
+  parentBoundaryParse = currentBoundaryParse;
+  currentBoundaryParse = alias;
+  boundaryParseStack.push(parentBoundaryParse);
+};
+
+//alias, label, ?type, ?descr, ?sprite, ?tags, $link
+export const addDeploymentNode = function (
+  nodeType,
+  alias,
+  label,
+  type,
+  descr,
+  sprite,
+  tags,
+  link
+) {
+  // if (parentBoundary === null) return;
+
+  // Don't allow label nulling
+  if (alias === null || label === null) return;
+
+  let boundary = {};
+  const old = boundarys.find((boundary) => boundary.alias === alias);
+  if (old && alias === old.alias) {
+    boundary = old;
+  } else {
+    boundary.alias = alias;
+    boundarys.push(boundary);
+  }
+
+  // Don't allow null labels, either
+  if (label === undefined || label === null) {
+    boundary.label = { text: '' };
+  } else {
+    boundary.label = { text: label };
+  }
+
+  if (type === undefined || type === null) {
+    boundary.type = { text: 'node' };
+  } else {
+    boundary.type = { text: type };
+  }
+
+  if (descr === undefined || descr === null) {
+    boundary.descr = { text: '' };
+  } else {
+    boundary.descr = { text: type };
+  }
+
+  boundary.tags = tags;
+  boundary.link = link;
+  boundary.nodeType = nodeType;
+  boundary.parentBoundary = currentBoundaryParse;
+  boundary.wrap = autoWrap();
 
   parentBoundaryParse = currentBoundaryParse;
   currentBoundaryParse = alias;
@@ -173,18 +348,18 @@ export const getParentBoundaryParse = function () {
   return parentBoundaryParse;
 };
 
-export const getPersonOrSystemArray = function (parentBoundary) {
-  if (parentBoundary === undefined || parentBoundary === null) return personOrSystemArray;
+export const getC4ShapeArray = function (parentBoundary) {
+  if (parentBoundary === undefined || parentBoundary === null) return c4ShapeArray;
   else
-    return personOrSystemArray.filter((personOrSystem) => {
+    return c4ShapeArray.filter((personOrSystem) => {
       return personOrSystem.parentBoundary === parentBoundary;
     });
 };
-export const getPersonOrSystem = function (alias) {
-  return personOrSystemArray.find((personOrSystem) => personOrSystem.alias === alias);
+export const getC4Shape = function (alias) {
+  return c4ShapeArray.find((personOrSystem) => personOrSystem.alias === alias);
 };
-export const getPersonOrSystemKeys = function (parentBoundary) {
-  return Object.keys(getPersonOrSystemArray(parentBoundary));
+export const getC4ShapeKeys = function (parentBoundary) {
+  return Object.keys(getC4ShapeArray(parentBoundary));
 };
 
 export const getBoundarys = function (parentBoundary) {
@@ -209,12 +384,12 @@ export const autoWrap = function () {
 };
 
 export const clear = function () {
-  personOrSystemArray = [];
+  c4ShapeArray = [];
   boundarys = [
     {
       alias: 'global',
       label: { text: 'global' },
-      type: 'global',
+      type: { text: 'global' },
       tags: null,
       link: null,
       parentBoundary: '',
@@ -279,14 +454,18 @@ const getAccDescription = function () {
 
 export default {
   addPersonOrSystem,
-  addBoundary,
+  addPersonOrSystemBoundary,
+  addContainer,
+  addContainerBoundary,
+  addComponent,
+  addDeploymentNode,
   popBoundaryParseStack,
   addRel,
   autoWrap,
   setWrap,
-  getPersonOrSystemArray,
-  getPersonOrSystem,
-  getPersonOrSystemKeys,
+  getC4ShapeArray,
+  getC4Shape,
+  getC4ShapeKeys,
   getBoundarys,
   getCurrentBoundaryParse,
   getParentBoundaryParse,

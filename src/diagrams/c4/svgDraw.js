@@ -227,8 +227,9 @@ export const drawRels = (elem, rels, conf) => {
       line.attr('stroke-width', '1');
       line.attr('stroke', '#444444');
       line.style('fill', 'none');
-      line.attr('marker-end', 'url(' + url + '#arrowhead)');
-      if (rel.type === 'birel') line.attr('marker-start', 'url(' + url + '#arrowend)');
+      if (rel.type !== 'rel_b') line.attr('marker-end', 'url(' + url + '#arrowhead)');
+      if (rel.type === 'birel' || rel.type === 'rel_b')
+        line.attr('marker-start', 'url(' + url + '#arrowend)');
       i = -1;
     } else {
       let line = relsElem.append('path');
@@ -250,9 +251,10 @@ export const drawRels = (elem, rels, conf) => {
             .replaceAll('controly', rel.startPoint.y + (rel.endPoint.y - rel.startPoint.y) / 2)
             .replaceAll('stopx', rel.endPoint.x)
             .replaceAll('stopy', rel.endPoint.y)
-        )
-        .attr('marker-end', 'url(' + url + '#arrowhead)');
-      if (rel.type === 'birel') line.attr('marker-start', 'url(' + url + '#arrowend)');
+        );
+      if (rel.type !== 'rel_b') line.attr('marker-end', 'url(' + url + '#arrowhead)');
+      if (rel.type === 'birel' || rel.type === 'rel_b')
+        line.attr('marker-start', 'url(' + url + '#arrowend)');
     }
 
     let messageConf = conf.messageFont();
@@ -297,6 +299,8 @@ export const drawRels = (elem, rels, conf) => {
 const drawBoundary = function (elem, boundary, conf) {
   const boundaryElem = elem.append('g');
 
+  let attrsValue = { 'stroke-width': 1.0, 'stroke-dasharray': '7.0,7.0' };
+  if (boundary.nodeType) attrsValue = { 'stroke-width': 1.0 };
   let rectData = {
     x: boundary.x,
     y: boundary.y,
@@ -306,11 +310,12 @@ const drawBoundary = function (elem, boundary, conf) {
     height: boundary.height,
     rx: 2.5,
     ry: 2.5,
-    attrs: { 'stroke-width': 1.0, 'stroke-dasharray': '7.0,7.0' },
+    attrs: attrsValue,
   };
 
   drawRect(boundaryElem, rectData);
 
+  // draw lable
   let boundaryConf = conf.boundaryFont();
   boundaryConf.fontWeight = 'bold';
   boundaryConf.fontSize = boundaryConf.fontSize + 2;
@@ -318,33 +323,51 @@ const drawBoundary = function (elem, boundary, conf) {
     boundary.label.text,
     boundaryElem,
     boundary.x,
-    boundary.y + boundary.label.y,
+    boundary.y + boundary.label.Y,
     boundary.width,
     boundary.height,
     { fill: '#444444' },
     boundaryConf
   );
 
-  boundaryConf = conf.boundaryFont();
-  boundaryConf.fontSize = boundaryConf.fontSize - 2;
-  _drawTextCandidateFunc(conf)(
-    '[' + boundary.type + ']',
-    boundaryElem,
-    boundary.x,
-    boundary.y + boundary.label.y + boundaryConf.fontSize + 8,
-    boundary.width,
-    boundary.height,
-    { fill: '#444444' },
-    boundaryConf
-  );
+  // draw type
+  if (boundary.type && boundary.type.text !== '') {
+    boundaryConf = conf.boundaryFont();
+    _drawTextCandidateFunc(conf)(
+      boundary.type.text,
+      boundaryElem,
+      boundary.x,
+      boundary.y + boundary.type.Y,
+      boundary.width,
+      boundary.height,
+      { fill: '#444444' },
+      boundaryConf
+    );
+  }
+
+  // draw descr
+  if (boundary.descr && boundary.descr.text !== '') {
+    boundaryConf = conf.boundaryFont();
+    boundaryConf.fontSize = boundaryConf.fontSize - 2;
+    _drawTextCandidateFunc(conf)(
+      boundary.descr.text,
+      boundaryElem,
+      boundary.x,
+      boundary.y + boundary.descr.Y,
+      boundary.width,
+      boundary.height,
+      { fill: '#444444' },
+      boundaryConf
+    );
+  }
 };
 
-export const drawPersonOrSystem = function (elem, personOrSystem, conf) {
-  let fillColor = conf[personOrSystem.type + '_bg_color'];
-  let strokeColor = conf[personOrSystem.type + '_border_color'];
+export const drawC4Shape = function (elem, c4Shape, conf) {
+  let fillColor = conf[c4Shape.typeC4Shape.text + '_bg_color'];
+  let strokeColor = conf[c4Shape.typeC4Shape.text + '_border_color'];
   let personImg =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAACD0lEQVR4Xu2YoU4EMRCGT+4j8Ai8AhaH4QHgAUjQuFMECUgMIUgwJAgMhgQsAYUiJCiQIBBY+EITsjfTdme6V24v4c8vyGbb+ZjOtN0bNcvjQXmkH83WvYBWto6PLm6v7p7uH1/w2fXD+PBycX1Pv2l3IdDm/vn7x+dXQiAubRzoURa7gRZWd0iGRIiJbOnhnfYBQZNJjNbuyY2eJG8fkDE3bbG4ep6MHUAsgYxmE3nVs6VsBWJSGccsOlFPmLIViMzLOB7pCVO2AtHJMohH7Fh6zqitQK7m0rJvAVYgGcEpe//PLdDz65sM4pF9N7ICcXDKIB5Nv6j7tD0NoSdM2QrU9Gg0ewE1LqBhHR3BBdvj2vapnidjHxD/q6vd7Pvhr31AwcY8eXMTXAKECZZJFXuEq27aLgQK5uLMohCenGGuGewOxSjBvYBqeG6B+Nqiblggdjnc+ZXDy+FNFpFzw76O3UBAROuXh6FoiAcf5g9eTvUgzy0nWg6I8cXHRUpg5bOVBCo+KDpFajOf23GgPme7RSQ+lacIENUgJ6gg1k6HjgOlqnLqip4tEuhv0hNEMXUD0clyXE3p6pZA0S2nnvTlXwLJEZWlb7cTQH1+USgTN4VhAenm/wea1OCAOmqo6fE1WCb9WSKBah+rbUWPWAmE2Rvk0ApiB45eOyNAzU8xcTvj8KvkKEoOaIYeHNA3ZuygAvFMUO0AAAAASUVORK5CYII=';
-  switch (personOrSystem.type) {
+  switch (c4Shape.typeC4Shape.text) {
     case 'person':
       personImg =
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAACD0lEQVR4Xu2YoU4EMRCGT+4j8Ai8AhaH4QHgAUjQuFMECUgMIUgwJAgMhgQsAYUiJCiQIBBY+EITsjfTdme6V24v4c8vyGbb+ZjOtN0bNcvjQXmkH83WvYBWto6PLm6v7p7uH1/w2fXD+PBycX1Pv2l3IdDm/vn7x+dXQiAubRzoURa7gRZWd0iGRIiJbOnhnfYBQZNJjNbuyY2eJG8fkDE3bbG4ep6MHUAsgYxmE3nVs6VsBWJSGccsOlFPmLIViMzLOB7pCVO2AtHJMohH7Fh6zqitQK7m0rJvAVYgGcEpe//PLdDz65sM4pF9N7ICcXDKIB5Nv6j7tD0NoSdM2QrU9Gg0ewE1LqBhHR3BBdvj2vapnidjHxD/q6vd7Pvhr31AwcY8eXMTXAKECZZJFXuEq27aLgQK5uLMohCenGGuGewOxSjBvYBqeG6B+Nqiblggdjnc+ZXDy+FNFpFzw76O3UBAROuXh6FoiAcf5g9eTvUgzy0nWg6I8cXHRUpg5bOVBCo+KDpFajOf23GgPme7RSQ+lacIENUgJ6gg1k6HjgOlqnLqip4tEuhv0hNEMXUD0clyXE3p6pZA0S2nnvTlXwLJEZWlb7cTQH1+USgTN4VhAenm/wea1OCAOmqo6fE1WCb9WSKBah+rbUWPWAmE2Rvk0ApiB45eOyNAzU8xcTvj8KvkKEoOaIYeHNA3ZuygAvFMUO0AAAAASUVORK5CYII=';
@@ -355,29 +378,38 @@ export const drawPersonOrSystem = function (elem, personOrSystem, conf) {
       break;
   }
 
-  const personOrSystemElem = elem.append('g');
-  personOrSystemElem.attr('class', 'person-man');
+  const c4ShapeElem = elem.append('g');
+  c4ShapeElem.attr('class', 'person-man');
 
   // <rect fill="#08427B" height="119.2188" rx="2.5" ry="2.5" style="stroke:#073B6F;stroke-width:0.5;" width="110" x="120" y="7"/>
+  // draw rect of c4Shape
   const rect = getNoteRect();
-  switch (personOrSystem.type) {
+  switch (c4Shape.typeC4Shape.text) {
     case 'person':
     case 'external_person':
     case 'system':
     case 'external_system':
-      rect.x = personOrSystem.x;
-      rect.y = personOrSystem.y;
+    case 'container':
+    case 'external_container':
+    case 'component':
+    case 'external_component':
+      rect.x = c4Shape.x;
+      rect.y = c4Shape.y;
       rect.fill = fillColor;
-      rect.width = personOrSystem.width;
-      rect.height = personOrSystem.height;
+      rect.width = c4Shape.width;
+      rect.height = c4Shape.height;
       rect.style = 'stroke:' + strokeColor + ';stroke-width:0.5;';
       rect.rx = 2.5;
       rect.ry = 2.5;
-      drawRect(personOrSystemElem, rect);
+      drawRect(c4ShapeElem, rect);
       break;
     case 'system_db':
     case 'external_system_db':
-      personOrSystemElem
+    case 'container_db':
+    case 'external_container_db':
+    case 'component_db':
+    case 'external_component_db':
+      c4ShapeElem
         .append('path')
         .attr('fill', fillColor)
         .attr('stroke-width', '0.5')
@@ -385,12 +417,12 @@ export const drawPersonOrSystem = function (elem, personOrSystem, conf) {
         .attr(
           'd',
           'Mstartx,startyc0,-10 half,-10 half,-10c0,0 half,0 half,10l0,heightc0,10 -half,10 -half,10c0,0 -half,0 -half,-10l0,-height'
-            .replaceAll('startx', personOrSystem.x)
-            .replaceAll('starty', personOrSystem.y)
-            .replaceAll('half', personOrSystem.width / 2)
-            .replaceAll('height', personOrSystem.height)
+            .replaceAll('startx', c4Shape.x)
+            .replaceAll('starty', c4Shape.y)
+            .replaceAll('half', c4Shape.width / 2)
+            .replaceAll('height', c4Shape.height)
         );
-      personOrSystemElem
+      c4ShapeElem
         .append('path')
         .attr('fill', 'none')
         .attr('stroke-width', '0.5')
@@ -398,14 +430,18 @@ export const drawPersonOrSystem = function (elem, personOrSystem, conf) {
         .attr(
           'd',
           'Mstartx,startyc0,10 half,10 half,10c0,0 half,0 half,-10'
-            .replaceAll('startx', personOrSystem.x)
-            .replaceAll('starty', personOrSystem.y)
-            .replaceAll('half', personOrSystem.width / 2)
+            .replaceAll('startx', c4Shape.x)
+            .replaceAll('starty', c4Shape.y)
+            .replaceAll('half', c4Shape.width / 2)
         );
       break;
     case 'system_queue':
     case 'external_system_queue':
-      personOrSystemElem
+    case 'container_queue':
+    case 'external_container_queue':
+    case 'component_queue':
+    case 'external_component_queue':
+      c4ShapeElem
         .append('path')
         .attr('fill', fillColor)
         .attr('stroke-width', '0.5')
@@ -413,12 +449,12 @@ export const drawPersonOrSystem = function (elem, personOrSystem, conf) {
         .attr(
           'd',
           'Mstartx,startylwidth,0c5,0 5,half 5,halfc0,0 0,half -5,halfl-width,0c-5,0 -5,-half -5,-halfc0,0 0,-half 5,-half'
-            .replaceAll('startx', personOrSystem.x)
-            .replaceAll('starty', personOrSystem.y)
-            .replaceAll('width', personOrSystem.width)
-            .replaceAll('half', personOrSystem.height / 2)
+            .replaceAll('startx', c4Shape.x)
+            .replaceAll('starty', c4Shape.y)
+            .replaceAll('width', c4Shape.width)
+            .replaceAll('half', c4Shape.height / 2)
         );
-      personOrSystemElem
+      c4ShapeElem
         .append('path')
         .attr('fill', 'none')
         .attr('stroke-width', '0.5')
@@ -426,66 +462,100 @@ export const drawPersonOrSystem = function (elem, personOrSystem, conf) {
         .attr(
           'd',
           'Mstartx,startyc-5,0 -5,half -5,halfc0,half 5,half 5,half'
-            .replaceAll('startx', personOrSystem.x + personOrSystem.width)
-            .replaceAll('starty', personOrSystem.y)
-            .replaceAll('half', personOrSystem.height / 2)
+            .replaceAll('startx', c4Shape.x + c4Shape.width)
+            .replaceAll('starty', c4Shape.y)
+            .replaceAll('half', c4Shape.height / 2)
         );
       break;
   }
 
-  personOrSystemElem
+  // draw type of c4Shape
+  let c4ShapeFontConf = getC4ShapeFont(conf, c4Shape.typeC4Shape.text);
+  c4ShapeElem
     .append('text')
     .attr('fill', '#FFFFFF')
-    .attr('font-family', conf.personFontFamily)
-    .attr('font-size', conf.personFontSize - 2)
+    .attr('font-family', c4ShapeFontConf.fontFamily)
+    .attr('font-size', c4ShapeFontConf.fontSize - 2)
     .attr('font-style', 'italic')
     .attr('lengthAdjust', 'spacing')
-    .attr('textLength', personOrSystem.typeLabelWidth)
-    .attr('x', personOrSystem.x + personOrSystem.width / 2 - personOrSystem.typeLabelWidth / 2)
-    .attr('y', personOrSystem.y + personOrSystem.typeLabelY)
-    .text('<<' + personOrSystem.type + '>>');
+    .attr('textLength', c4Shape.typeC4Shape.width)
+    .attr('x', c4Shape.x + c4Shape.width / 2 - c4Shape.typeC4Shape.width / 2)
+    .attr('y', c4Shape.y + c4Shape.typeC4Shape.Y)
+    .text('<<' + c4Shape.typeC4Shape.text + '>>');
 
-  switch (personOrSystem.type) {
+  // draw image/sprite
+  switch (c4Shape.typeC4Shape.text) {
     case 'person':
     case 'external_person':
       drawImage(
-        personOrSystemElem,
+        c4ShapeElem,
         48,
         48,
-        personOrSystem.x + personOrSystem.width / 2 - 24,
-        personOrSystem.y + 24,
+        c4Shape.x + c4Shape.width / 2 - 24,
+        c4Shape.y + c4Shape.image.Y,
         personImg
       );
       break;
   }
 
-  let personOrSystemConf = conf.personFont();
-  personOrSystemConf.fontWeight = 'bold';
-  personOrSystemConf.fontSize = personOrSystemConf.fontSize + 2;
+  // draw label
+  let textFontConf = conf[c4Shape.typeC4Shape.text + 'Font']();
+  textFontConf.fontWeight = 'bold';
+  textFontConf.fontSize = textFontConf.fontSize + 2;
   _drawTextCandidateFunc(conf)(
-    personOrSystem.label.text,
-    personOrSystemElem,
-    personOrSystem.x,
-    personOrSystem.y + personOrSystem.label.Y,
-    personOrSystem.width,
-    personOrSystem.height,
+    c4Shape.label.text,
+    c4ShapeElem,
+    c4Shape.x,
+    c4Shape.y + c4Shape.label.Y,
+    c4Shape.width,
+    c4Shape.height,
     { fill: '#FFFFFF' },
-    personOrSystemConf
+    textFontConf
   );
 
-  personOrSystemConf = conf.personFont();
-  _drawTextCandidateFunc(conf)(
-    personOrSystem.descr.text,
-    personOrSystemElem,
-    personOrSystem.x,
-    personOrSystem.y + personOrSystem.descr.Y,
-    personOrSystem.width,
-    personOrSystem.height,
-    { fill: '#FFFFFF' },
-    personOrSystemConf
-  );
+  // draw techn/type
+  textFontConf = conf[c4Shape.typeC4Shape.text + 'Font']();
 
-  return personOrSystem.height;
+  if (c4Shape.thchn && c4Shape.thchn.text !== '') {
+    _drawTextCandidateFunc(conf)(
+      c4Shape.thchn.text,
+      c4ShapeElem,
+      c4Shape.x,
+      c4Shape.y + c4Shape.thchn.Y,
+      c4Shape.width,
+      c4Shape.height,
+      { fill: '#FFFFFF', 'font-style': 'italic' },
+      textFontConf
+    );
+  } else if (c4Shape.type && c4Shape.type.text !== '') {
+    _drawTextCandidateFunc(conf)(
+      c4Shape.type.text,
+      c4ShapeElem,
+      c4Shape.x,
+      c4Shape.y + c4Shape.type.Y,
+      c4Shape.width,
+      c4Shape.height,
+      { fill: '#FFFFFF', 'font-style': 'italic' },
+      textFontConf
+    );
+  }
+
+  // draw descr
+  if (c4Shape.descr && c4Shape.descr.text !== '') {
+    textFontConf = conf.personFont();
+    _drawTextCandidateFunc(conf)(
+      c4Shape.descr.text,
+      c4ShapeElem,
+      c4Shape.x,
+      c4Shape.y + c4Shape.descr.Y,
+      c4Shape.width,
+      c4Shape.height,
+      { fill: '#FFFFFF' },
+      textFontConf
+    );
+  }
+
+  return c4Shape.height;
 };
 
 export const insertDatabaseIcon = function (elem) {
@@ -672,6 +742,14 @@ export const getNoteRect = function () {
   };
 };
 
+const getC4ShapeFont = (cnf, typeC4Shape) => {
+  return {
+    fontFamily: cnf[typeC4Shape + 'FontFamily'],
+    fontSize: cnf[typeC4Shape + 'FontSize'],
+    fontWeight: cnf[typeC4Shape + 'FontWeight'],
+  };
+};
+
 const _drawTextCandidateFunc = (function () {
   /**
    * @param {any} content
@@ -713,16 +791,17 @@ const _drawTextCandidateFunc = (function () {
         .attr('x', x + width / 2)
         .attr('y', y)
         .style('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
         .style('font-size', fontSize)
         .style('font-weight', fontWeight)
         .style('font-family', fontFamily);
       text
         .append('tspan')
-        .attr('x', x + width / 2)
+        // .attr('x', x + width / 2)
         .attr('dy', dy)
-        .text(lines[i]);
-
-      text.attr('y', y).attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
+        .text(lines[i])
+        // .attr('y', y + height / 2)
+        .attr('alignment-baseline', 'mathematical');
 
       _setTextAttrs(text, textAttrs);
     }
@@ -787,14 +866,14 @@ export default {
   drawText,
   drawLabel,
   drawBoundary,
-  drawPersonOrSystem,
+  drawC4Shape,
   drawRels,
   drawImage,
   drawEmbeddedImage,
   insertArrowHead,
   insertArrowEnd,
   insertArrowFilledHead,
-  insertSequenceNumber: insertDynamicNumber,
+  insertDynamicNumber,
   insertArrowCrossHead,
   insertDatabaseIcon,
   insertComputerIcon,

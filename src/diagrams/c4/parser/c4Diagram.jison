@@ -48,7 +48,6 @@
 %x index
 
 /* Deployment diagram */
-%x deployment_node
 %x node
 %x node_l
 %x node_r
@@ -56,10 +55,11 @@
 /* Relationship Types */
 %x rel
 %x rel_bi
-%x rel_up
-%x rel_down
-%x rel_left
-%x rel_right
+%x rel_u
+%x rel_d
+%x rel_l
+%x rel_r
+%x rel_b
 
 %x attribute
 %x string
@@ -105,18 +105,45 @@
 "Enterprise_Boundary"                     { this.begin("enterprise_boundary"); console.log('begin enterprise_boundary'); return 'ENTERPRISE_BOUNDARY';}
 "System_Boundary"                         { this.begin("system_boundary"); console.log('begin system_boundary'); return 'SYSTEM_BOUNDARY';}
 
+"ContainerQueue_Ext"                         { this.begin("container_ext_queue"); console.log('begin container_ext_queue'); return 'CONTAINER_EXT_QUEUE';}
+"ContainerDb_Ext"                            { this.begin("container_ext_db"); console.log('begin container_ext_db'); return 'CONTAINER_EXT_DB';}
+"Container_Ext"                              { this.begin("container_ext"); console.log('begin container_ext'); return 'CONTAINER_EXT';}
+"ContainerQueue"                             { this.begin("container_queue"); console.log('begin container_queue'); return 'CONTAINER_QUEUE';}
+"ContainerDb"                                { this.begin("container_db"); console.log('begin container_db'); return 'CONTAINER_DB';}
+"Container"                                  { this.begin("container"); console.log('begin container'); return 'CONTAINER';}
+
+"Container_Boundary"                         { this.begin("container_boundary"); console.log('begin container_boundary'); return 'CONTAINER_BOUNDARY';}
+
+"ComponentQueue_Ext"                         { this.begin("component_ext_queue"); console.log('begin component_ext_queue'); return 'COMPONENT_EXT_QUEUE';}
+"ComponentDb_Ext"                            { this.begin("component_ext_db"); console.log('begin component_ext_db'); return 'COMPONENT_EXT_DB';}
+"Component_Ext"                              { this.begin("component_ext"); console.log('begin component_ext'); return 'COMPONENT_EXT';}
+"ComponentQueue"                             { this.begin("component_queue"); console.log('begin component_queue'); return 'COMPONENT_QUEUE';}
+"ComponentDb"                                { this.begin("component_db"); console.log('begin component_db'); return 'COMPONENT_DB';}
+"Component"                                  { this.begin("component"); console.log('begin component'); return 'COMPONENT';}
+
+"Deployment_Node"                         { this.begin("node"); console.log('begin node'); return 'NODE';}
+"Node"                                    { this.begin("node"); console.log('begin node'); return 'NODE';}
+"Node_L"                                  { this.begin("node_l"); console.log('begin node_l'); return 'NODE_L';}
+"Node_R"                                  { this.begin("node_r"); console.log('begin node_r'); return 'NODE_R';}
+
+
 "Rel"                                     { this.begin("rel"); console.log('begin rel'); return 'REL';} 
 "BiRel"                                   { this.begin("birel"); console.log('begin birel'); return 'BIREL';} 
-"Rel_U|Rel_Up"                            { this.begin("rel_u"); console.log('begin rel_u'); return 'REL_U';}  
-"Rel_D|Rel_Down"                          { this.begin("rel_d"); console.log('begin rel_d'); return 'REL_D';}  
-"Rel_L|Rel_Left"                          { this.begin("rel_l"); console.log('begin rel_l'); return 'REL_L';}  
-"Rel_R|Rel_Right"                         { this.begin("rel_r"); console.log('begin rel_r'); return 'REL_R';}  
+"Rel_Up"                                  { this.begin("rel_u"); console.log('begin rel_u'); return 'REL_U';}  
+"Rel_U"                                   { this.begin("rel_u"); console.log('begin rel_u'); return 'REL_U';}  
+"Rel_Down"                                { this.begin("rel_d"); console.log('begin rel_d'); return 'REL_D';}  
+"Rel_D"                                   { this.begin("rel_d"); console.log('begin rel_d'); return 'REL_D';}  
+"Rel_Left"                                { this.begin("rel_l"); console.log('begin rel_l'); return 'REL_L';}  
+"Rel_L"                                   { this.begin("rel_l"); console.log('begin rel_l'); return 'REL_L';}  
+"Rel_Right"                               { this.begin("rel_r"); console.log('begin rel_r'); return 'REL_R';}  
+"Rel_R"                                   { this.begin("rel_r"); console.log('begin rel_r'); return 'REL_R';}  
+"Rel_Back"                                { this.begin("rel_b"); console.log('begin rel_b'); return 'REL_B';}  
+"RelIndex"                                { this.begin("rel_index"); console.log('begin rel_index'); return 'REL_INDEX';} 
 
-
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,rel,birel,rel_u,rel_d,rel_l,rel_r><<EOF>>                return "EOF_IN_STRUCT";
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,rel,birel,rel_u,rel_d,rel_l,rel_r>[(][ ]*[,]             { console.log('begin attribute with ATTRIBUTE_EMPTY'); this.begin("attribute"); return "ATTRIBUTE_EMPTY";}
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,rel,birel,rel_u,rel_d,rel_l,rel_r>[(]                    { console.log('begin attribute'); this.begin("attribute"); }
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,rel,birel,rel_u,rel_d,rel_l,rel_r,attribute>[)]          { console.log('STOP attribute'); this.popState();console.log('STOP diagram'); this.popState();}
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index><<EOF>>                return "EOF_IN_STRUCT";
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index>[(][ ]*[,]             { console.log('begin attribute with ATTRIBUTE_EMPTY'); this.begin("attribute"); return "ATTRIBUTE_EMPTY";}
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index>[(]                    { console.log('begin attribute'); this.begin("attribute"); }
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,attribute>[)]          { console.log('STOP attribute'); this.popState();console.log('STOP diagram'); this.popState();}
 
 <attribute>",,"                           { console.log(',,'); return 'ATTRIBUTE_EMPTY';}
 <attribute>","                            { console.log(','); }
@@ -221,9 +248,13 @@ boundaryStartStatement
     ;
 
 boundaryStart
-    : ENTERPRISE_BOUNDARY attributes {console.log($1,JSON.stringify($2)); $2.splice(2, 0, 'ENTERPRISE'); yy.addBoundary(...$2); $$=$2;}
-    | SYSTEM_BOUNDARY attributes {console.log($1,JSON.stringify($2)); $2.splice(2, 0, 'ENTERPRISE'); yy.addBoundary(...$2); $$=$2;}
-    | BOUNDARY attributes {console.log($1,JSON.stringify($2)); yy.addBoundary(...$2); $$=$2;}
+    : ENTERPRISE_BOUNDARY attributes {console.log($1,JSON.stringify($2)); $2.splice(2, 0, 'ENTERPRISE'); yy.addPersonOrSystemBoundary(...$2); $$=$2;}
+    | SYSTEM_BOUNDARY attributes {console.log($1,JSON.stringify($2)); $2.splice(2, 0, 'ENTERPRISE'); yy.addPersonOrSystemBoundary(...$2); $$=$2;}
+    | BOUNDARY attributes {console.log($1,JSON.stringify($2)); yy.addPersonOrSystemBoundary(...$2); $$=$2;}
+    | CONTAINER_BOUNDARY attributes {console.log($1,JSON.stringify($2)); $2.splice(2, 0, 'CONTAINER'); yy.addContainerBoundary(...$2); $$=$2;}
+    | NODE attributes {console.log($1,JSON.stringify($2)); yy.addDeploymentNode('node', ...$2); $$=$2;}
+    | NODE_L attributes {console.log($1,JSON.stringify($2)); yy.addDeploymentNode('nodeL', ...$2); $$=$2;}
+    | NODE_R attributes {console.log($1,JSON.stringify($2)); yy.addDeploymentNode('nodeR', ...$2); $$=$2;}
     ;
 
 boundaryStopStatement
@@ -245,6 +276,18 @@ diagramStatement
     | SYSTEM_EXT attributes {console.log($1,JSON.stringify($2)); yy.addPersonOrSystem('external_system', ...$2); $$=$2;}
     | SYSTEM_EXT_DB attributes {console.log($1,JSON.stringify($2)); yy.addPersonOrSystem('external_system_db', ...$2); $$=$2;}
     | SYSTEM_EXT_QUEUE attributes {console.log($1,JSON.stringify($2)); yy.addPersonOrSystem('external_system_queue', ...$2); $$=$2;}      
+    | CONTAINER attributes {console.log($1,JSON.stringify($2)); yy.addContainer('container', ...$2); $$=$2;}
+    | CONTAINER_DB attributes {console.log($1,JSON.stringify($2)); yy.addContainer('container_db', ...$2); $$=$2;}
+    | CONTAINER_QUEUE attributes {console.log($1,JSON.stringify($2)); yy.addContainer('container_queue', ...$2); $$=$2;}
+    | CONTAINER_EXT attributes {console.log($1,JSON.stringify($2)); yy.addContainer('external_container', ...$2); $$=$2;}
+    | CONTAINER_EXT_DB attributes {console.log($1,JSON.stringify($2)); yy.addContainer('external_container_db', ...$2); $$=$2;}
+    | CONTAINER_EXT_QUEUE attributes {console.log($1,JSON.stringify($2)); yy.addContainer('external_container_queue', ...$2); $$=$2;}      
+    | COMPONENT attributes {console.log($1,JSON.stringify($2)); yy.addComponent('component', ...$2); $$=$2;}
+    | COMPONENT_DB attributes {console.log($1,JSON.stringify($2)); yy.addComponent('component_db', ...$2); $$=$2;}
+    | COMPONENT_QUEUE attributes {console.log($1,JSON.stringify($2)); yy.addComponent('component_queue', ...$2); $$=$2;}
+    | COMPONENT_EXT attributes {console.log($1,JSON.stringify($2)); yy.addComponent('external_component', ...$2); $$=$2;}
+    | COMPONENT_EXT_DB attributes {console.log($1,JSON.stringify($2)); yy.addComponent('external_component_db', ...$2); $$=$2;}
+    | COMPONENT_EXT_QUEUE attributes {console.log($1,JSON.stringify($2)); yy.addComponent('external_component_queue', ...$2); $$=$2;}      
     | boundaryStatement
     | REL attributes {console.log($1,JSON.stringify($2)); yy.addRel('rel', ...$2); $$=$2;}
     | BIREL attributes {console.log($1,JSON.stringify($2)); yy.addRel('birel', ...$2); $$=$2;}
@@ -252,6 +295,8 @@ diagramStatement
     | REL_D attributes {console.log($1,JSON.stringify($2)); yy.addRel('rel_d', ...$2); $$=$2;}
     | REL_L attributes {console.log($1,JSON.stringify($2)); yy.addRel('rel_l', ...$2); $$=$2;}
     | REL_R attributes {console.log($1,JSON.stringify($2)); yy.addRel('rel_r', ...$2); $$=$2;}
+    | REL_B attributes {console.log($1,JSON.stringify($2)); yy.addRel('rel_b', ...$2); $$=$2;}
+    | REL_INDEX attributes {console.log($1,JSON.stringify($2)); $2.splice(0, 1); yy.addRel('rel', ...$2); $$=$2;}
     ;
 
 attributes
