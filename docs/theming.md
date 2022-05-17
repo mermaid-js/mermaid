@@ -116,15 +116,15 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 | -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
 | darkMode             | false                          |      | Boolean Value that dictates how to calculate colors. "true" will activate darkmode.                                                                                 |
 | background           | #f4f4f4                        |      | Used to calculate color for items that should either be background colored or contrasting to the background.                     |
-| primaryColor         | #fff4dd                        |      | Color to be used as background in nodes, other colors will be derived from this                                                  |
 | fontFamily           | "trebuchet ms", verdana, arial |      |                                                                                                                                  |
 | fontSize             | 16px                           |      |  Font Size, in pixels                                                                                                                                |
-| secondaryColor       | based on primaryColor          | *    |                                                                                                                                  |
-| tertiaryColor        | based on primaryColor          | *    |                                                                                                                                  |
+| primaryColor         | #fff4dd                        |      | Color to be used as background in nodes, other colors will be derived from this                                                  |
 | primaryBorderColor   | based on primaryColor          | *    | Color to be used as border in nodes using primaryColor                                                                           |
-| primaryTextColor     | based on darkMode #ddd/#333    | *    | Color to be used as text color in nodes using primaryColor                                                                        |
+| primaryTextColor     | based on darkMode #ddd/#333    | *    | Color to be used as text color in nodes using primaryColor   
+| secondaryColor       | based on primaryColor          | *    |                                                                                                                                  |
 | secondaryBorderColor | based on secondaryColor        | *    | Color to be used as border in nodes using secondaryColor                                                                         |
-| secondaryTextColor   | based on secondaryColor        | *    | Color to be used as text color in nodes using secondaryColor                                                                      |
+| secondaryTextColor   | based on secondaryColor        | *    | Color to be used as text color in nodes using secondaryColor   
+| tertiaryColor        | based on primaryColor          | *    |                                                                                                                                  |                                                                     |                                                                   |
 | tertiaryBorderColor  | based on tertiaryColor         | *    | Color to be used as border in nodes using tertiaryColor                                                                          |
 | tertiaryTextColor    | based on tertiaryColor         | *    | Color to be used as text color in nodes using tertiaryColor                                                                       |
 | noteBkgColor         | #fff5ad                        |      | Color used as background in notes                                                                                                |
@@ -160,9 +160,9 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 | actorBkg              | mainBkg                 | *    | Actor Background Color         |
 | actorTextColor        | primaryTextColor        | *    |  Actor Text Color            |
 | actorLineColor        | grey                    | *    |   Actor Line Color           |
-| labelBoxBkgColor      | actorBkg                | *    |  Label Box Background Color            |
 | signalColor           | textColor               | *    |  Signal Color           |
 | signalTextColor       | textColor               | *    |  Signal Text Color           |
+| labelBoxBkgColor      | actorBkg                | *    |  Label Box Background Color            |
 | labelBoxBorderColor   | actorBorder             | *    |   Label Box Border Color          |
 | labelTextColor        | actorTextColor          | *    |   Label Text Color           |
 | loopTextColor         | actorTextColor          | *    |   Loop ext Color            |
