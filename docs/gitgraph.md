@@ -640,7 +640,9 @@ See how the default theme is used to set the colors for the branches:
        branch featureA
        commit
 ```
-
+> #### IMPORTANT:
+> Mermaid supports the theme variables to override the default values for **upto 8 branches**, i.e., you can set the color/styling of upto 8 branches using theme variables. After this threshold of 8 branches,  the theme variables are reused in the cyclic manner, i.e. 9th branch will use the color/styling of 1st  branch, or branch at index postion '8' will use the color/styling of branch at index position '0'.
+ *More on this in the next section. See examples on **Customizing branch label colors** below*
 ### Customizing branch colors
 You can customize the branch colors using the `git0` to `git7` theme variables. Mermaid allows you to set the colors for up-to 8 branches, where `git0` variable will drive the value of the first branch, `git1` will drive the value of the second branch and so on.
 
@@ -685,27 +687,32 @@ Now let's override the default values for the `gitBranchLabel0` to `gitBranchLab
 
 ```mermaid-example
     %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
-              'gitBranchLabel0': '#ff0000',
-              'gitBranchLabel1': '#00ff00',
-              'gitBranchLabel2': '#0000ff'
-       } } }%%
-       gitGraph
-       commit
-       branch develop
-       commit tag:"v1.0.0"
-       commit
-       checkout main
-       commit type: HIGHLIGHT
-       commit
-       merge develop
-       commit
-       branch featureA
-       commit
-
+        'gitBranchLabel0': '#ffffff',
+        'gitBranchLabel1': '#ffffff',
+        'gitBranchLabel2': '#ffffff',
+        'gitBranchLabel3': '#ffffff',
+        'gitBranchLabel4': '#ffffff',
+        'gitBranchLabel5': '#ffffff',
+        'gitBranchLabel6': '#ffffff',
+        'gitBranchLabel7': '#ffffff',
+        'gitBranchLabel8': '#ffffff',
+        'gitBranchLabel9': '#ffffff'
+  } } }%%
+  gitGraph
+    checkout main
+    branch branch1
+    branch branch2
+    branch branch3
+    branch branch4
+    branch branch5
+    branch branch6
+    branch branch7
+    branch branch8
+    branch branch9
+    checkout branch1
+    commit
 ```
-See how the branch label colors are changed to the values specified in the theme variables.
-
-
+Here, you can see that `branch8` and `branch9` colors and the styles are being picked from branch at index position `0` (`main`) and `1`(`branch1`) respectively, i.e., **branch themeVariables are repeated cyclically**.
 ### Customizing Commit colors
 You can customize commit using the `commitLabelColor` and `commitLabelBackground` theme variables for changes in the commit label color and background color respectively.
 
@@ -784,6 +791,7 @@ Now let's override the default values for the `git0` to `git3` variables:
 
 ```
 See how the highlight commit color on the first branch is changed to the value specified in the theme variable `gitInv0`.
+
 
 
 

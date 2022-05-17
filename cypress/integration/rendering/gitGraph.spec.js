@@ -102,4 +102,33 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
+  it('8: should render a simple gitgraph with more than 8 branchs &  overriding variables', () => {
+    imgSnapshotTest(
+      `%%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+        'gitBranchLabel0': '#ffffff',
+        'gitBranchLabel1': '#ffffff',
+        'gitBranchLabel2': '#ffffff',
+        'gitBranchLabel3': '#ffffff',
+        'gitBranchLabel4': '#ffffff',
+        'gitBranchLabel5': '#ffffff',
+        'gitBranchLabel6': '#ffffff',
+        'gitBranchLabel7': '#ffffff',
+  } } }%%
+  gitGraph
+    checkout main
+    branch branch1
+    branch branch2
+    branch branch3
+    branch branch4
+    branch branch5
+    branch branch6
+    branch branch7
+    branch branch8
+    branch branch9
+    checkout branch1
+    commit
+      `,
+      {}
+    );
+  });
 });
