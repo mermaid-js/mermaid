@@ -31,7 +31,7 @@ import utils from './utils';
  */
 const init = function () {
   try {
-    initThrowsErrors();
+    initThrowsErrors(...arguments);
   } catch (e) {
     log.warn('Syntax Error rendering');
     log.warn(e);
