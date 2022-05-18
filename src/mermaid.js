@@ -215,6 +215,7 @@ const mermaid = {
   render: mermaidAPI != undefined ? mermaidAPI.render : null,
 
   init,
+  initThrowsErrors,
   initialize,
 
   contentLoaded,
