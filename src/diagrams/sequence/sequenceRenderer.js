@@ -441,7 +441,6 @@ const drawMessage = function (diagram, msgModel, lineStarty) {
       .attr('font-family', 'sans-serif')
       .attr('font-size', '12px')
       .attr('text-anchor', 'middle')
-      .attr('textLength', '16px')
       .attr('class', 'sequenceNumber')
       .text(sequenceIndex);
   }
