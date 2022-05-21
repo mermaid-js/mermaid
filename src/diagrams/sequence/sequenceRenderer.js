@@ -367,21 +367,21 @@ const drawMessage = function (diagram, msgModel, lineStarty) {
         .attr(
           'd',
           'M ' +
-            startx +
-            ',' +
-            lineStarty +
-            ' C ' +
-            (startx + 60) +
-            ',' +
-            (lineStarty - 10) +
-            ' ' +
-            (startx + 60) +
-            ',' +
-            (lineStarty + 30) +
-            ' ' +
-            startx +
-            ',' +
-            (lineStarty + 20)
+          startx +
+          ',' +
+          lineStarty +
+          ' C ' +
+          (startx + 60) +
+          ',' +
+          (lineStarty - 10) +
+          ' ' +
+          (startx + 60) +
+          ',' +
+          (lineStarty + 30) +
+          ' ' +
+          startx +
+          ',' +
+          (lineStarty + 20)
         );
     }
   } else {
@@ -764,6 +764,45 @@ export const draw = function (text, id) {
         if (msg.message.visible) parser.yy.enableSequenceNumbers();
         else parser.yy.disableSequenceNumbers();
         break;
+      case parser.yy.LINETYPE.CRITICAL_START:
+        adjustLoopHeightForWrap(
+          loopWidths,
+          msg,
+          conf.boxMargin,
+          conf.boxMargin + conf.boxTextMargin,
+          (message) => bounds.newLoop(message)
+        );
+        break;
+      case parser.yy.LINETYPE.CRITICAL_OPTION:
+        adjustLoopHeightForWrap(
+          loopWidths,
+          msg,
+          conf.boxMargin + conf.boxTextMargin,
+          conf.boxMargin,
+          (message) => bounds.addSectionToLoop(message)
+        );
+        break;
+      case parser.yy.LINETYPE.CRITICAL_END:
+        loopModel = bounds.endLoop();
+        svgDraw.drawLoop(diagram, loopModel, 'critical', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
+        break;
+      case parser.yy.LINETYPE.BREAK_START:
+        adjustLoopHeightForWrap(
+          loopWidths,
+          msg,
+          conf.boxMargin,
+          conf.boxMargin + conf.boxTextMargin,
+          (message) => bounds.newLoop(message)
+        );
+        break;
+      case parser.yy.LINETYPE.BREAK_END:
+        loopModel = bounds.endLoop();
+        svgDraw.drawLoop(diagram, loopModel, 'break', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
+        break;
       default:
         try {
           // lastMsg = msg
@@ -848,13 +887,13 @@ export const draw = function (text, id) {
   diagram.attr(
     'viewBox',
     box.startx -
-      conf.diagramMarginX +
-      ' -' +
-      (conf.diagramMarginY + extraVertForTitle) +
-      ' ' +
-      width +
-      ' ' +
-      (height + extraVertForTitle)
+    conf.diagramMarginX +
+    ' -' +
+    (conf.diagramMarginY + extraVertForTitle) +
+    ' ' +
+    width +
+    ' ' +
+    (height + extraVertForTitle)
   );
 
   addSVGAccessibilityFields(parser.yy, diagram, id);
@@ -1056,17 +1095,17 @@ const buildNoteModel = function (msg, actors) {
     noteModel.width = shouldWrap
       ? Math.max(conf.width, textDimensions.width)
       : Math.max(
-          actors[msg.from].width / 2 + actors[msg.to].width / 2,
-          textDimensions.width + 2 * conf.noteMargin
-        );
+        actors[msg.from].width / 2 + actors[msg.to].width / 2,
+        textDimensions.width + 2 * conf.noteMargin
+      );
     noteModel.startx = startx + (actors[msg.from].width + conf.actorMargin) / 2;
   } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
     noteModel.width = shouldWrap
       ? Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin)
       : Math.max(
-          actors[msg.from].width / 2 + actors[msg.to].width / 2,
-          textDimensions.width + 2 * conf.noteMargin
-        );
+        actors[msg.from].width / 2 + actors[msg.to].width / 2,
+        textDimensions.width + 2 * conf.noteMargin
+      );
     noteModel.startx = startx - noteModel.width + (actors[msg.from].width - conf.actorMargin) / 2;
   } else if (msg.to === msg.from) {
     textDimensions = utils.calculateTextDimensions(
@@ -1166,6 +1205,8 @@ const calculateLoopBounds = function (messages, actors) {
       case parser.yy.LINETYPE.ALT_START:
       case parser.yy.LINETYPE.OPT_START:
       case parser.yy.LINETYPE.PAR_START:
+      case parser.yy.LINETYPE.CRITICAL_START:
+      case parser.yy.LINETYPE.BREAK_START:
         stack.push({
           id: msg.id,
           msg: msg.message,
@@ -1176,6 +1217,7 @@ const calculateLoopBounds = function (messages, actors) {
         break;
       case parser.yy.LINETYPE.ALT_ELSE:
       case parser.yy.LINETYPE.PAR_AND:
+      case parser.yy.LINETYPE.CRITICAL_OPTION:
         if (msg.message) {
           current = stack.pop();
           loops[current.id] = current;
@@ -1187,31 +1229,33 @@ const calculateLoopBounds = function (messages, actors) {
       case parser.yy.LINETYPE.ALT_END:
       case parser.yy.LINETYPE.OPT_END:
       case parser.yy.LINETYPE.PAR_END:
+      case parser.yy.LINETYPE.CRITICAL_END:
+      case parser.yy.LINETYPE.BREAK_END:
         current = stack.pop();
         loops[current.id] = current;
         break;
       case parser.yy.LINETYPE.ACTIVE_START:
-        {
-          const actorRect = actors[msg.from ? msg.from.actor : msg.to.actor];
-          const stackedSize = actorActivations(msg.from ? msg.from.actor : msg.to.actor).length;
-          const x =
-            actorRect.x + actorRect.width / 2 + ((stackedSize - 1) * conf.activationWidth) / 2;
-          const toAdd = {
-            startx: x,
-            stopx: x + conf.activationWidth,
-            actor: msg.from.actor,
-            enabled: true,
-          };
-          bounds.activations.push(toAdd);
-        }
+      {
+        const actorRect = actors[msg.from ? msg.from.actor : msg.to.actor];
+        const stackedSize = actorActivations(msg.from ? msg.from.actor : msg.to.actor).length;
+        const x =
+          actorRect.x + actorRect.width / 2 + ((stackedSize - 1) * conf.activationWidth) / 2;
+        const toAdd = {
+          startx: x,
+          stopx: x + conf.activationWidth,
+          actor: msg.from.actor,
+          enabled: true,
+        };
+        bounds.activations.push(toAdd);
+      }
         break;
       case parser.yy.LINETYPE.ACTIVE_END:
-        {
-          const lastActorActivationIdx = bounds.activations
-            .map((a) => a.actor)
-            .lastIndexOf(msg.from.actor);
-          delete bounds.activations.splice(lastActorActivationIdx, 1)[0];
-        }
+      {
+        const lastActorActivationIdx = bounds.activations
+          .map((a) => a.actor)
+          .lastIndexOf(msg.from.actor);
+        delete bounds.activations.splice(lastActorActivationIdx, 1)[0];
+      }
         break;
     }
     const isNote = msg.placement !== undefined;

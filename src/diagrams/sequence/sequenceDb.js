@@ -156,8 +156,8 @@ export const parseMessage = function (str) {
       _str.match(/^[:]?wrap:/) !== null
         ? true
         : _str.match(/^[:]?nowrap:/) !== null
-        ? false
-        : undefined,
+          ? false
+          : undefined,
   };
   log.debug('parseMessage:', message);
   return message;
@@ -188,6 +188,11 @@ export const LINETYPE = {
   SOLID_POINT: 24,
   DOTTED_POINT: 25,
   AUTONUMBER: 26,
+  CRITICAL_START: 27,
+  CRITICAL_OPTION: 28,
+  CRITICAL_END: 29,
+  BREAK_START: 30,
+  BREAK_END: 31,
 };
 
 export const ARROWTYPE = {
@@ -427,6 +432,21 @@ export const apply = function (param) {
         addSignal(undefined, undefined, param.parText, param.signalType);
         break;
       case 'parEnd':
+        addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'criticalStart':
+        addSignal(undefined, undefined, param.criticalText, param.signalType);
+        break;
+      case 'option':
+        addSignal(undefined, undefined, param.optionText, param.signalType);
+        break;
+      case 'criticalEnd':
+        addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'breakStart':
+        addSignal(undefined, undefined, param.breakText, param.signalType);
+        break;
+      case 'breakEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
     }

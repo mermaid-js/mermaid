@@ -230,6 +230,70 @@ sequenceDiagram
     end
 ```
 
+## Critical Region
+
+It is possible to show actions that must happen automatically with conditional handling of circumstances.
+
+This is done by the notation
+
+```
+critical [Action that must be performed]
+... statements ...
+option [Circumstance A]
+... statements ...
+option [Circumstance B]
+... statements ...
+end
+```
+
+See the example below:
+
+```mermaid-example
+sequenceDiagram
+    critical Establish a connection to the DB
+        Service-->DB: connect
+    option Network timeout
+        Service-->Service: Log error
+    option Credentials rejected
+        Service-->Service: Log different error
+    end
+```
+
+It is also possible to have no options at all
+
+```mermaid-example
+sequenceDiagram
+    critical Establish a connection to the DB
+        Service-->DB: connect
+    end
+```
+
+This critical block can also be nested, equivalently to the `par` statement as seen above.
+
+## Break
+
+It is possible to indicate a stop of the sequence within the flow (usually used to model exceptions).
+
+This is done by the notation
+
+```
+break [something happened]
+... statements ...
+end
+```
+
+See the example below:
+
+```mermaid-example
+sequenceDiagram
+    Consumer-->API: Book something
+    API-->BookingService: Start booking process
+    break when the booking process fails
+        API-->Consumer: show failure
+    end
+    API-->BillingService: Start billing process
+```
+
 ## Background Highlighting
 
 It is possible to highlight flows by providing colored background rects. This is done by the notation
@@ -300,8 +364,8 @@ It is possible to get a sequence number attached to each arrow in a sequence dia
 
 ```html
     <script>
-      mermaid.initialize({ sequence: { showSequenceNumbers: true }, });
-    </script>
+    mermaid.initialize({ sequence: { showSequenceNumbers: true }, });
+</script>
 ```
 
 It can also be be turned on via the diagram code as in the diagram:
