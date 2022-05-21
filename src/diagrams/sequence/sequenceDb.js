@@ -156,8 +156,8 @@ export const parseMessage = function (str) {
       _str.match(/^[:]?wrap:/) !== null
         ? true
         : _str.match(/^[:]?nowrap:/) !== null
-          ? false
-          : undefined,
+        ? false
+        : undefined,
   };
   log.debug('parseMessage:', message);
   return message;
