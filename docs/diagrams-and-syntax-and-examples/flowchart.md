@@ -400,7 +400,7 @@ flowchart TB
 
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+It is possible to bind a click event to a node, the click can lead to either a JavaScript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 ```
 click nodeId callback
@@ -408,7 +408,7 @@ click nodeId call callback()
 ```
 
 * nodeId is the id of the node
-* callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
+* callback is the name of a JavaScript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
 
 Examples of tooltip usage below:
 
