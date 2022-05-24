@@ -5,6 +5,8 @@ import common from '../common/common';
 import {
   setAccTitle,
   getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -50,15 +52,6 @@ const clear = function () {
   title = '';
   showData = false;
   commonClear();
-};
-
-export const setDiagramTitle = function (txt) {
-  let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
-  title = sanitizedText;
-};
-
-export const getDiagramTitle = function () {
-  return title;
 };
 
 export default {

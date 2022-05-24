@@ -4,6 +4,8 @@ import common from '../common/common';
 import {
   setAccTitle,
   getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -120,14 +122,6 @@ const compileTasks = function () {
 
 const getActors = function () {
   return updateActors();
-};
-
-const setDiagramTitle = function (txt) {
-  title = sanitizeText(txt);
-};
-
-const getDiagramTitle = function () {
-  return title;
 };
 
 export default {

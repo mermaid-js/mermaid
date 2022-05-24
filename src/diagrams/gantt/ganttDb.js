@@ -11,6 +11,8 @@ import {
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 let dateFormat = '';
@@ -625,14 +627,6 @@ export const bindFunctions = function (element) {
   funs.forEach(function (fun) {
     fun(element);
   });
-};
-
-const setDiagramTitle = function (txt) {
-  title = sanitizeText(txt);
-};
-
-const getDiagramTitle = function () {
-  return title;
 };
 
 export default {
