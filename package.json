@@ -27,7 +27,7 @@
     "postbuild": "documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md",
     "build:watch": "yarn build:development --watch",
     "release": "yarn build",
-    "lint": "eslint ./ --ext .js,.json,.html,.md",
+    "lint": "eslint ./ --ext .js,.json,.html",
     "lint:fix": "yarn lint --fix",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
     "cypress": "cypress run",
