@@ -9,16 +9,16 @@ The theme can be altered by changing the root level variable `theme` variable in
 Themes follow and build upon the Levels of Configuration, and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
 
 ## Deployable Themes
-The following are a list of **Deployable themes**, sample `%%init%%` directives and `initialize` calls. 
-1. **Base**- Designed to modified, as the name implies it is supposed to be used as the base for making custom themes.
+The following are a list of **Deployable themes**, sample `%%init%%` directives and `initialize` calls.
+1. **base**- Designed to be modified, as the name implies it is supposed to be used as the base for making custom themes.
 
-2. **Forest**- A theme full of light greens that is easy on the eyes.
+2. **forest**- A theme full of light greens that is easy on the eyes.
 
-3. **Dark**- A theme that would go well with other dark colored elements.
+3. **dark**- A theme that would go well with other dark-colored elements.
 
-4. **Default**- The default theme for all diagrams. 
+4. **default**- The default theme for all diagrams.
 
-5. **Neutral**- The theme to be used for black and white printing
+5. **neutral**- The theme to be used for black and white printing.
 
 
 ## Site-wide Themes
