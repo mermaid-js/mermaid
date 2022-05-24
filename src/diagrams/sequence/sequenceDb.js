@@ -4,7 +4,9 @@ import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -331,15 +333,6 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
-export const setDiagramTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
-  diagramTitle = sanitizedText;
-};
-
-export const getDiagramTitle = function () {
-  return diagramTitle;
-};
-
 export const apply = function (param) {
   if (param instanceof Array) {
     param.forEach(function (item) {
@@ -450,8 +443,9 @@ export default {
   getActor,
   getActorKeys,
   getActorProperty,
-  getTitle,
+  getAccTitle,
   getDiagramTitle,
+  setDiagramTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
   clear,
@@ -461,7 +455,6 @@ export default {
   PLACEMENT,
   addNote,
   setAccTitle,
-  setDiagramTitle,
   apply,
   setAccDescription,
   getAccDescription,

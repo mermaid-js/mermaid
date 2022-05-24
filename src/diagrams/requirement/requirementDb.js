@@ -4,7 +4,7 @@ import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -163,7 +163,7 @@ export default {
   setNewReqRisk,
   setNewReqVerifyMethod,
   setAccTitle,
-  getTitle,
+  getAccTitle,
   setAccDescription,
   getAccDescription,
 

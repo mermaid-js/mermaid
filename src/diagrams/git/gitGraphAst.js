@@ -6,7 +6,7 @@ import { getConfig } from '../../config';
 import common from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -413,7 +413,7 @@ export default {
   getDirection,
   getHead,
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   commitType,

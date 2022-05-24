@@ -119,7 +119,7 @@ Alice->Bob:Hello Bob, how are you?
 
     mermaidAPI.parse(str);
     expect(parser.yy.getDiagramTitle()).toBe('Diagram Title');
-    expect(parser.yy.getTitle()).toBe('This is the title');
+    expect(parser.yy.getAccTitle()).toBe('This is the title');
     expect(parser.yy.getAccDescription()).toBe('Accessibility Description');
     const messages = parser.yy.getMessages();
   });
@@ -135,7 +135,7 @@ Alice->Bob:Hello Bob, how are you?
 `;
 
     mermaidAPI.parse(str);
-    expect(parser.yy.getTitle()).toBe('This is the title');
+    expect(parser.yy.getAccTitle()).toBe('This is the title');
     expect(parser.yy.getAccDescription()).toBe('Accessibility\nDescription');
     const messages = parser.yy.getMessages();
   });

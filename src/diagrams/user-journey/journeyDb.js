@@ -3,7 +3,9 @@ import * as configApi from '../../config';
 import common from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -126,8 +128,10 @@ export default {
   parseDirective,
   getConfig: () => configApi.getConfig().journey,
   clear,
+  setDiagramTitle,
+  getDiagramTitle,
   setAccTitle,
-  getTitle,
+  getAccTitle,
   setAccDescription,
   getAccDescription,
   addSection,

@@ -86,7 +86,7 @@ describe('when parsing requirement diagram it...', function () {
 
     reqDiagram.parser.parse(doc);
 
-    expect(requirementDb.getTitle()).toBe(expectedTitle);
+    expect(requirementDb.getAccTitle()).toBe(expectedTitle);
     expect(requirementDb.getAccDescription()).toBe(expectedAccDescription);
   });
 
@@ -107,7 +107,7 @@ line 2`;
 
     reqDiagram.parser.parse(doc);
 
-    expect(requirementDb.getTitle()).toBe(expectedTitle);
+    expect(requirementDb.getAccTitle()).toBe(expectedTitle);
     expect(requirementDb.getAccDescription()).toBe(expectedAccDescription);
   });
 

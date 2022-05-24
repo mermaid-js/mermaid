@@ -73,7 +73,7 @@ directive
   ;
 
 statement
-  : title {yy.setAccTitle($1.substr(6));$$=$1.substr(6);}
+  : title {yy.setDiagramTitle($1.substr(6));$$=$1.substr(6);}
   | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
   | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
   | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }

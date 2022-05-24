@@ -4,7 +4,7 @@ import * as configApi from '../../config';
 import common from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -94,7 +94,7 @@ export default {
   getRelationships,
   clear,
   setAccTitle,
-  getTitle,
+  getAccTitle,
   setAccDescription,
   getAccDescription,
 };

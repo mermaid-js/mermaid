@@ -7,10 +7,12 @@ import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 let dateFormat = '';
@@ -642,7 +644,9 @@ export default {
   setTodayMarker,
   getTodayMarker,
   setAccTitle,
-  getTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   setAccDescription,
   getAccDescription,
   addSection,

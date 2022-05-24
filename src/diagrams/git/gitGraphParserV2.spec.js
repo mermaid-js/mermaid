@@ -660,7 +660,7 @@ describe('when parsing a gitGraph', function () {
     commit
     `;
       parser.parse(str);
-      expect(parser.yy.getTitle()).toBe('This is a title');
+      expect(parser.yy.getAccTitle()).toBe('This is a title');
       expect(parser.yy.getAccDescription()).toBe('This is a description');
     });
     it('should handle a title and a multiline description (accDescr)', () => {
@@ -673,7 +673,7 @@ describe('when parsing a gitGraph', function () {
     commit
     `;
       parser.parse(str);
-      expect(parser.yy.getTitle()).toBe('This is a title');
+      expect(parser.yy.getAccTitle()).toBe('This is a title');
       expect(parser.yy.getAccDescription()).toBe('This is a description\nusing multiple lines');
     });
   });

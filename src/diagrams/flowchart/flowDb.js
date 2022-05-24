@@ -6,7 +6,7 @@ import mermaidAPI from '../../mermaidAPI';
 import { log } from '../../logger';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -747,7 +747,7 @@ export default {
   parseDirective,
   defaultConfig: () => configApi.defaultConfig.flowchart,
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   addVertex,
