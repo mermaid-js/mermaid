@@ -4,7 +4,7 @@ import * as configApi from '../../config';
 import common from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -52,12 +52,12 @@ const clear = function () {
   commonClear();
 };
 
-export const setPieTitle = function (txt) {
+export const setDiagramTitle = function (txt) {
   let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
   title = sanitizedText;
 };
 
-export const getPieTitle = function () {
+export const getDiagramTitle = function () {
   return title;
 };
 
@@ -69,9 +69,9 @@ export default {
   cleanupValue,
   clear,
   setAccTitle,
-  getTitle,
-  setPieTitle,
-  getPieTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   setShowData,
   getShowData,
   getAccDescription,

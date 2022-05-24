@@ -31,7 +31,7 @@ describe('when using the ganttDb', function () {
     it.each`
       fn                        | expected
       ${'getTasks'}             | ${[]}
-      ${'getTitle'}             | ${''}
+      ${'getAccTitle'}          | ${''}
       ${'getAccDescription'}    | ${''}
       ${'getDateFormat'}        | ${''}
       ${'getAxisFormat'}        | ${''}

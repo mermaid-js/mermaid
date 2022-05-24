@@ -63,7 +63,7 @@ describe('state diagram, ', function () {
       `;
 
       parser.parse(str);
-      const title = stateDb.getTitle();
+      const title = stateDb.getAccTitle();
       expect(title).toBe('a simple title of the diagram');
     });
     it('simple with directive', function () {

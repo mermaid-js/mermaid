@@ -1,6 +1,6 @@
 /**
  * This method will add a basic title and description element to a chart. The yy parser will need to
- * respond to getTitle and getAccDescription, where the title is the title element on the chart,
+ * respond to getAccTitle and getAccDescription, where the title is the title element on the chart,
  * which is generally not displayed and the accDescription is the description element on the chart,
  * which is never displayed.
  *
@@ -15,7 +15,7 @@ export default function addSVGAccessibilityFields(yy_parser, svg, id) {
     return;
   }
 
-  let title_string = yy_parser.getTitle();
+  let title_string = yy_parser.getAccTitle();
   let description = yy_parser.getAccDescription();
   svg.attr('role', 'img').attr('aria-labelledby', 'chart-title-' + id + ' chart-desc-' + id);
   svg

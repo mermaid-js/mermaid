@@ -16,7 +16,7 @@ describe('when using the journeyDb', function () {
     it.each`
       fn               | expected
       ${'getTasks'}    | ${[]}
-      ${'getTitle'}    | ${''}
+      ${'getAccTitle'} | ${''}
       ${'getSections'} | ${[]}
       ${'getActors'}   | ${[]}
     `('should clear $fn', ({ fn, expected }) => {
@@ -34,7 +34,7 @@ describe('when using the journeyDb', function () {
     it.each`
       fn                     | expected
       ${'getTasks'}          | ${[]}
-      ${'getTitle'}          | ${''}
+      ${'getAccTitle'}       | ${''}
       ${'getAccDescription'} | ${''}
       ${'getSections'}       | ${[]}
     `('should clear $fn', ({ fn, expected }) => {
@@ -52,7 +52,7 @@ describe('when using the journeyDb', function () {
     journeyDb.addSection('Do shopping');
     journeyDb.addTask('Go shopping', ':5:Mum');
 
-    expect(journeyDb.getTitle()).toEqual('Shopping');
+    expect(journeyDb.getAccTitle()).toEqual('Shopping');
     expect(journeyDb.getAccDescription()).toEqual('A user journey for family shopping');
     expect(journeyDb.getTasks()).toEqual([
       {

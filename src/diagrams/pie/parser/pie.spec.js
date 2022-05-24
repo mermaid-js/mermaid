@@ -56,7 +56,7 @@ pie
 "bat" : 40
 `);
     const sections = pieDb.getSections();
-    const title = pieDb.getPieTitle();
+    const title = pieDb.getDiagramTitle();
     const section1 = sections['ash'];
     expect(section1).toBe(60);
     expect(title).toBe('a 60/40 pie');
@@ -69,7 +69,7 @@ pie
 `);
 
     const sections = pieDb.getSections();
-    const title = pieDb.getPieTitle();
+    const title = pieDb.getDiagramTitle();
     const description = pieDb.getAccDescription();
     const section1 = sections['ash'];
     expect(section1).toBe(60);
@@ -85,7 +85,7 @@ pie
 `);
 
     const sections = pieDb.getSections();
-    const title = pieDb.getPieTitle();
+    const title = pieDb.getDiagramTitle();
     const description = pieDb.getAccDescription();
     const section1 = sections['ash'];
     expect(section1).toBe(60);
@@ -103,7 +103,7 @@ pie
 `);
 
     const sections = pieDb.getSections();
-    const title = pieDb.getPieTitle();
+    const title = pieDb.getDiagramTitle();
     const description = pieDb.getAccDescription();
     const section1 = sections['ash'];
     expect(section1).toBe(60);

@@ -169,7 +169,7 @@ describe('when parsing a gantt diagram it', function () {
 
     parser.parse(ganttString);
 
-    expect(ganttDb.getTitle()).toBe(expectedTitle);
+    expect(ganttDb.getAccTitle()).toBe(expectedTitle);
     expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
   });
   it('should allow for a accessibility title and multiline description (accDescr)', function () {
@@ -187,7 +187,7 @@ row2`;
 
     parser.parse(ganttString);
 
-    expect(ganttDb.getTitle()).toBe(expectedTitle);
+    expect(ganttDb.getAccTitle()).toBe(expectedTitle);
     expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
   });
 });

@@ -191,7 +191,7 @@ describe('when parsing ER diagram it...', function () {
       accDescr: this graph is about stuff
       ${line1}`
     );
-    expect(erDb.getTitle()).toBe('graph title');
+    expect(erDb.getAccTitle()).toBe('graph title');
     expect(erDb.getAccDescription()).toBe('this graph is about stuff');
   });
 
@@ -207,7 +207,7 @@ describe('when parsing ER diagram it...', function () {
       }\n
       ${line1}`
     );
-    expect(erDb.getTitle()).toBe('graph title');
+    expect(erDb.getAccTitle()).toBe('graph title');
     expect(erDb.getAccDescription()).toBe('this graph is about stuff');
   });
 

@@ -3,7 +3,7 @@ import * as configApi from '../../config';
 import common from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -122,12 +122,22 @@ const getActors = function () {
   return updateActors();
 };
 
+const setDiagramTitle = function (txt) {
+  title = sanitizeText(txt);
+};
+
+const getDiagramTitle = function () {
+  return title;
+};
+
 export default {
   parseDirective,
   getConfig: () => configApi.getConfig().journey,
   clear,
+  setDiagramTitle,
+  getDiagramTitle,
   setAccTitle,
-  getTitle,
+  getAccTitle,
   setAccDescription,
   getAccDescription,
   addSection,

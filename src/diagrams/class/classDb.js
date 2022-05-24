@@ -6,7 +6,7 @@ import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -356,7 +356,7 @@ const setDirection = (dir) => {
 export default {
   parseDirective,
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   getConfig: () => configApi.getConfig().class,

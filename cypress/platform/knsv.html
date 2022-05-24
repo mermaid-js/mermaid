@@ -30,7 +30,44 @@
 
 
 
-      <div class="mermaid" style="width: 50%;">
+<div class="mermaid" style="width: 50%;">
+   pie
+      accTitle: My Pie Chart Accessibility Title
+      accDescr: My Pie Chart Accessibility Description
+
+    title Key elements in Product X
+    "Calcium" : 42.96
+    "Potassium" : 50.05
+    "Magnesium" : 10.01
+    "Iron" :  5
+</div>
+<div class="mermaid" style="width: 50%;">
+  gitGraph
+      accTitle: My Gitgraph Accessibility Title
+      accDescr: My Gitgraph Accessibility Description
+
+     commit
+     commit
+     branch develop
+     checkout develop
+     commit
+     commit
+     checkout main
+     merge develop
+     commit
+     commit
+</div>
+<div class="mermaid" style="width: 50%;">
+   sequenceDiagram
+      title: My Sequence Diagram Title
+      accTitle: My Sequence Diagram
+      accDescr: My Sequence Diagram Description
+
+      Alice->>John: Hello John, how are you?
+      John-->>Alice: Great!
+      Alice-)John: See you later!
+</div>
+      <div class="mermaid2" style="width: 50%;">
 graph TD
     A -->|000| B
     B -->|111| C
@@ -38,18 +75,23 @@ graph TD
     linkStyle 1 stroke:#ff3,stroke-width:4px,color:red;
         </div>
       <div class="mermaid2" style="width: 100%;">
-journey
-            title My working day
-            section Go to work
-              Make tea: 5: Me
-              Go upstairs: 3: Me
-              Do work: 1: Me, Cat
-            section Go home
-              Go downstairs: 5: Me
-              Sit down: 5: Me
+  journey
+      accTitle: My User Journey Diagram
+      accDescr: My User Journey Diagram Description
+
+      title My working day
+      section Go to work
+        Make tea: 5: Me
+        Go upstairs: 3: Me
+        Do work: 1: Me, Cat
+      section Go home
+        Go downstairs: 5: Me
+        Sit down: 5: Me
       </div>
       <div class="mermaid2" style="width: 100%;">
 requirementDiagram
+      accTitle: My req Diagram
+      accDescr: My req Diagram Description
 
     requirement test_req {
     id: 1
@@ -89,6 +131,8 @@ requirementDiagram
       </div>
       <div class="mermaid2" style="width: 100%;">
       erDiagram
+            accTitle: My er Diagram
+      accDescr: My er Diagram Description
         CUSTOMER }|..|{ DELIVERY-ADDRESS : has
         CUSTOMER ||--o{ ORDER : places
         CUSTOMER ||--o{ INVOICE : "liable for"
@@ -100,12 +144,16 @@ requirementDiagram
       </div>
       <div class="mermaid2" style="width: 100%;">
       graph TB
+        accTitle: My flowchart
+        accDescr: My flowchart Description
         subgraph One
           a1-->a2-->a3
         end
       </div>
       <div class="mermaid2" style="width: 100%;">
       gantt
+            accTitle: My gantt chart
+      accDescr: My my gantt chart Description
     dateFormat  YYYY-MM-DD
     axisFormat  %d/%m
     title Adding GANTT diagram to mermaid
@@ -146,6 +194,8 @@ requirementDiagram
   </div>
       <div class="mermaid2" style="width: 100%;">
 classDiagram
+accTitle: My class diagram
+accDescr: My class diagram Description
 Class01 <|-- AveryLongClass : Cool
 Class09 --> C2 : Where am i?
 Class09 --* C3
@@ -162,6 +212,8 @@ class Class10 {
       </div>
       <div class="mermaid2" style="width: 100%;">
         stateDiagram
+        accTitle: Apa
+        accDescr: One that can climb better then any man
       [*] --> S1
       state "Some long name" as S1
       </div>

@@ -550,7 +550,7 @@ foo()
             `;
 
       parser.parse(str);
-      expect(parser.yy.getTitle()).toBe('My Title');
+      expect(parser.yy.getAccTitle()).toBe('My Title');
       expect(parser.yy.getAccDescription()).toBe('My Description');
     });
     it('should handle accTitle and multiline accDescr', function () {
@@ -565,7 +565,7 @@ foo()
             `;
 
       parser.parse(str);
-      expect(parser.yy.getTitle()).toBe('My Title');
+      expect(parser.yy.getAccTitle()).toBe('My Title');
       expect(parser.yy.getAccDescription()).toBe('This is mu multi\nline description');
     });
 

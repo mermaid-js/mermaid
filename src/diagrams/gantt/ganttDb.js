@@ -7,7 +7,7 @@ import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -627,6 +627,14 @@ export const bindFunctions = function (element) {
   });
 };
 
+const setDiagramTitle = function (txt) {
+  title = sanitizeText(txt);
+};
+
+const getDiagramTitle = function () {
+  return title;
+};
+
 export default {
   parseDirective,
   getConfig: () => configApi.getConfig().gantt,
@@ -642,7 +650,9 @@ export default {
   setTodayMarker,
   getTodayMarker,
   setAccTitle,
-  getTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   setAccDescription,
   getAccDescription,
   addSection,

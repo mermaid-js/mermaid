@@ -4,7 +4,7 @@ import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
 import {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -450,7 +450,7 @@ export default {
   getActor,
   getActorKeys,
   getActorProperty,
-  getTitle,
+  getAccTitle,
   getDiagramTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,

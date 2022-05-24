@@ -13,7 +13,7 @@ export const setAccTitle = function (txt) {
   title = sanitizeText(txt).replace(/^\s+/g, '');
 };
 
-export const getTitle = function () {
+export const getAccTitle = function () {
   return title;
 };
 
@@ -27,7 +27,7 @@ export const getAccDescription = function () {
 
 export default {
   setAccTitle,
-  getTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear,
