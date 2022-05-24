@@ -109,7 +109,7 @@ export const draw = function (text, id) {
 
   svg
     .append('text')
-    .text(parser.yy.getAccTitle())
+    .text(parser.yy.getDiagramTitle())
     .attr('x', w / 2)
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText');
