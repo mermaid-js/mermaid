@@ -36,11 +36,13 @@ describe('when parsing a journey diagram it', function () {
         family shopping
       }` +
       'title Adding journey diagram functionality to mermaid\n' +
+      'accTitle: Adding acc journey diagram functionality to mermaid\n' +
       'section Order from website';
 
     expect(parserFnConstructor(str)).not.toThrow();
     expect(journeyDb.getAccDescription()).toBe('A user journey for\nfamily shopping');
-    expect(journeyDb.getAccTitle()).toBe('Adding journey diagram functionality to mermaid');
+    expect(journeyDb.getDiagramTitle()).toBe('Adding journey diagram functionality to mermaid');
+    expect(journeyDb.getAccTitle()).toBe('Adding acc journey diagram functionality to mermaid');
   });
   it('it should handle an accessibility title (accDescr)', function () {
     const str = `journey

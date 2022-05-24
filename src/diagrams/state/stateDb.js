@@ -285,7 +285,6 @@ export default {
   addRelation,
   getDividerId,
   setDirection,
-  // addDescription,
   cleanupLabel,
   lineType,
   relationType,
