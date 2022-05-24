@@ -1775,14 +1775,14 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.6.tgz#d5e0706cf8c6acd8c6032f8d54070af261bbbb2f"
   integrity sha512-ws57AidsDvREKrZKYffXddNkyaF14iHNHm8VQnZH6t99E8gczjNN0GpvcGny0imC80yQ0tHz1xVUKk/KFQSUyA==
 
-"@es-joy/jsdoccomment@~0.29.0":
-  version "0.29.0"
-  resolved "https://registry.yarnpkg.com/@es-joy/jsdoccomment/-/jsdoccomment-0.29.0.tgz#527c7eefadeaf5c5d0c3b2721b5fa425d2119e98"
-  integrity sha512-4yKy5t+/joLihG+ei6CCU6sc08sjUdEdXCQ2U+9h9VP13EiqHQ4YMgDC18ys/AsLdJDBX3KRx/AWY6PR7hn52Q==
+"@es-joy/jsdoccomment@~0.30.0":
+  version "0.30.0"
+  resolved "https://registry.yarnpkg.com/@es-joy/jsdoccomment/-/jsdoccomment-0.30.0.tgz#12e3e220ee8e1a4b48c6db30c4a77fce0bd21d34"
+  integrity sha512-U30cjaHCjdUqtbMgChJl80BP25GSRWg0/1R3UdB2ksitAo2oDYdRMrvzwuM21jcsFbEcLNAqwQGTCg+5CVbSIA==
   dependencies:
     comment-parser "1.3.1"
     esquery "^1.4.0"
-    jsdoc-type-pratt-parser "~3.0.1"
+    jsdoc-type-pratt-parser "~3.1.0"
 
 "@eslint/eslintrc@^1.3.0":
   version "1.3.0"
@@ -5595,11 +5595,11 @@ eslint-plugin-jest@^26.0.0:
     "@typescript-eslint/utils" "^5.10.0"
 
 eslint-plugin-jsdoc@^39.1.0:
-  version "39.2.9"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-39.2.9.tgz#bc351de403f1862f1ef8c440d12dedc28e74cbbb"
-  integrity sha512-gaPYJT94rWlWyQcisQyyEJHtLaaJqN4baFlLCEr/LcXVibS9wzQTL2dskqk327ggwqQopR+Xecu2Lng1IJ9Ypw==
+  version "39.3.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-39.3.0.tgz#7318ac217a44401fc42fda1a051a6b7cd010a18a"
+  integrity sha512-zEdkpezjIhG7gq4MbwLBKaD3cWsJkT7uTAJcIbLohQWR7OVwhPOBLPqpftBt8uzy0ZL+3jlbiaSXik4+VmN6JQ==
   dependencies:
-    "@es-joy/jsdoccomment" "~0.29.0"
+    "@es-joy/jsdoccomment" "~0.30.0"
     comment-parser "1.3.1"
     debug "^4.3.4"
     escape-string-regexp "^4.0.0"
@@ -7952,10 +7952,10 @@ jsbn@~0.1.0:
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
   integrity sha1-peZUwuWi3rXyAdls77yoDA7y9RM=
 
-jsdoc-type-pratt-parser@~3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/jsdoc-type-pratt-parser/-/jsdoc-type-pratt-parser-3.0.1.tgz#ccbc7a4180bc8748af64d2cc431aaa92f88175bb"
-  integrity sha512-vqMCdAFVIiFhVgBYE/X8naf3L/7qiJsaYWTfUJZZZ124dR3OUz9HrmaMUGpYIYAN4VSuodf6gIZY0e8ktPw9cg==
+jsdoc-type-pratt-parser@~3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/jsdoc-type-pratt-parser/-/jsdoc-type-pratt-parser-3.1.0.tgz#a4a56bdc6e82e5865ffd9febc5b1a227ff28e67e"
+  integrity sha512-MgtD0ZiCDk9B+eI73BextfRrVQl0oyzRG8B2BjORts6jbunj4ScKPcyXGTbB6eXL4y9TzxCm6hyeLq/2ASzNdw==
 
 jsdom@^19.0.0:
   version "19.0.0"
