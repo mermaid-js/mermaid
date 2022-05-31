@@ -277,7 +277,33 @@ export const adjustClustersAndEdges = (graph, depth) => {
       ' --- ',
       clusterDb[e.w]
     );
-    if (clusterDb[e.v] || clusterDb[e.w]) {
+    if (clusterDb[e.v] && clusterDb[e.w] && clusterDb[e.v] === clusterDb[e.w]) {
+      log.warn('Fixing and trixing link to self - removing XXX', e.v, e.w, e.name);
+      log.warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
+      v = getAnchorId(e.v);
+      w = getAnchorId(e.w);
+      graph.removeEdge(e.v, e.w, e.name);
+      const specialId = e.w + '---' + e.v;
+      graph.setNode(specialId, {
+        domId: specialId,
+        id: specialId,
+        labelStyle: '',
+        labelText: edge.label,
+        padding: 0,
+        shape: 'labelRect',
+        style: '',
+      });
+      const edge1 = JSON.parse(JSON.stringify(edge));
+      const edge2 = JSON.parse(JSON.stringify(edge));
+      edge1.label = '';
+      edge1.arrowTypeEnd = 'none';
+      edge2.label = '';
+      edge1.fromCluster = e.v;
+      edge2.toCluster = e.v;
+
+      graph.setEdge(v, specialId, edge1, e.name + '-cyclic-special');
+      graph.setEdge(specialId, w, edge2, e.name + '-cyclic-special');
+    } else if (clusterDb[e.v] || clusterDb[e.w]) {
       log.warn('Fixing and trixing - removing XXX', e.v, e.w, e.name);
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);

@@ -394,6 +394,9 @@ const traverseEdge = (points) => {
  * @returns {Point} Return result of `transverseEdge`
  */
 const calcLabelPosition = (points) => {
+  if (points.length === 1) {
+    return points[0];
+  }
   return traverseEdge(points);
 };
 
