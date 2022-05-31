@@ -763,6 +763,45 @@ export const draw = function (text, id) {
         if (msg.message.visible) parser.yy.enableSequenceNumbers();
         else parser.yy.disableSequenceNumbers();
         break;
+      case parser.yy.LINETYPE.CRITICAL_START:
+        adjustLoopHeightForWrap(
+          loopWidths,
+          msg,
+          conf.boxMargin,
+          conf.boxMargin + conf.boxTextMargin,
+          (message) => bounds.newLoop(message)
+        );
+        break;
+      case parser.yy.LINETYPE.CRITICAL_OPTION:
+        adjustLoopHeightForWrap(
+          loopWidths,
+          msg,
+          conf.boxMargin + conf.boxTextMargin,
+          conf.boxMargin,
+          (message) => bounds.addSectionToLoop(message)
+        );
+        break;
+      case parser.yy.LINETYPE.CRITICAL_END:
+        loopModel = bounds.endLoop();
+        svgDraw.drawLoop(diagram, loopModel, 'critical', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
+        break;
+      case parser.yy.LINETYPE.BREAK_START:
+        adjustLoopHeightForWrap(
+          loopWidths,
+          msg,
+          conf.boxMargin,
+          conf.boxMargin + conf.boxTextMargin,
+          (message) => bounds.newLoop(message)
+        );
+        break;
+      case parser.yy.LINETYPE.BREAK_END:
+        loopModel = bounds.endLoop();
+        svgDraw.drawLoop(diagram, loopModel, 'break', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
+        break;
       default:
         try {
           // lastMsg = msg
@@ -1165,6 +1204,8 @@ const calculateLoopBounds = function (messages, actors) {
       case parser.yy.LINETYPE.ALT_START:
       case parser.yy.LINETYPE.OPT_START:
       case parser.yy.LINETYPE.PAR_START:
+      case parser.yy.LINETYPE.CRITICAL_START:
+      case parser.yy.LINETYPE.BREAK_START:
         stack.push({
           id: msg.id,
           msg: msg.message,
@@ -1175,6 +1216,7 @@ const calculateLoopBounds = function (messages, actors) {
         break;
       case parser.yy.LINETYPE.ALT_ELSE:
       case parser.yy.LINETYPE.PAR_AND:
+      case parser.yy.LINETYPE.CRITICAL_OPTION:
         if (msg.message) {
           current = stack.pop();
           loops[current.id] = current;
@@ -1186,6 +1228,8 @@ const calculateLoopBounds = function (messages, actors) {
       case parser.yy.LINETYPE.ALT_END:
       case parser.yy.LINETYPE.OPT_END:
       case parser.yy.LINETYPE.PAR_END:
+      case parser.yy.LINETYPE.CRITICAL_END:
+      case parser.yy.LINETYPE.BREAK_END:
         current = stack.pop();
         loops[current.id] = current;
         break;

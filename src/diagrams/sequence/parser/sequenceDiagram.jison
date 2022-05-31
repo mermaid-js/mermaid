@@ -47,6 +47,9 @@
 "else"                                                          { this.begin('LINE'); return 'else'; }
 "par"                                                           { this.begin('LINE'); return 'par'; }
 "and"                                                           { this.begin('LINE'); return 'and'; }
+"critical"                                                      { this.begin('LINE'); return 'critical'; }
+"option"                                                        { this.begin('LINE'); return 'option'; }
+"break"                                                         { this.begin('LINE'); return 'break'; }
 <LINE>(?:[:]?(?:no)?wrap:)?[^#\n;]*                             { this.popState(); return 'restOfLine'; }
 "end"                                                           return 'end';
 "left of"                                                       return 'left_of';
@@ -172,7 +175,26 @@ statement
 		// End
 		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		$$=$3;}
+	| critical restOfLine option_sections end
+	{
+		// critical start
+		$3.unshift({type: 'criticalStart', criticalText:yy.parseMessage($2), signalType: yy.LINETYPE.CRITICAL_START});
+		// Content in critical is already in $3
+		// critical end
+		$3.push({type: 'criticalEnd', signalType: yy.LINETYPE.CRITICAL_END});
+		$$=$3;}
+	| break restOfLine document end
+	{
+		$3.unshift({type: 'breakStart', breakText:yy.parseMessage($2), signalType: yy.LINETYPE.BREAK_START});
+		$3.push({type: 'breakEnd', optText:yy.parseMessage($2), signalType: yy.LINETYPE.BREAK_END});
+		$$=$3;}
   | directive
+	;
+
+option_sections
+	: document
+	| document option restOfLine option_sections
+	{ $$ = $1.concat([{type: 'option', optionText:yy.parseMessage($3), signalType: yy.LINETYPE.CRITICAL_OPTION}, $4]); }
 	;
 
 par_sections
