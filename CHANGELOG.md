@@ -23,7 +23,7 @@
 - Missing fontawesome icon support [\#830](https://github.com/knsv/mermaid/issues/830)
 - Docs for integration with wiki.js? [\#829](https://github.com/knsv/mermaid/issues/829)
 - Is this project still maintained? [\#826](https://github.com/knsv/mermaid/issues/826)
-- typroa [\#823](https://github.com/knsv/mermaid/issues/823)
+- typora [\#823](https://github.com/knsv/mermaid/issues/823)
 - Maintain the order of the nodes in Flowchart [\#815](https://github.com/knsv/mermaid/issues/815)
 - Overlap, Overflow and cut titles in flowchart [\#814](https://github.com/knsv/mermaid/issues/814)
 - How load mermaidApi notejs electron  [\#813](https://github.com/knsv/mermaid/issues/813)

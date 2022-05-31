@@ -52,7 +52,7 @@ parser.yy = db
 
 ### Step 2: Rendering
 
-Write a renderer that given the data found during parsing renders the diagram. To look at an example look at sequendeRenderer.js rather then the flowchart renderer as this is a more generic example.
+Write a renderer that given the data found during parsing renders the diagram. To look at an example look at sequenceRenderer.js rather then the flowchart renderer as this is a more generic example.
 
 Place the renderer in the diagram folder.
 

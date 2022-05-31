@@ -942,13 +942,13 @@ const config = {
     minEntityHeight: 75,
 
     /**
-     * | Parameter     | Description                                                 | Type    | Required | Values             |
-     * | ------------- | ----------------------------------------------------------- | ------- | -------- | ------------------ |
-     * | entityPadding | Minimum internal padding betweentext in box and box borders | Integer | 4        | Any Positive Value |
+     * | Parameter     | Description                                                  | Type    | Required | Values             |
+     * | ------------- | ------------------------------------------------------------ | ------- | -------- | ------------------ |
+     * | entityPadding | Minimum internal padding between text in box and box borders | Integer | 4        | Any Positive Value |
      *
      * **Notes:**
      *
-     * The minimum internal padding betweentext in an entity box and the enclosing box borders,
+     * The minimum internal padding between text in an entity box and the enclosing box borders,
      * expressed in pixels.
      *
      * Default value: 15

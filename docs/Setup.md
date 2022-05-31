@@ -818,13 +818,13 @@ Default value: 'TB'
 
 ### entityPadding
 
-| Parameter     | Description                                                 | Type    | Required | Values             |
-| ------------- | ----------------------------------------------------------- | ------- | -------- | ------------------ |
-| entityPadding | Minimum internal padding betweentext in box and box borders | Integer | 4        | Any Positive Value |
+| Parameter     | Description                                                  | Type    | Required | Values             |
+| ------------- | ------------------------------------------------------------ | ------- | -------- | ------------------ |
+| entityPadding | Minimum internal padding between text in box and box borders | Integer | 4        | Any Positive Value |
 
 **Notes:**
 
-The minimum internal padding betweentext in an entity box and the enclosing box borders,
+The minimum internal padding between text in an entity box and the enclosing box borders,
 expressed in pixels.
 
 Default value: 15
@@ -1004,9 +1004,9 @@ Pushes in a directive to the configuration
 
 ## conf
 
-| Parameter | Description                                                   | Type       | Required | Values                                       |
-| --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
-| conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
+| Parameter | Description                                                    | Type       | Required | Values                                       |
+| --------- | -------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+| conf      | base set of values, which currentConfig could be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
 
 **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
 

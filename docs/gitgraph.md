@@ -187,7 +187,7 @@ In Mermaid, you have the option to configure the gitgraph diagram. You can confi
 - `showBranches` : Boolean, default is `true`. If set to `false`, the branches are not shown in the diagram.
 - `showCommitLabel` : Boolean, default is `true`. If set to `false`, the commit labels are not shown in the diagram.
 - `mainBranchName` : String, default is `main`. The name of the default/root branch.
-- `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meanig, by default `main` branch is the first in the order.
+- `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meaning, by default `main` branch is the first in the order.
 
 Let's look at them one by one.
 ## Hiding Branch names and lines
@@ -321,11 +321,11 @@ Usage example:
 Look at the imaginary railroad map created using Mermaid. Here, we have changed the default main branch name to `MetroLine1`.
 
 ## Customizing branch ordering
-In Mermaid, by default the branches are shown in the order of their defintion or appearance in the diagram code.
+In Mermaid, by default the branches are shown in the order of their definition or appearance in the diagram code.
 
-Sometimes you may want to customize the order of the branches. You can do this by using the `order` keyword next the branch definiton. You can set it to a positive number.
+Sometimes you may want to customize the order of the branches. You can do this by using the `order` keyword next the branch definition. You can set it to a positive number.
 
-Mermaid follows the given precendence order of the `order` keyword.
+Mermaid follows the given precedence order of the `order` keyword.
 - Main branch is always shown first as it has default order value of `0`. (unless its order is modified and changed from `0` using the `mainBranchOrder` keyword in the config)
 - Next, All branches without an `order` are shown in the order of their appearance in the diagram code.
 - Next, All branches with an `order` are shown in the order of their `order` value.
@@ -357,11 +357,11 @@ Usage example:
 
  ```
 Look at the diagram, here, all the branches without a specified order are drawn in their order of definition.
-Then, `test4` branch is drawn becuase the order of `1`.
-Then, `main` branch is drawn becuase the order of `2`.
-And, lastly `test1`is drawn becuase the order of `3`.
+Then, `test4` branch is drawn because the order of `1`.
+Then, `main` branch is drawn because the order of `2`.
+And, lastly `test1`is drawn because the order of `3`.
 
-NOTE: Becuase we have overriden the `mainBranchOrder` to `2`, the `main` branch is not drawn in the begining, instead follows the ordering.
+NOTE: Because we have overridden the `mainBranchOrder` to `2`, the `main` branch is not drawn in the beginning, instead follows the ordering.
 
 
 
@@ -641,7 +641,7 @@ See how the default theme is used to set the colors for the branches:
        commit
 ```
 > #### IMPORTANT:
-> Mermaid supports the theme variables to override the default values for **upto 8 branches**, i.e., you can set the color/styling of upto 8 branches using theme variables. After this threshold of 8 branches,  the theme variables are reused in the cyclic manner, i.e. 9th branch will use the color/styling of 1st  branch, or branch at index postion '8' will use the color/styling of branch at index position '0'.
+> Mermaid supports the theme variables to override the default values for **up to 8 branches**, i.e., you can set the color/styling of up to 8 branches using theme variables. After this threshold of 8 branches,  the theme variables are reused in the cyclic manner, i.e. 9th branch will use the color/styling of 1st  branch, or branch at index position '8' will use the color/styling of branch at index position '0'.
  *More on this in the next section. See examples on **Customizing branch label colors** below*
 ### Customizing branch colors
 You can customize the branch colors using the `git0` to `git7` theme variables. Mermaid allows you to set the colors for up-to 8 branches, where `git0` variable will drive the value of the first branch, `git1` will drive the value of the second branch and so on.

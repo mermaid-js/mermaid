@@ -384,9 +384,9 @@ _URL Link:_
 ```mmd
 classDiagram
 class Shape
-link Shape "http://www.github.com" "This is a tooltip for a link"
+link Shape "https://www.github.com" "This is a tooltip for a link"
 class Shape2
-click Shape2 href "http://www.github.com" "This is a tooltip for a link"
+click Shape2 href "https://www.github.com" "This is a tooltip for a link"
 ```
 
 _Callback:_
@@ -412,11 +412,11 @@ classDiagram
     class Class01
     class Class02
     callback Class01 "callbackFunction" "Callback tooltip"
-    link Class02 "http://www.github.com" "This is a link"
+    link Class02 "https://www.github.com" "This is a link"
     class Class03
     class Class04
     click Class03 call callbackFunction() "Callback tooltip"
-    click Class04 href "http://www.github.com" "This is a link"
+    click Class04 href "https://www.github.com" "This is a link"
 ```
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
@@ -449,7 +449,7 @@ Beginners tip, a full example using interactive links in an html context:
       }
 
       callback Duck callback "Tooltip"
-      link Zebra "http://www.github.com" "This is a link"
+      link Zebra "https://www.github.com" "This is a link"
   </div>
 
   <script>

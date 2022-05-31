@@ -188,7 +188,7 @@ describe('when using mermaid and ', function () {
       flowDb.clear();
       flowDb.setGen('gen-2');
     });
-    it('it should throw for an invalid definiton', function () {
+    it('it should throw for an invalid definition', function () {
       expect(() => mermaid.parse('this is not a mermaid diagram definition')).toThrow();
     });
 
