@@ -452,6 +452,42 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should render rect around and inside criticals', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            critical yes
+              C ->> C: 1
+            option no
+              rect rgb(0, 204, 204)
+                C ->> C: 0
+              end
+            end
+          end
+          B ->> A: Return
+      `,
+        {}
+      );
+    });
+    it('should render rect around and inside breaks', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            break yes
+              rect rgb(0, 204, 204)
+                C ->> C: 0
+              end
+            end
+          end
+          B ->> A: Return
+      `,
+        {}
+      );
+    });
     it('should render autonumber when configured with such', () => {
       imgSnapshotTest(
         `
