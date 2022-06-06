@@ -4274,10 +4274,10 @@ cypress-image-snapshot@^4.0.1:
     pkg-dir "^3.0.0"
     term-img "^4.0.0"
 
-cypress@9.7.0:
-  version "9.7.0"
-  resolved "https://registry.yarnpkg.com/cypress/-/cypress-9.7.0.tgz#bf55b2afd481f7a113ef5604aa8b693564b5e744"
-  integrity sha512-+1EE1nuuuwIt/N1KXRR2iWHU+OiIt7H28jJDyyI4tiUftId/DrXYEwoDa5+kH2pki1zxnA0r6HrUGHV5eLbF5Q==
+cypress@10.0.3:
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-10.0.3.tgz#889b4bef863b7d1ef1b608b85b964394ad350c5f"
+  integrity sha512-8C82XTybsEmJC9POYSNITGUhMLCRwB9LadP0x33H+52QVoBjhsWvIzrI+ybCe0+TyxaF0D5/9IL2kSTgjqCB9A==
   dependencies:
     "@cypress/request" "^2.88.10"
     "@cypress/xvfb" "^1.2.4"
