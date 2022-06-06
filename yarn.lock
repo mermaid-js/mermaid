@@ -1543,9 +1543,9 @@
   integrity sha512-mgmE7XBYY/21erpzhexk4Cj1cyTQ9LzvnTxtzM17BJ7ERMNE6W72mQRo0I1Ud8eFJ+RVVIcBNhLFZ3GX4XFz5w==
 
 "@commitlint/cli@^17.0.0":
-  version "17.0.1"
-  resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-17.0.1.tgz#88c5ad3f297760ded589c3a33ed49321242e7ab0"
-  integrity sha512-5xT1G5pnynR0tk/ms8Ji7yr9lZCeQs4GLVVtyK/gw20w+enoLTVuRKKY9zg88hy9FoCycc/W8iip2xv3c8payg==
+  version "17.0.2"
+  resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-17.0.2.tgz#57c925fb5f09b8e4a83448d94db291ddf7aa58ee"
+  integrity sha512-Axe89Js0YzGGd4gxo3JLlF7yIdjOVpG1LbOorGc6PfYF+drBh14PvarSDLzyd2TNqdylUCq9wb9/A88ZjIdyhA==
   dependencies:
     "@commitlint/format" "^17.0.0"
     "@commitlint/lint" "^17.0.0"
