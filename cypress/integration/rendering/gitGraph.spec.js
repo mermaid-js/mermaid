@@ -180,4 +180,31 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
+
+  it('11: should render a simple gitgraph with two cherry pick commit', () => {
+    imgSnapshotTest(
+      `
+    gitGraph
+       commit id: "ZERO"
+       branch develop
+       commit id:"A"
+       checkout main
+       commit id:"ONE"
+       checkout develop
+       commit id:"B"
+       branch featureA
+       commit id:"FIX"
+       commit id: "FIX-2"
+       checkout main
+       commit id:"TWO"
+       cherry-pick id:"A"
+       commit id:"THREE"
+       cherry-pick id:"FIX"
+       checkout develop
+       commit id:"C"
+       merge featureA
+      `,
+      {}
+    );
+  });
 });
