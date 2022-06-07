@@ -182,6 +182,37 @@ After this we made use of the `checkout` keyword to set the current branch as `m
 After this we merge the `develop` branch onto the current branch `main`, resulting in a merge commit.
 Since the current branch at this point is still `main`, the last two commits are registered against that.
 
+### Cherry Pick commit from another branch
+Similar to how 'git' allows you to cherry pick a commit from **another branch** onto the **current** branch, Mermaid also suports this functionality. You can also cherry pick a commit from another branch using the `cherry-pick` keyword.
+
+To use the `cherry-pick` keyword, you must specify the id  using the `id` attribute, followed by `:` and your desired commit id within `""` quote. For example:
+
+ `cherry-pick id: "your_custom_id"`
+
+Here, a new commt representing the cherry pick is created on the current branch, and is visually highlighted in the diagram with a **cherry** and a tag depicting the commit id from which it is cherry picked from.
+
+Few Important rules to note here are:
+1. You need to provide the `id` for an existing commit to be cherry picked. If given commit id does not exist it will result in an error. For this make use of the `commit id:$value` format of declaring commits. See the examples from above.
+2. The given commit must not exist on the current branch. Cherry picked commit must always be a different branch than the current branch.
+3. Current branch must have atleast one commit, before you can cherry pick a commit, otherwise it will case an error is throw.
+
+Let see an example:
+```mermaid-example
+    gitGraph
+       commit id: "ZERO"
+       branch develop
+       commit id:"A"
+       checkout main
+       commit id:"ONE"
+       checkout develop
+       commit id:"B"
+       checkout main
+       commit id:"TWO"
+       cherry-pick id:"A"
+       commit id:"THREE"
+       checkout develop
+       commit id:"C"
+```
 ## Gitgraph specific configuration options
 In Mermaid, you have the option to configure the gitgraph diagram. You can configure the following options:
 - `showBranches` : Boolean, default is `true`. If set to `false`, the branches are not shown in the diagram.

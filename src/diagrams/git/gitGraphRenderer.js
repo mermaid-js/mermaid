@@ -14,6 +14,7 @@ const commitType = {
   REVERSE: 1,
   HIGHLIGHT: 2,
   MERGE: 3,
+  CHERRY_PICK: 4,
 };
 
 let branchPos = {};
@@ -103,6 +104,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
         case commitType.MERGE:
           typeClass = 'commit-merge';
           break;
+        case commitType.CHERRY_PICK:
+          typeClass = 'commit-cherry-pick';
+          break;
         default:
           typeClass = 'commit-normal';
       }
@@ -139,6 +143,43 @@ const drawCommits = (svg, commits, modifyGraph) => {
               typeClass +
               '-inner'
           );
+      } else if (commit.type === commitType.CHERRY_PICK) {
+        gBullets
+          .append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 10)
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+        gBullets
+          .append('circle')
+          .attr('cx', x - 3)
+          .attr('cy', y + 2)
+          .attr('r', 2.75)
+          .attr('fill', '#fff')
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+        gBullets
+          .append('circle')
+          .attr('cx', x + 3)
+          .attr('cy', y + 2)
+          .attr('r', 2.75)
+          .attr('fill', '#fff')
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+        gBullets
+          .append('line')
+          .attr('x1', x + 3)
+          .attr('y1', y + 1)
+          .attr('x2', x)
+          .attr('y2', y - 5)
+          .attr('stroke', '#fff')
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+        gBullets
+          .append('line')
+          .attr('x1', x - 3)
+          .attr('y1', y + 1)
+          .attr('x2', x)
+          .attr('y2', y - 5)
+          .attr('stroke', '#fff')
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
       } else {
         const circle = gBullets.append('circle');
         circle.attr('cx', x);
@@ -175,7 +216,11 @@ const drawCommits = (svg, commits, modifyGraph) => {
       const px = 4;
       const py = 2;
       // Draw the commit label
-      if (commit.type !== commitType.MERGE && gitGraphConfig.showCommitLabel) {
+      if (
+        commit.type !== commitType.CHERRY_PICK &&
+        commit.type !== commitType.MERGE &&
+        gitGraphConfig.showCommitLabel
+      ) {
         const wrapper = gLabels.append('g');
         const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
 
@@ -197,7 +242,6 @@ const drawCommits = (svg, commits, modifyGraph) => {
         if (gitGraphConfig.rotateCommitLabel) {
           let r_x = -7.5 - ((bbox.width + 10) / 25) * 9.5;
           let r_y = 10 + (bbox.width / 25) * 8.5;
-          //wrapper.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + bbox.width / 2 + ') ');
           wrapper.attr(
             'transform',
             'translate(' + r_x + ', ' + r_y + ') rotate(' + -45 + ', ' + pos + ', ' + y + ')'

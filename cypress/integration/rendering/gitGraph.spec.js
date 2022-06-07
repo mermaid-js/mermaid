@@ -126,12 +126,11 @@ describe('Git Graph diagram', () => {
     branch branch8
     branch branch9
     checkout branch1
-    commit
+    commit id: "1"
       `,
       {}
     );
   });
-
   it('9: should render a simple gitgraph with rotated labels', () => {
     imgSnapshotTest(
       `%%{init: { 'logLevel': 'debug', 'theme': 'default' , 'gitGraph': {
@@ -156,6 +155,54 @@ describe('Git Graph diagram', () => {
         commit id: "Beta"
         commit id: "Gamma"
         commit id: "Delta"
+      `,
+      {}
+    );
+  });
+  it('11: should render a simple gitgraph with cherry pick commit', () => {
+    imgSnapshotTest(
+      `
+    gitGraph
+       commit id: "ZERO"
+       branch develop
+       commit id:"A"
+       checkout main
+       commit id:"ONE"
+       checkout develop
+       commit id:"B"
+       checkout main
+       commit id:"TWO"
+       cherry-pick id:"A"
+       commit id:"THREE"
+       checkout develop
+       commit id:"C"
+      `,
+      {}
+    );
+  });
+
+  it('11: should render a simple gitgraph with two cherry pick commit', () => {
+    imgSnapshotTest(
+      `
+    gitGraph
+       commit id: "ZERO"
+       branch develop
+       commit id:"A"
+       checkout main
+       commit id:"ONE"
+       checkout develop
+       commit id:"B"
+       branch featureA
+       commit id:"FIX"
+       commit id: "FIX-2"
+       checkout main
+       commit id:"TWO"
+       cherry-pick id:"A"
+       commit id:"THREE"
+       cherry-pick id:"FIX"
+       checkout develop
+       commit id:"C"
+       merge featureA
       `,
       {}
     );
