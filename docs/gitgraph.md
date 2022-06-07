@@ -240,6 +240,55 @@ Usage example:
         merge release
  ```
 
+## Commit labels Layout: Rotated or Horizontal
+Mermaid supports two types of commit labels layout. The default layout is **rotated**, which means the labels are placed below the commit circle, rotated at 45 degress for better readability. This is particularly useful for commits with long labels.
+
+The other option is **horizontal**, which means the labels are placed below the commit circle centred horizontally, and are not rotated. This is particularly useful for commits with short labels.
+
+You can change the layout of the commit labels by using the `rotateCommitLabel` keyword in the directive. It defaults to `true`, which means the commit labels are rotated.
+
+Usage example: Rotated commit labels
+
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'rotateCommitLabel': true}} }%%
+gitGraph
+  commit id: "feat(api): ..."
+  commit id: "a"
+  commit id: "b"
+  commit id: "fix(client): .extra long label.."
+  branch c2
+  commit id: "feat(modules): ..."
+  commit id: "test(client): ..."
+  checkout main
+  commit id: "fix(api): ..."
+  commit id: "ci: ..."
+  branch b1
+  commit
+  branch b2
+  commit
+  ```
+
+Usage example: Horizontal commit labels
+
+```mermaid-example
+%%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'rotateCommitLabel': false}} }%%
+gitGraph
+  commit id: "feat(api): ..."
+  commit id: "a"
+  commit id: "b"
+  commit id: "fix(client): .extra long label.."
+  branch c2
+  commit id: "feat(modules): ..."
+  commit id: "test(client): ..."
+  checkout main
+  commit id: "fix(api): ..."
+  commit id: "ci: ..."
+  branch b1
+  commit
+  branch b2
+  commit
+  ```
+
 ## Hiding commit labels
 Sometimes you may want to hide the commit labels from the diagram. You can do this by using the `showCommitLabel` keyword. By default its value is `true`. You can set it to `false` using directives.
 

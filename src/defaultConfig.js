@@ -1058,6 +1058,7 @@ const config = {
     mainBranchOrder: 0,
     showCommitLabel: true,
     showBranches: true,
+    rotateCommitLabel: true,
   },
 
   /** The object containing configurations specific for c4 diagrams */
