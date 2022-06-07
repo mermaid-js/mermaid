@@ -689,7 +689,7 @@ const handleDirective = function (p, directive, type) {
 
 /** @param {any} conf */
 function updateRendererConfigs(conf) {
-  // Todo remove, all diagrams should get config on demoand from the config object, no need for this
+  // Todo remove, all diagrams should get config on demand from the config object, no need for this
 
   // gitGraphRenderer.setConf(conf.git); // Todo Remove all  of these
   flowRenderer.setConf(conf.flowchart);
