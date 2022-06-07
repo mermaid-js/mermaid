@@ -185,6 +185,10 @@ export const detectDirective = function (text, type = null) {
  */
 export const detectType = function (text, cnf) {
   text = text.replace(directive, '').replace(anyComment, '\n');
+  if (text.match(/^\s*C4Context|C4Container|C4Component|C4Dynamic|C4Deployment/)) {
+    return 'c4';
+  }
+
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';
   }

@@ -19,6 +19,9 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
+import c4Db from './diagrams/c4/c4Db';
+import c4Renderer from './diagrams/c4/c4Renderer';
+import c4Parser from './diagrams/c4/parser/c4Diagram';
 import classDb from './diagrams/class/classDb';
 import classRenderer from './diagrams/class/classRenderer';
 import classRendererV2 from './diagrams/class/classRenderer-v2';
@@ -84,6 +87,11 @@ function parse(text) {
 
     log.debug('Type ' + graphType);
     switch (graphType) {
+      case 'c4':
+        c4Db.clear();
+        parser = c4Parser;
+        parser.parser.yy = c4Parser;
+        break;
       case 'gitGraph':
         gitGraphAst.clear();
         parser = gitGraphParser;
@@ -449,6 +457,10 @@ const render = function (id, _txt, cb, container) {
 
   try {
     switch (graphType) {
+      case 'c4':
+        c4Renderer.setConf(cnf.c4);
+        c4Renderer.draw(txt, id);
+        break;
       case 'gitGraph':
         // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         //gitGraphRenderer.setConf(cnf.git);
