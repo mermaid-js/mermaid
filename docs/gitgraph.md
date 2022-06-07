@@ -185,6 +185,10 @@ Since the current branch at this point is still `main`, the last two commits are
 ### Cherry Pick commit from another branch
 Similar to how 'git' allows you to cherry pick a commit from **another branch** onto the **current** branch, Mermaid also suports this functionality. You can also cherry pick a commit from another branch using the `cherry-pick` keyword.
 
+To use the `cherry-pick` keyword, you must specify the id  using the `id` attribute, followed by `:` and your desired commit id within `""` quote. For example:
+
+ `cherry-pick id: "your_custom_id"`
+
 Here, a new commt representing the cherry pick is created on the current branch, and is visually highlighted in the diagram with a **cherry** and a tag depicting the commit id from which it is cherry picked from.
 
 Few Important rules to note here are:
