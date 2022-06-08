@@ -40,7 +40,7 @@ const rect = (parent, node) => {
 
   const width = node.width <= bbox.width + padding ? bbox.width + padding : node.width;
   if (node.width <= bbox.width + padding) {
-    node.diff = (bbox.width - node.width) / 2;
+    node.diff = (bbox.width - node.width) / 2 - node.padding / 2;
   } else {
     node.diff = -node.padding / 2;
   }
