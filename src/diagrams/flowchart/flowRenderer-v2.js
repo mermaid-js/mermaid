@@ -9,7 +9,7 @@ import { render } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
-import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
+import { interpolateToCurve, getStylesFromArray, setupGraphViewbox } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
@@ -452,21 +452,7 @@ export const draw = function (text, id) {
   const element = root.select('#' + id + ' g');
   render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
 
-  const padding = conf.diagramPadding;
-  const svgBounds = svg.node().getBBox();
-  const width = svgBounds.width + padding * 2;
-  const height = svgBounds.height + padding * 2;
-  log.debug(
-    `new ViewBox 0 0 ${width} ${height}`,
-    `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
-  );
-
-  configureSvgSize(svg, height, width, conf.useMaxWidth);
-
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg
-    .select('g')
-    .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
+  setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 
   // Index nodes
   flowDb.indexNodes('subGraph' + i);
