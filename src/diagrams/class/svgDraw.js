@@ -15,6 +15,8 @@ export const drawEdge = function (elem, path, relation, conf) {
         return 'composition';
       case relationType.DEPENDENCY:
         return 'dependency';
+      case relationType.LOLLIPOP:
+        return 'lollipop';
     }
   };
 
@@ -293,7 +295,7 @@ export const parseMember = function (text) {
   } else if (methodMatch) {
     return buildMethodDisplay(methodMatch);
   } else {
-    return buildLegacyDisplay(text);
+    return buildLegacyDisplay(text); 
   }
 };
 

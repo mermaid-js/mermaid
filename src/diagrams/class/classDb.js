@@ -303,6 +303,7 @@ export const relationType = {
   EXTENSION: 1,
   COMPOSITION: 2,
   DEPENDENCY: 3,
+  LOLLIPOP:4,
 };
 
 const setupToolTips = function (element) {

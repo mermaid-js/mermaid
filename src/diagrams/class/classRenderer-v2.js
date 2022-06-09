@@ -352,7 +352,7 @@ export const draw = function (text, id) {
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
-  render(element, g, ['aggregation', 'extension', 'composition', 'dependency'], 'classDiagram', id);
+  render(element, g, ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'], 'classDiagram', id);
 
   // element.selectAll('g.node').attr('title', function() {
   //   return flowDb.getTooltip(this.id);
@@ -454,6 +454,9 @@ function getArrowMarker(type) {
       break;
     case 3:
       marker = 'dependency';
+      break;
+    case 4:
+      marker = 'lollipop';
       break;
     default:
       marker = 'none';
