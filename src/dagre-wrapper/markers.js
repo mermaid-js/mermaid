@@ -135,6 +135,28 @@ const dependency = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
+
+const lollipop = (elem, type, id) => {
+  log.trace('Making markers for ', id);
+
+  elem
+  .append('defs')
+  .append('marker')
+  .attr('id', type + '-lollipopStart')
+  .attr('class', 'marker lollipop ' + type)
+  .attr('refX', 0)
+  .attr('refY', 7)
+  .attr('markerWidth', 190)
+  .attr('markerHeight', 240)
+  .attr('orient', 'auto')
+  .append('circle')
+  .attr('stroke', 'black')
+  .attr('fill', 'white')
+  .attr('cx', 9)
+  .attr('cy', 8)
+  .attr('r', 6);
+};
+
 const point = (elem, type) => {
   elem
     .append('marker')
@@ -266,6 +288,7 @@ const markers = {
   composition,
   aggregation,
   dependency,
+  lollipop,
   point,
   circle,
   cross,

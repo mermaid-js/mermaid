@@ -10927,6 +10927,7 @@ var extension = function extension(elem, type, id) {
   //   .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 
   elem.append('defs').append('marker').attr('id', type + '-extensionStart').attr('class', 'marker extension ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('circle').attr('stroke', 'black').attr('fill', 'white').attr('cx', 9).attr('cy', 8).attr('r', 6);
+  elem.append('defs').append('marker').attr('id', type + '-extensionStart').attr('class', 'marker extension ' + type).attr('refX', 19).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('circle').attr('stroke', 'black').attr('fill', 'white').attr('cx', 9).attr('cy', 8).attr('r', 6);
 };
 
 var composition = function composition(elem, type) {
@@ -14191,7 +14192,7 @@ var addClasses = function addClasses(classes, g) {
         break;
 
       default:
-        _shape = 'class_box';
+        _shape = 'null';
     } // Add the node
 
 

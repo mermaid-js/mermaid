@@ -646,6 +646,7 @@
 
   <div class="mermaid">
     classDiagram
+    direction RL
     class Class01~T~
     Class01 : #size()
     Class01 : -int chimp
@@ -655,10 +656,12 @@
     int id
     size()
     }
+    Class01 --> Class10 : SomeLable
   </div>
 
   <div class="mermaid">
     classDiagram
+    direction TB
     Class01~T~ <|-- AveryLongClass : Cool
     &lt;&lt;interface&gt;&gt; Class01
     Class03~T~ "0" *-- "0..n" Class04
@@ -678,6 +681,13 @@
         int id
         size()
         }
+  </div>
+
+  <div class="mermaid">
+    stateDiagram
+    <!-- direction TB -->
+    [*] --> AveryLongClass
+    AveryLongClass --> [*]
   </div>
 
   <div class="mermaid">
