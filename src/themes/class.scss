@@ -94,3 +94,11 @@ g.classGroup line {
 #extensionEnd, .extension {
   @include composition;
 }
+
+#lollipopStart , .lollipop{
+  @include composition;
+}
+
+#lollipopEnd, .lollipop {
+  @include composition;
+}
