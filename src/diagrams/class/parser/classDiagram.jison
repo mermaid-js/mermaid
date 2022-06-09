@@ -305,6 +305,7 @@ relationType
     | EXTENSION   { $$=yy.relationType.EXTENSION;}
     | COMPOSITION { $$=yy.relationType.COMPOSITION;}
     | DEPENDENCY  { $$=yy.relationType.DEPENDENCY;}
+    | LOLLIPOP    { $$=yy.relationType.LOLLIPOP;}
     ;
 
 lineType
