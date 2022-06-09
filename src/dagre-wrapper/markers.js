@@ -152,8 +152,8 @@ const lollipop = (elem, type, id) => {
   .append('circle')
   .attr('stroke', 'black')
   .attr('fill', 'white')
-  .attr('cx', 9)
-  .attr('cy', 8)
+  .attr('cx', 6)
+  .attr('cy', 7)
   .attr('r', 6);
 };
 

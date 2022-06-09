@@ -92,12 +92,12 @@ return /******/ (() => { // webpackBootstrap
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,7],$V2=[1,8],$V3=[1,9],$V4=[1,10],$V5=[1,13],$V6=[1,12],$V7=[1,16,25],$V8=[1,20],$V9=[1,31],$Va=[1,32],$Vb=[1,34],$Vc=[1,37],$Vd=[1,35],$Ve=[1,36],$Vf=[1,38],$Vg=[1,39],$Vh=[1,40],$Vi=[1,41],$Vj=[1,44],$Vk=[1,45],$Vl=[1,46],$Vm=[1,47],$Vn=[16,25],$Vo=[1,59],$Vp=[1,60],$Vq=[1,61],$Vr=[1,62],$Vs=[1,63],$Vt=[1,64],$Vu=[16,25,32,41,42,50,53,54,55,56,57,58,63,65],$Vv=[16,25,30,32,41,42,46,50,53,54,55,56,57,58,63,65,80,81,82,83],$Vw=[5,8,9,10,11,16,19,23,25],$Vx=[50,80,81,82,83],$Vy=[50,57,58,80,81,82,83],$Vz=[50,53,54,55,56,80,81,82,83],$VA=[16,25,32],$VB=[1,96];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,7],$V2=[1,8],$V3=[1,9],$V4=[1,10],$V5=[1,13],$V6=[1,12],$V7=[1,16,25],$V8=[1,20],$V9=[1,31],$Va=[1,32],$Vb=[1,34],$Vc=[1,37],$Vd=[1,35],$Ve=[1,36],$Vf=[1,38],$Vg=[1,39],$Vh=[1,40],$Vi=[1,41],$Vj=[1,44],$Vk=[1,45],$Vl=[1,46],$Vm=[1,47],$Vn=[16,25],$Vo=[1,59],$Vp=[1,60],$Vq=[1,61],$Vr=[1,62],$Vs=[1,63],$Vt=[1,64],$Vu=[1,65],$Vv=[16,25,32,41,42,50,53,54,55,56,57,58,59,64,66],$Vw=[16,25,30,32,41,42,46,50,53,54,55,56,57,58,59,64,66,81,82,83,84],$Vx=[5,8,9,10,11,16,19,23,25],$Vy=[50,81,82,83,84],$Vz=[50,58,59,81,82,83,84],$VA=[50,53,54,55,56,57,81,82,83,84],$VB=[16,25,32],$VC=[1,97];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"mermaidDoc":4,"statments":5,"direction":6,"directive":7,"direction_tb":8,"direction_bt":9,"direction_rl":10,"direction_lr":11,"graphConfig":12,"openDirective":13,"typeDirective":14,"closeDirective":15,"NEWLINE":16,":":17,"argDirective":18,"open_directive":19,"type_directive":20,"arg_directive":21,"close_directive":22,"CLASS_DIAGRAM":23,"statements":24,"EOF":25,"statement":26,"className":27,"alphaNumToken":28,"classLiteralName":29,"GENERICTYPE":30,"relationStatement":31,"LABEL":32,"classStatement":33,"methodStatement":34,"annotationStatement":35,"clickStatement":36,"cssClassStatement":37,"title":38,"accDescription":39,"CLASS":40,"STYLE_SEPARATOR":41,"STRUCT_START":42,"members":43,"STRUCT_STOP":44,"ANNOTATION_START":45,"ANNOTATION_END":46,"MEMBER":47,"SEPARATOR":48,"relation":49,"STR":50,"relationType":51,"lineType":52,"AGGREGATION":53,"EXTENSION":54,"COMPOSITION":55,"DEPENDENCY":56,"LINE":57,"DOTTED_LINE":58,"CALLBACK":59,"LINK":60,"LINK_TARGET":61,"CLICK":62,"CALLBACK_NAME":63,"CALLBACK_ARGS":64,"HREF":65,"CSSCLASS":66,"commentToken":67,"textToken":68,"graphCodeTokens":69,"textNoTagsToken":70,"TAGSTART":71,"TAGEND":72,"==":73,"--":74,"PCT":75,"DEFAULT":76,"SPACE":77,"MINUS":78,"keywords":79,"UNICODE_TEXT":80,"NUM":81,"ALPHA":82,"BQUOTE_STR":83,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"statments",8:"direction_tb",9:"direction_bt",10:"direction_rl",11:"direction_lr",16:"NEWLINE",17:":",19:"open_directive",20:"type_directive",21:"arg_directive",22:"close_directive",23:"CLASS_DIAGRAM",25:"EOF",30:"GENERICTYPE",32:"LABEL",38:"title",39:"accDescription",40:"CLASS",41:"STYLE_SEPARATOR",42:"STRUCT_START",44:"STRUCT_STOP",45:"ANNOTATION_START",46:"ANNOTATION_END",47:"MEMBER",48:"SEPARATOR",50:"STR",53:"AGGREGATION",54:"EXTENSION",55:"COMPOSITION",56:"DEPENDENCY",57:"LINE",58:"DOTTED_LINE",59:"CALLBACK",60:"LINK",61:"LINK_TARGET",62:"CLICK",63:"CALLBACK_NAME",64:"CALLBACK_ARGS",65:"HREF",66:"CSSCLASS",69:"graphCodeTokens",71:"TAGSTART",72:"TAGEND",73:"==",74:"--",75:"PCT",76:"DEFAULT",77:"SPACE",78:"MINUS",79:"keywords",80:"UNICODE_TEXT",81:"NUM",82:"ALPHA",83:"BQUOTE_STR"},
-productions_: [0,[3,1],[3,1],[3,1],[3,2],[6,1],[6,1],[6,1],[6,1],[4,1],[7,4],[7,6],[13,1],[14,1],[18,1],[15,1],[12,4],[24,1],[24,2],[24,3],[27,1],[27,1],[27,2],[27,2],[27,2],[26,1],[26,2],[26,1],[26,1],[26,1],[26,1],[26,1],[26,1],[26,1],[26,1],[26,1],[33,2],[33,4],[33,5],[33,7],[35,4],[43,1],[43,2],[34,1],[34,2],[34,1],[34,1],[31,3],[31,4],[31,4],[31,5],[49,3],[49,2],[49,2],[49,1],[51,1],[51,1],[51,1],[51,1],[52,1],[52,1],[36,3],[36,4],[36,3],[36,4],[36,4],[36,5],[36,3],[36,4],[36,4],[36,5],[36,3],[36,4],[36,4],[36,5],[37,3],[67,1],[67,1],[68,1],[68,1],[68,1],[68,1],[68,1],[68,1],[68,1],[70,1],[70,1],[70,1],[70,1],[28,1],[28,1],[28,1],[29,1]],
+symbols_: {"error":2,"start":3,"mermaidDoc":4,"statments":5,"direction":6,"directive":7,"direction_tb":8,"direction_bt":9,"direction_rl":10,"direction_lr":11,"graphConfig":12,"openDirective":13,"typeDirective":14,"closeDirective":15,"NEWLINE":16,":":17,"argDirective":18,"open_directive":19,"type_directive":20,"arg_directive":21,"close_directive":22,"CLASS_DIAGRAM":23,"statements":24,"EOF":25,"statement":26,"className":27,"alphaNumToken":28,"classLiteralName":29,"GENERICTYPE":30,"relationStatement":31,"LABEL":32,"classStatement":33,"methodStatement":34,"annotationStatement":35,"clickStatement":36,"cssClassStatement":37,"title":38,"accDescription":39,"CLASS":40,"STYLE_SEPARATOR":41,"STRUCT_START":42,"members":43,"STRUCT_STOP":44,"ANNOTATION_START":45,"ANNOTATION_END":46,"MEMBER":47,"SEPARATOR":48,"relation":49,"STR":50,"relationType":51,"lineType":52,"AGGREGATION":53,"EXTENSION":54,"COMPOSITION":55,"DEPENDENCY":56,"LOLLIPOP":57,"LINE":58,"DOTTED_LINE":59,"CALLBACK":60,"LINK":61,"LINK_TARGET":62,"CLICK":63,"CALLBACK_NAME":64,"CALLBACK_ARGS":65,"HREF":66,"CSSCLASS":67,"commentToken":68,"textToken":69,"graphCodeTokens":70,"textNoTagsToken":71,"TAGSTART":72,"TAGEND":73,"==":74,"--":75,"PCT":76,"DEFAULT":77,"SPACE":78,"MINUS":79,"keywords":80,"UNICODE_TEXT":81,"NUM":82,"ALPHA":83,"BQUOTE_STR":84,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"statments",8:"direction_tb",9:"direction_bt",10:"direction_rl",11:"direction_lr",16:"NEWLINE",17:":",19:"open_directive",20:"type_directive",21:"arg_directive",22:"close_directive",23:"CLASS_DIAGRAM",25:"EOF",30:"GENERICTYPE",32:"LABEL",38:"title",39:"accDescription",40:"CLASS",41:"STYLE_SEPARATOR",42:"STRUCT_START",44:"STRUCT_STOP",45:"ANNOTATION_START",46:"ANNOTATION_END",47:"MEMBER",48:"SEPARATOR",50:"STR",53:"AGGREGATION",54:"EXTENSION",55:"COMPOSITION",56:"DEPENDENCY",57:"LOLLIPOP",58:"LINE",59:"DOTTED_LINE",60:"CALLBACK",61:"LINK",62:"LINK_TARGET",63:"CLICK",64:"CALLBACK_NAME",65:"CALLBACK_ARGS",66:"HREF",67:"CSSCLASS",70:"graphCodeTokens",72:"TAGSTART",73:"TAGEND",74:"==",75:"--",76:"PCT",77:"DEFAULT",78:"SPACE",79:"MINUS",80:"keywords",81:"UNICODE_TEXT",82:"NUM",83:"ALPHA",84:"BQUOTE_STR"},
+productions_: [0,[3,1],[3,1],[3,1],[3,2],[6,1],[6,1],[6,1],[6,1],[4,1],[7,4],[7,6],[13,1],[14,1],[18,1],[15,1],[12,4],[24,1],[24,2],[24,3],[27,1],[27,1],[27,2],[27,2],[27,2],[26,1],[26,2],[26,1],[26,1],[26,1],[26,1],[26,1],[26,1],[26,1],[26,1],[26,1],[33,2],[33,4],[33,5],[33,7],[35,4],[43,1],[43,2],[34,1],[34,2],[34,1],[34,1],[31,3],[31,4],[31,4],[31,5],[49,3],[49,2],[49,2],[49,1],[51,1],[51,1],[51,1],[51,1],[51,1],[52,1],[52,1],[36,3],[36,4],[36,3],[36,4],[36,4],[36,5],[36,3],[36,4],[36,4],[36,5],[36,3],[36,4],[36,4],[36,5],[37,3],[68,1],[68,1],[69,1],[69,1],[69,1],[69,1],[69,1],[69,1],[69,1],[71,1],[71,1],[71,1],[71,1],[28,1],[28,1],[28,1],[29,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -218,45 +218,48 @@ case 58:
  this.$=yy.relationType.DEPENDENCY;
 break;
 case 59:
-this.$=yy.lineType.LINE;
+ this.$=yy.relationType.LOLLIPOP;
 break;
 case 60:
+this.$=yy.lineType.LINE;
+break;
+case 61:
 this.$=yy.lineType.DOTTED_LINE;
 break;
-case 61: case 67:
+case 62: case 68:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-1], $$[$0]);
 break;
-case 62: case 68:
+case 63: case 69:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-2], $$[$0]);
 break;
-case 63: case 71:
+case 64: case 72:
 this.$ = $$[$0-2];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 64:
+case 65:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1],$$[$0]);
 break;
-case 65: case 73:
+case 66: case 74:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-2], $$[$0]);
 break;
-case 66: case 74:
+case 67: case 75:
 this.$ = $$[$0-4];yy.setLink($$[$0-3], $$[$0-2], $$[$0]);yy.setTooltip($$[$0-3], $$[$0-1]);
 break;
-case 69:
+case 70:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 70:
+case 71:
 this.$ = $$[$0-4];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setTooltip($$[$0-3], $$[$0]);
 break;
-case 72:
+case 73:
 this.$ = $$[$0-3];yy.setLink($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 75:
+case 76:
 yy.setCssClass($$[$0-1], $$[$0]);
 break;
 }
 },
-table: [{3:1,4:2,5:$V0,6:4,7:5,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:11,19:$V5,23:$V6},{1:[3]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{3:14,4:2,5:$V0,6:4,7:5,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:11,19:$V5,23:$V6},{1:[2,9]},o($V7,[2,5]),o($V7,[2,6]),o($V7,[2,7]),o($V7,[2,8]),{14:15,20:[1,16]},{16:[1,17]},{20:[2,12]},{1:[2,4]},{15:18,17:[1,19],22:$V8},o([17,22],[2,13]),{6:30,7:29,8:$V1,9:$V2,10:$V3,11:$V4,13:11,19:$V5,24:21,26:22,27:33,28:42,29:43,31:23,33:24,34:25,35:26,36:27,37:28,38:$V9,39:$Va,40:$Vb,45:$Vc,47:$Vd,48:$Ve,59:$Vf,60:$Vg,62:$Vh,66:$Vi,80:$Vj,81:$Vk,82:$Vl,83:$Vm},{16:[1,48]},{18:49,21:[1,50]},{16:[2,15]},{25:[1,51]},{16:[1,52],25:[2,17]},o($Vn,[2,25],{32:[1,53]}),o($Vn,[2,27]),o($Vn,[2,28]),o($Vn,[2,29]),o($Vn,[2,30]),o($Vn,[2,31]),o($Vn,[2,32]),o($Vn,[2,33]),o($Vn,[2,34]),o($Vn,[2,35]),o($Vn,[2,43],{49:54,51:57,52:58,32:[1,56],50:[1,55],53:$Vo,54:$Vp,55:$Vq,56:$Vr,57:$Vs,58:$Vt}),{27:65,28:42,29:43,80:$Vj,81:$Vk,82:$Vl,83:$Vm},o($Vn,[2,45]),o($Vn,[2,46]),{28:66,80:$Vj,81:$Vk,82:$Vl},{27:67,28:42,29:43,80:$Vj,81:$Vk,82:$Vl,83:$Vm},{27:68,28:42,29:43,80:$Vj,81:$Vk,82:$Vl,83:$Vm},{27:69,28:42,29:43,80:$Vj,81:$Vk,82:$Vl,83:$Vm},{50:[1,70]},o($Vu,[2,20],{28:42,29:43,27:71,30:[1,72],80:$Vj,81:$Vk,82:$Vl,83:$Vm}),o($Vu,[2,21],{30:[1,73]}),o($Vv,[2,89]),o($Vv,[2,90]),o($Vv,[2,91]),o([16,25,30,32,41,42,50,53,54,55,56,57,58,63,65],[2,92]),o($Vw,[2,10]),{15:74,22:$V8},{22:[2,14]},{1:[2,16]},{6:30,7:29,8:$V1,9:$V2,10:$V3,11:$V4,13:11,19:$V5,24:75,25:[2,18],26:22,27:33,28:42,29:43,31:23,33:24,34:25,35:26,36:27,37:28,38:$V9,39:$Va,40:$Vb,45:$Vc,47:$Vd,48:$Ve,59:$Vf,60:$Vg,62:$Vh,66:$Vi,80:$Vj,81:$Vk,82:$Vl,83:$Vm},o($Vn,[2,26]),{27:76,28:42,29:43,50:[1,77],80:$Vj,81:$Vk,82:$Vl,83:$Vm},{49:78,51:57,52:58,53:$Vo,54:$Vp,55:$Vq,56:$Vr,57:$Vs,58:$Vt},o($Vn,[2,44]),{52:79,57:$Vs,58:$Vt},o($Vx,[2,54],{51:80,53:$Vo,54:$Vp,55:$Vq,56:$Vr}),o($Vy,[2,55]),o($Vy,[2,56]),o($Vy,[2,57]),o($Vy,[2,58]),o($Vz,[2,59]),o($Vz,[2,60]),o($Vn,[2,36],{41:[1,81],42:[1,82]}),{46:[1,83]},{50:[1,84]},{50:[1,85]},{63:[1,86],65:[1,87]},{28:88,80:$Vj,81:$Vk,82:$Vl},o($Vu,[2,22]),o($Vu,[2,23]),o($Vu,[2,24]),{16:[1,89]},{25:[2,19]},o($VA,[2,47]),{27:90,28:42,29:43,80:$Vj,81:$Vk,82:$Vl,83:$Vm},{27:91,28:42,29:43,50:[1,92],80:$Vj,81:$Vk,82:$Vl,83:$Vm},o($Vx,[2,53],{51:93,53:$Vo,54:$Vp,55:$Vq,56:$Vr}),o($Vx,[2,52]),{28:94,80:$Vj,81:$Vk,82:$Vl},{43:95,47:$VB},{27:97,28:42,29:43,80:$Vj,81:$Vk,82:$Vl,83:$Vm},o($Vn,[2,61],{50:[1,98]}),o($Vn,[2,63],{50:[1,100],61:[1,99]}),o($Vn,[2,67],{50:[1,101],64:[1,102]}),o($Vn,[2,71],{50:[1,104],61:[1,103]}),o($Vn,[2,75]),o($Vw,[2,11]),o($VA,[2,49]),o($VA,[2,48]),{27:105,28:42,29:43,80:$Vj,81:$Vk,82:$Vl,83:$Vm},o($Vx,[2,51]),o($Vn,[2,37],{42:[1,106]}),{44:[1,107]},{43:108,44:[2,41],47:$VB},o($Vn,[2,40]),o($Vn,[2,62]),o($Vn,[2,64]),o($Vn,[2,65],{61:[1,109]}),o($Vn,[2,68]),o($Vn,[2,69],{50:[1,110]}),o($Vn,[2,72]),o($Vn,[2,73],{61:[1,111]}),o($VA,[2,50]),{43:112,47:$VB},o($Vn,[2,38]),{44:[2,42]},o($Vn,[2,66]),o($Vn,[2,70]),o($Vn,[2,74]),{44:[1,113]},o($Vn,[2,39])],
-defaultActions: {2:[2,1],3:[2,2],4:[2,3],6:[2,9],13:[2,12],14:[2,4],20:[2,15],50:[2,14],51:[2,16],75:[2,19],108:[2,42]},
+table: [{3:1,4:2,5:$V0,6:4,7:5,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:11,19:$V5,23:$V6},{1:[3]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{3:14,4:2,5:$V0,6:4,7:5,8:$V1,9:$V2,10:$V3,11:$V4,12:6,13:11,19:$V5,23:$V6},{1:[2,9]},o($V7,[2,5]),o($V7,[2,6]),o($V7,[2,7]),o($V7,[2,8]),{14:15,20:[1,16]},{16:[1,17]},{20:[2,12]},{1:[2,4]},{15:18,17:[1,19],22:$V8},o([17,22],[2,13]),{6:30,7:29,8:$V1,9:$V2,10:$V3,11:$V4,13:11,19:$V5,24:21,26:22,27:33,28:42,29:43,31:23,33:24,34:25,35:26,36:27,37:28,38:$V9,39:$Va,40:$Vb,45:$Vc,47:$Vd,48:$Ve,60:$Vf,61:$Vg,63:$Vh,67:$Vi,81:$Vj,82:$Vk,83:$Vl,84:$Vm},{16:[1,48]},{18:49,21:[1,50]},{16:[2,15]},{25:[1,51]},{16:[1,52],25:[2,17]},o($Vn,[2,25],{32:[1,53]}),o($Vn,[2,27]),o($Vn,[2,28]),o($Vn,[2,29]),o($Vn,[2,30]),o($Vn,[2,31]),o($Vn,[2,32]),o($Vn,[2,33]),o($Vn,[2,34]),o($Vn,[2,35]),o($Vn,[2,43],{49:54,51:57,52:58,32:[1,56],50:[1,55],53:$Vo,54:$Vp,55:$Vq,56:$Vr,57:$Vs,58:$Vt,59:$Vu}),{27:66,28:42,29:43,81:$Vj,82:$Vk,83:$Vl,84:$Vm},o($Vn,[2,45]),o($Vn,[2,46]),{28:67,81:$Vj,82:$Vk,83:$Vl},{27:68,28:42,29:43,81:$Vj,82:$Vk,83:$Vl,84:$Vm},{27:69,28:42,29:43,81:$Vj,82:$Vk,83:$Vl,84:$Vm},{27:70,28:42,29:43,81:$Vj,82:$Vk,83:$Vl,84:$Vm},{50:[1,71]},o($Vv,[2,20],{28:42,29:43,27:72,30:[1,73],81:$Vj,82:$Vk,83:$Vl,84:$Vm}),o($Vv,[2,21],{30:[1,74]}),o($Vw,[2,90]),o($Vw,[2,91]),o($Vw,[2,92]),o([16,25,30,32,41,42,50,53,54,55,56,57,58,59,64,66],[2,93]),o($Vx,[2,10]),{15:75,22:$V8},{22:[2,14]},{1:[2,16]},{6:30,7:29,8:$V1,9:$V2,10:$V3,11:$V4,13:11,19:$V5,24:76,25:[2,18],26:22,27:33,28:42,29:43,31:23,33:24,34:25,35:26,36:27,37:28,38:$V9,39:$Va,40:$Vb,45:$Vc,47:$Vd,48:$Ve,60:$Vf,61:$Vg,63:$Vh,67:$Vi,81:$Vj,82:$Vk,83:$Vl,84:$Vm},o($Vn,[2,26]),{27:77,28:42,29:43,50:[1,78],81:$Vj,82:$Vk,83:$Vl,84:$Vm},{49:79,51:57,52:58,53:$Vo,54:$Vp,55:$Vq,56:$Vr,57:$Vs,58:$Vt,59:$Vu},o($Vn,[2,44]),{52:80,58:$Vt,59:$Vu},o($Vy,[2,54],{51:81,53:$Vo,54:$Vp,55:$Vq,56:$Vr,57:$Vs}),o($Vz,[2,55]),o($Vz,[2,56]),o($Vz,[2,57]),o($Vz,[2,58]),o($Vz,[2,59]),o($VA,[2,60]),o($VA,[2,61]),o($Vn,[2,36],{41:[1,82],42:[1,83]}),{46:[1,84]},{50:[1,85]},{50:[1,86]},{64:[1,87],66:[1,88]},{28:89,81:$Vj,82:$Vk,83:$Vl},o($Vv,[2,22]),o($Vv,[2,23]),o($Vv,[2,24]),{16:[1,90]},{25:[2,19]},o($VB,[2,47]),{27:91,28:42,29:43,81:$Vj,82:$Vk,83:$Vl,84:$Vm},{27:92,28:42,29:43,50:[1,93],81:$Vj,82:$Vk,83:$Vl,84:$Vm},o($Vy,[2,53],{51:94,53:$Vo,54:$Vp,55:$Vq,56:$Vr,57:$Vs}),o($Vy,[2,52]),{28:95,81:$Vj,82:$Vk,83:$Vl},{43:96,47:$VC},{27:98,28:42,29:43,81:$Vj,82:$Vk,83:$Vl,84:$Vm},o($Vn,[2,62],{50:[1,99]}),o($Vn,[2,64],{50:[1,101],62:[1,100]}),o($Vn,[2,68],{50:[1,102],65:[1,103]}),o($Vn,[2,72],{50:[1,105],62:[1,104]}),o($Vn,[2,76]),o($Vx,[2,11]),o($VB,[2,49]),o($VB,[2,48]),{27:106,28:42,29:43,81:$Vj,82:$Vk,83:$Vl,84:$Vm},o($Vy,[2,51]),o($Vn,[2,37],{42:[1,107]}),{44:[1,108]},{43:109,44:[2,41],47:$VC},o($Vn,[2,40]),o($Vn,[2,63]),o($Vn,[2,65]),o($Vn,[2,66],{62:[1,110]}),o($Vn,[2,69]),o($Vn,[2,70],{50:[1,111]}),o($Vn,[2,73]),o($Vn,[2,74],{62:[1,112]}),o($VB,[2,50]),{43:113,47:$VC},o($Vn,[2,38]),{44:[2,42]},o($Vn,[2,67]),o($Vn,[2,71]),o($Vn,[2,75]),{44:[1,114]},o($Vn,[2,39])],
+defaultActions: {2:[2,1],3:[2,2],4:[2,3],6:[2,9],13:[2,12],14:[2,4],20:[2,15],50:[2,14],51:[2,16],76:[2,19],109:[2,42]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -785,13 +788,13 @@ case 23: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
 break;
 case 24:return 40;
 break;
-case 25:return 66;
+case 25:return 67;
 break;
-case 26:return 59;
+case 26:return 60;
 break;
-case 27:return 60;
+case 27:return 61;
 break;
-case 28:return 62;
+case 28:return 63;
 break;
 case 29:return 45;
 break;
@@ -819,7 +822,7 @@ case 40:this.begin("href");
 break;
 case 41:this.popState();
 break;
-case 42:return 65;
+case 42:return 66;
 break;
 case 43:this.begin("callback_name");
 break;
@@ -827,19 +830,19 @@ case 44:this.popState();
 break;
 case 45:this.popState(); this.begin("callback_args");
 break;
-case 46:return 63;
+case 46:return 64;
 break;
 case 47:this.popState();
 break;
-case 48:return 64;
+case 48:return 65;
 break;
-case 49:return 61;
+case 49:return 62;
 break;
-case 50:return 61;
+case 50:return 62;
 break;
-case 51:return 61;
+case 51:return 62;
 break;
-case 52:return 61;
+case 52:return 62;
 break;
 case 53:return 54;
 break;
@@ -853,37 +856,37 @@ case 57:return 55;
 break;
 case 58:return 53;
 break;
-case 59:return 'LOLLIPOP';
+case 59:return 57;
 break;
-case 60:return 57;
+case 60:return 58;
 break;
-case 61:return 58;
+case 61:return 59;
 break;
 case 62:return 32;
 break;
 case 63:return 41;
 break;
-case 64:return 78;
+case 64:return 79;
 break;
 case 65:return 'DOT';
 break;
 case 66:return 'PLUS';
 break;
-case 67:return 75;
+case 67:return 76;
 break;
 case 68:return 'EQUALS';
 break;
 case 69:return 'EQUALS';
 break;
-case 70:return 82;
+case 70:return 83;
 break;
 case 71:return 'PUNCTUATION';
 break;
-case 72:return 81;
+case 72:return 82;
 break;
-case 73:return 80;
+case 73:return 81;
 break;
-case 74:return 77;
+case 74:return 78;
 break;
 case 75:return 25;
 break;
@@ -10298,6 +10301,10 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
       svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-dependencyStart' + ')');
       break;
 
+    case 'lollipop':
+      svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-lollipopStart' + ')');
+      break;
+
     default:
   }
 
@@ -10332,6 +10339,10 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
 
     case 'dependency':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-dependencyEnd' + ')');
+      break;
+
+    case 'dependency':
+      svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-lollipopEnd' + ')');
       break;
 
     default:
@@ -10950,7 +10961,7 @@ var dependency = function dependency(elem, type) {
 
 var lollipop = function lollipop(elem, type, id) {
   _logger__WEBPACK_IMPORTED_MODULE_0__.log.trace('Making markers for ', id);
-  elem.append('defs').append('marker').attr('id', type + '-lollipopStart').attr('class', 'marker lollipop ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('circle').attr('stroke', 'black').attr('fill', 'white').attr('cx', 9).attr('cy', 8).attr('r', 6);
+  elem.append('defs').append('marker').attr('id', type + '-lollipopStart').attr('class', 'marker lollipop ' + type).attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('circle').attr('stroke', 'black').attr('fill', 'white').attr('cx', 6).attr('cy', 7).attr('r', 6);
 };
 
 var point = function point(elem, type) {
@@ -14741,7 +14752,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 var getStyles = function getStyles(options) {
-  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n\n}\n\n.nodeLabel, .edgeLabel {\n  color: ").concat(options.classText, ";\n}\n.edgeLabel .label rect {\n  fill: ").concat(options.mainBkg, ";\n}\n.label text {\n  fill: ").concat(options.classText, ";\n}\n.edgeLabel .label span {\n  background: ").concat(options.mainBkg, ";\n}\n\n.classTitle {\n  font-weight: bolder;\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n.edgeTerminals {\n  font-size: 11px;\n}\n\n");
+  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  fill: ").concat(options.classText, ";\n  stroke: none;\n  font-family: ").concat(options.fontFamily, ";\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n\n}\n\n.nodeLabel, .edgeLabel {\n  color: ").concat(options.classText, ";\n}\n.edgeLabel .label rect {\n  fill: ").concat(options.mainBkg, ";\n}\n.label text {\n  fill: ").concat(options.classText, ";\n}\n.edgeLabel .label span {\n  background: ").concat(options.mainBkg, ";\n}\n\n.classTitle {\n  font-weight: bolder;\n}\n.node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ").concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n\n.divider {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke: 1;\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.mainBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.lineColor, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#compositionEnd, .composition {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#dependencyStart, .dependency {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionStart, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#extensionEnd, .extension {\n  fill: ").concat(options.lineColor, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationStart, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#aggregationEnd, .aggregation {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#lollipopStart, .lollipop {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n#lollipopEnd, .lollipop {\n  fill: ").concat(options.mainBkg, " !important;\n  stroke: ").concat(options.lineColor, " !important;\n  stroke-width: 1;\n}\n\n.edgeTerminals {\n  font-size: 11px;\n}\n\n");
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getStyles);

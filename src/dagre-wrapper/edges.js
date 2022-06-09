@@ -591,7 +591,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     case 'dependency':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-dependencyEnd' + ')');
       break;
-    case 'dependency':
+    case 'lollipop':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-lollipopEnd' + ')');
     break;
     default:
