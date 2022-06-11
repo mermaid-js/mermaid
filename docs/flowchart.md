@@ -515,8 +515,8 @@ flowchart LR
 
 It is possible to style links. For instance you might want to style a link that is going backwards in the flow. As links
 have no ids in the same way as nodes, some other way of deciding what style the links should be attached to is required.
-Instead of ids, the order number of when the link was defined in the graph is used. In the example below the style
-defined in the linkStyle statement will belong to the fourth link in the graph:
+Instead of ids, the order number of when the link was defined in the graph is used, or use default to apply to all links.
+In the example below the style defined in the linkStyle statement will belong to the fourth link in the graph:
 
 ```
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
