@@ -902,6 +902,81 @@ available space. If set to false, the diagram reserves its absolute width.
 
 Default value: true
 
+## c4
+
+The object containing configurations specific for c4 diagrams
+
+### diagramMarginX
+
+| Parameter      | Description                                    | Type    | Required | Values             |
+| -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+| diagramMarginX | Margin to the right and left of the c4 diagram | Integer | Required | Any Positive Value |
+
+**Notes:** Default value: 50
+
+### diagramMarginY
+
+| Parameter      | Description                                 | Type    | Required | Values             |
+| -------------- | ------------------------------------------- | ------- | -------- | ------------------ |
+| diagramMarginY | Margin to the over and under the c4 diagram | Integer | Required | Any Positive Value |
+
+**Notes:** Default value: 10
+
+### c4ShapeMargin
+
+| Parameter   | Description           | Type    | Required | Values             |
+| ----------- | --------------------- | ------- | -------- | ------------------ |
+| shapeMargin | Margin between shapes | Integer | Required | Any Positive Value |
+
+**Notes:** Default value: 50
+
+### width
+
+| Parameter | Description           | Type    | Required | Values             |
+| --------- | --------------------- | ------- | -------- | ------------------ |
+| width     | Width of person boxes | Integer | Required | Any Positive Value |
+
+**Notes:** Default value: 216
+
+### height
+
+| Parameter | Description            | Type    | Required | Values             |
+| --------- | ---------------------- | ------- | -------- | ------------------ |
+| height    | Height of person boxes | Integer | Required | Any Positive Value |
+
+**Notes:** Default value: 60
+
+### boxMargin
+
+| Parameter | Description              | Type    | Required | Values             |
+| --------- | ------------------------ | ------- | -------- | ------------------ |
+| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+
+**Notes:** Default value: 10
+
+### useMaxWidth
+
+| Parameter   | Description | Type    | Required | Values      |
+| ----------- | ----------- | ------- | -------- | ----------- |
+| useMaxWidth | See Notes   | boolean | Required | true, false |
+
+**Notes:** When this flag is set to true, the height and width is set to 100% and is then
+scaling with the available space. If set to false, the absolute space required is used.
+
+Default value: true
+
+### wrap
+
+This sets the auto-wrap state for the diagram
+
+**Notes:** Default value: true.
+
+### wrapPadding
+
+This sets the auto-wrap padding for the diagram (sides only)
+
+**Notes:** Default value: 0.
+
 ## setSiteConfig
 
 ## setSiteConfig
