@@ -819,6 +819,62 @@ Now let's override the default values for the `commitLabelColor` to `commitLabel
 
 ```
 See how the commit label color and background color are changed to the values specified in the theme variables.
+
+### Customizing Commit Label Font Size
+You can customize commit using the `commitLabelFontSize`  theme variables for changing in the font soze of the commit label .
+
+Example:
+Now let's override the default values for the `commitLabelFontSize` variable:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'commitLabelColor': '#ff0000',
+              'commitLabelBackground': '#00ff00',
+              'commitLabelFontSize': '16px'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the commit label font size changed.
+
+### Customizing Tag Label Font Size
+You can customize commit using the `tagLabelFontSize`  theme variables for changing in the font soze of the tag label .
+
+Example:
+Now let's override the default values for the `tagLabelFontSize` variable:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'commitLabelColor': '#ff0000',
+              'commitLabelBackground': '#00ff00',
+              'tagLabelFontSize': '16px'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the tag label font size changed.
 ### Customizing Tag colors
 You can customize tag using the `tagLabelColor`,`tagLabelBackground` and `tagLabelBorder`  theme variables for changes in the tag label color,tag label background color and tag label border respectively.
 Example:
