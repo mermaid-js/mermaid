@@ -2,6 +2,7 @@ import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
+import { setAccTitle, getAccTitle, getAccDescription, setAccDescription } from '../../commonDb';
 
 let c4ShapeArray = [];
 let boundaryParseStack = [''];
@@ -443,15 +444,6 @@ export const setTitle = function (txt) {
   title = sanitizedText;
 };
 
-const setAccDescription = function (description_lex) {
-  let sanitizedText = sanitizeText(description_lex, configApi.getConfig());
-  description = sanitizedText;
-};
-
-const getAccDescription = function () {
-  return description;
-};
-
 export default {
   addPersonOrSystem,
   addPersonOrSystemBoundary,
@@ -472,6 +464,8 @@ export default {
   getRels,
   getTitle,
   getC4Type,
+  setAccTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   parseDirective,
