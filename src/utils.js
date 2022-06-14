@@ -931,6 +931,10 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
   if (sWidth > width) {
     tx = (sWidth - width) / 2 + padding;
     width = sWidth + padding * 2;
+  } else {
+    if (Math.abs(sWidth - width) >= 2 * padding + 1) {
+      width = width - padding;
+    }
   }
   if (sHeight > height) {
     ty = (sHeight - height) / 2 + padding;

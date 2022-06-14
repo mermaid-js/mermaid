@@ -22,16 +22,16 @@
   <body>
     <h1>info below</h1>
     <div class="flex">
-      <div class="mermaid2" style="width: 50%; height: 20%;">
+      <div class="mermaid" style="width: 50%; height: 20%;">
 flowchart BT
-    subgraph two
-    b1
-    end
-    subgraph three
-    c1-->c2
-    end
-    c1 --apa apa apa--> b1
-    two --> c2
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
       </div>
       <div class="mermaid2" style="width: 50%; height: 200px;">
 sequenceDiagram
@@ -163,7 +163,7 @@ _one --> b
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'cardinal', htmlLabels: true },
+        flowchart: { curve: 'cardinal', htmlLabels: false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
