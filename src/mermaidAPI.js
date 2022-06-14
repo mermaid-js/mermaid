@@ -74,11 +74,6 @@ function parse(text) {
   try {
     text = text + '\n';
     const cnf = configApi.getConfig();
-    const graphInit = utils.detectInit(text, cnf);
-    if (graphInit) {
-      reinitialize(graphInit);
-      log.info('reinit ', graphInit);
-    }
     const graphType = utils.detectType(text, cnf);
     let parser;
 
@@ -90,10 +85,6 @@ function parse(text) {
         parser.parser.yy = gitGraphAst;
         break;
       case 'flowchart':
-        flowDb.clear();
-        parser = flowParser;
-        parser.parser.yy = flowDb;
-        break;
       case 'flowchart-v2':
         flowDb.clear();
         parser = flowParser;
@@ -109,17 +100,11 @@ function parse(text) {
         parser.parser.yy = ganttDb;
         break;
       case 'class':
-        parser = classParser;
-        parser.parser.yy = classDb;
-        break;
       case 'classDiagram':
         parser = classParser;
         parser.parser.yy = classDb;
         break;
       case 'state':
-        parser = stateParser;
-        parser.parser.yy = stateDb;
-        break;
       case 'stateDiagram':
         parser = stateParser;
         parser.parser.yy = stateDb;
@@ -261,7 +246,6 @@ const render = function (id, _txt, cb, container) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
-  // let d3Iframe;
   let root = select('body');
 
   // In regular execurtion the container will be the div with a mermaid class
@@ -274,7 +258,6 @@ const render = function (id, _txt, cb, container) {
         .attr('id', 'i' + id)
         .attr('style', 'width: 100%; height: 100%;')
         .attr('sandbox', '');
-      // const iframeBody = ;
       root = select(iframe.nodes()[0].contentDocument.body);
       root.node().style.margin = 0;
     }
@@ -326,15 +309,6 @@ const render = function (id, _txt, cb, container) {
       element.remove();
     }
 
-    // if (cnf.securityLevel === 'sandbox') {
-    //   const iframe = select('body')
-    //     .append('iframe')
-    //     .attr('id', 'i' + id)
-    //     .attr('sandbox', '');
-    //   // const iframeBody = ;
-    //   root = select(iframe.nodes()[0].contentDocument.body);
-    // }
-
     // Add the tmp div used for rendering with the id `d${id}`
     // d+id it will contain a svg with the id "id"
 
@@ -346,7 +320,7 @@ const render = function (id, _txt, cb, container) {
         .attr('id', 'i' + id)
         .attr('style', 'width: 100%; height: 100%;')
         .attr('sandbox', '');
-      // const iframeBody = ;
+
       root = select(iframe.nodes()[0].contentDocument.body);
       root.node().style.margin = 0;
     } else {
@@ -426,8 +400,6 @@ const render = function (id, _txt, cb, container) {
     }
   }
 
-  // log.warn(cnf.themeVariables);
-
   const stylis = (selector, styles) => serialize(compile(`${selector}{${styles}}`), stringify);
   const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
@@ -435,23 +407,9 @@ const render = function (id, _txt, cb, container) {
   style1.innerHTML = `#${id} ` + rules;
   svg.insertBefore(style1, firstChild);
 
-  // Verify that the generated svgs are ok before removing this
-
-  // const style2 = document.createElement('style');
-  // const cs = window.getComputedStyle(svg);
-  // style2.innerHTML = `#d${id} * {
-  //   color: ${cs.color};
-  //   // font: ${cs.font};
-  //   // font-family: Arial;
-  //   // font-size: 24px;
-  // }`;
-  // svg.insertBefore(style2, firstChild);
-
   try {
     switch (graphType) {
       case 'gitGraph':
-        // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        //gitGraphRenderer.setConf(cnf.git);
         gitGraphRenderer.draw(txt, id, false);
         break;
       case 'flowchart':
@@ -508,8 +466,6 @@ const render = function (id, _txt, cb, container) {
         infoRenderer.draw(txt, id, pkg.version);
         break;
       case 'pie':
-        //cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        //pieRenderer.setConf(cnf.pie);
         pieRenderer.draw(txt, id, pkg.version);
         break;
       case 'er':
@@ -526,7 +482,6 @@ const render = function (id, _txt, cb, container) {
         break;
     }
   } catch (e) {
-    // errorRenderer.setConf(cnf.class);
     errorRenderer.draw(id, pkg.version);
     throw e;
   }
@@ -557,7 +512,6 @@ const render = function (id, _txt, cb, container) {
     let width = '100%';
     let height = '100%';
     if (svgEl) {
-      // width = svgEl.viewBox.baseVal.width + 'px';
       height = svgEl.viewBox.baseVal.height + 'px';
     }
     svgCode = `<iframe style="width:${width};height:${height};border:0;margin:0;" src="data:text/html;base64,${btoa(
@@ -651,7 +605,6 @@ const handleDirective = function (p, directive, type) {
       log.debug('sanitize in handleDirective', directive.args);
       directiveSanitizer(directive.args);
       log.debug('sanitize in handleDirective (done)', directive.args);
-      reinitialize(directive.args);
       configApi.addDirective(directive.args);
       break;
     }
@@ -679,7 +632,6 @@ const handleDirective = function (p, directive, type) {
 function updateRendererConfigs(conf) {
   // Todo remove, all diagrams should get config on demoand from the config object, no need for this
 
-  // gitGraphRenderer.setConf(conf.git); // Todo Remove all  of these
   flowRenderer.setConf(conf.flowchart);
   flowRendererV2.setConf(conf.flowchart);
   if (typeof conf['sequenceDiagram'] !== 'undefined') {
@@ -691,33 +643,14 @@ function updateRendererConfigs(conf) {
   stateRenderer.setConf(conf.state);
   stateRendererV2.setConf(conf.state);
   infoRenderer.setConf(conf.class);
-  // pieRenderer.setConf(conf.class);
   erRenderer.setConf(conf.er);
   journeyRenderer.setConf(conf.journey);
   requirementRenderer.setConf(conf.requirement);
   errorRenderer.setConf(conf.class);
 }
 
-/** To be removed */
-function reinitialize() {
-  // `mermaidAPI.reinitialize: v${pkg.version}`,
-  //   JSON.stringify(options),
-  //   options.themeVariables.primaryColor;
-  // // if (options.theme && theme[options.theme]) {
-  // //   options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
-  // // }
-  // // Set default options
-  // const config =
-  //   typeof options === 'object' ? configApi.setConfig(options) : configApi.getSiteConfig();
-  // updateRendererConfigs(config);
-  // setLogLevel(config.logLevel);
-  // log.debug('mermaidAPI.reinitialize: ', config);
-}
-
 /** @param {any} options */
 function initialize(options) {
-  // console.warn(`mermaidAPI.initialize: v${pkg.version} `, options);
-
   // Handle legacy location of font-family configuration
   if (options && options.fontFamily) {
     if (!options.themeVariables) {
@@ -743,7 +676,6 @@ function initialize(options) {
 
   updateRendererConfigs(config);
   setLogLevel(config.logLevel);
-  // log.debug('mermaidAPI.initialize: ', config);
 }
 
 const mermaidAPI = Object.freeze({
@@ -751,16 +683,12 @@ const mermaidAPI = Object.freeze({
   parse,
   parseDirective,
   initialize,
-  reinitialize,
   getConfig: configApi.getConfig,
   setConfig: configApi.setConfig,
   getSiteConfig: configApi.getSiteConfig,
   updateSiteConfig: configApi.updateSiteConfig,
   reset: () => {
-    // console.warn('reset');
     configApi.reset();
-    // const siteConfig = configApi.getSiteConfig();
-    // updateRendererConfigs(siteConfig);
   },
   globalReset: () => {
     configApi.reset(configApi.defaultConfig);
