@@ -5,8 +5,8 @@ import * as configApi from '../../config';
 import { getConfig } from '../../config';
 import common from '../common/common';
 import {
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -25,6 +25,7 @@ let direction = 'LR';
 let seq = 0;
 
 function getId() {
+  // eslint-disable-line
   return random({ length: 7 });
 }
 
@@ -234,6 +235,85 @@ export const merge = function (otherBranch, tag) {
   log.debug('in mergeBranch');
 };
 
+export const cherryPick = function (sourceId, targetId) {
+  sourceId = common.sanitizeText(sourceId, configApi.getConfig());
+  targetId = common.sanitizeText(targetId, configApi.getConfig());
+
+  if (!sourceId || typeof commits[sourceId] === 'undefined') {
+    let error = new Error(
+      'Incorrect usage of "cherryPick". Source commit id should exist and provided'
+    );
+    error.hash = {
+      text: 'cherryPick ' + sourceId + ' ' + targetId,
+      token: 'cherryPick ' + sourceId + ' ' + targetId,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['cherry-pick abc'],
+    };
+    throw error;
+  }
+
+  let sourceCommit = commits[sourceId];
+  let sourceCommitBranch = sourceCommit.branch;
+  if (sourceCommit.type === commitType.MERGE) {
+    let error = new Error(
+      'Incorrect usage of "cherryPick". Source commit should not be a merge commit'
+    );
+    error.hash = {
+      text: 'cherryPick ' + sourceId + ' ' + targetId,
+      token: 'cherryPick ' + sourceId + ' ' + targetId,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['cherry-pick abc'],
+    };
+    throw error;
+  }
+  if (!targetId || typeof commits[targetId] === 'undefined') {
+    // cherry-pick source commit to current branch
+
+    if (sourceCommitBranch === curBranch) {
+      let error = new Error(
+        'Incorrect usage of "cherryPick". Source commit is already on current branch'
+      );
+      error.hash = {
+        text: 'cherryPick ' + sourceId + ' ' + targetId,
+        token: 'cherryPick ' + sourceId + ' ' + targetId,
+        line: '1',
+        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+        expected: ['cherry-pick abc'],
+      };
+      throw error;
+    }
+    const currentCommit = commits[branches[curBranch]];
+    if (typeof currentCommit === 'undefined' || !currentCommit) {
+      let error = new Error(
+        'Incorrect usage of "cherry-pick". Current branch (' + curBranch + ')has no commits'
+      );
+      error.hash = {
+        text: 'cherryPick ' + sourceId + ' ' + targetId,
+        token: 'cherryPick ' + sourceId + ' ' + targetId,
+        line: '1',
+        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+        expected: ['cherry-pick abc'],
+      };
+      throw error;
+    }
+    const commit = {
+      id: seq + '-' + getId(),
+      message: 'cherry-picked ' + sourceCommit + ' into ' + curBranch,
+      seq: seq++,
+      parents: [head == null ? null : head.id, sourceCommit.id],
+      branch: curBranch,
+      type: commitType.CHERRY_PICK,
+      tag: 'cherry-pick:' + sourceCommit.id,
+    };
+    head = commit;
+    commits[commit.id] = commit;
+    branches[curBranch] = commit.id;
+    log.debug(branches);
+    log.debug('in cheeryPick');
+  }
+};
 export const checkout = function (branch) {
   branch = common.sanitizeText(branch, configApi.getConfig());
   if (typeof branches[branch] === 'undefined') {
@@ -389,6 +469,7 @@ export const commitType = {
   REVERSE: 1,
   HIGHLIGHT: 2,
   MERGE: 3,
+  CHERRY_PICK: 4,
 };
 
 export default {
@@ -400,6 +481,7 @@ export default {
   commit,
   branch,
   merge,
+  cherryPick,
   checkout,
   //reset,
   prettyPrint,
@@ -411,8 +493,8 @@ export default {
   getCurrentBranch,
   getDirection,
   getHead,
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   commitType,

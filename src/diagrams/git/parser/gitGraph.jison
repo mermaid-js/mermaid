@@ -48,6 +48,7 @@ accDescr\s*"{"\s*                                               { this.begin("ac
 "branch"                                return 'BRANCH';
 "order:"                                return 'ORDER';
 "merge"                                 return 'MERGE';
+"cherry-pick"                           return 'CHERRY_PICK';
 // "reset"                                 return 'RESET';
 "checkout"                              return 'CHECKOUT';
 "LR"                                    return 'DIR';
@@ -102,7 +103,8 @@ line
 statement
     : commitStatement
     | mergeStatement
-    | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+    | cherryPickStatement
+    | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
     | branchStatement
@@ -112,6 +114,10 @@ statement
 branchStatement
     : BRANCH ID {yy.branch($2)}
     | BRANCH ID ORDER NUM {yy.branch($2, $4)}
+    ;
+
+cherryPickStatement
+    : CHERRY_PICK COMMIT_ID STR {yy.cherryPick($3)}
     ;
 
 mergeStatement

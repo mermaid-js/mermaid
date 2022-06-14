@@ -5,8 +5,8 @@ import common from '../common/common';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import {
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -142,7 +142,6 @@ export const addAnnotation = function (className, annotation) {
  * @public
  */
 export const addMember = function (className, member) {
-  console.log(className, member);
   const validatedClassName = splitClassNameAndType(className).className;
   const theClass = classes[validatedClassName];
 
@@ -356,8 +355,8 @@ const setDirection = (dir) => {
 
 export default {
   parseDirective,
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   getConfig: () => configApi.getConfig().class,

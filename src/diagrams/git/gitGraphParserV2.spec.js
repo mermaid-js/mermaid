@@ -40,7 +40,6 @@ describe('when parsing a gitGraph', function () {
     const str = `gitGraph:
     commit id:"1111"
     `;
-    //console.log(str);
     parser.parse(str);
     const commits = parser.yy.getCommits();
     expect(Object.keys(commits).length).toBe(1);
@@ -449,9 +448,6 @@ describe('when parsing a gitGraph', function () {
     const commit3 = Object.keys(commits)[2];
     const commit4 = Object.keys(commits)[3];
     expect(commits[commit1].branch).toBe('main');
-    console.log(commits);
-
-    console.log(commits[commit1].parents);
     expect(commits[commit1].parents).toStrictEqual([]);
     expect(commits[commit2].branch).toBe('testBranch');
     expect(commits[commit2].parents).toStrictEqual([commits[commit1].id]);
@@ -664,7 +660,7 @@ describe('when parsing a gitGraph', function () {
     commit
     `;
       parser.parse(str);
-      expect(parser.yy.getTitle()).toBe('This is a title');
+      expect(parser.yy.getAccTitle()).toBe('This is a title');
       expect(parser.yy.getAccDescription()).toBe('This is a description');
     });
     it('should handle a title and a multiline description (accDescr)', () => {
@@ -677,7 +673,7 @@ describe('when parsing a gitGraph', function () {
     commit
     `;
       parser.parse(str);
-      expect(parser.yy.getTitle()).toBe('This is a title');
+      expect(parser.yy.getAccTitle()).toBe('This is a title');
       expect(parser.yy.getAccDescription()).toBe('This is a description\nusing multiple lines');
     });
   });

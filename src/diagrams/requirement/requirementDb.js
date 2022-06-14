@@ -3,8 +3,8 @@ import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import {
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -162,8 +162,8 @@ export default {
   setNewReqText,
   setNewReqRisk,
   setNewReqVerifyMethod,
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
   setAccDescription,
   getAccDescription,
 

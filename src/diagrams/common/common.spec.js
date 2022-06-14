@@ -100,7 +100,6 @@ describe('Sanitize text', function () {
       securityLevel: 'strict',
       flowchart: { htmlLabels: true },
     });
-    console.log('result', result);
     expect(result).not.toContain('javascript:alert(1)');
   });
 });

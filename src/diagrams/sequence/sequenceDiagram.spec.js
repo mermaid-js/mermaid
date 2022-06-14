@@ -119,7 +119,7 @@ Alice->Bob:Hello Bob, how are you?
 
     mermaidAPI.parse(str);
     expect(parser.yy.getDiagramTitle()).toBe('Diagram Title');
-    expect(parser.yy.getTitle()).toBe('This is the title');
+    expect(parser.yy.getAccTitle()).toBe('This is the title');
     expect(parser.yy.getAccDescription()).toBe('Accessibility Description');
     const messages = parser.yy.getMessages();
   });
@@ -135,7 +135,7 @@ Alice->Bob:Hello Bob, how are you?
 `;
 
     mermaidAPI.parse(str);
-    expect(parser.yy.getTitle()).toBe('This is the title');
+    expect(parser.yy.getAccTitle()).toBe('This is the title');
     expect(parser.yy.getAccDescription()).toBe('Accessibility\nDescription');
     const messages = parser.yy.getMessages();
   });
@@ -423,7 +423,6 @@ deactivate Bob`;
     try {
       mermaidAPI.parse(str);
     } catch (e) {
-      console.log(e.hash);
       error = true;
     }
     expect(error).toBe(true);
@@ -844,6 +843,80 @@ end`;
     expect(messages[7].from).toBe('Bob');
     expect(messages[8].type).toBe(parser.yy.LINETYPE.ALT_END);
   });
+  it('it should handle critical statements without options', function () {
+    const str = `
+sequenceDiagram
+    critical Establish a connection to the DB
+        Service-->DB: connect
+    end`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+
+    expect(actors.Service.description).toBe('Service');
+    expect(actors.DB.description).toBe('DB');
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(3);
+    expect(messages[0].type).toBe(parser.yy.LINETYPE.CRITICAL_START);
+    expect(messages[1].from).toBe('Service');
+    expect(messages[2].type).toBe(parser.yy.LINETYPE.CRITICAL_END);
+  });
+  it('it should handle critical statements with options', function () {
+    const str = `
+sequenceDiagram
+    critical Establish a connection to the DB
+        Service-->DB: connect
+    option Network timeout
+        Service-->Service: Log error
+    option Credentials rejected
+        Service-->Service: Log different error
+    end`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+
+    expect(actors.Service.description).toBe('Service');
+    expect(actors.DB.description).toBe('DB');
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(7);
+    expect(messages[0].type).toBe(parser.yy.LINETYPE.CRITICAL_START);
+    expect(messages[1].from).toBe('Service');
+    expect(messages[2].type).toBe(parser.yy.LINETYPE.CRITICAL_OPTION);
+    expect(messages[3].from).toBe('Service');
+    expect(messages[4].type).toBe(parser.yy.LINETYPE.CRITICAL_OPTION);
+    expect(messages[5].from).toBe('Service');
+    expect(messages[6].type).toBe(parser.yy.LINETYPE.CRITICAL_END);
+  });
+  it('it should handle break statements', function () {
+    const str = `
+sequenceDiagram
+    Consumer-->API: Book something
+    API-->BookingService: Start booking process
+    break when the booking process fails
+        API-->Consumer: show failure
+    end
+    API-->BillingService: Start billing process`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+
+    expect(actors.Consumer.description).toBe('Consumer');
+    expect(actors.API.description).toBe('API');
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(6);
+    expect(messages[0].from).toBe('Consumer');
+    expect(messages[1].from).toBe('API');
+    expect(messages[2].type).toBe(parser.yy.LINETYPE.BREAK_START);
+    expect(messages[3].from).toBe('API');
+    expect(messages[4].type).toBe(parser.yy.LINETYPE.BREAK_END);
+    expect(messages[5].from).toBe('API');
+  });
   it('it should handle par statements a sequenceDiagram', function () {
     const str = `
 sequenceDiagram
@@ -1024,7 +1097,6 @@ link a: Endpoint @ https://alice.contoso.com
 link a: Swagger @ https://swagger.contoso.com
 link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 `;
-    console.log(str);
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
@@ -1049,7 +1121,6 @@ participant c as Charlie
 properties a: {"class": "internal-service-actor", "icon": "@clock"}
 properties b: {"class": "external-service-actor", "icon": "@computer"}
 `;
-    console.log(str);
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();

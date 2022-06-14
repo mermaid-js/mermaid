@@ -136,7 +136,7 @@ export const draw = (txt, id) => {
 
     svg
       .append('text')
-      .text(parser.yy.getPieTitle())
+      .text(parser.yy.getDiagramTitle())
       .attr('x', 0)
       .attr('y', -(height - 50) / 2)
       .attr('class', 'pieTitleText');

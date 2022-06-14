@@ -64,7 +64,7 @@ This is important so that, if someone that does not know about this great featur
 
 ### Add E2E Tests
 
-This tests the rendering and visual apearance of the diagrams. This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
+This tests the rendering and visual appearance of the diagrams. This ensures that the rendering of that feature in the e2e will be reviewed in the release process going forward. Less chance that it breaks!
 
 To start working with the e2e tests:
 

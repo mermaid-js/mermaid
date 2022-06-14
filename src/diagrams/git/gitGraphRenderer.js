@@ -14,6 +14,7 @@ const commitType = {
   REVERSE: 1,
   HIGHLIGHT: 2,
   MERGE: 3,
+  CHERRY_PICK: 4,
 };
 
 let branchPos = {};
@@ -103,6 +104,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
         case commitType.MERGE:
           typeClass = 'commit-merge';
           break;
+        case commitType.CHERRY_PICK:
+          typeClass = 'commit-cherry-pick';
+          break;
         default:
           typeClass = 'commit-normal';
       }
@@ -139,6 +143,43 @@ const drawCommits = (svg, commits, modifyGraph) => {
               typeClass +
               '-inner'
           );
+      } else if (commit.type === commitType.CHERRY_PICK) {
+        gBullets
+          .append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 10)
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+        gBullets
+          .append('circle')
+          .attr('cx', x - 3)
+          .attr('cy', y + 2)
+          .attr('r', 2.75)
+          .attr('fill', '#fff')
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+        gBullets
+          .append('circle')
+          .attr('cx', x + 3)
+          .attr('cy', y + 2)
+          .attr('r', 2.75)
+          .attr('fill', '#fff')
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+        gBullets
+          .append('line')
+          .attr('x1', x + 3)
+          .attr('y1', y + 1)
+          .attr('x2', x)
+          .attr('y2', y - 5)
+          .attr('stroke', '#fff')
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+        gBullets
+          .append('line')
+          .attr('x1', x - 3)
+          .attr('y1', y + 1)
+          .attr('x2', x)
+          .attr('y2', y - 5)
+          .attr('stroke', '#fff')
+          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
       } else {
         const circle = gBullets.append('circle');
         circle.attr('cx', x);
@@ -175,10 +216,15 @@ const drawCommits = (svg, commits, modifyGraph) => {
       const px = 4;
       const py = 2;
       // Draw the commit label
-      if (commit.type !== commitType.MERGE && gitGraphConfig.showCommitLabel) {
-        const labelBkg = gLabels.insert('rect').attr('class', 'commit-label-bkg');
+      if (
+        commit.type !== commitType.CHERRY_PICK &&
+        commit.type !== commitType.MERGE &&
+        gitGraphConfig.showCommitLabel
+      ) {
+        const wrapper = gLabels.append('g');
+        const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
 
-        const text = gLabels
+        const text = wrapper
           .append('text')
           .attr('x', pos)
           .attr('y', y + 25)
@@ -193,6 +239,14 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('width', bbox.width + 2 * py)
           .attr('height', bbox.height + 2 * py);
         text.attr('x', pos + 10 - bbox.width / 2);
+        if (gitGraphConfig.rotateCommitLabel) {
+          let r_x = -7.5 - ((bbox.width + 10) / 25) * 9.5;
+          let r_y = 10 + (bbox.width / 25) * 8.5;
+          wrapper.attr(
+            'transform',
+            'translate(' + r_x + ', ' + r_y + ') rotate(' + -45 + ', ' + pos + ', ' + y + ')'
+          );
+        }
       }
       if (commit.tag) {
         const rect = gLabels.insert('polygon');
@@ -408,13 +462,15 @@ const drawBranches = (svg, branches) => {
   const gitGraphConfig = getConfig().gitGraph;
   const g = svg.append('g');
   branches.forEach((branch, index) => {
+    let adjustIndexForTheme = index >= 8 ? index - 8 : index;
+
     const pos = branchPos[branch.name].pos;
     const line = g.append('line');
     line.attr('x1', 0);
     line.attr('y1', pos);
     line.attr('x2', maxPos);
     line.attr('y2', pos);
-    line.attr('class', 'branch branch' + index);
+    line.attr('class', 'branch branch' + adjustIndexForTheme);
 
     lanes.push(pos);
 
@@ -427,21 +483,25 @@ const drawBranches = (svg, branches) => {
     const branchLabel = g.insert('g').attr('class', 'branchLabel');
 
     // Create inner g, label, this will be positioned now for centering the text
-    const label = branchLabel.insert('g').attr('class', 'label branch-label' + index);
+    const label = branchLabel.insert('g').attr('class', 'label branch-label' + adjustIndexForTheme);
     label.node().appendChild(labelElement);
     let bbox = labelElement.getBBox();
     bkg
-      .attr('class', 'branchLabelBkg label' + index)
+      .attr('class', 'branchLabelBkg label' + adjustIndexForTheme)
       .attr('rx', 4)
       .attr('ry', 4)
-      .attr('x', -bbox.width - 4)
+      .attr('x', -bbox.width - 4 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0))
       .attr('y', -bbox.height / 2 + 8)
       .attr('width', bbox.width + 18)
       .attr('height', bbox.height + 4);
 
     label.attr(
       'transform',
-      'translate(' + (-bbox.width - 14) + ', ' + (pos - bbox.height / 2 - 1) + ')'
+      'translate(' +
+        (-bbox.width - 14 - (gitGraphConfig.rotateCommitLabel === true ? 30 : 0)) +
+        ', ' +
+        (pos - bbox.height / 2 - 1) +
+        ')'
     );
     bkg.attr('transform', 'translate(' + -19 + ', ' + (pos - bbox.height / 2) + ')');
   });
@@ -477,7 +537,7 @@ export const draw = function (txt, id, ver) {
   let pos = 0;
   branches.forEach((branch, index) => {
     branchPos[branch.name] = { pos, index };
-    pos += 50;
+    pos += 50 + (gitGraphConfig.rotateCommitLabel ? 40 : 0);
   });
 
   const diagram = select(`[id="${id}"]`);
@@ -498,7 +558,11 @@ export const draw = function (txt, id, ver) {
   const height = svgBounds.height + padding * 2;
 
   configureSvgSize(diagram, height, width, conf.useMaxWidth);
-  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
+  const vBox = `${
+    svgBounds.x -
+    padding -
+    (gitGraphConfig.showBranches && gitGraphConfig.rotateCommitLabel === true ? 30 : 0)
+  } ${svgBounds.y - padding} ${width} ${height}`;
   diagram.attr('viewBox', vBox);
 };
 

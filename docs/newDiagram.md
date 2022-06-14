@@ -28,7 +28,7 @@ statement
 In the extract of the grammar above, it is defined that a call to the setTitle method in the data object will be done when parsing and the title keyword is encountered.
 
 ```tip
-Make sure that the `parseError` function for the parser is defined and calling `mermaidPAI.parseError`. This way a common way of detecting parse errors is provided for the end-user.
+Make sure that the `parseError` function for the parser is defined and calling `mermaid.parseError`. This way a common way of detecting parse errors is provided for the end-user.
 ```
 
 For more info look in the example diagram type:
@@ -37,7 +37,7 @@ The `yy` object has the following function:
 
 ```javascript
 exports.parseError = function(err, hash){
-   mermaidAPI.parseError(err, hash)
+   mermaid.parseError(err, hash)
 };
 ```
 
@@ -52,7 +52,7 @@ parser.yy = db
 
 ### Step 2: Rendering
 
-Write a renderer that given the data found during parsing renders the diagram. To look at an example look at sequendeRenderer.js rather then the flowchart renderer as this is a more generic example.
+Write a renderer that given the data found during parsing renders the diagram. To look at an example look at sequenceRenderer.js rather then the flowchart renderer as this is a more generic example.
 
 Place the renderer in the diagram folder.
 

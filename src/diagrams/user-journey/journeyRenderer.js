@@ -74,7 +74,7 @@ export const draw = function (text, id) {
   svgDraw.initGraphics(diagram);
 
   const tasks = parser.yy.getTasks();
-  const title = parser.yy.getTitle();
+  const title = parser.yy.getDiagramTitle();
 
   const actorNames = parser.yy.getActors();
   for (let member in actors) delete actors[member];

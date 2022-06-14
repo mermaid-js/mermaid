@@ -6,11 +6,13 @@ import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import {
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
 } from '../../commonDb';
 
 let dateFormat = '';
@@ -641,8 +643,10 @@ export default {
   getAxisFormat,
   setTodayMarker,
   getTodayMarker,
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   setAccDescription,
   getAccDescription,
   addSection,

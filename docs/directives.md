@@ -5,9 +5,9 @@
 ## Directives
 Directives gives a diagram author the capability to alter the appearance of a diagram before rendering by changing the applied configuration.
 
-The significance of having directives is that you have them available while writing the diagram, and can modify the defualt global and diagram specific configurations. So, directives are applied on top of the default configurations. The beauty of directives is that you can use them to alter configuration settings for a specific diagram, i.e. at an individual level.
+The significance of having directives is that you have them available while writing the diagram, and can modify the default global and diagram specific configurations. So, directives are applied on top of the default configurations. The beauty of directives is that you can use them to alter configuration settings for a specific diagram, i.e. at an individual level.
 
-While directives allow you to change most of the default configuation settings, there are some that are not available, that too for security reasons. Also, you do have the *option to define the set of configurations* that you would allow to be available to the diagram author for overriding with help of directives.
+While directives allow you to change most of the default configuration settings, there are some that are not available, that too for security reasons. Also, you do have the *option to define the set of configurations* that you would allow to be available to the diagram author for overriding with help of directives.
 
 ## Types of Directives options
 Mermaid basically supports two types of configuration options to be overridden by directives.
@@ -21,7 +21,7 @@ Mermaid basically supports two types of configuration options to be overridden b
 
 
 2) *Diagram specific configurations* : These are the configurations that are available and applied to a specific diagram. For each diagram there are specific configuration that will alter how that particular diagram looks and behaves.
- For example, `mirrroActors` is a configuration that is specific to the `SequenceDiagram` and alter whether the actors are mirrored or not. So this config is available only for the `SequenceDiagram` type.
+ For example, `mirrorActors` is a configuration that is specific to the `SequenceDiagram` and alter whether the actors are mirrored or not. So this config is available only for the `SequenceDiagram` type.
 
 **NOTE:** These options listed here are not all the configuration options. To get hold of all the configuration options, please refer to the [defaultConfig.js](https://github.com/mermaid-js/mermaid/blob/develop/src/defaultConfig.js) in the source code.
 ```
@@ -173,7 +173,7 @@ Some common flowchart configurations are:
 - *useMaxWidth*: number
 
 For complete list of flowchart configurations, see [defaultConfig.js](https://github.com/mermaid-js/mermaid/blob/develop/src/defaultConfig.js) in the source code.
-*Soon we plan to publis a complete list all diagram specific configurations updated in the docs*
+*Soon we plan to publish a complete list all diagram specific configurations updated in the docs*
 
 The following code snippet changes flowchart config:
 
@@ -196,15 +196,15 @@ A --> C[End]
 Some common sequence configurations are:
 - *width*: number
 - *height*: number
-- *messgageAlign*: left, center, right
+- *messageAlign*: left, center, right
 - *mirrorActors*: boolean
 - *useMaxWidth*: boolean
 - *rightAngles*: boolean
 - *showSequenceNumbers*: boolean
 - *wrap*: boolean
 
-For complete list of sequeue diagram configurations, see *defaultConfig.js* in the source code.
-*Soon we plan to publis a complete list all diagram specific configurations updated in the docs*
+For complete list of sequence diagram configurations, see *defaultConfig.js* in the source code.
+*Soon we plan to publish a complete list all diagram specific configurations updated in the docs*
 
 So, `wrap` by default has a value of `false` for sequence diagrams.
 
@@ -214,12 +214,12 @@ Let us see an example:
 sequenceDiagram
 
 Alice->Bob: Hello Bob, how are you?
-Bob->Alice: Fine, How did you mother like the book I suggested? And did you catch with the new book about alien invansion?
+Bob->Alice: Fine, How did you mother like the book I suggested? And did you catch with the new book about alien invasion?
 Alice->Bob: Good.
 Bob->Alice: Cool
 ```
 
-Now let us enble wrap for sequence diagrams.
+Now let us enable wrap for sequence diagrams.
 
 The following code snippet changes sequence diagram config for `wrap` to `true`:
 
@@ -232,7 +232,7 @@ Using in the diagram above, the wrap will be enabled.
 %%{init: { "sequence": { "wrap": true, "width":300 } } }%%
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
-Bob->Alice: Fine, How did you mother like the book I suggested? And did you catch with the new book about alien invansion?
+Bob->Alice: Fine, How did you mother like the book I suggested? And did you catch with the new book about alien invasion?
 Alice->Bob: Good.
 Bob->Alice: Cool
 ```

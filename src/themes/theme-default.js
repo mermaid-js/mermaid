@@ -103,6 +103,11 @@ class Theme {
     this.critBkgColor = 'red';
     this.todayLineColor = 'red';
 
+    /* C4 Context Diagram variables */
+
+    this.personBorder = 'calculated';
+    this.personBkg = 'calculated';
+
     /* state colors */
     this.labelColor = 'black';
     this.errorBkgColor = '#552222';

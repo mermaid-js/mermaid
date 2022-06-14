@@ -168,7 +168,7 @@ describe('parsing a flow chart', function () {
       `;
 
     flow.parser.parse(flowChart);
-    expect(flow.parser.yy.getTitle()).toBe('Big decisions');
+    expect(flow.parser.yy.getAccTitle()).toBe('Big decisions');
     expect(flow.parser.yy.getAccDescription()).toBe('Flow chart of the decision making process');
   });
   it('should add accTitle and a multi line accDescr to flow chart', function () {
@@ -187,8 +187,7 @@ describe('parsing a flow chart', function () {
 `;
 
     flow.parser.parse(flowChart);
-    expect(flow.parser.yy.getTitle()).toBe('Big decisions');
-    console.log(flow.parser.yy.getAccDescription());
+    expect(flow.parser.yy.getAccTitle()).toBe('Big decisions');
     expect(flow.parser.yy.getAccDescription()).toBe(
       `Flow chart of the decision making process
 with a second line`

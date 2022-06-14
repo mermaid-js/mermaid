@@ -1,6 +1,12 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  push: {}
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
 
 permissions:
   contents: read
@@ -37,7 +43,3 @@ jobs:
       with:
         name: dist
         path: dist
-
-    - name: Run Unit Tests
-      run: |
-        yarn test --coverage

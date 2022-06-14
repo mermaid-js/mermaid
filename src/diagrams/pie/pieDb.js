@@ -3,8 +3,10 @@ import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import common from '../common/common';
 import {
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -52,15 +54,6 @@ const clear = function () {
   commonClear();
 };
 
-export const setPieTitle = function (txt) {
-  let sanitizedText = common.sanitizeText(txt, configApi.getConfig());
-  title = sanitizedText;
-};
-
-export const getPieTitle = function () {
-  return title;
-};
-
 export default {
   parseDirective,
   getConfig: () => configApi.getConfig().pie,
@@ -68,10 +61,10 @@ export default {
   getSections,
   cleanupValue,
   clear,
-  setTitle,
-  getTitle,
-  setPieTitle,
-  getPieTitle,
+  setAccTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   setShowData,
   getShowData,
   getAccDescription,

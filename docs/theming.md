@@ -9,16 +9,16 @@ The theme can be altered by changing the root level variable `theme` variable in
 Themes follow and build upon the Levels of Configuration, and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
 
 ## Deployable Themes
-The following are a list of **Deployable themes**, sample `%%init%%` directives and `initialize` calls. 
-1. **Base**- Designed to modified, as the name implies it is supposed to be used as the base for making custom themes.
+The following are a list of **Deployable themes**, sample `%%init%%` directives and `initialize` calls.
+1. **base**- Designed to be modified, as the name implies it is supposed to be used as the base for making custom themes.
 
-2. **Forest**- A theme full of light greens that is easy on the eyes.
+2. **forest**- A theme full of light greens that is easy on the eyes.
 
-3. **Dark**- A theme that would go well with other dark colored elements.
+3. **dark**- A theme that would go well with other dark-colored elements.
 
-4. **Default**- The default theme for all diagrams. 
+4. **default**- The default theme for all diagrams.
 
-5. **Neutral**- The theme to be used for black and white printing
+5. **neutral**- The theme to be used for black and white printing.
 
 
 ## Site-wide Themes
@@ -116,15 +116,15 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 | -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
 | darkMode             | false                          |      | Boolean Value that dictates how to calculate colors. "true" will activate darkmode.                                                                                 |
 | background           | #f4f4f4                        |      | Used to calculate color for items that should either be background colored or contrasting to the background.                     |
-| primaryColor         | #fff4dd                        |      | Color to be used as background in nodes, other colors will be derived from this                                                  |
 | fontFamily           | "trebuchet ms", verdana, arial |      |                                                                                                                                  |
 | fontSize             | 16px                           |      |  Font Size, in pixels                                                                                                                                |
-| secondaryColor       | based on primaryColor          | *    |                                                                                                                                  |
-| tertiaryColor        | based on primaryColor          | *    |                                                                                                                                  |
+| primaryColor         | #fff4dd                        |      | Color to be used as background in nodes, other colors will be derived from this                                                  |
 | primaryBorderColor   | based on primaryColor          | *    | Color to be used as border in nodes using primaryColor                                                                           |
-| primaryTextColor     | based on darkMode #ddd/#333    | *    | Color to be used as text color in nodes using primaryColor                                                                        |
+| primaryTextColor     | based on darkMode #ddd/#333    | *    | Color to be used as text color in nodes using primaryColor   
+| secondaryColor       | based on primaryColor          | *    |                                                                                                                                  |
 | secondaryBorderColor | based on secondaryColor        | *    | Color to be used as border in nodes using secondaryColor                                                                         |
-| secondaryTextColor   | based on secondaryColor        | *    | Color to be used as text color in nodes using secondaryColor                                                                      |
+| secondaryTextColor   | based on secondaryColor        | *    | Color to be used as text color in nodes using secondaryColor   
+| tertiaryColor        | based on primaryColor          | *    |                                                                                                                                  |                                                                     |                                                                   |
 | tertiaryBorderColor  | based on tertiaryColor         | *    | Color to be used as border in nodes using tertiaryColor                                                                          |
 | tertiaryTextColor    | based on tertiaryColor         | *    | Color to be used as text color in nodes using tertiaryColor                                                                       |
 | noteBkgColor         | #fff5ad                        |      | Color used as background in notes                                                                                                |
@@ -160,9 +160,9 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 | actorBkg              | mainBkg                 | *    | Actor Background Color         |
 | actorTextColor        | primaryTextColor        | *    |  Actor Text Color            |
 | actorLineColor        | grey                    | *    |   Actor Line Color           |
-| labelBoxBkgColor      | actorBkg                | *    |  Label Box Background Color            |
 | signalColor           | textColor               | *    |  Signal Color           |
 | signalTextColor       | textColor               | *    |  Signal Text Color           |
+| labelBoxBkgColor      | actorBkg                | *    |  Label Box Background Color            |
 | labelBoxBorderColor   | actorBorder             | *    |   Label Box Border Color          |
 | labelTextColor        | actorTextColor          | *    |   Label Text Color           |
 | loopTextColor         | actorTextColor          | *    |   Loop ext Color            |

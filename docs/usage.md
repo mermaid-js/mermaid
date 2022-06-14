@@ -2,7 +2,7 @@
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
 
-Mermaid is a Javascript tool that makes use of a markdown based syntax to render customizable diagrams, charts and visualizations.
+Mermaid is a JavaScript tool that makes use of a Markdown based syntax to render customizable diagrams, charts and visualizations.
 
 Diagrams can be re-rendered/modified by modifying their descriptions.
 
@@ -114,7 +114,7 @@ Values:
 -   **strict**: (**default**) tags in text are encoded, click functionality is disabled
 -   **loose**: tags in text are allowed, click functionality is enabled
 -   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
--   **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any javascript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc. 
+-   **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any JavaScript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc. 
 
 
 ```note
@@ -198,10 +198,10 @@ mermaid fully supports webpack. Here is a [working demo](https://github.com/merm
 ## API usage
 
 The main idea of the API is to be able to call a render function with the graph definition as a string. The render function
-will render the graph and call a callback with the resulting svg code. With this approach it is up to the site creator to
+will render the graph and call a callback with the resulting SVG code. With this approach it is up to the site creator to
 fetch the graph definition from the site (perhaps from a textarea), render it and place the graph somewhere in the site.
 
-The example below show an outline of how this could be used. The example just logs the resulting svg to the javascript console.
+The example below show an outline of how this could be used. The example just logs the resulting SVG to the JavaScript console.
 
 ```html
 <script src="mermaid.js"></script>
@@ -221,7 +221,7 @@ Sometimes the generated graph also has defined interactions like tooltip and cli
 add those events after the graph has been inserted into the DOM.
 
 The example code below is an extract of what mermaid does when using the API. The example shows how it is possible to
-bind events to an svg when using the API for rendering.
+bind events to an SVG when using the API for rendering.
 
 ```javascript
 var insertSvg = function(svgCode, bindFunctions) {
@@ -240,14 +240,14 @@ mermaidAPI.render(id,txt,insertSvg, element);
 
 1. The graph is generated using the render call.
 2. After generation the render function calls the provided callback function, in this case it's called insertSvg.
-3. The callback function is called with two parameters, the svg code of the generated graph and a function. This function binds events to the svg **after** it is inserted into the DOM.
-4. Insert the svg code into the DOM for presentation.
+3. The callback function is called with two parameters, the SVG code of the generated graph and a function. This function binds events to the SVG **after** it is inserted into the DOM.
+4. Insert the SVG code into the DOM for presentation.
 5. Call the binding function that binds the events.
 
 
 ## Example of a marked renderer
 
-This is the renderer used for transforming the documentation from markdown to html with mermaid diagrams in the html.
+This is the renderer used for transforming the documentation from Markdown to html with mermaid diagrams in the html.
 
 ```javascript
 var renderer = new marked.Renderer();
@@ -261,7 +261,7 @@ renderer.code = function (code, language) {
 };
 ```
 
-Another example in coffeescript that also includes the mermaid script tag in the generated markup.
+Another example in CoffeeScript that also includes the mermaid script tag in the generated markup.
 
 ```coffee
 marked = require 'marked'

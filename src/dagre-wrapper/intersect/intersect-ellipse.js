@@ -5,7 +5,7 @@
  * @param point
  */
 function intersectEllipse(node, rx, ry, point) {
-  // Formulae from: http://mathworld.wolfram.com/Ellipse-LineIntersection.html
+  // Formulae from: https://mathworld.wolfram.com/Ellipse-LineIntersection.html
 
   var cx = node.x;
   var cy = node.y;

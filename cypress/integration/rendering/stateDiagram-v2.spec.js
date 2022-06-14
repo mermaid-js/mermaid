@@ -346,6 +346,21 @@ describe('State diagram', () => {
       }
     );
   });
+  it('v2 A compound state should be able to link to itself', () => {
+    imgSnapshotTest(
+      `
+stateDiagram
+  state Active {
+    Idle
+  }
+  Inactive --> Idle: ACT
+  Active --> Active: LOG
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
   it('v2 width of compond state should grow with title if title is wider', () => {
     imgSnapshotTest(
       `

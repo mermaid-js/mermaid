@@ -3,8 +3,10 @@ import * as configApi from '../../config';
 import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
 import {
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   getAccDescription,
   setAccDescription,
   clear as commonClear,
@@ -188,6 +190,11 @@ export const LINETYPE = {
   SOLID_POINT: 24,
   DOTTED_POINT: 25,
   AUTONUMBER: 26,
+  CRITICAL_START: 27,
+  CRITICAL_OPTION: 28,
+  CRITICAL_END: 29,
+  BREAK_START: 30,
+  BREAK_END: 31,
 };
 
 export const ARROWTYPE = {
@@ -331,15 +338,6 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
-export const setDiagramTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
-  diagramTitle = sanitizedText;
-};
-
-export const getDiagramTitle = function () {
-  return diagramTitle;
-};
-
 export const apply = function (param) {
   if (param instanceof Array) {
     param.forEach(function (item) {
@@ -417,8 +415,8 @@ export const apply = function (param) {
       case 'altEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
-      case 'setTitle':
-        setTitle(param.text);
+      case 'setAccTitle':
+        setAccTitle(param.text);
         break;
       case 'parStart':
         addSignal(undefined, undefined, param.parText, param.signalType);
@@ -427,6 +425,21 @@ export const apply = function (param) {
         addSignal(undefined, undefined, param.parText, param.signalType);
         break;
       case 'parEnd':
+        addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'criticalStart':
+        addSignal(undefined, undefined, param.criticalText, param.signalType);
+        break;
+      case 'option':
+        addSignal(undefined, undefined, param.optionText, param.signalType);
+        break;
+      case 'criticalEnd':
+        addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'breakStart':
+        addSignal(undefined, undefined, param.breakText, param.signalType);
+        break;
+      case 'breakEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
     }
@@ -450,8 +463,9 @@ export default {
   getActor,
   getActorKeys,
   getActorProperty,
-  getTitle,
+  getAccTitle,
   getDiagramTitle,
+  setDiagramTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
   clear,
@@ -460,8 +474,7 @@ export default {
   ARROWTYPE,
   PLACEMENT,
   addNote,
-  setTitle,
-  setDiagramTitle,
+  setAccTitle,
   apply,
   setAccDescription,
   getAccDescription,

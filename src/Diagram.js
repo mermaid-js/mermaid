@@ -1,3 +1,6 @@
+import c4Db from './diagrams/c4/c4Db';
+import c4Renderer from './diagrams/c4/c4Renderer';
+import c4Parser from './diagrams/c4/parser/c4Diagram';
 import classDb from './diagrams/class/classDb';
 import classRenderer from './diagrams/class/classRenderer';
 import classRendererV2 from './diagrams/class/classRenderer-v2';
@@ -49,6 +52,12 @@ class Diagram {
     this.type = utils.detectType(txt, cnf);
     log.debug('Type ' + this.type);
     switch (this.type) {
+      case 'c4':
+        this.parser = c4Parser;
+        this.parser.parser.yy = c4Db;
+        this.db = c4Db;
+        this.renderer = c4Renderer;
+        break;
       case 'gitGraph':
         this.parser = gitGraphParser;
         this.parser.parser.yy = gitGraphAst;

@@ -110,14 +110,13 @@ describe('class diagram, ', function () {
         '   flightNumber : Integer\n' +
         '   departureTime : Date\n' +
         '}';
-      let testPased = false;
+      let testPassed = false;
       try {
         parser.parse(str);
       } catch (error) {
-        console.log(error.name);
-        testPased = true;
+        testPassed = true;
       }
-      expect(testPased).toBe(true);
+      expect(testPassed).toBe(true);
     });
 
     it('should break when EOF is encountered before closing the first `{` while defining generic class with brackets', function () {
@@ -129,14 +128,13 @@ describe('class diagram, ', function () {
         '}\n' +
         '\n' +
         'class Dummy_Class {\n';
-      let testPased = false;
+      let testPassed = false;
       try {
         parser.parse(str);
       } catch (error) {
-        console.log(error.name);
-        testPased = true;
+        testPassed = true;
       }
-      expect(testPased).toBe(true);
+      expect(testPassed).toBe(true);
     });
 
     it('should handle generic class with brackets', function () {
@@ -552,7 +550,7 @@ foo()
             `;
 
       parser.parse(str);
-      expect(parser.yy.getTitle()).toBe('My Title');
+      expect(parser.yy.getAccTitle()).toBe('My Title');
       expect(parser.yy.getAccDescription()).toBe('My Description');
     });
     it('should handle accTitle and multiline accDescr', function () {
@@ -567,7 +565,7 @@ foo()
             `;
 
       parser.parse(str);
-      expect(parser.yy.getTitle()).toBe('My Title');
+      expect(parser.yy.getAccTitle()).toBe('My Title');
       expect(parser.yy.getAccDescription()).toBe('This is mu multi\nline description');
     });
 

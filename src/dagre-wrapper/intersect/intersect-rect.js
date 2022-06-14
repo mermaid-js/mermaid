@@ -3,7 +3,7 @@ const intersectRect = (node, point) => {
   var y = node.y;
 
   // Rectangle intersection algorithm from:
-  // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
+  // https://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
   var dx = point.x - x;
   var dy = point.y - y;
   var w = node.width / 2;

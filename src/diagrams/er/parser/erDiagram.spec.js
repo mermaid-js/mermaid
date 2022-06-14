@@ -191,7 +191,7 @@ describe('when parsing ER diagram it...', function () {
       accDescr: this graph is about stuff
       ${line1}`
     );
-    expect(erDb.getTitle()).toBe('graph title');
+    expect(erDb.getAccTitle()).toBe('graph title');
     expect(erDb.getAccDescription()).toBe('this graph is about stuff');
   });
 
@@ -207,7 +207,7 @@ describe('when parsing ER diagram it...', function () {
       }\n
       ${line1}`
     );
-    expect(erDb.getTitle()).toBe('graph title');
+    expect(erDb.getAccTitle()).toBe('graph title');
     expect(erDb.getAccDescription()).toBe('this graph is about stuff');
   });
 
@@ -425,5 +425,11 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : places');
     const rels = erDb.getRelationships();
     expect(rels[0].roleA).toBe('places');
+  });
+
+  it('should allow an entity name with a dot', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER.PROP ||--|{ ORDER : places');
+    const rels = erDb.getRelationships();
+    expect(rels[0].entityA).toBe('CUSTOMER.PROP');
   });
 });

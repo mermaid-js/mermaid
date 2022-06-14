@@ -4,7 +4,7 @@
  *  MIT license.
  *
  *  Based on js sequence diagrams jison grammr
- *  http://bramp.github.io/js-sequence-diagrams/
+ *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
@@ -204,7 +204,7 @@ statement
     | note NOTE_TEXT AS ID
   	| directive
     | direction
-    | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+    | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    ;
 
