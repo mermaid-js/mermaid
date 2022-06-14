@@ -28,27 +28,27 @@
   <body>
     <div>info below</div>
     <div class="">
-      <div class="mermaid" style="width: 100%; height: 400px;">
+      <div class="mermaid2" style="width: 100%; height: 400px;">
 flowchart TB;subgraph "number as labels";1;end;
       </div>
-      <div class="mermaid" style="width: 100%; height: 400px;">
+      <div class="mermaid2" style="width: 100%; height: 400px;">
 flowchart TB;a[APA];
       </div>
-      <div class="mermaid" style="margin-left:100px;">
+      <div class="mermaid2" style="margin-left:100px;">
 graph TD
       work --> sleep
       sleep --> work
       eat --> sleep
       work --> eat
   </div>
-      <div class="mermaid" style="margin-left:100px;">
+      <div class="mermaid2" style="margin-left:100px;">
 flowchart TD
       work --> sleep
       sleep --> work
       eat --> sleep
       work --> eat
   </div>
-      <div class="mermaid" style="">
+      <div class="mermaid2" style="">
  graph TB
       A
       B
@@ -77,7 +77,7 @@ flowchart TD
       style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
       style bar fill:#999,stroke-width:2px,stroke:#0F0,color:blue
     </div>
-    <div class="mermaid" style="">
+    <div class="mermaid2" style="">
       graph TB
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
       A
@@ -107,55 +107,55 @@ flowchart TD
       style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
       style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
     </div>
-      <div class="mermaid" style="">
+      <div class="mermaid2" style="">
       graph TD
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
     </div>
-    <div class="mermaid" style="">
+    <div class="mermaid2" style="">
       graph TD
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
     </div>
-      <div class="mermaid" style="">
+      <div class="mermaid2" style="">
       flowchart TD
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
     </div>
-    <div class="mermaid" style="">
+    <div class="mermaid2" style="">
       flowchart TD
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
     </div>
-      <div class="mermaid" style="">
+      <div class="mermaid2" style="">
 flowchart LR
         a["<strong>Haiya</strong>"]---->b
 </div>
-      <div class="mermaid" style="">
+      <div class="mermaid2" style="">
 flowchart LR
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
         a["<strong>Haiya</strong>"]---->b
 </div>
-    <div class="mermaid" style="">
+    <div class="mermaid2" style="">
       flowchart TD
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
     </div>
-    <div class="mermaid" style="">
+    <div class="mermaid2" style="">
       flowchart TD
 %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
         A[Christmas] ==> D
         A[Christmas] -->|Get money| B(Go shopping)
         A[Christmas] ==> C
     </div>
-    <div class="mermaid" style="">
+    <div class="mermaid2" style="">
       %%{init: { "logLevel": 1, "flowchart": {"htmlLabels":true }} }%%
 classDiagram-v2
       Class01 <|-- AveryLongClass : Cool
@@ -183,7 +183,7 @@ classDiagram-v2
         test()
       }
       </div>
-    <div class="mermaid" style="">
+    <div class="mermaid2" style="">
 classDiagram-v2
       Class01 <|-- AveryLongClass : Cool
       &lt;&lt;interface&gt;&gt; Class01
@@ -209,6 +209,17 @@ classDiagram-v2
         int id
         test()
       }
+      </div>
+    <div class="mermaid" style="">
+flowchart BT
+   subgraph S1
+    sub1 -->sub2
+   end
+  subgraph S2
+    sub4
+   end
+   S1 --> S2
+   sub1 --> sub4
       </div>
   <script src="./mermaid.js"></script>
     <script>
