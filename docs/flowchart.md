@@ -640,7 +640,7 @@ flowchart LR
 
 Is it possible to adjust the width of the rendered flowchart.
 
-This is done by defining **mermaid.flowchartConfig** or by the CLI to use a json file with the configuration. How to use the CLI is described in the mermaidCLI page.
+This is done by defining **mermaid.flowchartConfig** or by the CLI to use a JSON file with the configuration. How to use the CLI is described in the mermaidCLI page.
 mermaid.flowchartConfig can be set to a JSON string with config parameters or the corresponding object.
 
 ```javascript
