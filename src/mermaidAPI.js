@@ -90,7 +90,7 @@ function parse(text) {
       case 'c4':
         c4Db.clear();
         parser = c4Parser;
-        parser.parser.yy = c4Parser;
+        parser.parser.yy = c4Db;
         break;
       case 'gitGraph':
         gitGraphAst.clear();
