@@ -1,9 +1,9 @@
 # Configuration
 
-When mermaid starts configuration is extracted to a configuration to be used for a diagram. There a 3 sources for configuration:
+When mermaid starts configuration is extracted to a configuration to be used for a diagram. There are 3 sources for configuration:
 
 * The default configuration
-* Overrides on the site level, set is set by the initialize call and will  be applied for all diagrams in the site/app. The term for this is the **siteConfig**.
+* Overrides on the site level is set by the initialize call and will be applied to all diagrams in the site/app. The term for this is the **siteConfig**.
 * Directives - diagram authors can update select configuration parameters directly in the diagram code via directives and these are applied to the render config.
 
 **The render config** is configuration that is used when rendering by applying these configurations.

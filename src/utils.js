@@ -185,6 +185,10 @@ export const detectDirective = function (text, type = null) {
  */
 export const detectType = function (text, cnf) {
   text = text.replace(directive, '').replace(anyComment, '\n');
+  if (text.match(/^\s*C4Context|C4Container|C4Component|C4Dynamic|C4Deployment/)) {
+    return 'c4';
+  }
+
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';
   }
@@ -915,6 +919,52 @@ export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
   const attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
   d3Attrs(svgElem, attrs);
 };
+export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth) {
+  const svgBounds = svgElem.node().getBBox();
+  const sWidth = svgBounds.width;
+  const sHeight = svgBounds.height;
+
+  let width = graph._label.width;
+  let height = graph._label.height;
+  let tx = 0;
+  let ty = 0;
+  if (sWidth > width) {
+    tx = (sWidth - width) / 2 + padding;
+    width = sWidth + padding * 2;
+  } else {
+    if (Math.abs(sWidth - width) >= 2 * padding + 1) {
+      width = width - padding;
+    }
+  }
+  if (sHeight > height) {
+    ty = (sHeight - height) / 2 + padding;
+    height = sHeight + padding * 2;
+  }
+  configureSvgSize(svgElem, height, width, useMaxWidth);
+
+  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
+  const vBox = `0 0 ${width} ${height}`;
+  log.debug(
+    'Grpah.label',
+    graph._label,
+    'swidth',
+    sWidth,
+    'sheight',
+    sHeight,
+    'width',
+    width,
+    'height',
+    height,
+    'tx',
+    tx,
+    'ty',
+    ty,
+    'vBox',
+    vBox
+  );
+  svgElem.attr('viewBox', vBox);
+  svgElem.select('g').attr('transform', `translate(${tx}, ${ty})`);
+};
 
 export const initIdGeneratior = class iterator {
   constructor(deterministic, seed) {
@@ -1014,6 +1064,7 @@ export default {
   calculateTextDimensions,
   calculateSvgSizeAttrs,
   configureSvgSize,
+  setupGraphViewbox,
   detectInit,
   detectDirective,
   detectType,

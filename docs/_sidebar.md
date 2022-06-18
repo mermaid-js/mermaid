@@ -15,6 +15,7 @@
   - [Pie Chart](pie.md)
   - [Requirement Diagram](requirementDiagram.md)
   - [Gitgraph (Git) Diagram 🔥](gitgraph.md)
+  - [C4C Diagram (Context) Diagram 🦺⚠️](c4c.md)
   - [Other Examples](examples.md)
 
 - ⚙️ Deployment and Configuration

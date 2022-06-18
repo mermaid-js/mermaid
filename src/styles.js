@@ -9,6 +9,7 @@ import requirement from './diagrams/requirement/styles';
 import sequence from './diagrams/sequence/styles';
 import stateDiagram from './diagrams/state/styles';
 import journey from './diagrams/user-journey/styles';
+import c4 from './diagrams/c4/styles';
 
 const themes = {
   flowchart,
@@ -26,6 +27,7 @@ const themes = {
   er,
   journey,
   requirement,
+  c4,
 };
 
 export const calcThemeVariables = (theme, userOverRides) => theme.calcColors(userOverRides);

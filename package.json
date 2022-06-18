@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "9.1.1",
+  "version": "9.1.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "module": "dist/mermaid.esm.min.mjs",
@@ -99,7 +99,7 @@
     "jest-environment-jsdom": "^28.0.2",
     "jison": "^0.4.18",
     "js-base64": "3.7.2",
-    "lint-staged": "^12.1.2",
+    "lint-staged": "^13.0.0",
     "moment": "^2.23.0",
     "path-browserify": "^1.0.1",
     "prettier": "^2.3.2",

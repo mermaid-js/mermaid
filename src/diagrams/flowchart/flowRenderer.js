@@ -9,7 +9,7 @@ import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
-import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
+import { interpolateToCurve, getStylesFromArray, setupGraphViewbox } from '../../utils';
 import flowChartShapes from './flowChartShapes';
 import addSVGAccessibilityFields from '../../accessibility';
 
@@ -427,8 +427,6 @@ export const draw = function (text, id) {
   const svg = root.select(`[id="${id}"]`);
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
-  log.warn(g);
-
   // Adds title and description to the flow chart
   addSVGAccessibilityFields(parser.yy, svg, id);
 
@@ -439,18 +437,6 @@ export const draw = function (text, id) {
   element.selectAll('g.node').attr('title', function () {
     return flowDb.getTooltip(this.id);
   });
-
-  const padding = conf.diagramPadding;
-  const svgBounds = svg.node().getBBox();
-  const width = svgBounds.width + padding * 2;
-  const height = svgBounds.height + padding * 2;
-
-  configureSvgSize(svg, height, width, conf.useMaxWidth);
-
-  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
-  log.debug(`viewBox ${vBox}`);
-  svg.attr('viewBox', vBox);
 
   // Index nodes
   flowDb.indexNodes('subGraph' + i);
@@ -468,10 +454,10 @@ export const draw = function (text, id) {
 
       const xPos = clusterRects[0].x.baseVal.value;
       const yPos = clusterRects[0].y.baseVal.value;
-      const width = clusterRects[0].width.baseVal.value;
+      const _width = clusterRects[0].width.baseVal.value;
       const cluster = select(clusterEl[0]);
       const te = cluster.select('.label');
-      te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`);
+      te.attr('transform', `translate(${xPos + _width / 2}, ${yPos + 14})`);
       te.attr('id', id + 'Text');
 
       for (let j = 0; j < subG.classes.length; j++) {
@@ -499,6 +485,7 @@ export const draw = function (text, id) {
       label.insertBefore(rect, label.firstChild);
     }
   }
+  setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 
   // If node has a link, wrap it in an anchor SVG object.
   const keys = Object.keys(vert);

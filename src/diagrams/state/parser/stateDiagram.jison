@@ -4,7 +4,7 @@
  *  MIT license.
  *
  *  Based on js sequence diagrams jison grammr
- *  http://bramp.github.io/js-sequence-diagrams/
+ *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
