@@ -15,6 +15,8 @@ const commitType = {
   CHERRY_PICK: 4,
 };
 
+const THEME_SIZE = 8;
+
 let branchPos = {};
 let commitPos = {};
 let lanes = [];
@@ -120,7 +122,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
           'commit ' +
             commit.id +
             ' commit-highlight' +
-            branchPos[commit.branch].index +
+            (branchPos[commit.branch].index % THEME_SIZE) +
             ' ' +
             typeClass +
             '-outer'
@@ -136,7 +138,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
             'commit ' +
               commit.id +
               ' commit' +
-              branchPos[commit.branch].index +
+              (branchPos[commit.branch].index % THEME_SIZE) +
               ' ' +
               typeClass +
               '-inner'
@@ -183,7 +185,10 @@ const drawCommits = (svg, commits, modifyGraph) => {
         circle.attr('cx', x);
         circle.attr('cy', y);
         circle.attr('r', commit.type === commitType.MERGE ? 9 : 10);
-        circle.attr('class', 'commit ' + commit.id + ' commit' + branchPos[commit.branch].index);
+        circle.attr(
+          'class',
+          'commit ' + commit.id + ' commit' + (branchPos[commit.branch].index % THEME_SIZE)
+        );
         if (commit.type === commitType.MERGE) {
           const circle2 = gBullets.append('circle');
           circle2.attr('cx', x);
@@ -191,7 +196,12 @@ const drawCommits = (svg, commits, modifyGraph) => {
           circle2.attr('r', 6);
           circle2.attr(
             'class',
-            'commit ' + typeClass + ' ' + commit.id + ' commit' + branchPos[commit.branch].index
+            'commit ' +
+              typeClass +
+              ' ' +
+              commit.id +
+              ' commit' +
+              (branchPos[commit.branch].index % THEME_SIZE)
           );
         }
         if (commit.type === commitType.REVERSE) {
@@ -200,7 +210,12 @@ const drawCommits = (svg, commits, modifyGraph) => {
             .attr('d', `M ${x - 5},${y - 5}L${x + 5},${y + 5}M${x - 5},${y + 5}L${x + 5},${y - 5}`)
             .attr(
               'class',
-              'commit ' + typeClass + ' ' + commit.id + ' commit' + branchPos[commit.branch].index
+              'commit ' +
+                typeClass +
+                ' ' +
+                commit.id +
+                ' commit' +
+                (branchPos[commit.branch].index % THEME_SIZE)
             );
         }
       }
@@ -430,7 +445,7 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
   const arrow = svg
     .append('path')
     .attr('d', lineDef)
-    .attr('class', 'arrow arrow' + colorClassNum);
+    .attr('class', 'arrow arrow' + (colorClassNum % THEME_SIZE));
 };
 
 const drawArrows = (svg, commits) => {
@@ -460,7 +475,7 @@ const drawBranches = (svg, branches) => {
   const gitGraphConfig = getConfig().gitGraph;
   const g = svg.append('g');
   branches.forEach((branch, index) => {
-    let adjustIndexForTheme = index >= 8 ? index - 8 : index;
+    let adjustIndexForTheme = index % THEME_SIZE;
 
     const pos = branchPos[branch.name].pos;
     const line = g.append('line');
