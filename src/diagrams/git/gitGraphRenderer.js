@@ -15,7 +15,7 @@ const commitType = {
   CHERRY_PICK: 4,
 };
 
-const THEME_SIZE = 8;
+const THEME_COLOR_LIMIT = 8;
 
 let branchPos = {};
 let commitPos = {};
@@ -122,7 +122,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
           'commit ' +
             commit.id +
             ' commit-highlight' +
-            (branchPos[commit.branch].index % THEME_SIZE) +
+            (branchPos[commit.branch].index % THEME_COLOR_LIMIT) +
             ' ' +
             typeClass +
             '-outer'
@@ -138,7 +138,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
             'commit ' +
               commit.id +
               ' commit' +
-              (branchPos[commit.branch].index % THEME_SIZE) +
+              (branchPos[commit.branch].index % THEME_COLOR_LIMIT) +
               ' ' +
               typeClass +
               '-inner'
@@ -187,7 +187,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
         circle.attr('r', commit.type === commitType.MERGE ? 9 : 10);
         circle.attr(
           'class',
-          'commit ' + commit.id + ' commit' + (branchPos[commit.branch].index % THEME_SIZE)
+          'commit ' + commit.id + ' commit' + (branchPos[commit.branch].index % THEME_COLOR_LIMIT)
         );
         if (commit.type === commitType.MERGE) {
           const circle2 = gBullets.append('circle');
@@ -201,7 +201,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
               ' ' +
               commit.id +
               ' commit' +
-              (branchPos[commit.branch].index % THEME_SIZE)
+              (branchPos[commit.branch].index % THEME_COLOR_LIMIT)
           );
         }
         if (commit.type === commitType.REVERSE) {
@@ -215,7 +215,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
                 ' ' +
                 commit.id +
                 ' commit' +
-                (branchPos[commit.branch].index % THEME_SIZE)
+                (branchPos[commit.branch].index % THEME_COLOR_LIMIT)
             );
         }
       }
@@ -445,7 +445,7 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
   const arrow = svg
     .append('path')
     .attr('d', lineDef)
-    .attr('class', 'arrow arrow' + (colorClassNum % THEME_SIZE));
+    .attr('class', 'arrow arrow' + (colorClassNum % THEME_COLOR_LIMIT));
 };
 
 const drawArrows = (svg, commits) => {
@@ -475,7 +475,7 @@ const drawBranches = (svg, branches) => {
   const gitGraphConfig = getConfig().gitGraph;
   const g = svg.append('g');
   branches.forEach((branch, index) => {
-    let adjustIndexForTheme = index % THEME_SIZE;
+    let adjustIndexForTheme = index % THEME_COLOR_LIMIT;
 
     const pos = branchPos[branch.name].pos;
     const line = g.append('line');
