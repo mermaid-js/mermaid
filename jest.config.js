@@ -10,6 +10,7 @@ module.exports = {
     ],
   },
   transformIgnorePatterns: ['/node_modules/(?!dagre-d3-renderer/lib|khroma).*\\.js'],
+  testPathIgnorePatterns: ['/node_modules/', '.cache'],
   moduleNameMapper: {
     '\\.(css|scss)$': 'identity-obj-proxy',
   },
