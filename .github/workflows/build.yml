@@ -1,6 +1,15 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  push: {}
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -30,29 +39,7 @@ jobs:
       run: yarn build
 
     - name: Upload Build as Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: dist
         path: dist
-
-    - name: Run Unit Tests
-      run: |
-        yarn test --coverage
-
-    #- name: Upload Test Results
-    #  uses: coverallsapp/github-action@v1.0.1
-    #  with:
-    #    github-token: ${{ secrets.GITHUB_TOKEN }}
-    #    parallel: true
-
-    # - name: Run E2E Tests
-    #   run: yarn e2e
-    #   env:
-    #     PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-    #     CYPRESS_CACHE_FOLDER: .cache/Cypress
-
-    #- name: Post Upload Test Results
-    #  uses: coverallsapp/github-action@master
-    #  with:
-    #    github-token: ${{ secrets.GITHUB_TOKEN }}
-    #    parallel-finished: true

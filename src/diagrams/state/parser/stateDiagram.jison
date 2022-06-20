@@ -4,7 +4,7 @@
  *  MIT license.
  *
  *  Based on js sequence diagrams jison grammr
- *  http://bramp.github.io/js-sequence-diagrams/
+ *  https://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
  */
@@ -20,6 +20,9 @@
 %x STATE_ID
 %x ALIAS
 %x SCALE
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %x NOTE
 %x NOTE_ID
 %x NOTE_TEXT
@@ -57,6 +60,14 @@
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
+
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
 
 <INITIAL,struct>"state"\s+            { /*console.log('Starting STATE zxzx'+yy.getDirection());*/this.pushState('STATE'); }
 <STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
@@ -193,7 +204,9 @@ statement
     | note NOTE_TEXT AS ID
   	| directive
     | direction
-    ;
+    | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
+    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }    ;
 
 directive
     : openDirective typeDirective closeDirective

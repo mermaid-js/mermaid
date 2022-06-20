@@ -15,7 +15,7 @@ They also serve as proof of concept, for the variety of things that can be built
 - [GitHub](https://github.com)
   - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
   - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
-- [GitBook](http://gitbook.com)
+- [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
@@ -30,7 +30,7 @@ They also serve as proof of concept, for the variety of things that can be built
 
 ## CRM/ERP/Similar
 
-  - [coreBOS](http://blog.corebos.org/blog/december2019)
+  - [coreBOS](https://blog.corebos.org/blog/december2019)
 
 ## Blogs
 
@@ -101,18 +101,18 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Language Mermaid Syntax Highlighter](https://atom.io/packages/language-mermaid)
 - [Sublime Text 3](https://sublimetext.com)
   - [Mermaid Package](https://packagecontrol.io/packages/Mermaid)
-- [Astah](http://astah.net)
+- [Astah](https://astah.net)
   - [Export to Mermaid](https://github.com/Avens666/Astah_Jude_UML_export_to_Markdown-mermaid-Plantuml-)
 - [Light Table](http://lighttable.com/)
   - [Mermaid Plugin](https://github.com/cldwalker/Mermaid)
-- [Draw.io](http://draw.io) - [Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
-- [Inkdrop](http://inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
+- [Draw.io](https://draw.io) - [Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
+- [Inkdrop](https://www.inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
 - [Vim](https://vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
 - [GNU Emacs](https://www.gnu.org/software/emacs/)
   - [Major mode for .mmd files](https://github.com/abrochard/mermaid-mode)
   - [Org-Mode integration](https://github.com/arnm/ob-mermaid)
-- [Brackets](http://brackets.io/)
+- [Brackets](https://brackets.io/)
   - [Mermaid Preview](https://s3.amazonaws.com/extend.brackets/alanhohn.mermaid-preview/alanhohn.mermaid-preview-1.0.2.zip)
 - [Iodide](https://github.com/iodide-project/iodide)
   - [iodide-mermaid-plugin](https://github.com/iodide-project/iodide-mermaid-plugin)

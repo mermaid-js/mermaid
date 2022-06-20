@@ -181,14 +181,33 @@ describe('when parsing ER diagram it...', function () {
     expect(Object.keys(erDb.getEntities()).length).toBe(1);
   });
 
-  it('should allow for a title and acc description', function () {
+  it('should allow for a accessibility title and description (accDescr)', function () {
     const teacherRole = 'is teacher of';
     const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
 
     erDiagram.parser.parse(
-      `erDiagram\ntitle graph title\n accDescription this graph is about stuff\n${line1}`
+      `erDiagram
+      accTitle: graph title
+      accDescr: this graph is about stuff
+      ${line1}`
     );
-    expect(erDb.getTitle()).toBe('graph title');
+    expect(erDb.getAccTitle()).toBe('graph title');
+    expect(erDb.getAccDescription()).toBe('this graph is about stuff');
+  });
+
+  it('should allow for a accessibility title and multi line description (accDescr)', function () {
+    const teacherRole = 'is teacher of';
+    const line1 = `TEACHER }o--o{ STUDENT : "${teacherRole}"`;
+
+    erDiagram.parser.parse(
+      `erDiagram
+      accTitle: graph title
+      accDescr {
+        this graph is about stuff
+      }\n
+      ${line1}`
+    );
+    expect(erDb.getAccTitle()).toBe('graph title');
     expect(erDb.getAccDescription()).toBe('this graph is about stuff');
   });
 
@@ -406,5 +425,11 @@ describe('when parsing ER diagram it...', function () {
     erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : places');
     const rels = erDb.getRelationships();
     expect(rels[0].roleA).toBe('places');
+  });
+
+  it('should allow an entity name with a dot', function () {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER.PROP ||--|{ ORDER : places');
+    const rels = erDb.getRelationships();
+    expect(rels[0].entityA).toBe('CUSTOMER.PROP');
   });
 });

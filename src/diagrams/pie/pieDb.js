@@ -2,7 +2,15 @@ import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import common from '../common/common';
-const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
+import {
+  setAccTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let sections = {};
 let title = '';
@@ -22,28 +30,12 @@ const addSection = function (id, value) {
 };
 const getSections = () => sections;
 
-const setTitle = function (txt) {
-  title = common.sanitizeText(txt, configApi.getConfig());
-};
-
 const setShowData = function (toggle) {
   showData = toggle;
 };
 
 const getShowData = function () {
   return showData;
-};
-
-const getTitle = function () {
-  return title;
-};
-
-const setAccDescription = function (txt) {
-  description = common.sanitizeText(txt, configApi.getConfig());
-};
-
-const getAccDescription = function () {
-  return description;
 };
 
 const cleanupValue = function (value) {
@@ -59,10 +51,8 @@ const clear = function () {
   sections = {};
   title = '';
   showData = false;
+  commonClear();
 };
-// export const parseError = (err, hash) => {
-//   global.mermaidAPI.parseError(err, hash)
-// }
 
 export default {
   parseDirective,
@@ -71,11 +61,12 @@ export default {
   getSections,
   cleanupValue,
   clear,
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
   setShowData,
   getShowData,
   getAccDescription,
   setAccDescription,
-  // parseError
 };

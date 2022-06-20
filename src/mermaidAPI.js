@@ -19,6 +19,9 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
+import c4Db from './diagrams/c4/c4Db';
+import c4Renderer from './diagrams/c4/c4Renderer';
+import c4Parser from './diagrams/c4/parser/c4Diagram';
 import classDb from './diagrams/class/classDb';
 import classRenderer from './diagrams/class/classRenderer';
 import classRendererV2 from './diagrams/class/classRenderer-v2';
@@ -62,97 +65,126 @@ import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
 import utils, { directiveSanitizer, assignWithDepth, sanitizeCss } from './utils';
+import DOMPurify from 'dompurify';
+import mermaid from './mermaid';
 
 /**
  * @param text
  * @returns {any}
  */
 function parse(text) {
-  const cnf = configApi.getConfig();
-  const graphInit = utils.detectInit(text, cnf);
-  if (graphInit) {
-    reinitialize(graphInit);
-    log.debug('reinit ', graphInit);
-  }
-  const graphType = utils.detectType(text, cnf);
-  let parser;
+  var parseEncounteredException = false;
+  try {
+    text = text + '\n';
+    const cnf = configApi.getConfig();
+    const graphInit = utils.detectInit(text, cnf);
+    if (graphInit) {
+      reinitialize(graphInit);
+      log.info('reinit ', graphInit);
+    }
+    const graphType = utils.detectType(text, cnf);
+    let parser;
 
-  log.debug('Type ' + graphType);
-  switch (graphType) {
-    case 'git':
-      parser = gitGraphParser;
-      parser.parser.yy = gitGraphAst;
-      break;
-    case 'flowchart':
-      flowDb.clear();
-      parser = flowParser;
-      parser.parser.yy = flowDb;
-      break;
-    case 'flowchart-v2':
-      flowDb.clear();
-      parser = flowParser;
-      parser.parser.yy = flowDb;
-      break;
-    case 'sequence':
-      sequenceDb.clear();
-      parser = sequenceParser;
-      parser.parser.yy = sequenceDb;
-      break;
-    case 'gantt':
-      parser = ganttParser;
-      parser.parser.yy = ganttDb;
-      break;
-    case 'class':
-      parser = classParser;
-      parser.parser.yy = classDb;
-      break;
-    case 'classDiagram':
-      parser = classParser;
-      parser.parser.yy = classDb;
-      break;
-    case 'state':
-      parser = stateParser;
-      parser.parser.yy = stateDb;
-      break;
-    case 'stateDiagram':
-      parser = stateParser;
-      parser.parser.yy = stateDb;
-      break;
-    case 'info':
-      log.debug('info info info');
-      parser = infoParser;
-      parser.parser.yy = infoDb;
-      break;
-    case 'pie':
-      log.debug('pie');
-      parser = pieParser;
-      parser.parser.yy = pieDb;
-      break;
-    case 'er':
-      log.debug('er');
-      parser = erParser;
-      parser.parser.yy = erDb;
-      break;
-    case 'journey':
-      log.debug('Journey');
-      parser = journeyParser;
-      parser.parser.yy = journeyDb;
-      break;
-    case 'requirement':
-    case 'requirementDiagram':
-      log.debug('RequirementDiagram');
-      parser = requirementParser;
-      parser.parser.yy = requirementDb;
-      break;
-  }
-  parser.parser.yy.graphType = graphType;
-  parser.parser.yy.parseError = (str, hash) => {
-    const error = { str, hash };
-    throw error;
-  };
+    log.debug('Type ' + graphType);
+    switch (graphType) {
+      case 'c4':
+        c4Db.clear();
+        parser = c4Parser;
+        parser.parser.yy = c4Db;
+        break;
+      case 'gitGraph':
+        gitGraphAst.clear();
+        parser = gitGraphParser;
+        parser.parser.yy = gitGraphAst;
+        break;
+      case 'flowchart':
+        flowDb.clear();
+        parser = flowParser;
+        parser.parser.yy = flowDb;
+        break;
+      case 'flowchart-v2':
+        flowDb.clear();
+        parser = flowParser;
+        parser.parser.yy = flowDb;
+        break;
+      case 'sequence':
+        sequenceDb.clear();
+        parser = sequenceParser;
+        parser.parser.yy = sequenceDb;
+        break;
+      case 'gantt':
+        parser = ganttParser;
+        parser.parser.yy = ganttDb;
+        break;
+      case 'class':
+        parser = classParser;
+        parser.parser.yy = classDb;
+        break;
+      case 'classDiagram':
+        parser = classParser;
+        parser.parser.yy = classDb;
+        break;
+      case 'state':
+        parser = stateParser;
+        parser.parser.yy = stateDb;
+        break;
+      case 'stateDiagram':
+        parser = stateParser;
+        parser.parser.yy = stateDb;
+        break;
+      case 'info':
+        log.debug('info info info');
+        parser = infoParser;
+        parser.parser.yy = infoDb;
+        break;
+      case 'pie':
+        log.debug('pie');
+        parser = pieParser;
+        parser.parser.yy = pieDb;
+        break;
+      case 'er':
+        log.debug('er');
+        parser = erParser;
+        parser.parser.yy = erDb;
+        break;
+      case 'journey':
+        log.debug('Journey');
+        parser = journeyParser;
+        parser.parser.yy = journeyDb;
+        break;
+      case 'requirement':
+      case 'requirementDiagram':
+        log.debug('RequirementDiagram');
+        parser = requirementParser;
+        parser.parser.yy = requirementDb;
+        break;
+    }
+    parser.parser.yy.graphType = graphType;
+    parser.parser.yy.parseError = (str, hash) => {
+      const error = { str, hash };
+      throw error;
+    };
 
-  parser.parse(text);
-  return parser;
+    parser.parse(text);
+  } catch (error) {
+    parseEncounteredException = true;
+    // Is this the correct way to access mermiad's parseError()
+    // method ? (or global.mermaid.parseError()) ?
+    if (mermaid.parseError) {
+      if (error.str != undefined) {
+        // handle case where error string and hash were
+        // wrapped in object like`const error = { str, hash };`
+        mermaid.parseError(error.str, error.hash);
+      } else {
+        // assume it is just error string and pass it on
+        mermaid.parseError(error);
+      }
+    } else {
+      // No mermaid.parseError() handler defined, so re-throw it
+      throw error;
+    }
+  }
+  return !parseEncounteredException;
 }
 
 export const encodeEntities = function (text) {
@@ -222,13 +254,16 @@ export const decodeEntities = function (text) {
  */
 const render = function (id, _txt, cb, container) {
   configApi.reset();
-  let txt = _txt;
+  let txt = _txt.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(txt);
   if (graphInit) {
     directiveSanitizer(graphInit);
     configApi.addDirective(graphInit);
   }
   let cnf = configApi.getConfig();
+
+  log.debug(cnf);
+
   // Check the maximum allowed text size
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
@@ -422,7 +457,11 @@ const render = function (id, _txt, cb, container) {
 
   try {
     switch (graphType) {
-      case 'git':
+      case 'c4':
+        c4Renderer.setConf(cnf.c4);
+        c4Renderer.draw(txt, id);
+        break;
+      case 'gitGraph':
         // cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         //gitGraphRenderer.setConf(cnf.git);
         gitGraphRenderer.draw(txt, id, false);
@@ -538,6 +577,13 @@ const render = function (id, _txt, cb, container) {
     )}" sandbox="allow-top-navigation-by-user-activation allow-popups">
   The “iframe” tag is not supported by your browser.
 </iframe>`;
+  } else {
+    if (cnf.securityLevel !== 'loose') {
+      svgCode = DOMPurify.sanitize(svgCode, {
+        ADD_TAGS: ['foreignobject'],
+        ADD_ATTR: ['dominant-baseline'],
+      });
+    }
   }
 
   if (typeof cb !== 'undefined') {
@@ -643,7 +689,7 @@ const handleDirective = function (p, directive, type) {
 
 /** @param {any} conf */
 function updateRendererConfigs(conf) {
-  // Todo remove, all diagrams should get config on demoand from the config object, no need for this
+  // Todo remove, all diagrams should get config on demand from the config object, no need for this
 
   // gitGraphRenderer.setConf(conf.git); // Todo Remove all  of these
   flowRenderer.setConf(conf.flowchart);

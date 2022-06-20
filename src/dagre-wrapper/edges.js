@@ -192,19 +192,6 @@ export const positionEdgeLabel = (edge, paths) => {
   }
 };
 
-// const getRelationType = function(type) {
-//   switch (type) {
-//     case stateDb.relationType.AGGREGATION:
-//       return 'aggregation';
-//     case stateDb.relationType.EXTENSION:
-//       return 'extension';
-//     case stateDb.relationType.COMPOSITION:
-//       return 'composition';
-//     case stateDb.relationType.DEPENDENCY:
-//       return 'dependency';
-//   }
-// };
-
 const outsideNode = (node, point) => {
   // log.warn('Checking bounds ', node, point);
   const x = node.x;
@@ -415,45 +402,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   if (edge.fromCluster) {
     log.info('from cluster abc88', clusterDb[edge.fromCluster]);
     points = cutPathAtIntersect(points.reverse(), clusterDb[edge.fromCluster].node).reverse();
-    // log.warn('edge', edge);
-    // log.warn('from cluster', clusterDb[edge.fromCluster], points);
-    // const updatedPoints = [];
-    // let lastPointOutside = edge.points[edge.points.length - 1];
-    // let isInside = false;
-    // for (let i = points.length - 1; i >= 0; i--) {
-    //   const point = points[i];
-    //   const node = clusterDb[edge.fromCluster].node;
-    //   log.warn('checking to', edge.fromCluster, point, node);
 
-    //   if (!outsideNode(node, point) && !isInside) {
-    //     log.warn('inside', edge.fromCluster, point, node);
-
-    //     // First point inside the rect
-    //     const inter = intersection(node, lastPointOutside, point);
-    //     log.warn('intersect', intersection(node, lastPointOutside, point));
-    //     let pointPresent = false;
-    //     points.forEach(p => {
-    //       pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
-    //     });
-    //     // if (!pointPresent) {
-    //     if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
-    //       updatedPoints.unshift(inter);
-    //       log.warn('Adding point -updated = ', updatedPoints);
-    //     } else {
-    //       log.warn('no intersect', inter, points);
-    //     }
-    //     // points.push(insterection);
-    //     isInside = true;
-    //   } else {
-    //     // at the outside
-    //     // if (!isInside) updatedPoints.unshift(point);
-    //     updatedPoints.unshift(point);
-    //     log.warn('Outside point', point, updatedPoints);
-    //   }
-    //   lastPointOutside = point;
-    // }
-    // points = updatedPoints;
-    // points = edge.points;
     pointsHasChanged = true;
   }
 

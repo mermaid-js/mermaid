@@ -347,6 +347,39 @@ const rect = (parent, node) => {
   return shapeSvg;
 };
 
+const labelRect = (parent, node) => {
+  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'label', true);
+
+  log.trace('Classes = ', node.classes);
+  // add the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+
+  // Hide the rect we are only after the label
+  const totalWidth = 0;
+  const totalHeight = 0;
+  rect.attr('width', totalWidth).attr('height', totalHeight);
+  shapeSvg.attr('class', 'label edgeLabel');
+
+  if (node.props) {
+    const propKeys = new Set(Object.keys(node.props));
+    if (node.props.borders) {
+      applyNodePropertyBorders(rect, node.props.borders, totalWidth, totalHeight);
+      propKeys.delete('borders');
+    }
+    propKeys.forEach((propKey) => {
+      log.warn(`Unknown node property ${propKey}`);
+    });
+  }
+
+  updateNodeBounds(node, rect);
+
+  node.intersect = function (point) {
+    return intersect.rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
 /**
  * @param rect
  * @param borders
@@ -976,6 +1009,7 @@ const class_box = (parent, node) => {
 const shapes = {
   question,
   rect,
+  labelRect,
   rectWithTitle,
   choice,
   circle,

@@ -12,7 +12,7 @@ This section talks about the different ways to deploy Mermaid. Learning the [Syn
 
 1. Using the Mermaid Live Editor at [mermaid.live](https://mermaid.live).
 2. Using [mermaid plugins](./integrations.md) with programs you are familiar with.
-3. Calling the Mermaid Javascript API.
+3. Calling the Mermaid JavaScript API.
 4. Deploying Mermaid as a dependency.
 
 **Note: It is our recommendation that you review all approaches, and choose the one that is best for your project.**
@@ -63,7 +63,7 @@ You can generate mermaid diagrams from within popular applications using plug-in
 
 **This is covered in greater detail in the [Usage section](usage.md)**
 
-## 3. Calling the Javascript API
+## 3. Calling the JavaScript API
 
 This method can be used with any common web server like Apache, IIS, nginx, node express.
 

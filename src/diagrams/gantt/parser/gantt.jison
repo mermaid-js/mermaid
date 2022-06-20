@@ -15,12 +15,24 @@
 %x type_directive
 %x arg_directive
 %x close_directive
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
 <open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                     return "acc_descr_multiline_value";
+
 \%\%(?!\{)*[^\n]*                                               /* skip comments */
 [^\}]\%\%*[^\n]*                                                /* skip comments */
 \%\%*[^\n]*[\n]*           /* do nothing */
@@ -65,22 +77,23 @@ that id.
 <click>[\s\n]           this.popState();
 <click>[^\s\n]*         return 'click';
 
-"gantt"                 return 'gantt';
-"dateFormat"\s[^#\n;]+  return 'dateFormat';
-"inclusiveEndDates"     return 'inclusiveEndDates';
-"topAxis"               return 'topAxis';
-"axisFormat"\s[^#\n;]+  return 'axisFormat';
-"includes"\s[^#\n;]+    return 'includes';
-"excludes"\s[^#\n;]+    return 'excludes';
-"todayMarker"\s[^\n;]+  return 'todayMarker';
-\d\d\d\d"-"\d\d"-"\d\d  return 'date';
-"title"\s[^#\n;]+       return 'title';
-"section"\s[^#:\n;]+    return 'section';
-[^#:\n;]+               return 'taskTxt';
-":"[^#\n;]+             return 'taskData';
-":"                     return ':';
-<<EOF>>                 return 'EOF';
-.                       return 'INVALID';
+"gantt"                     return 'gantt';
+"dateFormat"\s[^#\n;]+      return 'dateFormat';
+"inclusiveEndDates"         return 'inclusiveEndDates';
+"topAxis"                   return 'topAxis';
+"axisFormat"\s[^#\n;]+      return 'axisFormat';
+"includes"\s[^#\n;]+        return 'includes';
+"excludes"\s[^#\n;]+        return 'excludes';
+"todayMarker"\s[^\n;]+      return 'todayMarker';
+\d\d\d\d"-"\d\d"-"\d\d      return 'date';
+"title"\s[^#\n;]+           return 'title';
+"accDescription"\s[^#\n;]+  return 'accDescription'
+"section"\s[^#:\n;]+        return 'section';
+[^#:\n;]+                   return 'taskTxt';
+":"[^#\n;]+                 return 'taskData';
+":"                         return ':';
+<<EOF>>                     return 'EOF';
+.                           return 'INVALID';
 
 /lex
 
@@ -115,8 +128,10 @@ statement
   | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
   | includes {yy.setIncludes($1.substr(9));$$=$1.substr(9);}
   | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
-  | title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
-  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
+  | title {yy.setDiagramTitle($1.substr(6));$$=$1.substr(6);}
+  | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
+  | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+  | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
   | clickStatement
   | taskTxt taskData {yy.addTask($1,$2);$$='task';}
   | directive

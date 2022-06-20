@@ -156,4 +156,38 @@ describe('when parsing a gantt diagram it', function () {
       '"test0", test1, test2'
     );
   });
+
+  it('should allow for a accessibility title and description (accDescr)', function () {
+    const expectedTitle = 'Gantt Diagram';
+    const expectedAccDescription = 'Tasks for Q4';
+    const ganttString = `gantt
+       accTitle: ${expectedTitle}
+       accDescr: ${expectedAccDescription}
+       dateFormat  YYYY-MM-DD
+       section Section
+       A task :a1, 2014-01-01, 30d\n`;
+
+    parser.parse(ganttString);
+
+    expect(ganttDb.getAccTitle()).toBe(expectedTitle);
+    expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
+  });
+  it('should allow for a accessibility title and multiline description (accDescr)', function () {
+    const expectedTitle = 'Gantt Diagram';
+    const expectedAccDescription = `Tasks for Q4 row1
+row2`;
+    const ganttString = `gantt
+       accTitle: ${expectedTitle}
+       accDescr {
+         ${expectedAccDescription}
+       }
+       dateFormat  YYYY-MM-DD
+       section Section
+       A task :a1, 2014-01-01, 30d\n`;
+
+    parser.parse(ganttString);
+
+    expect(ganttDb.getAccTitle()).toBe(expectedTitle);
+    expect(ganttDb.getAccDescription()).toBe(expectedAccDescription);
+  });
 });

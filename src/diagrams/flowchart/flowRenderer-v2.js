@@ -9,7 +9,8 @@ import { render } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
-import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
+import { interpolateToCurve, getStylesFromArray, setupGraphViewbox } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -181,7 +182,7 @@ export const addVertices = function (vert, g, svgId, root, doc) {
 };
 
 /**
- * Add edges to graph based on parsed graph defninition
+ * Add edges to graph based on parsed graph definition
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
@@ -380,7 +381,7 @@ export const draw = function (text, id) {
   const rankSpacing = conf.rankSpacing || 50;
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and ocument for when rendering in sanbox mode
+  // Handle root and document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -416,7 +417,7 @@ export const draw = function (text, id) {
     flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
   }
 
-  // Fetch the verices/nodes and edges/links from the parsed graph definition
+  // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const vert = flowDb.getVertices();
 
   const edges = flowDb.getEdges();
@@ -444,25 +445,14 @@ export const draw = function (text, id) {
   const svg = root.select(`[id="${id}"]`);
   svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
+  // Adds title and description to the flow chart
+  addSVGAccessibilityFields(parser.yy, svg, id);
+
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
   render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
 
-  const padding = conf.diagramPadding;
-  const svgBounds = svg.node().getBBox();
-  const width = svgBounds.width + padding * 2;
-  const height = svgBounds.height + padding * 2;
-  log.debug(
-    `new ViewBox 0 0 ${width} ${height}`,
-    `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
-  );
-
-  configureSvgSize(svg, height, width, conf.useMaxWidth);
-
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg
-    .select('g')
-    .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
+  setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 
   // Index nodes
   flowDb.indexNodes('subGraph' + i);
@@ -481,7 +471,6 @@ export const draw = function (text, id) {
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
       rect.setAttribute('height', dim.height);
-      // rect.setAttribute('style', 'fill:#e8e8e8;');
 
       label.insertBefore(rect, label.firstChild);
     }

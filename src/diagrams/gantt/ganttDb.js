@@ -4,6 +4,16 @@ import { log } from '../../logger';
 import * as configApi from '../../config';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
+import common from '../common/common';
+import {
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+  setDiagramTitle,
+  getDiagramTitle,
+} from '../../commonDb';
 
 let dateFormat = '';
 let axisFormat = '';
@@ -12,6 +22,7 @@ let includes = [];
 let excludes = [];
 let links = {};
 let title = '';
+let accDescription = '';
 let sections = [];
 let tasks = [];
 let currentSection = '';
@@ -22,6 +33,10 @@ let topAxis = false;
 
 // The serial order of the task in the script
 let lastOrder = 0;
+
+const sanitizeText = function (txt) {
+  return common.sanitizeText(txt, configApi.getConfig());
+};
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
@@ -46,6 +61,7 @@ export const clear = function () {
   topAxis = false;
   lastOrder = 0;
   links = {};
+  commonClear();
 };
 
 export const setAxisFormat = function (txt) {
@@ -105,14 +121,6 @@ export const getExcludes = function () {
 
 export const getLinks = function () {
   return links;
-};
-
-export const setTitle = function (txt) {
-  title = txt;
-};
-
-export const getTitle = function () {
-  return title;
 };
 
 export const addSection = function (txt) {
@@ -635,8 +643,12 @@ export default {
   getAxisFormat,
   setTodayMarker,
   getTodayMarker,
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
+  setAccDescription,
+  getAccDescription,
   addSection,
   getSections,
   getTasks,

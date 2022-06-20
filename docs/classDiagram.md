@@ -8,28 +8,27 @@ The class diagram is the main building block of object-oriented modeling. It is 
 Mermaid can render class diagrams.
 
 ```mermaid-example
- classDiagram
-      Animal <|-- Duck
-      Animal <|-- Fish
-      Animal <|-- Zebra
-      Animal : +int age
-      Animal : +String gender
-      Animal: +isMammal()
-      Animal: +mate()
-      class Duck{
-          +String beakColor
-          +swim()
-          +quack()
-      }
-      class Fish{
-          -int sizeInFeet
-          -canEat()
-      }
-      class Zebra{
-          +bool is_wild
-          +run()
-      }
-
+classDiagram
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal <|-- Zebra
+    Animal : +int age
+    Animal : +String gender
+    Animal: +isMammal()
+    Animal: +mate()
+    class Duck{
+        +String beakColor
+        +swim()
+        +quack()
+    }
+    class Fish{
+        -int sizeInFeet
+        -canEat()
+    }
+    class Zebra{
+        +bool is_wild
+        +run()
+    }
 ```
 
 ## Syntax
@@ -79,12 +78,12 @@ There are two ways to define the members of a class, and regardless of whichever
 - Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
 
 ```mermaid-example
- classDiagram
- class BankAccount
- BankAccount : +String owner
- BankAccount : +BigDecimal balance
- BankAccount : +deposit(amount)
- BankAccount : +withdrawal(amount)
+classDiagram
+class BankAccount
+BankAccount : +String owner
+BankAccount : +BigDecimal balance
+BankAccount : +deposit(amount)
+BankAccount : +withdrawal(amount)
 ```
 
 - Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
@@ -217,7 +216,7 @@ It is possible to add a label text to a relation:
 classDiagram
 classA <|-- classB : implements
 classC *-- classD : composition
-classE o-- classF : association
+classE o-- classF : aggregation
 ```
 
 ### Two-way relations
@@ -385,9 +384,9 @@ _URL Link:_
 ```mmd
 classDiagram
 class Shape
-link Shape "http://www.github.com" "This is a tooltip for a link"
+link Shape "https://www.github.com" "This is a tooltip for a link"
 class Shape2
-click Shape2 href "http://www.github.com" "This is a tooltip for a link"
+click Shape2 href "https://www.github.com" "This is a tooltip for a link"
 ```
 
 _Callback:_
@@ -402,10 +401,10 @@ click Shape2 call callbackFunction() "This is a tooltip for a callback"
 
 ```html
 <script>
-    var callbackFunction = function(){
-        alert('A callback was triggered');
-    }
-<script>
+    var callbackFunction = function () {
+      alert('A callback was triggered');
+    };
+</script>
 ```
 
 ```mermaid
@@ -413,11 +412,11 @@ classDiagram
     class Class01
     class Class02
     callback Class01 "callbackFunction" "Callback tooltip"
-    link Class02 "http://www.github.com" "This is a link"
+    link Class02 "https://www.github.com" "This is a link"
     class Class03
     class Class04
     click Class03 call callbackFunction() "Callback tooltip"
-    click Class04 href "http://www.github.com" "This is a link"
+    click Class04 href "https://www.github.com" "This is a link"
 ```
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
@@ -450,18 +449,17 @@ Beginners tip, a full example using interactive links in an html context:
       }
 
       callback Duck callback "Tooltip"
-      link Zebra "http://www.github.com" "This is a link"
+      link Zebra "https://www.github.com" "This is a link"
   </div>
 
   <script>
-    var callback = function(){
+    var callback = function () {
         alert('A callback was triggered');
-    }
-    var config = {
-      startOnLoad:true,
-      securityLevel:'loose',
     };
-
+    var config = {
+        startOnLoad: true,
+        securityLevel: 'loose'
+    };
     mermaid.initialize(config);
   </script>
 </body>

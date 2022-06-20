@@ -110,14 +110,13 @@ describe('class diagram, ', function () {
         '   flightNumber : Integer\n' +
         '   departureTime : Date\n' +
         '}';
-      let testPased = false;
+      let testPassed = false;
       try {
         parser.parse(str);
       } catch (error) {
-        console.log(error.name);
-        testPased = true;
+        testPassed = true;
       }
-      expect(testPased).toBe(true);
+      expect(testPassed).toBe(true);
     });
 
     it('should break when EOF is encountered before closing the first `{` while defining generic class with brackets', function () {
@@ -129,14 +128,13 @@ describe('class diagram, ', function () {
         '}\n' +
         '\n' +
         'class Dummy_Class {\n';
-      let testPased = false;
+      let testPassed = false;
       try {
         parser.parse(str);
       } catch (error) {
-        console.log(error.name);
-        testPased = true;
+        testPassed = true;
       }
-      expect(testPased).toBe(true);
+      expect(testPassed).toBe(true);
     });
 
     it('should handle generic class with brackets', function () {
@@ -541,6 +539,34 @@ foo()
       expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
       expect(relations[0].relation.type2).toBe('none');
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
+    });
+
+    it('should handle accTitle and accDescr', function () {
+      const str = `classDiagram
+            accTitle: My Title
+            accDescr: My Description
+
+            Class01 <|-- Class02
+            `;
+
+      parser.parse(str);
+      expect(parser.yy.getAccTitle()).toBe('My Title');
+      expect(parser.yy.getAccDescription()).toBe('My Description');
+    });
+    it('should handle accTitle and multiline accDescr', function () {
+      const str = `classDiagram
+            accTitle: My Title
+            accDescr {
+              This is mu multi
+              line description
+            }
+
+            Class01 <|-- Class02
+            `;
+
+      parser.parse(str);
+      expect(parser.yy.getAccTitle()).toBe('My Title');
+      expect(parser.yy.getAccDescription()).toBe('This is mu multi\nline description');
     });
 
     it('should handle relation definitions AGGREGATION and dotted line', function () {

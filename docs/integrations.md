@@ -6,18 +6,18 @@ They also serve as proof of concept, for the variety of things that can be built
 
 
 ## Productivity
-
+- [GitHub](https://github.com) (**Native support**)
+  - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) (**Native support**)
+  - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
+  - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) (**Native support**)
 - [Gitea](https://gitea.io) (**Native support**)
 - [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) (**Native support**)
 - [Tuleap](https://docs.tuleap.org/user-guide/writing-in-tuleap.html#graphs) (**Native support**)
 - [Joplin](https://joplinapp.org) (**Native support**)
 - [Notion](https://notion.so) (**Native support**)
-- [GitHub](https://github.com) (**Native support**)
-  - [GitHub action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
-  - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
-  - [Using code blocks](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) (**Native support**)
-- [GitBook](http://gitbook.com)
+- [Observable](https://observablehq.com/@observablehq/mermaid) (**Native support**)
+- [GitBook](https://gitbook.com)
   - [Mermaid Plugin](https://github.com/JozoVilcek/gitbook-plugin-mermaid)
   - [Markdown with Mermaid CLI](https://github.com/miao1007/gitbook-plugin-mermaid-cli)
   - [Mermaid plugin for GitBook](https://github.com/wwformat/gitbook-plugin-mermaid-pdf)
@@ -33,7 +33,7 @@ They also serve as proof of concept, for the variety of things that can be built
 
 ## CRM/ERP/Similar
 
-  - [coreBOS](http://blog.corebos.org/blog/december2019)
+  - [coreBOS](https://blog.corebos.org/blog/december2019)
 
 ## Blogs
 
@@ -104,18 +104,18 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Language Mermaid Syntax Highlighter](https://atom.io/packages/language-mermaid)
 - [Sublime Text 3](https://sublimetext.com)
   - [Mermaid Package](https://packagecontrol.io/packages/Mermaid)
-- [Astah](http://astah.net)
+- [Astah](https://astah.net)
   - [Export to Mermaid](https://github.com/Avens666/Astah_Jude_UML_export_to_Markdown-mermaid-Plantuml-)
 - [Light Table](http://lighttable.com/)
   - [Mermaid Plugin](https://github.com/cldwalker/Mermaid)
-- [Draw.io](http://draw.io) - [Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
-- [Inkdrop](http://inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
+- [Draw.io](https://draw.io) - [Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
+- [Inkdrop](https://www.inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
 - [Vim](https://vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
 - [GNU Emacs](https://www.gnu.org/software/emacs/)
   - [Major mode for .mmd files](https://github.com/abrochard/mermaid-mode)
   - [Org-Mode integration](https://github.com/arnm/ob-mermaid)
-- [Brackets](http://brackets.io/)
+- [Brackets](https://brackets.io/)
   - [Mermaid Preview](https://s3.amazonaws.com/extend.brackets/alanhohn.mermaid-preview/alanhohn.mermaid-preview-1.0.2.zip)
 - [Iodide](https://github.com/iodide-project/iodide)
   - [iodide-mermaid-plugin](https://github.com/iodide-project/iodide-mermaid-plugin)

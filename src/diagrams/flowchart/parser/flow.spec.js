@@ -6,13 +6,13 @@ setConfig({
   securityLevel: 'strict',
 });
 
-describe('when parsing ', function () {
+describe('parsing a flow chart', function () {
   beforeEach(function () {
     flow.parser.yy = flowDb;
     flow.parser.yy.clear();
   });
 
-  it('it should handle a trailing whitespaces after statememnts', function () {
+  it('should handle a trailing whitespaces after statememnts', function () {
     const res = flow.parser.parse('graph TD;\n\n\n %% Comment\n A-->B; \n B-->C;');
 
     const vert = flow.parser.yy.getVertices();
@@ -80,47 +80,47 @@ describe('when parsing ', function () {
       flow.parser.yy.clear();
     };
 
-    it("it should be able to parse a '.'", function () {
+    it("should be able to parse a '.'", function () {
       charTest('.');
       charTest('Start 103a.a1');
     });
 
-    // it('it should be able to parse text containing \'_\'', function () {
+    // it('should be able to parse text containing \'_\'', function () {
     //   charTest('_')
     // })
 
-    it("it should be able to parse a ':'", function () {
+    it("should be able to parse a ':'", function () {
       charTest(':');
     });
 
-    it("it should be able to parse a ','", function () {
+    it("should be able to parse a ','", function () {
       charTest(',');
     });
 
-    it("it should be able to parse text containing '-'", function () {
+    it("should be able to parse text containing '-'", function () {
       charTest('a-b');
     });
 
-    it("it should be able to parse a '+'", function () {
+    it("should be able to parse a '+'", function () {
       charTest('+');
     });
 
-    it("it should be able to parse a '*'", function () {
+    it("should be able to parse a '*'", function () {
       charTest('*');
     });
 
-    it("it should be able to parse a '<'", function () {
+    it("should be able to parse a '<'", function () {
       charTest('<', '&lt;');
     });
 
-    // it("it should be able to parse a '>'", function() {
+    // it("should be able to parse a '>'", function() {
     //   charTest('>', '&gt;');
     // });
 
-    // it("it should be able to parse a '='", function() {
+    // it("should be able to parse a '='", function() {
     //   charTest('=', '&equals;');
     // });
-    it("it should be able to parse a '&'", function () {
+    it("should be able to parse a '&'", function () {
       charTest('&');
     });
   });
@@ -146,6 +146,7 @@ describe('when parsing ', function () {
     const classes = flow.parser.yy.getClasses();
     expect(vertices['A'].id).toBe('A');
   });
+
   it('should be possible to use numbers as labels', function () {
     let statement = '';
 
@@ -154,5 +155,42 @@ describe('when parsing ', function () {
     const vertices = flow.parser.yy.getVertices();
     const classes = flow.parser.yy.getClasses();
     expect(vertices['1'].id).toBe('1');
+  });
+
+  it('should add accTitle and accDescr to flow chart', function () {
+    const flowChart = `graph LR
+      accTitle: Big decisions
+      accDescr: Flow chart of the decision making process
+      A[Hard] -->|Text| B(Round)
+      B --> C{Decision}
+      C -->|One| D[Result 1]
+      C -->|Two| E[Result 2]
+      `;
+
+    flow.parser.parse(flowChart);
+    expect(flow.parser.yy.getAccTitle()).toBe('Big decisions');
+    expect(flow.parser.yy.getAccDescription()).toBe('Flow chart of the decision making process');
+  });
+  it('should add accTitle and a multi line accDescr to flow chart', function () {
+    const flowChart = `graph LR
+      accTitle: Big decisions
+
+      accDescr {
+        Flow chart of the decision making process
+        with a second line
+      }
+
+      A[Hard] -->|Text| B(Round)
+      B --> C{Decision}
+      C -->|One| D[Result 1]
+      C -->|Two| E[Result 2]
+`;
+
+    flow.parser.parse(flowChart);
+    expect(flow.parser.yy.getAccTitle()).toBe('Big decisions');
+    expect(flow.parser.yy.getAccDescription()).toBe(
+      `Flow chart of the decision making process
+with a second line`
+    );
   });
 });

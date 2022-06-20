@@ -3,6 +3,15 @@ import { generateId } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import common from '../common/common';
 import * as configApi from '../../config';
+import {
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
+
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
 let rootDoc = [];
@@ -83,7 +92,7 @@ const extract = (_doc) => {
   //   doc = root;
   // }
   log.info(doc);
-  clear();
+  clear(true);
 
   log.info('Extract', doc);
 
@@ -114,6 +123,9 @@ let currentDocument = documents.root;
 let startCnt = 0;
 let endCnt = 0; // eslint-disable-line
 // let stateCnt = 0;
+
+let title = 'State diagram';
+let description = '';
 
 /**
  * Function called by parser when a node definition has been found.
@@ -159,7 +171,7 @@ export const addState = function (id, type, doc, descr, note) {
   }
 };
 
-export const clear = function () {
+export const clear = function (saveCommon) {
   documents = {
     root: newDoc(),
   };
@@ -170,6 +182,9 @@ export const clear = function () {
   startCnt = 0;
   endCnt = 0; // eslint-disable-line
   classes = [];
+  if (!saveCommon) {
+    commonClear();
+  }
 };
 
 export const getState = function (id) {
@@ -270,7 +285,6 @@ export default {
   addRelation,
   getDividerId,
   setDirection,
-  // addDescription,
   cleanupLabel,
   lineType,
   relationType,
@@ -280,4 +294,8 @@ export default {
   getRootDocV2,
   extract,
   trimColon,
+  getAccTitle,
+  setAccTitle,
+  getAccDescription,
+  setAccDescription,
 };

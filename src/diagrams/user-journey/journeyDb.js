@@ -1,7 +1,20 @@
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
+import common from '../common/common';
+import {
+  setAccTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
+
+const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
 
 let title = '';
+let description = '';
 let currentSection = '';
 
 const sections = [];
@@ -17,15 +30,9 @@ export const clear = function () {
   tasks.length = 0;
   currentSection = '';
   title = '';
+  description = '';
   rawTasks.length = 0;
-};
-
-export const setTitle = function (txt) {
-  title = txt;
-};
-
-export const getTitle = function () {
-  return title;
+  commonClear();
 };
 
 export const addSection = function (txt) {
@@ -121,8 +128,12 @@ export default {
   parseDirective,
   getConfig: () => configApi.getConfig().journey,
   clear,
-  setTitle,
-  getTitle,
+  setDiagramTitle,
+  getDiagramTitle,
+  setAccTitle,
+  getAccTitle,
+  setAccDescription,
+  getAccDescription,
   addSection,
   getSections,
   getTasks,

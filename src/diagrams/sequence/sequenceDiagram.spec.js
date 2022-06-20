@@ -21,7 +21,7 @@ describe('when parsing a sequenceDiagram', function () {
     parser.yy = sequenceDb;
     parser.yy.clear();
   });
-  it('it should handle a sequenceDiagram definition', function () {
+  it('should handle a sequenceDiagram definition', function () {
     const str = `
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
@@ -47,6 +47,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
+    renderer.draw(str, 'tst'); // needs to be rendered for the correct value of visibility autonumbers
     expect(parser.yy.showSequenceNumbers()).toBe(false);
   });
   it('it should show sequence numbers when autonumber is enabled', function () {
@@ -58,6 +59,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
+    renderer.draw(str, 'tst'); // needs to be rendered for the correct value of visibility autonumbers
     expect(parser.yy.showSequenceNumbers()).toBe(true);
   });
   it('it should handle a sequenceDiagram definition with a title:', function () {
@@ -75,7 +77,7 @@ Bob-->Alice: I am good thanks!`;
 
     expect(parser.yy.getAccDescription()).toBe('');
     const messages = parser.yy.getMessages();
-    const title = parser.yy.getTitle();
+    const title = parser.yy.getDiagramTitle();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
@@ -98,7 +100,7 @@ Bob-->Alice: I am good thanks!`;
 
     expect(parser.yy.getAccDescription()).toBe('');
     const messages = parser.yy.getMessages();
-    const title = parser.yy.getTitle();
+    const title = parser.yy.getDiagramTitle();
 
     expect(messages.length).toBe(3);
     expect(messages[0].from).toBe('Alice');
@@ -106,26 +108,36 @@ Bob-->Alice: I am good thanks!`;
     expect(title).toBe('Diagram Title');
   });
 
-  it('it should handle a sequenceDiagram definition with a accDescription', function () {
+  it('it should handle a sequenceDiagram definition with a accessibility title and description (accDescr)', function () {
     const str = `
 sequenceDiagram
-accDescription Accessibility Description
+title: Diagram Title
+accTitle: This is the title
+accDescr: Accessibility Description
 Alice->Bob:Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!`;
+`;
 
     mermaidAPI.parse(str);
-    const actors = parser.yy.getActors();
-    expect(actors.Alice.description).toBe('Alice');
-    actors.Bob.description = 'Bob';
-
+    expect(parser.yy.getDiagramTitle()).toBe('Diagram Title');
+    expect(parser.yy.getAccTitle()).toBe('This is the title');
     expect(parser.yy.getAccDescription()).toBe('Accessibility Description');
     const messages = parser.yy.getMessages();
-    const title = parser.yy.getTitle();
+  });
+  it('it should handle a sequenceDiagram definition with a accessibility title and multiline description (accDescr)', function () {
+    const str = `
+sequenceDiagram
+accTitle: This is the title
+accDescr {
+Accessibility
+Description
+}
+Alice->Bob:Hello Bob, how are you?
+`;
 
-    expect(messages.length).toBe(3);
-    expect(messages[0].from).toBe('Alice');
-    expect(messages[2].from).toBe('Bob');
+    mermaidAPI.parse(str);
+    expect(parser.yy.getAccTitle()).toBe('This is the title');
+    expect(parser.yy.getAccDescription()).toBe('Accessibility\nDescription');
+    const messages = parser.yy.getMessages();
   });
 
   it('it should space in actor names', function () {
@@ -411,7 +423,6 @@ deactivate Bob`;
     try {
       mermaidAPI.parse(str);
     } catch (e) {
-      console.log(e.hash);
       error = true;
     }
     expect(error).toBe(true);
@@ -832,6 +843,80 @@ end`;
     expect(messages[7].from).toBe('Bob');
     expect(messages[8].type).toBe(parser.yy.LINETYPE.ALT_END);
   });
+  it('it should handle critical statements without options', function () {
+    const str = `
+sequenceDiagram
+    critical Establish a connection to the DB
+        Service-->DB: connect
+    end`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+
+    expect(actors.Service.description).toBe('Service');
+    expect(actors.DB.description).toBe('DB');
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(3);
+    expect(messages[0].type).toBe(parser.yy.LINETYPE.CRITICAL_START);
+    expect(messages[1].from).toBe('Service');
+    expect(messages[2].type).toBe(parser.yy.LINETYPE.CRITICAL_END);
+  });
+  it('it should handle critical statements with options', function () {
+    const str = `
+sequenceDiagram
+    critical Establish a connection to the DB
+        Service-->DB: connect
+    option Network timeout
+        Service-->Service: Log error
+    option Credentials rejected
+        Service-->Service: Log different error
+    end`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+
+    expect(actors.Service.description).toBe('Service');
+    expect(actors.DB.description).toBe('DB');
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(7);
+    expect(messages[0].type).toBe(parser.yy.LINETYPE.CRITICAL_START);
+    expect(messages[1].from).toBe('Service');
+    expect(messages[2].type).toBe(parser.yy.LINETYPE.CRITICAL_OPTION);
+    expect(messages[3].from).toBe('Service');
+    expect(messages[4].type).toBe(parser.yy.LINETYPE.CRITICAL_OPTION);
+    expect(messages[5].from).toBe('Service');
+    expect(messages[6].type).toBe(parser.yy.LINETYPE.CRITICAL_END);
+  });
+  it('it should handle break statements', function () {
+    const str = `
+sequenceDiagram
+    Consumer-->API: Book something
+    API-->BookingService: Start booking process
+    break when the booking process fails
+        API-->Consumer: show failure
+    end
+    API-->BillingService: Start billing process`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+
+    expect(actors.Consumer.description).toBe('Consumer');
+    expect(actors.API.description).toBe('API');
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(6);
+    expect(messages[0].from).toBe('Consumer');
+    expect(messages[1].from).toBe('API');
+    expect(messages[2].type).toBe(parser.yy.LINETYPE.BREAK_START);
+    expect(messages[3].from).toBe('API');
+    expect(messages[4].type).toBe(parser.yy.LINETYPE.BREAK_END);
+    expect(messages[5].from).toBe('API');
+  });
   it('it should handle par statements a sequenceDiagram', function () {
     const str = `
 sequenceDiagram
@@ -1012,7 +1097,6 @@ link a: Endpoint @ https://alice.contoso.com
 link a: Swagger @ https://swagger.contoso.com
 link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
 `;
-    console.log(str);
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
@@ -1037,7 +1121,6 @@ participant c as Charlie
 properties a: {"class": "internal-service-actor", "icon": "@clock"}
 properties b: {"class": "external-service-actor", "icon": "@computer"}
 `;
-    console.log(str);
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
@@ -1676,6 +1759,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str1);
+    renderer.draw(str1, 'tst'); // needs to be rendered for the correct value of visibility autonumbers
     expect(parser.yy.showSequenceNumbers()).toBe(true);
 
     const str2 = `
@@ -1685,6 +1769,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str2);
+    renderer.draw(str2, 'tst');
     expect(parser.yy.showSequenceNumbers()).toBe(false);
   });
 });

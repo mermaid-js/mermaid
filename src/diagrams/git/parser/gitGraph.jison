@@ -13,6 +13,9 @@
 %x type_directive
 %x arg_directive
 %x close_directive
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 %options case-insensitive
 
 
@@ -22,35 +25,45 @@
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+accTitle\s*":"\s*                                               { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                               { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                                    { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                               { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                                       { this.popState(); }
+<acc_descr_multiline>[^\}]*                                     return "acc_descr_multiline_value";
 (\r?\n)+                               /*{console.log('New line');return 'NL';}*/ return 'NL';
 \s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
 \%%[^\n]*                              /* skip comments */
-"gitGraph"                             return 'GG';
-"commit"                               return 'COMMIT';
-"id:"                                  return 'COMMIT_ID';
-"type:"                                return 'COMMIT_TYPE';
-"msg:"                                 return 'COMMIT_MSG';
-"NORMAL"                               return 'NORMAL';
-"REVERSE"                              return 'REVERSE';
-"HIGHLIGHT"                            return 'HIGHLIGHT';
-"tag:"                                 return 'COMMIT_TAG';
-"branch"                               return 'BRANCH';
-"merge"                                return 'MERGE';
-// "reset"                                return 'RESET';
-"checkout"                             return 'CHECKOUT';
-"LR"                                   return 'DIR';
-"BT"                                   return 'DIR';
-":"                                    return ':';
-"^"                                    return 'CARET'
-"options"\r?\n                         this.begin("options");
-<options>"end"\r?\n                    this.popState();
-<options>[^\n]+\r?\n                   return 'OPT';
-["]                                    this.begin("string");
-<string>["]                            this.popState();
-<string>[^"]*                          return 'STR';
-[a-zA-Z][-_\.a-zA-Z0-9]*[-_a-zA-Z0-9]  return 'ID';
-<<EOF>>                                return 'EOF';
+"gitGraph"                              return 'GG';
+"commit"                                return 'COMMIT';
+"id:"                                   return 'COMMIT_ID';
+"type:"                                 return 'COMMIT_TYPE';
+"msg:"                                  return 'COMMIT_MSG';
+"NORMAL"                                return 'NORMAL';
+"REVERSE"                               return 'REVERSE';
+"HIGHLIGHT"                             return 'HIGHLIGHT';
+"tag:"                                  return 'COMMIT_TAG';
+"branch"                                return 'BRANCH';
+"order:"                                return 'ORDER';
+"merge"                                 return 'MERGE';
+"cherry-pick"                           return 'CHERRY_PICK';
+// "reset"                                 return 'RESET';
+"checkout"                              return 'CHECKOUT';
+"LR"                                    return 'DIR';
+"BT"                                    return 'DIR';
+":"                                     return ':';
+"^"                                     return 'CARET'
+"options"\r?\n                          this.begin("options"); //
+<options>[ \r\n\t]+"end"                this.popState();       // not used anymore in the renderer, fixed for backward compatibility
+<options>[\s\S]+(?=[ \r\n\t]+"end")     return 'OPT';          //
+["]                                     this.begin("string");
+<string>["]                             this.popState();
+<string>[^"]*                           return 'STR';
+[0-9]+                                  return 'NUM';
+[a-zA-Z][-_\./a-zA-Z0-9]*[-_a-zA-Z0-9]  return 'ID';
+<<EOF>>                                 return 'EOF';
 
 /lex
 
@@ -89,11 +102,29 @@ line
 
 statement
     : commitStatement
-    | BRANCH ID {yy.branch($2)}
+    | mergeStatement
+    | cherryPickStatement
+    | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
+    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }  | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
+    | branchStatement
     | CHECKOUT ID {yy.checkout($2)}
-    | MERGE ID {yy.merge($2)}
     // | RESET reset_arg {yy.reset($2)}
     ;
+branchStatement
+    : BRANCH ID {yy.branch($2)}
+    | BRANCH ID ORDER NUM {yy.branch($2, $4)}
+    ;
+
+cherryPickStatement
+    : CHERRY_PICK COMMIT_ID STR {yy.cherryPick($3)}
+    ;
+
+mergeStatement
+    : MERGE ID {yy.merge($2)}
+    | MERGE ID COMMIT_TAG STR {yy.merge($2, $4)}
+    ;
+
 commitStatement
     : COMMIT commit_arg {yy.commit($2)}
     | COMMIT COMMIT_TAG STR {yy.commit('','',yy.commitType.NORMAL,$3)}

@@ -2,12 +2,21 @@ import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
 import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
+import {
+  setAccTitle,
+  getAccTitle,
+  setDiagramTitle,
+  getDiagramTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let prevActor = undefined;
 let actors = {};
 let messages = [];
 const notes = [];
-let title = '';
+let diagramTitle = '';
 let description = '';
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
@@ -119,11 +128,11 @@ export const getActor = function (id) {
 export const getActorKeys = function () {
   return Object.keys(actors);
 };
-export const getTitle = function () {
-  return title;
-};
 export const enableSequenceNumbers = function () {
   sequenceNumbersEnabled = true;
+};
+export const disableSequenceNumbers = function () {
+  sequenceNumbersEnabled = false;
 };
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
 
@@ -137,6 +146,8 @@ export const clear = function () {
   actors = {};
   messages = [];
   sequenceNumbersEnabled = false;
+  diagramTitle = '';
+  commonClear();
 };
 
 export const parseMessage = function (str) {
@@ -178,6 +189,12 @@ export const LINETYPE = {
   RECT_END: 23,
   SOLID_POINT: 24,
   DOTTED_POINT: 25,
+  AUTONUMBER: 26,
+  CRITICAL_START: 27,
+  CRITICAL_OPTION: 28,
+  CRITICAL_END: 29,
+  BREAK_START: 30,
+  BREAK_END: 31,
 };
 
 export const ARROWTYPE = {
@@ -321,11 +338,6 @@ export const getActorProperty = function (actor, key) {
   return undefined;
 };
 
-export const setTitle = function (txt) {
-  let sanitizedText = sanitizeText(txt, configApi.getConfig());
-  title = sanitizedText;
-};
-
 export const apply = function (param) {
   if (param instanceof Array) {
     param.forEach(function (item) {
@@ -333,6 +345,19 @@ export const apply = function (param) {
     });
   } else {
     switch (param.type) {
+      case 'sequenceIndex':
+        messages.push({
+          from: undefined,
+          to: undefined,
+          message: {
+            start: param.sequenceIndex,
+            step: param.sequenceIndexStep,
+            visible: param.sequenceVisible,
+          },
+          wrap: false,
+          type: param.signalType,
+        });
+        break;
       case 'addParticipant':
         addActor(param.actor, param.actor, param.description, 'participant');
         break;
@@ -390,8 +415,8 @@ export const apply = function (param) {
       case 'altEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
-      case 'setTitle':
-        setTitle(param.text);
+      case 'setAccTitle':
+        setAccTitle(param.text);
         break;
       case 'parStart':
         addSignal(undefined, undefined, param.parText, param.signalType);
@@ -402,17 +427,23 @@ export const apply = function (param) {
       case 'parEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
+      case 'criticalStart':
+        addSignal(undefined, undefined, param.criticalText, param.signalType);
+        break;
+      case 'option':
+        addSignal(undefined, undefined, param.optionText, param.signalType);
+        break;
+      case 'criticalEnd':
+        addSignal(undefined, undefined, undefined, param.signalType);
+        break;
+      case 'breakStart':
+        addSignal(undefined, undefined, param.breakText, param.signalType);
+        break;
+      case 'breakEnd':
+        addSignal(undefined, undefined, undefined, param.signalType);
+        break;
     }
   }
-};
-
-const setAccDescription = function (description_lex) {
-  let sanitizedText = sanitizeText(description_lex, configApi.getConfig());
-  description = sanitizedText;
-};
-
-const getAccDescription = function () {
-  return description;
 };
 
 export default {
@@ -425,13 +456,16 @@ export default {
   autoWrap,
   setWrap,
   enableSequenceNumbers,
+  disableSequenceNumbers,
   showSequenceNumbers,
   getMessages,
   getActors,
   getActor,
   getActorKeys,
   getActorProperty,
-  getTitle,
+  getAccTitle,
+  getDiagramTitle,
+  setDiagramTitle,
   parseDirective,
   getConfig: () => configApi.getConfig().sequence,
   clear,
@@ -440,7 +474,7 @@ export default {
   ARROWTYPE,
   PLACEMENT,
   addNote,
-  setTitle,
+  setAccTitle,
   apply,
   setAccDescription,
   getAccDescription,

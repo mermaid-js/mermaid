@@ -4,6 +4,13 @@ import * as configApi from '../../config';
 import common from '../common/common';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
+import {
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 
@@ -77,6 +84,7 @@ export const clear = function () {
   classes = {};
   funs = [];
   funs.push(setupToolTips);
+  commonClear();
 };
 
 export const getClass = function (id) {
@@ -326,7 +334,7 @@ const setupToolTips = function (element) {
 
       tooltipElem.transition().duration(200).style('opacity', '.9');
       tooltipElem
-        .html(el.attr('title'))
+        .text(el.attr('title'))
         .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
         .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
       el.classed('hover', true);
@@ -347,6 +355,10 @@ const setDirection = (dir) => {
 
 export default {
   parseDirective,
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
   getConfig: () => configApi.getConfig().class,
   addClass,
   bindFunctions,

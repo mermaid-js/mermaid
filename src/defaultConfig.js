@@ -230,6 +230,7 @@ const config = {
 
   /** The object containing configurations specific for sequence diagrams */
   sequence: {
+    hideUnusedParticipants: false,
     /**
      * | Parameter       | Description                  | Type    | Required | Values             |
      * | --------------- | ---------------------------- | ------- | -------- | ------------------ |
@@ -844,25 +845,6 @@ const config = {
      */
     defaultRenderer: 'dagre-wrapper',
   },
-  git: {
-    arrowMarkerAbsolute: false,
-
-    useWidth: undefined,
-
-    /**
-     * | Parameter   | Description | Type    | Required | Values      |
-     * | ----------- | ----------- | ------- | -------- | ----------- |
-     * | useMaxWidth | See notes   | boolean | 4        | true, false |
-     *
-     * **Notes:**
-     *
-     * When this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     *
-     * Default value: true
-     */
-    useMaxWidth: true,
-  },
   state: {
     dividerMargin: 10,
     sizeUnit: 5,
@@ -960,13 +942,13 @@ const config = {
     minEntityHeight: 75,
 
     /**
-     * | Parameter     | Description                                                 | Type    | Required | Values             |
-     * | ------------- | ----------------------------------------------------------- | ------- | -------- | ------------------ |
-     * | entityPadding | Minimum internal padding betweentext in box and box borders | Integer | 4        | Any Positive Value |
+     * | Parameter     | Description                                                  | Type    | Required | Values             |
+     * | ------------- | ------------------------------------------------------------ | ------- | -------- | ------------------ |
+     * | entityPadding | Minimum internal padding between text in box and box borders | Integer | 4        | Any Positive Value |
      *
      * **Notes:**
      *
-     * The minimum internal padding betweentext in an entity box and the enclosing box borders,
+     * The minimum internal padding between text in an entity box and the enclosing box borders,
      * expressed in pixels.
      *
      * Default value: 15
@@ -1066,27 +1048,421 @@ const config = {
   },
   gitGraph: {
     diagramPadding: 8,
-    nodeSpacing: 150,
-    nodeFillColor: 'yellow',
-    nodeStrokeWidth: 2,
-    nodeStrokeColor: 'grey',
-    lineStrokeWidth: 4,
-    branchOffset: 50,
-    lineColor: 'grey',
-    leftMargin: 50,
-    branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
-    nodeRadius: 10,
     nodeLabel: {
       width: 75,
       height: 100,
       x: -25,
       y: 0,
     },
+    mainBranchName: 'main',
+    mainBranchOrder: 0,
+    showCommitLabel: true,
+    showBranches: true,
+    rotateCommitLabel: true,
+  },
+
+  /** The object containing configurations specific for c4 diagrams */
+  c4: {
+    useWidth: undefined,
+
+    /**
+     * | Parameter      | Description                                    | Type    | Required | Values             |
+     * | -------------- | ---------------------------------------------- | ------- | -------- | ------------------ |
+     * | diagramMarginX | Margin to the right and left of the c4 diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 50
+     */
+    diagramMarginX: 50,
+
+    /**
+     * | Parameter      | Description                                 | Type    | Required | Values             |
+     * | -------------- | ------------------------------------------- | ------- | -------- | ------------------ |
+     * | diagramMarginY | Margin to the over and under the c4 diagram | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    diagramMarginY: 10,
+
+    /**
+     * | Parameter   | Description           | Type    | Required | Values             |
+     * | ----------- | --------------------- | ------- | -------- | ------------------ |
+     * | shapeMargin | Margin between shapes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 50
+     */
+    c4ShapeMargin: 50,
+
+    c4ShapePadding: 20,
+
+    /**
+     * | Parameter | Description           | Type    | Required | Values             |
+     * | --------- | --------------------- | ------- | -------- | ------------------ |
+     * | width     | Width of person boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 216
+     */
+    width: 216,
+
+    /**
+     * | Parameter | Description            | Type    | Required | Values             |
+     * | --------- | ---------------------- | ------- | -------- | ------------------ |
+     * | height    | Height of person boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 60
+     */
+    height: 60,
+
+    /**
+     * | Parameter | Description              | Type    | Required | Values             |
+     * | --------- | ------------------------ | ------- | -------- | ------------------ |
+     * | boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     * **Notes:** Default value: 10
+     */
+    boxMargin: 10,
+
+    /**
+     * | Parameter   | Description | Type    | Required | Values      |
+     * | ----------- | ----------- | ------- | -------- | ----------- |
+     * | useMaxWidth | See Notes   | boolean | Required | true, false |
+     *
+     * **Notes:** When this flag is set to true, the height and width is set to 100% and is then
+     * scaling with the available space. If set to false, the absolute space required is used.
+     *
+     * Default value: true
+     */
+    useMaxWidth: true,
+
+    c4ShapeInRow: 4,
+    nextLinePaddingX: 0,
+
+    c4BoundaryInRow: 2,
+
+    personFontSize: 14,
+    personFontFamily: '"Open Sans", sans-serif',
+    personFontWeight: 'normal',
+
+    external_personFontSize: 14,
+    external_personFontFamily: '"Open Sans", sans-serif',
+    external_personFontWeight: 'normal',
+
+    systemFontSize: 14,
+    systemFontFamily: '"Open Sans", sans-serif',
+    systemFontWeight: 'normal',
+
+    external_systemFontSize: 14,
+    external_systemFontFamily: '"Open Sans", sans-serif',
+    external_systemFontWeight: 'normal',
+
+    system_dbFontSize: 14,
+    system_dbFontFamily: '"Open Sans", sans-serif',
+    system_dbFontWeight: 'normal',
+
+    external_system_dbFontSize: 14,
+    external_system_dbFontFamily: '"Open Sans", sans-serif',
+    external_system_dbFontWeight: 'normal',
+
+    system_queueFontSize: 14,
+    system_queueFontFamily: '"Open Sans", sans-serif',
+    system_queueFontWeight: 'normal',
+
+    external_system_queueFontSize: 14,
+    external_system_queueFontFamily: '"Open Sans", sans-serif',
+    external_system_queueFontWeight: 'normal',
+
+    boundaryFontSize: 14,
+    boundaryFontFamily: '"Open Sans", sans-serif',
+    boundaryFontWeight: 'normal',
+
+    messageFontSize: 12,
+    messageFontFamily: '"Open Sans", sans-serif',
+    messageFontWeight: 'normal',
+
+    containerFontSize: 14,
+    containerFontFamily: '"Open Sans", sans-serif',
+    containerFontWeight: 'normal',
+
+    external_containerFontSize: 14,
+    external_containerFontFamily: '"Open Sans", sans-serif',
+    external_containerFontWeight: 'normal',
+
+    container_dbFontSize: 14,
+    container_dbFontFamily: '"Open Sans", sans-serif',
+    container_dbFontWeight: 'normal',
+
+    external_container_dbFontSize: 14,
+    external_container_dbFontFamily: '"Open Sans", sans-serif',
+    external_container_dbFontWeight: 'normal',
+
+    container_queueFontSize: 14,
+    container_queueFontFamily: '"Open Sans", sans-serif',
+    container_queueFontWeight: 'normal',
+
+    external_container_queueFontSize: 14,
+    external_container_queueFontFamily: '"Open Sans", sans-serif',
+    external_container_queueFontWeight: 'normal',
+
+    componentFontSize: 14,
+    componentFontFamily: '"Open Sans", sans-serif',
+    componentFontWeight: 'normal',
+
+    external_componentFontSize: 14,
+    external_componentFontFamily: '"Open Sans", sans-serif',
+    external_componentFontWeight: 'normal',
+
+    component_dbFontSize: 14,
+    component_dbFontFamily: '"Open Sans", sans-serif',
+    component_dbFontWeight: 'normal',
+
+    external_component_dbFontSize: 14,
+    external_component_dbFontFamily: '"Open Sans", sans-serif',
+    external_component_dbFontWeight: 'normal',
+
+    component_queueFontSize: 14,
+    component_queueFontFamily: '"Open Sans", sans-serif',
+    component_queueFontWeight: 'normal',
+
+    external_component_queueFontSize: 14,
+    external_component_queueFontFamily: '"Open Sans", sans-serif',
+    external_component_queueFontWeight: 'normal',
+
+    /**
+     * This sets the auto-wrap state for the diagram
+     *
+     * **Notes:** Default value: true.
+     */
+    wrap: true,
+
+    /**
+     * This sets the auto-wrap padding for the diagram (sides only)
+     *
+     * **Notes:** Default value: 0.
+     */
+    wrapPadding: 10,
+
+    personFont: function () {
+      return {
+        fontFamily: this.personFontFamily,
+        fontSize: this.personFontSize,
+        fontWeight: this.personFontWeight,
+      };
+    },
+
+    external_personFont: function () {
+      return {
+        fontFamily: this.external_personFontFamily,
+        fontSize: this.external_personFontSize,
+        fontWeight: this.external_personFontWeight,
+      };
+    },
+
+    systemFont: function () {
+      return {
+        fontFamily: this.systemFontFamily,
+        fontSize: this.systemFontSize,
+        fontWeight: this.systemFontWeight,
+      };
+    },
+
+    external_systemFont: function () {
+      return {
+        fontFamily: this.external_systemFontFamily,
+        fontSize: this.external_systemFontSize,
+        fontWeight: this.external_systemFontWeight,
+      };
+    },
+
+    system_dbFont: function () {
+      return {
+        fontFamily: this.system_dbFontFamily,
+        fontSize: this.system_dbFontSize,
+        fontWeight: this.system_dbFontWeight,
+      };
+    },
+
+    external_system_dbFont: function () {
+      return {
+        fontFamily: this.external_system_dbFontFamily,
+        fontSize: this.external_system_dbFontSize,
+        fontWeight: this.external_system_dbFontWeight,
+      };
+    },
+
+    system_queueFont: function () {
+      return {
+        fontFamily: this.system_queueFontFamily,
+        fontSize: this.system_queueFontSize,
+        fontWeight: this.system_queueFontWeight,
+      };
+    },
+
+    external_system_queueFont: function () {
+      return {
+        fontFamily: this.external_system_queueFontFamily,
+        fontSize: this.external_system_queueFontSize,
+        fontWeight: this.external_system_queueFontWeight,
+      };
+    },
+
+    containerFont: function () {
+      return {
+        fontFamily: this.containerFontFamily,
+        fontSize: this.containerFontSize,
+        fontWeight: this.containerFontWeight,
+      };
+    },
+
+    external_containerFont: function () {
+      return {
+        fontFamily: this.external_containerFontFamily,
+        fontSize: this.external_containerFontSize,
+        fontWeight: this.external_containerFontWeight,
+      };
+    },
+
+    container_dbFont: function () {
+      return {
+        fontFamily: this.container_dbFontFamily,
+        fontSize: this.container_dbFontSize,
+        fontWeight: this.container_dbFontWeight,
+      };
+    },
+
+    external_container_dbFont: function () {
+      return {
+        fontFamily: this.external_container_dbFontFamily,
+        fontSize: this.external_container_dbFontSize,
+        fontWeight: this.external_container_dbFontWeight,
+      };
+    },
+
+    container_queueFont: function () {
+      return {
+        fontFamily: this.container_queueFontFamily,
+        fontSize: this.container_queueFontSize,
+        fontWeight: this.container_queueFontWeight,
+      };
+    },
+
+    external_container_queueFont: function () {
+      return {
+        fontFamily: this.external_container_queueFontFamily,
+        fontSize: this.external_container_queueFontSize,
+        fontWeight: this.external_container_queueFontWeight,
+      };
+    },
+
+    componentFont: function () {
+      return {
+        fontFamily: this.componentFontFamily,
+        fontSize: this.componentFontSize,
+        fontWeight: this.componentFontWeight,
+      };
+    },
+
+    external_componentFont: function () {
+      return {
+        fontFamily: this.external_componentFontFamily,
+        fontSize: this.external_componentFontSize,
+        fontWeight: this.external_componentFontWeight,
+      };
+    },
+
+    component_dbFont: function () {
+      return {
+        fontFamily: this.component_dbFontFamily,
+        fontSize: this.component_dbFontSize,
+        fontWeight: this.component_dbFontWeight,
+      };
+    },
+
+    external_component_dbFont: function () {
+      return {
+        fontFamily: this.external_component_dbFontFamily,
+        fontSize: this.external_component_dbFontSize,
+        fontWeight: this.external_component_dbFontWeight,
+      };
+    },
+
+    component_queueFont: function () {
+      return {
+        fontFamily: this.component_queueFontFamily,
+        fontSize: this.component_queueFontSize,
+        fontWeight: this.component_queueFontWeight,
+      };
+    },
+
+    external_component_queueFont: function () {
+      return {
+        fontFamily: this.external_component_queueFontFamily,
+        fontSize: this.external_component_queueFontSize,
+        fontWeight: this.external_component_queueFontWeight,
+      };
+    },
+
+    boundaryFont: function () {
+      return {
+        fontFamily: this.boundaryFontFamily,
+        fontSize: this.boundaryFontSize,
+        fontWeight: this.boundaryFontWeight,
+      };
+    },
+
+    messageFont: function () {
+      return {
+        fontFamily: this.messageFontFamily,
+        fontSize: this.messageFontSize,
+        fontWeight: this.messageFontWeight,
+      };
+    },
+
+    // ' Colors
+    // ' ##################################
+    person_bg_color: '#08427B',
+    person_border_color: '#073B6F',
+    external_person_bg_color: '#686868',
+    external_person_border_color: '#8A8A8A',
+    system_bg_color: '#1168BD',
+    system_border_color: '#3C7FC0',
+    system_db_bg_color: '#1168BD',
+    system_db_border_color: '#3C7FC0',
+    system_queue_bg_color: '#1168BD',
+    system_queue_border_color: '#3C7FC0',
+    external_system_bg_color: '#999999',
+    external_system_border_color: '#8A8A8A',
+    external_system_db_bg_color: '#999999',
+    external_system_db_border_color: '#8A8A8A',
+    external_system_queue_bg_color: '#999999',
+    external_system_queue_border_color: '#8A8A8A',
+    container_bg_color: '#438DD5',
+    container_border_color: '#3C7FC0',
+    container_db_bg_color: '#438DD5',
+    container_db_border_color: '#3C7FC0',
+    container_queue_bg_color: '#438DD5',
+    container_queue_border_color: '#3C7FC0',
+    external_container_bg_color: '#B3B3B3',
+    external_container_border_color: '#A6A6A6',
+    external_container_db_bg_color: '#B3B3B3',
+    external_container_db_border_color: '#A6A6A6',
+    external_container_queue_bg_color: '#B3B3B3',
+    external_container_queue_border_color: '#A6A6A6',
+    component_bg_color: '#85BBF0',
+    component_border_color: '#78A8D8',
+    component_db_bg_color: '#85BBF0',
+    component_db_border_color: '#78A8D8',
+    component_queue_bg_color: '#85BBF0',
+    component_queue_border_color: '#78A8D8',
+    external_component_bg_color: '#CCCCCC',
+    external_component_border_color: '#BFBFBF',
+    external_component_db_bg_color: '#CCCCCC',
+    external_component_db_border_color: '#BFBFBF',
+    external_component_queue_bg_color: '#CCCCCC',
+    external_component_queue_border_color: '#BFBFBF',
   },
 };
 
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
 const keyify = (obj, prefix = '') =>
   Object.keys(obj).reduce((res, el) => {

@@ -1,4 +1,5 @@
 import moment from 'moment-mini';
+import { log } from '../../logger';
 import {
   select,
   scaleTime,
@@ -15,14 +16,13 @@ import common from '../common/common';
 import ganttDb from './ganttDb';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = ganttDb;
 export const setConf = function () {
-  // const keys = Object.keys(cnf);
-  // keys.forEach(function(key) {
-  //   conf[key] = cnf[key];
-  // });
+  log.debug('Something is calling, setConf, remove the call');
 };
+
 let w;
 export const draw = function (text, id) {
   const conf = getConfig().gantt;
@@ -109,10 +109,12 @@ export const draw = function (text, id) {
 
   svg
     .append('text')
-    .text(parser.yy.getTitle())
+    .text(parser.yy.getDiagramTitle())
     .attr('x', w / 2)
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText');
+
+  addSVGAccessibilityFields(parser.yy, svg, id);
 
   /**
    * @param tasks

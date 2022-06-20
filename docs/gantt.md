@@ -28,6 +28,7 @@ gantt
     Task in sec      :2014-01-12  , 12d
     another task      : 24d
 ```
+
 ## Syntax
 
 ```mermaid-example
@@ -64,6 +65,7 @@ gantt
 ```
 
 It is possible to set multiple dependencies separated by space:
+
 ```mermaid-example
     gantt
         apple :a, 2017-07-20, 1w
@@ -82,10 +84,9 @@ You can divide the chart into various sections, for example to separate differen
 
 To do so, start a line with the `section` keyword and give it a name. (Note that unlike with the [title for the entire chart](#title), this name is *required*.
 
-
 ### Milestones
 
-You can add milestones to the diagrams. Milestones differ from tasks as they represent a single instant in time and are identified by the keyword `milestone`. Below is an example on how to use milestones. As you may notice, the exact location of the milestone is determined by the initial date for the milestone and the "duration" of the task this way: *initial date*+*duration*/2. 
+You can add milestones to the diagrams. Milestones differ from tasks as they represent a single instant in time and are identified by the keyword `milestone`. Below is an example on how to use milestones. As you may notice, the exact location of the milestone is determined by the initial date for the milestone and the "duration" of the task this way: *initial date*+*duration*/2.
 
 ```mermaid-example
 gantt 
@@ -101,7 +102,6 @@ Final milestone : milestone, m2, 18:14, 2min
 ## Setting dates
 
 `dateFormat` defines the format of the date **input** of your gantt elements. How these dates are represented in the rendered chart **output** are defined by `axisFormat`.
-
 
 ### Input date format
 
@@ -136,7 +136,7 @@ SSS         0..999              Thousandths of a second
 Z ZZ        +12:00              Offset from UTC as +-HH:mm, +-HHmm, or Z
 ```
 
-More info in: http://momentjs.com/docs/#/parsing/string-format/
+More info in: https://momentjs.com/docs/#/parsing/string-format/
 
 ### Output date format on the axis
 

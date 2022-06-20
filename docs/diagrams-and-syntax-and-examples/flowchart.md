@@ -400,7 +400,7 @@ flowchart TB
 
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+It is possible to bind a click event to a node, the click can lead to either a JavaScript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 ```
 click nodeId callback
@@ -408,15 +408,15 @@ click nodeId call callback()
 ```
 
 * nodeId is the id of the node
-* callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
+* callback is the name of a JavaScript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
 
 Examples of tooltip usage below:
 
 ```html
 <script>
-  var callback = function(){
-      alert('A callback was triggered');
-  }
+  var callback = function () {
+    alert('A callback was triggered');
+  };
 </script>
 ```
 
@@ -428,9 +428,9 @@ graph LR;
     B-->C;
     C-->D;
     click A callback "Tooltip for a callback"
-    click B "http://www.github.com" "This is a tooltip for a link"
+    click B "https://www.github.com" "This is a tooltip for a link"
     click A call callback() "Tooltip for a callback"
-    click B href "http://www.github.com" "This is a tooltip for a link"
+    click B href "https://www.github.com" "This is a tooltip for a link"
 ```
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
@@ -443,13 +443,14 @@ graph LR;
     B-->C;
     C-->D;
     D-->E;
-    click A "http://www.github.com" _blank
-    click B "http://www.github.com" "Open this in a new tab" _blank
-    click C href "http://www.github.com" _blank
-    click D href "http://www.github.com" "Open this in a new tab" _blank
+    click A "https://www.github.com" _blank
+    click B "https://www.github.com" "Open this in a new tab" _blank
+    click C href "https://www.github.com" _blank
+    click D href "https://www.github.com" "Open this in a new tab" _blank
 ```
 
 Beginners tip, a full example using interactive links in a html context:
+
 ```html
 <body>
   <div class="mermaid">
@@ -458,25 +459,24 @@ Beginners tip, a full example using interactive links in a html context:
         B-->C;
         C-->D;
         click A callback "Tooltip"
-        click B "http://www.github.com" "This is a link"
+        click B "https://www.github.com" "This is a link"
         click C call callback() "Tooltip"
-        click D href "http://www.github.com" "This is a link"
+        click D href "https://www.github.com" "This is a link"
   </div>
 
   <script>
-    var callback = function(){
+    var callback = function () {
         alert('A callback was triggered');
-    }
-    var config = {
-        startOnLoad:true,
-        flowchart:{
-            useMaxWidth:true,
-            htmlLabels:true,
-            curve:'cardinal',
-        },
-        securityLevel:'loose',
     };
-
+    var config = {
+        startOnLoad: true,
+        flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'cardinal'
+        },
+        securityLevel: 'loose'
+    };
     mermaid.initialize(config);
   </script>
 </body>
@@ -578,14 +578,12 @@ below:
 
 **Example style**
 
-```html
-<style>
-    .cssClass > rect{
-        fill:#FF0000;
-        stroke:#FFFF00;
-        stroke-width:4px;
-    }
-</style>
+```css
+.cssClass > rect {
+    fill: #FF0000;
+    stroke: #FFFF00;
+    stroke-width: 4px;
+}
 ```
 
 **Example definition**
@@ -649,6 +647,6 @@ mermaid.flowchartConfig can be set to a JSON string with config parameters or th
 
 ```javascript
 mermaid.flowchartConfig = {
-    width: 100%
+    width: '100%'
 }
 ```

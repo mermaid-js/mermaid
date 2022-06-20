@@ -1,0 +1,34 @@
+name: Unit Tests
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        cache: yarn
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Yarn
+      run: npm i yarn --global
+
+    - name: Install Packages
+      run: |
+        yarn install --frozen-lockfile
+      env:
+        CYPRESS_CACHE_FOLDER: .cache/Cypress
+
+    - name: Run Unit Tests
+      run: |
+        yarn ci --coverage

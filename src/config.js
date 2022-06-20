@@ -3,8 +3,6 @@ import { log } from './logger';
 import theme from './themes';
 import config from './defaultConfig';
 
-// debugger;
-
 export const defaultConfig = Object.freeze(config);
 
 let siteConfig = assignWithDepth({}, defaultConfig);
@@ -29,7 +27,7 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
 
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
-  if (sumOfDirectives.theme) {
+  if (sumOfDirectives.theme && theme[sumOfDirectives.theme]) {
     const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
       tmpConfigFromInitialize.themeVariables || {},
@@ -61,7 +59,7 @@ export const setSiteConfig = (conf) => {
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
 
-  if (conf.theme) {
+  if (conf.theme && theme[conf.theme]) {
     siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
   }
 
@@ -211,9 +209,9 @@ export const addDirective = (directive) => {
  *
  * ## conf
  *
- * | Parameter | Description                                                   | Type       | Required | Values                                       |
- * | --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
- * | conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
+ * | Parameter | Description                                                    | Type       | Required | Values                                       |
+ * | --------- | -------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+ * | conf      | base set of values, which currentConfig could be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
  *
  * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
  */

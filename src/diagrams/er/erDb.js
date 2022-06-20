@@ -1,6 +1,14 @@
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
+import common from '../common/common';
+import {
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
 
 let entities = {};
 let relationships = [];
@@ -67,27 +75,11 @@ const addRelationship = function (entA, rolA, entB, rSpec) {
 
 const getRelationships = () => relationships;
 
-// Keep this - TODO: revisit...allow the diagram to have a title
-const setTitle = function (txt) {
-  title = txt;
-};
-
-const getTitle = function () {
-  return title;
-};
-
-const setAccDescription = function (txt) {
-  description = txt;
-};
-
-const getAccDescription = function () {
-  return description;
-};
-
 const clear = function () {
   entities = {};
   relationships = [];
   title = '';
+  commonClear();
 };
 
 export default {
@@ -101,8 +93,8 @@ export default {
   addRelationship,
   getRelationships,
   clear,
-  setTitle,
-  getTitle,
+  setAccTitle,
+  getAccTitle,
   setAccDescription,
   getAccDescription,
 };

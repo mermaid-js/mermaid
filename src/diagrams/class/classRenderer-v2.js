@@ -9,8 +9,9 @@ import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 // import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { curveLinear } from 'd3';
-import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
+import { interpolateToCurve, getStylesFromArray, setupGraphViewbox } from '../../utils';
 import common from '../common/common';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = classDb;
 
@@ -321,16 +322,6 @@ export const draw = function (text, id) {
   const relations = classDb.getRelations();
 
   log.info(relations);
-  // let i = 0;
-  // for (i = subGraphs.length - 1; i >= 0; i--) {
-  //   subG = subGraphs[i];
-
-  //   selectAll('cluster').append('text');
-
-  //   for (let j = 0; j < subG.nodes.length; j++) {
-  //     g.setParent(subG.nodes[j], subG.id);
-  //   }
-  // }
   addClasses(classes, g, id);
   addRelations(relations, g);
 
@@ -353,28 +344,7 @@ export const draw = function (text, id) {
   const element = root.select('#' + id + ' g');
   render(element, g, ['aggregation', 'extension', 'composition', 'dependency'], 'classDiagram', id);
 
-  // element.selectAll('g.node').attr('title', function() {
-  //   return flowDb.getTooltip(this.id);
-  // });
-
-  const padding = 8;
-  const svgBounds = svg.node().getBBox();
-  const width = svgBounds.width + padding * 2;
-  const height = svgBounds.height + padding * 2;
-  log.debug(
-    `new ViewBox 0 0 ${width} ${height}`,
-    `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
-  );
-
-  configureSvgSize(svg, height, width, conf.useMaxWidth);
-
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg
-    .select('g')
-    .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
-
-  // Index nodes
-  // flowDb.indexNodes('subGraph' + i);
+  setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
@@ -397,6 +367,7 @@ export const draw = function (text, id) {
     }
   }
 
+  addSVGAccessibilityFields(parser.yy, svg, id);
   // If node has a link, wrap it in an anchor SVG object.
   // const keys = Object.keys(classes);
   // keys.forEach(function(key) {

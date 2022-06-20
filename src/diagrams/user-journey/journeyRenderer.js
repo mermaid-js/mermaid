@@ -4,6 +4,7 @@ import journeyDb from './journeyDb';
 import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
+import addSVGAccessibilityFields from '../../accessibility';
 
 parser.yy = journeyDb;
 
@@ -73,7 +74,7 @@ export const draw = function (text, id) {
   svgDraw.initGraphics(diagram);
 
   const tasks = parser.yy.getTasks();
-  const title = parser.yy.getTitle();
+  const title = parser.yy.getDiagramTitle();
 
   const actorNames = parser.yy.getActors();
   for (let member in actors) delete actors[member];
@@ -100,6 +101,7 @@ export const draw = function (text, id) {
       .attr('font-weight', 'bold')
       .attr('y', 25);
   }
+
   const height = box.stopy - box.starty + 2 * conf.diagramMarginY;
   const width = LEFT_MARGIN + box.stopx + 2 * conf.diagramMarginX;
 
@@ -120,6 +122,8 @@ export const draw = function (text, id) {
   diagram.attr('viewBox', `${box.startx} -25 ${width} ${height + extraVertForTitle}`);
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
   diagram.attr('height', height + extraVertForTitle + 25);
+
+  addSVGAccessibilityFields(parser.yy, diagram, id);
 };
 
 export const bounds = {

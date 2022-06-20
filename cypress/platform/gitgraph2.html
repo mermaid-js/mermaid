@@ -9,7 +9,7 @@
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        background:#111;
+        /* background:#111; */
         /* background:#333; */
         font-family: 'Arial';
         }
@@ -43,6 +43,7 @@
 
     </div>
     <div class="mermaid" style="width: 100%; height: 20%;">
+      %%{init: {  "gitGraph": { "showBranches": true, "mainBranchName": "APA" }}}%%
       gitGraph
       commit
       branch hotfix
@@ -54,14 +55,14 @@
       branch featureB
       checkout featureB
       commit type:HIGHLIGHT
-      checkout main
+      checkout APA
       checkout hotfix
       commit type:NORMAL
       checkout develop
       commit type:REVERSE
       checkout featureB
       commit
-      checkout main
+      checkout APA
       merge hotfix
       checkout featureB
       commit
@@ -79,10 +80,10 @@
       branch release
       checkout release
       commit
-      checkout main
+      checkout APA
       commit
       checkout release
-      merge main
+      merge APA
       checkout develop
       merge release
 
@@ -101,7 +102,7 @@
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'dark',
+        theme: 'default',
         themeVariables: {
           // primaryColor: '#9400D3',
           // darkMode: false,
@@ -119,6 +120,7 @@
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 1,
         flowchart: { curve: 'linear', htmlLabels: true },
+        // gitGraph: { showCommitLabel: false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated

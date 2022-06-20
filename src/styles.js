@@ -2,13 +2,14 @@ import classDiagram from './diagrams/class/styles';
 import er from './diagrams/er/styles';
 import flowchart from './diagrams/flowchart/styles';
 import gantt from './diagrams/gantt/styles';
-import git from './diagrams/git/styles';
+import gitGraph from './diagrams/git/styles';
 import info from './diagrams/info/styles';
 import pie from './diagrams/pie/styles';
 import requirement from './diagrams/requirement/styles';
 import sequence from './diagrams/sequence/styles';
 import stateDiagram from './diagrams/state/styles';
 import journey from './diagrams/user-journey/styles';
+import c4 from './diagrams/c4/styles';
 
 const themes = {
   flowchart,
@@ -20,18 +21,18 @@ const themes = {
   class: classDiagram,
   stateDiagram,
   state: stateDiagram,
-  git,
+  gitGraph,
   info,
   pie,
   er,
   journey,
   requirement,
+  c4,
 };
 
 export const calcThemeVariables = (theme, userOverRides) => theme.calcColors(userOverRides);
 
 const getStyles = (type, userStyles, options) => {
-  //console.warn('options in styles: ', options);
   return ` {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};

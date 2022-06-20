@@ -2,15 +2,30 @@ import { log } from '../../logger';
 import { random } from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
+import { getConfig } from '../../config';
 import common from '../common/common';
+import {
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
+  clear as commonClear,
+} from '../../commonDb';
+
+let mainBranchName = getConfig().gitGraph.mainBranchName;
+let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
 let commits = {};
 let head = null;
-let branches = { main: head };
-let curBranch = 'main';
+let branchesConfig = {};
+branchesConfig[mainBranchName] = { name: mainBranchName, order: mainBranchOrder };
+let branches = {};
+branches[mainBranchName] = head;
+let curBranch = mainBranchName;
 let direction = 'LR';
 let seq = 0;
 
 function getId() {
+  // eslint-disable-line
   return random({ length: 7 });
 }
 
@@ -109,10 +124,11 @@ export const commit = function (msg, id, type, tag) {
   log.debug('in pushCommit ' + commit.id);
 };
 
-export const branch = function (name) {
+export const branch = function (name, order) {
   name = common.sanitizeText(name, configApi.getConfig());
   if (typeof branches[name] === 'undefined') {
     branches[name] = head != null ? head.id : null;
+    branchesConfig[name] = { name, order: order ? parseInt(order, 10) : null };
     checkout(name);
     log.debug('in createBranch');
   } else {
@@ -132,7 +148,7 @@ export const branch = function (name) {
   }
 };
 
-export const merge = function (otherBranch) {
+export const merge = function (otherBranch, tag) {
   otherBranch = common.sanitizeText(otherBranch, configApi.getConfig());
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
@@ -209,6 +225,7 @@ export const merge = function (otherBranch) {
     parents: [head == null ? null : head.id, branches[otherBranch]],
     branch: curBranch,
     type: commitType.MERGE,
+    tag: tag ? tag : '',
   };
   head = commit;
   commits[commit.id] = commit;
@@ -218,9 +235,87 @@ export const merge = function (otherBranch) {
   log.debug('in mergeBranch');
 };
 
+export const cherryPick = function (sourceId, targetId) {
+  sourceId = common.sanitizeText(sourceId, configApi.getConfig());
+  targetId = common.sanitizeText(targetId, configApi.getConfig());
+
+  if (!sourceId || typeof commits[sourceId] === 'undefined') {
+    let error = new Error(
+      'Incorrect usage of "cherryPick". Source commit id should exist and provided'
+    );
+    error.hash = {
+      text: 'cherryPick ' + sourceId + ' ' + targetId,
+      token: 'cherryPick ' + sourceId + ' ' + targetId,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['cherry-pick abc'],
+    };
+    throw error;
+  }
+
+  let sourceCommit = commits[sourceId];
+  let sourceCommitBranch = sourceCommit.branch;
+  if (sourceCommit.type === commitType.MERGE) {
+    let error = new Error(
+      'Incorrect usage of "cherryPick". Source commit should not be a merge commit'
+    );
+    error.hash = {
+      text: 'cherryPick ' + sourceId + ' ' + targetId,
+      token: 'cherryPick ' + sourceId + ' ' + targetId,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: ['cherry-pick abc'],
+    };
+    throw error;
+  }
+  if (!targetId || typeof commits[targetId] === 'undefined') {
+    // cherry-pick source commit to current branch
+
+    if (sourceCommitBranch === curBranch) {
+      let error = new Error(
+        'Incorrect usage of "cherryPick". Source commit is already on current branch'
+      );
+      error.hash = {
+        text: 'cherryPick ' + sourceId + ' ' + targetId,
+        token: 'cherryPick ' + sourceId + ' ' + targetId,
+        line: '1',
+        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+        expected: ['cherry-pick abc'],
+      };
+      throw error;
+    }
+    const currentCommit = commits[branches[curBranch]];
+    if (typeof currentCommit === 'undefined' || !currentCommit) {
+      let error = new Error(
+        'Incorrect usage of "cherry-pick". Current branch (' + curBranch + ')has no commits'
+      );
+      error.hash = {
+        text: 'cherryPick ' + sourceId + ' ' + targetId,
+        token: 'cherryPick ' + sourceId + ' ' + targetId,
+        line: '1',
+        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+        expected: ['cherry-pick abc'],
+      };
+      throw error;
+    }
+    const commit = {
+      id: seq + '-' + getId(),
+      message: 'cherry-picked ' + sourceCommit + ' into ' + curBranch,
+      seq: seq++,
+      parents: [head == null ? null : head.id, sourceCommit.id],
+      branch: curBranch,
+      type: commitType.CHERRY_PICK,
+      tag: 'cherry-pick:' + sourceCommit.id,
+    };
+    head = commit;
+    commits[commit.id] = commit;
+    branches[curBranch] = commit.id;
+    log.debug(branches);
+    log.debug('in cheeryPick');
+  }
+};
 export const checkout = function (branch) {
   branch = common.sanitizeText(branch, configApi.getConfig());
-  console.info(branches);
   if (typeof branches[branch] === 'undefined') {
     let error = new Error(
       'Trying to checkout branch which is not yet created. (Help try using "branch ' + branch + '")'
@@ -238,9 +333,6 @@ export const checkout = function (branch) {
   } else {
     curBranch = branch;
     const id = branches[curBranch];
-    console.log(id);
-    console.log('hi');
-    console.log(commits);
     head = commits[id];
   }
 };
@@ -320,18 +412,30 @@ export const prettyPrint = function () {
 export const clear = function () {
   commits = {};
   head = null;
-  branches = { main: head };
-  curBranch = 'main';
+  let mainBranch = getConfig().gitGraph.mainBranchName;
+  let mainBranchOrder = getConfig().gitGraph.mainBranchOrder;
+  branches = {};
+  branches[mainBranch] = null;
+  branchesConfig = {};
+  branchesConfig[mainBranch] = { name: mainBranch, order: mainBranchOrder };
+  curBranch = mainBranch;
   seq = 0;
+  commonClear();
 };
 
 export const getBranchesAsObjArray = function () {
-  const branchArr = [];
-  for (let branch in branches) {
-    // branchArr.push({ name: branch, commit: commits[branches[branch]] });
-    branchArr.push({ name: branch });
-  }
-  return branchArr;
+  const branchesArray = Object.values(branchesConfig)
+    .map((branchConfig, i) => {
+      if (branchConfig.order !== null) return branchConfig;
+      return {
+        ...branchConfig,
+        order: parseFloat(`0.${i}`, 10),
+      };
+    })
+    .sort((a, b) => a.order - b.order)
+    .map(({ name }) => ({ name }));
+
+  return branchesArray;
 };
 
 export const getBranches = function () {
@@ -365,6 +469,7 @@ export const commitType = {
   REVERSE: 1,
   HIGHLIGHT: 2,
   MERGE: 3,
+  CHERRY_PICK: 4,
 };
 
 export default {
@@ -376,6 +481,7 @@ export default {
   commit,
   branch,
   merge,
+  cherryPick,
   checkout,
   //reset,
   prettyPrint,
@@ -387,5 +493,9 @@ export default {
   getCurrentBranch,
   getDirection,
   getHead,
+  setAccTitle,
+  getAccTitle,
+  getAccDescription,
+  setAccDescription,
   commitType,
 };
