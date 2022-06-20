@@ -133,6 +133,18 @@ Enterprise_Boundary(b0, "BankBoundary0") {
 
     Rel(ma, sign, "Uses", "JSON/HTTPS")
     Rel(ma, accounts, "Uses", "JSON/HTTPS")
+
+    UpdateRelStyle(spa, sign, $offsetY="-40") 
+    UpdateRelStyle(spa, accounts, $offsetX="40", $offsetY="40")
+
+    UpdateRelStyle(ma, sign, $offsetX="-90", $offsetY="40")
+    UpdateRelStyle(ma, accounts, $offsetY="-40")
+
+        UpdateRelStyle(sign, security, $offsetX="-160", $offsetY="10")
+        UpdateRelStyle(accounts, mbsfacade, $offsetX="140", $offsetY="10")
+        UpdateRelStyle(security, db, $offsetY="-40")
+        UpdateRelStyle(mbsfacade, mbs, $offsetY="-40")
+
   </div>  
 
   <div class="mermaid">
@@ -197,6 +209,12 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     Rel(api, db, "Reads from and writes to", "JDBC")
     Rel(api, db2, "Reads from and writes to", "JDBC")
     Rel_R(db, db2, "Replicates data to")
+
+    UpdateRelStyle(spa, api, $offsetY="-40")
+    UpdateRelStyle(web, spa, $offsetY="-40")
+    UpdateRelStyle(api, db, $offsetY="-20", $offsetX="5")
+    UpdateRelStyle(api, db2, $offsetX="-40", $offsetY="-20")
+    UpdateRelStyle(db, db2, $offsetY="-10")
   </div>  
 
   <hr />
