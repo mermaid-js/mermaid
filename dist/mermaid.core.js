@@ -10341,7 +10341,7 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-dependencyEnd' + ')');
       break;
 
-    case 'dependency':
+    case 'lollipop':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-lollipopEnd' + ')');
       break;
 
