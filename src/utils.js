@@ -1044,6 +1044,17 @@ export const directiveSanitizer = (args) => {
       });
     }
   }
+  if (args.themeVariables) {
+    const kArr = Object.keys(args.themeVariables);
+    for (let i = 0; i < kArr.length; i++) {
+      const k = kArr[i];
+      const val = args.themeVariables[k];
+      if (!val.match(/^[a-zA-Z0-9#;]+$/)) {
+        args.themeVariables[k] = '';
+      }
+    }
+  }
+  log.debug('After sanitization', args);
 };
 export const sanitizeCss = (str) => {
   const stringsearch = 'o';
