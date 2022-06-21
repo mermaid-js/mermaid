@@ -1032,6 +1032,14 @@ export const directiveSanitizer = (args) => {
           log.debug('sanitizing themeCss option');
           args[key] = sanitizeCss(args[key]);
         }
+        if (key.indexOf('fontFamily') >= 0) {
+          log.debug('sanitizing fontFamily option');
+          args[key] = sanitizeCss(args[key]);
+        }
+        if (key.indexOf('altFontFamily') >= 0) {
+          log.debug('sanitizing altFontFamily option');
+          args[key] = sanitizeCss(args[key]);
+        }
         if (configKeys.indexOf(key) < 0) {
           log.debug('sanitize deleting option', key);
           delete args[key];
