@@ -1057,7 +1057,7 @@ export const directiveSanitizer = (args) => {
     for (let i = 0; i < kArr.length; i++) {
       const k = kArr[i];
       const val = args.themeVariables[k];
-      if (!val.match(/^[a-zA-Z0-9#;]+$/)) {
+      if (!val.match(/^[a-zA-Z0-9#,";()%. ]+$/)) {
         args.themeVariables[k] = '';
       }
     }
