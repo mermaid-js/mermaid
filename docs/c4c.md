@@ -5,7 +5,7 @@
 
 
 
-Mermaid's c4 diagram sytax is compatible with plantUML. See example below:
+Mermaid's c4 diagram syntax is compatible with plantUML. See example below:
 
 ```mermaid-example
     C4Context

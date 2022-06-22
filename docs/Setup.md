@@ -118,7 +118,7 @@ Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
 
 This option controls if the generated ids of nodes in the SVG are generated randomly or based
 on a seed. If set to false, the IDs are generated based on the current date and thus are not
-deterministic. This is the default behaviour.
+deterministic. This is the default behavior.
 
 **Notes**:
 

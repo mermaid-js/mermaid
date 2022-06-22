@@ -189,12 +189,12 @@ To use the `cherry-pick` keyword, you must specify the id  using the `id` attrib
 
  `cherry-pick id: "your_custom_id"`
 
-Here, a new commt representing the cherry pick is created on the current branch, and is visually highlighted in the diagram with a **cherry** and a tag depicting the commit id from which it is cherry picked from.
+Here, a new commit representing the cherry pick is created on the current branch, and is visually highlighted in the diagram with a **cherry** and a tag depicting the commit id from which it is cherry picked from.
 
 Few Important rules to note here are:
 1. You need to provide the `id` for an existing commit to be cherry picked. If given commit id does not exist it will result in an error. For this make use of the `commit id:$value` format of declaring commits. See the examples from above.
 2. The given commit must not exist on the current branch. Cherry picked commit must always be a different branch than the current branch.
-3. Current branch must have atleast one commit, before you can cherry pick a commit, otherwise it will case an error is throw.
+3. Current branch must have at least one commit, before you can cherry pick a commit, otherwise it will cause an error is throw.
 
 Let see an example:
 ```mermaid-example
@@ -272,7 +272,7 @@ Usage example:
  ```
 
 ## Commit labels Layout: Rotated or Horizontal
-Mermaid supports two types of commit labels layout. The default layout is **rotated**, which means the labels are placed below the commit circle, rotated at 45 degress for better readability. This is particularly useful for commits with long labels.
+Mermaid supports two types of commit labels layout. The default layout is **rotated**, which means the labels are placed below the commit circle, rotated at 45 degrees for better readability. This is particularly useful for commits with long labels.
 
 The other option is **horizontal**, which means the labels are placed below the commit circle centred horizontally, and are not rotated. This is particularly useful for commits with short labels.
 

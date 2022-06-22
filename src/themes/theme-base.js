@@ -5,7 +5,7 @@ class Theme {
     /** # Base variables */
     /**
      * - Background - used to know what the background color is of the diagram. This is used for
-     *   deducing colors for istance line color. Defaulr value is #f4f4f4.
+     *   deducing colors for instance line color. Default value is #f4f4f4.
      */
     this.background = '#f4f4f4';
     this.darkMode = false;
@@ -21,7 +21,7 @@ class Theme {
     this.fontSize = '16px';
   }
   updateColors() {
-    // The || is to make sure that if the variable has been defiend by a user override that value is to be used
+    // The || is to make sure that if the variable has been defined by a user override that value is to be used
 
     /* Main */
     this.primaryTextColor = this.primaryTextColor || (this.darkMode ? '#eee' : '#333'); // invert(this.primaryColor);
@@ -103,7 +103,7 @@ class Theme {
     /* state colors */
     this.transitionColor = this.transitionColor || this.lineColor;
     this.transitionLabelColor = this.transitionLabelColor || this.textColor;
-    /* The color of the text tables of the tstates*/
+    /* The color of the text tables of the states*/
     this.stateLabelColor = this.stateLabelColor || this.stateBkg || this.primaryTextColor;
 
     this.stateBkg = this.stateBkg || this.mainBkg;
