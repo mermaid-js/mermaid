@@ -112,6 +112,9 @@
     "webpack-merge": "^5.8.0",
     "webpack-node-externals": "^3.0.0"
   },
+  "resolutions": {
+    "d3": "^7.0.0"
+  },
   "files": [
     "dist"
   ],
