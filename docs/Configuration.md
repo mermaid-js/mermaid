@@ -5,7 +5,7 @@ Configuration is the second half of Mermaid, after deployment. Together Deployme
 This section will introduce the different methods of configuring of the behaviors and appearances of Mermaid Diagrams. 
 The Following are the most commonly used methods, and are all tied to Mermaid [Deployment](./n00b-gettingStarted.md) methods. 
 
-## Configuration Section in the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor).
+## Configuration Section in the [Live Editor](https://mermaid.live/).
 
 
 ## The `initialize()` call, for when Mermaid is called via an API, or through a <script> tag. 
