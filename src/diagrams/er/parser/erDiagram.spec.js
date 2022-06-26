@@ -72,6 +72,19 @@ describe('when parsing ER diagram it...', function () {
     expect(entities[entity].attributes.length).toBe(1);
   });
 
+  it('should allow an entity with attribute starting with fk or pk and a comment', function () {
+    const entity = 'BOOK';
+    const attribute1 = 'int fk_title FK';
+    const attribute2 = 'string pk_author PK';
+    const attribute3 = 'float pk_price PK "comment"';
+
+    erDiagram.parser.parse(
+      `erDiagram\n${entity} {\n${attribute1} \n\n${attribute2}\n${attribute3}\n}`
+    );
+    const entities = erDb.getEntities();
+    expect(entities[entity].attributes.length).toBe(3);
+  });
+
   it('should allow an entity with multiple attributes to be defined', function () {
     const entity = 'BOOK';
     const attribute1 = 'string title';
