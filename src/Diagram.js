@@ -107,12 +107,14 @@ class Diagram {
         this.parser = stateParser;
         this.parser.parser.yy = stateDb;
         this.db = stateDb;
+        this.db.clear();
         this.renderer = stateRenderer;
         break;
       case 'stateDiagram':
         this.parser = stateParser;
         this.parser.parser.yy = stateDb;
         this.db = stateDb;
+        this.db.clear();
         this.renderer = stateRendererV2;
         break;
       case 'info':

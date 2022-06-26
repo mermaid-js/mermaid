@@ -59,6 +59,7 @@ import stateRendererV2 from './diagrams/state/stateRenderer-v2';
 import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
+import Diagram from './Diagram';
 import errorRenderer from './errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
@@ -70,81 +71,19 @@ import mermaid from './mermaid';
 
 /**
  * @param text
+ * @param dia
  * @returns {any}
  */
-function parse(text) {
+function parse(text, dia) {
   var parseEncounteredException = false;
   try {
     text = text + '\n';
+    const diag = dia ? dia : new Diagram(text);
     const cnf = configApi.getConfig();
-    const graphType = utils.detectType(text, cnf);
     let parser;
 
-    log.debug('Type ' + graphType);
-    switch (graphType) {
-      case 'c4':
-        c4Db.clear();
-        parser = c4Parser;
-        parser.parser.yy = c4Db;
-        break;
-      case 'gitGraph':
-        gitGraphAst.clear();
-        parser = gitGraphParser;
-        parser.parser.yy = gitGraphAst;
-        break;
-      case 'flowchart':
-      case 'flowchart-v2':
-        flowDb.clear();
-        parser = flowParser;
-        parser.parser.yy = flowDb;
-        break;
-      case 'sequence':
-        sequenceDb.clear();
-        parser = sequenceParser;
-        parser.parser.yy = sequenceDb;
-        break;
-      case 'gantt':
-        parser = ganttParser;
-        parser.parser.yy = ganttDb;
-        break;
-      case 'class':
-      case 'classDiagram':
-        parser = classParser;
-        parser.parser.yy = classDb;
-        break;
-      case 'state':
-      case 'stateDiagram':
-        parser = stateParser;
-        parser.parser.yy = stateDb;
-        break;
-      case 'info':
-        log.debug('info info info');
-        parser = infoParser;
-        parser.parser.yy = infoDb;
-        break;
-      case 'pie':
-        log.debug('pie');
-        parser = pieParser;
-        parser.parser.yy = pieDb;
-        break;
-      case 'er':
-        log.debug('er');
-        parser = erParser;
-        parser.parser.yy = erDb;
-        break;
-      case 'journey':
-        log.debug('Journey');
-        parser = journeyParser;
-        parser.parser.yy = journeyDb;
-        break;
-      case 'requirement':
-      case 'requirementDiagram':
-        log.debug('RequirementDiagram');
-        parser = requirementParser;
-        parser.parser.yy = requirementDb;
-        break;
-    }
-    parser.parser.yy.graphType = graphType;
+    log.debug('Type ' + diag.type);
+    parser.parser.yy.graphType = diag.type;
     parser.parser.yy.parseError = (str, hash) => {
       const error = { str, hash };
       throw error;
@@ -349,9 +288,10 @@ const render = function (id, _txt, cb, container) {
 
   txt = encodeEntities(txt);
 
+  const diag = new Diagram(txt);
   // Get the tmp element containing the the svg
   const element = root.select('#d' + id).node();
-  const graphType = utils.detectType(txt, cnf);
+  const graphType = diag.type;
 
   // insert inline style into svg
   const svg = element.firstChild;
@@ -419,20 +359,20 @@ const render = function (id, _txt, cb, container) {
     switch (graphType) {
       case 'c4':
         c4Renderer.setConf(cnf.c4);
-        c4Renderer.draw(txt, id);
+        c4Renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'gitGraph':
-        gitGraphRenderer.draw(txt, id, false);
+        gitGraphRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'flowchart':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         flowRenderer.setConf(cnf.flowchart);
-        flowRenderer.draw(txt, id, false);
+        flowRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'flowchart-v2':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         flowRendererV2.setConf(cnf.flowchart);
-        flowRendererV2.draw(txt, id, false);
+        flowRendererV2.draw(txt, id, pkg.version, diag);
         break;
       case 'sequence':
         cnf.sequence.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
@@ -445,52 +385,52 @@ const render = function (id, _txt, cb, container) {
         } else {
           sequenceRenderer.setConf(cnf.sequence);
         }
-        sequenceRenderer.draw(txt, id);
+        sequenceRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'gantt':
         cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         ganttRenderer.setConf(cnf.gantt);
-        ganttRenderer.draw(txt, id);
+        ganttRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'class':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         classRenderer.setConf(cnf.class);
-        classRenderer.draw(txt, id);
+        classRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'classDiagram':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         classRendererV2.setConf(cnf.class);
-        classRendererV2.draw(txt, id);
+        classRendererV2.draw(txt, id, pkg.version, diag);
         break;
       case 'state':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         stateRenderer.setConf(cnf.state);
-        stateRenderer.draw(txt, id);
+        stateRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'stateDiagram':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        stateRendererV2.setConf(cnf.state);
-        stateRendererV2.draw(txt, id);
+        diag.renderer.setConf(cnf.state);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'info':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         infoRenderer.setConf(cnf.class);
-        infoRenderer.draw(txt, id, pkg.version);
+        infoRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'pie':
-        pieRenderer.draw(txt, id, pkg.version);
+        pieRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'er':
         erRenderer.setConf(cnf.er);
-        erRenderer.draw(txt, id, pkg.version);
+        erRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'journey':
         journeyRenderer.setConf(cnf.journey);
-        journeyRenderer.draw(txt, id, pkg.version);
+        journeyRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'requirement':
         requirementRenderer.setConf(cnf.requirement);
-        requirementRenderer.draw(txt, id, pkg.version);
+        requirementRenderer.draw(txt, id, pkg.version, diag);
         break;
     }
   } catch (e) {
