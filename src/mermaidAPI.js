@@ -79,8 +79,9 @@ function parse(text, dia) {
   try {
     text = text + '\n';
     const diag = dia ? dia : new Diagram(text);
+    diag.db.clear();
     const cnf = configApi.getConfig();
-    let parser;
+    let parser = diag.parser;
 
     log.debug('Type ' + diag.type);
     parser.parser.yy.graphType = diag.type;
