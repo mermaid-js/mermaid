@@ -243,24 +243,26 @@ This function will in turn call a function *your diagram should provide* returni
 
 ```js
 const getStyles = (options) =>
-  `
-  .line {
-    stroke-width: 1;
-    stroke: ${options.lineColor};
-    stroke-dasharray: 2;
-  }
-	// ...
+    `
+    .line {
+      stroke-width: 1;
+      stroke: ${options.lineColor};
+      stroke-dasharray: 2;
+    }
+    // ...
+    `;
 ```
 
 Note that you need to provide your function to the main getStyles by adding it into the themes object in  **src/styles.js** like in the xyzDiagram in the provided example:
 
 ```js
 const themes = {
-	flowchart,
-	'flowchart-v2': flowchart,
-	sequence,
-	xyzDiagram
-	//...
+    flowchart,
+    'flowchart-v2': flowchart,
+    sequence,
+    xyzDiagram,
+    //...
+};
 ```
 
 The actual options and values for the colors are defined in **src/theme/theme-[xyz].js**. If you provide the options your diagram needs in the existing theme files then the theming will work smoothly without hiccups.

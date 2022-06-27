@@ -27,7 +27,7 @@
     "postbuild": "documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md",
     "build:watch": "yarn build:development --watch",
     "release": "yarn build",
-    "lint": "eslint ./ --ext .js,.json,.html",
+    "lint": "eslint ./ --ext .js,.json,.html,.md",
     "lint:fix": "yarn lint --fix",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
     "cypress": "cypress run",
@@ -111,6 +111,9 @@
     "webpack-dev-server": "^4.3.0",
     "webpack-merge": "^5.8.0",
     "webpack-node-externals": "^3.0.0"
+  },
+  "resolutions": {
+    "d3": "^7.0.0"
   },
   "files": [
     "dist"

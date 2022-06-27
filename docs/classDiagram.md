@@ -48,7 +48,7 @@ classDiagram
     BankAccount : +String owner
     BankAccount : +Bigdecimal balance
     BankAccount : +deposit(amount)
-    BankAccount : +withdrawl(amount)
+    BankAccount : +withdrawal(amount)
 
 ```
 
@@ -94,7 +94,7 @@ class BankAccount{
     +String owner
     +BigDecimal balance
     +deposit(amount)
-    +withdrawl(amount)
+    +withdrawal(amount)
 }
 ```
 
@@ -109,7 +109,7 @@ class BankAccount{
     +String owner
     +BigDecimal balance
     +deposit(amount) bool
-    +withdrawl(amount) int
+    +withdrawal(amount) int
 }
 ```
 

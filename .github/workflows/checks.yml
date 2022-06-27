@@ -12,6 +12,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: check tests
+    if: github.repository_owner == 'mermaid'
     steps:
     - uses: actions/checkout@v2
       with:
