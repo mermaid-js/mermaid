@@ -945,7 +945,7 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `0 0 ${width} ${height}`;
   log.debug(
-    'Grpah.label',
+    'Graph.label',
     graph._label,
     'swidth',
     sWidth,
@@ -966,7 +966,7 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
   svgElem.select('g').attr('transform', `translate(${tx}, ${ty})`);
 };
 
-export const initIdGeneratior = class iterator {
+export const initIdGenerator = class iterator {
   constructor(deterministic, seed) {
     this.deterministic = deterministic;
     this.seed = seed;
@@ -1080,7 +1080,7 @@ export default {
   memoize,
   runFunc,
   entityDecode,
-  initIdGeneratior,
+  initIdGenerator: initIdGenerator,
   directiveSanitizer,
   sanitizeCss,
 };

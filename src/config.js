@@ -21,7 +21,7 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
     const d = _directives[i];
     sanitize(d);
 
-    // Apply the data from the directive where the the overrides the themeVaraibles
+    // Apply the data from the directive where the the overrides the themeVariables
     sumOfDirectives = assignWithDepth(sumOfDirectives, d);
   }
 
@@ -67,7 +67,7 @@ export const setSiteConfig = (conf) => {
   return siteConfig;
 };
 
-export const saveConfigFromInitilize = (conf) => {
+export const saveConfigFromInitialize = (conf) => {
   configFromInitialize = assignWithDepth({}, conf);
 };
 

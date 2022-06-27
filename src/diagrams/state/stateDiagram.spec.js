@@ -122,8 +122,8 @@ describe('state diagram, ', function () {
     });
     it('handle "as" in state names 2', function () {
       const str = `stateDiagram
-      assembleas
-      state assembleas
+      assemblies
+      state assemblies
       `;
 
       parser.parse(str);
@@ -222,14 +222,14 @@ describe('state diagram, ', function () {
 
       parser.parse(str);
     });
-    it('should handle state deifintions with separation of id', function () {
+    it('should handle state defintions with separation of id', function () {
       const str = `stateDiagram\n
         state "Long state description" as state1
         `;
 
       parser.parse(str);
     });
-    it('should handle state deifintions with separation of id', function () {
+    it('should handle state defintions with separation of id', function () {
       const str = `stateDiagram
       state "Not Shooting State" as NotShooting {
         state "Idle mode" as Idle

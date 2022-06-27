@@ -65,7 +65,7 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     Person(customer, Customer, "A customer of the bank, with personal bank accounts")
 
     Container_Boundary(c1, "Internet Banking") {
-        Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to cutomers via their web browser")
+        Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to customers via their web browser")
         Container_Ext(mobile_app, "Mobile App", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
         Container(web_app, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
         ContainerDb(database, "Database", "SQL Database", "Stores user registration information, hashed auth credentials, access logs, etc.")
@@ -99,7 +99,7 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     System_Ext(mbs, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
 
     Container_Boundary(api, "API Application") {
-        Component(sign, "Sign In Controller", "MVC Rest Controlle", "Allows users to sign in to the internet banking system")
+        Component(sign, "Sign In Controller", "MVC Rest Controller", "Allows users to sign in to the internet banking system")
         Component(accounts, "Accounts Summary Controller", "MVC Rest Controller", "Provides customers with a summary of their bank accounts")
         Component(security, "Security Component", "Spring Bean", "Provides functionality related to singing in, changing passwords, etc.")
         Component(mbsfacade, "Mainframe Banking System Facade", "Spring Bean", "A facade onto the mainframe banking system.")
