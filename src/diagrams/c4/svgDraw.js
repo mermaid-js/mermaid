@@ -216,6 +216,11 @@ export const drawRels = (elem, rels, conf) => {
   const relsElem = elem.append('g');
   let i = 0;
   for (let rel of rels) {
+    let textColor = rel.textColor ? rel.textColor : '#444444';
+    let strokeColor = rel.lineColor ? rel.lineColor : '#444444';
+    let offsetX = rel.offsetX ? parseInt(rel.offsetX) : 0;
+    let offsetY = rel.offsetY ? parseInt(rel.offsetY) : 0;
+
     let url = '';
     if (i === 0) {
       let line = relsElem.append('line');
@@ -225,7 +230,7 @@ export const drawRels = (elem, rels, conf) => {
       line.attr('y2', rel.endPoint.y);
 
       line.attr('stroke-width', '1');
-      line.attr('stroke', '#444444');
+      line.attr('stroke', strokeColor);
       line.style('fill', 'none');
       if (rel.type !== 'rel_b') line.attr('marker-end', 'url(' + url + '#arrowhead)');
       if (rel.type === 'birel' || rel.type === 'rel_b')
@@ -236,7 +241,7 @@ export const drawRels = (elem, rels, conf) => {
       line
         .attr('fill', 'none')
         .attr('stroke-width', '1')
-        .attr('stroke', '#444444')
+        .attr('stroke', strokeColor)
         .attr(
           'd',
           'Mstartx,starty Qcontrolx,controly stopx,stopy '
@@ -261,11 +266,15 @@ export const drawRels = (elem, rels, conf) => {
     _drawTextCandidateFunc(conf)(
       rel.label.text,
       relsElem,
-      Math.min(rel.startPoint.x, rel.endPoint.x) + Math.abs(rel.endPoint.x - rel.startPoint.x) / 2,
-      Math.min(rel.startPoint.y, rel.endPoint.y) + Math.abs(rel.endPoint.y - rel.startPoint.y) / 2,
+      Math.min(rel.startPoint.x, rel.endPoint.x) +
+        Math.abs(rel.endPoint.x - rel.startPoint.x) / 2 +
+        offsetX,
+      Math.min(rel.startPoint.y, rel.endPoint.y) +
+        Math.abs(rel.endPoint.y - rel.startPoint.y) / 2 +
+        offsetY,
       rel.label.width,
       rel.label.height,
-      { fill: '#444444' },
+      { fill: textColor },
       messageConf
     );
 
@@ -275,14 +284,16 @@ export const drawRels = (elem, rels, conf) => {
         '[' + rel.techn.text + ']',
         relsElem,
         Math.min(rel.startPoint.x, rel.endPoint.x) +
-          Math.abs(rel.endPoint.x - rel.startPoint.x) / 2,
+          Math.abs(rel.endPoint.x - rel.startPoint.x) / 2 +
+          offsetX,
         Math.min(rel.startPoint.y, rel.endPoint.y) +
           Math.abs(rel.endPoint.y - rel.startPoint.y) / 2 +
           conf.messageFontSize +
-          5,
+          5 +
+          offsetY,
         Math.max(rel.label.width, rel.techn.width),
         rel.techn.height,
-        { fill: '#444444', 'font-style': 'italic' },
+        { fill: textColor, 'font-style': 'italic' },
         messageConf
       );
     }
@@ -299,13 +310,17 @@ export const drawRels = (elem, rels, conf) => {
 const drawBoundary = function (elem, boundary, conf) {
   const boundaryElem = elem.append('g');
 
+  let fillColor = boundary.bgColor ? boundary.bgColor : 'none';
+  let strokeColor = boundary.borderColor ? boundary.borderColor : '#444444';
+  let fontColor = boundary.fontColor ? boundary.fontColor : 'black';
+
   let attrsValue = { 'stroke-width': 1.0, 'stroke-dasharray': '7.0,7.0' };
   if (boundary.nodeType) attrsValue = { 'stroke-width': 1.0 };
   let rectData = {
     x: boundary.x,
     y: boundary.y,
-    fill: 'none',
-    stroke: '#444444',
+    fill: fillColor,
+    stroke: strokeColor,
     width: boundary.width,
     height: boundary.height,
     rx: 2.5,
@@ -319,6 +334,7 @@ const drawBoundary = function (elem, boundary, conf) {
   let boundaryConf = conf.boundaryFont();
   boundaryConf.fontWeight = 'bold';
   boundaryConf.fontSize = boundaryConf.fontSize + 2;
+  boundaryConf.fontColor = fontColor;
   _drawTextCandidateFunc(conf)(
     boundary.label.text,
     boundaryElem,
@@ -333,6 +349,7 @@ const drawBoundary = function (elem, boundary, conf) {
   // draw type
   if (boundary.type && boundary.type.text !== '') {
     boundaryConf = conf.boundaryFont();
+    boundaryConf.fontColor = fontColor;
     _drawTextCandidateFunc(conf)(
       boundary.type.text,
       boundaryElem,
@@ -349,6 +366,7 @@ const drawBoundary = function (elem, boundary, conf) {
   if (boundary.descr && boundary.descr.text !== '') {
     boundaryConf = conf.boundaryFont();
     boundaryConf.fontSize = boundaryConf.fontSize - 2;
+    boundaryConf.fontColor = fontColor;
     _drawTextCandidateFunc(conf)(
       boundary.descr.text,
       boundaryElem,
@@ -363,8 +381,12 @@ const drawBoundary = function (elem, boundary, conf) {
 };
 
 export const drawC4Shape = function (elem, c4Shape, conf) {
-  let fillColor = conf[c4Shape.typeC4Shape.text + '_bg_color'];
-  let strokeColor = conf[c4Shape.typeC4Shape.text + '_border_color'];
+  let fillColor = c4Shape.bgColor ? c4Shape.bgColor : conf[c4Shape.typeC4Shape.text + '_bg_color'];
+  let strokeColor = c4Shape.borderColor
+    ? c4Shape.borderColor
+    : conf[c4Shape.typeC4Shape.text + '_border_color'];
+  let fontColor = c4Shape.fontColor ? c4Shape.fontColor : '#FFFFFF';
+
   let personImg =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAIAAADYYG7QAAACD0lEQVR4Xu2YoU4EMRCGT+4j8Ai8AhaH4QHgAUjQuFMECUgMIUgwJAgMhgQsAYUiJCiQIBBY+EITsjfTdme6V24v4c8vyGbb+ZjOtN0bNcvjQXmkH83WvYBWto6PLm6v7p7uH1/w2fXD+PBycX1Pv2l3IdDm/vn7x+dXQiAubRzoURa7gRZWd0iGRIiJbOnhnfYBQZNJjNbuyY2eJG8fkDE3bbG4ep6MHUAsgYxmE3nVs6VsBWJSGccsOlFPmLIViMzLOB7pCVO2AtHJMohH7Fh6zqitQK7m0rJvAVYgGcEpe//PLdDz65sM4pF9N7ICcXDKIB5Nv6j7tD0NoSdM2QrU9Gg0ewE1LqBhHR3BBdvj2vapnidjHxD/q6vd7Pvhr31AwcY8eXMTXAKECZZJFXuEq27aLgQK5uLMohCenGGuGewOxSjBvYBqeG6B+Nqiblggdjnc+ZXDy+FNFpFzw76O3UBAROuXh6FoiAcf5g9eTvUgzy0nWg6I8cXHRUpg5bOVBCo+KDpFajOf23GgPme7RSQ+lacIENUgJ6gg1k6HjgOlqnLqip4tEuhv0hNEMXUD0clyXE3p6pZA0S2nnvTlXwLJEZWlb7cTQH1+USgTN4VhAenm/wea1OCAOmqo6fE1WCb9WSKBah+rbUWPWAmE2Rvk0ApiB45eOyNAzU8xcTvj8KvkKEoOaIYeHNA3ZuygAvFMUO0AAAAASUVORK5CYII=';
   switch (c4Shape.typeC4Shape.text) {
@@ -473,7 +495,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   let c4ShapeFontConf = getC4ShapeFont(conf, c4Shape.typeC4Shape.text);
   c4ShapeElem
     .append('text')
-    .attr('fill', '#FFFFFF')
+    .attr('fill', fontColor)
     .attr('font-family', c4ShapeFontConf.fontFamily)
     .attr('font-size', c4ShapeFontConf.fontSize - 2)
     .attr('font-style', 'italic')
@@ -502,6 +524,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   let textFontConf = conf[c4Shape.typeC4Shape.text + 'Font']();
   textFontConf.fontWeight = 'bold';
   textFontConf.fontSize = textFontConf.fontSize + 2;
+  textFontConf.fontColor = fontColor;
   _drawTextCandidateFunc(conf)(
     c4Shape.label.text,
     c4ShapeElem,
@@ -509,12 +532,13 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
     c4Shape.y + c4Shape.label.Y,
     c4Shape.width,
     c4Shape.height,
-    { fill: '#FFFFFF' },
+    { fill: fontColor },
     textFontConf
   );
 
   // draw techn/type
   textFontConf = conf[c4Shape.typeC4Shape.text + 'Font']();
+  textFontConf.fontColor = fontColor;
 
   if (c4Shape.thchn && c4Shape.thchn.text !== '') {
     _drawTextCandidateFunc(conf)(
@@ -524,7 +548,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
       c4Shape.y + c4Shape.thchn.Y,
       c4Shape.width,
       c4Shape.height,
-      { fill: '#FFFFFF', 'font-style': 'italic' },
+      { fill: fontColor, 'font-style': 'italic' },
       textFontConf
     );
   } else if (c4Shape.type && c4Shape.type.text !== '') {
@@ -535,7 +559,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
       c4Shape.y + c4Shape.type.Y,
       c4Shape.width,
       c4Shape.height,
-      { fill: '#FFFFFF', 'font-style': 'italic' },
+      { fill: fontColor, 'font-style': 'italic' },
       textFontConf
     );
   }
@@ -543,6 +567,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
   // draw descr
   if (c4Shape.descr && c4Shape.descr.text !== '') {
     textFontConf = conf.personFont();
+    textFontConf.fontColor = fontColor;
     _drawTextCandidateFunc(conf)(
       c4Shape.descr.text,
       c4ShapeElem,
@@ -550,7 +575,7 @@ export const drawC4Shape = function (elem, c4Shape, conf) {
       c4Shape.y + c4Shape.descr.Y,
       c4Shape.width,
       c4Shape.height,
-      { fill: '#FFFFFF' },
+      { fill: fontColor },
       textFontConf
     );
   }

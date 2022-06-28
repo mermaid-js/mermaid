@@ -22,6 +22,8 @@ let rels = [];
 let title = '';
 let wrapEnabled = false;
 let description = '';
+let c4ShapeInRow = 4;
+let c4BoundaryInRow = 2;
 var c4Type;
 
 export const getC4Type = function () {
@@ -65,22 +67,46 @@ export const addRel = function (type, from, to, label, techn, descr, sprite, tag
   rel.to = to;
   rel.label = { text: label };
 
-  if (descr === undefined || descr === null) {
-    rel.descr = { text: '' };
-  } else {
-    rel.descr = { text: descr };
-  }
-
   if (techn === undefined || techn === null) {
     rel.techn = { text: '' };
   } else {
-    rel.techn = { text: techn };
+    if (typeof techn === 'object') {
+      let [key, value] = Object.entries(techn)[0];
+      rel[key] = { text: value };
+    } else {
+      rel.techn = { text: techn };
+    }
   }
 
-  // rel.techn = techn;
-  rel.sprite = sprite;
-  rel.tags = tags;
-  rel.link = link;
+  if (descr === undefined || descr === null) {
+    rel.descr = { text: '' };
+  } else {
+    if (typeof descr === 'object') {
+      let [key, value] = Object.entries(descr)[0];
+      rel[key] = { text: value };
+    } else {
+      rel.descr = { text: descr };
+    }
+  }
+
+  if (typeof sprite === 'object') {
+    let [key, value] = Object.entries(sprite)[0];
+    rel[key] = value;
+  } else {
+    rel.sprite = sprite;
+  }
+  if (typeof tags === 'object') {
+    let [key, value] = Object.entries(tags)[0];
+    rel[key] = value;
+  } else {
+    rel.tags = tags;
+  }
+  if (typeof link === 'object') {
+    let [key, value] = Object.entries(link)[0];
+    rel[key] = value;
+  } else {
+    rel.link = link;
+  }
   rel.wrap = autoWrap();
 };
 
@@ -108,15 +134,35 @@ export const addPersonOrSystem = function (typeC4Shape, alias, label, descr, spr
   if (descr === undefined || descr === null) {
     personOrSystem.descr = { text: '' };
   } else {
-    personOrSystem.descr = { text: descr };
+    if (typeof descr === 'object') {
+      let [key, value] = Object.entries(descr)[0];
+      personOrSystem[key] = { text: value };
+    } else {
+      personOrSystem.descr = { text: descr };
+    }
   }
 
-  personOrSystem.wrap = autoWrap();
-  personOrSystem.sprite = sprite;
-  personOrSystem.tags = tags;
-  personOrSystem.link = link;
+  if (typeof sprite === 'object') {
+    let [key, value] = Object.entries(sprite)[0];
+    personOrSystem[key] = value;
+  } else {
+    personOrSystem.sprite = sprite;
+  }
+  if (typeof tags === 'object') {
+    let [key, value] = Object.entries(tags)[0];
+    personOrSystem[key] = value;
+  } else {
+    personOrSystem.tags = tags;
+  }
+  if (typeof link === 'object') {
+    let [key, value] = Object.entries(link)[0];
+    personOrSystem[key] = value;
+  } else {
+    personOrSystem.link = link;
+  }
   personOrSystem.typeC4Shape = { text: typeC4Shape };
   personOrSystem.parentBoundary = currentBoundaryParse;
+  personOrSystem.wrap = autoWrap();
 };
 
 //type, alias, label, ?techn, ?descr ?sprite, ?tags, $link
@@ -143,18 +189,43 @@ export const addContainer = function (typeC4Shape, alias, label, techn, descr, s
   if (techn === undefined || techn === null) {
     container.techn = { text: '' };
   } else {
-    container.techn = { text: techn };
+    if (typeof techn === 'object') {
+      let [key, value] = Object.entries(techn)[0];
+      container[key] = { text: value };
+    } else {
+      container.techn = { text: techn };
+    }
   }
 
   if (descr === undefined || descr === null) {
     container.descr = { text: '' };
   } else {
-    container.descr = { text: descr };
+    if (typeof descr === 'object') {
+      let [key, value] = Object.entries(descr)[0];
+      container[key] = { text: value };
+    } else {
+      container.descr = { text: descr };
+    }
   }
 
-  container.sprite = sprite;
-  container.tags = tags;
-  container.link = link;
+  if (typeof sprite === 'object') {
+    let [key, value] = Object.entries(sprite)[0];
+    container[key] = value;
+  } else {
+    container.sprite = sprite;
+  }
+  if (typeof tags === 'object') {
+    let [key, value] = Object.entries(tags)[0];
+    container[key] = value;
+  } else {
+    container.tags = tags;
+  }
+  if (typeof link === 'object') {
+    let [key, value] = Object.entries(link)[0];
+    container[key] = value;
+  } else {
+    container.link = link;
+  }
   container.wrap = autoWrap();
   container.typeC4Shape = { text: typeC4Shape };
   container.parentBoundary = currentBoundaryParse;
@@ -184,18 +255,43 @@ export const addComponent = function (typeC4Shape, alias, label, techn, descr, s
   if (techn === undefined || techn === null) {
     component.techn = { text: '' };
   } else {
-    component.techn = { text: techn };
+    if (typeof techn === 'object') {
+      let [key, value] = Object.entries(techn)[0];
+      component[key] = { text: value };
+    } else {
+      component.techn = { text: techn };
+    }
   }
 
   if (descr === undefined || descr === null) {
     component.descr = { text: '' };
   } else {
-    component.descr = { text: descr };
+    if (typeof descr === 'object') {
+      let [key, value] = Object.entries(descr)[0];
+      component[key] = { text: value };
+    } else {
+      component.descr = { text: descr };
+    }
   }
 
-  component.sprite = sprite;
-  component.tags = tags;
-  component.link = link;
+  if (typeof sprite === 'object') {
+    let [key, value] = Object.entries(sprite)[0];
+    component[key] = value;
+  } else {
+    component.sprite = sprite;
+  }
+  if (typeof tags === 'object') {
+    let [key, value] = Object.entries(tags)[0];
+    component[key] = value;
+  } else {
+    component.tags = tags;
+  }
+  if (typeof link === 'object') {
+    let [key, value] = Object.entries(link)[0];
+    component[key] = value;
+  } else {
+    component.link = link;
+  }
   component.wrap = autoWrap();
   component.typeC4Shape = { text: typeC4Shape };
   component.parentBoundary = currentBoundaryParse;
@@ -227,11 +323,26 @@ export const addPersonOrSystemBoundary = function (alias, label, type, tags, lin
   if (type === undefined || type === null) {
     boundary.type = { text: 'system' };
   } else {
-    boundary.type = { text: type };
+    if (typeof type === 'object') {
+      let [key, value] = Object.entries(type)[0];
+      boundary[key] = { text: value };
+    } else {
+      boundary.type = { text: type };
+    }
   }
 
-  boundary.tags = tags;
-  boundary.link = link;
+  if (typeof tags === 'object') {
+    let [key, value] = Object.entries(tags)[0];
+    boundary[key] = value;
+  } else {
+    boundary.tags = tags;
+  }
+  if (typeof link === 'object') {
+    let [key, value] = Object.entries(link)[0];
+    boundary[key] = value;
+  } else {
+    boundary.link = link;
+  }
   boundary.parentBoundary = currentBoundaryParse;
   boundary.wrap = autoWrap();
 
@@ -266,11 +377,26 @@ export const addContainerBoundary = function (alias, label, type, tags, link) {
   if (type === undefined || type === null) {
     boundary.type = { text: 'container' };
   } else {
-    boundary.type = { text: type };
+    if (typeof type === 'object') {
+      let [key, value] = Object.entries(type)[0];
+      boundary[key] = { text: value };
+    } else {
+      boundary.type = { text: type };
+    }
   }
 
-  boundary.tags = tags;
-  boundary.link = link;
+  if (typeof tags === 'object') {
+    let [key, value] = Object.entries(tags)[0];
+    boundary[key] = value;
+  } else {
+    boundary.tags = tags;
+  }
+  if (typeof link === 'object') {
+    let [key, value] = Object.entries(link)[0];
+    boundary[key] = value;
+  } else {
+    boundary.link = link;
+  }
   boundary.parentBoundary = currentBoundaryParse;
   boundary.wrap = autoWrap();
 
@@ -314,17 +440,37 @@ export const addDeploymentNode = function (
   if (type === undefined || type === null) {
     boundary.type = { text: 'node' };
   } else {
-    boundary.type = { text: type };
+    if (typeof type === 'object') {
+      let [key, value] = Object.entries(type)[0];
+      boundary[key] = { text: value };
+    } else {
+      boundary.type = { text: type };
+    }
   }
 
   if (descr === undefined || descr === null) {
     boundary.descr = { text: '' };
   } else {
-    boundary.descr = { text: type };
+    if (typeof descr === 'object') {
+      let [key, value] = Object.entries(descr)[0];
+      boundary[key] = { text: value };
+    } else {
+      boundary.descr = { text: descr };
+    }
   }
 
-  boundary.tags = tags;
-  boundary.link = link;
+  if (typeof tags === 'object') {
+    let [key, value] = Object.entries(tags)[0];
+    boundary[key] = value;
+  } else {
+    boundary.tags = tags;
+  }
+  if (typeof link === 'object') {
+    let [key, value] = Object.entries(link)[0];
+    boundary[key] = value;
+  } else {
+    boundary.link = link;
+  }
   boundary.nodeType = nodeType;
   boundary.parentBoundary = currentBoundaryParse;
   boundary.wrap = autoWrap();
@@ -341,6 +487,177 @@ export const popBoundaryParseStack = function () {
   boundaryParseStack.push(parentBoundaryParse);
 };
 
+//elementName, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite
+export const updateElStyle = function (
+  typeC4Shape,
+  elementName,
+  bgColor,
+  fontColor,
+  borderColor,
+  shadowing,
+  shape,
+  sprite,
+  techn,
+  legendText,
+  legendSprite
+) {
+  let old = c4ShapeArray.find((element) => element.alias === elementName);
+  if (old === undefined) {
+    old = boundarys.find((element) => element.alias === elementName);
+    if (old === undefined) {
+      return;
+    }
+  }
+  if (bgColor !== undefined && bgColor !== null) {
+    if (typeof bgColor === 'object') {
+      let [key, value] = Object.entries(bgColor)[0];
+      old[key] = value;
+    } else {
+      old.bgColor = bgColor;
+    }
+  }
+  if (fontColor !== undefined && fontColor !== null) {
+    if (typeof fontColor === 'object') {
+      let [key, value] = Object.entries(fontColor)[0];
+      old[key] = value;
+    } else {
+      old.fontColor = fontColor;
+    }
+  }
+  if (borderColor !== undefined && borderColor !== null) {
+    if (typeof borderColor === 'object') {
+      let [key, value] = Object.entries(borderColor)[0];
+      old[key] = value;
+    } else {
+      old.borderColor = borderColor;
+    }
+  }
+  if (shadowing !== undefined && shadowing !== null) {
+    if (typeof shadowing === 'object') {
+      let [key, value] = Object.entries(shadowing)[0];
+      old[key] = value;
+    } else {
+      old.shadowing = shadowing;
+    }
+  }
+  if (shape !== undefined && shape !== null) {
+    if (typeof shape === 'object') {
+      let [key, value] = Object.entries(shape)[0];
+      old[key] = value;
+    } else {
+      old.shape = shape;
+    }
+  }
+  if (sprite !== undefined && sprite !== null) {
+    if (typeof sprite === 'object') {
+      let [key, value] = Object.entries(sprite)[0];
+      old[key] = value;
+    } else {
+      old.sprite = sprite;
+    }
+  }
+  if (techn !== undefined && techn !== null) {
+    if (typeof techn === 'object') {
+      let [key, value] = Object.entries(techn)[0];
+      old[key] = value;
+    } else {
+      old.techn = techn;
+    }
+  }
+  if (legendText !== undefined && legendText !== null) {
+    if (typeof legendText === 'object') {
+      let [key, value] = Object.entries(legendText)[0];
+      old[key] = value;
+    } else {
+      old.legendText = legendText;
+    }
+  }
+  if (legendSprite !== undefined && legendSprite !== null) {
+    if (typeof legendSprite === 'object') {
+      let [key, value] = Object.entries(legendSprite)[0];
+      old[key] = value;
+    } else {
+      old.legendSprite = legendSprite;
+    }
+  }
+};
+
+//textColor, lineColor, ?offsetX, ?offsetY
+export const updateRelStyle = function (
+  typeC4Shape,
+  from,
+  to,
+  textColor,
+  lineColor,
+  offsetX,
+  offsetY
+) {
+  const old = rels.find((rel) => rel.from === from && rel.to === to);
+  if (old === undefined) {
+    return;
+  }
+  if (textColor !== undefined && textColor !== null) {
+    if (typeof textColor === 'object') {
+      let [key, value] = Object.entries(textColor)[0];
+      old[key] = value;
+    } else {
+      old.textColor = textColor;
+    }
+  }
+  if (lineColor !== undefined && lineColor !== null) {
+    if (typeof lineColor === 'object') {
+      let [key, value] = Object.entries(lineColor)[0];
+      old[key] = value;
+    } else {
+      old.lineColor = lineColor;
+    }
+  }
+  if (offsetX !== undefined && offsetX !== null) {
+    if (typeof offsetX === 'object') {
+      let [key, value] = Object.entries(offsetX)[0];
+      old[key] = parseInt(value);
+    } else {
+      old.offsetX = parseInt(offsetX);
+    }
+  }
+  if (offsetY !== undefined && offsetY !== null) {
+    if (typeof offsetY === 'object') {
+      let [key, value] = Object.entries(offsetY)[0];
+      old[key] = parseInt(value);
+    } else {
+      old.offsetY = parseInt(offsetY);
+    }
+  }
+};
+
+//?c4ShapeInRow, ?c4BoundaryInRow
+export const updateLayoutConfig = function (typeC4Shape, c4ShapeInRowParam, c4BoundaryInRowParam) {
+  let c4ShapeInRowValue = c4ShapeInRow;
+  let c4BoundaryInRowValue = c4BoundaryInRow;
+
+  if (typeof c4ShapeInRowParam === 'object') {
+    let [key, value] = Object.entries(c4ShapeInRowParam)[0];
+    c4ShapeInRowValue = parseInt(value);
+  } else {
+    c4ShapeInRowValue = parseInt(c4ShapeInRowParam);
+  }
+  if (typeof c4BoundaryInRowParam === 'object') {
+    let [key, value] = Object.entries(c4BoundaryInRowParam)[0];
+    c4BoundaryInRowValue = parseInt(value);
+  } else {
+    c4BoundaryInRowValue = parseInt(c4BoundaryInRowParam);
+  }
+
+  if (c4ShapeInRowValue >= 1) c4ShapeInRow = c4ShapeInRowValue;
+  if (c4BoundaryInRowValue >= 1) c4BoundaryInRow = c4BoundaryInRowValue;
+};
+
+export const getC4ShapeInRow = function () {
+  return c4ShapeInRow;
+};
+export const getC4BoundaryInRow = function () {
+  return c4BoundaryInRow;
+};
 export const getCurrentBoundaryParse = function () {
   return currentBoundaryParse;
 };
@@ -400,6 +717,13 @@ export const clear = function () {
   currentBoundaryParse = 'global';
   boundaryParseStack = [''];
   rels = [];
+
+  boundaryParseStack = [''];
+  title = '';
+  wrapEnabled = false;
+  description = '';
+  c4ShapeInRow = 4;
+  c4BoundaryInRow = 2;
 };
 
 export const LINETYPE = {
@@ -453,6 +777,9 @@ export default {
   addDeploymentNode,
   popBoundaryParseStack,
   addRel,
+  updateElStyle,
+  updateRelStyle,
+  updateLayoutConfig,
   autoWrap,
   setWrap,
   getC4ShapeArray,
@@ -464,6 +791,8 @@ export default {
   getRels,
   getTitle,
   getC4Type,
+  getC4ShapeInRow,
+  getC4BoundaryInRow,
   setAccTitle,
   getAccTitle,
   getAccDescription,

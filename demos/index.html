@@ -20,6 +20,7 @@
   </div>
 
   <hr />
+
   <div class="mermaid">
     C4Context
       title System Context diagram for Internet Banking System
@@ -55,14 +56,22 @@ Enterprise_Boundary(b0, "BankBoundary0") {
       BiRel(SystemAA, SystemE, "Uses")
       Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
       Rel(SystemC, customerA, "Sends e-mails to")
+
+      UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
+      UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
+      UpdateRelStyle(SystemAA, SystemE, $textColor="blue", $lineColor="blue", $offsetY="-10")
+      UpdateRelStyle(SystemAA, SystemC, $textColor="blue", $lineColor="blue", $offsetY="-40", $offsetX="-50")
+      UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
+      
+      UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
   </div>
 
   <div class="mermaid">
     C4Container
     title Container diagram for Internet Banking System
 
-    System_Ext(email_system, "E-Mail System", "The internal Microsoft Exchange system")
-    Person(customer, Customer, "A customer of the bank, with personal bank accounts")
+    System_Ext(email_system, "E-Mail System", "The internal Microsoft Exchange system", $tags="v1.0")
+    Person(customer, Customer, "A customer of the bank, with personal bank accounts", $tags="v1.0")
 
     Container_Boundary(c1, "Internet Banking") {
         Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to customers via their web browser")
@@ -76,17 +85,26 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     System_Ext(banking_system, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
 
     Rel(customer, web_app, "Uses", "HTTPS")
+    UpdateRelStyle(customer, web_app, $offsetY="60", $offsetX="90")     
     Rel(customer, spa, "Uses", "HTTPS")
+    UpdateRelStyle(customer, spa, $offsetY="-40")    
     Rel(customer, mobile_app, "Uses")
+    UpdateRelStyle(customer, mobile_app, $offsetY="-30") 
 
     Rel(web_app, spa, "Delivers")
+    UpdateRelStyle(web_app, spa, $offsetX="130") 
     Rel(spa, backend_api, "Uses", "async, JSON/HTTPS")
     Rel(mobile_app, backend_api, "Uses", "async, JSON/HTTPS")
     Rel_Back(database, backend_api, "Reads from and writes to", "sync, JDBC")
 
     Rel(email_system, customer, "Sends e-mails to")
+    UpdateRelStyle(email_system, customer, $offsetX="-45")    
     Rel(backend_api, email_system, "Sends e-mails using", "sync, SMTP")
+    UpdateRelStyle(backend_api, email_system, $offsetY="-60")    
     Rel(backend_api, banking_system, "Uses", "sync/async, XML/HTTPS")
+    UpdateRelStyle(backend_api, banking_system, $offsetY="-50", $offsetX="-140") 
+
+
   </div>
 
   <div class="mermaid">
@@ -115,6 +133,18 @@ Enterprise_Boundary(b0, "BankBoundary0") {
 
     Rel(ma, sign, "Uses", "JSON/HTTPS")
     Rel(ma, accounts, "Uses", "JSON/HTTPS")
+
+    UpdateRelStyle(spa, sign, $offsetY="-40") 
+    UpdateRelStyle(spa, accounts, $offsetX="40", $offsetY="40")
+
+    UpdateRelStyle(ma, sign, $offsetX="-90", $offsetY="40")
+    UpdateRelStyle(ma, accounts, $offsetY="-40")
+
+        UpdateRelStyle(sign, security, $offsetX="-160", $offsetY="10")
+        UpdateRelStyle(accounts, mbsfacade, $offsetX="140", $offsetY="10")
+        UpdateRelStyle(security, db, $offsetY="-40")
+        UpdateRelStyle(mbsfacade, mbs, $offsetY="-40")
+
   </div>  
 
   <div class="mermaid">
@@ -130,6 +160,10 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     Rel(c1, c2, "Submits credentials to", "JSON/HTTPS")
     Rel(c2, c3, "Calls isAuthenticated() on")
     Rel(c3, c4, "select * from users where username = ?", "JDBC")
+
+    UpdateRelStyle(c1, c2, $textColor="red", $offsetY="-40")
+    UpdateRelStyle(c2, c3, $textColor="red", $offsetX="-40", $offsetY="60")
+    UpdateRelStyle(c3, c4, $textColor="red", $offsetY="-40", $offsetX="10")
   </div>  
 
    <div class="mermaid">
@@ -175,6 +209,12 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     Rel(api, db, "Reads from and writes to", "JDBC")
     Rel(api, db2, "Reads from and writes to", "JDBC")
     Rel_R(db, db2, "Replicates data to")
+
+    UpdateRelStyle(spa, api, $offsetY="-40")
+    UpdateRelStyle(web, spa, $offsetY="-40")
+    UpdateRelStyle(api, db, $offsetY="-20", $offsetX="5")
+    UpdateRelStyle(api, db2, $offsetX="-40", $offsetY="-20")
+    UpdateRelStyle(db, db2, $offsetY="-10")
   </div>  
 
   <hr />
