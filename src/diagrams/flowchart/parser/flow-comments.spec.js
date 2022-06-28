@@ -58,7 +58,7 @@ describe('[Comments] when parsing', () => {
   });
 
   it('should handle comments at the end no trailing newline', function () {
-    const res = flow.parser.parse('graph TD;\n A-->B\n%% Commento');
+    const res = flow.parser.parse('graph TD;\n A-->B\n%% Comment');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
@@ -73,7 +73,7 @@ describe('[Comments] when parsing', () => {
   });
 
   it('should handle comments at the end many trailing newlines', function () {
-    const res = flow.parser.parse('graph TD;\n A-->B\n%% Commento\n\n\n');
+    const res = flow.parser.parse('graph TD;\n A-->B\n%% Comment\n\n\n');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();

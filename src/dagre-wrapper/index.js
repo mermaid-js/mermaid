@@ -61,7 +61,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
       log.warn('Recursive render complete ', newEl, node);
     } else {
       if (graph.children(v).length > 0) {
-        // This is a cluster but not to be rendered recusively
+        // This is a cluster but not to be rendered recursively
         // Render as before
         log.info('Cluster - the non recursive path XXX', v, node.id, node, graph);
         log.info(findNonClusterChild(node.id, graph));
@@ -117,7 +117,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     } else {
       // Non cluster node
       if (graph.children(v).length > 0) {
-        // A cluster in the non-recurive way
+        // A cluster in the non-recursive way
         // positionCluster(node);
         insertCluster(clusters, node);
         clusterDb[node.id].node = node;

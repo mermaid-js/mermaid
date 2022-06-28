@@ -362,7 +362,7 @@ export const drawNote = (text, g) => {
 
 /**
  * Starting point for drawing a state. The function finds out the specifics about the state and
- * renders with approprtiate function.
+ * renders with appropriate function.
  *
  * @param {any} elem
  * @param {any} stateDef

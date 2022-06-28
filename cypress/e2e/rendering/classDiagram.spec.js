@@ -1,25 +1,10 @@
-import { imgSnapshotTest } from '../../helpers/util';
-describe('Class diagram V2', () => {
-  it('0: should render a simple class diagram', () => {
-    imgSnapshotTest(
-      `
-        classDiagram-v2
+import { imgSnapshotTest, renderGraph } from '../../helpers/util';
 
-        classA -- classB : Inheritance
-        classA -- classC : link
-        classC -- classD : link
-        classB -- classD
-
-        `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
-    );
-    cy.get('svg');
-  });
-
+describe('Class diagram', () => {
   it('1: should render a simple class diagram', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       Class01 <|-- AveryLongClass : Cool
       &lt;&lt;interface&gt;&gt; Class01
       Class03 *-- Class04
@@ -45,7 +30,7 @@ describe('Class diagram V2', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      { logLevel: 1 }
     );
     cy.get('svg');
   });
@@ -53,7 +38,7 @@ describe('Class diagram V2', () => {
   it('2: should render a simple class diagrams with cardinality', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       Class01 "1" <|--|> "*" AveryLongClass : Cool
       &lt;&lt;interface&gt;&gt; Class01
       Class03 "1" *-- "*" Class04
@@ -74,15 +59,15 @@ describe('Class diagram V2', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
 
-  it('should render a simple class diagram with different visibilities', () => {
+  it('3: should render a simple class diagram with different visibilities', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       Class01 <|-- AveryLongClass : Cool
       &lt;&lt;interface&gt;&gt; Class01
       Class01 : -privateMethod()
@@ -92,60 +77,7 @@ describe('Class diagram V2', () => {
       Class01 : +int publicGorilla
       Class01 : #int protectedMarmoset
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
-    );
-    cy.get('svg');
-  });
-
-  it('should render multiple class diagrams', () => {
-    imgSnapshotTest(
-      [
-        `
-    classDiagram-v2
-      Class01 "1" <|--|> "*" AveryLongClass : Cool
-      &lt;&lt;interface&gt;&gt; Class01
-      Class03 "1" *-- "*" Class04
-      Class05 "1" o-- "many" Class06
-      Class07 "1" .. "*" Class08
-      Class09 "1" --> "*" C2 : Where am i?
-      Class09 "*" --* "*" C3
-      Class09 "1" --|> "1" Class07
-      Class07  : equals()
-      Class07  : Object[] elementData
-      Class01  : size()
-      Class01  : int chimp
-      Class01  : int gorilla
-      Class08 "1" <--> "*" C2: Cool label
-      class Class10 {
-        &lt;&lt;service&gt;&gt;
-        int id
-        test()
-      }
-      `,
-        `
-    classDiagram-v2
-      Class01 "1" <|--|> "*" AveryLongClass : Cool
-      &lt;&lt;interface&gt;&gt; Class01
-      Class03 "1" *-- "*" Class04
-      Class05 "1" o-- "many" Class06
-      Class07 "1" .. "*" Class08
-      Class09 "1" --> "*" C2 : Where am i?
-      Class09 "*" --* "*" C3
-      Class09 "1" --|> "1" Class07
-      Class07  : equals()
-      Class07  : Object[] elementData
-      Class01  : size()
-      Class01  : int chimp
-      Class01  : int gorilla
-      Class08 "1" <--> "*" C2: Cool label
-      class Class10 {
-        &lt;&lt;service&gt;&gt;
-        int id
-        test()
-      }
-      `,
-      ],
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -153,7 +85,7 @@ describe('Class diagram V2', () => {
   it('4: should render a simple class diagram with comments', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       %% this is a comment
       Class01 <|-- AveryLongClass : Cool
       &lt;&lt;interface&gt;&gt; Class01
@@ -175,7 +107,7 @@ describe('Class diagram V2', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -183,11 +115,11 @@ describe('Class diagram V2', () => {
   it('5: should render a simple class diagram with abstract method', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       Class01 <|-- AveryLongClass : Cool
       Class01 : someMethod()*
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -195,11 +127,11 @@ describe('Class diagram V2', () => {
   it('6: should render a simple class diagram with static method', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       Class01 <|-- AveryLongClass : Cool
       Class01 : someMethod()$
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -207,7 +139,7 @@ describe('Class diagram V2', () => {
   it('7: should render a simple class diagram with Generic class', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
     class Class01~T~
       Class01 : size()
       Class01 : int chimp
@@ -219,7 +151,7 @@ describe('Class diagram V2', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -227,7 +159,7 @@ describe('Class diagram V2', () => {
   it('8: should render a simple class diagram with Generic class and relations', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
     Class01~T~ <|-- AveryLongClass : Cool
     Class03~T~ *-- Class04~T~
       Class01 : size()
@@ -240,7 +172,7 @@ describe('Class diagram V2', () => {
         test()
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -248,7 +180,7 @@ describe('Class diagram V2', () => {
   it('9: should render a simple class diagram with clickable link', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
     Class01~T~ <|-- AveryLongClass : Cool
     Class03~T~ *-- Class04~T~
       Class01 : size()
@@ -262,7 +194,7 @@ describe('Class diagram V2', () => {
       }
       link Class01 "google.com" "A Tooltip"
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -270,7 +202,7 @@ describe('Class diagram V2', () => {
   it('10: should render a simple class diagram with clickable callback', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
     Class01~T~ <|-- AveryLongClass : Cool
     Class03~T~ *-- Class04~T~
       Class01 : size()
@@ -284,7 +216,7 @@ describe('Class diagram V2', () => {
       }
       callback Class01 "functionCall" "A Tooltip"
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -292,14 +224,14 @@ describe('Class diagram V2', () => {
   it('11: should render a simple class diagram with return type on method', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       class Class10~T~ {
         int[] id
         test(int[] ids) bool
         testArray() bool[]
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -307,7 +239,7 @@ describe('Class diagram V2', () => {
   it('12: should render a simple class diagram with generic types', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       class Class10~T~ {
         int[] id
         List~int~ ids
@@ -315,7 +247,7 @@ describe('Class diagram V2', () => {
         testArray() bool[]
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -323,7 +255,7 @@ describe('Class diagram V2', () => {
   it('13: should render a simple class diagram with css classes applied', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       class Class10 {
         int[] id
         List~int~ ids
@@ -331,9 +263,9 @@ describe('Class diagram V2', () => {
         testArray() bool[]
       }
 
-      cssClass "Class10" exClass2
+      class Class10:::exClass2
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -341,7 +273,7 @@ describe('Class diagram V2', () => {
   it('14: should render a simple class diagram with css classes applied directly', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       class Class10:::exClass2 {
         int[] id
         List~int~ ids
@@ -349,7 +281,7 @@ describe('Class diagram V2', () => {
         testArray() bool[]
       }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
@@ -357,125 +289,122 @@ describe('Class diagram V2', () => {
   it('15: should render a simple class diagram with css classes applied two multiple classes', () => {
     imgSnapshotTest(
       `
-    classDiagram-v2
+    classDiagram
       class Class10
       class Class20
 
-      cssClass "Class10, class20" exClass2
+      cssClass "Class10, Class20" exClass2
+      class Class20:::exClass2
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      {}
     );
     cy.get('svg');
   });
 
-  it('16a: should render a simple class diagram with static field', () => {
+  it('16: should render multiple class diagrams', () => {
     imgSnapshotTest(
-      `
-    classDiagram-v2
-      class Foo {
-        +String bar$
+      [
+        `
+    classDiagram
+      Class01 "1" <|--|> "*" AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 "1" *-- "*" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 "1" .. "*" Class08
+      Class09 "1" --> "*" C2 : Where am i?
+      Class09 "*" --* "*" C3
+      Class09 "1" --|> "1" Class07
+      Class07  : equals()
+      Class07  : Object[] elementData
+      Class01  : size()
+      Class01  : int chimp
+      Class01  : int gorilla
+      Class08 "1" <--> "*" C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
       }
-            `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
-    );
-    cy.get('svg');
-  });
-
-  it('16b: should handle the direction statemnent with TB', () => {
-    imgSnapshotTest(
-      `
-      classDiagram
-        direction TB
-        class Student {
-          -idCard : IdCard
-        }
-        class IdCard{
-          -id : int
-          -name : string
-        }
-        class Bike{
-          -id : int
-          -name : string
-        }
-        Student "1" --o "1" IdCard : carries
-        Student "1" --o "1" Bike : rides
-
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
-    );
-    cy.get('svg');
-  });
-
-  it('18: should handle the direction statemnent with LR', () => {
-    imgSnapshotTest(
-      `
-      classDiagram
-        direction LR
-        class Student {
-          -idCard : IdCard
-        }
-        class IdCard{
-          -id : int
-          -name : string
-        }
-        class Bike{
-          -id : int
-          -name : string
-        }
-        Student "1" --o "1" IdCard : carries
-        Student "1" --o "1" Bike : rides
-
+        `
+    classDiagram
+      Class01 "1" <|--|> "*" AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class03 "1" *-- "*" Class04
+      Class05 "1" o-- "many" Class06
+      Class07 "1" .. "*" Class08
+      Class09 "1" --> "*" C2 : Where am i?
+      Class09 "*" --* "*" C3
+      Class09 "1" --|> "1" Class07
+      Class07  : equals()
+      Class07  : Object[] elementData
+      Class01  : size()
+      Class01  : int chimp
+      Class01  : int gorilla
+      Class08 "1" <--> "*" C2: Cool label
+      class Class10 {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
       `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
+      ],
+      {}
     );
     cy.get('svg');
   });
-  it('17a: should handle the direction statemnent with BT', () => {
-    imgSnapshotTest(
-      `
-      classDiagram
-        direction BT
-        class Student {
-          -idCard : IdCard
-        }
-        class IdCard{
-          -id : int
-          -name : string
-        }
-        class Bike{
-          -id : int
-          -name : string
-        }
-        Student "1" --o "1" IdCard : carries
-        Student "1" --o "1" Bike : rides
 
-      `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
-    );
-    cy.get('svg');
-  });
-  it('17b: should handle the direction statemment with RL', () => {
-    imgSnapshotTest(
-      `
-      classDiagram
-        direction RL
-        class Student {
-          -idCard : IdCard
-        }
-        class IdCard{
-          -id : int
-          -name : string
-        }
-        class Bike{
-          -id : int
-          -name : string
-        }
-        Student "1" --o "1" IdCard : carries
-        Student "1" --o "1" Bike : rides
+  // it('17: should render a class diagram when useMaxWidth is true (default)', () => {
+  //   renderGraph(
+  //     `
+  //   classDiagram
+  //     Class01 <|-- AveryLongClass : Cool
+  //     Class01 : size()
+  //     Class01 : int chimp
+  //     Class01 : int gorilla
+  //     Class01 : -int privateChimp
+  //     Class01 : +int publicGorilla
+  //     Class01 : #int protectedMarmoset
+  //     `,
+  //     { class: { useMaxWidth: true } }
+  //   );
+  //   cy.get('svg')
+  //     .should((svg) => {
+  //       expect(svg).to.have.attr('width', '100%');
+  //       const height = parseFloat(svg.attr('height'));
+  //       expect(height).to.be.within(332, 333);
+  //      // expect(svg).to.have.attr('height', '218');
+  //       const style = svg.attr('style');
+  //       expect(style).to.match(/^max-width: [\d.]+px;$/);
+  //       const maxWidthValue = parseInt(style.match(/[\d.]+/g).join(''));
+  //       // use within because the absolute value can be slightly different depending on the environment ±5%
+  //       expect(maxWidthValue).to.be.within(203, 204);
+  //     });
+  // });
 
-      `,
-      { logLevel: 1, flowchart: { htmlLabels: false } }
-    );
-    cy.get('svg');
-  });
+  // it('18: should render a class diagram when useMaxWidth is false', () => {
+  //   renderGraph(
+  //     `
+  //   classDiagram
+  //     Class01 <|-- AveryLongClass : Cool
+  //     Class01 : size()
+  //     Class01 : int chimp
+  //     Class01 : int gorilla
+  //     Class01 : -int privateChimp
+  //     Class01 : +int publicGorilla
+  //     Class01 : #int protectedMarmoset
+  //     `,
+  //     { class: { useMaxWidth: false } }
+  //   );
+  //   cy.get('svg')
+  //     .should((svg) => {
+  //       const width = parseFloat(svg.attr('width'));
+  //       // use within because the absolute value can be slightly different depending on the environment ±5%
+  //       expect(width).to.be.within(100, 101);
+  //       const height = parseFloat(svg.attr('height'));
+  //       expect(height).to.be.within(332, 333);
+  //      // expect(svg).to.have.attr('height', '332');
+  //      // expect(svg).to.not.have.attr('style');
+  //     });
+  // });
 });

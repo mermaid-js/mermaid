@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "9.1.2",
+  "version": "9.1.3",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "module": "dist/mermaid.esm.min.mjs",
@@ -27,7 +27,7 @@
     "postbuild": "documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md",
     "build:watch": "yarn build:development --watch",
     "release": "yarn build",
-    "lint": "eslint ./ --ext .js,.json,.html",
+    "lint": "eslint ./ --ext .js,.json,.html,.md",
     "lint:fix": "yarn lint --fix",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
     "cypress": "cypress run",
@@ -81,7 +81,7 @@
     "concurrently": "^7.0.0",
     "coveralls": "^3.0.2",
     "css-to-string-loader": "^0.1.3",
-    "cypress": "9.7.0",
+    "cypress": "10.2.0",
     "cypress-image-snapshot": "^4.0.1",
     "documentation": "13.2.0",
     "eslint": "^8.4.1",
@@ -111,6 +111,9 @@
     "webpack-dev-server": "^4.3.0",
     "webpack-merge": "^5.8.0",
     "webpack-node-externals": "^3.0.0"
+  },
+  "resolutions": {
+    "d3": "^7.0.0"
   },
   "files": [
     "dist"

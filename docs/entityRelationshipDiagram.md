@@ -18,7 +18,7 @@ Entity names are often capitalised, although there is no accepted standard on th
 
 Relationships between entities are represented by lines with end markers representing cardinality.  Mermaid uses the most popular crow's foot notation. The crow's foot intuitively conveys the possibility of many instances of the entity that it connects to.
 
-ER diagrams can be used for various purposes, ranging from abstract logical models devoid of any implementation details, through to physical models of relational database tables.  It can be useful to include attribute definitions on ER diagrams to aid comprehension of the purpose and meaning of entities.  These do not necessarily need to be exhaustive; often a small subset of attributes is enough.  Mermaid allows to be defined in terms of their *type* and *name*.
+ER diagrams can be used for various purposes, ranging from abstract logical models devoid of any implementation details, through to physical models of relational database tables.  It can be useful to include attribute definitions on ER diagrams to aid comprehension of the purpose and meaning of entities.  These do not necessarily need to be exhaustive; often a small subset of attributes is enough.  Mermaid allows them to be defined in terms of their *type* and *name*.
 
 ```mermaid-example
 erDiagram

@@ -10,6 +10,7 @@ import sequence from './diagrams/sequence/styles';
 import stateDiagram from './diagrams/state/styles';
 import journey from './diagrams/user-journey/styles';
 import c4 from './diagrams/c4/styles';
+import { log } from './logger';
 
 const themes = {
   flowchart,
@@ -30,7 +31,10 @@ const themes = {
   c4,
 };
 
-export const calcThemeVariables = (theme, userOverRides) => theme.calcColors(userOverRides);
+export const calcThemeVariables = (theme, userOverRides) => {
+  log.info('userOverides', userOverRides);
+  return theme.calcColors(userOverRides);
+};
 
 const getStyles = (type, userStyles, options) => {
   return ` {

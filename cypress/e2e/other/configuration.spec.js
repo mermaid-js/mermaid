@@ -41,7 +41,7 @@ describe('Configuration', () => {
         .should('exist')
         .and('include', 'url(#');
     });
-    it('should handle arrowMarkerAbsolute excplicitly set to false', () => {
+    it('should handle arrowMarkerAbsolute explicitly set to false', () => {
       renderGraph(
         `graph TD
         A[Christmas] -->|Get money| B(Go shopping)
@@ -63,7 +63,7 @@ describe('Configuration', () => {
         .should('exist')
         .and('include', 'url(#');
     });
-    it('should handle arrowMarkerAbsolute excplicitly set to "false" as false', () => {
+    it('should handle arrowMarkerAbsolute explicitly set to "false" as false', () => {
       renderGraph(
         `graph TD
         A[Christmas] -->|Get money| B(Go shopping)

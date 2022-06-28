@@ -90,7 +90,7 @@ const initThrowsErrors = function () {
     mermaidAPI.updateSiteConfig({ gantt: mermaid.ganttConfig });
   }
 
-  const idGeneratior = new utils.initIdGeneratior(conf.deterministicIds, conf.deterministicIDSeed);
+  const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt;
 
@@ -105,7 +105,7 @@ const initThrowsErrors = function () {
       continue;
     }
 
-    const id = `mermaid-${idGeneratior.next()}`;
+    const id = `mermaid-${idGenerator.next()}`;
 
     // Fetch the graph definition including tags
     txt = element.innerHTML;
@@ -189,7 +189,7 @@ if (typeof document !== 'undefined') {
 }
 
 /**
- * ## setParseErrorHandler  Alternativet to directly setting parseError using:
+ * ## setParseErrorHandler  Alternative to directly setting parseError using:
  *
  * ```js
  * mermaid.parseError = function(err,hash){=

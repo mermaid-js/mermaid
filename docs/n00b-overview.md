@@ -64,6 +64,6 @@ Being based on markdown, Mermaid can be used, not only by accomplished front-end
 In fact one can pick up the syntax for it quite easily from the examples given and there are many tutorials available in the internet.
 
 ## Mermaid is for everyone.
-Video [Tutorials](https://mermaid-js.github.io/mermaid/#/./Tutorials) are also available for the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
+Video [Tutorials](https://mermaid-js.github.io/mermaid/#/./Tutorials) are also available for the mermaid [live editor](https://mermaid.live/).
 
 Alternatively you can use Mermaid [Plug-Ins](https://mermaid-js.github.io/mermaid/#/./integrations), with tools you already use, like Google Docs. 

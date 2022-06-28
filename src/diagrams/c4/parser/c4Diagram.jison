@@ -61,14 +61,27 @@
 %x rel_r
 %x rel_b
 
+/* Custom tags/stereotypes */
+%x update_el_style
+%x update_rel_style
+%x update_layout_config
+
 %x attribute
 %x string
+%x string_kv
+%x string_kv_key
+%x string_kv_value
 
 %x open_directive
 %x type_directive
 %x arg_directive
+%x close_directive
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 
 %%
+
 \%\%\{                                    { this.begin('open_directive'); return 'open_directive'; }
 .*direction\s+TB[^\n]*                    return 'direction_tb';
 .*direction\s+BT[^\n]*                    return 'direction_bt';
@@ -78,11 +91,21 @@
 <type_directive>":"                       { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%      { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)      return 'arg_directive';
-\%\%(?!\{)*[^\n]*(\r?\n?)+                /* skip comments */
-\%\%[^\n]*(\r?\n)*            c            /* skip comments */
+
 
 "title"\s[^#\n;]+                         return 'title';
 "accDescription"\s[^#\n;]+                return 'accDescription';
+accTitle\s*":"\s*                         { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                         { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*              { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                         { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                 { this.popState(); }
+<acc_descr_multiline>[^\}]*               return "acc_descr_multiline_value";
+
+
+\%\%(?!\{)*[^\n]*(\r?\n?)+                /* skip comments */
+\%\%[^\n]*(\r?\n)*            c            /* skip comments */
 
 \s*(\r?\n)+                               return 'NEWLINE';
 \s+                                       /* skip whitespace */
@@ -140,10 +163,14 @@
 "Rel_Back"                                { this.begin("rel_b"); console.log('begin rel_b'); return 'REL_B';}  
 "RelIndex"                                { this.begin("rel_index"); console.log('begin rel_index'); return 'REL_INDEX';} 
 
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index><<EOF>>                return "EOF_IN_STRUCT";
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index>[(][ ]*[,]             { console.log('begin attribute with ATTRIBUTE_EMPTY'); this.begin("attribute"); return "ATTRIBUTE_EMPTY";}
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index>[(]                    { console.log('begin attribute'); this.begin("attribute"); }
-<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,attribute>[)]          { console.log('STOP attribute'); this.popState();console.log('STOP diagram'); this.popState();}
+"UpdateElementStyle"                      { this.begin("update_el_style"); console.log('begin update_el_style'); return 'UPDATE_EL_STYLE';}  
+"UpdateRelStyle"                          { this.begin("update_rel_style"); console.log('begin update_rel_style'); return 'UPDATE_REL_STYLE';} 
+"UpdateLayoutConfig"                      { this.begin("update_layout_config"); console.log('begin update_layout_config'); return 'UPDATE_LAYOUT_CONFIG';} 
+
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config><<EOF>>                return "EOF_IN_STRUCT";
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config>[(][ ]*[,]             { console.log('begin attribute with ATTRIBUTE_EMPTY'); this.begin("attribute"); return "ATTRIBUTE_EMPTY";}
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config>[(]                    { console.log('begin attribute'); this.begin("attribute"); }
+<person,person_ext,system_ext_queue,system_ext_db,system_ext,system_queue,system_db,system,boundary,enterprise_boundary,system_boundary,container_ext_db,container_ext,container_queue,container_db,container,container_boundary,component_ext_db,component_ext,component_queue,component_db,component,node,node_l,node_r,rel,birel,rel_u,rel_d,rel_l,rel_r,rel_b,rel_index,update_el_style,update_rel_style,update_layout_config,attribute>[)]          { console.log('STOP attribute'); this.popState();console.log('STOP diagram'); this.popState();}
 
 <attribute>",,"                           { console.log(',,'); return 'ATTRIBUTE_EMPTY';}
 <attribute>","                            { console.log(','); }
@@ -151,6 +178,13 @@
 <attribute>[ ]*["]                        { console.log('begin string'); this.begin("string");}
 <string>["]                               { console.log('STOP string');  this.popState(); }
 <string>[^"]*                             { console.log('STR'); return "STR";}
+
+<attribute>[ ]*[\$]                       { console.log('begin string_kv'); this.begin("string_kv");}
+<string_kv>[^=]*                          { console.log('STR_KEY'); this.begin("string_kv_key"); return "STR_KEY";}
+<string_kv_key>[=][ ]*["]                 { console.log('begin string_kv_value'); this.popState(); this.begin("string_kv_value"); }
+<string_kv_value>[^"]+                    { console.log('STR_VALUE'); return "STR_VALUE";}
+<string_kv_value>["]                      { console.log('STOP string_kv_value'); this.popState(); this.popState(); }
+
 <attribute>[^,]+                          { console.log('not STR'); return "STR";}
 
 '{'                                       { /* this.begin("lbrace"); */ console.log('begin boundary block'); return "LBRACE";}
@@ -235,6 +269,9 @@ otherStatements
 otherStatement
     : title {yy.setTitle($1.substring(6));$$=$1.substring(6);}
     | accDescription {yy.setAccDescription($1.substring(15));$$=$1.substring(15);}   
+    | acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value  { $$=$1.trim();yy.setAccDescription($$); } 
     ;
 
 boundaryStatement
@@ -297,6 +334,9 @@ diagramStatement
     | REL_R attributes {console.log($1,JSON.stringify($2)); yy.addRel('rel_r', ...$2); $$=$2;}
     | REL_B attributes {console.log($1,JSON.stringify($2)); yy.addRel('rel_b', ...$2); $$=$2;}
     | REL_INDEX attributes {console.log($1,JSON.stringify($2)); $2.splice(0, 1); yy.addRel('rel', ...$2); $$=$2;}
+    | UPDATE_EL_STYLE attributes {console.log($1,JSON.stringify($2)); yy.updateElStyle('update_el_style', ...$2); $$=$2;}
+    | UPDATE_REL_STYLE attributes {console.log($1,JSON.stringify($2)); yy.updateRelStyle('update_rel_style', ...$2); $$=$2;}
+    | UPDATE_LAYOUT_CONFIG attributes {console.log($1,JSON.stringify($2)); yy.updateLayoutConfig('update_layout_config', ...$2); $$=$2;}
     ;
 
 attributes
@@ -306,7 +346,7 @@ attributes
 
 attribute
     : STR {  $$ = $1.trim(); }
+    | STR_KEY STR_VALUE { console.log('kv: ', $1, $2); let kv={}; kv[$1.trim()]=$2.trim(); $$=kv; }
     | ATTRIBUTE {  $$ = $1.trim(); }
     | ATTRIBUTE_EMPTY {  $$ = ""; }
     ;
-

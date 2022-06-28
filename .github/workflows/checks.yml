@@ -12,6 +12,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: check tests
+    if: github.repository_owner == 'mermaid'
     steps:
     - uses: actions/checkout@v2
       with:
@@ -19,6 +20,6 @@ jobs:
     - uses: testomatio/check-tests@stable
       with:
         framework: cypress
-        tests: "./cypress/integration/**/**.spec.js"
+        tests: "./cypress/e2e/**/**.spec.js"
         token: ${{ secrets.GITHUB_TOKEN }}
         has-tests-label: true
