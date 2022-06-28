@@ -215,8 +215,10 @@ class Theme {
     this.tagLabelColor = this.tagLabelColor || this.primaryTextColor;
     this.tagLabelBackground = this.tagLabelBackground || this.primaryColor;
     this.tagLabelBorder = this.tagBorder || this.primaryBorderColor;
+    this.tagLabelFontSize = this.tagLabelFontSize || '10px';
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
+    this.commitLabelFontSize = this.commitLabelFontSize || '10px';
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
