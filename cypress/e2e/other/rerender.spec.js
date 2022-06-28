@@ -1,5 +1,5 @@
 describe('Rerendering', () => {
-  it('should be able to render after an error has occured', () => {
+  it('should be able to render after an error has occurred', () => {
     const url = 'http://localhost:9000/render-after-error.html';
     cy.viewport(1440, 1024);
     cy.visit(url);

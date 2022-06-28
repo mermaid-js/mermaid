@@ -196,7 +196,7 @@ const render = function (id, _txt, cb, container) {
 
   let root = select('body');
 
-  // In regular execurtion the container will be the div with a mermaid class
+  // In regular execution the container will be the div with a mermaid class
   if (typeof container !== 'undefined') {
     if (cnf.securityLevel === 'sandbox') {
       // IF we are in sandboxed mode, we do everyting mermaid related
@@ -240,7 +240,7 @@ const render = function (id, _txt, cb, container) {
   } else {
     // No container was provided
     // If there is an existsing element with the id, we remove it
-    // this likley a previously rendered diagram
+    // this likely a previously rendered diagram
     const existingSvg = document.getElementById(id);
     if (existingSvg) {
       existingSvg.remove();
@@ -300,6 +300,8 @@ const render = function (id, _txt, cb, container) {
 
   let userStyles = '';
   // user provided theme CSS
+  // If you add more configuration driven data into the user styles make sure that the value is
+  // sanitized bye the santiizeCSS function
   if (cnf.themeCSS !== undefined) {
     userStyles += `\n${cnf.themeCSS}`;
   }
@@ -615,7 +617,7 @@ function initialize(options) {
     }
   }
   // Set default options
-  configApi.saveConfigFromInitilize(options);
+  configApi.saveConfigFromInitialize(options);
 
   if (options && options.theme && theme[options.theme]) {
     // Todo merge with user options

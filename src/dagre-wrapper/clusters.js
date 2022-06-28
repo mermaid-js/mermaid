@@ -78,7 +78,7 @@ const rect = (parent, node) => {
 };
 
 /**
- * Non visiable cluster where the note is group with its
+ * Non visible cluster where the note is group with its
  *
  * @param {any} parent
  * @param {any} node

@@ -84,7 +84,7 @@
         div.className = 'malware';
         div.innerHTML = 'XSS Succeeded';
         document.getElementsByTagName('body')[0].appendChild(div);
-        throw new Error('XSS Succeded');
+        throw new Error('XSS Succeeded');
       }
       var diagram = 'graph LR\n';
 diagram += 'B-->D("<img onerror=location=`java';
@@ -100,4 +100,3 @@ mermaid.render('diagram', diagram, (res) => {
     </script>
   </body>
 </html>
-

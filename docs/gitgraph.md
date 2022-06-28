@@ -194,7 +194,7 @@ Here, a new commit representing the cherry-pick is created on the current branch
 A few important rules to note here are:
 1. You need to provide the `id` for an existing commit to be cherry-picked. If given commit id does not exist it will result in an error. For this, make use of the `commit id:$value` format of declaring commits. See the examples from above.
 2. The given commit must not exist on the current branch. The cherry-picked commit must always be a different branch than the current branch.
-3. Current branch must have at least one commit, before you can cherry-pick, otherwise it will case an error is throw.
+3. Current branch must have at least one commit, before you can cherry-pick, otherwise it will cause an error is throw.
 
 Let see an example:
 ```mermaid-example
@@ -819,6 +819,62 @@ Now let's override the default values for the `commitLabelColor` to `commitLabel
 
 ```
 See how the commit label color and background color are changed to the values specified in the theme variables.
+
+### Customizing Commit Label Font Size
+You can customize commit using the `commitLabelFontSize`  theme variables for changing in the font soze of the commit label .
+
+Example:
+Now let's override the default values for the `commitLabelFontSize` variable:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'commitLabelColor': '#ff0000',
+              'commitLabelBackground': '#00ff00',
+              'commitLabelFontSize': '16px'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the commit label font size changed.
+
+### Customizing Tag Label Font Size
+You can customize commit using the `tagLabelFontSize`  theme variables for changing in the font soze of the tag label .
+
+Example:
+Now let's override the default values for the `tagLabelFontSize` variable:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'commitLabelColor': '#ff0000',
+              'commitLabelBackground': '#00ff00',
+              'tagLabelFontSize': '16px'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the tag label font size changed.
 ### Customizing Tag colors
 You can customize tag using the `tagLabelColor`,`tagLabelBackground` and `tagLabelBorder`  theme variables for changes in the tag label color,tag label background color and tag label border respectively.
 Example:

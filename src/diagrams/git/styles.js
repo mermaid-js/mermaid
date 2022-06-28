@@ -26,9 +26,11 @@ const getStyles = (options) =>
     stroke: ${options.lineColor};
     stroke-dasharray: 2;
   }
-  .commit-label { font-size: 10px; fill: ${options.commitLabelColor};}
-  .commit-label-bkg { font-size: 10px; fill: ${options.commitLabelBackground}; opacity: 0.5; }
-  .tag-label { font-size: 10px; fill: ${options.tagLabelColor};}
+  .commit-label { font-size: ${options.commitLabelFontSize}; fill: ${options.commitLabelColor};}
+  .commit-label-bkg { font-size: ${options.commitLabelFontSize}; fill: ${
+    options.commitLabelBackground
+  }; opacity: 0.5; }
+  .tag-label { font-size: ${options.tagLabelFontSize}; fill: ${options.tagLabelColor};}
   .tag-label-bkg { fill: ${options.tagLabelBackground}; stroke: ${options.tagLabelBorder}; }
   .tag-hole { fill: ${options.textColor}; }
 

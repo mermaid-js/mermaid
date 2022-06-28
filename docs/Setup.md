@@ -924,11 +924,19 @@ The object containing configurations specific for c4 diagrams
 
 ### c4ShapeMargin
 
-| Parameter   | Description           | Type    | Required | Values             |
-| ----------- | --------------------- | ------- | -------- | ------------------ |
-| shapeMargin | Margin between shapes | Integer | Required | Any Positive Value |
+| Parameter     | Description           | Type    | Required | Values             |
+| ------------- | --------------------- | ------- | -------- | ------------------ |
+| c4ShapeMargin | Margin between shapes | Integer | Required | Any Positive Value |
 
 **Notes:** Default value: 50
+
+### c4ShapePadding
+
+| Parameter      | Description            | Type    | Required | Values             |
+| -------------- | ---------------------- | ------- | -------- | ------------------ |
+| c4ShapePadding | Padding between shapes | Integer | Required | Any Positive Value |
+
+**Notes:** Default value: 20
 
 ### width
 
@@ -948,9 +956,9 @@ The object containing configurations specific for c4 diagrams
 
 ### boxMargin
 
-| Parameter | Description              | Type    | Required | Values             |
-| --------- | ------------------------ | ------- | -------- | ------------------ |
-| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+| Parameter | Description         | Type    | Required | Values             |
+| --------- | ------------------- | ------- | -------- | ------------------ |
+| boxMargin | Margin around boxes | Integer | Required | Any Positive Value |
 
 **Notes:** Default value: 10
 
@@ -964,6 +972,422 @@ The object containing configurations specific for c4 diagrams
 scaling with the available space. If set to false, the absolute space required is used.
 
 Default value: true
+
+### c4ShapeInRow
+
+| Parameter    | Description | Type    | Required | Values             |
+| ------------ | ----------- | ------- | -------- | ------------------ |
+| c4ShapeInRow | See Notes   | Integer | Required | Any Positive Value |
+
+**Notes:** How many shapes to place in each row.
+
+Default value: 4
+
+### c4BoundaryInRow
+
+| Parameter       | Description | Type    | Required | Values             |
+| --------------- | ----------- | ------- | -------- | ------------------ |
+| c4BoundaryInRow | See Notes   | Integer | Required | Any Positive Value |
+
+**Notes:** How many boundarys to place in each row.
+
+Default value: 2
+
+### personFontSize
+
+This sets the font size of Person shape for the diagram
+
+**Notes:** Default value: 14.
+
+### personFontFamily
+
+This sets the font family of Person shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### personFontWeight
+
+This sets the font weight of Person shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_personFontSize
+
+This sets the font size of External Person shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_personFontFamily
+
+This sets the font family of External Person shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_personFontWeight
+
+This sets the font weight of External Person shape for the diagram
+
+**Notes:** Default value: normal.
+
+### systemFontSize
+
+This sets the font size of System shape for the diagram
+
+**Notes:** Default value: 14.
+
+### systemFontFamily
+
+This sets the font family of System shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### systemFontWeight
+
+This sets the font weight of System shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_systemFontSize
+
+This sets the font size of External System shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_systemFontFamily
+
+This sets the font family of External System shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_systemFontWeight
+
+This sets the font weight of External System shape for the diagram
+
+**Notes:** Default value: normal.
+
+### system_dbFontSize
+
+This sets the font size of System DB shape for the diagram
+
+**Notes:** Default value: 14.
+
+### system_dbFontFamily
+
+This sets the font family of System DB shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### system_dbFontWeight
+
+This sets the font weight of System DB shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_system_dbFontSize
+
+This sets the font size of External System DB shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_system_dbFontFamily
+
+This sets the font family of External System DB shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_system_dbFontWeight
+
+This sets the font weight of External System DB shape for the diagram
+
+**Notes:** Default value: normal.
+
+### system_queueFontSize
+
+This sets the font size of System Queue shape for the diagram
+
+**Notes:** Default value: 14.
+
+### system_queueFontFamily
+
+This sets the font family of System Queue shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### system_queueFontWeight
+
+This sets the font weight of System Queue shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_system_queueFontSize
+
+This sets the font size of External System Queue shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_system_queueFontFamily
+
+This sets the font family of External System Queue shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_system_queueFontWeight
+
+This sets the font weight of External System Queue shape for the diagram
+
+**Notes:** Default value: normal.
+
+### boundaryFontSize
+
+This sets the font size of Boundary shape for the diagram
+
+**Notes:** Default value: 14.
+
+### boundaryFontFamily
+
+This sets the font family of Boundary shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### boundaryFontWeight
+
+This sets the font weight of Boundary shape for the diagram
+
+**Notes:** Default value: normal.
+
+### messageFontSize
+
+This sets the font size of Message shape for the diagram
+
+**Notes:** Default value: 12.
+
+### messageFontFamily
+
+This sets the font family of Message shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### messageFontWeight
+
+This sets the font weight of Message shape for the diagram
+
+**Notes:** Default value: normal.
+
+### containerFontSize
+
+This sets the font size of Container shape for the diagram
+
+**Notes:** Default value: 14.
+
+### containerFontFamily
+
+This sets the font family of Container shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### containerFontWeight
+
+This sets the font weight of Container shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_containerFontSize
+
+This sets the font size of External Container shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_containerFontFamily
+
+This sets the font family of External Container shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_containerFontWeight
+
+This sets the font weight of External Container shape for the diagram
+
+**Notes:** Default value: normal.
+
+### container_dbFontSize
+
+This sets the font size of Container DB shape for the diagram
+
+**Notes:** Default value: 14.
+
+### container_dbFontFamily
+
+This sets the font family of Container DB shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### container_dbFontWeight
+
+This sets the font weight of Container DB shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_container_dbFontSize
+
+This sets the font size of External Container DB shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_container_dbFontFamily
+
+This sets the font family of External Container DB shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_container_dbFontWeight
+
+This sets the font weight of External Container DB shape for the diagram
+
+**Notes:** Default value: normal.
+
+### container_queueFontSize
+
+This sets the font size of Container Queue shape for the diagram
+
+**Notes:** Default value: 14.
+
+### container_queueFontFamily
+
+This sets the font family of Container Queue shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### container_queueFontWeight
+
+This sets the font weight of Container Queue shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_container_queueFontSize
+
+This sets the font size of External Container Queue shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_container_queueFontFamily
+
+This sets the font family of External Container Queue shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_container_queueFontWeight
+
+This sets the font weight of External Container Queue shape for the diagram
+
+**Notes:** Default value: normal.
+
+### componentFontSize
+
+This sets the font size of Component shape for the diagram
+
+**Notes:** Default value: 14.
+
+### componentFontFamily
+
+This sets the font family of Component shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### componentFontWeight
+
+This sets the font weight of Component shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_componentFontSize
+
+This sets the font size of External Component shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_componentFontFamily
+
+This sets the font family of External Component shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_componentFontWeight
+
+This sets the font weight of External Component shape for the diagram
+
+**Notes:** Default value: normal.
+
+### component_dbFontSize
+
+This sets the font size of Component DB shape for the diagram
+
+**Notes:** Default value: 14.
+
+### component_dbFontFamily
+
+This sets the font family of Component DB shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### component_dbFontWeight
+
+This sets the font weight of Component DB shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_component_dbFontSize
+
+This sets the font size of External Component DB shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_component_dbFontFamily
+
+This sets the font family of External Component DB shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_component_dbFontWeight
+
+This sets the font weight of External Component DB shape for the diagram
+
+**Notes:** Default value: normal.
+
+### component_queueFontSize
+
+This sets the font size of Component Queue shape for the diagram
+
+**Notes:** Default value: 14.
+
+### component_queueFontFamily
+
+This sets the font family of Component Queue shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### component_queueFontWeight
+
+This sets the font weight of Component Queue shape for the diagram
+
+**Notes:** Default value: normal.
+
+### external_component_queueFontSize
+
+This sets the font size of External Component Queue shape for the diagram
+
+**Notes:** Default value: 14.
+
+### external_component_queueFontFamily
+
+This sets the font family of External Component Queue shape for the diagram
+
+**Notes:** Default value: "Open Sans", sans-serif.
+
+### external_component_queueFontWeight
+
+This sets the font weight of External Component Queue shape for the diagram
+
+**Notes:** Default value: normal.
 
 ### wrap
 

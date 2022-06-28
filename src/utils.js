@@ -945,7 +945,7 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `0 0 ${width} ${height}`;
   log.debug(
-    'Grpah.label',
+    'Graph.label',
     graph._label,
     'swidth',
     sWidth,
@@ -966,7 +966,7 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
   svgElem.select('g').attr('transform', `translate(${tx}, ${ty})`);
 };
 
-export const initIdGeneratior = class iterator {
+export const initIdGenerator = class iterator {
   constructor(deterministic, seed) {
     this.deterministic = deterministic;
     this.seed = seed;
@@ -1032,6 +1032,14 @@ export const directiveSanitizer = (args) => {
           log.debug('sanitizing themeCss option');
           args[key] = sanitizeCss(args[key]);
         }
+        if (key.indexOf('fontFamily') >= 0) {
+          log.debug('sanitizing fontFamily option');
+          args[key] = sanitizeCss(args[key]);
+        }
+        if (key.indexOf('altFontFamily') >= 0) {
+          log.debug('sanitizing altFontFamily option');
+          args[key] = sanitizeCss(args[key]);
+        }
         if (configKeys.indexOf(key) < 0) {
           log.debug('sanitize deleting option', key);
           delete args[key];
@@ -1044,11 +1052,32 @@ export const directiveSanitizer = (args) => {
       });
     }
   }
+  if (args.themeVariables) {
+    const kArr = Object.keys(args.themeVariables);
+    for (let i = 0; i < kArr.length; i++) {
+      const k = kArr[i];
+      const val = args.themeVariables[k];
+      if (val && val.match && !val.match(/^[a-zA-Z0-9#,";()%. ]+$/)) {
+        args.themeVariables[k] = '';
+      }
+    }
+  }
+  log.debug('After sanitization', args);
 };
 export const sanitizeCss = (str) => {
-  const stringsearch = 'o';
-  const startCnt = (str.match(/\{/g) || []).length;
-  const endCnt = (str.match(/\}/g) || []).length;
+  let startCnt = 0;
+  let endCnt = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    if (startCnt < endCnt) {
+      return '{ /* ERROR: Unbalanced CSS */ }';
+    }
+    if (str[i] === '{') {
+      startCnt++;
+    } else if (str[i] === '}') {
+      endCnt++;
+    }
+  }
   if (startCnt !== endCnt) {
     return '{ /* ERROR: Unbalanced CSS */ }';
   }
@@ -1080,7 +1109,7 @@ export default {
   memoize,
   runFunc,
   entityDecode,
-  initIdGeneratior,
+  initIdGenerator: initIdGenerator,
   directiveSanitizer,
   sanitizeCss,
 };
