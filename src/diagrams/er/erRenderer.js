@@ -547,7 +547,7 @@ export const draw = function (text, id) {
   const parser = erParser.parser;
   parser.yy = erDb;
   const securityLevel = getConfig().securityLevel;
-  // Handle root and ocument for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sanbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -575,7 +575,7 @@ export const draw = function (text, id) {
   // ---
   // 1. Create all the entities in the svg node at 0,0, but with the correct dimensions (allowing for text content)
   // 2. Make sure they are all added to the graph
-  // 3. Add all the edges (relationships) to the graph aswell
+  // 3. Add all the edges (relationships) to the graph as well
   // 4. Let dagre do its magic to layout the graph.  This assigns:
   //    - the centre co-ordinates for each node, bearing in mind the dimensions and edge relationships
   //    - the path co-ordinates for each edge

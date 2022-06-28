@@ -210,7 +210,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
   } else {
     log.debug('Opting in, graph ');
   }
-  // Go through the nodes and for each cluster found, save a replacment node, this can be used when
+  // Go through the nodes and for each cluster found, save a replacement node, this can be used when
   // faking a link to a cluster
   graph.nodes().forEach(function (id) {
     const children = graph.children(id);
@@ -257,7 +257,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
   });
 
   // For clusters with incoming and/or outgoing edges translate those edges to a real node
-  // in the cluster inorder to fake the edge
+  // in the cluster in order to fake the edge
   graph.edges().forEach(function (e) {
     const edge = graph.edge(e);
     log.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));

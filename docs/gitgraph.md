@@ -194,7 +194,7 @@ Here, a new commit representing the cherry-pick is created on the current branch
 A few important rules to note here are:
 1. You need to provide the `id` for an existing commit to be cherry-picked. If given commit id does not exist it will result in an error. For this, make use of the `commit id:$value` format of declaring commits. See the examples from above.
 2. The given commit must not exist on the current branch. The cherry-picked commit must always be a different branch than the current branch.
-3. Current branch must have at least one commit, before you can cherry-pick, otherwise it will case an error is throw.
+3. Current branch must have at least one commit, before you can cherry-pick, otherwise it will cause an error is throw.
 
 Let see an example:
 ```mermaid-example

@@ -302,7 +302,7 @@ describe('when calculating SVG size', function () {
 
 describe('when initializing the id generator', function () {
   it('should return a random number generator based on Date', function (done) {
-    const idGenerator = new utils.initIdGeneratior(false);
+    const idGenerator = new utils.initIdGenerator(false);
     expect(typeof idGenerator.next).toEqual('function');
     const lastId = idGenerator.next();
     setTimeout(() => {
@@ -312,7 +312,7 @@ describe('when initializing the id generator', function () {
   });
 
   it('should return a non random number generator', function () {
-    const idGenerator = new utils.initIdGeneratior(true);
+    const idGenerator = new utils.initIdGenerator(true);
     expect(typeof idGenerator.next).toEqual('function');
     const start = 0;
     const lastId = idGenerator.next();
@@ -321,7 +321,7 @@ describe('when initializing the id generator', function () {
   });
 
   it('should return a non random number generator based on seed', function () {
-    const idGenerator = new utils.initIdGeneratior(true, 'thisIsASeed');
+    const idGenerator = new utils.initIdGenerator(true, 'thisIsASeed');
     expect(typeof idGenerator.next).toEqual('function');
     const start = 11;
     const lastId = idGenerator.next();

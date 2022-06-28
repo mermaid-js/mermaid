@@ -244,7 +244,7 @@ const barb = (elem, type) => {
     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
 };
 
-// TODO rename the class diagram markers to something shape descriptive and semanitc free
+// TODO rename the class diagram markers to something shape descriptive and semantic free
 const markers = {
   extension,
   composition,

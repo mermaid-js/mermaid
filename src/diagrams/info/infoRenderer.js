@@ -28,7 +28,7 @@ export const draw = (text, id, version) => {
     log.debug('Renering info diagram\n' + text);
 
     const securityLevel = getConfig().securityLevel;
-    // Handle root and ocument for when rendering in sanbox mode
+    // Handle root and Document for when rendering in sanbox mode
     let sandboxElement;
     if (securityLevel === 'sandbox') {
       sandboxElement = select('#i' + id);

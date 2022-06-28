@@ -315,7 +315,7 @@ const drawBoundary = function (elem, boundary, conf) {
 
   drawRect(boundaryElem, rectData);
 
-  // draw lable
+  // draw label
   let boundaryConf = conf.boundaryFont();
   boundaryConf.fontWeight = 'bold';
   boundaryConf.fontSize = boundaryConf.fontSize + 2;
