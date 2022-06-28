@@ -6,6 +6,14 @@ So you want to help? That's great!
 
 Here are a few things to know to get you started on the right path.
 
+## Development Installation
+```bash
+git clone git@github.com:mermaid-js/mermaid.git
+cd mermaid
+yarn
+yarn test
+```
+
 ## Committing code
 
 We make all changes via pull requests. As we have many pull requests from developers new to mermaid, the current approach is to have *knsv, Knut Sveidqvist* as a main reviewer of changes and merging pull requests. More precisely like this:
