@@ -443,7 +443,6 @@ export const draw = function (text, id) {
 
   // Set up an SVG group so that we can translate the final graph.
   const svg = root.select(`[id="${id}"]`);
-  svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   // Adds title and description to the flow chart
   addSVGAccessibilityFields(parser.yy, svg, id);

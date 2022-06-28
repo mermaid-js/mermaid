@@ -181,7 +181,6 @@ export const draw = function (text, id) {
 
   // Fetch the default direction, use TD if none was found
   const diagram = root.select(`[id='${id}']`);
-  diagram.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
   insertMarkers(diagram);
 
   // Layout graph, Create a new directed graph

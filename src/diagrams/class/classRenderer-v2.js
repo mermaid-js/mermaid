@@ -338,7 +338,6 @@ export const draw = function (text, id) {
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
   const svg = root.select(`[id="${id}"]`);
-  svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
