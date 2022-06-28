@@ -32,7 +32,7 @@ Entity names are often capitalized, although there is no accepted standard on th
 
 
 ## Syntax
-Mermaid syntax for Gitgraph is very straight-forward and simple. It follows a declarative-approach, where each commit is drawn on the timeline in the diagram, in order of its occurrences/presence in code. Basically, it follows the insertion order for each command.
+Mermaid syntax for a gitgraph is very straight-forward and simple. It follows a declarative-approach, where each commit is drawn on the timeline in the diagram, in order of its occurrences/presence in code. Basically, it follows the insertion order for each command.
 
 First thing you do is to declare your diagram type using the **gitgraph** keyword. This `gitgraph` keyword, tells Mermaid that you wish to draw a gitgraph, and parse the diagram code accordingly.
 
@@ -48,11 +48,11 @@ A simple gitgraph showing three commits on the default (***main***) branch:
        commit
        commit
 ```
-If you look closely at the previous example, you can see the default branch `main` along with three commits. Also, notice that by default each commit has been given a unique & random Id. What if you would want to give your own custom ID to a commit? Yes, it is possible to do that with Mermaid.
+If you look closely at the previous example, you can see the default branch `main` along with three commits. Also, notice that by default each commit has been given a unique & random ID. What if you wanted to give your own custom ID to a commit? Yes, it is possible to do that with Mermaid.
 
 ### Adding custom commit id
 
-For a given commit you may specify a custom id at the time of declaring it using the `id` attribute, followed by `:` and your custom value within `""` quote. For example: `commit id: "your_custom_id"`
+For a given commit you may specify a custom ID at the time of declaring it using the `id` attribute, followed by `:` and your custom value within a `""` quote. For example: `commit id: "your_custom_id"`
 
 Let us see how this works with the help of the following diagram:
 
@@ -126,13 +126,13 @@ Let see this in an example:
        commit
        commit
 ```
-In this example, see how we started with default `main` branch, and pushed to commits on that.
+In this example, see how we started with default `main` branch, and pushed two commits on that.
 Then we created the `develop` branch, and all commits afterwards are put on the `develop` branch as it became the current branch.
 
 ### Checking out an existing branch
-In Mermaid, in-order to switch to an existing branch, you make use of the `checkout` keyword. You also need to provide a name of an existing branch. If no branch is found with the given name, it will result in console error. Usage example: `checkout develop`
+In Mermaid, in order to switch to an existing branch, you make use of the `checkout` keyword. You also need to provide a name of an existing branch. If no branch is found with the given name, it will result in console error. Usage example: `checkout develop`
 
-When Mermaid, reads the `checkout` keyword, it finds the given branch and sets it as the current branch. Equivalent to  checking out a branch in Git world.
+When Mermaid, reads the `checkout` keyword, it finds the given branch and sets it as the current branch. Equivalent to checking out a branch in the Git world.
 
 Let see modify our previous example:
 
@@ -148,18 +148,18 @@ Let see modify our previous example:
        commit
        commit
 ```
-In this example, see how we started with default `main` branch, and pushed to commits on that.
+In this example, see how we started with default `main` branch, and pushed two commits on that.
 Then we created the `develop` branch, and all three commits afterwards are put on the `develop` branch as it became the current branch.
 After this we made use of the `checkout` keyword to set the current branch as `main`, and all commit that follow are registered against the current branch, i.e. `main`.
 
 ### Merging two branches
-In Mermaid, in-order to merge or join  to an existing branch, you make use of the `merge` keyword. You also need to provide a name of an existing branch to merge from. If no branch is found with the given name, it will result in console error. Also, if you can only merge two separate branches, and cannot merge a branch with itself. In such case an error is throw.
+In Mermaid, in order to merge or join  to an existing branch, you make use of the `merge` keyword. You also need to provide the name of an existing branch to merge from. If no branch is found with the given name, it will result in console error. Also, you can only merge two separate branches, and cannot merge a branch with itself. In such case an error is throw.
 
 Usage example: `merge develop`
 
-When Mermaid, reads the `merge` keyword, it finds the given branch and its head commit (the last commit on that branch), and joins it with the head commit on the **current branch**. Each merge result in a ***merge commit***, represented in the diagram with **filled double circle**.
+When Mermaid, reads the `merge` keyword, it finds the given branch and its head commit (the last commit on that branch), and joins it with the head commit on the **current branch**. Each merge results in a ***merge commit***, represented in the diagram with **filled double circle**.
 
-Let see modify our previous example to merge our two branches:
+Let us modify our previous example to merge our two branches:
 
 ```mermaid-example
     gitGraph
@@ -176,25 +176,25 @@ Let see modify our previous example to merge our two branches:
        commit
        commit
 ```
-In this example, see how we started with default `main` branch, and pushed to commits on that.
+In this example, see how we started with default `main` branch, and pushed two commits on that.
 Then we created the `develop` branch, and all three commits afterwards are put on the `develop` branch as it became the current branch.
 After this we made use of the `checkout` keyword to set the current branch as `main`, and all commits that follow are registered against the current branch, i.e. `main`.
 After this we merge the `develop` branch onto the current branch `main`, resulting in a merge commit.
 Since the current branch at this point is still `main`, the last two commits are registered against that.
 
 ### Cherry Pick commit from another branch
-Similar to how 'git' allows you to cherry pick a commit from **another branch** onto the **current** branch, Mermaid also suports this functionality. You can also cherry pick a commit from another branch using the `cherry-pick` keyword.
+Similar to how 'git' allows you to cherry-pick a commit from **another branch** onto the **current** branch, Mermaid also supports this functionality. You can also cherry-pick a commit from another branch using the `cherry-pick` keyword.
 
-To use the `cherry-pick` keyword, you must specify the id  using the `id` attribute, followed by `:` and your desired commit id within `""` quote. For example:
+To use the `cherry-pick` keyword, you must specify the id  using the `id` attribute, followed by `:` and your desired commit id within a `""` quote. For example:
 
  `cherry-pick id: "your_custom_id"`
 
-Here, a new commt representing the cherry pick is created on the current branch, and is visually highlighted in the diagram with a **cherry** and a tag depicting the commit id from which it is cherry picked from.
+Here, a new commit representing the cherry-pick is created on the current branch, and is visually highlighted in the diagram with a **cherry** and a tag depicting the commit id from which it is cherry-picked from.
 
-Few Important rules to note here are:
-1. You need to provide the `id` for an existing commit to be cherry picked. If given commit id does not exist it will result in an error. For this make use of the `commit id:$value` format of declaring commits. See the examples from above.
-2. The given commit must not exist on the current branch. Cherry picked commit must always be a different branch than the current branch.
-3. Current branch must have atleast one commit, before you can cherry pick a commit, otherwise it will case an error is throw.
+A few important rules to note here are:
+1. You need to provide the `id` for an existing commit to be cherry-picked. If given commit id does not exist it will result in an error. For this, make use of the `commit id:$value` format of declaring commits. See the examples from above.
+2. The given commit must not exist on the current branch. The cherry-picked commit must always be a different branch than the current branch.
+3. Current branch must have at least one commit, before you can cherry-pick, otherwise it will cause an error is throw.
 
 Let see an example:
 ```mermaid-example
@@ -222,7 +222,7 @@ In Mermaid, you have the option to configure the gitgraph diagram. You can confi
 
 Let's look at them one by one.
 ## Hiding Branch names and lines
-Sometimes you may want to hide the branch names and lines from the diagram. You can do this by using the `showBranches` keyword. Bye default its value is `true`. You can set it to false using directives
+Sometimes you may want to hide the branch names and lines from the diagram. You can do this by using the `showBranches` keyword. By default its value is `true`. You can set it to `false` using directives.
 
 Usage example:
 ```mermaid-example
@@ -272,7 +272,7 @@ Usage example:
  ```
 
 ## Commit labels Layout: Rotated or Horizontal
-Mermaid supports two types of commit labels layout. The default layout is **rotated**, which means the labels are placed below the commit circle, rotated at 45 degress for better readability. This is particularly useful for commits with long labels.
+Mermaid supports two types of commit labels layout. The default layout is **rotated**, which means the labels are placed below the commit circle, rotated at 45 degrees for better readability. This is particularly useful for commits with long labels.
 
 The other option is **horizontal**, which means the labels are placed below the commit circle centred horizontally, and are not rotated. This is particularly useful for commits with short labels.
 
@@ -450,7 +450,7 @@ Here, we have changed the default main branch name to `MetroLine1`.
 ## Themes
 Mermaid supports a bunch of pre-defined themes which you can use to find the right one for you. PS: you can actually override an existing theme's variable to get your own custom theme going. Learn more about theming your diagram [here](./theming.md).
 
-Following are the different pre-defined theme options:
+The following are the different pre-defined theme options:
 - `base`
 - `forest`
 - `dark`
@@ -458,7 +458,7 @@ Following are the different pre-defined theme options:
 - `neutral`
 
 **NOTE**: To change theme you can either use the `initialize` call or *directives*. Learn more about [directives](./directives.md)
-Let's put them to use, add see how our sample diagram looks like in different themes:
+Let's put them to use, and see how our sample diagram looks in different themes:
 
 ### Base Theme
 
@@ -721,7 +721,7 @@ See how the default theme is used to set the colors for the branches:
        commit
 ```
 > #### IMPORTANT:
-> Mermaid supports the theme variables to override the default values for **up to 8 branches**, i.e., you can set the color/styling of up to 8 branches using theme variables. After this threshold of 8 branches,  the theme variables are reused in the cyclic manner, i.e. 9th branch will use the color/styling of 1st  branch, or branch at index position '8' will use the color/styling of branch at index position '0'.
+> Mermaid supports the theme variables to override the default values for **up to 8 branches**, i.e., you can set the color/styling of up to 8 branches using theme variables. After this threshold of 8 branches,  the theme variables are reused in the cyclic manner, i.e. the 9th branch will use the color/styling of the 1st branch, or the branch at index position '8' will use the color/styling of the branch at index position '0'.
  *More on this in the next section. See examples on **Customizing branch label colors** below*
 ### Customizing branch colors
 You can customize the branch colors using the `git0` to `git7` theme variables. Mermaid allows you to set the colors for up-to 8 branches, where `git0` variable will drive the value of the first branch, `git1` will drive the value of the second branch and so on.
@@ -819,6 +819,62 @@ Now let's override the default values for the `commitLabelColor` to `commitLabel
 
 ```
 See how the commit label color and background color are changed to the values specified in the theme variables.
+
+### Customizing Commit Label Font Size
+You can customize commit using the `commitLabelFontSize`  theme variables for changing in the font soze of the commit label .
+
+Example:
+Now let's override the default values for the `commitLabelFontSize` variable:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'commitLabelColor': '#ff0000',
+              'commitLabelBackground': '#00ff00',
+              'commitLabelFontSize': '16px'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the commit label font size changed.
+
+### Customizing Tag Label Font Size
+You can customize commit using the `tagLabelFontSize`  theme variables for changing in the font soze of the tag label .
+
+Example:
+Now let's override the default values for the `tagLabelFontSize` variable:
+
+```mermaid-example
+    %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
+              'commitLabelColor': '#ff0000',
+              'commitLabelBackground': '#00ff00',
+              'tagLabelFontSize': '16px'
+       } } }%%
+       gitGraph
+       commit
+       branch develop
+       commit tag:"v1.0.0"
+       commit
+       checkout main
+       commit type: HIGHLIGHT
+       commit
+       merge develop
+       commit
+       branch featureA
+       commit
+
+```
+See how the tag label font size changed.
 ### Customizing Tag colors
 You can customize tag using the `tagLabelColor`,`tagLabelBackground` and `tagLabelBorder`  theme variables for changes in the tag label color,tag label background color and tag label border respectively.
 Example:
@@ -870,7 +926,7 @@ Now let's override the default values for the `git0` to `git3` variables:
        commit
 
 ```
-See how the highlight commit color on the first branch is changed to the value specified in the theme variable `gitInv0`.
+See how the highlighted commit color on the first branch is changed to the value specified in the theme variable `gitInv0`.
 
 
 

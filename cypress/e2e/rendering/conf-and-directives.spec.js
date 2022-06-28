@@ -16,7 +16,7 @@ describe('Configuration and directives - nodes should be light blue', () => {
     );
     cy.get('svg');
   });
-  it('Settigns from intitialize - nodes should be green', () => {
+  it('Settings from initialize - nodes should be green', () => {
     imgSnapshotTest(
       `
 graph TD
@@ -30,7 +30,7 @@ graph TD
     );
     cy.get('svg');
   });
-  it('Settings from initialize overriding themeVariable - nodes shold be red', () => {
+  it('Settings from initialize overriding themeVariable - nodes should be red', () => {
     imgSnapshotTest(
       `
 

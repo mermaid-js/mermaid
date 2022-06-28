@@ -65,9 +65,9 @@ const drawText = (txt) => {
 };
 
 /**
- * Draws the commits with its symbol and labels. The function has tywo modes, one which only
+ * Draws the commits with its symbol and labels. The function has two modes, one which only
  * calculates the positions and one that does the actual drawing. This for a simple way getting the
- * vertical leyering rcorrect in the graph.
+ * vertical layering correct in the graph.
  *
  * @param {any} svg
  * @param {any} commits
@@ -345,7 +345,7 @@ const findLane = (y1, y2, _depth) => {
 };
 
 /**
- * This function draw trhe lines between the commits. They were arrows initially.
+ * This function draw the lines between the commits. They were arrows initially.
  *
  * @param {any} svg
  * @param {any} commit1

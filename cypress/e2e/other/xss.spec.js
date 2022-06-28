@@ -60,52 +60,52 @@ describe('XSS', () => {
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating htmlLabels into a false positive', () => {
+  it('should not allow manipulating htmlLabels into a false positive', () => {
     cy.visit('http://localhost:9000/xss4.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating antiscript to run javascript', () => {
+  it('should not allow manipulating antiscript to run javascript', () => {
     cy.visit('http://localhost:9000/xss5.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating antiscript to run javascript using onerror', () => {
+  it('should not allow manipulating antiscript to run javascript using onerror', () => {
     cy.visit('http://localhost:9000/xss6.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre wrapper', () => {
+  it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre wrapper', () => {
     cy.visit('http://localhost:9000/xss8.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+  it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
     cy.visit('http://localhost:9000/xss9.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+  it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
     cy.visit('http://localhost:9000/xss10.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+  it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
     cy.visit('http://localhost:9000/xss11.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+  it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
     cy.visit('http://localhost:9000/xss12.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+  it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
     cy.visit('http://localhost:9000/xss13.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');
   });
-  it('should not allow maniplulating antiscript to run javascript iframes in class diagrams', () => {
+  it('should not allow manipulating antiscript to run javascript iframes in class diagrams', () => {
     cy.visit('http://localhost:9000/xss14.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');

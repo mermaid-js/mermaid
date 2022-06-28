@@ -12,7 +12,7 @@ describe('parsing a flow chart', function () {
     flow.parser.yy.clear();
   });
 
-  it('should handle a trailing whitespaces after statememnts', function () {
+  it('should handle a trailing whitespaces after statements', function () {
     const res = flow.parser.parse('graph TD;\n\n\n %% Comment\n A-->B; \n B-->C;');
 
     const vert = flow.parser.yy.getVertices();

@@ -53,9 +53,9 @@ Editing is as easy as pasting your **Diagram code**, into the `code` section of 
 
 The Gist you create should have a code.mmd file and optionally a config.json. [Example](https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a)
 
-To load a gist into the Editor, you can use https://mermaid-js.github.io/mermaid-live-editor/edit?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a
+To load a gist into the Editor, you can use https://mermaid.live/edit?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a
 
-and to View, https://mermaid-js.github.io/mermaid-live-editor/view?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a
+and to View, https://mermaid.live/view?gist=https://gist.github.com/sidharthv96/6268a23e673a533dcb198f241fd7012a
 
 ## 2. Using Mermaid Plugins:
 

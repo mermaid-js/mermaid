@@ -587,7 +587,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 export const draw = function (text, id) {
   conf = configApi.getConfig().sequence;
   const securityLevel = configApi.getConfig().securityLevel;
-  // Handle root and ocument for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sanbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);

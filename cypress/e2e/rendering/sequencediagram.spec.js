@@ -76,7 +76,7 @@ context('Sequence diagram', () => {
     imgSnapshotTest(
       `
         sequenceDiagram
-        Alice->>Bob: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         loop Loopy
             Bob->>Alice: Pasten
         end      `,
@@ -143,7 +143,7 @@ context('Sequence diagram', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
-        participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
         Bob-->A: Pasten !
       `,
@@ -154,7 +154,7 @@ context('Sequence diagram', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
-        participant A as wrap:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        participant A as wrap:Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
         Bob-->A: Pasten !
       `,
@@ -166,7 +166,7 @@ context('Sequence diagram', () => {
         `
         %%{init: {'config': {'wrap': true }}}%%
         sequenceDiagram
-        participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
         Bob-->A: Pasten !
       `,
@@ -190,7 +190,7 @@ context('Sequence diagram', () => {
         `
         sequenceDiagram
         Alice->>Bob: Hola
-        Note left of Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Note left of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -201,7 +201,7 @@ context('Sequence diagram', () => {
         `
         sequenceDiagram
         Alice->>Bob: Hola
-        Note left of Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Note left of Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -212,7 +212,7 @@ context('Sequence diagram', () => {
         `
         sequenceDiagram
         Alice->>Bob: Hola
-        Note right of Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Note right of Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -223,7 +223,7 @@ context('Sequence diagram', () => {
         `
         sequenceDiagram
         Alice->>Bob: Hola
-        Note right of Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Note right of Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -234,7 +234,7 @@ context('Sequence diagram', () => {
         `
         sequenceDiagram
         Alice->>Bob: Hola
-        Note over Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Note over Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -245,7 +245,7 @@ context('Sequence diagram', () => {
         `
         sequenceDiagram
         Alice->>Bob: Hola
-        Note over Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Note over Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -255,7 +255,7 @@ context('Sequence diagram', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
-        Alice->>Bob: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Alice->>Bob: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -265,7 +265,7 @@ context('Sequence diagram', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
-        Alice->>Bob:wrap:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Alice->>Bob:wrap:Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -276,7 +276,7 @@ context('Sequence diagram', () => {
         `
         sequenceDiagram
         Alice->>Bob: I'm short
-        Bob->>Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       `,
         {}
       );
@@ -286,7 +286,7 @@ context('Sequence diagram', () => {
         `
         sequenceDiagram
         Alice->>Bob: I'm short
-        Bob->>Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice:wrap: Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
       `,
         {}
       );

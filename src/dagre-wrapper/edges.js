@@ -313,7 +313,7 @@ const cutPathAtIntersect = (_points, boundryNode) => {
     // check if point is inside the boundry rect
     if (!outsideNode(boundryNode, point) && !isInside) {
       // First point inside the rect found
-      // Calc the intersection coord between the point anf the last opint ouside the rect
+      // Calc the intersection coord between the point anf the last point outside the rect
       const inter = intersection(boundryNode, lastPointOutside, point);
       log.warn('abc88 inside', point, lastPointOutside, inter);
       log.warn('abc88 intersection', inter);
@@ -391,7 +391,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     //     }
     //     isInside = true;
     // } else {
-    //   // outtside
+    //   // outside
     //   lastPointOutside = point;
     //   if (!isInside) points.push(point);
     // }

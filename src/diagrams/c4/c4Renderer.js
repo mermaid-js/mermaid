@@ -17,6 +17,9 @@ import addSVGAccessibilityFields from '../../accessibility';
 let globalBoundaryMaxX = 0,
   globalBoundaryMaxY = 0;
 
+let c4ShapeInRow = 4;
+let c4BoundaryInRow = 2;
+
 parser.yy = c4Db;
 
 let conf = {};
@@ -68,7 +71,7 @@ class Bounds {
     if (
       _startx >= this.data.widthLimit ||
       _stopx >= this.data.widthLimit ||
-      this.nextData.cnt > conf.c4ShapeInRow
+      this.nextData.cnt > c4ShapeInRow
     ) {
       _startx = this.nextData.startx + c4Shape.margin + conf.nextLinePaddingX;
       _starty = this.nextData.stopy + c4Shape.margin * 2;
@@ -448,7 +451,7 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
   let currentBounds = new Bounds();
   // Calculate the width limit of the boundar.  label/type 的长度，
   currentBounds.data.widthLimit =
-    parentBounds.data.widthLimit / Math.min(conf.c4BoundaryInRow, currentBoundarys.length);
+    parentBounds.data.widthLimit / Math.min(c4BoundaryInRow, currentBoundarys.length);
   // Math.min(
   //   conf.width * conf.c4ShapeInRow + conf.c4ShapeMargin * conf.c4ShapeInRow * 2,
   //   parentBounds.data.widthLimit / Math.min(conf.c4BoundaryInRow, currentBoundarys.length)
@@ -507,7 +510,7 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
       Y = currentBoundary['descr'].Y + currentBoundary['descr'].height;
     }
 
-    if (i == 0 || i % conf.c4BoundaryInRow === 0) {
+    if (i == 0 || i % c4BoundaryInRow === 0) {
       // Calculate the drawing start point of the currentBoundarys.
       let _x = parentBounds.data.startx + conf.diagramMarginX;
       let _y = parentBounds.data.stopy + conf.diagramMarginY + Y;
@@ -568,7 +571,7 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
 export const draw = function (text, id) {
   conf = configApi.getConfig().c4;
   const securityLevel = configApi.getConfig().securityLevel;
-  // Handle root and ocument for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sanbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -579,9 +582,14 @@ export const draw = function (text, id) {
       : select('body');
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
+  let db = parser.yy;
+
   parser.yy.clear();
   parser.yy.setWrap(conf.wrap);
   parser.parse(text + '\n');
+
+  c4ShapeInRow = db.getC4ShapeInRow();
+  c4BoundaryInRow = db.getC4BoundaryInRow();
 
   log.debug(`C:${JSON.stringify(conf, null, 2)}`);
 
@@ -593,6 +601,7 @@ export const draw = function (text, id) {
   svgDraw.insertClockIcon(diagram);
 
   let screenBounds = new Bounds();
+
   screenBounds.setData(
     conf.diagramMarginX,
     conf.diagramMarginX,

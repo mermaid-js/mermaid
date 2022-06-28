@@ -98,7 +98,6 @@ it('should render forks and joins', () => {
     );
     cy.get('svg');
 });
-
 ```
 
 ### Any Questions or Suggestions?

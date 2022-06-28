@@ -465,7 +465,7 @@ export const addSubGraph = function (_id, list, _title) {
     const prims = { boolean: {}, number: {}, string: {} };
     const objs = [];
 
-    let dir; //  = unbdefined; direction.trim();
+    let dir; //  = undefined; direction.trim();
     const nodeList = a.filter(function (item) {
       const type = typeof item;
       if (item.stmt && item.stmt === 'dir') {
