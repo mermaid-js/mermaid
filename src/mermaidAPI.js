@@ -385,6 +385,8 @@ const render = function (id, _txt, cb, container) {
 
   let userStyles = '';
   // user provided theme CSS
+  // If you add more configuration driven data into the user styles make sure that the value is
+  // sanitized bye the santiizeCSS function
   if (cnf.themeCSS !== undefined) {
     userStyles += `\n${cnf.themeCSS}`;
   }
