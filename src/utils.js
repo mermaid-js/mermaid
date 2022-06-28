@@ -1057,7 +1057,7 @@ export const directiveSanitizer = (args) => {
     for (let i = 0; i < kArr.length; i++) {
       const k = kArr[i];
       const val = args.themeVariables[k];
-      if (!val.match(/^[a-zA-Z0-9#,";()%. ]+$/)) {
+      if (val && val.match && !val.match(/^[a-zA-Z0-9#,";()%. ]+$/)) {
         args.themeVariables[k] = '';
       }
     }
@@ -1065,9 +1065,19 @@ export const directiveSanitizer = (args) => {
   log.debug('After sanitization', args);
 };
 export const sanitizeCss = (str) => {
-  const stringsearch = 'o';
-  const startCnt = (str.match(/\{/g) || []).length;
-  const endCnt = (str.match(/\}/g) || []).length;
+  let startCnt = 0;
+  let endCnt = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    if (startCnt < endCnt) {
+      return '{ /* ERROR: Unbalanced CSS */ }';
+    }
+    if (str[i] === '{') {
+      startCnt++;
+    } else if (str[i] === '}') {
+      endCnt++;
+    }
+  }
   if (startCnt !== endCnt) {
     return '{ /* ERROR: Unbalanced CSS */ }';
   }
