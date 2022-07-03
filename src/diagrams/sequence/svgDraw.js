@@ -193,7 +193,7 @@ export const drawText = function (elem, textData) {
       case 'start':
         textData.x = Math.round(textData.x + textData.textMargin);
         textData.anchor = 'start';
-        textData.dominantBaseline = 'text-after-edge';
+        textData.dominantBaseline = 'middle';
         textData.alignmentBaseline = 'middle';
         break;
       case 'middle':
@@ -207,7 +207,7 @@ export const drawText = function (elem, textData) {
       case 'end':
         textData.x = Math.round(textData.x + textData.width - textData.textMargin);
         textData.anchor = 'end';
-        textData.dominantBaseline = 'text-before-edge';
+        textData.dominantBaseline = 'middle';
         textData.alignmentBaseline = 'middle';
         break;
     }

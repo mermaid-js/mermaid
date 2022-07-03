@@ -126,6 +126,17 @@ context('Sequence diagram', () => {
         { sequence: { noteAlign: 'left' } }
       );
     });
+    it('should render multi-line notes aligned to the left when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I am left aligned<br>but also<br>multiline
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteAlign: 'left' } }
+      );
+    });
     it('should render notes aligned to the right when configured', () => {
       imgSnapshotTest(
         `
@@ -135,6 +146,37 @@ context('Sequence diagram', () => {
         Bob->>Alice: Short as well
       `,
         { sequence: { noteAlign: 'right' } }
+      );
+    });
+    it('should render multi-line notes aligned to the right when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I am right aligned<br>but also<br>multiline
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteAlign: 'right' } }
+      );
+    });
+    it('should render multi-line messages aligned to the left when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short<br>but also<br>multiline
+        Bob->>Alice: Short as well<br>and also<br>multiline
+      `,
+        { sequence: { messageAlign: 'left' } }
+      );
+    });
+    it('should render multi-line messages aligned to the right when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short<br>but also<br>multiline
+        Bob->>Alice: Short as well<br>and also<br>multiline
+      `,
+        { sequence: { messageAlign: 'right' } }
       );
     });
   });
