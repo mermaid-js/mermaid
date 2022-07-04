@@ -361,8 +361,8 @@ const render = function (id, _txt, cb, container) {
   try {
     switch (graphType) {
       case 'c4':
-        c4Renderer.setConf(cnf.c4);
-        c4Renderer.draw(txt, id, pkg.version, diag);
+        diag.renderer.setConf(cnf.c4);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'gitGraph':
         gitGraphRenderer.draw(txt, id, pkg.version, diag);
@@ -378,17 +378,8 @@ const render = function (id, _txt, cb, container) {
         flowRendererV2.draw(txt, id, pkg.version, diag);
         break;
       case 'sequence':
-        cnf.sequence.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        if (cnf.sequenceDiagram) {
-          // backwards compatibility
-          sequenceRenderer.setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
-          console.error(
-            '`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.'
-          );
-        } else {
-          sequenceRenderer.setConf(cnf.sequence);
-        }
-        sequenceRenderer.draw(txt, id, pkg.version, diag);
+        diag.renderer.setConf(cnf.sequence);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'gantt':
         cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;

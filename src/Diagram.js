@@ -80,10 +80,20 @@ class Diagram {
         break;
       case 'sequenceDiagram':
       case 'sequence':
+        cnf.sequence.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        if (cnf.sequenceDiagram) {
+          // backwards compatibility
+          sequenceRenderer.setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
+          console.error(
+            '`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.'
+          );
+        }
         this.parser = sequenceParser;
         this.parser.parser.yy = sequenceDb;
         this.db = sequenceDb;
+        this.db.setWrap(cnf.wrap);
         this.renderer = sequenceRenderer;
+        this.txt = this.txt + '\n';
         break;
       case 'gantt':
         this.parser = ganttParser;
