@@ -1,5 +1,6 @@
 import { addVertices, addEdges } from './flowRenderer';
 import { setConfig } from '../../config';
+import Diagram from '../../Diagram';
 
 setConfig({
   flowchart: {
@@ -28,6 +29,13 @@ describe('the flowchart renderer', function () {
       ['group', 'rect'],
     ].forEach(function ([type, expectedShape, expectedRadios = 0]) {
       it(`should add the correct shaped node to the graph for vertex type ${type}`, function () {
+        const fakeDiag = {
+          db: {
+            lookUpDomId: () => {
+              return 'my-node-id';
+            },
+          },
+        };
         const addedNodes = [];
         const mockG = {
           setNode: function (id, object) {
@@ -45,7 +53,10 @@ describe('the flowchart renderer', function () {
             },
           },
           mockG,
-          'svg-id'
+          'svg-id',
+          undefined,
+          undefined,
+          fakeDiag
         );
         expect(addedNodes).toHaveLength(1);
         expect(addedNodes[0][0]).toEqual('my-node-id');
@@ -62,6 +73,13 @@ describe('the flowchart renderer', function () {
     ) {
       it('should handle multiline texts with different line breaks', function () {
         const addedNodes = [];
+        const fakeDiag = {
+          db: {
+            lookUpDomId: () => {
+              return 'my-node-id';
+            },
+          },
+        };
         const mockG = {
           setNode: function (id, object) {
             addedNodes.push([id, object]);
@@ -78,7 +96,10 @@ describe('the flowchart renderer', function () {
             },
           },
           mockG,
-          'svg-id'
+          'svg-id',
+          false,
+          document,
+          fakeDiag
         );
         expect(addedNodes).toHaveLength(1);
         expect(addedNodes[0][0]).toEqual('my-node-id');
@@ -103,6 +124,13 @@ describe('the flowchart renderer', function () {
     ].forEach(function ([style, expectedStyle, expectedLabelStyle]) {
       it(`should add the styles to style and/or labelStyle for style ${style}`, function () {
         const addedNodes = [];
+        const fakeDiag = {
+          db: {
+            lookUpDomId: () => {
+              return 'my-node-id';
+            },
+          },
+        };
         const mockG = {
           setNode: function (id, object) {
             addedNodes.push([id, object]);
@@ -119,7 +147,10 @@ describe('the flowchart renderer', function () {
             },
           },
           mockG,
-          'svg-id'
+          'svg-id',
+          undefined,
+          undefined,
+          fakeDiag
         );
         expect(addedNodes).toHaveLength(1);
         expect(addedNodes[0][0]).toEqual('my-node-id');
@@ -137,11 +168,18 @@ describe('the flowchart renderer', function () {
           addedNodes.push([id, object]);
         },
       };
+      const fakeDiag = {
+        db: {
+          lookUpDomId: () => {
+            return 'my-node-id';
+          },
+        },
+      };
       addVertices(
         {
           v1: {
             type: 'rect',
-            id: 'defaultNode',
+            id: 'my-node-id',
             classes: [],
             styles: [],
             text: 'my vertex text',
@@ -155,12 +193,15 @@ describe('the flowchart renderer', function () {
           },
         },
         mockG,
-        'svg-id'
+        'svg-id',
+        undefined,
+        undefined,
+        fakeDiag
       );
       expect(addedNodes).toHaveLength(2);
-      expect(addedNodes[0][0]).toEqual('defaultNode');
+      expect(addedNodes[0][0]).toEqual('my-node-id');
       expect(addedNodes[0][1]).toHaveProperty('class', 'default');
-      expect(addedNodes[1][0]).toEqual('myNode');
+      expect(addedNodes[1][0]).toEqual('my-node-id');
       expect(addedNodes[1][1]).toHaveProperty('class', 'myClass');
     });
   });
@@ -168,6 +209,13 @@ describe('the flowchart renderer', function () {
   describe('when adding edges to a graph', function () {
     it('should handle multiline texts and set centered label position', function () {
       const addedEdges = [];
+      const fakeDiag = {
+        db: {
+          lookUpDomId: () => {
+            return 'my-node-id';
+          },
+        },
+      };
       const mockG = {
         setEdge: function (s, e, data, c) {
           addedEdges.push(data);
@@ -185,7 +233,7 @@ describe('the flowchart renderer', function () {
           { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br\t/>Line' },
         ],
         mockG,
-        'svg-id'
+        fakeDiag
       );
 
       addedEdges.forEach(function (edge) {
@@ -206,12 +254,19 @@ describe('the flowchart renderer', function () {
     ].forEach(function ([style, expectedStyle, expectedLabelStyle]) {
       it(`should add the styles to style and/or labelStyle for style ${style}`, function () {
         const addedEdges = [];
+        const fakeDiag = {
+          db: {
+            lookUpDomId: () => {
+              return 'my-node-id';
+            },
+          },
+        };
         const mockG = {
           setEdge: function (s, e, data, c) {
             addedEdges.push(data);
           },
         };
-        addEdges([{ style: style, text: 'styling' }], mockG, 'svg-id');
+        addEdges([{ style: style, text: 'styling' }], mockG, fakeDiag);
 
         expect(addedEdges).toHaveLength(1);
         expect(addedEdges[0]).toHaveProperty('style', expectedStyle);
