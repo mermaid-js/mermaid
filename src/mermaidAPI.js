@@ -379,34 +379,30 @@ const render = function (id, _txt, cb, container) {
         diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'gantt':
-        cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         diag.renderer.setConf(cnf.gantt);
         diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'class':
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        classRenderer.setConf(cnf.class);
-        classRenderer.draw(txt, id, pkg.version, diag);
+        // classRenderer.setConf(cnf.class);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'classDiagram':
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        classRendererV2.setConf(cnf.class);
-        classRendererV2.draw(txt, id, pkg.version, diag);
+        // classRendererV2.setConf(cnf.class);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'state':
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        stateRenderer.setConf(cnf.state);
-        stateRenderer.draw(txt, id, pkg.version, diag);
+        // stateRenderer.setConf(cnf.state);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'stateDiagram':
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        diag.renderer.setConf(cnf.state);
+        // cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        // diag.renderer.setConf(cnf.state);
         diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'info':
-        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        infoRenderer.setConf(cnf.class);
-        infoRenderer.draw(txt, id, pkg.version, diag);
+        // cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        // infoRenderer.setConf(cnf.class);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'pie':
         diag.renderer.draw(txt, id, pkg.version, diag);
@@ -582,10 +578,10 @@ function updateRendererConfigs(conf) {
   }
   sequenceRenderer.setConf(conf.sequence);
   ganttRenderer.setConf(conf.gantt);
-  classRenderer.setConf(conf.class);
+  // classRenderer.setConf(conf.class);
   stateRenderer.setConf(conf.state);
   stateRendererV2.setConf(conf.state);
-  infoRenderer.setConf(conf.class);
+  // infoRenderer.setConf(conf.class);
   journeyRenderer.setConf(conf.journey);
   errorRenderer.setConf(conf.class);
 }

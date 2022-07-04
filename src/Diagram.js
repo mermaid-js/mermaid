@@ -111,18 +111,23 @@ class Diagram {
         this.renderer = ganttRenderer;
         break;
       case 'class':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         this.parser = classParser;
         this.parser.parser.yy = classDb;
         this.db = classDb;
+        this.db.clear();
         this.renderer = classRenderer;
         break;
       case 'classDiagram':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         this.parser = classParser;
         this.parser.parser.yy = classDb;
         this.db = classDb;
+        this.db.clear();
         this.renderer = classRendererV2;
         break;
       case 'state':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         this.parser = stateParser;
         this.parser.parser.yy = stateDb;
         this.db = stateDb;
@@ -130,6 +135,7 @@ class Diagram {
         this.renderer = stateRenderer;
         break;
       case 'stateDiagram':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         this.parser = stateParser;
         this.parser.parser.yy = stateDb;
         this.db = stateDb;

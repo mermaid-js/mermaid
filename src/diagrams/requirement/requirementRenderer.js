@@ -356,7 +356,6 @@ export const draw = (text, id, _version, diagObj) => {
     drawRelationshipFromLayout(svg, rel, g, id, diagObj);
   });
 
-  // svg.attr('height', '500px');
   const padding = conf.rect_padding;
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;

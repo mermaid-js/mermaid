@@ -1,19 +1,18 @@
 import { line, curveBasis } from 'd3';
-import { lookUpDomId, relationType } from './classDb';
 import utils from '../../utils';
 import { log } from '../../logger';
 
 let edgeCount = 0;
-export const drawEdge = function (elem, path, relation, conf) {
+export const drawEdge = function (elem, path, relation, conf, diagObj) {
   const getRelationType = function (type) {
     switch (type) {
-      case relationType.AGGREGATION:
+      case diagObj.db.relationType.AGGREGATION:
         return 'aggregation';
-      case relationType.EXTENSION:
+      case diagObj.db.EXTENSION:
         return 'extension';
-      case relationType.COMPOSITION:
+      case diagObj.db.COMPOSITION:
         return 'composition';
-      case relationType.DEPENDENCY:
+      case diagObj.db.DEPENDENCY:
         return 'dependency';
     }
   };
@@ -150,10 +149,11 @@ export const drawEdge = function (elem, path, relation, conf) {
  * @param {SVGSVGElement} elem The element to draw it into
  * @param classDef
  * @param conf
+ * @param diagObj
  * @todo Add more information in the JSDOC here
  */
-export const drawClass = function (elem, classDef, conf) {
-  log.info('Rendering class ' + classDef);
+export const drawClass = function (elem, classDef, conf, diagObj) {
+  log.debug('Rendering class ', classDef, conf);
 
   const id = classDef.id;
   const classInfo = {
@@ -164,7 +164,7 @@ export const drawClass = function (elem, classDef, conf) {
   };
 
   // add class group
-  const g = elem.append('g').attr('id', lookUpDomId(id)).attr('class', 'classGroup');
+  const g = elem.append('g').attr('id', diagObj.db.lookUpDomId(id)).attr('class', 'classGroup');
 
   // add title
   let title;
