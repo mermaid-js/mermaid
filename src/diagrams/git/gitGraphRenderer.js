@@ -1,7 +1,5 @@
-import { curveBasis, line, select } from 'd3';
-import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
-import db from './gitGraphAst';
-import gitGraphParser from './parser/gitGraph';
+import { select } from 'd3';
+import { configureSvgSize } from '../../utils';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
@@ -515,23 +513,17 @@ const drawBranches = (svg, branches) => {
  * @param txt
  * @param id
  * @param ver
+ * @param diagObj
  */
-export const draw = function (txt, id, ver) {
+export const draw = function (txt, id, ver, diagObj) {
   clear();
   const conf = getConfig();
   const gitGraphConfig = getConfig().gitGraph;
   // try {
-  const parser = gitGraphParser.parser;
-  parser.yy = db;
-  parser.yy.clear();
-
   log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
-  // // Parse the graph definition
-  parser.parse(txt + '\n');
 
-  const direction = db.getDirection();
-  allCommitsDict = db.getCommits();
-  const branches = db.getBranchesAsObjArray();
+  allCommitsDict = diagObj.db.getCommits();
+  const branches = diagObj.db.getBranchesAsObjArray();
 
   // Position branches vertically
   let pos = 0;
@@ -543,7 +535,7 @@ export const draw = function (txt, id, ver) {
   const diagram = select(`[id="${id}"]`);
 
   // Adds title and description to the flow chart
-  addSVGAccessibilityFields(parser.yy, diagram, id);
+  addSVGAccessibilityFields(diagObj.db, diagram, id);
 
   drawCommits(diagram, allCommitsDict, false);
   if (gitGraphConfig.showBranches) {

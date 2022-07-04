@@ -63,8 +63,11 @@ class Diagram {
         this.parser.parser.yy = gitGraphAst;
         this.db = gitGraphAst;
         this.renderer = gitGraphRenderer;
+        this.txt = this.txt + '\n';
         break;
       case 'flowchart':
+        flowRenderer.setConf(cnf.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         flowDb.clear();
         this.parser = flowParser;
         this.parser.parser.yy = flowDb;
@@ -72,6 +75,8 @@ class Diagram {
         this.renderer = flowRenderer;
         break;
       case 'flowchart-v2':
+        flowRendererV2.setConf(cnf.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         flowDb.clear();
         this.parser = flowParser;
         this.parser.parser.yy = flowDb;
@@ -172,7 +177,7 @@ class Diagram {
       const error = { str, hash };
       throw error;
     };
-    this.parser.parse(txt);
+    this.parser.parse(this.txt);
   }
   getParser() {
     return this.parser;

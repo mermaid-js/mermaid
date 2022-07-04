@@ -317,7 +317,7 @@ const render = function (id, _txt, cb, container) {
 
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    const classes = flowRenderer.getClasses(txt);
+    const classes = flowRenderer.getClasses(txt, diag);
     const htmlLabels = cnf.htmlLabels || cnf.flowchart.htmlLabels;
     for (const className in classes) {
       if (htmlLabels) {
@@ -366,17 +366,13 @@ const render = function (id, _txt, cb, container) {
         diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'gitGraph':
-        gitGraphRenderer.draw(txt, id, pkg.version, diag);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'flowchart':
-        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        flowRenderer.setConf(cnf.flowchart);
-        flowRenderer.draw(txt, id, pkg.version, diag);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'flowchart-v2':
-        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        flowRendererV2.setConf(cnf.flowchart);
-        flowRendererV2.draw(txt, id, pkg.version, diag);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'sequence':
         diag.renderer.setConf(cnf.sequence);

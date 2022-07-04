@@ -51,12 +51,17 @@
     "Magnesium" : 10.01
     "Iron" :  5
 </div>
-<div class="mermaid" style="width: 50%;">
-    gitGraph:
+<div class="mermaid2" style="width: 50%;">
+ gitGraph
+       commit
+       commit
+       branch develop
        commit
        commit
        commit
-
+       checkout main
+       commit
+       commit
 </div>
 <div class="mermaid2" style="width: 50%;">
    sequenceDiagram
@@ -138,7 +143,7 @@ stateDiagram
   Inactive --> Idle: ACT
   Active --> Active: LOG
       </div>
-      <div class="mermaid2" style="width: 100%;">
+      <div class="mermaid" style="width: 100%;">
       graph TB
         accTitle: My flowchart
         accDescr: My flowchart Description
