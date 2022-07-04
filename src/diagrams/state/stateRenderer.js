@@ -2,16 +2,11 @@ import { select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
-import stateDb from './stateDb';
 import common from '../common/common';
-import { parser } from './parser/stateDiagram';
-// import idCache from './id-cache';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
-
-parser.yy = stateDb;
 
 // TODO Move conf object to main conf in mermaidAPI
 let conf;
@@ -44,8 +39,10 @@ const insertMarkers = function (elem) {
  *
  * @param {any} text
  * @param {any} id
+ * @param _version
+ * @param diagObj
  */
-export const draw = function (text, id) {
+export const draw = function (text, id, _version, diagObj) {
   conf = getConfig().state;
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sanbox mode
@@ -59,8 +56,8 @@ export const draw = function (text, id) {
       : select('body');
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
-  parser.yy.clear();
-  parser.parse(text);
+  // diagObj.db.clear();
+  // parser.parse(text);
   log.debug('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
@@ -81,8 +78,8 @@ export const draw = function (text, id) {
     return {};
   });
 
-  const rootDoc = stateDb.getRootDoc();
-  renderDoc(rootDoc, diagram, undefined, false, root, doc);
+  const rootDoc = diagObj.db.getRootDoc();
+  renderDoc(rootDoc, diagram, undefined, false, root, doc, diagObj);
 
   const padding = conf.padding;
   const bounds = diagram.node().getBBox();
@@ -98,13 +95,13 @@ export const draw = function (text, id) {
     'viewBox',
     `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
   );
-  addSVGAccessibilityFields(parser.yy, diagram, id);
+  addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
 const getLabelWidth = (text) => {
   return text ? text.length * conf.fontSizeFactor : 1;
 };
 
-const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument) => {
+const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) => {
   // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
     compound: true,
@@ -155,9 +152,9 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument) => {
     return {};
   });
 
-  stateDb.extract(doc);
-  const states = stateDb.getStates();
-  const relations = stateDb.getRelations();
+  diagObj.db.extract(doc);
+  const states = diagObj.db.getStates();
+  const relations = diagObj.db.getRelations();
 
   const keys = Object.keys(states);
 
@@ -173,7 +170,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument) => {
     let node;
     if (stateDef.doc) {
       let sub = diagram.append('g').attr('id', stateDef.id).attr('class', 'stateGroup');
-      node = renderDoc(stateDef.doc, sub, stateDef.id, !altBkg, root, domDocument);
+      node = renderDoc(stateDef.doc, sub, stateDef.id, !altBkg, root, domDocument, diagObj);
 
       if (first) {
         // first = false;

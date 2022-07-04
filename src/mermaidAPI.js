@@ -360,66 +360,7 @@ const render = function (id, _txt, cb, container) {
   svg.insertBefore(style1, firstChild);
 
   try {
-    switch (graphType) {
-      case 'c4':
-        diag.renderer.setConf(cnf.c4);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'gitGraph':
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'flowchart':
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'flowchart-v2':
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'sequence':
-        diag.renderer.setConf(cnf.sequence);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'gantt':
-        diag.renderer.setConf(cnf.gantt);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'class':
-        // classRenderer.setConf(cnf.class);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'classDiagram':
-        // classRendererV2.setConf(cnf.class);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'state':
-        // stateRenderer.setConf(cnf.state);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'stateDiagram':
-        // cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        // diag.renderer.setConf(cnf.state);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'info':
-        // cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        // infoRenderer.setConf(cnf.class);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'pie':
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'er':
-        // erRenderer.setConf(cnf.er);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'journey':
-        // journeyRenderer.setConf(cnf.journey);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-      case 'requirement':
-        // requirementRenderer.setConf(cnf.requirement);
-        diag.renderer.draw(txt, id, pkg.version, diag);
-        break;
-    }
+    diag.renderer.draw(txt, id, pkg.version, diag);
   } catch (e) {
     errorRenderer.draw(id, pkg.version);
     throw e;

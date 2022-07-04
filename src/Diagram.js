@@ -57,6 +57,7 @@ class Diagram {
         this.parser.parser.yy = c4Db;
         this.db = c4Db;
         this.renderer = c4Renderer;
+        this.renderer.setConf(cnf.c4);
         break;
       case 'gitGraph':
         this.parser = gitGraphParser;
@@ -100,15 +101,16 @@ class Diagram {
         this.db = sequenceDb;
         this.db.setWrap(cnf.wrap);
         this.renderer = sequenceRenderer;
+        this.renderer.setConf(cnf.sequence);
         this.txt = this.txt + '\n';
         break;
       case 'gantt':
         cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        ganttRenderer.setConf(cnf.gantt);
         this.parser = ganttParser;
         this.parser.parser.yy = ganttDb;
         this.db = ganttDb;
         this.renderer = ganttRenderer;
+        ganttRenderer.setConf(cnf.gantt);
         break;
       case 'class':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
