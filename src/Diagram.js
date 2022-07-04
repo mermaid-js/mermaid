@@ -159,9 +159,11 @@ class Diagram {
         break;
       case 'journey':
         log.debug('Journey');
+        journeyRenderer.setConf(cnf.journey);
         this.parser = journeyParser;
         this.parser.parser.yy = journeyDb;
         this.db = journeyDb;
+        this.db.clear();
         this.renderer = journeyRenderer;
         break;
       case 'requirement':

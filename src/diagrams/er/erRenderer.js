@@ -1,7 +1,7 @@
 import graphlib from 'graphlib';
 import { line, curveBasis, select } from 'd3';
-import erDb from './erDb';
-import erParser from './parser/erDiagram';
+// import erDb from './erDb';
+// import erParser from './parser/erDiagram';
 import dagre from 'dagre';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
@@ -9,7 +9,7 @@ import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 
-const conf = {};
+let conf = {};
 
 /**
  * Allows the top-level API module to inject config specific to this renderer, storing it in the
@@ -409,8 +409,9 @@ let relCnt = 0;
  * @param g The graph containing the edge information
  * @param insert The insertion point in the svg DOM (because relationships have markers that need to
  *   sit 'behind' opaque entity boxes)
+ * @param diagObj
  */
-const drawRelationshipFromLayout = function (svg, rel, g, insert) {
+const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   relCnt++;
 
   // Find the edge relating to this relationship
@@ -435,7 +436,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert) {
     .attr('fill', 'none');
 
   // ...and with dashes if necessary
-  if (rel.relSpec.relType === erDb.Identification.NON_IDENTIFYING) {
+  if (rel.relSpec.relType === diagObj.db.Identification.NON_IDENTIFYING) {
     svgPath.attr('stroke-dasharray', '8,8');
   }
 
@@ -457,40 +458,40 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert) {
 
   // Note that the 'A' entity's marker is at the end of the relationship and the 'B' entity's marker is at the start
   switch (rel.relSpec.cardA) {
-    case erDb.Cardinality.ZERO_OR_ONE:
+    case diagObj.db.Cardinality.ZERO_OR_ONE:
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
       break;
-    case erDb.Cardinality.ZERO_OR_MORE:
+    case diagObj.db.Cardinality.ZERO_OR_MORE:
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
       break;
-    case erDb.Cardinality.ONE_OR_MORE:
+    case diagObj.db.Cardinality.ONE_OR_MORE:
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
       break;
-    case erDb.Cardinality.ONLY_ONE:
+    case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
       break;
   }
 
   switch (rel.relSpec.cardB) {
-    case erDb.Cardinality.ZERO_OR_ONE:
+    case diagObj.db.Cardinality.ZERO_OR_ONE:
       svgPath.attr(
         'marker-start',
         'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
       );
       break;
-    case erDb.Cardinality.ZERO_OR_MORE:
+    case diagObj.db.Cardinality.ZERO_OR_MORE:
       svgPath.attr(
         'marker-start',
         'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
       );
       break;
-    case erDb.Cardinality.ONE_OR_MORE:
+    case diagObj.db.Cardinality.ONE_OR_MORE:
       svgPath.attr(
         'marker-start',
         'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
       );
       break;
-    case erDb.Cardinality.ONLY_ONE:
+    case diagObj.db.Cardinality.ONLY_ONE:
       svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
       break;
   }
@@ -540,12 +541,14 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert) {
  *
  * @param text The text of the diagram
  * @param id The unique id of the DOM node that contains the diagram
+ * @param _version
+ * @param diag
+ * @param diagObj
  */
-export const draw = function (text, id) {
+export const draw = function (text, id, _version, diagObj) {
+  conf = getConfig().er;
   log.info('Drawing ER diagram');
-  erDb.clear();
-  const parser = erParser.parser;
-  parser.yy = erDb;
+  //  diag.db.clear();
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sanbox mode
   let sandboxElement;
@@ -556,14 +559,14 @@ export const draw = function (text, id) {
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+  // const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   // Parse the text to populate erDb
-  try {
-    parser.parse(text);
-  } catch (err) {
-    log.debug('Parsing failed');
-  }
+  // try {
+  //   parser.parse(text);
+  // } catch (err) {
+  //   log.debug('Parsing failed');
+  // }
 
   // Get a reference to the svg node that contains the text
   const svg = root.select(`[id='${id}']`);
@@ -612,12 +615,12 @@ export const draw = function (text, id) {
 
   // Draw the entities (at 0,0), returning the first svg node that got
   // inserted - this represents the insertion point for relationship paths
-  const firstEntity = drawEntities(svg, erDb.getEntities(), g);
+  const firstEntity = drawEntities(svg, diagObj.db.getEntities(), g);
 
   // TODO: externalise the addition of entities to the graph - it's a bit 'buried' in the above
 
   // Add all the relationships to the graph
-  const relationships = addRelationships(erDb.getRelationships(), g);
+  const relationships = addRelationships(diagObj.db.getRelationships(), g);
 
   dagre.layout(g); // Node and edge positions will be updated
 
@@ -626,7 +629,7 @@ export const draw = function (text, id) {
 
   // Draw the relationships
   relationships.forEach(function (rel) {
-    drawRelationshipFromLayout(svg, rel, g, firstEntity);
+    drawRelationshipFromLayout(svg, rel, g, firstEntity, diagObj);
   });
 
   const padding = conf.diagramPadding;
@@ -639,7 +642,7 @@ export const draw = function (text, id) {
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 
-  addSVGAccessibilityFields(parser.yy, svg, id);
+  addSVGAccessibilityFields(diagObj.db, svg, id);
 }; // draw
 
 export default {

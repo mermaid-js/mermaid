@@ -30,15 +30,16 @@
 
 
 
-<div class="mermaid2" style="width: 50%;">
-      journey
-      title Adding journey diagram functionality to mermaid
-      accTitle: Adding acc journey diagram functionality to mermaid
-      accDescr {
-        My multi-line description
-        of the diagram
-      }
-      section Order from website
+<div class="mermaid" style="width: 50%;">
+journey
+    title My working day
+    section Go to work
+      Make tea: 5: Me
+      Go upstairs: 3: Me
+      Do work: 1: Me, Cat
+    section Go home
+      Go downstairs: 5: Me
+      Sit down: 5: Mee
 </div>
 <div class="mermaid2" style="width: 50%;">
    pie
@@ -135,7 +136,7 @@ requirementDiagram
     test_req - contains -> test_req3
     test_req <- copies - test_entity2
       </div>
-      <div class="mermaid" style="width: 100%;">
+      <div class="mermaid2" style="width: 100%;">
 gantt
     dateFormat  YYYY-MM-DD
     title       Adding GANTT diagram functionality to mermaid
@@ -242,6 +243,21 @@ class Class10 {
             +run()
           }
     </div>
+          <div class="mermaid2" style="width: 100%;">
+        erDiagram
+    CAR ||--o{ NAMED-DRIVER : allows
+    CAR {
+        string registrationNumber
+        string make
+        string model
+    }
+    PERSON ||--o{ NAMED-DRIVER : is
+    PERSON {
+        string firstName
+        string lastName
+        int age
+    }
+        </div>
 
   <script src="./mermaid.js"></script>
     <script>

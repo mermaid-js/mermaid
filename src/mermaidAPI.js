@@ -380,8 +380,8 @@ const render = function (id, _txt, cb, container) {
         break;
       case 'gantt':
         cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        ganttRenderer.setConf(cnf.gantt);
-        ganttRenderer.draw(txt, id, pkg.version, diag);
+        diag.renderer.setConf(cnf.gantt);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'class':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
@@ -409,15 +409,15 @@ const render = function (id, _txt, cb, container) {
         infoRenderer.draw(txt, id, pkg.version, diag);
         break;
       case 'pie':
-        pieRenderer.draw(txt, id, pkg.version, diag);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'er':
-        erRenderer.setConf(cnf.er);
-        erRenderer.draw(txt, id, pkg.version, diag);
+        // erRenderer.setConf(cnf.er);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'journey':
-        journeyRenderer.setConf(cnf.journey);
-        journeyRenderer.draw(txt, id, pkg.version, diag);
+        // journeyRenderer.setConf(cnf.journey);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'requirement':
         requirementRenderer.setConf(cnf.requirement);
