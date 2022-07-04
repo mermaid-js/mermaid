@@ -51,23 +51,14 @@
     "Magnesium" : 10.01
     "Iron" :  5
 </div>
-<div class="mermaid2" style="width: 50%;">
-  gitGraph
-      accTitle: My Gitgraph Accessibility Title
-      accDescr: My Gitgraph Accessibility Description
-
-     commit
-     commit
-     branch develop
-     checkout develop
-     commit
-     commit
-     checkout main
-     merge develop
-     commit
-     commit
-</div>
 <div class="mermaid" style="width: 50%;">
+    gitGraph:
+       commit
+       commit
+       commit
+
+</div>
+<div class="mermaid2" style="width: 50%;">
    sequenceDiagram
       title: My Sequence Diagram Title
       accTitle: My Acc Sequence Diagram
@@ -155,7 +146,7 @@ stateDiagram
           a1-->a2-->a3
         end
       </div>
-      <div class="mermaid" style="width: 100%;">
+      <div class="mermaid2" style="width: 100%;">
         sequenceDiagram
           A ->> B: 1
           rect rgb(204, 0, 102)
