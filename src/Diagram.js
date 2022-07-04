@@ -69,6 +69,7 @@ class Diagram {
         flowRenderer.setConf(cnf.flowchart);
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         flowDb.clear();
+        flowDb.setGen('gen-1');
         this.parser = flowParser;
         this.parser.parser.yy = flowDb;
         this.db = flowDb;
@@ -78,6 +79,7 @@ class Diagram {
         flowRendererV2.setConf(cnf.flowchart);
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         flowDb.clear();
+        flowDb.setGen('gen-2');
         this.parser = flowParser;
         this.parser.parser.yy = flowDb;
         this.db = flowDb;
@@ -101,6 +103,8 @@ class Diagram {
         this.txt = this.txt + '\n';
         break;
       case 'gantt':
+        cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        ganttRenderer.setConf(cnf.gantt);
         this.parser = ganttParser;
         this.parser.parser.yy = ganttDb;
         this.db = ganttDb;

@@ -11,23 +11,20 @@ import {
   axisTop,
   timeFormat,
 } from 'd3';
-import { parser } from './parser/gantt';
 import common from '../common/common';
-import ganttDb from './ganttDb';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 
-parser.yy = ganttDb;
 export const setConf = function () {
   log.debug('Something is calling, setConf, remove the call');
 };
 
 let w;
-export const draw = function (text, id) {
+export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().gantt;
-  parser.yy.clear();
-  parser.parse(text);
+  // diagObj.db.clear();
+  // parser.parse(text);
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sanbox mode
@@ -52,7 +49,7 @@ export const draw = function (text, id) {
     w = conf.useWidth;
   }
 
-  const taskArray = parser.yy.getTasks();
+  const taskArray = diagObj.db.getTasks();
 
   // Set height based on number of tasks
   const h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
@@ -109,12 +106,12 @@ export const draw = function (text, id) {
 
   svg
     .append('text')
-    .text(parser.yy.getDiagramTitle())
+    .text(diagObj.db.getDiagramTitle())
     .attr('x', w / 2)
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText');
 
-  addSVGAccessibilityFields(parser.yy, svg, id);
+  addSVGAccessibilityFields(diagObj.db, svg, id);
 
   /**
    * @param tasks
@@ -139,8 +136,8 @@ export const draw = function (text, id) {
       pageWidth,
       pageHeight,
       tasks,
-      parser.yy.getExcludes(),
-      parser.yy.getIncludes()
+      diagObj.db.getExcludes(),
+      diagObj.db.getIncludes()
     );
     makeGrid(leftPadding, topPadding, pageWidth, pageHeight);
     drawRects(tasks, gap, topPadding, leftPadding, barHeight, colorScale, pageWidth, pageHeight);
@@ -187,7 +184,7 @@ export const draw = function (text, id) {
     // Draw the rects representing the tasks
     const rectangles = svg.append('g').selectAll('rect').data(theArray).enter();
 
-    const links = ganttDb.getLinks();
+    const links = diagObj.db.getLinks();
 
     // Render the tasks with links
     // Render the other tasks
@@ -430,14 +427,14 @@ export const draw = function (text, id) {
       0
     );
     const maxTime = tasks.reduce((max, { endTime }) => (max ? Math.max(max, endTime) : endTime), 0);
-    const dateFormat = parser.yy.getDateFormat();
+    const dateFormat = diagObj.db.getDateFormat();
     if (!minTime || !maxTime) return;
 
     const excludeRanges = [];
     let range = null;
     let d = moment(minTime);
     while (d.valueOf() <= maxTime) {
-      if (parser.yy.isInvalidDate(d, dateFormat, excludes, includes)) {
+      if (diagObj.db.isInvalidDate(d, dateFormat, excludes, includes)) {
         if (!range) {
           range = {
             start: d.clone(),
@@ -495,7 +492,7 @@ export const draw = function (text, id) {
   function makeGrid(theSidePad, theTopPad, w, h) {
     let bottomXAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-      .tickFormat(timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+      .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
     svg
       .append('g')
@@ -509,10 +506,10 @@ export const draw = function (text, id) {
       .attr('font-size', 10)
       .attr('dy', '1em');
 
-    if (ganttDb.topAxisEnabled() || conf.topAxis) {
+    if (diagObj.db.topAxisEnabled() || conf.topAxis) {
       let topXAxis = axisTop(timeScale)
         .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-        .tickFormat(timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+        .tickFormat(timeFormat(diagObj.db.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
       svg
         .append('g')
@@ -592,7 +589,7 @@ export const draw = function (text, id) {
    * @param h
    */
   function drawToday(theSidePad, theTopPad, w, h) {
-    const todayMarker = ganttDb.getTodayMarker();
+    const todayMarker = diagObj.db.getTodayMarker();
     if (todayMarker === 'off') {
       return;
     }
