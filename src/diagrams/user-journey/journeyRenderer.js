@@ -69,7 +69,6 @@ export const draw = function (text, id) {
 
   bounds.init();
   const diagram = root.select('#' + id);
-  diagram.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   svgDraw.initGraphics(diagram);
 

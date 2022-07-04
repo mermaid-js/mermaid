@@ -236,6 +236,7 @@ const render = function (id, _txt, cb, container) {
       .attr('id', id)
       .attr('width', '100%')
       .attr('xmlns', 'http://www.w3.org/2000/svg')
+      .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
       .append('g');
   } else {
     // No container was provided
