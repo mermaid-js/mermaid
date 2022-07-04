@@ -420,8 +420,8 @@ const render = function (id, _txt, cb, container) {
         diag.renderer.draw(txt, id, pkg.version, diag);
         break;
       case 'requirement':
-        requirementRenderer.setConf(cnf.requirement);
-        requirementRenderer.draw(txt, id, pkg.version, diag);
+        // requirementRenderer.setConf(cnf.requirement);
+        diag.renderer.draw(txt, id, pkg.version, diag);
         break;
     }
   } catch (e) {
@@ -586,9 +586,7 @@ function updateRendererConfigs(conf) {
   stateRenderer.setConf(conf.state);
   stateRendererV2.setConf(conf.state);
   infoRenderer.setConf(conf.class);
-  erRenderer.setConf(conf.er);
   journeyRenderer.setConf(conf.journey);
-  requirementRenderer.setConf(conf.requirement);
   errorRenderer.setConf(conf.class);
 }
 
