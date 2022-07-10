@@ -1,7 +1,5 @@
 import graphlib from 'graphlib';
 import { select } from 'd3';
-import stateDb from './stateDb';
-import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
@@ -23,17 +21,16 @@ let nodeDb = {};
  * Returns the all the styles from classDef statements in the graph definition.
  *
  * @param {any} text
+ * @param diag
  * @returns {object} ClassDef styles
  */
-export const getClasses = function (text) {
+export const getClasses = function (text, diag) {
   log.trace('Extracting classes');
-  stateDb.clear();
-  const parser = state.parser;
-  parser.yy = stateDb;
+  diag.sb.clear();
 
   // Parse the graph definition
-  parser.parse(text);
-  return stateDb.getClasses();
+  diag.parser.parse(text);
+  return diag.sb.getClasses();
 };
 
 const setupNode = (g, parent, node, altFlag) => {
@@ -238,19 +235,15 @@ const getDir = (nodes, defaultDir) => {
  *
  * @param {any} text
  * @param {any} id
+ * @param _version
+ * @param diag
  */
-export const draw = function (text, id) {
+export const draw = function (text, id, _version, diag) {
   log.info('Drawing state diagram (v2)', id);
-  stateDb.clear();
+  // diag.sb.clear();
   nodeDb = {};
-  const parser = state.parser;
-  parser.yy = stateDb;
-
-  // Parse the graph definition
-  parser.parse(text);
-
   // Fetch the default direction, use TD if none was found
-  let dir = stateDb.getDirection();
+  let dir = diag.db.getDirection();
   if (typeof dir === 'undefined') {
     dir = 'LR';
   }
@@ -261,9 +254,9 @@ export const draw = function (text, id) {
 
   const securityLevel = getConfig().securityLevel;
 
-  log.info(stateDb.getRootDocV2());
-  stateDb.extract(stateDb.getRootDocV2());
-  log.info(stateDb.getRootDocV2());
+  log.info(diag.db.getRootDocV2());
+  diag.db.extract(diag.db.getRootDocV2());
+  log.info(diag.db.getRootDocV2());
 
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
@@ -271,7 +264,7 @@ export const draw = function (text, id) {
     compound: true,
   })
     .setGraph({
-      rankdir: getDir(stateDb.getRootDocV2()),
+      rankdir: getDir(diag.db.getRootDocV2()),
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
@@ -281,7 +274,7 @@ export const draw = function (text, id) {
       return {};
     });
 
-  setupNode(g, undefined, stateDb.getRootDocV2(), true);
+  setupNode(g, undefined, diag.db.getRootDocV2(), true);
 
   // Set up an SVG group so that we can translate the final graph.
   let sandboxElement;
@@ -337,7 +330,7 @@ export const draw = function (text, id) {
     label.insertBefore(rect, label.firstChild);
     // }
   }
-  addSVGAccessibilityFields(parser.yy, svg, id);
+  addSVGAccessibilityFields(diag.db, svg, id);
 };
 
 export default {

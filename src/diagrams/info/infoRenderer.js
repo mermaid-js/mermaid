@@ -1,18 +1,7 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import db from './infoDb';
-import infoParser from './parser/info';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
-
-const conf = {};
-export const setConf = function (cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
-};
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
@@ -20,11 +9,12 @@ export const setConf = function (cnf) {
  * @param {any} text
  * @param {any} id
  * @param {any} version
+ * @param diagObj
  */
-export const draw = (text, id, version) => {
+export const draw = (text, id, version, diagObj) => {
   try {
-    const parser = infoParser.parser;
-    parser.yy = db;
+    // const parser = infoParser.parser;
+    // parser.yy = db;
     log.debug('Renering info diagram\n' + text);
 
     const securityLevel = getConfig().securityLevel;
@@ -40,8 +30,8 @@ export const draw = (text, id, version) => {
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
     // Parse the graph definition
-    parser.parse(text);
-    log.debug('Parsed info diagram');
+    // parser.parse(text);
+    // log.debug('Parsed info diagram');
     // Fetch the default direction, use TD if none was found
     const svg = root.select('#' + id);
 
@@ -65,6 +55,5 @@ export const draw = (text, id, version) => {
 };
 
 export default {
-  setConf,
   draw,
 };

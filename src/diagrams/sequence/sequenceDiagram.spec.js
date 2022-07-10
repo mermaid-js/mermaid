@@ -1,9 +1,9 @@
-import { parser } from './parser/sequenceDiagram';
+import sequence from './parser/sequenceDiagram';
 import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import renderer from './sequenceRenderer';
 import mermaidAPI from '../../mermaidAPI';
-
+import Diagram from '../../Diagram';
 /**
  * @param conf
  * @param key
@@ -16,17 +16,22 @@ function addConf(conf, key, value) {
   return conf;
 }
 
+const parser = sequence.parser;
+
 describe('when parsing a sequenceDiagram', function () {
   beforeEach(function () {
     parser.yy = sequenceDb;
     parser.yy.clear();
   });
-  it('should handle a sequenceDiagram definition', function () {
+  fit('should handle a sequenceDiagram definition', function () {
     const str = `
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
+
+    // const dia = new Diagram(str);
+    // console.log('Type = ' + dia.type);
 
     mermaidAPI.parse(str);
     const actors = parser.yy.getActors();

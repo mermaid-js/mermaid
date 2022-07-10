@@ -489,7 +489,6 @@ export const addSubGraph = function (_id, list, _title) {
   const { nodeList: nl, dir } = uniq(nodeList.concat.apply(nodeList, list));
   nodeList = nl;
   if (version === 'gen-1') {
-    log.warn('LOOKING UP');
     for (let i = 0; i < nodeList.length; i++) {
       nodeList[i] = lookUpDomId(nodeList[i]);
     }

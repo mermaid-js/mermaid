@@ -2,19 +2,15 @@ import { select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
-import classDb, { lookUpDomId } from './classDb';
-import { parser } from './parser/classDiagram';
 import svgDraw from './svgDraw';
 import { configureSvgSize } from '../../utils';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
 
-parser.yy = classDb;
-
 let idCache = {};
 const padding = 20;
 
-const conf = {
+const confa = {
   dividerMargin: 10,
   padding: 5,
   textHeight: 10,
@@ -142,28 +138,19 @@ const insertMarkers = function (elem) {
 };
 
 /**
- * Merges the value of `conf` with the passed `cnf`
- *
- * @param {object} cnf Config to merge
- */
-export const setConf = function (cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
-};
-
-/**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  *
  * @param {string} text
  * @param {string} id
+ * @param version
+ * @param _version
+ * @param diagObj
  */
-export const draw = function (text, id) {
+export const draw = function (text, id, _version, diagObj) {
+  const conf = getConfig().class;
   idCache = {};
-  parser.yy.clear();
-  parser.parse(text);
+  // diagObj.db.clear();
+  // diagObj.parser.parse(text);
 
   log.info('Rendering diagram ' + text);
 
@@ -198,12 +185,12 @@ export const draw = function (text, id) {
     return {};
   });
 
-  const classes = classDb.getClasses();
+  const classes = diagObj.db.getClasses();
   const keys = Object.keys(classes);
 
   for (let i = 0; i < keys.length; i++) {
     const classDef = classes[keys[i]];
-    const node = svgDraw.drawClass(diagram, classDef, conf);
+    const node = svgDraw.drawClass(diagram, classDef, conf, diagObj);
     idCache[node.id] = node;
 
     // Add nodes to the graph. The first argument is the node id. The second is
@@ -214,7 +201,7 @@ export const draw = function (text, id) {
     log.info('Org height: ' + node.height);
   }
 
-  const relations = classDb.getRelations();
+  const relations = diagObj.db.getRelations();
   relations.forEach(function (relation) {
     log.info(
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
@@ -234,7 +221,7 @@ export const draw = function (text, id) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
       log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       root
-        .select('#' + lookUpDomId(v))
+        .select('#' + diagObj.db.lookUpDomId(v))
         .attr(
           'transform',
           'translate(' +
@@ -249,7 +236,7 @@ export const draw = function (text, id) {
   g.edges().forEach(function (e) {
     if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
       log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
-      svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf);
+      svgDraw.drawEdge(diagram, g.edge(e), g.edge(e).relation, conf, diagObj);
     }
   });
 
@@ -263,10 +250,9 @@ export const draw = function (text, id) {
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
   log.debug(`viewBox ${vBox}`);
   diagram.attr('viewBox', vBox);
-  addSVGAccessibilityFields(parser.yy, diagram, id);
+  addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
 
 export default {
-  setConf,
   draw,
 };

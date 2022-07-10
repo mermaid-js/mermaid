@@ -1,10 +1,6 @@
 import { select } from 'd3';
-import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
-import classDb, { lookUpDomId } from './classDb';
-import { parser } from './parser/classDiagram';
-import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 // import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
@@ -13,14 +9,12 @@ import { interpolateToCurve, getStylesFromArray, setupGraphViewbox } from '../..
 import common from '../common/common';
 import addSVGAccessibilityFields from '../../accessibility';
 
-parser.yy = classDb;
-
 let idCache = {};
 const padding = 20;
 
 const sanitizeText = (txt) => common.sanitizeText(txt, getConfig());
 
-const conf = {
+let conf = {
   dividerMargin: 10,
   padding: 5,
   textHeight: 10,
@@ -144,6 +138,7 @@ export const addClasses = function (classes, g) {
  * @param {object} g The graph object
  */
 export const addRelations = function (relations, g) {
+  const conf = getConfig().flowchart;
   let cnt = 0;
 
   let defaultStyle;
@@ -269,16 +264,18 @@ export const setConf = function (cnf) {
  *
  * @param {string} text
  * @param {string} id
+ * @param _version
+ * @param diagObj
  */
-export const draw = function (text, id) {
+export const draw = function (text, id, _version, diagObj) {
   log.info('Drawing class - ', id);
-  classDb.clear();
-  // const parser = classDb.parser;
+  // diagObj.db.clear();
+  // const parser = diagObj.db.parser;
   // parser.yy = classDb;
 
   // Parse the graph definition
   // try {
-  parser.parse(text);
+  // parser.parse(text);
   // } catch (err) {
   // log.debug('Parsing failed');
   // }
@@ -298,7 +295,7 @@ export const draw = function (text, id) {
     compound: true,
   })
     .setGraph({
-      rankdir: classDb.getDirection(),
+      rankdir: diagObj.db.getDirection(),
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
@@ -318,8 +315,8 @@ export const draw = function (text, id) {
   // }
 
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
-  const classes = classDb.getClasses();
-  const relations = classDb.getRelations();
+  const classes = diagObj.db.getClasses();
+  const relations = diagObj.db.getRelations();
 
   log.info(relations);
   addClasses(classes, g, id);
@@ -366,7 +363,7 @@ export const draw = function (text, id) {
     }
   }
 
-  addSVGAccessibilityFields(parser.yy, svg, id);
+  addSVGAccessibilityFields(diagObj.db, svg, id);
   // If node has a link, wrap it in an anchor SVG object.
   // const keys = Object.keys(classes);
   // keys.forEach(function(key) {

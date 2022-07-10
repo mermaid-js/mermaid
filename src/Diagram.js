@@ -57,22 +57,30 @@ class Diagram {
         this.parser.parser.yy = c4Db;
         this.db = c4Db;
         this.renderer = c4Renderer;
+        this.renderer.setConf(cnf.c4);
         break;
       case 'gitGraph':
         this.parser = gitGraphParser;
         this.parser.parser.yy = gitGraphAst;
         this.db = gitGraphAst;
         this.renderer = gitGraphRenderer;
+        this.txt = this.txt + '\n';
         break;
       case 'flowchart':
+        flowRenderer.setConf(cnf.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         flowDb.clear();
+        flowDb.setGen('gen-1');
         this.parser = flowParser;
         this.parser.parser.yy = flowDb;
         this.db = flowDb;
         this.renderer = flowRenderer;
         break;
       case 'flowchart-v2':
+        flowRendererV2.setConf(cnf.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         flowDb.clear();
+        flowDb.setGen('gen-2');
         this.parser = flowParser;
         this.parser.parser.yy = flowDb;
         this.db = flowDb;
@@ -80,39 +88,60 @@ class Diagram {
         break;
       case 'sequenceDiagram':
       case 'sequence':
+        cnf.sequence.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        if (cnf.sequenceDiagram) {
+          // backwards compatibility
+          sequenceRenderer.setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
+          console.error(
+            '`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.'
+          );
+        }
         this.parser = sequenceParser;
         this.parser.parser.yy = sequenceDb;
         this.db = sequenceDb;
+        this.db.setWrap(cnf.wrap);
         this.renderer = sequenceRenderer;
+        this.renderer.setConf(cnf.sequence);
+        this.txt = this.txt + '\n';
         break;
       case 'gantt':
+        cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         this.parser = ganttParser;
         this.parser.parser.yy = ganttDb;
         this.db = ganttDb;
         this.renderer = ganttRenderer;
+        ganttRenderer.setConf(cnf.gantt);
         break;
       case 'class':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         this.parser = classParser;
         this.parser.parser.yy = classDb;
         this.db = classDb;
+        this.db.clear();
         this.renderer = classRenderer;
         break;
       case 'classDiagram':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         this.parser = classParser;
         this.parser.parser.yy = classDb;
         this.db = classDb;
+        this.db.clear();
         this.renderer = classRendererV2;
         break;
       case 'state':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         this.parser = stateParser;
         this.parser.parser.yy = stateDb;
         this.db = stateDb;
+        this.db.clear();
         this.renderer = stateRenderer;
         break;
       case 'stateDiagram':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         this.parser = stateParser;
         this.parser.parser.yy = stateDb;
         this.db = stateDb;
+        this.db.clear();
         this.renderer = stateRendererV2;
         break;
       case 'info':
@@ -138,9 +167,11 @@ class Diagram {
         break;
       case 'journey':
         log.debug('Journey');
+        journeyRenderer.setConf(cnf.journey);
         this.parser = journeyParser;
         this.parser.parser.yy = journeyDb;
         this.db = journeyDb;
+        this.db.clear();
         this.renderer = journeyRenderer;
         break;
       case 'requirement':
@@ -160,7 +191,7 @@ class Diagram {
       const error = { str, hash };
       throw error;
     };
-    this.parser.parse(txt);
+    this.parser.parse(this.txt);
   }
   getParser() {
     return this.parser;

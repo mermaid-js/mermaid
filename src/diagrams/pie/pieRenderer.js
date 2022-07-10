@@ -1,7 +1,5 @@
 /** Created by AshishJ on 11-09-2019. */
 import { select, scaleOrdinal, pie as d3pie, arc } from 'd3';
-import pieData from './pieDb';
-import pieParser from './parser/pie';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 import * as configApi from '../../config';
@@ -17,11 +15,9 @@ let conf = configApi.getConfig();
  */
 let width;
 const height = 450;
-export const draw = (txt, id) => {
+export const draw = (txt, id, _version, diagObj) => {
   try {
     conf = configApi.getConfig();
-    const parser = pieParser.parser;
-    parser.yy = pieData;
     log.debug('Rendering info diagram\n' + txt);
 
     const securityLevel = configApi.getConfig().securityLevel;
@@ -37,8 +33,8 @@ export const draw = (txt, id) => {
     const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
     // Parse the Pie Chart definition
-    parser.yy.clear();
-    parser.parse(txt);
+    diagObj.db.clear();
+    diagObj.parser.parse(txt);
     log.debug('Parsed info diagram');
     const elem = doc.getElementById(id);
     width = elem.parentElement.offsetWidth;
@@ -57,7 +53,7 @@ export const draw = (txt, id) => {
     const diagram = root.select('#' + id);
     configureSvgSize(diagram, height, width, conf.pie.useMaxWidth);
 
-    addSVGAccessibilityFields(parser.yy, diagram, id);
+    addSVGAccessibilityFields(diagObj.db, diagram, id);
     // Set viewBox
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
@@ -72,7 +68,7 @@ export const draw = (txt, id) => {
       .append('g')
       .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-    var data = pieData.getSections();
+    var data = diagObj.db.getSections();
     var sum = 0;
     Object.keys(data).forEach(function (key) {
       sum += data[key];
@@ -136,7 +132,7 @@ export const draw = (txt, id) => {
 
     svg
       .append('text')
-      .text(parser.yy.getDiagramTitle())
+      .text(diagObj.db.getDiagramTitle())
       .attr('x', 0)
       .attr('y', -(height - 50) / 2)
       .attr('class', 'pieTitleText');
@@ -169,7 +165,7 @@ export const draw = (txt, id) => {
       .attr('x', legendRectSize + legendSpacing)
       .attr('y', legendRectSize - legendSpacing)
       .text(function (d) {
-        if (parser.yy.getShowData() || conf.showData || conf.pie.showData) {
+        if (diagObj.db.getShowData() || conf.showData || conf.pie.showData) {
           return d.data[0] + ' [' + d.data[1] + ']';
         } else {
           return d.data[0];

@@ -1,14 +1,12 @@
 import { select, selectAll } from 'd3';
 import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
 import { log } from '../../logger';
-import { parser } from './parser/sequenceDiagram';
+// import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
-import sequenceDb from './sequenceDb';
+// import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import utils, { assignWithDepth, configureSvgSize } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
-
-parser.yy = sequenceDb;
 
 let conf = {};
 
@@ -86,7 +84,7 @@ export const bounds = {
       stopy: undefined,
     };
     this.verticalPos = 0;
-    setConf(parser.yy.getConfig());
+    setConf(configApi.getConfig());
   },
   updateVal: function (obj, key, val, fun) {
     if (typeof obj[key] === 'undefined') {
@@ -327,8 +325,9 @@ const boundMessage = function (diagram, msgModel) {
  * @param {any} diagram - The parent of the message element
  * @param {any} msgModel - The model containing fields describing a message
  * @param {float} lineStarty - The Y coordinate at which the message line starts
+ * @param diagObj
  */
-const drawMessage = function (diagram, msgModel, lineStarty) {
+const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   let textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDraw.getTextObj();
@@ -394,10 +393,10 @@ const drawMessage = function (diagram, msgModel, lineStarty) {
   // Make an SVG Container
   // Draw the line
   if (
-    type === parser.yy.LINETYPE.DOTTED ||
-    type === parser.yy.LINETYPE.DOTTED_CROSS ||
-    type === parser.yy.LINETYPE.DOTTED_POINT ||
-    type === parser.yy.LINETYPE.DOTTED_OPEN
+    type === diagObj.db.LINETYPE.DOTTED ||
+    type === diagObj.db.LINETYPE.DOTTED_CROSS ||
+    type === diagObj.db.LINETYPE.DOTTED_POINT ||
+    type === diagObj.db.LINETYPE.DOTTED_OPEN
   ) {
     line.style('stroke-dasharray', '3, 3');
     line.attr('class', 'messageLine1');
@@ -420,14 +419,14 @@ const drawMessage = function (diagram, msgModel, lineStarty) {
   line.attr('stroke-width', 2);
   line.attr('stroke', 'none'); // handled by theme/css anyway
   line.style('fill', 'none'); // remove any fill colour
-  if (type === parser.yy.LINETYPE.SOLID || type === parser.yy.LINETYPE.DOTTED) {
+  if (type === diagObj.db.LINETYPE.SOLID || type === diagObj.db.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
   }
-  if (type === parser.yy.LINETYPE.SOLID_POINT || type === parser.yy.LINETYPE.DOTTED_POINT) {
+  if (type === diagObj.db.LINETYPE.SOLID_POINT || type === diagObj.db.LINETYPE.DOTTED_POINT) {
     line.attr('marker-end', 'url(' + url + '#filled-head)');
   }
 
-  if (type === parser.yy.LINETYPE.SOLID_CROSS || type === parser.yy.LINETYPE.DOTTED_CROSS) {
+  if (type === diagObj.db.LINETYPE.SOLID_CROSS || type === diagObj.db.LINETYPE.DOTTED_CROSS) {
     line.attr('marker-end', 'url(' + url + '#crosshead)');
   }
 
@@ -581,10 +580,13 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  *
- * @param {any} text
- * @param {any} id
+ * @param {any} text The text of the diagram
+ * @param _text
+ * @param {any} id The id of the diagram which will be used as a DOM element id¨
+ * @param {any} _version Mermaid version from package.json
+ * @param {any} diagObj A stanard diagram containing the db and the text and type etc of the diagram
  */
-export const draw = function (text, id) {
+export const draw = function (_text, id, _version, diagObj) {
   conf = configApi.getConfig().sequence;
   const securityLevel = configApi.getConfig().securityLevel;
   // Handle root and Document for when rendering in sanbox mode
@@ -592,28 +594,25 @@ export const draw = function (text, id) {
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
   }
+
   const root =
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-
-  parser.yy.clear();
-  parser.yy.setWrap(conf.wrap);
-  parser.parse(text + '\n');
   bounds.init();
-  log.debug(`C:${JSON.stringify(conf, null, 2)}`);
+  log.debug(diagObj.db);
 
   const diagram =
     securityLevel === 'sandbox' ? root.select(`[id="${id}"]`) : select(`[id="${id}"]`);
 
   // Fetch data from the parsing
-  const actors = parser.yy.getActors();
-  const actorKeys = parser.yy.getActorKeys();
-  const messages = parser.yy.getMessages();
-  const title = parser.yy.getDiagramTitle();
+  const actors = diagObj.db.getActors();
+  const actorKeys = diagObj.db.getActorKeys();
+  const messages = diagObj.db.getMessages();
+  const title = diagObj.db.getDiagramTitle();
 
-  const maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages);
+  const maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages, diagObj);
   conf.height = calculateActorMargins(actors, maxMessageWidthPerActor);
 
   svgDraw.insertComputerIcon(diagram);
@@ -621,7 +620,7 @@ export const draw = function (text, id) {
   svgDraw.insertClockIcon(diagram);
 
   drawActors(diagram, actors, actorKeys, 0, conf, messages);
-  const loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor);
+  const loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor, diagObj);
 
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram);
@@ -658,17 +657,17 @@ export const draw = function (text, id) {
     let loopModel, noteModel, msgModel;
 
     switch (msg.type) {
-      case parser.yy.LINETYPE.NOTE:
+      case diagObj.db.LINETYPE.NOTE:
         noteModel = msg.noteModel;
         drawNote(diagram, noteModel);
         break;
-      case parser.yy.LINETYPE.ACTIVE_START:
+      case diagObj.db.LINETYPE.ACTIVE_START:
         bounds.newActivation(msg, diagram, actors);
         break;
-      case parser.yy.LINETYPE.ACTIVE_END:
+      case diagObj.db.LINETYPE.ACTIVE_END:
         activeEnd(msg, bounds.getVerticalPos());
         break;
-      case parser.yy.LINETYPE.LOOP_START:
+      case diagObj.db.LINETYPE.LOOP_START:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -677,24 +676,24 @@ export const draw = function (text, id) {
           (message) => bounds.newLoop(message)
         );
         break;
-      case parser.yy.LINETYPE.LOOP_END:
+      case diagObj.db.LINETYPE.LOOP_END:
         loopModel = bounds.endLoop();
         svgDraw.drawLoop(diagram, loopModel, 'loop', conf);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
-      case parser.yy.LINETYPE.RECT_START:
+      case diagObj.db.LINETYPE.RECT_START:
         adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin, (message) =>
           bounds.newLoop(undefined, message.message)
         );
         break;
-      case parser.yy.LINETYPE.RECT_END:
+      case diagObj.db.LINETYPE.RECT_END:
         loopModel = bounds.endLoop();
         svgDraw.drawBackgroundRect(diagram, loopModel);
         bounds.models.addLoop(loopModel);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         break;
-      case parser.yy.LINETYPE.OPT_START:
+      case diagObj.db.LINETYPE.OPT_START:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -703,13 +702,13 @@ export const draw = function (text, id) {
           (message) => bounds.newLoop(message)
         );
         break;
-      case parser.yy.LINETYPE.OPT_END:
+      case diagObj.db.LINETYPE.OPT_END:
         loopModel = bounds.endLoop();
         svgDraw.drawLoop(diagram, loopModel, 'opt', conf);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
-      case parser.yy.LINETYPE.ALT_START:
+      case diagObj.db.LINETYPE.ALT_START:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -718,7 +717,7 @@ export const draw = function (text, id) {
           (message) => bounds.newLoop(message)
         );
         break;
-      case parser.yy.LINETYPE.ALT_ELSE:
+      case diagObj.db.LINETYPE.ALT_ELSE:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -727,13 +726,13 @@ export const draw = function (text, id) {
           (message) => bounds.addSectionToLoop(message)
         );
         break;
-      case parser.yy.LINETYPE.ALT_END:
+      case diagObj.db.LINETYPE.ALT_END:
         loopModel = bounds.endLoop();
         svgDraw.drawLoop(diagram, loopModel, 'alt', conf);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
-      case parser.yy.LINETYPE.PAR_START:
+      case diagObj.db.LINETYPE.PAR_START:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -742,7 +741,7 @@ export const draw = function (text, id) {
           (message) => bounds.newLoop(message)
         );
         break;
-      case parser.yy.LINETYPE.PAR_AND:
+      case diagObj.db.LINETYPE.PAR_AND:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -751,19 +750,19 @@ export const draw = function (text, id) {
           (message) => bounds.addSectionToLoop(message)
         );
         break;
-      case parser.yy.LINETYPE.PAR_END:
+      case diagObj.db.LINETYPE.PAR_END:
         loopModel = bounds.endLoop();
         svgDraw.drawLoop(diagram, loopModel, 'par', conf);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
-      case parser.yy.LINETYPE.AUTONUMBER:
+      case diagObj.db.LINETYPE.AUTONUMBER:
         sequenceIndex = msg.message.start || sequenceIndex;
         sequenceIndexStep = msg.message.step || sequenceIndexStep;
-        if (msg.message.visible) parser.yy.enableSequenceNumbers();
-        else parser.yy.disableSequenceNumbers();
+        if (msg.message.visible) diagObj.db.enableSequenceNumbers();
+        else diagObj.db.disableSequenceNumbers();
         break;
-      case parser.yy.LINETYPE.CRITICAL_START:
+      case diagObj.db.LINETYPE.CRITICAL_START:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -772,7 +771,7 @@ export const draw = function (text, id) {
           (message) => bounds.newLoop(message)
         );
         break;
-      case parser.yy.LINETYPE.CRITICAL_OPTION:
+      case diagObj.db.LINETYPE.CRITICAL_OPTION:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -781,13 +780,13 @@ export const draw = function (text, id) {
           (message) => bounds.addSectionToLoop(message)
         );
         break;
-      case parser.yy.LINETYPE.CRITICAL_END:
+      case diagObj.db.LINETYPE.CRITICAL_END:
         loopModel = bounds.endLoop();
         svgDraw.drawLoop(diagram, loopModel, 'critical', conf);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
-      case parser.yy.LINETYPE.BREAK_START:
+      case diagObj.db.LINETYPE.BREAK_START:
         adjustLoopHeightForWrap(
           loopWidths,
           msg,
@@ -796,7 +795,7 @@ export const draw = function (text, id) {
           (message) => bounds.newLoop(message)
         );
         break;
-      case parser.yy.LINETYPE.BREAK_END:
+      case diagObj.db.LINETYPE.BREAK_END:
         loopModel = bounds.endLoop();
         svgDraw.drawLoop(diagram, loopModel, 'break', conf);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
@@ -808,7 +807,7 @@ export const draw = function (text, id) {
           msgModel = msg.msgModel;
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
-          msgModel.sequenceVisible = parser.yy.showSequenceNumbers();
+          msgModel.sequenceVisible = diagObj.db.showSequenceNumbers();
           let lineStarty = boundMessage(diagram, msgModel);
           messagesToDraw.push({ messageModel: msgModel, lineStarty: lineStarty });
           bounds.models.addMessage(msgModel);
@@ -820,21 +819,21 @@ export const draw = function (text, id) {
     // Increment sequence counter if msg.type is a line (and not another event like activation or note, etc)
     if (
       [
-        parser.yy.LINETYPE.SOLID_OPEN,
-        parser.yy.LINETYPE.DOTTED_OPEN,
-        parser.yy.LINETYPE.SOLID,
-        parser.yy.LINETYPE.DOTTED,
-        parser.yy.LINETYPE.SOLID_CROSS,
-        parser.yy.LINETYPE.DOTTED_CROSS,
-        parser.yy.LINETYPE.SOLID_POINT,
-        parser.yy.LINETYPE.DOTTED_POINT,
+        diagObj.db.LINETYPE.SOLID_OPEN,
+        diagObj.db.LINETYPE.DOTTED_OPEN,
+        diagObj.db.LINETYPE.SOLID,
+        diagObj.db.LINETYPE.DOTTED,
+        diagObj.db.LINETYPE.SOLID_CROSS,
+        diagObj.db.LINETYPE.DOTTED_CROSS,
+        diagObj.db.LINETYPE.SOLID_POINT,
+        diagObj.db.LINETYPE.DOTTED_POINT,
       ].includes(msg.type)
     ) {
       sequenceIndex = sequenceIndex + sequenceIndexStep;
     }
   });
 
-  messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStarty));
+  messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStarty, diagObj));
 
   if (conf.mirrorActors) {
     // Draw actors below diagram
@@ -895,7 +894,7 @@ export const draw = function (text, id) {
       (height + extraVertForTitle)
   );
 
-  addSVGAccessibilityFields(parser.yy, diagram, id);
+  addSVGAccessibilityFields(diagObj.db, diagram, id);
   log.debug(`models:`, bounds.models);
 };
 
@@ -907,9 +906,10 @@ export const draw = function (text, id) {
  *
  * @param {any} actors - The actors map
  * @param {Array} messages - A list of message objects to iterate
+ * @param diagObj
  * @returns {any}
  */
-const getMaxMessageWidthPerActor = function (actors, messages) {
+const getMaxMessageWidthPerActor = function (actors, messages, diagObj) {
   const maxMessageWidthPerActor = {};
 
   messages.forEach(function (msg) {
@@ -917,12 +917,12 @@ const getMaxMessageWidthPerActor = function (actors, messages) {
       const actor = actors[msg.to];
 
       // If this is the first actor, and the message is left of it, no need to calculate the margin
-      if (msg.placement === parser.yy.PLACEMENT.LEFTOF && !actor.prevActor) {
+      if (msg.placement === diagObj.db.PLACEMENT.LEFTOF && !actor.prevActor) {
         return;
       }
 
       // If this is the last actor, and the message is right of it, no need to calculate the margin
-      if (msg.placement === parser.yy.PLACEMENT.RIGHTOF && !actor.nextActor) {
+      if (msg.placement === diagObj.db.PLACEMENT.RIGHTOF && !actor.nextActor) {
         return;
       }
 
@@ -972,17 +972,17 @@ const getMaxMessageWidthPerActor = function (actors, messages) {
           maxMessageWidthPerActor[msg.to] || 0,
           messageWidth / 2
         );
-      } else if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
+      } else if (msg.placement === diagObj.db.PLACEMENT.RIGHTOF) {
         maxMessageWidthPerActor[msg.from] = Math.max(
           maxMessageWidthPerActor[msg.from] || 0,
           messageWidth
         );
-      } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
+      } else if (msg.placement === diagObj.db.PLACEMENT.LEFTOF) {
         maxMessageWidthPerActor[actor.prevActor] = Math.max(
           maxMessageWidthPerActor[actor.prevActor] || 0,
           messageWidth
         );
-      } else if (msg.placement === parser.yy.PLACEMENT.OVER) {
+      } else if (msg.placement === diagObj.db.PLACEMENT.OVER) {
         if (actor.prevActor) {
           maxMessageWidthPerActor[actor.prevActor] = Math.max(
             maxMessageWidthPerActor[actor.prevActor] || 0,
@@ -1070,7 +1070,7 @@ const calculateActorMargins = function (actors, actorToMessageWidth) {
   return Math.max(maxHeight, conf.height);
 };
 
-const buildNoteModel = function (msg, actors) {
+const buildNoteModel = function (msg, actors, diagObj) {
   let startx = actors[msg.from].x;
   let stopx = actors[msg.to].x;
   let shouldWrap = msg.wrap && msg.message;
@@ -1090,7 +1090,7 @@ const buildNoteModel = function (msg, actors) {
     stopy: 0,
     message: msg.message,
   };
-  if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
+  if (msg.placement === diagObj.db.PLACEMENT.RIGHTOF) {
     noteModel.width = shouldWrap
       ? Math.max(conf.width, textDimensions.width)
       : Math.max(
@@ -1098,7 +1098,7 @@ const buildNoteModel = function (msg, actors) {
           textDimensions.width + 2 * conf.noteMargin
         );
     noteModel.startx = startx + (actors[msg.from].width + conf.actorMargin) / 2;
-  } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
+  } else if (msg.placement === diagObj.db.PLACEMENT.LEFTOF) {
     noteModel.width = shouldWrap
       ? Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin)
       : Math.max(
@@ -1139,18 +1139,18 @@ const buildNoteModel = function (msg, actors) {
   return noteModel;
 };
 
-const buildMessageModel = function (msg, actors) {
+const buildMessageModel = function (msg, actors, diagObj) {
   let process = false;
   if (
     [
-      parser.yy.LINETYPE.SOLID_OPEN,
-      parser.yy.LINETYPE.DOTTED_OPEN,
-      parser.yy.LINETYPE.SOLID,
-      parser.yy.LINETYPE.DOTTED,
-      parser.yy.LINETYPE.SOLID_CROSS,
-      parser.yy.LINETYPE.DOTTED_CROSS,
-      parser.yy.LINETYPE.SOLID_POINT,
-      parser.yy.LINETYPE.DOTTED_POINT,
+      diagObj.db.LINETYPE.SOLID_OPEN,
+      diagObj.db.LINETYPE.DOTTED_OPEN,
+      diagObj.db.LINETYPE.SOLID,
+      diagObj.db.LINETYPE.DOTTED,
+      diagObj.db.LINETYPE.SOLID_CROSS,
+      diagObj.db.LINETYPE.DOTTED_CROSS,
+      diagObj.db.LINETYPE.SOLID_POINT,
+      diagObj.db.LINETYPE.DOTTED_POINT,
     ].includes(msg.type)
   ) {
     process = true;
@@ -1192,7 +1192,7 @@ const buildMessageModel = function (msg, actors) {
   };
 };
 
-const calculateLoopBounds = function (messages, actors) {
+const calculateLoopBounds = function (messages, actors, _maxWidthPerActor, diagObj) {
   const loops = {};
   const stack = [];
   let current, noteModel, msgModel;
@@ -1200,12 +1200,12 @@ const calculateLoopBounds = function (messages, actors) {
   messages.forEach(function (msg) {
     msg.id = utils.random({ length: 10 });
     switch (msg.type) {
-      case parser.yy.LINETYPE.LOOP_START:
-      case parser.yy.LINETYPE.ALT_START:
-      case parser.yy.LINETYPE.OPT_START:
-      case parser.yy.LINETYPE.PAR_START:
-      case parser.yy.LINETYPE.CRITICAL_START:
-      case parser.yy.LINETYPE.BREAK_START:
+      case diagObj.db.LINETYPE.LOOP_START:
+      case diagObj.db.LINETYPE.ALT_START:
+      case diagObj.db.LINETYPE.OPT_START:
+      case diagObj.db.LINETYPE.PAR_START:
+      case diagObj.db.LINETYPE.CRITICAL_START:
+      case diagObj.db.LINETYPE.BREAK_START:
         stack.push({
           id: msg.id,
           msg: msg.message,
@@ -1214,9 +1214,9 @@ const calculateLoopBounds = function (messages, actors) {
           width: 0,
         });
         break;
-      case parser.yy.LINETYPE.ALT_ELSE:
-      case parser.yy.LINETYPE.PAR_AND:
-      case parser.yy.LINETYPE.CRITICAL_OPTION:
+      case diagObj.db.LINETYPE.ALT_ELSE:
+      case diagObj.db.LINETYPE.PAR_AND:
+      case diagObj.db.LINETYPE.CRITICAL_OPTION:
         if (msg.message) {
           current = stack.pop();
           loops[current.id] = current;
@@ -1224,16 +1224,16 @@ const calculateLoopBounds = function (messages, actors) {
           stack.push(current);
         }
         break;
-      case parser.yy.LINETYPE.LOOP_END:
-      case parser.yy.LINETYPE.ALT_END:
-      case parser.yy.LINETYPE.OPT_END:
-      case parser.yy.LINETYPE.PAR_END:
-      case parser.yy.LINETYPE.CRITICAL_END:
-      case parser.yy.LINETYPE.BREAK_END:
+      case diagObj.db.LINETYPE.LOOP_END:
+      case diagObj.db.LINETYPE.ALT_END:
+      case diagObj.db.LINETYPE.OPT_END:
+      case diagObj.db.LINETYPE.PAR_END:
+      case diagObj.db.LINETYPE.CRITICAL_END:
+      case diagObj.db.LINETYPE.BREAK_END:
         current = stack.pop();
         loops[current.id] = current;
         break;
-      case parser.yy.LINETYPE.ACTIVE_START:
+      case diagObj.db.LINETYPE.ACTIVE_START:
         {
           const actorRect = actors[msg.from ? msg.from.actor : msg.to.actor];
           const stackedSize = actorActivations(msg.from ? msg.from.actor : msg.to.actor).length;
@@ -1248,7 +1248,7 @@ const calculateLoopBounds = function (messages, actors) {
           bounds.activations.push(toAdd);
         }
         break;
-      case parser.yy.LINETYPE.ACTIVE_END:
+      case diagObj.db.LINETYPE.ACTIVE_END:
         {
           const lastActorActivationIdx = bounds.activations
             .map((a) => a.actor)
@@ -1259,7 +1259,7 @@ const calculateLoopBounds = function (messages, actors) {
     }
     const isNote = msg.placement !== undefined;
     if (isNote) {
-      noteModel = buildNoteModel(msg, actors);
+      noteModel = buildNoteModel(msg, actors, diagObj);
       msg.noteModel = noteModel;
       stack.forEach((stk) => {
         current = stk;
@@ -1269,7 +1269,7 @@ const calculateLoopBounds = function (messages, actors) {
           Math.max(current.width, Math.abs(current.from - current.to)) - conf.labelBoxWidth;
       });
     } else {
-      msgModel = buildMessageModel(msg, actors);
+      msgModel = buildMessageModel(msg, actors, diagObj);
       msg.msgModel = msgModel;
       if (msgModel.startx && msgModel.stopx && stack.length > 0) {
         stack.forEach((stk) => {

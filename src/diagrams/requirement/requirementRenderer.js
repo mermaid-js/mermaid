@@ -1,28 +1,15 @@
 import { line, select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
-// import * as configApi from '../../config';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../utils';
 import common from '../common/common';
-import { parser } from './parser/requirementDiagram';
-import requirementDb from './requirementDb';
 import markers from './requirementMarkers';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
 
-const conf = {};
+let conf = {};
 let relCnt = 0;
-
-export const setConf = function (cnf) {
-  if (typeof cnf === 'undefined') {
-    return;
-  }
-  const keys = Object.keys(cnf);
-  for (let i = 0; i < keys.length; i++) {
-    conf[keys[i]] = cnf[keys[i]];
-  }
-};
 
 const newRectNode = (parentNode, id) => {
   return parentNode
@@ -162,7 +149,7 @@ const addEdgeLabel = (parentNode, svgPath, conf, txt) => {
     .attr('fill-opacity', '85%');
 };
 
-const drawRelationshipFromLayout = function (svg, rel, g, insert) {
+const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   // Find the edge relating to this relationship
   const edge = g.edge(elementString(rel.src), elementString(rel.dst));
 
@@ -182,7 +169,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert) {
     .attr('d', lineFunction(edge.points))
     .attr('fill', 'none');
 
-  if (rel.type == requirementDb.Relationships.CONTAINS) {
+  if (rel.type == diagObj.db.Relationships.CONTAINS) {
     svgPath.attr(
       'marker-start',
       'url(' + common.getUrl(conf.arrowMarkerAbsolute) + '#' + rel.type + '_line_ending' + ')'
@@ -318,12 +305,12 @@ const elementString = (str) => {
   return str.replace(/\s/g, '').replace(/\./g, '_');
 };
 
-export const draw = (text, id) => {
-  parser.yy = requirementDb;
-  parser.yy.clear();
-  parser.parse(text);
+export const draw = (text, id, _version, diagObj) => {
+  conf = getConfig().requirement;
+  diagObj.db.clear();
+  diagObj.parser.parse(text);
 
-  const securityLevel = getConfig().securityLevel;
+  const securityLevel = conf.securityLevel;
   // Handle root and Document for when rendering in sanbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
@@ -355,9 +342,9 @@ export const draw = (text, id) => {
       return {};
     });
 
-  let requirements = requirementDb.getRequirements();
-  let elements = requirementDb.getElements();
-  let relationships = requirementDb.getRelationships();
+  let requirements = diagObj.db.getRequirements();
+  let elements = diagObj.db.getElements();
+  let relationships = diagObj.db.getRelationships();
 
   drawReqs(requirements, g, svg);
   drawElements(elements, g, svg);
@@ -366,10 +353,9 @@ export const draw = (text, id) => {
   adjustEntities(svg, g);
 
   relationships.forEach(function (rel) {
-    drawRelationshipFromLayout(svg, rel, g, id);
+    drawRelationshipFromLayout(svg, rel, g, id, diagObj);
   });
 
-  // svg.attr('height', '500px');
   const padding = conf.rect_padding;
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
@@ -379,10 +365,9 @@ export const draw = (text, id) => {
 
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
   // Adds title and description to the requirements diagram
-  addSVGAccessibilityFields(parser.yy, svg, id);
+  addSVGAccessibilityFields(diagObj.db, svg, id);
 };
 
 export default {
-  setConf,
   draw,
 };

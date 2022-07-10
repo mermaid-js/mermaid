@@ -817,6 +817,9 @@ const config = {
   },
   class: {
     arrowMarkerAbsolute: false,
+    dividerMargin: 10,
+    padding: 5,
+    textHeight: 10,
 
     /**
      * | Parameter   | Description | Type    | Required | Values      |
