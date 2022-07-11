@@ -1425,6 +1425,7 @@ Returns **[object][5]** The siteConfig
 ### Parameters
 
 -   `text`  
+-   `dia`  
 
 Returns **any** 
 
@@ -1485,30 +1486,6 @@ options in-place
 
 -   `options` **any** The potential setConfig parameter
 
-## addDirective
-
-Pushes in a directive to the configuration
-
-### Parameters
-
--   `directive` **[object][5]** The directive to push in
-
-## reset
-
-## reset
-
-| Function | Description                  | Type        | Required | Values |
-| -------- | ---------------------------- | ----------- | -------- | ------ |
-| reset    | Resets currentConfig to conf | Put Request | Required | None   |
-
-## conf
-
-| Parameter | Description                                                    | Type       | Required | Values                                       |
-| --------- | -------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
-| conf      | base set of values, which currentConfig could be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
-
-**Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
-
 ## render
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
@@ -1537,15 +1514,35 @@ $(function () {
 
 Returns **any** 
 
+## addDirective
+
+Pushes in a directive to the configuration
+
+### Parameters
+
+-   `directive` **[object][5]** The directive to push in
+
+## reset
+
+## reset
+
+| Function | Description                  | Type        | Required | Values |
+| -------- | ---------------------------- | ----------- | -------- | ------ |
+| reset    | Resets currentConfig to conf | Put Request | Required | None   |
+
+## conf
+
+| Parameter | Description                                                    | Type       | Required | Values                                       |
+| --------- | -------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+| conf      | base set of values, which currentConfig could be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
+
+**Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
+
 ## updateRendererConfigs
 
 ### Parameters
 
 -   `conf` **any** 
-
-## reinitialize
-
-To be removed
 
 ## initialize
 
