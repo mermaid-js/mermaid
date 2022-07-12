@@ -2,6 +2,7 @@ import { select } from 'd3';
 import { log } from '../logger'; // eslint-disable-line
 import { getConfig } from '../config';
 import { sanitizeText, evaluate } from '../diagrams/common/common';
+import { decodeEntities } from '../mermaidAPI';
 
 const sanitizeTxt = (txt) => sanitizeText(txt, getConfig());
 
@@ -52,7 +53,7 @@ const createLabel = (_vertexText, style, isTitle, isNode) => {
     log.info('vertexText' + vertexText);
     const node = {
       isNode,
-      label: vertexText.replace(
+      label: decodeEntities(vertexText).replace(
         /fa[lrsb]?:fa-[\w-]+/g,
         (s) => `<i class='${s.replace(':', ' ')}'></i>`
       ),
