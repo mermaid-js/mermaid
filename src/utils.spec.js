@@ -1,52 +1,55 @@
 import utils from './utils';
+import assignWithDepth from './assignWithDepth';
+import detectType from './diagram-api/detectType';
+import './diagram-api/diagram-orchestration';
 
 describe('when assignWithDepth: should merge objects within objects', function () {
   it('should handle simple, depth:1 types (identity)', function () {
     let config_0 = { foo: 'bar', bar: 0 };
     let config_1 = { foo: 'bar', bar: 0 };
-    let result = utils.assignWithDepth(config_0, config_1);
+    let result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_1);
   });
   it('should handle simple, depth:1 types (dst: undefined)', function () {
     let config_0 = undefined;
     let config_1 = { foo: 'bar', bar: 0 };
-    let result = utils.assignWithDepth(config_0, config_1);
+    let result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_1);
   });
   it('should handle simple, depth:1 types (src: undefined)', function () {
     let config_0 = { foo: 'bar', bar: 0 };
     let config_1 = undefined;
-    let result = utils.assignWithDepth(config_0, config_1);
+    let result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_0);
   });
   it('should handle simple, depth:1 types (merge)', function () {
     let config_0 = { foo: 'bar', bar: 0 };
     let config_1 = { foo: 'foo' };
-    let result = utils.assignWithDepth(config_0, config_1);
+    let result = assignWithDepth(config_0, config_1);
     expect(result).toEqual({ foo: 'foo', bar: 0 });
   });
   it('should handle depth:2 types (dst: orphan)', function () {
     let config_0 = { foo: 'bar', bar: { foo: 'bar' } };
     let config_1 = { foo: 'bar' };
-    let result = utils.assignWithDepth(config_0, config_1);
+    let result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_0);
   });
   it('should handle depth:2 types (dst: object, src: simple type)', function () {
     let config_0 = { foo: 'bar', bar: { foo: 'bar' } };
     let config_1 = { foo: 'foo', bar: 'should NOT clobber' };
-    let result = utils.assignWithDepth(config_0, config_1);
+    let result = assignWithDepth(config_0, config_1);
     expect(result).toEqual({ foo: 'foo', bar: { foo: 'bar' } });
   });
   it('should handle depth:2 types (src: orphan)', function () {
     let config_0 = { foo: 'bar' };
     let config_1 = { foo: 'bar', bar: { foo: 'bar' } };
-    let result = utils.assignWithDepth(config_0, config_1);
+    let result = assignWithDepth(config_0, config_1);
     expect(result).toEqual(config_1);
   });
   it('should handle depth:2 types (merge)', function () {
     let config_0 = { foo: 'bar', bar: { foo: 'bar' }, boofar: 1 };
     let config_1 = { foo: 'foo', bar: { bar: 0 }, foobar: 'foobar' };
-    let result = utils.assignWithDepth(config_0, config_1);
+    let result = assignWithDepth(config_0, config_1);
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'bar', bar: 0 },
@@ -65,7 +68,7 @@ describe('when assignWithDepth: should merge objects within objects', function (
       bar: { foo: 'foo', bar: { foo: { message: 'clobbered other foo' } } },
       foobar: 'foobar',
     };
-    let result = utils.assignWithDepth(config_0, config_1);
+    let result = assignWithDepth(config_0, config_1);
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'clobbered other foo' } } },
@@ -87,7 +90,7 @@ describe('when assignWithDepth: should merge objects within objects', function (
       bar: { foo: 'foo', bar: { foo: { message: 'this' } } },
       foobar: 'foobar',
     };
-    let result = utils.assignWithDepth(config_0, config_1, { depth: 1 });
+    let result = assignWithDepth(config_0, config_1, { depth: 1 });
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this' } } },
@@ -106,7 +109,7 @@ describe('when assignWithDepth: should merge objects within objects', function (
       bar: { foo: 'foo', bar: { foo: { message: 'this' } } },
       foobar: 'foobar',
     };
-    let result = utils.assignWithDepth(config_0, config_1, { depth: 3 });
+    let result = assignWithDepth(config_0, config_1, { depth: 3 });
     expect(result).toEqual({
       foo: 'foo',
       bar: { foo: 'foo', bar: { foo: { message: 'this', willbe: 'present' } } },
@@ -137,7 +140,7 @@ describe('when memoizing', function () {
 describe('when detecting chart type ', function () {
   it('should handle a graph definition', function () {
     const str = 'graph TB\nbfs1:queue';
-    const type = utils.detectType(str);
+    const type = detectType(str);
     expect(type).toBe('flowchart');
   });
   it('should handle an initialize definition', function () {
@@ -145,7 +148,7 @@ describe('when detecting chart type ', function () {
 %%{initialize: { 'logLevel': 0, 'theme': 'dark' }}%%
 sequenceDiagram
 Alice->Bob: hi`;
-    const type = utils.detectType(str);
+    const type = detectType(str);
     const init = utils.detectInit(str);
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
@@ -155,7 +158,7 @@ Alice->Bob: hi`;
 %%{init: { 'logLevel': 0, 'theme': 'dark' }}%%
 sequenceDiagram
 Alice->Bob: hi`;
-    const type = utils.detectType(str);
+    const type = detectType(str);
     const init = utils.detectInit(str);
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
@@ -165,7 +168,7 @@ Alice->Bob: hi`;
 %%{init: { 'logLevel': 0, 'theme': 'dark', 'config': {'wrap': true} } }%%
 sequenceDiagram
 Alice->Bob: hi`;
-    const type = utils.detectType(str);
+    const type = detectType(str);
     const init = utils.detectInit(str);
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark', sequence: { wrap: true } });
@@ -180,7 +183,7 @@ Alice->Bob: hi`;
 }%%
 sequenceDiagram
 Alice->Bob: hi`;
-    const type = utils.detectType(str);
+    const type = detectType(str);
     const init = utils.detectInit(str);
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
@@ -195,25 +198,25 @@ Alice->Bob: hi`;
 }%%
 sequenceDiagram
 Alice->Bob: hi`;
-    const type = utils.detectType(str);
+    const type = detectType(str);
     const init = utils.detectInit(str);
     expect(type).toBe('sequence');
     expect(init).toEqual({ logLevel: 0, theme: 'dark' });
   });
   it('should handle a graph definition with leading spaces', function () {
     const str = '    graph TB\nbfs1:queue';
-    const type = utils.detectType(str);
+    const type = detectType(str);
     expect(type).toBe('flowchart');
   });
 
   it('should handle a graph definition with leading spaces and newline', function () {
     const str = '  \n  graph TB\nbfs1:queue';
-    const type = utils.detectType(str);
+    const type = detectType(str);
     expect(type).toBe('flowchart');
   });
   it('should handle a graph definition for gitGraph', function () {
     const str = '  \n  gitGraph TB:\nbfs1:queue';
-    const type = utils.detectType(str);
+    const type = detectType(str);
     expect(type).toBe('gitGraph');
   });
 });

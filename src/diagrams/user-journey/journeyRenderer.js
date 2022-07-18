@@ -69,7 +69,6 @@ export const draw = function (text, id, version, diagObj) {
   svgDraw.initGraphics(diagram);
 
   const tasks = diagObj.db.getTasks();
-  console.log('text and tasks', text, tasks);
   const title = diagObj.db.getDiagramTitle();
 
   const actorNames = diagObj.db.getActors();

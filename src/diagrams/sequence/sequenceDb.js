@@ -140,7 +140,14 @@ export const setWrap = function (wrapSetting) {
   wrapEnabled = wrapSetting;
 };
 
-export const autoWrap = () => wrapEnabled;
+export const autoWrap = () => {
+  // if setWrap has been called, use that value, otherwise use the value from the config
+  // TODO: refactor, always use the config value let setWrap update the config value
+  if (typeof wrapEnabled !== 'undefined') {
+    return wrapEnabled;
+  }
+  return configApi.getConfig().sequence.wrap;
+};
 
 export const clear = function () {
   actors = {};
