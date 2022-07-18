@@ -1429,6 +1429,15 @@ function _Default value: At default, will mirror Global Config_
 
 Returns **[object][5]** The siteConfig
 
+## parse
+
+### Parameters
+
+-   `text`  
+-   `dia`  
+
+Returns **any** 
+
 ## getSiteConfig
 
 ## getSiteConfig
@@ -1521,8 +1530,6 @@ Pushes in a directive to the configuration
 ### Parameters
 
 -   `directive` **[object][5]** The directive to push in
-
-## reset
 
 ## reset
 
