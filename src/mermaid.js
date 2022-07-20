@@ -209,7 +209,7 @@ const setParseErrorHandler = function (newParseErrorHandler) {
 const mermaid = {
   startOnLoad: true,
   htmlLabels: true,
-
+  diagrams: {},
   mermaidAPI,
   parse: mermaidAPI != undefined ? mermaidAPI.parse : null,
   render: mermaidAPI != undefined ? mermaidAPI.render : null,

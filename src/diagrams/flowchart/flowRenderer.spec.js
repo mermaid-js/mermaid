@@ -1,6 +1,5 @@
 import { addVertices, addEdges } from './flowRenderer';
 import { setConfig } from '../../config';
-import Diagram from '../../Diagram';
 
 setConfig({
   flowchart: {
