@@ -1429,15 +1429,6 @@ function _Default value: At default, will mirror Global Config_
 
 Returns **[object][5]** The siteConfig
 
-## parse
-
-### Parameters
-
--   `text`  
--   `dia`  
-
-Returns **any** 
-
 ## getSiteConfig
 
 ## getSiteConfig
@@ -1480,21 +1471,6 @@ Returns **any** The currentConfig merged with the sanitized conf
 
 Returns **any** The currentConfig
 
-## sanitize
-
-## sanitize
-
-| Function | Description                            | Type        | Values |
-| -------- | -------------------------------------- | ----------- | ------ |
-| sanitize | Sets the siteConfig to desired values. | Put Request | None   |
-
-Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
-options in-place
-
-### Parameters
-
--   `options` **any** The potential setConfig parameter
-
 ## render
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
@@ -1523,6 +1499,21 @@ $(function () {
 
 Returns **any** 
 
+## sanitize
+
+## sanitize
+
+| Function | Description                            | Type        | Values |
+| -------- | -------------------------------------- | ----------- | ------ |
+| sanitize | Sets the siteConfig to desired values. | Put Request | None   |
+
+Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
+options in-place
+
+### Parameters
+
+-   `options` **any** The potential setConfig parameter
+
 ## addDirective
 
 Pushes in a directive to the configuration
@@ -1530,6 +1521,8 @@ Pushes in a directive to the configuration
 ### Parameters
 
 -   `directive` **[object][5]** The directive to push in
+
+## reset
 
 ## reset
 

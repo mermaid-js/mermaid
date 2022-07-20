@@ -79,7 +79,7 @@ const diagrams = {
       flowDb.setGen('gen-1');
     },
   },
-  flowchartV2: {
+  'flowchart-v2': {
     db: flowDb,
     renderer: flowRendererV2,
     parser: flowParser,

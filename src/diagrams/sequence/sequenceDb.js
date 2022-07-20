@@ -19,7 +19,7 @@ const notes = [];
 let diagramTitle = '';
 let description = '';
 let sequenceNumbersEnabled = false;
-let wrapEnabled = false;
+let wrapEnabled;
 
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);

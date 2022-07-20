@@ -80,7 +80,7 @@ context('Sequence diagram', () => {
         loop Loopy
             Bob->>Alice: Pasten
         end      `,
-      {}
+      { wrap: true }
     );
   });
   context('font settings', () => {

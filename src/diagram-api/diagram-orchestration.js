@@ -19,13 +19,14 @@ import gitGraphDetector from '../diagrams/git/gitGraphDetector';
 //   mindmapRenderer,
 //   mindmapDetector
 // );
-registerDiagram(
-  'gitGraph',
-  gitGraphParser,
-  gitGraphDb,
-  gitGraphRenderer,
-  undefined,
-  gitGraphDetector
-);
-const apa = { apa: 1 };
-export default apa;
+const addDiagrams = () => {
+  registerDiagram(
+    'gitGraph',
+    gitGraphParser,
+    gitGraphDb,
+    gitGraphRenderer,
+    undefined,
+    gitGraphDetector
+  );
+};
+export default addDiagrams;

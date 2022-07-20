@@ -64,7 +64,7 @@ journey
        commit
        commit
 </div>
-<div class="mermaid" style="width: 50%;">
+<div class="mermaid2" style="width: 50%;">
    sequenceDiagram
       title: My Sequence Diagram Title
       accTitle: My Acc Sequence Diagram
@@ -218,20 +218,41 @@ class Class10 {
 }
       </div>
       <div class="mermaid" style="width: 100%;">
-graph LR
-      A[[subroutine shape test]]
-      A -->|Get money| B[[Go shopping]]
-      B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
-      C -->|One| D[[Laptop]]
-      C -->|Two| E[[iPhone]]
-      C -->|Three| F[[Car<br/>wroom wroom]]
-      click A "index.html#link-clicked" "link test"
-      click B testClick "click test"
-      classDef someclass fill:#f96;
-      class A someclass;
-      class C someclass;
+%%{init: {'config': {'wrap': true }}}%%
+        sequenceDiagram
+        participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
+        A->>Bob: Hola
+        Bob-->A: Pasten !
       </div>
       <div class="mermaid2" style="width: 100%;">
+      gitGraph
+       commit id: "ZERO"
+       branch develop
+       commit id:"A"
+       checkout main
+       commit id:"ONE"
+       checkout develop
+       commit id:"B"
+       branch featureA
+       commit id:"FIX"
+       commit id: "FIX-2"
+       checkout main
+       commit id:"TWO"
+       cherry-pick id:"A"
+       commit id:"THREE"
+       cherry-pick id:"FIX"
+       checkout develop
+       commit id:"C"
+       merge featureA
+       </div>
+       <div class="mermaid2" style="width: 100%;">
+flowchart TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      </div>     <div class="mermaid2" style="width: 100%;">
         classDiagram
           Animal "1" <|-- Duck
           Animal <|-- Fish
@@ -292,7 +313,8 @@ graph LR
     htmlLabels: true,
   },
   sequence: {
-    mirrorActors: false,
+    // mirrorActors: false,'
+    wrap: false,
   },
         // gantt: { axisFormat: '%m/%d/%Y' },
   //       sequence: {
@@ -315,6 +337,7 @@ graph LR
         curve: 'cardinal',
         // securityLevel: 'sandbox',
         // themeVariables: {relationLabelColor: 'red'}
+        wrap: true,
       });
       function callback() {
   alert('It worked');

@@ -19,7 +19,7 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
-import apa from './diagram-api/diagram-orchestration';
+import addDiagrams from './diagram-api/diagram-orchestration';
 import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
@@ -515,6 +515,7 @@ function initialize(options) {
 
   updateRendererConfigs(config);
   setLogLevel(config.logLevel);
+  addDiagrams();
 }
 
 const mermaidAPI = Object.freeze({
