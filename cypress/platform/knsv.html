@@ -218,11 +218,18 @@ class Class10 {
 }
       </div>
       <div class="mermaid" style="width: 100%;">
-        stateDiagram
-        accTitle: Apa
-        accDescr: One that can climb better then any man
-      [*] --> S1
-      state "Some long name" as S1
+graph LR
+      A[[subroutine shape test]]
+      A -->|Get money| B[[Go shopping]]
+      B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
+      C -->|One| D[[Laptop]]
+      C -->|Two| E[[iPhone]]
+      C -->|Three| F[[Car<br/>wroom wroom]]
+      click A "index.html#link-clicked" "link test"
+      click B testClick "click test"
+      classDef someclass fill:#f96;
+      class A someclass;
+      class C someclass;
       </div>
       <div class="mermaid2" style="width: 100%;">
         classDiagram

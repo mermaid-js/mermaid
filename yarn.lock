@@ -70,12 +70,12 @@
     "@applitools/utils" "1.3.10"
 
 "@applitools/eyes-cypress@^3.25.7":
-  version "3.26.4"
-  resolved "https://registry.yarnpkg.com/@applitools/eyes-cypress/-/eyes-cypress-3.26.4.tgz#e1a511cc6ff9f851e29d918cebf9008922e6650d"
-  integrity sha512-YTlLlNBEwyLKzkKH9kAWz17GkDpI5kkuFIP+Gm4BGjRYawpLpF9GvxlCng0Q+Lli1jMIEIP6tZnjrapHbKqm4A==
+  version "3.26.6"
+  resolved "https://registry.yarnpkg.com/@applitools/eyes-cypress/-/eyes-cypress-3.26.6.tgz#a629ef45e1ae37b2234a79fac197f858eae96ccf"
+  integrity sha512-bj6goVPMdptgRreFcdoOKWJzkebp3R0TYj7G8OGDm6H2cHPQGLwPT+1Z+1Moj9XGy1X6Pgur6TeTtGE4q/QsUw==
   dependencies:
     "@applitools/eyes-api" "1.7.4"
-    "@applitools/eyes-universal" "2.9.6"
+    "@applitools/eyes-universal" "2.9.7"
     "@applitools/functional-commons" "1.6.0"
     "@applitools/logger" "1.1.15"
     "@applitools/visual-grid-client" "15.13.6"
@@ -102,10 +102,10 @@
     chalk "3.0.0"
     tunnel "0.0.6"
 
-"@applitools/eyes-universal@2.9.6":
-  version "2.9.6"
-  resolved "https://registry.yarnpkg.com/@applitools/eyes-universal/-/eyes-universal-2.9.6.tgz#65dad010283d5117704137e6c10e4592c6bdd7e1"
-  integrity sha512-Un6/p8CCI7bdootTDnjpls/mo53Q/3YV8VQQalbkR7Xex63Y4/r4Y/xowoAZb+Q/Iq/BblMwhKFh11dEePFMpA==
+"@applitools/eyes-universal@2.9.7":
+  version "2.9.7"
+  resolved "https://registry.yarnpkg.com/@applitools/eyes-universal/-/eyes-universal-2.9.7.tgz#0e4e5309e04abbeeb2f29a9e5d63a2feb90de55f"
+  integrity sha512-pqmgAt2MSSYsT1Iye0motD6x4O9IMF0CCpqKbllU2Om6KSSedT8+c8V0nr+SSrWxKYnvZ6Et1MPs2xYibOywsg==
   dependencies:
     "@applitools/execution-grid-client" "1.1.22"
     "@applitools/eyes-sdk-core" "13.8.12"
@@ -4220,10 +4220,10 @@ cypress-image-snapshot@^4.0.1:
     pkg-dir "^3.0.0"
     term-img "^4.0.0"
 
-cypress@10.3.0:
-  version "10.3.0"
-  resolved "https://registry.yarnpkg.com/cypress/-/cypress-10.3.0.tgz#fae8d32f0822fcfb938e79c7c31ef344794336ae"
-  integrity sha512-txkQWKzvBVnWdCuKs5Xc08gjpO89W2Dom2wpZgT9zWZT5jXxqPIxqP/NC1YArtkpmp3fN5HW8aDjYBizHLUFvg==
+cypress@9.7.0:
+  version "9.7.0"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-9.7.0.tgz#bf55b2afd481f7a113ef5604aa8b693564b5e744"
+  integrity sha512-+1EE1nuuuwIt/N1KXRR2iWHU+OiIt7H28jJDyyI4tiUftId/DrXYEwoDa5+kH2pki1zxnA0r6HrUGHV5eLbF5Q==
   dependencies:
     "@cypress/request" "^2.88.10"
     "@cypress/xvfb" "^1.2.4"
