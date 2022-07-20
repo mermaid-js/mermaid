@@ -1,4 +1,4 @@
-import { assignWithDepth } from './utils';
+import assignWithDepth from './assignWithDepth';
 import { log } from './logger';
 import theme from './themes';
 import config from './defaultConfig';

@@ -5,7 +5,8 @@ import { log } from '../../logger';
 import common from '../common/common';
 // import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
-import utils, { assignWithDepth, configureSvgSize } from '../../utils';
+import assignWithDepth from '../../assignWithDepth';
+import utils, { configureSvgSize } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let conf = {};

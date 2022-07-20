@@ -5,13 +5,8 @@ import { parser } from './parser/c4Diagram';
 import common from '../common/common';
 import c4Db from './c4Db';
 import * as configApi from '../../config';
-import utils, {
-  wrapLabel,
-  calculateTextWidth,
-  calculateTextHeight,
-  assignWithDepth,
-  configureSvgSize,
-} from '../../utils';
+import assignWithDepth from '../../assignWithDepth';
+import { wrapLabel, calculateTextWidth, calculateTextHeight, configureSvgSize } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let globalBoundaryMaxX = 0,

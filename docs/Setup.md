@@ -1401,6 +1401,15 @@ This sets the auto-wrap padding for the diagram (sides only)
 
 **Notes:** Default value: 0.
 
+## parse
+
+### Parameters
+
+-   `text`  
+-   `dia`  
+
+Returns **any** 
+
 ## setSiteConfig
 
 ## setSiteConfig
@@ -1521,8 +1530,6 @@ Pushes in a directive to the configuration
 ### Parameters
 
 -   `directive` **[object][5]** The directive to push in
-
-## reset
 
 ## reset
 

@@ -16,6 +16,8 @@ import {
 import common from './diagrams/common/common';
 import { configKeys } from './defaultConfig';
 import { log } from './logger';
+import detectType from './diagram-api/detectType';
+import assignWithDepth from './assignWithDepth';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -158,90 +160,6 @@ export const detectDirective = function (text, type = null) {
     );
     return { type: null, args: null };
   }
-};
-
-/**
- * @function detectType Detects the type of the graph text. Takes into consideration the possible
- *   existence of an %%init directive
- *
- *   ```mermaid
- *   %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
- *   graph LR
- *    a-->b
- *    b-->c
- *    c-->d
- *    d-->e
- *    e-->f
- *    f-->g
- *    g-->h
- * ```
- * @param {string} text The text defining the graph
- * @param {{
- *   class: { defaultRenderer: string } | undefined;
- *   state: { defaultRenderer: string } | undefined;
- *   flowchart: { defaultRenderer: string } | undefined;
- * }} [cnf]
- * @returns {string} A graph definition key
- */
-export const detectType = function (text, cnf) {
-  text = text.replace(directive, '').replace(anyComment, '\n');
-  if (text.match(/^\s*C4Context|C4Container|C4Component|C4Dynamic|C4Deployment/)) {
-    return 'c4';
-  }
-
-  if (text.match(/^\s*sequenceDiagram/)) {
-    return 'sequence';
-  }
-
-  if (text.match(/^\s*gantt/)) {
-    return 'gantt';
-  }
-  if (text.match(/^\s*classDiagram-v2/)) {
-    return 'classDiagram';
-  }
-  if (text.match(/^\s*classDiagram/)) {
-    if (cnf && cnf.class && cnf.class.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
-    return 'class';
-  }
-
-  if (text.match(/^\s*stateDiagram-v2/)) {
-    return 'stateDiagram';
-  }
-
-  if (text.match(/^\s*stateDiagram/)) {
-    if (cnf && cnf.class && cnf.state.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
-    return 'state';
-  }
-
-  if (text.match(/^\s*gitGraph/)) {
-    return 'gitGraph';
-  }
-  if (text.match(/^\s*flowchart/)) {
-    return 'flowchart-v2';
-  }
-
-  if (text.match(/^\s*info/)) {
-    return 'info';
-  }
-  if (text.match(/^\s*pie/)) {
-    return 'pie';
-  }
-
-  if (text.match(/^\s*erDiagram/)) {
-    return 'er';
-  }
-
-  if (text.match(/^\s*journey/)) {
-    return 'journey';
-  }
-
-  if (text.match(/^\s*requirement/) || text.match(/^\s*requirementDiagram/)) {
-    return 'requirement';
-  }
-  if (cnf && cnf.flowchart && cnf.flowchart.defaultRenderer === 'dagre-wrapper')
-    return 'flowchart-v2';
-
-  return 'flowchart';
 };
 
 /**
@@ -576,79 +494,6 @@ function makeid(length) {
 
 export const random = (options) => {
   return makeid(options.length);
-};
-
-/**
- * @function assignWithDepth Extends the functionality of {@link ObjectConstructor.assign} with the
- *   ability to merge arbitrary-depth objects For each key in src with path `k` (recursively)
- *   performs an Object.assign(dst[`k`], src[`k`]) with a slight change from the typical handling of
- *   undefined for dst[`k`]: instead of raising an error, dst[`k`] is auto-initialized to {} and
- *   effectively merged with src[`k`]<p> Additionally, dissimilar types will not clobber unless the
- *   config.clobber parameter === true. Example:
- *
- *   ```js
- *   let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
- *   let config_1 = { foo: 'foo', bar: 'bar' };
- *   let result = assignWithDepth(config_0, config_1);
- *   console.log(result);
- *   //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
- *   ```
- *
- *   Traditional Object.assign would have clobbered foo in config_0 with foo in config_1. If src is a
- *   destructured array of objects and dst is not an array, assignWithDepth will apply each element
- *   of src to dst in order.
- * @param dst
- * @param src
- * @param config
- * @param dst
- * @param src
- * @param config
- * @param dst
- * @param src
- * @param config
- * @param {any} dst - The destination of the merge
- * @param {any} src - The source object(s) to merge into destination
- * @param {{ depth: number; clobber: boolean }} [config={ depth: 2, clobber: false }] - Depth: depth
- *   to traverse within src and dst for merging - clobber: should dissimilar types clobber (default:
- *   { depth: 2, clobber: false }). Default is `{ depth: 2, clobber: false }`
- * @returns {any}
- */
-export const assignWithDepth = function (dst, src, config) {
-  const { depth, clobber } = Object.assign({ depth: 2, clobber: false }, config);
-  if (Array.isArray(src) && !Array.isArray(dst)) {
-    src.forEach((s) => assignWithDepth(dst, s, config));
-    return dst;
-  } else if (Array.isArray(src) && Array.isArray(dst)) {
-    src.forEach((s) => {
-      if (dst.indexOf(s) === -1) {
-        dst.push(s);
-      }
-    });
-    return dst;
-  }
-  if (typeof dst === 'undefined' || depth <= 0) {
-    if (dst !== undefined && dst !== null && typeof dst === 'object' && typeof src === 'object') {
-      return Object.assign(dst, src);
-    } else {
-      return src;
-    }
-  }
-  if (typeof src !== 'undefined' && typeof dst === 'object' && typeof src === 'object') {
-    Object.keys(src).forEach((key) => {
-      if (
-        typeof src[key] === 'object' &&
-        (dst[key] === undefined || typeof dst[key] === 'object')
-      ) {
-        if (dst[key] === undefined) {
-          dst[key] = Array.isArray(src[key]) ? [] : {};
-        }
-        dst[key] = assignWithDepth(dst[key], src[key], { depth: depth - 1, clobber });
-      } else if (clobber || (typeof dst[key] !== 'object' && typeof src[key] !== 'object')) {
-        dst[key] = src[key];
-      }
-    });
-  }
-  return dst;
 };
 
 export const getTextObj = function () {
@@ -1096,7 +941,6 @@ export default {
   setupGraphViewbox,
   detectInit,
   detectDirective,
-  detectType,
   isSubstringInArray,
   interpolateToCurve,
   calcLabelPosition,

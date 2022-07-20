@@ -19,56 +19,27 @@ import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
-import c4Db from './diagrams/c4/c4Db';
-import c4Renderer from './diagrams/c4/c4Renderer';
-import c4Parser from './diagrams/c4/parser/c4Diagram';
+import apa from './diagram-api/diagram-orchestration';
 import classDb from './diagrams/class/classDb';
-import classRenderer from './diagrams/class/classRenderer';
-import classRendererV2 from './diagrams/class/classRenderer-v2';
-import classParser from './diagrams/class/parser/classDiagram';
-import erDb from './diagrams/er/erDb';
-import erRenderer from './diagrams/er/erRenderer';
-import erParser from './diagrams/er/parser/erDiagram';
 import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import flowRendererV2 from './diagrams/flowchart/flowRenderer-v2';
-import flowParser from './diagrams/flowchart/parser/flow';
 import ganttDb from './diagrams/gantt/ganttDb';
 import ganttRenderer from './diagrams/gantt/ganttRenderer';
-import ganttParser from './diagrams/gantt/parser/gantt';
-import gitGraphAst from './diagrams/git/gitGraphAst';
-import gitGraphRenderer from './diagrams/git/gitGraphRenderer';
-import gitGraphParser from './diagrams/git/parser/gitGraph';
-import infoDb from './diagrams/info/infoDb';
-import infoRenderer from './diagrams/info/infoRenderer';
-import infoParser from './diagrams/info/parser/info';
-import pieParser from './diagrams/pie/parser/pie';
-import pieDb from './diagrams/pie/pieDb';
-import pieRenderer from './diagrams/pie/pieRenderer';
-import addSVGAccessibilityFields from './diagrams/pie/pieRenderer';
-import requirementParser from './diagrams/requirement/parser/requirementDiagram';
-import requirementDb from './diagrams/requirement/requirementDb';
-import requirementRenderer from './diagrams/requirement/requirementRenderer';
-import sequenceParser from './diagrams/sequence/parser/sequenceDiagram';
-import sequenceDb from './diagrams/sequence/sequenceDb';
 import sequenceRenderer from './diagrams/sequence/sequenceRenderer';
-import stateParser from './diagrams/state/parser/stateDiagram';
-import stateDb from './diagrams/state/stateDb';
 import stateRenderer from './diagrams/state/stateRenderer';
 import stateRendererV2 from './diagrams/state/stateRenderer-v2';
-import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
-import journeyParser from './diagrams/user-journey/parser/journey';
 import Diagram from './Diagram';
 import errorRenderer from './errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
-import utils, { directiveSanitizer, assignWithDepth, sanitizeCss } from './utils';
+import utils, { directiveSanitizer } from './utils';
+import assignWithDepth from './assignWithDepth';
 import DOMPurify from 'dompurify';
 import mermaid from './mermaid';
-
 /**
  * @param text
  * @param dia
@@ -77,20 +48,9 @@ import mermaid from './mermaid';
 function parse(text, dia) {
   var parseEncounteredException = false;
   try {
-    text = text + '\n';
     const diag = dia ? dia : new Diagram(text);
     diag.db.clear();
-    const cnf = configApi.getConfig();
-    let parser = diag.parser;
-
-    log.debug('Type ' + diag.type);
-    parser.parser.yy.graphType = diag.type;
-    parser.parser.yy.parseError = (str, hash) => {
-      const error = { str, hash };
-      throw error;
-    };
-
-    parser.parse(text);
+    return diag.parse(text);
   } catch (error) {
     parseEncounteredException = true;
     // Is this the correct way to access mermiad's parseError()
@@ -290,6 +250,7 @@ const render = function (id, _txt, cb, container) {
 
   txt = encodeEntities(txt);
 
+  // Imortant that we do not create the diagram until after the directives have been included
   const diag = new Diagram(txt);
   // Get the tmp element containing the the svg
   const element = root.select('#d' + id).node();

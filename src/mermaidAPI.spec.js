@@ -1,6 +1,6 @@
 import mermaid from './mermaid';
 import mermaidAPI from './mermaidAPI';
-import { assignWithDepth } from './utils';
+import assignWithDepth from './assignWithDepth';
 
 describe('when using mermaidAPI and ', function () {
   describe('doing initialize ', function () {
