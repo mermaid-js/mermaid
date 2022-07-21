@@ -35,6 +35,14 @@ import journeyDb from '../diagrams/user-journey/journeyDb';
 import journeyRenderer from '../diagrams/user-journey/journeyRenderer';
 import journeyParser from '../diagrams/user-journey/parser/journey';
 import { addDetector } from './detectType';
+import { sanitizeText as _sanitizeText } from '../diagrams/common/common';
+import { getConfig as _getConfig } from '../config';
+let title = '';
+let diagramTitle = '';
+let description = '';
+
+export const getConfig = _getConfig;
+export const sanitizeText = (txt) => _sanitizeText(txt, getConfig());
 
 const diagrams = {
   c4: {
