@@ -260,7 +260,7 @@ UpdateRelStyle(customerA, bankA, $offsetY="60")
     System_Ext(mbs, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
 
     Container_Boundary(api, "API Application") {
-        Component(sign, "Sign In Controller", "MVC Rest Controlle", "Allows users to sign in to the internet banking system")
+        Component(sign, "Sign In Controller", "MVC Rest Controller", "Allows users to sign in to the internet banking system")
         Component(accounts, "Accounts Summary Controller", "MVC Rest Controller", "Provides customers with a summary of their bank accounts")
         Component(security, "Security Component", "Spring Bean", "Provides functionality related to singing in, changing passwords, etc.")
         Component(mbsfacade, "Mainframe Banking System Facade", "Spring Bean", "A facade onto the mainframe banking system.")
