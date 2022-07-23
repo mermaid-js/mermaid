@@ -1818,6 +1818,11 @@ const config = {
     external_component_queue_bg_color: '#CCCCCC',
     external_component_queue_border_color: '#BFBFBF',
   },
+  mindmap: {
+    useMaxWidth: true,
+    diagramPadding: 10,
+    maxNodeWidth: 200,
+  },
 };
 
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;

@@ -1,6 +1,5 @@
 /** Created by knut on 15-01-14. */
-import { log } from '../../logger';
-import { sanitizeText } from '../../diagram-api/diagramAPI';
+import { log, sanitizeText, getConfig } from '../../diagram-api/diagramAPI';
 
 var message = '';
 var info = false;
@@ -26,7 +25,14 @@ export const getMindmap = () => {
   return nodes.length > 0 ? nodes[0] : null;
 };
 export const addNode = (level, id, descr, type) => {
-  const node = { id: sanitizeText(id), level, descr: sanitizeText(descr), type, children: [] };
+  const node = {
+    id: sanitizeText(id),
+    level,
+    descr: sanitizeText(descr),
+    type,
+    children: [],
+    width: getConfig().mindmap.maxNodeWidth,
+  };
   const parent = getParent(level);
   if (parent) {
     parent.children.push(node);

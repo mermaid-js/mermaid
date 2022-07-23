@@ -1,4 +1,4 @@
-const detector = (txt) => {
+const detector = function detect(txt) {
   if (txt.match(/^\s*mindmap/)) {
     return 'mindmap';
   }

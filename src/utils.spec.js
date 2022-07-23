@@ -1,7 +1,10 @@
 import utils from './utils';
 import assignWithDepth from './assignWithDepth';
 import detectType from './diagram-api/detectType';
-import './diagram-api/diagram-orchestration';
+import addDiagrams from './diagram-api/diagram-orchestration';
+
+// Orchestrating diagrams and adding the dynamic ones to the list of diagrams
+addDiagrams();
 
 describe('when assignWithDepth: should merge objects within objects', function () {
   it('should handle simple, depth:1 types (identity)', function () {
@@ -214,7 +217,7 @@ Alice->Bob: hi`;
     const type = detectType(str);
     expect(type).toBe('flowchart');
   });
-  it('should handle a graph definition for gitGraph', function () {
+  fit('should handle a graph definition for gitGraph', function () {
     const str = '  \n  gitGraph TB:\nbfs1:queue';
     const type = detectType(str);
     expect(type).toBe('gitGraph');

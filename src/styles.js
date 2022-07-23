@@ -2,7 +2,7 @@ import classDiagram from './diagrams/class/styles';
 import er from './diagrams/er/styles';
 import flowchart from './diagrams/flowchart/styles';
 import gantt from './diagrams/gantt/styles';
-import gitGraph from './diagrams/git/styles';
+// import gitGraph from './diagrams/git/styles';
 import info from './diagrams/info/styles';
 import pie from './diagrams/pie/styles';
 import requirement from './diagrams/requirement/styles';
@@ -22,7 +22,7 @@ const themes = {
   class: classDiagram,
   stateDiagram,
   state: stateDiagram,
-  gitGraph,
+  // gitGraph,
   info,
   pie,
   er,
@@ -87,6 +87,10 @@ const getStyles = (type, userStyles, options) => {
 
   ${userStyles}
 `;
+};
+
+export const addStylesForDiagram = (type, diagramTheme, options) => {
+  themes[type] = diagramTheme;
 };
 
 export default getStyles;
