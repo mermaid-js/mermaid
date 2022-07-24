@@ -1,5 +1,7 @@
 const lineBreakRegex = /<br\s*\/?>/gi;
 import { select } from 'd3';
+import db from './mindmapDb';
+
 /**
  * @param {string} text The text to be wrapped
  * @param {number} width The max width of the text
@@ -88,13 +90,21 @@ export const drawNode = function (elem, node, conf) {
     .call(wrap, node.width);
   const bbox = txt.node().getBBox();
   node.height = bbox.height + conf.fontSize * 1.1 * 0.5;
-  r.attr('height', node.height).attr('y', (-1 * node.height) / 2);
+  r.attr('height', node.height); // .attr('y', (-1 * node.height) / 2);
 
-  txt.attr('transform', 'translate( 0,' + (-1 * node.height) / 2 + ')');
   // Position the node to its coordinate
   if (node.x || node.y) {
     nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
   }
+  db.setElementForId(node.id, nodeElem);
   return node.height;
 };
-export default { drawNode };
+export const positionNode = function (node, conf) {
+  const nodeElem = db.getElementById(node.id);
+
+  const x = node.x || 0;
+  const y = node.y || 0;
+  // Position the node to its coordinate
+  nodeElem.attr('transform', 'translate(' + x + ',' + y + ')');
+};
+export default { drawNode, positionNode };

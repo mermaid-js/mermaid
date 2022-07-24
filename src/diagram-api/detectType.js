@@ -83,7 +83,6 @@ const detectType = function (text, cnf) {
   if (cnf && cnf.flowchart && cnf.flowchart.defaultRenderer === 'dagre-wrapper')
     return 'flowchart-v2';
   const k = Object.keys(detectors);
-  console.log('here', k);
   for (let i = 0; i < k.length; i++) {
     const key = k[i];
     console.log('Detecting type for', key);

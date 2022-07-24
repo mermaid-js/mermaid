@@ -5,9 +5,12 @@ var message = '';
 var info = false;
 const root = {};
 let nodes = [];
-
+let cnt = 0;
+let elements = {};
 export const clear = () => {
   nodes = [];
+  cnt = 0;
+  elements = {};
 };
 
 const getParent = function (level) {
@@ -26,7 +29,8 @@ export const getMindmap = () => {
 };
 export const addNode = (level, id, descr, type) => {
   const node = {
-    id: sanitizeText(id),
+    id: cnt++,
+    nodeId: sanitizeText(id),
     level,
     descr: sanitizeText(descr),
     type,
@@ -79,6 +83,11 @@ export const getTypeFromStart = (str) => {
       return nodeType.DEFAULT;
   }
 };
+
+export const setElementForId = (id, element) => {
+  elements[id] = element;
+};
+
 export const decorateNode = (decoration) => {
   console.log('decorateNode', decoration);
   const node = nodes[nodes.length - 1];
@@ -96,5 +105,9 @@ export default {
   nodeType,
   getTypeFromStart,
   decorateNode,
+  setElementForId,
+  getElementById: (id) => elements[id],
+  // getNodeById: (id) => nodes.find((node) => node.id === id),
+  getNodeById: (id) => nodes[id],
   // parseError
 };

@@ -85,7 +85,7 @@ describe('when parsing a mindmap ', function () {
 
       mindmap.parse(str);
       const mm = mindmap.yy.getMindmap();
-      expect(mm.id).toEqual('root');
+      expect(mm.nodeId).toEqual('root');
       expect(mm.descr).toEqual('The root');
       expect(mm.type).toEqual(mindmap.yy.nodeType.RECT);
     });
@@ -100,7 +100,7 @@ describe('when parsing a mindmap ', function () {
       expect(mm.children.length).toEqual(1);
       const child = mm.children[0];
       expect(child.descr).toEqual('child1');
-      expect(child.id).toEqual('theId');
+      expect(child.nodeId).toEqual('theId');
       expect(child.type).toEqual(mindmap.yy.nodeType.ROUNDED_RECT);
     });
     it('should handle an id and type for a node definition', function () {
@@ -114,7 +114,7 @@ root
       expect(mm.children.length).toEqual(1);
       const child = mm.children[0];
       expect(child.descr).toEqual('child1');
-      expect(child.id).toEqual('theId');
+      expect(child.nodeId).toEqual('theId');
       expect(child.type).toEqual(mindmap.yy.nodeType.ROUNDED_RECT);
     });
     it('mutiple types (circle)', function () {
@@ -139,7 +139,7 @@ root((the root))
 
       mindmap.parse(str);
       const mm = mindmap.yy.getMindmap();
-      expect(mm.id).toEqual('root');
+      expect(mm.nodeId).toEqual('root');
       expect(mm.descr).toEqual('The root');
       expect(mm.type).toEqual(mindmap.yy.nodeType.RECT);
       expect(mm.icon).toEqual('bomb');
@@ -153,7 +153,7 @@ root((the root))
 
       mindmap.parse(str);
       const mm = mindmap.yy.getMindmap();
-      expect(mm.id).toEqual('root');
+      expect(mm.nodeId).toEqual('root');
       expect(mm.descr).toEqual('The root');
       expect(mm.type).toEqual(mindmap.yy.nodeType.RECT);
       expect(mm.class).toEqual('m-4 p-8');
@@ -168,7 +168,7 @@ root((the root))
 
       mindmap.parse(str);
       const mm = mindmap.yy.getMindmap();
-      expect(mm.id).toEqual('root');
+      expect(mm.nodeId).toEqual('root');
       expect(mm.descr).toEqual('The root');
       expect(mm.type).toEqual(mindmap.yy.nodeType.RECT);
       expect(mm.class).toEqual('m-4 p-8');
@@ -182,7 +182,7 @@ root((the root))
 `;
       mindmap.parse(str);
       const mm = mindmap.yy.getMindmap();
-      expect(mm.id).toEqual('root');
+      expect(mm.nodeId).toEqual('root');
       expect(mm.descr).toEqual('String containing []');
     });
     it('should be possible to use node syntax in the descriptions in children', function () {
@@ -192,7 +192,7 @@ root((the root))
 `;
       mindmap.parse(str);
       const mm = mindmap.yy.getMindmap();
-      expect(mm.id).toEqual('root');
+      expect(mm.nodeId).toEqual('root');
       expect(mm.descr).toEqual('String containing []');
       expect(mm.children.length).toEqual(1);
       expect(mm.children[0].descr).toEqual('String containing ()');
