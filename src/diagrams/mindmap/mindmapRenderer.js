@@ -19,8 +19,25 @@ function drawNodes(svg, mindmap, conf) {
   }
 }
 
-/** @param {any} svg The svg element to draw the diagram onto */
-function drawEdges() {}
+/**
+ * @param {any} svg The svg element to draw the diagram onto
+ * @param edgesElem
+ * @param mindmap
+ * @param parent
+ * @param depth
+ * @param section
+ * @param conf
+ */
+function drawEdges(edgesElem, mindmap, parent, depth, section, conf) {
+  if (parent) {
+    svgDraw.drawEdge(edgesElem, mindmap, parent, depth, conf);
+  }
+  if (mindmap.children) {
+    mindmap.children.forEach((child, index) => {
+      drawEdges(edgesElem, child, mindmap, depth + 1, section < 0 ? index : section, conf);
+    });
+  }
+}
 
 /**
  * @param mindmap
@@ -232,6 +249,8 @@ export const draw = (text, id, version, diagObj) => {
     // Draw the graph and start with drawing the nodes without proper position
     // this gives us the size of the nodes and we can set the positions later
 
+    const edgesElem = svg.append('g');
+    edgesElem.attr('class', 'mindmap-edges');
     const nodesElem = svg.append('g');
     nodesElem.attr('class', 'mindmap-nodes');
     drawNodes(nodesElem, mm, conf);
@@ -243,8 +262,7 @@ export const draw = (text, id, version, diagObj) => {
     console.log(positionedMindmap);
 
     // After this we can draw, first the edges and the then nodes with the correct position
-    // drawEdges(svg, mm, conf);
-
+    drawEdges(edgesElem, positionedMindmap, null, 0, conf);
     positionNodes(positionedMindmap, conf);
 
     // Setup the view box and size of the svg element

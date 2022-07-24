@@ -99,6 +99,19 @@ export const drawNode = function (elem, node, conf) {
   db.setElementForId(node.id, nodeElem);
   return node.height;
 };
+
+export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, conf) {
+  edgesElem
+    .append('line')
+    .attr('x1', parent.x)
+    .attr('y1', parent.y + parent.height / 2)
+    .attr('x2', mindmap.x)
+    .attr('y2', mindmap.y + mindmap.height / 2)
+    .attr('stroke', '#88f')
+    .attr('stroke-width', 15 - depth * 3)
+    .attr('class', 'edge ');
+};
+
 export const positionNode = function (node, conf) {
   const nodeElem = db.getElementById(node.id);
 
@@ -107,4 +120,5 @@ export const positionNode = function (node, conf) {
   // Position the node to its coordinate
   nodeElem.attr('transform', 'translate(' + x + ',' + y + ')');
 };
-export default { drawNode, positionNode };
+
+export default { drawNode, positionNode, drawEdge };
