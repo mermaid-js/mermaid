@@ -30,7 +30,7 @@ function drawNodes(svg, mindmap, conf) {
  */
 function drawEdges(edgesElem, mindmap, parent, depth, section, conf) {
   if (parent) {
-    svgDraw.drawEdge(edgesElem, mindmap, parent, depth, conf);
+    svgDraw.drawEdge(edgesElem, mindmap, parent, depth, section, conf);
   }
   if (mindmap.children) {
     mindmap.children.forEach((child, index) => {
@@ -262,7 +262,7 @@ export const draw = (text, id, version, diagObj) => {
     console.log(positionedMindmap);
 
     // After this we can draw, first the edges and the then nodes with the correct position
-    drawEdges(edgesElem, positionedMindmap, null, 0, conf);
+    drawEdges(edgesElem, positionedMindmap, null, 0, -1, conf);
     positionNodes(positionedMindmap, conf);
 
     // Setup the view box and size of the svg element
