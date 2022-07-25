@@ -51,12 +51,16 @@ function wrap(text, width) {
 /**
  * @param {object} elem The D3 dom element in which the node is to be added
  * @param {object} node The node to be added
+ * @param section
  * @param {object} conf The configuration object
  * @returns {number} The height nodes dom element
  */
-export const drawNode = function (elem, node, conf) {
+export const drawNode = function (elem, node, section, conf) {
   const nodeElem = elem.append('g');
-  nodeElem.attr('class', 'mindmap-node');
+  nodeElem.attr(
+    'class',
+    'mindmap-node ' + (section === -1 ? 'section-root' : 'section-' + section)
+  );
 
   const rect = {
     fill: '#EDF2AE',
@@ -70,12 +74,13 @@ export const drawNode = function (elem, node, conf) {
 
   const r = nodeElem
     .append('rect')
-
     // .attr('width', node.width)
-    .attr('fill', rect.fill)
-    .attr('stroke', rect.stroke)
+    // .attr('fill', section === -1 ? rect.fill : section2Color(section))
+    // .attr('stroke', section === -1 ? rect.stroke : 0)
     .attr('rx', rect.rx)
-    .attr('ry', rect.ry);
+    .attr('ry', rect.ry)
+    .attr('id', 'node-' + node.id)
+    .attr('class', 'node-bkg ');
 
   const textElem = nodeElem.append('g');
 
@@ -99,35 +104,17 @@ export const drawNode = function (elem, node, conf) {
   db.setElementForId(node.id, nodeElem);
   return node.height;
 };
-const section2Color = function (section) {
-  switch (section) {
-    case 0:
-      return '#88f';
-    case 1:
-      return '#f88';
-    case 2:
-      return '#8f8';
-    case 3:
-      return '#f8f';
-    case 4:
-      return '#ff8';
-    case 5:
-      return '#8ff';
-    default:
-      return '#88f';
-  }
-};
+
 export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, section, conf) {
-  const color = section2Color(section);
   edgesElem
     .append('line')
     .attr('x1', parent.x + parent.width / 2)
     .attr('y1', parent.y + parent.height / 2)
     .attr('x2', mindmap.x + mindmap.width / 2)
     .attr('y2', mindmap.y + mindmap.height / 2)
-    .attr('stroke', color)
-    .attr('stroke-width', 15 - depth * 3)
-    .attr('class', 'edge ');
+    // .attr('stroke', color)
+    // .attr('stroke-width', 15 - depth * 3)
+    .attr('class', 'edge section-edge-' + section + ' edge-depth-' + depth);
 };
 
 export const positionNode = function (node, conf) {

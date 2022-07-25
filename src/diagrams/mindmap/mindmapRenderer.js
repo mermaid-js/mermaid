@@ -8,13 +8,14 @@ import db from './mindmapDb';
 /**
  * @param {any} svg The svg element to draw the diagram onto
  * @param {object} mindmap The maindmap data and hierarchy
+ * @param section
  * @param {object} conf The configuration object
  */
-function drawNodes(svg, mindmap, conf) {
-  svgDraw.drawNode(svg, mindmap, conf);
+function drawNodes(svg, mindmap, section, conf) {
+  svgDraw.drawNode(svg, mindmap, section, conf);
   if (mindmap.children) {
-    mindmap.children.forEach((child) => {
-      drawNodes(svg, child, conf);
+    mindmap.children.forEach((child, index) => {
+      drawNodes(svg, child, section < 0 ? index : section, conf);
     });
   }
 }
@@ -253,7 +254,7 @@ export const draw = (text, id, version, diagObj) => {
     edgesElem.attr('class', 'mindmap-edges');
     const nodesElem = svg.append('g');
     nodesElem.attr('class', 'mindmap-nodes');
-    drawNodes(nodesElem, mm, conf);
+    drawNodes(nodesElem, mm, -1, conf);
 
     // Next step is to layout the mindmap, giving each node a position
 
