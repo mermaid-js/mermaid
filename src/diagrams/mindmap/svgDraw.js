@@ -78,14 +78,22 @@ const rectBkg = function (elem, node, section, conf) {
     .attr('height', node.height)
     .attr('width', node.width);
 };
+const circleBkg = function (elem, node, section, conf) {
+  const r = elem
+    .append('circle')
+    .attr('id', 'node-' + node.id)
+    .attr('class', 'node-bkg node-' + db.type2Str(node.type))
+    .attr('r', node.width / 2);
+  // .attr('width', node.width);
+};
 const roundedRectBkg = function (elem, node, section, conf) {
   const r = elem
     .append('rect')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
     .attr('height', node.height)
-    .attr('rx', conf.mindmap.padding)
-    .attr('ry', conf.mindmap.padding)
+    .attr('rx', node.padding)
+    .attr('ry', node.padding)
     .attr('width', node.width);
 };
 
@@ -100,7 +108,9 @@ export const drawNode = function (elem, node, section, conf) {
   const nodeElem = elem.append('g');
   nodeElem.attr(
     'class',
-    'mindmap-node ' + (section === -1 ? 'section-root' : 'section-' + section)
+    (node.class ? node.class + ' ' : '') +
+      'mindmap-node ' +
+      (section === -1 ? 'section-root' : 'section-' + section)
   );
   const bkgElem = nodeElem.append('g');
 
@@ -116,12 +126,14 @@ export const drawNode = function (elem, node, section, conf) {
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
   const bbox = txt.node().getBBox();
-  node.height = bbox.height + conf.fontSize * 1.1 * 0.5 + conf.mindmap.padding;
-  node.width = bbox.width + 2 * conf.mindmap.padding;
+  node.height = bbox.height + conf.fontSize * 1.1 * 0.5 + node.padding;
+  node.width = bbox.width + 2 * node.padding;
 
   // textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.height / 2 + ')');
-  textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + conf.mindmap.padding / 2 + ')');
-
+  textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
+  {
+    /* <i class="mdi mdi-arrange-bring-to-front"></i> */
+  }
   switch (node.type) {
     case db.nodeType.DEFAULT:
       defaultBkg(bkgElem, node, section, conf);
@@ -133,7 +145,8 @@ export const drawNode = function (elem, node, section, conf) {
       rectBkg(bkgElem, node, section, conf);
       break;
     case db.nodeType.CIRCLE:
-      rectBkg(bkgElem, node, section, conf);
+      bkgElem.attr('transform', 'translate(' + node.width / 2 + ', ' + +node.height / 2 + ')');
+      circleBkg(bkgElem, node, section, conf);
       break;
     default:
     // defaultBkg(bkgElem, node, section, conf);

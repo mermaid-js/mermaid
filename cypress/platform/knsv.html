@@ -7,6 +7,7 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet">
     <style>
       body {
         /* background: rgb(221, 208, 208); */
@@ -93,8 +94,9 @@ mindmap
       Child3(Child 3 has a long wrapped text as well)
         GrandChild3
         GrandChild4
-      Child4
-        GrandChild5
+      Child4((Child Num 4<br>with<br>wrap text))
+        GrandChild5[With icon]
+        :::(mdi mdi-numeric-8-circle)
         GrandChild6
       Child1
         GrandChild1
@@ -102,7 +104,9 @@ mindmap
           sc2
           sc3
         GrandChild2
-      Child5
+      Child5((Child5))
+      :::disabled
+
         GrandChild7
           sc1
           sc2

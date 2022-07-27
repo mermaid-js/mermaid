@@ -28,6 +28,7 @@ export const getMindmap = () => {
   return nodes.length > 0 ? nodes[0] : null;
 };
 export const addNode = (level, id, descr, type) => {
+  const conf = getConfig();
   const node = {
     id: cnt++,
     nodeId: sanitizeText(id),
@@ -37,6 +38,16 @@ export const addNode = (level, id, descr, type) => {
     children: [],
     width: getConfig().mindmap.maxNodeWidth,
   };
+  switch (node.type) {
+    case nodeType.ROUNDED_RECT:
+      node.padding = 2 * conf.mindmap.padding;
+      break;
+    case nodeType.RECT:
+      node.padding = 2 * conf.mindmap.padding;
+      break;
+    default:
+      node.padding = conf.mindmap.padding;
+  }
   const parent = getParent(level);
   if (parent) {
     parent.children.push(node);
