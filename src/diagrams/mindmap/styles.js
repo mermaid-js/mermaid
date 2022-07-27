@@ -21,6 +21,10 @@ const genSections = (options) => {
     .section-${i - 1} text {
      fill: ${options['gitBranchLabel' + i]};
     }
+    .node-icon-${i - 1} {
+      font-size: 40px;
+      color: ${options['gitBranchLabel' + i]};
+    }
     .section-edge-${i - 1}{
       stroke: ${options['git' + i]};
     }
@@ -54,6 +58,12 @@ const getStyles = (options) =>
   }
   .section-root text {
     fill: ${options.gitBranchLabel0};
+  }
+  .icon-container {
+    height:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;A
   }
 
 `;

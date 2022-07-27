@@ -128,12 +128,32 @@ export const drawNode = function (elem, node, section, conf) {
   const bbox = txt.node().getBBox();
   node.height = bbox.height + conf.fontSize * 1.1 * 0.5 + node.padding;
   node.width = bbox.width + 2 * node.padding;
-
-  // textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.height / 2 + ')');
-  textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
-  {
-    /* <i class="mdi mdi-arrange-bring-to-front"></i> */
+  if (node.icon) {
+    node.width += 50;
+    const orgHeight = node.height;
+    node.height = Math.max(orgHeight, 60);
+    const heightDiff = Math.abs(node.height - orgHeight);
+    const icon = nodeElem
+      .append('foreignObject')
+      .attr('width', '60px')
+      .attr('height', node.height)
+      .attr('style', 'text-align: center;margin-top:' + heightDiff / 2 + 'px;');
+    // .attr('x', 0)
+    // .attr('y', 0)
+    // .attr('class', 'node-icon ' + node.icon);
+    icon
+      .append('div')
+      .attr('class', 'icon-container')
+      .append('i')
+      .attr('class', 'node-icon-' + section + ' ' + node.icon);
+    textElem.attr(
+      'transform',
+      'translate(' + (25 + node.width / 2) + ', ' + (heightDiff / 2 + node.padding / 2) + ')'
+    );
+  } else {
+    textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.padding / 2 + ')');
   }
+
   switch (node.type) {
     case db.nodeType.DEFAULT:
       defaultBkg(bkgElem, node, section, conf);
