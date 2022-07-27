@@ -6,9 +6,9 @@ const genSections = (options) => {
   for (let i = 0; i < 8; i++) {
     options['lineColor' + i] = options['lineColor' + i] || options['gitBranchLabel' + i];
     if (isDark(options['lineColor' + i])) {
-      options['lineColor' + i] = lighten(options['lineColor' + i], 30);
+      options['lineColor' + i] = lighten(options['lineColor' + i], 20);
     } else {
-      options['lineColor' + i] = darken(options['lineColor' + i], 30);
+      options['lineColor' + i] = darken(options['lineColor' + i], 20);
     }
   }
 

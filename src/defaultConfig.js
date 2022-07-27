@@ -1820,7 +1820,7 @@ const config = {
   },
   mindmap: {
     useMaxWidth: true,
-    diagramPadding: 10,
+    padding: 50,
     maxNodeWidth: 200,
   },
 };

@@ -78,6 +78,16 @@ const rectBkg = function (elem, node, section, conf) {
     .attr('height', node.height)
     .attr('width', node.width);
 };
+const roundedRectBkg = function (elem, node, section, conf) {
+  const r = elem
+    .append('rect')
+    .attr('id', 'node-' + node.id)
+    .attr('class', 'node-bkg node-' + db.type2Str(node.type))
+    .attr('height', node.height)
+    .attr('rx', conf.mindmap.padding)
+    .attr('ry', conf.mindmap.padding)
+    .attr('width', node.width);
+};
 
 /**
  * @param {object} elem The D3 dom element in which the node is to be added
@@ -100,22 +110,24 @@ export const drawNode = function (elem, node, section, conf) {
     .append('text')
     .text(node.descr)
     .attr('dy', '1em')
+    // .attr('dy', '0')
     .attr('alignment-baseline', 'middle')
     .attr('dominant-baseline', 'middle')
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
   const bbox = txt.node().getBBox();
-  node.height = bbox.height + conf.fontSize * 1.1 * 0.5;
-  node.width = bbox.width + conf.fontSize * 1.1 * 0.5;
+  node.height = bbox.height + conf.fontSize * 1.1 * 0.5 + conf.mindmap.padding;
+  node.width = bbox.width + 2 * conf.mindmap.padding;
 
-  textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + 0 + ')');
+  // textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + node.height / 2 + ')');
+  textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + conf.mindmap.padding / 2 + ')');
 
   switch (node.type) {
     case db.nodeType.DEFAULT:
       defaultBkg(bkgElem, node, section, conf);
       break;
     case db.nodeType.ROUNDED_RECT:
-      rectBkg(bkgElem, node, section, conf);
+      roundedRectBkg(bkgElem, node, section, conf);
       break;
     case db.nodeType.RECT:
       rectBkg(bkgElem, node, section, conf);

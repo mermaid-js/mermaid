@@ -267,7 +267,7 @@ export const draw = (text, id, version, diagObj) => {
     positionNodes(positionedMindmap, conf);
 
     // Setup the view box and size of the svg element
-    setupGraphViewbox(undefined, svg, conf.mindmap.diagramPadding, conf.mindmap.useMaxWidth);
+    setupGraphViewbox(undefined, svg, conf.mindmap.padding, conf.mindmap.useMaxWidth);
   } catch (e) {
     log.error('Error while rendering info diagram');
     log.error(e.message);
