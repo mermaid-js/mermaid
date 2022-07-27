@@ -32,6 +32,7 @@ class Diagram {
       const error = { str, hash };
       throw error;
     };
+    this.db.clear();
     this.parser.parse(this.txt);
   }
   parse(text) {

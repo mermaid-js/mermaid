@@ -48,6 +48,37 @@ function wrap(text, width) {
     }
   });
 }
+
+const defaultBkg = function (elem, node, section, conf) {
+  const rd = 5;
+  const r = elem
+    .append('path')
+    .attr('id', 'node-' + node.id)
+    .attr('class', 'node-bkg node-' + db.type2Str(node.type))
+    .attr(
+      'd',
+      `M0 ${node.height - rd} v${-node.height + 2 * rd} q0,-5 5,-5 h${
+        node.width - 2 * rd
+      } q5,0 5,5 v${node.height - rd} H0 Z`
+    );
+
+  elem
+    .append('line')
+    .attr('class', 'node-line-' + section)
+    .attr('x1', 0)
+    .attr('y1', node.height)
+    .attr('x2', node.width)
+    .attr('y2', node.height);
+};
+const rectBkg = function (elem, node, section, conf) {
+  const r = elem
+    .append('rect')
+    .attr('id', 'node-' + node.id)
+    .attr('class', 'node-bkg node-' + db.type2Str(node.type))
+    .attr('height', node.height)
+    .attr('width', node.width);
+};
+
 /**
  * @param {object} elem The D3 dom element in which the node is to be added
  * @param {object} node The node to be added
@@ -61,29 +92,10 @@ export const drawNode = function (elem, node, section, conf) {
     'class',
     'mindmap-node ' + (section === -1 ? 'section-root' : 'section-' + section)
   );
+  const bkgElem = nodeElem.append('g');
 
-  const rect = {
-    fill: '#EDF2AE',
-    stroke: '#666',
-    width: node.width,
-    anchor: 'start',
-    height: 100,
-    rx: 3,
-    ry: 3,
-  };
-
-  const r = nodeElem
-    .append('rect')
-    // .attr('width', node.width)
-    // .attr('fill', section === -1 ? rect.fill : section2Color(section))
-    // .attr('stroke', section === -1 ? rect.stroke : 0)
-    .attr('rx', rect.rx)
-    .attr('ry', rect.ry)
-    .attr('id', 'node-' + node.id)
-    .attr('class', 'node-bkg ');
-
+  // Create the wrapped text element
   const textElem = nodeElem.append('g');
-
   const txt = textElem
     .append('text')
     .text(node.descr)
@@ -95,10 +107,28 @@ export const drawNode = function (elem, node, section, conf) {
   const bbox = txt.node().getBBox();
   node.height = bbox.height + conf.fontSize * 1.1 * 0.5;
   node.width = bbox.width + conf.fontSize * 1.1 * 0.5;
-  r.attr('height', node.height).attr('width', node.width);
+
   textElem.attr('transform', 'translate(' + node.width / 2 + ', ' + 0 + ')');
+
+  switch (node.type) {
+    case db.nodeType.DEFAULT:
+      defaultBkg(bkgElem, node, section, conf);
+      break;
+    case db.nodeType.ROUNDED_RECT:
+      rectBkg(bkgElem, node, section, conf);
+      break;
+    case db.nodeType.RECT:
+      rectBkg(bkgElem, node, section, conf);
+      break;
+    case db.nodeType.CIRCLE:
+      rectBkg(bkgElem, node, section, conf);
+      break;
+    default:
+    // defaultBkg(bkgElem, node, section, conf);
+  }
+
   // Position the node to its coordinate
-  if (node.x || node.y) {
+  if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
     nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
   }
   db.setElementForId(node.id, nodeElem);

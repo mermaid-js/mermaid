@@ -98,6 +98,22 @@ export const decorateNode = (decoration) => {
     node.class = sanitizeText(decoration.class);
   }
 };
+
+const type2Str = (type) => {
+  switch (type) {
+    case nodeType.DEFAULT:
+      return 'no-border';
+    case nodeType.RECT:
+      return 'rect';
+    case nodeType.ROUNDED_RECT:
+      return 'rounded-rect';
+    case nodeType.CIRCLE:
+      return 'circle';
+    default:
+      return 'no-border';
+  }
+};
+
 export default {
   getMindmap,
   addNode,
@@ -109,5 +125,6 @@ export default {
   getElementById: (id) => elements[id],
   // getNodeById: (id) => nodes.find((node) => node.id === id),
   getNodeById: (id) => nodes[id],
+  type2Str,
   // parseError
 };
