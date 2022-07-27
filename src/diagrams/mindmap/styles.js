@@ -63,7 +63,7 @@ const getStyles = (options) =>
     height:100%;
     display: flex;
     justify-content: center;
-    align-items: center;A
+    align-items: center;
   }
 
 `;
