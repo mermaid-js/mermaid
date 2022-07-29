@@ -53,7 +53,7 @@ const getStyles = (options) =>
     stroke-width: 3;
   }
   ${genSections(options)}
-  .section-root rect, .section-root path {
+  .section-root rect, .section-root path, .section-root circle  {
     fill: ${options.git0};
   }
   .section-root text {
@@ -65,6 +65,8 @@ const getStyles = (options) =>
     justify-content: center;
     align-items: center;
   }
-
+  .edge {
+    fill: none;
+  }
 `;
 export default getStyles;

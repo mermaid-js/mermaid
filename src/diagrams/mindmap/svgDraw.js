@@ -126,7 +126,8 @@ export const drawNode = function (elem, node, section, conf) {
     .attr('text-anchor', 'middle')
     .call(wrap, node.width);
   const bbox = txt.node().getBBox();
-  node.height = bbox.height + conf.fontSize * 1.1 * 0.5 + node.padding;
+  const fontSize = conf.fontSize.replace ? conf.fontSize.replace('px', '') : conf.fontSize;
+  node.height = bbox.height + fontSize * 1.1 * 0.5 + node.padding;
   node.width = bbox.width + 2 * node.padding;
   if (node.icon) {
     if (node.type === db.nodeType.CIRCLE) {
@@ -206,14 +207,33 @@ export const drawNode = function (elem, node, section, conf) {
 };
 
 export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, section, conf) {
+  // edgesElem
+  //   .append('line')
+  //   .attr('x1', parent.x + parent.width / 2)
+  //   .attr('y1', parent.y + parent.height / 2)
+  //   .attr('x2', mindmap.x + mindmap.width / 2)
+  //   .attr('y2', mindmap.y + mindmap.height / 2)
+  //   .attr('class', 'edge section-edge-' + section + ' edge-depth-' + depth);
+
+  //<path d="M100,250 Q250,100 400,250 T700,250" />
+
+  const sx = parent.x + parent.width / 2;
+  const sy = parent.y + parent.height / 2;
+  const ex = mindmap.x + mindmap.width / 2;
+  const ey = mindmap.y + mindmap.height / 2;
+  const mx = ex > sx ? sx + Math.abs(sx - ex) / 2 : sx - Math.abs(sx - ex) / 2;
+  const my = ey > sy ? sy + Math.abs(sy - ey) / 2 : sy - Math.abs(sy - ey) / 2;
+  const qx = ex > sx ? Math.abs(sx - mx) / 2 + sx : -Math.abs(sx - mx) / 2 + sx;
+  const qy = ey > sy ? Math.abs(sy - my) / 2 + sy : -Math.abs(sy - my) / 2 + sy;
+
   edgesElem
-    .append('line')
-    .attr('x1', parent.x + parent.width / 2)
-    .attr('y1', parent.y + parent.height / 2)
-    .attr('x2', mindmap.x + mindmap.width / 2)
-    .attr('y2', mindmap.y + mindmap.height / 2)
-    // .attr('stroke', color)
-    // .attr('stroke-width', 15 - depth * 3)
+    .append('path')
+    .attr(
+      'd',
+      parent.direction === 'TB' || parent.direction === 'BT'
+        ? `M${sx},${sy} Q${sx},${qy} ${mx},${my} T${ex},${ey}`
+        : `M${sx},${sy} Q${qx},${sy} ${mx},${my} T${ex},${ey}`
+    )
     .attr('class', 'edge section-edge-' + section + ' edge-depth-' + depth);
 };
 

@@ -160,7 +160,9 @@ function layoutMindmap(node, conf) {
   // const bb = new BoundingBox(10, 10);
   // const layout = new Layout(bb);
   // // const layout = new HorizontalLayout(bb);
-
+  if (node.children.length === 0) {
+    return node;
+  }
   const trees = [];
   // node.children.forEach((child, index) => {
   //   const tree = clone(node);
@@ -186,6 +188,13 @@ function layoutMindmap(node, conf) {
       trees.push(layout(tree, dirFromIndex(i), conf));
     }
   }
+  // Let each node know the direct of its tree for when we draw the branches.
+  trees.forEach((tree, index) => {
+    tree.result.direction = dirFromIndex(index);
+    eachNode(tree.result, (node) => {
+      node.direction = dirFromIndex(index);
+    });
+  });
 
   // Merge the trees into a single tree
   const result = mergeTrees(node, trees);
@@ -197,6 +206,7 @@ function layoutMindmap(node, conf) {
   //   res.result.children.push(tree.result);
   // });
   console.log('Trees', trees);
+  eachNode;
   return node;
 }
 /**
