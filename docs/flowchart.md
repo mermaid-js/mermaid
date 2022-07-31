@@ -618,6 +618,8 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
+?> Mermaid is now only compatible with Font Awesome versions 4 and 5. Check that you are using the correct version of Font Awesome.
+
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
