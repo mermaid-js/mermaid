@@ -193,7 +193,7 @@ export const drawText = function (elem, textData) {
       case 'start':
         textData.x = Math.round(textData.x + textData.textMargin);
         textData.anchor = 'start';
-        textData.dominantBaseline = 'text-after-edge';
+        textData.dominantBaseline = 'middle';
         textData.alignmentBaseline = 'middle';
         break;
       case 'middle':
@@ -207,7 +207,7 @@ export const drawText = function (elem, textData) {
       case 'end':
         textData.x = Math.round(textData.x + textData.width - textData.textMargin);
         textData.anchor = 'end';
-        textData.dominantBaseline = 'text-before-edge';
+        textData.dominantBaseline = 'middle';
         textData.alignmentBaseline = 'middle';
         break;
     }
@@ -847,9 +847,12 @@ const _drawTextCandidateFunc = (function () {
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
+    let _actorFontSize =
+      actorFontSize && actorFontSize.replace ? actorFontSize.replace('px', '') : actorFontSize;
+
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
-      const dy = i * actorFontSize - (actorFontSize * (lines.length - 1)) / 2;
+      const dy = i * _actorFontSize - (_actorFontSize * (lines.length - 1)) / 2;
       const text = g
         .append('text')
         .attr('x', x + width / 2)

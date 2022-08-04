@@ -1,10 +1,6 @@
 import graphlib from 'graphlib';
 import { select, curveLinear, selectAll } from 'd3';
-
-import flowDb from './flowDb';
-import flow from './parser/flow';
 import { getConfig } from '../../config';
-
 import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { log } from '../../logger';
@@ -30,8 +26,9 @@ export const setConf = function (cnf) {
  * @param root
  * @param doc
  * @param _doc
+ * @param diagObj
  */
-export const addVertices = function (vert, g, svgId, root, _doc) {
+export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
   const securityLevel = getConfig().securityLevel;
 
   const svg = !root ? select(`[id="${svgId}"]`) : root.select(`[id="${svgId}"]`);
@@ -144,7 +141,7 @@ export const addVertices = function (vert, g, svgId, root, _doc) {
     }
     // Add the node
     log.warn('Adding node', vertex.id, vertex.domId);
-    g.setNode(flowDb.lookUpDomId(vertex.id), {
+    g.setNode(diagObj.db.lookUpDomId(vertex.id), {
       labelType: 'svg',
       labelStyle: styles.labelStyle,
       shape: _shape,
@@ -153,7 +150,7 @@ export const addVertices = function (vert, g, svgId, root, _doc) {
       ry: radious,
       class: classStr,
       style: styles.style,
-      id: flowDb.lookUpDomId(vertex.id),
+      id: diagObj.db.lookUpDomId(vertex.id),
     });
   });
 };
@@ -163,8 +160,9 @@ export const addVertices = function (vert, g, svgId, root, _doc) {
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
+ * @param diagObj
  */
-export const addEdges = function (edges, g) {
+export const addEdges = function (edges, g, diagObj) {
   let cnt = 0;
 
   let defaultStyle;
@@ -264,7 +262,7 @@ export const addEdges = function (edges, g) {
     edgeData.minlen = edge.length || 1;
 
     // Add the edge to the graph
-    g.setEdge(flowDb.lookUpDomId(edge.start), flowDb.lookUpDomId(edge.end), edgeData, cnt);
+    g.setEdge(diagObj.db.lookUpDomId(edge.start), diagObj.db.lookUpDomId(edge.end), edgeData, cnt);
   });
 };
 
@@ -272,18 +270,16 @@ export const addEdges = function (edges, g) {
  * Returns the all the styles from classDef statements in the graph definition.
  *
  * @param text
+ * @param diagObj
  * @returns {object} ClassDef styles
  */
-export const getClasses = function (text) {
+export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');
-  flowDb.clear();
+  diagObj.db.clear();
   try {
-    const parser = flow.parser;
-    parser.yy = flowDb;
-
     // Parse the graph definition
-    parser.parse(text);
-    return flowDb.getClasses();
+    diagObj.parse(text);
+    return diagObj.db.getClasses();
   } catch (e) {
     return;
   }
@@ -294,14 +290,12 @@ export const getClasses = function (text) {
  *
  * @param text
  * @param id
+ * @param _version
+ * @param diagObj
  */
-export const draw = function (text, id) {
+export const draw = function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
-  flowDb.clear();
-  flowDb.setGen('gen-1');
-  const parser = flow.parser;
-  parser.yy = flowDb;
-
+  diagObj.db.clear();
   const securityLevel = getConfig().securityLevel;
   let sandboxElement;
   if (securityLevel === 'sandbox') {
@@ -314,14 +308,14 @@ export const draw = function (text, id) {
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   // Parse the graph definition
-  // try {
-  parser.parse(text);
-  // } catch (err) {
-  // log.debug('Parsing failed');
-  // }
+  try {
+    diagObj.parser.parse(text);
+  } catch (err) {
+    log.debug('Parsing failed');
+  }
 
   // Fetch the default direction, use TD if none was found
-  let dir = flowDb.getDirection();
+  let dir = diagObj.db.getDirection();
   if (typeof dir === 'undefined') {
     dir = 'TD';
   }
@@ -347,17 +341,17 @@ export const draw = function (text, id) {
     });
 
   let subG;
-  const subGraphs = flowDb.getSubGraphs();
+  const subGraphs = diagObj.db.getSubGraphs();
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
-    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
+    diagObj.db.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
   }
 
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
-  const vert = flowDb.getVertices();
+  const vert = diagObj.db.getVertices();
   log.warn('Get vertices', vert);
 
-  const edges = flowDb.getEdges();
+  const edges = diagObj.db.getEdges();
 
   let i = 0;
   for (i = subGraphs.length - 1; i >= 0; i--) {
@@ -369,14 +363,14 @@ export const draw = function (text, id) {
       log.warn(
         'Setting subgraph',
         subG.nodes[j],
-        flowDb.lookUpDomId(subG.nodes[j]),
-        flowDb.lookUpDomId(subG.id)
+        diagObj.db.lookUpDomId(subG.nodes[j]),
+        diagObj.db.lookUpDomId(subG.id)
       );
-      g.setParent(flowDb.lookUpDomId(subG.nodes[j]), flowDb.lookUpDomId(subG.id));
+      g.setParent(diagObj.db.lookUpDomId(subG.nodes[j]), diagObj.db.lookUpDomId(subG.id));
     }
   }
-  addVertices(vert, g, id, root, doc);
-  addEdges(edges, g);
+  addVertices(vert, g, id, root, doc, diagObj);
+  addEdges(edges, g, diagObj);
 
   // Create the renderer
   const Render = dagreD3.render;
@@ -425,31 +419,30 @@ export const draw = function (text, id) {
 
   // Set up an SVG group so that we can translate the final graph.
   const svg = root.select(`[id="${id}"]`);
-  svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   // Adds title and description to the flow chart
-  addSVGAccessibilityFields(parser.yy, svg, id);
+  addSVGAccessibilityFields(diagObj.db, svg, id);
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
   render(element, g);
 
   element.selectAll('g.node').attr('title', function () {
-    return flowDb.getTooltip(this.id);
+    return diagObj.db.getTooltip(this.id);
   });
 
   // Index nodes
-  flowDb.indexNodes('subGraph' + i);
+  diagObj.db.indexNodes('subGraph' + i);
 
   // reposition labels
   for (i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i];
     if (subG.title !== 'undefined') {
       const clusterRects = doc.querySelectorAll(
-        '#' + id + ' [id="' + flowDb.lookUpDomId(subG.id) + '"] rect'
+        '#' + id + ' [id="' + diagObj.db.lookUpDomId(subG.id) + '"] rect'
       );
       const clusterEl = doc.querySelectorAll(
-        '#' + id + ' [id="' + flowDb.lookUpDomId(subG.id) + '"]'
+        '#' + id + ' [id="' + diagObj.db.lookUpDomId(subG.id) + '"]'
       );
 
       const xPos = clusterRects[0].x.baseVal.value;
@@ -493,7 +486,7 @@ export const draw = function (text, id) {
     const vertex = vert[key];
 
     if (vertex.link) {
-      const node = root.select('#' + id + ' [id="' + flowDb.lookUpDomId(key) + '"]');
+      const node = root.select('#' + id + ' [id="' + diagObj.db.lookUpDomId(key) + '"]');
       if (node) {
         const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));

@@ -207,4 +207,50 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
+
+  it('12: should render commits for more than 8 branches', () => {
+    imgSnapshotTest(
+      `
+      gitGraph
+      checkout main
+      commit
+      checkout main
+      branch branch1
+      commit
+      checkout main
+      merge branch1
+      branch branch2
+      commit
+      checkout main
+      merge branch2
+      branch branch3
+      commit
+      checkout main
+      merge branch3
+      branch branch4
+      commit
+      checkout main
+      merge branch4
+      branch branch5
+      commit
+      checkout main
+      merge branch5
+      branch branch6
+      commit
+      checkout main
+      merge branch6
+      branch branch7
+      commit
+      checkout main
+      merge branch7
+      branch branch8
+      commit
+      checkout main
+      merge branch8
+      branch branch9
+      commit
+      `,
+      {}
+    );
+  });
 });

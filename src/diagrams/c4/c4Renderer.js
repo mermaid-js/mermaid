@@ -5,13 +5,8 @@ import { parser } from './parser/c4Diagram';
 import common from '../common/common';
 import c4Db from './c4Db';
 import * as configApi from '../../config';
-import utils, {
-  wrapLabel,
-  calculateTextWidth,
-  calculateTextHeight,
-  assignWithDepth,
-  configureSvgSize,
-} from '../../utils';
+import assignWithDepth from '../../assignWithDepth';
+import { wrapLabel, calculateTextWidth, calculateTextHeight, configureSvgSize } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let globalBoundaryMaxX = 0,
@@ -25,7 +20,7 @@ parser.yy = c4Db;
 let conf = {};
 
 class Bounds {
-  constructor() {
+  constructor(diagObj) {
     this.name = '';
     this.data = {};
     this.data.startx = undefined;
@@ -41,7 +36,7 @@ class Bounds {
     this.nextData.stopy = undefined;
     this.nextData.cnt = 0;
 
-    setConf(parser.yy.getConfig());
+    setConf(diagObj.db.getConfig());
   }
 
   setData(startx, stopx, starty, stopy) {
@@ -96,7 +91,7 @@ class Bounds {
     this.updateVal(this.nextData, 'stopy', _stopy, Math.max);
   }
 
-  init() {
+  init(diagObj) {
     this.name = '';
     this.data = {
       startx: undefined,
@@ -112,7 +107,7 @@ class Bounds {
       stopy: undefined,
       cnt: 0,
     };
-    setConf(parser.yy.getConfig());
+    setConf(diagObj.db.getConfig());
   }
 
   bumpLastMargin(margin) {
@@ -411,13 +406,13 @@ let getIntersectPoints = function (fromNode, endNode) {
   return { startPoint: startPoint, endPoint: endPoint };
 };
 
-export const drawRels = function (diagram, rels, getC4ShapeObj) {
+export const drawRels = function (diagram, rels, getC4ShapeObj, diagObj) {
   let i = 0;
   for (let rel of rels) {
     i = i + 1;
     let relTextWrap = rel.wrap && conf.wrap;
     let relConf = messageFont(conf);
-    let diagramType = parser.yy.getC4Type();
+    let diagramType = diagObj.db.getC4Type();
     if (diagramType === 'C4Dynamic') rel.label.text = i + ': ' + rel.label.text;
     let textLimitWidth = calculateTextWidth(rel.label.text, relConf);
     calcC4ShapeTextWH('label', rel, relTextWrap, relConf, textLimitWidth);
@@ -446,9 +441,10 @@ export const drawRels = function (diagram, rels, getC4ShapeObj) {
  * @param parentBoundaryAlias
  * @param parentBounds
  * @param currentBoundarys
+ * @param diagObj
  */
-function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentBoundarys) {
-  let currentBounds = new Bounds();
+function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentBoundarys, diagObj) {
+  let currentBounds = new Bounds(diagObj);
   // Calculate the width limit of the boundar.  label/type 的长度，
   currentBounds.data.widthLimit =
     parentBounds.data.widthLimit / Math.min(c4BoundaryInRow, currentBoundarys.length);
@@ -527,8 +523,8 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
       currentBounds.setData(_x, _x, _y, _y);
     }
     currentBounds.name = currentBoundary.alias;
-    let currentPersonOrSystemArray = parser.yy.getC4ShapeArray(currentBoundary.alias);
-    let currentPersonOrSystemKeys = parser.yy.getC4ShapeKeys(currentBoundary.alias);
+    let currentPersonOrSystemArray = diagObj.db.getC4ShapeArray(currentBoundary.alias);
+    let currentPersonOrSystemKeys = diagObj.db.getC4ShapeKeys(currentBoundary.alias);
 
     if (currentPersonOrSystemKeys.length > 0) {
       drawC4ShapeArray(
@@ -539,13 +535,19 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
       );
     }
     parentBoundaryAlias = currentBoundary.alias;
-    let nextCurrentBoundarys = parser.yy.getBoundarys(parentBoundaryAlias);
+    let nextCurrentBoundarys = diagObj.db.getBoundarys(parentBoundaryAlias);
 
     if (nextCurrentBoundarys.length > 0) {
       // draw boundary inside currentBoundary
       // bounds.init();
       // parentBoundaryWidthLimit = bounds.data.stopx - bounds.startx;
-      drawInsideBoundary(diagram, parentBoundaryAlias, currentBounds, nextCurrentBoundarys);
+      drawInsideBoundary(
+        diagram,
+        parentBoundaryAlias,
+        currentBounds,
+        nextCurrentBoundarys,
+        diagObj
+      );
     }
     // draw boundary
     if (currentBoundary.alias !== 'global') drawBoundary(diagram, currentBoundary, currentBounds);
@@ -566,9 +568,12 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  *
  * @param {any} text
+ * @param _text
  * @param {any} id
+ * @param _version
+ * @param diagObj
  */
-export const draw = function (text, id) {
+export const draw = function (_text, id, _version, diagObj) {
   conf = configApi.getConfig().c4;
   const securityLevel = configApi.getConfig().securityLevel;
   // Handle root and Document for when rendering in sanbox mode
@@ -580,13 +585,10 @@ export const draw = function (text, id) {
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
-  let db = parser.yy;
+  let db = diagObj.db;
 
-  parser.yy.clear();
-  parser.yy.setWrap(conf.wrap);
-  parser.parse(text + '\n');
+  diagObj.db.setWrap(conf.wrap);
 
   c4ShapeInRow = db.getC4ShapeInRow();
   c4BoundaryInRow = db.getC4BoundaryInRow();
@@ -600,7 +602,7 @@ export const draw = function (text, id) {
   svgDraw.insertDatabaseIcon(diagram);
   svgDraw.insertClockIcon(diagram);
 
-  let screenBounds = new Bounds();
+  let screenBounds = new Bounds(diagObj);
 
   screenBounds.setData(
     conf.diagramMarginX,
@@ -613,12 +615,12 @@ export const draw = function (text, id) {
   globalBoundaryMaxX = conf.diagramMarginX;
   globalBoundaryMaxY = conf.diagramMarginY;
 
-  const title = parser.yy.getTitle();
-  const c4type = parser.yy.getC4Type();
-  let currentBoundarys = parser.yy.getBoundarys('');
+  const title = diagObj.db.getTitle();
+  const c4type = diagObj.db.getC4Type();
+  let currentBoundarys = diagObj.db.getBoundarys('');
   // switch (c4type) {
   //   case 'C4Context':
-  drawInsideBoundary(diagram, '', screenBounds, currentBoundarys);
+  drawInsideBoundary(diagram, '', screenBounds, currentBoundarys, diagObj);
   //     break;
   // }
 
@@ -628,7 +630,7 @@ export const draw = function (text, id) {
   svgDraw.insertArrowCrossHead(diagram);
   svgDraw.insertArrowFilledHead(diagram);
 
-  drawRels(diagram, parser.yy.getRels(), parser.yy.getC4Shape);
+  drawRels(diagram, diagObj.db.getRels(), diagObj.db.getC4Shape, diagObj);
 
   screenBounds.data.stopx = globalBoundaryMaxX;
   screenBounds.data.stopy = globalBoundaryMaxY;

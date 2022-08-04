@@ -4,7 +4,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g#flowchart-Function-2').click();
+      cy.get('body').find('g#flowchart-Function-4').click();
 
       cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
     });
@@ -12,7 +12,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g#flowchart-FunctionArg-18').click();
+      cy.get('body').find('g#flowchart-FunctionArg-28').click();
 
       cy.get('.created-by-click-2').should('have.text', 'Clicked By Flow: ARGUMENT');
     });
@@ -20,7 +20,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g[id="flowchart-FunctionArg-22"]').click();
+      cy.get('body').find('g[id="flowchart-FunctionArg-34"]').click();
 
       cy.get('.created-by-click-2').should('have.text', 'Clicked By Flow: ARGUMENT');
     });
@@ -28,7 +28,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('#flowchart-URL-3').click();
+      cy.get('body').find('#flowchart-URL-5').click();
 
       cy.location().should((location) => {
         expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
@@ -38,7 +38,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g[id="flowchart-2URL-7"]').click();
+      cy.get('body').find('g[id="flowchart-2URL-11"]').click();
 
       cy.location().should((location) => {
         expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
@@ -49,7 +49,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g#flowchart-Function-10').click();
+      cy.get('body').find('g#flowchart-Function-16').click();
 
       cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
     });
@@ -57,7 +57,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g[id="flowchart-1Function-14"]').click();
+      cy.get('body').find('g[id="flowchart-1Function-22"]').click();
 
       cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
     });
@@ -65,7 +65,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('#flowchart-URL-11').click();
+      cy.get('body').find('#flowchart-URL-17').click();
 
       cy.location().should((location) => {
         expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
@@ -75,7 +75,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_loose.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g[id="flowchart-2URL-15"]').click();
+      cy.get('body').find('g[id="flowchart-2URL-23"]').click();
 
       cy.location().should((location) => {
         expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
@@ -142,7 +142,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_strict.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g#flowchart-Function-2').click();
+      cy.get('body').find('g#flowchart-Function-4').click();
 
       cy.get('.created-by-click').should('not.exist');
       // cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
@@ -151,7 +151,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_strict.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g[id="flowchart-1Function-6"]').click();
+      cy.get('body').find('g[id="flowchart-1Function-10"]').click();
 
       // cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
       cy.get('.created-by-click').should('not.exist');
@@ -160,7 +160,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_strict.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g#flowchart-URL-3').click();
+      cy.get('body').find('g#flowchart-URL-5').click();
 
       cy.location().should((location) => {
         expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
@@ -170,7 +170,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_strict.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g[id="flowchart-2URL-7"]').click();
+      cy.get('body').find('g[id="flowchart-2URL-11"]').click();
 
       cy.location().should((location) => {
         expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
@@ -222,7 +222,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g#flowchart-Function-2').click();
+      cy.get('body').find('g#flowchart-Function-4').click();
 
       // cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
       cy.get('.created-by-click').should('not.exist');
@@ -231,7 +231,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g[id="flowchart-1Function-6"]').click();
+      cy.get('body').find('g[id="flowchart-1Function-10"]').click();
 
       cy.get('.created-by-click').should('not.exist');
       cy.get('.created-by-click').should('not.exist');
@@ -240,7 +240,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g#flowchart-URL-3').click();
+      cy.get('body').find('g#flowchart-URL-5').click();
 
       cy.location().should((location) => {
         expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');

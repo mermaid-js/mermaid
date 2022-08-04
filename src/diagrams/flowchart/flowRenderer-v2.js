@@ -28,8 +28,9 @@ export const setConf = function (cnf) {
  * @param svgId
  * @param root
  * @param doc
+ * @param diagObj
  */
-export const addVertices = function (vert, g, svgId, root, doc) {
+export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
   const svg = root.select(`[id="${svgId}"]`);
   const keys = Object.keys(vert);
 
@@ -152,8 +153,8 @@ export const addVertices = function (vert, g, svgId, root, doc) {
       id: vertex.id,
       link: vertex.link,
       linkTarget: vertex.linkTarget,
-      tooltip: flowDb.getTooltip(vertex.id) || '',
-      domId: flowDb.lookUpDomId(vertex.id),
+      tooltip: diagObj.db.getTooltip(vertex.id) || '',
+      domId: diagObj.db.lookUpDomId(vertex.id),
       haveCallback: vertex.haveCallback,
       width: vertex.type === 'group' ? 500 : undefined,
       dir: vertex.dir,
@@ -171,7 +172,7 @@ export const addVertices = function (vert, g, svgId, root, doc) {
       class: classStr,
       style: styles.style,
       id: vertex.id,
-      domId: flowDb.lookUpDomId(vertex.id),
+      domId: diagObj.db.lookUpDomId(vertex.id),
       width: vertex.type === 'group' ? 500 : undefined,
       type: vertex.type,
       dir: vertex.dir,
@@ -186,8 +187,9 @@ export const addVertices = function (vert, g, svgId, root, doc) {
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
+ * @param diagObj
  */
-export const addEdges = function (edges, g) {
+export const addEdges = function (edges, g, diagObj) {
   log.info('abc78 edges = ', edges);
   let cnt = 0;
   let linkIdCnt = {};
@@ -304,11 +306,7 @@ export const addEdges = function (edges, g) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
     }
-    // if (evaluate(getConfig().flowchart.htmlLabels) && false) {
-    //   // eslint-disable-line
-    //   edgeData.labelType = 'html';
-    //   edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
-    // } else {
+
     edgeData.labelType = 'text';
     edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
 
@@ -317,7 +315,6 @@ export const addEdges = function (edges, g) {
     }
 
     edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
-    // }
 
     edgeData.id = linkId;
     edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
@@ -331,22 +328,19 @@ export const addEdges = function (edges, g) {
  * Returns the all the styles from classDef statements in the graph definition.
  *
  * @param text
+ * @param diagObj
  * @returns {object} ClassDef styles
  */
-export const getClasses = function (text) {
+export const getClasses = function (text, diagObj) {
   log.info('Extracting classes');
-  flowDb.clear();
-  const parser = flow.parser;
-  parser.yy = flowDb;
-
+  diagObj.db.clear();
   try {
     // Parse the graph definition
-    parser.parse(text);
+    diagObj.parse(text);
+    return diagObj.db.getClasses();
   } catch (e) {
     return;
   }
-
-  return flowDb.getClasses();
 };
 
 /**
@@ -356,22 +350,15 @@ export const getClasses = function (text) {
  * @param id
  */
 
-export const draw = function (text, id) {
+export const draw = function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
-  flowDb.clear();
+  diagObj.db.clear();
   flowDb.setGen('gen-2');
-  const parser = flow.parser;
-  parser.yy = flowDb;
-
   // Parse the graph definition
-  // try {
-  parser.parse(text);
-  // } catch (err) {
-  // log.debug('Parsing failed');
-  // }
+  diagObj.parser.parse(text);
 
   // Fetch the default direction, use TD if none was found
-  let dir = flowDb.getDirection();
+  let dir = diagObj.db.getDirection();
   if (typeof dir === 'undefined') {
     dir = 'TD';
   }
@@ -409,18 +396,18 @@ export const draw = function (text, id) {
     });
 
   let subG;
-  const subGraphs = flowDb.getSubGraphs();
+  const subGraphs = diagObj.db.getSubGraphs();
   log.info('Subgraphs - ', subGraphs);
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
     log.info('Subgraph - ', subG);
-    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
+    diagObj.db.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
   }
 
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
-  const vert = flowDb.getVertices();
+  const vert = diagObj.db.getVertices();
 
-  const edges = flowDb.getEdges();
+  const edges = diagObj.db.getEdges();
 
   log.info(edges);
   let i = 0;
@@ -435,18 +422,17 @@ export const draw = function (text, id) {
       g.setParent(subG.nodes[j], subG.id);
     }
   }
-  addVertices(vert, g, id, root, doc);
-  addEdges(edges, g);
+  addVertices(vert, g, id, root, doc, diagObj);
+  addEdges(edges, g, diagObj);
 
   // Add custom shapes
   // flowChartShapes.addToRenderV2(addShape);
 
   // Set up an SVG group so that we can translate the final graph.
   const svg = root.select(`[id="${id}"]`);
-  svg.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   // Adds title and description to the flow chart
-  addSVGAccessibilityFields(parser.yy, svg, id);
+  addSVGAccessibilityFields(diagObj.db, svg, id);
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
@@ -455,7 +441,7 @@ export const draw = function (text, id) {
   setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 
   // Index nodes
-  flowDb.indexNodes('subGraph' + i);
+  diagObj.db.indexNodes('subGraph' + i);
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {

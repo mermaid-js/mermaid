@@ -1,12 +1,8 @@
 import { select } from 'd3';
-import { parser } from './parser/journey';
-import journeyDb from './journeyDb';
 import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
-
-parser.yy = journeyDb;
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
@@ -50,10 +46,10 @@ function drawActorLegend(diagram) {
 }
 const conf = getConfig().journey;
 const LEFT_MARGIN = getConfig().journey.leftMargin;
-export const draw = function (text, id) {
+export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().journey;
-  parser.yy.clear();
-  parser.parse(text + '\n');
+  diagObj.db.clear();
+  diagObj.parser.parse(text + '\n');
 
   const securityLevel = getConfig().securityLevel;
   // Handle root and Document for when rendering in sanbox mode
@@ -65,18 +61,17 @@ export const draw = function (text, id) {
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+  // const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   bounds.init();
   const diagram = root.select('#' + id);
-  diagram.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   svgDraw.initGraphics(diagram);
 
-  const tasks = parser.yy.getTasks();
-  const title = parser.yy.getDiagramTitle();
+  const tasks = diagObj.db.getTasks();
+  const title = diagObj.db.getDiagramTitle();
 
-  const actorNames = parser.yy.getActors();
+  const actorNames = diagObj.db.getActors();
   for (let member in actors) delete actors[member];
   let actorPos = 0;
   actorNames.forEach((actorName) => {
@@ -123,7 +118,7 @@ export const draw = function (text, id) {
   diagram.attr('preserveAspectRatio', 'xMinYMin meet');
   diagram.attr('height', height + extraVertForTitle + 25);
 
-  addSVGAccessibilityFields(parser.yy, diagram, id);
+  addSVGAccessibilityFields(diagObj.db, diagram, id);
 };
 
 export const bounds = {

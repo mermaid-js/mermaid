@@ -1,7 +1,5 @@
-import { curveBasis, line, select } from 'd3';
-import { interpolateToCurve, getStylesFromArray, configureSvgSize } from '../../utils';
-import db from './gitGraphAst';
-import gitGraphParser from './parser/gitGraph';
+import { select } from 'd3';
+import { configureSvgSize } from '../../utils';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
@@ -16,6 +14,8 @@ const commitType = {
   MERGE: 3,
   CHERRY_PICK: 4,
 };
+
+const THEME_COLOR_LIMIT = 8;
 
 let branchPos = {};
 let commitPos = {};
@@ -119,13 +119,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
         circle.attr('width', 20);
         circle.attr(
           'class',
-          'commit ' +
-            commit.id +
-            ' commit-highlight' +
-            branchPos[commit.branch].index +
-            ' ' +
-            typeClass +
-            '-outer'
+          `commit ${commit.id} commit-highlight${
+            branchPos[commit.branch].index % THEME_COLOR_LIMIT
+          } ${typeClass}-outer`
         );
         gBullets
           .append('rect')
@@ -135,13 +131,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('width', 12)
           .attr(
             'class',
-            'commit ' +
-              commit.id +
-              ' commit' +
-              branchPos[commit.branch].index +
-              ' ' +
-              typeClass +
-              '-inner'
+            `commit ${commit.id} commit${
+              branchPos[commit.branch].index % THEME_COLOR_LIMIT
+            } ${typeClass}-inner`
           );
       } else if (commit.type === commitType.CHERRY_PICK) {
         gBullets
@@ -149,21 +141,21 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('cx', x)
           .attr('cy', y)
           .attr('r', 10)
-          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+          .attr('class', `commit ${commit.id} ${typeClass}`);
         gBullets
           .append('circle')
           .attr('cx', x - 3)
           .attr('cy', y + 2)
           .attr('r', 2.75)
           .attr('fill', '#fff')
-          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+          .attr('class', `commit ${commit.id} ${typeClass}`);
         gBullets
           .append('circle')
           .attr('cx', x + 3)
           .attr('cy', y + 2)
           .attr('r', 2.75)
           .attr('fill', '#fff')
-          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+          .attr('class', `commit ${commit.id} ${typeClass}`);
         gBullets
           .append('line')
           .attr('x1', x + 3)
@@ -171,7 +163,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('x2', x)
           .attr('y2', y - 5)
           .attr('stroke', '#fff')
-          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+          .attr('class', `commit ${commit.id} ${typeClass}`);
         gBullets
           .append('line')
           .attr('x1', x - 3)
@@ -179,13 +171,16 @@ const drawCommits = (svg, commits, modifyGraph) => {
           .attr('x2', x)
           .attr('y2', y - 5)
           .attr('stroke', '#fff')
-          .attr('class', 'commit ' + commit.id + ' ' + typeClass);
+          .attr('class', `commit ${commit.id} ${typeClass}`);
       } else {
         const circle = gBullets.append('circle');
         circle.attr('cx', x);
         circle.attr('cy', y);
         circle.attr('r', commit.type === commitType.MERGE ? 9 : 10);
-        circle.attr('class', 'commit ' + commit.id + ' commit' + branchPos[commit.branch].index);
+        circle.attr(
+          'class',
+          `commit ${commit.id} commit${branchPos[commit.branch].index % THEME_COLOR_LIMIT}`
+        );
         if (commit.type === commitType.MERGE) {
           const circle2 = gBullets.append('circle');
           circle2.attr('cx', x);
@@ -193,7 +188,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
           circle2.attr('r', 6);
           circle2.attr(
             'class',
-            'commit ' + typeClass + ' ' + commit.id + ' commit' + branchPos[commit.branch].index
+            `commit ${typeClass} ${commit.id} commit${
+              branchPos[commit.branch].index % THEME_COLOR_LIMIT
+            }`
           );
         }
         if (commit.type === commitType.REVERSE) {
@@ -202,7 +199,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
             .attr('d', `M ${x - 5},${y - 5}L${x + 5},${y + 5}M${x - 5},${y + 5}L${x + 5},${y - 5}`)
             .attr(
               'class',
-              'commit ' + typeClass + ' ' + commit.id + ' commit' + branchPos[commit.branch].index
+              `commit ${typeClass} ${commit.id} commit${
+                branchPos[commit.branch].index % THEME_COLOR_LIMIT
+              }`
             );
         }
       }
@@ -432,7 +431,7 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
   const arrow = svg
     .append('path')
     .attr('d', lineDef)
-    .attr('class', 'arrow arrow' + colorClassNum);
+    .attr('class', 'arrow arrow' + (colorClassNum % THEME_COLOR_LIMIT));
 };
 
 const drawArrows = (svg, commits) => {
@@ -462,7 +461,7 @@ const drawBranches = (svg, branches) => {
   const gitGraphConfig = getConfig().gitGraph;
   const g = svg.append('g');
   branches.forEach((branch, index) => {
-    let adjustIndexForTheme = index >= 8 ? index - 8 : index;
+    const adjustIndexForTheme = index % THEME_COLOR_LIMIT;
 
     const pos = branchPos[branch.name].pos;
     const line = g.append('line');
@@ -515,23 +514,17 @@ const drawBranches = (svg, branches) => {
  * @param txt
  * @param id
  * @param ver
+ * @param diagObj
  */
-export const draw = function (txt, id, ver) {
+export const draw = function (txt, id, ver, diagObj) {
   clear();
   const conf = getConfig();
   const gitGraphConfig = getConfig().gitGraph;
   // try {
-  const parser = gitGraphParser.parser;
-  parser.yy = db;
-  parser.yy.clear();
-
   log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
-  // // Parse the graph definition
-  parser.parse(txt + '\n');
 
-  const direction = db.getDirection();
-  allCommitsDict = db.getCommits();
-  const branches = db.getBranchesAsObjArray();
+  allCommitsDict = diagObj.db.getCommits();
+  const branches = diagObj.db.getBranchesAsObjArray();
 
   // Position branches vertically
   let pos = 0;
@@ -543,7 +536,7 @@ export const draw = function (txt, id, ver) {
   const diagram = select(`[id="${id}"]`);
 
   // Adds title and description to the flow chart
-  addSVGAccessibilityFields(parser.yy, diagram, id);
+  addSVGAccessibilityFields(diagObj.db, diagram, id);
 
   drawCommits(diagram, allCommitsDict, false);
   if (gitGraphConfig.showBranches) {
