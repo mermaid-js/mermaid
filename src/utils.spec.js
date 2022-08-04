@@ -1,7 +1,9 @@
 import utils from './utils';
 import assignWithDepth from './assignWithDepth';
 import detectType from './diagram-api/detectType';
-import './diagram-api/diagram-orchestration';
+import addDiagrams from './diagram-api/diagram-orchestration';
+
+addDiagrams();
 
 describe('when assignWithDepth: should merge objects within objects', function () {
   it('should handle simple, depth:1 types (identity)', function () {
