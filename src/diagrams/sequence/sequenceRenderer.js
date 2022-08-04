@@ -229,7 +229,7 @@ const drawNote = function (elem, noteModel) {
   textObj.fontWeight = conf.noteFontWeight;
   textObj.anchor = conf.noteAlign;
   textObj.textMargin = conf.noteMargin;
-  textObj.valign = conf.noteAlign;
+  textObj.valign = 'center';
 
   let textElem = drawText(g, textObj);
 
@@ -342,7 +342,7 @@ const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
   textObj.fontSize = conf.messageFontSize;
   textObj.fontWeight = conf.messageFontWeight;
   textObj.anchor = conf.messageAlign;
-  textObj.valign = conf.messageAlign;
+  textObj.valign = 'center';
   textObj.textMargin = conf.wrapPadding;
   textObj.tspan = false;
 
