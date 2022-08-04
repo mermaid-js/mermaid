@@ -5237,9 +5237,9 @@ eslint-plugin-jest@^26.0.0:
     "@typescript-eslint/utils" "^5.10.0"
 
 eslint-plugin-jsdoc@^39.1.0:
-  version "39.3.3"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-39.3.3.tgz#75dd67ce581e7527a69f27800138cc0f9c388236"
-  integrity sha512-K/DAjKRUNaUTf0KQhI9PvsF+Y3mGDx/j0pofXsJCQe/tmRsRweBIXR353c8nAro0lytZYEf7l0PluBpzKDiHxw==
+  version "39.3.4"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-39.3.4.tgz#6d18c5a071ada5babce9636b02a6c8355e9de2e8"
+  integrity sha512-dYWXhMMHJaq++bY2hyByhgiRzt5qQ7XdfQGiHrU9f3APSSVZ/HuOnXuvUUX7W0jO55Udsu4/7iRlpF/yLFQdSA==
   dependencies:
     "@es-joy/jsdoccomment" "~0.31.0"
     comment-parser "1.3.1"
