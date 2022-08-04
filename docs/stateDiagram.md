@@ -249,3 +249,13 @@ stateDiagram-v2
 ## Styling
 
 Styling of the a state diagram is done by defining a number of css classes.  During rendering these classes are extracted from the file located at src/themes/state.scss
+
+## Spaces in state names
+
+Spaces can be added to a state by defining it at the top and referencing the acronym later.
+
+```mermaid-example
+stateDiagram-v2
+    Yswsii: Your state with spaces in it
+    [*] --> Yswsii
+```
