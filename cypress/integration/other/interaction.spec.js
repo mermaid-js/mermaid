@@ -222,7 +222,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g#flowchart-Function-2').click();
+      cy.get('body').find('g#flowchart-Function-4').click();
 
       // cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
       cy.get('.created-by-click').should('not.exist');
@@ -231,7 +231,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g[id="flowchart-1Function-6"]').click();
+      cy.get('body').find('g[id="flowchart-1Function-10"]').click();
 
       cy.get('.created-by-click').should('not.exist');
       cy.get('.created-by-click').should('not.exist');
@@ -240,7 +240,7 @@ describe('Interaction', () => {
       const url = 'http://localhost:9000/click_security_other.html';
       cy.viewport(1440, 1024);
       cy.visit(url);
-      cy.get('body').find('g#flowchart-URL-3').click();
+      cy.get('body').find('g#flowchart-URL-5').click();
 
       cy.location().should((location) => {
         expect(location.href).to.eq('http://localhost:9000/webpackUsage.html');
