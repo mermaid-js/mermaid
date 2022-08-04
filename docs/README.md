@@ -30,7 +30,8 @@ Mermaid allows even non-programmers to easily create detailed and diagrams throu
 [Tutorials](./Tutorials.md) has video tutorials.
 Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md).
 
-For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./n00b-gettingStarted.md) and [Usage](./usage.md).
+
+For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./n00b-overview.md) and [Usage](./usage.md).
 
 🌐 [CDN](https://unpkg.com/mermaid/) | 📖 [Documentation](https://mermaidjs.github.io) | 🙌 [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/docs/development.md) | 📜 [Version Log](./CHANGELOG.md) | 🔌 [Plug-Ins](./integrations.md)
 
