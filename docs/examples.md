@@ -141,7 +141,8 @@ sequenceDiagram
 ```
 
 ## A commit flow diagram.
-```mermaid
+
+```mermaid-example
 gitGraph:
     commit "Ashish"
     branch newbranch
