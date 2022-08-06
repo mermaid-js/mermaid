@@ -197,5 +197,24 @@ root((the root))
       expect(mm.children.length).toEqual(1);
       expect(mm.children[0].descr).toEqual('String containing ()');
     });
+    it('should be possible to have a child after a class assignment', function () {
+      var str = `mindmap
+  root(Root)
+    Child(Child)
+    :::hot
+      a(a)
+      b[New Stuff]`;
+      mindmap.parse(str);
+      const mm = mindmap.yy.getMindmap();
+      expect(mm.nodeId).toEqual('root');
+      expect(mm.descr).toEqual('Root');
+      expect(mm.children.length).toEqual(1);
+
+      const child = mm.children[0];
+      expect(child.nodeId).toEqual('Child');
+      expect(child.children[0].nodeId).toEqual('a');
+      expect(child.children.length).toEqual(2);
+      expect(child.children[1].nodeId).toEqual('b');
+    });
   });
 });

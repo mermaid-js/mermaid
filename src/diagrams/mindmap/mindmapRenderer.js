@@ -54,9 +54,7 @@ function eachNode(mindmap, callback) {
 }
 /** @param {object} mindmap */
 function transpose(mindmap) {
-  console.log('transpose', mindmap);
   eachNode(mindmap, (node) => {
-    // node.y = node.y - (node.y - bb.top) * 2 - node.height;
     const orgWidth = node.width;
     const orgX = node.x;
     node.width = node.height;
@@ -91,7 +89,7 @@ function rightToLeft(mindmap) {
  * @param conf
  */
 function layout(mindmap, dir, conf) {
-  const bb = new BoundingBox(40, 40);
+  const bb = new BoundingBox(60, 60);
 
   const layout = new Layout(bb);
   switch (dir) {

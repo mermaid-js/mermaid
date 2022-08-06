@@ -17,9 +17,11 @@
 
 %%
 
+\%\%.*\n {console.log('Found comment',yytext);}  /* skip comments */
+// \%\%[^\n]*\n                             /* skip comments */
 "mindmap"		       return 'MINDMAP';
 ":::"              { this.begin('CLASS'); }
-<CLASS>.+			     { return 'CLASS';this.popState(); }
+<CLASS>.+			     { this.popState();return 'CLASS'; }
 <CLASS>\n				   { this.popState();}
 [\n\s]*"::icon("   { this.begin('ICON'); }
 <ICON>[^\)]+			 { return 'ICON'; }
@@ -50,6 +52,7 @@
 start
 // %{	: info document 'EOF' { return yy; } }
 	: MINDMAP document  { return yy; }
+  |	SPACELIST MINDMAP document  { return yy; }
 	;
 
 document
