@@ -509,4 +509,16 @@ stateDiagram-v2
       expect(svg).to.not.have.attr('style');
     });
   });
+
+  it('v2 should render a state diagram and set the correct length of the labels', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram-v2
+      [*] --> 1
+      1 --> 2: test({ foo#colon; 'far' })
+      2 --> [*]
+    `,
+      { logLevel: 0, fontFamily: 'courier' }
+    );
+  });
 });

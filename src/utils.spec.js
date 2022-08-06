@@ -3,7 +3,6 @@ import assignWithDepth from './assignWithDepth';
 import detectType from './diagram-api/detectType';
 import addDiagrams from './diagram-api/diagram-orchestration';
 
-// Orchestrating diagrams and adding the dynamic ones to the list of diagrams
 addDiagrams();
 
 describe('when assignWithDepth: should merge objects within objects', function () {
@@ -217,7 +216,7 @@ Alice->Bob: hi`;
     const type = detectType(str);
     expect(type).toBe('flowchart');
   });
-  fit('should handle a graph definition for gitGraph', function () {
+  it('should handle a graph definition for gitGraph', function () {
     const str = '  \n  gitGraph TB:\nbfs1:queue';
     const type = detectType(str);
     expect(type).toBe('gitGraph');
