@@ -63,9 +63,11 @@
     "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
     "dompurify": "2.3.10",
+    "fast-clone": "^1.5.13",
     "graphlib": "^2.1.8",
     "khroma": "^2.0.0",
     "moment-mini": "^2.24.0",
+    "non-layered-tidy-tree-layout": "^2.0.2",
     "stylis": "^4.0.10"
   },
   "devDependencies": {

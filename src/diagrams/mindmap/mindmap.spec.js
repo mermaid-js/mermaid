@@ -119,7 +119,7 @@ root
     });
     it('mutiple types (circle)', function () {
       var str = `mindmap
-root((the root))
+ root((the root))
 `;
 
       mindmap.parse(str);
@@ -216,5 +216,24 @@ root((the root))
       expect(child.children.length).toEqual(2);
       expect(child.children[1].nodeId).toEqual('b');
     });
+  });
+  it('should be possible to have meaningless empty rows in a mindmap abc123', function () {
+    var str = `mindmap
+  root(Root)
+    Child(Child)
+      a(a)
+
+      b[New Stuff]`;
+    mindmap.parse(str);
+    const mm = mindmap.yy.getMindmap();
+    expect(mm.nodeId).toEqual('root');
+    expect(mm.descr).toEqual('Root');
+    expect(mm.children.length).toEqual(1);
+
+    const child = mm.children[0];
+    expect(child.nodeId).toEqual('Child');
+    expect(child.children[0].nodeId).toEqual('a');
+    expect(child.children.length).toEqual(2);
+    expect(child.children[1].nodeId).toEqual('b');
   });
 });
