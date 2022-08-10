@@ -338,7 +338,13 @@ export const draw = function (text, id, _version, diagObj) {
 
   // Run the renderer. This is what draws the final graph.
   const element = root.select('#' + id + ' g');
-  render(element, g, ['aggregation', 'extension', 'composition', 'dependency'], 'classDiagram', id);
+  render(
+    element,
+    g,
+    ['aggregation', 'extension', 'composition', 'dependency', 'lollipop'],
+    'classDiagram',
+    id
+  );
 
   setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
 
@@ -419,6 +425,9 @@ function getArrowMarker(type) {
       break;
     case 3:
       marker = 'dependency';
+      break;
+    case 4:
+      marker = 'lollipop';
       break;
     default:
       marker = 'none';

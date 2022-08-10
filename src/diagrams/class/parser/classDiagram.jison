@@ -44,6 +44,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "classDiagram-v2"       return 'CLASS_DIAGRAM';
 "classDiagram"          return 'CLASS_DIAGRAM';
 [{]                     { this.begin("struct"); /*console.log('Starting struct');*/ return 'STRUCT_START';}
+<INITIAL,struct>"[*]"   { /*console.log('EDGE_STATE=',yytext);*/ return 'EDGE_STATE';}
 <struct><<EOF>>         return "EOF_IN_STRUCT";
 <struct>[{]             return "OPEN_IN_STRUCT";
 <struct>[}]             { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
@@ -104,6 +105,7 @@ Function arguments are optional: 'call <callback_name>()' simply executes 'callb
 \s*\<                 return 'DEPENDENCY';
 \s*\*                 return 'COMPOSITION';
 \s*o                  return 'AGGREGATION';
+\s*\(\)               return 'LOLLIPOP';
 \-\-                  return 'LINE';
 \.\.                  return 'DOTTED_LINE';
 ":"{1}[^:\n;]+        return 'LABEL';
@@ -310,6 +312,7 @@ relationType
     | EXTENSION   { $$=yy.relationType.EXTENSION;}
     | COMPOSITION { $$=yy.relationType.COMPOSITION;}
     | DEPENDENCY  { $$=yy.relationType.DEPENDENCY;}
+    | LOLLIPOP    { $$=yy.relationType.LOLLIPOP;}
     ;
 
 lineType
