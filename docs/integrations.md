@@ -30,6 +30,7 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Mermaid Macro](https://www.redmine.org/plugins/redmine_mermaid_macro)
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
   - [markdown-for-mermaid-plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
+- [Jetsbrain IDE eg Pycharm](https://www.jetbrains.com/go/guide/tips/mermaid-js-support-in-markdown/)
 
 ## CRM/ERP/Similar
 
