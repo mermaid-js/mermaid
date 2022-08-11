@@ -22,6 +22,81 @@ function addConf(conf, key, value) {
 // const parser = sequence.parser;
 let diagram;
 
+describe('more than one sequence diagram', () => {
+  it('should not have duplicated messages', () => {
+    const diagram1 = new Diagram(`
+        sequenceDiagram
+        Alice->Bob:Hello Bob, how are you?
+        Bob-->Alice: I am good thanks!`);
+    expect(diagram1.db.getMessages()).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "from": "Alice",
+          "message": "Hello Bob, how are you?",
+          "to": "Bob",
+          "type": 5,
+          "wrap": false,
+        },
+        Object {
+          "from": "Bob",
+          "message": "I am good thanks!",
+          "to": "Alice",
+          "type": 6,
+          "wrap": false,
+        },
+      ]
+    `);
+    const diagram2 = new Diagram(`
+        sequenceDiagram
+        Alice->Bob:Hello Bob, how are you?
+        Bob-->Alice: I am good thanks!`);
+
+    expect(diagram2.db.getMessages()).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "from": "Alice",
+          "message": "Hello Bob, how are you?",
+          "to": "Bob",
+          "type": 5,
+          "wrap": false,
+        },
+        Object {
+          "from": "Bob",
+          "message": "I am good thanks!",
+          "to": "Alice",
+          "type": 6,
+          "wrap": false,
+        },
+      ]
+    `);
+
+    // Add John actor
+    const diagram3 = new Diagram(`
+        sequenceDiagram
+        Alice->John:Hello John, how are you?
+        John-->Alice: I am good thanks!`);
+
+    expect(diagram3.db.getMessages()).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "from": "Alice",
+          "message": "Hello John, how are you?",
+          "to": "John",
+          "type": 5,
+          "wrap": false,
+        },
+        Object {
+          "from": "John",
+          "message": "I am good thanks!",
+          "to": "Alice",
+          "type": 6,
+          "wrap": false,
+        },
+      ]
+    `);
+  });
+});
+
 describe('when parsing a sequenceDiagram', function () {
   beforeEach(function () {
     // diagram.db = sequenceDb;

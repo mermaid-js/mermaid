@@ -18,6 +18,8 @@ class Diagram {
     // console.log('this.type', this.type, diagrams[this.type]);
     // Setup diagram
     this.db = diagrams[this.type].db;
+    this.db.clear?.();
+
     this.renderer = diagrams[this.type].renderer;
     this.parser = diagrams[this.type].parser;
     this.parser.parser.yy = this.db;
