@@ -250,7 +250,7 @@ const render = function (id, _txt, cb, container) {
 
   txt = encodeEntities(txt);
 
-  // Imortant that we do not create the diagram until after the directives have been included
+  // Important that we do not create the diagram until after the directives have been included
   const diag = new Diagram(txt);
   // Get the tmp element containing the the svg
   const element = root.select('#d' + id).node();
