@@ -5230,9 +5230,9 @@ eslint-plugin-html@^7.1.0:
     htmlparser2 "^8.0.1"
 
 eslint-plugin-jest@^26.0.0:
-  version "26.8.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-26.8.0.tgz#32471a6af11dbcb7d0ccf83e8edc83d256fd34a3"
-  integrity sha512-IyGhk+PpDgIA99OBPHo+l2aTtt8yAeB1IgPwXOQZSzi8ag/t1MsLZBN2MKL1sj6ahlkaxbkhlm7ll+NPcMcjaQ==
+  version "26.8.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-26.8.2.tgz#42a1248a5ade2bc589eb0f9c4e0608dd89b18cf3"
+  integrity sha512-67oh0FKaku9y48OpLzL3uK9ckrgLb83Sp5gxxTbtOGDw9lq6D8jw/Psj/9CipkbK406I2M7mvx1q+pv/MdbvxA==
   dependencies:
     "@typescript-eslint/utils" "^5.10.0"
 
