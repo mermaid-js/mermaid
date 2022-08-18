@@ -23,7 +23,7 @@ We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermai
 **Using the npm package**
 
 ```
-1.You will need to install node v16, which would have npm.
+1. You will need to install node v16, which would have npm.
 
 2. download yarn using npm.
 
