@@ -40,13 +40,21 @@ import utils, { directiveSanitizer } from './utils';
 import assignWithDepth from './assignWithDepth';
 import DOMPurify from 'dompurify';
 import mermaid from './mermaid';
+
+let hasLoadedDiagrams = false;
+
 /**
  * @param text
  * @param dia
  * @returns {any}
  */
 function parse(text, dia) {
+  if (!hasLoadedDiagrams) {
+    addDiagrams();
+    hasLoadedDiagrams = true;
+  }
   var parseEncounteredException = false;
+
   try {
     const diag = dia ? dia : new Diagram(text);
     diag.db.clear();
@@ -512,7 +520,10 @@ function initialize(options) {
 
   updateRendererConfigs(config);
   setLogLevel(config.logLevel);
-  addDiagrams();
+  if (!hasLoadedDiagrams) {
+    addDiagrams();
+    hasLoadedDiagrams = true;
+  }
 }
 
 const mermaidAPI = Object.freeze({
