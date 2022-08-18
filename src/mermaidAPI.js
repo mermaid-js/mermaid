@@ -40,6 +40,9 @@ import utils, { directiveSanitizer } from './utils';
 import assignWithDepth from './assignWithDepth';
 import DOMPurify from 'dompurify';
 import mermaid from './mermaid';
+
+addDiagrams();
+
 /**
  * @param text
  * @param dia
@@ -512,7 +515,6 @@ function initialize(options) {
 
   updateRendererConfigs(config);
   setLogLevel(config.logLevel);
-  addDiagrams();
 }
 
 const mermaidAPI = Object.freeze({
