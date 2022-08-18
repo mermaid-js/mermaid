@@ -491,23 +491,20 @@ function updateRendererConfigs(conf) {
 /** @param {any} options */
 function initialize(options) {
   // Handle legacy location of font-family configuration
-  if (options && options.fontFamily) {
-    if (!options.themeVariables) {
+  if (options?.fontFamily) {
+    if (!options.themeVariables?.fontFamily) {
       options.themeVariables = { fontFamily: options.fontFamily };
-    } else {
-      if (!options.themeVariables.fontFamily) {
-        options.themeVariables = { fontFamily: options.fontFamily };
-      }
     }
   }
+
   // Set default options
   configApi.saveConfigFromInitialize(options);
 
-  if (options && options.theme && theme[options.theme]) {
+  if (options?.theme && theme[options.theme]) {
     // Todo merge with user options
     options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
-  } else {
-    if (options) options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
+  } else if (options) {
+    options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
   }
 
   const config =
