@@ -206,7 +206,9 @@ const setTooltip = function (ids, tooltip) {
     }
   });
 };
-
+export const getTooltip = function (id) {
+  return classes[id].tooltip;
+};
 /**
  * Called by parser when a link is found. Adds the URL to the vertex data.
  *
@@ -337,6 +339,7 @@ const setupToolTips = function (element) {
         .text(el.attr('title'))
         .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
         .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
+      tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
       el.classed('hover', true);
     })
     .on('mouseout', function () {
@@ -378,6 +381,7 @@ export default {
   setClickEvent,
   setCssClass,
   setLink,
+  getTooltip,
   setTooltip,
   lookUpDomId,
 };

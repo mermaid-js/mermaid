@@ -15,6 +15,8 @@
         /* font-size: 18px !important; */
         width: 100%;
         display: flex;
+        flex-direction: column;
+        margin-left: 20px;
         }
       h1 { color: grey;}
       .mermaid2,.mermaid3 {
@@ -31,26 +33,30 @@
 
 
 <div class="mermaid2" style="width: 50%;">
-journey
-    title My working day
-    section Go to work
-      Make tea: 5: Me
-      Go upstairs: 3: Me
-      Do work: 1: Me, Cat
-    section Go home
-      Go downstairs: 5: Me
-      Sit down: 5: Mee
-</div>
-<div class="mermaid2" style="width: 50%;">
-   pie
-      accTitle: My Pie Chart Accessibility Title
-      accDescr: My Pie Chart Accessibility Description
+flowchart LR
+  classDef aPID stroke:#4e4403,fill:#fdde29,color:#4e4403,rx:5px,ry:5px;
+  classDef crm stroke:#333333,fill:#DCDCDC,color:#333333,rx:5px,ry:5px;
+  classDef type stroke:#502604,fill:#FAB565,color:#502604,rx:20px,ry:20px;;
 
-    title Key elements in Product X
-    "Calcium" : 42.96
-    "Potassium" : 50.05
-    "Magnesium" : 10.01
-    "Iron" :  5
+  O0("Joe")
+  class O0 aPID;
+
+  O1("Person")
+  class O1 crm;
+  O0 -- has type -->O1["Person"]
+
+  O2("aat:300411314")
+  class O2 type;
+  click O2 function "Sorry the newline html tags are not being processed correctly<br/> So all of this appears on the <br/> same line."
+  O0 -- has type -->O2["Bug"]
+  click O0 function "Lots of great info about Joe<br>Lots of great info about Joe<br>burt<br>fred";
+</div>
+<div class="mermaid" style="width: 50%;">
+classDiagram-v2
+  class Shape
+  link Shape "https://www.github.com" "This is a<br/>tooltip<br>for a link"
+  class Shape2
+  click Shape2 href "https://www.github.com" "This is a tooltip for a link"
 </div>
 <div class="mermaid2" style="width: 50%;">
  gitGraph
@@ -217,7 +223,7 @@ class Class10 {
   size()
 }
       </div>
-      <div class="mermaid" style="width: 100%;">
+      <div class="mermaid2" style="width: 100%;">
 %%{init: {'config': {'wrap': true }}}%%
         sequenceDiagram
         participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
@@ -297,47 +303,15 @@ flowchart TD
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        // theme: 'dark',
-        // theme: 'forest',
-        // arrowMarkerAbsolute: true,
-        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
-        flowchart: {
-    nodeSpacing: 10,
-    curve: 'cardinal',
-    htmlLabels: true,
-    useMaxWidth: false,
-    // defaultRenderer: 'dagre-d3',
-  },
-  class: {
-    // defaultRenderer: 'dagre-d3',
-    htmlLabels: true,
-  },
-  sequence: {
-    // mirrorActors: false,'
-    wrap: false,
-  },
-        // gantt: { axisFormat: '%m/%d/%Y' },
-  //       sequence: {
-  //   actorFontFamily: 'courier',
-  //   actorMargin: 50,
-  //   showSequenceNumbers: false,
-  //   // hideUnusedParticipants: true,
-  //   // forceMenus: true,
-  // },
-  //       // sequenceDiagram: { actorMargin: 300, forceMenus: false }, // deprecated
-        // fontFamily: '"times", sans-serif',
-        // fontFamily: 'courier',
-        state: {
-          nodeSpacing: 50,
-          rankSpacing: 50,
-          defaultRenderer: 'dagre-d3',
-        },
+        maxTextSize: 900000,
+        startOnLoad: true,
+        securityLevel: 'loose',
         logLevel: 0,
-        fontSize: 18,
-        curve: 'cardinal',
-        // securityLevel: 'sandbox',
-        // themeVariables: {relationLabelColor: 'red'}
-        wrap: true,
+        flowchart: {
+          curve: 'basis',
+          useMaxWidth: false,
+          htmlLabels: true,
+        },
       });
       function callback() {
   alert('It worked');
