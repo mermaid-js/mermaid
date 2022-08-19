@@ -159,12 +159,6 @@ describe('[Text] when parsing', () => {
       const edges = flow.parser.yy.getEdges();
       expect(vert['a'].text).toBe('v');
     });
-    it('should handle keywords', function () {
-      const res = flow.parser.parse('graph TD;V-->a[v]');
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['a'].text).toBe('v');
-    });
     it('should handle quoted text', function () {
       const res = flow.parser.parse('graph TD;V-- "test string()" -->a[v]');
       const vert = flow.parser.yy.getVertices();
