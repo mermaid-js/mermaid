@@ -21,14 +21,14 @@ Mermaid is a JavaScript based diagramming and charting tool that uses Markdown-i
 
 Diagramming and documentation costs precious developer time and gets outdated quickly.
 But not having diagrams or docs ruins productivity and hurts organizational learning.<br/>
-Mermaid addresses this problem by enabling users to create easily modifiable diagrams, it can also be made part of production scripts (and other pieces of code).<br/>
+Mermaid addresses this problem by enabling users to create easily modifiable diagrams.  It can also be made part of production scripts (and other pieces of code).<br/>
  <br/>
 
 Mermaid allows even non-programmers to easily create detailed diagrams through the [Mermaid Live Editor](https://mermaid.live/).<br/>
 [Tutorials](./docs/Tutorials.md) has video tutorials.
 Use Mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/integrations.md).
 
-You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications, check out the list of [Integrations and Usages of Mermaid](./docs/integrations.md).
+You can also use Mermaid within [GitHub](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/) as well many of your other favorite applications—check out the list of [Integrations and Usages of Mermaid](./docs/integrations.md).
 
 For a more detailed introduction to Mermaid and some of its more basic uses, look to the [Beginner's Guide](./docs/n00b-overview.md), [Usage](./docs/usage.md) and [Tutorials](./docs/Tutorials.md).
 
@@ -48,7 +48,7 @@ In our release process we rely heavily on visual regression tests using [applito
 
 ## Examples
 
-__The following are some examples of the diagrams, charts and graphs that can be made using Mermaid. Click here jump into the [text syntax](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference).__
+__The following are some examples of the diagrams, charts and graphs that can be made using Mermaid. Click here to jump into the [text syntax](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference).__
 <!-- <Flowchart> -->
 
 ### Flowchart [<a href="https://mermaid-js.github.io/mermaid/#/flowchart">docs</a> - <a href="https://mermaid.live/edit#pako:eNpNkMtqwzAQRX9FzKqFJK7t1km8KDQP6KJQSLOLvZhIY1tgS0GWmgbb_165IaFaiXvOFTPqgGtBkEJR6zOv0Fj2scsU8-ft8I5G5Gw6fe339GN7tnrYaafE45WvRsLW3Ya4bKVWwzVe_xU-FfVsc9hR62rLwvw_2591z7Y3FuUwgYZMg1L4ObrRzMBW1FAGqb8KKtCLGWRq8Ko7CbS0FdJqA2mBdUsTQGf110VxSK1xdJM2EkuDzd2qNQrypQ7s5TQuXcrW-ie5VoUsx9yZ2seVtac2DYIRz0ppK3eccd0ErRTjD1XfyyRIomSBUUzJPMaXOBb8GC4XRfQcFmL-FEYIwzD8AggvcHE">live editor</a>]
@@ -125,7 +125,7 @@ gantt
 classDiagram
 Class01 <|-- AveryLongClass : Cool
 <<Interface>> Class01
-Class09 --> C2 : Where am i?
+Class09 --> C2 : Where am I?
 Class09 --* C3
 Class09 --|> Class07
 Class07 : equals()
@@ -143,7 +143,7 @@ class Class10 {
 classDiagram
 Class01 <|-- AveryLongClass : Cool
 <<Interface>> Class01
-Class09 --> C2 : Where am i?
+Class09 --> C2 : Where am I?
 Class09 --* C3
 Class09 --|> Class07
 Class07 : equals()

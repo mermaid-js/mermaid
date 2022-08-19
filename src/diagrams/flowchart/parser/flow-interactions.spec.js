@@ -14,7 +14,7 @@ describe('[Interactions] when parsing', () => {
     flow.parser.yy.clear();
   });
 
-  it('it should be possible to use click to a callback', function () {
+  it('should be possible to use click to a callback', function () {
     spyOn(flowDb, 'setClickEvent');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A callback');
 
@@ -24,7 +24,7 @@ describe('[Interactions] when parsing', () => {
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
   });
 
-  it('it should be possible to use click to a click and call callback', function () {
+  it('should be possible to use click to a click and call callback', function () {
     spyOn(flowDb, 'setClickEvent');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback()');
 
@@ -34,7 +34,7 @@ describe('[Interactions] when parsing', () => {
     expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback');
   });
 
-  it('it should be possible to use click to a callback with toolip', function () {
+  it('should be possible to use click to a callback with toolip', function () {
     spyOn(flowDb, 'setClickEvent');
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A callback "tooltip"');
@@ -46,7 +46,7 @@ describe('[Interactions] when parsing', () => {
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
   });
 
-  it('it should be possible to use click to a click and call callback with toolip', function () {
+  it('should be possible to use click to a click and call callback with toolip', function () {
     spyOn(flowDb, 'setClickEvent');
     spyOn(flowDb, 'setTooltip');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback() "tooltip"');
@@ -58,7 +58,7 @@ describe('[Interactions] when parsing', () => {
     expect(flowDb.setTooltip).toHaveBeenCalledWith('A', 'tooltip');
   });
 
-  it('it should be possible to use click to a callback with an arbitrary number of args', function () {
+  it('should be possible to use click to a callback with an arbitrary number of args', function () {
     spyOn(flowDb, 'setClickEvent');
     const res = flow.parser.parse('graph TD\nA-->B\nclick A call callback("test0", test1, test2)');
 
