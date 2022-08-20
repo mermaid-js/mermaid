@@ -4,7 +4,6 @@ import gitGraphAst from './gitGraphAst';
 import { parser } from './parser/gitGraph';
 //import randomString from 'crypto-random-string';
 //import cryptoRandomString from 'crypto-random-string';
-import { logger } from '../../logger';
 
 //jest.mock('crypto-random-string');
 

@@ -1,7 +1,7 @@
 import * as configApi from './config';
 import { log } from './logger';
 import { getDiagrams } from './diagram-api/diagramAPI';
-import detectType from './diagram-api/detectType';
+import { detectType } from './diagram-api/detectType';
 class Diagram {
   type = 'graph';
   parser;

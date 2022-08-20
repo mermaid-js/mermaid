@@ -16,7 +16,7 @@ import {
 import common from './diagrams/common/common';
 import { configKeys } from './defaultConfig';
 import { log } from './logger';
-import detectType from './diagram-api/detectType';
+import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 
 // Effectively an enum of the supported curve types, accessible by name

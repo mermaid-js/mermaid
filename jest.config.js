@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
   testEnvironment: 'jsdom',
+  preset: 'ts-jest',
   transform: {
     '^.+\\.jsx?$': ['babel-jest', { rootMode: 'upward' }],
     '^.+\\.jison$': [

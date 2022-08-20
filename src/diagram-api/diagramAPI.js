@@ -35,6 +35,7 @@ import journeyDb from '../diagrams/user-journey/journeyDb';
 import journeyRenderer from '../diagrams/user-journey/journeyRenderer';
 import journeyParser from '../diagrams/user-journey/parser/journey';
 import { addDetector } from './detectType';
+import { log } from '../logger';
 
 const diagrams = {
   c4: {
@@ -165,6 +166,9 @@ const diagrams = {
 };
 // console.log(sequenceDb);
 export const registerDiagram = (id, parser, db, renderer, init, detector) => {
+  if (diagrams[id]) {
+    log.warn(`Diagram ${id} already registered.`);
+  }
   diagrams[id] = { parser, db, renderer, init };
   addDetector(id, detector);
 };
