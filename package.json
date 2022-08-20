@@ -76,6 +76,7 @@
     "@babel/register": "^7.14.5",
     "@commitlint/cli": "^17.0.0",
     "@commitlint/config-conventional": "^17.0.0",
+    "@types/d3": "^7.4.0",
     "@types/jest": "^28.1.7",
     "babel-jest": "^28.0.3",
     "babel-loader": "^8.2.2",
