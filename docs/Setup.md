@@ -72,8 +72,8 @@ Theme , the CSS style sheet
 
 ## securityLevel
 
-| Parameter     | Description                       | Type   | Required | Values                    |
-| ------------- | --------------------------------- | ------ | -------- | ------------------------- |
+| Parameter     | Description                       | Type   | Required | Values                                     |
+| ------------- | --------------------------------- | ------ | -------- | ------------------------------------------ |
 | securityLevel | Level of trust for parsed diagram | string | Required | 'sandbox', 'strict', 'loose', 'antiscript' |
 
 **Notes**:
@@ -81,7 +81,7 @@ Theme , the CSS style sheet
 -   **strict**: (**default**) tags in text are encoded, click functionality is disabled
 -   **loose**: tags in text are allowed, click functionality is enabled
 -   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
--   **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any JavaScript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc. 
+-   **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any JavaScript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
 
 ## startOnLoad
 
@@ -1405,10 +1405,10 @@ This sets the auto-wrap padding for the diagram (sides only)
 
 ### Parameters
 
--   `text`  
--   `dia`  
+-   `text`
+-   `dia`
 
-Returns **any** 
+Returns **any**
 
 ## setSiteConfig
 
@@ -1425,7 +1425,7 @@ function _Default value: At default, will mirror Global Config_
 
 ### Parameters
 
--   `conf`  The base currentConfig to use as siteConfig
+-   `conf` The base currentConfig to use as siteConfig
 
 Returns **[object][5]** The siteConfig
 
@@ -1477,14 +1477,14 @@ Function that renders an svg with a graph from a chart definition. Usage example
 
 ```javascript
 mermaidAPI.initialize({
-  startOnLoad: true,
+    startOnLoad: true,
 });
 $(function () {
-  const graphDefinition = 'graph TB\na-->b';
-  const cb = function (svgGraph) {
-    console.log(svgGraph);
-  };
-  mermaidAPI.render('id1', graphDefinition, cb);
+    const graphDefinition = 'graph TB\na-->b';
+    const cb = function (svgGraph) {
+        console.log(svgGraph);
+    };
+    mermaidAPI.render('id1', graphDefinition, cb);
 });
 ```
 
@@ -1494,10 +1494,10 @@ $(function () {
 -   `_txt` **any** The graph definition
 -   `cb` **any** Callback which is called after rendering is finished with the svg code as inparam.
 -   `container` **any** Selector to element in which a div with the graph temporarily will be
-      inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
-      element will be removed when rendering is completed.
+    inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
+    element will be removed when rendering is completed.
 
-Returns **any** 
+Returns **any**
 
 ## sanitize
 
@@ -1542,84 +1542,80 @@ Pushes in a directive to the configuration
 
 ### Parameters
 
--   `conf` **any** 
+-   `conf` **any**
 
 ## initialize
 
 ### Parameters
 
--   `options` **any** 
+-   `options` **any**
 
-## 
+##
 
 ## mermaidAPI configuration defaults
 
 ```html
 <script>
-  var config = {
-    theme: 'default',
-    logLevel: 'fatal',
-    securityLevel: 'strict',
-    startOnLoad: true,
-    arrowMarkerAbsolute: false,
+    var config = {
+        theme: 'default',
+        logLevel: 'fatal',
+        securityLevel: 'strict',
+        startOnLoad: true,
+        arrowMarkerAbsolute: false,
 
-    er: {
-      diagramPadding: 20,
-      layoutDirection: 'TB',
-      minEntityWidth: 100,
-      minEntityHeight: 75,
-      entityPadding: 15,
-      stroke: 'gray',
-      fill: 'honeydew',
-      fontSize: 12,
-      useMaxWidth: true,
-    },
-    flowchart: {
-      diagramPadding: 8,
-      htmlLabels: true,
-      curve: 'basis',
-    },
-    sequence: {
-      diagramMarginX: 50,
-      diagramMarginY: 10,
-      actorMargin: 50,
-      width: 150,
-      height: 65,
-      boxMargin: 10,
-      boxTextMargin: 5,
-      noteMargin: 10,
-      messageMargin: 35,
-      messageAlign: 'center',
-      mirrorActors: true,
-      bottomMarginAdj: 1,
-      useMaxWidth: true,
-      rightAngles: false,
-      showSequenceNumbers: false,
-    },
-    gantt: {
-      titleTopMargin: 25,
-      barHeight: 20,
-      barGap: 4,
-      topPadding: 50,
-      leftPadding: 75,
-      gridLineStartPadding: 35,
-      fontSize: 11,
-      fontFamily: '"Open Sans", sans-serif',
-      numberSectionStyles: 4,
-      axisFormat: '%Y-%m-%d',
-      topAxis: false,
-    },
-  };
-  mermaid.initialize(config);
+        er: {
+            diagramPadding: 20,
+            layoutDirection: 'TB',
+            minEntityWidth: 100,
+            minEntityHeight: 75,
+            entityPadding: 15,
+            stroke: 'gray',
+            fill: 'honeydew',
+            fontSize: 12,
+            useMaxWidth: true,
+        },
+        flowchart: {
+            diagramPadding: 8,
+            htmlLabels: true,
+            curve: 'basis',
+        },
+        sequence: {
+            diagramMarginX: 50,
+            diagramMarginY: 10,
+            actorMargin: 50,
+            width: 150,
+            height: 65,
+            boxMargin: 10,
+            boxTextMargin: 5,
+            noteMargin: 10,
+            messageMargin: 35,
+            messageAlign: 'center',
+            mirrorActors: true,
+            bottomMarginAdj: 1,
+            useMaxWidth: true,
+            rightAngles: false,
+            showSequenceNumbers: false,
+        },
+        gantt: {
+            titleTopMargin: 25,
+            barHeight: 20,
+            barGap: 4,
+            topPadding: 50,
+            leftPadding: 75,
+            gridLineStartPadding: 35,
+            fontSize: 11,
+            fontFamily: '"Open Sans", sans-serif',
+            numberSectionStyles: 4,
+            axisFormat: '%Y-%m-%d',
+            topAxis: false,
+        },
+    };
+    mermaid.initialize(config);
 </script>
 ```
 
 [1]: https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js
-
 [2]: Setup.md?id=render
-
 [3]: 8.6.0_docs.md
-
 [4]: #mermaidapi-configuration-defaults
-
 [5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
