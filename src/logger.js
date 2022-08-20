@@ -12,11 +12,11 @@ export const LEVELS = {
 };
 
 export const log = {
-  debug: () => {},
-  info: () => {},
-  warn: () => {},
-  error: () => {},
-  fatal: () => {},
+  debug: (...args) => {},
+  info: (...args) => {},
+  warn: (...args) => {},
+  error: (...args) => {},
+  fatal: (...args) => {},
 };
 
 /**
