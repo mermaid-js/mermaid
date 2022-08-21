@@ -1,3 +1,5 @@
+// TODO: Remove
+// @ts-nocheck
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code.
@@ -29,9 +31,9 @@ import utils from './utils';
  *
  * Renders the mermaid diagrams
  */
-const init = function () {
+const init = function (config: any, ...nodes: any[]) {
   try {
-    initThrowsErrors(...arguments);
+    initThrowsErrors(config, nodes);
   } catch (e) {
     log.warn('Syntax Error rendering');
     log.warn(e.str);
@@ -41,25 +43,17 @@ const init = function () {
   }
 };
 
-const initThrowsErrors = function () {
+const initThrowsErrors = function (config: any, nodes: any[]) {
   const conf = mermaidAPI.getConfig();
   // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
-  let nodes;
-  if (arguments.length >= 2) {
-    /*! sequence config was passed as #1 */
-    if (typeof arguments[0] !== 'undefined') {
-      mermaid.sequenceConfig = arguments[0];
-    }
-
-    nodes = arguments[1];
-  } else {
-    nodes = arguments[0];
+  if (config) {
+    mermaid.sequenceConfig = config;
   }
 
   // if last argument is a function this is the callback function
-  let callback;
-  if (typeof arguments[arguments.length - 1] === 'function') {
-    callback = arguments[arguments.length - 1];
+  let callback: (id: string) => void;
+  if (typeof nodes[nodes.length - 1] === 'function') {
+    callback = nodes[nodes.length - 1];
     log.debug('Callback function found');
   } else {
     if (typeof conf.mermaid !== 'undefined') {
@@ -140,7 +134,7 @@ const initThrowsErrors = function () {
   }
 };
 
-const initialize = function (config) {
+const initialize = function (config: any) {
   // mermaidAPI.reset();
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {

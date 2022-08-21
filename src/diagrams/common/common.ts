@@ -1,19 +1,19 @@
 import DOMPurify from 'dompurify';
+import { MermaidConfig } from 'types/config';
 
 /**
- * Gets the number of lines in a string
+ * Gets the rows of lines in a string
  *
  * @param {string | undefined} s The string to check the lines for
- * @returns {number} The number of lines in that string
+ * @returns {string[]} The rows in that string
  */
-export const getRows = (s) => {
-  if (!s) return 1;
-  let str = breakToPlaceholder(s);
-  str = str.replace(/\\n/g, '#br#');
+export const getRows = (s?: string): string[] => {
+  if (!s) return [''];
+  const str = breakToPlaceholder(s).replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
 
-export const removeEscapes = (text) => {
+export const removeEscapes = (text: string): string => {
   let newStr = text.replace(/\\u[\dA-F]{4}/gi, function (match) {
     return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
   });
@@ -35,7 +35,7 @@ export const removeEscapes = (text) => {
  * @param {string} txt The text to sanitize
  * @returns {string} The safer text
  */
-export const removeScript = (txt) => {
+export const removeScript = (txt: string): string => {
   var rs = '';
   var idx = 0;
 
@@ -65,49 +65,39 @@ export const removeScript = (txt) => {
   return decodedText;
 };
 
-const sanitizeMore = (text, config) => {
-  let txt = text;
-  let htmlLabels = true;
-  if (
-    config.flowchart &&
-    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
-  ) {
-    htmlLabels = false;
-  }
-
-  if (htmlLabels) {
+const sanitizeMore = (text: string, config: MermaidConfig) => {
+  // TODO Q: Should this check really be here? Feels like we should be sanitizing it regardless.
+  if (config.flowchart?.htmlLabels !== false) {
     const level = config.securityLevel;
-
     if (level === 'antiscript' || level === 'strict') {
-      txt = removeScript(txt);
+      text = removeScript(text);
     } else if (level !== 'loose') {
-      // eslint-disable-line
-      txt = breakToPlaceholder(txt);
-      txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      txt = txt.replace(/=/g, '&equals;');
-      txt = placeholderToBreak(txt);
+      text = breakToPlaceholder(text);
+      text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      text = text.replace(/=/g, '&equals;');
+      text = placeholderToBreak(text);
     }
   }
-
-  return txt;
+  return text;
 };
 
-export const sanitizeText = (text, config) => {
+export const sanitizeText = (text: string, config: MermaidConfig): string => {
   if (!text) return text;
-  let txt = '';
-  if (config['dompurifyConfig']) {
-    txt = DOMPurify.sanitize(sanitizeMore(text, config), config['dompurifyConfig']);
+  if (config.dompurifyConfig) {
+    text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
-    txt = DOMPurify.sanitize(sanitizeMore(text, config));
+    text = DOMPurify.sanitize(sanitizeMore(text, config));
   }
-  return txt;
+  return text;
 };
 
-export const sanitizeTextOrArray = (a, config) => {
+export const sanitizeTextOrArray = (
+  a: string | string[] | string[][],
+  config: MermaidConfig
+): string | string[] => {
   if (typeof a === 'string') return sanitizeText(a, config);
-
-  const f = (x) => sanitizeText(x, config);
-  return a.flat().map(f);
+  // TODO Q: Do we need flat?
+  return a.flat().map((x: string) => sanitizeText(x, config));
 };
 
 export const lineBreakRegex = /<br\s*\/?>/gi;
@@ -118,7 +108,7 @@ export const lineBreakRegex = /<br\s*\/?>/gi;
  * @param {string} text The text to test
  * @returns {boolean} Whether or not the text has breaks
  */
-export const hasBreaks = (text) => {
+export const hasBreaks = (text: string): boolean => {
   return lineBreakRegex.test(text);
 };
 
@@ -128,7 +118,7 @@ export const hasBreaks = (text) => {
  * @param {string} text Text to split
  * @returns {string[]} List of lines as strings
  */
-export const splitBreaks = (text) => {
+export const splitBreaks = (text: string): string[] => {
   return text.split(lineBreakRegex);
 };
 
@@ -138,7 +128,7 @@ export const splitBreaks = (text) => {
  * @param {string} s HTML with placeholders
  * @returns {string} HTML with breaks instead of placeholders
  */
-const placeholderToBreak = (s) => {
+const placeholderToBreak = (s: string): string => {
   return s.replace(/#br#/g, '<br/>');
 };
 
@@ -148,7 +138,7 @@ const placeholderToBreak = (s) => {
  * @param {string} s HTML string
  * @returns {string} String with placeholders
  */
-const breakToPlaceholder = (s) => {
+const breakToPlaceholder = (s: string): string => {
   return s.replace(lineBreakRegex, '#br#');
 };
 
@@ -158,8 +148,9 @@ const breakToPlaceholder = (s) => {
  * @param {boolean} useAbsolute Whether to return the absolute URL or not
  * @returns {string} The current URL
  */
-const getUrl = (useAbsolute) => {
+const getUrl = (useAbsolute: boolean): string => {
   let url = '';
+  // TODO Q: If useAbsolute if false, empty string is returned. Bug?
   if (useAbsolute) {
     url =
       window.location.protocol +
@@ -180,7 +171,9 @@ const getUrl = (useAbsolute) => {
  * @param {string | boolean} val String or boolean to convert
  * @returns {boolean} The result from the input
  */
-export const evaluate = (val) => (val === 'false' || val === false ? false : true);
+// TODO Q: Should we make this check more specific? 'False', '0', 'null' all will evaluate to true.
+export const evaluate = (val: string | boolean): boolean =>
+  val === 'false' || val === false ? false : true;
 
 export default {
   getRows,

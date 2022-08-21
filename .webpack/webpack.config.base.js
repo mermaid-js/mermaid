@@ -1,12 +1,12 @@
 import path from 'path';
-
+const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 export const resolveRoot = (...relativePath) => path.resolve(__dirname, '..', ...relativePath);
 
 export default {
   amd: false, // https://github.com/lodash/lodash/issues/3052
   target: 'web',
   entry: {
-    mermaid: './src/mermaid.js',
+    mermaid: './src/mermaid.ts',
   },
   resolve: {
     extensions: ['.wasm', '.mjs', '.js', '.ts', '.json', '.jison'],
@@ -14,6 +14,7 @@ export default {
       fs: false, // jison generated code requires 'fs'
       path: require.resolve('path-browserify'),
     },
+    plugins: [new TsConfigPathsPlugin()],
   },
   output: {
     path: resolveRoot('./dist'),

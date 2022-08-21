@@ -1,3 +1,5 @@
+import type { MermaidConfig } from 'types/config';
+
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
@@ -41,7 +43,7 @@ const diagramMatchers: Record<string, RegExp> = {
  * }} [cnf]
  * @returns {string} A graph definition key
  */
-export const detectType = function (text: string, cnf: ConfigType): string {
+export const detectType = function (text: string, cnf: MermaidConfig): string {
   text = text.replace(directive, '').replace(anyComment, '\n');
   for (const [diagram, matcher] of Object.entries(diagramMatchers)) {
     if (text.match(matcher)) {

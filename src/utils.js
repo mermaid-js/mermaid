@@ -814,6 +814,7 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
 export const initIdGenerator = class iterator {
   constructor(deterministic, seed) {
     this.deterministic = deterministic;
+    // TODO: Seed is only used for length?
     this.seed = seed;
 
     this.count = seed ? seed.length : 0;
