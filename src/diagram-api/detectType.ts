@@ -1,4 +1,6 @@
-import type { MermaidConfig } from 'types/config';
+import { MermaidConfig } from '../config.type';
+
+export type DiagramDetector = (text: string) => boolean;
 
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;

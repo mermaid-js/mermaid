@@ -19,7 +19,7 @@ import { configKeys } from './defaultConfig';
 import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
-import { MermaidConfig } from 'types/config';
+import { MermaidConfig } from './config.type';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {

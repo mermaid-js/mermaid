@@ -32,7 +32,7 @@ export interface MermaidConfig {
 }
 
 // TODO: More configs needs to be moved in here
-export interface BaseDiagramConfig extends BaseDiagramConfig {
+export interface BaseDiagramConfig {
   useWidth?: number;
   useMaxWidth?: boolean;
 }
@@ -340,4 +340,7 @@ export interface FontConfig {
   fontFamily?: string;
   fontWeight?: string | number;
 }
+
 export type FontCalculator = () => Partial<FontConfig>;
+
+export {};

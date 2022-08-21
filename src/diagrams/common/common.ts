@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import { MermaidConfig } from 'types/config';
+import { MermaidConfig } from '../../config.type';
 
 /**
  * Gets the rows of lines in a string

@@ -58,10 +58,18 @@ Theme , the CSS style sheet
 
 ## logLevel
 
-| Parameter | Description                                           | Type             | Required | Values                                             |
-| --------- | ----------------------------------------------------- | ---------------- | -------- | -------------------------------------------------- |
-| logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 'trace', 'debug', 'info', 'warn', 'error', 'fatal' |
+| Parameter | Description                                           | Type             | Required | Values                                        |
+| --------- | ----------------------------------------------------- | ---------------- | -------- | --------------------------------------------- |
+| logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 'trace','debug','info','warn','error','fatal' |
 
+**Notes:**
+
+-   Trace: 0
+-   Debug: 1
+-   Info: 2
+-   Warn: 3
+-   Error: 4
+-   Fatal: 5 (default)
 
 ## securityLevel
 
@@ -1418,7 +1426,7 @@ function _Default value: At default, will mirror Global Config_
 
 ### Parameters
 
--   `conf`  The base currentConfig to use as siteConfig
+-   `conf` **MermaidConfig** The base currentConfig to use as siteConfig
 
 Returns **[object][5]** The siteConfig
 
@@ -1530,6 +1538,8 @@ Pushes in a directive to the configuration
 | conf      | base set of values, which currentConfig could be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
 
 **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
+
+Returns **void** 
 
 ## updateRendererConfigs
 

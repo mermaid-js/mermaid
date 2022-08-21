@@ -1,5 +1,4 @@
 import path from 'path';
-const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 export const resolveRoot = (...relativePath) => path.resolve(__dirname, '..', ...relativePath);
 
 export default {
@@ -14,7 +13,6 @@ export default {
       fs: false, // jison generated code requires 'fs'
       path: require.resolve('path-browserify'),
     },
-    plugins: [new TsConfigPathsPlugin()],
   },
   output: {
     path: resolveRoot('./dist'),

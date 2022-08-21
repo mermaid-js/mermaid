@@ -2,7 +2,7 @@ import assignWithDepth from './assignWithDepth';
 import { log } from './logger';
 import theme from './themes';
 import config from './defaultConfig';
-import { MermaidConfig } from 'types/config';
+import type { MermaidConfig } from './config.type';
 
 export const defaultConfig: MermaidConfig = Object.freeze(config);
 
