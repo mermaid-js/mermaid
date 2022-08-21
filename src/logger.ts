@@ -1,8 +1,9 @@
 import moment from 'moment-mini';
 
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
+export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
 export const LEVELS: Record<LogLevel, number> = {
+  trace: 0,
   debug: 1,
   info: 2,
   warn: 3,
@@ -11,6 +12,7 @@ export const LEVELS: Record<LogLevel, number> = {
 };
 
 export const log: Record<keyof typeof LEVELS, typeof console.log> = {
+  trace: (..._args: any[]) => {},
   debug: (..._args: any[]) => {},
   info: (..._args: any[]) => {},
   warn: (..._args: any[]) => {},
@@ -31,6 +33,7 @@ export const setLogLevel = function (level: keyof typeof LEVELS | number | strin
       numericLevel = LEVELS[level as keyof typeof LEVELS];
     }
   }
+  log.trace = () => {};
   log.debug = () => {};
   log.info = () => {};
   log.warn = () => {};
@@ -60,6 +63,11 @@ export const setLogLevel = function (level: keyof typeof LEVELS | number | strin
     log.debug = console.debug
       ? console.debug.bind(console, format('DEBUG'), 'color: lightgreen')
       : console.log.bind(console, '\x1b[32m', format('DEBUG'));
+  }
+  if (numericLevel <= LEVELS.trace) {
+    log.trace = console.debug
+      ? console.debug.bind(console, format('TRACE'), 'color: lightgreen')
+      : console.log.bind(console, '\x1b[32m', format('TRACE'));
   }
 };
 
