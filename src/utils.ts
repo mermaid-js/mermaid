@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import {
   curveBasis,
@@ -18,6 +19,7 @@ import { configKeys } from './defaultConfig';
 import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
+import { MermaidConfig } from 'types/config';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -71,7 +73,7 @@ const anyComment = /\s*%%.*\n/gm;
  * @param {any} cnf
  * @returns {object} The json object representing the init passed to mermaid.initialize()
  */
-export const detectInit = function (text, cnf) {
+export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {
   let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
 
@@ -84,7 +86,7 @@ export const detectInit = function (text, cnf) {
     results = inits.args;
   }
   if (results) {
-    let type = detectType(text, cnf);
+    let type = detectType(text, config);
     ['config'].forEach((prop) => {
       if (typeof results[prop] !== 'undefined') {
         if (type === 'flowchart-v2') {

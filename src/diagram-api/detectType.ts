@@ -40,10 +40,10 @@ const diagramMatchers: Record<string, RegExp> = {
  *   class: { defaultRenderer: string } | undefined;
  *   state: { defaultRenderer: string } | undefined;
  *   flowchart: { defaultRenderer: string } | undefined;
- * }} [cnf]
+ * }} [config]
  * @returns {string} A graph definition key
  */
-export const detectType = function (text: string, cnf: MermaidConfig): string {
+export const detectType = function (text: string, config?: MermaidConfig): string {
   text = text.replace(directive, '').replace(anyComment, '\n');
   for (const [diagram, matcher] of Object.entries(diagramMatchers)) {
     if (text.match(matcher)) {
@@ -52,16 +52,16 @@ export const detectType = function (text: string, cnf: MermaidConfig): string {
   }
 
   if (text.match(/^\s*classDiagram/)) {
-    if (cnf?.class?.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
+    if (config?.class?.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
     return 'class';
   }
 
   if (text.match(/^\s*stateDiagram/)) {
-    if (cnf?.state?.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
+    if (config?.state?.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
     return 'state';
   }
 
-  if (cnf?.flowchart?.defaultRenderer === 'dagre-wrapper') {
+  if (config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
     return 'flowchart-v2';
   }
 

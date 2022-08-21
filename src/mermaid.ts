@@ -1,9 +1,8 @@
-// TODO: Remove
-// @ts-nocheck
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code.
  */
+import { MermaidConfig } from 'types/config';
 import { log } from './logger';
 import mermaidAPI from './mermaidAPI';
 import utils from './utils';
@@ -31,73 +30,73 @@ import utils from './utils';
  *
  * Renders the mermaid diagrams
  */
-const init = function (config: any, ...nodes: any[]) {
+const init = function (
+  config?: MermaidConfig,
+  nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  callback?: Function
+) {
   try {
-    initThrowsErrors(config, nodes);
+    initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
+    // @ts-ignore
     log.warn(e.str);
-    if (this.parseError) {
-      this.parseError(e);
+    if (mermaid.parseError) {
+      // @ts-ignore
+      mermaid.parseError(e);
     }
   }
 };
 
-const initThrowsErrors = function (config: any, nodes: any[]) {
+const initThrowsErrors = function (
+  config?: MermaidConfig,
+  nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  callback?: Function
+) {
   const conf = mermaidAPI.getConfig();
   // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   if (config) {
+    // @ts-ignore
     mermaid.sequenceConfig = config;
   }
 
   // if last argument is a function this is the callback function
-  let callback: (id: string) => void;
-  if (typeof nodes[nodes.length - 1] === 'function') {
-    callback = nodes[nodes.length - 1];
-    log.debug('Callback function found');
+
+  if (!callback && typeof conf?.mermaid?.callback === 'function') {
+    callback = conf.mermaid.callback;
+  }
+  log.debug(`${!callback ? 'No ' : ''}Callback function found`);
+  let nodesToProcess: NodeListOf<HTMLElement>;
+  if (typeof nodes === 'undefined') {
+    nodesToProcess = document.querySelectorAll('.mermaid');
+  } else if (typeof nodes === 'string') {
+    nodesToProcess = document.querySelectorAll(nodes);
+  } else if (nodes instanceof HTMLElement) {
+    nodesToProcess = new NodeList() as NodeListOf<HTMLElement>;
+    nodesToProcess[0] = nodes;
+  } else if (nodes instanceof NodeList) {
+    nodesToProcess = nodes;
   } else {
-    if (typeof conf.mermaid !== 'undefined') {
-      if (typeof conf.mermaid.callback === 'function') {
-        callback = conf.mermaid.callback;
-        log.debug('Callback function found');
-      } else {
-        log.debug('No Callback function found');
-      }
-    }
-  }
-  nodes =
-    nodes === undefined
-      ? document.querySelectorAll('.mermaid')
-      : typeof nodes === 'string'
-      ? document.querySelectorAll(nodes)
-      : nodes instanceof window.Node
-      ? [nodes]
-      : nodes; // Last case  - sequence config was passed pick next
-
-  log.debug('Start On Load before: ' + mermaid.startOnLoad);
-  if (typeof mermaid.startOnLoad !== 'undefined') {
-    log.debug('Start On Load inner: ' + mermaid.startOnLoad);
-    mermaidAPI.updateSiteConfig({ startOnLoad: mermaid.startOnLoad });
+    throw new Error('Invalid argument nodes for mermaid.init');
   }
 
-  if (typeof mermaid.ganttConfig !== 'undefined') {
-    mermaidAPI.updateSiteConfig({ gantt: mermaid.ganttConfig });
+  log.debug(`Found ${nodesToProcess.length} diagrams`);
+  if (typeof config?.startOnLoad !== 'undefined') {
+    log.debug('Start On Load: ' + config?.startOnLoad);
+    mermaidAPI.updateSiteConfig({ startOnLoad: config?.startOnLoad });
   }
 
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt;
 
-  for (let i = 0; i < nodes.length; i++) {
-    // element is the current div with mermaid class
-    const element = nodes[i];
-
+  // element is the current div with mermaid class
+  for (const element of Array.from(nodesToProcess)) {
     /*! Check if previously processed */
-    if (!element.getAttribute('data-processed')) {
-      element.setAttribute('data-processed', true);
-    } else {
+    if (element.getAttribute('data-processed')) {
       continue;
     }
+    element.setAttribute('data-processed', 'true');
 
     const id = `mermaid-${idGenerator.next()}`;
 
@@ -118,7 +117,7 @@ const initThrowsErrors = function (config: any, nodes: any[]) {
       mermaidAPI.render(
         id,
         txt,
-        (svgCode, bindFunctions) => {
+        (svgCode: string, bindFunctions: (el: HTMLElement) => void) => {
           element.innerHTML = svgCode;
           if (typeof callback !== 'undefined') {
             callback(id);
@@ -129,24 +128,15 @@ const initThrowsErrors = function (config: any, nodes: any[]) {
       );
     } catch (error) {
       log.warn('Catching Error (bootstrap)');
+      // @ts-ignore
+      // TODO: We should be throwing an error object.
       throw { error, message: error.str };
     }
   }
 };
 
-const initialize = function (config: any) {
-  // mermaidAPI.reset();
-  if (typeof config.mermaid !== 'undefined') {
-    if (typeof config.mermaid.startOnLoad !== 'undefined') {
-      mermaid.startOnLoad = config.mermaid.startOnLoad;
-    }
-    if (typeof config.mermaid.htmlLabels !== 'undefined') {
-      mermaid.htmlLabels =
-        config.mermaid.htmlLabels === 'false' || config.mermaid.htmlLabels === false ? false : true;
-    }
-  }
+const initialize = function (config: MermaidConfig) {
   mermaidAPI.initialize(config);
-  // mermaidAPI.reset();
 };
 
 /**
@@ -154,22 +144,9 @@ const initialize = function (config: any) {
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
  */
 const contentLoaded = function () {
-  let config;
-
-  if (mermaid.startOnLoad) {
-    // No config found, do check API config
-    config = mermaidAPI.getConfig();
-    if (config.startOnLoad) {
-      mermaid.init();
-    }
-  } else {
-    if (typeof mermaid.startOnLoad === 'undefined') {
-      log.debug('In start, no config');
-      config = mermaidAPI.getConfig();
-      if (config.startOnLoad) {
-        mermaid.init();
-      }
-    }
+  const { startOnLoad } = mermaidAPI.getConfig();
+  if (startOnLoad) {
+    mermaid.init();
   }
 };
 
@@ -200,13 +177,12 @@ if (typeof document !== 'undefined') {
  *
  * @param {function (err, hash)} newParseErrorHandler New parseError() callback.
  */
-const setParseErrorHandler = function (newParseErrorHandler) {
+const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: any) => void) {
+  // @ts-ignore
   mermaid.parseError = newParseErrorHandler;
 };
 
 const mermaid = {
-  startOnLoad: true,
-  htmlLabels: true,
   diagrams: {},
   mermaidAPI,
   parse: mermaidAPI != undefined ? mermaidAPI.parse : null,
@@ -215,7 +191,7 @@ const mermaid = {
   init,
   initThrowsErrors,
   initialize,
-
+  parseError: undefined,
   contentLoaded,
 
   setParseErrorHandler,

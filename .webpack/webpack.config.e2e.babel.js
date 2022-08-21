@@ -4,7 +4,7 @@ import { merge } from 'webpack-merge';
 export default merge(baseConfig, {
   mode: 'development',
   entry: {
-    mermaid: './src/mermaid.ts',
+    mermaid: './src/mermaid',
     e2e: './cypress/platform/viewer.js',
     'bundle-test': './cypress/platform/bundle-test.js',
   },

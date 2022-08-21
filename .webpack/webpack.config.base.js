@@ -6,7 +6,7 @@ export default {
   amd: false, // https://github.com/lodash/lodash/issues/3052
   target: 'web',
   entry: {
-    mermaid: './src/mermaid.ts',
+    mermaid: './src/mermaid',
   },
   resolve: {
     extensions: ['.wasm', '.mjs', '.js', '.ts', '.json', '.jison'],

@@ -31,6 +31,7 @@
     "lint:fix": "yarn lint --fix",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
     "cypress": "cypress run",
+    "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "e2e-upd": "yarn lint && jest e2e -u --config e2e/jest.config.js",
     "dev": "webpack serve --config ./.webpack/webpack.config.e2e.babel.js",

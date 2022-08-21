@@ -2,16 +2,17 @@ import assignWithDepth from './assignWithDepth';
 import { log } from './logger';
 import theme from './themes';
 import config from './defaultConfig';
+import { MermaidConfig } from 'types/config';
 
-export const defaultConfig = Object.freeze(config);
+export const defaultConfig: MermaidConfig = Object.freeze(config);
 
-let siteConfig = assignWithDepth({}, defaultConfig);
-let configFromInitialize;
-let directives = [];
-let currentConfig = assignWithDepth({}, defaultConfig);
+let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
+let configFromInitialize: MermaidConfig;
+let directives: any[] = [];
+let currentConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 
-export const updateCurrentConfig = (siteCfg, _directives) => {
-  // start with config beeing the siteConfig
+export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: any[]) => {
+  // start with config being the siteConfig
   let cfg = assignWithDepth({}, siteCfg);
   // let sCfg = assignWithDepth(defaultConfig, siteConfigDelta);
 
@@ -27,12 +28,15 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
 
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
+  // @ts-ignore
   if (sumOfDirectives.theme && theme[sumOfDirectives.theme]) {
     const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
       tmpConfigFromInitialize.themeVariables || {},
+      // @ts-ignore
       sumOfDirectives.themeVariables
     );
+    // @ts-ignore
     cfg.themeVariables = theme[cfg.theme].getThemeVariables(themeVariables);
   }
 
@@ -55,11 +59,13 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  * @param conf - The base currentConfig to use as siteConfig
  * @returns {object} - The siteConfig
  */
-export const setSiteConfig = (conf) => {
+export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
 
+  // @ts-ignore
   if (conf.theme && theme[conf.theme]) {
+    // @ts-ignore
     siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
   }
 
@@ -67,11 +73,11 @@ export const setSiteConfig = (conf) => {
   return siteConfig;
 };
 
-export const saveConfigFromInitialize = (conf) => {
+export const saveConfigFromInitialize = (conf: MermaidConfig): void => {
   configFromInitialize = assignWithDepth({}, conf);
 };
 
-export const updateSiteConfig = (conf) => {
+export const updateSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth(siteConfig, conf);
   updateCurrentConfig(siteConfig, directives);
 
@@ -88,7 +94,7 @@ export const updateSiteConfig = (conf) => {
  *
  * @returns {object} - The siteConfig
  */
-export const getSiteConfig = () => {
+export const getSiteConfig = (): MermaidConfig => {
   return assignWithDepth({}, siteConfig);
 };
 /**
@@ -105,7 +111,7 @@ export const getSiteConfig = () => {
  * @param {any} conf - The potential currentConfig
  * @returns {any} - The currentConfig merged with the sanitized conf
  */
-export const setConfig = (conf) => {
+export const setConfig = (conf: MermaidConfig): MermaidConfig => {
   // sanitize(conf);
   // Object.keys(conf).forEach(key => {
   //   const manipulator = manipulators[key];
@@ -143,17 +149,14 @@ export const getConfig = () => {
  *
  * @param {any} options - The potential setConfig parameter
  */
-export const sanitize = (options) => {
+export const sanitize = (options: any) => {
   // Checking that options are not in the list of excluded options
-  Object.keys(siteConfig.secure).forEach((key) => {
-    if (typeof options[siteConfig.secure[key]] !== 'undefined') {
-      // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
+  siteConfig.secure?.forEach((key) => {
+    if (typeof options[key] !== 'undefined') {
+      // DO NOT attempt to print options[key] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
-      log.debug(
-        `Denied attempt to modify a secure key ${siteConfig.secure[key]}`,
-        options[siteConfig.secure[key]]
-      );
-      delete options[siteConfig.secure[key]];
+      log.debug(`Denied attempt to modify a secure key ${key}`, options[key]);
+      delete options[key];
     }
   });
 
@@ -186,7 +189,7 @@ export const sanitize = (options) => {
  *
  * @param {object} directive The directive to push in
  */
-export const addDirective = (directive) => {
+export const addDirective = (directive: any) => {
   if (directive.fontFamily) {
     if (!directive.themeVariables) {
       directive.themeVariables = { fontFamily: directive.fontFamily };
@@ -215,7 +218,7 @@ export const addDirective = (directive) => {
  *
  * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
  */
-export const reset = () => {
+export const reset = (): void => {
   // Replace current config with siteConfig
   directives = [];
   updateCurrentConfig(siteConfig, directives);

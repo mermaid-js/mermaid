@@ -8,6 +8,7 @@ export interface MermaidConfig {
   themeCSS?: string;
   maxTextSize?: number;
   darkMode?: boolean;
+  htmlLabels?: boolean;
   fontFamily?: string;
   logLevel?: number;
   securityLevel?: string;
