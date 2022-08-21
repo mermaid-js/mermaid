@@ -13,22 +13,6 @@ export const getRows = (s?: string): string[] => {
   return str.split('#br#');
 };
 
-export const removeEscapes = (text: string): string => {
-  let newStr = text.replace(/\\u[\dA-F]{4}/gi, function (match) {
-    return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
-  });
-
-  newStr = newStr.replace(/\\x([0-9a-f]{2})/gi, (_, c) => String.fromCharCode(parseInt(c, 16)));
-  newStr = newStr.replace(/\\[\d\d\d]{3}/gi, function (match) {
-    return String.fromCharCode(parseInt(match.replace(/\\/g, ''), 8));
-  });
-  newStr = newStr.replace(/\\[\d\d\d]{2}/gi, function (match) {
-    return String.fromCharCode(parseInt(match.replace(/\\/g, ''), 8));
-  });
-
-  return newStr;
-};
-
 /**
  * Removes script tags from a text
  *
@@ -36,33 +20,7 @@ export const removeEscapes = (text: string): string => {
  * @returns {string} The safer text
  */
 export const removeScript = (txt: string): string => {
-  var rs = '';
-  var idx = 0;
-
-  while (idx >= 0) {
-    idx = txt.indexOf('<script');
-    if (idx >= 0) {
-      rs += txt.substr(0, idx);
-      txt = txt.substr(idx + 1);
-
-      idx = txt.indexOf('</script>');
-      if (idx >= 0) {
-        idx += 9;
-        txt = txt.substr(idx);
-      }
-    } else {
-      rs += txt;
-      idx = -1;
-      break;
-    }
-  }
-  let decodedText = removeEscapes(rs);
-  decodedText = decodedText.replaceAll(/script>/gi, '#');
-  decodedText = decodedText.replaceAll(/javascript:/gi, '#');
-  decodedText = decodedText.replaceAll(/javascript&colon/gi, '#');
-  decodedText = decodedText.replaceAll(/onerror=/gi, 'onerror:');
-  decodedText = decodedText.replaceAll(/<iframe/gi, '');
-  return decodedText;
+  return DOMPurify.sanitize(txt);
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
@@ -185,5 +143,4 @@ export default {
   removeScript,
   getUrl,
   evaluate,
-  removeEscapes,
 };
