@@ -58,17 +58,10 @@ Theme , the CSS style sheet
 
 ## logLevel
 
-| Parameter | Description                                           | Type             | Required | Values        |
-| --------- | ----------------------------------------------------- | ---------------- | -------- | ------------- |
-| logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 1, 2, 3, 4, 5 |
+| Parameter | Description                                           | Type             | Required | Values                                             |
+| --------- | ----------------------------------------------------- | ---------------- | -------- | -------------------------------------------------- |
+| logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 'trace', 'debug', 'info', 'warn', 'error', 'fatal' |
 
-**Notes:**
-
--   Debug: 1
--   Info: 2
--   Warn: 3
--   Error: 4
--   Fatal: 5 (default)
 
 ## securityLevel
 
