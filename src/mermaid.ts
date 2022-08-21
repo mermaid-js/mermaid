@@ -144,9 +144,11 @@ const initialize = function (config: MermaidConfig) {
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
  */
 const contentLoaded = function () {
-  const { startOnLoad } = mermaidAPI.getConfig();
-  if (startOnLoad) {
-    mermaid.init();
+  if (mermaid.startOnLoad) {
+    const { startOnLoad } = mermaidAPI.getConfig();
+    if (startOnLoad) {
+      mermaid.init();
+    }
   }
 };
 
@@ -183,6 +185,7 @@ const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: an
 };
 
 const mermaid = {
+  startOnLoad: true,
   diagrams: {},
   mermaidAPI,
   parse: mermaidAPI != undefined ? mermaidAPI.parse : null,
