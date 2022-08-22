@@ -1,8 +1,27 @@
-// @ts-nocheck
+import { MermaidConfig } from '../config.type';
+
+export type DiagramDetector = (text: string) => boolean;
+
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
-const detectors = {};
+
+const detectors: Record<string, DiagramDetector> = {};
+const diagramMatchers: Record<string, RegExp> = {
+  c4: /^\s*C4Context|C4Container|C4Component|C4Dynamic|C4Deployment/,
+  sequence: /^\s*sequenceDiagram/,
+  gantt: /^\s*gantt/,
+  classDiagram: /^\s*classDiagram-v2/,
+  stateDiagram: /^\s*stateDiagram-v2/,
+  'flowchart-v2': /^\s*flowchart/,
+  info: /^\s*info/,
+  pie: /^\s*pie/,
+  er: /^\s*erDiagram/,
+  journey: /^\s*journey/,
+  // gitGraph: /^\s*gitGraph/,
+  requirement: /^\s*requirement(Diagram)?/,
+};
+
 /**
  * @function detectType Detects the type of the graph text. Takes into consideration the possible
  *   existence of an %%init directive
@@ -23,79 +42,40 @@ const detectors = {};
  *   class: { defaultRenderer: string } | undefined;
  *   state: { defaultRenderer: string } | undefined;
  *   flowchart: { defaultRenderer: string } | undefined;
- * }} [cnf]
+ * }} [config]
  * @returns {string} A graph definition key
  */
-const detectType = function (text, cnf) {
+export const detectType = function (text: string, config?: MermaidConfig): string {
   text = text.replace(directive, '').replace(anyComment, '\n');
-  if (text.match(/^\s*C4Context|C4Container|C4Component|C4Dynamic|C4Deployment/)) {
-    return 'c4';
+  for (const [diagram, matcher] of Object.entries(diagramMatchers)) {
+    if (text.match(matcher)) {
+      return diagram;
+    }
   }
 
-  if (text.match(/^\s*sequenceDiagram/)) {
-    return 'sequence';
-  }
-
-  if (text.match(/^\s*gantt/)) {
-    return 'gantt';
-  }
-  if (text.match(/^\s*classDiagram-v2/)) {
-    return 'classDiagram';
-  }
   if (text.match(/^\s*classDiagram/)) {
-    if (cnf && cnf.class && cnf.class.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
+    if (config?.class?.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
     return 'class';
   }
 
-  if (text.match(/^\s*stateDiagram-v2/)) {
-    return 'stateDiagram';
-  }
-
   if (text.match(/^\s*stateDiagram/)) {
-    if (cnf && cnf.class && cnf.state.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
+    if (config?.state?.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
     return 'state';
   }
 
-  // if (text.match(/^\s*gitGraph/)) {
-  //   return 'gitGraph';
-  // }
-  if (text.match(/^\s*flowchart/)) {
+  if (config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
     return 'flowchart-v2';
   }
 
-  if (text.match(/^\s*info/)) {
-    return 'info';
-  }
-  if (text.match(/^\s*pie/)) {
-    return 'pie';
-  }
-
-  if (text.match(/^\s*erDiagram/)) {
-    return 'er';
-  }
-
-  if (text.match(/^\s*journey/)) {
-    return 'journey';
-  }
-
-  if (text.match(/^\s*requirement/) || text.match(/^\s*requirementDiagram/)) {
-    return 'requirement';
-  }
-  if (cnf && cnf.flowchart && cnf.flowchart.defaultRenderer === 'dagre-wrapper')
-    return 'flowchart-v2';
-  const k = Object.keys(detectors);
-  for (let i = 0; i < k.length; i++) {
-    const key = k[i];
-    const dia = detectors[key];
-    if (dia && dia.detector(text)) {
+  for (const [key, detector] of Object.entries(detectors)) {
+    if (detector(text)) {
       return key;
     }
   }
+
   return 'flowchart';
 };
-export const addDetector = (key, detector) => {
-  detectors[key] = {
-    detector,
-  };
+
+export const addDetector = (key: string, detector: DiagramDetector) => {
+  detectors[key] = detector;
 };
-export default detectType;
