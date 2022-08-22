@@ -1471,6 +1471,21 @@ Returns **any** The currentConfig merged with the sanitized conf
 
 Returns **any** The currentConfig
 
+## sanitize
+
+## sanitize
+
+| Function | Description                            | Type        | Values |
+| -------- | -------------------------------------- | ----------- | ------ |
+| sanitize | Sets the siteConfig to desired values. | Put Request | None   |
+
+Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
+options in-place
+
+### Parameters
+
+-   `options` **any** The potential setConfig parameter
+
 ## render
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
@@ -1498,21 +1513,6 @@ $(function () {
       element will be removed when rendering is completed.
 
 Returns **any** 
-
-## sanitize
-
-## sanitize
-
-| Function | Description                            | Type        | Values |
-| -------- | -------------------------------------- | ----------- | ------ |
-| sanitize | Sets the siteConfig to desired values. | Put Request | None   |
-
-Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
-options in-place
-
-### Parameters
-
--   `options` **any** The potential setConfig parameter
 
 ## addDirective
 
