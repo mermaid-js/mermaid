@@ -23,10 +23,7 @@ import { gitGraphDetector } from '../diagrams/git/gitGraphDetector';
 export const addDiagrams = () => {
   registerDiagram(
     'gitGraph',
-    gitGraphParser,
-    gitGraphDb,
-    gitGraphRenderer,
-    undefined,
+    { parser: gitGraphParser, db: gitGraphDb, renderer: gitGraphRenderer },
     gitGraphDetector
   );
 };

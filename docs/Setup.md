@@ -1433,24 +1433,6 @@ Returns **[object][5]** The siteConfig
 
 Returns **[object][5]** The siteConfig
 
-## setConfig
-
-## setConfig
-
-| Function      | Description                           | Type        | Values                                  |
-| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
-| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
-
-**Notes**: Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure
-keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
-corresponding siteConfig value.
-
-### Parameters
-
--   `conf` **any** The potential currentConfig
-
-Returns **any** The currentConfig merged with the sanitized conf
-
 ## render
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
@@ -1478,6 +1460,24 @@ $(function () {
       element will be removed when rendering is completed.
 
 Returns **any** 
+
+## setConfig
+
+## setConfig
+
+| Function      | Description                           | Type        | Values                                  |
+| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+
+**Notes**: Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure
+keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
+corresponding siteConfig value.
+
+### Parameters
+
+-   `conf` **any** The potential currentConfig
+
+Returns **any** The currentConfig merged with the sanitized conf
 
 ## getConfig
 

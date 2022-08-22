@@ -1,5 +1,6 @@
 const path = require('path');
 
+/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   testEnvironment: 'jsdom',
   preset: 'ts-jest',
@@ -11,7 +12,7 @@ module.exports = {
     ],
   },
   transformIgnorePatterns: ['/node_modules/(?!dagre-d3-renderer/lib|khroma).*\\.js'],
-  testPathIgnorePatterns: ['/node_modules/', '.cache'],
+  testPathIgnorePatterns: ['/node_modules/', '.cache', './cypress'],
   moduleNameMapper: {
     '\\.(css|scss)$': 'identity-obj-proxy',
   },

@@ -29,6 +29,7 @@ export interface MermaidConfig {
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   dompurifyConfig?: DOMPurify.Config;
+  wrap?: boolean;
 }
 
 // TODO: More configs needs to be moved in here
@@ -289,6 +290,7 @@ export interface GanttDiagramConfig extends BaseDiagramConfig {
 }
 
 export interface SequenceDiagramConfig extends BaseDiagramConfig {
+  arrowMarkerAbsolute?: boolean;
   hideUnusedParticipants?: boolean;
   activationWidth?: number;
   diagramMarginX?: number;
@@ -326,6 +328,7 @@ export interface SequenceDiagramConfig extends BaseDiagramConfig {
 }
 
 export interface FlowchartDiagramConfig extends BaseDiagramConfig {
+  arrowMarkerAbsolute?: boolean;
   diagramPadding?: number;
   htmlLabels?: boolean;
   nodeSpacing?: number;
