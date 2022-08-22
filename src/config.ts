@@ -218,8 +218,8 @@ export const addDirective = (directive: any) => {
  *
  * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
  */
-export const reset = (): void => {
+export const reset = (config = siteConfig): void => {
   // Replace current config with siteConfig
   directives = [];
-  updateCurrentConfig(siteConfig, directives);
+  updateCurrentConfig(config, directives);
 };

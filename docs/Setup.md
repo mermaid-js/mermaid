@@ -1402,15 +1402,6 @@ This sets the auto-wrap padding for the diagram (sides only)
 
 **Notes:** Default value: 0.
 
-## parse
-
-### Parameters
-
--   `text`  
--   `dia`  
-
-Returns **any** 
-
 ## setSiteConfig
 
 ## setSiteConfig
@@ -1460,18 +1451,6 @@ corresponding siteConfig value.
 
 Returns **any** The currentConfig merged with the sanitized conf
 
-## getConfig
-
-## getConfig
-
-| Function  | Description               | Type        | Return Values                  |
-| --------- | ------------------------- | ----------- | ------------------------------ |
-| getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
-
-**Notes**: Returns **any** the currentConfig
-
-Returns **any** The currentConfig
-
 ## render
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
@@ -1492,13 +1471,25 @@ $(function () {
 ### Parameters
 
 -   `id` **any** The id of the element to be rendered
--   `_txt` **any** The graph definition
+-   `text` **any** The graph definition
 -   `cb` **any** Callback which is called after rendering is finished with the svg code as inparam.
 -   `container` **any** Selector to element in which a div with the graph temporarily will be
       inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
       element will be removed when rendering is completed.
 
 Returns **any** 
+
+## getConfig
+
+## getConfig
+
+| Function  | Description               | Type        | Return Values                  |
+| --------- | ------------------------- | ----------- | ------------------------------ |
+| getConfig | Obtains the currentConfig | Get Request | Any Values from current Config |
+
+**Notes**: Returns **any** the currentConfig
+
+Returns **any** The currentConfig
 
 ## sanitize
 
@@ -1539,19 +1530,17 @@ Pushes in a directive to the configuration
 
 **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
-Returns **void** 
-
-## updateRendererConfigs
-
 ### Parameters
 
--   `conf` **any** 
+-   `config`   (optional, default `siteConfig`)
+
+Returns **void** 
 
 ## initialize
 
 ### Parameters
 
--   `options` **any** 
+-   `options` **MermaidConfig** 
 
 ## 
 

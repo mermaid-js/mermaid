@@ -4,8 +4,8 @@
  */
 import { MermaidConfig } from './config.type';
 import { log } from './logger';
-import mermaidAPI from './mermaidAPI';
 import utils from './utils';
+import { mermaidAPI } from './mermaidAPI';
 
 /**
  * ## init
@@ -117,7 +117,7 @@ const initThrowsErrors = function (
       mermaidAPI.render(
         id,
         txt,
-        (svgCode: string, bindFunctions: (el: HTMLElement) => void) => {
+        (svgCode: string, bindFunctions?: (el: Element) => void) => {
           element.innerHTML = svgCode;
           if (typeof callback !== 'undefined') {
             callback(id);
@@ -180,23 +180,36 @@ if (typeof document !== 'undefined') {
  * @param {function (err, hash)} newParseErrorHandler New parseError() callback.
  */
 const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: any) => void) {
-  // @ts-ignore
   mermaid.parseError = newParseErrorHandler;
 };
 
-const mermaid = {
+const parse = (txt: string) => {
+  return mermaidAPI.parse(txt, mermaid.parseError);
+};
+
+const mermaid: {
+  startOnLoad: boolean;
+  diagrams: any;
+  parseError?: Function;
+  mermaidAPI: typeof mermaidAPI;
+  parse: typeof parse;
+  render: typeof mermaidAPI.render;
+  init: typeof init;
+  initThrowsErrors: typeof initThrowsErrors;
+  initialize: typeof initialize;
+  contentLoaded: typeof contentLoaded;
+  setParseErrorHandler: typeof setParseErrorHandler;
+} = {
   startOnLoad: true,
   diagrams: {},
   mermaidAPI,
-  parse: mermaidAPI != undefined ? mermaidAPI.parse : null,
-  render: mermaidAPI != undefined ? mermaidAPI.render : null,
-
+  parse,
+  render: mermaidAPI.render,
   init,
   initThrowsErrors,
   initialize,
   parseError: undefined,
   contentLoaded,
-
   setParseErrorHandler,
 };
 

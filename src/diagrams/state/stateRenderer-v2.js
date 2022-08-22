@@ -248,11 +248,9 @@ export const draw = function (text, id, _version, diag) {
     dir = 'LR';
   }
 
-  const conf = getConfig().state;
+  const { securityLevel, state: conf } = getConfig().state;
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
-
-  const securityLevel = getConfig().securityLevel;
 
   log.info(diag.db.getRootDocV2());
   diag.db.extract(diag.db.getRootDocV2());
