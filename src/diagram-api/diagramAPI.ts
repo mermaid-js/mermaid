@@ -1,3 +1,4 @@
+// @ts-nocheck
 import c4Db from '../diagrams/c4/c4Db';
 import c4Renderer from '../diagrams/c4/c4Renderer';
 import c4Parser from '../diagrams/c4/parser/c4Diagram';
