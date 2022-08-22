@@ -61,10 +61,6 @@ const initThrowsErrors = function (
   }
 
   // if last argument is a function this is the callback function
-
-  if (!callback && typeof conf?.mermaid?.callback === 'function') {
-    callback = conf.mermaid.callback;
-  }
   log.debug(`${!callback ? 'No ' : ''}Callback function found`);
   let nodesToProcess: NodeListOf<HTMLElement>;
   if (typeof nodes === 'undefined') {

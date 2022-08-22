@@ -134,7 +134,7 @@ export const setConfig = (conf: MermaidConfig): MermaidConfig => {
  *
  * @returns {any} - The currentConfig
  */
-export const getConfig = () => {
+export const getConfig = (): MermaidConfig => {
   return assignWithDepth({}, currentConfig);
 };
 /**

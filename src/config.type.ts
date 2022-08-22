@@ -10,6 +10,7 @@ export interface MermaidConfig {
   darkMode?: boolean;
   htmlLabels?: boolean;
   fontFamily?: string;
+  altFontFamily?: string;
   logLevel?: number;
   securityLevel?: string;
   startOnLoad?: boolean;
@@ -225,6 +226,7 @@ export interface ErDiagramConfig extends BaseDiagramConfig {
 }
 
 export interface StateDiagramConfig extends BaseDiagramConfig {
+  arrowMarkerAbsolute?: boolean;
   dividerMargin?: number;
   sizeUnit?: number;
   padding?: number;

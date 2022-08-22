@@ -103,20 +103,21 @@ export const decodeEntities = function (text: string): string {
  * });
  * ```
  *
- * @param {any} id The id of the element to be rendered
- * @param {any} text The graph definition
- * @param {any} cb Callback which is called after rendering is finished with the svg code as inparam.
- * @param {any} container Selector to element in which a div with the graph temporarily will be
+ * @param {string} id The id of the element to be rendered
+ * @param {string} text The graph definition
+ * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
+ *   is called after rendering is finished with the svg code as inparam.
+ * @param {Element} container Selector to element in which a div with the graph temporarily will be
  *   inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
- * @returns {any}
+ * @returns {void}
  */
 const render = function (
   id: string,
   text: string,
   cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   container: Element
-) {
+): void {
   configApi.reset();
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(text);
@@ -129,7 +130,7 @@ const render = function (
   log.debug(cnf);
 
   // Check the maximum allowed text size
-  if (text.length > cnf.maxTextSize) {
+  if (text.length > cnf.maxTextSize!) {
     text = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
@@ -137,18 +138,6 @@ const render = function (
 
   // In regular execution the container will be the div with a mermaid class
   if (typeof container !== 'undefined') {
-    if (cnf.securityLevel === 'sandbox') {
-      // IF we are in sandboxed mode, we do everyting mermaid related
-      // in a sandboxed div
-      const iframe = select('body')
-        .append('iframe')
-        .attr('id', 'i' + id)
-        .attr('style', 'width: 100%; height: 100%;')
-        .attr('sandbox', '');
-      root = select(iframe.nodes()[0]!.contentDocument!.body);
-      root.node().style.margin = 0;
-    }
-
     // A container was provided by the caller
     if (container) {
       container.innerHTML = '';
@@ -190,11 +179,12 @@ const render = function (
 
     // Remove previous tpm element if it exists
     let element;
-    if (cnf.securityLevel !== 'sandbox') {
-      element = document.querySelector('#' + 'd' + id);
+    if (cnf.securityLevel === 'sandbox') {
+      element = document.querySelector('#i' + id);
     } else {
-      element = document.querySelector('#' + 'i' + id);
+      element = document.querySelector('#d' + id);
     }
+
     if (element) {
       element.remove();
     }
@@ -260,7 +250,7 @@ const render = function (
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     const classes: any = flowRenderer.getClasses(text, diag);
-    const htmlLabels = cnf.htmlLabels || cnf.flowchart.htmlLabels;
+    const htmlLabels = cnf.htmlLabels || cnf.flowchart?.htmlLabels;
     for (const className in classes) {
       if (htmlLabels) {
         userStyles += `\n.${className} > * { ${classes[className].styles.join(
@@ -318,10 +308,8 @@ const render = function (
   let svgCode = root.select('#d' + id).node().innerHTML;
 
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
-  if (
-    (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') &&
-    cnf.arrowMarkerAbsolute !== 'sandbox'
-  ) {
+  // TODO Q: Needs verification.
+  if (!cnf.arrowMarkerAbsolute && cnf.securityLevel !== 'sandbox') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 

@@ -165,11 +165,10 @@ const diagrams: Record<string, DiagramDefinition> = {
     renderer: stateRenderer,
     parser: stateParser,
     init: (cnf) => {
-      // TODO Q: Why is state diagram init setting cnf.class.arrowMarkerAbsolute ?
-      if (!cnf.class) {
-        cnf.class = {};
+      if (!cnf.state) {
+        cnf.state = {};
       }
-      cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+      cnf.state.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
       stateDb.clear();
     },
   },
@@ -178,11 +177,10 @@ const diagrams: Record<string, DiagramDefinition> = {
     renderer: stateRendererV2,
     parser: stateParser,
     init: (cnf) => {
-      // TODO Q: Why is state diagram init setting cnf.class.arrowMarkerAbsolute ?
-      if (!cnf.class) {
-        cnf.class = {};
+      if (!cnf.state) {
+        cnf.state = {};
       }
-      cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+      cnf.state.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
       stateDb.clear();
     },
   },

@@ -458,9 +458,7 @@ export const draw = function (text, id, _version, diagObj) {
   }
 
   // Add label rects for non html labels
-  // TODO: This always evaluates to true. Bug?
-  // eslint-disable-next-line no-constant-condition
-  if (!evaluate(conf.htmlLabels) || true) {
+  if (!conf.htmlLabels) {
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];
