@@ -151,7 +151,7 @@ export const getConfig = (): MermaidConfig => {
  */
 export const sanitize = (options: any) => {
   // Checking that options are not in the list of excluded options
-  siteConfig.secure?.forEach((key) => {
+  ['secure', ...(siteConfig.secure ?? [])].forEach((key) => {
     if (typeof options[key] !== 'undefined') {
       // DO NOT attempt to print options[key] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
