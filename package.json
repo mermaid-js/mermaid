@@ -65,7 +65,7 @@
     "dompurify": "2.3.10",
     "graphlib": "^2.1.8",
     "khroma": "^2.0.0",
-    "moment-mini": "2.24.0",
+    "moment-mini": "2.29.4",
     "stylis": "^4.0.10"
   },
   "devDependencies": {
