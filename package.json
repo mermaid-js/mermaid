@@ -103,7 +103,7 @@
     "moment": "^2.23.0",
     "path-browserify": "^1.0.1",
     "prettier": "^2.3.2",
-    "prettier-plugin-jsdoc": "^0.4.1",
+    "prettier-plugin-jsdoc": "^0.3.30",
     "start-server-and-test": "^1.12.6",
     "terser-webpack-plugin": "^5.2.4",
     "webpack": "^5.53.0",
