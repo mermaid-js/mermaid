@@ -49,4 +49,21 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
 
     expect(rendered).toBe(true);
   });
+
+  it('should handle parameter names that are keywords', function () {
+    flow.parser.parse(`C4Context
+title title
+Person(Person, "Person", "Person")`);
+
+    const yy = flow.parser.yy;
+    expect(yy.getTitle()).toBe('title');
+
+    const shapes = yy.getC4ShapeArray();
+    expect(shapes.length).toBe(1);
+    const onlyShape = shapes[0];
+
+    expect(onlyShape.alias).toBe('Person');
+    expect(onlyShape.descr.text).toBe('Person');
+    expect(onlyShape.label.text).toBe('Person');
+  });
 });
