@@ -72,9 +72,9 @@ Theme , the CSS style sheet
 
 ## securityLevel
 
-| Parameter     | Description                       | Type   | Required | Values                          |
-| ------------- | --------------------------------- | ------ | -------- | ------------------------------- |
-| securitylevel | Level of trust for parsed diagram | string | Required | 'strict', 'loose', 'antiscript' |
+| Parameter     | Description                       | Type   | Required | Values                                     |
+| ------------- | --------------------------------- | ------ | -------- | ------------------------------------------ |
+| securityLevel | Level of trust for parsed diagram | string | Required | 'sandbox', 'strict', 'loose', 'antiscript' |
 
 **Notes**:
 
@@ -82,6 +82,9 @@ Theme , the CSS style sheet
 -   **loose**: tags in text are allowed, click functionality is enabled
 -   **antiscript**: html tags in text are allowed, (only script element is removed), click
     functionality is enabled
+-   **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
+    prevent any JavaScript from running in the context. This may hinder interactive functionality
+    of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
 
 ## startOnLoad
 
@@ -1509,7 +1512,7 @@ $(function () {
 -   `_txt` **any** The graph definition
 -   `cb` **any** Callback which is called after rendering is finished with the svg code as inparam.
 -   `container` **any** Selector to element in which a div with the graph temporarily will be
-      inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
+      inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
       element will be removed when rendering is completed.
 
 Returns **any** 
