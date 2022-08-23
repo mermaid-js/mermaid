@@ -167,6 +167,21 @@ describe('Entity Relationship Diagram', () => {
     cy.get('svg');
   });
 
+  it.only('should render entities with generic and array attributes', () => {
+    renderGraph(
+      `
+    erDiagram
+        BOOK {
+          string title
+          string[] authors
+          type~T~ type
+        }
+      `,
+      { logLevel: 1 }
+    );
+    cy.get('svg');
+  });
+
   it('should render entities and attributes with big and small entity names', () => {
     renderGraph(
       `
