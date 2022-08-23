@@ -40,4 +40,13 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
       wrap: false,
     });
   });
+
+  it('should handle a trailing whitespaces after statements', function () {
+    const whitespace = ' ';
+    const rendered = flow.parser.parse(`C4Context${whitespace}
+title System Context diagram for Internet Banking System${whitespace}
+Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")${whitespace}`);
+
+    expect(rendered).toBe(true);
+  });
 });
