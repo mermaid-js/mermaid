@@ -66,4 +66,19 @@ Person(Person, "Person", "Person")`);
     expect(onlyShape.descr.text).toBe('Person');
     expect(onlyShape.label.text).toBe('Person');
   });
+
+  it('should allow default in the parameters', function () {
+    flow.parser.parse(`C4Context
+Person(default, "default", "default")`);
+
+    const yy = flow.parser.yy;
+
+    const shapes = yy.getC4ShapeArray();
+    expect(shapes.length).toBe(1);
+    const onlyShape = shapes[0];
+
+    expect(onlyShape.alias).toBe('default');
+    expect(onlyShape.descr.text).toBe('default');
+    expect(onlyShape.label.text).toBe('default');
+  });
 });
