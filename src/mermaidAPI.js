@@ -141,7 +141,7 @@ export const decodeEntities = function (text) {
  * @param {any} _txt The graph definition
  * @param {any} cb Callback which is called after rendering is finished with the svg code as inparam.
  * @param {any} container Selector to element in which a div with the graph temporarily will be
- *   inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
+ *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
  * @returns {any}
  */
