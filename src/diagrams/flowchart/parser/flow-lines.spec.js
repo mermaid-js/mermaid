@@ -89,7 +89,7 @@ describe('[Lines] when parsing', () => {
   });
 
   describe('it should handle new line type notation', function () {
-    it('it should handle regular lines', function () {
+    it('should handle regular lines', function () {
       const res = flow.parser.parse('graph TD;A-->B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -98,7 +98,7 @@ describe('[Lines] when parsing', () => {
       expect(edges[0].stroke).toBe('normal');
     });
 
-    it('it should handle dotted lines', function () {
+    it('should handle dotted lines', function () {
       const res = flow.parser.parse('graph TD;A-.->B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -107,7 +107,7 @@ describe('[Lines] when parsing', () => {
       expect(edges[0].stroke).toBe('dotted');
     });
 
-    it('it should handle dotted lines', function () {
+    it('should handle dotted lines', function () {
       const res = flow.parser.parse('graph TD;A==>B;');
 
       const vert = flow.parser.yy.getVertices();

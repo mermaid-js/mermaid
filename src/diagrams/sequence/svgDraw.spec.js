@@ -3,7 +3,7 @@ const { MockD3 } = require('d3');
 
 describe('svgDraw', function () {
   describe('drawRect', function () {
-    it('it should append a rectangle', function () {
+    it('should append a rectangle', function () {
       const svg = MockD3('svg');
       svgDraw.drawRect(svg, {
         x: 10,
@@ -29,7 +29,7 @@ describe('svgDraw', function () {
       expect(rect.attr).toHaveBeenCalledWith('ry', '10');
       expect(rect.attr).toHaveBeenCalledWith('class', 'unitTestRectangleClass');
     });
-    it('it should not add the class attribute if a class isn`t provided', () => {
+    it('should not add the class attribute if a class isn`t provided', () => {
       const svg = MockD3('svg');
       svgDraw.drawRect(svg, {
         x: 10,
@@ -49,7 +49,7 @@ describe('svgDraw', function () {
     });
   });
   describe('drawText', function () {
-    it('it should append a single element', function () {
+    it('should append a single element', function () {
       const svg = MockD3('svg');
       svgDraw.drawText(svg, {
         x: 10,
@@ -73,7 +73,7 @@ describe('svgDraw', function () {
       expect(text.style).toHaveBeenCalledWith('font-size', '10px');
       expect(text.style).toHaveBeenCalledWith('font-weight', '500');
     });
-    it('it should append a multiple elements', function () {
+    it('should append a multiple elements', function () {
       const svg = MockD3('svg');
       svgDraw.drawText(svg, {
         x: 10,
@@ -101,7 +101,7 @@ describe('svgDraw', function () {
     });
   });
   describe('drawBackgroundRect', function () {
-    it('it should append a rect before the previous element within a given bound', function () {
+    it('should append a rect before the previous element within a given bound', function () {
       const svg = MockD3('svg');
       const boundingRect = {
         startx: 50,
@@ -125,12 +125,12 @@ describe('svgDraw', function () {
     });
   });
   describe('sanitizeUrl', function () {
-    it('it should sanitize malicious urls', function () {
+    it('should sanitize malicious urls', function () {
       const maliciousStr = 'javascript:script:alert(1)';
       const result = svgDraw.sanitizeUrl(maliciousStr);
       expect(result).not.toContain('javascript:alert(1)');
     });
-    it('it should not sanitize non dangerous urls', function () {
+    it('should not sanitize non dangerous urls', function () {
       const maliciousStr = 'javajavascript:script:alert(1)';
       const result = svgDraw.sanitizeUrl(maliciousStr);
       expect(result).not.toContain('javascript:alert(1)');
