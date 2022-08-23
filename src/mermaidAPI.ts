@@ -116,7 +116,7 @@ const render = function (
   id: string,
   text: string,
   cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
-  container: Element
+  container?: Element
 ): void {
   configApi.reset();
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
@@ -493,7 +493,6 @@ export const mermaidAPI = Object.freeze({
 
 setLogLevel(configApi.getConfig().logLevel);
 configApi.reset(configApi.getConfig());
-console.log(mermaidAPI);
 export default mermaidAPI;
 /**
  * ## mermaidAPI configuration defaults

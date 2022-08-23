@@ -1433,6 +1433,24 @@ Returns **[object][5]** The siteConfig
 
 Returns **[object][5]** The siteConfig
 
+## setConfig
+
+## setConfig
+
+| Function      | Description                           | Type        | Values                                  |
+| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+
+**Notes**: Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure
+keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
+corresponding siteConfig value.
+
+### Parameters
+
+-   `conf` **any** The potential currentConfig
+
+Returns **any** The currentConfig merged with the sanitized conf
+
 ## render
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
@@ -1452,32 +1470,14 @@ $(function () {
 
 ### Parameters
 
--   `id` **any** The id of the element to be rendered
--   `text` **any** The graph definition
--   `cb` **any** Callback which is called after rendering is finished with the svg code as inparam.
--   `container` **any** Selector to element in which a div with the graph temporarily will be
+-   `id` **[string][6]** The id of the element to be rendered
+-   `text` **[string][6]** The graph definition
+-   `cb` **function (svgCode: [string][6], bindFunctions: function (element: [Element][7]): void): void** 
+-   `container` **[Element][7]** Selector to element in which a div with the graph temporarily will be
       inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
       element will be removed when rendering is completed.
 
-Returns **any** 
-
-## setConfig
-
-## setConfig
-
-| Function      | Description                           | Type        | Values                                  |
-| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
-| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
-
-**Notes**: Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure
-keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
-corresponding siteConfig value.
-
-### Parameters
-
--   `conf` **any** The potential currentConfig
-
-Returns **any** The currentConfig merged with the sanitized conf
+Returns **void** 
 
 ## getConfig
 
@@ -1615,3 +1615,7 @@ Returns **void**
 [4]: #mermaidapi-configuration-defaults
 
 [5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+
+[7]: https://developer.mozilla.org/docs/Web/API/Element

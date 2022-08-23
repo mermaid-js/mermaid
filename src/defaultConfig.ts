@@ -1822,7 +1822,6 @@ const config: Partial<MermaidConfig> = {
   },
 };
 
-console.log(JSON.stringify(config));
 if (config.class) config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 if (config.gitGraph) config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
