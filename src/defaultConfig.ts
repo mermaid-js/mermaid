@@ -66,9 +66,9 @@ const config: Partial<MermaidConfig> = {
   logLevel: 5,
 
   /**
-   * | Parameter     | Description                       | Type   | Required | Values                          |
-   * | ------------- | --------------------------------- | ------ | -------- | ------------------------------- |
-   * | securitylevel | Level of trust for parsed diagram | string | Required | 'strict', 'loose', 'antiscript' |
+   * | Parameter     | Description                       | Type   | Required | Values                                     |
+   * | ------------- | --------------------------------- | ------ | -------- | ------------------------------------------ |
+   * | securityLevel | Level of trust for parsed diagram | string | Required | 'sandbox', 'strict', 'loose', 'antiscript' |
    *
    * **Notes**:
    *
@@ -76,6 +76,9 @@ const config: Partial<MermaidConfig> = {
    * - **loose**: tags in text are allowed, click functionality is enabled
    * - **antiscript**: html tags in text are allowed, (only script element is removed), click
    *   functionality is enabled
+   * - **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
+   *   prevent any JavaScript from running in the context. This may hinder interactive functionality
+   *   of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
    */
   securityLevel: 'strict',
 

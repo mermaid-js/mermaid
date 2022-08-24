@@ -471,7 +471,7 @@ flowchart LR
     click D href "https://www.github.com" "Open this in a new tab" _blank
 ```
 
-Beginners tip, a full example using interactive links in a html context:
+Beginner's tip—a full example using interactive links in a html context:
 ```html
 <body>
   <div class="mermaid">
@@ -513,7 +513,7 @@ flowchart LR
 
 ### Styling links
 
-It is possible to style links. For instance you might want to style a link that is going backwards in the flow. As links
+It is possible to style links. For instance, you might want to style a link that is going backwards in the flow. As links
 have no ids in the same way as nodes, some other way of deciding what style the links should be attached to is required.
 Instead of ids, the order number of when the link was defined in the graph is used, or use default to apply to all links.
 In the example below the style defined in the linkStyle statement will belong to the fourth link in the graph:

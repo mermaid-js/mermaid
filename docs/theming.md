@@ -64,7 +64,7 @@ Here is an example of how `%%init%%` can set the theme to 'base', this assumes t
 ```
 # List of Themes 
 
-# Customizing Themes  with `themeVariables`
+# Customizing Themes with `themeVariables`
 
 The easiest way to make a custom theme is to start with the base theme, and just modify theme variables through `themeVariables`, via `%%init%%`.
 

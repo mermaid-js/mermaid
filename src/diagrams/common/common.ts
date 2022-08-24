@@ -134,6 +134,29 @@ const getUrl = (useAbsolute: boolean): string => {
 export const evaluate = (val: string | boolean): boolean =>
   val === 'false' || val === false ? false : true;
 
+/**
+ * Makes generics in typescript syntax
+ *
+ * @example <caption>Array of array of strings in typescript syntax</caption>
+ *   // returns "Array<Array<string>>"
+ *   parseGenericTypes('Array~Array~string~~');
+ *
+ * @param {string} text The text to convert
+ * @returns {string} The converted string
+ */
+export const parseGenericTypes = function (text: string): string {
+  let cleanedText = text;
+
+  if (text.indexOf('~') != -1) {
+    cleanedText = cleanedText.replace('~', '<');
+    cleanedText = cleanedText.replace('~', '>');
+
+    return parseGenericTypes(cleanedText);
+  } else {
+    return cleanedText;
+  }
+};
+
 export default {
   getRows,
   sanitizeText,

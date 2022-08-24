@@ -106,7 +106,7 @@ gantt
 classDiagram
 Class01 <|-- AveryLongClass : Cool
 <<Interface>> Class01
-Class09 --> C2 : Where am i?
+Class09 --> C2 : Where am I?
 Class09 --* C3
 Class09 --|> Class07
 Class07 : equals()
@@ -124,7 +124,7 @@ class Class10 {
 classDiagram
 Class01 <|-- AveryLongClass : Cool
 <<Interface>> Class01
-Class09 --> C2 : Where am i?
+Class09 --> C2 : Where am I?
 Class09 --* C3
 Class09 --|> Class07
 Class07 : equals()

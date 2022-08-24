@@ -125,11 +125,11 @@ describe('when using mermaidAPI and ', function () {
   });
   describe('test mermaidApi.parse() for checking validity of input ', function () {
     mermaid.parseError = undefined; // ensure it parseError undefined
-    it('it should throw for an invalid definition (with no mermaid.parseError() defined)', function () {
+    it('should throw for an invalid definition (with no mermaid.parseError() defined)', function () {
       expect(mermaid.parseError).toEqual(undefined);
       expect(() => mermaidAPI.parse('this is not a mermaid diagram definition')).toThrow();
     });
-    it('it should not throw for a valid definition', function () {
+    it('should not throw for a valid definition', function () {
       expect(() => mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).not.toThrow();
     });
     it('it should return false for invalid definition WITH a parseError() callback defined', function () {
@@ -142,7 +142,7 @@ describe('when using mermaidAPI and ', function () {
       ).toEqual(false);
       expect(parseErrorWasCalled).toEqual(true);
     });
-    it('it should return true for valid definition', function () {
+    it('should return true for valid definition', function () {
       expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).toEqual(true);
     });
   });

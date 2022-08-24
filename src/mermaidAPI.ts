@@ -108,7 +108,7 @@ export const decodeEntities = function (text: string): string {
  * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
  *   is called after rendering is finished with the svg code as inparam.
  * @param {Element} container Selector to element in which a div with the graph temporarily will be
- *   inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
+ *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
  * @returns {void}
  */

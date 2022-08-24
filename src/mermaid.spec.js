@@ -46,7 +46,7 @@ describe('when using mermaid and ', function () {
       flowDb.clear();
       flowDb.setGen('gen-2');
     });
-    it('it should handle edges with text', function () {
+    it('should handle edges with text', function () {
       const diag = new Diagram('graph TD;A-->|text ex|B;');
       diag.db.getVertices();
       const edges = diag.db.getEdges();
@@ -189,18 +189,18 @@ describe('when using mermaid and ', function () {
       flowDb.clear();
       flowDb.setGen('gen-2');
     });
-    it('it should throw for an invalid definition', function () {
+    it('should throw for an invalid definition', function () {
       expect(() => mermaid.parse('this is not a mermaid diagram definition')).toThrow();
     });
 
-    it('it should not throw for a valid flow definition', function () {
+    it('should not throw for a valid flow definition', function () {
       expect(() => mermaid.parse('graph TD;A--x|text including URL space|B;')).not.toThrow();
     });
-    it('it should throw for an invalid flow definition', function () {
+    it('should throw for an invalid flow definition', function () {
       expect(() => mermaid.parse('graph TQ;A--x|text including URL space|B;')).toThrow();
     });
 
-    it('it should not throw for a valid sequenceDiagram definition', function () {
+    it('should not throw for a valid sequenceDiagram definition', function () {
       const text =
         'sequenceDiagram\n' +
         'Alice->Bob: Hello Bob, how are you?\n\n' +
@@ -214,7 +214,7 @@ describe('when using mermaid and ', function () {
       expect(() => mermaid.parse(text)).not.toThrow();
     });
 
-    it('it should throw for an invalid sequenceDiagram definition', function () {
+    it('should throw for an invalid sequenceDiagram definition', function () {
       const text =
         'sequenceDiagram\n' +
         'Alice:->Bob: Hello Bob, how are you?\n\n' +
