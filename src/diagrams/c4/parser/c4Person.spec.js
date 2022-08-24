@@ -38,4 +38,17 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
       wrap: false,
     });
   });
+
+  it('should parse a sprite', function () {
+    c4.parser.parse(`C4Context
+Person(customerA, $sprite="users")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      label: {
+        text: {
+          sprite: 'users',
+        },
+      },
+    });
+  });
 });
