@@ -8,11 +8,13 @@ describe('when using the ganttDb', function () {
 
   describe('when using relative times', function () {
     it.each`
-      diff    | date                    | expected
-      ${'1d'} | ${moment('2019-01-01')} | ${moment('2019-01-02').toDate()}
-      ${'1w'} | ${moment('2019-01-01')} | ${moment('2019-01-08').toDate()}
+      diff      | date                        | expected
+      ${'1d'}   | ${moment.utc('2019-01-01')} | ${'2019-01-02T00:00:00.000Z'}
+      ${'1w'}   | ${moment.utc('2019-01-01')} | ${'2019-01-08T00:00:00.000Z'}
+      ${'1ms'}  | ${moment.utc('2019-01-01')} | ${'2019-01-01T00:00:00.001Z'}
+      ${'0.1s'} | ${moment.utc('2019-01-01')} | ${'2019-01-01T00:00:00.100Z'}
     `('should add $diff to $date resulting in $expected', ({ diff, date, expected }) => {
-      expect(ganttDb.parseDuration(diff, date)).toEqual(expected);
+      expect(ganttDb.parseDuration(diff, date).toISOString()).toEqual(expected);
     });
   });
 

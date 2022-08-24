@@ -238,7 +238,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * @returns The date of the end of the duration.
  */
 const parseDuration = function (durationStr, relativeTime) {
-  const durationStatement = /^([\d]+)([wdhms]|ms)$/.exec(durationStr.trim());
+  const durationStatement = /^(\d+(?:\.\d+)?)([wdhms]|ms)$/.exec(durationStr.trim());
   if (durationStatement !== null) {
     switch (durationStatement[2]) {
       case 'ms':
