@@ -39,6 +39,17 @@ Person(customerA, "Banking Customer A", "A customer of the bank, with personal b
     });
   });
 
+  it('should parse the label', function () {
+    c4.parser.parse(`C4Context
+Person(customerA, "Banking Customer A")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      label: {
+        text: 'Banking Customer A',
+      },
+    });
+  });
+
   it('should parse the description', function () {
     c4.parser.parse(`C4Context
 Person(customerA, "", "A customer of the bank, with personal bank accounts.")`);
