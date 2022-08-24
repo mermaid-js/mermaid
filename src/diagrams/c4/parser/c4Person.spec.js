@@ -51,4 +51,17 @@ Person(customerA, $sprite="users")`);
       },
     });
   });
+
+  it('should parse a link', function () {
+    c4.parser.parse(`C4Context
+Person(customerA, $link="https://github.com/mermaidjs")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      label: {
+        text: {
+          link: 'https://github.com/mermaidjs',
+        },
+      },
+    });
+  });
 });
