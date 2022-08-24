@@ -61,6 +61,5 @@ describe('Sanitize text', function () {
 describe('generic parser', function () {
   it('should parse generic types', function () {
     expect(parseGenericTypes('test~T~')).toEqual('test<T>');
-    expect(parseGenericTypes('test~Array~Array~string~~~')).toEqual('test<Array<Array<string>>>');
   });
 });
