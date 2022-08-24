@@ -230,7 +230,15 @@ const getStartDate = function (prevTime, dateFormat, str) {
   return new Date();
 };
 
-const durationToDate = function (durationStatement, relativeTime) {
+/**
+ * Parse a duration as an absolute date.
+ *
+ * @param durationStr A string representing a duration
+ * @param relativeTime The moment when this duration starts
+ * @returns The date of the end of the duration.
+ */
+const parseDuration = function (durationStr, relativeTime) {
+  const durationStatement = /^([\d]+)([wdhms]|ms)$/.exec(durationStr.trim());
   if (durationStatement !== null) {
     switch (durationStatement[2]) {
       case 'ms':
@@ -253,7 +261,6 @@ const durationToDate = function (durationStatement, relativeTime) {
         break;
     }
   }
-  // Default date - now
   return relativeTime.toDate();
 };
 
@@ -270,7 +277,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive) {
     return mDate.toDate();
   }
 
-  return durationToDate(/^([\d]+)([wdhms]|ms)$/.exec(str.trim()), moment(prevTime));
+  return parseDuration(str, moment(prevTime));
 };
 
 let taskCnt = 0;
@@ -666,7 +673,7 @@ export default {
   setLink,
   getLinks,
   bindFunctions,
-  durationToDate,
+  parseDuration,
   isInvalidDate,
 };
 
