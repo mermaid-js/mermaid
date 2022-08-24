@@ -64,4 +64,17 @@ Person(customerA, $link="https://github.com/mermaidjs")`);
       },
     });
   });
+
+  it('should parse tags', function () {
+    c4.parser.parse(`C4Context
+Person(customerA, $tags="tag1,tag2")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      label: {
+        text: {
+          tags: 'tag1,tag2',
+        },
+      },
+    });
+  });
 });
