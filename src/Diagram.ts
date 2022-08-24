@@ -29,7 +29,6 @@ export class Diagram {
       const error = { str, hash };
       throw error;
     };
-    // TODO Q: Should diagrams be parsed inside constructor?
     this.parse(this.txt, parseError);
   }
 
