@@ -6,15 +6,16 @@ describe('when using the ganttDb', function () {
     ganttDb.clear();
   });
 
-  describe('when using relative times', function () {
+  describe('when using duration', function () {
     it.each`
-      diff      | date                        | expected
-      ${'1d'}   | ${moment.utc('2019-01-01')} | ${'2019-01-02T00:00:00.000Z'}
-      ${'1w'}   | ${moment.utc('2019-01-01')} | ${'2019-01-08T00:00:00.000Z'}
-      ${'1ms'}  | ${moment.utc('2019-01-01')} | ${'2019-01-01T00:00:00.001Z'}
-      ${'0.1s'} | ${moment.utc('2019-01-01')} | ${'2019-01-01T00:00:00.100Z'}
-    `('should add $diff to $date resulting in $expected', ({ diff, date, expected }) => {
-      expect(ganttDb.parseDuration(diff, date).toISOString()).toEqual(expected);
+      str       | expected
+      ${'1d'}   | ${moment.duration(1, 'd')}
+      ${'2w'}   | ${moment.duration(2, 'w')}
+      ${'1ms'}  | ${moment.duration(1, 'ms')}
+      ${'0.1s'} | ${moment.duration(100, 'ms')}
+      ${'1f'}   | ${moment.duration.invalid()}
+    `('should $str resulting in $expected duration', ({ str, expected }) => {
+      expect(ganttDb.parseDuration(str)).toEqual(expected);
     });
   });
 
