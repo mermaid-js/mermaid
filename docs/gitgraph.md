@@ -182,6 +182,8 @@ After this we made use of the `checkout` keyword to set the current branch as `m
 After this we merge the `develop` branch onto the current branch `main`, resulting in a merge commit.
 Since the current branch at this point is still `main`, the last two commits are registered against that.
 
+Additionally, you may add a tag to the merge commit, or override the default id: `merge branch id:"1234" tag:"v1.0.0"`
+
 ### Cherry Pick commit from another branch
 Similar to how 'git' allows you to cherry-pick a commit from **another branch** onto the **current** branch, Mermaid also supports this functionality. You can also cherry-pick a commit from another branch using the `cherry-pick` keyword.
 
