@@ -13,11 +13,11 @@ let currentConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 
 export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: any[]) => {
   // start with config being the siteConfig
-  let cfg = assignWithDepth({}, siteCfg);
+  let cfg: MermaidConfig = assignWithDepth({}, siteCfg);
   // let sCfg = assignWithDepth(defaultConfig, siteConfigDelta);
 
   // Join directives
-  let sumOfDirectives = {};
+  let sumOfDirectives: MermaidConfig = {};
   for (let i = 0; i < _directives.length; i++) {
     const d = _directives[i];
     sanitize(d);
@@ -28,16 +28,15 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: any[]) 
 
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
-  // @ts-ignore
-  if (sumOfDirectives.theme && theme[sumOfDirectives.theme]) {
+  if (sumOfDirectives.theme && sumOfDirectives.theme in theme) {
     const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
       tmpConfigFromInitialize.themeVariables || {},
-      // @ts-ignore
       sumOfDirectives.themeVariables
     );
-    // @ts-ignore
-    cfg.themeVariables = theme[cfg.theme].getThemeVariables(themeVariables);
+    if (cfg.theme && cfg.theme in theme) {
+      cfg.themeVariables = theme[cfg.theme as keyof typeof theme].getThemeVariables(themeVariables);
+    }
   }
 
   currentConfig = cfg;

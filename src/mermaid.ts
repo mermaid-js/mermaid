@@ -6,6 +6,7 @@ import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
+import { isDetailedError } from './utils';
 
 /**
  * ## init
@@ -39,10 +40,10 @@ const init = function (
     initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
-    // @ts-ignore
-    log.warn(e.str);
+    if (isDetailedError(e)) {
+      log.warn(e.str);
+    }
     if (mermaid.parseError) {
-      // @ts-ignore
       mermaid.parseError(e);
     }
   }
@@ -56,6 +57,7 @@ const initThrowsErrors = function (
   const conf = mermaidAPI.getConfig();
   // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   if (config) {
+    // This is a legacy way of setting config. It is not documented and should be removed in the future.
     // @ts-ignore
     mermaid.sequenceConfig = config;
   }

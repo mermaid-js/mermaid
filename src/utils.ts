@@ -933,6 +933,20 @@ export const sanitizeCss = (str) => {
   return str;
 };
 
+export interface DetailedError {
+  str: string;
+  hash: any;
+}
+
+export function isDetailedError(error: unknown): error is DetailedError {
+  return 'str' in error;
+}
+
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
 export default {
   assignWithDepth,
   wrapLabel,

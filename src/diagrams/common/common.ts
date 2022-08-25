@@ -147,7 +147,7 @@ export const evaluate = (val: string | boolean): boolean =>
 export const parseGenericTypes = function (text: string): string {
   let cleanedText = text;
 
-  if (text.indexOf('~') != -1) {
+  if (text.indexOf('~') !== -1) {
     cleanedText = cleanedText.replace('~', '<');
     cleanedText = cleanedText.replace('~', '>');
 

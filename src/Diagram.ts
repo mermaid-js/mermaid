@@ -2,6 +2,7 @@ import * as configApi from './config';
 import { log } from './logger';
 import { getDiagram } from './diagram-api/diagramAPI';
 import { detectType } from './diagram-api/detectType';
+import { isDetailedError } from './utils';
 export class Diagram {
   type = 'graph';
   parser;
@@ -42,11 +43,9 @@ export class Diagram {
       // Is this the correct way to access mermiad's parseError()
       // method ? (or global.mermaid.parseError()) ?
       if (parseError) {
-        // @ts-ignore
-        if (error.str != undefined) {
+        if (isDetailedError(error)) {
           // handle case where error string and hash were
           // wrapped in object like`const error = { str, hash };`
-          // @ts-ignore
           parseError(error.str, error.hash);
         } else {
           // assume it is just error string and pass it on

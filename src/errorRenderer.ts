@@ -1,6 +1,7 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
 import { log } from './logger';
+import { getErrorMessage } from './utils';
 
 let conf = {};
 
@@ -89,8 +90,7 @@ export const draw = (id: string, mermaidVersion: string) => {
     svg.attr('viewBox', '768 0 512 512');
   } catch (e) {
     log.error('Error while rendering info diagram');
-    // @ts-ignore
-    log.error(e.message);
+    log.error(getErrorMessage(e));
   }
 };
 
