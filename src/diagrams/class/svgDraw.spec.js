@@ -137,6 +137,14 @@ describe('class member Renderer, ', function () {
       expect(actual.displayText).toBe('+foo(List<int> ids) : List<Item>');
       expect(actual.cssStyle).toBe('font-style:italic;');
     });
+
+    it('should handle method declaration with nested markup', function () {
+      const str = '+foo (  List~List~int~~ ids  )* List~List~Item~~';
+      let actual = svgDraw.parseMember(str);
+
+      expect(actual.displayText).toBe('+foo(List<List<int>> ids) : List<List<Item>>');
+      expect(actual.cssStyle).toBe('font-style:italic;');
+    });
   });
 
   describe('when parsing text to build field display string', function () {
