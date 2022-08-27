@@ -6,7 +6,7 @@ setConfig({
   securityLevel: 'strict',
 });
 
-describe('parsing a C4 diagram', function () {
+describe('parsing a C4 Person_Ext', function () {
   beforeEach(function () {
     c4.parser.yy = c4Db;
     c4.parser.yy.clear();
