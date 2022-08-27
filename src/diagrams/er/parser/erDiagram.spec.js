@@ -85,6 +85,31 @@ describe('when parsing ER diagram it...', function () {
     expect(entities[entity].attributes.length).toBe(3);
   });
 
+  it('should allow an entity with attribute that has a generic type', function () {
+    const entity = 'BOOK';
+    const attribute1 = 'type~T~ type';
+    const attribute2 = 'option~T~ readable "comment"';
+    const attribute3 = 'string id PK';
+
+    erDiagram.parser.parse(
+      `erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n${attribute3}\n}`
+    );
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(3);
+  });
+
+  it('should allow an entity with attribute that is an array', function () {
+    const entity = 'BOOK';
+    const attribute1 = 'string[] readers FK "comment"';
+    const attribute2 = 'string[] authors FK';
+
+    erDiagram.parser.parse(`erDiagram\n${entity} {\n${attribute1}\n${attribute2}\n}`);
+    const entities = erDb.getEntities();
+    expect(Object.keys(entities).length).toBe(1);
+    expect(entities[entity].attributes.length).toBe(2);
+  });
+
   it('should allow an entity with multiple attributes to be defined', function () {
     const entity = 'BOOK';
     const attribute1 = 'string title';

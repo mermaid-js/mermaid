@@ -163,6 +163,24 @@ describe('Gantt diagram', () => {
     );
   });
 
+  it('should handle milliseconds', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      title A Gantt Diagram
+      dateFormat x
+      axisFormat %L
+      section Section
+      A task           :a1, 0, 30ms
+      Another task     :after a1, 20ms
+      section Another
+      Another another task      :b1, 20, 12ms
+      Another another another task     :after b1, 24ms
+        `,
+      {}
+    );
+  });
+
   it('should render a gantt diagram when useMaxWidth is true (default)', () => {
     renderGraph(
       `

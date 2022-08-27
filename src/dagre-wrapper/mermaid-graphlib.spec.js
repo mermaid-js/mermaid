@@ -471,7 +471,7 @@ describe('sortNodesByHierarchy', function () {
       return {};
     });
   });
-  it('it should sort proper en nodes are in reverse order', function () {
+  it('should sort proper en nodes are in reverse order', function () {
     /*
   a -->b
   subgraph B
@@ -488,7 +488,7 @@ describe('sortNodesByHierarchy', function () {
     g.setEdge('a', 'b', '1');
     expect(sortNodesByHierarchy(g)).toEqual(['a', 'A', 'B', 'b']);
   });
-  it('it should sort proper en nodes are in correct order', function () {
+  it('should sort proper en nodes are in correct order', function () {
     /*
   a -->b
   subgraph B

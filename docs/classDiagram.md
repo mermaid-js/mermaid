@@ -3,7 +3,7 @@
 > "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
 > Wikipedia
 
-The class diagram is the main building block of object-oriented modeling. It is used for general conceptual modeling of the structure of the application, and for detailed modeling translating the models into programming code. Class diagrams can also be used for data modeling. The classes in a class diagram represent both the main elements, interactions in the application, and the classes to be programmed.
+The class diagram is the main building block of object-oriented modeling. It is used for general conceptual modeling of the structure of the application, and for detailed modeling to translate the models into programming code. Class diagrams can also be used for data modeling. The classes in a class diagram represent both the main elements, interactions in the application, and the classes to be programmed.
 
 Mermaid can render class diagrams.
 
@@ -56,8 +56,8 @@ classDiagram
 
 There are two ways to define a class:
 
-- Explicitly defining a class using keyword **class** like `class Animal`. This defines the Animal class
-- Define two classes via a **relationship** between them `Vehicle <|-- Car`. This defines two classes Vehicle and Car along with their relationship.
+- Explicitly using keyword **class** like `class Animal` which would define the Animal class.
+- Via a **relationship** which defines two classes at a time along with their relationship. For instance, `Vehicle <|-- Car`.
 
 ```mermaid-example
 classDiagram
@@ -65,13 +65,13 @@ classDiagram
     Vehicle <|-- Car
 ```
 
-Naming convention: a class name should be composed of alphanumeric (unicode allowed) and underscore characters.
+Naming convention: a class name should be composed only of alphanumeric characters (including unicode), and underscores.
 
 ## Defining Members of a class
 
-UML provides mechanisms to represent class members, such as attributes and methods, and additional information about them.
+UML provides mechanisms to represent class members such as attributes and methods, as well as additional information about them.
 
-Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and others as attributes.
+Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and all others as attributes.
 
 There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
 
@@ -100,8 +100,7 @@ class BankAccount{
 
 #### Return Type
 
-Optionally you can end the method/function definition with the data type that will be returned (note: there must be a space between the final `)` of the method definition and return type
-example:
+Optionally you can end a method/function definition with the data type that will be returned (note: there must be a space between the final `)` and the return type).  An example:
 
 ```mermaid-example
 classDiagram
@@ -115,9 +114,9 @@ class BankAccount{
 
 #### Generic Types
 
-Members can be defined using generic types, such as `List<int>`, for fields, parameters and return types by enclosing the type within `~` (**tilde**). Note: **nested** type declarations (such as `List<List<int>>`) are not currently supported
+Members can be defined using generic types, such as `List<int>`, for fields, parameters, and return types by enclosing the type within `~` (**tilde**). Note: **nested** type declarations such as `List<List<int>>` are not currently supported.
 
-This can be done as part of either class definition method:
+Generics can be represented as part of a class definition and also in the parameters or the return value of a method/function:
 
 ```mermaid-example
 classDiagram
@@ -135,24 +134,23 @@ Square : +getMessages() List~string~
 
 #### Return Type
 
-Optionally you can end the method/function definition with the data type that will be returned
+Optionally you can end the method/function definition with the data type that will be returned.
 
 #### Visibility
 
-To specify the visibility of a class member (i.e. any attribute or method), these notations may be placed before the member's name, but it is optional:
+To describe the visibility (or encapsulation) of an attribute or method/function that is a part of a class (i.e. a class member), optional notation may be placed before that members' name:
 
 - `+` Public
 - `-` Private
 - `#` Protected
 - `~` Package/Internal
 
-> _note_ you can also include additional _classifiers_ to a method definition by adding the following notations to the end of the method, i.e.: after the `()`:
+> _note_ you can also include additional _classifiers_ to a method definition by adding the following notation to the _end_ of the method, i.e.: after the `()`:
 > - `*` Abstract e.g.: `someAbstractMethod()*`
 > - `$` Static e.g.: `someStaticMethod()$`
 
-> _note_ you can also include additional _classifiers_ to a field definition by adding the following notations to the end of the field name:
+> _note_ you can also include additional _classifiers_ to a field definition by adding the following notation to the end of its name:
 > - `$` Static e.g.: `String someField$`
-
 
 
 ## Defining Relationship
@@ -163,7 +161,7 @@ A relationship is a general term covering the specific types of logical connecti
 [classA][Arrow][ClassB]
 ```
 
-There are different types of relations defined for classes under UML which are currently supported:
+There are eight different types of relations defined for classes under UML which are currently supported:
 
 | Type  | Description   |
 | ----- | ------------- |
@@ -189,7 +187,7 @@ classO .. classP
 
 ```
 
-We can use the labels to describe nature of relation between two classes. Also, arrowheads can be used in opposite directions as well :
+We can use the labels to describe the nature of the relation between two classes. Also, arrowheads can be used in the opposite direction as well:
 
 ```mermaid-example
 classDiagram
@@ -206,7 +204,7 @@ classO .. classP : Link(Dashed)
 
 ### Labels on Relations
 
-It is possible to add a label text to a relation:
+It is possible to add label text to a relation:
 
 ```
 [classA][Arrow][ClassB]:LabelText
@@ -221,7 +219,7 @@ classE o-- classF : aggregation
 
 ### Two-way relations
 
-Relations can go in multiple ways:
+Relations can logically represent an N:M association:
 
 ```mmd
 classDiagram
@@ -255,9 +253,9 @@ And `Link` can be one of:
 
 ## Cardinality / Multiplicity on relations
 
-Multiplicity or cardinality in class diagrams indicates the number of instances of one class linked to one instance of the other class. For example, one company will have one or more employees, but each employee works for just one company.
+Multiplicity or cardinality in class diagrams indicates the number of instances of one class that can be linked to an instance of the other class. For example, each company will have one or more employees (not zero), and each employee currently works for zero or one companies.
 
-Multiplicity notations are placed near the ends of an association.
+Multiplicity notations are placed near the end of an association.
 
 The different cardinality options are :
 
@@ -269,7 +267,7 @@ The different cardinality options are :
 - `0..n` zero to n {where n>1}
 - `1..n` one to n {where n>1}
 
-Cardinality can be easily defined by placing cardinality text within quotes `"` before(optional) and after(optional) a given arrow.
+Cardinality can be easily defined by placing the text option within quotes `"` before or after a given arrow. For example:
 
 ```
 [classA] "cardinality1" [Arrow] "cardinality2" [ClassB]:LabelText
@@ -284,16 +282,16 @@ classDiagram
 
 ## Annotations on classes
 
-It is possible to annotate classes with a specific marker text which is like meta-data for the class, giving a clear indication about its nature. Some common annotations examples could be:
+It is possible to annotate classes with markers to provide additional metadata about the class.  This can give a clearer indication about its nature. Some common annotations include:
 
 - `<<Interface>>` To represent an Interface class
-- `<<abstract>>` To represent an abstract class
+- `<<Abstract>>` To represent an abstract class
 - `<<Service>>` To represent a service class
-- `<<enumeration>>` To represent an enum
+- `<<Enumeration>>` To represent an enum
 
-Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class and regardless of the syntax used output will be same. The two ways are :
+Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class, and either way the output will be same:
 
-- In a **_separate line_** after a class is defined. For example:
+- In a **_separate line_** after a class is defined:
 
 ```mermaid-example
 classDiagram
@@ -303,7 +301,7 @@ Shape : noOfVertices
 Shape : draw()
 ```
 
-- In a **_nested structure_** along with class definition. For example:
+- In a **_nested structure_** along with the class definition:
 
 ```mermaid-example
 classDiagram
@@ -325,7 +323,7 @@ class Color{
 
 ## Comments
 
-Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any class diagram syntax
+Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including any class diagram syntax.
 
 ```mmd
 classDiagram
@@ -335,12 +333,11 @@ class Shape{
     noOfVertices
     draw()
 }
-
 ```
 
 ## Setting the direction of the diagram
 
-With class diagrams you can use the direction statement to set the direction which the diagram will render like in this example.
+With class diagrams you can use the direction statement to set the direction in which the diagram will render:
 
 ```mermaid-example
 classDiagram
@@ -362,7 +359,7 @@ classDiagram
 
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+It is possible to bind a click event to a node. The click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 You would define these actions on a separate line after all classes have been declared.
 
@@ -421,7 +418,7 @@ classDiagram
 
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
-Beginners tip, a full example using interactive links in an html context:
+Beginner's tip—a full example using interactive links in an HTML page:
 
 ```html
 <body>
@@ -469,8 +466,7 @@ Beginners tip, a full example using interactive links in an html context:
 
 ### Styling a node
 
-It is possible to apply specific styles such as a thicker border or a different background color to individual nodes. This is done by predefining classes in css styles that can be applied from the graph definition as in the example
-below:
+It is possible to apply specific styles such as a thicker border or a different background color to individual nodes. This is done by predefining classes in css styles that can be applied from the graph definition:
 
 ```html
 <style>
@@ -482,7 +478,7 @@ below:
 </style>
 ```
 
-Then attaching that class to a specific node as per below:
+Then attaching that class to a specific node:
 
 ```
     cssClass "nodeId1" cssClass;
@@ -494,7 +490,7 @@ It is also possible to attach a class to a list of nodes in one statement:
     cssClass "nodeId1,nodeId2" cssClass;
 ```
 
-A shorter form of adding a class is to attach the classname to the node using the `:::` operator as per below:
+A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 
 ```mmd
 classDiagram

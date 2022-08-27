@@ -1,4 +1,4 @@
-import { sanitizeText, removeScript, removeEscapes } from './common';
+import { sanitizeText, removeScript, removeEscapes, parseGenericTypes } from './common';
 
 describe('when securityLevel is antiscript, all script must be removed', function () {
   /**
@@ -101,5 +101,12 @@ describe('Sanitize text', function () {
       flowchart: { htmlLabels: true },
     });
     expect(result).not.toContain('javascript:alert(1)');
+  });
+});
+
+describe('generic parser', function () {
+  it('should parse generic types', function () {
+    const result = parseGenericTypes('test~T~');
+    expect(result).toEqual('test<T>');
   });
 });

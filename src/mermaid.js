@@ -34,7 +34,7 @@ const init = function () {
     initThrowsErrors(...arguments);
   } catch (e) {
     log.warn('Syntax Error rendering');
-    log.warn(e);
+    log.warn(e.str);
     if (this.parseError) {
       this.parseError(e);
     }
@@ -120,19 +120,23 @@ const initThrowsErrors = function () {
     if (init) {
       log.debug('Detected early reinit: ', init);
     }
-
-    mermaidAPI.render(
-      id,
-      txt,
-      (svgCode, bindFunctions) => {
-        element.innerHTML = svgCode;
-        if (typeof callback !== 'undefined') {
-          callback(id);
-        }
-        if (bindFunctions) bindFunctions(element);
-      },
-      element
-    );
+    try {
+      mermaidAPI.render(
+        id,
+        txt,
+        (svgCode, bindFunctions) => {
+          element.innerHTML = svgCode;
+          if (typeof callback !== 'undefined') {
+            callback(id);
+          }
+          if (bindFunctions) bindFunctions(element);
+        },
+        element
+      );
+    } catch (error) {
+      log.warn('Catching Error (bootstrap)');
+      throw { error, message: error.str };
+    }
   }
 };
 

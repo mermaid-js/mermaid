@@ -409,6 +409,7 @@ const setupToolTips = function (element) {
         .text(el.attr('title'))
         .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
         .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
+      tooltipElem.html(tooltipElem.html().replace(/&lt;br\/&gt;/g, '<br/>'));
       el.classed('hover', true);
     })
     .on('mouseout', function () {

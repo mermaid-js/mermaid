@@ -16,10 +16,15 @@
         /* font-size: 18px !important; */
         width: 100%;
         display: flex;
+        flex-direction: column;
+        margin-left: 20px;
         }
       h1 { color: grey;}
       .mermaid2,.mermaid3 {
         display: none;
+      }
+      .mermaid {
+        border: 1px solid purple;
       }
       .mermaid svg {
         /* font-size: 18px !important; */
@@ -33,15 +38,37 @@
 
 
 <div class="mermaid2" style="width: 50%;">
-journey
-    title My working day
-    section Go to work
-      Make tea: 5: Me
-      Go upstairs: 3: Me
-      Do work: 1: Me, Cat
-    section Go home
-      Go downstairs: 5: Me
-      Sit down: 5: Mee
+flowchart LR
+  classDef aPID stroke:#4e4403,fill:#fdde29,color:#4e4403,rx:5px,ry:5px;
+  classDef crm stroke:#333333,fill:#DCDCDC,color:#333333,rx:5px,ry:5px;
+  classDef type stroke:#502604,fill:#FAB565,color:#502604,rx:20px,ry:20px;;
+
+  O0("Joe")
+  class O0 aPID;
+
+  O1("Person")
+  class O1 crm;
+  O0 -- has type -->O1["Person"]
+
+  O2("aat:300411314")
+  class O2 type;
+  click O2 function "Sorry the newline html tags are not being processed correctly<br/> So all of this appears on the <br/> same line."
+  O0 -- has type -->O2["Bug"]
+  click O0 function "Lots of great info about Joe<br>Lots of great info about Joe<br>burt<br>fred";
+</div>
+<div class="mermaid" style="width: 50%;">
+flowchart TD
+    subgraph test
+    direction TB
+    subgraph test2
+      direction LR
+      F --> D
+    end
+    subgraph test3
+      direction TB
+      G --> H
+    end
+    end
 </div>
 <div class="mermaid2" style="width: 50%;">
 mindmap
@@ -138,11 +165,10 @@ mindmap
       accTitle: My Pie Chart Accessibility Title
       accDescr: My Pie Chart Accessibility Description
 
-    title Key elements in Product X
-    "Calcium" : 42.96
-    "Potassium" : 50.05
-    "Magnesium" : 10.01
-    "Iron" :  5
+    A --> B
+    A --> C
+    B --> C
+
 </div>
 <div class="mermaid2" style="width: 50%;">
  gitGraph TB
@@ -394,35 +420,9 @@ flowchart TD
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         flowchart: {
-    nodeSpacing: 10,
-    curve: 'cardinal',
-    htmlLabels: true,
-    useMaxWidth: false,
-    // defaultRenderer: 'dagre-d3',
-  },
-  class: {
-    // defaultRenderer: 'dagre-d3',
-    htmlLabels: true,
-  },
-  sequence: {
-    // mirrorActors: false,'
-    wrap: false,
-  },
-        // gantt: { axisFormat: '%m/%d/%Y' },
-  //       sequence: {
-  //   actorFontFamily: 'courier',
-  //   actorMargin: 50,
-  //   showSequenceNumbers: false,
-  //   // hideUnusedParticipants: true,
-  //   // forceMenus: true,
-  // },
-  //       // sequenceDiagram: { actorMargin: 300, forceMenus: false }, // deprecated
-        // fontFamily: '"times", sans-serif',
-        // fontFamily: 'courier',
-        state: {
-          nodeSpacing: 50,
-          rankSpacing: 50,
-          defaultRenderer: 'dagre-d3',
+          curve: 'curveLinear',
+          useMaxWidth: true,
+          htmlLabels: true,
         },
         logLevel: 1,
         fontSize: 18,

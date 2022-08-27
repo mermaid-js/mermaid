@@ -19,7 +19,7 @@ describe('when parsing a journey diagram it', function () {
     expect(parserFnConstructor(str)).not.toThrow();
   });
 
-  it('it should handle an accessibility description (accDescr)', function () {
+  it('should handle an accessibility description (accDescr)', function () {
     const str =
       'journey\n' +
       'accDescr: A user journey for family shopping\n' +
@@ -28,7 +28,7 @@ describe('when parsing a journey diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
-  it('it should handle an accessibility multiline description (accDescr)', function () {
+  it('should handle an accessibility multiline description (accDescr)', function () {
     const str =
       'journey\n' +
       `accDescr {
@@ -44,7 +44,7 @@ describe('when parsing a journey diagram it', function () {
     expect(journeyDb.getDiagramTitle()).toBe('Adding journey diagram functionality to mermaid');
     expect(journeyDb.getAccTitle()).toBe('Adding acc journey diagram functionality to mermaid');
   });
-  it('it should handle an accessibility title (accDescr)', function () {
+  it('should handle an accessibility title (accDescr)', function () {
     const str = `journey
     accTitle: The title
     section Order from website`;
