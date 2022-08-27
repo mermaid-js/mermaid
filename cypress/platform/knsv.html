@@ -23,10 +23,12 @@
         display: none;
       }
       .mermaid {
-        border: 1px solid purple;
+
       }
       .mermaid svg {
+        border: 1px solid purple;
         /* font-size: 18px !important; */
+        fontFamily: 'courier'
       }
     </style>
   </head>
@@ -35,7 +37,7 @@
 
 
 
-<div class="mermaid2" style="width: 50%;">
+<div class="mermaid" style="width: 50%;">
 flowchart LR
   classDef aPID stroke:#4e4403,fill:#fdde29,color:#4e4403,rx:5px,ry:5px;
   classDef crm stroke:#333333,fill:#DCDCDC,color:#333333,rx:5px,ry:5px;
@@ -54,7 +56,7 @@ flowchart LR
   O0 -- has type -->O2["Bug"]
   click O0 function "Lots of great info about Joe<br>Lots of great info about Joe<br>burt<br>fred";
 </div>
-<div class="mermaid" style="width: 50%;">
+<div class="mermaid2" style="width: 50%;">
 flowchart TD
     subgraph test
     direction TB
@@ -68,22 +70,30 @@ flowchart TD
     end
     end
 
+</div>
+<div class="mermaid" style="width: 50%;">
+flowchart LR
+        a["<strong>Haiya</strong>"]===>b
+</div>
+<div class="mermaid" style="width: 50%;">
+flowchart TD
     A --> B
     A --> C
     B --> C
-
 </div>
-<div class="mermaid2" style="width: 50%;">
- gitGraph
-       commit
-       commit
-       branch develop
-       commit
-       commit
-       commit
-       checkout main
-       commit
-       commit
+<div class="mermaid" style="width: 50%;">
+flowchart TD
+      A([stadium shape test])
+      A -->|Get money| B([Go shopping])
+      B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
+      C -->|One| D([Laptop])
+      C -->|Two| E([iPhone])
+      C -->|Three| F([Car<br/>wroom wroom])
+      click A "index.html#link-clicked" "link test"
+      click B testClick "click test"
+      classDef someclass fill:#f96;
+      class A someclass;
+      class C someclass;
 </div>
 <div class="mermaid2" style="width: 50%;">
    sequenceDiagram
@@ -273,7 +283,7 @@ flowchart TD
       C -->|One| D[Laptop]
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
-      </div>     <div class="mermaid2" style="width: 100%;">
+      </div>     <div class="mermaid" style="width: 100%;">
         classDiagram
           Animal "1" <|-- Duck
           Animal <|-- Fish
@@ -322,10 +332,12 @@ flowchart TD
         startOnLoad: true,
         securityLevel: 'loose',
         logLevel: 0,
+        fontFamily: 'courier',
         flowchart: {
-          curve: 'curveLinear',
+          // curve: 'curveLinear',
           useMaxWidth: true,
-          htmlLabels: true,
+          htmlLabels: false,
+          fontFamily: 'courier',
         },
       });
       function callback() {

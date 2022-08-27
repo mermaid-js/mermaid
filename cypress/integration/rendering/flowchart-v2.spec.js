@@ -42,7 +42,7 @@ describe('Flowchart v2', () => {
         P3 --> P6
         P1.5 --> P5
       `,
-      { flowchart: { diagramPadding: 0 } }
+      {}
     );
   });
 
@@ -60,7 +60,7 @@ describe('Flowchart v2', () => {
       C <-...-> E4
       C ======> E5
       `,
-      { flowchart: { diagramPadding: 0 } }
+      {}
     );
   });
   it('5: should render escaped without html labels', () => {
@@ -648,6 +648,17 @@ flowchart RL
       flowchart LR
       default-index.js --> dot.template.js
       index.js --> module-utl.js
+      `,
+      { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
+    );
+  });
+  it('2824: Clipping of edges', () => {
+    imgSnapshotTest(
+      `
+      flowchart TD
+          A --> B
+          A --> C
+          B --> C
       `,
       { htmlLabels: true, flowchart: { htmlLabels: true }, securityLevel: 'loose' }
     );
