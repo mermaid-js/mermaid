@@ -31,6 +31,8 @@ Person_Ext(customerA, "Banking Customer A", "A customer of the bank, with person
       label: {
         text: 'Banking Customer A',
       },
+      // TODO: Why are link, sprite, and tags undefined instead of not appearing at all?
+      //       Compare to Person where they don't show up.
       link: undefined,
       sprite: undefined,
       tags: undefined,
