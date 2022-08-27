@@ -44,6 +44,50 @@ Person_Ext(customerA, "Banking Customer A", "A customer of the bank, with person
     });
   });
 
+  it('should parse the alias', function () {
+    c4.parser.parse(`C4Context
+Person_Ext(customerA, "Banking Customer A")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      alias: 'customerA',
+    });
+  });
+
+  it('should parse the label', function () {
+    c4.parser.parse(`C4Context
+Person_Ext(customerA, "Banking Customer A")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      label: {
+        text: 'Banking Customer A',
+      },
+    });
+  });
+
+  it('should parse the description', function () {
+    c4.parser.parse(`C4Context
+Person_Ext(customerA, "", "A customer of the bank, with personal bank accounts.")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      descr: {
+        text: 'A customer of the bank, with personal bank accounts.',
+      },
+    });
+  });
+
+  it('should parse a sprite', function () {
+    c4.parser.parse(`C4Context
+Person_Ext(customerA, $sprite="users")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      label: {
+        text: {
+          sprite: 'users',
+        },
+      },
+    });
+  });
+
   it('should parse a link', function () {
     c4.parser.parse(`C4Context
 Person_Ext(customerA, $link="https://github.com/mermaidjs")`);
@@ -52,6 +96,19 @@ Person_Ext(customerA, $link="https://github.com/mermaidjs")`);
       label: {
         text: {
           link: 'https://github.com/mermaidjs',
+        },
+      },
+    });
+  });
+
+  it('should parse tags', function () {
+    c4.parser.parse(`C4Context
+Person_Ext(customerA, $tags="tag1,tag2")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      label: {
+        text: {
+          tags: 'tag1,tag2',
         },
       },
     });
