@@ -745,9 +745,9 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
   // attrs.set('height', height);
   if (useMaxWidth) {
     attrs.set('width', '100%');
-    attrs.set('style', `max-width: ${width * 1.2}px;`);
+    attrs.set('style', `max-width: ${width}px;`);
   } else {
-    attrs.set('width', width * 1.2);
+    attrs.set('width', width);
   }
   return attrs;
 };
@@ -761,7 +761,7 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
  * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
  */
 export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
-  const attrs = calculateSvgSizeAttrs(height, width, useMaxWidth);
+  const attrs = calculateSvgSizeAttrs(height, 1.1 * width, useMaxWidth);
   d3Attrs(svgElem, attrs);
 };
 export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth) {
