@@ -22,6 +22,9 @@
       .mermaid2,.mermaid3 {
         display: none;
       }
+      .mermaid {
+        border: 1px solid purple;
+      }
       .mermaid svg {
         /* font-size: 18px !important; */
       }
@@ -52,11 +55,23 @@ flowchart LR
   click O0 function "Lots of great info about Joe<br>Lots of great info about Joe<br>burt<br>fred";
 </div>
 <div class="mermaid" style="width: 50%;">
-classDiagram-v2
-  class Shape
-  link Shape "https://www.github.com" "This is a<br/>tooltip<br>for a link"
-  class Shape2
-  click Shape2 href "https://www.github.com" "This is a tooltip for a link"
+flowchart TD
+    subgraph test
+    direction TB
+    subgraph test2
+      direction LR
+      F --> D
+    end
+    subgraph test3
+      direction TB
+      G --> H
+    end
+    end
+
+    A --> B
+    A --> C
+    B --> C
+
 </div>
 <div class="mermaid2" style="width: 50%;">
  gitGraph
@@ -308,8 +323,8 @@ flowchart TD
         securityLevel: 'loose',
         logLevel: 0,
         flowchart: {
-          curve: 'basis',
-          useMaxWidth: false,
+          curve: 'curveLinear',
+          useMaxWidth: true,
           htmlLabels: true,
         },
       });
