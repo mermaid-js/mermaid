@@ -43,4 +43,17 @@ Person_Ext(customerA, "Banking Customer A", "A customer of the bank, with person
       wrap: false,
     });
   });
+
+  it('should parse a link', function () {
+    c4.parser.parse(`C4Context
+Person_Ext(customerA, $link="https://github.com/mermaidjs")`);
+
+    expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
+      label: {
+        text: {
+          link: 'https://github.com/mermaidjs',
+        },
+      },
+    });
+  });
 });
