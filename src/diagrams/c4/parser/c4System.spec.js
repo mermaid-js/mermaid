@@ -6,7 +6,7 @@ setConfig({
   securityLevel: 'strict',
 });
 
-describe('parsing a C4 System', function () {
+describe.each([['System', 'system']])('parsing a C4 %s', function (macroName, elementName) {
   beforeEach(function () {
     c4.parser.yy = c4Db;
     c4.parser.yy.clear();
@@ -15,7 +15,7 @@ describe('parsing a C4 System', function () {
   it('should parse a C4 diagram with one System correctly', function () {
     c4.parser.parse(`C4Context
 title System Context diagram for Internet Banking System
-System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")`);
+${macroName}(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")`);
 
     const yy = c4.parser.yy;
 
@@ -38,7 +38,7 @@ System(SystemAA, "Internet Banking System", "Allows customers to view informatio
       tags: undefined,
       parentBoundary: 'global',
       typeC4Shape: {
-        text: 'system',
+        text: elementName,
       },
       wrap: false,
     });
@@ -46,7 +46,7 @@ System(SystemAA, "Internet Banking System", "Allows customers to view informatio
 
   it('should parse the alias', function () {
     c4.parser.parse(`C4Context
-System(SystemAA, "Internet Banking System")`);
+${macroName}(SystemAA, "Internet Banking System")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       alias: 'SystemAA',
@@ -55,7 +55,7 @@ System(SystemAA, "Internet Banking System")`);
 
   it('should parse the label', function () {
     c4.parser.parse(`C4Context
-System(SystemAA, "Internet Banking System")`);
+${macroName}(SystemAA, "Internet Banking System")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
@@ -66,7 +66,7 @@ System(SystemAA, "Internet Banking System")`);
 
   it('should parse the description', function () {
     c4.parser.parse(`C4Context
-System(SystemAA, "", "Allows customers to view information about their bank accounts, and make payments.")`);
+${macroName}(SystemAA, "", "Allows customers to view information about their bank accounts, and make payments.")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       descr: {
@@ -77,7 +77,7 @@ System(SystemAA, "", "Allows customers to view information about their bank acco
 
   it('should parse a sprite', function () {
     c4.parser.parse(`C4Context
-System(SystemAA, $sprite="users")`);
+${macroName}(SystemAA, $sprite="users")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
@@ -90,7 +90,7 @@ System(SystemAA, $sprite="users")`);
 
   it('should parse a link', function () {
     c4.parser.parse(`C4Context
-System(SystemAA, $link="https://github.com/mermaidjs")`);
+${macroName}(SystemAA, $link="https://github.com/mermaidjs")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
@@ -103,7 +103,7 @@ System(SystemAA, $link="https://github.com/mermaidjs")`);
 
   it('should parse tags', function () {
     c4.parser.parse(`C4Context
-System(SystemAA, $tags="tag1,tag2")`);
+${macroName}(SystemAA, $tags="tag1,tag2")`);
 
     expect(c4.parser.yy.getC4ShapeArray()[0]).toMatchObject({
       label: {
