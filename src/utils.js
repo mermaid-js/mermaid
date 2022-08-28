@@ -761,7 +761,7 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
  * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
  */
 export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
-  const attrs = calculateSvgSizeAttrs(height, 1.1 * width, useMaxWidth);
+  const attrs = calculateSvgSizeAttrs(height, 1 * width, useMaxWidth);
   d3Attrs(svgElem, attrs);
 };
 export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth) {
@@ -775,21 +775,22 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
   let height = graph._label.height;
   log.info(`Graph bounds: ${width}x${height}`, graph);
 
-  let tx = 0;
-  let ty = 0;
-  if (sWidth > width) {
-    tx = (sWidth - width) / 2 + padding;
-    width = sWidth + padding * 2;
-  } else {
-    if (Math.abs(sWidth - width) >= 2 * padding + 1) {
-      width = width - padding;
-    }
-  }
-  if (sHeight > height) {
-    ty = (sHeight - height) / 2 + padding;
-    height = sHeight + padding * 2;
-  }
+  // let tx = 0;
+  // let ty = 0;
+  // if (sWidth > width) {
+  //   tx = (sWidth - width) / 2 + padding;
+  width = sWidth + padding * 2;
+  // } else {
+  //   if (Math.abs(sWidth - width) >= 2 * padding + 1) {
+  //     width = width - padding;
+  //   }
+  // }
+  // if (sHeight > height) {
+  //   ty = (sHeight - height) / 2 + padding;
+  height = sHeight + padding * 2;
+  // }
 
+  // width =
   log.info(`Calculated bounds: ${width}x${height}`);
   configureSvgSize(svgElem, height, width, useMaxWidth);
 
@@ -809,10 +810,7 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
     width,
     'height',
     height,
-    'tx',
-    tx,
-    'ty',
-    ty,
+
     'vBox',
     vBox
   );

@@ -218,10 +218,10 @@ describe('Gantt diagram', () => {
     );
     cy.get('svg').should((svg) => {
       expect(svg).to.have.attr('width', '100%');
-      expect(svg).to.have.attr('height');
+      // expect(svg).to.have.attr('height');
       // use within because the absolute value can be slightly different depending on the environment ±5%
-      const height = parseFloat(svg.attr('height'));
-      expect(height).to.be.within(484 * 0.95, 484 * 1.05);
+      // const height = parseFloat(svg.attr('height'));
+      // expect(height).to.be.within(484 * 0.95, 484 * 1.05);
       const style = svg.attr('style');
       expect(style).to.match(/^max-width: [\d.]+px;$/);
       const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
