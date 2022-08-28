@@ -23,9 +23,9 @@ System(SystemAA, "Internet Banking System")
 
     const boundaries = yy.getBoundarys();
     expect(boundaries.length).toBe(2);
-    const onlyShape = boundaries[1];
+    const boundary = boundaries[1];
 
-    expect(onlyShape).toEqual({
+    expect(boundary).toEqual({
       alias: 'b1',
       label: {
         text: 'BankBoundary',
@@ -40,6 +40,71 @@ System(SystemAA, "Internet Banking System")
         text: 'system',
       },
       wrap: false,
+    });
+  });
+
+  it('should parse the alias', function () {
+    c4.parser.parse(`C4Context
+${macroName}(b1, "BankBoundary") {
+System(SystemAA, "Internet Banking System")
+}`);
+
+    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+      alias: 'b1',
+    });
+  });
+
+  it('should parse the label', function () {
+    c4.parser.parse(`C4Context
+${macroName}(b1, "BankBoundary") {
+System(SystemAA, "Internet Banking System")
+}`);
+
+    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+      label: {
+        text: 'BankBoundary',
+      },
+    });
+  });
+
+  it('should parse the type', function () {
+    c4.parser.parse(`C4Context
+${macroName}(b1, "", "company") {
+System(SystemAA, "Internet Banking System")
+}`);
+
+    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+      type: { text: 'company' },
+    });
+  });
+
+  it('should parse a link', function () {
+    c4.parser.parse(`C4Context
+${macroName}(b1, $link="https://github.com/mermaidjs") {
+System(SystemAA, "Internet Banking System")
+}`);
+
+    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+      label: {
+        text: {
+          link: 'https://github.com/mermaidjs',
+        },
+      },
+    });
+  });
+
+  it('should parse tags', function () {
+    c4.parser.parse(`C4Context
+${macroName}(b1, $tags="tag1,tag2") {
+System(SystemAA, "Internet Banking System")
+}`);
+
+    expect(c4.parser.yy.getBoundarys()[1]).toMatchObject({
+      label: {
+        text: {
+          tags: 'tag1,tag2',
+        },
+      },
     });
   });
 });
