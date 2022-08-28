@@ -23,12 +23,11 @@
       .mermaid2,.mermaid3 {
         display: none;
       }
-      .mermaid {
-        border: 1px solid purple;
-      }
+
       .mermaid svg {
+        border: 1px solid purple;
         /* font-size: 18px !important; */
-        border: 1px solid red;
+        fontFamily: 'courier'
       }
     </style>
   </head>
@@ -56,7 +55,7 @@ flowchart LR
   O0 -- has type -->O2["Bug"]
   click O0 function "Lots of great info about Joe<br>Lots of great info about Joe<br>burt<br>fred";
 </div>
-<div class="mermaid" style="width: 50%;">
+<div class="mermaid2" style="width: 50%;">
 flowchart TD
     subgraph test
     direction TB
@@ -152,13 +151,23 @@ mindmap
         GrandChild2
       Child5((Child5))
       :::disabled
-
         GrandChild7
           sc1
           sc2
           sc3
         GrandChild7
 
+</div>
+<div class="mermaid" style="width: 50%;">
+  flowchart TD
+  id
+</div>
+<div class="mermaid2" style="width: 50%;">
+  flowchart LR
+  a["<strong>Haiya</strong>"]===>b
+</div>
+<div class="mermaid2" style="width: 50%;">
+  flowchart TD
 </div>
 <div class="mermaid2" style="width: 50%;">
    pie
@@ -168,9 +177,20 @@ mindmap
     A --> B
     A --> C
     B --> C
-
 </div>
 <div class="mermaid2" style="width: 50%;">
+flowchart TD
+      A([stadium shape test])
+      A -->|Get money| B([Go shopping])
+      B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
+      C -->|One| D([Laptop])
+      C -->|Two| E([iPhone])
+      C -->|Three| F([Car<br/>wroom wroom])
+      click A "index.html#link-clicked" "link test"
+      click B testClick "click test"
+      classDef someclass fill:#f96;
+      class A someclass;
+      class C someclass;
  gitGraph TB
        commit
        commit
@@ -415,16 +435,17 @@ flowchart TD
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        // theme: 'dark',
-        theme: 'base',
-        // arrowMarkerAbsolute: true,
-        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
+        maxTextSize: 900000,
+        startOnLoad: true,
+        securityLevel: 'loose',
+        logLevel: 0,
+        fontFamily: 'courier',
         flowchart: {
-          curve: 'curveLinear',
+          // curve: 'curveLinear',
           useMaxWidth: true,
-          htmlLabels: true,
+          htmlLabels: false,
+          fontFamily: 'courier',
         },
-        logLevel: 1,
         fontSize: 18,
         curve: 'cardinal',
         // securityLevel: 'sandbox',
