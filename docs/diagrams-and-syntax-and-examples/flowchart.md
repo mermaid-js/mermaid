@@ -7,16 +7,14 @@ title: Flowchart
 
 ## Graph
 
-This statement declares the direction of the Flowchart.
-
-This declares the graph is oriented from top to bottom (`TD` or `TB`).
+This statement declares the direction of the flowchart, either from top to bottom (`TD` or `TB`):
 
 ```mermaid-example
 graph TD
     Start --> Stop
 ```
 
-This declares the graph is oriented from left to right (`LR`).
+or left to right (`LR`):
 
 ```mermaid-example
 graph LR
@@ -28,22 +26,21 @@ graph LR
 Possible FlowChart orientations are:
 
 * TB - top to bottom
-* TD - top-down/ same as top to bottom
+* TD - top-down (same as top to bottom)
 * BT - bottom to top
 * RL - right to left
 * LR - left to right
-
 
 
 ## Flowcharts
 
 This renders a flowchart that allows for features such as: more arrow types, multi directional arrows, and linking to and from subgraphs.
 
-Apart from the graph type, the syntax is the same. This is currently experimental but when the beta period is over, both the graph and flowchart keywords will render in the new way. This means it is ok to start beta testing flowcharts.
+Apart from the graph type, the syntax is the same. This is currently experimental.  When the beta period is over, both the graph and flowchart keywords will render in this new way. At this point it is OK to start beta testing flowcharts.
 
 > **Important note** Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).**
 
-## Nodes & shapes
+## Nodes and shapes
 
 ### A node (default)
 
@@ -56,9 +53,9 @@ graph LR
 
 ### A node with text
 
-It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
-found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The
-one previously defined will be used when rendering the box.
+It is also possible to set text in the box that differs from the id. If this is done several times, only the last text
+found for the node will be rendered. Also if you define edges for the node later on, you can omit text definitions. The
+text previously defined will be used when rendering the box.
 
 ```mermaid-example
 graph LR
@@ -108,7 +105,7 @@ graph LR
 graph LR
     id1>This is the text in the box]
 ```
-Currently only the shape above is possible and not its mirror. *This might change with future releases.*
+Currently it is only possible to render the shape above, and not its mirror. *This might change with future releases.*
 
 ### A node (rhombus)
 
@@ -117,7 +114,7 @@ graph LR
     id1{This is the text in the box}
 ```
 
-### A hexagon node
+### A hexagonal node
 
 ```mermaid-example
 graph LR
@@ -152,16 +149,16 @@ graph TD
 
 ## Links between nodes
 
-Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.
+Nodes can be connected with links/edges. It is possible to have different types of links, or attach a text string on a link.
 
-### A link with arrow head
+### Link with arrow head
 
 ```mermaid-example
 graph LR
     A-->B
 ```
 
-### An open link
+### Open link
 
 ```mermaid-example
 graph LR
@@ -182,7 +179,7 @@ graph LR
     A---|This is the text|B
 ```
 
-### A link with arrow head and text
+### Link with arrow head and text
 
 ```mermaid-example
 graph LR
@@ -226,7 +223,7 @@ graph LR
 
 ### Chaining of links
 
-It is possible to declare many links in the same line as per below:
+It is possible to declare many links on the same line as per below:
 ```mermaid-example
 graph LR
    A -- text --> B -- text2 --> C
@@ -243,10 +240,7 @@ You can then describe dependencies in a very expressive way. Like the one-liner 
 graph TB
     A & B--> C & D
 ```
-If you describe the same diagram using the the basic syntax, it will take four lines. A
-word of warning, one could go overboard with this making the graph harder to read in
-markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
-This goes for expressive syntaxes as well.
+If you describe the same diagram using the the basic syntax, it will take four lines:
 ```mmd
 graph TB
     A --> C
@@ -254,6 +248,9 @@ graph TB
     B --> C
     B --> D
 ```
+A word of warning, one could go overboard with this, making the graph harder to read in
+markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
+This goes for expressive syntaxes as well.
 
 ### New arrow types
 
@@ -264,7 +261,6 @@ flowchart LR
     A --o B
     B --x C
 ```
-
 
 ### Multi directional arrows
 
@@ -297,8 +293,8 @@ graph TD
     B ---->|No| E[End];
 ```
 
-> **Note** Links may still be made longer than the requested number of ranks
-> by the rendering engine to accommodate other requests.
+> **Note** The rendering engine may cause some links to be longer than
+> the number of ranks requested in order to accommodate the overall topology.
 
 When the link label is written in the middle of the link, the extra dashes must
 be added on the right side of the link. The following example is equivalent to
@@ -327,7 +323,7 @@ as summed up in the following table:
 
 ## Special characters that break syntax
 
-It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
+Use quotes around text in order to render more troublesome characters, as in the example below:
 
 ```mermaid-example
 graph LR
@@ -336,7 +332,7 @@ graph LR
 
 ### Entity codes to escape characters
 
-It is possible to escape characters using the syntax exemplified here.
+Special characters (including Unicode) can be included by using HTML escaping syntax:
 
 ```mermaid-example
     graph LR
@@ -351,7 +347,7 @@ subgraph title
 end
 ```
 
-An example below:
+An example:
 
 ```mermaid-example
 graph TB
@@ -367,7 +363,7 @@ graph TB
     end
  ```
 
- You can also set an explicit id for the subgraph.
+You can also set an explicit id for the subgraph:
 
 ```mermaid-example
 graph TB
@@ -377,9 +373,9 @@ graph TB
     end
  ```
 
-## flowcharts
+## Flowcharts
 
-With the graphtype flowchart it is also possible to set edges to and from subgraphs as in the graph below.
+With the graphtype `flowchart` it is also possible to set edges to and from subgraphs:
 
 ```mermaid-example
 flowchart TB
@@ -400,7 +396,7 @@ flowchart TB
 
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a JavaScript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+A node can have click events bound that lead to either a JavaScript callback or to open a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 ```
 click nodeId callback
@@ -408,17 +404,17 @@ click nodeId call callback()
 ```
 
 * nodeId is the id of the node
-* callback is the name of a JavaScript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
-
-Examples of tooltip usage below:
+* `callback` is the name of a JavaScript function defined on the page displaying the graph. The function will be called with the nodeId as an incoming parameter.
 
 ```html
 <script>
-  var callback = function () {
-    alert('A callback was triggered');
+  var callback = function (nodeId) {
+    alert('A callback was triggered on ' + nodeId);
   };
 </script>
 ```
+
+Examples of tooltip usage:
 
 The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.
 
@@ -449,7 +445,7 @@ graph LR;
     click D href "https://www.github.com" "Open this in a new tab" _blank
 ```
 
-Beginners tip, a full example using interactive links in a html context:
+Beginner's tip—here's a full example of using interactive links in HTML:
 
 ```html
 <body>
@@ -484,7 +480,7 @@ Beginners tip, a full example using interactive links in a html context:
 
 ### Comments
 
-Comments can be entered within a flow diagram, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
+Comments can be entered within a flow diagram, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including all punctuation and any flow syntax.
 
 ```mmd
 graph LR
@@ -496,16 +492,15 @@ graph LR
 
 ### Styling links
 
-It is possible to style links. For instance you might want to style a link that is going backwards in the flow. As links
-have no ids in the same way as nodes, some other way of deciding what style the links should be attached to is required.
-Instead of ids, the order number of when the link was defined in the graph is used. In the example below the style
-defined in the linkStyle statement will belong to the fourth link in the graph:
+It is possible to style links. For instance, you might want to style a link that is going backwards in the flow. As links
+have no ids in the same way as nodes, some other way of attaching style is required.
+So instead of ids, the order number of when the link was defined in the graph is used, starting with zero. Here's a linkStyle statement that would apply style to the fourth link in the graph:
 
 ```
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ```
 
-You can specify default to apply to all links, or you can give a list of link order numbers separated by a comma.
+You can specify a `default` to apply to all links, or you can give a comma-separated list of link order numbers.
 
 Instead of giving a styles option, you can also use custom d3 curve types with the following syntax:
 
@@ -513,14 +508,14 @@ Instead of giving a styles option, you can also use custom d3 curve types with t
 linkStyle default|numList|num interpolate curveType
 ```
 
-If you want to add style options too, instead of writing:
+If you want to add both D3 and style options, instead of writing:
 
 ```
 linkStyle default interpolate cardinal
 linkStyle default stroke:#ff3,stroke-width:4px,color:red;
 ```
 
-You can combine them into:
+You can combine them:
 
 ```
 linkStyle default interpolate cardinal stroke:#ff3,stroke-width:4px,color:red;
@@ -540,29 +535,27 @@ graph LR
 
 #### Classes
 
-More convenient then defining the style every time is to define a class of styles and attach this class to the nodes that
-should have a different look.
+More convenient than defining the style every time is to define a class of styles and attach this class reference to multiple nodes.
 
-a class definition looks like the example below:
-
+here's a class definition:
 
 ```
     classDef className fill:#f9f,stroke:#333,stroke-width:4px;
 ```
 
-Attachment of a class to a node is done as per below:
+and then attaching this class to a node is simply:
 
 ```
     class nodeId1 className;
 ```
 
-It is also possible to attach a class to a list of nodes in one statement:
+It is also possible to attach a class to multiple nodes in one statement:
 
 ```
     class nodeId1,nodeId2 className;
 ```
 
-A shorter form of adding a class is to attach the classname to the node using the `:::`operator as per below:
+An even shorter form of adding a class is to attach the classname to the node using the `:::`operator:
 
 ```mermaid-example
 graph LR
@@ -573,8 +566,7 @@ graph LR
 
 ### Css classes
 
-It is also possible to predefine classes in css styles that can be applied from the graph definition as in the example
-below:
+It is also possible to predefine classes in css styles that can be applied from the graph definition:
 
 **Example style**
 
@@ -598,7 +590,7 @@ graph LR;
 
 ### Default class
 
-If a class is named default it will be assigned to all classes without specific class definitions.
+If a class is named `default` it will be assigned to all nodes that do not have a specific class definition.
 
 ```
     classDef default fill:#f9f,stroke:#333,stroke-width:4px;
@@ -607,9 +599,7 @@ If a class is named default it will be assigned to all classes without specific 
 
 ## Basic support for fontawesome
 
-It is possible to add icons from fontawesome.
-
-The icons are accessed via the syntax fa:#icon class name#.
+It is possible to add icons from fontawesome.  These are accessed via the syntax fa:#icon-class-name#.
 
 ```mermaid-example
 graph TD
@@ -622,11 +612,11 @@ graph TD
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
-* In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
+* After release 0.2.16, graph declaration statements do not need to end with a semicolon. (And they can continue to have the ending semicolon—it has now just become optional.) So the below graph declaration is valid along with the old declarations.
 
-* A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduce to improve readability.
+* A single space is allowed between vertices and the link, however there should not be any space between a vertex and its text, or a link and its text. The old syntax of graph declarations will also work, so this new feature is optional and is introduced to improve readability.
 
-Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
+Below is an example of the new way to declare graph edges. This is valid alongside any old-style declarations of graph edges.
 
 ```mermaid-example
 graph LR
@@ -641,9 +631,8 @@ graph LR
 
 Is it possible to adjust the width of the rendered flowchart.
 
-This is done by defining **mermaid.flowchartConfig** or by the CLI to use a json file with the configuration. How to use
-the CLI is described in the mermaidCLI page.
-mermaid.flowchartConfig can be set to a JSON string with config parameters or the corresponding object.
+This is done by defining **mermaid.flowchartConfig**, or by the CLI to use a json file with the configuration (which is described in the mermaidCLI page).
+In Javascript config parameters can be set by using `mermaid.flowchartConfig`:
 
 ```javascript
 mermaid.flowchartConfig = {

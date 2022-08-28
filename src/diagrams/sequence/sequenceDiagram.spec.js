@@ -22,6 +22,81 @@ function addConf(conf, key, value) {
 // const parser = sequence.parser;
 let diagram;
 
+describe('more than one sequence diagram', () => {
+  it('should not have duplicated messages', () => {
+    const diagram1 = new Diagram(`
+        sequenceDiagram
+        Alice->Bob:Hello Bob, how are you?
+        Bob-->Alice: I am good thanks!`);
+    expect(diagram1.db.getMessages()).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "from": "Alice",
+          "message": "Hello Bob, how are you?",
+          "to": "Bob",
+          "type": 5,
+          "wrap": false,
+        },
+        Object {
+          "from": "Bob",
+          "message": "I am good thanks!",
+          "to": "Alice",
+          "type": 6,
+          "wrap": false,
+        },
+      ]
+    `);
+    const diagram2 = new Diagram(`
+        sequenceDiagram
+        Alice->Bob:Hello Bob, how are you?
+        Bob-->Alice: I am good thanks!`);
+
+    expect(diagram2.db.getMessages()).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "from": "Alice",
+          "message": "Hello Bob, how are you?",
+          "to": "Bob",
+          "type": 5,
+          "wrap": false,
+        },
+        Object {
+          "from": "Bob",
+          "message": "I am good thanks!",
+          "to": "Alice",
+          "type": 6,
+          "wrap": false,
+        },
+      ]
+    `);
+
+    // Add John actor
+    const diagram3 = new Diagram(`
+        sequenceDiagram
+        Alice->John:Hello John, how are you?
+        John-->Alice: I am good thanks!`);
+
+    expect(diagram3.db.getMessages()).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "from": "Alice",
+          "message": "Hello John, how are you?",
+          "to": "John",
+          "type": 5,
+          "wrap": false,
+        },
+        Object {
+          "from": "John",
+          "message": "I am good thanks!",
+          "to": "Alice",
+          "type": 6,
+          "wrap": false,
+        },
+      ]
+    `);
+  });
+});
+
 describe('when parsing a sequenceDiagram', function () {
   beforeEach(function () {
     // diagram.db = sequenceDb;
@@ -51,7 +126,7 @@ Bob-->Alice: I am good thanks!`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
-  it('it should not show sequence numbers per default', function () {
+  it('should not show sequence numbers per default', function () {
     const str = `
 sequenceDiagram
 Alice->Bob:Hello Bob, how are you?
@@ -62,7 +137,7 @@ Bob-->Alice: I am good thanks!`;
     diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility autonumbers
     expect(diagram.db.showSequenceNumbers()).toBe(false);
   });
-  it('it should show sequence numbers when autonumber is enabled', function () {
+  it('should show sequence numbers when autonumber is enabled', function () {
     const str = `
 sequenceDiagram
 autonumber
@@ -74,7 +149,7 @@ Bob-->Alice: I am good thanks!`;
     diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility autonumbers
     expect(diagram.db.showSequenceNumbers()).toBe(true);
   });
-  it('it should handle a sequenceDiagram definition with a title:', function () {
+  it('should handle a sequenceDiagram definition with a title:', function () {
     const str = `
 sequenceDiagram
 title: Diagram Title
@@ -97,7 +172,7 @@ Bob-->Alice: I am good thanks!`;
     expect(title).toBe('Diagram Title');
   });
 
-  it('it should handle a sequenceDiagram definition with a title without a :', function () {
+  it('should handle a sequenceDiagram definition with a title without a :', function () {
     const str = `
 sequenceDiagram
 title Diagram Title
@@ -120,7 +195,7 @@ Bob-->Alice: I am good thanks!`;
     expect(title).toBe('Diagram Title');
   });
 
-  it('it should handle a sequenceDiagram definition with a accessibility title and description (accDescr)', function () {
+  it('should handle a sequenceDiagram definition with a accessibility title and description (accDescr)', function () {
     const str = `
 sequenceDiagram
 title: Diagram Title
@@ -135,7 +210,7 @@ Alice->Bob:Hello Bob, how are you?
     expect(diagram.db.getAccDescription()).toBe('Accessibility Description');
     const messages = diagram.db.getMessages();
   });
-  it('it should handle a sequenceDiagram definition with a accessibility title and multiline description (accDescr)', function () {
+  it('should handle a sequenceDiagram definition with a accessibility title and multiline description (accDescr)', function () {
     const str = `
 sequenceDiagram
 accTitle: This is the title
@@ -152,7 +227,7 @@ Alice->Bob:Hello Bob, how are you?
     const messages = diagram.db.getMessages();
   });
 
-  it('it should space in actor names', function () {
+  it('should space in actor names', function () {
     const str = `
 sequenceDiagram
 Alice->Bob:Hello Bob, how are - you?
@@ -169,7 +244,7 @@ Bob-->Alice: I am good thanks!`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
   });
-  it('it should handle dashes in actor names', function () {
+  it('should handle dashes in actor names', function () {
     const str = `
 sequenceDiagram
 Alice-in-Wonderland->Bob:Hello Bob, how are - you?
@@ -186,7 +261,7 @@ Bob-->Alice-in-Wonderland:I am good thanks!`;
     expect(messages[0].from).toBe('Alice-in-Wonderland');
     expect(messages[1].from).toBe('Bob');
   });
-  it('it should alias participants', function () {
+  it('should alias participants', function () {
     const str = `
 sequenceDiagram
 participant A as Alice
@@ -207,7 +282,7 @@ B-->A: I am good thanks!`;
     expect(messages[0].from).toBe('A');
     expect(messages[1].from).toBe('B');
   });
-  it('it should alias a mix of actors and participants apa12', function () {
+  it('should alias a mix of actors and participants apa12', function () {
     const str = `
 sequenceDiagram
   actor Alice as Alice2
@@ -235,7 +310,7 @@ sequenceDiagram
     expect(messages[0].from).toBe('Alice');
     expect(messages[4].to).toBe('Joan');
   });
-  it('it should alias actors apa13', function () {
+  it('should alias actors apa13', function () {
     const str = `
 sequenceDiagram
 actor A as Alice
@@ -255,7 +330,7 @@ B-->A: I am good thanks!`;
     expect(messages[0].from).toBe('A');
     expect(messages[1].from).toBe('B');
   });
-  it('it should handle in async messages', function () {
+  it('should handle in async messages', function () {
     const str = `
 sequenceDiagram
 Alice-xBob:Hello Bob, how are you?`;
@@ -270,7 +345,7 @@ Alice-xBob:Hello Bob, how are you?`;
     expect(messages.length).toBe(1);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.SOLID_CROSS);
   });
-  it('it should handle in async dotted messages', function () {
+  it('should handle in async dotted messages', function () {
     const str = `
 sequenceDiagram
 Alice--xBob:Hello Bob, how are you?`;
@@ -285,7 +360,7 @@ Alice--xBob:Hello Bob, how are you?`;
     expect(messages.length).toBe(1);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED_CROSS);
   });
-  it('it should handle in sync messages', function () {
+  it('should handle in sync messages', function () {
     const str = `
 sequenceDiagram
 Alice-)Bob:Hello Bob, how are you?`;
@@ -300,7 +375,7 @@ Alice-)Bob:Hello Bob, how are you?`;
     expect(messages.length).toBe(1);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.SOLID_POINT);
   });
-  it('it should handle in sync dotted messages', function () {
+  it('should handle in sync dotted messages', function () {
     const str = `
 sequenceDiagram
 Alice--)Bob:Hello Bob, how are you?`;
@@ -315,7 +390,7 @@ Alice--)Bob:Hello Bob, how are you?`;
     expect(messages.length).toBe(1);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED_POINT);
   });
-  it('it should handle in arrow messages', function () {
+  it('should handle in arrow messages', function () {
     const str = `
 sequenceDiagram
 Alice->>Bob:Hello Bob, how are you?`;
@@ -330,7 +405,7 @@ Alice->>Bob:Hello Bob, how are you?`;
     expect(messages.length).toBe(1);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.SOLID);
   });
-  it('it should handle in arrow messages', function () {
+  it('should handle in arrow messages', function () {
     const str = 'sequenceDiagram\n' + 'Alice-->>Bob:Hello Bob, how are you?';
 
     mermaidAPI.parse(str);
@@ -343,7 +418,7 @@ Alice->>Bob:Hello Bob, how are you?`;
     expect(messages.length).toBe(1);
     expect(messages[0].type).toBe(diagram.db.LINETYPE.DOTTED);
   });
-  it('it should handle actor activation', function () {
+  it('should handle actor activation', function () {
     const str = `
 sequenceDiagram
 Alice-->>Bob:Hello Bob, how are you?
@@ -366,7 +441,7 @@ deactivate Bob`;
     expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
     expect(messages[3].from.actor).toBe('Bob');
   });
-  it('it should handle actor one line notation activation', function () {
+  it('should handle actor one line notation activation', function () {
     const str = `
       sequenceDiagram
       Alice-->>+Bob:Hello Bob, how are you?
@@ -387,7 +462,7 @@ deactivate Bob`;
     expect(messages[3].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
     expect(messages[3].from.actor).toBe('Bob');
   });
-  it('it should handle stacked activations', function () {
+  it('should handle stacked activations', function () {
     const str = `
       sequenceDiagram
       Alice-->>+Bob:Hello Bob, how are you?
@@ -414,7 +489,7 @@ deactivate Bob`;
     expect(messages[7].type).toBe(diagram.db.LINETYPE.ACTIVE_END);
     expect(messages[7].from.actor).toBe('Carol');
   });
-  it('it should handle fail parsing when activating an inactive participant', function () {
+  it('should handle fail parsing when activating an inactive participant', function () {
     const str = `
       sequenceDiagram
       participant user as End User
@@ -440,7 +515,7 @@ deactivate Bob`;
     expect(error).toBe(true);
   });
 
-  it('it should handle comments in a sequenceDiagram', function () {
+  it('should handle comments in a sequenceDiagram', function () {
     const str = `
       sequenceDiagram
       Alice->Bob: Hello Bob, how are you?
@@ -459,7 +534,7 @@ deactivate Bob`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
-  it('it should handle new lines in a sequenceDiagram', function () {
+  it('should handle new lines in a sequenceDiagram', function () {
     const str = `
       sequenceDiagram
       Alice->Bob: Hello Bob, how are you?
@@ -480,7 +555,7 @@ deactivate Bob`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
-  it('it should handle semicolons', function () {
+  it('should handle semicolons', function () {
     const str = `
 sequenceDiagram;Alice->Bob: Hello Bob, how are you?;Note right of Bob: Bob thinks;Bob-->Alice: I am good thanks!;`;
 
@@ -495,7 +570,7 @@ sequenceDiagram;Alice->Bob: Hello Bob, how are you?;Note right of Bob: Bob think
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
-  it('it should handle one leading space in lines in a sequenceDiagram', function () {
+  it('should handle one leading space in lines in a sequenceDiagram', function () {
     const str = `
 sequenceDiagram
  Alice->Bob: Hello Bob, how are you?
@@ -515,7 +590,7 @@ Bob-->Alice: I am good thanks!`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
-  it('it should handle several leading spaces in lines in a sequenceDiagram', function () {
+  it('should handle several leading spaces in lines in a sequenceDiagram', function () {
     const str = `
 sequenceDiagram
    Alice->Bob: Hello Bob, how are you?
@@ -535,7 +610,7 @@ Bob-->Alice: I am good thanks!`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
-  it('it should handle several leading spaces in lines in a sequenceDiagram', function () {
+  it('should handle several leading spaces in lines in a sequenceDiagram', function () {
     const str = `
 sequenceDiagram
 participant Alice
@@ -560,7 +635,7 @@ Bob-->John: Jolly good!`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('John');
   });
-  it('it should handle different line breaks', function () {
+  it('should handle different line breaks', function () {
     const str = `
 sequenceDiagram
 participant 1 as multiline<br>text
@@ -595,7 +670,7 @@ note right of 1: multiline<br \t/>text
     expect(messages[6].message).toBe('multiline<br \t/>text');
     expect(messages[7].message).toBe('multiline<br \t/>text');
   });
-  it('it should handle notes and messages without wrap specified', function () {
+  it('should handle notes and messages without wrap specified', function () {
     const str = `
 sequenceDiagram
 participant 1
@@ -634,7 +709,7 @@ note right of 1:nowrap: multiline<br/>text
     expect(messages[6].wrap).toBe(false);
     expect(messages[7].wrap).toBe(false);
   });
-  it('it should handle notes and messages with wrap specified', function () {
+  it('should handle notes and messages with wrap specified', function () {
     const str = `
 sequenceDiagram
 participant 1
@@ -659,7 +734,7 @@ note right of 3:wrap: multiline<br/>text
     expect(messages[2].wrap).toBe(true);
     expect(messages[3].wrap).toBe(true);
   });
-  it('it should handle notes and messages with nowrap or line breaks', function () {
+  it('should handle notes and messages with nowrap or line breaks', function () {
     const str = `
 sequenceDiagram
 participant 1
@@ -676,7 +751,7 @@ note right of 2: single-line text
     expect(messages[0].wrap).toBe(false);
     expect(messages[1].wrap).toBe(false);
   });
-  it('it should handle notes over a single actor', function () {
+  it('should handle notes over a single actor', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -689,7 +764,7 @@ Note over Bob: Bob thinks
     expect(messages[1].from).toBe('Bob');
     expect(messages[1].to).toBe('Bob');
   });
-  it('it should handle notes over multiple actors', function () {
+  it('should handle notes over multiple actors', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -705,7 +780,7 @@ Note over Bob,Alice: resolution
     expect(messages[2].from).toBe('Bob');
     expect(messages[2].to).toBe('Alice');
   });
-  it('it should handle loop statements', function () {
+  it('should handle loop statements', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -728,7 +803,7 @@ end`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
   });
-  it('it should add a rect around sequence', function () {
+  it('should add a rect around sequence', function () {
     const str = `
       sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
@@ -752,7 +827,7 @@ end`;
     expect(messages[4].type).toEqual(diagram.db.LINETYPE.RECT_END);
   });
 
-  it('it should allow for nested rects', function () {
+  it('should allow for nested rects', function () {
     const str = `
       sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
@@ -779,7 +854,7 @@ end`;
     expect(messages[5].type).toEqual(diagram.db.LINETYPE.DOTTED_OPEN);
     expect(messages[6].type).toEqual(diagram.db.LINETYPE.RECT_END);
   });
-  it('it should handle opt statements', function () {
+  it('should handle opt statements', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -802,7 +877,7 @@ end`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
   });
-  it('it should handle alt statements', function () {
+  it('should handle alt statements', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -828,7 +903,7 @@ end`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
   });
-  it('it should handle alt statements with multiple elses', function () {
+  it('should handle alt statements with multiple elses', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -855,7 +930,7 @@ end`;
     expect(messages[7].from).toBe('Bob');
     expect(messages[8].type).toBe(diagram.db.LINETYPE.ALT_END);
   });
-  it('it should handle critical statements without options', function () {
+  it('should handle critical statements without options', function () {
     const str = `
 sequenceDiagram
     critical Establish a connection to the DB
@@ -875,7 +950,7 @@ sequenceDiagram
     expect(messages[1].from).toBe('Service');
     expect(messages[2].type).toBe(diagram.db.LINETYPE.CRITICAL_END);
   });
-  it('it should handle critical statements with options', function () {
+  it('should handle critical statements with options', function () {
     const str = `
 sequenceDiagram
     critical Establish a connection to the DB
@@ -903,7 +978,7 @@ sequenceDiagram
     expect(messages[5].from).toBe('Service');
     expect(messages[6].type).toBe(diagram.db.LINETYPE.CRITICAL_END);
   });
-  it('it should handle break statements', function () {
+  it('should handle break statements', function () {
     const str = `
 sequenceDiagram
     Consumer-->API: Book something
@@ -929,7 +1004,7 @@ sequenceDiagram
     expect(messages[4].type).toBe(diagram.db.LINETYPE.BREAK_END);
     expect(messages[5].from).toBe('API');
   });
-  it('it should handle par statements a sequenceDiagram', function () {
+  it('should handle par statements a sequenceDiagram', function () {
     const str = `
 sequenceDiagram
 par Parallel one
@@ -956,7 +1031,7 @@ end`;
     expect(messages[1].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
-  it('it should handle special characters in signals', function () {
+  it('should handle special characters in signals', function () {
     const str = 'sequenceDiagram\n' + 'Alice->Bob: -:<>,;# comment';
 
     mermaidAPI.parse(str);
@@ -964,7 +1039,7 @@ end`;
     const messages = diagram.db.getMessages();
     expect(messages[0].message).toBe('-:<>,');
   });
-  it('it should handle special characters in notes', function () {
+  it('should handle special characters in notes', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -975,7 +1050,7 @@ Note right of Bob: -:<>,;# comment`;
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
   });
-  it('it should handle special characters in loop', function () {
+  it('should handle special characters in loop', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -988,7 +1063,7 @@ end`;
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
   });
-  it('it should handle special characters in opt', function () {
+  it('should handle special characters in opt', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1001,7 +1076,7 @@ end`;
     const messages = diagram.db.getMessages();
     expect(messages[1].message).toBe('-:<>,');
   });
-  it('it should handle special characters in alt', function () {
+  it('should handle special characters in alt', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1017,7 +1092,7 @@ end`;
     expect(messages[1].message).toBe('-:<>,');
     expect(messages[3].message).toBe(',<>:-');
   });
-  it('it should handle special characters in par', function () {
+  it('should handle special characters in par', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1033,7 +1108,7 @@ end`;
     expect(messages[1].message).toBe('-:<>,');
     expect(messages[3].message).toBe(',<>:-');
   });
-  it('it should handle no-label loop', function () {
+  it('should handle no-label loop', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1047,7 +1122,7 @@ end`;
     expect(messages[1].message).toBe('');
     expect(messages[2].message).toBe('I am good thanks!');
   });
-  it('it should handle no-label opt', function () {
+  it('should handle no-label opt', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1061,7 +1136,7 @@ end`;
     expect(messages[1].message).toBe('');
     expect(messages[2].message).toBe('I am good thanks!');
   });
-  it('it should handle no-label alt', function () {
+  it('should handle no-label alt', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1078,7 +1153,7 @@ end`;
     expect(messages[3].message).toBe('');
     expect(messages[4].message).toBe('I am good thanks!');
   });
-  it('it should handle no-label par', function () {
+  it('should handle no-label par', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1096,7 +1171,7 @@ end`;
     expect(messages[4].message).toBe('I am good thanks!');
   });
 
-  it('it should handle links', function () {
+  it('should handle links', function () {
     const str = `
 sequenceDiagram
 participant a as Alice
@@ -1123,7 +1198,7 @@ link a: Tests @ https://tests.contoso.com/?svc=alice@contoso.com
     expect(actors.a.links['Tests']).toBe('https://tests.contoso.com/?svc=alice@contoso.com');
   });
 
-  it('it should handle properties EXPERIMENTAL: USE WITH CAUTION', function () {
+  it('should handle properties EXPERIMENTAL: USE WITH CAUTION', function () {
     //Be aware that the syntax for "properties" is likely to be changed.
     const str = `
 sequenceDiagram
@@ -1170,7 +1245,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     diagram.renderer.bounds.init();
     conf = diagram.db.getConfig();
   });
-  it('it should handle a simple bound call', function () {
+  it('should handle a simple bound call', function () {
     diagram.renderer.bounds.insert(100, 100, 200, 200);
 
     const { bounds } = diagram.renderer.bounds.getBounds();
@@ -1179,7 +1254,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(200);
     expect(bounds.stopy).toBe(200);
   });
-  it('it should handle an expanding bound', function () {
+  it('should handle an expanding bound', function () {
     diagram.renderer.bounds.insert(100, 100, 200, 200);
     diagram.renderer.bounds.insert(25, 50, 300, 400);
 
@@ -1189,7 +1264,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(300);
     expect(bounds.stopy).toBe(400);
   });
-  it('it should handle inserts within the bound without changing the outer bounds', function () {
+  it('should handle inserts within the bound without changing the outer bounds', function () {
     diagram.renderer.bounds.insert(100, 100, 200, 200);
     diagram.renderer.bounds.insert(25, 50, 300, 400);
     diagram.renderer.bounds.insert(125, 150, 150, 200);
@@ -1200,7 +1275,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(300);
     expect(bounds.stopy).toBe(400);
   });
-  it('it should handle a loop without expanding the area', function () {
+  it('should handle a loop without expanding the area', function () {
     diagram.renderer.bounds.insert(25, 50, 300, 400);
     diagram.renderer.bounds.verticalPos = 150;
     diagram.renderer.bounds.newLoop();
@@ -1221,7 +1296,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(300);
     expect(bounds.stopy).toBe(400);
   });
-  it('it should handle multiple loops withtout expanding the bounds', function () {
+  it('should handle multiple loops withtout expanding the bounds', function () {
     diagram.renderer.bounds.insert(100, 100, 1000, 1000);
     diagram.renderer.bounds.verticalPos = 200;
     diagram.renderer.bounds.newLoop();
@@ -1252,7 +1327,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(1000);
     expect(bounds.stopy).toBe(1000);
   });
-  it('it should handle a loop that expands the area', function () {
+  it('should handle a loop that expands the area', function () {
     diagram.renderer.bounds.insert(100, 100, 200, 200);
     diagram.renderer.bounds.verticalPos = 200;
     diagram.renderer.bounds.newLoop();
@@ -1339,7 +1414,7 @@ participant Alice`;
       expect(bounds.stopy).toBe(conf.height);
     });
   });
-  it('it should handle same actor with different whitespace properly', function () {
+  it('should handle same actor with different whitespace properly', function () {
     const str = `
 sequenceDiagram
 participant Alice
@@ -1352,7 +1427,7 @@ participant Alice
     const actors = diagram.db.getActors();
     expect(Object.keys(actors)).toEqual(['Alice']);
   });
-  it('it should handle one actor and a centered note', function () {
+  it('should handle one actor and a centered note', function () {
     const str = `
 sequenceDiagram
 participant Alice
@@ -1370,7 +1445,7 @@ Note over Alice: Alice thinks
     // 10 comes from mock of text height
     expect(bounds.stopy).toBe(models.lastNote().stopy);
   });
-  it('it should handle one actor and a note to the left', function () {
+  it('should handle one actor and a note to the left', function () {
     const str = `
 sequenceDiagram
 participant Alice
@@ -1386,7 +1461,7 @@ Note left of Alice: Alice thinks`;
     // 10 comes from mock of text height
     expect(bounds.stopy).toBe(models.lastNote().stopy);
   });
-  it('it should handle one actor and a note to the right', function () {
+  it('should handle one actor and a note to the right', function () {
     const str = `
 sequenceDiagram
 participant Alice
@@ -1402,7 +1477,7 @@ Note right of Alice: Alice thinks`;
     // 10 comes from mock of text height
     expect(bounds.stopy).toBe(models.lastNote().stopy);
   });
-  it('it should handle two actors', function () {
+  it('should handle two actors', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
@@ -1416,7 +1491,7 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('it should handle two actors with init directive', function () {
+  it('should handle two actors with init directive', function () {
     const str = `
 %%{init: {'logLevel': 0}}%%
 sequenceDiagram
@@ -1433,7 +1508,7 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('it should handle two actors with init directive with multiline directive', function () {
+  it('should handle two actors with init directive with multiline directive', function () {
     const str = `
 %%{init: { 'logLevel': 0}}%%
 sequenceDiagram
@@ -1455,7 +1530,7 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
     expect(msgs.every((v) => v.wrap)).toBe(true);
   });
-  it('it should handle two actors and two centered shared notes', function () {
+  it('should handle two actors and two centered shared notes', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1472,7 +1547,7 @@ Note over Bob,Alice: Looks back
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastNote().stopy);
   });
-  it('it should draw two actors and two messages', function () {
+  it('should draw two actors and two messages', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1487,7 +1562,7 @@ Bob->Alice: Fine!`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('it should draw two actors notes to the right', function () {
+  it('should draw two actors notes to the right', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1506,7 +1581,7 @@ Bob->Alice: Fine!`;
     expect(bounds.stopx).toBe(expStopX);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('it should draw two actors notes to the left', function () {
+  it('should draw two actors notes to the left', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1523,7 +1598,7 @@ Bob->Alice: Fine!`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('it should draw two actors notes to the left with text wrapped (inline)', function () {
+  it('should draw two actors notes to the left with text wrapped (inline)', function () {
     const str = `
 sequenceDiagram
 Alice->>Bob:wrap: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
@@ -1542,7 +1617,7 @@ Bob->>Alice: Fine!`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('it should draw two actors notes to the left with text wrapped (directive)', function () {
+  it('should draw two actors notes to the left with text wrapped (directive)', function () {
     const str = `
 %%{init: { 'theme': 'dark' } }%%
 sequenceDiagram
@@ -1565,7 +1640,7 @@ Bob->>Alice: Fine!`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('it should draw two actors notes to the left with text wrapped and the init directive sets the theme to dark', function () {
+  it('should draw two actors notes to the left with text wrapped and the init directive sets the theme to dark', function () {
     const str = `
 %%{init:{'theme':'dark'}}%%
 sequenceDiagram
@@ -1588,7 +1663,7 @@ Bob->>Alice: Fine!`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('it should draw two actors, notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', function () {
+  it('should draw two actors, notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', function () {
     const str = `
     %%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "messageFontWeight": 400, "wrap": true }}}%%
 sequenceDiagram
@@ -1613,7 +1688,7 @@ Bob->>Alice: Fine!`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
-  it('it should draw two loops', function () {
+  it('should draw two loops', function () {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1630,7 +1705,7 @@ end`;
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
     expect(bounds.stopy).toBe(models.lastLoop().stopy);
   });
-  it('it should draw background rect', function () {
+  it('should draw background rect', function () {
     const str = `
       sequenceDiagram
         Alice->Bob: Hello Bob, are you alright?
@@ -1680,7 +1755,7 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
     diagram.renderer.bounds.init();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function (textPlacement) {
-    it('it should handle one actor, when textPlacement is' + textPlacement, function () {
+    it('should handle one actor, when textPlacement is' + textPlacement, function () {
       mermaidAPI.initialize(addConf(conf, 'textPlacement', textPlacement));
       diagram.renderer.bounds.init();
       const str = `
@@ -1724,7 +1799,7 @@ describe('when rendering a sequenceDiagram with directives', function () {
     diagram.renderer.bounds.init();
   });
 
-  it('it should handle one actor, when theme is dark and logLevel is 1 DX1', function () {
+  it('should handle one actor, when theme is dark and logLevel is 1 DX1', function () {
     const str = `
 %%{init: { "theme": "dark", "logLevel": 1 } }%%
 sequenceDiagram
@@ -1748,7 +1823,7 @@ participant Alice
       models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin
     );
   });
-  it('it should handle one actor, when logLevel is 3', function () {
+  it('should handle one actor, when logLevel is 3', function () {
     const str = `
 %%{initialize: { "logLevel": 3 }}%%
 sequenceDiagram
@@ -1768,7 +1843,7 @@ participant Alice
       models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin
     );
   });
-  it('it should hide sequence numbers when autonumber is removed when autonumber is enabled', function () {
+  it('should hide sequence numbers when autonumber is removed when autonumber is enabled', function () {
     const str1 = `
 sequenceDiagram
 autonumber

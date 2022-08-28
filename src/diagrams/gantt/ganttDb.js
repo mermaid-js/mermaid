@@ -233,6 +233,9 @@ const getStartDate = function (prevTime, dateFormat, str) {
 const durationToDate = function (durationStatement, relativeTime) {
   if (durationStatement !== null) {
     switch (durationStatement[2]) {
+      case 'ms':
+        relativeTime.add(durationStatement[1], 'milliseconds');
+        break;
       case 's':
         relativeTime.add(durationStatement[1], 'seconds');
         break;
@@ -267,7 +270,7 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive) {
     return mDate.toDate();
   }
 
-  return durationToDate(/^([\d]+)([wdhms])/.exec(str.trim()), moment(prevTime));
+  return durationToDate(/^([\d]+)([wdhms]|ms)$/.exec(str.trim()), moment(prevTime));
 };
 
 let taskCnt = 0;

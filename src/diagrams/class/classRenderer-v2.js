@@ -29,8 +29,10 @@ let conf = {
  * >} classes
  *   Object containing the vertices.
  * @param {SVGGElement} g The graph that is to be drawn.
+ * @param _id
+ * @param diagObj
  */
-export const addClasses = function (classes, g) {
+export const addClasses = function (classes, g, _id, diagObj) {
   // const svg = select(`[id="${svgId}"]`);
   const keys = Object.keys(classes);
   log.info('keys:', keys);
@@ -108,6 +110,7 @@ export const addClasses = function (classes, g) {
       style: styles.style,
       id: vertex.id,
       domId: vertex.domId,
+      tooltip: diagObj.db.getTooltip(vertex.id) || '',
       haveCallback: vertex.haveCallback,
       link: vertex.link,
       width: vertex.type === 'group' ? 500 : undefined,
@@ -319,7 +322,7 @@ export const draw = function (text, id, _version, diagObj) {
   const relations = diagObj.db.getRelations();
 
   log.info(relations);
-  addClasses(classes, g, id);
+  addClasses(classes, g, id, diagObj);
   addRelations(relations, g);
 
   // Add custom shapes

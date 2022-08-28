@@ -1,6 +1,6 @@
 # Change Log
 
-Here is the list of the newest versions in Descending Order, beginning from the latest version.
+All changes are in descending order, beginning with the newest (latest) version.
 
 ## Unreleased
 

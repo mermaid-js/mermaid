@@ -99,6 +99,27 @@ describe('when using the ganttDb', function () {
     }
   );
 
+  it('should handle milliseconds', function () {
+    ganttDb.setDateFormat('x');
+    ganttDb.addSection('testa1');
+    ganttDb.addTask('test1', 'id1,0,20ms');
+    ganttDb.addTask('test2', 'id2,after id1,5ms');
+    ganttDb.addSection('testa2');
+    ganttDb.addTask('test3', 'id3,20,10ms');
+    ganttDb.addTask('test4', 'id4,after id3,5ms');
+
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime.toISOString()).toEqual('1970-01-01T00:00:00.000Z');
+    expect(tasks[0].endTime.toISOString()).toEqual('1970-01-01T00:00:00.020Z');
+    expect(tasks[1].startTime.toISOString()).toEqual('1970-01-01T00:00:00.020Z');
+    expect(tasks[1].endTime.toISOString()).toEqual('1970-01-01T00:00:00.025Z');
+    expect(tasks[2].startTime.toISOString()).toEqual('1970-01-01T00:00:00.020Z');
+    expect(tasks[2].endTime.toISOString()).toEqual('1970-01-01T00:00:00.030Z');
+    expect(tasks[3].startTime.toISOString()).toEqual('1970-01-01T00:00:00.030Z');
+    expect(tasks[3].endTime.toISOString()).toEqual('1970-01-01T00:00:00.035Z');
+  });
+
   it('should handle relative start date based on id regardless of sections', function () {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('testa1');
