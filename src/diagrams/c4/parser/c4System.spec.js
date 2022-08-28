@@ -6,7 +6,14 @@ setConfig({
   securityLevel: 'strict',
 });
 
-describe.each([['System', 'system']])('parsing a C4 %s', function (macroName, elementName) {
+describe.each([
+  ['System', 'system'],
+  ['SystemDb', 'system_db'],
+  ['SystemQueue', 'system_queue'],
+  ['System_Ext', 'external_system'],
+  ['SystemDb_Ext', 'external_system_db'],
+  ['SystemQueue_Ext', 'external_system_queue'],
+])('parsing a C4 %s', function (macroName, elementName) {
   beforeEach(function () {
     c4.parser.yy = c4Db;
     c4.parser.yy.clear();
