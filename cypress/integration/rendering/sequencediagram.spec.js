@@ -734,9 +734,9 @@ context('Sequence diagram', () => {
       );
       cy.get('svg').should((svg) => {
         expect(svg).to.have.attr('width', '100%');
-        expect(svg).to.have.attr('height');
-        const height = parseFloat(svg.attr('height'));
-        expect(height).to.be.within(920, 971);
+        // expect(svg).to.have.attr('height');
+        // const height = parseFloat(svg.attr('height'));
+        // expect(height).to.be.within(920, 971);
         const style = svg.attr('style');
         expect(style).to.match(/^max-width: [\d.]+px;$/);
         const maxWidthValue = parseFloat(style.match(/[\d.]+/g).join(''));
@@ -773,9 +773,9 @@ context('Sequence diagram', () => {
         { sequence: { useMaxWidth: false } }
       );
       cy.get('svg').should((svg) => {
-        const height = parseFloat(svg.attr('height'));
+        // const height = parseFloat(svg.attr('height'));
         const width = parseFloat(svg.attr('width'));
-        expect(height).to.be.within(920, 971);
+        // expect(height).to.be.within(920, 971);
         // use within because the absolute value can be slightly different depending on the environment ±5%
         expect(width).to.be.within(820 * 0.95, 820 * 1.05);
         expect(svg).to.not.have.attr('style');

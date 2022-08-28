@@ -305,7 +305,7 @@ export const draw = function (text, id, _version, diag) {
 
   const svgBounds = svg.node().getBBox();
 
-  configureSvgSize(svg, height, width * 1.75, conf.useMaxWidth);
+  configureSvgSize(svg, height, width, conf.useMaxWidth);
 
   // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
