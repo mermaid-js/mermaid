@@ -366,7 +366,7 @@ describe('State diagram', () => {
       // use within because the absolute value can be slightly different depending on the environment ±5%
       // Todo investigate difference
       // expect(maxWidthValue).to.be.within(112 * .95, 112 * 1.05);
-      expect(maxWidthValue).to.be.within(130, 140);
+      expect(maxWidthValue).to.be.within(65, 85);
     });
   });
   it('should render a state diagram when useMaxWidth is false', () => {
@@ -385,7 +385,7 @@ describe('State diagram', () => {
       // use within because the absolute value can be slightly different depending on the environment ±5%
       // Todo investigate difference
       // expect(width).to.be.within(112 * .95, 112 * 1.05);
-      expect(width).to.be.within(130, 140);
+      expect(width).to.be.within(65, 85);
 
       expect(svg).to.not.have.attr('style');
     });

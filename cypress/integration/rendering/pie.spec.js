@@ -68,9 +68,9 @@ describe('Pie Chart', () => {
       { pie: { useMaxWidth: false } }
     );
     cy.get('svg').should((svg) => {
-      const height = parseFloat(svg.attr('height'));
+      // const height = parseFloat(svg.attr('height'));
       const width = parseFloat(svg.attr('width'));
-      expect(height).to.eq(450);
+      // expect(height).to.eq(450);
       expect(width).to.eq(984);
       expect(svg).to.not.have.attr('style');
     });

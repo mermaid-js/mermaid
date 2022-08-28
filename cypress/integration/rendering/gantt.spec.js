@@ -265,10 +265,10 @@ describe('Gantt diagram', () => {
       { gantt: { useMaxWidth: false } }
     );
     cy.get('svg').should((svg) => {
-      const height = parseFloat(svg.attr('height'));
+      // const height = parseFloat(svg.attr('height'));
       const width = parseFloat(svg.attr('width'));
       // use within because the absolute value can be slightly different depending on the environment ±5%
-      expect(height).to.be.within(484 * 0.95, 484 * 1.05);
+      // expect(height).to.be.within(484 * 0.95, 484 * 1.05);
       expect(width).to.be.within(984 * 0.95, 984 * 1.05);
       expect(svg).to.not.have.attr('style');
     });
