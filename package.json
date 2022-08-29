@@ -76,7 +76,7 @@
     "@babel/register": "^7.14.5",
     "@commitlint/cli": "^17.0.0",
     "@commitlint/config-conventional": "^17.0.0",
-    "babel-jest": "^28.0.3",
+    "babel-jest": "^29.0.1",
     "babel-loader": "^8.2.2",
     "concurrently": "^7.0.0",
     "coveralls": "^3.0.2",
