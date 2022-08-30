@@ -72,8 +72,43 @@ mindmap
 
 ```mermaid-example
 mindmap
-    id((I am a rounded square))
+    id((I am a circle))
 ```
+
+### Default
+
+```mermaid-example
+mindmap
+    I am the default shape
+```
+
+More shapes will be added, beginning with the shapes available in flowcharts.
+
+# Icons and classes
+
+## icons
+As with flowcharts you can add icons to your nodes but with an updated syntax. The styling for the font based icons are added during the integration so that they are available for the web page. *This is not something a diagram author can do but has to be done with the site administrator or the integrator*. Once the icon fonts are in place you add them to the mind map nodes using the `::icon()` syntax. You place the classes for the icon within the parethesis like in the following example where icons for material design and fontwaresome 4. is displayed. The intention is that this approach should be used for all diagrams supporting icons. **Expermental feature:** This wider scope is also the reason Mindmaps are experimental as this syntax and approach could change.
+
+```mermaid-example
+mindmap
+    Root
+        A
+        ::icon(fa fa-book)
+        B(B)
+        ::icon(mdi mdi-skull-outline)
+```
+## Classes
+
+Again the synax for adding classes is similar to flowcharts and you can add classes using a tripple colon following a numver of css classes separated by space. In the following example one of the nodes has two custom classes attached urgent turning the background red and the text whiet and large increasing the font size:
+```mermaid-example
+mindmap
+    Root
+        A[A]
+        :::urgent large
+        B(B)
+        C
+```
+*These classes needs top be supplied by the site administrator.*
 
 ## Unclear indentation
 The actual indentation does not really matter only compared with the previous rows. If we take the previous example and disrupt it a little we can se how the calculations are performed. Let us start with placing C with a smaller indentation than `B`but larger then `A`.

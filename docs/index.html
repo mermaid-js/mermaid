@@ -18,6 +18,7 @@
     <!-- <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css"> -->
     <link rel="stylesheet" href="theme.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet">
     <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.6/dist/mermaid.min.js"></script> -->
     <script src="http://localhost:9000/mermaid.js"></script>
     <script>
@@ -49,6 +50,20 @@
       .markdown-section {
         max-width: 1200px;
       }
+       .urgent rect,.urgent path, .urgent text {
+        fill: rgba(255, 63, 0, 1) !important;
+        stroke: white
+        color: white;
+      }
+      .urgent i, .urgent text {
+        fill: white !important;
+        color: white !important;
+      }
+      .large {
+        font-size: 20px !important;
+        font-weight: 900 !important;
+      }
+
     </style>
   </head>
   <body>
