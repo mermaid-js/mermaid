@@ -74,7 +74,7 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-  it('7: should render a simple gitgraph with three branches and merge commit', () => {
+  it('7: should render a simple gitgraph with three branches and tagged merge commit', () => {
     imgSnapshotTest(
       `gitGraph
        commit id: "1"
@@ -93,7 +93,7 @@ describe('Git Graph diagram', () => {
        checkout nice_feature
        commit id: "7"
        checkout main
-       merge nice_feature
+       merge nice_feature id: "12345" tag: "my merge commit"
        checkout very_nice_feature
        commit id: "8"
        checkout main

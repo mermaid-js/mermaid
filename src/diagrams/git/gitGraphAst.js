@@ -150,6 +150,8 @@ export const branch = function (name, order) {
 
 export const merge = function (otherBranch, custom_id, override_type, custom_tag) {
   otherBranch = common.sanitizeText(otherBranch, configApi.getConfig());
+  custom_id = common.sanitizeText(custom_id, configApi.getConfig());
+
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
   if (curBranch === otherBranch) {
