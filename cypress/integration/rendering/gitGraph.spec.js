@@ -253,7 +253,7 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-  it('12: should render a simple gitgraph with three branches,custom merge commit id,tag,type', () => {
+  it('13: should render a simple gitgraph with three branches,custom merge commit id,tag,type', () => {
     imgSnapshotTest(
       `gitGraph
        commit id: "1"
@@ -272,7 +272,7 @@ describe('Git Graph diagram', () => {
        checkout nice_feature
        commit id: "7"
        checkout main
-       merge nice_feature id: "customID" tag: "customTag" type: "REVERSE"
+       merge nice_feature id: "customID" tag: "customTag" type: REVERSE
        checkout very_nice_feature
        commit id: "8"
        checkout main
