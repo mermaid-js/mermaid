@@ -1826,6 +1826,7 @@ const config = {
     padding: 10,
     maxNodeWidth: 200,
   },
+  fontSize: 16,
 };
 
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;

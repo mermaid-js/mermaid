@@ -134,7 +134,7 @@ const initThrowsErrors = function () {
         element
       );
     } catch (error) {
-      log.warn('Catching Error (bootstrap)');
+      log.warn('Catching Error (bootstrap)', error);
       throw { error, message: error.str };
     }
   }

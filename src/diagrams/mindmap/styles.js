@@ -4,7 +4,7 @@ const genSections = (options) => {
   let sections = '';
 
   for (let i = 0; i < 8; i++) {
-    options['lineColor' + i] = options['lineColor' + i] || options['gitBranchLabel' + i];
+    options['lineColor' + i] = options['lineColor' + i] || options['gitInv' + i];
     if (isDark(options['lineColor' + i])) {
       options['lineColor' + i] = lighten(options['lineColor' + i], 20);
     } else {
@@ -20,10 +20,12 @@ const genSections = (options) => {
     }
     .section-${i - 1} text {
      fill: ${options['gitBranchLabel' + i]};
+    //  fill: ${options['gitInv' + i]};
     }
     .node-icon-${i - 1} {
       font-size: 40px;
       color: ${options['gitBranchLabel' + i]};
+      // color: ${options['gitInv' + i]};
     }
     .section-edge-${i - 1}{
       stroke: ${options['git' + i]};
