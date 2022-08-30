@@ -215,11 +215,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
       const px = 4;
       const py = 2;
       // Draw the commit label
-      if (
-        commit.type !== commitType.CHERRY_PICK &&
-        commit.type !== commitType.MERGE &&
-        gitGraphConfig.showCommitLabel
-      ) {
+      if (commit.type !== commitType.CHERRY_PICK && gitGraphConfig.showCommitLabel) {
         const wrapper = gLabels.append('g');
         const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
 

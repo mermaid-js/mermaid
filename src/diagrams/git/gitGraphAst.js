@@ -148,8 +148,17 @@ export const branch = function (name, order) {
   }
 };
 
-export const merge = function (otherBranch, tag) {
+/**
+ * Creates a merge commit.
+ *
+ * @param {string} otherBranch - Target branch to merge to.
+ * @param {string} [tag] - Git tag to use on this merge commit.
+ * @param {string} [id] - Git commit id.
+ */
+export const merge = function (otherBranch, tag, id) {
   otherBranch = common.sanitizeText(otherBranch, configApi.getConfig());
+  id = common.sanitizeText(id, configApi.getConfig());
+
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
   if (curBranch === otherBranch) {
@@ -219,7 +228,7 @@ export const merge = function (otherBranch, tag) {
   // } else {
   // create merge commit
   const commit = {
-    id: seq + '-' + getId(),
+    id: id || seq + '-' + getId(),
     message: 'merged branch ' + otherBranch + ' into ' + curBranch,
     seq: seq++,
     parents: [head == null ? null : head.id, branches[otherBranch]],
