@@ -107,7 +107,7 @@ Mermaid can load multiple diagrams, in the same page.
 
 | Parameter     | Description                       | Type   | Required | Values                    |
 | ------------- | --------------------------------- | ------ | -------- | ------------------------- |
-| securityLevel | Level of trust for parsed diagram | String | Required | Strict, Loose, antiscript , sandbox|
+| securityLevel | Level of trust for parsed diagram | String | Required | 'sandbox', 'strict', 'loose', 'antiscript' |
 
 Values:
 
@@ -118,7 +118,7 @@ Values:
 
 
 ```note
-This changes the default behaviour of mermaid so that after upgrade to 8.2,unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
+This changes the default behaviour of mermaid so that after upgrade to 8.2, unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
 **sandbox** security level is still in the beta version. 
 ```
 
