@@ -496,7 +496,7 @@ describe('when parsing a gitGraph', function () {
     ]);
   });
 
-  it('should handle merge ids', function () {
+  it('should handle merge with custom ids, tags and typr', function () {
     const str = `gitGraph:
       commit
       branch testBranch
@@ -510,7 +510,7 @@ describe('when parsing a gitGraph', function () {
       commit
       checkout main
       %% Merge ID and Tag (reverse order)
-      merge testBranch2 id: "4-444" tag: "merge-tag2"
+      merge testBranch2 id: "4-444" tag: "merge-tag2" type:HIGHLIGHT
       branch testBranch3
       checkout testBranch3
       commit
@@ -553,6 +553,8 @@ describe('when parsing a gitGraph', function () {
     expect(testBranch2Merge.parents).toStrictEqual([testBranchMerge.id, testBranch2Commit.id]);
     expect(testBranch2Merge.tag).toBe('merge-tag2');
     expect(testBranch2Merge.id).toBe('4-444');
+    expect(testBranch2Merge.customType).toBe(2);
+    expect(testBranch2Merge.customId).toBe(true);
 
     expect(testBranch3Merge.branch).toBe('main');
     expect(testBranch3Merge.parents).toStrictEqual([testBranch2Merge.id, testBranch3Commit.id]);
@@ -685,6 +687,27 @@ describe('when parsing a gitGraph', function () {
       expect(true).toBe(false);
     } catch (e) {
       expect(e.message).toBe('Incorrect usage of "merge". Cannot merge a branch to itself');
+    }
+  });
+
+  it('should throw error when using existing id as merge ID', function () {
+    const str = `gitGraph
+    commit id: "1-111"
+    branch testBranch
+    commit id: "2-222"
+    commit id: "3-333"
+    checkout main
+    merge testBranch id: "1-111"
+    `;
+
+    try {
+      parser.parse(str);
+      // Fail test if above expression doesn't throw anything.
+      expect(true).toBe(false);
+    } catch (e) {
+      expect(e.message).toBe(
+        'Incorrect usage of "merge". Commit with id:1-111 already exists, use different custom Id'
+      );
     }
   });
   it('should throw error when trying to merge branches having same heads', function () {
