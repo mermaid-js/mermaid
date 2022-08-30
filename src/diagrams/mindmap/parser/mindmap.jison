@@ -17,7 +17,7 @@
 
 %%
 
-\%\%.*\n {console.log('Found comment',yytext);}  /* skip comments */
+\s*\%\%.*\n {console.log('Found comment',yytext);}
 // \%\%[^\n]*\n                             /* skip comments */
 "mindmap"		       return 'MINDMAP';
 ":::"              { this.begin('CLASS'); }
@@ -68,7 +68,7 @@ statement
 	: SPACELIST node      { yy.addNode($1.length, $2.id, $2.descr, $2.type);  }
 	| SPACELIST ICON       { yy.decorateNode({icon: $2}); }
 	| SPACELIST EOF
-	| SPACELIST NL			
+	| SPACELIST NL
 	| node					{ console.log($1.id);yy.addNode(0, $1.id, $1.descr, $1.type);  }
 	| ICON                 { yy.decorateNode({icon: $1}); }
 	| SPACELIST CLASS       { yy.decorateNode({class: $2}); }

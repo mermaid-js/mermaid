@@ -174,6 +174,22 @@ root
       expect(mm.class).toEqual('m-4 p-8');
       expect(mm.icon).toEqual('bomb');
     });
+    it('should be possible to set both classes and icon for the node', function () {
+      var str = `mindmap
+    root[The root]
+    ::icon(bomb)
+    :::m-4 p-8
+    `;
+      // ::class1 class2
+
+      mindmap.parse(str);
+      const mm = mindmap.yy.getMindmap();
+      expect(mm.nodeId).toEqual('root');
+      expect(mm.descr).toEqual('The root');
+      expect(mm.type).toEqual(mindmap.yy.nodeType.RECT);
+      expect(mm.class).toEqual('m-4 p-8');
+      expect(mm.icon).toEqual('bomb');
+    });
   });
   describe('descriptions', function () {
     it('should be possible to use node syntax in the descriptions', function () {
@@ -223,6 +239,45 @@ root
     Child(Child)
       a(a)
 
+      b[New Stuff]`;
+    mindmap.parse(str);
+    const mm = mindmap.yy.getMindmap();
+    expect(mm.nodeId).toEqual('root');
+    expect(mm.descr).toEqual('Root');
+    expect(mm.children.length).toEqual(1);
+
+    const child = mm.children[0];
+    expect(child.nodeId).toEqual('Child');
+    expect(child.children[0].nodeId).toEqual('a');
+    expect(child.children.length).toEqual(2);
+    expect(child.children[1].nodeId).toEqual('b');
+  });
+  it('should be possible to have comments in a mindmap', function () {
+    var str = `mindmap
+  root(Root)
+    Child(Child)
+      a(a)
+
+      %% This is a comment
+      b[New Stuff]`;
+    mindmap.parse(str);
+    const mm = mindmap.yy.getMindmap();
+    expect(mm.nodeId).toEqual('root');
+    expect(mm.descr).toEqual('Root');
+    expect(mm.children.length).toEqual(1);
+
+    const child = mm.children[0];
+    expect(child.nodeId).toEqual('Child');
+    expect(child.children[0].nodeId).toEqual('a');
+    expect(child.children.length).toEqual(2);
+    expect(child.children[1].nodeId).toEqual('b');
+  });
+
+  it('should be possible to have comments at the end of a line', function () {
+    var str = `mindmap
+  root(Root)
+    Child(Child)
+      a(a) %% This is a comment
       b[New Stuff]`;
     mindmap.parse(str);
     const mm = mindmap.yy.getMindmap();
