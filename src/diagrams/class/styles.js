@@ -128,6 +128,18 @@ g.classGroup line {
   stroke-width: 1;
 }
 
+#lollipopStart, .lollipop {
+  fill: ${options.mainBkg} !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
+#lollipopEnd, .lollipop {
+  fill: ${options.mainBkg} !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
 .edgeTerminals {
   font-size: 11px;
 }
