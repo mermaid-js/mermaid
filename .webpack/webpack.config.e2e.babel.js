@@ -29,7 +29,7 @@ export default merge(baseConfig, {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: 'esbuild-loader',
         },
       },
     ],

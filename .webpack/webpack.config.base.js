@@ -1,5 +1,5 @@
 import path from 'path';
-
+const { ESBuildMinifyPlugin } = require('esbuild-loader');
 export const resolveRoot = (...relativePath) => path.resolve(__dirname, '..', ...relativePath);
 
 export default {
@@ -31,7 +31,10 @@ export default {
         test: /\.js$/,
         include: [resolveRoot('./src'), resolveRoot('./node_modules/dagre-d3-renderer/lib')],
         use: {
-          loader: 'babel-loader',
+          loader: 'esbuild-loader',
+          options: {
+            target: 'es2015',
+          },
         },
       },
       {
@@ -51,4 +54,11 @@ export default {
     ],
   },
   devtool: 'source-map',
+  optimization: {
+    minimizer: [
+      new ESBuildMinifyPlugin({
+        target: 'es2015',
+      }),
+    ],
+  },
 };
