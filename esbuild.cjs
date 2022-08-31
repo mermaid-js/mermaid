@@ -21,11 +21,15 @@ let jisonPlugin = {
 const { build } = require('esbuild');
 build({
   bundle: true,
-  minify: false,
+  minify: true,
   keepNames: true,
   globalName: 'mermaid',
+  format: 'esm',
   platform: 'browser',
+  resolveExtensions: ['.js', '.json', '.jison'],
+  external: ['require', 'fs', 'path'],
   entryPoints: ['src/mermaid.js'],
-  outfile: 'dist/mermaid.js',
+  outfile: 'dist/mermaid.min.js',
   plugins: [jisonPlugin],
+  sourcemap: 'external',
 }).catch(() => process.exit(1));

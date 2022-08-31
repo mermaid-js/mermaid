@@ -2,12 +2,12 @@
   "name": "mermaid",
   "version": "9.1.5",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "main": "dist/mermaid.min.js",
-  "module": "dist/mermaid.esm.min.mjs",
+  "main": "./dist/mermaid.min.js",
+  "module": "./dist/mermaid.min.js",
   "exports": {
     ".": {
       "require": "./dist/mermaid.min.js",
-      "import": "./dist/mermaid.esm.min.mjs"
+      "import": "./dist/mermaid.min.js"
     },
     "./*": "./*"
   },
@@ -21,6 +21,7 @@
     "git graph"
   ],
   "scripts": {
+    "build:fast": "node esbuild.cjs",
     "build:development": "webpack --mode development --progress --color",
     "build:production": "webpack --mode production --progress --color",
     "build": "concurrently \"yarn build:development\" \"yarn build:production\"",
@@ -84,8 +85,8 @@
     "cypress": "9.7.0",
     "cypress-image-snapshot": "^4.0.1",
     "documentation": "13.2.0",
-    "esbuild": "^0.12.28",
-    "esbuild-loader": "^2.15.1",
+    "esbuild": "^0.15.6",
+    "esbuild-loader": "^2.19.0",
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-cypress": "^2.12.1",
@@ -123,5 +124,8 @@
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
-  ]
+  ],
+  "browser": {
+    "path": "path-browserify"
+  }
 }

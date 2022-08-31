@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
+import svgDraw from './svgDraw';
 import { log } from '../../logger';
 import { parser } from './parser/c4Diagram';
 import common from '../common/common';
