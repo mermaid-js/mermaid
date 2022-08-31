@@ -522,6 +522,22 @@ In the example below the style defined in the linkStyle statement will belong to
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ```
 
+### Styling line curves
+
+It is possible to style the type of curve used for lines between items, if the default method does not meet your needs.
+Available curve styles include `basis`, `bump`, `linear`, `monotoneX`, `monotoneY`, `natural`, `step`, `stepAfter`,
+and `stepBefore`.
+
+In this example, a left-to-right graph uses the `stepBefore` curve style:
+
+```
+%%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
+graph LR
+```
+
+For a full list of available curves, including an explanation of custom curves, refer to
+the [Shapes](https://github.com/d3/d3-shape/blob/main/README.md#curves) documentation in the
+[d3-shape](https://github.com/d3/d3-shape/) project.
 
 ### Styling a node
 

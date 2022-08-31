@@ -386,8 +386,8 @@ export const draw = function (text, id, _version, diagObj) {
       rankdir: dir,
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
-      marginx: 8,
-      marginy: 8,
+      marginx: 0,
+      marginy: 0,
     })
     .setDefaultEdgeLabel(function () {
       return {};

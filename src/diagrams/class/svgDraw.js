@@ -15,6 +15,8 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
         return 'composition';
       case diagObj.db.DEPENDENCY:
         return 'dependency';
+      case diagObj.db.LOLLIPOP:
+        return 'lollipop';
     }
   };
 

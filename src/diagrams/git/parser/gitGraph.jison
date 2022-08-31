@@ -123,6 +123,9 @@ cherryPickStatement
 mergeStatement
     : MERGE ID {yy.merge($2)}
     | MERGE ID COMMIT_TAG STR {yy.merge($2, $4)}
+    | MERGE ID COMMIT_ID STR {yy.merge($2, '', $4)}
+    | MERGE ID COMMIT_TAG STR COMMIT_ID STR {yy.merge($2, $4, $6)}
+    | MERGE ID COMMIT_ID STR COMMIT_TAG STR {yy.merge($2, $6, $4)}
     ;
 
 commitStatement
