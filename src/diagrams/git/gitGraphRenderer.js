@@ -343,7 +343,7 @@ const findLane = (y1, y2, _depth) => {
     return candidate;
   }
   const diff = Math.abs(y1 - y2);
-  return findLane(y1, y2 - diff / 5, depth);
+  return findLane(y1, y2 - diff / 5, depth + 1);
 };
 
 /**
