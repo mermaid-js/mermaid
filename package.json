@@ -2,12 +2,12 @@
   "name": "mermaid",
   "version": "9.1.5",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "main": "./dist/mermaid.min.js",
-  "module": "./dist/mermaid.min.js",
+  "main": "dist/mermaid.min.js",
+  "module": "dist/mermaid.esm.min.mjs",
   "exports": {
     ".": {
       "require": "./dist/mermaid.min.js",
-      "import": "./dist/mermaid.min.js"
+      "import": "./dist/mermaid.esm.min.mjs"
     },
     "./*": "./*"
   },
@@ -21,7 +21,7 @@
     "git graph"
   ],
   "scripts": {
-    "build:fast": "node esbuild.cjs",
+    "build:fast": "node .esbuild/esbuild.cjs",
     "build:development": "webpack --mode development --progress --color",
     "build:production": "webpack --mode production --progress --color",
     "build": "concurrently \"yarn build:development\" \"yarn build:production\"",

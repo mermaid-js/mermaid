@@ -1,4 +1,5 @@
 import path from 'path';
+// const esbuild = require('esbuild');
 const { ESBuildMinifyPlugin } = require('esbuild-loader');
 export const resolveRoot = (...relativePath) => path.resolve(__dirname, '..', ...relativePath);
 
@@ -33,6 +34,7 @@ export default {
         use: {
           loader: 'esbuild-loader',
           options: {
+            // implementation: esbuild,
             target: 'es2015',
           },
         },
