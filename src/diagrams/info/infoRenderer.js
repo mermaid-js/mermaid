@@ -15,7 +15,7 @@ export const draw = (text, id, version, diagObj) => {
   try {
     // const parser = infoParser.parser;
     // parser.yy = db;
-    log.debug('Renering info diagram\n' + text);
+    log.debug('Rendering info diagram\n' + text);
 
     const securityLevel = getConfig().securityLevel;
     // Handle root and Document for when rendering in sanbox mode
@@ -49,6 +49,7 @@ export const draw = (text, id, version, diagObj) => {
     svg.attr('width', 400);
     // svg.attr('viewBox', '0 0 300 150');
   } catch (e) {
+    console.error(e);
     log.error('Error while rendering info diagram');
     log.error(e.message);
   }
