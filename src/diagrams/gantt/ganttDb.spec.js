@@ -6,13 +6,16 @@ describe('when using the ganttDb', function () {
     ganttDb.clear();
   });
 
-  describe('when using relative times', function () {
+  describe('when using duration', function () {
     it.each`
-      diff     | date                    | expected
-      ${' 1d'} | ${moment('2019-01-01')} | ${moment('2019-01-02').toDate()}
-      ${' 1w'} | ${moment('2019-01-01')} | ${moment('2019-01-08').toDate()}
-    `('should add $diff to $date resulting in $expected', ({ diff, date, expected }) => {
-      expect(ganttDb.durationToDate(diff, date)).toEqual(expected);
+      str       | expected
+      ${'1d'}   | ${moment.duration(1, 'd')}
+      ${'2w'}   | ${moment.duration(2, 'w')}
+      ${'1ms'}  | ${moment.duration(1, 'ms')}
+      ${'0.1s'} | ${moment.duration(100, 'ms')}
+      ${'1f'}   | ${moment.duration.invalid()}
+    `('should $str resulting in $expected duration', ({ str, expected }) => {
+      expect(ganttDb.parseDuration(str)).toEqual(expected);
     });
   });
 
@@ -106,7 +109,7 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('test2', 'id2,after id1,5ms');
     ganttDb.addSection('testa2');
     ganttDb.addTask('test3', 'id3,20,10ms');
-    ganttDb.addTask('test4', 'id4,after id3,5ms');
+    ganttDb.addTask('test4', 'id4,after id3,0.005s');
 
     const tasks = ganttDb.getTasks();
 

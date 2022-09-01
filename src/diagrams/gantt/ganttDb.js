@@ -230,31 +230,31 @@ const getStartDate = function (prevTime, dateFormat, str) {
   return new Date();
 };
 
-const durationToDate = function (durationStatement, relativeTime) {
-  if (durationStatement !== null) {
-    switch (durationStatement[2]) {
-      case 'ms':
-        relativeTime.add(durationStatement[1], 'milliseconds');
-        break;
-      case 's':
-        relativeTime.add(durationStatement[1], 'seconds');
-        break;
-      case 'm':
-        relativeTime.add(durationStatement[1], 'minutes');
-        break;
-      case 'h':
-        relativeTime.add(durationStatement[1], 'hours');
-        break;
-      case 'd':
-        relativeTime.add(durationStatement[1], 'days');
-        break;
-      case 'w':
-        relativeTime.add(durationStatement[1], 'weeks');
-        break;
-    }
+/**
+ * Parse a string as a moment duration.
+ *
+ * The string have to be compound by a value and a shorthand duration unit. For example `5d`
+ * representes 5 days.
+ *
+ * Shorthand unit supported are:
+ *
+ * - `y` for years
+ * - `M` for months
+ * - `w` for weeks
+ * - `d` for days
+ * - `h` for hours
+ * - `s` for seconds
+ * - `ms` for milliseconds
+ *
+ * @param {string} str - A string representing the duration.
+ * @returns {moment.Duration} A moment duration, including an invalid moment for invalid input string.
+ */
+const parseDuration = function (str) {
+  const statement = /^(\d+(?:\.\d+)?)([yMwdhms]|ms)$/.exec(str.trim());
+  if (statement !== null) {
+    return moment.duration(Number.parseFloat(statement[1]), statement[2]);
   }
-  // Default date - now
-  return relativeTime.toDate();
+  return moment.duration.invalid();
 };
 
 const getEndDate = function (prevTime, dateFormat, str, inclusive) {
@@ -270,7 +270,12 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive) {
     return mDate.toDate();
   }
 
-  return durationToDate(/^([\d]+)([wdhms]|ms)$/.exec(str.trim()), moment(prevTime));
+  const endTime = moment(prevTime);
+  const duration = parseDuration(str);
+  if (duration.isValid()) {
+    endTime.add(duration);
+  }
+  return endTime.toDate();
 };
 
 let taskCnt = 0;
@@ -666,7 +671,7 @@ export default {
   setLink,
   getLinks,
   bindFunctions,
-  durationToDate,
+  parseDuration,
   isInvalidDate,
 };
 
