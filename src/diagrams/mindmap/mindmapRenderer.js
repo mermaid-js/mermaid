@@ -5,6 +5,7 @@ import svgDraw from './svgDraw';
 import { BoundingBox, Layout, Tree } from 'non-layered-tidy-tree-layout';
 import clone from 'fast-clone';
 import db from './mindmapDb';
+
 /**
  * @param {any} svg The svg element to draw the diagram onto
  * @param {object} mindmap The maindmap data and hierarchy

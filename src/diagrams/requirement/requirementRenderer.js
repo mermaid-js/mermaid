@@ -2,7 +2,7 @@ import { line, select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
 import markers from './requirementMarkers';
 import { getConfig } from '../../config';

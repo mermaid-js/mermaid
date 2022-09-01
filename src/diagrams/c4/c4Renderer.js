@@ -6,7 +6,8 @@ import common from '../common/common';
 import c4Db from './c4Db';
 import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
-import { wrapLabel, calculateTextWidth, calculateTextHeight, configureSvgSize } from '../../utils';
+import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let globalBoundaryMaxX = 0,

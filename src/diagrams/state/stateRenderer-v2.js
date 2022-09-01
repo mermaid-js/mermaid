@@ -3,7 +3,7 @@ import { select } from 'd3';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
 import addSVGAccessibilityFields from '../../accessibility';
 

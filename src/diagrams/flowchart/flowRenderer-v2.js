@@ -9,7 +9,8 @@ import { render } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
-import { interpolateToCurve, getStylesFromArray, setupGraphViewbox } from '../../utils';
+import { interpolateToCurve, getStylesFromArray } from '../../utils';
+import { setupGraphViewbox } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 const conf = {};

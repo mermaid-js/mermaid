@@ -6,7 +6,7 @@ import dagre from 'dagre';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
 import erMarkers from './erMarkers';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 import { parseGenericTypes } from '../common/common';
 

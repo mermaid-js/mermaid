@@ -6,7 +6,8 @@ import common from '../common/common';
 // import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
-import utils, { configureSvgSize } from '../../utils';
+import utils from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let conf = {};
