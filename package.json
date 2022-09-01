@@ -23,7 +23,7 @@
     "git graph"
   ],
   "scripts": {
-    "build:fast": "rm -rf dist; node .esbuild/esbuild.cjs; tsc --emitDeclarationOnly",
+    "build:fast": "vite build",
     "build:dev": "webpack --mode development --progress --color",
     "build:prod": "webpack --mode production --progress --color",
     "build": "concurrently \"yarn build:dev\" \"yarn build:prod\"",
@@ -114,11 +114,13 @@
     "path-browserify": "^1.0.1",
     "prettier": "^2.3.2",
     "prettier-plugin-jsdoc": "^0.3.30",
+    "rollup-pluginutils": "^2.8.2",
     "start-server-and-test": "^1.12.6",
     "terser-webpack-plugin": "^5.3.6",
     "ts-jest": "^28.0.8",
     "ts-loader": "^9.3.1",
     "typescript": "^4.7.4",
+    "vite": "^3.0.9",
     "webpack": "^5.53.0",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^4.10.1",
