@@ -33,7 +33,6 @@ accDescr\s*"{"\s*                                               { this.begin("ac
 <acc_descr_multiline>[\}]                                       { this.popState(); }
 <acc_descr_multiline>[^\}]*                                     return "acc_descr_multiline_value";
 (\r?\n)+                               /*{console.log('New line');return 'NL';}*/ return 'NL';
-\s+                                    /* skip all whitespace */
 \#[^\n]*                               /* skip comments */
 \%%[^\n]*                              /* skip comments */
 "gitGraph"                              return 'GG';
@@ -61,9 +60,10 @@ accDescr\s*"{"\s*                                               { this.begin("ac
 ["]                                     this.begin("string");
 <string>["]                             this.popState();
 <string>[^"]*                           return 'STR';
-[0-9]+                                  return 'NUM';
-[a-zA-Z][-_\./a-zA-Z0-9]*[-_a-zA-Z0-9]  return 'ID';
+[0-9]+(?=\s|$)                          return 'NUM';
+\w[-\./\w]*[-\w]                        return 'ID'; // only a subset of https://git-scm.com/docs/git-check-ref-format
 <<EOF>>                                 return 'EOF';
+\s+                                    /* skip all whitespace */ // lowest priority so we can use lookaheads in earlier regex
 
 /lex
 
