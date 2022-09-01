@@ -91,7 +91,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
     // Don't draw the commits now but calculate the positioning which is used by the branch lines etc.
     if (modifyGraph) {
       let typeClass;
-      switch (commit.type) {
+      let commitSymbolType =
+        typeof commit.customType !== 'undefined' ? commit.customType : commit.type;
+      switch (commitSymbolType) {
         case commitType.NORMAL:
           typeClass = 'commit-normal';
           break;
@@ -111,7 +113,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
           typeClass = 'commit-normal';
       }
 
-      if (commit.type === commitType.HIGHLIGHT) {
+      if (commitSymbolType === commitType.HIGHLIGHT) {
         const circle = gBullets.append('rect');
         circle.attr('x', x - 10);
         circle.attr('y', y - 10);
@@ -135,7 +137,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
               branchPos[commit.branch].index % THEME_COLOR_LIMIT
             } ${typeClass}-inner`
           );
-      } else if (commit.type === commitType.CHERRY_PICK) {
+      } else if (commitSymbolType === commitType.CHERRY_PICK) {
         gBullets
           .append('circle')
           .attr('cx', x)
@@ -181,7 +183,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
           'class',
           `commit ${commit.id} commit${branchPos[commit.branch].index % THEME_COLOR_LIMIT}`
         );
-        if (commit.type === commitType.MERGE) {
+        if (commitSymbolType === commitType.MERGE) {
           const circle2 = gBullets.append('circle');
           circle2.attr('cx', x);
           circle2.attr('cy', y);
@@ -193,7 +195,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
             }`
           );
         }
-        if (commit.type === commitType.REVERSE) {
+        if (commitSymbolType === commitType.REVERSE) {
           const cross = gBullets.append('path');
           cross
             .attr('d', `M ${x - 5},${y - 5}L${x + 5},${y + 5}M${x - 5},${y + 5}L${x + 5},${y - 5}`)
@@ -215,7 +217,12 @@ const drawCommits = (svg, commits, modifyGraph) => {
       const px = 4;
       const py = 2;
       // Draw the commit label
-      if (commit.type !== commitType.CHERRY_PICK && gitGraphConfig.showCommitLabel) {
+      if (
+        commit.type !== commitType.CHERRY_PICK &&
+        ((commit.customId && commit.type === commitType.MERGE) ||
+          commit.type !== commitType.MERGE) &&
+        gitGraphConfig.showCommitLabel
+      ) {
         const wrapper = gLabels.append('g');
         const labelBkg = wrapper.insert('rect').attr('class', 'commit-label-bkg');
 
@@ -336,7 +343,7 @@ const findLane = (y1, y2, _depth) => {
     return candidate;
   }
   const diff = Math.abs(y1 - y2);
-  return findLane(y1, y2 - diff / 5, depth);
+  return findLane(y1, y2 - diff / 5, depth + 1);
 };
 
 /**

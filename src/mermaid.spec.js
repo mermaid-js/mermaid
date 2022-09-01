@@ -227,5 +227,14 @@ describe('when using mermaid and ', function () {
         'end';
       expect(() => mermaid.parse(text)).toThrow();
     });
+
+    it('should return false for invalid definition WITH a parseError() callback defined', function () {
+      let parseErrorWasCalled = false;
+      mermaid.setParseErrorHandler(() => {
+        parseErrorWasCalled = true;
+      });
+      expect(mermaid.parse('this is not a mermaid diagram definition')).toEqual(false);
+      expect(parseErrorWasCalled).toEqual(true);
+    });
   });
 });

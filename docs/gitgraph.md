@@ -182,7 +182,40 @@ After this we made use of the `checkout` keyword to set the current branch as `m
 After this we merge the `develop` branch onto the current branch `main`, resulting in a merge commit.
 Since the current branch at this point is still `main`, the last two commits are registered against that.
 
-Additionally, you may add a tag to the merge commit, or override the default id: `merge branch id:"1234" tag:"v1.0.0"`
+You can also decorate your merge with similar attributes as you did for the commit using:
+- `id`--> To override the default ID with custom ID
+- `tag`--> To add a custom tag to your merge commit
+- `type`--> To override the default shape of merge commit. Here you can use other commit type mentioned earlier.
+
+And you can choose to use none, some or all of these attributes together.
+For example: `merge develop id: "my_custom_id" tag: "my_custom_tag" type: REVERSE`
+
+Let us see how this works with the help of the following diagram:
+
+```mermaid-example
+    gitGraph
+       commit id: "1"
+       commit id: "2"
+       branch nice_feature
+       checkout nice_feature
+       commit id: "3"
+       checkout main
+       commit id: "4"
+       checkout nice_feature
+       branch very_nice_feature
+       checkout very_nice_feature
+       commit id: "5"
+       checkout main
+       commit id: "6"
+       checkout nice_feature
+       commit id: "7"
+       checkout main
+       merge nice_feature id: "customID" tag: "customTag" type: REVERSE
+       checkout very_nice_feature
+       commit id: "8"
+       checkout main
+       commit id: "9"
+```
 
 ### Cherry Pick commit from another branch
 Similar to how 'git' allows you to cherry-pick a commit from **another branch** onto the **current** branch, Mermaid also supports this functionality. You can also cherry-pick a commit from another branch using the `cherry-pick` keyword.

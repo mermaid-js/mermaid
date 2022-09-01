@@ -1,25 +1,21 @@
-/**
- * Returns the styles given options
- *
- * @param {{
- *   fontFamily: string;
- *   nodeTextColor: string;
- *   textColor: string;
- *   titleColor: string;
- *   mainBkg: string;
- *   nodeBorder: string;
- *   arrowheadColor: string;
- *   lineColor: string;
- *   edgeLabelBackground: string;
- *   clusterBkg: string;
- *   clusterBorder: string;
- *   tertiaryColor: string;
- *   border2: string;
- * }} options
- *   The options for the styles
- * @returns {string} The resulting styles
- */
-const getStyles = (options) =>
+/** Returns the styles given options */
+export interface FlowChartStyleOptions {
+  arrowheadColor: string;
+  border2: string;
+  clusterBkg: string;
+  clusterBorder: string;
+  edgeLabelBackground: string;
+  fontFamily: string;
+  lineColor: string;
+  mainBkg: string;
+  nodeBorder: string;
+  nodeTextColor: string;
+  tertiaryColor: string;
+  textColor: string;
+  titleColor: string;
+}
+
+const getStyles = (options: FlowChartStyleOptions) =>
   `.label {
     font-family: ${options.fontFamily};
     color: ${options.nodeTextColor || options.textColor};

@@ -1,13 +1,15 @@
 {
   "name": "mermaid",
-  "version": "9.1.5",
+  "version": "9.1.6",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.min.js",
   "module": "dist/mermaid.esm.min.mjs",
+  "types": "dist/mermaid.d.ts",
   "exports": {
     ".": {
       "require": "./dist/mermaid.min.js",
-      "import": "./dist/mermaid.esm.min.mjs"
+      "import": "./dist/mermaid.esm.min.mjs",
+      "types": "./dist/mermaid.d.ts"
     },
     "./*": "./*"
   },
@@ -22,16 +24,17 @@
   ],
   "scripts": {
     "build:fast": "node .esbuild/esbuild.cjs",
-    "build:development": "webpack --mode development --progress --color",
-    "build:production": "webpack --mode production --progress --color",
-    "build": "concurrently \"yarn build:development\" \"yarn build:production\"",
-    "postbuild": "documentation build src/mermaidAPI.js src/config.js src/defaultConfig.js --shallow -f md --markdown-toc false > docs/Setup.md",
-    "build:watch": "yarn build:development --watch",
+    "build:dev": "webpack --mode development --progress --color",
+    "build:prod": "webpack --mode production --progress --color",
+    "build": "concurrently \"yarn build:dev\" \"yarn build:prod\"",
+    "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > docs/Setup.md",
+    "build:watch": "yarn build:dev --watch",
     "release": "yarn build",
     "lint": "eslint --cache ./ --ext .js,.json,.html,.md",
     "lint:fix": "yarn lint --fix",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
     "cypress": "cypress run",
+    "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "e2e-upd": "yarn lint && jest e2e -u --config e2e/jest.config.js",
     "dev": "webpack serve --config ./.webpack/webpack.config.e2e.babel.js",
@@ -39,12 +42,12 @@
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn test",
-    "prepare": "husky install && yarn build",
+    "prepare": "husky install",
     "pre-commit": "lint-staged"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/knsv/mermaid"
+    "url": "https://github.com/mermaid-js/mermaid"
   },
   "author": "Knut Sveidqvist",
   "license": "MIT",
@@ -75,8 +78,12 @@
     "@babel/eslint-parser": "^7.14.7",
     "@babel/preset-env": "^7.14.7",
     "@babel/register": "^7.14.5",
-    "@commitlint/cli": "^17.0.0",
+    "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.0.0",
+    "@types/d3": "^7.4.0",
+    "@types/dompurify": "^2.3.3",
+    "@types/jest": "^28.1.7",
+    "@types/stylis": "^4.0.2",
     "babel-jest": "^29.0.1",
     "babel-loader": "^8.2.2",
     "concurrently": "^7.0.0",
@@ -108,10 +115,13 @@
     "prettier": "^2.3.2",
     "prettier-plugin-jsdoc": "^0.3.30",
     "start-server-and-test": "^1.12.6",
-    "terser-webpack-plugin": "^5.2.4",
+    "terser-webpack-plugin": "^5.3.6",
+    "ts-jest": "^28.0.8",
+    "ts-loader": "^9.3.1",
+    "typescript": "^4.7.4",
     "webpack": "^5.53.0",
     "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^4.3.0",
+    "webpack-dev-server": "^4.10.1",
     "webpack-merge": "^5.8.0",
     "webpack-node-externals": "^3.0.0"
   },

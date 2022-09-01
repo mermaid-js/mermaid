@@ -1,9 +1,9 @@
 import moment from 'moment-mini';
 
-/** @typedef {'debug' | 'info' | 'warn' | 'error' | 'fatal'} LogLevel A log level */
+export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
-/** @type {Object<LogLevel, number>} */
-export const LEVELS = {
+export const LEVELS: Record<LogLevel, number> = {
+  trace: 0,
   debug: 1,
   info: 2,
   warn: 3,
@@ -11,12 +11,13 @@ export const LEVELS = {
   fatal: 5,
 };
 
-export const log = {
-  debug: () => {},
-  info: () => {},
-  warn: () => {},
-  error: () => {},
-  fatal: () => {},
+export const log: Record<keyof typeof LEVELS, typeof console.log> = {
+  trace: (..._args: any[]) => {},
+  debug: (..._args: any[]) => {},
+  info: (..._args: any[]) => {},
+  warn: (..._args: any[]) => {},
+  error: (..._args: any[]) => {},
+  fatal: (..._args: any[]) => {},
 };
 
 /**
@@ -24,11 +25,12 @@ export const log = {
  *
  * @param {LogLevel} [level="fatal"] The level to set the logging to. Default is `"fatal"`
  */
-export const setLogLevel = function (level = 'fatal') {
-  if (isNaN(level)) {
+export const setLogLevel = function (level: keyof typeof LEVELS | number | string = 'fatal') {
+  let numericLevel: number = LEVELS.fatal;
+  if (typeof level === 'string') {
     level = level.toLowerCase();
-    if (LEVELS[level] !== undefined) {
-      level = LEVELS[level];
+    if (level in LEVELS) {
+      numericLevel = LEVELS[level as keyof typeof LEVELS];
     }
   }
   log.trace = () => {};
@@ -37,30 +39,35 @@ export const setLogLevel = function (level = 'fatal') {
   log.warn = () => {};
   log.error = () => {};
   log.fatal = () => {};
-  if (level <= LEVELS.fatal) {
+  if (numericLevel <= LEVELS.fatal) {
     log.fatal = console.error
       ? console.error.bind(console, format('FATAL'), 'color: orange')
       : console.log.bind(console, '\x1b[35m', format('FATAL'));
   }
-  if (level <= LEVELS.error) {
+  if (numericLevel <= LEVELS.error) {
     log.error = console.error
       ? console.error.bind(console, format('ERROR'), 'color: orange')
       : console.log.bind(console, '\x1b[31m', format('ERROR'));
   }
-  if (level <= LEVELS.warn) {
+  if (numericLevel <= LEVELS.warn) {
     log.warn = console.warn
       ? console.warn.bind(console, format('WARN'), 'color: orange')
       : console.log.bind(console, `\x1b[33m`, format('WARN'));
   }
-  if (level <= LEVELS.info) {
-    log.info = console.info // ? console.info.bind(console, '\x1b[34m', format('INFO'), 'color: blue')
+  if (numericLevel <= LEVELS.info) {
+    log.info = console.info
       ? console.info.bind(console, format('INFO'), 'color: lightblue')
       : console.log.bind(console, '\x1b[34m', format('INFO'));
   }
-  if (level <= LEVELS.debug) {
+  if (numericLevel <= LEVELS.debug) {
     log.debug = console.debug
       ? console.debug.bind(console, format('DEBUG'), 'color: lightgreen')
       : console.log.bind(console, '\x1b[32m', format('DEBUG'));
+  }
+  if (numericLevel <= LEVELS.trace) {
+    log.trace = console.debug
+      ? console.debug.bind(console, format('TRACE'), 'color: lightgreen')
+      : console.log.bind(console, '\x1b[32m', format('TRACE'));
   }
 };
 
@@ -70,7 +77,7 @@ export const setLogLevel = function (level = 'fatal') {
  * @param {LogLevel} level The level for the log format
  * @returns {string} The format with the timestamp and log level
  */
-const format = (level) => {
+const format = (level: string): string => {
   const time = moment().format('ss.SSS');
   return `%c${time} : ${level} : `;
 };

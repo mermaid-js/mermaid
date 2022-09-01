@@ -1,29 +1,26 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
 import { log } from './logger';
+import { getErrorMessage } from './utils';
 
-const conf = {};
+let conf = {};
 
 /**
  * Merges the value of `conf` with the passed `cnf`
  *
  * @param {object} cnf Config to merge
  */
-export const setConf = function (cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
+export const setConf = function (cnf: any) {
+  conf = { ...conf, ...cnf };
 };
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
  *
  * @param {string} id The text for the error
- * @param {string} ver The version
+ * @param {string} mermaidVersion The version
  */
-export const draw = (id, ver) => {
+export const draw = (id: string, mermaidVersion: string) => {
   try {
     log.debug('Renering svg for syntax error\n');
 
@@ -86,14 +83,14 @@ export const draw = (id, ver) => {
       .attr('y', 400)
       .attr('font-size', '100px')
       .style('text-anchor', 'middle')
-      .text('mermaid version ' + ver);
+      .text('mermaid version ' + mermaidVersion);
 
     svg.attr('height', 100);
     svg.attr('width', 400);
     svg.attr('viewBox', '768 0 512 512');
   } catch (e) {
     log.error('Error while rendering info diagram');
-    log.error(e.message);
+    log.error(getErrorMessage(e));
   }
 };
 

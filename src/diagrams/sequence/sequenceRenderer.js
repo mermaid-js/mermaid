@@ -588,8 +588,8 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
  * @param {any} diagObj A stanard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (_text, id, _version, diagObj) {
-  conf = configApi.getConfig().sequence;
-  const securityLevel = configApi.getConfig().securityLevel;
+  const { securityLevel, sequence } = configApi.getConfig();
+  conf = sequence;
   // Handle root and Document for when rendering in sanbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
