@@ -271,7 +271,7 @@ document
 	{ $$ = [];}
 	| document line
 	{
-	    if(Array.isArray($2) && $2.length > 0){
+	    if(!Array.isArray($2) || $2.length > 0){
 	        $1.push($2);
 	    }
 	    $$=$1;}
