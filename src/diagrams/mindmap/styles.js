@@ -12,7 +12,7 @@ const genSections = (options) => {
     }
   }
 
-  for (let i = 1; i < 8; i++) {
+  for (let i = 0; i < 8; i++) {
     const sw = '' + (17 - 3 * i);
     sections += `
     .section-${i - 1} rect, .section-${i - 1} path, .section-${i - 1} circle  {
