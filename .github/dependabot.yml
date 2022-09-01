@@ -4,6 +4,7 @@ updates:
   open-pull-requests-limit: 10
   directory: /
   target-branch: develop
+  versioning-strategy: increase
   schedule:
     interval: weekly
     day: monday
