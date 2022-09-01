@@ -22,16 +22,27 @@ const buildOptions = (override = {}) => {
   };
 };
 
-exports.esmBuild = ({ minify = true } = {}) => {
+/**
+ * @param {Options} override
+ * @returns {Options}
+ */
+exports.esmBuild = (override = { minify: true }) => {
   return buildOptions({
     format: 'esm',
-    outfile: `dist/mermaid.esm${minify ? '.min' : ''}.mjs`,
-    minify,
+    outfile: `dist/mermaid.esm${override.minify ? '.min' : ''}.mjs`,
+    ...override,
   });
 };
 
-exports.umdBuild = ({ minify = true } = {}) => {
-  return buildOptions({ outfile: `dist/mermaid${minify ? '.min' : ''}.js`, minify });
+/**
+ * @param {Options} override
+ * @returns {Options}
+ */
+exports.umdBuild = (override = { minify: true }) => {
+  return buildOptions({
+    outfile: `dist/mermaid${override.minify ? '.min' : ''}.js`,
+    ...override,
+  });
 };
 
 const jisonPlugin = {
