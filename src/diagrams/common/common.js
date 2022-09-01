@@ -196,8 +196,8 @@ export const parseGenericTypes = function (text) {
   let cleanedText = text;
 
   if (text.indexOf('~') != -1) {
-    cleanedText = cleanedText.replace('~', '<');
-    cleanedText = cleanedText.replace('~', '>');
+    cleanedText = cleanedText.replace(/~([^~].*)/, '<$1');
+    cleanedText = cleanedText.replace(/~([^~]*)$/, '>$1');
 
     return parseGenericTypes(cleanedText);
   } else {
