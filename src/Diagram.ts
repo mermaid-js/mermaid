@@ -1,71 +1,68 @@
-import utils from './utils';
 import * as configApi from './config';
 import { log } from './logger';
-import { getDiagrams } from './diagram-api/diagramAPI';
-import detectType from './diagram-api/detectType';
-class Diagram {
+import { getDiagram } from './diagram-api/diagramAPI';
+import { detectType } from './diagram-api/detectType';
+import { isDetailedError } from './utils';
+export class Diagram {
   type = 'graph';
   parser;
   renderer;
   db;
-  constructor(txt) {
-    const diagrams = getDiagrams();
+  constructor(public txt: string, parseError?: Function) {
     const cnf = configApi.getConfig();
     this.txt = txt;
     this.type = detectType(txt, cnf);
+    const diagram = getDiagram(this.type);
     log.debug('Type ' + this.type);
-
-    // console.log('this.type', this.type, diagrams[this.type]);
     // Setup diagram
-    this.db = diagrams[this.type].db;
+    this.db = diagram.db;
     this.db.clear?.();
-
-    this.renderer = diagrams[this.type].renderer;
-    this.parser = diagrams[this.type].parser;
+    this.renderer = diagram.renderer;
+    this.parser = diagram.parser;
     this.parser.parser.yy = this.db;
-    if (typeof diagrams[this.type].init === 'function') {
-      diagrams[this.type].init(cnf);
+    if (diagram.init) {
+      diagram.init(cnf);
       log.debug('Initialized diagram ' + this.type, cnf);
     }
-    this.txt = this.txt + '\n';
-
+    this.txt += '\n';
     this.parser.parser.yy.graphType = this.type;
-    this.parser.parser.yy.parseError = (str, hash) => {
+    this.parser.parser.yy.parseError = (str: string, hash: string) => {
       const error = { str, hash };
       throw error;
     };
-    this.parser.parse(this.txt);
+    this.parse(this.txt, parseError);
   }
-  parse(text) {
-    var parseEncounteredException = false;
+
+  parse(text: string, parseError?: Function): boolean {
     try {
       text = text + '\n';
       this.db.clear();
-
       this.parser.parse(text);
+      return true;
     } catch (error) {
-      parseEncounteredException = true;
       // Is this the correct way to access mermiad's parseError()
       // method ? (or global.mermaid.parseError()) ?
-      if (global.mermaid.parseError) {
-        if (error.str != undefined) {
+      if (parseError) {
+        if (isDetailedError(error)) {
           // handle case where error string and hash were
           // wrapped in object like`const error = { str, hash };`
-          global.mermaid.parseError(error.str, error.hash);
+          parseError(error.str, error.hash);
         } else {
           // assume it is just error string and pass it on
-          global.mermaid.parseError(error);
+          parseError(error);
         }
       } else {
         // No mermaid.parseError() handler defined, so re-throw it
         throw error;
       }
     }
-    return !parseEncounteredException;
+    return false;
   }
+
   getParser() {
     return this.parser;
   }
+
   getType() {
     return this.type;
   }

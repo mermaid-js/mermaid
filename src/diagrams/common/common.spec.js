@@ -1,4 +1,4 @@
-import { sanitizeText, removeScript, removeEscapes, parseGenericTypes } from './common';
+import { sanitizeText, removeScript, parseGenericTypes } from './common';
 
 describe('when securityLevel is antiscript, all script must be removed', function () {
   /**
@@ -6,7 +6,7 @@ describe('when securityLevel is antiscript, all script must be removed', functio
    * @param {string} result The expected sanitized text
    */
   function compareRemoveScript(original, result) {
-    expect(removeScript(original)).toEqual(result);
+    expect(removeScript(original).trim()).toEqual(result);
   }
 
   it('should remove all script block, script inline.', function () {
@@ -29,67 +29,21 @@ describe('when securityLevel is antiscript, all script must be removed', functio
     compareRemoveScript(
       `This is a <a href="javascript:runHijackingScript();">clean link</a> + <a href="javascript:runHijackingScript();">clean link</a>
   and <a href="javascript&colon;bipassedMining();">me too</a>`,
-      `This is a <a href="#runHijackingScript();">clean link</a> + <a href="#runHijackingScript();">clean link</a>
-  and <a href="#;bipassedMining();">me too</a>`
+      `This is a <a>clean link</a> + <a>clean link</a>
+  and <a>me too</a>`
     );
   });
 
   it('should detect malicious images', function () {
-    compareRemoveScript(`<img onerror="alert('hello');">`, `<img onerror:"alert('hello');">`);
+    compareRemoveScript(`<img onerror="alert('hello');">`, `<img>`);
   });
 
   it('should detect iframes', function () {
     compareRemoveScript(
       `<iframe src="http://abc.com/script1.js"></iframe>
     <iframe src="http://example.com/iframeexample"></iframe>`,
-      ` src="http://abc.com/script1.js"></iframe>
-     src="http://example.com/iframeexample"></iframe>`
+      ''
     );
-  });
-});
-
-describe('remove escape code in text', function () {
-  it('should remove a unicode colon', function () {
-    const labelString = '\\u003A';
-
-    const result = removeEscapes(labelString);
-    expect(result).toEqual(':');
-  });
-  it('should remove a hex colon', function () {
-    const labelString = '\\x3A';
-
-    const result = removeEscapes(labelString);
-    expect(result).toEqual(':');
-  });
-  it('should remove a oct colon', function () {
-    const labelString = '\\72';
-
-    const result = removeEscapes(labelString);
-    expect(result).toEqual(':');
-  });
-  it('should remove a oct colon 3 numbers', function () {
-    const labelString = '\\072';
-
-    const result = removeEscapes(labelString);
-    expect(result).toEqual(':');
-  });
-  it('should remove multiple colons 3 numbers', function () {
-    const labelString = '\\072\\072\\72';
-
-    const result = removeEscapes(labelString);
-    expect(result).toEqual(':::');
-  });
-  it('should handle greater and smaller then', function () {
-    const labelString = '\\74\\076';
-
-    const result = removeEscapes(labelString);
-    expect(result).toEqual('<>');
-  });
-  it('should handle letters', function () {
-    const labelString = '\\u0073\\143ri\\x70\\u0074\\x3A';
-
-    const result = removeEscapes(labelString);
-    expect(result).toEqual('script:');
   });
 });
 

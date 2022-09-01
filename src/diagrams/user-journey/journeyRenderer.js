@@ -44,8 +44,9 @@ function drawActorLegend(diagram) {
     yPos += 20;
   });
 }
+// TODO: Cleanup?
 const conf = getConfig().journey;
-const LEFT_MARGIN = getConfig().journey.leftMargin;
+const LEFT_MARGIN = conf.leftMargin;
 export const draw = function (text, id, version, diagObj) {
   const conf = getConfig().journey;
   diagObj.db.clear();

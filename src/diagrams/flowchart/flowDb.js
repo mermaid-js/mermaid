@@ -425,7 +425,7 @@ funs.push(setupToolTips);
  *
  * @param ver
  */
-export const clear = function (ver) {
+export const clear = function (ver = 'gen-1') {
   vertices = {};
   classes = {};
   edges = [];
@@ -436,7 +436,7 @@ export const clear = function (ver) {
   subCount = 0;
   tooltips = [];
   firstGraphFlag = true;
-  version = ver || 'gen-1';
+  version = ver;
   commonClear();
 };
 export const setGen = (ver) => {

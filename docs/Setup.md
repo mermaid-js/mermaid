@@ -58,12 +58,13 @@ Theme , the CSS style sheet
 
 ## logLevel
 
-| Parameter | Description                                           | Type             | Required | Values        |
-| --------- | ----------------------------------------------------- | ---------------- | -------- | ------------- |
-| logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 1, 2, 3, 4, 5 |
+| Parameter | Description                                           | Type             | Required | Values                                        |
+| --------- | ----------------------------------------------------- | ---------------- | -------- | --------------------------------------------- |
+| logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 'trace','debug','info','warn','error','fatal' |
 
 **Notes:**
 
+-   Trace: 0
 -   Debug: 1
 -   Info: 2
 -   Warn: 3
@@ -1404,15 +1405,6 @@ This sets the auto-wrap padding for the diagram (sides only)
 
 **Notes:** Default value: 0.
 
-## parse
-
-### Parameters
-
--   `text`  
--   `dia`  
-
-Returns **any** 
-
 ## setSiteConfig
 
 ## setSiteConfig
@@ -1428,7 +1420,7 @@ function _Default value: At default, will mirror Global Config_
 
 ### Parameters
 
--   `conf`  The base currentConfig to use as siteConfig
+-   `conf` **MermaidConfig** The base currentConfig to use as siteConfig
 
 Returns **[object][5]** The siteConfig
 
@@ -1462,6 +1454,34 @@ corresponding siteConfig value.
 
 Returns **any** The currentConfig merged with the sanitized conf
 
+## render
+
+Function that renders an svg with a graph from a chart definition. Usage example below.
+
+```javascript
+mermaidAPI.initialize({
+  startOnLoad: true,
+});
+$(function () {
+  const graphDefinition = 'graph TB\na-->b';
+  const cb = function (svgGraph) {
+    console.log(svgGraph);
+  };
+  mermaidAPI.render('id1', graphDefinition, cb);
+});
+```
+
+### Parameters
+
+-   `id` **[string][6]** The id of the element to be rendered
+-   `text` **[string][6]** The graph definition
+-   `cb` **function (svgCode: [string][6], bindFunctions: function (element: [Element][7]): void): void** 
+-   `container` **[Element][7]** Selector to element in which a div with the graph temporarily will be
+      inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
+      element will be removed when rendering is completed.
+
+Returns **void** 
+
 ## getConfig
 
 ## getConfig
@@ -1489,34 +1509,6 @@ options in-place
 
 -   `options` **any** The potential setConfig parameter
 
-## render
-
-Function that renders an svg with a graph from a chart definition. Usage example below.
-
-```javascript
-mermaidAPI.initialize({
-  startOnLoad: true,
-});
-$(function () {
-  const graphDefinition = 'graph TB\na-->b';
-  const cb = function (svgGraph) {
-    console.log(svgGraph);
-  };
-  mermaidAPI.render('id1', graphDefinition, cb);
-});
-```
-
-### Parameters
-
--   `id` **any** The id of the element to be rendered
--   `_txt` **any** The graph definition
--   `cb` **any** Callback which is called after rendering is finished with the svg code as inparam.
--   `container` **any** Selector to element in which a div with the graph temporarily will be
-      inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
-      element will be removed when rendering is completed.
-
-Returns **any** 
-
 ## addDirective
 
 Pushes in a directive to the configuration
@@ -1541,17 +1533,17 @@ Pushes in a directive to the configuration
 
 **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
-## updateRendererConfigs
-
 ### Parameters
 
--   `conf` **any** 
+-   `config`   (optional, default `siteConfig`)
+
+Returns **void** 
 
 ## initialize
 
 ### Parameters
 
--   `options` **any** 
+-   `options` **MermaidConfig** 
 
 ## 
 
@@ -1626,3 +1618,7 @@ Pushes in a directive to the configuration
 [4]: #mermaidapi-configuration-defaults
 
 [5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+
+[7]: https://developer.mozilla.org/docs/Web/API/Element

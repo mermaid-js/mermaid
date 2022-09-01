@@ -17,19 +17,14 @@
  */
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
+// @ts-ignore
 import pkg from '../package.json';
 import * as configApi from './config';
-import addDiagrams from './diagram-api/diagram-orchestration';
+import { addDiagrams } from './diagram-api/diagram-orchestration';
 import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
-import flowRendererV2 from './diagrams/flowchart/flowRenderer-v2';
 import ganttDb from './diagrams/gantt/ganttDb';
-import ganttRenderer from './diagrams/gantt/ganttRenderer';
-import sequenceRenderer from './diagrams/sequence/sequenceRenderer';
-import stateRenderer from './diagrams/state/stateRenderer';
-import stateRendererV2 from './diagrams/state/stateRenderer-v2';
-import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import Diagram from './Diagram';
 import errorRenderer from './errorRenderer';
 import { attachFunctions } from './interactionDb';
@@ -37,50 +32,22 @@ import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
 import utils, { directiveSanitizer } from './utils';
-import assignWithDepth from './assignWithDepth';
 import DOMPurify from 'dompurify';
-import mermaid from './mermaid';
+import { MermaidConfig } from './config.type';
+import { evaluate } from './diagrams/common/common';
 
 let hasLoadedDiagrams = false;
 
-/**
- * @param text
- * @param dia
- * @returns {any}
- */
-function parse(text, dia) {
+function parse(text: string, parseError?: Function): boolean {
   if (!hasLoadedDiagrams) {
     addDiagrams();
     hasLoadedDiagrams = true;
   }
-  var parseEncounteredException = false;
-
-  try {
-    const diag = dia ? dia : new Diagram(text);
-    diag.db.clear();
-    return diag.parse(text);
-  } catch (error) {
-    parseEncounteredException = true;
-    // Is this the correct way to access mermiad's parseError()
-    // method ? (or global.mermaid.parseError()) ?
-    if (mermaid.parseError) {
-      if (error.str != undefined) {
-        // handle case where error string and hash were
-        // wrapped in object like`const error = { str, hash };`
-        mermaid.parseError(error.str, error.hash);
-      } else {
-        // assume it is just error string and pass it on
-        mermaid.parseError(error);
-      }
-    } else {
-      // No mermaid.parseError() handler defined, so re-throw it
-      throw error;
-    }
-  }
-  return !parseEncounteredException;
+  const diagram = new Diagram(text, parseError);
+  return diagram.parse(text, parseError);
 }
 
-export const encodeEntities = function (text) {
+export const encodeEntities = function (text: string): string {
   let txt = text;
 
   txt = txt.replace(/style.*:\S*#.*;/g, function (s) {
@@ -106,7 +73,7 @@ export const encodeEntities = function (text) {
   return txt;
 };
 
-export const decodeEntities = function (text) {
+export const decodeEntities = function (text: string): string {
   let txt = text;
 
   txt = txt.replace(/ﬂ°°/g, function () {
@@ -137,18 +104,24 @@ export const decodeEntities = function (text) {
  * });
  * ```
  *
- * @param {any} id The id of the element to be rendered
- * @param {any} _txt The graph definition
- * @param {any} cb Callback which is called after rendering is finished with the svg code as inparam.
- * @param {any} container Selector to element in which a div with the graph temporarily will be
+ * @param {string} id The id of the element to be rendered
+ * @param {string} text The graph definition
+ * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
+ *   is called after rendering is finished with the svg code as inparam.
+ * @param {Element} container Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
- * @returns {any}
+ * @returns {void}
  */
-const render = function (id, _txt, cb, container) {
+const render = function (
+  id: string,
+  text: string,
+  cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
+  container?: Element
+): void {
   configApi.reset();
-  let txt = _txt.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
-  const graphInit = utils.detectInit(txt);
+  text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
+  const graphInit = utils.detectInit(text);
   if (graphInit) {
     directiveSanitizer(graphInit);
     configApi.addDirective(graphInit);
@@ -158,28 +131,18 @@ const render = function (id, _txt, cb, container) {
   log.debug(cnf);
 
   // Check the maximum allowed text size
-  if (_txt.length > cnf.maxTextSize) {
-    txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+  if (text.length > cnf.maxTextSize!) {
+    text = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
-  let root = select('body');
+  let root: any = select('body');
 
   // In regular execution the container will be the div with a mermaid class
   if (typeof container !== 'undefined') {
-    if (cnf.securityLevel === 'sandbox') {
-      // IF we are in sandboxed mode, we do everyting mermaid related
-      // in a sandboxed div
-      const iframe = select('body')
-        .append('iframe')
-        .attr('id', 'i' + id)
-        .attr('style', 'width: 100%; height: 100%;')
-        .attr('sandbox', '');
-      root = select(iframe.nodes()[0].contentDocument.body);
-      root.node().style.margin = 0;
-    }
-
     // A container was provided by the caller
-    container.innerHTML = '';
+    if (container) {
+      container.innerHTML = '';
+    }
 
     if (cnf.securityLevel === 'sandbox') {
       // IF we are in sandboxed mode, we do everyting mermaid related
@@ -190,7 +153,7 @@ const render = function (id, _txt, cb, container) {
         .attr('style', 'width: 100%; height: 100%;')
         .attr('sandbox', '');
       // const iframeBody = ;
-      root = select(iframe.nodes()[0].contentDocument.body);
+      root = select(iframe.nodes()[0]!.contentDocument!.body);
       root.node().style.margin = 0;
     } else {
       root = select(container);
@@ -217,11 +180,12 @@ const render = function (id, _txt, cb, container) {
 
     // Remove previous tpm element if it exists
     let element;
-    if (cnf.securityLevel !== 'sandbox') {
-      element = document.querySelector('#' + 'd' + id);
+    if (cnf.securityLevel === 'sandbox') {
+      element = document.querySelector('#i' + id);
     } else {
-      element = document.querySelector('#' + 'i' + id);
+      element = document.querySelector('#d' + id);
     }
+
     if (element) {
       element.remove();
     }
@@ -238,7 +202,7 @@ const render = function (id, _txt, cb, container) {
         .attr('style', 'width: 100%; height: 100%;')
         .attr('sandbox', '');
 
-      root = select(iframe.nodes()[0].contentDocument.body);
+      root = select(iframe.nodes()[0]!.contentDocument!.body);
       root.node().style.margin = 0;
     } else {
       root = select('body');
@@ -256,10 +220,10 @@ const render = function (id, _txt, cb, container) {
       .append('g');
   }
 
-  txt = encodeEntities(txt);
+  text = encodeEntities(text);
 
   // Important that we do not create the diagram until after the directives have been included
-  const diag = new Diagram(txt);
+  const diag = new Diagram(text);
   // Get the tmp element containing the the svg
   const element = root.select('#d' + id).node();
   const graphType = diag.type;
@@ -286,8 +250,8 @@ const render = function (id, _txt, cb, container) {
 
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    const classes = flowRenderer.getClasses(txt, diag);
-    const htmlLabels = cnf.htmlLabels || cnf.flowchart.htmlLabels;
+    const classes: any = flowRenderer.getClasses(text, diag);
+    const htmlLabels = cnf.htmlLabels || cnf.flowchart?.htmlLabels;
     for (const className in classes) {
       if (htmlLabels) {
         userStyles += `\n.${className} > * { ${classes[className].styles.join(
@@ -321,7 +285,8 @@ const render = function (id, _txt, cb, container) {
     }
   }
 
-  const stylis = (selector, styles) => serialize(compile(`${selector}{${styles}}`), stringify);
+  const stylis = (selector: string, styles: string) =>
+    serialize(compile(`${selector}{${styles}}`), stringify);
   const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
   const style1 = document.createElement('style');
@@ -329,7 +294,7 @@ const render = function (id, _txt, cb, container) {
   svg.insertBefore(style1, firstChild);
 
   try {
-    diag.renderer.draw(txt, id, pkg.version, diag);
+    diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
     errorRenderer.draw(id, pkg.version);
     throw e;
@@ -344,10 +309,7 @@ const render = function (id, _txt, cb, container) {
   let svgCode = root.select('#d' + id).node().innerHTML;
 
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
-  if (
-    (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') &&
-    cnf.arrowMarkerAbsolute !== 'sandbox'
-  ) {
+  if (!evaluate(cnf.arrowMarkerAbsolute) && cnf.securityLevel !== 'sandbox') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 
@@ -400,16 +362,16 @@ const render = function (id, _txt, cb, container) {
 
   const tmpElementSelector = cnf.securityLevel === 'sandbox' ? '#i' + id : '#d' + id;
   const node = select(tmpElementSelector).node();
-  if (node !== null && typeof node.remove === 'function') {
-    select(tmpElementSelector).node().remove();
+  if (node && 'remove' in node) {
+    node.remove();
   }
 
   return svgCode;
 };
 
-let currentDirective = {};
+let currentDirective: { type?: string; args?: any } | undefined = {};
 
-const parseDirective = function (p, statement, context, type) {
+const parseDirective = function (p: any, statement: string, context: string, type: string): void {
   try {
     if (statement !== undefined) {
       statement = statement.trim();
@@ -418,14 +380,16 @@ const parseDirective = function (p, statement, context, type) {
           currentDirective = {};
           break;
         case 'type_directive':
+          if (!currentDirective) throw new Error('currentDirective is undefined');
           currentDirective.type = statement.toLowerCase();
           break;
         case 'arg_directive':
+          if (!currentDirective) throw new Error('currentDirective is undefined');
           currentDirective.args = JSON.parse(statement);
           break;
         case 'close_directive':
           handleDirective(p, currentDirective, type);
-          currentDirective = null;
+          currentDirective = undefined;
           break;
       }
     }
@@ -433,11 +397,12 @@ const parseDirective = function (p, statement, context, type) {
     log.error(
       `Error while rendering sequenceDiagram directive: ${statement} jison context: ${context}`
     );
+    // @ts-ignore
     log.error(error.message);
   }
 };
 
-const handleDirective = function (p, directive, type) {
+const handleDirective = function (p: any, directive: any, type: string): void {
   log.debug(`Directive type=${directive.type} with args:`, directive.args);
   switch (directive.type) {
     case 'init':
@@ -477,27 +442,8 @@ const handleDirective = function (p, directive, type) {
   }
 };
 
-/** @param {any} conf */
-function updateRendererConfigs(conf) {
-  // Todo remove, all diagrams should get config on demand from the config object, no need for this
-
-  flowRenderer.setConf(conf.flowchart);
-  flowRendererV2.setConf(conf.flowchart);
-  if (typeof conf['sequenceDiagram'] !== 'undefined') {
-    sequenceRenderer.setConf(assignWithDepth(conf.sequence, conf['sequenceDiagram']));
-  }
-  sequenceRenderer.setConf(conf.sequence);
-  ganttRenderer.setConf(conf.gantt);
-  // classRenderer.setConf(conf.class);
-  stateRenderer.setConf(conf.state);
-  stateRendererV2.setConf(conf.state);
-  // infoRenderer.setConf(conf.class);
-  journeyRenderer.setConf(conf.journey);
-  errorRenderer.setConf(conf.class);
-}
-
-/** @param {any} options */
-function initialize(options) {
+/** @param {MermaidConfig} options */
+function initialize(options: MermaidConfig) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily) {
     if (!options.themeVariables?.fontFamily) {
@@ -508,9 +454,11 @@ function initialize(options) {
   // Set default options
   configApi.saveConfigFromInitialize(options);
 
-  if (options?.theme && theme[options.theme]) {
+  if (options?.theme && options.theme in theme) {
     // Todo merge with user options
-    options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
+    options.themeVariables = theme[options.theme as keyof typeof theme].getThemeVariables(
+      options.themeVariables
+    );
   } else if (options) {
     options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
   }
@@ -518,7 +466,6 @@ function initialize(options) {
   const config =
     typeof options === 'object' ? configApi.setSiteConfig(options) : configApi.getSiteConfig();
 
-  updateRendererConfigs(config);
   setLogLevel(config.logLevel);
   if (!hasLoadedDiagrams) {
     addDiagrams();
@@ -526,7 +473,7 @@ function initialize(options) {
   }
 }
 
-const mermaidAPI = Object.freeze({
+export const mermaidAPI = Object.freeze({
   render,
   parse,
   parseDirective,
@@ -540,14 +487,12 @@ const mermaidAPI = Object.freeze({
   },
   globalReset: () => {
     configApi.reset(configApi.defaultConfig);
-    updateRendererConfigs(configApi.getConfig());
   },
   defaultConfig: configApi.defaultConfig,
 });
 
 setLogLevel(configApi.getConfig().logLevel);
 configApi.reset(configApi.getConfig());
-
 export default mermaidAPI;
 /**
  * ## mermaidAPI configuration defaults
