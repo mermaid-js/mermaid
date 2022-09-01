@@ -12,8 +12,7 @@ describe('DiagramAPI', () => {
 
   it('should handle diagram registrations', () => {
     expect(() => getDiagram('loki')).toThrow();
-    // TODO Q: Shouldn't this be throwing an error?
-    expect(detectType('loki diagram')).toBe('flowchart');
+    expect(() => detectType('loki diagram')).toThrow();
     registerDiagram(
       'loki',
       {

@@ -24,7 +24,6 @@ export const removeScript = (txt: string): string => {
 };
 
 const sanitizeMore = (text: string, config: MermaidConfig) => {
-  // TODO Q: Should this check really be here? Feels like we should be sanitizing it regardless.
   if (config.flowchart?.htmlLabels !== false) {
     const level = config.securityLevel;
     if (level === 'antiscript' || level === 'strict') {
@@ -54,7 +53,7 @@ export const sanitizeTextOrArray = (
   config: MermaidConfig
 ): string | string[] => {
   if (typeof a === 'string') return sanitizeText(a, config);
-  // TODO Q: Do we need flat?
+  // TODO: Refactor to avoid flat.
   return a.flat().map((x: string) => sanitizeText(x, config));
 };
 
@@ -108,7 +107,6 @@ const breakToPlaceholder = (s: string): string => {
  */
 const getUrl = (useAbsolute: boolean): string => {
   let url = '';
-  // TODO Q: If useAbsolute if false, empty string is returned. Bug?
   if (useAbsolute) {
     url =
       window.location.protocol +
@@ -116,7 +114,6 @@ const getUrl = (useAbsolute: boolean): string => {
       window.location.host +
       window.location.pathname +
       window.location.search;
-    // TODO Q: Why is this necessary?
     url = url.replaceAll(/\(/g, '\\(');
     url = url.replaceAll(/\)/g, '\\)');
   }
@@ -130,9 +127,8 @@ const getUrl = (useAbsolute: boolean): string => {
  * @param {string | boolean} val String or boolean to convert
  * @returns {boolean} The result from the input
  */
-// TODO Q: Should we make this check more specific? 'False', '0', 'null' all will evaluate to true.
-export const evaluate = (val: string | boolean): boolean =>
-  val === 'false' || val === false ? false : true;
+export const evaluate = (val?: string | boolean): boolean =>
+  val === false || ['false', 'null', '0'].includes(String(val).trim().toLowerCase()) ? false : true;
 
 /**
  * Makes generics in typescript syntax

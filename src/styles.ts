@@ -13,7 +13,7 @@ import c4 from './diagrams/c4/styles';
 import { FlowChartStyleOptions } from './diagrams/flowchart/styles';
 import { log } from './logger';
 
-// TODO Q: Shouldn't registerDiagram be injecting data here?
+// TODO @knut: Inject from registerDiagram.
 const themes = {
   flowchart,
   'flowchart-v2': flowchart,

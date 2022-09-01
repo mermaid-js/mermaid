@@ -34,6 +34,7 @@ import theme from './themes';
 import utils, { directiveSanitizer } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
+import { evaluate } from './diagrams/common/common';
 
 let hasLoadedDiagrams = false;
 
@@ -308,8 +309,7 @@ const render = function (
   let svgCode = root.select('#d' + id).node().innerHTML;
 
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
-  // TODO Q: Needs verification.
-  if (!cnf.arrowMarkerAbsolute && cnf.securityLevel !== 'sandbox') {
+  if (!evaluate(cnf.arrowMarkerAbsolute) && cnf.securityLevel !== 'sandbox') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 

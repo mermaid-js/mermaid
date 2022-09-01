@@ -73,7 +73,7 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
     }
   }
 
-  return 'flowchart';
+  throw new Error(`No diagram type detected for text: ${text}`);
 };
 
 export const addDetector = (key: string, detector: DiagramDetector) => {
