@@ -26,6 +26,7 @@
     "clean": "rimraf dist",
     "build:code": "node .esbuild/esbuild.cjs",
     "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
+    "build:webpack": "webpack --mode production --progress --color",
     "build": "yarn clean; concurrently \"yarn build:code\" \"yarn build:types\"",
     "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > docs/Setup.md",
     "build:watch": "yarn build:code --watch",
