@@ -23,7 +23,7 @@
     "git graph"
   ],
   "scripts": {
-    "build:fast": "node .esbuild/esbuild.cjs",
+    "build:fast": "rm -rf dist; node .esbuild/esbuild.cjs; tsc --emitDeclarationOnly",
     "build:dev": "webpack --mode development --progress --color",
     "build:prod": "webpack --mode production --progress --color",
     "build": "concurrently \"yarn build:dev\" \"yarn build:prod\"",

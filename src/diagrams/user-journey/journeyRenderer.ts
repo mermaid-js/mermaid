@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { select } from 'd3';
 import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
