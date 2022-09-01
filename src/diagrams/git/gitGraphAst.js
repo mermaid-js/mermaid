@@ -148,16 +148,9 @@ export const branch = function (name, order) {
   }
 };
 
-/**
- * Creates a merge commit.
- *
- * @param {string} otherBranch - Target branch to merge to.
- * @param {string} [tag] - Git tag to use on this merge commit.
- * @param {string} [id] - Git commit id.
- */
-export const merge = function (otherBranch, tag, id) {
+export const merge = function (otherBranch, custom_id, override_type, custom_tag) {
   otherBranch = common.sanitizeText(otherBranch, configApi.getConfig());
-  id = common.sanitizeText(id, configApi.getConfig());
+  custom_id = common.sanitizeText(custom_id, configApi.getConfig());
 
   const currentCommit = commits[branches[curBranch]];
   const otherCommit = commits[branches[otherBranch]];
@@ -217,6 +210,23 @@ export const merge = function (otherBranch, tag, id) {
       expected: ['branch abc'],
     };
     throw error;
+  } else if (custom_id && typeof commits[custom_id] !== 'undefined') {
+    let error = new Error(
+      'Incorrect usage of "merge". Commit with id:' +
+        custom_id +
+        ' already exists, use different custom Id'
+    );
+    error.hash = {
+      text: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
+      token: 'merge ' + otherBranch + custom_id + override_type + custom_tag,
+      line: '1',
+      loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+      expected: [
+        'merge ' + otherBranch + ' ' + custom_id + '_UNIQUE ' + override_type + ' ' + custom_tag,
+      ],
+    };
+
+    throw error;
   }
   // if (isReachableFrom(currentCommit, otherCommit)) {
   //   log.debug('Already merged');
@@ -228,13 +238,15 @@ export const merge = function (otherBranch, tag, id) {
   // } else {
   // create merge commit
   const commit = {
-    id: id || seq + '-' + getId(),
+    id: custom_id ? custom_id : seq + '-' + getId(),
     message: 'merged branch ' + otherBranch + ' into ' + curBranch,
     seq: seq++,
     parents: [head == null ? null : head.id, branches[otherBranch]],
     branch: curBranch,
     type: commitType.MERGE,
-    tag: tag ? tag : '',
+    customType: override_type,
+    customId: custom_id ? true : false,
+    tag: custom_tag ? custom_tag : '',
   };
   head = commit;
   commits[commit.id] = commit;
