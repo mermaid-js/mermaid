@@ -33,12 +33,6 @@ const themes = {
   c4,
 };
 
-// TODO: Delete as it's not used
-// export const calcThemeVariables = (theme: string, userOverRides) => {
-//   log.info('userOverides', userOverRides);
-//   return theme.calcColors(userOverRides);
-// };
-
 const getStyles = (
   type: string,
   userStyles: string,

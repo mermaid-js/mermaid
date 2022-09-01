@@ -13,7 +13,7 @@ const diagramMatchers: Record<string, RegExp> = {
   gantt: /^\s*gantt/,
   classDiagram: /^\s*classDiagram-v2/,
   stateDiagram: /^\s*stateDiagram-v2/,
-  'flowchart-v2': /^\s*flowchart/,
+  'flowchart-v2': /^\s*flowchart/, // Might need to add |graph to fix #3391
   info: /^\s*info/,
   pie: /^\s*pie/,
   er: /^\s*erDiagram/,
@@ -72,8 +72,9 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
       return key;
     }
   }
-
-  throw new Error(`No diagram type detected for text: ${text}`);
+  // TODO: #3391
+  // throw new Error(`No diagram type detected for text: ${text}`);
+  return 'flowchart';
 };
 
 export const addDetector = (key: string, detector: DiagramDetector) => {
