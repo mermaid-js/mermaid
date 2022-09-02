@@ -45,7 +45,7 @@ const getStyles = (
     lineColor: string;
   } & FlowChartStyleOptions
 ) => {
-  let diagramStyles: string = '';
+  let diagramStyles = '';
   if (type in themes && themes[type as keyof typeof themes]) {
     diagramStyles = themes[type as keyof typeof themes](options);
   } else {

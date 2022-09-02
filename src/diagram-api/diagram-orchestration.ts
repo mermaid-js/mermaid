@@ -6,7 +6,7 @@ import { registerDiagram } from './diagramAPI';
 
 import gitGraphDb from '../diagrams/git/gitGraphAst';
 import gitGraphRenderer from '../diagrams/git/gitGraphRenderer';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import gitGraphParser from '../diagrams/git/parser/gitGraph';
 import { gitGraphDetector } from '../diagrams/git/gitGraphDetector';
 

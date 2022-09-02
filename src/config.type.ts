@@ -212,7 +212,7 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
   line_height?: number;
 }
 
-export interface PieDiagramConfig extends BaseDiagramConfig {}
+export type PieDiagramConfig = BaseDiagramConfig;
 
 export interface ErDiagramConfig extends BaseDiagramConfig {
   diagramPadding?: number;

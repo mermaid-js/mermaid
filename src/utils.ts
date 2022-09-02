@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck: TODO Fix ts errors
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import {
   curveBasis,
@@ -43,17 +43,19 @@ const anyComment = /\s*%%.*\n/gm;
 
 /**
  * @function detectInit Detects the init config object from the text
+ * @param config
  *
  *   ```mermaid
+ *
  *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
  *   graph LR
- *    a-->b
- *    b-->c
- *    c-->d
- *    d-->e
- *    e-->f
- *    f-->g
- *    g-->h
+ *      a-->b
+ *      b-->c
+ *      c-->d
+ *      d-->e
+ *      e-->f
+ *      f-->g
+ *      g-->h
  * ```
  *
  *   Or
@@ -74,11 +76,11 @@ const anyComment = /\s*%%.*\n/gm;
  * @returns {object} The json object representing the init passed to mermaid.initialize()
  */
 export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {
-  let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
+  const inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
 
   if (Array.isArray(inits)) {
-    let args = inits.map((init) => init.args);
+    const args = inits.map((init) => init.args);
     directiveSanitizer(args);
 
     results = assignWithDepth(results, [...args]);
@@ -133,8 +135,8 @@ export const detectDirective = function (text, type = null) {
     log.debug(
       `Detecting diagram directive${type !== null ? ' type:' + type : ''} based on the text:${text}`
     );
-    let match,
-      result = [];
+    let match;
+    const result = [];
     while ((match = directive.exec(text)) !== null) {
       // This is necessary to avoid infinite loops with zero-width matches
       if (match.index === directive.lastIndex) {
@@ -145,8 +147,8 @@ export const detectDirective = function (text, type = null) {
         (type && match[1] && match[1].match(type)) ||
         (type && match[2] && match[2].match(type))
       ) {
-        let type = match[1] ? match[1] : match[2];
-        let args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
+        const type = match[1] ? match[1] : match[2];
+        const args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
         result.push({ type, args });
       }
     }
@@ -172,13 +174,13 @@ export const detectDirective = function (text, type = null) {
  * @returns {Function} An optimized caching function
  */
 const memoize = (fn, resolver) => {
-  let cache = {};
+  const cache = {};
   return (...args) => {
-    let n = resolver ? resolver.apply(this, args) : args[0];
+    const n = resolver ? resolver.apply(this, args) : args[0];
     if (n in cache) {
       return cache[n];
     } else {
-      let result = fn(...args);
+      const result = fn(...args);
       cache[n] = result;
       return result;
     }
@@ -221,7 +223,7 @@ export const interpolateToCurve = (interpolate, defaultCurve) => {
  * @returns {string | undefined} The formatted URL
  */
 export const formatUrl = (linkStr, config) => {
-  let url = linkStr.trim();
+  const url = linkStr.trim();
 
   if (url) {
     if (config.securityLevel !== 'loose') {
@@ -364,10 +366,10 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
     prevPoint = point;
   });
   // if relation is present (Arrows will be added), change cardinality point off-set distance (d)
-  let d = isRelationTypePresent ? 10 : 5;
+  const d = isRelationTypePresent ? 10 : 5;
   //Calculate Angle for x and y axis
-  let angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
-  let cardinalityPosition = { x: 0, y: 0 };
+  const angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
+  const cardinalityPosition = { x: 0, y: 0 };
   //Calculation cardinality position using angle, center point on the line/curve but pendicular and with offset-distance
   cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2;
   cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2;
@@ -425,11 +427,11 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
     prevPoint = point;
   });
   // if relation is present (Arrows will be added), change cardinality point off-set distance (d)
-  let d = 10 + terminalMarkerSize * 0.5;
+  const d = 10 + terminalMarkerSize * 0.5;
   //Calculate Angle for x and y axis
-  let angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
+  const angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
 
-  let cardinalityPosition = { x: 0, y: 0 };
+  const cardinalityPosition = { x: 0, y: 0 };
 
   //Calculation cardinality position using angle, center point on the line/curve but pendicular and with offset-distance
 
@@ -485,10 +487,10 @@ export const generateId = () => {
  * @returns {any}
  */
 function makeid(length) {
-  var result = '';
-  var characters = '0123456789abcdef';
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
+  let result = '';
+  const characters = '0123456789abcdef';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
@@ -675,7 +677,7 @@ export const calculateTextDimensions = memoize(
     // of sans-serif.
     const fontFamilies = ['sans-serif', fontFamily];
     const lines = text.split(common.lineBreakRegex);
-    let dims = [];
+    const dims = [];
 
     const body = select('body');
     // We don't want to leak DOM elements - if a removal operation isn't available
@@ -686,10 +688,10 @@ export const calculateTextDimensions = memoize(
 
     const g = body.append('svg');
 
-    for (let fontFamily of fontFamilies) {
+    for (const fontFamily of fontFamilies) {
       let cheight = 0;
-      let dim = { width: 0, height: 0, lineHeight: 0 };
-      for (let line of lines) {
+      const dim = { width: 0, height: 0, lineHeight: 0 };
+      for (const line of lines) {
         const textObj = getTextObj();
         textObj.text = line;
         const textElem = drawSimpleText(g, textObj)
@@ -697,7 +699,7 @@ export const calculateTextDimensions = memoize(
           .style('font-weight', fontWeight)
           .style('font-family', fontFamily);
 
-        let bBox = (textElem._groups || textElem)[0][0].getBBox();
+        const bBox = (textElem._groups || textElem)[0][0].getBBox();
         dim.width = Math.round(Math.max(dim.width, bBox.width));
         cheight = Math.round(bBox.height);
         dim.height += cheight;
@@ -708,7 +710,7 @@ export const calculateTextDimensions = memoize(
 
     g.remove();
 
-    let index =
+    const index =
       isNaN(dims[1].height) ||
       isNaN(dims[1].width) ||
       isNaN(dims[1].lineHeight) ||
@@ -729,7 +731,7 @@ export const calculateTextDimensions = memoize(
  * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of attributes
  */
 const d3Attrs = function (d3Elem, attrs) {
-  for (let attr of attrs) {
+  for (const attr of attrs) {
     d3Elem.attr(attr[0], attr[1]);
   }
 };
@@ -743,7 +745,7 @@ const d3Attrs = function (d3Elem, attrs) {
  * @returns {Map<'height' | 'width' | 'style', string>} Attributes for the SVG
  */
 export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
-  let attrs = new Map();
+  const attrs = new Map();
   // attrs.set('height', height);
   if (useMaxWidth) {
     attrs.set('width', '100%');
@@ -945,10 +947,12 @@ export interface DetailedError {
   hash: any;
 }
 
+/** @param error */
 export function isDetailedError(error: unknown): error is DetailedError {
   return 'str' in error;
 }
 
+/** @param error */
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);

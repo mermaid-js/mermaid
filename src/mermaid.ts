@@ -30,10 +30,15 @@ import { isDetailedError } from './utils';
  * ```
  *
  * Renders the mermaid diagrams
+ *
+ * @param config
+ * @param nodes
+ * @param callback
  */
 const init = function (
   config?: MermaidConfig,
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   callback?: Function
 ) {
   try {
@@ -52,13 +57,14 @@ const init = function (
 const initThrowsErrors = function (
   config?: MermaidConfig,
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   callback?: Function
 ) {
   const conf = mermaidAPI.getConfig();
   // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   if (config) {
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
-    // @ts-ignore
+    // @ts-ignore: TODO Fix ts errors
     mermaid.sequenceConfig = config;
   }
 
@@ -126,7 +132,7 @@ const initThrowsErrors = function (
       );
     } catch (error) {
       log.warn('Catching Error (bootstrap)');
-      // @ts-ignore
+      // @ts-ignore: TODO Fix ts errors
       // TODO: We should be throwing an error object.
       throw { error, message: error.str };
     }
@@ -188,6 +194,7 @@ const parse = (txt: string) => {
 const mermaid: {
   startOnLoad: boolean;
   diagrams: any;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   parseError?: Function;
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;

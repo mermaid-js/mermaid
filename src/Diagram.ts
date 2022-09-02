@@ -8,6 +8,7 @@ export class Diagram {
   parser;
   renderer;
   db;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   constructor(public txt: string, parseError?: Function) {
     const cnf = configApi.getConfig();
     this.txt = txt;
@@ -33,6 +34,7 @@ export class Diagram {
     this.parse(this.txt, parseError);
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   parse(text: string, parseError?: Function): boolean {
     try {
       text = text + '\n';
