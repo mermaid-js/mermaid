@@ -5711,7 +5711,7 @@ esbuild-windows-arm64@0.15.6:
   resolved "https://registry.yarnpkg.com/esbuild-windows-arm64/-/esbuild-windows-arm64-0.15.6.tgz#e18a778d354fc2ca2306688f3fedad8a3e57819e"
   integrity sha512-DB3G2x9OvFEa00jV+OkDBYpufq5x/K7a6VW6E2iM896DG4ZnAvJKQksOsCPiM1DUaa+DrijXAQ/ZOcKAqf/3Hg==
 
-esbuild@^0.14.39:
+esbuild@^0.14.39, esbuild@^0.14.48:
   version "0.14.54"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.14.54.tgz#8b44dcf2b0f1a66fc22459943dccf477535e9aa2"
   integrity sha512-Cy9llcy8DvET5uznocPyqL3BFRrFXSVqbgpMJ9Wz8oVjZlh/zUSNbPRbov0VX7VxN2JH1Oa0uNxZ7eLRb62pJA==
@@ -7859,6 +7859,14 @@ jest-environment-node@^28.1.3:
     "@types/node" "*"
     jest-mock "^28.1.3"
     jest-util "^28.1.3"
+
+jest-esbuild@^0.2.9:
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/jest-esbuild/-/jest-esbuild-0.2.9.tgz#c4c103e510400ad8a080753fd990dfe5a2a76025"
+  integrity sha512-GfcQgHf8XPwUydEurYTRdrhrDblVFXtgOsKmE/7KADxbsC0c5xpxQBarak4X7K0wl5XXfTmw7Qtat2V0/ssreg==
+  dependencies:
+    debug "^4.3.4"
+    esbuild "^0.14.48"
 
 jest-get-type@^28.0.2:
   version "28.0.2"

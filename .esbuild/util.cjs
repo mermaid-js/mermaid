@@ -9,6 +9,7 @@ const buildOptions = (override = {}) => {
     bundle: true,
     minify: true,
     keepNames: true,
+    banner: { js: '"use strict";' },
     globalName: 'mermaid',
     platform: 'browser',
     tsconfig: 'tsconfig.json',
@@ -45,18 +46,17 @@ exports.umdBuild = (override = { minify: true }) => {
   });
 };
 
+const { Generator } = require('jison');
+let fs = require('fs');
 const jisonPlugin = {
   name: 'jison',
   setup(build) {
-    const { Generator } = require('jison');
-    let fs = require('fs');
-
     build.onLoad({ filter: /\.jison$/ }, async (args) => {
       // Load the file from the file system
       let source = await fs.promises.readFile(args.path, 'utf8');
 
       try {
-        let contents = new Generator(source, {}).generate();
+        let contents = new Generator(source, { 'token-stack': true }).generate();
         return { contents, warnings: [] };
       } catch (e) {
         return { errors: [] };

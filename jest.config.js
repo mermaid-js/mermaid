@@ -1,11 +1,11 @@
 const path = require('path');
-
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   testEnvironment: 'jsdom',
   preset: 'ts-jest',
   transform: {
-    '^.+\\.jsx?$': ['babel-jest', { rootMode: 'upward' }],
+    '^.+\\.tsx?$': ['jest-esbuild', { banner: '"use strict";' }],
+    '^.+\\.jsx?$': ['jest-esbuild', { banner: '"use strict";' }],
     '^.+\\.jison$': [
       path.resolve(__dirname, './src/jison/transformer.js'),
       { 'token-stack': true },
