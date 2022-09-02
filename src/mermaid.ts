@@ -64,14 +64,13 @@ const initThrowsErrors = function (
 
   // if last argument is a function this is the callback function
   log.debug(`${!callback ? 'No ' : ''}Callback function found`);
-  let nodesToProcess: NodeListOf<HTMLElement>;
+  let nodesToProcess: ArrayLike<HTMLElement>;
   if (typeof nodes === 'undefined') {
     nodesToProcess = document.querySelectorAll('.mermaid');
   } else if (typeof nodes === 'string') {
     nodesToProcess = document.querySelectorAll(nodes);
   } else if (nodes instanceof HTMLElement) {
-    nodesToProcess = new NodeList() as NodeListOf<HTMLElement>;
-    nodesToProcess[0] = nodes;
+    nodesToProcess = [nodes];
   } else if (nodes instanceof NodeList) {
     nodesToProcess = nodes;
   } else {
