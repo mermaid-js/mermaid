@@ -35,9 +35,6 @@ const init = function () {
   } catch (e) {
     log.warn('Syntax Error rendering');
     log.warn(e.str);
-    if (this.parseError) {
-      this.parseError(e);
-    }
   }
 };
 
@@ -93,8 +90,10 @@ const initThrowsErrors = function () {
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt;
+  const errors = [];
 
   for (let i = 0; i < nodes.length; i++) {
+    log.info('Rendering diagram: ' + nodes[i].id, i);
     // element is the current div with mermaid class
     const element = nodes[i];
 
@@ -134,9 +133,15 @@ const initThrowsErrors = function () {
         element
       );
     } catch (error) {
-      log.warn('Catching Error (bootstrap)');
-      throw { error, message: error.str };
+      log.warn('Catching Error (bootstrap)', error);
+      if (typeof mermaid.parseError === 'function') {
+        mermaid.parseError({ error, str: error.str, hash: error.hash, message: error.str });
+      }
+      errors.push({ error, str: error.str, hash: error.hash, message: error.str });
     }
+  }
+  if (errors.length > 0) {
+    throw errors[0];
   }
 };
 
