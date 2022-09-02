@@ -1,4 +1,4 @@
-// @ts-nocheck: TODO Fix ts errors
+// @ts-nocheck : TODO Fix ts errors
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import {
   curveBasis,
