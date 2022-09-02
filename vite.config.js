@@ -2,6 +2,7 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import jison from './jison';
 export default defineConfig({
+  plugins: [jison()],
   resolve: {
     extensions: ['.ts', '.js', '.json', '.jison'],
   },
@@ -13,7 +14,6 @@ export default defineConfig({
       fileName: 'mermaid',
     },
     rollupOptions: {
-      plugins: [jison()],
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       output: {
