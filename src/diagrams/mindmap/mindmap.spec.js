@@ -128,6 +128,29 @@ root
       expect(mm.children.length).toEqual(0);
       expect(mm.type).toEqual(mindmap.yy.nodeType.CIRCLE);
     });
+
+    it('mutiple types (cloud)', function () {
+      var str = `mindmap
+ root))the root((
+`;
+
+      mindmap.parse(str);
+      const mm = mindmap.yy.getMindmap();
+      expect(mm.descr).toEqual('the root');
+      expect(mm.children.length).toEqual(0);
+      expect(mm.type).toEqual(mindmap.yy.nodeType.CLOUD);
+    });
+    it('mutiple types (bang)', function () {
+      var str = `mindmap
+ root))the root((
+`;
+
+      mindmap.parse(str);
+      const mm = mindmap.yy.getMindmap();
+      expect(mm.descr).toEqual('the root');
+      expect(mm.children.length).toEqual(0);
+      expect(mm.type).toEqual(mindmap.yy.nodeType.BANG);
+    });
   });
   describe('decorations', function () {
     it('should be possible to set an icon for the node', function () {

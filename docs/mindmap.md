@@ -49,10 +49,12 @@ Root
       C
 ```
 
+)sdlfkjlsd(
+
 In this way we can use a text outline to generate a hierarchical mindmap.
 
 ## Different shapes
-Mermaids mindmaps can show node using different shapes. When specifying a shape for a node the synax for the is similar to flowchart nodes, with an id followed by the shape definition and with the text within the shape delimiters. Where possible we try/will try to keep the same shapes as for flowcharts even though they are not all supported from the start.
+Mermaids mindmaps can show node using different shapes. When specifying a shape for a node the syntax for the is similar to flowchart nodes, with an id followed by the shape definition and with the text within the shape delimiters. Where possible we try/will try to keep the same shapes as for flowcharts even though they are not all supported from the start.
 
 Mindmap can show the following shapes:
 
@@ -99,7 +101,7 @@ mindmap
 ```
 ## Classes
 
-Again the synax for adding classes is similar to flowcharts and you can add classes using a tripple colon following a numver of css classes separated by space. In the following example one of the nodes has two custom classes attached urgent turning the background red and the text whiet and large increasing the font size:
+Again the syntax for adding classes is similar to flowcharts and you can add classes using a tripple colon following a numver of css classes separated by space. In the following example one of the nodes has two custom classes attached urgent turning the background red and the text whiet and large increasing the font size:
 ```mermaid-example
 mindmap
     Root

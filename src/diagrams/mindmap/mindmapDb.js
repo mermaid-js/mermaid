@@ -82,14 +82,19 @@ export const nodeType = {
   CIRCLE: 3,
 };
 
-export const getTypeFromStart = (str) => {
-  switch (str) {
+export const getType = (startStr, endStr) => {
+  console.log('In get type', startStr, endStr);
+  switch (startStr) {
     case '[':
       return nodeType.RECT;
     case '(':
       return nodeType.ROUNDED_RECT;
     case '((':
       return nodeType.CIRCLE;
+    case ')':
+      return nodeType.CLOUD;
+    case '))':
+      return nodeType.BANG;
     default:
       return nodeType.DEFAULT;
   }
@@ -120,6 +125,10 @@ const type2Str = (type) => {
       return 'rounded-rect';
     case nodeType.CIRCLE:
       return 'circle';
+    case nodeType.CLOUD:
+      return 'cloud';
+    case nodeType.BANG:
+      return 'bang';
     default:
       return 'no-border';
   }
@@ -130,7 +139,7 @@ export default {
   addNode,
   clear,
   nodeType,
-  getTypeFromStart,
+  getType,
   decorateNode,
   setElementForId,
   getElementById: (id) => elements[id],

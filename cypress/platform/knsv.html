@@ -121,21 +121,29 @@ mindmap
           sc2
           sc3
         GrandChild2
+        %%{init: {'securityLevel': 'loose', 'theme':'neutral'}}%%
 </div>
 <div class="mermaid" style="width: 100%;">
 mindmap
-    root[
+    root))TheRoot)
+      Child1)"Child1"(
+      Child2-)"Child2"(-
+      Child3(-"Child3"-)
+</div>
+<div class="mermaid2" style="width: 100%;">
+mindmap
+    root((
       The root<br>
       where<br>
       things<br>
       happen!
-    ]
+    ))
       ::icon(mdi mdi-numeric-8-circle)
       Child2
       :::disabled
         GrandChild1
         GrandChild2
-      Child3(Child 3 has a long wrapped text as well)
+      Child3(Child 3 has a long text that wraps to keep the node width)
       ::icon(mdi mdi-alarm)
         GrandChild3
         GrandChild4
@@ -143,24 +151,12 @@ mindmap
       ::icon(mdi mdi-alarm)
         GrandChild5[With<br>icon<br>one<br>two<br>three]
         ::icon(mdi mdi-numeric-8-circle)
-        GrandChild6sakdjhfkla jhklasjfh klj
+        GrandChild6 with wrapping text
         ::icon(mdi mdi-numeric-8-circle)
-      Child1
-        GrandChild1
-          sc1
-          sc2
-          sc3
-        GrandChild2
-      Child5((Child5))
-      :::disabled
-        GrandChild7
-          sc1
-          sc2
-          sc3
-        GrandChild7
+
 
 </div>
-<div class="mermaid" style="width: 50%;">
+<div class="mermaid2" style="width: 50%;">
   flowchart TD
   id
 </div>
@@ -452,6 +448,7 @@ flowchart TD
         curve: 'cardinal',
         // securityLevel: 'sandbox',
         // themeVariables: {relationLabelColor: 'red'}
+        // theme: 'dark',
         wrap: true,
       });
       function callback() {

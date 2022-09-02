@@ -78,6 +78,26 @@ const rectBkg = function (elem, node, section, conf) {
     .attr('height', node.height)
     .attr('width', node.width);
 };
+const cloudBkg = function (elem, node, section, conf) {
+  const r = elem
+    .append('rect')
+    .attr('id', 'node-' + node.id)
+    .attr('class', 'node-bkg node-' + db.type2Str(node.type))
+    .attr('height', node.height)
+    .attr('rx', node.padding)
+    .attr('ry', node.padding)
+    .attr('width', node.width);
+};
+const bangBkg = function (elem, node, section, conf) {
+  const r = elem
+    .append('rect')
+    .attr('id', 'node-' + node.id)
+    .attr('class', 'node-bkg node-' + db.type2Str(node.type))
+    .attr('height', node.height)
+    .attr('rx', node.padding)
+    .attr('ry', node.padding)
+    .attr('width', node.width);
+};
 const circleBkg = function (elem, node, section, conf) {
   const r = elem
     .append('circle')
@@ -193,6 +213,14 @@ export const drawNode = function (elem, node, section, conf) {
     case db.nodeType.CIRCLE:
       bkgElem.attr('transform', 'translate(' + node.width / 2 + ', ' + +node.height / 2 + ')');
       circleBkg(bkgElem, node, section, conf);
+      break;
+    case db.nodeType.CLOUD:
+      // bkgElem.attr('transform', 'translate(' + node.width / 2 + ', ' + +node.height / 2 + ')');
+      cloudBkg(bkgElem, node, section, conf);
+      break;
+    case db.nodeType.BANG:
+      // bkgElem.attr('transform', 'translate(' + node.width / 2 + ', ' + +node.height / 2 + ')');
+      bangBkg(bkgElem, node, section, conf);
       break;
     default:
     // defaultBkg(bkgElem, node, section, conf);

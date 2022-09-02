@@ -27,11 +27,16 @@
 [\n]+             /* return 'NL'; */
 <ICON>[^\)]+			 { return 'ICON'; }
 <ICON>\)				   {this.popState();}
+"-)"               { console.log('Exploding node'); this.begin('NODE');return 'NODE_DSTART'; }
+"(-"               { console.log('Cloud'); this.begin('NODE');return 'NODE_DSTART'; }
+"))"               { console.log('Explosion Bang'); this.begin('NODE');return 'NODE_DSTART'; }
+")"               { console.log('Cloud Bang'); this.begin('NODE');return 'NODE_DSTART'; }
 "(("               { this.begin('NODE');return 'NODE_DSTART'; }
 "("                { this.begin('NODE');return 'NODE_DSTART'; }
 "["                { this.begin('NODE');return 'NODE_DSTART'; }
 [\s]+              return 'SPACELIST'                 /* skip all whitespace */    ;
-[^\(\[\n]+         return 'NODE_ID';
+// !(-\()            return 'NODE_ID';
+[^\(\[\n\-\)]+         return 'NODE_ID';
 <<EOF>>            return 'EOF';
 <NODE>["]          { console.log('Starting NSTR');this.begin("NSTR");}
 <NSTR>[^"]+        { console.log('description:', yytext); return "NODE_DESCR";}
@@ -39,7 +44,12 @@
 <NODE>[\)]\)         {this.popState();console.log('node end ))');return "NODE_DEND";}
 <NODE>[\)]         {this.popState();console.log('node end )');return "NODE_DEND";}
 <NODE>[\]]         {this.popState();console.log('node end ...');return "NODE_DEND";}
-<NODE>[^\)\]]+     { console.log('Long description:', yytext);   return 'NODE_DESCR';}
+<NODE>"(-"         {this.popState();console.log('node end (-');return "NODE_DEND";}
+<NODE>"-)"         {this.popState();console.log('node end (-');return "NODE_DEND";}
+<NODE>"(("         {this.popState();console.log('node end ((');return "NODE_DEND";}
+<NODE>"("         {this.popState();console.log('node end ((');return "NODE_DEND";}
+<NODE>[^\)\]\(]+     { console.log('Long description:', yytext);   return 'NODE_DESCR';}
+<NODE>.+(?!\(\()     { console.log('Long description:', yytext);   return 'NODE_DESCR';}
 // [\[]               return 'NODE_START';
 // .+                 return 'TXT' ;
 
@@ -78,6 +88,6 @@ statement
 node
 	:  NODE_ID             { $$ = { id: $1, descr: $1, type: yy.nodeType.DEFAULT }; }
 	|  NODE_ID NODE_DSTART NODE_DESCR NODE_DEND
-	                       { console.log("node found ..", $1); $$ = { id: $1, descr: $3, type: yy.getTypeFromStart($2) }; }
+	                       { console.log("node found ..", $1); $$ = { id: $1, descr: $3, type: yy.getType($2, $4) }; }
 	;
 %%
