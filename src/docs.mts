@@ -1,6 +1,6 @@
 import { remark } from 'remark';
 import type { Code, Root } from 'mdast';
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 // @ts-ignore
 import flatmap from 'unist-util-flatmap';
 import { globby } from 'globby';
@@ -61,8 +61,7 @@ const transform = (file: string) => {
     verifyAndCopy(file);
   });
   if (fileChanged) {
-    console.log('Please commit the changes to the docs folder');
+    console.log('Committing changes to the docs folder');
     exec('git add docs');
-    // process.exit(0);
   }
 })();
