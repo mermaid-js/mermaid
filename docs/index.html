@@ -105,7 +105,9 @@
                 colorize.push(currentCodeExample);
                 return '<pre id="code' + currentCodeExample + '">' + escapeHTML(code) + '</pre>';
               } else if (lang === 'mermaid') {
-                return '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</div>';
+                return (
+                  '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</div>'
+                );
               }
               return this.origin.code.apply(this, arguments);
             },
@@ -120,7 +122,7 @@
         plugins: [
           function (hook, vm) {
             hook.beforeEach(function (html) {
-              url = 'https://github.com/mermaid-js/mermaid/blob/develop/docs/' + vm.route.file;
+              url = 'https://github.com/mermaid-js/mermaid/blob/develop/src/docs/' + vm.route.file;
               var editHtml = '[:memo: Edit this Page](' + url + ')\n';
               return editHtml + html;
             });
@@ -131,7 +133,8 @@
                 while (!window.hasOwnProperty('monaco'))
                   await new Promise((resolve) => setTimeout(resolve, 1000));
                 colorizeEverything(html).then(
-                  (newHTML) => (document.querySelector('article.markdown-section').innerHTML = newHTML)
+                  (newHTML) =>
+                    (document.querySelector('article.markdown-section').innerHTML = newHTML)
                 );
               })();
             });

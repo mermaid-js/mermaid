@@ -120,7 +120,7 @@
         plugins: [
           function (hook, vm) {
             hook.beforeEach(function (html) {
-              url = 'https://github.com/mermaid-js/mermaid/blob/develop/docs/' + vm.route.file;
+              url = 'https://github.com/mermaid-js/mermaid/blob/develop/src/docs/' + vm.route.file;
               var editHtml = '[:memo: Edit this Page](' + url + ')\n';
               return editHtml + html;
             });
