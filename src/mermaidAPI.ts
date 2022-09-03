@@ -171,7 +171,7 @@ const render = function (
       .append('g');
   } else {
     // No container was provided
-    // If there is an existsing element with the id, we remove it
+    // If there is an existing element with the id, we remove it
     // this likely a previously rendered diagram
     const existingSvg = document.getElementById(id);
     if (existingSvg) {
