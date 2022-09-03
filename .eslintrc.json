@@ -22,6 +22,7 @@
   ],
   "plugins": ["html", "jest", "jsdoc", "json", "prettier"],
   "rules": {
+    "no-console": "error",
     "no-prototype-builtins": "off",
     "no-unused-vars": "off",
     "jsdoc/check-indentation": "off",
@@ -46,6 +47,12 @@
       "files": "./**/*.md/*.html",
       "rules": {
         "prettier/prettier": "off"
+      }
+    },
+    {
+      "files": ["./cypress/**", "./demos/**"],
+      "rules": {
+        "no-console": "off"
       }
     }
   ]
