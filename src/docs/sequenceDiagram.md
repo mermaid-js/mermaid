@@ -1,6 +1,5 @@
 # Sequence diagrams
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/sequenceDiagram.md)
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
 
 Mermaid can render sequence diagrams.
@@ -38,6 +37,7 @@ sequenceDiagram
 ### Actors
 
 If you specifically want to use the actor symbol instead of a rectangle with text you can do so by using actor statements as per below.
+
 ```mermaid-example
 sequenceDiagram
     actor Alice
@@ -68,15 +68,15 @@ Messages can be of two displayed either solid or with a dotted line.
 
 There are six types of arrows currently supported:
 
-| Type | Description                                 |
-| ---- | ------------------------------------------- |
-| ->   | Solid line without arrow                    |
-| -->  | Dotted line without arrow                   |
-| ->>  | Solid line with arrowhead                   |
-| -->> | Dotted line with arrowhead                  |
-| -x   | Solid line with a cross at the end          |
-| --x  | Dotted line with a cross at the end.        |
-| -)   | Solid line with an open arrow at the end (async)  |
+| Type | Description                                      |
+| ---- | ------------------------------------------------ |
+| ->   | Solid line without arrow                         |
+| -->  | Dotted line without arrow                        |
+| ->>  | Solid line with arrowhead                        |
+| -->> | Dotted line with arrowhead                       |
+| -x   | Solid line with a cross at the end               |
+| --x  | Dotted line with a cross at the end.             |
+| -)   | Solid line with an open arrow at the end (async) |
 | --)  | Dotted line with a open arrow at the end (async) |
 
 ## Activations
@@ -335,7 +335,7 @@ sequenceDiagram
 
 ## Comments
 
-Comments can be entered within a sequence diagram, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
+Comments can be entered within a sequence diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
 ```mmd
 sequenceDiagram
@@ -363,9 +363,9 @@ Because semicolons can be used instead of line breaks to define the markup, you 
 It is possible to get a sequence number attached to each arrow in a sequence diagram. This can be configured when adding mermaid to the website as shown below:
 
 ```html
-    <script>
-      mermaid.initialize({ sequence: { showSequenceNumbers: true }, });
-    </script>
+<script>
+    mermaid.initialize({ sequence: { showSequenceNumbers: true } });
+</script>
 ```
 
 It can also be be turned on via the diagram code as in the diagram:
@@ -385,12 +385,14 @@ sequenceDiagram
 
 ## Actor Menus
 
-Actors can have popup-menus containing individualized links to external pages.  For example, if an actor represented a web service, useful links might include a link to the service health dashboard, repo containing the code for the service, or a wiki page describing the service.
+Actors can have popup-menus containing individualized links to external pages. For example, if an actor represented a web service, useful links might include a link to the service health dashboard, repo containing the code for the service, or a wiki page describing the service.
 
 This can be configured by adding one or more link lines with the format:
+
 ```
 link <actor>: <link-label> @ <link-url>
 ```
+
 ```mmd
 sequenceDiagram
     participant Alice
@@ -405,6 +407,7 @@ sequenceDiagram
 ```
 
 #### Advanced Menu Syntax
+
 There is an advanced syntax that relies on JSON formatting. If you are comfortable with JSON format, then this exists as well.
 
 This can be configured by adding the links lines with the format:
@@ -544,7 +547,7 @@ mermaid.sequenceConfig = {
     boxTextMargin: 5,
     noteMargin: 10,
     messageMargin: 35,
-    mirrorActors: true
+    mirrorActors: true,
 };
 ```
 
@@ -555,8 +558,8 @@ mermaid.sequenceConfig = {
 | mirrorActors      | Turns on/off the rendering of actors below the diagram as well as above it                                                                 | false                          |
 | bottomMarginAdj   | Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists. | 1                              |
 | actorFontSize     | Sets the font size for the actor's description                                                                                             | 14                             |
-| actorFontFamily   | Sets the font family for the actor's description                                                                                           | "Open Sans", sans-serif      |
-| actorFontWeight   | Sets the font weight for the actor's description                                                                                           | "Open Sans", sans-serif      |
+| actorFontFamily   | Sets the font family for the actor's description                                                                                           | "Open Sans", sans-serif        |
+| actorFontWeight   | Sets the font weight for the actor's description                                                                                           | "Open Sans", sans-serif        |
 | noteFontSize      | Sets the font size for actor-attached notes                                                                                                | 14                             |
 | noteFontFamily    | Sets the font family for actor-attached notes                                                                                              | "trebuchet ms", verdana, arial |
 | noteFontWeight    | Sets the font weight for actor-attached notes                                                                                              | "trebuchet ms", verdana, arial |

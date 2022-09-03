@@ -1,7 +1,5 @@
 # Directives
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/directives.md)
-
 ## Directives
 Directives gives a diagram author the capability to alter the appearance of a diagram before rendering by changing the applied configuration.
 
