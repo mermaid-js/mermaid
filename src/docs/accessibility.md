@@ -3,9 +3,9 @@
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/accessibility.md)
 
 ## Accessibility
-Now with Mermaid library is in much wider use, we have started to work towwards more accessible features, based on the feedback from the community.
+Now with Mermaid library in much wider use, we have started to work towards more accessible features, based on the feedback from the community.
 
-TO begin with, we have added a new feature to Mermaid library, which is to support accessibility options, **Accessibility Title** and **Accessibility Description**.
+To begin with, we have added a new feature to Mermaid library, which is to support accessibility options, **Accessibility Title** and **Accessibility Description**.
 
 This support for accessibility options is available for all the diagrams/chart types. Also, we have tired to keep the same format for the accessibility options, so that it is easy to understand and maintain.
 
