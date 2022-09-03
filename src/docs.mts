@@ -50,7 +50,14 @@ const transform = (file: string) => {
   )}`;
   verifyAndCopy(
     file,
-    prettier.format(transformed, { parser: 'markdown', printWidth: 100, singleQuote: true })
+    prettier.format(transformed, {
+      parser: 'markdown',
+      useTabs: false,
+      tabWidth: 4,
+      endOfLine: 'auto',
+      printWidth: 100,
+      singleQuote: true,
+    })
   );
 };
 
