@@ -36,7 +36,7 @@ See in the code snippet above, the `accTitle` and `accDescr` are defined in the 
 
 
 ### Multi-line Accessibility title/description
-You can also define the accessibility options in a multi-line format, where the keyword is followed by opening curly bracket `{` and then mutltile lines, followed by a closing `}`.
+You can also define the accessibility options in a multi-line format, where the keyword is followed by opening curly bracket `{` and then multiple lines, followed by a closing `}`.
 
 `accTitle: My single line title value` (***single line format***)
 
