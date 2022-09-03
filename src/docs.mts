@@ -62,9 +62,9 @@ const transform = (file: string) => {
 };
 
 (async () => {
-  const mdFiles = await globby(['./src/docs/**/*.md']);
+  const mdFiles = await globby(['./src/docs/**/*.md'], { dot: true });
   mdFiles.forEach(transform);
-  const nonMDFiles = await globby(['src/docs/**', '!**/*.md']);
+  const nonMDFiles = await globby(['src/docs/**', '!**/*.md'], { dot: true });
   nonMDFiles.forEach((file) => {
     verifyAndCopy(file);
   });
