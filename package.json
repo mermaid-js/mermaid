@@ -27,7 +27,7 @@
     "build:prod": "webpack --mode production --progress --color",
     "build": "concurrently \"yarn build:dev\" \"yarn build:prod\"",
     "build:docs": "ts-node-esm src/docs.mts",
-    "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > docs/Setup.md",
+    "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md; yarn build:docs",
     "build:watch": "yarn build:dev --watch",
     "release": "yarn build",
     "lint": "eslint --cache ./ --ext .js,.json,.html,.md",
