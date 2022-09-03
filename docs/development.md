@@ -5,7 +5,7 @@ So you want to help? That's great!
 
 ![Image of happy people jumping with excitement](https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif)
 
-Here are a few things to know to get you started on the right path.
+Here are a few things to get you started on the right path.
 
 **The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**
 
