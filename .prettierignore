@@ -1,3 +1,4 @@
 demos/*.html
 cypress/**/*.html
 dist
+.cache
