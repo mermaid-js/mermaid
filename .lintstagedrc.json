@@ -1,4 +1,4 @@
 {
-  "src/docs/**": ["yarn docs:build"],
+  "src/docs/**": ["GIT=true yarn docs:build"],
   "*.{ts,js,json,html,md}": ["eslint --fix", "prettier --write"]
 }

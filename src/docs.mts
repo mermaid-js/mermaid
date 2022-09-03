@@ -9,6 +9,7 @@ import { exec } from 'child_process';
 import prettier from 'prettier';
 
 const verify = process.argv.includes('--verify');
+const git = process.env.GIT === 'true';
 let fileChanged = false;
 // Possible Improvement: combine with lint-staged to only copy files that have changed
 const prepareOutFile = (file: string): string => {
@@ -76,6 +77,8 @@ const transform = (file: string) => {
       process.exit(1);
     }
     console.log('Adding changes in docs folder to git');
-    exec('git add docs');
+    if (git) {
+      exec('git add docs');
+    }
   }
 })();
