@@ -1,6 +1,6 @@
 {
    "src/docs/**": [
-      "yarn build:docs"
+      "yarn docs:build"
    ],
    "*.{js,json,html,md}": [
       "yarn lint:fix"
