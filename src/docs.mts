@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync } from
 import flatmap from 'unist-util-flatmap';
 import { globby } from 'globby';
 import { join, dirname } from 'path';
+import { exec } from 'child_process';
 
 let fileChanged = false;
 // Possible Improvement: combine with lint-staged to only copy files that have changed
@@ -61,6 +62,7 @@ const transform = (file: string) => {
   });
   if (fileChanged) {
     console.log('Please commit the changes to the docs folder');
+    exec('git add docs');
     process.exit(1);
   }
 })();
