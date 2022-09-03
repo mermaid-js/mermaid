@@ -10,8 +10,8 @@ This would be to define a jison grammar for the new diagram type. That should st
 
 For instance:
 
--   the flowchart starts with the keyword graph.
--   the sequence diagram starts with the keyword sequenceDiagram
+- the flowchart starts with the keyword graph.
+- the sequence diagram starts with the keyword sequenceDiagram
 
 #### Store data found during parsing
 
@@ -38,7 +38,7 @@ The `yy` object has the following function:
 
 ```javascript
 exports.parseError = function (err, hash) {
-    mermaid.parseError(err, hash);
+  mermaid.parseError(err, hash);
 };
 ```
 
@@ -110,10 +110,10 @@ If you are using a dagre based layout, please use flowchart-v2 as a template and
 
 There are a few features that are common between the different types of diagrams. We try to standardize the diagrams that work as similar as possible for the end user. The commonalities are:
 
--   Directives, a way of modifying the diagram configuration from within the diagram code.
--   Accessibility, a way for an author to provide additional information like titles and descriptions to people accessing a text with diagrams using a screen reader.
--   Themes, there is a common way to modify the styling of diagrams in Mermaid.
--   Comments should follow mermaid standards
+- Directives, a way of modifying the diagram configuration from within the diagram code.
+- Accessibility, a way for an author to provide additional information like titles and descriptions to people accessing a text with diagrams using a screen reader.
+- Themes, there is a common way to modify the styling of diagrams in Mermaid.
+- Comments should follow mermaid standards
 
 Here some pointers on how to handle these different areas.
 
@@ -236,7 +236,7 @@ This function will in turn call a function _your diagram should provide_ returni
 
 ```js
 const getStyles = (options) =>
-    `
+  `
     .line {
       stroke-width: 1;
       stroke: ${options.lineColor};
@@ -250,11 +250,11 @@ Note that you need to provide your function to the main getStyles by adding it i
 
 ```js
 const themes = {
-    flowchart,
-    'flowchart-v2': flowchart,
-    sequence,
-    xyzDiagram,
-    //...
+  flowchart,
+  'flowchart-v2': flowchart,
+  sequence,
+  xyzDiagram,
+  //...
 };
 ```
 

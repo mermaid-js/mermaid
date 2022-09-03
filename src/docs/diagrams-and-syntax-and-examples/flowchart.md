@@ -25,20 +25,19 @@ graph LR
 
 Possible FlowChart orientations are:
 
-* TB - top to bottom
-* TD - top-down (same as top to bottom)
-* BT - bottom to top
-* RL - right to left
-* LR - left to right
-
+- TB - top to bottom
+- TD - top-down (same as top to bottom)
+- BT - bottom to top
+- RL - right to left
+- LR - left to right
 
 ## Flowcharts
 
 This renders a flowchart that allows for features such as: more arrow types, multi directional arrows, and linking to and from subgraphs.
 
-Apart from the graph type, the syntax is the same. This is currently experimental.  When the beta period is over, both the graph and flowchart keywords will render in this new way. At this point it is OK to start beta testing flowcharts.
+Apart from the graph type, the syntax is the same. This is currently experimental. When the beta period is over, both the graph and flowchart keywords will render in this new way. At this point it is OK to start beta testing flowcharts.
 
-> **Important note** Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).**
+> **Important note** Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).\*\*
 
 ## Nodes and shapes
 
@@ -105,7 +104,8 @@ graph LR
 graph LR
     id1>This is the text in the box]
 ```
-Currently it is only possible to render the shape above, and not its mirror. *This might change with future releases.*
+
+Currently it is only possible to render the shape above, and not its mirror. _This might change with future releases._
 
 ### A node (rhombus)
 
@@ -127,6 +127,7 @@ graph LR
 graph TD
     id1[/This is the text in the box/]
 ```
+
 ### Parallelogram alt
 
 ```mermaid-example
@@ -140,6 +141,7 @@ graph TD
 graph TD
     A[/Christmas\]
 ```
+
 ### Trapezoid alt
 
 ```mermaid-example
@@ -224,23 +226,28 @@ graph LR
 ### Chaining of links
 
 It is possible to declare many links on the same line as per below:
+
 ```mermaid-example
 graph LR
    A -- text --> B -- text2 --> C
 ```
 
 It is also possible to declare multiple nodes links in the same line as per below:
+
 ```mermaid-example
 graph LR
    a --> b & c--> d
 ```
 
 You can then describe dependencies in a very expressive way. Like the one-liner below:
+
 ```mermaid-example
 graph TB
     A & B--> C & D
 ```
+
 If you describe the same diagram using the the basic syntax, it will take four lines:
+
 ```mmd
 graph TB
     A --> C
@@ -248,6 +255,7 @@ graph TB
     B --> C
     B --> D
 ```
+
 A word of warning, one could go overboard with this, making the graph harder to read in
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
@@ -312,12 +320,12 @@ graph TD
 For dotted or thick links, the characters to add are equals signs or dots,
 as summed up in the following table:
 
-| Length            |    1   |    2    |     3    |
-|-------------------|:------:|:-------:|:--------:|
-| Normal            |  `---` |  `----` |  `-----` |
-| Normal with arrow |  `-->` |  `--->` |  `---->` |
-| Thick             |  `===` |  `====` |  `=====` |
-| Thick with arrow  |  `==>` |  `===>` |  `====>` |
+| Length            |   1    |    2    |    3     |
+| ----------------- | :----: | :-----: | :------: |
+| Normal            | `---`  | `----`  | `-----`  |
+| Normal with arrow | `-->`  | `--->`  | `---->`  |
+| Thick             | `===`  | `====`  | `=====`  |
+| Thick with arrow  | `==>`  | `===>`  | `====>`  |
 | Dotted            | `-.-`  | `-..-`  | `-...-`  |
 | Dotted with arrow | `-.->` | `-..->` | `-...->` |
 
@@ -361,7 +369,7 @@ graph TB
     subgraph three
     c1-->c2
     end
- ```
+```
 
 You can also set an explicit id for the subgraph:
 
@@ -371,7 +379,7 @@ graph TB
     subgraph ide1 [one]
     a1-->a2
     end
- ```
+```
 
 ## Flowcharts
 
@@ -392,7 +400,7 @@ flowchart TB
     one --> two
     three --> two
     two --> c2
- ```
+```
 
 ## Interaction
 
@@ -403,8 +411,8 @@ click nodeId callback
 click nodeId call callback()
 ```
 
-* nodeId is the id of the node
-* `callback` is the name of a JavaScript function defined on the page displaying the graph. The function will be called with the nodeId as an incoming parameter.
+- nodeId is the id of the node
+- `callback` is the name of a JavaScript function defined on the page displaying the graph. The function will be called with the nodeId as an incoming parameter.
 
 ```html
 <script>
@@ -428,11 +436,13 @@ graph LR;
     click A call callback() "Tooltip for a callback"
     click B href "https://www.github.com" "This is a tooltip for a link"
 ```
+
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
 ?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/s37cjoau/3/).
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
+
 ```mermaid-example
 graph LR;
     A-->B;
@@ -450,28 +460,23 @@ Beginner's tip—here's a full example of using interactive links in HTML:
 ```html
 <body>
   <div class="mermaid">
-    graph LR;
-        A-->B;
-        B-->C;
-        C-->D;
-        click A callback "Tooltip"
-        click B "https://www.github.com" "This is a link"
-        click C call callback() "Tooltip"
-        click D href "https://www.github.com" "This is a link"
+    graph LR; A-->B; B-->C; C-->D; click A callback "Tooltip" click B "https://www.github.com" "This
+    is a link" click C call callback() "Tooltip" click D href "https://www.github.com" "This is a
+    link"
   </div>
 
   <script>
     var callback = function () {
-        alert('A callback was triggered');
+      alert('A callback was triggered');
     };
     var config = {
-        startOnLoad: true,
-        flowchart: {
-            useMaxWidth: true,
-            htmlLabels: true,
-            curve: 'cardinal'
-        },
-        securityLevel: 'loose'
+      startOnLoad: true,
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'cardinal',
+      },
+      securityLevel: 'loose',
     };
     mermaid.initialize(config);
   </script>
@@ -480,7 +485,7 @@ Beginner's tip—here's a full example of using interactive links in HTML:
 
 ### Comments
 
-Comments can be entered within a flow diagram, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including all punctuation and any flow syntax.
+Comments can be entered within a flow diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including all punctuation and any flow syntax.
 
 ```mmd
 graph LR
@@ -532,7 +537,6 @@ graph LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-
 #### Classes
 
 More convenient than defining the style every time is to define a class of styles and attach this class reference to multiple nodes.
@@ -563,7 +567,6 @@ graph LR
     classDef someclass fill:#f96;
 ```
 
-
 ### Css classes
 
 It is also possible to predefine classes in css styles that can be applied from the graph definition:
@@ -572,9 +575,9 @@ It is also possible to predefine classes in css styles that can be applied from 
 
 ```css
 .cssClass > rect {
-    fill: #FF0000;
-    stroke: #FFFF00;
-    stroke-width: 4px;
+  fill: #ff0000;
+  stroke: #ffff00;
+  stroke-width: 4px;
 }
 ```
 
@@ -587,7 +590,6 @@ graph LR;
     class A cssClass;
 ```
 
-
 ### Default class
 
 If a class is named `default` it will be assigned to all nodes that do not have a specific class definition.
@@ -596,10 +598,9 @@ If a class is named `default` it will be assigned to all nodes that do not have 
     classDef default fill:#f9f,stroke:#333,stroke-width:4px;
 ```
 
-
 ## Basic support for fontawesome
 
-It is possible to add icons from fontawesome.  These are accessed via the syntax fa:#icon-class-name#.
+It is possible to add icons from fontawesome. These are accessed via the syntax fa:#icon-class-name#.
 
 ```mermaid-example
 graph TD
@@ -609,12 +610,11 @@ graph TD
     B-->E(A fa:fa-camera-retro perhaps?);
 ```
 
-
 ## Graph declarations with spaces between vertices and link and without semicolon
 
-* After release 0.2.16, graph declaration statements do not need to end with a semicolon. (And they can continue to have the ending semicolon—it has now just become optional.) So the below graph declaration is valid along with the old declarations.
+- After release 0.2.16, graph declaration statements do not need to end with a semicolon. (And they can continue to have the ending semicolon—it has now just become optional.) So the below graph declaration is valid along with the old declarations.
 
-* A single space is allowed between vertices and the link, however there should not be any space between a vertex and its text, or a link and its text. The old syntax of graph declarations will also work, so this new feature is optional and is introduced to improve readability.
+- A single space is allowed between vertices and the link, however there should not be any space between a vertex and its text, or a link and its text. The old syntax of graph declarations will also work, so this new feature is optional and is introduced to improve readability.
 
 Below is an example of the new way to declare graph edges. This is valid alongside any old-style declarations of graph edges.
 
@@ -626,7 +626,6 @@ graph LR
     C -->|Two| E[Result two]
 ```
 
-
 ## Configuration...
 
 Is it possible to adjust the width of the rendered flowchart.
@@ -636,6 +635,6 @@ In Javascript config parameters can be set by using `mermaid.flowchartConfig`:
 
 ```javascript
 mermaid.flowchartConfig = {
-    width: '100%'
-}
+  width: '100%',
+};
 ```

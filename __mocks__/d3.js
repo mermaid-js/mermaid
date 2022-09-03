@@ -1,4 +1,7 @@
 let NewD3 = function () {
+  /**
+   *
+   */
   function returnThis() {
     return this;
   }

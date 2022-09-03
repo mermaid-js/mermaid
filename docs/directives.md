@@ -16,12 +16,12 @@ Mermaid basically supports two types of configuration options to be overridden b
 
 1.  _General/Top Level configurations_ : These are the configurations that are available and applied to all the diagram. **Some of the most important top-level** configurations are:
 
--   theme
--   fontFamily
--   logLevel
--   securityLevel
--   startOnLoad
--   secure
+- theme
+- fontFamily
+- logLevel
+- securityLevel
+- startOnLoad
+- secure
 
 2.  _Diagram specific configurations_ : These are the configurations that are available and applied to a specific diagram. For each diagram there are specific configuration that will alter how that particular diagram looks and behaves.
     For example, `mirrorActors` is a configuration that is specific to the `SequenceDiagram` and alter whether the actors are mirrored or not. So this config is available only for the `SequenceDiagram` type.
@@ -95,9 +95,9 @@ parsing the above generates a single `%%init%%` JSON object below, combining the
 
 ```json5
 {
-    logLevel: 'fatal',
-    theme: 'dark',
-    startOnLoad: true,
+  logLevel: 'fatal',
+  theme: 'dark',
+  startOnLoad: true,
 }
 ```
 
@@ -183,11 +183,11 @@ The following code snippet changes theme to forest:
 
 Possible logLevel values are:
 
--   `1` for _debug_,
--   `2` for _info_
--   `3` for _warn_
--   `4` for _error_
--   `5` for _only fatal errors_
+- `1` for _debug_,
+- `2` for _info_
+- `3` for _warn_
+- `4` for _error_
+- `5` for _only fatal errors_
 
 Default Value is `5`.
 
@@ -219,10 +219,10 @@ A --> C[End]
 
 Some common flowchart configurations are:
 
--   _htmlLabels_: true/false
--   _curve_: linear/curve
--   _diagramPadding_: number
--   _useMaxWidth_: number
+- _htmlLabels_: true/false
+- _curve_: linear/curve
+- _diagramPadding_: number
+- _useMaxWidth_: number
 
 For complete list of flowchart configurations, see [defaultConfig.js](https://github.com/mermaid-js/mermaid/blob/develop/src/defaultConfig.js) in the source code.
 _Soon we plan to publish a complete list all diagram specific configurations updated in the docs_
@@ -259,14 +259,14 @@ A --> C[End]
 
 Some common sequence configurations are:
 
--   _width_: number
--   _height_: number
--   _messageAlign_: left, center, right
--   _mirrorActors_: boolean
--   _useMaxWidth_: boolean
--   _rightAngles_: boolean
--   _showSequenceNumbers_: boolean
--   _wrap_: boolean
+- _width_: number
+- _height_: number
+- _messageAlign_: left, center, right
+- _mirrorActors_: boolean
+- _useMaxWidth_: boolean
+- _rightAngles_: boolean
+- _showSequenceNumbers_: boolean
+- _wrap_: boolean
 
 For complete list of sequence diagram configurations, see _defaultConfig.js_ in the source code.
 _Soon we plan to publish a complete list all diagram specific configurations updated in the docs_

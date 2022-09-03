@@ -64,9 +64,9 @@ classDiagram
 UML provides mechanisms to represent class members, such as attributes and methods, and additional information about them.
 A single instance of a class in the diagram contains three compartments:
 
--   The top compartment contains the name of the class. It is printed in bold and centered, and the first letter is capitalized. It may also contain optional annotation text describing the nature of the class.
--   The middle compartment contains the attributes of the class. They are left-aligned and the first letter is lowercase.
--   The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
+- The top compartment contains the name of the class. It is printed in bold and centered, and the first letter is capitalized. It may also contain optional annotation text describing the nature of the class.
+- The middle compartment contains the attributes of the class. They are left-aligned and the first letter is lowercase.
+- The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
 ```mermaid-example
 classDiagram
@@ -92,8 +92,8 @@ classDiagram
 
 There are two ways to define a class:
 
--   Explicitly using keyword **class** like `class Animal` which would define the Animal class.
--   Via a **relationship** which defines two classes at a time along with their relationship. For instance, `Vehicle <|-- Car`.
+- Explicitly using keyword **class** like `class Animal` which would define the Animal class.
+- Via a **relationship** which defines two classes at a time along with their relationship. For instance, `Vehicle <|-- Car`.
 
 ```mermaid-example
 classDiagram
@@ -117,7 +117,7 @@ Mermaid distinguishes between attributes and functions/methods based on if the *
 
 There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
 
--   Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
+- Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
 
 ```mermaid-example
 classDiagram
@@ -137,7 +137,7 @@ BankAccount : +deposit(amount)
 BankAccount : +withdrawal(amount)
 ```
 
--   Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
+- Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
 
 ```mermaid-example
 classDiagram
@@ -225,19 +225,19 @@ Optionally you can end the method/function definition with the data type that wi
 
 To describe the visibility (or encapsulation) of an attribute or method/function that is a part of a class (i.e. a class member), optional notation may be placed before that members' name:
 
--   `+` Public
--   `-` Private
--   `#` Protected
--   `~` Package/Internal
+- `+` Public
+- `-` Private
+- `#` Protected
+- `~` Package/Internal
 
 > _note_ you can also include additional _classifiers_ to a method definition by adding the following notation to the _end_ of the method, i.e.: after the `()`:
 >
-> -   `*` Abstract e.g.: `someAbstractMethod()*`
-> -   `$` Static e.g.: `someStaticMethod()$`
+> - `*` Abstract e.g.: `someAbstractMethod()*`
+> - `$` Static e.g.: `someStaticMethod()$`
 
 > _note_ you can also include additional _classifiers_ to a field definition by adding the following notation to the end of its name:
 >
-> -   `$` Static e.g.: `String someField$`
+> - `$` Static e.g.: `String someField$`
 
 ## Defining Relationship
 
@@ -371,13 +371,13 @@ Multiplicity notations are placed near the end of an association.
 
 The different cardinality options are :
 
--   `1` Only 1
--   `0..1` Zero or One
--   `1..*` One or more
--   `*` Many
--   `n` n {where n>1}
--   `0..n` zero to n {where n>1}
--   `1..n` one to n {where n>1}
+- `1` Only 1
+- `0..1` Zero or One
+- `1..*` One or more
+- `*` Many
+- `n` n {where n>1}
+- `0..n` zero to n {where n>1}
+- `1..n` one to n {where n>1}
 
 Cardinality can be easily defined by placing the text option within quotes `"` before or after a given arrow. For example:
 
@@ -401,14 +401,14 @@ classDiagram
 
 It is possible to annotate classes with markers to provide additional metadata about the class. This can give a clearer indication about its nature. Some common annotations include:
 
--   `<<Interface>>` To represent an Interface class
--   `<<Abstract>>` To represent an abstract class
--   `<<Service>>` To represent a service class
--   `<<Enumeration>>` To represent an enum
+- `<<Interface>>` To represent an Interface class
+- `<<Abstract>>` To represent an abstract class
+- `<<Service>>` To represent a service class
+- `<<Enumeration>>` To represent an enum
 
 Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class, and either way the output will be same:
 
--   In a **_separate line_** after a class is defined:
+- In a **_separate line_** after a class is defined:
 
 ```mermaid-example
 classDiagram
@@ -426,7 +426,7 @@ Shape : noOfVertices
 Shape : draw()
 ```
 
--   In a **_nested structure_** along with the class definition:
+- In a **_nested structure_** along with the class definition:
 
 ```mermaid-example
 classDiagram
@@ -528,11 +528,11 @@ You would define these actions on a separate line after all classes have been de
     click className call callback() "tooltip"
     click className href "url" "tooltip"
 
--   _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
--   _className_ is the id of the node that the action will be associated with
--   _reference_ is either the url link, or the function name for callback.
--   (_optional_) tooltip is a string to be displayed when hovering over element (note: The styles of the tooltip are set by the class .mermaidTooltip.)
--   note: callback function will be called with the nodeId as parameter.
+- _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
+- _className_ is the id of the node that the action will be associated with
+- _reference_ is either the url link, or the function name for callback.
+- (_optional_) tooltip is a string to be displayed when hovering over element (note: The styles of the tooltip are set by the class .mermaidTooltip.)
+- note: callback function will be called with the nodeId as parameter.
 
 ### Examples
 
@@ -558,9 +558,9 @@ click Shape2 call callbackFunction() "This is a tooltip for a callback"
 
 ```html
 <script>
-    var callbackFunction = function () {
-        alert('A callback was triggered');
-    };
+  var callbackFunction = function () {
+    alert('A callback was triggered');
+  };
 </script>
 ```
 
@@ -594,23 +594,23 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
 ```html
 <body>
-    <div class="mermaid">
-        classDiagram Animal <|-- Duck Animal <|-- Fish Animal <|-- Zebra Animal : +int age Animal :
-        +String gender Animal: +isMammal() Animal: +mate() class Duck{ +String beakColor +swim()
-        +quack() } class Fish{ -int sizeInFeet -canEat() } class Zebra{ +bool is_wild +run() }
-        callback Duck callback "Tooltip" link Zebra "https://www.github.com" "This is a link"
-    </div>
+  <div class="mermaid">
+    classDiagram Animal <|-- Duck Animal <|-- Fish Animal <|-- Zebra Animal : +int age Animal :
+    +String gender Animal: +isMammal() Animal: +mate() class Duck{ +String beakColor +swim()
+    +quack() } class Fish{ -int sizeInFeet -canEat() } class Zebra{ +bool is_wild +run() } callback
+    Duck callback "Tooltip" link Zebra "https://www.github.com" "This is a link"
+  </div>
 
-    <script>
-        var callback = function () {
-            alert('A callback was triggered');
-        };
-        var config = {
-            startOnLoad: true,
-            securityLevel: 'loose',
-        };
-        mermaid.initialize(config);
-    </script>
+  <script>
+    var callback = function () {
+      alert('A callback was triggered');
+    };
+    var config = {
+      startOnLoad: true,
+      securityLevel: 'loose',
+    };
+    mermaid.initialize(config);
+  </script>
 </body>
 ```
 
@@ -622,11 +622,11 @@ It is possible to apply specific styles such as a thicker border or a different 
 
 ```html
 <style>
-    .cssClass > rect {
-        fill: #ff0000;
-        stroke: #ffff00;
-        stroke-width: 4px;
-    }
+  .cssClass > rect {
+    fill: #ff0000;
+    stroke: #ffff00;
+    stroke-width: 4px;
+  }
 </style>
 ```
 
@@ -679,91 +679,91 @@ The main styling of the class diagram is done with a preset number of css classe
 
 ```scss
 body {
-    background: white;
+  background: white;
 }
 
 g.classGroup text {
-    fill: $nodeBorder;
-    stroke: none;
-    font-family: 'trebuchet ms', verdana, arial;
-    font-family: var(--mermaid-font-family);
-    font-size: 10px;
+  fill: $nodeBorder;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+  font-size: 10px;
 
-    .title {
-        font-weight: bolder;
-    }
+  .title {
+    font-weight: bolder;
+  }
 }
 
 g.classGroup rect {
-    fill: $nodeBkg;
-    stroke: $nodeBorder;
+  fill: $nodeBkg;
+  stroke: $nodeBorder;
 }
 
 g.classGroup line {
-    stroke: $nodeBorder;
-    stroke-width: 1;
+  stroke: $nodeBorder;
+  stroke-width: 1;
 }
 
 .classLabel .box {
-    stroke: none;
-    stroke-width: 0;
-    fill: $nodeBkg;
-    opacity: 0.5;
+  stroke: none;
+  stroke-width: 0;
+  fill: $nodeBkg;
+  opacity: 0.5;
 }
 
 .classLabel .label {
-    fill: $nodeBorder;
-    font-size: 10px;
+  fill: $nodeBorder;
+  font-size: 10px;
 }
 
 .relation {
-    stroke: $nodeBorder;
-    stroke-width: 1;
-    fill: none;
+  stroke: $nodeBorder;
+  stroke-width: 1;
+  fill: none;
 }
 
 @mixin composition {
-    fill: $nodeBorder;
-    stroke: $nodeBorder;
-    stroke-width: 1;
+  fill: $nodeBorder;
+  stroke: $nodeBorder;
+  stroke-width: 1;
 }
 
 #compositionStart {
-    @include composition;
+  @include composition;
 }
 
 #compositionEnd {
-    @include composition;
+  @include composition;
 }
 
 @mixin aggregation {
-    fill: $nodeBkg;
-    stroke: $nodeBorder;
-    stroke-width: 1;
+  fill: $nodeBkg;
+  stroke: $nodeBorder;
+  stroke-width: 1;
 }
 
 #aggregationStart {
-    @include aggregation;
+  @include aggregation;
 }
 
 #aggregationEnd {
-    @include aggregation;
+  @include aggregation;
 }
 
 #dependencyStart {
-    @include composition;
+  @include composition;
 }
 
 #dependencyEnd {
-    @include composition;
+  @include composition;
 }
 
 #extensionStart {
-    @include composition;
+  @include composition;
 }
 
 #extensionEnd {
-    @include composition;
+  @include composition;
 }
 ```
 

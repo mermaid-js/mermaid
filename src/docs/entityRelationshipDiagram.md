@@ -53,10 +53,10 @@ Mermaid syntax for ER diagrams is compatible with PlantUML, with an extension to
 
 Where:
 
--   `first-entity` is the name of an entity. Names must begin with an alphabetic character and may also contain digits, hyphens, and underscores.
--   `relationship` describes the way that both entities inter-relate. See below.
--   `second-entity` is the name of the other entity.
--   `relationship-label` describes the relationship from the perspective of the first entity.
+- `first-entity` is the name of an entity. Names must begin with an alphabetic character and may also contain digits, hyphens, and underscores.
+- `relationship` describes the way that both entities inter-relate. See below.
+- `second-entity` is the name of the other entity.
+- `relationship-label` describes the relationship from the perspective of the first entity.
 
 For example:
 
@@ -72,9 +72,9 @@ Only the `first-entity` part of a statement is mandatory. This makes it possible
 
 The `relationship` part of each statement can be broken down into three sub-components:
 
--   the cardinality of the first entity with respect to the second,
--   whether the relationship confers identity on a 'child' entity
--   the cardinality of the second entity with respect to the first
+- the cardinality of the first entity with respect to the second,
+- whether the relationship confers identity on a 'child' entity
+- the cardinality of the second entity with respect to the first
 
 Cardinality is a property that describes how many elements of another entity can be related to the entity in question. In the above example a `PROPERTY` can have one or more `ROOM` instances associated to it, whereas a `ROOM` can only be associated with one `PROPERTY`. In each cardinality marker there are two characters. The outermost character represents a maximum value, and the innermost character represents a minimum value. The table below summarises possible cardinalities.
 
@@ -159,8 +159,8 @@ erDiagram
 
 ### Other Things
 
--   If you want the relationship label to be more than one word, you must use double quotes around the phrase
--   If you don't want a label at all on a relationship, you must use an empty double-quoted string
+- If you want the relationship label to be more than one word, you must use double quotes around the phrase
+- If you don't want a label at all on a relationship, you must use an empty double-quoted string
 
 ## Styling
 

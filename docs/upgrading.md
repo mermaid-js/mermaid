@@ -14,7 +14,7 @@ Some of the interfaces has been upgraded.
 
 ```javascript
 mermaid_config = {
-    startOnLoad: true,
+  startOnLoad: true,
 };
 ```
 
@@ -22,6 +22,6 @@ mermaid_config = {
 
 ```javascript
 mermaid.initialize({
-    startOnLoad: true,
+  startOnLoad: true,
 });
 ```

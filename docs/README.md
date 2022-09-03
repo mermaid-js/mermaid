@@ -204,7 +204,7 @@ To Deploy Mermaid:
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>
-    mermaid.initialize({ startOnLoad: true });
+  mermaid.initialize({ startOnLoad: true });
 </script>
 ```
 
@@ -214,10 +214,10 @@ To Deploy Mermaid:
 
 ## Sibling projects
 
--   [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
--   [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
--   [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
--   [Mermaid Parcel Demo](https://github.com/mermaidjs/mermaid-parcel-demo)
+- [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
+- [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
+- [Mermaid Webpack Demo](https://github.com/mermaidjs/mermaid-webpack-demo)
+- [Mermaid Parcel Demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 
 ## Request for Assistance
 
@@ -229,8 +229,8 @@ represent the project when answering questions and issues.
 
 Together we could continue the work with things like:
 
--   Adding more types of diagrams like mindmaps, ert diagrams, etc.
--   Improving existing diagrams
+- Adding more types of diagrams like mindmaps, ert diagrams, etc.
+- Improving existing diagrams
 
 Don't hesitate to contact me if you want to get involved!
 
@@ -279,9 +279,9 @@ The above command generates files into the `dist` folder and publishes them to n
 
 ## Related projects
 
--   [Command Line Interface](https://github.com/mermaid-js/mermaid-cli)
--   [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
--   [HTTP Server](https://github.com/TomWright/mermaid-server)
+- [Command Line Interface](https://github.com/mermaid-js/mermaid-cli)
+- [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
+- [HTTP Server](https://github.com/TomWright/mermaid-server)
 
 ## Contributors [![Good first issue](https://img.shields.io/github/labels/mermaid-js/mermaid/Good%20first%20issue%21)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Good+first+issue%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
 

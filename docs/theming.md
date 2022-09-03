@@ -30,8 +30,8 @@ Example of `Initialize` call setting `theme` to `base`:
 
 ```javascript
 mermaidAPI.initialize({
-    securityLevel: 'loose',
-    theme: 'base',
+  securityLevel: 'loose',
+  theme: 'base',
 });
 ```
 
@@ -276,9 +276,9 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 
 \*\*This got a bit too dark and bit too colorful. With some easy steps this can be fixed:
 
--   Make the primary color a little lighter
--   set the tertiary color to a reddish shade as well
--   make the edge label background differ from the subgraph by setting the edgeLabelBackground
+- Make the primary color a little lighter
+- set the tertiary color to a reddish shade as well
+- make the edge label background differ from the subgraph by setting the edgeLabelBackground
 
 ```mermaid-example
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffcccc', 'edgeLabelBackground':'#ffffee', 'tertiaryColor': '#fff0f0'}}}%%

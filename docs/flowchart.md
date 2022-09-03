@@ -70,11 +70,11 @@ flowchart LR
 
 Possible FlowChart orientations are:
 
--   TB - top to bottom
--   TD - top-down/ same as top to bottom
--   BT - bottom to top
--   RL - right to left
--   LR - left to right
+- TB - top to bottom
+- TD - top-down/ same as top to bottom
+- BT - bottom to top
+- RL - right to left
+- LR - left to right
 
 ## Node shapes
 
@@ -678,16 +678,16 @@ It is possible to bind a click event to a node, the click can lead to either a j
     click nodeId callback
     click nodeId call callback()
 
--   nodeId is the id of the node
--   callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
+- nodeId is the id of the node
+- callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
 
 Examples of tooltip usage below:
 
 ```html
 <script>
-    var callback = function () {
-        alert('A callback was triggered');
-    };
+  var callback = function () {
+    alert('A callback was triggered');
+  };
 </script>
 ```
 
@@ -749,23 +749,23 @@ Beginner's tip—a full example using interactive links in a html context:
 
 ```html
 <body>
-    <div class="mermaid">
-        flowchart LR A-->B B-->C C-->D click A callback "Tooltip" click B "https://www.github.com"
-        "This is a link" click C call callback() "Tooltip" click D href "https://www.github.com"
-        "This is a link"
-    </div>
+  <div class="mermaid">
+    flowchart LR A-->B B-->C C-->D click A callback "Tooltip" click B "https://www.github.com" "This
+    is a link" click C call callback() "Tooltip" click D href "https://www.github.com" "This is a
+    link"
+  </div>
 
-    <script>
-        var callback = function () {
-            alert('A callback was triggered');
-        };
-        var config = {
-            startOnLoad: true,
-            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
-            securityLevel: 'loose',
-        };
-        mermaid.initialize(config);
-    </script>
+  <script>
+    var callback = function () {
+      alert('A callback was triggered');
+    };
+    var config = {
+      startOnLoad: true,
+      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
+      securityLevel: 'loose',
+    };
+    mermaid.initialize(config);
+  </script>
 </body>
 ```
 
@@ -863,11 +863,11 @@ below:
 
 ```html
 <style>
-    .cssClass > rect {
-        fill: #ff0000;
-        stroke: #ffff00;
-        stroke-width: 4px;
-    }
+  .cssClass > rect {
+    fill: #ff0000;
+    stroke: #ffff00;
+    stroke-width: 4px;
+  }
 </style>
 ```
 
@@ -919,9 +919,9 @@ flowchart TD
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
--   In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
+- In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
 
--   A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduced to improve readability.
+- A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduced to improve readability.
 
 Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
 

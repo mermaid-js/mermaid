@@ -14,8 +14,8 @@ This support for accessibility options is available for all the diagrams/chart t
 
 The diagram authors can now add the accessibility options in the diagram definition, using the `accTitle` and `accDescr` keywords, where each keyword is followed by `:` and the string value for title and description like:
 
--   `accTitle: "Your Accessibility Title"` or
--   `accDescr: "Your Accessibility Description"`
+- `accTitle: "Your Accessibility Title"` or
+- `accDescr: "Your Accessibility Description"`
 
 **When these two options are defined, they will add a coressponding `<title>` and `<desc>` tag in the SVG.**
 

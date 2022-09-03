@@ -38,10 +38,10 @@ Mermaid can render Git diagrams
 
 In Mermaid, we support the basic git operations like:
 
--   _commit_ : Representing a new commit on the current branch.
--   _branch_ : To create & switch to a new branch, setting it as the current branch.
--   _checkout_ : To checking out an existing branch and setting it as the current branch.
--   _merge_ : To merge an existing branch onto the current branch.
+- _commit_ : Representing a new commit on the current branch.
+- _branch_ : To create & switch to a new branch, setting it as the current branch.
+- _checkout_ : To checking out an existing branch and setting it as the current branch.
+- _merge_ : To merge an existing branch onto the current branch.
 
 With the help of these key git commands, you will be able to draw a gitgraph in Mermaid very easily and quickly.
 Entity names are often capitalized, although there is no accepted standard on this, and it is not required in Mermaid.
@@ -100,9 +100,9 @@ In this example, we have given our custom IDs to the commits.
 
 In Mermaid, a commit can be of three type, which render a bit different in the diagram. These types are:
 
--   `NORMAL` : Default commit type. Represented by a solid circle in the diagram
--   `REVERSE` : To emphasize a commit as a reverse commit. Represented by a crossed solid circle in the diagram.
--   `HIGHLIGHT` : To highlight a particular commit in the diagram. Represented by a filled rectangle in the diagram.
+- `NORMAL` : Default commit type. Represented by a solid circle in the diagram
+- `REVERSE` : To emphasize a commit as a reverse commit. Represented by a crossed solid circle in the diagram.
+- `HIGHLIGHT` : To highlight a particular commit in the diagram. Represented by a filled rectangle in the diagram.
 
 For a given commit you may specify its type at the time of declaring it using the `type` attribute, followed by `:` and the required type option discussed above. For example: `commit type: HIGHLIGHT`
 
@@ -282,9 +282,9 @@ Since the current branch at this point is still `main`, the last two commits are
 
 You can also decorate your merge with similar attributes as you did for the commit using:
 
--   `id`--> To override the default ID with custom ID
--   `tag`--> To add a custom tag to your merge commit
--   `type`--> To override the default shape of merge commit. Here you can use other commit type mentioned earlier.
+- `id`--> To override the default ID with custom ID
+- `tag`--> To add a custom tag to your merge commit
+- `type`--> To override the default shape of merge commit. Here you can use other commit type mentioned earlier.
 
 And you can choose to use none, some or all of these attributes together.
 For example: `merge develop id: "my_custom_id" tag: "my_custom_tag" type: REVERSE`
@@ -397,10 +397,10 @@ Let see an example:
 
 In Mermaid, you have the option to configure the gitgraph diagram. You can configure the following options:
 
--   `showBranches` : Boolean, default is `true`. If set to `false`, the branches are not shown in the diagram.
--   `showCommitLabel` : Boolean, default is `true`. If set to `false`, the commit labels are not shown in the diagram.
--   `mainBranchName` : String, default is `main`. The name of the default/root branch.
--   `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meaning, by default `main` branch is the first in the order.
+- `showBranches` : Boolean, default is `true`. If set to `false`, the branches are not shown in the diagram.
+- `showCommitLabel` : Boolean, default is `true`. If set to `false`, the commit labels are not shown in the diagram.
+- `mainBranchName` : String, default is `main`. The name of the default/root branch.
+- `mainBranchOrder` : Position of the main branch in the list of branches. default is `0`, meaning, by default `main` branch is the first in the order.
 
 Let's look at them one by one.
 
@@ -752,9 +752,9 @@ Sometimes you may want to customize the order of the branches. You can do this b
 
 Mermaid follows the given precedence order of the `order` keyword.
 
--   Main branch is always shown first as it has default order value of `0`. (unless its order is modified and changed from `0` using the `mainBranchOrder` keyword in the config)
--   Next, All branches without an `order` are shown in the order of their appearance in the diagram code.
--   Next, All branches with an `order` are shown in the order of their `order` value.
+- Main branch is always shown first as it has default order value of `0`. (unless its order is modified and changed from `0` using the `mainBranchOrder` keyword in the config)
+- Next, All branches without an `order` are shown in the order of their appearance in the diagram code.
+- Next, All branches with an `order` are shown in the order of their `order` value.
 
 To fully control the order of all the branches, you must define `order` for all the branches.
 
@@ -821,11 +821,11 @@ Mermaid supports a bunch of pre-defined themes which you can use to find the rig
 
 The following are the different pre-defined theme options:
 
--   `base`
--   `forest`
--   `dark`
--   `default`
--   `neutral`
+- `base`
+- `forest`
+- `dark`
+- `default`
+- `neutral`
 
 **NOTE**: To change theme you can either use the `initialize` call or _directives_. Learn more about [directives](./directives.md)
 Let's put them to use, and see how our sample diagram looks in different themes:

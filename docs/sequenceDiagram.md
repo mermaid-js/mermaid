@@ -514,7 +514,7 @@ It is possible to get a sequence number attached to each arrow in a sequence dia
 
 ```html
 <script>
-    mermaid.initialize({ sequence: { showSequenceNumbers: true } });
+  mermaid.initialize({ sequence: { showSequenceNumbers: true } });
 </script>
 ```
 
@@ -624,81 +624,81 @@ Styling of a sequence diagram is done by defining a number of css classes. Durin
 
 ```css
 body {
-    background: white;
+  background: white;
 }
 
 .actor {
-    stroke: #ccccff;
-    fill: #ececff;
+  stroke: #ccccff;
+  fill: #ececff;
 }
 text.actor {
-    fill: black;
-    stroke: none;
-    font-family: Helvetica;
+  fill: black;
+  stroke: none;
+  font-family: Helvetica;
 }
 
 .actor-line {
-    stroke: grey;
+  stroke: grey;
 }
 
 .messageLine0 {
-    stroke-width: 1.5;
-    stroke-dasharray: '2 2';
-    marker-end: 'url(#arrowhead)';
-    stroke: black;
+  stroke-width: 1.5;
+  stroke-dasharray: '2 2';
+  marker-end: 'url(#arrowhead)';
+  stroke: black;
 }
 
 .messageLine1 {
-    stroke-width: 1.5;
-    stroke-dasharray: '2 2';
-    stroke: black;
+  stroke-width: 1.5;
+  stroke-dasharray: '2 2';
+  stroke: black;
 }
 
 #arrowhead {
-    fill: black;
+  fill: black;
 }
 
 .messageText {
-    fill: black;
-    stroke: none;
-    font-family: 'trebuchet ms', verdana, arial;
-    font-size: 14px;
+  fill: black;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 14px;
 }
 
 .labelBox {
-    stroke: #ccccff;
-    fill: #ececff;
+  stroke: #ccccff;
+  fill: #ececff;
 }
 
 .labelText {
-    fill: black;
-    stroke: none;
-    font-family: 'trebuchet ms', verdana, arial;
+  fill: black;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
 }
 
 .loopText {
-    fill: black;
-    stroke: none;
-    font-family: 'trebuchet ms', verdana, arial;
+  fill: black;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
 }
 
 .loopLine {
-    stroke-width: 2;
-    stroke-dasharray: '2 2';
-    marker-end: 'url(#arrowhead)';
-    stroke: #ccccff;
+  stroke-width: 2;
+  stroke-dasharray: '2 2';
+  marker-end: 'url(#arrowhead)';
+  stroke: #ccccff;
 }
 
 .note {
-    stroke: #decc93;
-    fill: #fff5ad;
+  stroke: #decc93;
+  fill: #fff5ad;
 }
 
 .noteText {
-    fill: black;
-    stroke: none;
-    font-family: 'trebuchet ms', verdana, arial;
-    font-size: 14px;
+  fill: black;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 14px;
 }
 ```
 
@@ -712,12 +712,12 @@ How to use the CLI is described in the [mermaidCLI](mermaidCLI) page.
 
 ```javascript
 mermaid.sequenceConfig = {
-    diagramMarginX: 50,
-    diagramMarginY: 10,
-    boxTextMargin: 5,
-    noteMargin: 10,
-    messageMargin: 35,
-    mirrorActors: true,
+  diagramMarginX: 50,
+  diagramMarginY: 10,
+  boxTextMargin: 5,
+  noteMargin: 10,
+  messageMargin: 35,
+  mirrorActors: true,
 };
 ```
 

@@ -240,7 +240,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
   // log.warn();
-  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) { // eslint-disable-line
+  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // Intersection is top or bottom of rect.
     // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;

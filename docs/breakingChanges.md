@@ -44,7 +44,7 @@ You just:
 
 ```javascript
 mermaid.initialize({
-    theme: 'forest',
+  theme: 'forest',
 });
 ```
 

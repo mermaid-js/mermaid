@@ -66,12 +66,12 @@ Theme , the CSS style sheet
 
 **Notes:**
 
--   Trace: 0
--   Debug: 1
--   Info: 2
--   Warn: 3
--   Error: 4
--   Fatal: 5 (default)
+- Trace: 0
+- Debug: 1
+- Info: 2
+- Warn: 3
+- Error: 4
+- Fatal: 5 (default)
 
 ## securityLevel
 
@@ -81,13 +81,13 @@ Theme , the CSS style sheet
 
 **Notes**:
 
--   **strict**: (**default**) tags in text are encoded, click functionality is disabled
--   **loose**: tags in text are allowed, click functionality is enabled
--   **antiscript**: html tags in text are allowed, (only script element is removed), click
-    functionality is enabled
--   **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
-    prevent any JavaScript from running in the context. This may hinder interactive functionality
-    of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
+- **strict**: (**default**) tags in text are encoded, click functionality is disabled
+- **loose**: tags in text are allowed, click functionality is enabled
+- **antiscript**: html tags in text are allowed, (only script element is removed), click
+  functionality is enabled
+- **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
+  prevent any JavaScript from running in the context. This may hinder interactive functionality
+  of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
 
 ## startOnLoad
 
@@ -1422,7 +1422,7 @@ function _Default value: At default, will mirror Global Config_
 
 ### Parameters
 
--   `conf` **MermaidConfig** The base currentConfig to use as siteConfig
+- `conf` **MermaidConfig** The base currentConfig to use as siteConfig
 
 Returns **[object][5]** The siteConfig
 
@@ -1452,7 +1452,7 @@ corresponding siteConfig value.
 
 ### Parameters
 
--   `conf` **any** The potential currentConfig
+- `conf` **any** The potential currentConfig
 
 Returns **any** The currentConfig merged with the sanitized conf
 
@@ -1462,25 +1462,25 @@ Function that renders an svg with a graph from a chart definition. Usage example
 
 ```javascript
 mermaidAPI.initialize({
-    startOnLoad: true,
+  startOnLoad: true,
 });
 $(function () {
-    const graphDefinition = 'graph TB\na-->b';
-    const cb = function (svgGraph) {
-        console.log(svgGraph);
-    };
-    mermaidAPI.render('id1', graphDefinition, cb);
+  const graphDefinition = 'graph TB\na-->b';
+  const cb = function (svgGraph) {
+    console.log(svgGraph);
+  };
+  mermaidAPI.render('id1', graphDefinition, cb);
 });
 ```
 
 ### Parameters
 
--   `id` **[string][6]** The id of the element to be rendered
--   `text` **[string][6]** The graph definition
--   `cb` **function (svgCode: [string][6], bindFunctions: function (element: [Element][7]): void): void**
--   `container` **[Element][7]** Selector to element in which a div with the graph temporarily will be
-    inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
-    element will be removed when rendering is completed.
+- `id` **[string][6]** The id of the element to be rendered
+- `text` **[string][6]** The graph definition
+- `cb` **function (svgCode: [string][6], bindFunctions: function (element: [Element][7]): void): void**
+- `container` **[Element][7]** Selector to element in which a div with the graph temporarily will be
+  inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
+  element will be removed when rendering is completed.
 
 Returns **void**
 
@@ -1509,7 +1509,7 @@ options in-place
 
 ### Parameters
 
--   `options` **any** The potential setConfig parameter
+- `options` **any** The potential setConfig parameter
 
 ## addDirective
 
@@ -1517,7 +1517,7 @@ Pushes in a directive to the configuration
 
 ### Parameters
 
--   `directive` **[object][5]** The directive to push in
+- `directive` **[object][5]** The directive to push in
 
 ## reset
 
@@ -1537,7 +1537,7 @@ Pushes in a directive to the configuration
 
 ### Parameters
 
--   `config` (optional, default `siteConfig`)
+- `config` (optional, default `siteConfig`)
 
 Returns **void**
 
@@ -1545,7 +1545,7 @@ Returns **void**
 
 ### Parameters
 
--   `options` **MermaidConfig**
+- `options` **MermaidConfig**
 
 ##
 
@@ -1553,61 +1553,61 @@ Returns **void**
 
 ```html
 <script>
-    var config = {
-        theme: 'default',
-        logLevel: 'fatal',
-        securityLevel: 'strict',
-        startOnLoad: true,
-        arrowMarkerAbsolute: false,
+  var config = {
+    theme: 'default',
+    logLevel: 'fatal',
+    securityLevel: 'strict',
+    startOnLoad: true,
+    arrowMarkerAbsolute: false,
 
-        er: {
-            diagramPadding: 20,
-            layoutDirection: 'TB',
-            minEntityWidth: 100,
-            minEntityHeight: 75,
-            entityPadding: 15,
-            stroke: 'gray',
-            fill: 'honeydew',
-            fontSize: 12,
-            useMaxWidth: true,
-        },
-        flowchart: {
-            diagramPadding: 8,
-            htmlLabels: true,
-            curve: 'basis',
-        },
-        sequence: {
-            diagramMarginX: 50,
-            diagramMarginY: 10,
-            actorMargin: 50,
-            width: 150,
-            height: 65,
-            boxMargin: 10,
-            boxTextMargin: 5,
-            noteMargin: 10,
-            messageMargin: 35,
-            messageAlign: 'center',
-            mirrorActors: true,
-            bottomMarginAdj: 1,
-            useMaxWidth: true,
-            rightAngles: false,
-            showSequenceNumbers: false,
-        },
-        gantt: {
-            titleTopMargin: 25,
-            barHeight: 20,
-            barGap: 4,
-            topPadding: 50,
-            leftPadding: 75,
-            gridLineStartPadding: 35,
-            fontSize: 11,
-            fontFamily: '"Open Sans", sans-serif',
-            numberSectionStyles: 4,
-            axisFormat: '%Y-%m-%d',
-            topAxis: false,
-        },
-    };
-    mermaid.initialize(config);
+    er: {
+      diagramPadding: 20,
+      layoutDirection: 'TB',
+      minEntityWidth: 100,
+      minEntityHeight: 75,
+      entityPadding: 15,
+      stroke: 'gray',
+      fill: 'honeydew',
+      fontSize: 12,
+      useMaxWidth: true,
+    },
+    flowchart: {
+      diagramPadding: 8,
+      htmlLabels: true,
+      curve: 'basis',
+    },
+    sequence: {
+      diagramMarginX: 50,
+      diagramMarginY: 10,
+      actorMargin: 50,
+      width: 150,
+      height: 65,
+      boxMargin: 10,
+      boxTextMargin: 5,
+      noteMargin: 10,
+      messageMargin: 35,
+      messageAlign: 'center',
+      mirrorActors: true,
+      bottomMarginAdj: 1,
+      useMaxWidth: true,
+      rightAngles: false,
+      showSequenceNumbers: false,
+    },
+    gantt: {
+      titleTopMargin: 25,
+      barHeight: 20,
+      barGap: 4,
+      topPadding: 50,
+      leftPadding: 75,
+      gridLineStartPadding: 35,
+      fontSize: 11,
+      fontFamily: '"Open Sans", sans-serif',
+      numberSectionStyles: 4,
+      axisFormat: '%Y-%m-%d',
+      topAxis: false,
+    },
+  };
+  mermaid.initialize(config);
 </script>
 ```
 

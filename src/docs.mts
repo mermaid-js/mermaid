@@ -53,7 +53,7 @@ const transform = (file: string) => {
     prettier.format(transformed, {
       parser: 'markdown',
       useTabs: false,
-      tabWidth: 4,
+      tabWidth: 2,
       endOfLine: 'auto',
       printWidth: 100,
       singleQuote: true,

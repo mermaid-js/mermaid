@@ -32,7 +32,7 @@
     "build:watch": "yarn build:dev --watch",
     "release": "yarn build",
     "lint": "eslint --cache --ignore-path .gitignore .; prettier --check .",
-    "lint:fix": "eslint --cache --fix --ignore-path .gitignore .; prettier --write .",
+    "lint:fix": "eslint --fix --ignore-path .gitignore .; prettier --write ./src",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
     "cypress": "cypress run",
     "cypress:open": "cypress open",

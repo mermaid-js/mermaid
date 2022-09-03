@@ -28,7 +28,7 @@ It is a relatively straightforward solution to a significant hurdle with the sof
 
 ```html
 <div class="mermaid">
-    graph TD A[Client] --> B[Load Balancer] B --> C[Server01] B --> D[Server02]
+  graph TD A[Client] --> B[Load Balancer] B --> C[Server01] B --> D[Server02]
 </div>
 ```
 
@@ -42,10 +42,10 @@ It is a relatively straightforward solution to a significant hurdle with the sof
 
 ## Advantages of using Mermaid
 
--   Ease to generate, modify and render diagrams when you make them.
--   The number of integrations and plugins it has.
--   You can add it to your or companies website.
--   Diagrams can be created through comments like this in a script:
+- Ease to generate, modify and render diagrams when you make them.
+- The number of integrations and plugins it has.
+- You can add it to your or companies website.
+- Diagrams can be created through comments like this in a script:
 
 ## The catch-22 of Diagrams and Charts:
 

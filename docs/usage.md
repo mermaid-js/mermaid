@@ -51,7 +51,7 @@ The easiest way to integrate mermaid on a web page requires three elements:
 
     ```html
     <script>
-        mermaid.initialize({ startOnLoad: true });
+      mermaid.initialize({ startOnLoad: true });
     </script>
     ```
 
@@ -68,16 +68,16 @@ locate the graph definitions inside the `div` tags with `class="mermaid"` and re
 ```html
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-    </head>
-    <body>
-        <div class="mermaid">graph LR A --- B B-->C[fa:fa-ban forbidden] B-->D(fa:fa-spinner);</div>
-        <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-        <script>
-            mermaid.initialize({ startOnLoad: true });
-        </script>
-    </body>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div class="mermaid">graph LR A --- B B-->C[fa:fa-ban forbidden] B-->D(fa:fa-spinner);</div>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
 </html>
 ```
 
@@ -103,10 +103,10 @@ A `securityLevel` configuration has to first be cleared, `securityLevel` sets th
 
 Values:
 
--   **strict**: (**default**) tags in text are encoded, click functionality is disabled
--   **loose**: tags in text are allowed, click functionality is enabled
--   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
--   **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any JavaScript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
+- **strict**: (**default**) tags in text are encoded, click functionality is disabled
+- **loose**: tags in text are allowed, click functionality is enabled
+- **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
+- **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any JavaScript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
 
 ```note
 This changes the default behaviour of mermaid so that after upgrade to 8.2, unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
@@ -119,7 +119,7 @@ This changes the default behaviour of mermaid so that after upgrade to 8.2, unle
 
 ```javascript
 mermaidAPI.initialize({
-    securityLevel: 'loose',
+  securityLevel: 'loose',
 });
 ```
 
@@ -130,7 +130,7 @@ whole page to load (dom + assets, particularly the fonts file).
 
 ```javascript
 $(document).load(function () {
-    mermaid.initialize();
+  mermaid.initialize();
 });
 ```
 
@@ -138,7 +138,7 @@ or
 
 ```javascript
 $(document).ready(function () {
-    mermaid.initialize();
+  mermaid.initialize();
 });
 ```
 
@@ -148,7 +148,7 @@ If your page has other fonts in its body those might be used instead of the merm
 
 ```css
 div.mermaid {
-    font-family: 'trebuchet ms', verdana, arial;
+  font-family: 'trebuchet ms', verdana, arial;
 }
 ```
 
@@ -158,11 +158,11 @@ By default, `mermaid.init` will be called when the document is ready, finding al
 `class="mermaid"`. If you are adding content after mermaid is loaded, or otherwise need
 finer-grained control of this behavior, you can call `init` yourself with:
 
--   a configuration object
--   some nodes, as
-    -   a node
-    -   an array-like of nodes
-    -   or W3C selector that will find your nodes
+- a configuration object
+- some nodes, as
+  - a node
+  - an array-like of nodes
+  - or W3C selector that will find your nodes
 
 Example:
 
@@ -196,16 +196,16 @@ The example below show an outline of how this could be used. The example just lo
 <script src="mermaid.js"></script>
 
 <script>
-    mermaid.mermaidAPI.initialize({ startOnLoad: false });
-    $(function () {
-        // Example of using the API var
-        element = document.querySelector('#graphDiv');
-        var insertSvg = function (svgCode, bindFunctions) {
-            element.innerHTML = svgCode;
-        };
-        var graphDefinition = 'graph TB\na-->b';
-        var graph = mermaid.mermaidAPI.render('graphDiv', graphDefinition, insertSvg);
-    });
+  mermaid.mermaidAPI.initialize({ startOnLoad: false });
+  $(function () {
+    // Example of using the API var
+    element = document.querySelector('#graphDiv');
+    var insertSvg = function (svgCode, bindFunctions) {
+      element.innerHTML = svgCode;
+    };
+    var graphDefinition = 'graph TB\na-->b';
+    var graph = mermaid.mermaidAPI.render('graphDiv', graphDefinition, insertSvg);
+  });
 </script>
 ```
 
@@ -219,11 +219,11 @@ bind events to an SVG when using the API for rendering.
 
 ```javascript
 var insertSvg = function (svgCode, bindFunctions) {
-    element.innerHTML = svgCode;
-    if (typeof callback !== 'undefined') {
-        callback(id);
-    }
-    bindFunctions(element);
+  element.innerHTML = svgCode;
+  if (typeof callback !== 'undefined') {
+    callback(id);
+  }
+  bindFunctions(element);
 };
 
 var id = 'theGraph';
@@ -244,11 +244,11 @@ This is the renderer used for transforming the documentation from Markdown to ht
 ```javascript
 var renderer = new marked.Renderer();
 renderer.code = function (code, language) {
-    if (code.match(/^sequenceDiagram/) || code.match(/^graph/)) {
-        return '<div class="mermaid">' + code + '</div>';
-    } else {
-        return '<pre><code>' + code + '</code></pre>';
-    }
+  if (code.match(/^sequenceDiagram/) || code.match(/^graph/)) {
+    return '<div class="mermaid">' + code + '</div>';
+  } else {
+    return '<pre><code>' + code + '</code></pre>';
+  }
 };
 ```
 
@@ -290,15 +290,15 @@ The code-example below in meta code illustrates how this could work:
 
 ```javascript
 mermaid.parseError = function (err, hash) {
-    displayErrorInGui(err);
+  displayErrorInGui(err);
 };
 
 var textFieldUpdated = function () {
-    var textStr = getTextFromFormField('code');
+  var textStr = getTextFromFormField('code');
 
-    if (mermaid.parse(textStr)) {
-        reRender(textStr);
-    }
+  if (mermaid.parse(textStr)) {
+    reRender(textStr);
+  }
 };
 
 bindEventHandler('change', 'code', textFieldUpdated);
@@ -328,8 +328,8 @@ on what kind of integration you use.
 ```html
 <script src="../dist/mermaid.js"></script>
 <script>
-    var config = { startOnLoad: true, flowchart: { useMaxWidth: false, htmlLabels: true } };
-    mermaid.initialize(config);
+  var config = { startOnLoad: true, flowchart: { useMaxWidth: false, htmlLabels: true } };
+  mermaid.initialize(config);
 </script>
 ```
 
@@ -344,8 +344,8 @@ This is the preferred way of configuring mermaid.
 Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:
 
--   mermaid.startOnLoad
--   mermaid.htmlLabels
+- mermaid.startOnLoad
+- mermaid.htmlLabels
 
 ```javascript
 mermaid.startOnLoad = true;
@@ -360,8 +360,8 @@ This way of setting the configuration is deprecated. Instead the preferred way i
 It is possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:
 
--   mermaid_config.startOnLoad
--   mermaid_config.htmlLabels
+- mermaid_config.startOnLoad
+- mermaid_config.htmlLabels
 
 ```javascript
 mermaid_config.startOnLoad = true;
@@ -375,8 +375,8 @@ This way of setting the configuration is deprecated. Instead the preferred way i
 
 To set some configuration via the mermaid object. The two parameters that are supported using this approach are:
 
--   mermaid_config.startOnLoad
--   mermaid_config.htmlLabels
+- mermaid_config.startOnLoad
+- mermaid_config.htmlLabels
 
 ```javascript
 mermaid_config.startOnLoad = true;

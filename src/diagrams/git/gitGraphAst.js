@@ -24,6 +24,9 @@ let curBranch = mainBranchName;
 let direction = 'LR';
 let seq = 0;
 
+/**
+ *
+ */
 function getId() {
   // eslint-disable-line
   return random({ length: 7 });
