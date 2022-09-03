@@ -63,6 +63,6 @@ const transform = (file: string) => {
   if (fileChanged) {
     console.log('Please commit the changes to the docs folder');
     exec('git add docs');
-    process.exit(1);
+    // process.exit(0);
   }
 })();
