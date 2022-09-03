@@ -27,7 +27,7 @@ We make all changes via Pull Requests. As we have many Pull Requests from develo
 
 *   Large changes reviewed by knsv or other developer asked to review by knsv
 *   Smaller, low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
-*   Documentation (we encourage updates to the docs folder; you can submit them via direct commits)
+*   Documentation (we encourage updates to the `src/docs` folder; you can submit them via direct commits)
 
 When you commit code, create a branch with the following naming convention:
 
@@ -45,7 +45,7 @@ Start with the type, such as **feature** or **bug**, followed by the issue numbe
 
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the `docs` folder and are written in Markdown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via the **[sidebar](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**.
+The docs are located in the `src/docs` folder and are written in Markdown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via the **[sidebar](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**.
 
 > **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**.
 
@@ -55,7 +55,9 @@ The contents of <https://mermaid-js.github.io/mermaid/> are based on the docs fr
 
 We are a little less strict here, it is OK to commit directly in the `develop` branch if you are a collaborator.
 
-The documentation is located in the `docs` directory and organized according to relevant subfolder.
+The documentation is located in the `src/docs` directory and organized according to relevant subfolder.
+
+The `docs` folder will be automatically generated when committing to `src/docs` and should not be edited manually.
 
 We encourage contributions to the documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw\&t=3s)
 
