@@ -25,10 +25,12 @@
     <!-- <script src="http://localhost:9000/mermaid.js"></script> -->
     <script>
       // prettier-ignore
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      (function (i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
       ga('create', 'UA-153180559-1', 'auto');
       if (location) {
@@ -54,6 +56,7 @@
       }
     </style>
   </head>
+
   <body>
     <div id="app"></div>
     <script>
@@ -105,7 +108,9 @@
                 colorize.push(currentCodeExample);
                 return '<pre id="code' + currentCodeExample + '">' + escapeHTML(code) + '</pre>';
               } else if (lang === 'mermaid') {
-                return '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</div>';
+                return (
+                  '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</div>'
+                );
               }
               return this.origin.code.apply(this, arguments);
             },
@@ -131,7 +136,8 @@
                 while (!window.hasOwnProperty('monaco'))
                   await new Promise((resolve) => setTimeout(resolve, 1000));
                 colorizeEverything(html).then(
-                  (newHTML) => (document.querySelector('article.markdown-section').innerHTML = newHTML)
+                  (newHTML) =>
+                    (document.querySelector('article.markdown-section').innerHTML = newHTML)
                 );
               })();
             });
