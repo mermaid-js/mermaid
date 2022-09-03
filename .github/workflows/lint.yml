@@ -37,3 +37,6 @@ jobs:
 
     - name: Run Linting
       run: yarn lint
+    
+    - name: Verify Docs
+      run: yarn docs:verify
