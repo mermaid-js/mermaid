@@ -1,8 +1,7 @@
 /**
  * Mocks for `./mermaidAPI`.
- * 
- * We can't easily use `jest.spyOn(mermaidAPI, "function")` since the object
- * is frozen with `Object.freeze()`.
+ *
+ * We can't easily use `jest.spyOn(mermaidAPI, "function")` since the object is frozen with `Object.freeze()`.
  */
 import * as configApi from '../config';
 
@@ -42,6 +41,6 @@ export const mermaidAPI = {
     configApi.reset(configApi.defaultConfig);
   },
   defaultConfig: configApi.defaultConfig,
-}
+};
 
 export default mermaidAPI;
