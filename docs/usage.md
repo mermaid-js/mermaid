@@ -1,7 +1,5 @@
 # Usage
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
-
 Mermaid is a JavaScript tool that makes use of a Markdown based syntax to render customizable diagrams, charts and visualizations.
 
 Diagrams can be re-rendered/modified by modifying their descriptions.
@@ -257,12 +255,11 @@ This is the renderer used for transforming the documentation from Markdown to ht
 ```javascript
 var renderer = new marked.Renderer();
 renderer.code = function (code, language) {
-    if (code.match(/^sequenceDiagram/) || code.match(/^graph/)) {
-<pre class="mermaid">' + code + '</div>';
-    } else {
-        return '<pre><code>' + code + '</code>
-        return '</pre>';
-    }
+  if (code.match(/^sequenceDiagram/) || code.match(/^graph/)) {
+    return '<pre class="mermaid">' + code + '</pre>';
+  } else {
+    return '<pre><code>' + code + '</code></pre>';
+  }
 };
 ```
 
@@ -281,8 +278,7 @@ module.exports = (options) ->
       if not hasMermaid
         hasMermaid = true
         html += '<script src="'+options.mermaidPath+'"></script>'
-      html + '<div class="mermaid">'+code+'
-</pre>'
+      html + '<pre class="mermaid">'+code+'</pre>'
     else
       @defaultCode(code, language)
 

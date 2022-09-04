@@ -99,8 +99,7 @@ c. The `mermaid.initialize()` call, which dictates the appearance of diagrams an
         A[Client] --> B[Load Balancer] 
         B --> C[Server01] 
         B --> D[Server02]
-    </pre
-  >
+  </pre>
 </body>
 ```
 
@@ -145,8 +144,7 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
             A[Client] --> B[Load Balancer] 
             B --> C[Server1] 
             B --> D[Server2]
-        </pre
-    >
+    </pre>
 
     And here is another:
     <pre class="mermaid">
@@ -155,8 +153,7 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
             B(Load Balancer) 
             B -->|tcp_456| C[Server1] 
             B -->|tcp_456| D[Server2]
-        </pre
-    >
+    </pre>
   </body>
 </html>
 ```
@@ -175,15 +172,13 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
             A --- B 
             B-->C[fa:fa-ban forbidden] 
             B-->D(fa:fa-spinner);
-        </pre
-    >
+    </pre>
     <pre class="mermaid">
             graph TD 
             A[Client] --> B[Load Balancer] 
             B --> C[Server1] 
             B --> D[Server2]
-        </pre
-    >
+    </pre>
     <script src="The\Path\In\Your\Package\mermaid.js"></script>
     <script>
       mermaid.initialize({ startOnLoad: true });
