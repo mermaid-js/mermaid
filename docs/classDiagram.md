@@ -3,8 +3,7 @@
 # Class diagrams
 
 > "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
->
-> - Wikipedia
+> Wikipedia
 
 The class diagram is the main building block of object-oriented modeling. It is used for general conceptual modeling of the structure of the application, and for detailed modeling to translate the models into programming code. Class diagrams can also be used for data modeling. The classes in a class diagram represent both the main elements, interactions in the application, and the classes to be programmed.
 
@@ -595,12 +594,32 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
 ```html
 <body>
-  <div class="mermaid">
-    classDiagram Animal <|-- Duck Animal <|-- Fish Animal <|-- Zebra Animal : +int age Animal :
-    +String gender Animal: +isMammal() Animal: +mate() class Duck{ +String beakColor +swim()
-    +quack() } class Fish{ -int sizeInFeet -canEat() } class Zebra{ +bool is_wild +run() } callback
-    Duck callback "Tooltip" link Zebra "https://www.github.com" "This is a link"
-  </div>
+  <pre class="mermaid">
+    classDiagram
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal <|-- Zebra
+    Animal : +int age
+    Animal : +String gender
+    Animal: +isMammal()
+    Animal: +mate()
+    class Duck{
+      +String beakColor
+      +swim()
+      +quack()
+      }
+    class Fish{
+      -int sizeInFeet
+      -canEat()
+      }
+    class Zebra{
+      +bool is_wild
+      +run()
+      }
+
+      callback Duck callback "Tooltip"
+      link Zebra "https://www.github.com" "This is a link"
+  </pre>
 
   <script>
     var callback = function () {

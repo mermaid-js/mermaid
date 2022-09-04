@@ -25,9 +25,12 @@ It is a relatively straightforward solution to a significant hurdle with the sof
 > These are the Mermaid diagram definitions inside `<div>` tags, with the `class=mermaid`.
 
 ```html
-<div class="mermaid">
-  graph TD A[Client] --> B[Load Balancer] B --> C[Server01] B --> D[Server02]
-</div>
+<pre class="mermaid">
+    graph TD
+    A[Client] --> B[Load Balancer]
+    B --> C[Server01]
+    B --> D[Server02]
+</pre>
 ```
 
 **render**

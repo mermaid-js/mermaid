@@ -481,11 +481,16 @@ Beginner's tip—a full example using interactive links in a html context:
 
 ```html
 <body>
-  <div class="mermaid">
-    flowchart LR A-->B B-->C C-->D click A callback "Tooltip" click B "https://www.github.com" "This
-    is a link" click C call callback() "Tooltip" click D href "https://www.github.com" "This is a
-    link"
-  </div>
+  <pre class="mermaid">
+    flowchart LR
+        A-->B
+        B-->C
+        C-->D
+        click A callback "Tooltip"
+        click B "https://www.github.com" "This is a link"
+        click C call callback() "Tooltip"
+        click D href "https://www.github.com" "This is a link"
+  </pre>
 
   <script>
     var callback = function () {

@@ -109,7 +109,7 @@
                 return '<pre id="code' + currentCodeExample + '">' + escapeHTML(code) + '</pre>';
               } else if (lang === 'mermaid') {
                 return (
-                  '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</div>'
+                  '<pre class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</pre>'
                 );
               }
               return this.origin.code.apply(this, arguments);

@@ -707,11 +707,16 @@ Beginner's tip—here's a full example of using interactive links in HTML:
 
 ```html
 <body>
-  <div class="mermaid">
-    graph LR; A-->B; B-->C; C-->D; click A callback "Tooltip" click B "https://www.github.com" "This
-    is a link" click C call callback() "Tooltip" click D href "https://www.github.com" "This is a
-    link"
-  </div>
+  <pre class="mermaid">
+    graph LR;
+        A-->B;
+        B-->C;
+        C-->D;
+        click A callback "Tooltip"
+        click B "https://www.github.com" "This is a link"
+        click C call callback() "Tooltip"
+        click D href "https://www.github.com" "This is a link"
+  </pre>
 
   <script>
     var callback = function () {

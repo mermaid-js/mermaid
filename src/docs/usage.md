@@ -41,24 +41,30 @@ We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermai
 
 The easiest way to integrate mermaid on a web page requires three elements:
 
-1. Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.Example:
+1.  Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.Example:
 
-   ```html
-   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-   ```
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    ```
 
-2. The `mermaidAPI` call, in a separate `script` tag. Example:
+2.  The `mermaidAPI` call, in a separate `script` tag. Example:
 
-   ```html
-   <script>
-     mermaid.initialize({ startOnLoad: true });
-   </script>
-   ```
+    ```html
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+    ```
 
-3. A graph definition, inside `<div>` tags labeled `class=mermaid`. Example:
-   ```html
-   <div class="mermaid">graph LR A --- B B-->C[fa:fa-ban forbidden] B-->D(fa:fa-spinner);</div>
-   ```
+3.  A graph definition, inside `<div>` tags labeled `class=mermaid`. Example:
+
+```html
+<pre class="mermaid">
+    graph LR
+    A --- B
+    B-->C[fa:fa-ban forbidden]
+    B-->D(fa:fa-spinner);
+</pre>
+```
 
 **Following these directions, mermaid starts at page load and (when the page has loaded) it will
 locate the graph definitions inside the `div` tags with `class="mermaid"` and return diagrams in SVG form, following given definitions.**
@@ -72,7 +78,12 @@ locate the graph definitions inside the `div` tags with `class="mermaid"` and re
     <meta charset="utf-8" />
   </head>
   <body>
-    <div class="mermaid">graph LR A --- B B-->C[fa:fa-ban forbidden] B-->D(fa:fa-spinner);</div>
+    <pre class="mermaid">
+  graph LR
+      A --- B
+      B-->C[fa:fa-ban forbidden]
+      B-->D(fa:fa-spinner);
+    </pre>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script>
       mermaid.initialize({ startOnLoad: true });
@@ -245,7 +256,7 @@ This is the renderer used for transforming the documentation from Markdown to ht
 var renderer = new marked.Renderer();
 renderer.code = function (code, language) {
   if (code.match(/^sequenceDiagram/) || code.match(/^graph/)) {
-    return '<div class="mermaid">' + code + '</div>';
+    return '<pre class="mermaid">' + code + '</pre>';
   } else {
     return '<pre><code>' + code + '</code></pre>';
   }
@@ -267,7 +278,7 @@ module.exports = (options) ->
       if not hasMermaid
         hasMermaid = true
         html += '<script src="'+options.mermaidPath+'"></script>'
-      html + '<div class="mermaid">'+code+'</div>'
+      html + '<pre class="mermaid">'+code+'</pre>'
     else
       @defaultCode(code, language)
 

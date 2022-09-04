@@ -89,22 +89,25 @@ c. The `mermaid.initialize()` call, which dictates the appearance of diagrams an
 </body>
 ```
 
-**b. The embedded mermaid diagram definition inside a `<div class="mermaid">`:**
+**b. The embedded mermaid diagram definition inside a `<pre class="mermaid">`:**
 
 ```html
 <body>
   Here is a mermaid diagram:
-  <div class="mermaid">
-    graph TD A[Client] --> B[Load Balancer] B --> C[Server01] B --> D[Server02]
-  </div>
+  <pre class="mermaid">
+        graph TD 
+        A[Client] --> B[Load Balancer] 
+        B --> C[Server01] 
+        B --> D[Server02]
+  </pre>
 </body>
 ```
 
-**Notes**: Every Mermaid chart/graph/diagram definition, should have separate `<div>` tags.
+**Notes**: Every Mermaid chart/graph/diagram definition, should have separate `<pre>` tags.
 
 **c. The `mermaid.initialize()` call.**
 
-`mermaid.initialize()` call takes all the definitions contained in all the `<div class="mermaid">` tags that it finds in the html body and renders them into diagrams. Example:
+`mermaid.initialize()` call takes all the definitions contained in all the `<pre class="mermaid">` tags that it finds in the html body and renders them into diagrams. Example:
 
 ```html
 <body>
@@ -136,15 +139,21 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
     </script>
 
     Here is one mermaid diagram:
-    <div class="mermaid">
-      graph TD A[Client] --> B[Load Balancer] B --> C[Server1] B --> D[Server2]
-    </div>
+    <pre class="mermaid">
+            graph TD 
+            A[Client] --> B[Load Balancer] 
+            B --> C[Server1] 
+            B --> D[Server2]
+    </pre>
 
     And here is another:
-    <div class="mermaid">
-      graph TD A[Client] -->|tcp_123| B B(Load Balancer) B -->|tcp_456| C[Server1] B -->|tcp_456|
-      D[Server2]
-    </div>
+    <pre class="mermaid">
+            graph TD 
+            A[Client] -->|tcp_123| B
+            B(Load Balancer) 
+            B -->|tcp_456| C[Server1] 
+            B -->|tcp_456| D[Server2]
+    </pre>
   </body>
 </html>
 ```
@@ -158,10 +167,18 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
     <meta charset="utf-8" />
   </head>
   <body>
-    <div class="mermaid">graph LR A --- B B-->C[fa:fa-ban forbidden] B-->D(fa:fa-spinner);</div>
-    <div class="mermaid">
-      graph TD A[Client] --> B[Load Balancer] B --> C[Server1] B --> D[Server2]
-    </div>
+    <pre class="mermaid">
+            graph LR 
+            A --- B 
+            B-->C[fa:fa-ban forbidden] 
+            B-->D(fa:fa-spinner);
+    </pre>
+    <pre class="mermaid">
+            graph TD 
+            A[Client] --> B[Load Balancer] 
+            B --> C[Server1] 
+            B --> D[Server2]
+    </pre>
     <script src="The\Path\In\Your\Package\mermaid.js"></script>
     <script>
       mermaid.initialize({ startOnLoad: true });
