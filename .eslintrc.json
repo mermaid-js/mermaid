@@ -5,7 +5,7 @@
     "jest/globals": true,
     "node": true
   },
-  "parser": "@babel/eslint-parser",
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true,
@@ -18,9 +18,9 @@
     "plugin:jsdoc/recommended",
     "plugin:json/recommended",
     "plugin:markdown/recommended",
-    "plugin:prettier/recommended"
+    "prettier"
   ],
-  "plugins": ["html", "jest", "jsdoc", "json", "prettier"],
+  "plugins": ["@typescript-eslint", "html", "jest", "jsdoc", "json"],
   "rules": {
     "no-prototype-builtins": "off",
     "no-unused-vars": "off",
@@ -40,12 +40,6 @@
       "rules": {
         "no-undef": "off",
         "jsdoc/require-jsdoc": "off"
-      }
-    },
-    {
-      "files": "./**/*.md/*.html",
-      "rules": {
-        "prettier/prettier": "off"
       }
     }
   ]

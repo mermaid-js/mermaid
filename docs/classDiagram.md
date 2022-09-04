@@ -100,7 +100,7 @@ class BankAccount{
 
 #### Return Type
 
-Optionally you can end a method/function definition with the data type that will be returned (note: there must be a space between the final `)` and the return type).  An example:
+Optionally you can end a method/function definition with the data type that will be returned (note: there must be a space between the final `)` and the return type). An example:
 
 ```mermaid-example
 classDiagram
@@ -146,12 +146,13 @@ To describe the visibility (or encapsulation) of an attribute or method/function
 - `~` Package/Internal
 
 > _note_ you can also include additional _classifiers_ to a method definition by adding the following notation to the _end_ of the method, i.e.: after the `()`:
+>
 > - `*` Abstract e.g.: `someAbstractMethod()*`
 > - `$` Static e.g.: `someStaticMethod()$`
 
 > _note_ you can also include additional _classifiers_ to a field definition by adding the following notation to the end of its name:
+>
 > - `$` Static e.g.: `String someField$`
-
 
 ## Defining Relationship
 
@@ -234,7 +235,6 @@ Here is the syntax:
 
 Where `Relation Type` can be one of:
 
-
 | Type | Description |
 | ---- | ----------- |
 | <\|  | Inheritance |
@@ -282,7 +282,7 @@ classDiagram
 
 ## Annotations on classes
 
-It is possible to annotate classes with markers to provide additional metadata about the class.  This can give a clearer indication about its nature. Some common annotations include:
+It is possible to annotate classes with markers to provide additional metadata about the class. This can give a clearer indication about its nature. Some common annotations include:
 
 - `<<Interface>>` To represent an Interface class
 - `<<Abstract>>` To represent an abstract class
@@ -355,7 +355,7 @@ classDiagram
   }
   Student "1" --o "1" IdCard : carries
   Student "1" --o "1" Bike : rides
- ```
+```
 
 ## Interaction
 
@@ -368,6 +368,7 @@ action className "reference" "tooltip"
 click className call callback() "tooltip"
 click className href "url" "tooltip"
 ```
+
 - _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
 - _className_ is the id of the node that the action will be associated with
 - _reference_ is either the url link, or the function name for callback.
@@ -398,9 +399,9 @@ click Shape2 call callbackFunction() "This is a tooltip for a callback"
 
 ```html
 <script>
-    var callbackFunction = function () {
-      alert('A callback was triggered');
-    };
+  var callbackFunction = function () {
+    alert('A callback was triggered');
+  };
 </script>
 ```
 
@@ -422,7 +423,7 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
 ```html
 <body>
-  <div class="mermaid">
+  <pre class="mermaid">
     classDiagram
     Animal <|-- Duck
     Animal <|-- Fish
@@ -447,15 +448,15 @@ Beginner's tip—a full example using interactive links in an HTML page:
 
       callback Duck callback "Tooltip"
       link Zebra "https://www.github.com" "This is a link"
-  </div>
+  </pre>
 
   <script>
     var callback = function () {
-        alert('A callback was triggered');
+      alert('A callback was triggered');
     };
     var config = {
-        startOnLoad: true,
-        securityLevel: 'loose'
+      startOnLoad: true,
+      securityLevel: 'loose',
     };
     mermaid.initialize(config);
   </script>
@@ -470,11 +471,11 @@ It is possible to apply specific styles such as a thicker border or a different 
 
 ```html
 <style>
-    .cssClass > rect{
-        fill:#FF0000;
-        stroke:#FFFF00;
-        stroke-width:4px;
-    }
+  .cssClass > rect {
+    fill: #ff0000;
+    stroke: #ffff00;
+    stroke-width: 4px;
+  }
 </style>
 ```
 
@@ -509,7 +510,7 @@ classDiagram
 
 ?> cssClasses cannot be added using this shorthand method at the same time as a relation statement.
 
-?> Due to limitations with existing markup for class diagrams, it is not currently possible to define css classes within the diagram itself.  ***Coming soon!***
+?> Due to limitations with existing markup for class diagrams, it is not currently possible to define css classes within the diagram itself. **_Coming soon!_**
 
 ### Default Styles
 
@@ -531,91 +532,91 @@ The main styling of the class diagram is done with a preset number of css classe
 
 ```scss
 body {
-    background: white;
+  background: white;
 }
 
 g.classGroup text {
-    fill: $nodeBorder;
-    stroke: none;
-    font-family: 'trebuchet ms', verdana, arial;
-    font-family: var(--mermaid-font-family);
-    font-size: 10px;
+  fill: $nodeBorder;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+  font-size: 10px;
 
-    .title {
-        font-weight: bolder;
-    }
+  .title {
+    font-weight: bolder;
+  }
 }
 
 g.classGroup rect {
-    fill: $nodeBkg;
-    stroke: $nodeBorder;
+  fill: $nodeBkg;
+  stroke: $nodeBorder;
 }
 
 g.classGroup line {
-    stroke: $nodeBorder;
-    stroke-width: 1;
+  stroke: $nodeBorder;
+  stroke-width: 1;
 }
 
 .classLabel .box {
-    stroke: none;
-    stroke-width: 0;
-    fill: $nodeBkg;
-    opacity: 0.5;
+  stroke: none;
+  stroke-width: 0;
+  fill: $nodeBkg;
+  opacity: 0.5;
 }
 
 .classLabel .label {
-    fill: $nodeBorder;
-    font-size: 10px;
+  fill: $nodeBorder;
+  font-size: 10px;
 }
 
 .relation {
-    stroke: $nodeBorder;
-    stroke-width: 1;
-    fill: none;
+  stroke: $nodeBorder;
+  stroke-width: 1;
+  fill: none;
 }
 
 @mixin composition {
-    fill: $nodeBorder;
-    stroke: $nodeBorder;
-    stroke-width: 1;
+  fill: $nodeBorder;
+  stroke: $nodeBorder;
+  stroke-width: 1;
 }
 
 #compositionStart {
-    @include composition;
+  @include composition;
 }
 
 #compositionEnd {
-    @include composition;
+  @include composition;
 }
 
 @mixin aggregation {
-    fill: $nodeBkg;
-    stroke: $nodeBorder;
-    stroke-width: 1;
+  fill: $nodeBkg;
+  stroke: $nodeBorder;
+  stroke-width: 1;
 }
 
 #aggregationStart {
-    @include aggregation;
+  @include aggregation;
 }
 
 #aggregationEnd {
-    @include aggregation;
+  @include aggregation;
 }
 
 #dependencyStart {
-    @include composition;
+  @include composition;
 }
 
 #dependencyEnd {
-    @include composition;
+  @include composition;
 }
 
 #extensionStart {
-    @include composition;
+  @include composition;
 }
 
 #extensionEnd {
-    @include composition;
+  @include composition;
 }
 ```
 

@@ -2,18 +2,17 @@
 
 > A Gantt chart is a type of bar chart, first developed by Karol Adamiecki in 1896, and independently by Henry Gantt in the 1910s, that illustrates a project schedule and the amount of time it would take for any one project to finish. Gantt charts illustrate number of days between the start and finish dates of the terminal elements and summary elements of a project.
 
- ## A note to users
- Gantt Charts will record each scheduled task as one continuous bar that extends from the left to the right. The x axis represents time and the y records the different tasks and the order in which they are to be completed.
+## A note to users
 
+Gantt Charts will record each scheduled task as one continuous bar that extends from the left to the right. The x axis represents time and the y records the different tasks and the order in which they are to be completed.
 
- It is important to remember that when a date, day, or collection of dates specific to a task are "excluded", the Gantt Chart will accommodate those changes by extending an equal number of days, towards the right, not by creating a gap inside the task.
- As shown here ![](./img/Gantt-excluded-days-within.png)
+It is important to remember that when a date, day, or collection of dates specific to a task are "excluded", the Gantt Chart will accommodate those changes by extending an equal number of days, towards the right, not by creating a gap inside the task.
+As shown here ![](./img/Gantt-excluded-days-within.png)
 
+However, if the excluded dates are between two tasks that are set to start consecutively, the excluded dates will be skipped graphically and left blank, and the following task will begin after the end of the excluded dates.
+As shown here ![](./img/Gantt-long-weekend-look.png)
 
- However, if the excluded dates are between two tasks that are set to start consecutively, the excluded dates will be skipped graphically and left blank, and the following task will begin after the end of the excluded dates.
- As shown here ![](./img/Gantt-long-weekend-look.png)
-
- A Gantt chart is useful for tracking the amount of time it would take before a project is finished, but it can also be used to graphically represent "non-working days", with a few tweaks.
+A Gantt chart is useful for tracking the amount of time it would take before a project is finished, but it can also be used to graphically represent "non-working days", with a few tweaks.
 
 Mermaid can render Gantt diagrams as SVG, PNG or a MarkDown link that can be pasted into docs.
 
@@ -75,29 +74,27 @@ It is possible to set multiple dependencies separated by space:
 
 ### Title
 
-The `title` is an *optional* string to be displayed at the top of the Gantt chart to describe the chart as a whole.
-
+The `title` is an _optional_ string to be displayed at the top of the Gantt chart to describe the chart as a whole.
 
 ### Section statements
 
 You can divide the chart into various sections, for example to separate different parts of a project like development and documentation.
 
-To do so, start a line with the `section` keyword and give it a name. (Note that unlike with the [title for the entire chart](#title), this name is *required*.
+To do so, start a line with the `section` keyword and give it a name. (Note that unlike with the [title for the entire chart](#title), this name is _required_.
 
 ### Milestones
 
-You can add milestones to the diagrams. Milestones differ from tasks as they represent a single instant in time and are identified by the keyword `milestone`. Below is an example on how to use milestones. As you may notice, the exact location of the milestone is determined by the initial date for the milestone and the "duration" of the task this way: *initial date*+*duration*/2.
+You can add milestones to the diagrams. Milestones differ from tasks as they represent a single instant in time and are identified by the keyword `milestone`. Below is an example on how to use milestones. As you may notice, the exact location of the milestone is determined by the initial date for the milestone and the "duration" of the task this way: _initial date_+_duration_/2.
 
 ```mermaid-example
-gantt 
+gantt
 dateFormat HH:mm
 axisFormat %H:%M
 Initial milestone : milestone, m1, 17:49,2min
 taska2 : 10min
-taska3 : 5min 
+taska3 : 5min
 Final milestone : milestone, m2, 18:14, 2min
 ```
-
 
 ## Setting dates
 
@@ -105,7 +102,7 @@ Final milestone : milestone, m2, 18:14, 2min
 
 ### Input date format
 
-The default input date format is `YYYY-MM-DD`. You can define your custom ``dateFormat``.
+The default input date format is `YYYY-MM-DD`. You can define your custom `dateFormat`.
 
 ```
 dateFormat YYYY-MM-DD
@@ -140,7 +137,7 @@ More info in: https://momentjs.com/docs/#/parsing/string-format/
 
 ### Output date format on the axis
 
-The default output date format is YYYY-MM-DD. You can define your custom ``axisFormat``, like `2020-Q1` for the first quarter of the year 2020.
+The default output date format is YYYY-MM-DD. You can define your custom `axisFormat`, like `2020-Q1` for the first quarter of the year 2020.
 
 ```
 axisFormat  %Y-%m-%d
@@ -201,63 +198,61 @@ Styling of the a gantt diagram is done by defining a number of css classes. Duri
 
 ### Classes used
 
-Class | Description
----                   | ---
-grid.tick             | Styling for the Grid Lines 
-grid.path             | Styling for the Grid's borders
-.taskText             | Task Text Styling
-.taskTextOutsideRight | Styling for Task Text that exceeds the activity bar towards the right. 
-.taskTextOutsideLeft  | Styling for Task Text that exceeds the activity bar, towards the left.
-todayMarker           | Toggle and Styling for the "Today Marker"
-
+| Class                 | Description                                                            |
+| --------------------- | ---------------------------------------------------------------------- |
+| grid.tick             | Styling for the Grid Lines                                             |
+| grid.path             | Styling for the Grid's borders                                         |
+| .taskText             | Task Text Styling                                                      |
+| .taskTextOutsideRight | Styling for Task Text that exceeds the activity bar towards the right. |
+| .taskTextOutsideLeft  | Styling for Task Text that exceeds the activity bar, towards the left. |
+| todayMarker           | Toggle and Styling for the "Today Marker"                              |
 
 ### Sample stylesheet
 
-
 ```css
 .grid .tick {
-    stroke: lightgrey;
-    opacity: 0.3;
-    shape-rendering: crispEdges;
+  stroke: lightgrey;
+  opacity: 0.3;
+  shape-rendering: crispEdges;
 }
 .grid path {
-    stroke-width: 0;
+  stroke-width: 0;
 }
 
 #tag {
-    color: white;
-    background: #FA283D;
-    width: 150px;
-    position: absolute;
-    display: none;
-    padding:3px 6px;
-    margin-left: -80px;
-    font-size: 11px;
+  color: white;
+  background: #fa283d;
+  width: 150px;
+  position: absolute;
+  display: none;
+  padding: 3px 6px;
+  margin-left: -80px;
+  font-size: 11px;
 }
 
 #tag:before {
-    border: solid transparent;
-    content: ' ';
-    height: 0;
-    left: 50%;
-    margin-left: -5px;
-    position: absolute;
-    width: 0;
-    border-width: 10px;
-    border-bottom-color: #FA283D;
-    top: -20px;
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  left: 50%;
+  margin-left: -5px;
+  position: absolute;
+  width: 0;
+  border-width: 10px;
+  border-bottom-color: #fa283d;
+  top: -20px;
 }
 .taskText {
-    fill:white;
-    text-anchor:middle;
+  fill: white;
+  text-anchor: middle;
 }
 .taskTextOutsideRight {
-    fill:black;
-    text-anchor:start;
+  fill: black;
+  text-anchor: start;
 }
 .taskTextOutsideLeft {
-    fill:black;
-    text-anchor:end;
+  fill: black;
+  text-anchor: end;
 }
 ```
 
@@ -286,20 +281,20 @@ mermaid.ganttConfig can be set to a JSON string with config parameters or the co
 
 ```javascript
 mermaid.ganttConfig = {
-    titleTopMargin:25,
-    barHeight:20,
-    barGap:4,
-    topPadding:75,
-    sidePadding:75
-}
+  titleTopMargin: 25,
+  barHeight: 20,
+  barGap: 4,
+  topPadding: 75,
+  sidePadding: 75,
+};
 ```
 
 ### Possible configuration params:
 
-Param | Description | Default value
---- | --- | ---
-mirrorActor|Turns on/off the rendering of actors below the diagram as well as above it|false
-bottomMarginAdj|Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists.|1
+| Param           | Description                                                                                                                                | Default value |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| mirrorActor     | Turns on/off the rendering of actors below the diagram as well as above it                                                                 | false         |
+| bottomMarginAdj | Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists. | 1             |
 
 ## Interaction
 
@@ -310,13 +305,14 @@ click taskId call callback(arguments)
 click taskId href URL
 ```
 
-* taskId is the id of the task
-* callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified.
+- taskId is the id of the task
+- callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified.
 
 Beginner's tip—a full example using interactive links in an html context:
+
 ```html
 <body>
-  <div class="mermaid">
+  <pre class="mermaid">
     gantt
       dateFormat  YYYY-MM-DD
 
@@ -328,18 +324,18 @@ Beginner's tip—a full example using interactive links in an html context:
       click cl1 href "https://mermaidjs.github.io/"
       click cl2 call printArguments("test1", "test2", test3)
       click cl3 call printTask()
-  </div>
+  </pre>
 
   <script>
-    var printArguments = function(arg1, arg2, arg3) {
+    var printArguments = function (arg1, arg2, arg3) {
       alert('printArguments called with arguments: ' + arg1 + ', ' + arg2 + ', ' + arg3);
-    }
-    var printTask = function(taskId) {
+    };
+    var printTask = function (taskId) {
       alert('taskId: ' + taskId);
-    }
+    };
     var config = {
-      startOnLoad:true,
-      securityLevel:'loose',
+      startOnLoad: true,
+      securityLevel: 'loose',
     };
     mermaid.initialize(config);
   </script>
