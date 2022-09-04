@@ -46,7 +46,7 @@ function merge(current, update) {
     // if update[key] exist, and it's not a string or array,
     // we go in one level deeper
     if (
-      current.hasOwnProperty(key) && // eslint-disable-line
+      current.hasOwnProperty(key) &&
       typeof current[key] === 'object' &&
       !(current[key] instanceof Array)
     ) {

@@ -44,6 +44,7 @@ const anyComment = /\s*%%.*\n/gm;
 /**
  * @function detectInit Detects the init config object from the text
  *
+ * @param config
  *   ```mermaid
  *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
  *   graph LR
@@ -326,7 +327,7 @@ const calcLabelPosition = (points) => {
 
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
   let prevPoint;
-  let totalDistance = 0; // eslint-disable-line
+  let totalDistance = 0;
   log.info('our points', points);
   if (points[0] !== initialPosition) {
     points = points.reverse();
@@ -386,7 +387,7 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   // Todo looking to faster cloning method
   let points = JSON.parse(JSON.stringify(_points));
   let prevPoint;
-  let totalDistance = 0; // eslint-disable-line
+  let totalDistance = 0;
   log.info('our points', points);
   if (position !== 'start_left' && position !== 'start_right') {
     points = points.reverse();
@@ -945,10 +946,18 @@ export interface DetailedError {
   hash: any;
 }
 
+/**
+ *
+ * @param error
+ */
 export function isDetailedError(error: unknown): error is DetailedError {
   return 'str' in error;
 }
 
+/**
+ *
+ * @param error
+ */
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);

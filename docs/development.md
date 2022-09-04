@@ -22,11 +22,11 @@ This means that **you should branch off your pull request from develop** and dir
 
 ## Contributing Code
 
-We make all changes via Pull Requests. As we have many Pull Requests from developers new to mermaid, we have put in place a process, wherein *knsv, Knut Sveidqvist* is the primary reviewer of changes and merging pull requests. The process is as follows:
+We make all changes via Pull Requests. As we have many Pull Requests from developers new to mermaid, we have put in place a process, wherein _knsv, Knut Sveidqvist_ is the primary reviewer of changes and merging pull requests. The process is as follows:
 
-* Large changes reviewed by knsv or other developer asked to review by knsv
-* Smaller, low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
-* Documentation (we encourage updates to the docs folder; you can submit them via direct commits)
+- Large changes reviewed by knsv or other developer asked to review by knsv
+- Smaller, low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
+- Documentation (we encourage updates to the docs folder; you can submit them via direct commits)
 
 When you commit code, create a branch with the following naming convention:
 
@@ -70,7 +70,7 @@ To start working with the e2e tests:
 
 1. Run `yarn dev` to start the dev server
 2. Start **Cypress** by running `cypress open` in the **mermaid** folder.  
-(Make sure you have path to Cypress in order, the binary is located in `node_modules/.bin`).
+   (Make sure you have path to Cypress in order, the binary is located in `node_modules/.bin`).
 
 The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
 
@@ -80,8 +80,8 @@ This is what a rendering test looks like:
 
 ```js
 it('should render forks and joins', () => {
-    imgSnapshotTest(
-        `
+  imgSnapshotTest(
+    `
     stateDiagram
     state fork_state &lt;&lt;fork&gt;&gt;
       [*] --> fork_state
@@ -94,9 +94,9 @@ it('should render forks and joins', () => {
       join_state --> State4
       State4 --> [*]
     `,
-        { logLevel: 0 }
-    );
-    cy.get('svg');
+    { logLevel: 0 }
+  );
+  cy.get('svg');
 });
 ```
 

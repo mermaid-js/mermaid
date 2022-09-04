@@ -8,37 +8,37 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: fregante/setup-git-user@v1
+      - uses: actions/checkout@v3
+      - uses: fregante/setup-git-user@v1
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.x
-    - name: Install Yarn
-      run: npm i yarn --global
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: Install Yarn
+        run: npm i yarn --global
 
-    - name: Install Json
-      run: npm i json --global
+      - name: Install Json
+        run: npm i json --global
 
-    - name: Install Packages
-      run: yarn install --frozen-lockfile
+      - name: Install Packages
+        run: yarn install --frozen-lockfile
 
-    - name: Prepare release
-      run: |
-        VERSION=${GITHUB_REF:10}
-        echo "Preparing release $VERSION"
-        git checkout -t origin/release/$VERSION
-        npm version --no-git-tag-version --allow-same-version $VERSION
-        git add package.json
-        git commit -m "Bump version $VERSION"
-        git checkout -t origin/master
-        git merge -m "Release $VERSION" --no-ff release/$VERSION
-        git push --no-verify
+      - name: Prepare release
+        run: |
+          VERSION=${GITHUB_REF:10}
+          echo "Preparing release $VERSION"
+          git checkout -t origin/release/$VERSION
+          npm version --no-git-tag-version --allow-same-version $VERSION
+          git add package.json
+          git commit -m "Bump version $VERSION"
+          git checkout -t origin/master
+          git merge -m "Release $VERSION" --no-ff release/$VERSION
+          git push --no-verify
 
-    - name: Publish
-      run: |
-        npm set //registry.npmjs.org/:_authToken $NPM_TOKEN
-        npm publish
-      env:
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish
+        run: |
+          npm set //registry.npmjs.org/:_authToken $NPM_TOKEN
+          npm publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
