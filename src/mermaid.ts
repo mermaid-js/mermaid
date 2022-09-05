@@ -42,7 +42,6 @@ const init = function (
   try {
     initThrowsErrors(config, nodes, callback);
   } catch (e) {
-    console.error('Syntax Error rendering');
     log.warn('Syntax Error rendering');
     if (isDetailedError(e)) {
       log.warn(e.str);
@@ -128,8 +127,7 @@ const initThrowsErrors = function (
         element
       );
     } catch (error) {
-      console.error('Catching Error (bootstrap)', error);
-      log.warn('Catching Error (bootstrap)');
+      log.warn('Catching Error (bootstrap)', error);
       // @ts-ignore
       // TODO: We should be throwing an error object.
       throw { error, message: error.str };

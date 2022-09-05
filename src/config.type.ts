@@ -213,6 +213,7 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
   rect_padding?: number;
   line_height?: number;
 }
+
 export interface MindmapDiagramConfig extends BaseDiagramConfig {
   useMaxWidth: boolean;
   padding: number;

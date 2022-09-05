@@ -10,10 +10,6 @@
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
-    <link
-      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
-      rel="stylesheet"
-    />
     <style>
       body {
         /* background: rgb(221, 208, 208); */
@@ -42,10 +38,24 @@
     </style>
   </head>
   <body>
-    <pre class="mermaid" style="width: 50%">
-mindmap
-[apa]
-      ))bapa((
+    <pre class="mermaid2" style="width: 50%">
+flowchart LR
+  classDef aPID stroke:#4e4403,fill:#fdde29,color:#4e4403,rx:5px,ry:5px;
+  classDef crm stroke:#333333,fill:#DCDCDC,color:#333333,rx:5px,ry:5px;
+  classDef type stroke:#502604,fill:#FAB565,color:#502604,rx:20px,ry:20px;;
+
+  O0("Joe")
+  class O0 aPID;
+
+  O1("Person")
+  class O1 crm;
+  O0 -- has type -->O1["Person"]
+
+  O2("aat:300411314")
+  class O2 type;
+  click O2 function "Sorry the newline html tags are not being processed correctly<br/> So all of this appears on the <br/> same line."
+  O0 -- has type -->O2["Bug"]
+  click O0 function "Lots of great info about Joe<br>Lots of great info about Joe<br>burt<br>fred";
     </pre>
     <pre class="mermaid2" style="width: 50%">
 flowchart TD
@@ -60,15 +70,21 @@ flowchart TD
       G --> H
     end
     end
-
     </pre>
-
+    <pre class="mermaid" style="width: 50%">
+flowchart TD
+id
+    </pre>
     <pre class="mermaid2" style="width: 50%">
 flowchart LR
         a["<strong>Haiya</strong>"]===>b
-</pre
-    >
-    <div class="mermaid2" style="width: 50%">flowchart TD A --> B A --> C B --> C</div>
+    </pre>
+    <pre class="mermaid2" style="width: 50%">
+flowchart TD
+    A --> B
+    A --> C
+    B --> C
+    </pre>
     <pre class="mermaid2" style="width: 50%">
 flowchart TD
       A([stadium shape test])
@@ -83,11 +99,16 @@ flowchart TD
       class A someclass;
       class C someclass;
     </pre>
-    <div class="mermaid2" style="width: 50%">
-      sequenceDiagram title: My Sequence Diagram Title accTitle: My Acc Sequence Diagram accDescr:
-      My Sequence Diagram Description Alice->>John: Hello John, how are you? John-->>Alice: Great!
+    <pre class="mermaid2" style="width: 50%">
+   sequenceDiagram
+      title: My Sequence Diagram Title
+      accTitle: My Acc Sequence Diagram
+      accDescr: My Sequence Diagram Description
+
+      Alice->>John: Hello John, how are you?
+      John-->>Alice: Great!
       Alice-)John: See you later!
-    </div>
+    </pre>
     <pre class="mermaid2" style="width: 50%">
 graph TD
     A -->|000| B
@@ -95,7 +116,7 @@ graph TD
 
     linkStyle 1 stroke:#ff3,stroke-width:4px,color:red;
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
   journey
       accTitle: My User Journey Diagram
       accDescr: My User Journey Diagram Description
@@ -323,12 +344,6 @@ flowchart TD
           htmlLabels: false,
           fontFamily: 'courier',
         },
-        fontSize: 18,
-        curve: 'cardinal',
-        // securityLevel: 'sandbox',
-        // themeVariables: {relationLabelColor: 'red'}
-        // theme: 'dark',
-        wrap: true,
       });
       function callback() {
         alert('It worked');

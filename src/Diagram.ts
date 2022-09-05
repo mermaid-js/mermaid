@@ -30,7 +30,6 @@ export class Diagram {
       const error = { str, hash };
       throw error;
     };
-    this.db.clear();
     this.parse(this.txt, parseError);
   }
 

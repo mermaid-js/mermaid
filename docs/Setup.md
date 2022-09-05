@@ -79,13 +79,13 @@ Theme , the CSS style sheet
 
 **Notes**:
 
--   **strict**: (**default**) tags in text are encoded, click functionality is disabled
--   **loose**: tags in text are allowed, click functionality is enabled
--   **antiscript**: html tags in text are allowed, (only script element is removed), click
-    functionality is enabled
--   **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
-    prevent any JavaScript from running in the context. This may hinder interactive functionality
-    of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
+- **strict**: (**default**) tags in text are encoded, click functionality is disabled
+- **loose**: tags in text are allowed, click functionality is enabled
+- **antiscript**: html tags in text are allowed, (only script element is removed), click
+  functionality is enabled
+- **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
+  prevent any JavaScript from running in the context. This may hinder interactive functionality
+  of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
 
 ## startOnLoad
 
@@ -1450,7 +1450,7 @@ corresponding siteConfig value.
 
 ### Parameters
 
--   `conf` **any** The potential currentConfig
+- `conf` **any** The potential currentConfig
 
 Returns **any** The currentConfig merged with the sanitized conf
 
@@ -1515,7 +1515,7 @@ Pushes in a directive to the configuration
 
 ### Parameters
 
--   `directive` **[object][5]** The directive to push in
+- `directive` **[object][5]** The directive to push in
 
 ## reset
 
@@ -1545,7 +1545,7 @@ Returns **void**
 
 -   `options` **MermaidConfig** 
 
-## 
+##
 
 ## mermaidAPI configuration defaults
 
@@ -1610,15 +1610,9 @@ Returns **void**
 ```
 
 [1]: https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js
-
 [2]: Setup.md?id=render
-
 [3]: 8.6.0_docs.md
-
 [4]: #mermaidapi-configuration-defaults
-
 [5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-
 [6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-
 [7]: https://developer.mozilla.org/docs/Web/API/Element
