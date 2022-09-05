@@ -7,6 +7,7 @@ So you want to help? That's great!
 Here are a few things to know to get you started on the right path.
 
 ## Development Installation
+
 ```bash
 git clone git@github.com:mermaid-js/mermaid.git
 cd mermaid
@@ -16,11 +17,11 @@ yarn test
 
 ## Committing code
 
-We make all changes via pull requests. As we have many pull requests from developers new to mermaid, the current approach is to have *knsv, Knut Sveidqvist* as a main reviewer of changes and merging pull requests. More precisely like this:
+We make all changes via pull requests. As we have many pull requests from developers new to mermaid, the current approach is to have _knsv, Knut Sveidqvist_ as a main reviewer of changes and merging pull requests. More precisely like this:
 
-* Large changes reviewed by knsv or other developer asked to review by knsv
-* Smaller low-risk changes like dependencies, documentation etc can be merged by active collaborators
-* documentation (updates to the docs folder is also allowed via direct commits)
+- Large changes reviewed by knsv or other developer asked to review by knsv
+- Smaller low-risk changes like dependencies, documentation etc can be merged by active collaborators
+- documentation (updates to the docs folder is also allowed via direct commits)
 
 To commit code, create a branch, let it start with the type like feature or bug followed by the issue number for reference and some describing text.
 
@@ -93,10 +94,11 @@ The rendering tests are very straightforward to create. There is a function imgS
 When running in ci it will take a snapshot of the rendered diagram and compare it with the snapshot from last build and flag for review it if it differs.
 
 This is what a rendering test looks like:
+
 ```javascript
-  it('should render forks and joins', () => {
-    imgSnapshotTest(
-      `
+it('should render forks and joins', () => {
+  imgSnapshotTest(
+    `
     stateDiagram
     state fork_state &lt;&lt;fork&gt;&gt;
       [*] --> fork_state
@@ -109,18 +111,17 @@ This is what a rendering test looks like:
       join_state --> State4
       State4 --> [*]
     `,
-      { logLevel: 0 }
-    );
-    cy.get('svg');
-  });
-  ```
-
+    { logLevel: 0 }
+  );
+  cy.get('svg');
+});
+```
 
 ### **Add documentation for it**
 
 Finally, if it is not in the documentation, no one will know about it and then **no one will use it**. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the docs folder and are ofc written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the _navbar.md.
+The docs are located in the docs folder and are ofc written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the \_navbar.md.
 
 The changes in master is reflected in https://mermaid-js.github.io/mermaid/ once released the updates are committed to https://mermaid-js.github.io/#/
 
@@ -129,6 +130,5 @@ The changes in master is reflected in https://mermaid-js.github.io/mermaid/ once
 Don't get daunted if it is hard in the beginning. We have a great community with only encouraging words. So if you get stuck, ask for help and hints in the slack forum. If you want to show off something good, show it off there.
 
 [Join our slack community if you want closer contact!](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
-
 
 ![A superhero wishing you good luck](https://media.giphy.com/media/l49JHz7kJvl6MCj3G/giphy.gif)

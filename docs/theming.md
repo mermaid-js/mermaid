@@ -2,14 +2,16 @@
 
 **Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/theming.md)
 
-With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of themes. The intent is to increase the customizability and ease of styling for mermaid diagrams.  
+With Version 8.7.0 Mermaid comes out with a system for dynamic and integrated configuration of themes. The intent is to increase the customizability and ease of styling for mermaid diagrams.
 
 The theme can be altered by changing the root level variable `theme` variable in the configuration. To change it for the whole site you must use the `initialize` call. To do it for just for a single diagram you can use the `%%init%%` directive
 
 Themes follow and build upon the Levels of Configuration, and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](./8.6.0_docs.md).
 
 ## Deployable Themes
+
 The following are a list of **Deployable themes**, sample `%%init%%` directives and `initialize` calls.
+
 1. **base**- Designed to be modified, as the name implies it is supposed to be used as the base for making custom themes.
 
 2. **forest**- A theme full of light greens that is easy on the eyes.
@@ -20,28 +22,30 @@ The following are a list of **Deployable themes**, sample `%%init%%` directives 
 
 5. **neutral**- The theme to be used for black and white printing.
 
-
 ## Site-wide Themes
+
 Site-wide themes are declared via `initialize` by site owners.
 
 Example of `Initialize` call setting `theme` to `base`:
+
 ```javascript
-    mermaidAPI.initialize({
-        'securityLevel': 'loose', 'theme': 'base'
-    });
+mermaidAPI.initialize({
+  securityLevel: 'loose',
+  theme: 'base',
+});
 ```
+
 **Notes**: Only site owners can use the `mermaidAPI.initialize` call, to set values. Site-Users will have to use `%%init%%` to modify or create the theme for their diagrams.
 
 ## Themes at the Local or Current Level
-When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array.
 
+When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array.
 
 ```mmd
 %%{init: {'theme':'base'}}%%
   graph TD
     a --> b
 ```
-
 
 Here is an example of how `%%init%%` can set the theme to 'base', this assumes that `themeVariables` are set to default:
 
@@ -62,16 +66,16 @@ Here is an example of how `%%init%%` can set the theme to 'base', this assumes t
             G
           end
 ```
-# List of Themes 
+
+# List of Themes
 
 # Customizing Themes with `themeVariables`
 
 The easiest way to make a custom theme is to start with the base theme, and just modify theme variables through `themeVariables`, via `%%init%%`.
 
-|   Parameter    |                            Description                             | Type  | Required |         Objects contained          |
+| Parameter      | Description                                                        | Type  | Required | Objects contained                  |
 | -------------- | ------------------------------------------------------------------ | ----- | -------- | ---------------------------------- |
 | themeVariables | Array containing objects, modifiable with the `%%init%%` directive | Array | Required | primaryColor, lineColor, textColor |
-
 
 **Here is an example of overriding `primaryColor` through `themeVariables` and giving everything a different look, using `%%init%%`.**
 
@@ -93,7 +97,6 @@ The easiest way to make a custom theme is to start with the base theme, and just
           end
 ```
 
-
 **Notes:**
 Leaving it empty will set all variable values to default.
 
@@ -105,36 +108,35 @@ Color definitions have certain interactions in mermaid, this is in order to ensu
 
 You can create your own themes, by changing any of the given variables below. If you are using a dark background, set dark mode to true to adjust the colors. It is possible to override the calculations using the variable names below, with `%%init%%` if you wish to style it differently.
 
-
 ## Theme Variables Reference Table
 
 ```note
 Variables that are unique to some diagrams can be affected by changes in Theme Variables
 ```
 
-|       Variable       |         Default/Base/Factor value          | Calc |                                                           Description                                                            |
-| -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
-| darkMode             | false                          |      | Boolean Value that dictates how to calculate colors. "true" will activate darkmode.                                                                                 |
+| Variable             | Default/Base/Factor value      | Calc | Description                                                                                                                      |
+| -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- | --- | --- |
+| darkMode             | false                          |      | Boolean Value that dictates how to calculate colors. "true" will activate darkmode.                                              |
 | background           | #f4f4f4                        |      | Used to calculate color for items that should either be background colored or contrasting to the background.                     |
 | fontFamily           | "trebuchet ms", verdana, arial |      |                                                                                                                                  |
-| fontSize             | 16px                           |      |  Font Size, in pixels                                                                                                                                |
+| fontSize             | 16px                           |      | Font Size, in pixels                                                                                                             |
 | primaryColor         | #fff4dd                        |      | Color to be used as background in nodes, other colors will be derived from this                                                  |
-| primaryBorderColor   | based on primaryColor          | *    | Color to be used as border in nodes using primaryColor                                                                           |
-| primaryTextColor     | based on darkMode #ddd/#333    | *    | Color to be used as text color in nodes using primaryColor   
-| secondaryColor       | based on primaryColor          | *    |                                                                                                                                  |
-| secondaryBorderColor | based on secondaryColor        | *    | Color to be used as border in nodes using secondaryColor                                                                         |
-| secondaryTextColor   | based on secondaryColor        | *    | Color to be used as text color in nodes using secondaryColor   
-| tertiaryColor        | based on primaryColor          | *    |                                                                                                                                  |                                                                     |                                                                   |
-| tertiaryBorderColor  | based on tertiaryColor         | *    | Color to be used as border in nodes using tertiaryColor                                                                          |
-| tertiaryTextColor    | based on tertiaryColor         | *    | Color to be used as text color in nodes using tertiaryColor                                                                       |
+| primaryBorderColor   | based on primaryColor          | \*   | Color to be used as border in nodes using primaryColor                                                                           |
+| primaryTextColor     | based on darkMode #ddd/#333    | \*   | Color to be used as text color in nodes using primaryColor                                                                       |
+| secondaryColor       | based on primaryColor          | \*   |                                                                                                                                  |
+| secondaryBorderColor | based on secondaryColor        | \*   | Color to be used as border in nodes using secondaryColor                                                                         |
+| secondaryTextColor   | based on secondaryColor        | \*   | Color to be used as text color in nodes using secondaryColor                                                                     |
+| tertiaryColor        | based on primaryColor          | \*   |                                                                                                                                  |     |     |
+| tertiaryBorderColor  | based on tertiaryColor         | \*   | Color to be used as border in nodes using tertiaryColor                                                                          |
+| tertiaryTextColor    | based on tertiaryColor         | \*   | Color to be used as text color in nodes using tertiaryColor                                                                      |
 | noteBkgColor         | #fff5ad                        |      | Color used as background in notes                                                                                                |
-| noteTextColor        | #333                           |      | Text color in note rectangles.                                                                                                        |
-| noteBorderColor      | based on noteBkgColor          | *    | Border color in note rectangles.                                                                                                      |
-| lineColor            | based on background            | *    |                                                                                                                                  |
-| textColor            | based on primaryTextColor      | *    | Text in diagram over the background for instance text on labels and on signals in sequence diagram or the title in gantt diagram |
-| mainBkg              | based on primaryColor          | *    | Background in flowchart objects like rects/circles, class diagram classes, sequence diagram  etc                                 |
-| errorBkgColor        | tertiaryColor                  | *    | Color for syntax error message                                                                                                   |
-| errorTextColor       | tertiaryTextColor              | *    | Color for syntax error message                                                                                                   |
+| noteTextColor        | #333                           |      | Text color in note rectangles.                                                                                                   |
+| noteBorderColor      | based on noteBkgColor          | \*   | Border color in note rectangles.                                                                                                 |
+| lineColor            | based on background            | \*   |                                                                                                                                  |
+| textColor            | based on primaryTextColor      | \*   | Text in diagram over the background for instance text on labels and on signals in sequence diagram or the title in gantt diagram |
+| mainBkg              | based on primaryColor          | \*   | Background in flowchart objects like rects/circles, class diagram classes, sequence diagram etc                                  |
+| errorBkgColor        | tertiaryColor                  | \*   | Color for syntax error message                                                                                                   |
+| errorTextColor       | tertiaryTextColor              | \*   | Color for syntax error message                                                                                                   |
 
 # What follows are Variables, specific to different diagrams and charts.
 
@@ -142,64 +144,64 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 
 ## Flowchart
 
-|       Variable      |    Default/ Associated Value        | Calc |                                                           Description                                                            |
-| -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
-| nodeBorder           | primaryBorderColor             | *    | Node Border Color                                                                                                                                |
-| clusterBkg           | tertiaryColor                  | *    | Background in subgraphs                                                                                                          |
-| clusterBorder        | tertiaryBorderColor            | *    | Cluster Border Color                                                                                                                               |
-| defaultLinkColor     | lineColor                      | *    | Link Color                                                                                                                                  |
-| titleColor           | tertiaryTextColor              | *    |  Title Color                                                                                                                              |
-| edgeLabelBackground  | based on secondaryColor        | *    |                                                                                                                                  |
-| nodeTextColor        | primaryTextColor               | *    |  Color for text inside Nodes.                                                                                                                                |
+| Variable            | Default/ Associated Value | Calc | Description                  |
+| ------------------- | ------------------------- | ---- | ---------------------------- |
+| nodeBorder          | primaryBorderColor        | \*   | Node Border Color            |
+| clusterBkg          | tertiaryColor             | \*   | Background in subgraphs      |
+| clusterBorder       | tertiaryBorderColor       | \*   | Cluster Border Color         |
+| defaultLinkColor    | lineColor                 | \*   | Link Color                   |
+| titleColor          | tertiaryTextColor         | \*   | Title Color                  |
+| edgeLabelBackground | based on secondaryColor   | \*   |                              |
+| nodeTextColor       | primaryTextColor          | \*   | Color for text inside Nodes. |
 
 # sequence diagram
 
-|         name          |      Default value      | Calc | Description |
-| --------------------- | ----------------------- | ---- | ----------- |
-| actorBorder           | primaryBorderColor      | *    |   Actor Border Color          |
-| actorBkg              | mainBkg                 | *    | Actor Background Color         |
-| actorTextColor        | primaryTextColor        | *    |  Actor Text Color            |
-| actorLineColor        | grey                    | *    |   Actor Line Color           |
-| signalColor           | textColor               | *    |  Signal Color           |
-| signalTextColor       | textColor               | *    |  Signal Text Color           |
-| labelBoxBkgColor      | actorBkg                | *    |  Label Box Background Color            |
-| labelBoxBorderColor   | actorBorder             | *    |   Label Box Border Color          |
-| labelTextColor        | actorTextColor          | *    |   Label Text Color           |
-| loopTextColor         | actorTextColor          | *    |   Loop ext Color            |
-| activationBorderColor | based on secondaryColor | *    |    Activation Border Color         |
-| activationBkgColor    | secondaryColor          | *    |   Activation Background Color          |
-| sequenceNumberColor   | based on lineColor      | *    |    Sequence Number Color          |
+| name                  | Default value           | Calc | Description                 |
+| --------------------- | ----------------------- | ---- | --------------------------- |
+| actorBorder           | primaryBorderColor      | \*   | Actor Border Color          |
+| actorBkg              | mainBkg                 | \*   | Actor Background Color      |
+| actorTextColor        | primaryTextColor        | \*   | Actor Text Color            |
+| actorLineColor        | grey                    | \*   | Actor Line Color            |
+| signalColor           | textColor               | \*   | Signal Color                |
+| signalTextColor       | textColor               | \*   | Signal Text Color           |
+| labelBoxBkgColor      | actorBkg                | \*   | Label Box Background Color  |
+| labelBoxBorderColor   | actorBorder             | \*   | Label Box Border Color      |
+| labelTextColor        | actorTextColor          | \*   | Label Text Color            |
+| loopTextColor         | actorTextColor          | \*   | Loop ext Color              |
+| activationBorderColor | based on secondaryColor | \*   | Activation Border Color     |
+| activationBkgColor    | secondaryColor          | \*   | Activation Background Color |
+| sequenceNumberColor   | based on lineColor      | \*   | Sequence Number Color       |
 
 # state colors
 
-|     name      |  Default value   | Calc |                 Description                 |
-| ------------- | ---------------- | ---- | ------------------------------------------- |
-| labelColor    | primaryTextColor | *    |                                             |
-| altBackground | tertiaryColor    | *    | Used for background in deep composite states |
+| name          | Default value    | Calc | Description                                  |
+| ------------- | ---------------- | ---- | -------------------------------------------- |
+| labelColor    | primaryTextColor | \*   |                                              |
+| altBackground | tertiaryColor    | \*   | Used for background in deep composite states |
 
 # class colors
 
-|   name    | Default value | Calc |      Description       |
-| --------- | ------------- | ---- | ---------------------- |
-| classText | textColor     | *    | Color of Text in class diagrams |
+| name      | Default value | Calc | Description                     |
+| --------- | ------------- | ---- | ------------------------------- |
+| classText | textColor     | \*   | Color of Text in class diagrams |
 
 # User journey colors
 
-|   name    |      Default value       | Calc |               Description               |
-| --------- | ------------------------ | ---- | --------------------------------------- |
-| fillType0 | primaryColor             | *    | Fill for 1st section in journey diagram |
-| fillType1 | secondaryColor           | *    | Fill for 2nd section in journey diagram |
-| fillType2 | based on primaryColor    | *    | Fill for 3rd section in journey diagram |
-| fillType3 | based on  secondaryColor | *    | Fill for 4th section in journey diagram |
-| fillType4 | based on primaryColor    | *    | Fill for 5th section in journey diagram |
-| fillType5 | based on secondaryColor  | *    | Fill for 6th section in journey diagram |
-| fillType6 | based on primaryColor    | *    | Fill for 7th section in journey diagram |
-| fillType7 | based on secondaryColor  | *    | Fill for 8th section in journey diagram |
+| name      | Default value           | Calc | Description                             |
+| --------- | ----------------------- | ---- | --------------------------------------- |
+| fillType0 | primaryColor            | \*   | Fill for 1st section in journey diagram |
+| fillType1 | secondaryColor          | \*   | Fill for 2nd section in journey diagram |
+| fillType2 | based on primaryColor   | \*   | Fill for 3rd section in journey diagram |
+| fillType3 | based on secondaryColor | \*   | Fill for 4th section in journey diagram |
+| fillType4 | based on primaryColor   | \*   | Fill for 5th section in journey diagram |
+| fillType5 | based on secondaryColor | \*   | Fill for 6th section in journey diagram |
+| fillType6 | based on primaryColor   | \*   | Fill for 7th section in journey diagram |
+| fillType7 | based on secondaryColor | \*   | Fill for 8th section in journey diagram |
 
-**Notes: Values are meant to create an alternating look.
-
+\*\*Notes: Values are meant to create an alternating look.
 
 # Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
+
 ```mermaid-example
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
@@ -218,12 +220,11 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
           end
 ```
 
-**This got a bit too dark and bit too colorful. With some easy steps this can be fixed:
+\*\*This got a bit too dark and bit too colorful. With some easy steps this can be fixed:
 
-* Make the primary color a little lighter
-* set the tertiary color to a reddish shade as well
-* make the edge label background differ from the subgraph by setting the edgeLabelBackground
-
+- Make the primary color a little lighter
+- set the tertiary color to a reddish shade as well
+- make the edge label background differ from the subgraph by setting the edgeLabelBackground
 
 ```mermaid-example
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ffcccc', 'edgeLabelBackground':'#ffffee', 'tertiaryColor': '#fff0f0'}}}%%
@@ -255,6 +256,7 @@ When adjusting a theme it might be helpful to look at how your preferred theme g
 In the following examples, the directive `init` is used, with the `theme` being declared as `base`. For more information on using directives, read the documentation for [Version 8.6.0](/8.6.0_docs.md)
 
 ### Flowchart
+
 ```mmd
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         graph TD
@@ -272,6 +274,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
             G
           end
 ```
+
 ```mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         graph TD
@@ -291,6 +294,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ```
 
 ### Flowchart (beta)
+
 ```mermaid-example
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         flowchart TD
@@ -310,6 +314,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ```
 
 ### Sequence diagram
+
 ```mermaid-example
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         sequenceDiagram
@@ -330,6 +335,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ```
 
 ### Class diagram
+
 ```mermaid-example
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 
@@ -357,6 +363,7 @@ classDiagram
 ```
 
 ### Gantt
+
 ```mermaid-example
 gantt
        dateFormat                YYYY-MM-DD
@@ -388,6 +395,7 @@ gantt
 ```
 
 ### State diagram
+
 ```mermaid-example
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
       stateDiagram
@@ -464,6 +472,7 @@ stateDiagram-v2
 ```
 
 ### User journey diagram
+
 ```mermaid-example
 journey
             title My working day

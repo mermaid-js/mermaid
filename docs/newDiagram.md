@@ -2,15 +2,14 @@
 
 ### Step 1: Grammar & Parsing
 
-
 #### Grammar
 
 This would be to define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. Create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.
 
 For instance:
 
-* the flowchart starts with the keyword graph.
-* the sequence diagram starts with the keyword sequenceDiagram
+- the flowchart starts with the keyword graph.
+- the sequence diagram starts with the keyword sequenceDiagram
 
 #### Store data found during parsing
 
@@ -36,19 +35,18 @@ For more info look in the example diagram type:
 The `yy` object has the following function:
 
 ```javascript
-exports.parseError = function(err, hash){
-   mermaid.parseError(err, hash)
+exports.parseError = function (err, hash) {
+  mermaid.parseError(err, hash);
 };
 ```
 
 when parsing the `yy` object is initialized as per below:
 
 ```javascript
-var parser
-parser = exampleParser.parser
-parser.yy = db
+var parser;
+parser = exampleParser.parser;
+parser.yy = db;
 ```
-
 
 ### Step 2: Rendering
 
@@ -56,54 +54,48 @@ Write a renderer that given the data found during parsing renders the diagram. T
 
 Place the renderer in the diagram folder.
 
-
 ### Step 3: Detection of the new diagram type
 
 The second thing to do is to add the capability to detect the new new diagram to type to the detectType in utils.js. The detection should return a key for the new diagram type.
-
 
 ### Step 4: The final piece - triggering the rendering
 
 At this point when mermaid is trying to render the diagram, it will detect it as being of the new type but there will be no match when trying to render the diagram. To fix this add a new case in the switch statement in main.js:init this should match the diagram type returned from step #2. The code in this new case statement should call the renderer for the diagram type with the data found by the parser as an argument.
 
-
 ## Usage of the parser as a separate module
-
 
 ### Setup
 
 ```javascript
-var graph = require('./graphDb')
-var flow = require('./parser/flow')
-flow.parser.yy = graph
+var graph = require('./graphDb');
+var flow = require('./parser/flow');
+flow.parser.yy = graph;
 ```
-
 
 ### Parsing
 
 ```javascript
-flow.parser.parse(text)
+flow.parser.parse(text);
 ```
-
 
 ### Data extraction
 
 ```javascript
-graph.getDirection()
-graph.getVertices()
-graph.getEdges()
+graph.getDirection();
+graph.getVertices();
+graph.getEdges();
 ```
 
 The parser is also exposed in the mermaid api by calling:
 
 ```javascript
-var parser = mermaid.getParser()
+var parser = mermaid.getParser();
 ```
 
 Note that the parse needs a graph object to store the data as per:
 
 ```javascript
-flow.parser.yy = graph
+flow.parser.yy = graph;
 ```
 
 Look at `graphDb.js` for more details on that object.
@@ -116,10 +108,10 @@ If you are using a dagre based layout, please use flowchart-v2 as a template and
 
 There are a few features that are common between the different types of diagrams. We try to standardize the diagrams that work as similar as possible for the end user. The commonalities are:
 
-* Directives, a way of modifying the diagram configuration from within the diagram code.
-* Accessibility, a way for an author to provide additional information like titles and descriptions to people accessing a text with diagrams using a screen reader.
-* Themes, there is a common way to modify the styling of diagrams in Mermaid.
-* Comments should follow mermaid standards
+- Directives, a way of modifying the diagram configuration from within the diagram code.
+- Accessibility, a way for an author to provide additional information like titles and descriptions to people accessing a text with diagrams using a screen reader.
+- Themes, there is a common way to modify the styling of diagrams in Mermaid.
+- Comments should follow mermaid standards
 
 Here some pointers on how to handle these different areas.
 
@@ -127,6 +119,7 @@ Here some pointers on how to handle these different areas.
 
 Here is example handling from flowcharts:
 Jison:
+
 ```jison
 
 /* lexical grammar */
@@ -173,6 +166,7 @@ It is probably a good idea to keep the handling similar to this in your new diag
 ## Accessibility
 
 The syntax for adding title and description looks like this:
+
 ```
 accTitle: The title
 accDescr: The description
@@ -222,6 +216,7 @@ import {
 For rendering the accessibility tags you have again an existing function you can use.
 
 **In the renderer:**
+
 ```js
 import addSVGAccessibilityFields from '../../accessibility';
 
@@ -239,11 +234,11 @@ When adding themes to a diagram it comes down to a few important locations in th
 
 The entry point for the styling engine is in **src/styles.js**. The getStyles function will be called by Mermaid when the styles are being applied to the diagram.
 
-This function will in turn call a function *your diagram should provide* returning the css for the new diagram. The diagram specific, also which is commonly also called getStyles and located in the folder for your diagram under src/diagrams and should be named styles.js. The getStyles function will be called with the theme options as an argument like in the following example:
+This function will in turn call a function _your diagram should provide_ returning the css for the new diagram. The diagram specific, also which is commonly also called getStyles and located in the folder for your diagram under src/diagrams and should be named styles.js. The getStyles function will be called with the theme options as an argument like in the following example:
 
 ```js
 const getStyles = (options) =>
-    `
+  `
     .line {
       stroke-width: 1;
       stroke: ${options.lineColor};
@@ -253,17 +248,16 @@ const getStyles = (options) =>
     `;
 ```
 
-Note that you need to provide your function to the main getStyles by adding it into the themes object in  **src/styles.js** like in the xyzDiagram in the provided example:
+Note that you need to provide your function to the main getStyles by adding it into the themes object in **src/styles.js** like in the xyzDiagram in the provided example:
 
 ```js
 const themes = {
-    flowchart,
-    'flowchart-v2': flowchart,
-    sequence,
-    xyzDiagram,
-    //...
+  flowchart,
+  'flowchart-v2': flowchart,
+  sequence,
+  xyzDiagram,
+  //...
 };
 ```
 
 The actual options and values for the colors are defined in **src/theme/theme-[xyz].js**. If you provide the options your diagram needs in the existing theme files then the theming will work smoothly without hiccups.
-

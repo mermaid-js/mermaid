@@ -5,6 +5,7 @@
   - [Syntax and Configuration](n00b-syntaxReference.md)
 
 - 📊 Diagram Syntax
+
   - [Flowchart](flowchart.md)
   - [Sequence Diagram](sequenceDiagram.md)
   - [Class Diagram](classDiagram.md)
@@ -30,6 +31,7 @@
   - [Advanced usage](n00b-advanced.md)
 
 - 📚 Misc
+
   - [Use-Cases and Integrations](integrations.md)
   - [FAQ](faq.md)
 

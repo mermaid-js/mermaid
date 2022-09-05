@@ -140,7 +140,7 @@ stateDiagram-v2
     }
 ```
 
-*You can not define transitions between internal states belonging to different composite states*
+_You can not define transitions between internal states belonging to different composite states_
 
 ## Choice
 
@@ -177,7 +177,7 @@ It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&
 
 Sometimes nothing says it better then a Post-it note. That is also the case in state diagrams.
 
-Here you can choose to put the note to the *right of* or to the *left of* a node.
+Here you can choose to put the note to the _right of_ or to the _left of_ a node.
 
 ```mermaid-example
     stateDiagram-v2
@@ -228,12 +228,11 @@ stateDiagram
       a --> b
     }
     B --> D
- ```
-
+```
 
 ## Comments
 
-Comments can be entered within a state diagram chart, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
+Comments can be entered within a state diagram chart, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
 ```mmd
 stateDiagram-v2
@@ -248,7 +247,7 @@ stateDiagram-v2
 
 ## Styling
 
-Styling of the a state diagram is done by defining a number of css classes.  During rendering these classes are extracted from the file located at src/themes/state.scss
+Styling of the a state diagram is done by defining a number of css classes. During rendering these classes are extracted from the file located at src/themes/state.scss
 
 ## Spaces in state names
 

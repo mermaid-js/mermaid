@@ -6,7 +6,7 @@ All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, th
 
 It can also accommodate different arrow types, multi directional arrows, and linking to and from subgraphs.
 
-> **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).**
+> **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).\*\*
 
 ### A node (default)
 
@@ -50,11 +50,11 @@ flowchart LR
 
 Possible FlowChart orientations are:
 
-* TB - top to bottom
-* TD - top-down/ same as top to bottom
-* BT - bottom to top
-* RL - right to left
-* LR - left to right
+- TB - top to bottom
+- TD - top-down/ same as top to bottom
+- BT - bottom to top
+- RL - right to left
+- LR - left to right
 
 ## Node shapes
 
@@ -99,7 +99,8 @@ flowchart LR
 flowchart LR
     id1>This is the text in the box]
 ```
-Currently only the shape above is possible and not its mirror. *This might change with future releases.*
+
+Currently only the shape above is possible and not its mirror. _This might change with future releases._
 
 ### A node (rhombus)
 
@@ -109,6 +110,7 @@ flowchart LR
 ```
 
 ### A hexagon node
+
 ```mermaid-example
 flowchart LR
     id1{{This is the text in the box}}
@@ -134,6 +136,7 @@ flowchart TD
 flowchart TD
     A[/Christmas\]
 ```
+
 ### Trapezoid alt
 
 ```mermaid-example
@@ -225,26 +228,31 @@ flowchart LR
 ### Chaining of links
 
 It is possible declare many links in the same line as per below:
+
 ```mermaid-example
 flowchart LR
    A -- text --> B -- text2 --> C
 ```
 
 It is also possible to declare multiple nodes links in the same line as per below:
+
 ```mermaid-example
 flowchart LR
    a --> b & c--> d
 ```
 
 You can then describe dependencies in a very expressive way. Like the one-liner below:
+
 ```mermaid-example
 flowchart TB
     A & B--> C & D
 ```
+
 If you describe the same diagram using the the basic syntax, it will take four lines. A
 word of warning, one could go overboard with this making the flowchart harder to read in
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
+
 ```mmd
 flowchart TB
     A --> C
@@ -262,7 +270,6 @@ flowchart LR
     A --o B
     B --x C
 ```
-
 
 ### Multi directional arrows
 
@@ -314,12 +321,12 @@ flowchart TD
 For dotted or thick links, the characters to add are equals signs or dots,
 as summed up in the following table:
 
-| Length            |    1   |    2    |     3    |
-|-------------------|:------:|:-------:|:--------:|
-| Normal            |  `---` |  `----` |  `-----` |
-| Normal with arrow |  `-->` |  `--->` |  `---->` |
-| Thick             |  `===` |  `====` |  `=====` |
-| Thick with arrow  |  `==>` |  `===>` |  `====>` |
+| Length            |   1    |    2    |    3     |
+| ----------------- | :----: | :-----: | :------: |
+| Normal            | `---`  | `----`  | `-----`  |
+| Normal with arrow | `-->`  | `--->`  | `---->`  |
+| Thick             | `===`  | `====`  | `=====`  |
+| Thick with arrow  | `==>`  | `===>`  | `====>`  |
 | Dotted            | `-.-`  | `-..-`  | `-...-`  |
 | Dotted with arrow | `-.->` | `-..->` | `-...->` |
 
@@ -365,9 +372,9 @@ flowchart TB
     subgraph three
     c1-->c2
     end
- ```
+```
 
- You can also set an explicit id for the subgraph.
+You can also set an explicit id for the subgraph.
 
 ```mermaid-example
 flowchart TB
@@ -375,7 +382,7 @@ flowchart TB
     subgraph ide1 [one]
     a1-->a2
     end
- ```
+```
 
 ## flowcharts
 
@@ -396,9 +403,9 @@ flowchart TB
     one --> two
     three --> two
     two --> c2
- ```
+```
 
- ## Direction in subgraphs
+## Direction in subgraphs
 
 With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
 
@@ -417,7 +424,7 @@ flowchart LR
   end
   A --> TOP --> B
   B1 --> B2
- ```
+```
 
 ## Interaction
 
@@ -428,15 +435,15 @@ click nodeId callback
 click nodeId call callback()
 ```
 
-* nodeId is the id of the node
-* callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
+- nodeId is the id of the node
+- callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
 
 Examples of tooltip usage below:
 
 ```html
 <script>
   var callback = function () {
-      alert('A callback was triggered');
+    alert('A callback was triggered');
   };
 </script>
 ```
@@ -459,6 +466,7 @@ flowchart LR
 ?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/s37cjoau/3/).
 
 Links are opened in the same browser tab/window by default. It is possible to change this by adding a link target to the click definition (`_self`, `_blank`, `_parent` and `_top` are supported):
+
 ```mermaid-example
 flowchart LR
     A-->B
@@ -472,9 +480,10 @@ flowchart LR
 ```
 
 Beginner's tip—a full example using interactive links in a html context:
+
 ```html
 <body>
-  <div class="mermaid">
+  <pre class="mermaid">
     flowchart LR
         A-->B
         B-->C
@@ -483,16 +492,16 @@ Beginner's tip—a full example using interactive links in a html context:
         click B "https://www.github.com" "This is a link"
         click C call callback() "Tooltip"
         click D href "https://www.github.com" "This is a link"
-  </div>
+  </pre>
 
   <script>
     var callback = function () {
-        alert('A callback was triggered');
+      alert('A callback was triggered');
     };
     var config = {
-        startOnLoad: true,
-        flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
-        securityLevel:'loose'
+      startOnLoad: true,
+      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
+      securityLevel: 'loose',
     };
     mermaid.initialize(config);
   </script>
@@ -501,7 +510,7 @@ Beginner's tip—a full example using interactive links in a html context:
 
 ### Comments
 
-Comments can be entered within a flow diagram, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
+Comments can be entered within a flow diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
 
 ```mmd
 flowchart LR
@@ -550,14 +559,12 @@ flowchart LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-
 #### Classes
 
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
 should have a different look.
 
 a class definition looks like the example below:
-
 
 ```
     classDef className fill:#f9f,stroke:#333,stroke-width:4px;
@@ -583,7 +590,6 @@ flowchart LR
     classDef someclass fill:#f96;
 ```
 
-
 ### Css classes
 
 It is also possible to predefine classes in css styles that can be applied from the graph definition as in the example
@@ -593,11 +599,11 @@ below:
 
 ```html
 <style>
-    .cssClass > rect{
-        fill:#FF0000;
-        stroke:#FFFF00;
-        stroke-width:4px;
-    }
+  .cssClass > rect {
+    fill: #ff0000;
+    stroke: #ffff00;
+    stroke-width: 4px;
+  }
 </style>
 ```
 
@@ -610,7 +616,6 @@ flowchart LR;
     class A cssClass
 ```
 
-
 ### Default class
 
 If a class is named default it will be assigned to all classes without specific class definitions.
@@ -618,7 +623,6 @@ If a class is named default it will be assigned to all classes without specific 
 ```
     classDef default fill:#f9f,stroke:#333,stroke-width:4px;
 ```
-
 
 ## Basic support for fontawesome
 
@@ -636,12 +640,11 @@ flowchart TD
 
 ?> Mermaid is now only compatible with Font Awesome versions 4 and 5. Check that you are using the correct version of Font Awesome.
 
-
 ## Graph declarations with spaces between vertices and link and without semicolon
 
-* In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
+- In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
 
-* A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduced to improve readability.
+- A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduced to improve readability.
 
 Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
 
@@ -652,7 +655,6 @@ flowchart LR
     C -->|One| D[Result one]
     C -->|Two| E[Result two]
 ```
-
 
 ## Configuration...
 

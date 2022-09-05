@@ -17,7 +17,10 @@
     />
     <!-- <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css"> -->
     <link rel="stylesheet" href="theme.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+    />
     <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.6/dist/mermaid.min.js"></script>
     <!-- <script src="http://localhost:9000/mermaid.js"></script> -->
     <script>
@@ -108,8 +111,7 @@
                 }
 
                 if (lang === 'mermaid' || lang === 'mermaid-example') {
-                  resultingHTML +=
-                    '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</div>';
+                  '<pre class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</pre>';
                 }
 
                 if (resultingHTML !== '') {
@@ -134,7 +136,8 @@
                 while (!window.hasOwnProperty('monaco'))
                   await new Promise((resolve) => setTimeout(resolve, 1000));
                 colorizeEverything(html).then(
-                  (newHTML) => (document.querySelector('article.markdown-section').innerHTML = newHTML)
+                  (newHTML) =>
+                    (document.querySelector('article.markdown-section').innerHTML = newHTML)
                 );
               })();
             });

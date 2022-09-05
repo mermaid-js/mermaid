@@ -85,35 +85,35 @@ c. The `mermaid.initialize()` call, which dictates the appearance of diagrams an
 
 ```html
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 </body>
 ```
 
-**b. The embedded mermaid diagram definition inside a `<div class="mermaid">`:**
+**b. The embedded mermaid diagram definition inside a `<pre class="mermaid">`:**
 
 ```html
 <body>
-    Here is a mermaid diagram:
-    <div class="mermaid">
+  Here is a mermaid diagram:
+  <pre class="mermaid">
         graph TD 
         A[Client] --> B[Load Balancer] 
         B --> C[Server01] 
         B --> D[Server02]
-    </div>
+  </pre>
 </body>
 ```
 
-**Notes**: Every Mermaid chart/graph/diagram definition, should have separate `<div>` tags.
+**Notes**: Every Mermaid chart/graph/diagram definition, should have separate `<pre>` tags.
 
 **c. The `mermaid.initialize()` call.**
 
-`mermaid.initialize()` call takes all the definitions contained in all the `<div class="mermaid">` tags that it finds in the html body and renders them into diagrams. Example:
+`mermaid.initialize()` call takes all the definitions contained in all the `<pre class="mermaid">` tags that it finds in the html body and renders them into diagrams. Example:
 
 ```html
 <body>
-    <script>
-        mermaid.initialize({ startOnLoad: true });
-    </script>
+  <script>
+    mermaid.initialize({ startOnLoad: true });
+  </script>
 </body>
 ```
 
@@ -132,29 +132,29 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
 
 ```html
 <html>
-    <body>
-        <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-        <script>
-            mermaid.initialize({ startOnLoad: true });
-        </script>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
 
-        Here is one mermaid diagram:
-        <div class="mermaid">
+    Here is one mermaid diagram:
+    <pre class="mermaid">
             graph TD 
             A[Client] --> B[Load Balancer] 
             B --> C[Server1] 
             B --> D[Server2]
-        </div>
+    </pre>
 
-        And here is another:
-        <div class="mermaid">
+    And here is another:
+    <pre class="mermaid">
             graph TD 
             A[Client] -->|tcp_123| B
             B(Load Balancer) 
             B -->|tcp_456| C[Server1] 
             B -->|tcp_456| D[Server2]
-        </div>
-    </body>
+    </pre>
+  </body>
 </html>
 ```
 
@@ -163,27 +163,27 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
 
 ```html
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-    </head>
-    <body>
-        <div class="mermaid">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <pre class="mermaid">
             graph LR 
             A --- B 
             B-->C[fa:fa-ban forbidden] 
             B-->D(fa:fa-spinner);
-        </div>
-        <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
             graph TD 
             A[Client] --> B[Load Balancer] 
             B --> C[Server1] 
             B --> D[Server2]
-        </div>
-        <script src="The\Path\In\Your\Package\mermaid.js"></script>
-        <script>
-            mermaid.initialize({ startOnLoad: true });
-        </script>
-    </body>
+    </pre>
+    <script src="The\Path\In\Your\Package\mermaid.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
 </html>
 ```
 
@@ -204,4 +204,4 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
 
 **Comments from Knut Sveidqvist, creator of mermaid:**
 
--   In early versions of mermaid, the `<script src>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflects the previous way which still works.
+- In early versions of mermaid, the `<script src>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflects the previous way which still works.

@@ -1,45 +1,40 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
 
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Mermaid Quick Test Page</title>
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
-<style>
-	div.mermaid {
-		/* font-family: 'trebuchet ms', verdana, arial; */
-		font-family: 'Courier New', Courier, monospace !important;
-	}
-</style>
-</head>
-
-<body>
-
-
-<div class="mermaid">
+  <body>
+    <pre class="mermaid">
 erDiagram
 title This is a title
 accDescription Test a description
 CUSTOMER ||--o{ ORDER : places
 ORDER ||--|{ LINE-ITEM : contains
 CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
-</div>
+    </pre>
 
-<script src="./mermaid.js"></script>
-<script>
-	mermaid.initialize({
-	  theme: 'forest',
-	  // themeCSS: '.node rect { fill: red; }',
-	  logLevel: 3,
-	  securityLevel: 'loose',
-	  flowchart: { curve: 'basis' },
-	  gantt: { axisFormat: '%m/%d/%Y' },
-	  sequence: { actorMargin: 50 },
-	  // sequenceDiagram: { actorMargin: 300 } // deprecated
-	});
-</script>
-
-</body>
-
+    <script src="./mermaid.js"></script>
+    <script>
+      mermaid.initialize({
+        theme: 'forest',
+        // themeCSS: '.node rect { fill: red; }',
+        logLevel: 3,
+        securityLevel: 'loose',
+        flowchart: { curve: 'basis' },
+        gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorMargin: 50 },
+        // sequenceDiagram: { actorMargin: 300 } // deprecated
+      });
+    </script>
+  </body>
 </html>

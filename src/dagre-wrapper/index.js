@@ -19,7 +19,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   const dir = graph.graph().rankdir;
   log.trace('Dir in recursive render - dir:', dir);
 
-  const elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
+  const elem = _elem.insert('g').attr('class', 'root');
   if (!graph.nodes()) {
     log.info('No nodes found for', graph);
   } else {
@@ -28,7 +28,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   if (graph.edges().length > 0) {
     log.trace('Recursive edges', graph.edge(graph.edges()[0]));
   }
-  const clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
+  const clusters = elem.insert('g').attr('class', 'clusters');
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
   const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
   const nodes = elem.insert('g').attr('class', 'nodes');
