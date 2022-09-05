@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';

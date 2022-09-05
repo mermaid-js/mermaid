@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 export const setConf = function (cnf) {

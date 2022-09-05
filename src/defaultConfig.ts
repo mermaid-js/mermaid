@@ -1823,6 +1823,12 @@ const config: Partial<MermaidConfig> = {
     external_component_queue_bg_color: '#CCCCCC',
     external_component_queue_border_color: '#BFBFBF',
   },
+  mindmap: {
+    useMaxWidth: true,
+    padding: 10,
+    maxNodeWidth: 200,
+  },
+  fontSize: 16,
 };
 
 if (config.class) config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;

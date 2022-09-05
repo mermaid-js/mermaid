@@ -27,10 +27,12 @@ export interface MermaidConfig {
   er?: ErDiagramConfig;
   pie?: PieDiagramConfig;
   requirement?: RequirementDiagramConfig;
+  mindmap?: MindmapDiagramConfig;
   gitGraph?: GitGraphDiagramConfig;
   c4?: C4DiagramConfig;
   dompurifyConfig?: DOMPurify.Config;
   wrap?: boolean;
+  fontSize?: number;
 }
 
 // TODO: More configs needs to be moved in here
@@ -212,6 +214,11 @@ export interface RequirementDiagramConfig extends BaseDiagramConfig {
   line_height?: number;
 }
 
+export interface MindmapDiagramConfig extends BaseDiagramConfig {
+  useMaxWidth: boolean;
+  padding: number;
+  maxNodeWidth: number;
+}
 export interface PieDiagramConfig extends BaseDiagramConfig {}
 
 export interface ErDiagramConfig extends BaseDiagramConfig {
