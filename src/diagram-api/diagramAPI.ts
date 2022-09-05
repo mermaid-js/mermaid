@@ -248,5 +248,5 @@ export const getDiagram = (name: string): DiagramDefinition => {
 
 export const log = _log;
 export const getConfig = _getConfig;
-export const sanitizeText = (text:string) => _sanitizeText(text, getConfig());
+export const sanitizeText = (text: string) => _sanitizeText(text, getConfig());
 export const setupGraphViewbox = _setupGraphViewbox;

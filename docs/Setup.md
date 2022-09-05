@@ -64,12 +64,12 @@ Theme , the CSS style sheet
 
 **Notes:**
 
--   Trace: 0
--   Debug: 1
--   Info: 2
--   Warn: 3
--   Error: 4
--   Fatal: 5 (default)
+- Trace: 0
+- Debug: 1
+- Info: 2
+- Warn: 3
+- Error: 4
+- Fatal: 5 (default)
 
 ## securityLevel
 
@@ -1420,7 +1420,7 @@ function _Default value: At default, will mirror Global Config_
 
 ### Parameters
 
--   `conf` **MermaidConfig** The base currentConfig to use as siteConfig
+- `conf` **MermaidConfig** The base currentConfig to use as siteConfig
 
 Returns **[object][5]** The siteConfig
 
@@ -1473,14 +1473,14 @@ $(function () {
 
 ### Parameters
 
--   `id` **[string][6]** The id of the element to be rendered
--   `text` **[string][6]** The graph definition
--   `cb` **function (svgCode: [string][6], bindFunctions: function (element: [Element][7]): void): void** 
--   `container` **[Element][7]** Selector to element in which a div with the graph temporarily will be
-      inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
-      element will be removed when rendering is completed.
+- `id` **[string][6]** The id of the element to be rendered
+- `text` **[string][6]** The graph definition
+- `cb` **function (svgCode: [string][6], bindFunctions: function (element: [Element][7]): void): void**
+- `container` **[Element][7]** Selector to element in which a div with the graph temporarily will be
+  inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
+  element will be removed when rendering is completed.
 
-Returns **void** 
+Returns **void**
 
 ## getConfig
 
@@ -1507,7 +1507,7 @@ options in-place
 
 ### Parameters
 
--   `options` **any** The potential setConfig parameter
+- `options` **any** The potential setConfig parameter
 
 ## addDirective
 
@@ -1535,15 +1535,15 @@ Pushes in a directive to the configuration
 
 ### Parameters
 
--   `config`   (optional, default `siteConfig`)
+- `config` (optional, default `siteConfig`)
 
-Returns **void** 
+Returns **void**
 
 ## initialize
 
 ### Parameters
 
--   `options` **MermaidConfig** 
+- `options` **MermaidConfig**
 
 ##
 
