@@ -30,6 +30,10 @@
     "jsdoc/multiline-blocks": "off",
     "jsdoc/newline-after-description": "off",
     "jsdoc/tag-lines": "off",
+    "jsdoc/require-param-description": "off",
+    "jsdoc/require-param-type": "off",
+    "jsdoc/require-returns": "off",
+    "jsdoc/require-returns-description": "off",
     "cypress/no-async-tests": "off",
     "json/*": ["error", "allowComments"],
     "no-empty": ["error", { "allowEmptyCatch": true }]
