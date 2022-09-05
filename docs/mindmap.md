@@ -49,8 +49,6 @@ Root
       C
 ```
 
-)sdlfkjlsd(
-
 In this way we can use a text outline to generate a hierarchical mindmap.
 
 ## Different shapes
@@ -76,7 +74,18 @@ mindmap
 mindmap
     id((I am a circle))
 ```
+### Bang
 
+```mermaid-example
+mindmap
+    id))I am a bang((
+```
+### Cloud
+
+```mermaid-example
+mindmap
+    id)I am a cloud(
+```
 ### Default
 
 ```mermaid-example

@@ -38,6 +38,32 @@ root[root]
     );
   });
 
+  it('Blang and cloud shape', () => {
+    imgSnapshotTest(
+      `mindmap
+root))bang((
+  ::icon(mdi mdi-fire)
+  a))Another bang((
+  ::icon(mdi mdi-fire)
+  a)A cloud(
+  ::icon(mdi mdi-fire)
+    `,
+      {}
+    );
+  });
+
+  it('Blang and cloud shape with icons', () => {
+    imgSnapshotTest(
+      `mindmap
+root))bang((
+
+  a))Another bang((
+  a)A cloud(
+    `,
+      {}
+    );
+  });
+
   it('braches', () => {
     imgSnapshotTest(
       `mindmap

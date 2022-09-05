@@ -85,7 +85,6 @@ const detectType = function (text, cnf) {
   const k = Object.keys(detectors);
   for (let i = 0; i < k.length; i++) {
     const key = k[i];
-    console.log('Detecting type for', key);
     const dia = detectors[key];
     if (dia && dia.detector(text)) {
       return key;

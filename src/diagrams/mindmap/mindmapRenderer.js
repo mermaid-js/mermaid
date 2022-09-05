@@ -67,7 +67,7 @@ function transpose(mindmap) {
 }
 /** @param {object} mindmap */
 function bottomToUp(mindmap) {
-  console.log('bottomToUp', mindmap);
+  log.debug('bottomToUp', mindmap);
   eachNode(mindmap.result, (node) => {
     // node.y = node.y - (node.y - bb.top) * 2 - node.height;
     node.y = node.y - (node.y - 0) * 2 - node.height;
@@ -76,7 +76,6 @@ function bottomToUp(mindmap) {
 }
 /** @param {object} mindmap The mindmap hierarchy */
 function rightToLeft(mindmap) {
-  console.log('bottomToUp', mindmap);
   eachNode(mindmap.result, (node) => {
     // node.y = node.y - (node.y - bb.top) * 2 - node.height;
     node.x = node.x - (node.x - 0) * 2 - node.width;
@@ -90,7 +89,7 @@ function rightToLeft(mindmap) {
  * @param conf
  */
 function layout(mindmap, dir, conf) {
-  const bb = new BoundingBox(80, 80);
+  const bb = new BoundingBox(30, 60);
 
   const layout = new Layout(bb);
   switch (dir) {
@@ -114,7 +113,7 @@ function layout(mindmap, dir, conf) {
   }
 }
 const dirFromIndex = (index) => {
-  const dirNum = index % 4;
+  const dirNum = (index + 2) % 4;
   switch (dirNum) {
     case 0:
       return 'LR';
@@ -197,14 +196,6 @@ function layoutMindmap(node, conf) {
 
   // Merge the trees into a single tree
   const result = mergeTrees(node, trees);
-
-  // return layout(node, 'BT', conf);
-  // const res = layout(node, 'BT', conf);
-  // res.result.children = [];
-  // trees.forEach((tree) => {
-  //   res.result.children.push(tree.result);
-  // });
-  console.log('Trees', trees);
   eachNode;
   return node;
 }
@@ -267,9 +258,7 @@ export const draw = (text, id, version, diagObj) => {
 
     // Next step is to layout the mindmap, giving each node a position
 
-    console.log('Before', mm);
     const positionedMindmap = layoutMindmap(mm, conf);
-    console.log(positionedMindmap);
 
     // After this we can draw, first the edges and the then nodes with the correct position
     drawEdges(edgesElem, positionedMindmap, null, 0, -1, conf);

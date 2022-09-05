@@ -24,7 +24,6 @@ const getParent = function (level) {
 };
 
 export const getMindmap = () => {
-  console.log('getMindmap', nodes[0]);
   return nodes.length > 0 ? nodes[0] : null;
 };
 export const addNode = (level, id, descr, type) => {
@@ -80,15 +79,17 @@ export const nodeType = {
   ROUNDED_RECT: 1,
   RECT: 2,
   CIRCLE: 3,
+  CLOUD: 4,
+  BANG: 5,
 };
 
 export const getType = (startStr, endStr) => {
-  console.log('In get type', startStr, endStr);
+  log.debug('In get type', startStr, endStr);
   switch (startStr) {
     case '[':
       return nodeType.RECT;
     case '(':
-      return nodeType.ROUNDED_RECT;
+      return endStr === ')' ? nodeType.ROUNDED_RECT : nodeType.CLOUD;
     case '((':
       return nodeType.CIRCLE;
     case ')':
@@ -105,7 +106,6 @@ export const setElementForId = (id, element) => {
 };
 
 export const decorateNode = (decoration) => {
-  console.log('decorateNode', decoration);
   const node = nodes[nodes.length - 1];
   if (decoration && decoration.icon) {
     node.icon = sanitizeText(decoration.icon);

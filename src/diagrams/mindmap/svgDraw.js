@@ -79,24 +79,69 @@ const rectBkg = function (elem, node, section, conf) {
     .attr('width', node.width);
 };
 const cloudBkg = function (elem, node, section, conf) {
-  const r = elem
-    .append('rect')
+  const rd = 5;
+  const r = elem;
+  const w = node.width;
+  const h = node.height;
+  const r0 = 0.1 * w;
+  const r1 = 0.15 * w;
+  const r2 = 0.25 * w;
+  const r3 = 0.35 * w;
+  const r4 = 0.2 * w;
+  const p = elem
+    .append('path')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
-    .attr('height', node.height)
-    .attr('rx', node.padding)
-    .attr('ry', node.padding)
-    .attr('width', node.width);
+    .attr(
+      'd',
+      `M0 0 a${r1},${r1} 0 0,1 ${w * 0.25},${-1 * w * 0.1}
+      a${r3},${r3} 1 0,1 ${w * 0.4},${-1 * w * 0.1}
+      a${r2},${r2} 1 0,1 ${w * 0.35},${1 * w * 0.2}
+
+      a${r1},${r1} 1 0,1 ${w * 0.15},${1 * h * 0.35}
+      a${r4},${r4} 1 0,1 ${-1 * w * 0.15},${1 * h * 0.65}
+
+      a${r2},${r1} 1 0,1 ${-1 * w * 0.25},${w * 0.15}
+      a${r3},${r3} 1 0,1 ${-1 * w * 0.5},${0}
+      a${r1},${r1} 1 0,1 ${-1 * w * 0.25},${-1 * w * 0.15}
+
+      a${r1},${r1} 1 0,1 ${-1 * w * 0.1},${-1 * h * 0.35}
+      a${r4},${r4} 1 0,1 ${w * 0.1},${-1 * h * 0.65}
+
+    H0 V0 Z`
+    );
 };
 const bangBkg = function (elem, node, section, conf) {
-  const r = elem
-    .append('rect')
+  const rd = 5;
+  const w = node.width;
+  const h = node.height;
+  const r = 0.15 * w;
+  const p = elem
+    .append('path')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
-    .attr('height', node.height)
-    .attr('rx', node.padding)
-    .attr('ry', node.padding)
-    .attr('width', node.width);
+    .attr(
+      'd',
+      `M0 0 a${r},${r} 1 0,0 ${w * 0.25},${-1 * h * 0.1}
+      a${r},${r} 1 0,0 ${w * 0.25},${0}
+      a${r},${r} 1 0,0 ${w * 0.25},${0}
+      a${r},${r} 1 0,0 ${w * 0.25},${1 * h * 0.1}
+
+      a${r},${r} 1 0,0 ${w * 0.15},${1 * h * 0.33}
+      a${r * 0.8},${r * 0.8} 1 0,0 ${0},${1 * h * 0.34}
+      a${r},${r} 1 0,0 ${-1 * w * 0.15},${1 * h * 0.33}
+
+      a${r},${r} 1 0,0 ${-1 * w * 0.25},${h * 0.15}
+      a${r},${r} 1 0,0 ${-1 * w * 0.25},${0}
+      a${r},${r} 1 0,0 ${-1 * w * 0.25},${0}
+      a${r},${r} 1 0,0 ${-1 * w * 0.25},${-1 * h * 0.15}
+
+      a${r},${r} 1 0,0 ${-1 * w * 0.1},${-1 * h * 0.33}
+      a${r * 0.8},${r * 0.8} 1 0,0 ${0},${-1 * h * 0.34}
+      a${r},${r} 1 0,0 ${w * 0.1},${-1 * h * 0.33}
+
+    H0 V0 Z`
+    );
 };
 const circleBkg = function (elem, node, section, conf) {
   const r = elem
