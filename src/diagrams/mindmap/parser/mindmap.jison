@@ -86,6 +86,16 @@ statement
 	| EOF
 	;
 node
+  :nodeWithId
+  |nodeWithoutId
+  ;
+
+nodeWithoutId
+  :   NODE_DSTART NODE_DESCR NODE_DEND
+	      { console.log("node found ..", $1); $$ = { id: $2, descr: $2, type: yy.getType($1, $3) }; }
+  ;
+
+nodeWithId
 	:  NODE_ID             { $$ = { id: $1, descr: $1, type: yy.nodeType.DEFAULT }; }
 	|  NODE_ID NODE_DSTART NODE_DESCR NODE_DEND
 	                       { console.log("node found ..", $1); $$ = { id: $1, descr: $3, type: yy.getType($2, $4) }; }

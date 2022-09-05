@@ -30,7 +30,17 @@ describe('when parsing a mindmap ', function () {
       expect(mm.children[0].descr).toEqual('child1');
       expect(mm.children[1].descr).toEqual('child2');
     });
-    it('should handle a hierachial mindmap definition', function () {
+
+    it('should handle a simple root definition with a shape and without an id abc123', function () {
+      var str = `mindmap
+    (root)`;
+
+      mindmap.parse(str);
+      // console.log('Time for checks', mindmap.yy.getMindmap().descr);
+      expect(mindmap.yy.getMindmap().descr).toEqual('root');
+    });
+
+    it('should handle a deeper hierachial mindmap definition', function () {
       var str = `mindmap
     root
       child1
@@ -131,7 +141,7 @@ root
 
     it('mutiple types (cloud)', function () {
       var str = `mindmap
- root))the root((
+ root)the root(
 `;
 
       mindmap.parse(str);
@@ -256,7 +266,7 @@ root
       expect(child.children[1].nodeId).toEqual('b');
     });
   });
-  it('should be possible to have meaningless empty rows in a mindmap abc123', function () {
+  it('should be possible to have meaningless empty rows in a mindmap abc124', function () {
     var str = `mindmap
   root(Root)
     Child(Child)
