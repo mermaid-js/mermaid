@@ -11,7 +11,7 @@ using the default integration provided by mermaid.js.
 The core of this api is the [**render**][2] function which, given a graph
 definition as text, renders the graph/diagram and returns an svg element for the graph.
 
-It is is then up to the user of the API to make use of the svg, either insert it somewhere in the
+It is then up to the user of the API to make use of the svg, either insert it somewhere in the
 page or do something completely different.
 
 In addition to the render function, a number of behavioral configuration options are available.
@@ -58,17 +58,18 @@ Theme , the CSS style sheet
 
 ## logLevel
 
-| Parameter | Description                                           | Type             | Required | Values        |
-| --------- | ----------------------------------------------------- | ---------------- | -------- | ------------- |
-| logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 1, 2, 3, 4, 5 |
+| Parameter | Description                                           | Type             | Required | Values                                        |
+| --------- | ----------------------------------------------------- | ---------------- | -------- | --------------------------------------------- |
+| logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 'trace','debug','info','warn','error','fatal' |
 
 **Notes:**
 
--   Debug: 1
--   Info: 2
--   Warn: 3
--   Error: 4
--   Fatal: 5 (default)
+- Trace: 0
+- Debug: 1
+- Info: 2
+- Warn: 3
+- Error: 4
+- Fatal: 5 (default)
 
 ## securityLevel
 
@@ -78,13 +79,13 @@ Theme , the CSS style sheet
 
 **Notes**:
 
--   **strict**: (**default**) tags in text are encoded, click functionality is disabled
--   **loose**: tags in text are allowed, click functionality is enabled
--   **antiscript**: html tags in text are allowed, (only script element is removed), click
-    functionality is enabled
--   **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
-    prevent any JavaScript from running in the context. This may hinder interactive functionality
-    of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
+- **strict**: (**default**) tags in text are encoded, click functionality is disabled
+- **loose**: tags in text are allowed, click functionality is enabled
+- **antiscript**: html tags in text are allowed, (only script element is removed), click
+  functionality is enabled
+- **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
+  prevent any JavaScript from running in the context. This may hinder interactive functionality
+  of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
 
 ## startOnLoad
 
@@ -1404,15 +1405,6 @@ This sets the auto-wrap padding for the diagram (sides only)
 
 **Notes:** Default value: 0.
 
-## parse
-
-### Parameters
-
--   `text`  
--   `dia`  
-
-Returns **any** 
-
 ## setSiteConfig
 
 ## setSiteConfig
@@ -1428,7 +1420,7 @@ function _Default value: At default, will mirror Global Config_
 
 ### Parameters
 
--   `conf`  The base currentConfig to use as siteConfig
+- `conf` **MermaidConfig** The base currentConfig to use as siteConfig
 
 Returns **[object][5]** The siteConfig
 
@@ -1458,9 +1450,37 @@ corresponding siteConfig value.
 
 ### Parameters
 
--   `conf` **any** The potential currentConfig
+- `conf` **any** The potential currentConfig
 
 Returns **any** The currentConfig merged with the sanitized conf
+
+## render
+
+Function that renders an svg with a graph from a chart definition. Usage example below.
+
+```javascript
+mermaidAPI.initialize({
+  startOnLoad: true,
+});
+$(function () {
+  const graphDefinition = 'graph TB\na-->b';
+  const cb = function (svgGraph) {
+    console.log(svgGraph);
+  };
+  mermaidAPI.render('id1', graphDefinition, cb);
+});
+```
+
+### Parameters
+
+- `id` **[string][6]** The id of the element to be rendered
+- `text` **[string][6]** The graph definition
+- `cb` **function (svgCode: [string][6], bindFunctions: function (element: [Element][7]): void): void**
+- `container` **[Element][7]** Selector to element in which a div with the graph temporarily will be
+  inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
+  element will be removed when rendering is completed.
+
+Returns **void**
 
 ## getConfig
 
@@ -1487,35 +1507,7 @@ options in-place
 
 ### Parameters
 
--   `options` **any** The potential setConfig parameter
-
-## render
-
-Function that renders an svg with a graph from a chart definition. Usage example below.
-
-```javascript
-mermaidAPI.initialize({
-  startOnLoad: true,
-});
-$(function () {
-  const graphDefinition = 'graph TB\na-->b';
-  const cb = function (svgGraph) {
-    console.log(svgGraph);
-  };
-  mermaidAPI.render('id1', graphDefinition, cb);
-});
-```
-
-### Parameters
-
--   `id` **any** The id of the element to be rendered
--   `_txt` **any** The graph definition
--   `cb` **any** Callback which is called after rendering is finished with the svg code as inparam.
--   `container` **any** Selector to element in which a div with the graph temporarily will be
-      inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
-      element will be removed when rendering is completed.
-
-Returns **any** 
+- `options` **any** The potential setConfig parameter
 
 ## addDirective
 
@@ -1523,7 +1515,7 @@ Pushes in a directive to the configuration
 
 ### Parameters
 
--   `directive` **[object][5]** The directive to push in
+- `directive` **[object][5]** The directive to push in
 
 ## reset
 
@@ -1541,19 +1533,19 @@ Pushes in a directive to the configuration
 
 **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
-## updateRendererConfigs
-
 ### Parameters
 
--   `conf` **any** 
+- `config` (optional, default `siteConfig`)
+
+Returns **void**
 
 ## initialize
 
 ### Parameters
 
--   `options` **any** 
+- `options` **MermaidConfig**
 
-## 
+##
 
 ## mermaidAPI configuration defaults
 
@@ -1618,11 +1610,9 @@ Pushes in a directive to the configuration
 ```
 
 [1]: https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js
-
 [2]: Setup.md?id=render
-
 [3]: 8.6.0_docs.md
-
 [4]: #mermaidapi-configuration-defaults
-
 [5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[7]: https://developer.mozilla.org/docs/Web/API/Element

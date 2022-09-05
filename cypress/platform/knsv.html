@@ -1,13 +1,19 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
     <style>
       body {
         /* background: rgb(221, 208, 208); */
@@ -18,25 +24,26 @@
         display: flex;
         flex-direction: column;
         margin-left: 20px;
-        }
-      h1 { color: grey;}
-      .mermaid2,.mermaid3 {
+      }
+      h1 {
+        color: grey;
+      }
+      .mermaid2,
+      .mermaid3 {
         display: none;
       }
+      .mermaid {
 
+      }
       .mermaid svg {
         border: 1px solid purple;
         /* font-size: 18px !important; */
-        fontFamily: 'courier'
+        fontfamily: 'courier';
       }
     </style>
   </head>
   <body>
-
-
-
-
-<div class="mermaid2" style="width: 50%;">
+    <pre class="mermaid2" style="width: 50%">
 flowchart LR
   classDef aPID stroke:#4e4403,fill:#fdde29,color:#4e4403,rx:5px,ry:5px;
   classDef crm stroke:#333333,fill:#DCDCDC,color:#333333,rx:5px,ry:5px;
@@ -54,8 +61,8 @@ flowchart LR
   click O2 function "Sorry the newline html tags are not being processed correctly<br/> So all of this appears on the <br/> same line."
   O0 -- has type -->O2["Bug"]
   click O0 function "Lots of great info about Joe<br>Lots of great info about Joe<br>burt<br>fred";
-</div>
-<div class="mermaid2" style="width: 50%;">
+    </pre>
+    <pre class="mermaid2" style="width: 50%">
 flowchart TD
     subgraph test
     direction TB
@@ -68,116 +75,23 @@ flowchart TD
       G --> H
     end
     end
-</div>
-<div class="mermaid2" style="width: 50%;">
-mindmap
-  The root
-    C1
-      c2
-      c3
-    C4
-      c5
-      c6
-    C7
-      c8
-      c9
-    C8
-      c10
-      c11
-    </div>
-<div class="mermaid2" style="width: 50%;">
-mindmap
-    root[
-      The root where the things
-      hap<br/>
-      hap<br/>
-      pen!
-    ]
-      Child1
-</div>
-<div class="mermaid2" style="width: 50%;">
-mindmap
-    root))
-      The root where the things
-      hap<br/>
-      hap<br/>
-      pen!
-    ((
-    ::icon(mdi mdi-alarm)
-      Child1
-      child2)
-        Child2<br/>
-        The second<br/>
-        The second<br/>
-        The second<br/>
-        The second<br/>
-        The second<br/>
-        The second<br/>
-        The second<br/>
-      (
-        Other
-      Child3
-        GrandChild1
-          sc1
-          sc2
-          sc3
-        GrandChild2
-        %%{init: {'securityLevel': 'loose', 'theme':'neutral'}}%%
-</div>
-<div class="mermaid" style="width: 100%;">
-mindmap
-    root))I am a bang((
-    ::icon(mdi mdi-alarm)
-      Child1)"Bang"(
-      ::icon(mdi mdi-alarm)
-</div>
-<div class="mermaid2" style="width: 100%;">
-mindmap
-    root((
-      The root<br>
-      where<br>
-      things<br>
-      happen!
-    ))
-      ::icon(mdi mdi-numeric-8-circle)
-      Child2
-      :::disabled
-        GrandChild1
-        GrandChild2
-      Child3(Child 3 has a long text that wraps to keep the node width)
-      ::icon(mdi mdi-alarm)
-        GrandChild3
-        GrandChild4
-      Child4((Child Num 4<br>with<br>wrap text))
-      ::icon(mdi mdi-alarm)
-        GrandChild5[With<br>icon<br>one<br>two<br>three]
-        ::icon(mdi mdi-numeric-8-circle)
-        GrandChild6 with wrapping text
-        ::icon(mdi mdi-numeric-8-circle)
-
 
 </div>
-<div class="mermaid2" style="width: 50%;">
-  flowchart TD
-  id
+<div class="mermaid" style="width: 50%;">
+flowchart TD
+id
 </div>
 <div class="mermaid2" style="width: 50%;">
-  flowchart LR
-  a["<strong>Haiya</strong>"]===>b
+flowchart LR
+        a["<strong>Haiya</strong>"]===>b
 </div>
 <div class="mermaid2" style="width: 50%;">
-  flowchart TD
-</div>
-<div class="mermaid2" style="width: 50%;">
-   pie
-      accTitle: My Pie Chart Accessibility Title
-      accDescr: My Pie Chart Accessibility Description
-
+flowchart TD
     A --> B
     A --> C
     B --> C
-</div>
-<div class="mermaid2" style="width: 50%;">
+    </pre>
+    <pre class="mermaid2" style="width: 50%">
 flowchart TD
       A([stadium shape test])
       A -->|Get money| B([Go shopping])
@@ -190,16 +104,6 @@ flowchart TD
       classDef someclass fill:#f96;
       class A someclass;
       class C someclass;
- gitGraph TB
-       commit
-       commit
-       branch develop
-       commit
-       commit
-       commit
-       checkout main
-       commit
-       commit
 </div>
 <div class="mermaid2" style="width: 50%;">
    sequenceDiagram
@@ -210,15 +114,15 @@ flowchart TD
       Alice->>John: Hello John, how are you?
       John-->>Alice: Great!
       Alice-)John: See you later!
-</div>
-      <div class="mermaid2" style="width: 50%;">
+    </pre>
+    <pre class="mermaid2" style="width: 50%">
 graph TD
     A -->|000| B
     B -->|111| C
 
     linkStyle 1 stroke:#ff3,stroke-width:4px,color:red;
-        </div>
-      <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
   journey
       accTitle: My User Journey Diagram
       accDescr: My User Journey Diagram Description
@@ -231,11 +135,11 @@ graph TD
       section Go home
         Go downstairs: 5: Me
         Sit down: 5: Me
-      </div>
-      <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
         info
-      </div>
-      <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
 requirementDiagram
       accTitle: My req Diagram
       accDescr: My req Diagram Description
@@ -275,9 +179,8 @@ requirementDiagram
     test_req - traces -> test_req2
     test_req - contains -> test_req3
     test_req <- copies - test_entity2
-
-      </div>
-      <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
 gantt
     dateFormat  YYYY-MM-DD
     title       Adding GANTT diagram functionality to mermaid
@@ -308,24 +211,24 @@ gantt
     Describe gantt syntax               :after doc1, 3d
     Add gantt diagram to demo page      :20h
     Add another diagram to demo page    :48h
-      </div>
-      <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
 stateDiagram
   state Active {
     Idle
   }
   Inactive --> Idle: ACT
   Active --> Active: LOG
-      </div>
-      <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
       flowchart TB
         accTitle: My flowchart
         accDescr: My flowchart Description
         subgraph One
           a1-->a2-->a3
         end
-      </div>
-      <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
         sequenceDiagram
           A ->> B: 1
           rect rgb(204, 0, 102)
@@ -335,8 +238,9 @@ stateDiagram
               end
             end
           end
-          B ->> A: Return</div>
-      <div class="mermaid2" style="width: 100%;">
+          B ->> A: Return
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
 classDiagram
 accTitle: My class diagram
 accDescr: My class diagram Description
@@ -353,15 +257,15 @@ class Class10 {
   int id
   size()
 }
-      </div>
-      <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
 %%{init: {'config': {'wrap': true }}}%%
         sequenceDiagram
         participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
         Bob-->A: Pasten !
-      </div>
-      <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
       gitGraph
        commit id: "ZERO"
        branch develop
@@ -381,15 +285,16 @@ class Class10 {
        checkout develop
        commit id:"C"
        merge featureA
-       </div>
-       <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
 flowchart TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
       C -->|One| D[Laptop]
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
-      </div>     <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
         classDiagram
           Animal "1" <|-- Duck
           Animal <|-- Fish
@@ -411,8 +316,8 @@ flowchart TD
             +bool is_wild
             +run()
           }
-    </div>
-          <div class="mermaid2" style="width: 100%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
         erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
@@ -426,9 +331,9 @@ flowchart TD
         string lastName
         int age
     }
-        </div>
+    </pre>
 
-  <script src="./mermaid.js"></script>
+    <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
@@ -453,17 +358,17 @@ flowchart TD
         wrap: true,
       });
       function callback() {
-  alert('It worked');
-}
+        alert('It worked');
+      }
 
-function clickByFlow(elemName) {
-  const div = document.createElement('div');
-  div.className = 'created-by-click';
-  div.style = 'padding: 20px; background: green; color: white;';
-  div.innerText = 'Clicked By Flow';
+      function clickByFlow(elemName) {
+        const div = document.createElement('div');
+        div.className = 'created-by-click';
+        div.style = 'padding: 20px; background: green; color: white;';
+        div.innerText = 'Clicked By Flow';
 
-  document.getElementsByTagName('body')[0].appendChild(div);
-}
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
     </script>
   </body>
 </html>

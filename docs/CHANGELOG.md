@@ -26,7 +26,8 @@ Example of `Initalize` call setting `theme` to `base`:
 
 ```javascript
 mermaidAPI.initialize({
-    'securityLevel': 'loose', 'theme': 'base'
+  securityLevel: 'loose',
+  theme: 'base',
 });
 ```
 
@@ -49,10 +50,9 @@ It is also possible to override site-wide theme settings locally, for a specific
 
 The easiest way to make a custom theme is to start with the base theme, and just modify theme variables through `themeVariables`, via `%%init%%`.
 
-|   Parameter    |                            Description                             | Type  | Required |         Objects contained          |
+| Parameter      | Description                                                        | Type  | Required | Objects contained                  |
 | -------------- | ------------------------------------------------------------------ | ----- | -------- | ---------------------------------- |
 | themeVariables | Array containing objects, modifiable with the `%%init%%` directive | Array | Required | primaryColor, lineColor, textColor |
-
 
 Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
 
@@ -117,9 +117,9 @@ This was introduced in version 8.2 as a security improvement, aimed at preventin
 
 **Notes:**
 
--   **strict**: (**default**) tags in text are encoded, click functionality is disabled
--   **loose**: tags in text are allowed, click functionality is enabled
--   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
+- **strict**: (**default**) tags in text are encoded, click functionality is disabled
+- **loose**: tags in text are allowed, click functionality is enabled
+- **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
 
 ⚠️ **Note**: This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
 
@@ -129,9 +129,9 @@ By doing this clicks and tags are again allowed.
 ### To change `securityLevel` with `mermaidAPI.initialize`:
 
 ```javascript
-    mermaidAPI.initialize({
-        securityLevel: 'loose'
-    });
+mermaidAPI.initialize({
+  securityLevel: 'loose',
+});
 ```
 
 **Closed issues:**
@@ -160,9 +160,9 @@ By doing this clicks and tags are again allowed.
 - margins around flowchart are not balanced [\#852](https://github.com/knsv/mermaid/issues/852)
 - Smaller bundles [\#843](https://github.com/knsv/mermaid/issues/843)
 - unicode in labels [\#776](https://github.com/knsv/mermaid/issues/776)
-- Hard-changing drawing  of arrows per edge type [\#775](https://github.com/knsv/mermaid/issues/775)
+- Hard-changing drawing of arrows per edge type [\#775](https://github.com/knsv/mermaid/issues/775)
 - SequenceDiagram wrong [\#773](https://github.com/knsv/mermaid/issues/773)
-- Render mermaid on github pages with simple code  [\#772](https://github.com/knsv/mermaid/issues/772)
+- Render mermaid on github pages with simple code [\#772](https://github.com/knsv/mermaid/issues/772)
 - FlowChart - large space between text and the image [\#754](https://github.com/knsv/mermaid/issues/754)
 - Class Diagram Issues when using Mermaid in Stackedit [\#748](https://github.com/knsv/mermaid/issues/748)
 - Multi-platform CI [\#744](https://github.com/knsv/mermaid/issues/744)
@@ -175,18 +175,18 @@ By doing this clicks and tags are again allowed.
 - Issue on Dynamic Creation in PHP [\#690](https://github.com/knsv/mermaid/issues/690)
 - `click "\#target"` and `click "http://url"` should create regular links [\#689](https://github.com/knsv/mermaid/issues/689)
 - Support Chinese punctuation [\#687](https://github.com/knsv/mermaid/issues/687)
-- \[Question\] Proper way to install on Mac?  [\#681](https://github.com/knsv/mermaid/issues/681)
-- Has Mermaid a graphical interface to make diagrams?  [\#668](https://github.com/knsv/mermaid/issues/668)
-- mermaid installation on debian  [\#649](https://github.com/knsv/mermaid/issues/649)
+- \[Question\] Proper way to install on Mac? [\#681](https://github.com/knsv/mermaid/issues/681)
+- Has Mermaid a graphical interface to make diagrams? [\#668](https://github.com/knsv/mermaid/issues/668)
+- mermaid installation on debian [\#649](https://github.com/knsv/mermaid/issues/649)
 - "Cannot activate" in sequenceDiagram [\#647](https://github.com/knsv/mermaid/issues/647)
 - Link \("click" statement\) in flowchart does not work in exported SVG [\#646](https://github.com/knsv/mermaid/issues/646)
-- How to pass styling  [\#639](https://github.com/knsv/mermaid/issues/639)
+- How to pass styling [\#639](https://github.com/knsv/mermaid/issues/639)
 - The live editor cant show seq diagram with notes for 8.0.0-alpha.3 [\#638](https://github.com/knsv/mermaid/issues/638)
 - import mermaid.css with ES6 + NPM [\#634](https://github.com/knsv/mermaid/issues/634)
 - Actor line cuts through other elements [\#633](https://github.com/knsv/mermaid/issues/633)
 - Graph TD line out of the picture \(left side\) [\#630](https://github.com/knsv/mermaid/issues/630)
-- Flowchart labels appear "cutoff"  [\#628](https://github.com/knsv/mermaid/issues/628)
-- Uncaught TypeError: \_.constant is not a function \(mermaid.js\)  [\#626](https://github.com/knsv/mermaid/issues/626)
+- Flowchart labels appear "cutoff" [\#628](https://github.com/knsv/mermaid/issues/628)
+- Uncaught TypeError: \_.constant is not a function \(mermaid.js\) [\#626](https://github.com/knsv/mermaid/issues/626)
 - Missing tags and releases for newer versions [\#623](https://github.com/knsv/mermaid/issues/623)
 - Mermaid and Leo / Leo Vue [\#622](https://github.com/knsv/mermaid/issues/622)
 - mermaidAPI gantt Vue.js [\#621](https://github.com/knsv/mermaid/issues/621)
@@ -221,7 +221,7 @@ By doing this clicks and tags are again allowed.
 - TypeError: Cannot read property 'select' of undefined [\#563](https://github.com/knsv/mermaid/issues/563)
 - A little bug [\#557](https://github.com/knsv/mermaid/issues/557)
 - Japanese text appears garbled [\#554](https://github.com/knsv/mermaid/issues/554)
-- classdiagram not works in mermaid live\_editor  [\#553](https://github.com/knsv/mermaid/issues/553)
+- classdiagram not works in mermaid live_editor [\#553](https://github.com/knsv/mermaid/issues/553)
 - font awesome in link text? [\#546](https://github.com/knsv/mermaid/issues/546)
 - q: heard of the cosmogol standard? [\#545](https://github.com/knsv/mermaid/issues/545)
 - Arrow heads missing \(cli, 7.0.3\) [\#544](https://github.com/knsv/mermaid/issues/544)
@@ -248,7 +248,7 @@ By doing this clicks and tags are again allowed.
 - Flowchart edge labels placement [\#490](https://github.com/knsv/mermaid/issues/490)
 - Very different styles when rendering as png vs. svg [\#489](https://github.com/knsv/mermaid/issues/489)
 - New editor that supports mermaid: Caret [\#488](https://github.com/knsv/mermaid/issues/488)
-- Gant PNG margin  [\#486](https://github.com/knsv/mermaid/issues/486)
+- Gant PNG margin [\#486](https://github.com/knsv/mermaid/issues/486)
 - ReferenceError: window is not defined [\#485](https://github.com/knsv/mermaid/issues/485)
 - Menu and layout bugs in docs [\#484](https://github.com/knsv/mermaid/issues/484)
 - Mermaid resets some of the page CSS styles [\#482](https://github.com/knsv/mermaid/issues/482)
@@ -271,7 +271,7 @@ By doing this clicks and tags are again allowed.
 - shouldn't mermaid become more like Markdown ? [\#417](https://github.com/knsv/mermaid/issues/417)
 - Live editor show rendered diagram if syntax invalid [\#415](https://github.com/knsv/mermaid/issues/415)
 - Linkstyle stroke does not work [\#410](https://github.com/knsv/mermaid/issues/410)
-- flowchart id's with dots in them .. break links  [\#408](https://github.com/knsv/mermaid/issues/408)
+- flowchart id's with dots in them .. break links [\#408](https://github.com/knsv/mermaid/issues/408)
 - Flowchart: Link text beginning with lowercase 'o' causes flowchart to break [\#407](https://github.com/knsv/mermaid/issues/407)
 - Some Chinese character will case Safari no responding. [\#405](https://github.com/knsv/mermaid/issues/405)
 - Cannot center-justify text in nodes? [\#397](https://github.com/knsv/mermaid/issues/397)
@@ -282,7 +282,7 @@ By doing this clicks and tags are again allowed.
 - sequence diagram config issue [\#385](https://github.com/knsv/mermaid/issues/385)
 - How to add newline in the text [\#384](https://github.com/knsv/mermaid/issues/384)
 - PhantomJS crashes on a large graph [\#380](https://github.com/knsv/mermaid/issues/380)
-- Finnish support for class diagrams using plantuml syntax  [\#377](https://github.com/knsv/mermaid/issues/377)
+- Finnish support for class diagrams using plantuml syntax [\#377](https://github.com/knsv/mermaid/issues/377)
 - mermaidAPI.render generated different svg code from mermaid.int\(\) [\#374](https://github.com/knsv/mermaid/issues/374)
 - Put your own action on the chart [\#372](https://github.com/knsv/mermaid/issues/372)
 - when declaring participants the elements are generated twice [\#370](https://github.com/knsv/mermaid/issues/370)
@@ -312,7 +312,7 @@ By doing this clicks and tags are again allowed.
 - Mermaid does not work in Chrome 48 [\#281](https://github.com/knsv/mermaid/issues/281)
 - circle and ellipse cannot change color by classDef [\#271](https://github.com/knsv/mermaid/issues/271)
 - npm run watch doesn't work due missing dependencies [\#266](https://github.com/knsv/mermaid/issues/266)
-- label out of node  [\#262](https://github.com/knsv/mermaid/issues/262)
+- label out of node [\#262](https://github.com/knsv/mermaid/issues/262)
 - IE11 Support issue [\#261](https://github.com/knsv/mermaid/issues/261)
 - mermaid without browser [\#260](https://github.com/knsv/mermaid/issues/260)
 - Insufficient capacity of gantt diagrams [\#226](https://github.com/knsv/mermaid/issues/226)
@@ -346,13 +346,14 @@ By doing this clicks and tags are again allowed.
 - Adding trapezoid and inverse trapezoid vertex options. [\#741](https://github.com/knsv/mermaid/pull/741) ([adamwulf](https://github.com/adamwulf))
 - Add option for right angles [\#721](https://github.com/knsv/mermaid/pull/721) ([paulbland](https://github.com/paulbland))
 - Add nested activation classes [\#720](https://github.com/knsv/mermaid/pull/720) ([paulbland](https://github.com/paulbland))
-- wip: class diagram  cardinality display [\#705](https://github.com/knsv/mermaid/pull/705) ([Vrixyz](https://github.com/Vrixyz))
+- wip: class diagram cardinality display [\#705](https://github.com/knsv/mermaid/pull/705) ([Vrixyz](https://github.com/Vrixyz))
 - add comments about CSS in config [\#688](https://github.com/knsv/mermaid/pull/688) ([imma90](https://github.com/imma90))
 - SequenceDiagram: Add support for multiple alt else statements [\#641](https://github.com/knsv/mermaid/pull/641) ([sechel](https://github.com/sechel))
 - fix \#426 - add class .clickable on nodes with click function or link [\#598](https://github.com/knsv/mermaid/pull/598) ([thomasleveil](https://github.com/thomasleveil))
 - Spec fix 1 [\#595](https://github.com/knsv/mermaid/pull/595) ([frankschmitt](https://github.com/frankschmitt))
 
 ## [7.0.5](https://github.com/knsv/mermaid/tree/7.0.5) (2017-09-01)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/7.0.3...7.0.5)
 
 **Closed issues:**
@@ -376,6 +377,7 @@ By doing this clicks and tags are again allowed.
 - New documentation - need improved logo [\#216](https://github.com/knsv/mermaid/issues/216)
 
 ## [7.0.3](https://github.com/knsv/mermaid/tree/7.0.3) (2017-06-04)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/7.0.2...7.0.3)
 
 **Closed issues:**
@@ -384,6 +386,7 @@ By doing this clicks and tags are again allowed.
 - Good example of interactivity with mermaidAPI [\#514](https://github.com/knsv/mermaid/issues/514)
 
 ## [7.0.2](https://github.com/knsv/mermaid/tree/7.0.2) (2017-06-01)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/7.0.0...7.0.2)
 
 **Closed issues:**
@@ -421,6 +424,7 @@ By doing this clicks and tags are again allowed.
 - add par statement to sequenceDiagram [\#470](https://github.com/knsv/mermaid/pull/470) ([u-minor](https://github.com/u-minor))
 
 ## [7.0.0](https://github.com/knsv/mermaid/tree/7.0.0) (2017-01-29)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/6.0.0...7.0.0)
 
 **Implemented enhancements:**
@@ -434,7 +438,7 @@ By doing this clicks and tags are again allowed.
 - Can not be generated PNG pictures through CLI with Chinese [\#451](https://github.com/knsv/mermaid/issues/451)
 - Round nodes cannot be styled with CSS classes [\#443](https://github.com/knsv/mermaid/issues/443)
 - webpack gulp UglifyJsPlugin error. [\#440](https://github.com/knsv/mermaid/issues/440)
-- String concatenation isn't working  [\#432](https://github.com/knsv/mermaid/issues/432)
+- String concatenation isn't working [\#432](https://github.com/knsv/mermaid/issues/432)
 - text flow/wrap in actor box of sequence diagram [\#422](https://github.com/knsv/mermaid/issues/422)
 - Online live editor still use old version [\#402](https://github.com/knsv/mermaid/issues/402)
 - uncaught TypeError: t.getTransformToElement is not a function [\#401](https://github.com/knsv/mermaid/issues/401)
@@ -459,7 +463,7 @@ By doing this clicks and tags are again allowed.
 - fix gantt chart cli configuration parsing including functions [\#430](https://github.com/knsv/mermaid/pull/430) ([whyzdev](https://github.com/whyzdev))
 - Uses an empty text node instead of a string for svg group labels [\#429](https://github.com/knsv/mermaid/pull/429) ([daveaglick](https://github.com/daveaglick))
 - use tspan via d3.textwrap to place actor text in sequence diagram [\#427](https://github.com/knsv/mermaid/pull/427) ([whyzdev](https://github.com/whyzdev))
-- \#422 use foreignObject/div to place actor label in sequence diagram  [\#423](https://github.com/knsv/mermaid/pull/423) ([whyzdev](https://github.com/whyzdev))
+- \#422 use foreignObject/div to place actor label in sequence diagram [\#423](https://github.com/knsv/mermaid/pull/423) ([whyzdev](https://github.com/whyzdev))
 - Clarify the need for a CSS stylesheet [\#413](https://github.com/knsv/mermaid/pull/413) ([sifb](https://github.com/sifb))
 - Added hads downstream project [\#412](https://github.com/knsv/mermaid/pull/412) ([sinedied](https://github.com/sinedied))
 - update usage and fix \#273 [\#406](https://github.com/knsv/mermaid/pull/406) ([jinntrance](https://github.com/jinntrance))
@@ -474,6 +478,7 @@ By doing this clicks and tags are again allowed.
 - Fix typo in the sequence diagram documentation [\#369](https://github.com/knsv/mermaid/pull/369) ([ggpasqualino](https://github.com/ggpasqualino))
 
 ## [6.0.0](https://github.com/knsv/mermaid/tree/6.0.0) (2016-05-29)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.5.8...6.0.0)
 
 **Closed issues:**
@@ -512,9 +517,11 @@ By doing this clicks and tags are again allowed.
 - Quote phantomPath so that it doesn't fail on window [\#286](https://github.com/knsv/mermaid/pull/286) ([raghur](https://github.com/raghur))
 
 ## [0.5.8](https://github.com/knsv/mermaid/tree/0.5.8) (2016-01-27)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.5.7...0.5.8)
 
 ## [0.5.7](https://github.com/knsv/mermaid/tree/0.5.7) (2016-01-25)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.5.6...0.5.7)
 
 **Closed issues:**
@@ -536,6 +543,7 @@ By doing this clicks and tags are again allowed.
 - Allow sequenceDiagram participant aliasing [\#265](https://github.com/knsv/mermaid/pull/265) ([gibson042](https://github.com/gibson042))
 
 ## [0.5.6](https://github.com/knsv/mermaid/tree/0.5.6) (2015-11-22)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.5.5...0.5.6)
 
 **Implemented enhancements:**
@@ -572,6 +580,7 @@ By doing this clicks and tags are again allowed.
 - Add a Gitter chat badge to README.md [\#230](https://github.com/knsv/mermaid/pull/230) ([gitter-badger](https://github.com/gitter-badger))
 
 ## [0.5.5](https://github.com/knsv/mermaid/tree/0.5.5) (2015-10-21)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.5.4...0.5.5)
 
 **Closed issues:**
@@ -583,6 +592,7 @@ By doing this clicks and tags are again allowed.
 - Fix a typo: crosshead --\> arrowhead [\#228](https://github.com/knsv/mermaid/pull/228) ([tylerlong](https://github.com/tylerlong))
 
 ## [0.5.4](https://github.com/knsv/mermaid/tree/0.5.4) (2015-10-19)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.5.3...0.5.4)
 
 **Implemented enhancements:**
@@ -608,9 +618,11 @@ By doing this clicks and tags are again allowed.
 - Remove duplicate npm dependencies: d3 and he [\#223](https://github.com/knsv/mermaid/pull/223) ([spect88](https://github.com/spect88))
 
 ## [0.5.3](https://github.com/knsv/mermaid/tree/0.5.3) (2015-10-04)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.5.2...0.5.3)
 
 ## [0.5.2](https://github.com/knsv/mermaid/tree/0.5.2) (2015-10-04)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.5.1...0.5.2)
 
 **Implemented enhancements:**
@@ -623,7 +635,7 @@ By doing this clicks and tags are again allowed.
 - node feature request [\#211](https://github.com/knsv/mermaid/issues/211)
 - Please add prefix for styles [\#208](https://github.com/knsv/mermaid/issues/208)
 - Bad handling of block arguments [\#207](https://github.com/knsv/mermaid/issues/207)
-- please consider port to mac osx  [\#203](https://github.com/knsv/mermaid/issues/203)
+- please consider port to mac osx [\#203](https://github.com/knsv/mermaid/issues/203)
 - allow phantomjs \>=1.9.x [\#201](https://github.com/knsv/mermaid/issues/201)
 - syntax for venn diagrams? [\#200](https://github.com/knsv/mermaid/issues/200)
 - Broken CLI Graphs? \(v0.5.1\) [\#196](https://github.com/knsv/mermaid/issues/196)
@@ -650,7 +662,7 @@ By doing this clicks and tags are again allowed.
 - Last word in comment boxes getting cut off by word wrap library : \( [\#195](https://github.com/knsv/mermaid/issues/195)
 - Escaping characters in sequence diagram [\#193](https://github.com/knsv/mermaid/issues/193)
 - SVG foreignObject rendering [\#180](https://github.com/knsv/mermaid/issues/180)
-- IE9 issue  [\#179](https://github.com/knsv/mermaid/issues/179)
+- IE9 issue [\#179](https://github.com/knsv/mermaid/issues/179)
 - inoperable in an AMD/requirejs environment: IPython Notebook [\#127](https://github.com/knsv/mermaid/issues/127)
 - \[Parser\] Hyphen in participant name bring TypeError [\#74](https://github.com/knsv/mermaid/issues/74)
 
@@ -663,6 +675,7 @@ By doing this clicks and tags are again allowed.
 - Update phantomscript.js [\#182](https://github.com/knsv/mermaid/pull/182) ([phairow](https://github.com/phairow))
 
 ## [0.5.1](https://github.com/knsv/mermaid/tree/0.5.1) (2015-06-21)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.5.0...0.5.1)
 
 **Implemented enhancements:**
@@ -699,6 +712,7 @@ By doing this clicks and tags are again allowed.
 - Remove moot `version` property from bower.json [\#172](https://github.com/knsv/mermaid/pull/172) ([kkirsche](https://github.com/kkirsche))
 
 ## [0.5.0](https://github.com/knsv/mermaid/tree/0.5.0) (2015-06-07)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.4.0...0.5.0)
 
 **Implemented enhancements:**
@@ -734,6 +748,7 @@ By doing this clicks and tags are again allowed.
 - Use a library-level variable for assigning ids [\#134](https://github.com/knsv/mermaid/pull/134) ([bollwyvl](https://github.com/bollwyvl))
 
 ## [0.4.0](https://github.com/knsv/mermaid/tree/0.4.0) (2015-03-01)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.3.5...0.4.0)
 
 **Implemented enhancements:**
@@ -752,9 +767,11 @@ By doing this clicks and tags are again allowed.
 - Internet Explorer Support [\#99](https://github.com/knsv/mermaid/issues/99)
 
 ## [0.3.5](https://github.com/knsv/mermaid/tree/0.3.5) (2015-02-15)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.3.4...0.3.5)
 
 ## [0.3.4](https://github.com/knsv/mermaid/tree/0.3.4) (2015-02-15)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.3.3...0.3.4)
 
 **Implemented enhancements:**
@@ -785,6 +802,7 @@ By doing this clicks and tags are again allowed.
 - Ignore all files except the license and dist/ folder when installing with Bower. [\#112](https://github.com/knsv/mermaid/pull/112) ([jasonbellamy](https://github.com/jasonbellamy))
 
 ## [0.3.3](https://github.com/knsv/mermaid/tree/0.3.3) (2015-01-25)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.3.2...0.3.3)
 
 **Implemented enhancements:**
@@ -805,6 +823,7 @@ By doing this clicks and tags are again allowed.
 - fix html tags in example usage [\#100](https://github.com/knsv/mermaid/pull/100) ([deiwin](https://github.com/deiwin))
 
 ## [0.3.2](https://github.com/knsv/mermaid/tree/0.3.2) (2015-01-11)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.3.1...0.3.2)
 
 **Implemented enhancements:**
@@ -827,6 +846,7 @@ By doing this clicks and tags are again allowed.
 - Template change [\#88](https://github.com/knsv/mermaid/pull/88) ([gkchic](https://github.com/gkchic))
 
 ## [0.3.1](https://github.com/knsv/mermaid/tree/0.3.1) (2015-01-05)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.3.0...0.3.1)
 
 **Implemented enhancements:**
@@ -849,6 +869,7 @@ By doing this clicks and tags are again allowed.
 - Add apostrophe & 'and' [\#72](https://github.com/knsv/mermaid/pull/72) ([sudodoki](https://github.com/sudodoki))
 
 ## [0.3.0](https://github.com/knsv/mermaid/tree/0.3.0) (2014-12-22)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.16...0.3.0)
 
 **Implemented enhancements:**
@@ -871,6 +892,7 @@ By doing this clicks and tags are again allowed.
 - Allow special symbols for direction along with acronyms [\#66](https://github.com/knsv/mermaid/pull/66) ([vijay40](https://github.com/vijay40))
 
 ## [0.2.16](https://github.com/knsv/mermaid/tree/0.2.16) (2014-12-15)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.15...0.2.16)
 
 **Fixed bugs:**
@@ -891,11 +913,12 @@ By doing this clicks and tags are again allowed.
 - New grammar will allow statements ending without semicolon as disccused in Issue \#38 [\#63](https://github.com/knsv/mermaid/pull/63) ([vijay40](https://github.com/vijay40))
 - Class based styling [\#62](https://github.com/knsv/mermaid/pull/62) ([bjowes](https://github.com/bjowes))
 - Fix typos [\#60](https://github.com/knsv/mermaid/pull/60) ([sublimino](https://github.com/sublimino))
-- Included .DS\_Store in gitignore [\#57](https://github.com/knsv/mermaid/pull/57) ([alvynmcq](https://github.com/alvynmcq))
+- Included .DS_Store in gitignore [\#57](https://github.com/knsv/mermaid/pull/57) ([alvynmcq](https://github.com/alvynmcq))
 - Improves readability discussed in issue \#38 [\#56](https://github.com/knsv/mermaid/pull/56) ([vijay40](https://github.com/vijay40))
 - Added a linting task for gulp [\#43](https://github.com/knsv/mermaid/pull/43) ([serv](https://github.com/serv))
 
 ## [0.2.15](https://github.com/knsv/mermaid/tree/0.2.15) (2014-12-05)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.14...0.2.15)
 
 **Fixed bugs:**
@@ -911,13 +934,15 @@ By doing this clicks and tags are again allowed.
 
 **Merged pull requests:**
 
-- Include bower\_components/ to .gitignore [\#33](https://github.com/knsv/mermaid/pull/33) ([serv](https://github.com/serv))
+- Include bower_components/ to .gitignore [\#33](https://github.com/knsv/mermaid/pull/33) ([serv](https://github.com/serv))
 - Fixed reference to Git repo. [\#32](https://github.com/knsv/mermaid/pull/32) ([guyellis](https://github.com/guyellis))
 
 ## [0.2.14](https://github.com/knsv/mermaid/tree/0.2.14) (2014-12-03)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.13...0.2.14)
 
 ## [0.2.13](https://github.com/knsv/mermaid/tree/0.2.13) (2014-12-03)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.10...0.2.13)
 
 **Implemented enhancements:**
@@ -932,9 +957,11 @@ By doing this clicks and tags are again allowed.
 - Support unicode chars in labels [\#9](https://github.com/knsv/mermaid/issues/9)
 
 ## [0.2.10](https://github.com/knsv/mermaid/tree/0.2.10) (2014-12-01)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.9...0.2.10)
 
 ## [0.2.9](https://github.com/knsv/mermaid/tree/0.2.9) (2014-12-01)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.8...0.2.9)
 
 **Closed issues:**
@@ -947,9 +974,11 @@ By doing this clicks and tags are again allowed.
 - Allow unicode chars in labels [\#13](https://github.com/knsv/mermaid/pull/13) ([codebeige](https://github.com/codebeige))
 
 ## [0.2.8](https://github.com/knsv/mermaid/tree/0.2.8) (2014-12-01)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.7...0.2.8)
 
 ## [0.2.7](https://github.com/knsv/mermaid/tree/0.2.7) (2014-12-01)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.6...0.2.7)
 
 **Closed issues:**
@@ -957,9 +986,11 @@ By doing this clicks and tags are again allowed.
 - Provide parser as separate module [\#4](https://github.com/knsv/mermaid/issues/4)
 
 ## [0.2.6](https://github.com/knsv/mermaid/tree/0.2.6) (2014-11-27)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.5...0.2.6)
 
 ## [0.2.5](https://github.com/knsv/mermaid/tree/0.2.5) (2014-11-27)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.4...0.2.5)
 
 **Merged pull requests:**
@@ -967,21 +998,27 @@ By doing this clicks and tags are again allowed.
 - Added new shapes! [\#1](https://github.com/knsv/mermaid/pull/1) ([bjowes](https://github.com/bjowes))
 
 ## [0.2.4](https://github.com/knsv/mermaid/tree/0.2.4) (2014-11-25)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.3...0.2.4)
 
 ## [0.2.3](https://github.com/knsv/mermaid/tree/0.2.3) (2014-11-24)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.2...0.2.3)
 
 ## [0.2.2](https://github.com/knsv/mermaid/tree/0.2.2) (2014-11-22)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.1...0.2.2)
 
 ## [0.2.1](https://github.com/knsv/mermaid/tree/0.2.1) (2014-11-22)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.2.0...0.2.1)
 
 ## [0.2.0](https://github.com/knsv/mermaid/tree/0.2.0) (2014-11-22)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.1.1...0.2.0)
 
 ## [0.1.1](https://github.com/knsv/mermaid/tree/0.1.1) (2014-11-17)
+
 [Full Changelog](https://github.com/knsv/mermaid/compare/0.1.0...0.1.1)
 
 ## [0.1.0](https://github.com/knsv/mermaid/tree/0.1.0) (2014-11-16)

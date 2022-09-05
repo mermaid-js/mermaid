@@ -1,5 +1,5 @@
-let interactionFunctions = [];
-export const addFunction = (func) => {
+let interactionFunctions: (() => {})[] = [];
+export const addFunction = (func: () => {}) => {
   interactionFunctions.push(func);
 };
 export const attachFunctions = () => {

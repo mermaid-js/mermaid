@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import {
   curveBasis,
@@ -16,8 +17,9 @@ import {
 import common from './diagrams/common/common';
 import { configKeys } from './defaultConfig';
 import { log } from './logger';
-import detectType from './diagram-api/detectType';
+import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
+import { MermaidConfig } from './config.type';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -42,6 +44,7 @@ const anyComment = /\s*%%.*\n/gm;
 /**
  * @function detectInit Detects the init config object from the text
  *
+ * @param config
  *   ```mermaid
  *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
  *   graph LR
@@ -71,7 +74,7 @@ const anyComment = /\s*%%.*\n/gm;
  * @param {any} cnf
  * @returns {object} The json object representing the init passed to mermaid.initialize()
  */
-export const detectInit = function (text, cnf) {
+export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {
   let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
 
@@ -84,7 +87,7 @@ export const detectInit = function (text, cnf) {
     results = inits.args;
   }
   if (results) {
-    let type = detectType(text, cnf);
+    let type = detectType(text, config);
     ['config'].forEach((prop) => {
       if (typeof results[prop] !== 'undefined') {
         if (type === 'flowchart-v2') {
@@ -324,7 +327,7 @@ const calcLabelPosition = (points) => {
 
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
   let prevPoint;
-  let totalDistance = 0; // eslint-disable-line
+  let totalDistance = 0;
   log.info('our points', points);
   if (points[0] !== initialPosition) {
     points = points.reverse();
@@ -384,7 +387,7 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   // Todo looking to faster cloning method
   let points = JSON.parse(JSON.stringify(_points));
   let prevPoint;
-  let totalDistance = 0; // eslint-disable-line
+  let totalDistance = 0;
   log.info('our points', points);
   if (position !== 'start_left' && position !== 'start_right') {
     points = points.reverse();
@@ -735,6 +738,7 @@ const d3Attrs = function (d3Elem, attrs) {
 export const initIdGenerator = class iterator {
   constructor(deterministic, seed) {
     this.deterministic = deterministic;
+    // TODO: Seed is only used for length?
     this.seed = seed;
 
     this.count = seed ? seed.length : 0;
@@ -850,6 +854,28 @@ export const sanitizeCss = (str) => {
   // Todo add more checks here
   return str;
 };
+
+export interface DetailedError {
+  str: string;
+  hash: any;
+}
+
+/**
+ *
+ * @param error
+ */
+export function isDetailedError(error: unknown): error is DetailedError {
+  return 'str' in error;
+}
+
+/**
+ *
+ * @param error
+ */
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
 
 export default {
   assignWithDepth,

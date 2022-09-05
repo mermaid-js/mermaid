@@ -2,21 +2,22 @@ import assignWithDepth from './assignWithDepth';
 import { log } from './logger';
 import theme from './themes';
 import config from './defaultConfig';
+import type { MermaidConfig } from './config.type';
 
-export const defaultConfig = Object.freeze(config);
+export const defaultConfig: MermaidConfig = Object.freeze(config);
 
-let siteConfig = assignWithDepth({}, defaultConfig);
-let configFromInitialize;
-let directives = [];
-let currentConfig = assignWithDepth({}, defaultConfig);
+let siteConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
+let configFromInitialize: MermaidConfig;
+let directives: any[] = [];
+let currentConfig: MermaidConfig = assignWithDepth({}, defaultConfig);
 
-export const updateCurrentConfig = (siteCfg, _directives) => {
-  // start with config beeing the siteConfig
-  let cfg = assignWithDepth({}, siteCfg);
+export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: any[]) => {
+  // start with config being the siteConfig
+  let cfg: MermaidConfig = assignWithDepth({}, siteCfg);
   // let sCfg = assignWithDepth(defaultConfig, siteConfigDelta);
 
   // Join directives
-  let sumOfDirectives = {};
+  let sumOfDirectives: MermaidConfig = {};
   for (let i = 0; i < _directives.length; i++) {
     const d = _directives[i];
     sanitize(d);
@@ -27,13 +28,15 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
 
   cfg = assignWithDepth(cfg, sumOfDirectives);
 
-  if (sumOfDirectives.theme && theme[sumOfDirectives.theme]) {
+  if (sumOfDirectives.theme && sumOfDirectives.theme in theme) {
     const tmpConfigFromInitialize = assignWithDepth({}, configFromInitialize);
     const themeVariables = assignWithDepth(
       tmpConfigFromInitialize.themeVariables || {},
       sumOfDirectives.themeVariables
     );
-    cfg.themeVariables = theme[cfg.theme].getThemeVariables(themeVariables);
+    if (cfg.theme && cfg.theme in theme) {
+      cfg.themeVariables = theme[cfg.theme as keyof typeof theme].getThemeVariables(themeVariables);
+    }
   }
 
   currentConfig = cfg;
@@ -55,11 +58,13 @@ export const updateCurrentConfig = (siteCfg, _directives) => {
  * @param conf - The base currentConfig to use as siteConfig
  * @returns {object} - The siteConfig
  */
-export const setSiteConfig = (conf) => {
+export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
 
+  // @ts-ignore
   if (conf.theme && theme[conf.theme]) {
+    // @ts-ignore
     siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
   }
 
@@ -67,11 +72,11 @@ export const setSiteConfig = (conf) => {
   return siteConfig;
 };
 
-export const saveConfigFromInitialize = (conf) => {
+export const saveConfigFromInitialize = (conf: MermaidConfig): void => {
   configFromInitialize = assignWithDepth({}, conf);
 };
 
-export const updateSiteConfig = (conf) => {
+export const updateSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth(siteConfig, conf);
   updateCurrentConfig(siteConfig, directives);
 
@@ -88,7 +93,7 @@ export const updateSiteConfig = (conf) => {
  *
  * @returns {object} - The siteConfig
  */
-export const getSiteConfig = () => {
+export const getSiteConfig = (): MermaidConfig => {
   return assignWithDepth({}, siteConfig);
 };
 /**
@@ -105,7 +110,7 @@ export const getSiteConfig = () => {
  * @param {any} conf - The potential currentConfig
  * @returns {any} - The currentConfig merged with the sanitized conf
  */
-export const setConfig = (conf) => {
+export const setConfig = (conf: MermaidConfig): MermaidConfig => {
   // sanitize(conf);
   // Object.keys(conf).forEach(key => {
   //   const manipulator = manipulators[key];
@@ -128,7 +133,7 @@ export const setConfig = (conf) => {
  *
  * @returns {any} - The currentConfig
  */
-export const getConfig = () => {
+export const getConfig = (): MermaidConfig => {
   return assignWithDepth({}, currentConfig);
 };
 /**
@@ -143,17 +148,14 @@ export const getConfig = () => {
  *
  * @param {any} options - The potential setConfig parameter
  */
-export const sanitize = (options) => {
+export const sanitize = (options: any) => {
   // Checking that options are not in the list of excluded options
-  Object.keys(siteConfig.secure).forEach((key) => {
-    if (typeof options[siteConfig.secure[key]] !== 'undefined') {
-      // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
+  ['secure', ...(siteConfig.secure ?? [])].forEach((key) => {
+    if (typeof options[key] !== 'undefined') {
+      // DO NOT attempt to print options[key] within `${}` as a malicious script
       // can exploit the logger's attempt to stringify the value and execute arbitrary code
-      log.debug(
-        `Denied attempt to modify a secure key ${siteConfig.secure[key]}`,
-        options[siteConfig.secure[key]]
-      );
-      delete options[siteConfig.secure[key]];
+      log.debug(`Denied attempt to modify a secure key ${key}`, options[key]);
+      delete options[key];
     }
   });
 
@@ -186,7 +188,7 @@ export const sanitize = (options) => {
  *
  * @param {object} directive The directive to push in
  */
-export const addDirective = (directive) => {
+export const addDirective = (directive: any) => {
   if (directive.fontFamily) {
     if (!directive.themeVariables) {
       directive.themeVariables = { fontFamily: directive.fontFamily };
@@ -215,8 +217,8 @@ export const addDirective = (directive) => {
  *
  * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
  */
-export const reset = () => {
+export const reset = (config = siteConfig): void => {
   // Replace current config with siteConfig
   directives = [];
-  updateCurrentConfig(siteConfig, directives);
+  updateCurrentConfig(config, directives);
 };

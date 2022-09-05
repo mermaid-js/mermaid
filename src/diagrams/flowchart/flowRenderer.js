@@ -297,7 +297,7 @@ export const getClasses = function (text, diagObj) {
 export const draw = function (text, id, _version, diagObj) {
   log.info('Drawing flowchart');
   diagObj.db.clear();
-  const securityLevel = getConfig().securityLevel;
+  const { securityLevel, flowchart: conf } = getConfig();
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -320,8 +320,6 @@ export const draw = function (text, id, _version, diagObj) {
   if (typeof dir === 'undefined') {
     dir = 'TD';
   }
-
-  const conf = getConfig().flowchart;
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
 
@@ -461,7 +459,7 @@ export const draw = function (text, id, _version, diagObj) {
   }
 
   // Add label rects for non html labels
-  if (!evaluate(conf.htmlLabels) || true) { // eslint-disable-line
+  if (!conf.htmlLabels) {
     const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];

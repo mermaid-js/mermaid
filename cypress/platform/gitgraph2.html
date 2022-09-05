@@ -1,32 +1,36 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
         /* background: rgb(221, 208, 208); */
         /* background:#111; */
         /* background:#333; */
         font-family: 'Arial';
-        }
+      }
       /* h1 { color: white;} */
       .mermaid2 {
         display: none;
       }
-      .customCss > rect, .customCss{
-        fill:#FF0000 !important;
-        stroke:#FFFF00 !important;
-        stroke-width:4px !important;
-    }
+      .customCss > rect,
+      .customCss {
+        fill: #ff0000 !important;
+        stroke: #ffff00 !important;
+        stroke-width: 4px !important;
+      }
     </style>
   </head>
   <body>
     <h1>info below</h1>
-    <div class="mermaid2" style="width: 100%; height: 20%;">
+    <pre class="mermaid2" style="width: 100%; height: 20%">
        gitGraph:
        commit "Ashish"
        branch newbranch
@@ -40,9 +44,8 @@
        commit
        branch b2
        commit
-
-    </div>
-    <div class="mermaid" style="width: 100%; height: 20%;">
+    </pre>
+    <pre class="mermaid" style="width: 100%; height: 20%">
       %%{init: {  "gitGraph": { "showBranches": true, "mainBranchName": "APA" }}}%%
       gitGraph
       commit
@@ -86,17 +89,16 @@
       merge APA
       checkout develop
       merge release
-
-   </div>
-    <div class="mermaid2" style="width: 100%; height: 20%;">
+    </pre>
+    <pre class="mermaid2" style="width: 100%; height: 20%">
       gitGraph:
       commit
       commit
       branch newbranch
       commit
       merge main
-    </div>
-      <script src="./mermaid.js"></script>
+    </pre>
+    <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
@@ -132,8 +134,8 @@
         securityLevel: 'loose',
       });
       function callback() {
-  alert('It worked');
-}
+        alert('It worked');
+      }
     </script>
   </body>
 </html>

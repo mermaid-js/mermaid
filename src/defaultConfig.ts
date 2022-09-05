@@ -1,4 +1,5 @@
 import theme from './themes';
+import { MermaidConfig } from './config.type';
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click
  * here](8.6.0_docs.md)].**
@@ -21,7 +22,7 @@ import theme from './themes';
  *
  * @name Configuration
  */
-const config = {
+const config: Partial<MermaidConfig> = {
   /**
    * Theme , the CSS style sheet
    *
@@ -49,12 +50,13 @@ const config = {
   fontFamily: '"trebuchet ms", verdana, arial, sans-serif;',
 
   /**
-   * | Parameter | Description                                           | Type             | Required | Values        |
-   * | --------- | ----------------------------------------------------- | ---------------- | -------- | ------------- |
-   * | logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 1, 2, 3, 4, 5 |
+   * | Parameter | Description                                           | Type             | Required | Values                                        |
+   * | --------- | ----------------------------------------------------- | ---------------- | -------- | --------------------------------------------- |
+   * | logLevel  | This option decides the amount of logging to be used. | string \| number | Required | 'trace','debug','info','warn','error','fatal' |
    *
    * **Notes:**
    *
+   * - Trace: 0
    * - Debug: 1
    * - Info: 2
    * - Warn: 3
@@ -1829,11 +1831,11 @@ const config = {
   fontSize: 16,
 };
 
-config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+if (config.class) config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+if (config.gitGraph) config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
-const keyify = (obj, prefix = '') =>
-  Object.keys(obj).reduce((res, el) => {
+const keyify = (obj: any, prefix = ''): string[] =>
+  Object.keys(obj).reduce((res: string[], el): string[] => {
     if (Array.isArray(obj[el])) {
       return res;
     } else if (typeof obj[el] === 'object' && obj[el] !== null) {
@@ -1842,5 +1844,5 @@ const keyify = (obj, prefix = '') =>
     return [...res, prefix + el];
   }, []);
 
-export const configKeys = keyify(config, '');
+export const configKeys: string[] = keyify(config, '');
 export default config;

@@ -10,8 +10,10 @@ import sequence from './diagrams/sequence/styles';
 import stateDiagram from './diagrams/state/styles';
 import journey from './diagrams/user-journey/styles';
 import c4 from './diagrams/c4/styles';
+import { FlowChartStyleOptions } from './diagrams/flowchart/styles';
 import { log } from './logger';
 
+// TODO @knut: Inject from registerDiagram.
 const themes = {
   flowchart,
   'flowchart-v2': flowchart,
@@ -31,12 +33,24 @@ const themes = {
   c4,
 };
 
-export const calcThemeVariables = (theme, userOverRides) => {
-  log.info('userOverides', userOverRides);
-  return theme.calcColors(userOverRides);
-};
-
-const getStyles = (type, userStyles, options) => {
+const getStyles = (
+  type: string,
+  userStyles: string,
+  options: {
+    fontFamily: string;
+    fontSize: string;
+    textColor: string;
+    errorBkgColor: string;
+    errorTextColor: string;
+    lineColor: string;
+  } & FlowChartStyleOptions
+) => {
+  let diagramStyles: string = '';
+  if (type in themes && themes[type as keyof typeof themes]) {
+    diagramStyles = themes[type as keyof typeof themes](options);
+  } else {
+    log.warn(`No theme found for ${type}`);
+  }
   return ` {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
@@ -83,13 +97,13 @@ const getStyles = (type, userStyles, options) => {
     font-size: ${options.fontSize};
   }
 
-  ${themes[type](options)}
+  ${diagramStyles}
 
   ${userStyles}
 `;
 };
 
-export const addStylesForDiagram = (type, diagramTheme, options) => {
+export const addStylesForDiagram = (type, diagramTheme) => {
   themes[type] = diagramTheme;
 };
 

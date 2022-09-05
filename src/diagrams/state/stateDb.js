@@ -121,8 +121,7 @@ let documents = {
 let currentDocument = documents.root;
 
 let startCnt = 0;
-let endCnt = 0; // eslint-disable-line
-// let stateCnt = 0;
+let endCnt = 0; // let stateCnt = 0;
 
 let title = 'State diagram';
 let description = '';
@@ -180,7 +179,7 @@ export const clear = function (saveCommon) {
   currentDocument = documents.root;
 
   startCnt = 0;
-  endCnt = 0; // eslint-disable-line
+  endCnt = 0;
   classes = [];
   if (!saveCommon) {
     commonClear();

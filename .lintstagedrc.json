@@ -1,5 +1,3 @@
 {
-  "*.{js,json,html,md}": [
-      "yarn lint:fix" 
-   ]
+  "*.{ts,js,json,html,md}": ["eslint --fix", "prettier --write"]
 }

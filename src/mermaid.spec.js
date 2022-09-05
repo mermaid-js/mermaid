@@ -1,10 +1,18 @@
 import mermaid from './mermaid';
+import { mermaidAPI } from './mermaidAPI';
 import flowDb from './diagrams/flowchart/flowDb';
 import flowParser from './diagrams/flowchart/parser/flow';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import Diagram from './Diagram';
 
 const spyOn = jest.spyOn;
+
+// mocks the mermaidAPI.render function (see `./__mocks__/mermaidAPI`)
+jest.mock('./mermaidAPI');
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
 
 describe('when using mermaid and ', function () {
   describe('when detecting chart type ', function () {
@@ -37,6 +45,16 @@ describe('when using mermaid and ', function () {
       spyOn(mermaid, 'init');
       mermaid.contentLoaded();
       expect(mermaid.init).toHaveBeenCalled();
+    });
+  });
+
+  describe('when using #initThrowsErrors', function () {
+    it('should accept single node', async () => {
+      const node = document.createElement('div');
+      node.appendChild(document.createTextNode('graph TD;\na;'));
+
+      mermaid.initThrowsErrors(undefined, node);
+      expect(mermaidAPI.render).toHaveBeenCalled();
     });
   });
 
@@ -226,6 +244,15 @@ describe('when using mermaid and ', function () {
         'Bob-->Alice: Feel sick...\n' +
         'end';
       expect(() => mermaid.parse(text)).toThrow();
+    });
+
+    it('should return false for invalid definition WITH a parseError() callback defined', function () {
+      let parseErrorWasCalled = false;
+      mermaid.setParseErrorHandler(() => {
+        parseErrorWasCalled = true;
+      });
+      expect(mermaid.parse('this is not a mermaid diagram definition')).toEqual(false);
+      expect(parseErrorWasCalled).toEqual(true);
     });
   });
 });

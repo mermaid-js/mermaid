@@ -94,6 +94,9 @@ describe('flowchart shapes', function () {
   });
 });
 
+/**
+ *
+ */
 function MockRender() {
   const shapes = {};
   return {
@@ -103,6 +106,11 @@ function MockRender() {
   };
 }
 
+/**
+ *
+ * @param tag
+ * @param {...any} args
+ */
 function MockSvg(tag, ...args) {
   const children = [];
   const attributes = {};
@@ -139,6 +147,11 @@ function useWidth(w, h) {
   return w;
 }
 
+/**
+ *
+ * @param w
+ * @param h
+ */
 function useHeight(w, h) {
   return h;
 }

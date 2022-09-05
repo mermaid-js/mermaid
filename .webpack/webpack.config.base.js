@@ -1,15 +1,14 @@
 import path from 'path';
-
 export const resolveRoot = (...relativePath) => path.resolve(__dirname, '..', ...relativePath);
 
 export default {
   amd: false, // https://github.com/lodash/lodash/issues/3052
   target: 'web',
   entry: {
-    mermaid: './src/mermaid.js',
+    mermaid: './src/mermaid',
   },
   resolve: {
-    extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
+    extensions: ['.wasm', '.mjs', '.js', '.ts', '.json', '.jison'],
     fallback: {
       fs: false, // jison generated code requires 'fs'
       path: require.resolve('path-browserify'),
@@ -27,6 +26,11 @@ export default {
   },
   module: {
     rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
       {
         test: /\.js$/,
         include: [resolveRoot('./src'), resolveRoot('./node_modules/dagre-d3-renderer/lib')],

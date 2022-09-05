@@ -2,7 +2,6 @@ import graphlib from 'graphlib';
 import { select, curveLinear, selectAll } from 'd3';
 
 import flowDb from './flowDb';
-import flow from './parser/flow';
 import { getConfig } from '../../config';
 
 import { render } from '../../dagre-wrapper/index.js';
@@ -364,11 +363,10 @@ export const draw = function (text, id, _version, diagObj) {
     dir = 'TD';
   }
 
-  const conf = getConfig().flowchart;
+  const { securityLevel, flowchart: conf } = getConfig();
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
 
-  const securityLevel = getConfig().securityLevel;
   // Handle root and document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {

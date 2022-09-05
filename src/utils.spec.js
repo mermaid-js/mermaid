@@ -1,7 +1,7 @@
 import utils from './utils';
 import assignWithDepth from './assignWithDepth';
-import detectType from './diagram-api/detectType';
-import addDiagrams from './diagram-api/diagram-orchestration';
+import { detectType } from './diagram-api/detectType';
+import { addDiagrams } from './diagram-api/diagram-orchestration';
 import { configureSvgSize, calculateSvgSizeAttrs } from './setupGraphViewbox';
 addDiagrams();
 

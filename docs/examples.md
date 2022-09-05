@@ -13,12 +13,14 @@ pie title NETFLIX
          "Time spent looking for movie" : 90
          "Time spent watching it" : 10
 ```
+
 ```mermaid-example
 pie title What Voldemort doesn't have?
          "FRIENDS" : 2
          "FAMILY" : 3
          "NOSE" : 45
 ```
+
 ## Basic sequence diagram
 
 ```mermaid-example
@@ -42,7 +44,6 @@ graph LR
     B --> D{Rhombus}
     C --> D
 ```
-
 
 ## Larger flowchart with some styling
 
@@ -70,7 +71,6 @@ graph TB
      class di orange
 ```
 
-
 ## SequenceDiagram: Loops, alt and opt
 
 ```mermaid-example
@@ -88,7 +88,6 @@ sequenceDiagram
         end
     end
 ```
-
 
 ## SequenceDiagram: Message to self in loop
 
@@ -141,6 +140,7 @@ sequenceDiagram
 ```
 
 ## A commit flow diagram.
+
 ```mermaid
 gitGraph:
     commit "Ashish"
