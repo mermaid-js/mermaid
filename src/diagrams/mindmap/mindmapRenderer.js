@@ -4,7 +4,7 @@ import { log, getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI'
 import svgDraw from './svgDraw';
 import { BoundingBox, Layout, Tree } from 'non-layered-tidy-tree-layout';
 import clone from 'fast-clone';
-import db from './mindmapDb';
+import * as db from './mindmapDb';
 
 /**
  * @param {any} svg The svg element to draw the diagram onto
@@ -224,8 +224,6 @@ function positionNodes(node, conf) {
 export const draw = (text, id, version, diagObj) => {
   const conf = getConfig();
   try {
-    // const parser = infoParser.parser;
-    // parser.yy = db;
     log.debug('Renering info diagram\n' + text);
 
     const securityLevel = getConfig().securityLevel;

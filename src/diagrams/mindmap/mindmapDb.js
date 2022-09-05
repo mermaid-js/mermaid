@@ -2,9 +2,6 @@
 import { sanitizeText, getConfig } from '../../diagram-api/diagramAPI';
 import { log } from '../../logger';
 
-var message = '';
-var info = false;
-const root = {};
 let nodes = [];
 let cnt = 0;
 let elements = {};
@@ -117,7 +114,7 @@ export const decorateNode = (decoration) => {
   }
 };
 
-const type2Str = (type) => {
+export const type2Str = (type) => {
   switch (type) {
     case nodeType.DEFAULT:
       return 'no-border';
@@ -136,17 +133,19 @@ const type2Str = (type) => {
   }
 };
 
-export default {
-  getMindmap,
-  addNode,
-  clear,
-  nodeType,
-  getType,
-  decorateNode,
-  setElementForId,
-  getElementById: (id) => elements[id],
-  // getNodeById: (id) => nodes.find((node) => node.id === id),
-  getNodeById: (id) => nodes[id],
-  type2Str,
-  // parseError
-};
+export const getNodeById = (id) => nodes[id];
+export const getElementById = (id) => elements[id];
+// export default {
+// //   getMindmap,
+//   // addNode,
+//   // clear,
+//   // nodeType,
+//   // getType,
+//   // decorateNode,
+//   // setElementForId,
+//   getElementById: (id) => elements[id],
+//   // getNodeById: (id) => nodes.find((node) => node.id === id),
+//   getNodeById: (id) => nodes[id],
+//   // type2Str,
+//   // parseError
+// };

@@ -80,21 +80,6 @@ export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth)
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${
     svgBounds.width + 2 * padding
   } ${svgBounds.height + 2 * padding}`;
-  // log.info(
-  //   'Graph.label',
-  //   graph._label,
-  //   'swidth',
-  //   sWidth,
-  //   'sheight',
-  //   sHeight,
-  //   'width',
-  //   width,
-  //   'height',
-  //   height,
 
-  //   'vBox',
-  //   vBox
-  // );
   svgElem.attr('viewBox', vBox);
-  // svgElem.select('g').attr('transform', `translate(${tx}, ${ty})`);
 };

@@ -1,5 +1,5 @@
 import { registerDiagram } from './diagramAPI';
-import mindmapDb from '../diagrams/mindmap/mindmapDb';
+import * as mindmapDb from '../diagrams/mindmap/mindmapDb';
 import mindmapRenderer from '../diagrams/mindmap/mindmapRenderer';
 // @ts-ignore
 import mindmapParser from '../diagrams/mindmap/parser/mindmap';

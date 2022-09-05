@@ -1,6 +1,6 @@
 const lineBreakRegex = /<br\s*\/?>/gi;
 import { select } from 'd3';
-import db from './mindmapDb';
+import * as db from './mindmapDb';
 
 /**
  * @param {string} text The text to be wrapped
