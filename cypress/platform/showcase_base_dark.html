@@ -1,12 +1,15 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
         /* background: rgb(221, 208, 208); */
@@ -17,8 +20,10 @@
         width: 100%;
         margin: 0;
         padding: 0;
-        }
-      h1 { color: grey;}
+      }
+      h1 {
+        color: grey;
+      }
       .mermaid2 {
         display: none;
       }
@@ -40,7 +45,7 @@
   <body>
     <h1>Showcases of diagrams</h1>
     <div class="flex flex-wrap">
-      <div class="mermaid width height">
+      <pre class="mermaid width height">
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -55,8 +60,8 @@
             F
             G
           end
-      </div>
-      <div class="mermaid width height">
+      </pre>
+      <pre class="mermaid width height">
 %%{init2: {'securityLevel': 'loose', 'theme':'base'}}%%
         flowchart TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -72,8 +77,8 @@
             F
             G
           end
-      </div>
-      <div class="mermaid width height" >
+      </pre>
+      <pre class="mermaid width height">
         sequenceDiagram
           autonumber
           par Action 1
@@ -89,8 +94,8 @@
               loop Every minute
                 John-->Alice: Great!
             end
-      </div>
-      <div class="mermaid width height" >
+      </pre>
+      <pre class="mermaid width height">
 classDiagram
 	Animal "1" <|-- Duck
 	Animal <|-- Fish
@@ -112,8 +117,8 @@ classDiagram
 		+bool is_wild
 		+run()
 	}
-      </div>
-      <div class="mermaid width height">
+      </pre>
+      <pre class="mermaid width height">
 gantt
        dateFormat                :YYYY-MM-DD
        title                     Adding GANTT diagram functionality to mermaid
@@ -141,8 +146,8 @@ gantt
        Describe gantt syntax               :after doc1, 3d
        Add gantt diagram to demo page      :20h
        Add another diagram to demo page    :48h
-      </div>
-      <div class="mermaid width height2">
+      </pre>
+      <pre class="mermaid width height2">
       stateDiagram
         [*] --> Active
 
@@ -168,9 +173,8 @@ gantt
         note right of SomethingElse : This is the note to the right.
 
         SomethingElse --> [*]
-
-      </div>
-      <div class="mermaid width height2">
+      </pre>
+      <pre class="mermaid width height2">
 stateDiagram-v2
         [*] --> Active
 
@@ -196,8 +200,8 @@ stateDiagram-v2
         note right of SomethingElse2 : This is the note to the right.
 
         SomethingElse2 --> [*]
-      </div>
-      <div class="mermaid width height2">
+      </pre>
+      <pre class="mermaid width height2">
       erDiagram
         CUSTOMER }|..|{ DELIVERY-ADDRESS : has
         CUSTOMER ||--o{ ORDER : places
@@ -207,8 +211,8 @@ stateDiagram-v2
         ORDER ||--|{ ORDER-ITEM : includes
         PRODUCT-CATEGORY ||--|{ PRODUCT : contains
         PRODUCT ||--o{ ORDER-ITEM : "ordered in"
-      </div>
-      <div class="mermaid width height">
+      </pre>
+      <pre class="mermaid width height">
 journey
             title My working day
             section Go to work
@@ -218,8 +222,8 @@ journey
             section Go home
               Go downstairs: 5: Me
               Sit down: 5: Me
-      </div>
-      <div class="mermaid width height">
+      </pre>
+      <pre class="mermaid width height">
 requirementDiagram
 
     requirement test_req {
@@ -257,8 +261,8 @@ requirementDiagram
     test_req - traces -> test_req2
     test_req - contains -> test_req3
     test_req <- copies - test_entity2
-      </div>
-    <div class="mermaid" class="width height">
+      </pre>
+      <pre class="mermaid" class="width height">
 gitGraph
       commit
       branch hotfix
@@ -301,7 +305,9 @@ gitGraph
       merge main
       checkout develop
       merge release
-   </div>
+   
+      </pre>
+    </div>
     <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
@@ -331,8 +337,8 @@ gitGraph
         // securityLevel: 'strict'
       });
       function callback() {
-  alert('It worked');
-}
+        alert('It worked');
+      }
     </script>
   </body>
 </html>

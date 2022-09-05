@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Mermaid Quick Test Page</title>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
-  <style>
-    div.mermaid {
-      /* font-family: 'trebuchet ms', verdana, arial; */
-      font-family: 'Courier New', Courier, monospace !important;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="mermaid">
+  <body>
+    <pre class="mermaid">
     info
-  </div>
+    </pre>
 
-  <hr />
+    <hr />
 
-  <div class="mermaid">
+    <pre class="mermaid">
     C4Context
       title System Context diagram for Internet Banking System
 Enterprise_Boundary(b0, "BankBoundary0") {
@@ -64,9 +63,9 @@ Enterprise_Boundary(b0, "BankBoundary0") {
       UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
       
       UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
-  </div>
+    </pre>
 
-  <div class="mermaid">
+    <pre class="mermaid">
     C4Container
     title Container diagram for Internet Banking System
 
@@ -102,12 +101,10 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     Rel(backend_api, email_system, "Sends e-mails using", "sync, SMTP")
     UpdateRelStyle(backend_api, email_system, $offsetY="-60")    
     Rel(backend_api, banking_system, "Uses", "sync/async, XML/HTTPS")
-    UpdateRelStyle(backend_api, banking_system, $offsetY="-50", $offsetX="-140") 
+    UpdateRelStyle(backend_api, banking_system, $offsetY="-50", $offsetX="-140")
+    </pre>
 
-
-  </div>
-
-  <div class="mermaid">
+    <pre class="mermaid">
     C4Component
     title Component diagram for Internet Banking System - API Application
 
@@ -144,10 +141,9 @@ Enterprise_Boundary(b0, "BankBoundary0") {
         UpdateRelStyle(accounts, mbsfacade, $offsetX="140", $offsetY="10")
         UpdateRelStyle(security, db, $offsetY="-40")
         UpdateRelStyle(mbsfacade, mbs, $offsetY="-40")
+    </pre>
 
-  </div>  
-
-  <div class="mermaid">
+    <pre class="mermaid">
     C4Dynamic
     title Dynamic diagram for Internet Banking System - API Application
 
@@ -164,9 +160,9 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     UpdateRelStyle(c1, c2, $textColor="red", $offsetY="-40")
     UpdateRelStyle(c2, c3, $textColor="red", $offsetX="-40", $offsetY="60")
     UpdateRelStyle(c3, c4, $textColor="red", $offsetY="-40", $offsetX="10")
-  </div>  
+    </pre>
 
-   <div class="mermaid">
+    <pre class="mermaid">
     C4Deployment
     title Deployment Diagram for Internet Banking System - Live
 
@@ -215,11 +211,11 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     UpdateRelStyle(api, db, $offsetY="-20", $offsetX="5")
     UpdateRelStyle(api, db2, $offsetX="-40", $offsetY="-20")
     UpdateRelStyle(db, db2, $offsetY="-10")
-  </div>  
+     </pre>
 
-  <hr />
+    <hr />
 
-  <div class="mermaid">
+    <pre class="mermaid">
     pie
       title Key elements in Product X
       accDescription This is a pie chart showing the key elements in Product X.
@@ -227,9 +223,9 @@ Enterprise_Boundary(b0, "BankBoundary0") {
       "Potassium" : 50.05
       "Magnesium" : 10.01
       "Iron" :  5
-  </div>
+    </pre>
 
-  <div class="mermaid">
+    <pre class="mermaid">
     gantt
       title Airworks roadmap
       dateFormat YYYY-MM-DD
@@ -244,8 +240,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
       section Airworks 3.4.2
       开发	:a, 2021-10-09, 4d
       测试	:after a, 4d
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     gantt
     title Exclusive end dates (Manual date should end on 3d)
     dateFormat YYYY-MM-DD
@@ -253,8 +249,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     section Section1
     2 Days: 1, 2019-01-01,2d
     Manual Date: 2, 2019-01-01,2019-01-03
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     gantt
     title Inclusive end dates (Manual date should end on 4th)
     dateFormat YYYY-MM-DD
@@ -263,8 +259,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     section Section1
     2 Days: 1, 2019-01-01,2d
     Manual Date: 2, 2019-01-01,2019-01-03
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     gantt
     title Hide today marker (vertical line should not be visible)
     dateFormat YYYY-MM-DD
@@ -272,8 +268,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     todayMarker off
     section Section1
     Today: 1, -1h
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     gantt
     title Style today marker (vertical line should be 5px wide and half-transparent blue)
     dateFormat YYYY-MM-DD
@@ -281,11 +277,11 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
     section Section1
     Today: 1, -1h
-  </div>
+    </pre>
 
-  <hr />
+    <hr />
 
-  <div class="mermaid">
+    <pre class="mermaid">
     graph LR
     sid-B3655226-6C29-4D00-B685-3D5C734DC7E1["
 
@@ -381,16 +377,16 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     sid-3E35A7FF-A2F4-4E07-9247-DBF884C81937-->sid-6C2120F3-D940-4958-A067-0903DCE879C4;
     sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4DA958A0-26D9-4D47-93A7-70F39FD7D51A;
     sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4FC27B48-A6F9-460A-A675-021F5854FE22;
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph TD
     A[Christmas] -->|Get money| B(Go shopping)
     B --> C{Let me thinksssssx<br />sssssssssssssssssssuuu<br />tttsssssssssssssssssssssss}
     C -->|One| D[Laptop]
     C -->|Two| E[iPhone]
     C -->|Three| F[Car]
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph TD
     A[/Christmas\]
     A -->|Get money| B[\Go shopping/]
@@ -398,8 +394,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     C -->|One| D[/Laptop/]
     C -->|Two| E[\iPhone\]
     C -->|Three| F[Car]
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph LR
     47(SAM.CommonFA.FMESummary)-->48(SAM.CommonFA.CommonFAFinanceBudget)
     37(SAM.CommonFA.BudgetSubserviceLineVolume)-->48(SAM.CommonFA.CommonFAFinanceBudget)
@@ -421,8 +417,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     39(SAM.CommonFA.ChargeDetails)-->40(SAM.CommonFA.OPVisits)
     35(SAM.CommonFA.PopulationFME)-->39(SAM.CommonFA.ChargeDetails)
     36(SAM.CommonFA.PremetricCost)-->39(SAM.CommonFA.ChargeDetails)
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph TD
     9e122290_1ec3_e711_8c5a_005056ad0002("fa:fa-creative-commons My System | Test Environment")
     82072290_1ec3_e711_8c5a_005056ad0002("fa:fa-cogs Shared Business Logic Server:Service 1")
@@ -486,14 +482,14 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     c0102290_1ec3_e711_8c5a_005056ad0002-->71082290_1ec3_e711_8c5a_005056ad0002
     9a072290_1ec3_e711_8c5a_005056ad0002-->d6072290_1ec3_e711_8c5a_005056ad0002
     9a072290_1ec3_e711_8c5a_005056ad0002-->71082290_1ec3_e711_8c5a_005056ad0002
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph TB
     subgraph One
     a1-->a2
     end
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph TB
     A
     B
@@ -521,8 +517,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
 
     style foo fill:#F99,stroke-width:2px,stroke:#F0F,color:darkred
     style bar fill:#999,stroke-width:10px,stroke:#0F0,color:blue
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph LR
     456ac9b0d15a8b7f1e71073221059886[1051 AAA fa:fa-check]
     f7f580e11d00a75814d2ded41fe8e8fe[1141 BBB fa:fa-check]
@@ -536,8 +532,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     click 81dc9bdb52d04dc20036dbd8313ed055 "/admin/user/view?id=1234" "CCC
     3000"
     style 456ac9b0d15a8b7f1e71073221059886 fill:#f9f,stroke:#333,stroke-width:4px
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph TD
     A[Christmas] -->|Get money| B(Go shopping)
     B --> C{{Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?}}
@@ -549,8 +545,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     classDef someclass fill:#f96;
     class A someclass;
     class C someclass;
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph TD
     A([stadium shape test])
     A -->|Get money| B([Go shopping])
@@ -563,8 +559,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     classDef someclass fill:#f96;
     class A someclass;
     class C someclass;
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph LR
     A[[subroutine shape test]]
     A -->|Get money| B[[Go shopping]]
@@ -577,8 +573,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     classDef someclass fill:#f96;
     class A someclass;
     class C someclass;
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph LR
     A[(cylindrical<br />shape<br />test)]
     A -->|Get money| B1[(Go shopping 1)]
@@ -595,8 +591,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     click B testClick "click test"
     classDef someclass fill:#f96;
     class A someclass;
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph LR
     A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
     C1[Multi<br />Line] -->|Multi<br />Line| D1(Multi<br />Line)
@@ -607,16 +603,16 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     linkStyle 0 stroke:DarkGray,stroke-width:2px
     linkStyle 1 stroke:DarkGray,stroke-width:2px
     linkStyle 2 stroke:DarkGray,stroke-width:2px
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph LR
     A(( )) -->|step 1| B(( ))
     B(( )) -->|step 2| C(( ))
     C(( )) -->|step 3| D(( ))
     linkStyle 1 stroke:greenyellow,stroke-width:2px
     style C fill:greenyellow,stroke:green,stroke-width:4px
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph TB
     TITLE["Link Click Events<br>(click the nodes below)"]
     A["link test (open in same tab)"]
@@ -632,9 +628,9 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     click D "mailto:user@user.user" "mailto test"
     click E "notes://do-your-thing/id" "other protocol test"
     click F "javascript:alert('test')" "script test"
-  </div>
-  <hr />
-  <div class="mermaid">
+    </pre>
+    <hr />
+    <pre class="mermaid">
     graph LR
     A[red<br>text] -->|red<br>text| B(blue<br>text)
     C[/red<br />text/] -->|blue<br />text| D{blue<br />text}
@@ -648,8 +644,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     style D stroke:#0000ff,fill:#ccccff,color:#0000ff
     click B "index.html#link-clicked" "link test"
     click D testClick "click test"
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     graph TD
     A[myClass1] --> B[default] & C[default]
     B[default] & C[default] --> D[myClass2]
@@ -659,11 +655,11 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     classDef myClass2 stroke:#0000ff,fill:#ccccff
     class A myClass1
     class D myClass2
-  </div>
+    </pre>
 
-  <hr />
+    <hr />
 
-  <div class="mermaid">
+    <pre class="mermaid">
     sequenceDiagram
     accDescription Hello friends
     participant Alice
@@ -696,8 +692,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     and
     Alice -->> John: Parallel message 2
     end
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     sequenceDiagram
     participant 1 as multiline<br>using #lt;br#gt;
     participant 2 as multiline<br />using #lt;br/#gt;
@@ -711,8 +707,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     note right of 4: multiline<br />using #lt;br /#gt;
     4->>1: multiline<br />using #lt;br /#gt;
     note right of 1: multiline<br />using #lt;br /#gt;
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     sequenceDiagram
     autonumber
     Alice->>John: Hello John,<br>how are you?
@@ -721,11 +717,11 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     John-->>Alice: Hi Alice,<br />I can hear you!
     autonumber off
     John-->>Alice: I feel great!
-  </div>
+    </pre>
 
-  <hr />
+    <hr />
 
-  <div class="mermaid">
+    <pre class="mermaid">
     gantt
     dateFormat YYYY-MM-DD
     axisFormat %d/%m
@@ -762,8 +758,8 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     Describe gantt syntax :after doc1, 3d
     Add gantt diagram to demo page : 20h
     Add another diagram to demo page : 48h
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     gantt
     dateFormat YYYY-MM-DD
     axisFormat %d/%m
@@ -793,11 +789,11 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     Describe gantt syntax : after doc1, 3d
     Add gantt diagram to demo page : 20h
     Add another diagram to demo page : 48h
-  </div>
+    </pre>
 
-  <hr />
+    <hr />
 
-  <div class="mermaid">
+    <pre class="mermaid">
     gitGraph:
     options
     {
@@ -815,11 +811,11 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     commit
     commit
     merge newbranch
-  </div>
+    </pre>
 
-  <hr />
+    <hr />
 
-  <div class="mermaid">
+    <pre class="mermaid">
     classDiagram
     Class01 <|-- AveryLongClass : Cool
 
@@ -841,9 +837,9 @@ Enterprise_Boundary(b0, "BankBoundary0") {
       int id
       size()
       }
-  </div>
+    </pre>
 
-  <div class="mermaid">
+    <pre class="mermaid">
     classDiagram
     class Class01~T~
     Class01 : #size()
@@ -854,9 +850,9 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     int id
     size()
     }
-  </div>
+    </pre>
 
-  <div class="mermaid">
+    <pre class="mermaid">
     classDiagram
     Class01~T~ <|-- AveryLongClass : Cool
     &lt;&lt;interface&gt;&gt; Class01
@@ -877,22 +873,22 @@ Enterprise_Boundary(b0, "BankBoundary0") {
         int id
         size()
         }
-  </div>
+    </pre>
 
-  <div class="mermaid">
+    <pre class="mermaid">
     classDiagram
     Interface1 ()-- Interface1Impl
-  </div>
+    </pre>
 
-  <div class="mermaid">
+    <pre class="mermaid">
     classDiagram 
     direction LR
     Animal ()-- Dog
     Dog : bark()
     Dog : species()
-  </div>
+    </pre>
 
-  <div class="mermaid">
+    <pre class="mermaid">
     classDiagram 
     direction RL
     Fruit ()-- Apple
@@ -902,25 +898,25 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     Pineapple : color()
     Pineapple : -int leafCount()
     Pineapple : -int spikeCount()
-  </div>
+    </pre>
 
-  <div class="mermaid">
+    <pre class="mermaid">
     stateDiagram
     accDescription This is a state diagram showing one state
     State1
-  </div>
+    </pre>
 
-  <hr>
+    <hr />
 
-  <div class="mermaid">
+    <pre class="mermaid">
     stateDiagram
     [*] --> First
     state First {
     [*] --> second
     second --> [*]
     }
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     stateDiagram
     State1: The state with a note
     note right of State1
@@ -929,18 +925,18 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     end note
     State1 --> State2
     note left of State2 : This is the note to the left.
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
     stateDiagram
     State1
     note right of State1
     Line1<br>Line2<br />Line3<br />Line4<br />Line5
     end note
-  </div>
+    </pre>
 
-  <hr />
+    <hr />
 
-  <div class="mermaid">
+    <pre class="mermaid">
     requirementDiagram
 
     requirement An Example {
@@ -1007,98 +1003,97 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     test_req4 - derives -> test_req5
     test_req5 - refines -> test_req6
     test_entity3 - verifies -> test_req5
-    An Example <- copies - test_entity2 </div>
-  </div>
+    An Example <- copies - test_entity2
+    </pre>
 
-  <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
+    <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
 
-  <script src="./mermaid.js"></script>
-  <script>
-    const ALLOWED_TAGS = [
-      'a',
-  'b',
-  'blockquote',
-  'br',
-  'dd',
-  'div',
-  'dl',
-      'dt',
-  'em',
-  'foreignObject',
-  'h1',
-  'h2',
-  'h3',
-  'h4',
-      'h5',
-  'h6',
-  'h7',
-  'h8',
-  'hr',
-  'i',
-  'li',
-  'ul',
-  'ol',
-  'p',
-      'pre',
-  'span',
-  'strike',
-  'strong',
-  'table',
-  'tbody',
-      'td',
-  'tfoot',
-  'th',
-  'thead',
-  'tr',
-    ];
-    mermaid.initialize({
-      theme: 'forest',
-      // themeCSS: '.node rect { fill: red; }',
-      logLevel: 3,
-      securityLevel: 'loose',
-      flowchart: { curve: 'basis' },
-      gantt: { axisFormat: '%m/%d/%Y' },
-      sequence: { actorMargin: 50 },
-      dompurifyConfig: {
-        USE_PROFILES: {
-          svg: true,
+    <script src="./mermaid.js"></script>
+    <script>
+      const ALLOWED_TAGS = [
+        'a',
+        'b',
+        'blockquote',
+        'br',
+        'dd',
+        'div',
+        'dl',
+        'dt',
+        'em',
+        'foreignObject',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'h7',
+        'h8',
+        'hr',
+        'i',
+        'li',
+        'ul',
+        'ol',
+        'p',
+        'pre',
+        'span',
+        'strike',
+        'strong',
+        'table',
+        'tbody',
+        'td',
+        'tfoot',
+        'th',
+        'thead',
+        'tr',
+      ];
+      mermaid.initialize({
+        theme: 'forest',
+        // themeCSS: '.node rect { fill: red; }',
+        logLevel: 3,
+        securityLevel: 'loose',
+        flowchart: { curve: 'basis' },
+        gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorMargin: 50 },
+        dompurifyConfig: {
+          USE_PROFILES: {
+            svg: true,
+          },
+          ADD_TAGS: ALLOWED_TAGS,
+          ADD_ATTR: ['transform-origin'],
         },
-        ADD_TAGS: ALLOWED_TAGS,
-        ADD_ATTR: ['transform-origin'],
-      },
-      // sequenceDiagram: { actorMargin: 300 } // deprecated
-    });
-  </script>
-  <script>
-    function ganttTestClick(a, b, c) {
-      console.log('a:', a);
-      console.log('b:', b);
-      console.log('c:', c);
-    }
-    function testClick(nodeId) {
-      console.log('clicked', nodeId);
-      var originalBgColor = document.querySelector('body').style.backgroundColor;
-      document.querySelector('body').style.backgroundColor = 'yellow';
-      setTimeout(function () {
-        document.querySelector('body').style.backgroundColor = originalBgColor;
-      }, 100);
-    }
-  </script>
-  <script>
-    const testLineEndings = (test, input) => {
-      try {
-        mermaid.render(test, input, () => {
-          //no-op
-        });
-      } catch (err) {
-        console.error('Error in %s:\n\n%s', test, err);
+        // sequenceDiagram: { actorMargin: 300 } // deprecated
+      });
+    </script>
+    <script>
+      function ganttTestClick(a, b, c) {
+        console.log('a:', a);
+        console.log('b:', b);
+        console.log('c:', c);
       }
-    };
+      function testClick(nodeId) {
+        console.log('clicked', nodeId);
+        var originalBgColor = document.querySelector('body').style.backgroundColor;
+        document.querySelector('body').style.backgroundColor = 'yellow';
+        setTimeout(function () {
+          document.querySelector('body').style.backgroundColor = originalBgColor;
+        }, 100);
+      }
+    </script>
+    <script>
+      const testLineEndings = (test, input) => {
+        try {
+          mermaid.render(test, input, () => {
+            //no-op
+          });
+        } catch (err) {
+          console.error('Error in %s:\n\n%s', test, err);
+        }
+      };
 
-    testLineEndings('CR', 'graph LR\rsubgraph CR\rA --> B\rend');
-    testLineEndings('LF', 'graph LR\nsubgraph LF\nA --> B\nend');
-    testLineEndings('CRLF', 'graph LR\r\nsubgraph CRLF\r\nA --> B\r\nend');
-  </script>
-</body>
-
+      testLineEndings('CR', 'graph LR\rsubgraph CR\rA --> B\rend');
+      testLineEndings('LF', 'graph LR\nsubgraph LF\nA --> B\nend');
+      testLineEndings('CRLF', 'graph LR\r\nsubgraph CRLF\r\nA --> B\r\nend');
+    </script>
+  </body>
 </html>
