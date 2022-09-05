@@ -1,0 +1,15 @@
+# Summary
+
+- [mermaid](README.md)
+- [FAQ](faq.md)
+- [Breaking changes](breakingChanges.md)
+- [Usage](usage.md)
+- [Flowchart](flowchart.md)
+- [Sequence diagram](sequenceDiagram.md)
+- [Gantt diagram](gantt.md)
+- [mermaid CLI](mermaidCLI.md)
+- [Demos](demos.md)
+- [mermaidAPI](mermaidAPI.md)
+- [Development](development.md)
+- [Upgrading](upgrading.md)
+- [Contribute to this website](https://github.com/mermaidjs/mermaid-gitbook)
