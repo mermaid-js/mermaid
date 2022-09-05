@@ -145,11 +145,6 @@ flowchart LR
     id1>This is the text in the box]
 ```
 
-```mermaid
-flowchart LR
-    id1>This is the text in the box]
-```
-
 Currently only the shape above is possible and not its mirror. _This might change with future releases._
 
 ### A node (rhombus)
@@ -203,11 +198,6 @@ flowchart TD
 ### Trapezoid
 
 ```mermaid-example
-flowchart TD
-    A[/Christmas\]
-```
-
-```mermaid
 flowchart TD
     A[/Christmas\]
 ```
@@ -393,11 +383,6 @@ flowchart TB
     A & B--> C & D
 ```
 
-```mermaid
-flowchart TB
-    A & B--> C & D
-```
-
 If you describe the same diagram using the the basic syntax, it will take four lines. A
 word of warning, one could go overboard with this making the flowchart harder to read in
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
@@ -416,12 +401,6 @@ flowchart TB
 There are new types of arrows supported as per below:
 
 ```mermaid-example
-flowchart LR
-    A --o B
-    B --x C
-```
-
-```mermaid
 flowchart LR
     A --o B
     B --x C
@@ -563,31 +542,9 @@ flowchart TB
     end
 ```
 
-```mermaid
-flowchart TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
-```
-
 You can also set an explicit id for the subgraph.
 
 ```mermaid-example
-flowchart TB
-    c1-->a2
-    subgraph ide1 [one]
-    a1-->a2
-    end
-```
-
-```mermaid
 flowchart TB
     c1-->a2
     subgraph ide1 [one]
@@ -616,45 +573,11 @@ flowchart TB
     two --> c2
 ```
 
-```mermaid
-flowchart TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
-    one --> two
-    three --> two
-    two --> c2
-```
-
 ## Direction in subgraphs
 
 With the graphtype flowcharts you can use the direction statement to set the direction which the subgraph will render like in this example.
 
 ```mermaid-example
-flowchart LR
-  subgraph TOP
-    direction TB
-    subgraph B1
-        direction RL
-        i1 -->f1
-    end
-    subgraph B2
-        direction BT
-        i2 -->f2
-    end
-  end
-  A --> TOP --> B
-  B1 --> B2
-```
-
-```mermaid
 flowchart LR
   subgraph TOP
     direction TB
@@ -821,13 +744,6 @@ flowchart LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-```mermaid
-flowchart LR
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-```
-
 #### Classes
 
 More convenient than defining the style every time is to define a class of styles and attach this class to the nodes that
@@ -835,7 +751,9 @@ should have a different look.
 
 a class definition looks like the example below:
 
-        classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
+    classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
 
 Attachment of a class to a node is done as per below:
 
@@ -848,12 +766,6 @@ It is also possible to attach a class to a list of nodes in one statement:
 A shorter form of adding a class is to attach the classname to the node using the `:::`operator as per below:
 
 ```mermaid-example
-flowchart LR
-    A:::someclass --> B
-    classDef someclass fill:#f96;
-```
-
-```mermaid
 flowchart LR
     A:::someclass --> B
     classDef someclass fill:#f96;
@@ -885,18 +797,13 @@ flowchart LR;
     class A cssClass
 ```
 
-```mermaid
-flowchart LR;
-    A-->B[AAA<span>BBB</span>]
-    B-->D
-    class A cssClass
-```
-
 ### Default class
 
 If a class is named default it will be assigned to all classes without specific class definitions.
 
-        classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
+    classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
 
 ## Basic support for fontawesome
 
@@ -920,8 +827,6 @@ flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
-?> Mermaid is now only compatible with Font Awesome versions 4 and 5. Check that you are using the correct version of Font Awesome.
-
 ## Graph declarations with spaces between vertices and link and without semicolon
 
 - In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
@@ -931,14 +836,6 @@ flowchart TD
 Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
 
 ```mermaid-example
-flowchart LR
-    A[Hard edge] -->|Link text| B(Round edge)
-    B --> C{Decision}
-    C -->|One| D[Result one]
-    C -->|Two| E[Result two]
-```
-
-```mermaid
 flowchart LR
     A[Hard edge] -->|Link text| B(Round edge)
     B --> C{Decision}

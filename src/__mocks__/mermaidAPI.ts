@@ -15,6 +15,10 @@ import Diagram from '../Diagram';
 // const {parse} = jest.requireActual("./mermaidAPI");
 
 let hasLoadedDiagrams = false;
+/**
+ * @param text
+ * @param parseError
+ */
 function parse(text: string, parseError?: Function): boolean {
   if (!hasLoadedDiagrams) {
     addDiagrams();

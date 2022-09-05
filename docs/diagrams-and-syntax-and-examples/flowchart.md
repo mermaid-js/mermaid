@@ -154,11 +154,6 @@ graph LR
     id1>This is the text in the box]
 ```
 
-```mermaid
-graph LR
-    id1>This is the text in the box]
-```
-
 Currently it is only possible to render the shape above, and not its mirror. _This might change with future releases._
 
 ### A node (rhombus)
@@ -192,11 +187,6 @@ graph TD
     id1[/This is the text in the box/]
 ```
 
-```mermaid
-graph TD
-    id1[/This is the text in the box/]
-```
-
 ### Parallelogram alt
 
 ```mermaid-example
@@ -212,11 +202,6 @@ graph TD
 ### Trapezoid
 
 ```mermaid-example
-graph TD
-    A[/Christmas\]
-```
-
-```mermaid
 graph TD
     A[/Christmas\]
 ```
@@ -390,11 +375,6 @@ graph TB
     A & B--> C & D
 ```
 
-```mermaid
-graph TB
-    A & B--> C & D
-```
-
 If you describe the same diagram using the the basic syntax, it will take four lines:
 
 ```mmd
@@ -559,31 +539,9 @@ graph TB
     end
 ```
 
-```mermaid
-graph TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
-```
-
 You can also set an explicit id for the subgraph:
 
 ```mermaid-example
-graph TB
-    c1-->a2
-    subgraph ide1 [one]
-    a1-->a2
-    end
-```
-
-```mermaid
 graph TB
     c1-->a2
     subgraph ide1 [one]
@@ -596,23 +554,6 @@ graph TB
 With the graphtype `flowchart` it is also possible to set edges to and from subgraphs:
 
 ```mermaid-example
-flowchart TB
-    c1-->a2
-    subgraph one
-    a1-->a2
-    end
-    subgraph two
-    b1-->b2
-    end
-    subgraph three
-    c1-->c2
-    end
-    one --> two
-    three --> two
-    two --> c2
-```
-
-```mermaid
 flowchart TB
     c1-->a2
     subgraph one
@@ -652,17 +593,6 @@ Examples of tooltip usage:
 The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.
 
 ```mermaid-example
-graph LR;
-    A-->B;
-    B-->C;
-    C-->D;
-    click A callback "Tooltip for a callback"
-    click B "https://www.github.com" "This is a tooltip for a link"
-    click A call callback() "Tooltip for a callback"
-    click B href "https://www.github.com" "This is a tooltip for a link"
-```
-
-```mermaid
 graph LR;
     A-->B;
     B-->C;
@@ -782,13 +712,6 @@ graph LR
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 
-```mermaid
-graph LR
-    id1(Start)-->id2(Stop)
-    style id1 fill:#f9f,stroke:#333,stroke-width:4px
-    style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-```
-
 #### Classes
 
 More convenient than defining the style every time is to define a class of styles and attach this class reference to multiple nodes.
@@ -808,12 +731,6 @@ It is also possible to attach a class to multiple nodes in one statement:
 An even shorter form of adding a class is to attach the classname to the node using the `:::`operator:
 
 ```mermaid-example
-graph LR
-    A:::someclass --> B
-    classDef someclass fill:#f96;
-```
-
-```mermaid
 graph LR
     A:::someclass --> B
     classDef someclass fill:#f96;
@@ -842,32 +759,19 @@ graph LR;
     class A cssClass;
 ```
 
-```mermaid
-graph LR;
-    A-->B[AAA<span>BBB</span>];
-    B-->D;
-    class A cssClass;
-```
-
 ### Default class
 
 If a class is named `default` it will be assigned to all nodes that do not have a specific class definition.
 
-        classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
+    classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
 
 ## Basic support for fontawesome
 
 It is possible to add icons from fontawesome. These are accessed via the syntax fa:#icon-class-name#.
 
 ```mermaid-example
-graph TD
-    B["fa:fa-twitter for peace"]
-    B-->C[fa:fa-ban forbidden]
-    B-->D(fa:fa-spinner);
-    B-->E(A fa:fa-camera-retro perhaps?);
-```
-
-```mermaid
 graph TD
     B["fa:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
@@ -884,14 +788,6 @@ graph TD
 Below is an example of the new way to declare graph edges. This is valid alongside any old-style declarations of graph edges.
 
 ```mermaid-example
-graph LR
-    A[Hard edge] -->|Link text| B(Round edge)
-    B --> C{Decision}
-    C -->|One| D[Result one]
-    C -->|Two| E[Result two]
-```
-
-```mermaid
 graph LR
     A[Hard edge] -->|Link text| B(Round edge)
     B --> C{Decision}

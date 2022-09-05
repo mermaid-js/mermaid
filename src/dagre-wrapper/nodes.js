@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { log } from '../logger'; // eslint-disable-line
+import { log } from '../logger';
 import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util';
 import { getConfig } from '../config';
 import intersect from './intersect/index.js';

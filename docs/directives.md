@@ -14,7 +14,7 @@ While directives allow you to change most of the default configuration settings,
 
 Mermaid basically supports two types of configuration options to be overridden by directives.
 
-1.  _General/Top Level configurations_ : These are the configurations that are available and applied to all the diagram. **Some of the most important top-level** configurations are:
+1. _General/Top Level configurations_ : These are the configurations that are available and applied to all the diagram. **Some of the most important top-level** configurations are:
 
 - theme
 - fontFamily
@@ -23,13 +23,15 @@ Mermaid basically supports two types of configuration options to be overridden b
 - startOnLoad
 - secure
 
-2.  _Diagram specific configurations_ : These are the configurations that are available and applied to a specific diagram. For each diagram there are specific configuration that will alter how that particular diagram looks and behaves.
-    For example, `mirrorActors` is a configuration that is specific to the `SequenceDiagram` and alter whether the actors are mirrored or not. So this config is available only for the `SequenceDiagram` type.
+2. _Diagram specific configurations_ : These are the configurations that are available and applied to a specific diagram. For each diagram there are specific configuration that will alter how that particular diagram looks and behaves.
+   For example, `mirrorActors` is a configuration that is specific to the `SequenceDiagram` and alter whether the actors are mirrored or not. So this config is available only for the `SequenceDiagram` type.
 
 **NOTE:** These options listed here are not all the configuration options. To get hold of all the configuration options, please refer to the [defaultConfig.js](https://github.com/mermaid-js/mermaid/blob/develop/src/defaultConfig.js) in the source code.
 
-    Soon we plan to publish a complete list of top-level configurations & all the diagram specific configurations,
-    with their possible values in the docs
+```
+Soon we plan to publish a complete list of top-level configurations & all the diagram specific configurations,
+with their possible values in the docs
+```
 
 ## Declaring directives
 
@@ -40,28 +42,34 @@ Here the structure of a directive text is like a nested key-value pair map or a 
 
 Following code snippet shows the structure of a directive:
 
-    %%{
-      init: {
-        "theme": "dark",
-        "fontFamily": "monospace",
-        "logLevel": "info",
-        "flowchart": {
-          "htmlLabels": true,
-          "curve": "linear"
-        },
-        "sequence": {
-          "mirrorActors": true
-        }
-      }
-    }%%
+```
+%%{
+  init: {
+    "theme": "dark",
+    "fontFamily": "monospace",
+    "logLevel": "info",
+    "flowchart": {
+      "htmlLabels": true,
+      "curve": "linear"
+    },
+    "sequence": {
+      "mirrorActors": true
+    }
+  }
+}%%
+```
 
 You can also define the directives in a single line, like this:
 
-    %%{init: { **insert argument here**}}%%
+```
+%%{init: { **insert argument here**}}%%
+```
 
 For example, the following code snippet:
 
-    %%{init: { "sequence": { "mirrorActors":false }}}%%
+```
+%%{init: { "sequence": { "mirrorActors":false }}}%%
+```
 
 **Notes:**
 The json object that is passed as {**argument** } must be valid key value pairs and encased in quotation marks or it will be ignored.
@@ -244,17 +252,6 @@ A --> C[End]
   end
 ```
 
-```mermaid
-%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
-graph TD
-A(Forest) --> B[/Another/]
-A --> C[End]
-  subgraph section
-  B
-  C
-  end
-```
-
 ### Changing Sequence diagram config via directive
 
 Some common sequence configurations are:
@@ -302,15 +299,6 @@ The following code snippet changes sequence diagram config for `wrap` to `true`:
 Using in the diagram above, the wrap will be enabled.
 
 ```mermaid-example
-%%{init: { "sequence": { "wrap": true, "width":300 } } }%%
-sequenceDiagram
-Alice->Bob: Hello Bob, how are you?
-Bob->Alice: Fine, How did you mother like the book I suggested? And did you catch with the new book about alien invasion?
-Alice->Bob: Good.
-Bob->Alice: Cool
-```
-
-```mermaid
 %%{init: { "sequence": { "wrap": true, "width":300 } } }%%
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?

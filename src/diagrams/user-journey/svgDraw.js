@@ -439,7 +439,6 @@ const _drawTextCandidateFunc = (function () {
   function _setTextAttrs(toText, fromTextAttrsDict) {
     for (const key in fromTextAttrsDict) {
       if (key in fromTextAttrsDict) {
-        // eslint-disable-line
         // noinspection JSUnfilteredForInLoop
         toText.attr(key, fromTextAttrsDict[key]);
       }

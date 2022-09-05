@@ -126,8 +126,6 @@ It is possible to set multiple dependencies separated by space:
         cherry :active, c, after b a, 1d
 ```
 
-### Title
-
 The `title` is an _optional_ string to be displayed at the top of the Gantt chart to describe the chart as a whole.
 
 ### Section statements
@@ -141,16 +139,6 @@ To do so, start a line with the `section` keyword and give it a name. (Note that
 You can add milestones to the diagrams. Milestones differ from tasks as they represent a single instant in time and are identified by the keyword `milestone`. Below is an example on how to use milestones. As you may notice, the exact location of the milestone is determined by the initial date for the milestone and the "duration" of the task this way: _initial date_+_duration_/2.
 
 ```mermaid-example
-gantt
-dateFormat HH:mm
-axisFormat %H:%M
-Initial milestone : milestone, m1, 17:49,2min
-taska2 : 10min
-taska3 : 5min
-Final milestone : milestone, m2, 18:14, 2min
-```
-
-```mermaid
 gantt
 dateFormat HH:mm
 axisFormat %H:%M

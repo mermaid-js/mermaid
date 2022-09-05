@@ -223,26 +223,6 @@ stateDiagram-v2
     }
 ```
 
-```mermaid
-stateDiagram-v2
-    [*] --> First
-    First --> Second
-    First --> Third
-
-    state First {
-        [*] --> fir
-        fir --> [*]
-    }
-    state Second {
-        [*] --> sec
-        sec --> [*]
-    }
-    state Third {
-        [*] --> thi
-        thi --> [*]
-    }
-```
-
 _You can not define transitions between internal states belonging to different composite states_
 
 ## Choice
@@ -374,19 +354,6 @@ stateDiagram-v2
 With state diagrams you can use the direction statement to set the direction which the diagram will render like in this example.
 
 ```mermaid-example
-stateDiagram
-    direction LR
-    [*] --> A
-    A --> B
-    B --> C
-    state B {
-      direction LR
-      a --> b
-    }
-    B --> D
-```
-
-```mermaid
 stateDiagram
     direction LR
     [*] --> A

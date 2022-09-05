@@ -4,11 +4,11 @@
 
 ## Accessibility
 
+Now with Mermaid library is in much wider use, we have started to work towwards more accessible features, based on the feedback from the community.
+
 Now with Mermaid library in much wider use, we have started to work towards more accessible features, based on the feedback from the community.
 
 To begin with, we have added a new feature to Mermaid library, which is to support accessibility options, **Accessibility Title** and **Accessibility Description**.
-
-This support for accessibility options is available for all the diagrams/chart types. Also, we have tired to keep the same format for the accessibility options, so that it is easy to understand and maintain.
 
 ## Defining Accessibility Options
 
@@ -33,23 +33,13 @@ Let us take a look at the following example with a flowchart diagram:
 
 ```
 
-```mermaid
-   graph LR
-      accTitle: Big decisions
-      accDescr: Flow chart of the decision making process
-      A[Hard] -->|Text| B(Round)
-      B --> C{Decision}
-      C -->|One| D[Result 1]
-
-```
-
 See in the code snippet above, the `accTitle` and `accDescr` are defined in the diagram definition. They result in the following tags in SVG code:
 
 ![Accessibility options rendered inside SVG](img/accessibility-div-example.png)
 
 ### Multi-line Accessibility title/description
 
-You can also define the accessibility options in a multi-line format, where the keyword is followed by opening curly bracket `{` and then multiple lines, followed by a closing `}`.
+You can also define the accessibility options in a multi-line format, where the keyword is followed by opening curly bracket `{` and then mutltile lines, followed by a closing `}`.
 
 `accTitle: My single line title value` (**_single line format_**)
 
@@ -60,21 +50,6 @@ vs
 Let us look at it in the following example, with same flowchart:
 
 ```mermaid-example
-   graph LR
-      accTitle: Big decisions
-
-      accDescr {
-        My multi-line description
-        of the diagram
-      }
-
-      A[Hard] -->|Text| B(Round)
-      B --> C{Decision}
-      C -->|One| D[Result 1]
-
-```
-
-```mermaid
    graph LR
       accTitle: Big decisions
 
@@ -197,22 +172,6 @@ See in the code snippet above, the `accTitle` and `accDescr` are defined in the 
 
 ```
 
-```mermaid
-  journey
-      accTitle: My User Journey Diagram
-      accDescr: My User Journey Diagram Description
-
-      title My working day
-      section Go to work
-        Make tea: 5: Me
-        Go upstairs: 3: Me
-        Do work: 1: Me, Cat
-      section Go home
-        Go downstairs: 5: Me
-        Sit down: 5: Me
-
-```
-
 #### Gantt Chart
 
 ```mermaid-example
@@ -262,19 +221,6 @@ See in the code snippet above, the `accTitle` and `accDescr` are defined in the 
 
 ```
 
-```mermaid
-   pie
-      accTitle: My Pie Chart Accessibility Title
-      accDescr: My Pie Chart Accessibility Description
-
-    title Key elements in Product X
-    "Calcium" : 42.96
-    "Potassium" : 50.05
-    "Magnesium" : 10.01
-    "Iron" :  5
-
-```
-
 #### Requirement Diagram
 
 ```mermaid-example
@@ -297,47 +243,15 @@ See in the code snippet above, the `accTitle` and `accDescr` are defined in the 
 
 ```
 
-```mermaid
-  requirementDiagram
-      accTitle: My Requirement Diagram
-      accDescr: My Requirement Diagram Description
-
        requirement test_req {
-  id: 1
-  text: the test text.
-  risk: high
-  verifymethod: test
-  }
 
-  element test_entity {
-  type: simulation
-  }
-
-  test_entity - satisfies -> test_req
-
-```
-
-#### Gitgraph
+id: 1
+text: the test text.
+risk: high
+verifymethod: test
+}
 
 ```mermaid-example
-  gitGraph
-      accTitle: My Gitgraph Accessibility Title
-      accDescr: My Gitgraph Accessibility Description
-
-     commit
-     commit
-     branch develop
-     checkout develop
-     commit
-     commit
-     checkout main
-     merge develop
-     commit
-     commit
-
-```
-
-```mermaid
   gitGraph
       accTitle: My Gitgraph Accessibility Title
       accDescr: My Gitgraph Accessibility Description

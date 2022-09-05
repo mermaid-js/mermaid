@@ -28,7 +28,6 @@ let seq = 0;
  *
  */
 function getId() {
-  // eslint-disable-line
   return random({ length: 7 });
 }
 

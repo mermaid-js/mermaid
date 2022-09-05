@@ -169,6 +169,10 @@ It is probably a good idea to keep the handling similar to this in your new diag
 
 The syntax for adding title and description looks like this:
 
+````
+accTitle: The title
+accDescr: The description
+
     accTitle: The title
     accDescr: The description
 
@@ -199,7 +203,7 @@ statement
     : acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
-```
+````
 
 The functions for setting title and description are provided by a common module. This is the import from flowDb.js:
 
@@ -258,4 +262,4 @@ const themes = {
 };
 ```
 
-The actual options and values for the colors are defined in **src/theme/theme-\[xyz].js**. If you provide the options your diagram needs in the existing theme files then the theming will work smoothly without hiccups.
+The actual options and values for the colors are defined in **src/theme/theme-[xyz].js**. If you provide the options your diagram needs in the existing theme files then the theming will work smoothly without hiccups.

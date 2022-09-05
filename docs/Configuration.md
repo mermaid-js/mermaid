@@ -13,7 +13,7 @@ The Following are the most commonly used methods, and are all tied to Mermaid [D
 
 ## [Directives](./directives.md),
 
-Directives allows limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram. You can pass a directive alongside your definition inside `%%{ }%%`, either above or below your diagram definition.
+allows the limited reconfiguration of a diagram just before it is rendered. It can alter the font style, color and other aesthetic aspects of the diagram. you can pass a directive alongside your definition inside `%%{ }%%`, either above or below your diagram definition.
 
 ## Theme Creation:
 

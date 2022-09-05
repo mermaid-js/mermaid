@@ -500,33 +500,17 @@ classDiagram
   Student "1" --o "1" Bike : rides
 ```
 
-```mermaid
-classDiagram
-  direction RL
-  class Student {
-    -idCard : IdCard
-  }
-  class IdCard{
-    -id : int
-    -name : string
-  }
-  class Bike{
-    -id : int
-    -name : string
-  }
-  Student "1" --o "1" IdCard : carries
-  Student "1" --o "1" Bike : rides
-```
-
 ## Interaction
 
 It is possible to bind a click event to a node. The click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 You would define these actions on a separate line after all classes have been declared.
 
-    action className "reference" "tooltip"
-    click className call callback() "tooltip"
-    click className href "url" "tooltip"
+```
+action className "reference" "tooltip"
+click className call callback() "tooltip"
+click className href "url" "tooltip"
+```
 
 - _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
 - _className_ is the id of the node that the action will be associated with
