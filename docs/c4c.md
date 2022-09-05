@@ -2,13 +2,58 @@
 
 # C4 Diagrams
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/gitgraph.md)
-
 > C4 Diagram: This is an experimental diagram for now. The syntax and properties can change in future releases. Proper documentation will be provided when the syntax is stable.
 
 Mermaid's c4 diagram syntax is compatible with plantUML. See example below:
 
 ```mermaid-example
+    C4Context
+      title System Context diagram for Internet Banking System
+      Enterprise_Boundary(b0, "BankBoundary0") {
+        Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
+        Person(customerB, "Banking Customer B")
+        Person_Ext(customerC, "Banking Customer C", "desc")
+
+        Person(customerD, "Banking Customer D", "A customer of the bank, <br/> with personal bank accounts.")
+
+        System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
+
+        Enterprise_Boundary(b1, "BankBoundary") {
+
+          SystemDb_Ext(SystemE, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+
+          System_Boundary(b2, "BankBoundary2") {
+            System(SystemA, "Banking System A")
+            System(SystemB, "Banking System B", "A system of the bank, with personal bank accounts. next line.")
+          }
+
+          System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
+          SystemDb(SystemD, "Banking System D Database", "A system of the bank, with personal bank accounts.")
+
+          Boundary(b3, "BankBoundary3", "boundary") {
+            SystemQueue(SystemF, "Banking System F Queue", "A system of the bank.")
+            SystemQueue_Ext(SystemG, "Banking System G Queue", "A system of the bank, with personal bank accounts.")
+          }
+        }
+      }
+
+      BiRel(customerA, SystemAA, "Uses")
+      BiRel(SystemAA, SystemE, "Uses")
+      Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
+      Rel(SystemC, customerA, "Sends e-mails to")
+
+      UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
+      UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
+      UpdateRelStyle(SystemAA, SystemE, $textColor="blue", $lineColor="blue", $offsetY="-10")
+      UpdateRelStyle(SystemAA, SystemC, $textColor="blue", $lineColor="blue", $offsetY="-40", $offsetX="-50")
+      UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
+
+      UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+
+
+```
+
+```mermaid
     C4Context
       title System Context diagram for Internet Banking System
       Enterprise_Boundary(b0, "BankBoundary0") {
@@ -81,71 +126,121 @@ The number of shapes per row and the number of boundaries can be adjusted using 
 
 The following unfinished features are not supported in the short term.
 
-- [ ] sprite
-- [ ] tags
-- [ ] link
-- [ ] Legend
+- \[ ] sprite
 
-- [x] System Context
-- - [x] Person(alias, label, ?descr, ?sprite, ?tags, $link)
-- - [x] Person_Ext
-- - [x] System(alias, label, ?descr, ?sprite, ?tags, $link)
-- - [x] SystemDb
-- - [x] SystemQueue
-- - [x] System_Ext
-- - [x] SystemDb_Ext
-- - [x] SystemQueue_Ext
-- - [x] Boundary(alias, label, ?type, ?tags, $link)
-- - [x] Enterprise_Boundary(alias, label, ?tags, $link)
-- - [x] System_Boundary
+- \[ ] tags
 
-- [x] Container diagram
-- - [x] Container(alias, label, ?techn, ?descr, ?sprite, ?tags, $link)
-- - [x] ContainerDb
-- - [x] ContainerQueue
-- - [x] Container_Ext
-- - [x] ContainerDb_Ext
-- - [x] ContainerQueue_Ext
-- - [x] Container_Boundary(alias, label, ?tags, $link)
+- \[ ] link
 
-- [x] Component diagram
-- - [x] Component(alias, label, ?techn, ?descr, ?sprite, ?tags, $link)
-- - [x] ComponentDb
-- - [x] ComponentQueue
-- - [x] Component_Ext
-- - [x] ComponentDb_Ext
-- - [x] ComponentQueue_Ext
+- \[ ] Legend
 
-- [x] Dynamic diagram
-- - [x] RelIndex(index, from, to, label, ?tags, $link)
+- \[x] System Context
 
-- [x] Deployment diagram
-- - [x] Deployment_Node(alias, label, ?type, ?descr, ?sprite, ?tags, $link)
-- - [x] Node(alias, label, ?type, ?descr, ?sprite, ?tags, $link): short name of Deployment_Node()
-- - [x] Node_L(alias, label, ?type, ?descr, ?sprite, ?tags, $link): left aligned Node()
-- - [x] Node_R(alias, label, ?type, ?descr, ?sprite, ?tags, $link): right aligned Node()
+- - \[x] Person(alias, label, ?descr, ?sprite, ?tags, $link)
 
-- [x] Relationship Types
-- - [x] Rel(from, to, label, ?techn, ?descr, ?sprite, ?tags, $link)
-- - [x] BiRel (bidirectional relationship)
-- - [x] Rel_U, Rel_Up
-- - [x] Rel_D, Rel_Down
-- - [x] Rel_L, Rel_Left
-- - [x] Rel_R, Rel_Right
-- - [x] Rel_Back
-- - [x] RelIndex \* Compatible with C4-Plantuml syntax, but ignores the index parameter. The sequence number is determined by the order in which the rel statements are written.
+- - \[x] Person_Ext
 
-- [ ] Custom tags/stereotypes support and skinparam updates
-- - [ ] AddElementTag(tagStereo, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite): Introduces a new element tag. The styles of the tagged elements are updated and the tag is displayed in the calculated legend.
-- - [ ] AddRelTag(tagStereo, ?textColor, ?lineColor, ?lineStyle, ?sprite, ?techn, ?legendText, ?legendSprite): Introduces a new Relationship tag. The styles of the tagged relationships are updated and the tag is displayed in the calculated legend.
-- - [x] UpdateElementStyle(elementName, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite): This call updates the default style of the elements (component, ...) and creates no additional legend entry.
-- - [x] UpdateRelStyle(from, to, ?textColor, ?lineColor, ?offsetX, ?offsetY): This call updates the default relationship colors and creates no additional legend entry. Two new parameters, offsetX and offsetY, are added to set the offset of the original position of the text.
-- - [ ] RoundedBoxShape(): This call returns the name of the rounded box shape and can be used as ?shape argument.
-- - [ ] EightSidedShape(): This call returns the name of the eight sided shape and can be used as ?shape argument.
-- - [ ] DashedLine(): This call returns the name of the dashed line and can be used as ?lineStyle argument.
-- - [ ] DottedLine(): This call returns the name of the dotted line and can be used as ?lineStyle argument.
-- - [ ] BoldLine(): This call returns the name of the bold line and can be used as ?lineStyle argument.
-- - [x] UpdateLayoutConfig(?c4ShapeInRow, ?c4BoundaryInRow): New. This call updates the default c4ShapeInRow(4) and c4BoundaryInRow(2).
+- - \[x] System(alias, label, ?descr, ?sprite, ?tags, $link)
+
+- - \[x] SystemDb
+
+- - \[x] SystemQueue
+
+- - \[x] System_Ext
+
+- - \[x] SystemDb_Ext
+
+- - \[x] SystemQueue_Ext
+
+- - \[x] Boundary(alias, label, ?type, ?tags, $link)
+
+- - \[x] Enterprise_Boundary(alias, label, ?tags, $link)
+
+- - \[x] System_Boundary
+
+- \[x] Container diagram
+
+- - \[x] Container(alias, label, ?techn, ?descr, ?sprite, ?tags, $link)
+
+- - \[x] ContainerDb
+
+- - \[x] ContainerQueue
+
+- - \[x] Container_Ext
+
+- - \[x] ContainerDb_Ext
+
+- - \[x] ContainerQueue_Ext
+
+- - \[x] Container_Boundary(alias, label, ?tags, $link)
+
+- \[x] Component diagram
+
+- - \[x] Component(alias, label, ?techn, ?descr, ?sprite, ?tags, $link)
+
+- - \[x] ComponentDb
+
+- - \[x] ComponentQueue
+
+- - \[x] Component_Ext
+
+- - \[x] ComponentDb_Ext
+
+- - \[x] ComponentQueue_Ext
+
+- \[x] Dynamic diagram
+
+- - \[x] RelIndex(index, from, to, label, ?tags, $link)
+
+- \[x] Deployment diagram
+
+- - \[x] Deployment_Node(alias, label, ?type, ?descr, ?sprite, ?tags, $link)
+
+- - \[x] Node(alias, label, ?type, ?descr, ?sprite, ?tags, $link): short name of Deployment_Node()
+
+- - \[x] Node_L(alias, label, ?type, ?descr, ?sprite, ?tags, $link): left aligned Node()
+
+- - \[x] Node_R(alias, label, ?type, ?descr, ?sprite, ?tags, $link): right aligned Node()
+
+- \[x] Relationship Types
+
+- - \[x] Rel(from, to, label, ?techn, ?descr, ?sprite, ?tags, $link)
+
+- - \[x] BiRel (bidirectional relationship)
+
+- - \[x] Rel_U, Rel_Up
+
+- - \[x] Rel_D, Rel_Down
+
+- - \[x] Rel_L, Rel_Left
+
+- - \[x] Rel_R, Rel_Right
+
+- - \[x] Rel_Back
+
+- - \[x] RelIndex \* Compatible with C4-Plantuml syntax, but ignores the index parameter. The sequence number is determined by the order in which the rel statements are written.
+
+- \[ ] Custom tags/stereotypes support and skinparam updates
+
+- - \[ ] AddElementTag(tagStereo, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite): Introduces a new element tag. The styles of the tagged elements are updated and the tag is displayed in the calculated legend.
+
+- - \[ ] AddRelTag(tagStereo, ?textColor, ?lineColor, ?lineStyle, ?sprite, ?techn, ?legendText, ?legendSprite): Introduces a new Relationship tag. The styles of the tagged relationships are updated and the tag is displayed in the calculated legend.
+
+- - \[x] UpdateElementStyle(elementName, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite): This call updates the default style of the elements (component, ...) and creates no additional legend entry.
+
+- - \[x] UpdateRelStyle(from, to, ?textColor, ?lineColor, ?offsetX, ?offsetY): This call updates the default relationship colors and creates no additional legend entry. Two new parameters, offsetX and offsetY, are added to set the offset of the original position of the text.
+
+- - \[ ] RoundedBoxShape(): This call returns the name of the rounded box shape and can be used as ?shape argument.
+
+- - \[ ] EightSidedShape(): This call returns the name of the eight sided shape and can be used as ?shape argument.
+
+- - \[ ] DashedLine(): This call returns the name of the dashed line and can be used as ?lineStyle argument.
+
+- - \[ ] DottedLine(): This call returns the name of the dotted line and can be used as ?lineStyle argument.
+
+- - \[ ] BoldLine(): This call returns the name of the bold line and can be used as ?lineStyle argument.
+
+- - \[x] UpdateLayoutConfig(?c4ShapeInRow, ?c4BoundaryInRow): New. This call updates the default c4ShapeInRow(4) and c4BoundaryInRow(2).
 
 There are two ways to assign parameters with question marks. One uses the non-named parameter assignment method in the order of the parameters, and the other uses the named parameter assignment method, where the name must start with a $ symbol.
 
@@ -161,6 +256,52 @@ UpdateRelStyle(customerA, bankA, $offsetY="60")
 ## C4 System Context Diagram (C4Context)
 
 ```mermaid-example
+    C4Context
+      title System Context diagram for Internet Banking System
+      Enterprise_Boundary(b0, "BankBoundary0") {
+        Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
+        Person(customerB, "Banking Customer B")
+        Person_Ext(customerC, "Banking Customer C", "desc")
+
+        Person(customerD, "Banking Customer D", "A customer of the bank, <br/> with personal bank accounts.")
+
+        System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
+
+        Enterprise_Boundary(b1, "BankBoundary") {
+
+          SystemDb_Ext(SystemE, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+
+          System_Boundary(b2, "BankBoundary2") {
+            System(SystemA, "Banking System A")
+            System(SystemB, "Banking System B", "A system of the bank, with personal bank accounts. next line.")
+          }
+
+          System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
+          SystemDb(SystemD, "Banking System D Database", "A system of the bank, with personal bank accounts.")
+
+          Boundary(b3, "BankBoundary3", "boundary") {
+            SystemQueue(SystemF, "Banking System F Queue", "A system of the bank.")
+            SystemQueue_Ext(SystemG, "Banking System G Queue", "A system of the bank, with personal bank accounts.")
+          }
+        }
+      }
+
+      BiRel(customerA, SystemAA, "Uses")
+      BiRel(SystemAA, SystemE, "Uses")
+      Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
+      Rel(SystemC, customerA, "Sends e-mails to")
+
+      UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
+      UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
+      UpdateRelStyle(SystemAA, SystemE, $textColor="blue", $lineColor="blue", $offsetY="-10")
+      UpdateRelStyle(SystemAA, SystemC, $textColor="blue", $lineColor="blue", $offsetY="-40", $offsetX="-50")
+      UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
+
+      UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+
+```
+
+```mermaid
     C4Context
       title System Context diagram for Internet Banking System
       Enterprise_Boundary(b0, "BankBoundary0") {
@@ -248,9 +389,89 @@ UpdateRelStyle(customerA, bankA, $offsetY="60")
 
 ```
 
+```mermaid
+    C4Container
+    title Container diagram for Internet Banking System
+
+    System_Ext(email_system, "E-Mail System", "The internal Microsoft Exchange system", $tags="v1.0")
+    Person(customer, Customer, "A customer of the bank, with personal bank accounts", $tags="v1.0")
+
+    Container_Boundary(c1, "Internet Banking") {
+        Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to cutomers via their web browser")
+        Container_Ext(mobile_app, "Mobile App", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
+        Container(web_app, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
+        ContainerDb(database, "Database", "SQL Database", "Stores user registration information, hashed auth credentials, access logs, etc.")
+        ContainerDb_Ext(backend_api, "API Application", "Java, Docker Container", "Provides Internet banking functionality via API")
+
+    }
+
+    System_Ext(banking_system, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+
+    Rel(customer, web_app, "Uses", "HTTPS")
+    UpdateRelStyle(customer, web_app, $offsetY="60", $offsetX="90")
+    Rel(customer, spa, "Uses", "HTTPS")
+    UpdateRelStyle(customer, spa, $offsetY="-40")
+    Rel(customer, mobile_app, "Uses")
+    UpdateRelStyle(customer, mobile_app, $offsetY="-30")
+
+    Rel(web_app, spa, "Delivers")
+    UpdateRelStyle(web_app, spa, $offsetX="130")
+    Rel(spa, backend_api, "Uses", "async, JSON/HTTPS")
+    Rel(mobile_app, backend_api, "Uses", "async, JSON/HTTPS")
+    Rel_Back(database, backend_api, "Reads from and writes to", "sync, JDBC")
+
+    Rel(email_system, customer, "Sends e-mails to")
+    UpdateRelStyle(email_system, customer, $offsetX="-45")
+    Rel(backend_api, email_system, "Sends e-mails using", "sync, SMTP")
+    UpdateRelStyle(backend_api, email_system, $offsetY="-60")
+    Rel(backend_api, banking_system, "Uses", "sync/async, XML/HTTPS")
+    UpdateRelStyle(backend_api, banking_system, $offsetY="-50", $offsetX="-140")
+
+```
+
 ## C4 Component diagram (C4Component)
 
 ```mermaid-example
+    C4Component
+    title Component diagram for Internet Banking System - API Application
+
+    Container(spa, "Single Page Application", "javascript and angular", "Provides all the internet banking functionality to customers via their web browser.")
+    Container(ma, "Mobile App", "Xamarin", "Provides a limited subset ot the internet banking functionality to customers via their mobile mobile device.")
+    ContainerDb(db, "Database", "Relational Database Schema", "Stores user registration information, hashed authentication credentials, access logs, etc.")
+    System_Ext(mbs, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+
+    Container_Boundary(api, "API Application") {
+        Component(sign, "Sign In Controller", "MVC Rest Controller", "Allows users to sign in to the internet banking system")
+        Component(accounts, "Accounts Summary Controller", "MVC Rest Controller", "Provides customers with a summary of their bank accounts")
+        Component(security, "Security Component", "Spring Bean", "Provides functionality related to singing in, changing passwords, etc.")
+        Component(mbsfacade, "Mainframe Banking System Facade", "Spring Bean", "A facade onto the mainframe banking system.")
+
+        Rel(sign, security, "Uses")
+        Rel(accounts, mbsfacade, "Uses")
+        Rel(security, db, "Read & write to", "JDBC")
+        Rel(mbsfacade, mbs, "Uses", "XML/HTTPS")
+    }
+
+    Rel_Back(spa, sign, "Uses", "JSON/HTTPS")
+    Rel(spa, accounts, "Uses", "JSON/HTTPS")
+
+    Rel(ma, sign, "Uses", "JSON/HTTPS")
+    Rel(ma, accounts, "Uses", "JSON/HTTPS")
+
+    UpdateRelStyle(spa, sign, $offsetY="-40")
+    UpdateRelStyle(spa, accounts, $offsetX="40", $offsetY="40")
+
+    UpdateRelStyle(ma, sign, $offsetX="-90", $offsetY="40")
+    UpdateRelStyle(ma, accounts, $offsetY="-40")
+
+        UpdateRelStyle(sign, security, $offsetX="-160", $offsetY="10")
+        UpdateRelStyle(accounts, mbsfacade, $offsetX="140", $offsetY="10")
+        UpdateRelStyle(security, db, $offsetY="-40")
+        UpdateRelStyle(mbsfacade, mbs, $offsetY="-40")
+
+```
+
+```mermaid
     C4Component
     title Component diagram for Internet Banking System - API Application
 

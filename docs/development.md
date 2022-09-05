@@ -28,7 +28,7 @@ We make all changes via Pull Requests. As we have many Pull Requests from develo
 
 - Large changes reviewed by knsv or other developer asked to review by knsv
 - Smaller, low-risk changes like dependencies, documentation, etc. can be merged by active collaborators
-- Documentation (we encourage updates to the docs folder; you can submit them via direct commits)
+- Documentation (we encourage updates to the `src/docs` folder; you can submit them via direct commits)
 
 When you commit code, create a branch with the following naming convention:
 
@@ -72,9 +72,9 @@ This tests the rendering and visual appearance of the diagrams. This ensures tha
 
 To start working with the e2e tests:
 
-1. Run `yarn dev` to start the dev server
-2. Start **Cypress** by running `cypress open` in the **mermaid** folder.  
-   (Make sure you have path to Cypress in order, the binary is located in `node_modules/.bin`).
+1.  Run `yarn dev` to start the dev server
+2.  Start **Cypress** by running `cypress open` in the **mermaid** folder.\
+    (Make sure you have path to Cypress in order, the binary is located in `node_modules/.bin`).
 
 The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
 

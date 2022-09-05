@@ -12,15 +12,15 @@ Themes follow and build upon the Levels of Configuration, and employ `directives
 
 The following are a list of **Deployable themes**, sample `%%init%%` directives and `initialize` calls.
 
-1. **base**- Designed to be modified, as the name implies it is supposed to be used as the base for making custom themes.
+1.  **base**- Designed to be modified, as the name implies it is supposed to be used as the base for making custom themes.
 
-1. **base**- Designed to be modified, as the name implies it is supposed to be used as the base for making custom themes.
+2.  **forest**- A theme full of light greens that is easy on the eyes.
 
-1. **forest**- A theme full of light greens that is easy on the eyes.
+3.  **dark**- A theme that would go well with other dark-colored elements.
 
-1. **dark**- A theme that would go well with other dark-colored elements.
+4.  **default**- The default theme for all diagrams.
 
-1. **default**- The default theme for all diagrams.
+5.  **neutral**- The theme to be used for black and white printing.
 
 ## Site-wide Themes
 
@@ -67,6 +67,24 @@ Here is an example of how `%%init%%` can set the theme to 'base', this assumes t
           end
 ```
 
+```mermaid
+%%{init: {'theme':'base'}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
 # List of Themes
 
 # Customizing Themes with `themeVariables`
@@ -80,6 +98,24 @@ The easiest way to make a custom theme is to start with the base theme, and just
 **Here is an example of overriding `primaryColor` through `themeVariables` and giving everything a different look, using `%%init%%`.**
 
 ```mermaid-example
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
+```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -220,6 +256,24 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
           end
 ```
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
 \*\*This got a bit too dark and bit too colorful. With some easy steps this can be fixed:
 
 - Make the primary color a little lighter
@@ -276,6 +330,24 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ### Flowchart
 
 ```mmd
+%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
+```mermaid-example
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)

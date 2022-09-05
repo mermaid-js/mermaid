@@ -71,7 +71,10 @@ Type, risk, and method are enumerations defined in SysML.
 
 An element definition contains an element name, type, and document reference. These three are all user defined. The element feature is intended to be lightweight but allow requirements to be connected to portions of other documents.
 
-An element definition contains an element name, type, and document reference. These three are all user defined. The element feature is intended to be lightweight but allow requirements to be connected to portions of other documents.
+    element user_defined_name {
+        type: user_defined_type
+        docref: user_defined_ref
+    }
 
 ### Relationship
 

@@ -2,8 +2,6 @@
 
 # Sequence diagrams
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/sequenceDiagram.md)
-
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
 
 Mermaid can render sequence diagrams.
@@ -554,9 +552,7 @@ Actors can have popup-menus containing individualized links to external pages. F
 
 This can be configured by adding one or more link lines with the format:
 
-```
-link <actor>: <link-label> @ <link-url>
-```
+    link <actor>: <link-label> @ <link-url>
 
 ```mmd
 sequenceDiagram
