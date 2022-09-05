@@ -35,8 +35,14 @@
   <body>
 
 
-
-
+<div class="mermaid2" style="width: 50%;">
+flowchart LR
+  a ---
+</div>
+<div class="mermaid" style="width: 50%;">
+flowchart LR
+  a2 ---
+</div>
 <div class="mermaid2" style="width: 50%;">
 flowchart LR
   classDef aPID stroke:#4e4403,fill:#fdde29,color:#4e4403,rx:5px,ry:5px;
@@ -73,7 +79,31 @@ flowchart TD
 </div>
 <div class="mermaid" style="width: 50%;">
 flowchart TD
-id
+
+  release-branch[Create Release Branch]:::relClass
+  develop-branch[Update Develop Branch]:::relClass
+  github-release-draft[GitHub Release Draft]:::relClass
+  trigger-pipeline[Trigger Jenkins pipeline]:::fixClass
+  github-release[GitHub Release]:::postClass
+
+  build-ready --> release-branch
+  build-ready --> develop-branch
+  release-branch --> jenkins-release-build
+  jenkins-release-build --> github-release-draft
+  jenkins-release-build --> install-release
+  install-release --> verify-release
+  jenkins-release-build --> announce
+  github-release-draft --> github-release
+  verify-release --> verify-check
+  verify-check -- Yes --> github-release
+  verify-check -- No --> release-fix
+  release-fix --> release-branch-pr
+  verify-check -- No --> delete-artifacts
+  release-branch-pr --> trigger-pipeline
+  delete-artifacts --> trigger-pipeline
+  trigger-pipeline --> jenkins-release-build
+
+
 </div>
 <div class="mermaid2" style="width: 50%;">
 flowchart LR
@@ -356,6 +386,11 @@ function clickByFlow(elemName) {
 
   document.getElementsByTagName('body')[0].appendChild(div);
 }
+
+mermaid.parseError = function (err, hash) {
+  console.error('In parse error:');
+  console.error(err);
+};
     </script>
   </body>
 </html>

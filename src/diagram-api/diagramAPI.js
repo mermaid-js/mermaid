@@ -7,6 +7,7 @@ import classRendererV2 from '../diagrams/class/classRenderer-v2';
 import classParser from '../diagrams/class/parser/classDiagram';
 import erDb from '../diagrams/er/erDb';
 import erRenderer from '../diagrams/er/erRenderer';
+import errorRenderer from '../diagrams/error/errorRenderer';
 import erParser from '../diagrams/er/parser/erDiagram';
 import flowDb from '../diagrams/flowchart/flowDb';
 import flowRenderer from '../diagrams/flowchart/flowRenderer';
@@ -53,6 +54,13 @@ const diagrams = {
       cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
       classDb.clear();
     },
+  },
+  // Special diagram with error messages but setup as a regular diagram
+  error: {
+    db: {},
+    renderer: errorRenderer,
+    parser: { parser: { yy: {} }, parse: () => {} },
+    init: () => {},
   },
   classDiagram: {
     db: classDb,

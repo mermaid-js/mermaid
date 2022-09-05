@@ -31,7 +31,7 @@ import stateRenderer from './diagrams/state/stateRenderer';
 import stateRendererV2 from './diagrams/state/stateRenderer-v2';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import Diagram from './Diagram';
-import errorRenderer from './errorRenderer';
+import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
@@ -259,7 +259,14 @@ const render = function (id, _txt, cb, container) {
   txt = encodeEntities(txt);
 
   // Important that we do not create the diagram until after the directives have been included
-  const diag = new Diagram(txt);
+  let diag;
+  let parseEncounteredException;
+  try {
+    diag = new Diagram(txt);
+  } catch (error) {
+    diag = new Diagram('error');
+    parseEncounteredException = error;
+  }
   // Get the tmp element containing the the svg
   const element = root.select('#d' + id).node();
   const graphType = diag.type;
@@ -402,6 +409,10 @@ const render = function (id, _txt, cb, container) {
   const node = select(tmpElementSelector).node();
   if (node !== null && typeof node.remove === 'function') {
     select(tmpElementSelector).node().remove();
+  }
+
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
   }
 
   return svgCode;
