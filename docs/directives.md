@@ -144,7 +144,7 @@ A --> C[End]
 
 ### Changing fontFamily via directive
 
-The following code snippet changes theme to forest:
+The following code snippet changes fontFamily to rebuchet MS, Verdana, Arial, Sans-Serif:
 
 `%%{init: { "fontFamily": "Trebuchet MS, Verdana, Arial, Sans-Serif" } }%%`
 
@@ -176,7 +176,7 @@ A --> C[End]
 
 ### Changing logLevel via directive
 
-The following code snippet changes theme to forest:
+The following code snippet changes logLevel to 2:
 
 `%%{init: { "logLevel": 2 } }%%`
 
