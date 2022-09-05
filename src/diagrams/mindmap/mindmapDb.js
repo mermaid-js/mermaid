@@ -1,5 +1,6 @@
 /** Created by knut on 15-01-14. */
-import { log, sanitizeText, getConfig } from '../../diagram-api/diagramAPI';
+import { sanitizeText, getConfig } from '../../diagram-api/diagramAPI';
+import { log } from '../../logger';
 
 var message = '';
 var info = false;
@@ -27,6 +28,7 @@ export const getMindmap = () => {
   return nodes.length > 0 ? nodes[0] : null;
 };
 export const addNode = (level, id, descr, type) => {
+  console.info('addNode', level, id, descr, type);
   const conf = getConfig();
   const node = {
     id: cnt++,

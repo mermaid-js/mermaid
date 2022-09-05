@@ -3,7 +3,7 @@ import mindmapDb from '../diagrams/mindmap/mindmapDb';
 import mindmapRenderer from '../diagrams/mindmap/mindmapRenderer';
 // @ts-ignore
 import mindmapParser from '../diagrams/mindmap/parser/mindmap';
-import mindmapDetector from '../diagrams/mindmap/mindmapDetector';
+import { mindmapDetector } from '../diagrams/mindmap/mindmapDetector';
 import mindmapStyles from '../diagrams/mindmap/styles';
 
 import gitGraphDb from '../diagrams/git/gitGraphAst';
@@ -23,6 +23,6 @@ export const addDiagrams = () => {
     registerDiagram(
     'mindmap',
     { parser: mindmapParser, db: mindmapDb, renderer: mindmapRenderer, styles: mindmapStyles },
-    gitGraphDetector
+    mindmapDetector
   );
 };

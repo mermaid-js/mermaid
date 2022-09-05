@@ -103,7 +103,8 @@ const getStyles = (
 `;
 };
 
-export const addStylesForDiagram = (type, diagramTheme) => {
+export const addStylesForDiagram = (type: any, diagramTheme: any) => {
+  // @ts-ignore
   themes[type] = diagramTheme;
 };
 
