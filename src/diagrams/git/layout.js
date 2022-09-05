@@ -1,6 +1,6 @@
 import { getConfig } from '../../config';
 
-export default (dir, _branches, _commits) => { // eslint-disable-line
+export default (dir, _branches, _commits) => {
   const config = getConfig().gitGraph;
   const branches = [];
   const commits = [];

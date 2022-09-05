@@ -8,7 +8,7 @@
  * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
  * definition as text, renders the graph/diagram and returns an svg element for the graph.
  *
- * It is is then up to the user of the API to make use of the svg, either insert it somewhere in the
+ * It is then up to the user of the API to make use of the svg, either insert it somewhere in the
  * page or do something completely different.
  *
  * In addition to the render function, a number of behavioral configuration options are available.
@@ -38,6 +38,11 @@ import { evaluate } from './diagrams/common/common';
 
 let hasLoadedDiagrams = false;
 
+/**
+ *
+ * @param text
+ * @param parseError
+ */
 function parse(text: string, parseError?: Function): boolean {
   if (!hasLoadedDiagrams) {
     addDiagrams();
@@ -171,7 +176,7 @@ const render = function (
       .append('g');
   } else {
     // No container was provided
-    // If there is an existsing element with the id, we remove it
+    // If there is an existing element with the id, we remove it
     // this likely a previously rendered diagram
     const existingSvg = document.getElementById(id);
     if (existingSvg) {

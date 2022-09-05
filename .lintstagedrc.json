@@ -1,5 +1,4 @@
 {
-  "*.{js,json,html,md}": [
-      "yarn lint:fix" 
-   ]
+  "src/docs/**": ["yarn docs:build --git"],
+  "*.{ts,js,json,html,md}": ["eslint --fix", "prettier --write"]
 }

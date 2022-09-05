@@ -216,7 +216,6 @@ export const addRelations = function (relations, g) {
       edgeData.labelpos = 'c';
 
       if (getConfig().flowchart.htmlLabels) {
-        // eslint-disable-line
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {

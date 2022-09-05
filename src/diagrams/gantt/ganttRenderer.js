@@ -621,7 +621,6 @@ export const draw = function (text, id, version, diagObj) {
     const result = [];
     for (let i = 0, l = arr.length; i < l; ++i) {
       if (!Object.prototype.hasOwnProperty.call(hash, arr[i])) {
-        // eslint-disable-line
         // it works with objects! in FF, at least
         hash[arr[i]] = true;
         result.push(arr[i]);

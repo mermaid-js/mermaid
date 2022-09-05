@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { log } from '../logger'; // eslint-disable-line
+import { log } from '../logger';
 import { getConfig } from '../config';
 import { sanitizeText, evaluate } from '../diagrams/common/common';
 import { decodeEntities } from '../mermaidAPI';
