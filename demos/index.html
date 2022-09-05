@@ -1073,7 +1073,7 @@ Enterprise_Boundary(b0, "BankBoundary0") {
       }
       function testClick(nodeId) {
         console.log('clicked', nodeId);
-        var originalBgColor = document.querySelector('body').style.backgroundColor;
+        let originalBgColor = document.querySelector('body').style.backgroundColor;
         document.querySelector('body').style.backgroundColor = 'yellow';
         setTimeout(function () {
           document.querySelector('body').style.backgroundColor = originalBgColor;

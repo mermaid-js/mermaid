@@ -494,12 +494,12 @@ export const drawActors = function (
 };
 
 export const drawActorsPopup = function (diagram, actors, actorKeys, doc) {
-  var maxHeight = 0;
-  var maxWidth = 0;
+  let maxHeight = 0;
+  let maxWidth = 0;
   for (let i = 0; i < actorKeys.length; i++) {
     const actor = actors[actorKeys[i]];
     const minMenuWidth = getRequiredPopupWidth(actor);
-    var menuDimensions = svgDraw.drawPopup(
+    let menuDimensions = svgDraw.drawPopup(
       diagram,
       actor,
       minMenuWidth,
@@ -846,7 +846,7 @@ export const draw = function (_text, id, _version, diagObj) {
   }
 
   // only draw popups for the top row of actors.
-  var requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys, doc);
+  let requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys, doc);
 
   const { bounds: box } = bounds.getBounds();
 

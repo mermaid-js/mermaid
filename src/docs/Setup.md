@@ -1551,7 +1551,7 @@ Returns **void**
 
 ```html
 <script>
-  var config = {
+  let config = {
     theme: 'default',
     logLevel: 'fatal',
     securityLevel: 'strict',

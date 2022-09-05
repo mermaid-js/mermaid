@@ -13,13 +13,13 @@ export default intersectPolygon;
  * @param point
  */
 function intersectPolygon(node, polyPoints, point) {
-  var x1 = node.x;
-  var y1 = node.y;
+  let x1 = node.x;
+  let y1 = node.y;
 
-  var intersections = [];
+  let intersections = [];
 
-  var minX = Number.POSITIVE_INFINITY;
-  var minY = Number.POSITIVE_INFINITY;
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
   if (typeof polyPoints.forEach === 'function') {
     polyPoints.forEach(function (entry) {
       minX = Math.min(minX, entry.x);
@@ -30,13 +30,13 @@ function intersectPolygon(node, polyPoints, point) {
     minY = Math.min(minY, polyPoints.y);
   }
 
-  var left = x1 - node.width / 2 - minX;
-  var top = y1 - node.height / 2 - minY;
+  let left = x1 - node.width / 2 - minX;
+  let top = y1 - node.height / 2 - minY;
 
-  for (var i = 0; i < polyPoints.length; i++) {
-    var p1 = polyPoints[i];
-    var p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
-    var intersect = intersectLine(
+  for (let i = 0; i < polyPoints.length; i++) {
+    let p1 = polyPoints[i];
+    let p2 = polyPoints[i < polyPoints.length - 1 ? i + 1 : 0];
+    let intersect = intersectLine(
       node,
       point,
       { x: left + p1.x, y: top + p1.y },
@@ -55,13 +55,13 @@ function intersectPolygon(node, polyPoints, point) {
   if (intersections.length > 1) {
     // More intersections, find the one nearest to edge end point
     intersections.sort(function (p, q) {
-      var pdx = p.x - point.x;
-      var pdy = p.y - point.y;
-      var distp = Math.sqrt(pdx * pdx + pdy * pdy);
+      let pdx = p.x - point.x;
+      let pdy = p.y - point.y;
+      let distp = Math.sqrt(pdx * pdx + pdy * pdy);
 
-      var qdx = q.x - point.x;
-      var qdy = q.y - point.y;
-      var distq = Math.sqrt(qdx * qdx + qdy * qdy);
+      let qdx = q.x - point.x;
+      let qdy = q.y - point.y;
+      let distq = Math.sqrt(qdx * qdx + qdy * qdy);
 
       return distp < distq ? -1 : distp === distq ? 0 : 1;
     });

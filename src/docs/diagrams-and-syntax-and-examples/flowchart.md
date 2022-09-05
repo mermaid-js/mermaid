@@ -416,7 +416,7 @@ click nodeId call callback()
 
 ```html
 <script>
-  var callback = function (nodeId) {
+  let callback = function (nodeId) {
     alert('A callback was triggered on ' + nodeId);
   };
 </script>
@@ -471,10 +471,10 @@ Beginner's tip—here's a full example of using interactive links in HTML:
   </pre>
 
   <script>
-    var callback = function () {
+    let callback = function () {
       alert('A callback was triggered');
     };
-    var config = {
+    let config = {
       startOnLoad: true,
       flowchart: {
         useMaxWidth: true,

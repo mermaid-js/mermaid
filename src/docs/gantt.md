@@ -327,13 +327,13 @@ Beginner's tip—a full example using interactive links in an html context:
   </pre>
 
   <script>
-    var printArguments = function (arg1, arg2, arg3) {
+    let printArguments = function (arg1, arg2, arg3) {
       alert('printArguments called with arguments: ' + arg1 + ', ' + arg2 + ', ' + arg3);
     };
-    var printTask = function (taskId) {
+    let printTask = function (taskId) {
       alert('taskId: ' + taskId);
     };
-    var config = {
+    let config = {
       startOnLoad: true,
       securityLevel: 'loose',
     };

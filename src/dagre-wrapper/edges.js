@@ -348,7 +348,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   let points = edge.points;
   let pointsHasChanged = false;
   const tail = graph.node(e.v);
-  var head = graph.node(e.w);
+  let head = graph.node(e.w);
 
   log.info('abc88 InsertEdge: ', edge);
   if (head.intersect && tail.intersect) {

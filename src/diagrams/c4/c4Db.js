@@ -24,7 +24,7 @@ let wrapEnabled = false;
 let description = '';
 let c4ShapeInRow = 4;
 let c4BoundaryInRow = 2;
-var c4Type;
+let c4Type;
 
 export const getC4Type = function () {
   return c4Type;

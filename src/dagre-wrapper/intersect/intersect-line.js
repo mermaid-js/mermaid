@@ -10,10 +10,10 @@ function intersectLine(p1, p2, q1, q2) {
   // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
   // p7 and p473.
 
-  var a1, a2, b1, b2, c1, c2;
-  var r1, r2, r3, r4;
-  var denom, offset, num;
-  var x, y;
+  let a1, a2, b1, b2, c1, c2;
+  let r1, r2, r3, r4;
+  let denom, offset, num;
+  let x, y;
 
   // Compute a1, b1, c1, where line joining points 1 and 2 is F(x,y) = a1 x +
   // b1 y + c1 = 0.

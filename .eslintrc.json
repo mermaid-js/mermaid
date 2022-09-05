@@ -25,6 +25,7 @@
   "rules": {
     "no-prototype-builtins": "off",
     "no-unused-vars": "off",
+    "no-var": "error",
     "jsdoc/check-indentation": "off",
     "jsdoc/check-alignment": "off",
     "jsdoc/check-line-alignment": "off",

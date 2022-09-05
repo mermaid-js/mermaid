@@ -1,8 +1,8 @@
 /** Created by knut on 15-01-14. */
 import { log } from '../../logger';
 
-var message = '';
-var info = false;
+let message = '';
+let info = false;
 
 export const setMessage = (txt) => {
   log.debug('Setting message to: ' + txt);

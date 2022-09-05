@@ -1,15 +1,15 @@
 const intersectRect = (node, point) => {
-  var x = node.x;
-  var y = node.y;
+  let x = node.x;
+  let y = node.y;
 
   // Rectangle intersection algorithm from:
   // https://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
-  var dx = point.x - x;
-  var dy = point.y - y;
-  var w = node.width / 2;
-  var h = node.height / 2;
+  let dx = point.x - x;
+  let dy = point.y - y;
+  let w = node.width / 2;
+  let h = node.height / 2;
 
-  var sx, sy;
+  let sx, sy;
   if (Math.abs(dy) * w > Math.abs(dx) * h) {
     // Intersection is top or bottom of rect.
     if (dy < 0) {

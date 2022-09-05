@@ -58,24 +58,24 @@ export const draw = (txt, id, _version, diagObj) => {
     elem.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
 
     // Fetch the default direction, use TD if none was found
-    var margin = 40;
-    var legendRectSize = 18;
-    var legendSpacing = 4;
+    let margin = 40;
+    let legendRectSize = 18;
+    let legendSpacing = 4;
 
-    var radius = Math.min(width, height) / 2 - margin;
+    let radius = Math.min(width, height) / 2 - margin;
 
-    var svg = diagram
+    let svg = diagram
       .append('g')
       .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-    var data = diagObj.db.getSections();
-    var sum = 0;
+    let data = diagObj.db.getSections();
+    let sum = 0;
     Object.keys(data).forEach(function (key) {
       sum += data[key];
     });
 
     const themeVariables = conf.themeVariables;
-    var myGeneratedColors = [
+    let myGeneratedColors = [
       themeVariables.pie1,
       themeVariables.pie2,
       themeVariables.pie3,
@@ -91,16 +91,16 @@ export const draw = (txt, id, _version, diagObj) => {
     ];
 
     // Set the color scale
-    var color = scaleOrdinal().range(myGeneratedColors);
+    let color = scaleOrdinal().range(myGeneratedColors);
 
     // Compute the position of each group on the pie:
-    var pie = d3pie().value(function (d) {
+    let pie = d3pie().value(function (d) {
       return d[1];
     });
-    var dataReady = pie(Object.entries(data));
+    let dataReady = pie(Object.entries(data));
 
     // Shape helper to build arcs:
-    var arcGenerator = arc().innerRadius(0).outerRadius(radius);
+    let arcGenerator = arc().innerRadius(0).outerRadius(radius);
 
     // Build the pie chart: each part of the pie is a path that we build using the arc function.
     svg
@@ -138,17 +138,17 @@ export const draw = (txt, id, _version, diagObj) => {
       .attr('class', 'pieTitleText');
 
     // Add the legends/annotations for each section
-    var legend = svg
+    let legend = svg
       .selectAll('.legend')
       .data(color.domain())
       .enter()
       .append('g')
       .attr('class', 'legend')
       .attr('transform', function (d, i) {
-        var height = legendRectSize + legendSpacing;
-        var offset = (height * color.domain().length) / 2;
-        var horz = 12 * legendRectSize;
-        var vert = i * height - offset;
+        let height = legendRectSize + legendSpacing;
+        let offset = (height * color.domain().length) / 2;
+        let horz = 12 * legendRectSize;
+        let vert = i * height - offset;
         return 'translate(' + horz + ',' + vert + ')';
       });
 

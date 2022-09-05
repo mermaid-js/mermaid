@@ -249,7 +249,7 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   });
 
   const classBox = g.node().getBBox();
-  var cssClassStr = ' ';
+  let cssClassStr = ' ';
 
   if (classDef.cssClasses.length > 0) {
     cssClassStr = cssClassStr + classDef.cssClasses.join(' ');

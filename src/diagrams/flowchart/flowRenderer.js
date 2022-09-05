@@ -178,9 +178,9 @@ export const addEdges = function (edges, g, diagObj) {
     cnt++;
 
     // Identify Link
-    var linkId = 'L-' + edge.start + '-' + edge.end;
-    var linkNameStart = 'LS-' + edge.start;
-    var linkNameEnd = 'LE-' + edge.end;
+    let linkId = 'L-' + edge.start + '-' + edge.end;
+    let linkNameStart = 'LS-' + edge.start;
+    let linkNameEnd = 'LE-' + edge.end;
 
     const edgeData = {};
 

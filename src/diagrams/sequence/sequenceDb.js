@@ -259,11 +259,11 @@ export const addALink = function (actorId, text) {
   try {
     const links = {};
     let sanitizedText = sanitizeText(text.text, configApi.getConfig());
-    var sep = sanitizedText.indexOf('@');
+    let sep = sanitizedText.indexOf('@');
     sanitizedText = sanitizedText.replace(/&amp;/g, '&');
     sanitizedText = sanitizedText.replace(/&equals;/g, '=');
-    var label = sanitizedText.slice(0, sep - 1).trim();
-    var link = sanitizedText.slice(sep + 1).trim();
+    let label = sanitizedText.slice(0, sep - 1).trim();
+    let link = sanitizedText.slice(sep + 1).trim();
 
     links[label] = link;
     // add the deserialized text to the actor's links field.

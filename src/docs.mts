@@ -1,7 +1,7 @@
 import { remark } from 'remark';
 import type { Code, Root } from 'mdast';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
-// @ts-ignore
+// @ts-ignore: no types for this package
 import flatmap from 'unist-util-flatmap';
 import { globby } from 'globby';
 import { join, dirname } from 'path';

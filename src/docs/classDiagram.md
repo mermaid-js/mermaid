@@ -399,7 +399,7 @@ click Shape2 call callbackFunction() "This is a tooltip for a callback"
 
 ```html
 <script>
-  var callbackFunction = function () {
+  let callbackFunction = function () {
     alert('A callback was triggered');
   };
 </script>
@@ -451,10 +451,10 @@ Beginner's tip—a full example using interactive links in an HTML page:
   </pre>
 
   <script>
-    var callback = function () {
+    let callback = function () {
       alert('A callback was triggered');
     };
-    var config = {
+    let config = {
       startOnLoad: true,
       securityLevel: 'loose',
     };

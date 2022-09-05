@@ -399,10 +399,10 @@ export const draw = function (text, id, version, diagObj) {
           return typeof links[d.id] !== 'undefined';
         })
         .each(function (o) {
-          var taskRect = doc.querySelector('#' + o.id);
-          var taskText = doc.querySelector('#' + o.id + '-text');
+          let taskRect = doc.querySelector('#' + o.id);
+          let taskText = doc.querySelector('#' + o.id + '-text');
           const oldParent = taskRect.parentNode;
-          var Link = doc.createElement('a');
+          let Link = doc.createElement('a');
           Link.setAttribute('xlink:href', links[o.id]);
           Link.setAttribute('target', '_top');
           oldParent.appendChild(Link);

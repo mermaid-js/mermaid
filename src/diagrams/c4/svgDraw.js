@@ -38,7 +38,7 @@ export const drawEmbeddedImage = function (elem, x, y, link) {
   const imageElem = elem.append('use');
   imageElem.attr('x', x);
   imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
+  let sanitizedLink = sanitizeUrl(link);
   imageElem.attr('xlink:href', '#' + sanitizedLink);
 };
 

@@ -49,7 +49,7 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   const actorCnt = actor.actorCnt;
   const rectData = actor.rectData;
 
-  var displayValue = 'none';
+  let displayValue = 'none';
   if (forceMenus) {
     displayValue = 'block !important';
   }
@@ -59,7 +59,7 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   g.attr('class', 'actorPopupMenu');
   g.attr('display', displayValue);
   addPopupInteraction('#actor' + actorCnt + '_popup', actorCnt);
-  var actorClass = '';
+  let actorClass = '';
   if (typeof rectData.class !== 'undefined') {
     actorClass = ' ' + rectData.class;
   }
@@ -76,11 +76,11 @@ export const drawPopup = function (elem, actor, minMenuWidth, textAttrs, forceMe
   rectElem.attr('height', rectData.height);
   rectElem.attr('rx', rectData.rx);
   rectElem.attr('ry', rectData.ry);
+  let linkY = 20;
   if (links != null) {
-    var linkY = 20;
     for (let key in links) {
-      var linkElem = g.append('a');
-      var sanitizedLink = sanitizeUrl(links[key]);
+      let linkElem = g.append('a');
+      let sanitizedLink = sanitizeUrl(links[key]);
       linkElem.attr('xlink:href', sanitizedLink);
       linkElem.attr('target', '_blank');
 
@@ -108,7 +108,7 @@ export const drawImage = function (elem, x, y, link) {
   const imageElem = elem.append('image');
   imageElem.attr('x', x);
   imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
+  let sanitizedLink = sanitizeUrl(link);
   imageElem.attr('xlink:href', sanitizedLink);
 };
 
@@ -116,7 +116,7 @@ export const drawEmbeddedImage = function (elem, x, y, link) {
   const imageElem = elem.append('use');
   imageElem.attr('x', x);
   imageElem.attr('y', y);
-  var sanitizedLink = sanitizeUrl(link);
+  let sanitizedLink = sanitizeUrl(link);
   imageElem.attr('xlink:href', '#' + sanitizedLink);
 };
 
@@ -137,14 +137,14 @@ export const popdownMenu = function (popid) {
 };
 
 const popupMenuUpFunc = function (popupId) {
-  var pu = document.getElementById(popupId);
+  let pu = document.getElementById(popupId);
   if (pu != null) {
     pu.style.display = 'block';
   }
 };
 
 const popupMenuDownFunc = function (popupId) {
-  var pu = document.getElementById(popupId);
+  let pu = document.getElementById(popupId);
   if (pu != null) {
     pu.style.display = 'none';
   }
@@ -340,7 +340,7 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
   const center = actor.x + actor.width / 2;
 
   const boxpluslineGroup = elem.append('g');
-  var g = boxpluslineGroup;
+  let g = boxpluslineGroup;
 
   if (actor.y === 0) {
     actorCnt++;
@@ -364,7 +364,7 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
   }
 
   const rect = getNoteRect();
-  var cssclass = 'actor';
+  let cssclass = 'actor';
   if (actor.properties != null && actor.properties['class']) {
     cssclass = actor.properties['class'];
   } else {
