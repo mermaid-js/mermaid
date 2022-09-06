@@ -1,3 +1,6 @@
+const { Generator } = require('jison');
+const fs = require('fs');
+
 /** @typedef {import('esbuild').BuildOptions} Options */
 
 /**
@@ -46,21 +49,14 @@ exports.umdBuild = (override = { minify: true }) => {
   });
 };
 
-const { Generator } = require('jison');
-let fs = require('fs');
 const jisonPlugin = {
   name: 'jison',
   setup(build) {
     build.onLoad({ filter: /\.jison$/ }, async (args) => {
       // Load the file from the file system
-      let source = await fs.promises.readFile(args.path, 'utf8');
-
-      try {
-        let contents = new Generator(source, { 'token-stack': true }).generate();
-        return { contents, warnings: [] };
-      } catch (e) {
-        return { errors: [] };
-      }
+      const source = await fs.promises.readFile(args.path, 'utf8');
+      const contents = new Generator(source, { 'token-stack': true }).generate();
+      return { contents, warnings: [] };
     });
   },
 };
