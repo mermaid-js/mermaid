@@ -66,9 +66,9 @@ export const drawSimpleState = (g, stateDef) => {
 /**
  * Draws a state with descriptions
  *
- * @param {any} g
+ * @param {any} g The d3 svg object to add the state to
  * @param {any} stateDef
- * @returns
+ * @returns {any} The d3 svg state
  */
 export const drawDescrState = (g, stateDef) => {
   const addTspan = function (textEl, txt, isFirst) {

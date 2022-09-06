@@ -32,7 +32,7 @@ export const setConf = function (cnf) {
  * @param groupNode The svg group node for the entity
  * @param entityTextNode The svg node for the entity label text
  * @param attributes An array of attributes defined for the entity (each attribute has a type and a name)
- * @returns The bounding box of the entity, after attributes have been added
+ * @returns {object} The bounding box of the entity, after attributes have been added. The bounding box has a .width and .height
  */
 const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const heightPadding = conf.entityPadding / 3; // Padding internal to attribute boxes
@@ -307,7 +307,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
  * @param svgNode The svg node that contains the diagram
  * @param entities The entities to be drawn
  * @param graph The graph that contains the vertex and edge definitions post-layout
- * @returns The first entity that was inserted
+ * @returns {object} The first entity that was inserted
  */
 const drawEntities = function (svgNode, entities, graph) {
   const keys = Object.keys(entities);
@@ -545,7 +545,6 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
  * @param text The text of the diagram
  * @param id The unique id of the DOM node that contains the diagram
  * @param _version
- * @param diag
  * @param diagObj
  */
 export const draw = function (text, id, _version, diagObj) {
