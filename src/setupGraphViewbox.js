@@ -37,8 +37,6 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
  * @param {SVGSVGElement} svgElem The SVG Element to configure
  * @param {number} height The height of the SVG
  * @param {number} width The width of the SVG
- * @param tx
- * @param ty
  * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
  */
 export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
