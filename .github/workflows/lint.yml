@@ -37,3 +37,17 @@ jobs:
 
     - name: Run Linting
       run: yarn lint
+    - name: Check no `console.log()` in .jison files
+      # ESLint can't parse .jison files directly
+      # In the future, it might be worth making a `eslint-plugin-jison`, so
+      # that this will be built into the `yarn lint` command.
+      run: |
+        shopt -s globstar
+        mkdir -p tmp/
+        for jison_file in src/**/*.jison; do
+          outfile="tmp/$(basename -- "$jison_file" .jison)-jison.js"
+          echo "Converting $jison_file to $outfile"
+          # default module-type (CJS) always adds a console.log()
+          yarn jison "$jison_file" --outfile "$outfile" --module-type "amd"
+        done
+        yarn eslint --no-eslintrc --rule no-console:error --parser "@babel/eslint-parser" "./tmp/*-jison.js"
