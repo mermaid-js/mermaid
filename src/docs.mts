@@ -49,11 +49,18 @@ const verifyAndCopy = (file: string, content?: string) => {
     // Files are same, skip.
     return;
   }
-  console.log(`File changed: ${outFile}`);
+  let changeMsg = 'changed';
+  if (verifyOnly) {
+    changeMsg = 'to be changed';
+  }
+  let logMsg = `  File ${changeMsg}: ${outFile}`
+
   filesWereChanged = true;
   if (!verifyOnly) {
     writeFileSync(outFile, newBuffer);
+    logMsg += ' ...and copied to /docs'
   }
+  console.log(logMsg);
 };
 
 /**
