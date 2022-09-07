@@ -30,12 +30,14 @@ import { isDetailedError } from './utils';
  * ```
  *
  * Renders the mermaid diagrams
+ *
  * @param config
  * @param nodes
  * @param callback
  */
 const init = function (
   config?: MermaidConfig,
+  // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
   callback?: Function
 ) {
@@ -54,6 +56,7 @@ const init = function (
 
 const initThrowsErrors = function (
   config?: MermaidConfig,
+  // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
   callback?: Function
 ) {
@@ -156,13 +159,7 @@ if (typeof document !== 'undefined') {
   /*!
    * Wait for document loaded before starting the execution
    */
-  window.addEventListener(
-    'load',
-    function () {
-      contentLoaded();
-    },
-    false
-  );
+  window.addEventListener('load', contentLoaded, false);
 }
 
 /**
