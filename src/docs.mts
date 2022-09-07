@@ -190,7 +190,7 @@ const transformHtml = (filename: string) => {
 
 /** Main method (entry point) */
 (async () => {
-  const sourceDirGlob = join(__dirname, SOURCE_DOCS_DIR, '**');
+  const sourceDirGlob = join('.', SOURCE_DOCS_DIR, '**');
   const includeFilesStartingWithDot = true;
 
   console.log('Transforming markdown files...');
