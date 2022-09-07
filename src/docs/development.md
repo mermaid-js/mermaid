@@ -6,7 +6,7 @@ So you want to help? That's great!
 
 Here are a few things to get you started on the right path.
 
-**The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**
+**The Docs Structure is dictated by [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**
 
 **Note: Commits and Pull Requests should be directed to the develop branch.**
 
@@ -44,9 +44,9 @@ Start with the type, such as **feature** or **bug**, followed by the issue numbe
 
 If it is not in the documentation, it's like it never happened. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The docs are located in the `src/docs` folder and are written in Markdown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via the **[sidebar](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**.
+The docs are located in the `src/docs` folder and are written in Markdown. Just pick the right section and start typing. If you want to propose changes to the structure of the documentation, such as adding a new section or a new file you do that via the **[sidebar](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**.
 
-> **All the documents displayed in the github.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/docs/_sidebar.md)**.
+> **All the documents displayed in the GitHub.io page are listed in [sidebar.md](https://github.com/mermaid-js/mermaid/edit/develop/src/docs/_sidebar.md)**.
 
 The contents of [https://mermaid-js.github.io/mermaid/](https://mermaid-js.github.io/mermaid/) are based on the docs from the `master` branch. Updates committed to the `master` branch are reflected in the [Mermaid Docs](https://mermaid-js.github.io/mermaid/) once released.
 
@@ -58,7 +58,7 @@ The documentation is located in the `src/docs` directory and organized according
 
 The `docs` folder will be automatically generated when committing to `src/docs` and should not be edited manually.
 
-We encourage contributions to the documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs). We publish documentation using GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
+We encourage contributions to the documentation at [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs). We publish documentation using GitHub Pages with [Docsify](https://www.youtube.com/watch?v=TV88lp7egMw&t=3s)
 
 ### Add Unit Tests for Parsing
 
@@ -71,7 +71,7 @@ This tests the rendering and visual appearance of the diagrams. This ensures tha
 To start working with the e2e tests:
 
 1. Run `yarn dev` to start the dev server
-2. Start **Cypress** by running `cypress open` in the **mermaid** folder.  
+2. Start **Cypress** by running `cypress open` in the **mermaid** folder.
    (Make sure you have path to Cypress in order, the binary is located in `node_modules/.bin`).
 
 The rendering tests are very straightforward to create. There is a function `imgSnapshotTest`, which takes a diagram in text form and the mermaid options, and it renders that diagram in Cypress.
@@ -112,7 +112,7 @@ Markdown is used to format the text, for more information about Markdown [see th
 
 To edit Docs on your computer:
 
-1. Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs) directory in the `develop` branch.
+1. Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs) directory in the `develop` branch.
 2. Create a fork of the develop branch.
 3. Make changes or add new documentation.
 4. Commit changes to your fork and push it to GitHub.
@@ -121,7 +121,7 @@ To edit Docs on your computer:
 To edit Docs on GitHub:
 
 1. Login to [GitHub.com](https://www.github.com).
-2. Navigate to [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs).
+2. Navigate to [mermaid-js/mermaid/src/docs](https://github.com/mermaid-js/mermaid/tree/develop/src/docs).
 3. To edit a file, click the pencil icon at the top-right of the file contents panel.
 4. Describe what you changed in the **Propose file change** section, located at the bottom of the page.
 5. Submit your changes by clicking the button **Propose file change** at the bottom (by automatic creation of a fork and a new branch).
