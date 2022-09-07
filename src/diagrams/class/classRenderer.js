@@ -142,8 +142,7 @@ const insertMarkers = function (elem) {
  *
  * @param {string} text
  * @param {string} id
- * @param version
- * @param _version
+ * @param {any} _version
  * @param diagObj
  */
 export const draw = function (text, id, _version, diagObj) {

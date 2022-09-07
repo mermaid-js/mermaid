@@ -25,7 +25,6 @@ export const setConf = function (cnf) {
  * @param g The graph that is to be drawn.
  * @param svgId
  * @param root
- * @param doc
  * @param _doc
  * @param diagObj
  */
