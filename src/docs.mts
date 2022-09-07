@@ -207,8 +207,9 @@ const transformHtml = (filename: string) => {
   const otherFiles = await globby([sourceDirGlob, '!**/*.md', '!**/*.html'], {
     dot: includeFilesStartingWithDot,
   });
-  otherFiles.forEach((file) => {
-    copyTransformedContents(file);
+  otherFiles.forEach((file: string) => {
+    const transformedContents = readSyncedUTF8file(file); // no transformation is done; just get the contents
+    copyTransformedContents(file, transformedContents, !verifyOnly);
   });
 
   if (filesWereTransformed) {
