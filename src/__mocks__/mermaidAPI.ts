@@ -1,18 +1,15 @@
 /**
  * Mocks for `./mermaidAPI`.
  *
- * We can't easily use `jest.spyOn(mermaidAPI, "function")` since the object is frozen with `Object.freeze()`.
+ * We can't easily use `vi.spyOn(mermaidAPI, "function")` since the object is frozen with `Object.freeze()`.
  */
 import * as configApi from '../config';
-
+import { vi } from 'vitest';
 import { addDiagrams } from '../diagram-api/diagram-orchestration';
 import Diagram from '../Diagram';
 
 // Normally, we could just do the following to get the original `parse()`
-// implementation, however, requireActual isn't currently supported in Jest
-// for ESM, see https://github.com/facebook/jest/issues/9430
-// and https://github.com/facebook/jest/pull/10976
-// const {parse} = jest.requireActual("./mermaidAPI");
+// implementation, however, requireActual returns a promise and it's not documented how to use withing mock file.
 
 let hasLoadedDiagrams = false;
 /**
@@ -30,10 +27,10 @@ function parse(text: string, parseError?: Function): boolean {
 
 // original version cannot be modified since it was frozen with `Object.freeze()`
 export const mermaidAPI = {
-  render: jest.fn(),
+  render: vi.fn(),
   parse,
-  parseDirective: jest.fn(),
-  initialize: jest.fn(),
+  parseDirective: vi.fn(),
+  initialize: vi.fn(),
   getConfig: configApi.getConfig,
   setConfig: configApi.setConfig,
   getSiteConfig: configApi.getSiteConfig,

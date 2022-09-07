@@ -1,8 +1,10 @@
+import { parser } from './parser/info';
+import infoDb from './infoDb';
 describe('when parsing an info graph it', function () {
   var ex;
   beforeEach(function () {
-    ex = require('./parser/info').parser;
-    ex.yy = require('./infoDb');
+    ex = parser;
+    ex.yy = infoDb;
   });
 
   it('should handle an info definition', function () {

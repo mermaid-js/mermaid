@@ -39,7 +39,6 @@ import { evaluate } from './diagrams/common/common';
 let hasLoadedDiagrams = false;
 
 /**
- *
  * @param text
  * @param parseError
  */

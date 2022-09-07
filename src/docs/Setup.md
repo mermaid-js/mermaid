@@ -1405,6 +1405,15 @@ This sets the auto-wrap padding for the diagram (sides only)
 
 **Notes:** Default value: 0.
 
+## parse
+
+### Parameters
+
+- `text` **[string][5]**
+- `parseError` **[Function][6]?**
+
+Returns **[boolean][7]**
+
 ## setSiteConfig
 
 ## setSiteConfig
@@ -1422,7 +1431,7 @@ function _Default value: At default, will mirror Global Config_
 
 - `conf` **MermaidConfig** The base currentConfig to use as siteConfig
 
-Returns **[object][5]** The siteConfig
+Returns **[object][8]** The siteConfig
 
 ## getSiteConfig
 
@@ -1434,7 +1443,7 @@ Returns **[object][5]** The siteConfig
 
 **Notes**: Returns **any** values in siteConfig.
 
-Returns **[object][5]** The siteConfig
+Returns **[object][8]** The siteConfig
 
 ## setConfig
 
@@ -1473,10 +1482,10 @@ $(function () {
 
 ### Parameters
 
-- `id` **[string][6]** The id of the element to be rendered
-- `text` **[string][6]** The graph definition
-- `cb` **function (svgCode: [string][6], bindFunctions: function (element: [Element][7]): void): void**
-- `container` **[Element][7]** Selector to element in which a div with the graph temporarily will be
+- `id` **[string][5]** The id of the element to be rendered
+- `text` **[string][5]** The graph definition
+- `cb` **function (svgCode: [string][5], bindFunctions: function (element: [Element][9]): void): void**
+- `container` **[Element][9]** Selector to element in which a div with the graph temporarily will be
   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
   element will be removed when rendering is completed.
 
@@ -1515,7 +1524,7 @@ Pushes in a directive to the configuration
 
 ### Parameters
 
-- `directive` **[object][5]** The directive to push in
+- `directive` **[object][8]** The directive to push in
 
 ## reset
 
@@ -1613,6 +1622,8 @@ Returns **void**
 [2]: Setup.md?id=render
 [3]: 8.6.0_docs.md
 [4]: #mermaidapi-configuration-defaults
-[5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-[7]: https://developer.mozilla.org/docs/Web/API/Element
+[5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[7]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[8]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[9]: https://developer.mozilla.org/docs/Web/API/Element

@@ -29,15 +29,15 @@ describe('more than one sequence diagram', () => {
         Alice->Bob:Hello Bob, how are you?
         Bob-->Alice: I am good thanks!`);
     expect(diagram1.db.getMessages()).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "from": "Alice",
           "message": "Hello Bob, how are you?",
           "to": "Bob",
           "type": 5,
           "wrap": false,
         },
-        Object {
+        {
           "from": "Bob",
           "message": "I am good thanks!",
           "to": "Alice",
@@ -52,15 +52,15 @@ describe('more than one sequence diagram', () => {
         Bob-->Alice: I am good thanks!`);
 
     expect(diagram2.db.getMessages()).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "from": "Alice",
           "message": "Hello Bob, how are you?",
           "to": "Bob",
           "type": 5,
           "wrap": false,
         },
-        Object {
+        {
           "from": "Bob",
           "message": "I am good thanks!",
           "to": "Alice",
@@ -77,15 +77,15 @@ describe('more than one sequence diagram', () => {
         John-->Alice: I am good thanks!`);
 
     expect(diagram3.db.getMessages()).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "from": "Alice",
           "message": "Hello John, how are you?",
           "to": "John",
           "type": 5,
           "wrap": false,
         },
-        Object {
+        {
           "from": "John",
           "message": "I am good thanks!",
           "to": "Alice",

@@ -1,5 +1,8 @@
+// @ts-nocheck
 import moment from 'moment-mini';
 import ganttDb from './ganttDb';
+import { it, describe } from 'vitest';
+import { convert } from '../../tests/util';
 
 describe('when using the ganttDb', function () {
   beforeEach(function () {
@@ -7,15 +10,60 @@ describe('when using the ganttDb', function () {
   });
 
   describe('when using duration', function () {
-    it.each`
+    it.each([{ str: '1d', expected: moment.duration(1, 'd') }])(
+      'should %s resulting in $o duration',
+      ({ str, expected }) => {
+        expect(ganttDb.parseDuration(str)).toEqual(expected);
+      }
+    );
+
+    // it.only('should parse', () => {
+    //   expect(
+    //     convert(`
+    //   str       | expected
+    //   ${'1d'}   | ${moment.duration(1, 'd')}
+    //   ${'2w'}   | ${moment.duration(2, 'w')}
+    //   ${'1ms'}  | ${moment.duration(1, 'ms')}
+    //   ${'0.1s'} | ${moment.duration(100, 'ms')}
+    //   ${'1f'}   | ${moment.duration.invalid()}
+    // `)
+    //   ).toMatchInlineSnapshot(`
+    //     [
+    //       {
+    //         "expected": "P1D",
+    //         "str": "1d",
+    //       },
+    //       {
+    //         "expected": "P14D",
+    //         "str": "2w",
+    //       },
+    //       {
+    //         "expected": "PT0.001S",
+    //         "str": "1ms",
+    //       },
+    //       {
+    //         "expected": "PT0.1S",
+    //         "str": "0.1s",
+    //       },
+    //       {
+    //         "expected": "Invalid date",
+    //         "str": "1f",
+    //       },
+    //     ]
+    //   `);
+    // });
+
+    it.each(
+      convert`
       str       | expected
       ${'1d'}   | ${moment.duration(1, 'd')}
       ${'2w'}   | ${moment.duration(2, 'w')}
       ${'1ms'}  | ${moment.duration(1, 'ms')}
       ${'0.1s'} | ${moment.duration(100, 'ms')}
       ${'1f'}   | ${moment.duration.invalid()}
-    `('should $str resulting in $expected duration', ({ str, expected }) => {
-      expect(ganttDb.parseDuration(str)).toEqual(expected);
+    `
+    )('should $str resulting in $expected duration', ({ str, expected }) => {
+      expect(ganttDb.parseDuration(str).toString()).not.toEqual(expected);
     });
   });
 
@@ -31,7 +79,7 @@ describe('when using the ganttDb', function () {
       ganttDb.clear();
     });
 
-    it.each`
+    it.each(convert`
       fn                        | expected
       ${'getTasks'}             | ${[]}
       ${'getAccTitle'}          | ${''}
@@ -42,22 +90,54 @@ describe('when using the ganttDb', function () {
       ${'getExcludes'}          | ${[]}
       ${'getSections'}          | ${[]}
       ${'endDatesAreInclusive'} | ${false}
-    `('should clear $fn', ({ fn, expected }) => {
+    `)('should clear $fn', ({ fn, expected }) => {
       expect(ganttDb[fn]()).toEqual(expected);
     });
   });
 
-  it.each`
+  it.each(convert`
     testName                                                                             | section     | taskName   | taskData                       | expStartDate            | expEndDate                       | expId      | expTask
-    ${'should handle fixed dates'}                                                       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2013-01-12'} | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}         | ${'id1'}   | ${'test1'}
-    ${'should handle duration (days) instead of fixed date to determine end date'}       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2d'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 3)}          | ${'id1'}   | ${'test1'}
-    ${'should handle duration (hours) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2h'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 2)}       | ${'id1'}   | ${'test1'}
-    ${'should handle duration (minutes) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2m'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 0, 2)}    | ${'id1'}   | ${'test1'}
-    ${'should handle duration (seconds) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2s'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 0, 0, 2)} | ${'id1'}   | ${'test1'}
-    ${'should handle duration (weeks) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2w'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 15)}         | ${'id1'}   | ${'test1'}
-    ${'should handle fixed dates without id'}                                            | ${'testa1'} | ${'test1'} | ${'2013-01-01,2013-01-12'}     | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}         | ${'task1'} | ${'test1'}
-    ${'should handle duration instead of a fixed date to determine end date without id'} | ${'testa1'} | ${'test1'} | ${'2013-01-01,4d'}             | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 5)}          | ${'task1'} | ${'test1'}
-  `('$testName', ({ section, taskName, taskData, expStartDate, expEndDate, expId, expTask }) => {
+    ${'should handle fixed dates'}                                                       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2013-01-12'} | ${new Date(
+    2013,
+    0,
+    1
+  )} | ${new Date(2013, 0, 12)}         | ${'id1'}   | ${'test1'}
+    ${'should handle duration (days) instead of fixed date to determine end date'}       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2d'}         | ${new Date(
+    2013,
+    0,
+    1
+  )} | ${new Date(2013, 0, 3)}          | ${'id1'}   | ${'test1'}
+    ${'should handle duration (hours) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2h'}         | ${new Date(
+    2013,
+    0,
+    1
+  )} | ${new Date(2013, 0, 1, 2)}       | ${'id1'}   | ${'test1'}
+    ${'should handle duration (minutes) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2m'}         | ${new Date(
+    2013,
+    0,
+    1
+  )} | ${new Date(2013, 0, 1, 0, 2)}    | ${'id1'}   | ${'test1'}
+    ${'should handle duration (seconds) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2s'}         | ${new Date(
+    2013,
+    0,
+    1
+  )} | ${new Date(2013, 0, 1, 0, 0, 2)} | ${'id1'}   | ${'test1'}
+    ${'should handle duration (weeks) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2w'}         | ${new Date(
+    2013,
+    0,
+    1
+  )} | ${new Date(2013, 0, 15)}         | ${'id1'}   | ${'test1'}
+    ${'should handle fixed dates without id'}                                            | ${'testa1'} | ${'test1'} | ${'2013-01-01,2013-01-12'}     | ${new Date(
+    2013,
+    0,
+    1
+  )} | ${new Date(2013, 0, 12)}         | ${'task1'} | ${'test1'}
+    ${'should handle duration instead of a fixed date to determine end date without id'} | ${'testa1'} | ${'test1'} | ${'2013-01-01,4d'}             | ${new Date(
+    2013,
+    0,
+    1
+  )} | ${new Date(2013, 0, 5)}          | ${'task1'} | ${'test1'}
+  `)('$testName', ({ section, taskName, taskData, expStartDate, expEndDate, expId, expTask }) => {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection(section);
     ganttDb.addTask(taskName, taskData);
@@ -68,14 +148,32 @@ describe('when using the ganttDb', function () {
     expect(tasks[0].task).toEqual(expTask);
   });
 
-  it.each`
+  it.each(convert`
     section     | taskName1  | taskName2  | taskData1              | taskData2             | expStartDate2                                | expEndDate2              | expId2     | expTask2
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id1,1d'} | ${new Date(2013, 0, 15)}                     | ${undefined}             | ${'id2'}   | ${'test2'}
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id3,1d'} | ${new Date(new Date().setHours(0, 0, 0, 0))} | ${undefined}             | ${'id2'}   | ${'test2'}
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'after id1,1d'}     | ${new Date(2013, 0, 15)}                     | ${undefined}             | ${'task1'} | ${'test2'}
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2013-01-26'}       | ${new Date(2013, 0, 15)}                     | ${new Date(2013, 0, 26)} | ${'task1'} | ${'test2'}
-    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2d'}               | ${new Date(2013, 0, 15)}                     | ${new Date(2013, 0, 17)} | ${'task1'} | ${'test2'}
-  `(
+    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id1,1d'} | ${new Date(
+    2013,
+    0,
+    15
+  )}                     | ${undefined}             | ${'id2'}   | ${'test2'}
+    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id3,1d'} | ${new Date(
+    new Date().setHours(0, 0, 0, 0)
+  )} | ${undefined}             | ${'id2'}   | ${'test2'}
+    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'after id1,1d'}     | ${new Date(
+    2013,
+    0,
+    15
+  )}                     | ${undefined}             | ${'task1'} | ${'test2'}
+    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2013-01-26'}       | ${new Date(
+    2013,
+    0,
+    15
+  )}                     | ${new Date(2013, 0, 26)} | ${'task1'} | ${'test2'}
+    ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2d'}               | ${new Date(
+    2013,
+    0,
+    15
+  )}                     | ${new Date(2013, 0, 17)} | ${'task1'} | ${'test2'}
+  `)(
     '$testName',
     ({
       section,
@@ -381,11 +479,11 @@ describe('when using the ganttDb', function () {
     });
   });
 
-  it.each`
+  it.each(convert`
     type       | expected
     ${'hide'}  | ${'off'}
     ${'style'} | ${'stoke:stroke-width:5px,stroke:#00f,opacity:0.5'}
-  `('should ${type} today marker', ({ expected }) => {
+  `)('should ${type} today marker', ({ expected }) => {
     ganttDb.setTodayMarker(expected);
     expect(ganttDb.getTodayMarker()).toEqual(expected);
   });

@@ -1,17 +1,17 @@
 import mermaid from './mermaid';
 import { mermaidAPI } from './mermaidAPI';
 import flowDb from './diagrams/flowchart/flowDb';
+// @ts-ignore
 import flowParser from './diagrams/flowchart/parser/flow';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import Diagram from './Diagram';
+import { vi, describe, it, beforeEach, afterEach } from 'vitest';
+const spyOn = vi.spyOn;
 
-const spyOn = jest.spyOn;
-
-// mocks the mermaidAPI.render function (see `./__mocks__/mermaidAPI`)
-jest.mock('./mermaidAPI');
+vi.mock('./mermaidAPI');
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 describe('when using mermaid and ', function () {
@@ -70,7 +70,7 @@ describe('when using mermaid and ', function () {
       const edges = diag.db.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
+        setEdge: function (start: any, end: any, options: { arrowhead: any; label: string }) {
           expect(start).toContain('flowchart-A-');
           expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('normal');
@@ -87,7 +87,7 @@ describe('when using mermaid and ', function () {
       const edges = diag.db.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
+        setEdge: function (start: any, end: any, options: { arrowhead: any }) {
           expect(start).toContain('flowchart-A-');
           expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('normal');
@@ -103,7 +103,7 @@ describe('when using mermaid and ', function () {
       const edges = diag.db.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
+        setEdge: function (start: any, end: any, options: { arrowhead: any }) {
           expect(start).toContain('flowchart-A-');
           expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
@@ -119,7 +119,7 @@ describe('when using mermaid and ', function () {
       const edges = diag.db.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
+        setEdge: function (start: any, end: any, options: { arrowhead: any; style: any }) {
           expect(start).toContain('flowchart-A-');
           expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
@@ -135,7 +135,7 @@ describe('when using mermaid and ', function () {
       const edges = diag.db.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
+        setEdge: function (start: any, end: any, options: { arrowhead: any; curve: any }) {
           expect(start).toContain('flowchart-A-');
           expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
@@ -153,7 +153,11 @@ describe('when using mermaid and ', function () {
       const edges = diag.db.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
+        setEdge: function (
+          start: any,
+          end: any,
+          options: { arrowhead: any; label: string; style: any }
+        ) {
           expect(start).toContain('flowchart-A-');
           expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
@@ -171,7 +175,7 @@ describe('when using mermaid and ', function () {
       const edges = diag.db.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
+        setEdge: function (start: any, end: any, options: { arrowhead: any; style: any }) {
           expect(start).toContain('flowchart-A-');
           expect(end).toContain('flowchart-B');
           expect(options.arrowhead).toBe('none');
@@ -189,7 +193,7 @@ describe('when using mermaid and ', function () {
       diag.db.getVertices();
       const edges = diag.db.getEdges();
       const mockG = {
-        setEdge: function (start, end, options) {
+        setEdge: function (start: any, end: any, options: { arrowhead: any; style: any }) {
           expect(start).toContain('flowchart-A-');
           expect(end).toContain('flowchart-B-');
           expect(options.arrowhead).toBe('none');
