@@ -1,7 +1,7 @@
-import jison from 'jison';
+import { Generator } from 'jison';
 import { defineConfig } from 'vitest/config';
 
-const fileRegex = /\.(jison)$/;
+const fileRegex = /\.jison$/;
 
 /** Transforms jison to js. */
 export function jisonPlugin() {
@@ -10,9 +10,10 @@ export function jisonPlugin() {
 
     transform(src: string, id: string) {
       if (fileRegex.test(id)) {
+        console.log('Transforming', id);
         return {
           // @ts-ignore
-          code: new jison.Generator(src, { 'token-stack': true }).generate(),
+          code: new Generator(src, { 'token-stack': true }).generate(),
           map: null, // provide source map if available
         };
       }
@@ -26,16 +27,8 @@ export default defineConfig({
   },
   plugins: [jisonPlugin()],
   test: {
-    // coverage: {
-    //   enabled: true,
-    // },
     environment: 'jsdom',
     globals: true,
-    mockReset: true,
-    clearMocks: true,
-    deps: {
-      inline: ['dagre-d3', 'd3'],
-    },
     setupFiles: ['src/tests/setup.ts'],
   },
 });
