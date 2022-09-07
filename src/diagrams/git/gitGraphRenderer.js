@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
@@ -290,13 +290,13 @@ const drawCommits = (svg, commits, modifyGraph) => {
 };
 
 /**
- * Detect if there are other commits between commit1s x-position and commit2s x-position on the same
+ * Detect if there are other commits between commit1's x-position and commit2's x-position on the same
  * branch as commit2.
  *
  * @param {any} commit1
  * @param {any} commit2
  * @param allCommits
- * @returns
+ * @returns {boolean} if there are commits between commit1's x-position and commit2's x-position
  */
 const hasOverlappingCommits = (commit1, commit2, allCommits) => {
   const commit1Pos = commitPos[commit2.id];
@@ -322,7 +322,7 @@ const hasOverlappingCommits = (commit1, commit2, allCommits) => {
  * @param {any} y1
  * @param {any} y2
  * @param {any} _depth
- * @returns
+ * @returns {number} y value between y1 and y2
  */
 const findLane = (y1, y2, _depth) => {
   const depth = _depth || 0;
@@ -347,7 +347,7 @@ const findLane = (y1, y2, _depth) => {
 };
 
 /**
- * This function draw the lines between the commits. They were arrows initially.
+ * Draw the lines between the commits. They were arrows initially.
  *
  * @param {any} svg
  * @param {any} commit1
@@ -453,12 +453,10 @@ const drawArrows = (svg, commits) => {
 };
 
 /**
- * This function adds the branches and the branches' labels to the svg.
+ * Adds the branches and the branches' labels to the svg.
  *
  * @param svg
- * @param commitid
  * @param branches
- * @param direction
  */
 const drawBranches = (svg, branches) => {
   const gitGraphConfig = getConfig().gitGraph;
@@ -510,10 +508,6 @@ const drawBranches = (svg, branches) => {
 };
 
 /**
- * @param svg
- * @param commit
- * @param direction
- * @param branchColor
  * @param txt
  * @param id
  * @param ver

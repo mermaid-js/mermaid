@@ -30,9 +30,14 @@ import { isDetailedError } from './utils';
  * ```
  *
  * Renders the mermaid diagrams
+ *
+ * @param config
+ * @param nodes
+ * @param callback
  */
 const init = function (
   config?: MermaidConfig,
+  // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
   callback?: Function
 ) {
@@ -51,6 +56,7 @@ const init = function (
 
 const initThrowsErrors = function (
   config?: MermaidConfig,
+  // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
   callback?: Function
 ) {
@@ -124,7 +130,7 @@ const initThrowsErrors = function (
         element
       );
     } catch (error) {
-      log.warn('Catching Error (bootstrap)');
+      log.warn('Catching Error (bootstrap)', error);
       // @ts-ignore
       // TODO: We should be throwing an error object.
       throw { error, message: error.str };
@@ -153,13 +159,7 @@ if (typeof document !== 'undefined') {
   /*!
    * Wait for document loaded before starting the execution
    */
-  window.addEventListener(
-    'load',
-    function () {
-      contentLoaded();
-    },
-    false
-  );
+  window.addEventListener('load', contentLoaded, false);
 }
 
 /**

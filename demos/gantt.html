@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      div.mermaid {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
 
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Mermaid Quick Test Page</title>
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
-<style>
-	div.mermaid {
-		font-family: 'Courier New', Courier, monospace !important;
-	}
-</style>
-</head>
-
-<body>
-
-<!-- accDescription Tasks for Q4 -->
-<div class="mermaid">
+  <body>
+    <!-- accDescription Tasks for Q4 -->
+    <pre class="mermaid">
 gantt
   title A Gantt Diagram
   accDescription Remaining Q4 Tasks
@@ -27,17 +25,18 @@ gantt
   section Another
   Task in sec      :2014-01-12  , 12d
   another task      : 24d
-</div>
 
-<script src="./mermaid.js"></script>
-<script>
-	mermaid.initialize({
-  logLevel: 3,
-  securityLevel: 'loose',
-  gantt: { axisFormat: '%m/%d/%Y' },
-	});
-</script>
 
-</body>
+</pre
+    >
 
+    <script src="./mermaid.js"></script>
+    <script>
+      mermaid.initialize({
+        logLevel: 3,
+        securityLevel: 'loose',
+        gantt: { axisFormat: '%m/%d/%Y' },
+      });
+    </script>
+  </body>
 </html>

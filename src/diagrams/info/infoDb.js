@@ -1,5 +1,6 @@
 /** Created by knut on 15-01-14. */
 import { log } from '../../logger';
+import { clear } from '../../commonDb';
 
 var message = '';
 var info = false;
@@ -30,5 +31,6 @@ export default {
   getMessage,
   setInfo,
   getInfo,
+  clear,
   // parseError
 };

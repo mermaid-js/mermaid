@@ -163,9 +163,9 @@ export const validate = (graph) => {
 };
 
 /**
- * Finds a child that is not a cluster. When faking a edge between a node and a cluster.
+ * Finds a child that is not a cluster. When faking an edge between a node and a cluster.
  *
- * @param {Finds a} id
+ * @param id
  * @param {any} graph
  */
 export const findNonClusterChild = (id, graph) => {
@@ -235,7 +235,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
       edges.forEach((edge) => {
         // log.debug('Edge, decendants: ', edge, decendants[id]);
 
-        // Check if any edge leaves the cluster (not the actual cluster, thats a link from the box)
+        // Check if any edge leaves the cluster (not the actual cluster, that's a link from the box)
         if (edge.v !== id && edge.w !== id) {
           // Any edge where either the one of the nodes is decending to the cluster but not the other
           // if (decendants[id].indexOf(edge.v) < 0 && decendants[id].indexOf(edge.w) < 0) {

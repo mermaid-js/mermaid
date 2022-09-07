@@ -44,6 +44,7 @@ const anyComment = /\s*%%.*\n/gm;
 /**
  * @function detectInit Detects the init config object from the text
  *
+ * @param config
  *   ```mermaid
  *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
  *   graph LR
@@ -326,7 +327,7 @@ const calcLabelPosition = (points) => {
 
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
   let prevPoint;
-  let totalDistance = 0; // eslint-disable-line
+  let totalDistance = 0;
   log.info('our points', points);
   if (points[0] !== initialPosition) {
     points = points.reverse();
@@ -386,7 +387,7 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   // Todo looking to faster cloning method
   let points = JSON.parse(JSON.stringify(_points));
   let prevPoint;
-  let totalDistance = 0; // eslint-disable-line
+  let totalDistance = 0;
   log.info('our points', points);
   if (position !== 'start_left' && position !== 'start_right') {
     points = points.reverse();
@@ -734,92 +735,6 @@ const d3Attrs = function (d3Elem, attrs) {
   }
 };
 
-/**
- * Gives attributes for an SVG's size given arguments
- *
- * @param {number} height The height of the SVG
- * @param {number} width The width of the SVG
- * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
- * @returns {Map<'height' | 'width' | 'style', string>} Attributes for the SVG
- */
-export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
-  let attrs = new Map();
-  // attrs.set('height', height);
-  if (useMaxWidth) {
-    attrs.set('width', '100%');
-    attrs.set('style', `max-width: ${width}px;`);
-  } else {
-    attrs.set('width', width);
-  }
-  return attrs;
-};
-
-/**
- * Applies attributes from `calculateSvgSizeAttrs`
- *
- * @param {SVGSVGElement} svgElem The SVG Element to configure
- * @param {number} height The height of the SVG
- * @param {number} width The width of the SVG
- * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
- */
-export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
-  const attrs = calculateSvgSizeAttrs(height, 1 * width, useMaxWidth);
-  d3Attrs(svgElem, attrs);
-};
-export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth) {
-  const svgBounds = svgElem.node().getBBox();
-  const sWidth = svgBounds.width;
-  const sHeight = svgBounds.height;
-
-  log.info(`SVG bounds: ${sWidth}x${sHeight}`, svgBounds);
-
-  let width = graph._label.width;
-  let height = graph._label.height;
-  log.info(`Graph bounds: ${width}x${height}`, graph);
-
-  // let tx = 0;
-  // let ty = 0;
-  // if (sWidth > width) {
-  //   tx = (sWidth - width) / 2 + padding;
-  width = sWidth + padding * 2;
-  // } else {
-  //   if (Math.abs(sWidth - width) >= 2 * padding + 1) {
-  //     width = width - padding;
-  //   }
-  // }
-  // if (sHeight > height) {
-  //   ty = (sHeight - height) / 2 + padding;
-  height = sHeight + padding * 2;
-  // }
-
-  // width =
-  log.info(`Calculated bounds: ${width}x${height}`);
-  configureSvgSize(svgElem, height, width, useMaxWidth);
-
-  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-  // const vBox = `0 0 ${width} ${height}`;
-  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${
-    svgBounds.width + 2 * padding
-  } ${svgBounds.height + 2 * padding}`;
-  log.info(
-    'Graph.label',
-    graph._label,
-    'swidth',
-    sWidth,
-    'sheight',
-    sHeight,
-    'width',
-    width,
-    'height',
-    height,
-
-    'vBox',
-    vBox
-  );
-  svgElem.attr('viewBox', vBox);
-  // svgElem.select('g').attr('transform', `translate(${tx}, ${ty})`);
-};
-
 export const initIdGenerator = class iterator {
   constructor(deterministic, seed) {
     this.deterministic = deterministic;
@@ -945,10 +860,18 @@ export interface DetailedError {
   hash: any;
 }
 
+/**
+ *
+ * @param error
+ */
 export function isDetailedError(error: unknown): error is DetailedError {
   return 'str' in error;
 }
 
+/**
+ *
+ * @param error
+ */
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);
@@ -960,9 +883,6 @@ export default {
   calculateTextHeight,
   calculateTextWidth,
   calculateTextDimensions,
-  calculateSvgSizeAttrs,
-  configureSvgSize,
-  setupGraphViewbox,
   detectInit,
   detectDirective,
   isSubstringInArray,

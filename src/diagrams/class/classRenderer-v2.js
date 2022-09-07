@@ -5,7 +5,8 @@ import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 // import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { curveLinear } from 'd3';
-import { interpolateToCurve, getStylesFromArray, setupGraphViewbox } from '../../utils';
+import { interpolateToCurve, getStylesFromArray } from '../../utils';
+import { setupGraphViewbox } from '../../setupGraphViewbox';
 import common from '../common/common';
 import addSVGAccessibilityFields from '../../accessibility';
 
@@ -216,7 +217,6 @@ export const addRelations = function (relations, g) {
       edgeData.labelpos = 'c';
 
       if (getConfig().flowchart.htmlLabels) {
-        // eslint-disable-line
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
