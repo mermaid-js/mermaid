@@ -1,10 +1,11 @@
 import * as mindmapDB from './mindmapDb';
+import { parser } from './parser/mindmap';
 
 describe('when parsing a mindmap ', function () {
   let mindmap;
   beforeEach(function () {
-    mindmap = require('./parser/mindmap').parser;
-    mindmap.yy = require('./mindmapDb');
+    mindmap = parser;
+    mindmap.yy = mindmapDB;
     mindmap.yy.clear();
   });
   describe('hiearchy', function () {
