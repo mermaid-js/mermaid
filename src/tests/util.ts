@@ -1,6 +1,31 @@
 /*
- * Used to convert Tagged Template literals to object arrays as required by vitest.
- */
+Used to convert jest's Tagged Template literals to object arrays as required by vitest.
+
+Example:
+
+Jest code
+```ts
+it.each`
+str       | expected
+${'1d'}   | ${moment.duration(1, 'd')}
+${'2w'}   | ${moment.duration(2, 'w')}
+`('should parse $str to $expected duration', ({ str, expected }) => {
+   expect(yourFunction(str)).toEqual(expected);
+ });
+```
+
+Vitest code
+```ts
+it.each(convert`
+str       | expected
+${'1d'}   | ${moment.duration(1, 'd')}
+${'2w'}   | ${moment.duration(2, 'w')}
+`)('should parse $str to $expected duration', ({ str, expected }) => {
+   expect(yourFunction(str)).toEqual(expected);
+ });
+```
+*/
+
 export const convert = (template: TemplateStringsArray, ...params: any[]) => {
   const header = template[0]
     .trim()

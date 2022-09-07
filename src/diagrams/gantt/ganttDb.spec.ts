@@ -27,7 +27,7 @@ describe('when using the ganttDb', function () {
       ${'1f'}   | ${moment.duration.invalid()}
     `
     )('should $str resulting in $expected duration', ({ str, expected }) => {
-      expect(ganttDb.parseDuration(str).toString()).not.toEqual(expected);
+      expect(ganttDb.parseDuration(str)).toEqual(expected);
     });
   });
 
