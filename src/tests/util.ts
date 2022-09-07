@@ -1,3 +1,6 @@
+/*
+ * Used to convert Tagged Template literals to object arrays as required by vitest.
+ */
 export const convert = (template: TemplateStringsArray, ...params: any[]) => {
   const header = template[0]
     .trim()
