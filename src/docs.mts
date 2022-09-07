@@ -111,7 +111,7 @@ const copyTransformedContents = (
   if (doCopy) {
     writeFileSync(outFile, newBuffer);
   }
-  logWasOrShouldBeTransformed(outFile, doCopy);
+  logWasOrShouldBeTransformed(fileInFinalDocDir, doCopy);
 };
 
 const readSyncedUTF8file = (file: string): string => {
@@ -153,7 +153,8 @@ const transformMarkdown = (file: string) => {
       endOfLine: 'auto',
       printWidth: 100,
       singleQuote: true,
-    })
+    }),
+    !verifyOnly
   );
 };
 
