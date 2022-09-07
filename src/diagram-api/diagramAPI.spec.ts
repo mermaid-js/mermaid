@@ -19,6 +19,7 @@ describe('DiagramAPI', () => {
         db: {},
         parser: {},
         renderer: {},
+        styles: {},
       },
       (text: string) => text.includes('loki')
     );

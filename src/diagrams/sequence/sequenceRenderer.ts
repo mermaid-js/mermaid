@@ -7,7 +7,8 @@ import common from '../common/common';
 // import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
-import utils, { configureSvgSize } from '../../utils';
+import utils from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let conf = {};
@@ -326,7 +327,7 @@ const boundMessage = function (diagram, msgModel) {
  *
  * @param {any} diagram - The parent of the message element
  * @param {any} msgModel - The model containing fields describing a message
- * @param {float} lineStarty - The Y coordinate at which the message line starts
+ * @param {number} lineStarty - The Y coordinate at which the message line starts
  * @param diagObj
  */
 const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
@@ -582,8 +583,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  *
- * @param {any} text The text of the diagram
- * @param _text
+ * @param {any} _text The text of the diagram
  * @param {any} id The id of the diagram which will be used as a DOM element id¨
  * @param {any} _version Mermaid version from package.json
  * @param {any} diagObj A stanard diagram containing the db and the text and type etc of the diagram
