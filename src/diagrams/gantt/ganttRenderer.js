@@ -13,7 +13,7 @@ import {
 } from 'd3';
 import common from '../common/common';
 import { getConfig } from '../../config';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 export const setConf = function () {

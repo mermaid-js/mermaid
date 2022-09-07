@@ -129,7 +129,7 @@ const initThrowsErrors = function (
         element
       );
     } catch (error) {
-      log.warn('Catching Error (bootstrap)');
+      log.warn('Catching Error (bootstrap)', error);
       // @ts-ignore
       // TODO: We should be throwing an error object.
       throw { error, message: error.str };

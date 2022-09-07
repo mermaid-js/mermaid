@@ -5,7 +5,8 @@ import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { log } from '../../logger';
 import common, { evaluate } from '../common/common';
-import { interpolateToCurve, getStylesFromArray, setupGraphViewbox } from '../../utils';
+import { interpolateToCurve, getStylesFromArray } from '../../utils';
+import { setupGraphViewbox } from '../../setupGraphViewbox';
 import flowChartShapes from './flowChartShapes';
 import addSVGAccessibilityFields from '../../accessibility';
 
@@ -24,7 +25,6 @@ export const setConf = function (cnf) {
  * @param g The graph that is to be drawn.
  * @param svgId
  * @param root
- * @param doc
  * @param _doc
  * @param diagObj
  */

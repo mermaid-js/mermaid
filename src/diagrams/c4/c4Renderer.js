@@ -6,7 +6,8 @@ import common from '../common/common';
 import c4Db from './c4Db';
 import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
-import { wrapLabel, calculateTextWidth, calculateTextHeight, configureSvgSize } from '../../utils';
+import { wrapLabel, calculateTextWidth, calculateTextHeight } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let globalBoundaryMaxX = 0,
@@ -567,10 +568,9 @@ function drawInsideBoundary(diagram, parentBoundaryAlias, parentBounds, currentB
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  *
- * @param {any} text
- * @param _text
+ * @param {any} _text
  * @param {any} id
- * @param _version
+ * @param {any} _version
  * @param diagObj
  */
 export const draw = function (_text, id, _version, diagObj) {
