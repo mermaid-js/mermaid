@@ -1,17 +1,25 @@
 /**
- * @overview Process and potentially transform documentation source files into files suitable for publishing.
- *   Copy files from the source directory (/src/docs) to the directory used for the final, published documentation (/docs).
- *   The list of files changed (transformed) and copied to /docs are logged to the console.
- *   If a file in /src/docs has the same contents in /docs, nothing is done (it is not copied to /docs).
+ * @file Transform documentation source files into files suitable for publishing and optionally copy
+ *   the transformed files from the source directory to the directory used for the final, published
+ *   documentation directory. The list of files transformed and copied to final documentation
+ *   directory are logged to the console. If a file in the source directory has the same contents in
+ *   the final directory, nothing is done (the final directory is up-to-date).
+ * @example
+ *   docs
+ *   Run with no option flags
  *
- * @example docs
- * @example docs --verify
- *   If the --verify option is used, no files will be copied to /docs, but the list of files to be changed is still shown on the console.
- *   A message to the console will show that this command should be run without the --verify flag so that the 'docs' folder is be updated.
- *   Note that the command will return an exit code (1), which will show that it failed.
- * @example docs --git
- *   If the --git option is used, the command `git add docs` will be run
+ * @example
+ *   docs --verify
+ *   If the --verify option is used, it only _verifies_ that the final directory has been updated with the transformed files in the source directory.
+ *   No files will be copied to the final documentation directory, but the list of files to be changed is shown on the console.
+ *   If the final documentation directory does not have the transformed files from source directory
+ *   - a message to the console will show that this command should be run without the --verify flag so that the final directory is updated, and
+ *   - it will return a fail exit code (1)
  *
+ * @example
+ *   docs --git
+ *   If the --git option is used, the command `git add docs` will be run after all transformations (and/or verifications) have completed successfully
+ *   If not files were transformed, the git command is not run.
  */
 
 import { remark } from 'remark';
@@ -39,11 +47,12 @@ let filesWereChanged = false;
 
 /**
  * Given a source file name and path, return the documentation destination full path and file name
- * Create the destination path if it does not already exist.
- * Possible Improvement: combine with lint-staged to only copy files that have changed
+ * Create the destination path if it does not already exist. Possible Improvement: combine with
+ * lint-staged to only copy files that have changed
  *
- * @param file {string} name of the file (including full path)
- * @returns {string} name of the file with the path changed from src/docs to docs
+ * @param {string} file - Name of the file (including full path)
+ * @returns {string} Name of the file with the path changed from the source directory to final
+ *   documentation directory
  */
 const prepareOutFile = (file: string): string => {
   const outFile = join(FINAL_DOCS_DIR, file.replace(SOURCE_DOCS_DIR, ''));
@@ -86,11 +95,10 @@ const readSyncedUTF8file = (file: string): string => {
 
 /**
  * Transform a markdown file and write the transformed file to the directory for published documentation
- *   1. add a `mermaid-example` block before every `mermaid` or `mmd` block
- *      On the docsify site (one place where the documentation is published), this will show the code used for the mermaid diagram
- *   2. add the text that says the file is automatically generated
- *   3. use prettier to format the file
- *   Verify that the file has been changed and write out the changes
+ * 1. Add a `mermaid-example` block before every `mermaid` or `mmd` block On the docsify site (one
+ *    place where the documentation is published), this will show the code used for the mermaid diagram
+ * 2. Add the text that says the file is automatically generated
+ * 3. Use prettier to format the file Verify that the file has been changed and write out the changes
  *
  * @param file {string} name of the file that will be verified
  */
@@ -124,9 +132,9 @@ const transformMarkdown = (file: string) => {
 };
 
 /**
- * Transform a HTML file and write the transformed file to the directory for published documentation
- *   - add the text that says the file is automatically generated
- *   Verify that the file has been changed and write out the changes
+ * Transform an HTML file and write the transformed file to the directory for published documentation
+ * - Add the text that says the file is automatically generated Verify that the file has been changed
+ *   and write out the changes
  *
  * @param filename {string} name of the HTML file to transform
  */
@@ -135,7 +143,7 @@ const transformHtml = (filename: string) => {
    * Insert the '...auto generated...' comment into an HTML file after the <html> element
    *
    * @param fileName {string} file name that should have the comment inserted
-   * @returns {string} the contents of the file with the comment inserted
+   * @returns {string} The contents of the file with the comment inserted
    */
   const insertAutoGeneratedComment = (fileName: string): string => {
     const fileContents = readSyncedUTF8file(fileName);
@@ -152,6 +160,7 @@ const transformHtml = (filename: string) => {
   verifyAndCopy(filename, transformedHTML);
 };
 
+/** Main method (entry point) */
 (async () => {
   console.log('Transforming markdown files...');
   const mdFiles = await globby(['./src/docs/**/*.md'], { dot: true });
