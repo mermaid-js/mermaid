@@ -17,42 +17,6 @@ describe('when using the ganttDb', function () {
       }
     );
 
-    // it.only('should parse', () => {
-    //   expect(
-    //     convert(`
-    //   str       | expected
-    //   ${'1d'}   | ${moment.duration(1, 'd')}
-    //   ${'2w'}   | ${moment.duration(2, 'w')}
-    //   ${'1ms'}  | ${moment.duration(1, 'ms')}
-    //   ${'0.1s'} | ${moment.duration(100, 'ms')}
-    //   ${'1f'}   | ${moment.duration.invalid()}
-    // `)
-    //   ).toMatchInlineSnapshot(`
-    //     [
-    //       {
-    //         "expected": "P1D",
-    //         "str": "1d",
-    //       },
-    //       {
-    //         "expected": "P14D",
-    //         "str": "2w",
-    //       },
-    //       {
-    //         "expected": "PT0.001S",
-    //         "str": "1ms",
-    //       },
-    //       {
-    //         "expected": "PT0.1S",
-    //         "str": "0.1s",
-    //       },
-    //       {
-    //         "expected": "Invalid date",
-    //         "str": "1f",
-    //       },
-    //     ]
-    //   `);
-    // });
-
     it.each(
       convert`
       str       | expected
