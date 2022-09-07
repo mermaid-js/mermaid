@@ -31,7 +31,7 @@
     "build": "yarn clean; concurrently \"yarn build:code\" \"yarn build:types\"",
     "docs:build": "ts-node-esm src/docs.mts",
     "docs:verify": "ts-node-esm src/docs.mts --verify",
-    "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md; yarn docs:build",
+    "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md; prettier --write src/docs/Setup.md; yarn docs:build",
     "release": "yarn build",
     "lint": "eslint --cache --ignore-path .gitignore .; prettier --check .",
     "lint:fix": "eslint --fix --ignore-path .gitignore .; prettier --write .",
