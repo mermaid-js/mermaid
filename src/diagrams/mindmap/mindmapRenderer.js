@@ -22,7 +22,6 @@ function drawNodes(svg, mindmap, section, conf) {
 }
 
 /**
- * @param {any} svg The svg element to draw the diagram onto
  * @param edgesElem
  * @param mindmap
  * @param parent
@@ -149,8 +148,6 @@ const mergeTrees = (node, trees) => {
 
 /**
  * @param node
- * @param isRoot
- * @param parent
  * @param conf
  */
 function layoutMindmap(node, conf) {
@@ -201,7 +198,6 @@ function layoutMindmap(node, conf) {
 }
 /**
  * @param node
- * @param isRoot
  * @param conf
  */
 function positionNodes(node, conf) {
