@@ -54,6 +54,8 @@ describe('when using mermaid and ', function () {
       node.appendChild(document.createTextNode('graph TD;\na;'));
 
       mermaid.initThrowsErrors(undefined, node);
+      // mermaidAPI.render function has been mocked, since it doesn't yet work
+      // in Node.JS (only works in browser)
       expect(mermaidAPI.render).toHaveBeenCalled();
     });
   });
