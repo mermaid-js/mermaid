@@ -45,7 +45,7 @@
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn test",
-    "prepare": "concurrently \"husky install\" \"yarn build:prod\" \"yarn postbuild\"",
+    "prepare": "concurrently \"husky install\" \"yarn build\"",
     "pre-commit": "lint-staged"
   },
   "repository": {
