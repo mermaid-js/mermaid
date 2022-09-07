@@ -43,7 +43,7 @@
     "dev": "webpack serve --config ./.webpack/webpack.config.e2e.babel.js",
     "ci": "vitest",
     "test": "yarn lint && vitest run",
-    "test:watch": "vitest --watch",
+    "test:watch": "vitest --coverage --watch",
     "prepublishOnly": "yarn build && yarn test",
     "prepare": "concurrently \"husky install\" \"yarn build\"",
     "pre-commit": "lint-staged"
@@ -91,6 +91,7 @@
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
+    "@vitest/coverage-c8": "^0.23.1",
     "@vitest/ui": "^0.23.1",
     "babel-loader": "^8.2.2",
     "concurrently": "^7.0.0",
