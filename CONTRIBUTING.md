@@ -143,7 +143,6 @@ The source files for documentation are in `/src/docs` and are written in markdow
 
 If you want to add a new section or change the organization (structure), then you need to make sure to **change the side navigation** in `src/docs/_sidebar.md`.
 
-
 When changes are committed and then released, they become part of the `master` branch and become part of the published documentation on https://mermaid-js.github.io/mermaid/
 
 ## Last words
