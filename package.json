@@ -28,11 +28,11 @@
     "build": "concurrently \"yarn build:dev\" \"yarn build:prod\"",
     "docs:build": "ts-node-esm src/docs.mts",
     "docs:verify": "ts-node-esm src/docs.mts --verify",
-    "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md; yarn docs:build",
+    "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md && prettier --write src/docs/Setup.md && yarn docs:build",
     "build:watch": "yarn build:dev --watch",
     "release": "yarn build",
-    "lint": "eslint --cache --ignore-path .gitignore .; prettier --check .",
-    "lint:fix": "eslint --fix --ignore-path .gitignore .; prettier --write .",
+    "lint": "eslint --cache --ignore-path .gitignore . && prettier --check .",
+    "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
@@ -43,7 +43,7 @@
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn test",
-    "prepare": "concurrently \"husky install\" \"yarn build:prod\"",
+    "prepare": "concurrently \"husky install\" \"yarn build:prod\" \"yarn postbuild\"",
     "pre-commit": "lint-staged"
   },
   "repository": {
