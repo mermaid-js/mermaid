@@ -1532,6 +1532,33 @@
   resolved "https://registry.yarnpkg.com/@braintree/sanitize-url/-/sanitize-url-6.0.0.tgz#fe364f025ba74f6de6c837a84ef44bdb1d61e68f"
   integrity sha512-mgmE7XBYY/21erpzhexk4Cj1cyTQ9LzvnTxtzM17BJ7ERMNE6W72mQRo0I1Ud8eFJ+RVVIcBNhLFZ3GX4XFz5w==
 
+"@chevrotain/cst-dts-gen@10.3.0":
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/@chevrotain/cst-dts-gen/-/cst-dts-gen-10.3.0.tgz#434b267f7b38b2a760002a1bad699b4be1bd27a5"
+  integrity sha512-7DJPfCtfK1SU1/F3ZmmVv5IsTTcP/iiKFqU1m0H4VzJNvG3/GNxJFQjy4t/veWTAFSPWSj1WCNyq+sc5XKq9yA==
+  dependencies:
+    "@chevrotain/gast" "10.3.0"
+    "@chevrotain/types" "10.3.0"
+    lodash "4.17.21"
+
+"@chevrotain/gast@10.3.0":
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/@chevrotain/gast/-/gast-10.3.0.tgz#0c242546768183a13509e732ab35cb7402a3d6cd"
+  integrity sha512-kLbGubyLprlyFZ1/c5pkpciCi6WTcRcnKhkfflSdKsZuoy0OmVTEXzrmFCQWzJ+QtmQNtPZTKwIBXJ6Zixp6nA==
+  dependencies:
+    "@chevrotain/types" "10.3.0"
+    lodash "4.17.21"
+
+"@chevrotain/types@10.3.0":
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/@chevrotain/types/-/types-10.3.0.tgz#aa002b643534b5ff1333a46984f63e0ef3898088"
+  integrity sha512-LGesL4c5+FyweDsmFukcxmsowpagj1iC4iqkQSIDG3Y7krV2rIOmCDDq4kZff51Asr6yQHEJsWTyvGVHeWQLkw==
+
+"@chevrotain/utils@10.3.0":
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/@chevrotain/utils/-/utils-10.3.0.tgz#a5c02c388207d032b563bfc3f051fec646192920"
+  integrity sha512-KCpFcX+kNyKlVZQW60ZUGRW5Nsg5u0F2CIgHiDQyg282ouHS9xap2ZEKqhwGE/0nYP46nAPnGPdb/IYh7ZHOsA==
+
 "@commitlint/cli@^17.1.2":
   version "17.1.2"
   resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-17.1.2.tgz#38240f84936df5216f749f06f838dc50cc85a43d"
@@ -4030,6 +4057,18 @@ check-more-types@2.24.0, check-more-types@^2.24.0:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/check-more-types/-/check-more-types-2.24.0.tgz#1420ffb10fd444dcfc79b43891bbfffd32a84600"
   integrity sha1-FCD/sQ/URNz8ebQ4kbv//TKoRgA=
+
+chevrotain@^10.3.0:
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/chevrotain/-/chevrotain-10.3.0.tgz#16bad78cfffefe58bfe9e4943ba585bad2a2b6a1"
+  integrity sha512-sy3yTBfvNJmxzYOGWaDStZFuA7va5/MXwzBU+XBIol0bR0aYlfGqTjzgedeu32Ki/j7IVyvYAZO2PInBjmmMjg==
+  dependencies:
+    "@chevrotain/cst-dts-gen" "10.3.0"
+    "@chevrotain/gast" "10.3.0"
+    "@chevrotain/types" "10.3.0"
+    "@chevrotain/utils" "10.3.0"
+    lodash "4.17.21"
+    regexp-to-ast "0.5.0"
 
 chokidar@^3.4.0, chokidar@^3.5.3:
   version "3.5.3"
@@ -8486,7 +8525,7 @@ lodash.once@^4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
   integrity sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=
 
-lodash@^4.17.10, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.21, lodash@^4.17.4:
+lodash@4.17.21, lodash@^4.17.10, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.21, lodash@^4.17.4:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -10273,6 +10312,11 @@ regex-not@^1.0.0, regex-not@^1.0.2:
   dependencies:
     extend-shallow "^3.0.2"
     safe-regex "^1.1.0"
+
+regexp-to-ast@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/regexp-to-ast/-/regexp-to-ast-0.5.0.tgz#56c73856bee5e1fef7f73a00f1473452ab712a24"
+  integrity sha512-tlbJqcMHnPKI9zSrystikWKwHkBqu2a/Sgw01h3zFjvYrMxEDYHzzoMZnUrbIfpTFEsoRnnviOXNCzFiSc54Qw==
 
 regexpp@^3.2.0:
   version "3.2.0"

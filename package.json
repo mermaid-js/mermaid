@@ -91,6 +91,7 @@
     "@typescript-eslint/parser": "^5.36.1",
     "babel-jest": "^29.0.2",
     "babel-loader": "^8.2.2",
+    "chevrotain": "^10.3.0",
     "concurrently": "^7.0.0",
     "coveralls": "^3.0.2",
     "css-to-string-loader": "^0.1.3",
