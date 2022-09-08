@@ -11,6 +11,10 @@ module.exports = {
       { 'token-stack': true },
     ],
   },
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '^.+\\.jison$', // might be able to fix in future if .jison adds source-map support
+  ],
   transformIgnorePatterns: ['/node_modules/(?!dagre-d3-renderer/lib|khroma).*\\.js'],
   testPathIgnorePatterns: ['/node_modules/', '.cache', './cypress'],
   moduleNameMapper: {
