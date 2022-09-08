@@ -2,8 +2,8 @@ import { createToken, EmbeddedActionsParser, Lexer } from 'chevrotain';
 import { log } from '../../logger';
 import infoDb from './infoDb';
 
-const Info = createToken({ name: 'Info', pattern: /info/ });
-const ShowInfo = createToken({ name: 'ShowInfo', pattern: /showInfo/ });
+const Info = createToken({ name: 'Info', pattern: /info/i });
+const ShowInfo = createToken({ name: 'ShowInfo', pattern: /showInfo/i });
 const NewLine = createToken({
   name: 'NewLine',
   pattern: /\r?\n/,
@@ -44,7 +44,7 @@ class InfoParser extends EmbeddedActionsParser {
 
   public hdr = this.RULE('hdr', () => {
     this.CONSUME(Info);
-    this.CONSUME(NewLine);
+    this.OPTION(() => this.CONSUME(NewLine));
   });
 
   public row = this.RULE('row', () => {

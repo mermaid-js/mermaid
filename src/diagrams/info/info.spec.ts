@@ -35,11 +35,19 @@ describe('when parsing an info graph it', function () {
     }).toThrow();
   });
 
-  // TODO
-  // it('should no throw an error when showInfo is not defined', function () {
-  //   expect(() => {
-  //     infoParser.parse('info');
-  //   }).not.toThrow();
-  //   expect(infoDb.getInfo()).toEqual(false);
-  // });
+  it('should not throw an error when showInfo is not defined', function () {
+    infoParser.parse('info');
+    expect(infoDb.getInfo()).toEqual(true);
+  });
+
+  it.each([
+    `InFo`,
+    `Info
+  showinfo`,
+    `info
+  shOWINFO`,
+  ])('should be case insensitive', function (str) {
+    infoParser.parse(str);
+    expect(infoDb.getInfo()).toEqual(true);
+  });
 });
