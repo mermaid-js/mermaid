@@ -30,8 +30,7 @@ import infoDb from '../diagrams/info/infoDb';
 import infoRenderer from '../diagrams/info/infoRenderer';
 import infoParser from '../diagrams/info/infoParser';
 import infoStyles from '../diagrams/info/styles';
-// @ts-ignore
-import pieParser from '../diagrams/pie/parser/pie';
+import pieParser from '../diagrams/pie/pieParser';
 import pieDb from '../diagrams/pie/pieDb';
 import pieRenderer from '../diagrams/pie/pieRenderer';
 import pieStyles from '../diagrams/pie/styles';

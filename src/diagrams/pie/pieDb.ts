@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
@@ -13,8 +14,6 @@ import {
 } from '../../commonDb';
 
 let sections = {};
-let title = '';
-let description = '';
 let showData = false;
 
 export const parseDirective = function (statement, context, type) {
@@ -25,7 +24,7 @@ const addSection = function (id, value) {
   id = common.sanitizeText(id, configApi.getConfig());
   if (typeof sections[id] === 'undefined') {
     sections[id] = value;
-    log.debug('Added new section :', id);
+    log.debug('Added new section : ', id, ' with value:', value);
   }
 };
 const getSections = () => sections;
@@ -49,7 +48,6 @@ const cleanupValue = function (value) {
 
 const clear = function () {
   sections = {};
-  title = '';
   showData = false;
   commonClear();
 };
