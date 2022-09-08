@@ -49,8 +49,8 @@ describe('when parsing pie', function () {
     expect(section1).toBe(60);
   });
 
-  it('should handle pie with a title', function () {
-    pie.parser.parse(`pie title a 60/40 pie
+  it('should handle pie with a title and emoji', function () {
+    pie.parser.parse(`pie title a 60/40 pie ❤️
   "ash" : 60
   "bat" : 40
   `);
@@ -58,7 +58,7 @@ describe('when parsing pie', function () {
     const title = pieDb.getDiagramTitle();
     const section1 = sections['ash'];
     expect(section1).toBe(60);
-    expect(title).toBe('a 60/40 pie');
+    expect(title).toBe('a 60/40 pie ❤️');
   });
 
   it('should handle pie with an acc title  (accTitle)', function () {
