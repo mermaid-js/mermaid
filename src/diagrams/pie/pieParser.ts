@@ -75,11 +75,12 @@ class PieParser extends EmbeddedActionsParser {
       this.CONSUME(NewLine);
     });
     this.OPTION2(() => {
+      this.CONSUME2(AccDescription);
       this.OR([
         { ALT: () => this.SUBRULE(this.accDescriptionSingleLine) },
         { ALT: () => this.SUBRULE(this.accDescriptionMultiLine) },
       ]);
-      this.CONSUME2(NewLine);
+      this.CONSUME3(NewLine);
     });
     this.AT_LEAST_ONE(() => {
       this.SUBRULE2(this.row);
@@ -112,14 +113,12 @@ class PieParser extends EmbeddedActionsParser {
   });
 
   public accDescriptionSingleLine = this.RULE('accDescriptionSingleLine', () => {
-    this.CONSUME(AccDescription);
     this.CONSUME(Colon);
     const accDescrText = this.CONSUME(Text).image;
     this.ACTION(() => pieDb.setAccDescription(accDescrText));
   });
 
   public accDescriptionMultiLine = this.RULE('accDescriptionMultiLine', () => {
-    this.CONSUME(AccDescription);
     this.CONSUME(LeftCurly);
     this.MANY(() => this.CONSUME(NewLine));
 
