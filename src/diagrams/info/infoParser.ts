@@ -28,13 +28,17 @@ class InfoParser extends EmbeddedActionsParser {
     infoDb.clear();
   }
 
-  public infoDiagram = this.RULE('infoDiagram', () => {
+  public diagram = this.RULE('diagram', () => {
     this.MANY(() => {
       this.CONSUME(NewLine);
     });
     this.SUBRULE(this.hdr);
-    this.AT_LEAST_ONE(() => {
+    this.MANY2(() => {
       this.SUBRULE2(this.row);
+    });
+    infoDb.setInfo(true);
+    this.MANY3(() => {
+      this.CONSUME2(NewLine);
     });
   });
 
@@ -61,7 +65,7 @@ const parser = new InfoParser();
 const parse = (text: string): void => {
   const lexResult = InfoLexer.tokenize(text);
   parser.input = lexResult.tokens;
-  parser.infoDiagram();
+  parser.diagram();
 
   if (parser.errors.length > 0 || lexResult.errors.length > 0) {
     log.error(
