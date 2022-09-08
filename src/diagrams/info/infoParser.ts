@@ -36,7 +36,7 @@ class InfoParser extends EmbeddedActionsParser {
     this.MANY2(() => {
       this.SUBRULE2(this.row);
     });
-    infoDb.setInfo(true);
+    this.ACTION(() => infoDb.setInfo(true));
     this.MANY3(() => {
       this.CONSUME2(NewLine);
     });
@@ -56,7 +56,7 @@ class InfoParser extends EmbeddedActionsParser {
 
   public field = this.RULE('field', () => {
     this.CONSUME(ShowInfo);
-    infoDb.setInfo(true);
+    this.ACTION(() => infoDb.setInfo(true));
   });
 }
 
