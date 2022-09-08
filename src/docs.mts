@@ -1,8 +1,9 @@
 /**
- * @file Transform documentation source files into files suitable for publishing and optionally copy the transformed files from the source directory
- *   to the directory used for the final, published documentation directory. The list of files transformed and copied to final documentation directory
- *   are logged to the console. If a file in the source directory has the same contents in the final directory, nothing is done (the final directory
- *   is up-to-date).
+ * @file Transform documentation source files into files suitable for publishing and optionally copy
+ *   the transformed files from the source directory to the directory used for the final, published
+ *   documentation directory. The list of files transformed and copied to final documentation
+ *   directory are logged to the console. If a file in the source directory has the same contents in
+ *   the final directory, nothing is done (the final directory is up-to-date).
  * @example
  *   docs
  *   Run with no option flags
@@ -20,23 +21,24 @@
  *   If the --git option is used, the command `git add docs` will be run after all transformations (and/or verifications) have completed successfully
  *   If not files were transformed, the git command is not run.
  *
- * @todo Ensure that the documentation source and final paths are correct by using process.cwd() to get their absolute paths. Ensures that the
- *   location of those 2 directories is not dependent on where this file resides.
+ * @todo Ensure that the documentation source and final paths are correct by using process.cwd() to
+ *   get their absolute paths. Ensures that the location of those 2 directories is not dependent on
+ *   where this file resides.
  *
- * @todo Write a test file for this. (Will need to be able to deal .mts file. Jest has trouble with it.)
+ * @todo Write a test file for this. (Will need to be able to deal .mts file. Jest has trouble with
+ *   it.)
  */
-
-import { remark } from 'remark';
-import type { Code, Root } from 'mdast';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
-import { JSDOM } from 'jsdom';
-// @ts-ignore
-import flatmap from 'unist-util-flatmap';
-import { globby } from 'globby';
-import { join, dirname } from 'path';
 import { exec } from 'child_process';
+import { globby } from 'globby';
+import { JSDOM } from 'jsdom';
+import type { Code, Root } from 'mdast';
+import { join, dirname } from 'path';
 // @ts-ignore
 import prettier from 'prettier';
+import { remark } from 'remark';
+// @ts-ignore
+import flatmap from 'unist-util-flatmap';
 
 const SOURCE_DOCS_DIR = 'src/docs';
 const FINAL_DOCS_DIR = 'docs';
@@ -55,10 +57,12 @@ const git: boolean = process.argv.includes('--git');
 let filesWereTransformed = false;
 
 /**
- * Given a source file name and path, return the documentation destination full path and file name Create the destination path if it does not already exist.
+ * Given a source file name and path, return the documentation destination full path and file name
+ * Create the destination path if it does not already exist.
  *
  * @param {string} file - Name of the file (including full path)
- * @returns {string} Name of the file with the path changed from the source directory to final documentation directory
+ * @returns {string} Name of the file with the path changed from the source directory to final
+ *   documentation directory
  * @todo Possible Improvement: combine with lint-staged to only copy files that have changed
  */
 const changeToFinalDocDir = (file: string): string => {
@@ -68,7 +72,8 @@ const changeToFinalDocDir = (file: string): string => {
 };
 
 /**
- * Log messages to the console showing if the transformed file copied to the final documentation directory or still needs to be copied.
+ * Log messages to the console showing if the transformed file copied to the final documentation
+ * directory or still needs to be copied.
  *
  * @param {string} filename Name of the file that was transformed
  * @param {boolean} wasCopied Whether or not the file was copied
@@ -85,12 +90,14 @@ const logWasOrShouldBeTransformed = (filename: string, wasCopied: boolean) => {
 };
 
 /**
- * If the file contents were transformed, set the _filesWereTransformed_ flag to true and copy the transformed contents to the final documentation
- * directory if the doCopy flag is true. Log messages to the console.
+ * If the file contents were transformed, set the _filesWereTransformed_ flag to true and copy the
+ * transformed contents to the final documentation directory if the doCopy flag is true. Log
+ * messages to the console.
  *
  * @param {string} filename Name of the file that will be verified
  * @param {string} [transformedContent] New contents for the file
- * @param {boolean} [doCopy=false] Whether we should copy that transformedContents to the final documentation directory. Default is `false`
+ * @param {boolean} [doCopy=false] Whether we should copy that transformedContents to the final
+ *   documentation directory. Default is `false`
  */
 const copyTransformedContents = (
   filename: string,
@@ -118,10 +125,12 @@ const readSyncedUTF8file = (filename: string): string => {
 };
 
 /**
- * Transform a markdown file and write the transformed file to the directory for published documentation
+ * Transform a markdown file and write the transformed file to the directory for published
+ * documentation
  *
- * 1. Add a `mermaid-example` block before every `mermaid` or `mmd` block On the docsify site (one place where the documentation is published), this will
- *    show the code used for the mermaid diagram
+ * 1. Add a `mermaid-example` block before every `mermaid` or `mmd` block On the docsify site (one
+ *    place where the documentation is published), this will show the code used for the mermaid
+ *    diagram
  * 2. Add the text that says the file is automatically generated
  * 3. Use prettier to format the file Verify that the file has been changed and write out the changes
  *
@@ -158,9 +167,11 @@ const transformMarkdown = (file: string) => {
 };
 
 /**
- * Transform an HTML file and write the transformed file to the directory for published documentation
+ * Transform an HTML file and write the transformed file to the directory for published
+ * documentation
  *
- * - Add the text that says the file is automatically generated Verify that the file has been changed and write out the changes
+ * - Add the text that says the file is automatically generated Verify that the file has been changed
+ *   and write out the changes
  *
  * @param filename {string} name of the HTML file to transform
  */
