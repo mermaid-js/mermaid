@@ -20,11 +20,6 @@ const InfoLexer = new Lexer(allTokens);
 class InfoParser extends EmbeddedActionsParser {
   constructor() {
     super(allTokens);
-
-    const $ = this;
-    // very important to call this after all the rules have been defined.
-    // otherwise the parser may not work correctly as it will lack information
-    // derived during the self analysis phase.
     this.performSelfAnalysis();
   }
 
@@ -32,6 +27,7 @@ class InfoParser extends EmbeddedActionsParser {
     super.reset();
     infoDb.clear();
   }
+
   public infoDiagram = this.RULE('infoDiagram', () => {
     this.MANY(() => {
       this.CONSUME(NewLine);
