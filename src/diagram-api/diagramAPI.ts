@@ -28,8 +28,7 @@ import ganttStyles from '../diagrams/gantt/styles';
 
 import infoDb from '../diagrams/info/infoDb';
 import infoRenderer from '../diagrams/info/infoRenderer';
-// @ts-ignore
-import infoParser from '../diagrams/info/parser/info';
+import infoParser from '../diagrams/info/infoParser';
 import infoStyles from '../diagrams/info/styles';
 // @ts-ignore
 import pieParser from '../diagrams/pie/parser/pie';
