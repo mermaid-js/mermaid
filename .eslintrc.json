@@ -22,6 +22,7 @@
   ],
   "plugins": ["@typescript-eslint", "html", "jest", "jsdoc", "json"],
   "rules": {
+    "no-console": "error",
     "no-prototype-builtins": "off",
     "no-unused-vars": "off",
     "jsdoc/check-indentation": "off",
@@ -44,6 +45,12 @@
       "rules": {
         "no-undef": "off",
         "jsdoc/require-jsdoc": "off"
+      }
+    },
+    {
+      "files": ["./cypress/**", "./demos/**"],
+      "rules": {
+        "no-console": "off"
       }
     }
   ]
