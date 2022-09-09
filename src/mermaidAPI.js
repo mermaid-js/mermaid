@@ -146,6 +146,10 @@ export const decodeEntities = function (text) {
  * @returns {any}
  */
 const render = function (id, _txt, cb, container) {
+  if (!hasLoadedDiagrams) {
+    addDiagrams();
+    hasLoadedDiagrams = true;
+  }
   configApi.reset();
   let txt = _txt.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(txt);
