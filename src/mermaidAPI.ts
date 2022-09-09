@@ -38,6 +38,11 @@ import { evaluate } from './diagrams/common/common';
 
 let hasLoadedDiagrams = false;
 
+/**
+ *
+ * @param text
+ * @param parseError
+ */
 function parse(text: string, parseError?: Function): boolean {
   if (!hasLoadedDiagrams) {
     addDiagrams();
