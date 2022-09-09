@@ -348,6 +348,21 @@ describe('when parsing a gitGraph', function () {
     expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
   });
 
+  it('should allow branch names starting with numbers', function () {
+    const str = `gitGraph:
+    commit
+    %% branch names starting with numbers are not recommended, but are supported by git
+    branch 1.0.1
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getCurrentBranch()).toBe('1.0.1');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
+  });
+
   it('should handle new branch checkout', function () {
     const str = `gitGraph:
     commit
@@ -534,8 +549,6 @@ describe('when parsing a gitGraph', function () {
       testBranch3Commit,
       testBranch3Merge,
     ] = Object.values(commits);
-
-    console.log(Object.keys(commits));
 
     expect(mainCommit.branch).toBe('main');
     expect(mainCommit.parents).toStrictEqual([]);

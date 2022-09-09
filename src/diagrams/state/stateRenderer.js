@@ -5,7 +5,7 @@ import { log } from '../../logger';
 import common from '../common/common';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 // TODO Move conf object to main conf in mermaidAPI

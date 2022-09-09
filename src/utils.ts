@@ -44,8 +44,8 @@ const anyComment = /\s*%%.*\n/gm;
 /**
  * @function detectInit Detects the init config object from the text
  * @param config
- *
  * @param config
+ *
  *   ```mermaid
  *
  *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
@@ -634,7 +634,8 @@ const breakString = memoize(
  * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
  *
  * @param {any} text The text to measure
- * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the
+ *   resulting size
  * @returns {any} - The height for the given text
  */
 export const calculateTextHeight = function (text, config) {
@@ -649,7 +650,8 @@ export const calculateTextHeight = function (text, config) {
  * This calculates the width of the given text, font size and family.
  *
  * @param {any} text - The text to calculate the width of
- * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the
+ *   resulting size
  * @returns {any} - The width for the given text
  */
 export const calculateTextWidth = function (text, config) {
@@ -658,7 +660,8 @@ export const calculateTextWidth = function (text, config) {
 };
 
 /**
- * This calculates the dimensions of the given text, font size, font family, font weight, and margins.
+ * This calculates the dimensions of the given text, font size, font family, font weight, and
+ * margins.
  *
  * @param {any} text - The text to calculate the width of
  * @param {any} config - The config for fontSize, fontFamily, fontWeight, and margin all impacting
@@ -729,98 +732,13 @@ export const calculateTextDimensions = memoize(
  * Applys d3 attributes
  *
  * @param {any} d3Elem D3 Element to apply the attributes onto
- * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of attributes
+ * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of
+ *   attributes
  */
 const d3Attrs = function (d3Elem, attrs) {
   for (const attr of attrs) {
     d3Elem.attr(attr[0], attr[1]);
   }
-};
-
-/**
- * Gives attributes for an SVG's size given arguments
- *
- * @param {number} height The height of the SVG
- * @param {number} width The width of the SVG
- * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
- * @returns {Map<'height' | 'width' | 'style', string>} Attributes for the SVG
- */
-export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
-  const attrs = new Map();
-  // attrs.set('height', height);
-  if (useMaxWidth) {
-    attrs.set('width', '100%');
-    attrs.set('style', `max-width: ${width}px;`);
-  } else {
-    attrs.set('width', width);
-  }
-  return attrs;
-};
-
-/**
- * Applies attributes from `calculateSvgSizeAttrs`
- *
- * @param {SVGSVGElement} svgElem The SVG Element to configure
- * @param {number} height The height of the SVG
- * @param {number} width The width of the SVG
- * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
- */
-export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
-  const attrs = calculateSvgSizeAttrs(height, 1 * width, useMaxWidth);
-  d3Attrs(svgElem, attrs);
-};
-export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth) {
-  const svgBounds = svgElem.node().getBBox();
-  const sWidth = svgBounds.width;
-  const sHeight = svgBounds.height;
-
-  log.info(`SVG bounds: ${sWidth}x${sHeight}`, svgBounds);
-
-  let width = graph._label.width;
-  let height = graph._label.height;
-  log.info(`Graph bounds: ${width}x${height}`, graph);
-
-  // let tx = 0;
-  // let ty = 0;
-  // if (sWidth > width) {
-  //   tx = (sWidth - width) / 2 + padding;
-  width = sWidth + padding * 2;
-  // } else {
-  //   if (Math.abs(sWidth - width) >= 2 * padding + 1) {
-  //     width = width - padding;
-  //   }
-  // }
-  // if (sHeight > height) {
-  //   ty = (sHeight - height) / 2 + padding;
-  height = sHeight + padding * 2;
-  // }
-
-  // width =
-  log.info(`Calculated bounds: ${width}x${height}`);
-  configureSvgSize(svgElem, height, width, useMaxWidth);
-
-  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-  // const vBox = `0 0 ${width} ${height}`;
-  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${
-    svgBounds.width + 2 * padding
-  } ${svgBounds.height + 2 * padding}`;
-  log.info(
-    'Graph.label',
-    graph._label,
-    'swidth',
-    sWidth,
-    'sheight',
-    sHeight,
-    'width',
-    width,
-    'height',
-    height,
-
-    'vBox',
-    vBox
-  );
-  svgElem.attr('viewBox', vBox);
-  // svgElem.select('g').attr('transform', `translate(${tx}, ${ty})`);
 };
 
 export const initIdGenerator = class iterator {
@@ -948,18 +866,12 @@ export interface DetailedError {
   hash: any;
 }
 
-/**
- *
- * @param error
- */
+/** @param error */
 export function isDetailedError(error: unknown): error is DetailedError {
   return 'str' in error;
 }
 
-/**
- *
- * @param error
- */
+/** @param error */
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);
@@ -971,9 +883,6 @@ export default {
   calculateTextHeight,
   calculateTextWidth,
   calculateTextDimensions,
-  calculateSvgSizeAttrs,
-  configureSvgSize,
-  setupGraphViewbox,
   detectInit,
   detectDirective,
   isSubstringInArray,

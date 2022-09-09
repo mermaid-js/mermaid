@@ -3,7 +3,7 @@ import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
 import svgDraw from './svgDraw';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
 
@@ -142,8 +142,7 @@ const insertMarkers = function (elem) {
  *
  * @param {string} text
  * @param {string} id
- * @param version
- * @param _version
+ * @param {any} _version
  * @param diagObj
  */
 export const draw = function (text, id, _version, diagObj) {
