@@ -20,6 +20,7 @@ import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 import { MermaidConfig } from './config.type';
+import memoize from 'micro-memoize';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -43,10 +44,10 @@ const anyComment = /\s*%%.*\n/gm;
 
 /**
  * @function detectInit Detects the init config object from the text
- *
  * @param config
+ *
  *   ```mermaid
- *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
+ *           %%{init: {"theme": "debug", "logLevel": 1 }}%%
  *   graph LR
  *    a-->b
  *    b-->c
@@ -163,27 +164,6 @@ export const detectDirective = function (text, type = null) {
     );
     return { type: null, args: null };
   }
-};
-
-/**
- * Caches results of functions based on input
- *
- * @param {Function} fn Function to run
- * @param {Function} resolver Function that resolves to an ID given arguments the `fn` takes
- * @returns {Function} An optimized caching function
- */
-const memoize = (fn, resolver) => {
-  let cache = {};
-  return (...args) => {
-    let n = resolver ? resolver.apply(this, args) : args[0];
-    if (n in cache) {
-      return cache[n];
-    } else {
-      let result = fn(...args);
-      cache[n] = result;
-      return result;
-    }
-  };
 };
 
 /**
@@ -594,7 +574,7 @@ export const wrapLabel = memoize(
     return completedLines.filter((line) => line !== '').join(config.joinWith);
   },
   (label, maxWidth, config) =>
-    `${label}-${maxWidth}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}-${config.joinWith}`
+    `${label}${maxWidth}${config.fontSize}${config.fontWeight}${config.fontFamily}${config.joinWith}`
 );
 
 const breakString = memoize(
@@ -632,7 +612,8 @@ const breakString = memoize(
  * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
  *
  * @param {any} text The text to measure
- * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the
+ *   resulting size
  * @returns {any} - The height for the given text
  */
 export const calculateTextHeight = function (text, config) {
@@ -647,7 +628,8 @@ export const calculateTextHeight = function (text, config) {
  * This calculates the width of the given text, font size and family.
  *
  * @param {any} text - The text to calculate the width of
- * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the
+ *   resulting size
  * @returns {any} - The width for the given text
  */
 export const calculateTextWidth = function (text, config) {
@@ -656,7 +638,8 @@ export const calculateTextWidth = function (text, config) {
 };
 
 /**
- * This calculates the dimensions of the given text, font size, font family, font weight, and margins.
+ * This calculates the dimensions of the given text, font size, font family, font weight, and
+ * margins.
  *
  * @param {any} text - The text to calculate the width of
  * @param {any} config - The config for fontSize, fontFamily, fontWeight, and margin all impacting
@@ -727,7 +710,8 @@ export const calculateTextDimensions = memoize(
  * Applys d3 attributes
  *
  * @param {any} d3Elem D3 Element to apply the attributes onto
- * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of attributes
+ * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of
+ *   attributes
  */
 const d3Attrs = function (d3Elem, attrs) {
   for (let attr of attrs) {
@@ -860,18 +844,12 @@ export interface DetailedError {
   hash: any;
 }
 
-/**
- *
- * @param error
- */
+/** @param error */
 export function isDetailedError(error: unknown): error is DetailedError {
   return 'str' in error;
 }
 
-/**
- *
- * @param error
- */
+/** @param error */
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);
@@ -894,7 +872,6 @@ export default {
   getStylesFromArray,
   generateId,
   random,
-  memoize,
   runFunc,
   entityDecode,
   initIdGenerator: initIdGenerator,

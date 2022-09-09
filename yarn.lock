@@ -9070,6 +9070,11 @@ methods@~1.1.2:
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
   integrity sha1-VSmk1nZUE07cxSZmVoNbD4Ua/O4=
 
+micro-memoize@^4.0.11:
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/micro-memoize/-/micro-memoize-4.0.11.tgz#f664afc8bd8c11cb2838716a7306d6e1ec205d3a"
+  integrity sha512-CjxsaYe4j43df32DtzzNCwanPqZjZDwuQAZilsCYpa2ZVtSPDjHXbTlR4gsEZRyO9/twHs0b7HLjvy/sowl7sA==
+
 micromark-core-commonmark@^1.0.1:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/micromark-core-commonmark/-/micromark-core-commonmark-1.0.6.tgz#edff4c72e5993d93724a3c206970f5a15b0585ad"
