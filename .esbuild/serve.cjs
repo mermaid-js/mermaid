@@ -1,7 +1,7 @@
 const esbuild = require('esbuild');
 const http = require('http');
 const path = require('path');
-const { umdBuild } = require('./util.cjs');
+const { iifeBuild } = require('./util.cjs');
 
 // Start esbuild's server on a random local port
 esbuild
@@ -9,7 +9,7 @@ esbuild
     {
       servedir: path.join(__dirname, '..'),
     },
-    umdBuild({ minify: false })
+    iifeBuild({ minify: false })
   )
   .then((result) => {
     // The result tells us where esbuild's local server is
