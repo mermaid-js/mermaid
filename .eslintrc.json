@@ -15,6 +15,7 @@
   },
   "extends": [
     "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
     "plugin:jsdoc/recommended",
     "plugin:json/recommended",
     "plugin:markdown/recommended",
@@ -36,6 +37,16 @@
     "jsdoc/require-returns": "off",
     "jsdoc/require-returns-description": "off",
     "cypress/no-async-tests": "off",
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": "allow-with-description",
+        "ts-nocheck": "allow-with-description",
+        "ts-check": "allow-with-description",
+        "minimumDescriptionLength": 10
+      }
+    ],
     "json/*": ["error", "allowComments"],
     "no-empty": ["error", { "allowEmptyCatch": true }]
   },

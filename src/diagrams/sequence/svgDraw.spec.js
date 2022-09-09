@@ -1,5 +1,5 @@
-const svgDraw = require('./svgDraw').default;
-const { MockD3 } = require('d3');
+import svgDraw from './svgDraw';
+import { MockD3 } from 'd3';
 
 describe('svgDraw', function () {
   describe('drawRect', function () {

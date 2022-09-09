@@ -96,6 +96,7 @@ export const bounds = {
     }
   },
   updateBounds: function (startx, starty, stopx, stopy) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _self = this;
     let cnt = 0;
     /** @param {any} type */
@@ -653,7 +654,7 @@ export const draw = function (_text, id, _version, diagObj) {
   // Draw the messages/signals
   let sequenceIndex = 1;
   let sequenceIndexStep = 1;
-  let messagesToDraw = Array();
+  let messagesToDraw = [];
   messages.forEach(function (msg) {
     let loopModel, noteModel, msgModel;
 
