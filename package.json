@@ -73,6 +73,7 @@
     "fast-clone": "^1.5.13",
     "graphlib": "^2.1.8",
     "khroma": "^2.0.0",
+    "lodash": "^4.17.21",
     "moment-mini": "^2.24.0",
     "non-layered-tidy-tree-layout": "^2.0.2",
     "stylis": "^4.0.10"
@@ -88,6 +89,7 @@
     "@types/d3": "^7.4.0",
     "@types/dompurify": "^2.3.4",
     "@types/jest": "^28.1.7",
+    "@types/lodash": "^4.14.184",
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
