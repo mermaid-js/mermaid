@@ -39,12 +39,17 @@ exports.esmBuild = (override = { minify: true }) => {
 };
 
 /**
- * @param {Options} override
+ * @param {Options & { core?: boolean }} override
  * @returns {Options}
  */
-exports.umdBuild = (override = { minify: true }) => {
+exports.umdBuild = (override = { minify: true, core: false }) => {
+  const core = override.core;
+  if (core && override.minify) {
+    throw new Error('Cannot minify core build');
+  }
+  delete override.core;
   return buildOptions({
-    outfile: `dist/mermaid${override.minify ? '.min' : ''}.js`,
+    outfile: `dist/mermaid${override.minify ? '.min' : core ? '.core' : ''}.js`,
     ...override,
   });
 };
