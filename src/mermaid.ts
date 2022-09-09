@@ -30,6 +30,7 @@ import { isDetailedError } from './utils';
  * ```
  *
  * Renders the mermaid diagrams
+ *
  * @param config
  * @param nodes
  * @param callback
@@ -158,13 +159,7 @@ if (typeof document !== 'undefined') {
   /*!
    * Wait for document loaded before starting the execution
    */
-  window.addEventListener(
-    'load',
-    function () {
-      contentLoaded();
-    },
-    false
-  );
+  window.addEventListener('load', contentLoaded, false);
 }
 
 /**
