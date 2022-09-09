@@ -50,6 +50,7 @@ exports.iifeBuild = (override = { minify: true, core: false }) => {
   delete override.core;
   return buildOptions({
     outfile: `dist/mermaid${override.minify ? '.min' : core ? '.core' : ''}.js`,
+    format: 'iife',
     ...override,
   });
 };
