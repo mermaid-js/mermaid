@@ -20,7 +20,7 @@ import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 import { MermaidConfig } from './config.type';
-import memoize from 'micro-memoize';
+import { memoize } from 'lodash';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -47,7 +47,8 @@ const anyComment = /\s*%%.*\n/gm;
  * @param config
  *
  *   ```mermaid
- *           %%{init: {"theme": "debug", "logLevel": 1 }}%%
+ *
+ *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
  *   graph LR
  *    a-->b
  *    b-->c
@@ -602,7 +603,7 @@ const breakString = memoize(
     return { hyphenatedStrings: lines, remainingWord: currentLine };
   },
   (word, maxWidth, hyphenCharacter = '-', config) =>
-    `${word}-${maxWidth}-${hyphenCharacter}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
+    `${word}${maxWidth}${hyphenCharacter}${config.fontSize}${config.fontWeight}${config.fontFamily}`
 );
 
 /**
@@ -703,7 +704,7 @@ export const calculateTextDimensions = memoize(
         : 1;
     return dims[index];
   },
-  (text, config) => `${text}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
+  (text, config) => `${text}${config.fontSize}${config.fontWeight}${config.fontFamily}`
 );
 
 /**
