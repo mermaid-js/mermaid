@@ -1,26 +1,12 @@
 import { MermaidConfig } from '../config.type';
 
-export type DiagramDetector = (text: string) => boolean;
+export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
 
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
 
 const detectors: Record<string, DiagramDetector> = {};
-const diagramMatchers: Record<string, RegExp> = {
-  c4: /^\s*C4Context|C4Container|C4Component|C4Dynamic|C4Deployment/,
-  sequence: /^\s*sequenceDiagram/,
-  gantt: /^\s*gantt/,
-  classDiagram: /^\s*classDiagram-v2/,
-  stateDiagram: /^\s*stateDiagram-v2/,
-  'flowchart-v2': /^\s*flowchart/, // Might need to add |graph to fix #3391
-  info: /^\s*info/,
-  pie: /^\s*pie/,
-  er: /^\s*erDiagram/,
-  journey: /^\s*journey/,
-  // gitGraph: /^\s*gitGraph/,
-  requirement: /^\s*requirement(Diagram)?/,
-};
 
 /**
  * @function detectType Detects the type of the graph text. Takes into consideration the possible
@@ -47,28 +33,9 @@ const diagramMatchers: Record<string, RegExp> = {
  */
 export const detectType = function (text: string, config?: MermaidConfig): string {
   text = text.replace(directive, '').replace(anyComment, '\n');
-  for (const [diagram, matcher] of Object.entries(diagramMatchers)) {
-    if (text.match(matcher)) {
-      return diagram;
-    }
-  }
-
-  if (text.match(/^\s*classDiagram/)) {
-    if (config?.class?.defaultRenderer === 'dagre-wrapper') return 'classDiagram';
-    return 'class';
-  }
-
-  if (text.match(/^\s*stateDiagram/)) {
-    if (config?.state?.defaultRenderer === 'dagre-wrapper') return 'stateDiagram';
-    return 'state';
-  }
-
-  if (config?.flowchart?.defaultRenderer === 'dagre-wrapper') {
-    return 'flowchart-v2';
-  }
 
   for (const [key, detector] of Object.entries(detectors)) {
-    if (detector(text)) {
+    if (detector(text, config)) {
       return key;
     }
   }
