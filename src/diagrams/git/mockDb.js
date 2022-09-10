@@ -173,7 +173,9 @@ export const getCommits = () => {
     },
   };
 };
-export const clear = () => {};
+export const clear = () => {
+  //no-op
+};
 export const getBranchesAsObjArray = () => [
   {
     name: 'master',

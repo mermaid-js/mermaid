@@ -550,8 +550,6 @@ describe('when parsing a gitGraph', function () {
       testBranch3Merge,
     ] = Object.values(commits);
 
-    console.log(Object.keys(commits));
-
     expect(mainCommit.branch).toBe('main');
     expect(mainCommit.parents).toStrictEqual([]);
 

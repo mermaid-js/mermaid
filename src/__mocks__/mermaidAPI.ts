@@ -19,6 +19,7 @@ let hasLoadedDiagrams = false;
  * @param text
  * @param parseError
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 function parse(text: string, parseError?: Function): boolean {
   if (!hasLoadedDiagrams) {
     addDiagrams();

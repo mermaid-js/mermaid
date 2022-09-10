@@ -219,7 +219,8 @@ export interface MindmapDiagramConfig extends BaseDiagramConfig {
   padding: number;
   maxNodeWidth: number;
 }
-export interface PieDiagramConfig extends BaseDiagramConfig {}
+
+export type PieDiagramConfig = BaseDiagramConfig;
 
 export interface ErDiagramConfig extends BaseDiagramConfig {
   diagramPadding?: number;

@@ -151,6 +151,7 @@ export const bounds = {
   },
   updateBounds: function (startx, starty, stopx, stopy) {
     const conf = getConfig().journey;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _self = this;
     let cnt = 0;
     /** @param {any} type */

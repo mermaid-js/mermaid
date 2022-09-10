@@ -13,7 +13,9 @@ let conf;
 
 const transformationLog = {};
 
-export const setConf = function () {};
+export const setConf = function () {
+  //no-op
+};
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.

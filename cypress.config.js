@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 const { defineConfig } = require('cypress');
 const { addMatchImageSnapshotPlugin } = require('cypress-image-snapshot/plugin');
 require('@applitools/eyes-cypress')(module);

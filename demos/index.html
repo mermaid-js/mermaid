@@ -1083,7 +1083,9 @@ Enterprise_Boundary(b0, "BankBoundary0") {
     <script>
       const testLineEndings = (test, input) => {
         try {
-          mermaid.render(test, input, () => {});
+          mermaid.render(test, input, () => {
+            //no-op
+          });
         } catch (err) {
           console.error('Error in %s:\n\n%s', test, err);
         }
