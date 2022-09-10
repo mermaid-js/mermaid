@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /**
  * @file Transform documentation source files into files suitable for publishing and optionally copy
  *   the transformed files from the source directory to the directory used for the final, published
