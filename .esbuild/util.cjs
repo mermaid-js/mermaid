@@ -61,7 +61,9 @@ const jisonPlugin = {
     build.onLoad({ filter: /\.jison$/ }, async (args) => {
       // Load the file from the file system
       const source = await fs.promises.readFile(args.path, 'utf8');
-      const contents = new Generator(source, { 'token-stack': true }).generate();
+      const contents = new Generator(source, { 'token-stack': true }).generate({
+        moduleMain: '() => {}', // disable moduleMain (default one requires Node.JS modules)
+      });
       return { contents, warnings: [] };
     });
   },
