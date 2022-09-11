@@ -36,10 +36,9 @@ import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
 import type { Code, Root } from 'mdast';
 import { join, dirname } from 'path';
-// @ts-ignore
 import prettier from 'prettier';
 import { remark } from 'remark';
-// @ts-ignore
+// @ts-ignore No typescript declaration file
 import flatmap from 'unist-util-flatmap';
 
 const SOURCE_DOCS_DIR = 'src/docs';
@@ -90,9 +89,8 @@ const changeToFinalDocDir = (file: string): string => {
  * @param {boolean} wasCopied Whether or not the file was copied
  */
 const logWasOrShouldBeTransformed = (filename: string, wasCopied: boolean) => {
-  let changeMsg: string;
+  const changeMsg = wasCopied ? LOGMSG_TRANSFORMED : LOGMSG_TO_BE_TRANSFORMED;
   let logMsg: string;
-  changeMsg = wasCopied ? LOGMSG_TRANSFORMED : LOGMSG_TO_BE_TRANSFORMED;
   logMsg = `  File ${changeMsg}: ${filename}`;
   if (wasCopied) {
     logMsg += LOGMSG_COPIED;
@@ -106,15 +104,11 @@ const logWasOrShouldBeTransformed = (filename: string, wasCopied: boolean) => {
  * messages to the console.
  *
  * @param {string} filename Name of the file that will be verified
- * @param {string} [transformedContent] New contents for the file
  * @param {boolean} [doCopy=false] Whether we should copy that transformedContents to the final
  *   documentation directory. Default is `false`
+ * @param {string} [transformedContent] New contents for the file
  */
-const copyTransformedContents = (
-  filename: string,
-  doCopy: boolean = false,
-  transformedContent?: string
-) => {
+const copyTransformedContents = (filename: string, doCopy = false, transformedContent?: string) => {
   const fileInFinalDocDir = changeToFinalDocDir(filename);
   const existingBuffer = existsSync(fileInFinalDocDir)
     ? readFileSync(fileInFinalDocDir)
