@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck TODO: fix file
 import { select } from 'd3';
 import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
@@ -74,7 +74,7 @@ export const draw = function (text, id, version, diagObj) {
   const title = diagObj.db.getDiagramTitle();
 
   const actorNames = diagObj.db.getActors();
-  for (let member in actors) delete actors[member];
+  for (const member in actors) delete actors[member];
   let actorPos = 0;
   actorNames.forEach((actorName) => {
     actors[actorName] = {
@@ -152,6 +152,7 @@ export const bounds = {
   },
   updateBounds: function (startx, starty, stopx, stopy) {
     const conf = getConfig().journey;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _self = this;
     let cnt = 0;
     /** @param {any} type */
@@ -219,7 +220,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
 
   // Draw the tasks
   for (let i = 0; i < tasks.length; i++) {
-    let task = tasks[i];
+    const task = tasks[i];
     if (lastSection !== task.section) {
       fill = fills[sectionNumber % fills.length];
       num = sectionNumber % fills.length;

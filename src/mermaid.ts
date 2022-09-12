@@ -14,7 +14,8 @@ import { isDetailedError } from './utils';
  * Function that goes through the document to find the chart definitions in there and render them.
  *
  * The function tags the processed attributes with the attribute data-processed and ignores found
- * elements with the attribute already set. This way the init function can be triggered several times.
+ * elements with the attribute already set. This way the init function can be triggered several
+ * times.
  *
  * Optionally, `init` can accept in the second argument one of the following:
  *
@@ -39,6 +40,7 @@ const init = function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   callback?: Function
 ) {
   try {
@@ -58,13 +60,14 @@ const initThrowsErrors = function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   callback?: Function
 ) {
   const conf = mermaidAPI.getConfig();
   // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   if (config) {
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
-    // @ts-ignore
+    // @ts-ignore: TODO Fix ts errors
     mermaid.sequenceConfig = config;
   }
 
@@ -131,7 +134,7 @@ const initThrowsErrors = function (
       );
     } catch (error) {
       log.warn('Catching Error (bootstrap)', error);
-      // @ts-ignore
+      // @ts-ignore: TODO Fix ts errors
       // TODO: We should be throwing an error object.
       throw { error, message: error.str };
     }
@@ -144,7 +147,8 @@ const initialize = function (config: MermaidConfig) {
 
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
- * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
+ * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
+ * page.
  */
 const contentLoaded = function () {
   if (mermaid.startOnLoad) {
@@ -187,6 +191,7 @@ const parse = (txt: string) => {
 const mermaid: {
   startOnLoad: boolean;
   diagrams: any;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   parseError?: Function;
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;

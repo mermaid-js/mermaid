@@ -1,52 +1,52 @@
 import c4Db from '../diagrams/c4/c4Db';
 import c4Renderer from '../diagrams/c4/c4Renderer';
 import c4Styles from '../diagrams/c4/styles';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import c4Parser from '../diagrams/c4/parser/c4Diagram';
 import classDb from '../diagrams/class/classDb';
 import classRenderer from '../diagrams/class/classRenderer';
 import classRendererV2 from '../diagrams/class/classRenderer-v2';
 import classStyles from '../diagrams/class/styles';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import classParser from '../diagrams/class/parser/classDiagram';
 import erDb from '../diagrams/er/erDb';
 import erRenderer from '../diagrams/er/erRenderer';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import erParser from '../diagrams/er/parser/erDiagram';
 import erStyles from '../diagrams/er/styles';
 import flowDb from '../diagrams/flowchart/flowDb';
 import flowRenderer from '../diagrams/flowchart/flowRenderer';
 import flowRendererV2 from '../diagrams/flowchart/flowRenderer-v2';
 import flowStyles from '../diagrams/flowchart/styles';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import flowParser from '../diagrams/flowchart/parser/flow';
 import ganttDb from '../diagrams/gantt/ganttDb';
 import ganttRenderer from '../diagrams/gantt/ganttRenderer';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import ganttParser from '../diagrams/gantt/parser/gantt';
 import ganttStyles from '../diagrams/gantt/styles';
 
 import infoDb from '../diagrams/info/infoDb';
 import infoRenderer from '../diagrams/info/infoRenderer';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import infoParser from '../diagrams/info/parser/info';
 import infoStyles from '../diagrams/info/styles';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import pieParser from '../diagrams/pie/parser/pie';
 import pieDb from '../diagrams/pie/pieDb';
 import pieRenderer from '../diagrams/pie/pieRenderer';
 import pieStyles from '../diagrams/pie/styles';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import requirementParser from '../diagrams/requirement/parser/requirementDiagram';
 import requirementDb from '../diagrams/requirement/requirementDb';
 import requirementRenderer from '../diagrams/requirement/requirementRenderer';
 import requirementStyles from '../diagrams/requirement/styles';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import sequenceParser from '../diagrams/sequence/parser/sequenceDiagram';
 import sequenceDb from '../diagrams/sequence/sequenceDb';
 import sequenceRenderer from '../diagrams/sequence/sequenceRenderer';
 import sequenceStyles from '../diagrams/sequence/styles';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import stateParser from '../diagrams/state/parser/stateDiagram';
 import stateDb from '../diagrams/state/stateDb';
 import stateRenderer from '../diagrams/state/stateRenderer';
@@ -55,7 +55,7 @@ import stateStyles from '../diagrams/state/styles';
 import journeyDb from '../diagrams/user-journey/journeyDb';
 import journeyRenderer from '../diagrams/user-journey/journeyRenderer';
 import journeyStyles from '../diagrams/user-journey/styles';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import journeyParser from '../diagrams/user-journey/parser/journey';
 import { addDetector, DiagramDetector } from './detectType';
 import { log as _log } from '../logger';

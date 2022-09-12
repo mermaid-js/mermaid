@@ -14,7 +14,7 @@ import { FlowChartStyleOptions } from './diagrams/flowchart/styles';
 import { log } from './logger';
 
 // TODO @knut: Inject from registerDiagram.
-const themes = {
+const themes: Record<string, any> = {
   flowchart,
   'flowchart-v2': flowchart,
   sequence,
@@ -45,7 +45,7 @@ const getStyles = (
     lineColor: string;
   } & FlowChartStyleOptions
 ) => {
-  let diagramStyles: string = '';
+  let diagramStyles = '';
   if (type in themes && themes[type as keyof typeof themes]) {
     diagramStyles = themes[type as keyof typeof themes](options);
   } else {
@@ -103,8 +103,7 @@ const getStyles = (
 `;
 };
 
-export const addStylesForDiagram = (type: string, diagramTheme: any) => {
-  // @ts-ignore
+export const addStylesForDiagram = (type: string, diagramTheme: unknown): void => {
   themes[type] = diagramTheme;
 };
 

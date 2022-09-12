@@ -17,7 +17,7 @@
  */
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import pkg from '../package.json';
 import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
@@ -39,10 +39,10 @@ import { evaluate } from './diagrams/common/common';
 let hasLoadedDiagrams = false;
 
 /**
- *
  * @param text
  * @param parseError
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 function parse(text: string, parseError?: Function): boolean {
   if (!hasLoadedDiagrams) {
     addDiagrams();
@@ -131,7 +131,7 @@ const render = function (
     directiveSanitizer(graphInit);
     configApi.addDirective(graphInit);
   }
-  let cnf = configApi.getConfig();
+  const cnf = configApi.getConfig();
 
   log.debug(cnf);
 
@@ -324,8 +324,8 @@ const render = function (
   svgCode = svgCode.replace(/<br>/g, '<br/>');
 
   if (cnf.securityLevel === 'sandbox') {
-    let svgEl = root.select('#d' + id + ' svg').node();
-    let width = '100%';
+    const svgEl = root.select('#d' + id + ' svg').node();
+    const width = '100%';
     let height = '100%';
     if (svgEl) {
       height = svgEl.viewBox.baseVal.height + 'px';
@@ -402,7 +402,7 @@ const parseDirective = function (p: any, statement: string, context: string, typ
     log.error(
       `Error while rendering sequenceDiagram directive: ${statement} jison context: ${context}`
     );
-    // @ts-ignore
+    // @ts-ignore: TODO Fix ts errors
     log.error(error.message);
   }
 };

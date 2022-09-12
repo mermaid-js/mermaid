@@ -1,11 +1,10 @@
+import { parser as mindmap } from './parser/mindmap';
 import * as mindmapDB from './mindmapDb';
 import { setLogLevel } from '../../logger';
 
 describe('when parsing a mindmap ', function () {
-  let mindmap;
   beforeEach(function () {
-    mindmap = require('./parser/mindmap').parser;
-    mindmap.yy = require('./mindmapDb');
+    mindmap.yy = mindmapDB;
     mindmap.yy.clear();
     setLogLevel('trace');
   });
