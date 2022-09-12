@@ -88,7 +88,7 @@
     "@types/jest": "^28.1.7",
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
-    "@typescript-eslint/parser": "^5.36.1",
+    "@typescript-eslint/parser": "^5.36.2",
     "babel-jest": "^29.0.2",
     "babel-loader": "^8.2.2",
     "concurrently": "^7.0.0",
