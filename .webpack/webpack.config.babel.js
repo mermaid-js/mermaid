@@ -5,12 +5,19 @@ import baseConfig from './webpack.config.base';
 export default (_env, args) => {
   return [
     // non-minified
-    baseConfig,
+    merge(baseConfig, {
+      optimization: {
+        minimize: false,
+      },
+    }),
     // core [To be used by webpack/esbuild/vite etc to bundle mermaid]
     merge(baseConfig, {
       externals: [nodeExternals()],
       output: {
         filename: '[name].core.js',
+      },
+      optimization: {
+        minimize: false,
       },
     }),
     // umd
