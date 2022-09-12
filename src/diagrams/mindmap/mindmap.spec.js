@@ -1,6 +1,6 @@
 import { parser as mindmap } from './parser/mindmap';
 import * as mindmapDB from './mindmapDb';
-import { setLogLevel } from '../../logger';
+import { setLogLevel } from '../../diagram-api/diagramAPI';
 
 describe('when parsing a mindmap ', function () {
   beforeEach(function () {
