@@ -6,8 +6,8 @@ import { MermaidConfig } from '../config.type';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox';
 import { addStylesForDiagram } from '../styles';
 
-/* 
-  Packaging and exposing resources for externa diagrams so that they can import 
+/*
+  Packaging and exposing resources for externa diagrams so that they can import
   diagramAPI and have access to selct parts of mermaid common code reqiored to
   create diagrams worling like the internal diagrams.
 */
