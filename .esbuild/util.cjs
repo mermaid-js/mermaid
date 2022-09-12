@@ -47,7 +47,7 @@ exports.esmBuild = (override = { minify: true }) => {
  * Build options for mermaid.core.* build.
  *
  * This build does not bundle `./node_modules/`, as it is designed to be used
- * with Webpack/ESBuild to merge webpack into a website.
+ * with Webpack/ESBuild/Vite to use mermaid inside an app/website.
  *
  * @param {Options} override - Override options.
  * @returns {Options} ESBuild build options.
