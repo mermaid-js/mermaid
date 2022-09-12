@@ -4,6 +4,9 @@ import flowDb from './diagrams/flowchart/flowDb';
 import flowParser from './diagrams/flowchart/parser/flow';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import Diagram from './Diagram';
+import { addDiagrams } from './diagram-api/diagram-orchestration';
+
+addDiagrams();
 
 const spyOn = jest.spyOn;
 
