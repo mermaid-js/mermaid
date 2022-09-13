@@ -5609,10 +5609,10 @@ eslint-plugin-html@^7.1.0:
   dependencies:
     htmlparser2 "^8.0.1"
 
-eslint-plugin-jest@^27.0.1:
-  version "27.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-27.0.1.tgz#3e67ee2051411540988c62075e8788702a1064da"
-  integrity sha512-LosUsrkwVSs/8Z/I8Hqn5vWgTEsHrfIquDEKOsV8/cl+gbFR4tiRCE1AimEotsHjSC0Rx1tYm6vPhw8C3ktmmg==
+eslint-plugin-jest@^27.0.4:
+  version "27.0.4"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-27.0.4.tgz#ab9c7b3f48bfade4762c24c415a5d9bbc0174a61"
+  integrity sha512-BuvY78pHMpMJ6Cio7sKg6jrqEcnRYPUc4Nlihku4vKx3FjlmMINSX4vcYokZIe+8TKcyr1aI5Kq7vYwgJNdQSA==
   dependencies:
     "@typescript-eslint/utils" "^5.10.0"
 
