@@ -1,4 +1,4 @@
-import { darken, lighten, adjust, invert, isDark } from 'khroma';
+import { darken, lighten, isDark } from 'khroma';
 
 const genSections = (options) => {
   let sections = '';

@@ -3,7 +3,6 @@ import graphlib from 'graphlib';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
-// import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { curveLinear } from 'd3';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
@@ -11,7 +10,6 @@ import common from '../common/common';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let idCache = {};
-const padding = 20;
 
 const sanitizeText = (txt) => common.sanitizeText(txt, getConfig());
 
@@ -233,20 +231,6 @@ export const addRelations = function (relations, g) {
     // Add the edge to the graph
     g.setEdge(edge.id1, edge.id2, edgeData, cnt);
   });
-};
-
-/**
- * Gets the ID with the same label as in the cache
- *
- * @param {string} label The label to look for
- * @returns {string} The resulting ID
- */
-const getGraphId = function (label) {
-  const foundEntry = Object.entries(idCache).find((entry) => entry[1].label === label);
-
-  if (foundEntry) {
-    return foundEntry[0];
-  }
 };
 
 /**

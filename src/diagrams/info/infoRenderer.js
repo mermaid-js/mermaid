@@ -27,7 +27,6 @@ export const draw = (text, id, version, diagObj) => {
       securityLevel === 'sandbox'
         ? select(sandboxElement.nodes()[0].contentDocument.body)
         : select('body');
-    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
     // Parse the graph definition
     // parser.parse(text);

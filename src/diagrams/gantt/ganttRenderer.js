@@ -391,7 +391,6 @@ export const draw = function (text, id, version, diagObj) {
     if (securityLevel === 'sandbox') {
       let sandboxElement;
       sandboxElement = select('#i' + id);
-      const root = select(sandboxElement.nodes()[0].contentDocument.body);
       const doc = sandboxElement.nodes()[0].contentDocument;
 
       rectangles

@@ -1,6 +1,5 @@
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
-import common from '../common/common';
 import {
   setAccTitle,
   getAccTitle,
@@ -11,10 +10,6 @@ import {
   clear as commonClear,
 } from '../../commonDb';
 
-const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
-
-let title = '';
-let description = '';
 let currentSection = '';
 
 const sections = [];
@@ -29,8 +24,6 @@ export const clear = function () {
   sections.length = 0;
   tasks.length = 0;
   currentSection = '';
-  title = '';
-  description = '';
   rawTasks.length = 0;
   commonClear();
 };

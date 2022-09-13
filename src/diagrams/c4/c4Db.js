@@ -1,6 +1,5 @@
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
-import { log } from '../../logger';
 import { sanitizeText } from '../common/common';
 import { setAccTitle, getAccTitle, getAccDescription, setAccDescription } from '../../commonDb';
 
@@ -21,7 +20,6 @@ let boundarys = [
 let rels = [];
 let title = '';
 let wrapEnabled = false;
-let description = '';
 let c4ShapeInRow = 4;
 let c4BoundaryInRow = 2;
 var c4Type;
@@ -636,13 +634,13 @@ export const updateLayoutConfig = function (typeC4Shape, c4ShapeInRowParam, c4Bo
   let c4BoundaryInRowValue = c4BoundaryInRow;
 
   if (typeof c4ShapeInRowParam === 'object') {
-    let [key, value] = Object.entries(c4ShapeInRowParam)[0];
+    let [, value] = Object.entries(c4ShapeInRowParam)[0];
     c4ShapeInRowValue = parseInt(value);
   } else {
     c4ShapeInRowValue = parseInt(c4ShapeInRowParam);
   }
   if (typeof c4BoundaryInRowParam === 'object') {
-    let [key, value] = Object.entries(c4BoundaryInRowParam)[0];
+    let [, value] = Object.entries(c4BoundaryInRowParam)[0];
     c4BoundaryInRowValue = parseInt(value);
   } else {
     c4BoundaryInRowValue = parseInt(c4BoundaryInRowParam);
@@ -721,7 +719,6 @@ export const clear = function () {
   boundaryParseStack = [''];
   title = '';
   wrapEnabled = false;
-  description = '';
   c4ShapeInRow = 4;
   c4BoundaryInRow = 2;
 };

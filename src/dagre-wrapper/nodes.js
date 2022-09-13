@@ -6,9 +6,7 @@ import intersect from './intersect/index.js';
 import createLabel from './createLabel';
 import note from './shapes/note';
 import { parseMember } from '../diagrams/class/svgDraw';
-import { evaluate, sanitizeText as sanitize } from '../diagrams/common/common';
-
-const sanitizeText = (txt) => sanitize(txt, getConfig());
+import { evaluate } from '../diagrams/common/common';
 
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
@@ -348,7 +346,7 @@ const rect = (parent, node) => {
 };
 
 const labelRect = (parent, node) => {
-  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'label', true);
+  const { shapeSvg } = labelHelper(parent, node, 'label', true);
 
   log.trace('Classes = ', node.classes);
   // add the rect
