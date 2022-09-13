@@ -15,54 +15,119 @@
         /* font-size: 18px !important; */
         width: 100%;
         display: flex;
+        flex-direction: column;
+        margin-left: 20px;
         }
       h1 { color: grey;}
       .mermaid2,.mermaid3 {
         display: none;
       }
+      .mermaid {
+
+      }
       .mermaid svg {
+        border: 1px solid purple;
         /* font-size: 18px !important; */
+        fontFamily: 'courier'
       }
     </style>
   </head>
   <body>
 
 
-
-
 <div class="mermaid2" style="width: 50%;">
-journey
-    title My working day
-    section Go to work
-      Make tea: 5: Me
-      Go upstairs: 3: Me
-      Do work: 1: Me, Cat
-    section Go home
-      Go downstairs: 5: Me
-      Sit down: 5: Mee
+flowchart LR
+  a ---
+</div>
+<div class="mermaid" style="width: 50%;">
+flowchart LR
+  a2 ---
 </div>
 <div class="mermaid2" style="width: 50%;">
-   pie
-      accTitle: My Pie Chart Accessibility Title
-      accDescr: My Pie Chart Accessibility Description
+flowchart LR
+  classDef aPID stroke:#4e4403,fill:#fdde29,color:#4e4403,rx:5px,ry:5px;
+  classDef crm stroke:#333333,fill:#DCDCDC,color:#333333,rx:5px,ry:5px;
+  classDef type stroke:#502604,fill:#FAB565,color:#502604,rx:20px,ry:20px;;
 
-    title Key elements in Product X
-    "Calcium" : 42.96
-    "Potassium" : 50.05
-    "Magnesium" : 10.01
-    "Iron" :  5
+  O0("Joe")
+  class O0 aPID;
+
+  O1("Person")
+  class O1 crm;
+  O0 -- has type -->O1["Person"]
+
+  O2("aat:300411314")
+  class O2 type;
+  click O2 function "Sorry the newline html tags are not being processed correctly<br/> So all of this appears on the <br/> same line."
+  O0 -- has type -->O2["Bug"]
+  click O0 function "Lots of great info about Joe<br>Lots of great info about Joe<br>burt<br>fred";
 </div>
 <div class="mermaid2" style="width: 50%;">
- gitGraph
-       commit
-       commit
-       branch develop
-       commit
-       commit
-       commit
-       checkout main
-       commit
-       commit
+flowchart TD
+    subgraph test
+    direction TB
+    subgraph test2
+      direction LR
+      F --> D
+    end
+    subgraph test3
+      direction TB
+      G --> H
+    end
+    end
+
+</div>
+<div class="mermaid" style="width: 50%;">
+flowchart TD
+
+  release-branch[Create Release Branch]:::relClass
+  develop-branch[Update Develop Branch]:::relClass
+  github-release-draft[GitHub Release Draft]:::relClass
+  trigger-pipeline[Trigger Jenkins pipeline]:::fixClass
+  github-release[GitHub Release]:::postClass
+
+  build-ready --> release-branch
+  build-ready --> develop-branch
+  release-branch --> jenkins-release-build
+  jenkins-release-build --> github-release-draft
+  jenkins-release-build --> install-release
+  install-release --> verify-release
+  jenkins-release-build --> announce
+  github-release-draft --> github-release
+  verify-release --> verify-check
+  verify-check -- Yes --> github-release
+  verify-check -- No --> release-fix
+  release-fix --> release-branch-pr
+  verify-check -- No --> delete-artifacts
+  release-branch-pr --> trigger-pipeline
+  delete-artifacts --> trigger-pipeline
+  trigger-pipeline --> jenkins-release-build
+
+
+</div>
+<div class="mermaid2" style="width: 50%;">
+flowchart LR
+        a["<strong>Haiya</strong>"]===>b
+</div>
+<div class="mermaid2" style="width: 50%;">
+flowchart TD
+    A --> B
+    A --> C
+    B --> C
+</div>
+<div class="mermaid2" style="width: 50%;">
+flowchart TD
+      A([stadium shape test])
+      A -->|Get money| B([Go shopping])
+      B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
+      C -->|One| D([Laptop])
+      C -->|Two| E([iPhone])
+      C -->|Three| F([Car<br/>wroom wroom])
+      click A "index.html#link-clicked" "link test"
+      click B testClick "click test"
+      classDef someclass fill:#f96;
+      class A someclass;
+      class C someclass;
 </div>
 <div class="mermaid2" style="width: 50%;">
    sequenceDiagram
@@ -217,7 +282,7 @@ class Class10 {
   size()
 }
       </div>
-      <div class="mermaid" style="width: 100%;">
+      <div class="mermaid2" style="width: 100%;">
 %%{init: {'config': {'wrap': true }}}%%
         sequenceDiagram
         participant A as Extremely utterly long line of longness which had previously overflown the actor box as it is much longer than what it should be
@@ -297,47 +362,17 @@ flowchart TD
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        // theme: 'dark',
-        // theme: 'forest',
-        // arrowMarkerAbsolute: true,
-        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
-        flowchart: {
-    nodeSpacing: 10,
-    curve: 'cardinal',
-    htmlLabels: true,
-    useMaxWidth: false,
-    // defaultRenderer: 'dagre-d3',
-  },
-  class: {
-    // defaultRenderer: 'dagre-d3',
-    htmlLabels: true,
-  },
-  sequence: {
-    // mirrorActors: false,'
-    wrap: false,
-  },
-        // gantt: { axisFormat: '%m/%d/%Y' },
-  //       sequence: {
-  //   actorFontFamily: 'courier',
-  //   actorMargin: 50,
-  //   showSequenceNumbers: false,
-  //   // hideUnusedParticipants: true,
-  //   // forceMenus: true,
-  // },
-  //       // sequenceDiagram: { actorMargin: 300, forceMenus: false }, // deprecated
-        // fontFamily: '"times", sans-serif',
-        // fontFamily: 'courier',
-        state: {
-          nodeSpacing: 50,
-          rankSpacing: 50,
-          defaultRenderer: 'dagre-d3',
-        },
+        maxTextSize: 900000,
+        startOnLoad: true,
+        securityLevel: 'loose',
         logLevel: 0,
-        fontSize: 18,
-        curve: 'cardinal',
-        // securityLevel: 'sandbox',
-        // themeVariables: {relationLabelColor: 'red'}
-        wrap: true,
+        fontFamily: 'courier',
+        flowchart: {
+          // curve: 'curveLinear',
+          useMaxWidth: true,
+          htmlLabels: false,
+          fontFamily: 'courier',
+        },
       });
       function callback() {
   alert('It worked');
@@ -351,6 +386,11 @@ function clickByFlow(elemName) {
 
   document.getElementsByTagName('body')[0].appendChild(div);
 }
+
+mermaid.parseError = function (err, hash) {
+  console.error('In parse error:');
+  console.error(err);
+};
     </script>
   </body>
 </html>

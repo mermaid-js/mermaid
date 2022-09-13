@@ -23,3 +23,6 @@ Gemfile.lock
 
 cypress/screenshots/
 cypress/snapshots/
+
+# eslint --cache file
+.eslintcache

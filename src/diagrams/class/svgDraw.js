@@ -1,6 +1,7 @@
 import { line, curveBasis } from 'd3';
 import utils from '../../utils';
 import { log } from '../../logger';
+import { parseGenericTypes } from '../common/common';
 
 let edgeCount = 0;
 export const drawEdge = function (elem, path, relation, conf, diagObj) {
@@ -14,6 +15,8 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
         return 'composition';
       case diagObj.db.DEPENDENCY:
         return 'dependency';
+      case diagObj.db.LOLLIPOP:
+        return 'lollipop';
     }
   };
 
@@ -409,29 +412,6 @@ const addTspan = function (textEl, txt, isFirst, conf) {
 
   if (!isFirst) {
     tSpan.attr('dy', conf.textHeight);
-  }
-};
-
-/**
- * Makes generics in typescript syntax
- *
- * @example <caption>Array of array of strings in typescript syntax</caption>
- *   // returns "Array<Array<string>>"
- *   parseGenericTypes('Array~Array~string~~');
- *
- * @param {string} text The text to convert
- * @returns {string} The converted string
- */
-const parseGenericTypes = function (text) {
-  let cleanedText = text;
-
-  if (text.indexOf('~') != -1) {
-    cleanedText = cleanedText.replace('~', '<');
-    cleanedText = cleanedText.replace('~', '>');
-
-    return parseGenericTypes(cleanedText);
-  } else {
-    return cleanedText;
   }
 };
 

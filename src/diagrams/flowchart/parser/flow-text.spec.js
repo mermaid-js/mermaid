@@ -13,7 +13,7 @@ describe('[Text] when parsing', () => {
   });
 
   describe('it should handle text on edges', function () {
-    it('it should handle text without space', function () {
+    it('should handle text without space', function () {
       const res = flow.parser.parse('graph TD;A--x|textNoSpace|B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -22,7 +22,7 @@ describe('[Text] when parsing', () => {
       expect(edges[0].type).toBe('arrow_cross');
     });
 
-    it('should handle  with space', function () {
+    it('should handle with space', function () {
       const res = flow.parser.parse('graph TD;A--x|text including space|B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -31,7 +31,7 @@ describe('[Text] when parsing', () => {
       expect(edges[0].type).toBe('arrow_cross');
     });
 
-    it('it should handle text with /', function () {
+    it('should handle text with /', function () {
       const res = flow.parser.parse('graph TD;A--x|text with / should work|B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -40,7 +40,7 @@ describe('[Text] when parsing', () => {
       expect(edges[0].text).toBe('text with / should work');
     });
 
-    it('it should handle space and space between vertices and link', function () {
+    it('should handle space and space between vertices and link', function () {
       const res = flow.parser.parse('graph TD;A --x|textNoSpace| B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -159,12 +159,6 @@ describe('[Text] when parsing', () => {
       const edges = flow.parser.yy.getEdges();
       expect(vert['a'].text).toBe('v');
     });
-    it('should handle keywords', function () {
-      const res = flow.parser.parse('graph TD;V-->a[v]');
-      const vert = flow.parser.yy.getVertices();
-      const edges = flow.parser.yy.getEdges();
-      expect(vert['a'].text).toBe('v');
-    });
     it('should handle quoted text', function () {
       const res = flow.parser.parse('graph TD;V-- "test string()" -->a[v]');
       const vert = flow.parser.yy.getVertices();
@@ -174,7 +168,7 @@ describe('[Text] when parsing', () => {
   });
 
   describe('it should handle text on lines', () => {
-    it('it should handle normal text on lines', function () {
+    it('should handle normal text on lines', function () {
       const res = flow.parser.parse('graph TD;A-- test text with == -->B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -182,7 +176,7 @@ describe('[Text] when parsing', () => {
 
       expect(edges[0].stroke).toBe('normal');
     });
-    it('it should handle dotted text on lines (TD3)', function () {
+    it('should handle dotted text on lines (TD3)', function () {
       const res = flow.parser.parse('graph TD;A-. test text with == .->B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -190,7 +184,7 @@ describe('[Text] when parsing', () => {
 
       expect(edges[0].stroke).toBe('dotted');
     });
-    it('it should handle thick text on lines', function () {
+    it('should handle thick text on lines', function () {
       const res = flow.parser.parse('graph TD;A== test text with - ==>B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -201,7 +195,7 @@ describe('[Text] when parsing', () => {
   });
 
   describe('it should handle text on edges using the new notation', function () {
-    it('it should handle text without space', function () {
+    it('should handle text without space', function () {
       const res = flow.parser.parse('graph TD;A-- textNoSpace --xB;');
 
       const vert = flow.parser.yy.getVertices();
@@ -210,7 +204,7 @@ describe('[Text] when parsing', () => {
       expect(edges[0].type).toBe('arrow_cross');
     });
 
-    it('it should handle text with multiple leading space', function () {
+    it('should handle text with multiple leading space', function () {
       const res = flow.parser.parse('graph TD;A--    textNoSpace --xB;');
 
       const vert = flow.parser.yy.getVertices();
@@ -219,7 +213,7 @@ describe('[Text] when parsing', () => {
       expect(edges[0].type).toBe('arrow_cross');
     });
 
-    it('should handle  with space', function () {
+    it('should handle with space', function () {
       const res = flow.parser.parse('graph TD;A-- text including space --xB;');
 
       const vert = flow.parser.yy.getVertices();
@@ -228,7 +222,7 @@ describe('[Text] when parsing', () => {
       expect(edges[0].type).toBe('arrow_cross');
     });
 
-    it('it should handle text with /', function () {
+    it('should handle text with /', function () {
       const res = flow.parser.parse('graph TD;A -- text with / should work --x B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -237,7 +231,7 @@ describe('[Text] when parsing', () => {
       expect(edges[0].text).toBe('text with / should work');
     });
 
-    it('it should handle space and space between vertices and link', function () {
+    it('should handle space and space between vertices and link', function () {
       const res = flow.parser.parse('graph TD;A -- textNoSpace --x B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -302,7 +296,7 @@ describe('[Text] when parsing', () => {
   });
 
   describe('it should handle text in vertices, ', function () {
-    it('it should handle space', function () {
+    it('should handle space', function () {
       const res = flow.parser.parse('graph TD;A-->C(Chimpansen hoppar);');
 
       const vert = flow.parser.yy.getVertices();
@@ -311,7 +305,7 @@ describe('[Text] when parsing', () => {
       expect(vert['C'].type).toBe('round');
       expect(vert['C'].text).toBe('Chimpansen hoppar');
     });
-    it('it should handle åäö and minus', function () {
+    it('should handle åäö and minus', function () {
       const res = flow.parser.parse('graph TD;A-->C{Chimpansen hoppar åäö-ÅÄÖ};');
 
       const vert = flow.parser.yy.getVertices();
@@ -321,7 +315,7 @@ describe('[Text] when parsing', () => {
       expect(vert['C'].text).toBe('Chimpansen hoppar åäö-ÅÄÖ');
     });
 
-    it('it should handle with åäö, minus and space and br', function () {
+    it('should handle with åäö, minus and space and br', function () {
       const res = flow.parser.parse('graph TD;A-->C(Chimpansen hoppar åäö  <br> -  ÅÄÖ);');
 
       const vert = flow.parser.yy.getVertices();
@@ -330,7 +324,7 @@ describe('[Text] when parsing', () => {
       expect(vert['C'].type).toBe('round');
       expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
     });
-    // xit('it should handle åäö, minus and space and br',function(){
+    // xit('should handle åäö, minus and space and br',function(){
     //    const res = flow.parser.parse('graph TD; A[Object&#40;foo,bar&#41;]-->B(Thing);');
     //
     //    const vert = flow.parser.yy.getVertices();
@@ -339,21 +333,21 @@ describe('[Text] when parsing', () => {
     //    expect(vert['C'].type).toBe('round');
     //    expect(vert['C'].text).toBe(' A[Object&#40;foo,bar&#41;]-->B(Thing);');
     // });
-    it('it should handle unicode chars', function () {
+    it('should handle unicode chars', function () {
       const res = flow.parser.parse('graph TD;A-->C(Начало);');
 
       const vert = flow.parser.yy.getVertices();
 
       expect(vert['C'].text).toBe('Начало');
     });
-    it('it should handle backslask', function () {
+    it('should handle backslask', function () {
       const res = flow.parser.parse('graph TD;A-->C(c:\\windows);');
 
       const vert = flow.parser.yy.getVertices();
 
       expect(vert['C'].text).toBe('c:\\windows');
     });
-    it('it should handle CAPS', function () {
+    it('should handle CAPS', function () {
       const res = flow.parser.parse('graph TD;A-->C(some CAPS);');
 
       const vert = flow.parser.yy.getVertices();
@@ -362,7 +356,7 @@ describe('[Text] when parsing', () => {
       expect(vert['C'].type).toBe('round');
       expect(vert['C'].text).toBe('some CAPS');
     });
-    it('it should handle directions', function () {
+    it('should handle directions', function () {
       const res = flow.parser.parse('graph TD;A-->C(some URL);');
 
       const vert = flow.parser.yy.getVertices();

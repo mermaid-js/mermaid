@@ -57,11 +57,11 @@ export const removeScript = (txt) => {
     }
   }
   let decodedText = removeEscapes(rs);
-  decodedText = decodedText.replaceAll(/script>/gi, '#');
-  decodedText = decodedText.replaceAll(/javascript:/gi, '#');
-  decodedText = decodedText.replaceAll(/javascript&colon/gi, '#');
-  decodedText = decodedText.replaceAll(/onerror=/gi, 'onerror:');
-  decodedText = decodedText.replaceAll(/<iframe/gi, '');
+  decodedText = decodedText.replace(/script>/gi, '#');
+  decodedText = decodedText.replace(/javascript:/gi, '#');
+  decodedText = decodedText.replace(/javascript&colon/gi, '#');
+  decodedText = decodedText.replace(/onerror=/gi, 'onerror:');
+  decodedText = decodedText.replace(/<iframe/gi, '');
   return decodedText;
 };
 
@@ -181,6 +181,29 @@ const getUrl = (useAbsolute) => {
  * @returns {boolean} The result from the input
  */
 export const evaluate = (val) => (val === 'false' || val === false ? false : true);
+
+/**
+ * Makes generics in typescript syntax
+ *
+ * @example <caption>Array of array of strings in typescript syntax</caption>
+ *   // returns "Array<Array<string>>"
+ *   parseGenericTypes('Array~Array~string~~');
+ *
+ * @param {string} text The text to convert
+ * @returns {string} The converted string
+ */
+export const parseGenericTypes = function (text) {
+  let cleanedText = text;
+
+  if (text.indexOf('~') != -1) {
+    cleanedText = cleanedText.replace('~', '<');
+    cleanedText = cleanedText.replace('~', '>');
+
+    return parseGenericTypes(cleanedText);
+  } else {
+    return cleanedText;
+  }
+};
 
 export default {
   getRows,

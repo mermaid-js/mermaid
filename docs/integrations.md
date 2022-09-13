@@ -50,7 +50,6 @@ They also serve as proof of concept, for the variety of things that can be built
 
 - [VuePress](https://vuepress.vuejs.org/)
   - [Plugin for Mermaid.js](https://github.com/eFrane/vuepress-plugin-mermaidjs)
-  - [vuepress-plugin-mermaidjs-cli](https://github.com/gwleclerc/vuepress-plugin-mermaidjs-cli)
 - [Grav CMS](https://getgrav.org/)
   - [Mermaid Diagrams](https://github.com/DanielFlaum/grav-plugin-mermaid-diagrams)
   - [Gitlab Markdown Adapter](https://github.com/Goutte/grav-plugin-gitlab-markdown-adapter)
@@ -111,13 +110,13 @@ They also serve as proof of concept, for the variety of things that can be built
   - [Mermaid Plugin](https://github.com/cldwalker/Mermaid)
 - [Draw.io](https://draw.io) - [Plugin](https://github.com/nopeslide/drawio_mermaid_plugin)
 - [Inkdrop](https://www.inkdrop.app) - [Plugin](https://github.com/inkdropapp/inkdrop-mermaid)
-- [Vim](https://vim.org)
+- [Vim](https://www.vim.org)
   - [Vim Diagram Syntax](https://github.com/zhaozg/vim-diagram)
 - [GNU Emacs](https://www.gnu.org/software/emacs/)
   - [Major mode for .mmd files](https://github.com/abrochard/mermaid-mode)
   - [Org-Mode integration](https://github.com/arnm/ob-mermaid)
 - [Brackets](https://brackets.io/)
-  - [Mermaid Preview](https://s3.amazonaws.com/extend.brackets/alanhohn.mermaid-preview/alanhohn.mermaid-preview-1.0.2.zip)
+  - [Mermaid Preview](https://github.com/AlanHohn/mermaid-preview)
 - [Iodide](https://github.com/iodide-project/iodide)
   - [iodide-mermaid-plugin](https://github.com/iodide-project/iodide-mermaid-plugin)
 - [Google docs](https://docs.google.com/)
@@ -150,7 +149,7 @@ They also serve as proof of concept, for the variety of things that can be built
 
 | Name | Chrome Web Store | Firefox Add-ons | Opera | Edge | Source/Repository | 
 | -- | -- | -- | -- | -- | -- |
-| GitHub + Mermaid | [🎡🔗](https://chrome.google.com/webstore/detail/github-%20-mermaid/goiiopgdnkogdbjmncgedmgpoajilohe) | [🦊🔗](https://addons.mozilla.org/firefox/addon/github-mermaid/) | - | - |  [🐙🔗](https://github.com/BackMarket/github-mermaid-extension)
+| GitHub + Mermaid | - | [🦊🔗](https://addons.mozilla.org/firefox/addon/github-mermaid/) | - | - |  [🐙🔗](https://github.com/BackMarket/github-mermaid-extension)
 | Asciidoctor Live Preview | [🎡🔗](https://chrome.google.com/webstore/detail/asciidoctorjs-live-previe/iaalpfgpbocpdfblpnhhgllgbdbchmia) | - | - | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/asciidoctorjs-live-previ/pefkelkanablhjdekgdahplkccnbdggd?hl=en-US) | -|
 | Diagram Tab| -| - | - | - | [🐙🔗](https://github.com/khafast/diagramtab)  |
 | Markdown Diagrams| [🎡🔗](https://chrome.google.com/webstore/detail/markdown-diagrams/pmoglnmodacnbbofbgcagndelmgaclel/) | [🦊🔗](https://addons.mozilla.org/en-US/firefox/addon/markdown-diagrams/) | [🔴🔗](https://addons.opera.com/en/extensions/details/markdown-diagrams/) | [🌀🔗](https://microsoftedge.microsoft.com/addons/detail/markdown-diagrams/hceenoomhhdkjjijnmlclkpenkapfihe) | [🐙🔗](https://github.com/marcozaccari/markdown-diagrams-browser-extension/tree/master/doc/examples) |

@@ -14,7 +14,16 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
     });
+    xit('should handle a leading newline axa', function () {
+      const str = '\nclassDiagram\n' + 'class Car';
 
+      try {
+        parser.parse(str);
+        // Fail test if above expression doesn't throw anything.
+      } catch (e) {
+        expect(true).toBe(false);
+      }
+    });
     it('should handle relation definitions', function () {
       const str =
         'classDiagram\n' +

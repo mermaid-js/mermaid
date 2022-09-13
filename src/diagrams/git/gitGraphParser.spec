@@ -115,7 +115,7 @@ describe('when parsing a gitGraph', function() {
     expect(parser.yy.getCurrentBranch()).toBe('master');
   });
 
-  it('it should reset a branch', function() {
+  it('should reset a branch', function() {
     const str =
       'gitGraph:\n' +
       'commit\n' +
@@ -153,7 +153,7 @@ describe('when parsing a gitGraph', function() {
     expect(parser.yy.getHead().id).toEqual(master.parent);
   });
 
-  it('it should handle fast forwardable merges', function() {
+  it('should handle fast forwardable merges', function() {
     const str =
       'gitGraph:\n' +
       'commit\n' +
@@ -173,7 +173,7 @@ describe('when parsing a gitGraph', function() {
     expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['newbranch']);
   });
 
-  it('it should handle cases when merge is a noop', function() {
+  it('should handle cases when merge is a noop', function() {
     const str =
       'gitGraph:\n' +
       'commit\n' +
@@ -192,7 +192,7 @@ describe('when parsing a gitGraph', function() {
     expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['newbranch']);
   });
 
-  it('it should handle merge with 2 parents', function() {
+  it('should handle merge with 2 parents', function() {
     const str =
       'gitGraph:\n' +
       'commit\n' +
@@ -213,7 +213,7 @@ describe('when parsing a gitGraph', function() {
     expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['master']);
   });
 
-  it('it should handle ff merge when history walk has two parents (merge commit)', function() {
+  it('should handle ff merge when history walk has two parents (merge commit)', function() {
     const str =
       'gitGraph:\n' +
       'commit\n' +
@@ -239,7 +239,7 @@ describe('when parsing a gitGraph', function() {
     parser.yy.prettyPrint();
   });
 
-  it('it should generate a secure random ID for commits', function() {
+  it('should generate a secure random ID for commits', function() {
     const str = 'gitGraph:\n' + 'commit\n' + 'commit\n';
     const EXPECTED_LENGTH = 7;
     const EXPECTED_CHARACTERS = '0123456789abcdef';
@@ -267,7 +267,7 @@ describe('when parsing a gitGraph', function() {
     });
   });
 
-  it('it should generate an array of known branches', function() {
+  it('should generate an array of known branches', function() {
     const str =
       'gitGraph:\n' +
       'commit\n' +

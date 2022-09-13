@@ -8,6 +8,7 @@ import { log } from '../../logger';
 import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../utils';
 import addSVGAccessibilityFields from '../../accessibility';
+import { parseGenericTypes } from '../common/common';
 
 let conf = {};
 
@@ -63,6 +64,8 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     const attrPrefix = `${entityTextNode.node().id}-attr-${attrNum}`;
     let nodeHeight = 0;
 
+    const attributeType = parseGenericTypes(item.attributeType);
+
     // Add a text node for the attribute type
     const typeNode = groupNode
       .append('text')
@@ -76,7 +79,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         'style',
         'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
       )
-      .text(item.attributeType);
+      .text(attributeType);
 
     // Add a text node for the attribute name
     const nameNode = groupNode

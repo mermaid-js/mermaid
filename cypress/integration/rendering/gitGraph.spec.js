@@ -74,7 +74,7 @@ describe('Git Graph diagram', () => {
       {}
     );
   });
-  it('7: should render a simple gitgraph with three branches and merge commit', () => {
+  it('7: should render a simple gitgraph with three branches and tagged merge commit', () => {
     imgSnapshotTest(
       `gitGraph
        commit id: "1"
@@ -93,7 +93,7 @@ describe('Git Graph diagram', () => {
        checkout nice_feature
        commit id: "7"
        checkout main
-       merge nice_feature
+       merge nice_feature id: "12345" tag: "my merge commit"
        checkout very_nice_feature
        commit id: "8"
        checkout main
@@ -249,6 +249,34 @@ describe('Git Graph diagram', () => {
       merge branch8
       branch branch9
       commit
+      `,
+      {}
+    );
+  });
+  it('13: should render a simple gitgraph with three branches,custom merge commit id,tag,type', () => {
+    imgSnapshotTest(
+      `gitGraph
+       commit id: "1"
+       commit id: "2"
+       branch nice_feature
+       checkout nice_feature
+       commit id: "3"
+       checkout main
+       commit id: "4"
+       checkout nice_feature
+       branch very_nice_feature
+       checkout very_nice_feature
+       commit id: "5"
+       checkout main
+       commit id: "6"
+       checkout nice_feature
+       commit id: "7"
+       checkout main
+       merge nice_feature id: "customID" tag: "customTag" type: REVERSE
+       checkout very_nice_feature
+       commit id: "8"
+       checkout main
+       commit id: "9"
       `,
       {}
     );

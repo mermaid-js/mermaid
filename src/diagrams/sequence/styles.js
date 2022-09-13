@@ -45,7 +45,7 @@ const getStyles = (options) =>
 
   .messageText {
     fill: ${options.signalTextColor};
-    stroke: ${options.signalTextColor};
+    stroke: none;
   }
 
   .labelBox {

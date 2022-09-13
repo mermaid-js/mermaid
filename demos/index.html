@@ -880,6 +880,31 @@ Enterprise_Boundary(b0, "BankBoundary0") {
   </div>
 
   <div class="mermaid">
+    classDiagram
+    Interface1 ()-- Interface1Impl
+  </div>
+
+  <div class="mermaid">
+    classDiagram 
+    direction LR
+    Animal ()-- Dog
+    Dog : bark()
+    Dog : species()
+  </div>
+
+  <div class="mermaid">
+    classDiagram 
+    direction RL
+    Fruit ()-- Apple
+    Apple : color()
+    Apple : -int leafCount()
+    Fruit ()-- Pineapple
+    Pineapple : color()
+    Pineapple : -int leafCount()
+    Pineapple : -int spikeCount()
+  </div>
+
+  <div class="mermaid">
     stateDiagram
     accDescription This is a state diagram showing one state
     State1

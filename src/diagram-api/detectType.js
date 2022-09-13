@@ -31,6 +31,9 @@ const detectType = function (text, cnf) {
     return 'c4';
   }
 
+  if (text === 'error') {
+    return 'error';
+  }
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';
   }

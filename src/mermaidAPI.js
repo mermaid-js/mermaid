@@ -31,7 +31,7 @@ import stateRenderer from './diagrams/state/stateRenderer';
 import stateRendererV2 from './diagrams/state/stateRenderer-v2';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import Diagram from './Diagram';
-import errorRenderer from './errorRenderer';
+import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
@@ -40,13 +40,21 @@ import utils, { directiveSanitizer } from './utils';
 import assignWithDepth from './assignWithDepth';
 import DOMPurify from 'dompurify';
 import mermaid from './mermaid';
+
+let hasLoadedDiagrams = false;
+
 /**
  * @param text
  * @param dia
  * @returns {any}
  */
 function parse(text, dia) {
+  if (!hasLoadedDiagrams) {
+    addDiagrams();
+    hasLoadedDiagrams = true;
+  }
   var parseEncounteredException = false;
+
   try {
     const diag = dia ? dia : new Diagram(text);
     diag.db.clear();
@@ -133,11 +141,15 @@ export const decodeEntities = function (text) {
  * @param {any} _txt The graph definition
  * @param {any} cb Callback which is called after rendering is finished with the svg code as inparam.
  * @param {any} container Selector to element in which a div with the graph temporarily will be
- *   inserted. In one is provided a hidden div will be inserted in the body of the page instead. The
+ *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
  * @returns {any}
  */
 const render = function (id, _txt, cb, container) {
+  if (!hasLoadedDiagrams) {
+    addDiagrams();
+    hasLoadedDiagrams = true;
+  }
   configApi.reset();
   let txt = _txt.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(txt);
@@ -251,7 +263,14 @@ const render = function (id, _txt, cb, container) {
   txt = encodeEntities(txt);
 
   // Important that we do not create the diagram until after the directives have been included
-  const diag = new Diagram(txt);
+  let diag;
+  let parseEncounteredException;
+  try {
+    diag = new Diagram(txt);
+  } catch (error) {
+    diag = new Diagram('error');
+    parseEncounteredException = error;
+  }
   // Get the tmp element containing the the svg
   const element = root.select('#d' + id).node();
   const graphType = diag.type;
@@ -396,6 +415,10 @@ const render = function (id, _txt, cb, container) {
     select(tmpElementSelector).node().remove();
   }
 
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
+
   return svgCode;
 };
 
@@ -491,23 +514,20 @@ function updateRendererConfigs(conf) {
 /** @param {any} options */
 function initialize(options) {
   // Handle legacy location of font-family configuration
-  if (options && options.fontFamily) {
-    if (!options.themeVariables) {
+  if (options?.fontFamily) {
+    if (!options.themeVariables?.fontFamily) {
       options.themeVariables = { fontFamily: options.fontFamily };
-    } else {
-      if (!options.themeVariables.fontFamily) {
-        options.themeVariables = { fontFamily: options.fontFamily };
-      }
     }
   }
+
   // Set default options
   configApi.saveConfigFromInitialize(options);
 
-  if (options && options.theme && theme[options.theme]) {
+  if (options?.theme && theme[options.theme]) {
     // Todo merge with user options
     options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
-  } else {
-    if (options) options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
+  } else if (options) {
+    options.themeVariables = theme.default.getThemeVariables(options.themeVariables);
   }
 
   const config =
@@ -515,7 +535,10 @@ function initialize(options) {
 
   updateRendererConfigs(config);
   setLogLevel(config.logLevel);
-  addDiagrams();
+  if (!hasLoadedDiagrams) {
+    addDiagrams();
+    hasLoadedDiagrams = true;
+  }
 }
 
 const mermaidAPI = Object.freeze({

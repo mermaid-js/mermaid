@@ -1,5 +1,6 @@
 import classDiagram from './diagrams/class/styles';
 import er from './diagrams/er/styles';
+import error from './diagrams/error/styles';
 import flowchart from './diagrams/flowchart/styles';
 import gantt from './diagrams/gantt/styles';
 import gitGraph from './diagrams/git/styles';
@@ -26,6 +27,7 @@ const themes = {
   info,
   pie,
   er,
+  error,
   journey,
   requirement,
   c4,
