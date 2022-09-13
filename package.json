@@ -73,7 +73,7 @@
     "khroma": "^2.0.0",
     "moment-mini": "^2.24.0",
     "non-layered-tidy-tree-layout": "^2.0.2",
-    "stylis": "^4.0.10"
+    "stylis": "^4.1.2"
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.25.7",
