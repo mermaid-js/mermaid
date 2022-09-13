@@ -19,14 +19,19 @@ const buildOptions = (override = {}) => {
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.json', '.jison'],
     external: ['require', 'fs', 'path'],
-    entryPoints: ['src/mermaid.ts'],
-    outfile: 'dist/mermaid.min.js',
+    outdir: 'dist',
     plugins: [jisonPlugin],
     sourcemap: 'external',
     ...override,
   };
 };
 
+const getOutFiles = (extension) => {
+  return {
+    [`mermaid${extension}`]: 'src/mermaid.ts',
+    [`diagramAPI${extension}`]: 'src/diagram-api/diagramAPI.ts',
+  };
+};
 /**
  * Build options for mermaid.esm.* build.
  *
@@ -38,7 +43,8 @@ const buildOptions = (override = {}) => {
 exports.esmBuild = (override = { minify: true }) => {
   return buildOptions({
     format: 'esm',
-    outfile: `dist/mermaid.esm${override.minify ? '.min' : ''}.mjs`,
+    entryPoints: getOutFiles(`.esm${override.minify ? '.min' : ''}`),
+    outExtension: { '.js': '.mjs' },
     ...override,
   });
 };
@@ -46,8 +52,8 @@ exports.esmBuild = (override = { minify: true }) => {
 /**
  * Build options for mermaid.core.* build.
  *
- * This build does not bundle `./node_modules/`, as it is designed to be used
- * with Webpack/ESBuild/Vite to use mermaid inside an app/website.
+ * This build does not bundle `./node_modules/`, as it is designed to be used with
+ * Webpack/ESBuild/Vite to use mermaid inside an app/website.
  *
  * @param {Options} override - Override options.
  * @returns {Options} ESBuild build options.
@@ -55,7 +61,8 @@ exports.esmBuild = (override = { minify: true }) => {
 exports.esmCoreBuild = (override) => {
   return buildOptions({
     format: 'esm',
-    outfile: `dist/mermaid.core.mjs`,
+    entryPoints: getOutFiles(`.core`),
+    outExtension: { '.js': '.mjs' },
     external: ['require', 'fs', 'path', ...Object.keys(dependencies)],
     platform: 'neutral',
     ...override,
@@ -72,7 +79,7 @@ exports.esmCoreBuild = (override) => {
  */
 exports.iifeBuild = (override = { minify: true }) => {
   return buildOptions({
-    outfile: `dist/mermaid${override.minify ? '.min' : ''}.js`,
+    entryPoints: getOutFiles(override.minify ? '.min' : ''),
     format: 'iife',
     ...override,
   });
