@@ -4,7 +4,6 @@ import { log } from '../../logger';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let allCommitsDict = {};
-let branchNum;
 
 const commitType = {
   NORMAL: 0,
@@ -82,7 +81,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
   const sortedKeys = keys.sort((a, b) => {
     return commits[a].seq - commits[b].seq;
   });
-  sortedKeys.forEach((key, index) => {
+  sortedKeys.forEach((key) => {
     const commit = commits[key];
 
     const y = branchPos[commit.branch].pos;
@@ -298,9 +297,6 @@ const drawCommits = (svg, commits, modifyGraph) => {
  * @returns {boolean} if there are commits between commit1's x-position and commit2's x-position
  */
 const hasOverlappingCommits = (commit1, commit2, allCommits) => {
-  const commit1Pos = commitPos[commit2.id];
-  const commit2Pos = commitPos[commit1.id];
-
   // Find commits on the same branch as commit2
   const keys = Object.keys(allCommits);
   const overlappingComits = keys.filter((key) => {
