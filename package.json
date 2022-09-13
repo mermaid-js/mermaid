@@ -91,7 +91,7 @@
     "@typescript-eslint/parser": "^5.37.0",
     "babel-jest": "^29.0.3",
     "babel-loader": "^8.2.2",
-    "concurrently": "^7.0.0",
+    "concurrently": "^7.4.0",
     "css-to-string-loader": "^0.1.3",
     "cypress": "9.7.0",
     "cypress-image-snapshot": "^4.0.1",
