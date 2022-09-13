@@ -1,4 +1,3 @@
-const lineBreakRegex = /<br\s*\/?>/gi;
 import { select } from 'd3';
 import * as db from './mindmapDb';
 
@@ -15,7 +14,6 @@ function wrap(text, width) {
         .reverse(),
       word,
       line = [],
-      lineNumber = 0,
       lineHeight = 1.1, // ems
       y = text.attr('y'),
       dy = parseFloat(text.attr('dy')),
