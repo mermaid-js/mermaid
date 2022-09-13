@@ -41,9 +41,11 @@ import erStyles from '../diagrams/er/styles';
 import flowParser from '../diagrams/flowchart/parser/flow';
 import { flowDetector } from '../diagrams/flowchart/flowDetector';
 import { flowDetectorV2 } from '../diagrams/flowchart/flowDetector-v2';
+import { flowDetectorV3 } from '../diagrams/flowchart/flowDetector-v3';
 import flowDb from '../diagrams/flowchart/flowDb';
 import flowRenderer from '../diagrams/flowchart/flowRenderer';
 import flowRendererV2 from '../diagrams/flowchart/flowRenderer-v2';
+import flowRendererV3 from '../diagrams/flowchart/flowRenderer-v3';
 import flowStyles from '../diagrams/flowchart/styles';
 
 // @ts-ignore: TODO Fix ts errors
@@ -304,6 +306,20 @@ export const addDiagrams = () => {
       },
     },
     flowDetectorV2
+  );
+  registerDiagram(
+    'flowchart-v3',
+    {
+      parser: flowParser,
+      db: flowDb,
+      renderer: flowRendererV3,
+      styles: flowStyles,
+      init: () => {
+        flowDb.clear();
+        flowDb.setGen('gen-3');
+      },
+    },
+    flowDetectorV3
   );
   registerDiagram(
     'gitGraph',

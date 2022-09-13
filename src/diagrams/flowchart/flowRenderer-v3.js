@@ -3,7 +3,7 @@ import { select, curveLinear, selectAll } from 'd3';
 
 import flowDb from './flowDb';
 import { getConfig } from '../../config';
-
+import { insertNode } from '../../dagre-wrapper/nodes.js';
 import { render } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { log } from '../../logger';
@@ -12,7 +12,9 @@ import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
-let conf = {};
+import cytoscape from 'cytoscape';
+
+const conf = {};
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
   for (let i = 0; i < keys.length; i++) {
@@ -20,18 +22,19 @@ export const setConf = function (cnf) {
   }
 };
 
-/**
- * Function that adds the vertices found during parsing to the graph to be rendered.
- *
- * @param vert Object containing the vertices.
- * @param g The graph that is to be drawn.
- * @param svgId
- * @param root
- * @param doc
- * @param diagObj
- */
-export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
+// /**
+//  * Function that adds the vertices found during parsing to the graph to be rendered.
+//  *
+//  * @param vert Object containing the vertices.
+//  * @param g The graph that is to be drawn.
+//  * @param svgId
+//  * @param root
+//  * @param doc
+//  * @param diagObj
+//  */
+export const addVertices = function (vert, cy, svgId, root, doc, diagObj) {
   const svg = root.select(`[id="${svgId}"]`);
+  const nodes = svg.insert('g').attr('class', 'nodes');
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
@@ -141,8 +144,8 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       default:
         _shape = 'rect';
     }
-    // Add the node
-    g.setNode(vertex.id, {
+    // // Add the node
+    const node = {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
@@ -161,9 +164,36 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
       type: vertex.type,
       props: vertex.props,
       padding: getConfig().flowchart.padding,
+    };
+    const nodeEl = insertNode(nodes, node, vertex.dir);
+    const boundingBox = nodeEl.node().getBBox();
+    cy.add({
+      group: 'nodes',
+      data: {
+        id: vertex.id,
+        labelStyle: styles.labelStyle,
+        shape: _shape,
+        labelText: vertexText,
+        rx: radious,
+        ry: radious,
+        class: classStr,
+        style: styles.style,
+        link: vertex.link,
+        linkTarget: vertex.linkTarget,
+        tooltip: diagObj.db.getTooltip(vertex.id) || '',
+        domId: diagObj.db.lookUpDomId(vertex.id),
+        haveCallback: vertex.haveCallback,
+        width: vertex.type === 'group' ? 500 : undefined,
+        dir: vertex.dir,
+        type: vertex.type,
+        props: vertex.props,
+        padding: getConfig().flowchart.padding,
+        boundingBox,
+        el: nodeEl,
+      },
     });
 
-    log.info('setNode', {
+    log.trace('setNode', {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
@@ -187,10 +217,11 @@ export const addVertices = function (vert, g, svgId, root, doc, diagObj) {
  *
  * @param {object} edges The edges to add to the graph
  * @param {object} g The graph object
+ * @param cy
  * @param diagObj
  */
-export const addEdges = function (edges, g, diagObj) {
-  log.info('abc78 edges = ', edges);
+export const addEdges = function (edges, cy, diagObj) {
+  // log.info('abc78 edges = ', edges);
   let cnt = 0;
   let linkIdCnt = {};
 
@@ -320,7 +351,7 @@ export const addEdges = function (edges, g, diagObj) {
     edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
 
     // Add the edge to the graph
-    g.setEdge(edge.start, edge.end, edgeData, cnt);
+    cy.add({ group: 'edges', data: { source: edge.start, target: edge.end, edgeData, id: cnt } });
   });
 };
 
@@ -351,13 +382,56 @@ export const getClasses = function (text, diagObj) {
  */
 
 export const draw = function (text, id, _version, diagObj) {
-  // const conf = config.getConfig(_version);
-  log.info('Drawing flowchart');
-  diagObj.db.clear();
-  flowDb.setGen('gen-2');
-  // Parse the graph definition
-  diagObj.parser.parse(text);
+  const cy = cytoscape({
+    // styleEnabled: false,
+    // animate: false,
+    // ready: function () {
+    //   log.info('Ready', this);
+    // },
+    container: document.getElementById('cy'), // container to render in
 
+    elements: [
+      // list of graph elements to start with
+      // { // node a
+      //   data: { id: 'a' }
+      // },
+      // { // node b
+      //   data: { id: 'b' }
+      // },
+      // { // edge ab
+      //   data: { id: 'ab', source: 'a', target: 'b' }
+      // }
+    ],
+
+    style: [
+      // the stylesheet for the graph
+      {
+        selector: 'node',
+        style: {
+          'background-color': '#666',
+          label: 'data(labelText)',
+        },
+      },
+
+      {
+        selector: 'edge',
+        style: {
+          width: 3,
+          'line-color': '#ccc',
+          'target-arrow-color': '#ccc',
+          'target-arrow-shape': 'triangle',
+          'curve-style': 'bezier',
+          label: 'data(id)',
+        },
+      },
+    ],
+
+    layout: {
+      name: 'breadthfirst',
+      rows: 1,
+    },
+  });
+  log.info('Drawing flowchart using v3 renderer');
   // Fetch the default direction, use TD if none was found
   let dir = diagObj.db.getDirection();
   if (typeof dir === 'undefined') {
@@ -365,8 +439,8 @@ export const draw = function (text, id, _version, diagObj) {
   }
 
   const { securityLevel, flowchart: conf } = getConfig();
-  const nodeSpacing = conf.nodeSpacing || 50;
-  const rankSpacing = conf.rankSpacing || 50;
+  // const nodeSpacing = conf.nodeSpacing || 50;
+  // const rankSpacing = conf.rankSpacing || 50;
 
   // Handle root and document for when rendering in sandbox mode
   let sandboxElement;
@@ -379,133 +453,96 @@ export const draw = function (text, id, _version, diagObj) {
       : select('body');
   const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
-  // Create the input mermaid.graph
-  const g = new graphlib.Graph({
-    multigraph: true,
-    compound: true,
-  })
-    .setGraph({
-      rankdir: dir,
-      nodesep: nodeSpacing,
-      ranksep: rankSpacing,
-      marginx: 0,
-      marginy: 0,
-    })
-    .setDefaultEdgeLabel(function () {
-      return {};
-    });
+  const c = cytoscape({
+    // name: 'cose',
+    name: 'cose',
+    container: null,
+    layout: {
+      boundingBox: {
+        x1: 0,
+        y1: 0,
+        w: 200,
+        h: 200,
+      },
+    },
+    headless: true,
+    styleEnabled: false,
+    animate: false,
+    ready: function () {
+      log.info('Ready', this);
+    },
+  });
 
-  let subG;
-  const subGraphs = diagObj.db.getSubGraphs();
-  log.info('Subgraphs - ', subGraphs);
-  for (let i = subGraphs.length - 1; i >= 0; i--) {
-    subG = subGraphs[i];
-    log.info('Subgraph - ', subG);
-    diagObj.db.addVertex(subG.id, subG.title, 'group', undefined, subG.classes, subG.dir);
-  }
+  const svg = root.select(`[id="${id}"]`);
+  const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
 
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const vert = diagObj.db.getVertices();
+  addVertices(vert, cy, id, root, doc, diagObj);
+  // c.style();
+  // Make cytoscape care about the dimensisions of the nodes
+  cy.nodes().forEach(function (n) {
+    n.layoutDimensions = () => {
+      const boundingBox = n.data().boundingBox;
+      return { w: boundingBox.width, h: boundingBox.height };
+    };
+  });
 
   const edges = diagObj.db.getEdges();
+  addEdges(edges, cy, diagObj);
 
-  log.info(edges);
-  let i = 0;
-  for (i = subGraphs.length - 1; i >= 0; i--) {
-    // for (let i = 0; i < subGraphs.length; i++) {
-    subG = subGraphs[i];
+  cy.layout({
+    // name: 'grid',
+    name: 'circle',
+    // name: 'cose'
+  }).run();
+  cy.nodes().map((node, id) => {
+    const data = node.data();
+    log.info(
+      'Position: (',
+      node.position().x,
+      ', ',
+      node.position().y,
+      ')',
+      node.layoutDimensions()
+    );
+    data.el.attr('transform', `translate(${node.position().x}, ${node.position().y})`);
+  });
 
-    selectAll('cluster').append('text');
-
-    for (let j = 0; j < subG.nodes.length; j++) {
-      log.info('Setting up subgraphs', subG.nodes[j], subG.id);
-      g.setParent(subG.nodes[j], subG.id);
-    }
-  }
-  addVertices(vert, g, id, root, doc, diagObj);
-  addEdges(edges, g, diagObj);
-
-  // Add custom shapes
-  // flowChartShapes.addToRenderV2(addShape);
-
-  // Set up an SVG group so that we can translate the final graph.
-  const svg = root.select(`[id="${id}"]`);
-
-  // Adds title and description to the flow chart
-  addSVGAccessibilityFields(diagObj.db, svg, id);
-
-  // Run the renderer. This is what draws the final graph.
-  const element = root.select('#' + id + ' g');
-  render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
-
-  setupGraphViewbox(g, svg, conf.diagramPadding, conf.useMaxWidth);
-
-  // Index nodes
-  diagObj.db.indexNodes('subGraph' + i);
-
-  // Add label rects for non html labels
-  if (!conf.htmlLabels) {
-    const labels = doc.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
-    for (let k = 0; k < labels.length; k++) {
-      const label = labels[k];
-
-      // Get dimensions of label
-      const dim = label.getBBox();
-
-      const rect = doc.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('rx', 0);
-      rect.setAttribute('ry', 0);
-      rect.setAttribute('width', dim.width);
-      rect.setAttribute('height', dim.height);
-
-      label.insertBefore(rect, label.firstChild);
-    }
-  }
-
-  // If node has a link, wrap it in an anchor SVG object.
-  const keys = Object.keys(vert);
-  keys.forEach(function (key) {
-    const vertex = vert[key];
-
-    if (vertex.link) {
-      const node = select('#' + id + ' [id="' + key + '"]');
-      if (node) {
-        const link = doc.createElementNS('http://www.w3.org/2000/svg', 'a');
-        link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
-        link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
-        link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
-        if (securityLevel === 'sandbox') {
-          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', '_top');
-        } else if (vertex.linkTarget) {
-          link.setAttributeNS('http://www.w3.org/2000/svg', 'target', vertex.linkTarget);
-        }
-
-        const linkNode = node.insert(function () {
-          return link;
-        }, ':first-child');
-
-        const shape = node.select('.label-container');
-        if (shape) {
-          linkNode.append(function () {
-            return shape.node();
-          });
-        }
-
-        const label = node.select('.label');
-        if (label) {
-          linkNode.append(function () {
-            return label.node();
-          });
-        }
-      }
+  cy.edges().map((edge, id) => {
+    const data = edge.data();
+    if (edge[0]._private.bodyBounds) {
+      const bounds = edge[0]._private.bodyBounds;
+      log.info(
+        id,
+        // 'x:',
+        // edge.controlPoints(),
+        // 'y:',
+        edge[0]._private
+        // 'w:',
+        // edge.boundingbox().w,
+        // 'h:',
+        // edge.boundingbox().h,
+        // edge.midPoint()
+      );
+      // data.el.attr('transform', `translate(${node.position().x}, ${node.position().y})`);
+      edgesEl
+        .insert('line')
+        .attr('x1', bounds.x1)
+        .attr('y1', bounds.y1)
+        .attr('x2', bounds.x2)
+        .attr('y2', bounds.y2)
+        .attr('class', 'path');
     }
   });
+  log.info(cy.json());
+  setupGraphViewbox({}, svg, conf.diagramPadding, conf.useMaxWidth);
 };
 
 export default {
-  setConf,
-  addVertices,
-  addEdges,
+  // setConf,
+  // addVertices,
+  // addEdges,
   getClasses,
   draw,
 };

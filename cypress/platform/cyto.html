@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        /* background:#333; */
+        font-family: 'Arial';
+        /* font-size: 18px !important; */
+        width: 100%;
+        /* display: flex; */
+        /* flex-direction: column; */
+        margin-left: 20px;
+      }
+      h1 {
+        color: grey;
+      }
+      .mermaid2,
+      .mermaid3 {
+        display: none;
+      }
+      .mermaid {
+      }
+      .mermaid svg {
+        border: 1px solid purple;
+        /* font-size: 18px !important; */
+        /* fontfamily: 'courier'; */
+      }
+      #cy {
+        width: 300px;
+        height: 300px;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cy"></div>
+    <pre class="mermaid" style="width: 50%">
+flowchart TD
+id1 --> id2--> id3[Iam number 3]--> id4--> id5 --> id1
+    </pre>
+
+    <script src="./mermaid.js"></script>
+    <script>
+      mermaid.parseError = function (err, hash) {
+        // console.error('Mermaid error: ', err);
+      };
+      mermaid.initialize({
+        maxTextSize: 900000,
+        startOnLoad: true,
+        securityLevel: 'loose',
+        logLevel: 0,
+        fontFamily: 'courier',
+        flowchart: {
+          // curve: 'curveLinear',
+          useMaxWidth: true,
+          htmlLabels: false,
+          fontFamily: 'courier',
+          defaultRenderer: 'cytoscape',
+          // defaultRenderer: 'dagre-wrapper',
+        },
+      });
+      function callback() {
+        alert('It worked');
+      }
+
+      function clickByFlow(elemName) {
+        const div = document.createElement('div');
+        div.className = 'created-by-click';
+        div.style = 'padding: 20px; background: green; color: white;';
+        div.innerText = 'Clicked By Flow';
+
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
+    </script>
+  </body>
+</html>

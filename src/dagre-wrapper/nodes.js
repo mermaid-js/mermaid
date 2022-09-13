@@ -8,8 +8,6 @@ import note from './shapes/note';
 import { parseMember } from '../diagrams/class/svgDraw';
 import { evaluate, sanitizeText as sanitize } from '../diagrams/common/common';
 
-const sanitizeText = (txt) => sanitize(txt, getConfig());
-
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
@@ -1064,6 +1062,7 @@ export const insertNode = (elem, node, dir) => {
   if (node.haveCallback) {
     nodeElems[node.id].attr('class', nodeElems[node.id].attr('class') + ' clickable');
   }
+  return newEl;
 };
 export const setNodeElem = (elem, node) => {
   nodeElems[node.id] = elem;
