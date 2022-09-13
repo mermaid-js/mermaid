@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "9.1.6",
+  "version": "9.2.0-rc1",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.mjs",
   "module": "dist/mermaid.core.mjs",
@@ -126,7 +126,7 @@
     "ts-jest": "^28.0.8",
     "ts-loader": "^9.3.1",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.2",
+    "typescript": "^4.8.3",
     "unist-util-flatmap": "^1.0.0"
   },
   "resolutions": {
