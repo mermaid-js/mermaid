@@ -30,7 +30,31 @@
   </head>
   <body>
     <h1>info below</h1>
+
     <pre class="mermaid" style="width: 100%; height: 20%">
+  %%{init: { "logLevel": "debug", "theme": "default" , "gitGraph" : {"showBranches":"false","rotateCommitLabel":"true"},"themeVariables": {
+              "gitBranchLabel0": "#ff0000",
+              "gitBranchLabel1": "#00ff00",
+              "gitBranchLabel2": "#0000ff",
+              "git0": "#550055"
+       } } }%%
+    gitGraph
+      commit
+       branch develop
+       commit
+       commit
+       branch release/1.0.0
+       checkout release/1.0.0
+       commit tag:"1.0.0-beta1"
+       checkout develop
+       commit
+       commit
+       commit
+       commit
+       checkout release/1.0.0
+       merge develop tag: "1.0.0-beta2"
+    </pre>
+    <pre class="mermaid2" style="width: 100%; height: 20%">
     %%{init: { "logLevel": "debug", "theme": "default" , "gitGraph" : {"showBranches":"false"},"themeVariables": {
               "gitBranchLabel0": "#ff0000",
               "gitBranchLabel1": "#00ff00",
@@ -131,6 +155,7 @@
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 1,
+        gitGraph: {rotateCommitLabel: false},
         flowchart: { curve: 'linear', htmlLabels: true },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
