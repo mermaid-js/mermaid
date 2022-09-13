@@ -26,12 +26,14 @@ const buildOptions = (override = {}) => {
   };
 };
 
-const getOutFiles = (extension) => {
+const getEntryPoints = (extension) => {
   return {
     [`mermaid${extension}`]: 'src/mermaid.ts',
     [`diagramAPI${extension}`]: 'src/diagram-api/diagramAPI.ts',
   };
 };
+exports.getEntryPoints = getEntryPoints;
+
 /**
  * Build options for mermaid.esm.* build.
  *
@@ -43,7 +45,7 @@ const getOutFiles = (extension) => {
 exports.esmBuild = (override = { minify: true }) => {
   return buildOptions({
     format: 'esm',
-    entryPoints: getOutFiles(`.esm${override.minify ? '.min' : ''}`),
+    entryPoints: getEntryPoints(`.esm${override.minify ? '.min' : ''}`),
     outExtension: { '.js': '.mjs' },
     ...override,
   });
@@ -61,7 +63,7 @@ exports.esmBuild = (override = { minify: true }) => {
 exports.esmCoreBuild = (override) => {
   return buildOptions({
     format: 'esm',
-    entryPoints: getOutFiles(`.core`),
+    entryPoints: getEntryPoints(`.core`),
     outExtension: { '.js': '.mjs' },
     external: ['require', 'fs', 'path', ...Object.keys(dependencies)],
     platform: 'neutral',
@@ -79,7 +81,7 @@ exports.esmCoreBuild = (override) => {
  */
 exports.iifeBuild = (override = { minify: true }) => {
   return buildOptions({
-    entryPoints: getOutFiles(override.minify ? '.min' : ''),
+    entryPoints: getEntryPoints(override.minify ? '.min' : ''),
     format: 'iife',
     ...override,
   });
