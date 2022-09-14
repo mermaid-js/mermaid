@@ -118,12 +118,12 @@ export const decodeEntities = function (text: string): string {
  *   element will be removed when rendering is completed.
  * @returns {void}
  */
-const render = function (
+const render = async function (
   id: string,
   text: string,
   cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   container?: Element
-): void {
+): Promise<void> {
   configApi.reset();
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(text);
@@ -299,7 +299,7 @@ const render = function (
   svg.insertBefore(style1, firstChild);
 
   try {
-    diag.renderer.draw(text, id, pkg.version, diag);
+    await diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
     errorRenderer.draw(id, pkg.version);
     throw e;

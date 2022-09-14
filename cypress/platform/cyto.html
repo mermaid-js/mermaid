@@ -46,9 +46,15 @@
     <div id="cy"></div>
     <pre class="mermaid" style="width: 50%">
 flowchart TD
-id1 --> id2--> id3[Iam number 3]--> id4--> id5 --> id1
+id1 --> id2--> id3[I am number 3 and I<br/>am a gigantic node<br/>am a gigantic node<br/>am a gigantic node<br/>am a gigantic node<br/>am a gigantic node]--> id4--> id5 --> id1
+id5 --> id4
+id5 --> id4
     </pre>
-
+    <pre class="mermaid2" style="width: 50%">
+flowchart TD
+id1 --> id2--> id3
+id2 --> id1
+    </pre>
     <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {

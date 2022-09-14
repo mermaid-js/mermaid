@@ -4750,6 +4750,14 @@ cypress@9.7.0:
     untildify "^4.0.0"
     yauzl "^2.10.0"
 
+cytoscape@^3.23.0:
+  version "3.23.0"
+  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.23.0.tgz#054ee05a6d0aa3b4f139382bbf2f4e5226df3c6d"
+  integrity sha512-gRZqJj/1kiAVPkrVFvz/GccxsXhF3Qwpptl32gKKypO4IlqnKBjTOu+HbXtEggSGzC5KCaHp3/F7GgENrtsFkA==
+  dependencies:
+    heap "^0.2.6"
+    lodash "^4.17.21"
+
 "d3-array@2 - 3", "d3-array@2.10.0 - 3", "d3-array@2.5.0 - 3", d3-array@3:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-3.1.1.tgz#7797eb53ead6b9083c75a45a681e93fc41bc468c"
@@ -6827,6 +6835,11 @@ he@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
+
+heap@^0.2.6:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/heap/-/heap-0.2.7.tgz#1e6adf711d3f27ce35a81fe3b7bd576c2260a8fc"
+  integrity sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==
 
 highlight.js@^10.5.0:
   version "10.7.3"

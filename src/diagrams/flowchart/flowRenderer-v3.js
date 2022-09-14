@@ -382,161 +382,162 @@ export const getClasses = function (text, diagObj) {
  */
 
 export const draw = function (text, id, _version, diagObj) {
-  const cy = cytoscape({
-    // styleEnabled: false,
-    // animate: false,
-    // ready: function () {
-    //   log.info('Ready', this);
-    // },
-    container: document.getElementById('cy'), // container to render in
-
-    elements: [
-      // list of graph elements to start with
-      // { // node a
-      //   data: { id: 'a' }
+  return new Promise(function (resolve, reject) {
+    const cy = cytoscape({
+      // styleEnabled: false,
+      // animate: false,
+      // ready: function () {
+      //   log.info('Ready', this);
       // },
-      // { // node b
-      //   data: { id: 'b' }
-      // },
-      // { // edge ab
-      //   data: { id: 'ab', source: 'a', target: 'b' }
-      // }
-    ],
+      container: document.getElementById('cy'), // container to render in
 
-    style: [
-      // the stylesheet for the graph
-      {
-        selector: 'node',
-        style: {
-          'background-color': '#666',
-          label: 'data(labelText)',
+      elements: [
+        // list of graph elements to start with
+        // { // node a
+        //   data: { id: 'a' }
+        // },
+        // { // node b
+        //   data: { id: 'b' }
+        // },
+        // { // edge ab
+        //   data: { id: 'ab', source: 'a', target: 'b' }
+        // }
+      ],
+
+      style: [
+        // the stylesheet for the graph
+        {
+          selector: 'node',
+          style: {
+            'background-color': '#666',
+            label: 'data(labelText)',
+          },
         },
-      },
 
-      {
-        selector: 'edge',
-        style: {
-          width: 3,
-          'line-color': '#ccc',
-          'target-arrow-color': '#ccc',
-          'target-arrow-shape': 'triangle',
-          'curve-style': 'bezier',
-          label: 'data(id)',
+        {
+          selector: 'edge',
+          style: {
+            width: 3,
+            'line-color': '#ccc',
+            'target-arrow-color': '#ccc',
+            'target-arrow-shape': 'triangle',
+            'curve-style': 'bezier',
+            label: 'data(id)',
+          },
         },
+      ],
+
+      layout: {
+        name: 'breadthfirst',
+        rows: 1,
       },
-    ],
-
-    layout: {
-      name: 'breadthfirst',
-      rows: 1,
-    },
-  });
-  log.info('Drawing flowchart using v3 renderer');
-  // Fetch the default direction, use TD if none was found
-  let dir = diagObj.db.getDirection();
-  if (typeof dir === 'undefined') {
-    dir = 'TD';
-  }
-
-  const { securityLevel, flowchart: conf } = getConfig();
-  // const nodeSpacing = conf.nodeSpacing || 50;
-  // const rankSpacing = conf.rankSpacing || 50;
-
-  // Handle root and document for when rendering in sandbox mode
-  let sandboxElement;
-  if (securityLevel === 'sandbox') {
-    sandboxElement = select('#i' + id);
-  }
-  const root =
-    securityLevel === 'sandbox'
-      ? select(sandboxElement.nodes()[0].contentDocument.body)
-      : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-
-  const c = cytoscape({
-    // name: 'cose',
-    name: 'cose',
-    container: null,
-    layout: {
-      boundingBox: {
-        x1: 0,
-        y1: 0,
-        w: 200,
-        h: 200,
-      },
-    },
-    headless: true,
-    styleEnabled: false,
-    animate: false,
-    ready: function () {
-      log.info('Ready', this);
-    },
-  });
-
-  const svg = root.select(`[id="${id}"]`);
-  const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
-
-  // Fetch the vertices/nodes and edges/links from the parsed graph definition
-  const vert = diagObj.db.getVertices();
-  addVertices(vert, cy, id, root, doc, diagObj);
-  // c.style();
-  // Make cytoscape care about the dimensisions of the nodes
-  cy.nodes().forEach(function (n) {
-    n.layoutDimensions = () => {
-      const boundingBox = n.data().boundingBox;
-      return { w: boundingBox.width, h: boundingBox.height };
-    };
-  });
-
-  const edges = diagObj.db.getEdges();
-  addEdges(edges, cy, diagObj);
-
-  cy.layout({
-    // name: 'grid',
-    name: 'circle',
-    // name: 'cose'
-  }).run();
-  cy.nodes().map((node, id) => {
-    const data = node.data();
-    log.info(
-      'Position: (',
-      node.position().x,
-      ', ',
-      node.position().y,
-      ')',
-      node.layoutDimensions()
-    );
-    data.el.attr('transform', `translate(${node.position().x}, ${node.position().y})`);
-  });
-
-  cy.edges().map((edge, id) => {
-    const data = edge.data();
-    if (edge[0]._private.bodyBounds) {
-      const bounds = edge[0]._private.bodyBounds;
-      log.info(
-        id,
-        // 'x:',
-        // edge.controlPoints(),
-        // 'y:',
-        edge[0]._private
-        // 'w:',
-        // edge.boundingbox().w,
-        // 'h:',
-        // edge.boundingbox().h,
-        // edge.midPoint()
-      );
-      // data.el.attr('transform', `translate(${node.position().x}, ${node.position().y})`);
-      edgesEl
-        .insert('line')
-        .attr('x1', bounds.x1)
-        .attr('y1', bounds.y1)
-        .attr('x2', bounds.x2)
-        .attr('y2', bounds.y2)
-        .attr('class', 'path');
+    });
+    log.info('Drawing flowchart using v3 renderer');
+    // Fetch the default direction, use TD if none was found
+    let dir = diagObj.db.getDirection();
+    if (typeof dir === 'undefined') {
+      dir = 'TD';
     }
+
+    const { securityLevel, flowchart: conf } = getConfig();
+    // const nodeSpacing = conf.nodeSpacing || 50;
+    // const rankSpacing = conf.rankSpacing || 50;
+
+    // Handle root and document for when rendering in sandbox mode
+    let sandboxElement;
+    if (securityLevel === 'sandbox') {
+      sandboxElement = select('#i' + id);
+    }
+    const root =
+      securityLevel === 'sandbox'
+        ? select(sandboxElement.nodes()[0].contentDocument.body)
+        : select('body');
+    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
+
+    const svg = root.select(`[id="${id}"]`);
+    const edgesEl = svg.insert('g').attr('class', 'edges edgePath');
+
+    // Fetch the vertices/nodes and edges/links from the parsed graph definition
+    const vert = diagObj.db.getVertices();
+    addVertices(vert, cy, id, root, doc, diagObj);
+    // c.style();
+    // Make cytoscape care about the dimensisions of the nodes
+    cy.nodes().forEach(function (n) {
+      n.layoutDimensions = () => {
+        const boundingBox = n.data().boundingBox;
+        return { w: boundingBox.width, h: boundingBox.height };
+      };
+    });
+
+    const edges = diagObj.db.getEdges();
+    addEdges(edges, cy, diagObj);
+
+    cy.layout({
+      // name: 'grid',
+      // name: 'circle',
+      name: 'cose',
+      // name: 'breadthfirst',
+      headless: true,
+      styleEnabled: false,
+      animate: false,
+    }).run();
+    log.info('Positions', cy.nodes().positions());
+    window.cy = cy;
+    cy.ready((e) => {
+      log.info('Ready', e);
+      setTimeout(() => {
+        cy.nodes().map((node, id) => {
+          const data = node.data();
+          log.info('Position: (', node.position().x, ', ', node.position().y, ')', data);
+          data.el.attr('transform', `translate(${node.position().x}, ${node.position().y})`);
+          // document
+          //   .querySelector(`[id="${data.domId}"]`)
+          //   .setAttribute('transform', `translate(${node.position().x}, ${node.position().y})`);
+          log.info('Id = ', data.domId, svg.select(`[id="${data.domId}"]`), data.el.node());
+        });
+
+        cy.edges().map((edge, id) => {
+          const data = edge.data();
+          if (edge[0]._private.bodyBounds) {
+            const bounds = edge[0]._private.rscratch;
+            log.info(
+              id,
+              // 'x:',
+              // edge.controlPoints(),
+              // 'y:',
+              edge[0]._private.rscratch
+              // 'w:',
+              // edge.boundingbox().w,
+              // 'h:',
+              // edge.boundingbox().h,
+              // edge.midPoint()
+            );
+            // data.el.attr('transform', `translate(${node.position().x}, ${node.position().y})`);
+            // edgesEl
+            //   .insert('line')
+            //   .attr('x1', bounds.startX)
+            //   .attr('y1', bounds.startY)
+            //   .attr('x2', bounds.endX)
+            //   .attr('y2', bounds.endY)
+            //   .attr('class', 'path');
+            edgesEl
+              .insert('path')
+              // Todo use regular line function
+              .attr(
+                'd',
+                `M ${bounds.startX},${bounds.startY} L ${bounds.midX},${bounds.midY} L${bounds.endX},${bounds.endY} `
+              )
+              .attr('class', 'path')
+              .attr('fill', 'none');
+          }
+        });
+
+        log.info(cy.json());
+        setupGraphViewbox({}, svg, conf.diagramPadding, conf.useMaxWidth);
+        resolve();
+      }, 500);
+    });
   });
-  log.info(cy.json());
-  setupGraphViewbox({}, svg, conf.diagramPadding, conf.useMaxWidth);
 };
 
 export default {

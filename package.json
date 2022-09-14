@@ -64,6 +64,7 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
+    "cytoscape": "^3.23.0",
     "d3": "^7.0.0",
     "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
