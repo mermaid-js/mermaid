@@ -616,7 +616,6 @@ export const draw = function (_text, id, _version, diagObj) {
   globalBoundaryMaxY = conf.diagramMarginY;
 
   const title = diagObj.db.getTitle();
-  const c4type = diagObj.db.getC4Type(); // TODO: @knsv: remove this?
   let currentBoundarys = diagObj.db.getBoundarys('');
   // switch (c4type) {
   //   case 'C4Context':

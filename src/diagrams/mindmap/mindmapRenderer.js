@@ -192,9 +192,7 @@ function layoutMindmap(node, conf) {
   });
 
   // Merge the trees into a single tree
-  const result = mergeTrees(node, trees);
-  // TODO: @knsv The function is not called bug?
-  eachNode;
+  mergeTrees(node, trees);
   return node;
 }
 /**

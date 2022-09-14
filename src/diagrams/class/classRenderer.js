@@ -157,8 +157,6 @@ export const draw = function (text, id, _version, diagObj) {
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  // TODO: @knsv doc is not used, bug?
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   // Fetch the default direction, use TD if none was found
   const diagram = root.select(`[id='${id}']`);
