@@ -36,9 +36,3 @@ jobs:
         run: yarn e2e
         env:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
-
-      - name: Upload Coverage to Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: e2e
