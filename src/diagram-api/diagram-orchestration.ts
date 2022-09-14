@@ -97,7 +97,29 @@ import journeyDb from '../diagrams/user-journey/journeyDb';
 import journeyRenderer from '../diagrams/user-journey/journeyRenderer';
 import journeyStyles from '../diagrams/user-journey/styles';
 
+import errorRenderer from '../diagrams/error/errorRenderer';
+import errorStyles from '../diagrams/error/styles';
+
 export const addDiagrams = () => {
+  registerDiagram(
+    'error',
+    // Special diagram with error messages but setup as a regular diagram
+    {
+      db: {},
+      styles: errorStyles,
+      renderer: errorRenderer,
+      parser: {
+        parser: { yy: {} },
+        parse: () => {
+          // no op
+        },
+      },
+      init: () => {
+        // no op
+      },
+    },
+    (text) => text.toLowerCase().trim() === 'error'
+  );
   registerDiagram(
     'c4',
     {

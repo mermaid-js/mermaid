@@ -1,7 +1,7 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
-import { log } from './logger';
-import { getErrorMessage } from './utils';
+import { log } from '../../logger';
+import { getErrorMessage } from '../../utils';
 
 let conf = {};
 
@@ -72,22 +72,22 @@ export const draw = (id: string, mermaidVersion: string) => {
 
     g.append('text') // text label for the x axis
       .attr('class', 'error-text')
-      .attr('x', 1240)
+      .attr('x', 1440)
       .attr('y', 250)
       .attr('font-size', '150px')
       .style('text-anchor', 'middle')
       .text('Syntax error in graph');
     g.append('text') // text label for the x axis
       .attr('class', 'error-text')
-      .attr('x', 1050)
+      .attr('x', 1250)
       .attr('y', 400)
       .attr('font-size', '100px')
       .style('text-anchor', 'middle')
       .text('mermaid version ' + mermaidVersion);
 
     svg.attr('height', 100);
-    svg.attr('width', 400);
-    svg.attr('viewBox', '768 0 512 512');
+    svg.attr('width', 500);
+    svg.attr('viewBox', '768 0 912 512');
   } catch (e) {
     log.error('Error while rendering info diagram');
     log.error(getErrorMessage(e));
