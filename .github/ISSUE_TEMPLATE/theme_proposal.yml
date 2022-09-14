@@ -34,6 +34,8 @@ body:
         - background: #f4f4f4
         - primaryColor: #fff4dd
         - ...
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Screenshots
