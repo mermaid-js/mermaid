@@ -67,5 +67,10 @@ const generateHandler = (server) => {
   app.use(express.static('cypress/platform'));
   app.all('/mermaid.js', generateHandler(iifeServer));
   app.all('/mermaid.esm.mjs', generateHandler(esmServer));
-  app.listen(3000);
+
+  app.all('/e2e.js', generateHandler(iifeServer));
+  app.all('/bundle-test.js', generateHandler(iifeServer));
+  app.listen(9000, () => {
+    console.log(`Listening on http://localhost:9000`);
+  });
 })();
