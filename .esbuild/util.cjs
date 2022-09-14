@@ -17,7 +17,7 @@ const buildOptions = (override = {}) => {
     globalName: 'mermaid',
     platform: 'browser',
     tsconfig: 'tsconfig.json',
-    resolveExtensions: ['.ts', '.js', '.json', '.jison'],
+    resolveExtensions: ['.ts', '.js', '.mjs', '.json', '.jison'],
     external: ['require', 'fs', 'path'],
     outdir: 'dist',
     plugins: [jisonPlugin],
