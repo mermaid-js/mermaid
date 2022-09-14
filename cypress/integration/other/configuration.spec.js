@@ -15,11 +15,13 @@ describe('Configuration', () => {
 
       // Check the marker-end property to make sure it is properly set to
       // start with #
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(#');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(#');
+      });
     });
     it('should handle default value false of arrowMarkerAbsolute', () => {
       renderGraph(
@@ -35,11 +37,13 @@ describe('Configuration', () => {
 
       // Check the marker-end property to make sure it is properly set to
       // start with #
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(#');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(#');
+      });
     });
     it('should handle arrowMarkerAbsolute explicitly set to false', () => {
       renderGraph(
@@ -57,11 +61,13 @@ describe('Configuration', () => {
 
       // Check the marker-end property to make sure it is properly set to
       // start with #
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(#');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(#');
+      });
     });
     it('should handle arrowMarkerAbsolute explicitly set to "false" as false', () => {
       renderGraph(
@@ -79,11 +85,13 @@ describe('Configuration', () => {
 
       // Check the marker-end property to make sure it is properly set to
       // start with #
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(#');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(#');
+      });
     });
     it('should handle arrowMarkerAbsolute set to true', () => {
       renderGraph(
@@ -99,11 +107,13 @@ describe('Configuration', () => {
         }
       );
 
-      cy.get('.edgePath path')
-        .first()
-        .should('have.attr', 'marker-end')
-        .should('exist')
-        .and('include', 'url(http://localhost');
+      cy.get('.edgePaths').within(() => {
+        cy.get('path')
+          .first()
+          .should('have.attr', 'marker-end')
+          .should('exist')
+          .and('include', 'url(http://localhost');
+      });
     });
     it('should not taint the initial configuration when using multiple directives', () => {
       const url = 'http://localhost:9000/regression/issue-1874.html';
