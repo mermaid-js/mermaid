@@ -12,32 +12,32 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        cache: yarn
-        node-version: ${{ matrix.node-version }}
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Yarn
-      run: npm i yarn --global
+      - name: Install Yarn
+        run: npm i yarn --global
 
-    - name: Install Packages
-      run: |
-        yarn install --frozen-lockfile
-      env:
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
+      - name: Install Packages
+        run: |
+          yarn install --frozen-lockfile
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
-    - name: Run Build
-      run: yarn build
+      - name: Run Build
+        run: yarn build
 
-    - name: Run E2E Tests
-      run: yarn e2e
-      env:
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
+      - name: Run E2E Tests
+        run: yarn e2e
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
-    - name: Upload Coverage to Coveralls
+      - name: Upload Coverage to Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
