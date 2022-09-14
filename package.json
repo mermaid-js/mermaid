@@ -93,7 +93,7 @@
     "babel-loader": "^8.2.2",
     "concurrently": "^7.4.0",
     "css-to-string-loader": "^0.1.3",
-    "cypress": "9.7.0",
+    "cypress": "^10.0.0",
     "cypress-image-snapshot": "^4.0.1",
     "documentation": "13.2.0",
     "eslint": "^8.23.1",
