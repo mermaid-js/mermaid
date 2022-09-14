@@ -634,13 +634,13 @@ export const updateLayoutConfig = function (typeC4Shape, c4ShapeInRowParam, c4Bo
   let c4BoundaryInRowValue = c4BoundaryInRow;
 
   if (typeof c4ShapeInRowParam === 'object') {
-    let [, value] = Object.entries(c4ShapeInRowParam)[0];
+    const value = Object.values(c4ShapeInRowParam)[0];
     c4ShapeInRowValue = parseInt(value);
   } else {
     c4ShapeInRowValue = parseInt(c4ShapeInRowParam);
   }
   if (typeof c4BoundaryInRowParam === 'object') {
-    let [, value] = Object.entries(c4BoundaryInRowParam)[0];
+    const value = Object.values(c4BoundaryInRowParam)[0];
     c4BoundaryInRowValue = parseInt(value);
   } else {
     c4BoundaryInRowValue = parseInt(c4BoundaryInRowParam);
