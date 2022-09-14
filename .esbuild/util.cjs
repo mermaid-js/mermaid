@@ -83,6 +83,9 @@ exports.iifeBuild = (override = { minify: true }) => {
   return buildOptions({
     entryPoints: getEntryPoints(override.minify ? '.min' : ''),
     format: 'iife',
+    footer: {
+      js: 'mermaid = mermaid.default;',
+    },
     ...override,
   });
 };
