@@ -95,7 +95,7 @@ describe('Configuration', () => {
     });
     it('should handle arrowMarkerAbsolute set to true', () => {
       renderGraph(
-        `graph TD
+        `flowchart TD
         A[Christmas] -->|Get money| B(Go shopping)
         B --> C{Let me think}
         C -->|One| D[Laptop]
