@@ -60,8 +60,6 @@ body:
         - Device: [Samsung, iPhone, ...]
         - OS and Version: [Android, iOS, ...]
         - Browser and Version: [Chrome, Safari, ...]
-    validations:
-      required: true
   - type: textarea
     attributes:
       label: Additional Context
