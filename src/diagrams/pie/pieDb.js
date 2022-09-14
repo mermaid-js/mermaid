@@ -13,8 +13,6 @@ import {
 } from '../../commonDb';
 
 let sections = {};
-let title = '';
-let description = '';
 let showData = false;
 
 export const parseDirective = function (statement, context, type) {
@@ -49,7 +47,6 @@ const cleanupValue = function (value) {
 
 const clear = function () {
   sections = {};
-  title = '';
   showData = false;
   commonClear();
 };

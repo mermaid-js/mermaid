@@ -1,10 +1,8 @@
 import { select } from 'd3';
 import { log } from '../logger';
 import { getConfig } from '../config';
-import { sanitizeText, evaluate } from '../diagrams/common/common';
+import { evaluate } from '../diagrams/common/common';
 import { decodeEntities } from '../mermaidAPI';
-
-const sanitizeTxt = (txt) => sanitizeText(txt, getConfig());
 
 /**
  * @param dom
