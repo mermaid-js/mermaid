@@ -4,7 +4,7 @@ import { log } from '../../logger';
 import * as configApi from '../../config';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
-import common from '../common/common';
+
 import {
   setAccTitle,
   getAccTitle,
@@ -21,8 +21,6 @@ let todayMarker = '';
 let includes = [];
 let excludes = [];
 let links = {};
-let title = '';
-let accDescription = '';
 let sections = [];
 let tasks = [];
 let currentSection = '';
@@ -34,10 +32,6 @@ let topAxis = false;
 // The serial order of the task in the script
 let lastOrder = 0;
 
-const sanitizeText = function (txt) {
-  return common.sanitizeText(txt, configApi.getConfig());
-};
-
 export const parseDirective = function (statement, context, type) {
   mermaidAPI.parseDirective(this, statement, context, type);
 };
@@ -47,7 +41,6 @@ export const clear = function () {
   tasks = [];
   currentSection = '';
   funs = [];
-  title = '';
   taskCnt = 0;
   lastTask = undefined;
   lastTaskID = undefined;
@@ -247,7 +240,8 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * - `ms` for milliseconds
  *
  * @param {string} str - A string representing the duration.
- * @returns {moment.Duration} A moment duration, including an invalid moment for invalid input string.
+ * @returns {moment.Duration} A moment duration, including an invalid moment for invalid input
+ *   string.
  */
 const parseDuration = function (str) {
   const statement = /^(\d+(?:\.\d+)?)([yMwdhms]|ms)$/.exec(str.trim());

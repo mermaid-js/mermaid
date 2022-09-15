@@ -40,7 +40,6 @@ const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const directiveWithoutOpen =
   /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
-const anyComment = /\s*%%.*\n/gm;
 
 /**
  * @function detectInit Detects the init config object from the text
@@ -308,7 +307,6 @@ const calcLabelPosition = (points) => {
 
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
   let prevPoint;
-  let totalDistance = 0;
   log.info('our points', points);
   if (points[0] !== initialPosition) {
     points = points.reverse();
@@ -368,7 +366,6 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   // Todo looking to faster cloning method
   let points = JSON.parse(JSON.stringify(_points));
   let prevPoint;
-  let totalDistance = 0;
   log.info('our points', points);
   if (position !== 'start_left' && position !== 'start_right') {
     points = points.reverse();
@@ -706,19 +703,6 @@ export const calculateTextDimensions = memoize(
   },
   (text, config) => `${text}${config.fontSize}${config.fontWeight}${config.fontFamily}`
 );
-
-/**
- * Applys d3 attributes
- *
- * @param {any} d3Elem D3 Element to apply the attributes onto
- * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of
- *   attributes
- */
-const d3Attrs = function (d3Elem, attrs) {
-  for (const attr of attrs) {
-    d3Elem.attr(attr[0], attr[1]);
-  }
-};
 
 export const initIdGenerator = class iterator {
   constructor(deterministic, seed) {

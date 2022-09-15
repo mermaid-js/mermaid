@@ -63,6 +63,13 @@
       "rules": {
         "no-console": "off"
       }
+    },
+    {
+      "files": ["./**/*.spec.{ts,js}", "./cypress/**", "./demos/**", "./**/docs/**"],
+      "rules": {
+        "jsdoc/require-jsdoc": "off",
+        "@typescript-eslint/no-unused-vars": "off"
+      }
     }
   ]
 }
