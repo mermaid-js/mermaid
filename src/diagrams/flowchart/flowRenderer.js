@@ -29,8 +29,6 @@ export const setConf = function (cnf) {
  * @param diagObj
  */
 export const addVertices = function (vert, g, svgId, root, _doc, diagObj) {
-  const securityLevel = getConfig().securityLevel;
-
   const svg = !root ? select(`[id="${svgId}"]`) : root.select(`[id="${svgId}"]`);
   const doc = !_doc ? document : _doc;
   const keys = Object.keys(vert);

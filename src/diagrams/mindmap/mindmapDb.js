@@ -1,6 +1,5 @@
 /** Created by knut on 15-01-14. */
-import { sanitizeText, getConfig } from '../../diagram-api/diagramAPI';
-import { log as _log } from '../../logger';
+import { sanitizeText, getConfig, log as _log } from '../../diagram-api/diagramAPI';
 
 let nodes = [];
 let cnt = 0;
