@@ -1,8 +1,9 @@
 import classDiagram from './diagrams/class/styles';
 import er from './diagrams/er/styles';
+import error from './diagrams/error/styles';
 import flowchart from './diagrams/flowchart/styles';
 import gantt from './diagrams/gantt/styles';
-import gitGraph from './diagrams/git/styles';
+// import gitGraph from './diagrams/git/styles';
 import info from './diagrams/info/styles';
 import pie from './diagrams/pie/styles';
 import requirement from './diagrams/requirement/styles';
@@ -14,7 +15,7 @@ import { FlowChartStyleOptions } from './diagrams/flowchart/styles';
 import { log } from './logger';
 
 // TODO @knut: Inject from registerDiagram.
-const themes = {
+const themes: Record<string, any> = {
   flowchart,
   'flowchart-v2': flowchart,
   sequence,
@@ -24,10 +25,11 @@ const themes = {
   class: classDiagram,
   stateDiagram,
   state: stateDiagram,
-  gitGraph,
+  // gitGraph,
   info,
   pie,
   er,
+  error,
   journey,
   requirement,
   c4,
@@ -45,7 +47,7 @@ const getStyles = (
     lineColor: string;
   } & FlowChartStyleOptions
 ) => {
-  let diagramStyles: string = '';
+  let diagramStyles = '';
   if (type in themes && themes[type as keyof typeof themes]) {
     diagramStyles = themes[type as keyof typeof themes](options);
   } else {
@@ -101,6 +103,10 @@ const getStyles = (
 
   ${userStyles}
 `;
+};
+
+export const addStylesForDiagram = (type: string, diagramTheme: unknown): void => {
+  themes[type] = diagramTheme;
 };
 
 export default getStyles;

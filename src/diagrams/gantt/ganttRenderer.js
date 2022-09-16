@@ -13,7 +13,7 @@ import {
 } from 'd3';
 import common from '../common/common';
 import { getConfig } from '../../config';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 export const setConf = function () {
@@ -391,7 +391,6 @@ export const draw = function (text, id, version, diagObj) {
     if (securityLevel === 'sandbox') {
       let sandboxElement;
       sandboxElement = select('#i' + id);
-      const root = select(sandboxElement.nodes()[0].contentDocument.body);
       const doc = sandboxElement.nodes()[0].contentDocument;
 
       rectangles
@@ -621,7 +620,6 @@ export const draw = function (text, id, version, diagObj) {
     const result = [];
     for (let i = 0, l = arr.length; i < l; ++i) {
       if (!Object.prototype.hasOwnProperty.call(hash, arr[i])) {
-        // eslint-disable-line
         // it works with objects! in FF, at least
         hash[arr[i]] = true;
         result.push(arr[i]);

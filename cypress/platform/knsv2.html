@@ -1,20 +1,25 @@
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
     <link
-      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
         /* background: rgb(221, 208, 208); */
         /* background:#333; */
         font-family: 'Arial';
         /* font-size: 18px !important; */
-        }
-      h1 { color: grey;}
+      }
+      h1 {
+        color: grey;
+      }
       .mermaid2 {
         display: none;
       }
@@ -23,9 +28,9 @@
       }
       .malware {
         position: fixed;
-        bottom:0;
-        left:0;
-        right:0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         height: 150px;
         background: red;
         color: black;
@@ -41,31 +46,40 @@
   <body>
     <div>Security check</div>
     <div class="flex">
-      <div id="diagram" class="mermaid">
-sequenceDiagram
-  Nothing:Valid;
-      </div>
+      <pre id="diagram" class="mermaid">
+    flowchart TD
+    A[myClass1] --> B[default] & C[default]
+    B[default] & C[default] --> D[myClass2]
+    classDef default stroke-width:2px,fill:none,stroke:silver
+    classDef node color:red
+    classDef myClass1 color:#0000ff
+    classDef myClass2 stroke:#0000ff,fill:#ccccff
+    class A myClass1
+    class D myClass2
+  </pre
+      >
       <div id="res" class=""></div>
-  <script src="./mermaid.js"></script>
+    </div>
+    <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
         startOnLoad: false,
+        logLevel: 0,
         // themeVariables: {relationLabelColor: 'red'}
       });
       function callback() {
-  alert('It worked');
-}
+        alert('It worked');
+      }
 
-// document.querySelector('#diagram').innerHTML = diagram;
-try {
-  mermaid.initThrowsErrors(undefined, '#diagram');
-} catch (err) {
-  console.log('Caught error:', err);
-}
+      // document.querySelector('#diagram').innerHTML = diagram;
+      try {
+        mermaid.initThrowsErrors(undefined, '#diagram');
+      } catch (err) {
+        console.log('Caught error:', err);
+      }
     </script>
   </body>
 </html>
-

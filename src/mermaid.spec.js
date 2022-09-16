@@ -1,10 +1,20 @@
-import mermaid from './mermaid';
-import flowDb from './diagrams/flowchart/flowDb';
+// mocks the mermaidAPI.render function (see `./__mocks__/mermaidAPI`)
+jest.mock('./mermaidAPI');
+// jest.mock only works well with CJS, see https://github.com/facebook/jest/issues/9430
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { default: mermaid } = require('./mermaid');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { mermaidAPI } = require('./mermaidAPI');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { default: flowDb } = require('./diagrams/flowchart/flowDb');
+
 import flowParser from './diagrams/flowchart/parser/flow';
-import flowRenderer from './diagrams/flowchart/flowRenderer';
-import Diagram from './Diagram';
 
 const spyOn = jest.spyOn;
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
 
 describe('when using mermaid and ', function () {
   describe('when detecting chart type ', function () {
@@ -40,146 +50,15 @@ describe('when using mermaid and ', function () {
     });
   });
 
-  describe('when calling addEdges ', function () {
-    beforeEach(function () {
-      flowParser.parser.yy = flowDb;
-      flowDb.clear();
-      flowDb.setGen('gen-2');
-    });
-    it('should handle edges with text', function () {
-      const diag = new Diagram('graph TD;A-->|text ex|B;');
-      diag.db.getVertices();
-      const edges = diag.db.getEdges();
+  describe('when using #initThrowsErrors', function () {
+    it('should accept single node', async () => {
+      const node = document.createElement('div');
+      node.appendChild(document.createTextNode('graph TD;\na;'));
 
-      const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B-');
-          expect(options.arrowhead).toBe('normal');
-          expect(options.label.match('text ex')).toBeTruthy();
-        },
-      };
-
-      flowRenderer.addEdges(edges, mockG, diag);
-    });
-
-    it('should handle edges without text', function () {
-      const diag = new Diagram('graph TD;A-->B;');
-      diag.db.getVertices();
-      const edges = diag.db.getEdges();
-
-      const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B-');
-          expect(options.arrowhead).toBe('normal');
-        },
-      };
-
-      flowRenderer.addEdges(edges, mockG, diag);
-    });
-
-    it('should handle open-ended edges', function () {
-      const diag = new Diagram('graph TD;A---B;');
-      diag.db.getVertices();
-      const edges = diag.db.getEdges();
-
-      const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B-');
-          expect(options.arrowhead).toBe('none');
-        },
-      };
-
-      flowRenderer.addEdges(edges, mockG, diag);
-    });
-
-    it('should handle edges with styles defined', function () {
-      const diag = new Diagram('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
-      diag.db.getVertices();
-      const edges = diag.db.getEdges();
-
-      const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B-');
-          expect(options.arrowhead).toBe('none');
-          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
-        },
-      };
-
-      flowRenderer.addEdges(edges, mockG, diag);
-    });
-    it('should handle edges with interpolation defined', function () {
-      const diag = new Diagram('graph TD;A---B; linkStyle 0 interpolate basis');
-      diag.db.getVertices();
-      const edges = diag.db.getEdges();
-
-      const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B-');
-          expect(options.arrowhead).toBe('none');
-          expect(options.curve).toBe('basis'); // mocked as string
-        },
-      };
-
-      flowRenderer.addEdges(edges, mockG, diag);
-    });
-    it('should handle edges with text and styles defined', function () {
-      const diag = new Diagram(
-        'graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;'
-      );
-      diag.db.getVertices();
-      const edges = diag.db.getEdges();
-
-      const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B-');
-          expect(options.arrowhead).toBe('none');
-          expect(options.label.match('the text')).toBeTruthy();
-          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
-        },
-      };
-
-      flowRenderer.addEdges(edges, mockG, diag);
-    });
-
-    it('should set fill to "none" by default when handling edges', function () {
-      const diag = new Diagram('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
-      diag.db.getVertices();
-      const edges = diag.db.getEdges();
-
-      const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B');
-          expect(options.arrowhead).toBe('none');
-          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
-        },
-      };
-
-      flowRenderer.addEdges(edges, mockG, diag);
-    });
-
-    it('should not set fill to none if fill is set in linkStyle', function () {
-      const diag = new Diagram(
-        'graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2,fill:blue;'
-      );
-      diag.db.getVertices();
-      const edges = diag.db.getEdges();
-      const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B-');
-          expect(options.arrowhead).toBe('none');
-          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:blue;');
-        },
-      };
-
-      flowRenderer.addEdges(edges, mockG, diag);
+      mermaid.initThrowsErrors(undefined, node);
+      // mermaidAPI.render function has been mocked, since it doesn't yet work
+      // in Node.JS (only works in browser)
+      expect(mermaidAPI.render).toHaveBeenCalled();
     });
   });
 

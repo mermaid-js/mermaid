@@ -1,1 +1,3 @@
-demos/*.html
+dist
+cypress/platform/xss3.html
+.cache

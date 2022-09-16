@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Mermaid Quick Test Page</title>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
-  <style>
-    body {
-      font-family: 'trebuchet ms', verdana, arial;
-    }
-  </style>
-</head>
-<body>
-  <div class="mermaid2">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      body {
+        font-family: 'trebuchet ms', verdana, arial;
+      }
+    </style>
+  </head>
+  <body>
+    <pre class="mermaid2">
   %%{init: { 'themeCSS': '} * { background: lightblue }' } }%%
   flowchart TD
     a --> b
-  </div>
-  <div class="mermaid">
+    </pre>
+    <pre class="mermaid">
    %%{init:{"theme":"base", "themeVariables": {"primaryColor":"#411d4e", "titleColor":"white", "darkMode":true}}}%%
     flowchart LR
     subgraph A
@@ -27,13 +27,13 @@
         i -->f
     end
     A --> B
-  </div>
-  <script src="./mermaid.js"></script>
-  <script>
-     function showFullFirstSquad(elemName) {
-       console.log('show ' + elemName);
-     }
-     mermaid.initialize({ startOnLoad: true, securityLevel: 'loose', logLevel: 0 });
-  </script>
-</body>
+    </pre>
+    <script src="./mermaid.js"></script>
+    <script>
+      function showFullFirstSquad(elemName) {
+        console.log('show ' + elemName);
+      }
+      mermaid.initialize({ startOnLoad: true, securityLevel: 'loose', logLevel: 0 });
+    </script>
+  </body>
 </html>

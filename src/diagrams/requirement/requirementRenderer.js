@@ -2,7 +2,7 @@ import { line, select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
 import markers from './requirementMarkers';
 import { getConfig } from '../../config';
@@ -320,7 +320,6 @@ export const draw = (text, id, _version, diagObj) => {
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   const svg = root.select(`[id='${id}']`);
   markers.insertLineEndings(svg, conf);

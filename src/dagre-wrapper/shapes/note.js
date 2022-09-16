@@ -1,5 +1,5 @@
 import { updateNodeBounds, labelHelper } from './util';
-import { log } from '../../logger'; // eslint-disable-line
+import { log } from '../../logger';
 import intersect from '../intersect/index.js';
 
 const note = (parent, node) => {

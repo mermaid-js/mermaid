@@ -62,9 +62,9 @@ export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth({}, defaultConfig);
   siteConfig = assignWithDepth(siteConfig, conf);
 
-  // @ts-ignore
+  // @ts-ignore: TODO Fix ts errors
   if (conf.theme && theme[conf.theme]) {
-    // @ts-ignore
+    // @ts-ignore: TODO Fix ts errors
     siteConfig.themeVariables = theme[conf.theme].getThemeVariables(conf.themeVariables);
   }
 
@@ -216,6 +216,8 @@ export const addDirective = (directive: any) => {
  * | conf      | base set of values, which currentConfig could be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
  *
  * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
+ *
+ * @param config
  */
 export const reset = (config = siteConfig): void => {
   // Replace current config with siteConfig

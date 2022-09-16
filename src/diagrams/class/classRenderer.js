@@ -3,18 +3,12 @@ import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
 import svgDraw from './svgDraw';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let idCache = {};
 const padding = 20;
-
-const confa = {
-  dividerMargin: 10,
-  padding: 5,
-  textHeight: 10,
-};
 
 /**
  * Gets the ID with the same label as in the cache
@@ -142,8 +136,7 @@ const insertMarkers = function (elem) {
  *
  * @param {string} text
  * @param {string} id
- * @param version
- * @param _version
+ * @param {any} _version
  * @param diagObj
  */
 export const draw = function (text, id, _version, diagObj) {
@@ -164,7 +157,6 @@ export const draw = function (text, id, _version, diagObj) {
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
   // Fetch the default direction, use TD if none was found
   const diagram = root.select(`[id='${id}']`);

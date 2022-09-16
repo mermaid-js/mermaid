@@ -1,5 +1,4 @@
 import common from '../common/common';
-import { addFunction } from '../../interactionDb';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 export const drawRect = function (elem, rectData) {
@@ -875,7 +874,6 @@ const _drawTextCandidateFunc = (function () {
   function _setTextAttrs(toText, fromTextAttrsDict) {
     for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
-        // eslint-disable-line
         toText.attr(key, fromTextAttrsDict[key]);
       }
     }

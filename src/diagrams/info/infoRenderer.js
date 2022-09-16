@@ -27,7 +27,6 @@ export const draw = (text, id, version, diagObj) => {
       securityLevel === 'sandbox'
         ? select(sandboxElement.nodes()[0].contentDocument.body)
         : select('body');
-    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
 
     // Parse the graph definition
     // parser.parse(text);
@@ -49,7 +48,6 @@ export const draw = (text, id, version, diagObj) => {
     svg.attr('width', 400);
     // svg.attr('viewBox', '0 0 300 150');
   } catch (e) {
-    console.error(e);
     log.error('Error while rendering info diagram');
     log.error(e.message);
   }

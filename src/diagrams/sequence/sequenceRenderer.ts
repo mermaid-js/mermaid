@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck TODO: fix file
 import { select, selectAll } from 'd3';
 import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
 import { log } from '../../logger';
@@ -7,7 +7,8 @@ import common from '../common/common';
 // import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
 import assignWithDepth from '../../assignWithDepth';
-import utils, { configureSvgSize } from '../../utils';
+import utils from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let conf = {};
@@ -96,6 +97,7 @@ export const bounds = {
     }
   },
   updateBounds: function (startx, starty, stopx, stopy) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _self = this;
     let cnt = 0;
     /** @param {any} type */
@@ -216,7 +218,7 @@ const drawNote = function (elem, noteModel) {
   rect.width = noteModel.width || conf.width;
   rect.class = 'note';
 
-  let g = elem.append('g');
+  const g = elem.append('g');
   const rectElem = svgDraw.drawRect(g, rect);
   const textObj = svgDraw.getTextObj();
   textObj.x = noteModel.startx;
@@ -232,9 +234,9 @@ const drawNote = function (elem, noteModel) {
   textObj.textMargin = conf.noteMargin;
   textObj.valign = 'center';
 
-  let textElem = drawText(g, textObj);
+  const textElem = drawText(g, textObj);
 
-  let textHeight = Math.round(
+  const textHeight = Math.round(
     textElem
       .map((te) => (te._groups || te)[0][0].getBBox().height)
       .reduce((acc, curr) => acc + curr)
@@ -284,7 +286,7 @@ const boundMessage = function (diagram, msgModel) {
   bounds.bumpVerticalPos(10);
   const { startx, stopx, message } = msgModel;
   const lines = common.splitBreaks(message).length;
-  let textDims = utils.calculateTextDimensions(message, messageFont(conf));
+  const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const lineHeight = textDims.height / lines;
   msgModel.height += lineHeight;
 
@@ -292,7 +294,7 @@ const boundMessage = function (diagram, msgModel) {
 
   let lineStarty;
   let totalOffset = textDims.height - 10;
-  let textWidth = textDims.width;
+  const textWidth = textDims.width;
 
   if (startx === stopx) {
     lineStarty = bounds.getVerticalPos() + totalOffset;
@@ -326,12 +328,12 @@ const boundMessage = function (diagram, msgModel) {
  *
  * @param {any} diagram - The parent of the message element
  * @param {any} msgModel - The model containing fields describing a message
- * @param {float} lineStarty - The Y coordinate at which the message line starts
+ * @param {number} lineStarty - The Y coordinate at which the message line starts
  * @param diagObj
  */
 const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
-  let textDims = utils.calculateTextDimensions(message, messageFont(conf));
+  const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDraw.getTextObj();
   textObj.x = startx;
   textObj.y = starty + 10;
@@ -349,7 +351,7 @@ const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
 
   drawText(diagram, textObj);
 
-  let textWidth = textDims.width;
+  const textWidth = textDims.width;
 
   let line;
   if (startx === stopx) {
@@ -494,12 +496,12 @@ export const drawActors = function (
 };
 
 export const drawActorsPopup = function (diagram, actors, actorKeys, doc) {
-  var maxHeight = 0;
-  var maxWidth = 0;
+  let maxHeight = 0;
+  let maxWidth = 0;
   for (let i = 0; i < actorKeys.length; i++) {
     const actor = actors[actorKeys[i]];
     const minMenuWidth = getRequiredPopupWidth(actor);
-    var menuDimensions = svgDraw.drawPopup(
+    const menuDimensions = svgDraw.drawPopup(
       diagram,
       actor,
       minMenuWidth,
@@ -563,8 +565,8 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
   bounds.bumpVerticalPos(preMargin);
   let heightAdjust = postMargin;
   if (msg.id && msg.message && loopWidths[msg.id]) {
-    let loopWidth = loopWidths[msg.id].width;
-    let textConf = messageFont(conf);
+    const loopWidth = loopWidths[msg.id].width;
+    const textConf = messageFont(conf);
     msg.message = utils.wrapLabel(`[${msg.message}]`, loopWidth - 2 * conf.wrapPadding, textConf);
     msg.width = loopWidth;
     msg.wrap = true;
@@ -582,8 +584,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 /**
  * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  *
- * @param {any} text The text of the diagram
- * @param _text
+ * @param {any} _text The text of the diagram
  * @param {any} id The id of the diagram which will be used as a DOM element id¨
  * @param {any} _version Mermaid version from package.json
  * @param {any} diagObj A stanard diagram containing the db and the text and type etc of the diagram
@@ -654,7 +655,7 @@ export const draw = function (_text, id, _version, diagObj) {
   // Draw the messages/signals
   let sequenceIndex = 1;
   let sequenceIndexStep = 1;
-  let messagesToDraw = Array();
+  const messagesToDraw = [];
   messages.forEach(function (msg) {
     let loopModel, noteModel, msgModel;
 
@@ -810,7 +811,7 @@ export const draw = function (_text, id, _version, diagObj) {
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
           msgModel.sequenceVisible = diagObj.db.showSequenceNumbers();
-          let lineStarty = boundMessage(diagram, msgModel);
+          const lineStarty = boundMessage(diagram, msgModel);
           messagesToDraw.push({ messageModel: msgModel, lineStarty: lineStarty });
           bounds.models.addMessage(msgModel);
         } catch (e) {
@@ -846,7 +847,7 @@ export const draw = function (_text, id, _version, diagObj) {
   }
 
   // only draw popups for the top row of actors.
-  var requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys, doc);
+  const requiredBoxSize = drawActorsPopup(diagram, actors, actorKeys, doc);
 
   const { bounds: box } = bounds.getBounds();
 
@@ -932,7 +933,7 @@ const getMaxMessageWidthPerActor = function (actors, messages, diagObj) {
       const isMessage = !isNote;
 
       const textFont = isNote ? noteFont(conf) : messageFont(conf);
-      let wrappedMessage = msg.wrap
+      const wrappedMessage = msg.wrap
         ? utils.wrapLabel(msg.message, conf.width - 2 * conf.wrapPadding, textFont)
         : msg.message;
       const messageDimensions = utils.calculateTextDimensions(wrappedMessage, textFont);
@@ -1009,9 +1010,9 @@ const getMaxMessageWidthPerActor = function (actors, messages, diagObj) {
 const getRequiredPopupWidth = function (actor) {
   let requiredPopupWidth = 0;
   const textFont = actorFont(conf);
-  for (let key in actor.links) {
-    let labelDimensions = utils.calculateTextDimensions(key, textFont);
-    let labelWidth = labelDimensions.width + 2 * conf.wrapPadding + 2 * conf.boxMargin;
+  for (const key in actor.links) {
+    const labelDimensions = utils.calculateTextDimensions(key, textFont);
+    const labelWidth = labelDimensions.width + 2 * conf.wrapPadding + 2 * conf.boxMargin;
     if (requiredPopupWidth < labelWidth) {
       requiredPopupWidth = labelWidth;
     }
@@ -1049,7 +1050,7 @@ const calculateActorMargins = function (actors, actorToMessageWidth) {
     maxHeight = Math.max(maxHeight, actor.height);
   });
 
-  for (let actorKey in actorToMessageWidth) {
+  for (const actorKey in actorToMessageWidth) {
     const actor = actors[actorKey];
 
     if (!actor) {
@@ -1073,15 +1074,15 @@ const calculateActorMargins = function (actors, actorToMessageWidth) {
 };
 
 const buildNoteModel = function (msg, actors, diagObj) {
-  let startx = actors[msg.from].x;
-  let stopx = actors[msg.to].x;
-  let shouldWrap = msg.wrap && msg.message;
+  const startx = actors[msg.from].x;
+  const stopx = actors[msg.to].x;
+  const shouldWrap = msg.wrap && msg.message;
 
   let textDimensions = utils.calculateTextDimensions(
     shouldWrap ? utils.wrapLabel(msg.message, conf.width, noteFont(conf)) : msg.message,
     noteFont(conf)
   );
-  let noteModel = {
+  const noteModel = {
     width: shouldWrap
       ? conf.width
       : Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin),
@@ -1277,8 +1278,8 @@ const calculateLoopBounds = function (messages, actors, _maxWidthPerActor, diagO
         stack.forEach((stk) => {
           current = stk;
           if (msgModel.startx === msgModel.stopx) {
-            let from = actors[msg.from];
-            let to = actors[msg.to];
+            const from = actors[msg.from];
+            const to = actors[msg.to];
             current.from = Math.min(
               from.x - msgModel.width / 2,
               from.x - from.width / 2,

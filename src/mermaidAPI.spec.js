@@ -1,3 +1,4 @@
+'use strict';
 import mermaid from './mermaid';
 import mermaidAPI from './mermaidAPI';
 import assignWithDepth from './assignWithDepth';

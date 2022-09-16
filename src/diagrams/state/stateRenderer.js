@@ -5,7 +5,7 @@ import { log } from '../../logger';
 import common from '../common/common';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 
 // TODO Move conf object to main conf in mermaidAPI
@@ -13,7 +13,9 @@ let conf;
 
 const transformationLog = {};
 
-export const setConf = function () {};
+export const setConf = function () {
+  //no-op
+};
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.

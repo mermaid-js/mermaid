@@ -1,11 +1,10 @@
 import { select } from 'd3';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import { log } from '../../logger';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let allCommitsDict = {};
-let branchNum;
 
 const commitType = {
   NORMAL: 0,
@@ -83,7 +82,7 @@ const drawCommits = (svg, commits, modifyGraph) => {
   const sortedKeys = keys.sort((a, b) => {
     return commits[a].seq - commits[b].seq;
   });
-  sortedKeys.forEach((key, index) => {
+  sortedKeys.forEach((key) => {
     const commit = commits[key];
 
     const y = branchPos[commit.branch].pos;
@@ -92,7 +91,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
     if (modifyGraph) {
       let typeClass;
       let commitSymbolType =
-        typeof commit.customType !== 'undefined' ? commit.customType : commit.type;
+        typeof commit.customType !== 'undefined' && commit.customType !== ''
+          ? commit.customType
+          : commit.type;
       switch (commitSymbolType) {
         case commitType.NORMAL:
           typeClass = 'commit-normal';
@@ -290,18 +291,15 @@ const drawCommits = (svg, commits, modifyGraph) => {
 };
 
 /**
- * Detect if there are other commits between commit1s x-position and commit2s x-position on the same
- * branch as commit2.
+ * Detect if there are other commits between commit1's x-position and commit2's x-position on the
+ * same branch as commit2.
  *
  * @param {any} commit1
  * @param {any} commit2
  * @param allCommits
- * @returns
+ * @returns {boolean} If there are commits between commit1's x-position and commit2's x-position
  */
 const hasOverlappingCommits = (commit1, commit2, allCommits) => {
-  const commit1Pos = commitPos[commit2.id];
-  const commit2Pos = commitPos[commit1.id];
-
   // Find commits on the same branch as commit2
   const keys = Object.keys(allCommits);
   const overlappingComits = keys.filter((key) => {
@@ -322,7 +320,7 @@ const hasOverlappingCommits = (commit1, commit2, allCommits) => {
  * @param {any} y1
  * @param {any} y2
  * @param {any} _depth
- * @returns
+ * @returns {number} Y value between y1 and y2
  */
 const findLane = (y1, y2, _depth) => {
   const depth = _depth || 0;
@@ -347,7 +345,7 @@ const findLane = (y1, y2, _depth) => {
 };
 
 /**
- * This function draw the lines between the commits. They were arrows initially.
+ * Draw the lines between the commits. They were arrows initially.
  *
  * @param {any} svg
  * @param {any} commit1
@@ -355,24 +353,10 @@ const findLane = (y1, y2, _depth) => {
  * @param {any} allCommits
  */
 const drawArrow = (svg, commit1, commit2, allCommits) => {
-  const conf = getConfig();
-
   const p1 = commitPos[commit1.id];
   const p2 = commitPos[commit2.id];
   const overlappingCommits = hasOverlappingCommits(commit1, commit2, allCommits);
   // log.debug('drawArrow', p1, p2, overlappingCommits, commit1.id, commit2.id);
-
-  let url = '';
-  if (conf.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
-  }
 
   let arc = '';
   let arc2 = '';
@@ -431,7 +415,7 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
       } ${p2.y}`;
     }
   }
-  const arrow = svg
+  svg
     .append('path')
     .attr('d', lineDef)
     .attr('class', 'arrow arrow' + (colorClassNum % THEME_COLOR_LIMIT));
@@ -439,10 +423,7 @@ const drawArrow = (svg, commit1, commit2, allCommits) => {
 
 const drawArrows = (svg, commits) => {
   const gArrows = svg.append('g').attr('class', 'commit-arrows');
-  let pos = 0;
-
-  const k = Object.keys(commits);
-  k.forEach((key, index) => {
+  Object.keys(commits).forEach((key) => {
     const commit = commits[key];
     if (commit.parents && commit.parents.length > 0) {
       commit.parents.forEach((parent) => {
@@ -453,12 +434,10 @@ const drawArrows = (svg, commits) => {
 };
 
 /**
- * This function adds the branches and the branches' labels to the svg.
+ * Adds the branches and the branches' labels to the svg.
  *
  * @param svg
- * @param commitid
  * @param branches
- * @param direction
  */
 const drawBranches = (svg, branches) => {
   const gitGraphConfig = getConfig().gitGraph;
@@ -510,10 +489,6 @@ const drawBranches = (svg, branches) => {
 };
 
 /**
- * @param svg
- * @param commit
- * @param direction
- * @param branchColor
  * @param txt
  * @param id
  * @param ver

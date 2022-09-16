@@ -3,7 +3,7 @@ import { select } from 'd3';
 import { getConfig } from '../../config';
 import { render } from '../../dagre-wrapper/index.js';
 import { log } from '../../logger';
-import { configureSvgSize } from '../../utils';
+import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
 import addSVGAccessibilityFields from '../../accessibility';
 
@@ -283,7 +283,6 @@ export const draw = function (text, id, _version, diag) {
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
   const svg = root.select(`[id="${id}"]`);
 
   // Run the renderer. This is what draws the final graph.

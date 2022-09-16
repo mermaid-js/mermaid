@@ -16,8 +16,6 @@ let prevActor = undefined;
 let actors = {};
 let messages = [];
 const notes = [];
-let diagramTitle = '';
-let description = '';
 let sequenceNumbersEnabled = false;
 let wrapEnabled;
 
@@ -153,7 +151,6 @@ export const clear = function () {
   actors = {};
   messages = [];
   sequenceNumbersEnabled = false;
-  diagramTitle = '';
   commonClear();
 };
 

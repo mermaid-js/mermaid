@@ -1,61 +1,60 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Mermaid Quick Test Page</title>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
-  <style>
-    .mermaid2 {
-      display: none;
-    }
-  </style>
-</head>
-<body>
-  <div style="display: flex">
-  <div id="FirstLine" class="mermaid">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <style>
+      .mermaid2 {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="display: flex">
+      <pre id="FirstLine" class="mermaid">
     graph TB
       Function-->URL
       click Function clickByFlow "Add a div"
       click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
-</div>
-<div id="FirstLine" class="mermaid">
+      </pre>
+      <pre id="FirstLine" class="mermaid">
   graph TB
     1Function--->2URL
     click 1Function clickByFlow "Add a div"
     click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
-</div>
-  <div id="FirstLine" class="mermaid">
+      </pre>
+      <pre id="FirstLine" class="mermaid">
     flowchart TB
       Function-->URL
       click Function clickByFlow "Add a div"
       click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>" _self
-</div>
-<div id="FirstLine" class="mermaid">
+      </pre>
+      <pre id="FirstLine" class="mermaid">
   flowchart TB
     1Function--->2URL
     click 1Function clickByFlow "Add a div"
     click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>" _self
-</div>
+      </pre>
 
-<div id="FirstLine" class="mermaid">
+      <pre id="FirstLine" class="mermaid">
   classDiagram
     class ShapeLink
     link ShapeLink "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
     class ShapeCallback
     callback ShapeCallback "clickByClass" "This is a tooltip for a callback"
-</div>
-<div id="FirstLine" class="mermaid">
+      </pre>
+      <pre id="FirstLine" class="mermaid">
   classDiagram-v2
     class ShapeLink2
     link ShapeLink2 "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
     class ShapeCallback2
     callback ShapeCallback2 "clickByClass" "This is a tooltip for a callback"
-</div>
+      </pre>
+    </div>
 
-</div>
-
-<div class="mermaid">
+    <pre class="mermaid">
     gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %d/%m
@@ -94,77 +93,76 @@
     Describe gantt syntax               :after doc1, 3d
     Add gantt diagram to demo page      : 20h
     Add another diagram to demo page    : 48h
-      </div>
-  <div style="display: flex">
-    <div id="FirstLine" class="mermaid">
+    </pre>
+    <div style="display: flex">
+      <pre id="FirstLine" class="mermaid">
       graph TB
         FunctionArg-->URL
         click FunctionArg call clickByFlowArg(ARGUMENT) "Add a div"
         click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
-    </div>
-    <div id="FirstLine" class="mermaid">
+      </pre>
+      <pre id="FirstLine" class="mermaid">
       flowchart TB
         FunctionArg-->URL
         click FunctionArg call clickByFlowArg(ARGUMENT) "Add a div"
         click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
-    </div>
-    
-    <div id="FirstLine" class="mermaid">
+      </pre>
+
+      <pre id="FirstLine" class="mermaid">
       classDiagram
       class ShapeLink
       link ShapeLink "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
       class ShapeCallback
       click ShapeCallback call clickByClass(123) "This is a tooltip for a callback"
-    </div>
+      </pre>
 
-    <div id="FirstLine" class="mermaid">
+      <pre id="FirstLine" class="mermaid">
       classDiagram-v2
         class ShapeLink2
         link ShapeLink2 "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
         class ShapeCallback2
         click ShapeCallback2 call clickByClass(123) "This is a tooltip for a callback"
+      </pre>
     </div>
-    
-  </div>
-    
-  <script src="./mermaid.js"></script>
-  <script>
-  function clickByFlow(elemName) {
-    const div = document.createElement('div');
-    div.className = 'created-by-click';
-    div.style = 'padding: 20px; background: green; color: white;';
-    div.innerText = 'Clicked By Flow';
 
-    document.getElementsByTagName('body')[0].appendChild(div);
-  }
-  function clickByFlowArg(argument) {
-    const div = document.createElement('div');
-    div.className = 'created-by-click-2';
-    div.style = 'padding: 20px; background: green; color: white;';
-    div.innerText = 'Clicked By Flow: ' + argument;
+    <script src="./mermaid.js"></script>
+    <script>
+      function clickByFlow(elemName) {
+        const div = document.createElement('div');
+        div.className = 'created-by-click';
+        div.style = 'padding: 20px; background: green; color: white;';
+        div.innerText = 'Clicked By Flow';
 
-    document.getElementsByTagName('body')[0].appendChild(div);
-  }
-  function clickByGantt(arg1, arg2, arg3) {
-    const div = document.createElement('div');
-    div.className = 'created-by-gant-click';
-    div.style = 'padding: 20px; background: green; color: white;';
-    div.innerText = 'Clicked By Gant';
-    if (arg1) div.innerText += ' ' + arg1;
-    if (arg2) div.innerText += ' ' + arg2;
-    if (arg3) div.innerText += ' ' + arg3;
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
+      function clickByFlowArg(argument) {
+        const div = document.createElement('div');
+        div.className = 'created-by-click-2';
+        div.style = 'padding: 20px; background: green; color: white;';
+        div.innerText = 'Clicked By Flow: ' + argument;
 
-    document.getElementsByTagName('body')[0].appendChild(div);
-  }
-  function clickByClass(arg) {
-    const div = document.createElement('div');
-    div.className = 'created-by-class-click';
-    div.style = 'padding: 20px; background: purple; color: white;';
-    div.innerText = 'Clicked By Class' + (arg ? arg : '');
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
+      function clickByGantt(arg1, arg2, arg3) {
+        const div = document.createElement('div');
+        div.className = 'created-by-gant-click';
+        div.style = 'padding: 20px; background: green; color: white;';
+        div.innerText = 'Clicked By Gant';
+        if (arg1) div.innerText += ' ' + arg1;
+        if (arg2) div.innerText += ' ' + arg2;
+        if (arg3) div.innerText += ' ' + arg3;
 
-    document.getElementsByTagName('body')[0].appendChild(div);
-  }
-  mermaid.initialize({ startOnLoad: true, securityLevel: 'loose', logLevel: 1 });
-  </script>
-</body>
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
+      function clickByClass(arg) {
+        const div = document.createElement('div');
+        div.className = 'created-by-class-click';
+        div.style = 'padding: 20px; background: purple; color: white;';
+        div.innerText = 'Clicked By Class' + (arg ? arg : '');
+
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
+      mermaid.initialize({ startOnLoad: true, securityLevel: 'loose', logLevel: 1 });
+    </script>
+  </body>
 </html>

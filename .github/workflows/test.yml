@@ -12,23 +12,32 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        cache: yarn
-        node-version: ${{ matrix.node-version }}
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Yarn
-      run: npm i yarn --global
+      - name: Install Yarn
+        run: npm i yarn --global
 
-    - name: Install Packages
-      run: |
-        yarn install --frozen-lockfile
-      env:
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
+      - name: Install Packages
+        run: |
+          yarn install --frozen-lockfile
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
 
-    - name: Run Unit Tests
-      run: |
-        yarn ci --coverage
+      - name: Run Unit Tests
+        run: |
+          yarn ci --coverage
+
+      - name: Upload Coverage to Coveralls
+        # it feels a bit weird to use @master, but that's what the docs use
+        # (coveralls also doesn't publish a @v1 we can use)
+        # https://github.com/marketplace/actions/coveralls-github-action
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: unit

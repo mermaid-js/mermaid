@@ -1,14 +1,11 @@
 /**
- * Edit this
- * Page[[N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js)
- *
  * This is the API to be used when optionally handling the integration with the web page, instead of
  * using the default integration provided by mermaid.js.
  *
  * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
  * definition as text, renders the graph/diagram and returns an svg element for the graph.
  *
- * It is is then up to the user of the API to make use of the svg, either insert it somewhere in the
+ * It is then up to the user of the API to make use of the svg, either insert it somewhere in the
  * page or do something completely different.
  *
  * In addition to the render function, a number of behavioral configuration options are available.
@@ -17,7 +14,7 @@
  */
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
-// @ts-ignore
+// @ts-ignore: TODO Fix ts errors
 import pkg from '../package.json';
 import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
@@ -26,7 +23,7 @@ import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import ganttDb from './diagrams/gantt/ganttDb';
 import Diagram from './Diagram';
-import errorRenderer from './errorRenderer';
+import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
@@ -38,6 +35,11 @@ import { evaluate } from './diagrams/common/common';
 
 let hasLoadedDiagrams = false;
 
+/**
+ * @param text
+ * @param parseError
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
 function parse(text: string, parseError?: Function): boolean {
   if (!hasLoadedDiagrams) {
     addDiagrams();
@@ -119,6 +121,10 @@ const render = function (
   cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   container?: Element
 ): void {
+  if (!hasLoadedDiagrams) {
+    addDiagrams();
+    hasLoadedDiagrams = true;
+  }
   configApi.reset();
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(text);
@@ -126,7 +132,7 @@ const render = function (
     directiveSanitizer(graphInit);
     configApi.addDirective(graphInit);
   }
-  let cnf = configApi.getConfig();
+  const cnf = configApi.getConfig();
 
   log.debug(cnf);
 
@@ -171,7 +177,7 @@ const render = function (
       .append('g');
   } else {
     // No container was provided
-    // If there is an existsing element with the id, we remove it
+    // If there is an existing element with the id, we remove it
     // this likely a previously rendered diagram
     const existingSvg = document.getElementById(id);
     if (existingSvg) {
@@ -223,7 +229,14 @@ const render = function (
   text = encodeEntities(text);
 
   // Important that we do not create the diagram until after the directives have been included
-  const diag = new Diagram(text);
+  let diag;
+  let parseEncounteredException;
+  try {
+    diag = new Diagram(text);
+  } catch (error) {
+    diag = new Diagram('error');
+    parseEncounteredException = error;
+  }
   // Get the tmp element containing the the svg
   const element = root.select('#d' + id).node();
   const graphType = diag.type;
@@ -296,7 +309,7 @@ const render = function (
   try {
     diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
-    errorRenderer.draw(id, pkg.version);
+    errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
 
@@ -319,8 +332,8 @@ const render = function (
   svgCode = svgCode.replace(/<br>/g, '<br/>');
 
   if (cnf.securityLevel === 'sandbox') {
-    let svgEl = root.select('#d' + id + ' svg').node();
-    let width = '100%';
+    const svgEl = root.select('#d' + id + ' svg').node();
+    const width = '100%';
     let height = '100%';
     if (svgEl) {
       height = svgEl.viewBox.baseVal.height + 'px';
@@ -366,6 +379,10 @@ const render = function (
     node.remove();
   }
 
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
+
   return svgCode;
 };
 
@@ -397,7 +414,7 @@ const parseDirective = function (p: any, statement: string, context: string, typ
     log.error(
       `Error while rendering sequenceDiagram directive: ${statement} jison context: ${context}`
     );
-    // @ts-ignore
+    // @ts-ignore: TODO Fix ts errors
     log.error(error.message);
   }
 };

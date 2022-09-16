@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck : TODO Fix ts errors
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import {
   curveBasis,
@@ -20,6 +20,7 @@ import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 import { MermaidConfig } from './config.type';
+import memoize from 'lodash/memoize';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -39,21 +40,22 @@ const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const directiveWithoutOpen =
   /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
-const anyComment = /\s*%%.*\n/gm;
 
 /**
  * @function detectInit Detects the init config object from the text
+ * @param config
  *
  *   ```mermaid
+ *
  *   %%{init: {"theme": "debug", "logLevel": 1 }}%%
  *   graph LR
- *    a-->b
- *    b-->c
- *    c-->d
- *    d-->e
- *    e-->f
- *    f-->g
- *    g-->h
+ *      a-->b
+ *      b-->c
+ *      c-->d
+ *      d-->e
+ *      e-->f
+ *      f-->g
+ *      g-->h
  * ```
  *
  *   Or
@@ -70,15 +72,15 @@ const anyComment = /\s*%%.*\n/gm;
  *    g-->h
  * ```
  * @param {string} text The text defining the graph
- * @param {any} cnf
+ * @param {any} config
  * @returns {object} The json object representing the init passed to mermaid.initialize()
  */
 export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {
-  let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
+  const inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
 
   if (Array.isArray(inits)) {
-    let args = inits.map((init) => init.args);
+    const args = inits.map((init) => init.args);
     directiveSanitizer(args);
 
     results = assignWithDepth(results, [...args]);
@@ -133,8 +135,8 @@ export const detectDirective = function (text, type = null) {
     log.debug(
       `Detecting diagram directive${type !== null ? ' type:' + type : ''} based on the text:${text}`
     );
-    let match,
-      result = [];
+    let match;
+    const result = [];
     while ((match = directive.exec(text)) !== null) {
       // This is necessary to avoid infinite loops with zero-width matches
       if (match.index === directive.lastIndex) {
@@ -145,8 +147,8 @@ export const detectDirective = function (text, type = null) {
         (type && match[1] && match[1].match(type)) ||
         (type && match[2] && match[2].match(type))
       ) {
-        let type = match[1] ? match[1] : match[2];
-        let args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
+        const type = match[1] ? match[1] : match[2];
+        const args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
         result.push({ type, args });
       }
     }
@@ -162,27 +164,6 @@ export const detectDirective = function (text, type = null) {
     );
     return { type: null, args: null };
   }
-};
-
-/**
- * Caches results of functions based on input
- *
- * @param {Function} fn Function to run
- * @param {Function} resolver Function that resolves to an ID given arguments the `fn` takes
- * @returns {Function} An optimized caching function
- */
-const memoize = (fn, resolver) => {
-  let cache = {};
-  return (...args) => {
-    let n = resolver ? resolver.apply(this, args) : args[0];
-    if (n in cache) {
-      return cache[n];
-    } else {
-      let result = fn(...args);
-      cache[n] = result;
-      return result;
-    }
-  };
 };
 
 /**
@@ -221,7 +202,7 @@ export const interpolateToCurve = (interpolate, defaultCurve) => {
  * @returns {string | undefined} The formatted URL
  */
 export const formatUrl = (linkStr, config) => {
-  let url = linkStr.trim();
+  const url = linkStr.trim();
 
   if (url) {
     if (config.securityLevel !== 'loose') {
@@ -326,7 +307,6 @@ const calcLabelPosition = (points) => {
 
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
   let prevPoint;
-  let totalDistance = 0; // eslint-disable-line
   log.info('our points', points);
   if (points[0] !== initialPosition) {
     points = points.reverse();
@@ -364,10 +344,10 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
     prevPoint = point;
   });
   // if relation is present (Arrows will be added), change cardinality point off-set distance (d)
-  let d = isRelationTypePresent ? 10 : 5;
+  const d = isRelationTypePresent ? 10 : 5;
   //Calculate Angle for x and y axis
-  let angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
-  let cardinalityPosition = { x: 0, y: 0 };
+  const angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
+  const cardinalityPosition = { x: 0, y: 0 };
   //Calculation cardinality position using angle, center point on the line/curve but pendicular and with offset-distance
   cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2;
   cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2;
@@ -386,14 +366,12 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   // Todo looking to faster cloning method
   let points = JSON.parse(JSON.stringify(_points));
   let prevPoint;
-  let totalDistance = 0; // eslint-disable-line
   log.info('our points', points);
   if (position !== 'start_left' && position !== 'start_right') {
     points = points.reverse();
   }
 
   points.forEach((point) => {
-    totalDistance += distance(point, prevPoint);
     prevPoint = point;
   });
 
@@ -425,11 +403,11 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
     prevPoint = point;
   });
   // if relation is present (Arrows will be added), change cardinality point off-set distance (d)
-  let d = 10 + terminalMarkerSize * 0.5;
+  const d = 10 + terminalMarkerSize * 0.5;
   //Calculate Angle for x and y axis
-  let angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
+  const angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
 
-  let cardinalityPosition = { x: 0, y: 0 };
+  const cardinalityPosition = { x: 0, y: 0 };
 
   //Calculation cardinality position using angle, center point on the line/curve but pendicular and with offset-distance
 
@@ -485,10 +463,10 @@ export const generateId = () => {
  * @returns {any}
  */
 function makeid(length) {
-  var result = '';
-  var characters = '0123456789abcdef';
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
+  let result = '';
+  const characters = '0123456789abcdef';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
@@ -593,7 +571,7 @@ export const wrapLabel = memoize(
     return completedLines.filter((line) => line !== '').join(config.joinWith);
   },
   (label, maxWidth, config) =>
-    `${label}-${maxWidth}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}-${config.joinWith}`
+    `${label}${maxWidth}${config.fontSize}${config.fontWeight}${config.fontFamily}${config.joinWith}`
 );
 
 const breakString = memoize(
@@ -621,7 +599,7 @@ const breakString = memoize(
     return { hyphenatedStrings: lines, remainingWord: currentLine };
   },
   (word, maxWidth, hyphenCharacter = '-', config) =>
-    `${word}-${maxWidth}-${hyphenCharacter}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
+    `${word}${maxWidth}${hyphenCharacter}${config.fontSize}${config.fontWeight}${config.fontFamily}`
 );
 
 /**
@@ -631,7 +609,8 @@ const breakString = memoize(
  * If the wrapped text text has greater height, we extend the height, so it's value won't overflow.
  *
  * @param {any} text The text to measure
- * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the
+ *   resulting size
  * @returns {any} - The height for the given text
  */
 export const calculateTextHeight = function (text, config) {
@@ -646,7 +625,8 @@ export const calculateTextHeight = function (text, config) {
  * This calculates the width of the given text, font size and family.
  *
  * @param {any} text - The text to calculate the width of
- * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the resulting size
+ * @param {any} config - The config for fontSize, fontFamily, and fontWeight all impacting the
+ *   resulting size
  * @returns {any} - The width for the given text
  */
 export const calculateTextWidth = function (text, config) {
@@ -655,7 +635,8 @@ export const calculateTextWidth = function (text, config) {
 };
 
 /**
- * This calculates the dimensions of the given text, font size, font family, font weight, and margins.
+ * This calculates the dimensions of the given text, font size, font family, font weight, and
+ * margins.
  *
  * @param {any} text - The text to calculate the width of
  * @param {any} config - The config for fontSize, fontFamily, fontWeight, and margin all impacting
@@ -675,7 +656,7 @@ export const calculateTextDimensions = memoize(
     // of sans-serif.
     const fontFamilies = ['sans-serif', fontFamily];
     const lines = text.split(common.lineBreakRegex);
-    let dims = [];
+    const dims = [];
 
     const body = select('body');
     // We don't want to leak DOM elements - if a removal operation isn't available
@@ -686,10 +667,10 @@ export const calculateTextDimensions = memoize(
 
     const g = body.append('svg');
 
-    for (let fontFamily of fontFamilies) {
+    for (const fontFamily of fontFamilies) {
       let cheight = 0;
-      let dim = { width: 0, height: 0, lineHeight: 0 };
-      for (let line of lines) {
+      const dim = { width: 0, height: 0, lineHeight: 0 };
+      for (const line of lines) {
         const textObj = getTextObj();
         textObj.text = line;
         const textElem = drawSimpleText(g, textObj)
@@ -697,7 +678,7 @@ export const calculateTextDimensions = memoize(
           .style('font-weight', fontWeight)
           .style('font-family', fontFamily);
 
-        let bBox = (textElem._groups || textElem)[0][0].getBBox();
+        const bBox = (textElem._groups || textElem)[0][0].getBBox();
         dim.width = Math.round(Math.max(dim.width, bBox.width));
         cheight = Math.round(bBox.height);
         dim.height += cheight;
@@ -708,7 +689,7 @@ export const calculateTextDimensions = memoize(
 
     g.remove();
 
-    let index =
+    const index =
       isNaN(dims[1].height) ||
       isNaN(dims[1].width) ||
       isNaN(dims[1].lineHeight) ||
@@ -719,106 +700,8 @@ export const calculateTextDimensions = memoize(
         : 1;
     return dims[index];
   },
-  (text, config) => `${text}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
+  (text, config) => `${text}${config.fontSize}${config.fontWeight}${config.fontFamily}`
 );
-
-/**
- * Applys d3 attributes
- *
- * @param {any} d3Elem D3 Element to apply the attributes onto
- * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of attributes
- */
-const d3Attrs = function (d3Elem, attrs) {
-  for (let attr of attrs) {
-    d3Elem.attr(attr[0], attr[1]);
-  }
-};
-
-/**
- * Gives attributes for an SVG's size given arguments
- *
- * @param {number} height The height of the SVG
- * @param {number} width The width of the SVG
- * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
- * @returns {Map<'height' | 'width' | 'style', string>} Attributes for the SVG
- */
-export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
-  let attrs = new Map();
-  // attrs.set('height', height);
-  if (useMaxWidth) {
-    attrs.set('width', '100%');
-    attrs.set('style', `max-width: ${width}px;`);
-  } else {
-    attrs.set('width', width);
-  }
-  return attrs;
-};
-
-/**
- * Applies attributes from `calculateSvgSizeAttrs`
- *
- * @param {SVGSVGElement} svgElem The SVG Element to configure
- * @param {number} height The height of the SVG
- * @param {number} width The width of the SVG
- * @param {boolean} useMaxWidth Whether or not to use max-width and set width to 100%
- */
-export const configureSvgSize = function (svgElem, height, width, useMaxWidth) {
-  const attrs = calculateSvgSizeAttrs(height, 1 * width, useMaxWidth);
-  d3Attrs(svgElem, attrs);
-};
-export const setupGraphViewbox = function (graph, svgElem, padding, useMaxWidth) {
-  const svgBounds = svgElem.node().getBBox();
-  const sWidth = svgBounds.width;
-  const sHeight = svgBounds.height;
-
-  log.info(`SVG bounds: ${sWidth}x${sHeight}`, svgBounds);
-
-  let width = graph._label.width;
-  let height = graph._label.height;
-  log.info(`Graph bounds: ${width}x${height}`, graph);
-
-  // let tx = 0;
-  // let ty = 0;
-  // if (sWidth > width) {
-  //   tx = (sWidth - width) / 2 + padding;
-  width = sWidth + padding * 2;
-  // } else {
-  //   if (Math.abs(sWidth - width) >= 2 * padding + 1) {
-  //     width = width - padding;
-  //   }
-  // }
-  // if (sHeight > height) {
-  //   ty = (sHeight - height) / 2 + padding;
-  height = sHeight + padding * 2;
-  // }
-
-  // width =
-  log.info(`Calculated bounds: ${width}x${height}`);
-  configureSvgSize(svgElem, height, width, useMaxWidth);
-
-  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
-  // const vBox = `0 0 ${width} ${height}`;
-  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${
-    svgBounds.width + 2 * padding
-  } ${svgBounds.height + 2 * padding}`;
-  log.info(
-    'Graph.label',
-    graph._label,
-    'swidth',
-    sWidth,
-    'sheight',
-    sHeight,
-    'width',
-    width,
-    'height',
-    height,
-
-    'vBox',
-    vBox
-  );
-  svgElem.attr('viewBox', vBox);
-  // svgElem.select('g').attr('transform', `translate(${tx}, ${ty})`);
-};
 
 export const initIdGenerator = class iterator {
   constructor(deterministic, seed) {
@@ -842,7 +725,7 @@ let decoder;
  * Decodes HTML, source: {@link https://github.com/shrpne/entity-decode/blob/v2.0.1/browser.js}
  *
  * @param {string} html HTML as a string
- * @returns Unescaped HTML
+ * @returns {string} Unescaped HTML
  */
 export const entityDecode = function (html) {
   decoder = decoder || document.createElement('div');
@@ -945,10 +828,12 @@ export interface DetailedError {
   hash: any;
 }
 
+/** @param error */
 export function isDetailedError(error: unknown): error is DetailedError {
   return 'str' in error;
 }
 
+/** @param error */
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return String(error);
@@ -960,9 +845,6 @@ export default {
   calculateTextHeight,
   calculateTextWidth,
   calculateTextDimensions,
-  calculateSvgSizeAttrs,
-  configureSvgSize,
-  setupGraphViewbox,
   detectInit,
   detectDirective,
   isSubstringInArray,
@@ -974,7 +856,6 @@ export default {
   getStylesFromArray,
   generateId,
   random,
-  memoize,
   runFunc,
   entityDecode,
   initIdGenerator: initIdGenerator,

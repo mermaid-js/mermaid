@@ -1,5 +1,8 @@
 import { detectType } from './detectType';
 import { getDiagram, registerDiagram } from './diagramAPI';
+import { addDiagrams } from './diagram-orchestration';
+
+addDiagrams();
 
 describe('DiagramAPI', () => {
   it('should return default diagrams', () => {
@@ -19,6 +22,7 @@ describe('DiagramAPI', () => {
         db: {},
         parser: {},
         renderer: {},
+        styles: {},
       },
       (text: string) => text.includes('loki')
     );

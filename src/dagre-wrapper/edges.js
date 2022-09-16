@@ -1,4 +1,4 @@
-import { log } from '../logger'; // eslint-disable-line
+import { log } from '../logger';
 import createLabel from './createLabel';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
@@ -240,7 +240,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
   // log.warn();
-  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) { // eslint-disable-line
+  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // Intersection is top or bottom of rect.
     // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
@@ -472,7 +472,8 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   // });
 
   let url = '';
-  if (getConfig().state.arrowMarkerAbsolute) {
+  // // TODO: Can we load this config only from the rendered graph type?
+  if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
     url =
       window.location.protocol +
       '//' +

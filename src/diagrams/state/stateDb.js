@@ -11,8 +11,6 @@ import {
   clear as commonClear,
 } from '../../commonDb';
 
-const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
-
 const clone = (o) => JSON.parse(JSON.stringify(o));
 let rootDoc = [];
 
@@ -121,11 +119,6 @@ let documents = {
 let currentDocument = documents.root;
 
 let startCnt = 0;
-let endCnt = 0; // eslint-disable-line
-// let stateCnt = 0;
-
-let title = 'State diagram';
-let description = '';
 
 /**
  * Function called by parser when a node definition has been found.
@@ -180,7 +173,6 @@ export const clear = function (saveCommon) {
   currentDocument = documents.root;
 
   startCnt = 0;
-  endCnt = 0; // eslint-disable-line
   classes = [];
   if (!saveCommon) {
     commonClear();
@@ -212,7 +204,6 @@ export const addRelation = function (_id1, _id2, title) {
     type1 = 'start';
   }
   if (_id2 === '[*]') {
-    endCnt++;
     id2 = 'end' + startCnt;
     type2 = 'end';
   }

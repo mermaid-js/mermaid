@@ -1,3 +1,4 @@
+'use strict';
 /**
  * @function assignWithDepth Extends the functionality of {@link ObjectConstructor.assign} with the
  *   ability to merge arbitrary-depth objects For each key in src with path `k` (recursively)
@@ -17,15 +18,6 @@
  *   Traditional Object.assign would have clobbered foo in config_0 with foo in config_1. If src is a
  *   destructured array of objects and dst is not an array, assignWithDepth will apply each element
  *   of src to dst in order.
- * @param dst
- * @param src
- * @param config
- * @param dst
- * @param src
- * @param config
- * @param dst
- * @param src
- * @param config
  * @param {any} dst - The destination of the merge
  * @param {any} src - The source object(s) to merge into destination
  * @param {{ depth: number; clobber: boolean }} [config={ depth: 2, clobber: false }] - Depth: depth
