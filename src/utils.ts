@@ -167,8 +167,6 @@ export const detectDirective = function (text, type = null) {
 };
 
 /**
- * > > > > > > > Develop
- *
  * @function isSubstringInArray Detects whether a substring in present in a given array
  * @param {string} str The substring to detect
  * @param {Array} arr The array to search
