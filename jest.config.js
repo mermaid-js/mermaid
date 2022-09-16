@@ -5,8 +5,7 @@ module.exports = {
   testEnvironment: 'jsdom',
   preset: 'ts-jest',
   transform: {
-    '^.+\\.tsx?$': ['jest-esbuild', { banner: '"use strict";' }],
-    '^.+\\.jsx?$': ['jest-esbuild', { banner: '"use strict";' }],
+    '^.+\\.[jt]sx?$': 'esbuild-jest',
     '^.+\\.jison$': [
       path.resolve(__dirname, './src/jison/transformer.js'),
       { 'token-stack': true },
