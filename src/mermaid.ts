@@ -95,9 +95,11 @@ const initThrowsErrors = function (
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt;
+  const errors = [];
 
   // element is the current div with mermaid class
   for (const element of Array.from(nodesToProcess)) {
+    log.info('Rendering diagram: ' + element.id);
     /*! Check if previously processed */
     if (element.getAttribute('data-processed')) {
       continue;
@@ -135,9 +137,16 @@ const initThrowsErrors = function (
     } catch (error) {
       log.warn('Catching Error (bootstrap)', error);
       // @ts-ignore: TODO Fix ts errors
-      // TODO: We should be throwing an error object.
-      throw { error, message: error.str };
+      const mermaidError = { error, str: error.str, hash: error.hash, message: error.str };
+      if (typeof mermaid.parseError === 'function') {
+        mermaid.parseError(mermaidError);
+      }
+      errors.push(mermaidError);
     }
+  }
+  if (errors.length > 0) {
+    // TODO: We should be throwing an error object.
+    throw errors[0];
   }
 };
 

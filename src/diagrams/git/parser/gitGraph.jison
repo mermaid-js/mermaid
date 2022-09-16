@@ -61,7 +61,7 @@ checkout(?=\s|$)                        return 'CHECKOUT';
 <string>["]                             this.popState();
 <string>[^"]*                           return 'STR';
 [0-9]+(?=\s|$)                          return 'NUM';
-\w[-\./\w]*[-\w]                        return 'ID'; // only a subset of https://git-scm.com/docs/git-check-ref-format
+\w([-\./\w]*[-\w])?                     return 'ID'; // only a subset of https://git-scm.com/docs/git-check-ref-format
 <<EOF>>                                 return 'EOF';
 \s+                                    /* skip all whitespace */ // lowest priority so we can use lookaheads in earlier regex
 

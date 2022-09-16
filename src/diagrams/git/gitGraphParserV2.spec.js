@@ -372,14 +372,16 @@ describe('when parsing a gitGraph', function () {
     branch cherry-pick03
     branch branch/example-branch
     branch merge/test_merge
+    %% single character branch name
+    branch A
     `;
 
     parser.parse(str);
     const commits = parser.yy.getCommits();
     expect(Object.keys(commits).length).toBe(1);
-    expect(parser.yy.getCurrentBranch()).toBe('merge/test_merge');
+    expect(parser.yy.getCurrentBranch()).toBe('A');
     expect(parser.yy.getDirection()).toBe('LR');
-    expect(Object.keys(parser.yy.getBranches()).length).toBe(6);
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(7);
     expect(Object.keys(parser.yy.getBranches())).toEqual(
       expect.arrayContaining([
         'branch01',
@@ -387,6 +389,7 @@ describe('when parsing a gitGraph', function () {
         'cherry-pick03',
         'branch/example-branch',
         'merge/test_merge',
+        'A',
       ])
     );
   });

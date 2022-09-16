@@ -91,7 +91,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
     if (modifyGraph) {
       let typeClass;
       let commitSymbolType =
-        typeof commit.customType !== 'undefined' ? commit.customType : commit.type;
+        typeof commit.customType !== 'undefined' && commit.customType !== ''
+          ? commit.customType
+          : commit.type;
       switch (commitSymbolType) {
         case commitType.NORMAL:
           typeClass = 'commit-normal';
