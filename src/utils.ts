@@ -72,7 +72,7 @@ const directiveWithoutOpen =
  *    g-->h
  * ```
  * @param {string} text The text defining the graph
- * @param {any} cnf
+ * @param {any} config
  * @returns {object} The json object representing the init passed to mermaid.initialize()
  */
 export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {
@@ -372,7 +372,6 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
   }
 
   points.forEach((point) => {
-    totalDistance += distance(point, prevPoint);
     prevPoint = point;
   });
 
@@ -726,7 +725,7 @@ let decoder;
  * Decodes HTML, source: {@link https://github.com/shrpne/entity-decode/blob/v2.0.1/browser.js}
  *
  * @param {string} html HTML as a string
- * @returns Unescaped HTML
+ * @returns {string} Unescaped HTML
  */
 export const entityDecode = function (html) {
   decoder = decoder || document.createElement('div');
