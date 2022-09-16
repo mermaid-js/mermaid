@@ -81,6 +81,9 @@ describe('XSS', () => {
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+    cy.on('uncaught:exception', (_err, _runnable) => {
+      return false; // continue rendering even if there if mermaid throws an error
+    });
     cy.visit('http://localhost:9000/xss9.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');

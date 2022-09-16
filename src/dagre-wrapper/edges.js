@@ -472,7 +472,8 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   // });
 
   let url = '';
-  if (getConfig().state.arrowMarkerAbsolute) {
+  // // TODO: Can we load this config only from the rendered graph type?
+  if (getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute) {
     url =
       window.location.protocol +
       '//' +
