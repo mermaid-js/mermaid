@@ -5,13 +5,16 @@ module.exports = {
   testEnvironment: 'jsdom',
   preset: 'ts-jest',
   transform: {
-    '^.+\\.tsx?$': ['jest-esbuild', { banner: '"use strict";' }],
-    '^.+\\.jsx?$': ['jest-esbuild', { banner: '"use strict";' }],
+    '^.+\\.[jt]sx?$': 'esbuild-jest',
     '^.+\\.jison$': [
       path.resolve(__dirname, './src/jison/transformer.js'),
       { 'token-stack': true },
     ],
   },
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '^.+\\.jison$', // might be able to fix in future if .jison adds source-map support
+  ],
   transformIgnorePatterns: ['/node_modules/(?!dagre-d3-renderer/lib|khroma).*\\.js'],
   testPathIgnorePatterns: ['/node_modules/', '.cache', './cypress'],
   moduleNameMapper: {

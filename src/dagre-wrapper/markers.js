@@ -119,7 +119,7 @@ const dependency = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
-const lollipop = (elem, type, id) => {
+const lollipop = (elem, type) => {
   elem
     .append('defs')
     .append('marker')

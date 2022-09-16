@@ -1,7 +1,7 @@
 import * as configApi from '../../config';
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
-import common from '../common/common';
+
 import {
   setAccTitle,
   getAccTitle,
@@ -15,10 +15,6 @@ let latestRequirement = {};
 let requirements = {};
 let latestElement = {};
 let elements = {};
-let title = '';
-let accDescription = '';
-
-const sanitizeText = (txt) => common.sanitizeText(txt, configApi.getConfig());
 
 const RequirementType = {
   REQUIREMENT: 'Requirement',
