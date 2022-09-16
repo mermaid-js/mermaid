@@ -1,7 +1,7 @@
-// @ts-nocheck
+// @ts-nocheck TODO: Fix TS
 import { vi } from 'vitest';
 
-let NewD3 = function () {
+const NewD3 = function () {
   /**
    *
    */
