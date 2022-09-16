@@ -1,12 +1,36 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 
 import { log } from '../logger';
+import { getConfig } from '../config';
 
 // Only add the number of markers that the diagram needs
-const insertMarkers = (elem, markerArray, type, id) => {
+export const insertMarkers = (elem, markerArray, type, id) => {
   markerArray.forEach((markerName) => {
     markers[markerName](elem, type, id);
   });
+};
+
+const theme = () => getConfig().theme;
+
+export const markerId = (type, name) => {
+  return `${theme()}-${type}-${name}`;
+};
+
+export const markerUrl = (type, name) => {
+  let absolute = '';
+
+  if (getConfig().state.arrowMarkerAbsolute) {
+    absolute =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search;
+    absolute = absolute.replace(/\(/g, '\\(');
+    absolute = absolute.replace(/\)/g, '\\)');
+  }
+
+  return `url(${absolute}#${markerId(type, name)})`;
 };
 
 const extension = (elem, type, id) => {
@@ -14,7 +38,7 @@ const extension = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-extensionStart')
+    .attr('id', markerId(type, 'extensionStart'))
     .attr('class', 'marker extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -27,7 +51,7 @@ const extension = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-extensionEnd')
+    .attr('id', markerId(type, 'extensionEnd'))
     .attr('class', 'marker extension ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -42,7 +66,7 @@ const composition = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-compositionStart')
+    .attr('id', markerId(type, 'compositionStart'))
     .attr('class', 'marker composition ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -55,7 +79,7 @@ const composition = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-compositionEnd')
+    .attr('id', markerId(type, 'compositionEnd'))
     .attr('class', 'marker composition ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -65,11 +89,12 @@ const composition = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
+
 const aggregation = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-aggregationStart')
+    .attr('id', markerId(type, 'aggregationStart'))
     .attr('class', 'marker aggregation ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -82,7 +107,7 @@ const aggregation = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-aggregationEnd')
+    .attr('id', markerId(type, 'aggregationEnd'))
     .attr('class', 'marker aggregation ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -92,11 +117,12 @@ const aggregation = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
+
 const dependency = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-dependencyStart')
+    .attr('id', markerId(type, 'dependencyStart'))
     .attr('class', 'marker dependency ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -109,7 +135,7 @@ const dependency = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-dependencyEnd')
+    .attr('id', markerId(type, 'dependencyEnd'))
     .attr('class', 'marker dependency ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -119,11 +145,12 @@ const dependency = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
-const lollipop = (elem, type, id) => {
+
+const lollipop = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-lollipopStart')
+    .attr('id', markerId(type, 'lollipopStart'))
     .attr('class', 'marker lollipop ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -137,10 +164,11 @@ const lollipop = (elem, type, id) => {
     .attr('cy', 7)
     .attr('r', 6);
 };
+
 const point = (elem, type) => {
   elem
     .append('marker')
-    .attr('id', type + '-pointEnd')
+    .attr('id', markerId(type, 'pointEnd'))
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 9)
@@ -154,9 +182,10 @@ const point = (elem, type) => {
     .attr('class', 'arrowMarkerPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
+
   elem
     .append('marker')
-    .attr('id', type + '-pointStart')
+    .attr('id', markerId(type, 'pointStart'))
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 0)
@@ -171,10 +200,11 @@ const point = (elem, type) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
+
 const circle = (elem, type) => {
   elem
     .append('marker')
-    .attr('id', type + '-circleEnd')
+    .attr('id', markerId(type, 'circleEnd'))
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 11)
@@ -193,7 +223,7 @@ const circle = (elem, type) => {
 
   elem
     .append('marker')
-    .attr('id', type + '-circleStart')
+    .attr('id', markerId(type, 'circleStart'))
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', -1)
@@ -210,10 +240,11 @@ const circle = (elem, type) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
+
 const cross = (elem, type) => {
   elem
     .append('marker')
-    .attr('id', type + '-crossEnd')
+    .attr('id', markerId(type, 'crossEnd'))
     .attr('class', 'marker cross ' + type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', 12)
@@ -231,7 +262,7 @@ const cross = (elem, type) => {
 
   elem
     .append('marker')
-    .attr('id', type + '-crossStart')
+    .attr('id', markerId(type, 'crossStart'))
     .attr('class', 'marker cross ' + type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', -1)
@@ -247,11 +278,12 @@ const cross = (elem, type) => {
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 };
+
 const barb = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', type + '-barbEnd')
+    .attr('id', markerId(type, 'barbEnd'))
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -274,4 +306,5 @@ const markers = {
   cross,
   barb,
 };
+
 export default insertMarkers;
