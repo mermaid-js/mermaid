@@ -43,7 +43,6 @@ const directiveWithoutOpen =
 /**
  * @function detectInit Detects the init config object from the text
  * @param config
- * @param config
  *
  *   ```mermaid
  *
