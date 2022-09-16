@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { getConfig,setupGraphViewbox } from '../../diagram-api/diagramAPI';
+import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI';
 import { log } from '../../logger';
 import addSVGAccessibilityFields from '../../accessibility';
 
@@ -522,8 +522,8 @@ export const draw = function (txt, id, ver, diagObj) {
   drawArrows(diagram, allCommitsDict);
   drawCommits(diagram, allCommitsDict, true);
 
-   // Setup the view box and size of the svg element
-    setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, conf.useMaxWidth);
+  // Setup the view box and size of the svg element
+  setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, conf.useMaxWidth);
 };
 
 export default {
