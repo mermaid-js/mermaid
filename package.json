@@ -2,13 +2,13 @@
   "name": "mermaid",
   "version": "9.2.0-rc1",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "main": "dist/mermaid.min.js",
-  "module": "dist/mermaid.esm.min.mjs",
+  "main": "dist/mermaid.core.mjs",
+  "module": "dist/mermaid.core.mjs",
   "types": "dist/mermaid.d.ts",
   "exports": {
     ".": {
       "require": "./dist/mermaid.min.js",
-      "import": "./dist/mermaid.esm.min.mjs",
+      "import": "./dist/mermaid.core.mjs",
       "types": "./dist/mermaid.d.ts"
     },
     "./*": "./*"
@@ -23,13 +23,16 @@
     "git graph"
   ],
   "scripts": {
-    "build:dev": "webpack --mode development --progress --color",
-    "build:prod": "webpack --mode production --progress --color",
-    "build": "concurrently \"yarn build:dev\" \"yarn build:prod\"",
+    "clean": "rimraf dist",
+    "build:code": "node .esbuild/esbuild.cjs",
+    "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
+    "build:webpack": "webpack --mode production --progress --color",
+    "build:watch": "yarn build:code --watch",
+    "build:new": "concurrently \"yarn build:code\" \"yarn build:types\"",
+    "build": "yarn clean; yarn build:webpack",
     "docs:build": "ts-node-esm src/docs.mts",
     "docs:verify": "ts-node-esm src/docs.mts --verify",
     "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md && prettier --write src/docs/Setup.md && yarn docs:build",
-    "build:watch": "yarn build:dev --watch",
     "release": "yarn build",
     "lint": "eslint --cache --ignore-path .gitignore . && prettier --check .",
     "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",
@@ -43,7 +46,7 @@
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn test",
-    "prepare": "concurrently \"husky install\" \"yarn build:prod\" \"yarn postbuild\"",
+    "prepare": "concurrently \"husky install\" \"yarn build\"",
     "pre-commit": "lint-staged"
   },
   "repository": {
@@ -71,6 +74,7 @@
     "fast-clone": "^1.5.13",
     "graphlib": "^2.1.8",
     "khroma": "^2.0.0",
+    "lodash": "^4.17.21",
     "moment-mini": "^2.24.0",
     "non-layered-tidy-tree-layout": "^2.0.2",
     "stylis": "^4.1.2"
@@ -86,6 +90,7 @@
     "@types/d3": "^7.4.0",
     "@types/dompurify": "^2.3.4",
     "@types/jest": "^28.1.7",
+    "@types/lodash": "^4.14.184",
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
@@ -96,6 +101,9 @@
     "cypress": "9.7.0",
     "cypress-image-snapshot": "^4.0.1",
     "documentation": "13.2.0",
+    "esbuild": "^0.15.6",
+    "esbuild-jest": "^0.5.0",
+    "esbuild-loader": "^2.19.0",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-cypress": "^2.12.1",
@@ -117,6 +125,7 @@
     "prettier": "^2.7.1",
     "prettier-plugin-jsdoc": "^0.4.2",
     "remark": "^14.0.2",
+    "rimraf": "^3.0.2",
     "start-server-and-test": "^1.12.6",
     "terser-webpack-plugin": "^5.3.6",
     "ts-jest": "^28.0.8",

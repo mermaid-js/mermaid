@@ -1,12 +1,16 @@
-import mermaid from './mermaid';
-import { mermaidAPI } from './mermaidAPI';
-import flowDb from './diagrams/flowchart/flowDb';
+// mocks the mermaidAPI.render function (see `./__mocks__/mermaidAPI`)
+jest.mock('./mermaidAPI');
+// jest.mock only works well with CJS, see https://github.com/facebook/jest/issues/9430
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { default: mermaid } = require('./mermaid');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { mermaidAPI } = require('./mermaidAPI');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { default: flowDb } = require('./diagrams/flowchart/flowDb');
+
 import flowParser from './diagrams/flowchart/parser/flow';
 
 const spyOn = jest.spyOn;
-
-// mocks the mermaidAPI.render function (see `./__mocks__/mermaidAPI`)
-jest.mock('./mermaidAPI');
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -52,6 +56,8 @@ describe('when using mermaid and ', function () {
       node.appendChild(document.createTextNode('graph TD;\na;'));
 
       mermaid.initThrowsErrors(undefined, node);
+      // mermaidAPI.render function has been mocked, since it doesn't yet work
+      // in Node.JS (only works in browser)
       expect(mermaidAPI.render).toHaveBeenCalled();
     });
   });

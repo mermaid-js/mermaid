@@ -20,6 +20,7 @@ import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 import { MermaidConfig } from './config.type';
+import memoize from 'lodash/memoize';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -163,27 +164,6 @@ export const detectDirective = function (text, type = null) {
     );
     return { type: null, args: null };
   }
-};
-
-/**
- * Caches results of functions based on input
- *
- * @param {Function} fn Function to run
- * @param {Function} resolver Function that resolves to an ID given arguments the `fn` takes
- * @returns {Function} An optimized caching function
- */
-const memoize = (fn, resolver) => {
-  const cache = {};
-  return (...args) => {
-    const n = resolver ? resolver.apply(this, args) : args[0];
-    if (n in cache) {
-      return cache[n];
-    } else {
-      const result = fn(...args);
-      cache[n] = result;
-      return result;
-    }
-  };
 };
 
 /**
@@ -591,7 +571,7 @@ export const wrapLabel = memoize(
     return completedLines.filter((line) => line !== '').join(config.joinWith);
   },
   (label, maxWidth, config) =>
-    `${label}-${maxWidth}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}-${config.joinWith}`
+    `${label}${maxWidth}${config.fontSize}${config.fontWeight}${config.fontFamily}${config.joinWith}`
 );
 
 const breakString = memoize(
@@ -619,7 +599,7 @@ const breakString = memoize(
     return { hyphenatedStrings: lines, remainingWord: currentLine };
   },
   (word, maxWidth, hyphenCharacter = '-', config) =>
-    `${word}-${maxWidth}-${hyphenCharacter}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
+    `${word}${maxWidth}${hyphenCharacter}${config.fontSize}${config.fontWeight}${config.fontFamily}`
 );
 
 /**
@@ -720,7 +700,7 @@ export const calculateTextDimensions = memoize(
         : 1;
     return dims[index];
   },
-  (text, config) => `${text}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
+  (text, config) => `${text}${config.fontSize}${config.fontWeight}${config.fontFamily}`
 );
 
 export const initIdGenerator = class iterator {
@@ -876,7 +856,6 @@ export default {
   getStylesFromArray,
   generateId,
   random,
-  memoize,
   runFunc,
   entityDecode,
   initIdGenerator: initIdGenerator,

@@ -2,13 +2,10 @@
 
 ## mermaidAPI
 
-Edit this
-Page[\[N|Solid\](img/GitHub-Mark-32px.png)][1]
-
 This is the API to be used when optionally handling the integration with the web page, instead of
 using the default integration provided by mermaid.js.
 
-The core of this api is the [**render**][2] function which, given a graph
+The core of this api is the [**render**][1] function which, given a graph
 definition as text, renders the graph/diagram and returns an svg element for the graph.
 
 It is then up to the user of the API to make use of the svg, either insert it somewhere in the
@@ -19,7 +16,7 @@ In addition to the render function, a number of behavioral configuration options
 ## Configuration
 
 **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more\[[click
-here][3]].**
+here][2]].**
 
 ## **What follows are config instructions for older versions**
 
@@ -34,7 +31,7 @@ htmlLabels:true, curve:'cardinal', },
 
 }; mermaid.initialize(config); </script> </pre>
 
-A summary of all options and their defaults is found [here][4].
+A summary of all options and their defaults is found [here][3].
 A description of each option follows below.
 
 ## theme
@@ -1411,10 +1408,10 @@ This sets the auto-wrap padding for the diagram (sides only)
 
 ### Parameters
 
-- `text` **[string][5]**
-- `parseError` **[Function][6]?**
+- `text` **[string][4]**
+- `parseError` **[Function][5]?**
 
-Returns **[boolean][7]**
+Returns **[boolean][6]**
 
 ## setSiteConfig
 
@@ -1433,7 +1430,7 @@ function _Default value: At default, will mirror Global Config_
 
 - `conf` **MermaidConfig** The base currentConfig to use as siteConfig
 
-Returns **[object][8]** The siteConfig
+Returns **[object][7]** The siteConfig
 
 ## getSiteConfig
 
@@ -1445,7 +1442,7 @@ Returns **[object][8]** The siteConfig
 
 **Notes**: Returns **any** values in siteConfig.
 
-Returns **[object][8]** The siteConfig
+Returns **[object][7]** The siteConfig
 
 ## setConfig
 
@@ -1484,10 +1481,10 @@ $(function () {
 
 ### Parameters
 
-- `id` **[string][5]** The id of the element to be rendered
-- `text` **[string][5]** The graph definition
-- `cb` **function (svgCode: [string][5], bindFunctions: function (element: [Element][9]): void): void**
-- `container` **[Element][9]** Selector to element in which a div with the graph temporarily will be
+- `id` **[string][4]** The id of the element to be rendered
+- `text` **[string][4]** The graph definition
+- `cb` **function (svgCode: [string][4], bindFunctions: function (element: [Element][8]): void): void**
+- `container` **[Element][8]** Selector to element in which a div with the graph temporarily will be
   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
   element will be removed when rendering is completed.
 
@@ -1526,7 +1523,7 @@ Pushes in a directive to the configuration
 
 ### Parameters
 
-- `directive` **[object][8]** The directive to push in
+- `directive` **[object][7]** The directive to push in
 
 ## reset
 
@@ -1620,12 +1617,11 @@ Returns **void**
 </script>
 ```
 
-[1]: https://github.com/mermaid-js/mermaid/blob/develop/src/mermaidAPI.js
-[2]: Setup.md?id=render
-[3]: 8.6.0_docs.md
-[4]: #mermaidapi-configuration-defaults
-[5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
-[7]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
-[8]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-[9]: https://developer.mozilla.org/docs/Web/API/Element
+[1]: Setup.md?id=render
+[2]: 8.6.0_docs.md
+[3]: #mermaidapi-configuration-defaults
+[4]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[7]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[8]: https://developer.mozilla.org/docs/Web/API/Element
