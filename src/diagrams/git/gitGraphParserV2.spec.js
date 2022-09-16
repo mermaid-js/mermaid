@@ -363,6 +363,37 @@ describe('when parsing a gitGraph', function () {
     expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
   });
 
+  it('should allow branch names starting with unusual prefixes', function () {
+    const str = `gitGraph:
+    commit
+    %% branch names starting with numbers are not recommended, but are supported by git
+    branch branch01
+    branch checkout02
+    branch cherry-pick03
+    branch branch/example-branch
+    branch merge/test_merge
+    %% single character branch name
+    branch A
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(1);
+    expect(parser.yy.getCurrentBranch()).toBe('A');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(7);
+    expect(Object.keys(parser.yy.getBranches())).toEqual(
+      expect.arrayContaining([
+        'branch01',
+        'checkout02',
+        'cherry-pick03',
+        'branch/example-branch',
+        'merge/test_merge',
+        'A',
+      ])
+    );
+  });
+
   it('should handle new branch checkout', function () {
     const str = `gitGraph:
     commit
@@ -549,8 +580,6 @@ describe('when parsing a gitGraph', function () {
       testBranch3Commit,
       testBranch3Merge,
     ] = Object.values(commits);
-
-    console.log(Object.keys(commits));
 
     expect(mainCommit.branch).toBe('main');
     expect(mainCommit.parents).toStrictEqual([]);

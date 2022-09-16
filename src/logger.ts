@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-console */
 import moment from 'moment-mini';
 
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
@@ -32,6 +36,8 @@ export const setLogLevel = function (level: keyof typeof LEVELS | number | strin
     if (level in LEVELS) {
       numericLevel = LEVELS[level as keyof typeof LEVELS];
     }
+  } else if (typeof level === 'number') {
+    numericLevel = level;
   }
   log.trace = () => {};
   log.debug = () => {};

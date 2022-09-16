@@ -1,15 +1,15 @@
+import { parser as mindmap } from './parser/mindmap';
 import * as mindmapDB from './mindmapDb';
-import { parser } from './parser/mindmap';
+import { setLogLevel } from '../../diagram-api/diagramAPI';
 
 describe('when parsing a mindmap ', function () {
-  let mindmap;
   beforeEach(function () {
-    mindmap = parser;
     mindmap.yy = mindmapDB;
     mindmap.yy.clear();
+    setLogLevel('trace');
   });
   describe('hiearchy', function () {
-    it('should handle a simple root definition', function () {
+    it('MMP-1 should handle a simple root definition abc122', function () {
       let str = `mindmap
     root`;
 
@@ -17,7 +17,7 @@ describe('when parsing a mindmap ', function () {
       // console.log('Time for checks', mindmap.yy.getMindmap().descr);
       expect(mindmap.yy.getMindmap().descr).toEqual('root');
     });
-    it('should handle a hierachial mindmap definition', function () {
+    it('MMP-2 should handle a hierachial mindmap definition', function () {
       let str = `mindmap
     root
       child1
@@ -32,7 +32,7 @@ describe('when parsing a mindmap ', function () {
       expect(mm.children[1].descr).toEqual('child2');
     });
 
-    it('should handle a simple root definition with a shape and without an id abc123', function () {
+    it('3 should handle a simple root definition with a shape and without an id abc123', function () {
       let str = `mindmap
     (root)`;
 
@@ -41,7 +41,7 @@ describe('when parsing a mindmap ', function () {
       expect(mindmap.yy.getMindmap().descr).toEqual('root');
     });
 
-    it('should handle a deeper hierachial mindmap definition', function () {
+    it('MMP-4 should handle a deeper hierachial mindmap definition', function () {
       let str = `mindmap
     root
       child1
@@ -56,7 +56,7 @@ describe('when parsing a mindmap ', function () {
       expect(mm.children[0].children[0].descr).toEqual('leaf1');
       expect(mm.children[1].descr).toEqual('child2');
     });
-    it('Multiple roots are illegal', function () {
+    it('5 Multiple roots are illegal', function () {
       let str = `mindmap
     root
     fakeRoot`;
@@ -71,7 +71,7 @@ describe('when parsing a mindmap ', function () {
         );
       }
     });
-    it('real root in wrong place', function () {
+    it('MMP-6 real root in wrong place', function () {
       let str = `mindmap
           root
         fakeRoot
@@ -89,7 +89,7 @@ describe('when parsing a mindmap ', function () {
     });
   });
   describe('nodes', function () {
-    it('should handle an id and type for a node definition', function () {
+    it('MMP-7 should handle an id and type for a node definition', function () {
       let str = `mindmap
     root[The root]
       `;
@@ -100,7 +100,7 @@ describe('when parsing a mindmap ', function () {
       expect(mm.descr).toEqual('The root');
       expect(mm.type).toEqual(mindmap.yy.nodeType.RECT);
     });
-    it('should handle an id and type for a node definition', function () {
+    it('MMP-8 should handle an id and type for a node definition', function () {
       let str = `mindmap
     root
       theId(child1)`;
@@ -114,7 +114,7 @@ describe('when parsing a mindmap ', function () {
       expect(child.nodeId).toEqual('theId');
       expect(child.type).toEqual(mindmap.yy.nodeType.ROUNDED_RECT);
     });
-    it('should handle an id and type for a node definition', function () {
+    it('MMP-9 should handle an id and type for a node definition', function () {
       let str = `mindmap
 root
       theId(child1)`;
@@ -128,10 +128,10 @@ root
       expect(child.nodeId).toEqual('theId');
       expect(child.type).toEqual(mindmap.yy.nodeType.ROUNDED_RECT);
     });
-    it('mutiple types (circle)', function () {
+    it('MMP-10 mutiple types (circle)', function () {
       let str = `mindmap
  root((the root))
-`;
+ `;
 
       mindmap.parse(str);
       const mm = mindmap.yy.getMindmap();
@@ -140,7 +140,7 @@ root
       expect(mm.type).toEqual(mindmap.yy.nodeType.CIRCLE);
     });
 
-    it('mutiple types (cloud)', function () {
+    it('MMP-11 mutiple types (cloud)', function () {
       let str = `mindmap
  root)the root(
 `;
@@ -151,7 +151,7 @@ root
       expect(mm.children.length).toEqual(0);
       expect(mm.type).toEqual(mindmap.yy.nodeType.CLOUD);
     });
-    it('mutiple types (bang)', function () {
+    it('MMP-12 mutiple types (bang)', function () {
       let str = `mindmap
  root))the root((
 `;
@@ -164,7 +164,7 @@ root
     });
   });
   describe('decorations', function () {
-    it('should be possible to set an icon for the node', function () {
+    it('MMP-13 should be possible to set an icon for the node', function () {
       let str = `mindmap
     root[The root]
     ::icon(bomb)
@@ -178,7 +178,7 @@ root
       expect(mm.type).toEqual(mindmap.yy.nodeType.RECT);
       expect(mm.icon).toEqual('bomb');
     });
-    it('should be possible to set classes for the node', function () {
+    it('MMP-14 should be possible to set classes for the node', function () {
       let str = `mindmap
     root[The root]
     :::m-4 p-8
@@ -192,7 +192,7 @@ root
       expect(mm.type).toEqual(mindmap.yy.nodeType.RECT);
       expect(mm.class).toEqual('m-4 p-8');
     });
-    it('should be possible to set both classes and icon for the node', function () {
+    it('MMP-15 should be possible to set both classes and icon for the node', function () {
       let str = `mindmap
     root[The root]
     :::m-4 p-8
@@ -208,7 +208,7 @@ root
       expect(mm.class).toEqual('m-4 p-8');
       expect(mm.icon).toEqual('bomb');
     });
-    it('should be possible to set both classes and icon for the node', function () {
+    it('MMP-16 should be possible to set both classes and icon for the node', function () {
       let str = `mindmap
     root[The root]
     ::icon(bomb)
@@ -226,7 +226,7 @@ root
     });
   });
   describe('descriptions', function () {
-    it('should be possible to use node syntax in the descriptions', function () {
+    it('MMP-17 should be possible to use node syntax in the descriptions', function () {
       let str = `mindmap
     root["String containing []"]
 `;
@@ -235,7 +235,7 @@ root
       expect(mm.nodeId).toEqual('root');
       expect(mm.descr).toEqual('String containing []');
     });
-    it('should be possible to use node syntax in the descriptions in children', function () {
+    it('MMP-18 should be possible to use node syntax in the descriptions in children', function () {
       let str = `mindmap
     root["String containing []"]
       child1["String containing ()"]
@@ -247,7 +247,7 @@ root
       expect(mm.children.length).toEqual(1);
       expect(mm.children[0].descr).toEqual('String containing ()');
     });
-    it('should be possible to have a child after a class assignment', function () {
+    it('MMP-19 should be possible to have a child after a class assignment', function () {
       let str = `mindmap
   root(Root)
     Child(Child)
@@ -267,7 +267,7 @@ root
       expect(child.children[1].nodeId).toEqual('b');
     });
   });
-  it('should be possible to have meaningless empty rows in a mindmap abc124', function () {
+  it('MMP-20 should be possible to have meaningless empty rows in a mindmap abc124', function () {
     let str = `mindmap
   root(Root)
     Child(Child)
@@ -286,7 +286,7 @@ root
     expect(child.children.length).toEqual(2);
     expect(child.children[1].nodeId).toEqual('b');
   });
-  it('should be possible to have comments in a mindmap', function () {
+  it('MMP-21 should be possible to have comments in a mindmap', function () {
     let str = `mindmap
   root(Root)
     Child(Child)
@@ -307,7 +307,7 @@ root
     expect(child.children[1].nodeId).toEqual('b');
   });
 
-  it('should be possible to have comments at the end of a line', function () {
+  it('MMP-22 should be possible to have comments at the end of a line', function () {
     let str = `mindmap
   root(Root)
     Child(Child)

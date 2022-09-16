@@ -1,6 +1,5 @@
 /** Created by knut on 15-01-14. */
-import { sanitizeText, getConfig } from '../../diagram-api/diagramAPI';
-import { log } from '../../logger';
+import { sanitizeText, getConfig, log as _log } from '../../diagram-api/diagramAPI';
 
 let nodes = [];
 let cnt = 0;
@@ -25,7 +24,7 @@ export const getMindmap = () => {
   return nodes.length > 0 ? nodes[0] : null;
 };
 export const addNode = (level, id, descr, type) => {
-  console.info('addNode', level, id, descr, type);
+  log.info('addNode', level, id, descr, type);
   const conf = getConfig();
   const node = {
     id: cnt++,
@@ -132,7 +131,8 @@ export const type2Str = (type) => {
       return 'no-border';
   }
 };
-
+// Expose logger to grammar
+export const log = _log;
 export const getNodeById = (id) => nodes[id];
 export const getElementById = (id) => elements[id];
 // export default {

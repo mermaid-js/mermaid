@@ -1,7 +1,7 @@
 import { log } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
 import * as configApi from '../../config';
-import common from '../common/common';
+
 import {
   setAccTitle,
   getAccTitle,
@@ -12,8 +12,6 @@ import {
 
 let entities = {};
 let relationships = [];
-let title = '';
-let description = '';
 
 const Cardinality = {
   ZERO_OR_ONE: 'ZERO_OR_ONE',
@@ -78,7 +76,6 @@ const getRelationships = () => relationships;
 const clear = function () {
   entities = {};
   relationships = [];
-  title = '';
   commonClear();
 };
 

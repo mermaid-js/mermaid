@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code.
@@ -14,7 +15,8 @@ import { isDetailedError } from './utils';
  * Function that goes through the document to find the chart definitions in there and render them.
  *
  * The function tags the processed attributes with the attribute data-processed and ignores found
- * elements with the attribute already set. This way the init function can be triggered several times.
+ * elements with the attribute already set. This way the init function can be triggered several
+ * times.
  *
  * Optionally, `init` can accept in the second argument one of the following:
  *
@@ -30,6 +32,7 @@ import { isDetailedError } from './utils';
  * ```
  *
  * Renders the mermaid diagrams
+ *
  * @param config
  * @param nodes
  * @param callback
@@ -38,6 +41,7 @@ const init = function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   callback?: Function
 ) {
   try {
@@ -57,13 +61,14 @@ const initThrowsErrors = function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   callback?: Function
 ) {
   const conf = mermaidAPI.getConfig();
   // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   if (config) {
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
-    // @ts-ignore
+    // @ts-ignore: TODO Fix ts errors
     mermaid.sequenceConfig = config;
   }
 
@@ -91,9 +96,11 @@ const initThrowsErrors = function (
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt;
+  const errors = [];
 
   // element is the current div with mermaid class
   for (const element of Array.from(nodesToProcess)) {
+    log.info('Rendering diagram: ' + element.id);
     /*! Check if previously processed */
     if (element.getAttribute('data-processed')) {
       continue;
@@ -130,10 +137,17 @@ const initThrowsErrors = function (
       );
     } catch (error) {
       log.warn('Catching Error (bootstrap)', error);
-      // @ts-ignore
-      // TODO: We should be throwing an error object.
-      throw { error, message: error.str };
+      // @ts-ignore: TODO Fix ts errors
+      const mermaidError = { error, str: error.str, hash: error.hash, message: error.str };
+      if (typeof mermaid.parseError === 'function') {
+        mermaid.parseError(mermaidError);
+      }
+      errors.push(mermaidError);
     }
+  }
+  if (errors.length > 0) {
+    // TODO: We should be throwing an error object.
+    throw errors[0];
   }
 };
 
@@ -143,7 +157,8 @@ const initialize = function (config: MermaidConfig) {
 
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
- * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
+ * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
+ * page.
  */
 const contentLoaded = function () {
   if (mermaid.startOnLoad) {
@@ -158,13 +173,7 @@ if (typeof document !== 'undefined') {
   /*!
    * Wait for document loaded before starting the execution
    */
-  window.addEventListener(
-    'load',
-    function () {
-      contentLoaded();
-    },
-    false
-  );
+  window.addEventListener('load', contentLoaded, false);
 }
 
 /**
@@ -192,6 +201,7 @@ const parse = (txt: string) => {
 const mermaid: {
   startOnLoad: boolean;
   diagrams: any;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   parseError?: Function;
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;

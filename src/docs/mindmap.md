@@ -1,7 +1,5 @@
 # Mindmap
 
-**Edit this Page** [![N|Solid](img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/mindmap.md)
-
 > Mindmap: This is an experimental diagram for now. The syntax and properties can change in future releases. The syntax is stabel except for the icon integration which is the experimental part.
 
 "A mind map is a diagram used to visually organize information into a hierarchy, showing relationships among pieces of the whole. It is often created around a single concept, drawn as an image in the center of a blank page, to which associated representations of ideas such as images, words and parts of words are added. Major ideas are connected directly to the central concept, and other ideas branch out from those major ideas." Wikipedia
@@ -43,7 +41,7 @@ mindmap
             C
 ```
 
-In summary is is a simple text outline where there are one node at the root level called `Root` which has one child `A`. A in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
+In summary is a simple text outline where there are one node at the root level called `Root` which has one child `A`. `A` in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
 
 ```mermaid
 mindmap
@@ -109,7 +107,7 @@ More shapes will be added, beginning with the shapes available in flowcharts.
 
 ## icons
 
-As with flowcharts you can add icons to your nodes but with an updated syntax. The styling for the font based icons are added during the integration so that they are available for the web page. _This is not something a diagram author can do but has to be done with the site administrator or the integrator_. Once the icon fonts are in place you add them to the mind map nodes using the `::icon()` syntax. You place the classes for the icon within the parethesis like in the following example where icons for material design and fontwaresome 4. is displayed. The intention is that this approach should be used for all diagrams supporting icons. **Expermental feature:** This wider scope is also the reason Mindmaps are experimental as this syntax and approach could change.
+As with flowcharts you can add icons to your nodes but with an updated syntax. The styling for the font based icons are added during the integration so that they are available for the web page. _This is not something a diagram author can do but has to be done with the site administrator or the integrator_. Once the icon fonts are in place you add them to the mind map nodes using the `::icon()` syntax. You place the classes for the icon within the parenthesis like in the following example where icons for material design and fontawesome 4 are displayed. The intention is that this approach should be used for all diagrams supporting icons. **Experimental feature:** This wider scope is also the reason Mindmaps are experimental as this syntax and approach could change.
 
 ```mermaid-example
 mindmap
@@ -122,7 +120,7 @@ mindmap
 
 ## Classes
 
-Again the syntax for adding classes is similar to flowcharts and you can add classes using a tripple colon following a numver of css classes separated by space. In the following example one of the nodes has two custom classes attached urgent turning the background red and the text whiet and large increasing the font size:
+Again the syntax for adding classes is similar to flowcharts. You can add classes using a triple colon following a number of css classes separated by space. In the following example one of the nodes has two custom classes attached urgent turning the background red and the text white and large increasing the font size:
 
 ```mermaid-example
 mindmap
@@ -147,7 +145,7 @@ mindmap
           C
 ```
 
-This outline is unclear as `B` clearly is a child of `A` but when we move on to `C` the clarity is lost. `C` is not a child of `B` with a highter indentation nor does ot haver the same indentation as `B`. The only thing that is clear is that the first node with smaller indentation, indicating a parent, is A. Then Mermaid relies on this known truth and compensates for the unclear indentation and selects `A` as a parent of `C` leading till the same diagram with `B` and `C` as sieblings.
+This outline is unclear as `B` clearly is a child of `A` but when we move on to `C` the clarity is lost. `C` is not a child of `B` with a higher indentation nor does it have the same indentation as `B`. The only thing that is clear is that the first node with smaller indentation, indicating a parent, is A. Then Mermaid relies on this known truth and compensates for the unclear indentation and selects `A` as a parent of `C` leading till the same diagram with `B` and `C` as siblings.
 
 ```mermaid
 mindmap

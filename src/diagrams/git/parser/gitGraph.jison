@@ -36,7 +36,7 @@ accDescr\s*"{"\s*                                               { this.begin("ac
 \#[^\n]*                               /* skip comments */
 \%%[^\n]*                              /* skip comments */
 "gitGraph"                              return 'GG';
-"commit"                                return 'COMMIT';
+commit(?=\s|$)                          return 'COMMIT';
 "id:"                                   return 'COMMIT_ID';
 "type:"                                 return 'COMMIT_TYPE';
 "msg:"                                  return 'COMMIT_MSG';
@@ -44,12 +44,12 @@ accDescr\s*"{"\s*                                               { this.begin("ac
 "REVERSE"                               return 'REVERSE';
 "HIGHLIGHT"                             return 'HIGHLIGHT';
 "tag:"                                  return 'COMMIT_TAG';
-"branch"                                return 'BRANCH';
+branch(?=\s|$)                          return 'BRANCH';
 "order:"                                return 'ORDER';
-"merge"                                 return 'MERGE';
-"cherry-pick"                           return 'CHERRY_PICK';
+merge(?=\s|$)                           return 'MERGE';
+cherry-pick(?=\s|$)                     return 'CHERRY_PICK';
 // "reset"                                 return 'RESET';
-"checkout"                              return 'CHECKOUT';
+checkout(?=\s|$)                        return 'CHECKOUT';
 "LR"                                    return 'DIR';
 "BT"                                    return 'DIR';
 ":"                                     return ':';
@@ -61,7 +61,7 @@ accDescr\s*"{"\s*                                               { this.begin("ac
 <string>["]                             this.popState();
 <string>[^"]*                           return 'STR';
 [0-9]+(?=\s|$)                          return 'NUM';
-\w[-\./\w]*[-\w]                        return 'ID'; // only a subset of https://git-scm.com/docs/git-check-ref-format
+\w([-\./\w]*[-\w])?                     return 'ID'; // only a subset of https://git-scm.com/docs/git-check-ref-format
 <<EOF>>                                 return 'EOF';
 \s+                                    /* skip all whitespace */ // lowest priority so we can use lookaheads in earlier regex
 

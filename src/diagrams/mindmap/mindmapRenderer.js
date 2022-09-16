@@ -2,7 +2,7 @@
 import { select } from 'd3';
 import { log, getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI';
 import svgDraw from './svgDraw';
-import { BoundingBox, Layout, Tree } from 'non-layered-tidy-tree-layout';
+import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
 import clone from 'fast-clone';
 import * as db from './mindmapDb';
 
@@ -85,9 +85,8 @@ function rightToLeft(mindmap) {
 /**
  * @param mindmap
  * @param dir
- * @param conf
  */
-function layout(mindmap, dir, conf) {
+function layout(mindmap, dir) {
   const bb = new BoundingBox(30, 60);
 
   const layout = new Layout(bb);
@@ -192,8 +191,7 @@ function layoutMindmap(node, conf) {
   });
 
   // Merge the trees into a single tree
-  const result = mergeTrees(node, trees);
-  eachNode;
+  mergeTrees(node, trees);
   return node;
 }
 /**
@@ -232,13 +230,11 @@ export const draw = (text, id, version, diagObj) => {
       securityLevel === 'sandbox'
         ? select(sandboxElement.nodes()[0].contentDocument.body)
         : select('body');
-    const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
-
     // Parse the graph definition
 
     const svg = root.select('#' + id);
 
-    const g = svg.append('g');
+    svg.append('g');
     const mm = diagObj.db.getMindmap();
 
     // Draw the graph and start with drawing the nodes without proper position

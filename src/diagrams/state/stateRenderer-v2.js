@@ -283,7 +283,6 @@ export const draw = function (text, id, _version, diag) {
     securityLevel === 'sandbox'
       ? select(sandboxElement.nodes()[0].contentDocument.body)
       : select('body');
-  const doc = securityLevel === 'sandbox' ? sandboxElement.nodes()[0].contentDocument : document;
   const svg = root.select(`[id="${id}"]`);
 
   // Run the renderer. This is what draws the final graph.

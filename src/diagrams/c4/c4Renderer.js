@@ -298,7 +298,7 @@ export const drawC4ShapeArray = function (currentBounds, diagram, c4ShapeArray, 
 
     currentBounds.insert(c4Shape);
 
-    const height = svgDraw.drawC4Shape(diagram, c4Shape, conf);
+    svgDraw.drawC4Shape(diagram, c4Shape, conf);
   }
 
   currentBounds.bumpLastMargin(conf.c4ShapeMargin);
@@ -616,7 +616,6 @@ export const draw = function (_text, id, _version, diagObj) {
   globalBoundaryMaxY = conf.diagramMarginY;
 
   const title = diagObj.db.getTitle();
-  const c4type = diagObj.db.getC4Type();
   let currentBoundarys = diagObj.db.getBoundarys('');
   // switch (c4type) {
   //   case 'C4Context':

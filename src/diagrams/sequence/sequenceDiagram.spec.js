@@ -1,12 +1,8 @@
-// import sequence from './parser/sequenceDiagram';
-// import sequenceDb from './sequenceDb';
 import * as configApi from '../../config';
-// import renderer from './sequenceRenderer';
 import mermaidAPI from '../../mermaidAPI';
-// import '../../diagram-api/diagramAPI';
 import Diagram from '../../Diagram';
-
-// console.log('sequenceDiagram', sequenceDb);
+import { addDiagrams } from '../../diagram-api/diagram-orchestration';
+addDiagrams();
 /**
  * @param conf
  * @param key
