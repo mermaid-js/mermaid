@@ -1,5 +1,5 @@
 import { select } from 'd3';
-import { getConfig,setupGraphViewbox } from '../../diagram-api/diagramAPI';
+import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI';
 import { log } from '../../logger';
 import addSVGAccessibilityFields from '../../accessibility';
 
@@ -288,13 +288,13 @@ const drawCommits = (svg, commits, modifyGraph) => {
 };
 
 /**
- * Detect if there are other commits between commit1's x-position and commit2's x-position on the same
- * branch as commit2.
+ * Detect if there are other commits between commit1's x-position and commit2's x-position on the
+ * same branch as commit2.
  *
  * @param {any} commit1
  * @param {any} commit2
  * @param allCommits
- * @returns {boolean} if there are commits between commit1's x-position and commit2's x-position
+ * @returns {boolean} If there are commits between commit1's x-position and commit2's x-position
  */
 const hasOverlappingCommits = (commit1, commit2, allCommits) => {
   // Find commits on the same branch as commit2
@@ -317,7 +317,7 @@ const hasOverlappingCommits = (commit1, commit2, allCommits) => {
  * @param {any} y1
  * @param {any} y2
  * @param {any} _depth
- * @returns {number} y value between y1 and y2
+ * @returns {number} Y value between y1 and y2
  */
 const findLane = (y1, y2, _depth) => {
   const depth = _depth || 0;
@@ -537,8 +537,8 @@ export const draw = function (txt, id, ver, diagObj) {
   drawArrows(diagram, allCommitsDict);
   drawCommits(diagram, allCommitsDict, true);
 
-   // Setup the view box and size of the svg element
-    setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, conf.useMaxWidth);
+  // Setup the view box and size of the svg element
+  setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, conf.useMaxWidth);
 };
 
 export default {
