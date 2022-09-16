@@ -105,7 +105,11 @@ export const addDiagrams = () => {
     'error',
     // Special diagram with error messages but setup as a regular diagram
     {
-      db: {},
+      db: {
+        clear: () => {
+          // Quite ok, clear needs to be there for error to work as a regular diagram
+        },
+      },
       styles: errorStyles,
       renderer: errorRenderer,
       parser: {

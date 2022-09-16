@@ -17,10 +17,11 @@ export const setConf = function (cnf: any) {
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
  *
+ * @param text
  * @param {string} id The text for the error
  * @param {string} mermaidVersion The version
  */
-export const draw = (id: string, mermaidVersion: string) => {
+export const draw = (text: string, id: string, mermaidVersion: string) => {
   try {
     log.debug('Renering svg for syntax error\n');
 
