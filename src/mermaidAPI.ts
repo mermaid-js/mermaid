@@ -26,7 +26,7 @@ import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import ganttDb from './diagrams/gantt/ganttDb';
 import Diagram from './Diagram';
-import errorRenderer from './errorRenderer';
+import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
@@ -124,6 +124,10 @@ const render = function (
   cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   container?: Element
 ): void {
+  if (!hasLoadedDiagrams) {
+    addDiagrams();
+    hasLoadedDiagrams = true;
+  }
   configApi.reset();
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(text);
@@ -228,7 +232,14 @@ const render = function (
   text = encodeEntities(text);
 
   // Important that we do not create the diagram until after the directives have been included
-  const diag = new Diagram(text);
+  let diag;
+  let parseEncounteredException;
+  try {
+    diag = new Diagram(text);
+  } catch (error) {
+    diag = new Diagram('error');
+    parseEncounteredException = error;
+  }
   // Get the tmp element containing the the svg
   const element = root.select('#d' + id).node();
   const graphType = diag.type;
@@ -369,6 +380,10 @@ const render = function (
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
+  }
+
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
   }
 
   return svgCode;
