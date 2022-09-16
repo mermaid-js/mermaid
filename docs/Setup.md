@@ -221,7 +221,7 @@ Default value: true
 Decides which rendering engine that is to be used for the rendering. Legal values are:
 dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
 
-Default value: 'dagre-d3'
+Default value: 'dagre-wrapper'
 
 ## sequence
 
@@ -364,7 +364,8 @@ Default value: true
 
 **Notes:**
 
-This will display arrows that start and begin at the same node as right angles, rather than a curve
+This will display arrows that start and begin at the same node as right angles, rather than a
+curve
 
 Default value: false
 
@@ -716,7 +717,8 @@ Default value: true
 
 **Notes:**
 
-This will display arrows that start and begin at the same node as right angles, rather than a curves
+This will display arrows that start and begin at the same node as right angles, rather than a
+curves
 
 Default value: false
 
