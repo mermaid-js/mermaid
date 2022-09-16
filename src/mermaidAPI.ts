@@ -312,7 +312,7 @@ const render = function (
   try {
     diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
-    errorRenderer.draw(id, pkg.version);
+    errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
 
