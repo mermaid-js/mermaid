@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/reveal.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section
+          data-markdown="example.md"
+          data-separator="^#######"
+          data-separator-vertical="^-------"
+        ></section>
+      </div>
+    </div>
+
+    <!-- <script src="./mermaid.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.6/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+
+    <script>
+      mermaid.initialize({ startOnLoad: false });
+      Reveal.initialize({
+        plugins: [RevealMarkdown],
+      }).then(() => {
+        function renderGraph(dom, id) {
+          const mermaidGraph = dom.textContent;
+
+          const svg = mermaid.mermaidAPI.render(`mermaid-${id}`, mermaidGraph);
+
+          const mermaidSvg = document.createElement('div');
+          mermaidSvg.classList.add('mermaid-svg');
+          mermaidSvg.innerHTML = svg;
+
+          dom.parentNode.after(mermaidSvg);
+          dom.parentNode.remove();
+
+          return mermaidSvg;
+        }
+
+        Reveal.on('slidechanged', () => {
+          document.querySelectorAll('.mermaid').forEach(renderGraph);
+        });
+      });
+    </script>
+  </body>
+</html>
