@@ -16,6 +16,12 @@ export const markerId = (type, name) => {
   return `${theme()}-${type}-${name}`;
 };
 
+export const uniqueMarkerId = (elem, type, name) => {
+  const viewport = elem._groups[0][0].farthestViewportElement;
+  const docId = viewport.id.replace(/\D/g, '');
+  return `${type}-${name}-${docId}`;
+};
+
 export const markerUrl = (type, name) => {
   let absolute = '';
 
@@ -33,12 +39,29 @@ export const markerUrl = (type, name) => {
   return `url(${absolute}#${markerId(type, name)})`;
 };
 
+export const uniqueMarkerUrl = (elem, type, name) => {
+  let absolute = '';
+
+  if (getConfig().state.arrowMarkerAbsolute) {
+    absolute =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search;
+    absolute = absolute.replace(/\(/g, '\\(');
+    absolute = absolute.replace(/\)/g, '\\)');
+  }
+
+  return `url(${absolute}#${uniqueMarkerId(elem, type, name)})`;
+};
+
 const extension = (elem, type, id) => {
   log.trace('Making markers for ', id);
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'extensionStart'))
+    .attr('id', uniqueMarkerId(elem, type, 'extensionStart'))
     .attr('class', 'marker extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -51,7 +74,7 @@ const extension = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'extensionEnd'))
+    .attr('id', uniqueMarkerId(elem, type, 'extensionEnd'))
     .attr('class', 'marker extension ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -66,7 +89,7 @@ const composition = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'compositionStart'))
+    .attr('id', uniqueMarkerId(elem, type, 'compositionStart'))
     .attr('class', 'marker composition ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -79,7 +102,7 @@ const composition = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'compositionEnd'))
+    .attr('id', uniqueMarkerId(elem, type, 'compositionEnd'))
     .attr('class', 'marker composition ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -94,7 +117,7 @@ const aggregation = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'aggregationStart'))
+    .attr('id', uniqueMarkerId(elem, type, 'aggregationStart'))
     .attr('class', 'marker aggregation ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -107,7 +130,7 @@ const aggregation = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'aggregationEnd'))
+    .attr('id', uniqueMarkerId(elem, type, 'aggregationEnd'))
     .attr('class', 'marker aggregation ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -122,7 +145,7 @@ const dependency = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'dependencyStart'))
+    .attr('id', uniqueMarkerId(elem, type, 'dependencyStart'))
     .attr('class', 'marker dependency ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -135,7 +158,7 @@ const dependency = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'dependencyEnd'))
+    .attr('id', uniqueMarkerId(elem, type, 'dependencyEnd'))
     .attr('class', 'marker dependency ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -150,7 +173,7 @@ const lollipop = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'lollipopStart'))
+    .attr('id', uniqueMarkerId(elem, type, 'lollipopStart'))
     .attr('class', 'marker lollipop ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -168,7 +191,7 @@ const lollipop = (elem, type) => {
 const point = (elem, type) => {
   elem
     .append('marker')
-    .attr('id', markerId(type, 'pointEnd'))
+    .attr('id', uniqueMarkerId(elem, type, 'pointEnd'))
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 9)
@@ -185,7 +208,7 @@ const point = (elem, type) => {
 
   elem
     .append('marker')
-    .attr('id', markerId(type, 'pointStart'))
+    .attr('id', uniqueMarkerId(elem, type, 'pointStart'))
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 0)
@@ -204,7 +227,7 @@ const point = (elem, type) => {
 const circle = (elem, type) => {
   elem
     .append('marker')
-    .attr('id', markerId(type, 'circleEnd'))
+    .attr('id', uniqueMarkerId(elem, type, 'circleEnd'))
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 11)
@@ -223,7 +246,7 @@ const circle = (elem, type) => {
 
   elem
     .append('marker')
-    .attr('id', markerId(type, 'circleStart'))
+    .attr('id', uniqueMarkerId(elem, type, 'circleStart'))
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', -1)
@@ -244,7 +267,7 @@ const circle = (elem, type) => {
 const cross = (elem, type) => {
   elem
     .append('marker')
-    .attr('id', markerId(type, 'crossEnd'))
+    .attr('id', uniqueMarkerId(elem, type, 'crossEnd'))
     .attr('class', 'marker cross ' + type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', 12)
@@ -262,7 +285,7 @@ const cross = (elem, type) => {
 
   elem
     .append('marker')
-    .attr('id', markerId(type, 'crossStart'))
+    .attr('id', uniqueMarkerId(elem, type, 'crossStart'))
     .attr('class', 'marker cross ' + type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', -1)
@@ -283,7 +306,7 @@ const barb = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', markerId(type, 'barbEnd'))
+    .attr('id', uniqueMarkerId(elem, type, 'barbEnd'))
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)

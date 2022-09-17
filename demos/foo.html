@@ -1,54 +1,29 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Mermaid Quick Test Page</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
-    <style>
-      div.mermaid {
-        /* font-family: 'trebuchet ms', verdana, arial; */
-        font-family: 'Courier New', Courier, monospace !important;
-      }
-    </style>
-  </head>
+  <head> </head>
   <body>
-    <h2>Marker spill over</h2>
-    <pre class="mermaid">
-    %%{}%%
+    <h2>Changing Themes</h2>
+    The marker stroke should be from the current theme:
+    <pre>
+    %%{init:{"theme":"dark"}}%%
     flowchart LR
-      DataStore[|borders:tb|Database] -->|input| Process((System)) -->|output| Entity[Customer];
-    </pre>
-
-    <h2>Borders Example</h2>
-    <pre class="mermaid">
-    flowchart TD
-      allSides[ stroke all sides ];
-      allSides2[|borders:ltrb| stroke all sides ];
-      rbSides[|borders:rb| stroke right and bottom sides ];
-      ltSides[|borders:lt| stroke left and top sides ];
-      lrSides[|borders:lr| stroke left and right sides ];
-      noSide[|borders:no| stroke no side ];
-    </pre>
+    A --> B
+  </pre
+    >
+    <div class="mermaid">%%{init:{"theme":"dark"}}%% flowchart LR A --> B</div>
+    <pre>
+    %%{init:{"theme":"base"}}%%
+    flowchart LR
+    A -->|marker should be dark brown| B
+  </pre
+    >
+    <div class="mermaid">
+      %%{init:{"theme":"base"}}%% flowchart LR A -->|marker should be dark brown| B
+    </div>
 
     <script src="./mermaid.js"></script>
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.6/dist/mermaid.min.js"></script> -->
     <script>
-      mermaid.initialize({
-        theme: 'forest',
-        logLevel: 3,
-        securityLevel: 'loose',
-        flowchart: { curve: 'basis' },
-      });
-    </script>
-    <script>
-      function testClick(nodeId) {
-        console.log('clicked', nodeId);
-        var originalBgColor = document.querySelector('body').style.backgroundColor;
-        document.querySelector('body').style.backgroundColor = 'yellow';
-        setTimeout(function () {
-          document.querySelector('body').style.backgroundColor = originalBgColor;
-        }, 100);
-      }
+      mermaid.initialize({});
     </script>
   </body>
 </html>

@@ -1,0 +1,21 @@
+<html>
+  <head> </head>
+  <body>
+    <h2>Edge Styling</h2>
+    <div class="mermaid">
+      %%{init:{"theme":"base"}}%% flowchart subgraph red A --> B %% linkStyle 0 stroke:red end
+    </div>
+    <div class="mermaid">
+      %%{init:{"theme":"base"}}%% flowchart subgraph blue A --> B linkStyle 0 stroke:blue end
+    </div>
+
+    <!-- <script src="./mermaid.js"></script> -->
+    <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.6/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({});
+      function callback() {
+        alert('It worked');
+      }
+    </script>
+  </body>
+</html>
