@@ -1,29 +1,36 @@
 <html>
   <head> </head>
+
   <body>
     <h2>Changing Themes</h2>
     The marker stroke should be from the current theme:
     <pre>
     %%{init:{"theme":"dark"}}%%
-    flowchart LR
+    flowchart
     A --> B
   </pre
     >
-    <div class="mermaid">%%{init:{"theme":"dark"}}%% flowchart LR A --> B</div>
+    <pre class="mermaid">
+    %%{init:{"theme":"dark"}}%%
+    flowchart LR
+    A --> B</pre
+    >
     <pre>
+    <!-- %%{init:{"theme":"base"}}%% -->
+    flowchart LR
+    A -->|marker should be dark brown| B
+  </pre>
+    <pre class="mermaid">
     %%{init:{"theme":"base"}}%%
     flowchart LR
     A -->|marker should be dark brown| B
   </pre
     >
-    <div class="mermaid">
-      %%{init:{"theme":"base"}}%% flowchart LR A -->|marker should be dark brown| B
-    </div>
 
-    <script src="./mermaid.js"></script>
-    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.6/dist/mermaid.min.js"></script> -->
+    <!-- <script src="./mermaid.js"></script> -->
+    <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.6/dist/mermaid.js"></script>
     <script>
-      mermaid.initialize({});
+      mermaid.initialize({ logLevel: 1 });
     </script>
   </body>
 </html>
