@@ -429,6 +429,8 @@ By default, the cherry-picked commit from commit with id `A` will be labeled `ch
        commit id:"C"
 ```
 
+To suppress the tag entirely, use `tag:""` (empty string).
+
 ## Gitgraph specific configuration options
 
 In Mermaid, you have the option to configure the gitgraph diagram. You can configure the following options:

@@ -117,7 +117,7 @@ branchStatement
     ;
 
 cherryPickStatement
-    : CHERRY_PICK COMMIT_ID STR {yy.cherryPick($3, '', '')}
+    : CHERRY_PICK COMMIT_ID STR {yy.cherryPick($3, '', 'cherry-pick:<id>')}
     | CHERRY_PICK COMMIT_ID STR COMMIT_TAG STR {yy.cherryPick($3, '', $5)}
     | CHERRY_PICK COMMIT_TAG STR COMMIT_ID STR {yy.cherryPick($5, '', $3)}
     ;

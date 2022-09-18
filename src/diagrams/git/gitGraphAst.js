@@ -262,6 +262,10 @@ export const cherryPick = function (sourceId, targetId, tag) {
   log.debug('Entering cherryPick:', sourceId, targetId, tag);
   sourceId = common.sanitizeText(sourceId, configApi.getConfig());
   targetId = common.sanitizeText(targetId, configApi.getConfig());
+
+  if (tag === 'cherry-pick:<id>') {
+    tag = 'cherry-pick:' + sourceCommit.id;
+  }
   tag = common.sanitizeText(tag, configApi.getConfig());
 
   if (!sourceId || typeof commits[sourceId] === 'undefined') {
@@ -330,7 +334,7 @@ export const cherryPick = function (sourceId, targetId, tag) {
       parents: [head == null ? null : head.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
-      tag: tag ? tag : 'cherry-pick:' + sourceCommit.id,
+      tag: tag,
     };
     head = commit;
     commits[commit.id] = commit;
