@@ -47,7 +47,7 @@ commit(?=\s|$)                          return 'COMMIT';
 branch(?=\s|$)                          return 'BRANCH';
 "order:"                                return 'ORDER';
 merge(?=\s|$)                           return 'MERGE';
-cherry-pick(?=\s|$)                     return 'CHERRY_PICK';
+cherry\-pick(?=\s|$)                    return 'CHERRY_PICK';
 // "reset"                                 return 'RESET';
 checkout(?=\s|$)                        return 'CHECKOUT';
 "LR"                                    return 'DIR';
