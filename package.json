@@ -103,7 +103,7 @@
     "documentation": "13.2.0",
     "esbuild": "^0.15.6",
     "esbuild-jest": "^0.5.0",
-    "esbuild-loader": "^2.19.0",
+    "esbuild-loader": "^2.20.0",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-cypress": "^2.12.1",
