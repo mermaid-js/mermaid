@@ -4,7 +4,7 @@ import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
 import utils from '../utils';
 import { evaluate } from '../diagrams/common/common';
-import { uniqueMarkerUrl } from './markers';
+import { markerUrl } from './markers';
 
 let edgeLabels = {};
 let terminalLabels = {};
@@ -454,12 +454,14 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
       break;
   }
 
-  const svgPath = elem
+  elem
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
     .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
-    .attr('style', edge.style);
+    .attr('style', edge.style)
+    .attr('marker-start', markerUrl(elem, startMarkerName(edge.arrowTypeStart)))
+    .attr('marker-end', markerUrl(elem, endMarkerName(edge.arrowTypeEnd)));
 
   // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach(point => {
@@ -475,66 +477,6 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   log.info('arrowTypeStart', edge.arrowTypeStart);
   log.info('arrowTypeEnd', edge.arrowTypeEnd);
 
-  switch (edge.arrowTypeStart) {
-    case 'arrow_cross':
-      svgPath.attr('marker-start', uniqueMarkerUrl(svgPath, diagramType, 'crossStart'));
-      break;
-    case 'arrow_point':
-      svgPath.attr('marker-start', uniqueMarkerUrl(svgPath, diagramType, 'pointStart'));
-      break;
-    case 'arrow_barb':
-      svgPath.attr('marker-start', uniqueMarkerUrl(svgPath, diagramType, 'barbStart'));
-      break;
-    case 'arrow_circle':
-      svgPath.attr('marker-start', uniqueMarkerUrl(svgPath, diagramType, 'circleStart'));
-      break;
-    case 'aggregation':
-      svgPath.attr('marker-start', uniqueMarkerUrl(svgPath, diagramType, 'aggregationStart'));
-      break;
-    case 'extension':
-      svgPath.attr('marker-start', uniqueMarkerUrl(svgPath, diagramType, 'extensionStart'));
-      break;
-    case 'composition':
-      svgPath.attr('marker-start', uniqueMarkerUrl(svgPath, diagramType, 'compositionStart'));
-      break;
-    case 'dependency':
-      svgPath.attr('marker-start', uniqueMarkerUrl(svgPath, diagramType, 'dependencyStart'));
-      break;
-    case 'lollipop':
-      svgPath.attr('marker-start', uniqueMarkerUrl(svgPath, diagramType, 'lollipopStart'));
-      break;
-    default:
-  }
-  switch (edge.arrowTypeEnd) {
-    case 'arrow_cross':
-      svgPath.attr('marker-end', uniqueMarkerUrl(svgPath, diagramType, 'crossEnd'));
-      break;
-    case 'arrow_point':
-      svgPath.attr('marker-end', uniqueMarkerUrl(svgPath, diagramType, 'pointEnd'));
-      break;
-    case 'arrow_barb':
-      svgPath.attr('marker-end', uniqueMarkerUrl(svgPath, diagramType, 'barbEnd'));
-      break;
-    case 'arrow_circle':
-      svgPath.attr('marker-end', uniqueMarkerUrl(svgPath, diagramType, 'circleEnd'));
-      break;
-    case 'aggregation':
-      svgPath.attr('marker-end', uniqueMarkerUrl(svgPath, diagramType, 'aggregationEnd'));
-      break;
-    case 'extension':
-      svgPath.attr('marker-end', uniqueMarkerUrl(svgPath, diagramType, 'extensionEnd'));
-      break;
-    case 'composition':
-      svgPath.attr('marker-end', uniqueMarkerUrl(svgPath, diagramType, 'compositionEnd'));
-      break;
-    case 'dependency':
-      svgPath.attr('marker-end', uniqueMarkerUrl(svgPath, diagramType, 'dependencyEnd'));
-      break;
-    case 'lollipop':
-      svgPath.attr('marker-end', uniqueMarkerUrl(svgPath, diagramType, 'lollipopEnd'));
-      break;
-    default:
-  }
   let paths = {};
   if (pointsHasChanged) {
     paths.updatedPath = points;
@@ -542,3 +484,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   paths.originalPath = edge.points;
   return paths;
 };
+
+const markerName = (arrowType) => arrowType.replace('arrow_', '');
+const startMarkerName = (arrowType) => markerName(arrowType) + 'Start';
+const endMarkerName = (arrowType) => markerName(arrowType) + 'End';
