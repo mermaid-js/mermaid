@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import jison from './jison';
+import jison from './.esbuild/jison';
 export default defineConfig({
   plugins: [jison()],
   resolve: {
@@ -16,11 +16,22 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      output: {
-        name: 'mermaid',
-        // Provide global variables to use in the UMD build
-        // for externalized deps
-      },
+      external: ['require', 'fs', 'path'],
+      output: [
+        {
+          name: 'mermaid',
+          format: 'esm',
+          // Provide global variables to use in the UMD build
+          // for externalized deps
+        },
+        {
+          name: 'mermaid',
+          format: 'umd',
+
+          // Provide global variables to use in the UMD build
+          // for externalized deps
+        },
+      ],
     },
   },
 });
