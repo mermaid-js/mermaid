@@ -90,7 +90,7 @@
     "@types/d3": "^7.4.0",
     "@types/dompurify": "^2.3.4",
     "@types/jest": "^28.1.7",
-    "@types/lodash": "^4.14.184",
+    "@types/lodash": "^4.14.185",
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
