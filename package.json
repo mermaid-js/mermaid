@@ -81,7 +81,7 @@
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.25.7",
-    "@babel/core": "^7.19.0",
+    "@babel/core": "^7.19.1",
     "@babel/eslint-parser": "^7.14.7",
     "@babel/preset-env": "^7.19.0",
     "@babel/register": "^7.14.5",
