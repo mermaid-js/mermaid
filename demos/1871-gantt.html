@@ -1,32 +1,23 @@
 <html>
   <head>
-    <title>Flowchart TV</title>
+    <title>State TV</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
   </head>
 
   <body>
     <h2>Theme Variables</h2>
     The marker stroke should be from the theme variable:
-    <pre>
-    %%{init:{"theme":"base", "themeVariables": {"lineColor":"red"}}}%%
-    flowchart LR
-    A --> B
-    </pre>
     <pre class="mermaid">
       %%{init:{"theme":"base", "themeVariables": {"lineColor":"red"}}}%%
-      flowchart LR
-      A --> B
-    </pre>
-
-    <pre>
-    %%{init:{"theme":"base", "themeVariables": {"lineColor":"blue"}}}%%
-    flowchart LR
-    A -->|marker should be blue| B
-    </pre>
-    <pre class="mermaid">
-      %%{init:{"theme":"base", "themeVariables": {"lineColor":"blue"}}}%%
-      flowchart LR
-      A -->|marker should be blue| B
+      gantt
+      title A Gantt Diagram
+      dateFormat  YYYY-MM-DD
+      section Section
+      A task           :a1, 2014-01-01, 30d
+      Another task     :after a1  , 20d
+      section Another
+      Task in sec      :2014-01-12  , 12d
+      another task      : 24d    >
     </pre>
 
     <script src="./mermaid.js"></script>

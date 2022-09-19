@@ -1,0 +1,35 @@
+<html>
+  <head> </head>
+
+  <body>
+    <h2>Theme Variables</h2>
+    The marker stroke should be from the theme variable:
+    <pre>
+    %%{init:{"theme":"base", "themeVariables": {"lineColor":"red"}}}%%
+    flowchart LR
+    A --> B
+    </pre>
+    <pre class="mermaid">
+      %%{init:{"theme":"base", "themeVariables": {"lineColor":"red"}}}%%
+      flowchart LR
+      A --> B
+    </pre>
+
+    <pre>
+    %%{init:{"theme":"base", "themeVariables": {"lineColor":"blue"}}}%%
+    flowchart LR
+    A -->|marker should be blue| B
+    </pre>
+    <pre class="mermaid">
+      %%{init:{"theme":"base", "themeVariables": {"lineColor":"blue"}}}%%
+      flowchart LR
+      A -->|marker should be blue| B
+    </pre>
+
+    <script src="./mermaid.js"></script>
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.6/dist/mermaid.js"></script> -->
+    <script>
+      mermaid.initialize({ logLevel: 1 });
+    </script>
+  </body>
+</html>
