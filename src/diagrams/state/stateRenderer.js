@@ -7,6 +7,7 @@ import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
+import { appendMarker } from '../../markers';
 
 // TODO Move conf object to main conf in mermaidAPI
 let conf;
@@ -23,10 +24,7 @@ export const setConf = function () {
  * @param {any} elem
  */
 const insertMarkers = function (elem) {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'dependencyEnd')
+  appendMarker(elem, 'dependencyEnd')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)

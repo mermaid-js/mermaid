@@ -1,5 +1,6 @@
 import common from '../common/common';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import { appendMarker } from '../../markers';
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -633,10 +634,7 @@ export const insertClockIcon = function (elem) {
  * @param elem
  */
 export const insertArrowHead = function (elem) {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'arrowhead')
+  appendMarker(elem, 'arrowhead')
     .attr('refX', 9)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -647,10 +645,7 @@ export const insertArrowHead = function (elem) {
     .attr('d', 'M 0 0 L 10 5 L 0 10 z'); // this is actual shape for arrowhead
 };
 export const insertArrowEnd = function (elem) {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'arrowend')
+  appendMarker(elem, 'arrowend')
     .attr('refX', 1)
     .attr('refY', 5)
     .attr('markerUnits', 'userSpaceOnUse')
@@ -666,10 +661,7 @@ export const insertArrowEnd = function (elem) {
  * @param {any} elem
  */
 export const insertArrowFilledHead = function (elem) {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'filled-head')
+  appendMarker(elem, 'filled-head')
     .attr('refX', 18)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -684,10 +676,7 @@ export const insertArrowFilledHead = function (elem) {
  * @param {any} elem
  */
 export const insertDynamicNumber = function (elem) {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'sequencenumber')
+  appendMarker(elem, 'sequencenumber')
     .attr('refX', 15)
     .attr('refY', 15)
     .attr('markerWidth', 60)
@@ -705,10 +694,7 @@ export const insertDynamicNumber = function (elem) {
  * @param {any} elem
  */
 export const insertArrowCrossHead = function (elem) {
-  const defs = elem.append('defs');
-  const marker = defs
-    .append('marker')
-    .attr('id', 'crosshead')
+  const marker = appendMarker(elem, 'crosshead')
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)
     .attr('orient', 'auto')

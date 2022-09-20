@@ -1,3 +1,4 @@
+import { appendMarker } from '../markers';
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 
 // import { log } from '../logger';
@@ -30,11 +31,8 @@ const insertPatterns = (elem, patternArray, type, id) => {
 </svg>; */
 }
 
-const dots = (elem, type) => {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', type + '-barbEnd')
+const dots = (elem) => {
+  appendMarker(elem, 'barbEnd')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)

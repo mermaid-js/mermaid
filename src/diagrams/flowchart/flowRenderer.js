@@ -9,6 +9,7 @@ import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import { setupGraphViewbox } from '../../setupGraphViewbox';
 import flowChartShapes from './flowChartShapes';
 import addSVGAccessibilityFields from '../../accessibility';
+import { appendMarker } from '../../markers';
 
 const conf = {};
 export const setConf = function (cnf) {
@@ -377,9 +378,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   // Add our custom arrow - an empty arrowhead
   render.arrows().none = function normal(parent, id, edge, type) {
-    const marker = parent
-      .append('marker')
-      .attr('id', id)
+    const marker = appendMarker(parent, id)
       .attr('viewBox', '0 0 10 10')
       .attr('refX', 9)
       .attr('refY', 5)
@@ -394,9 +393,7 @@ export const draw = function (text, id, _version, diagObj) {
 
   // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
   render.arrows().normal = function normal(parent, id) {
-    const marker = parent
-      .append('marker')
-      .attr('id', id)
+    const marker = appendMarker(parent, id)
       .attr('viewBox', '0 0 10 10')
       .attr('refX', 9)
       .attr('refY', 5)

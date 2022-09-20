@@ -1,6 +1,5 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 
-import { log } from '../logger';
 import { appendMarker } from '../markers';
 
 // Only add the number of markers that the diagram needs
@@ -216,7 +215,7 @@ const cross = (elem, type) => {
     .style('stroke-dasharray', '1,0');
 };
 
-const barb = (elem, type) => {
+const barb = (elem) => {
   appendMarker(elem, 'barbEnd')
     .attr('refX', 19)
     .attr('refY', 7)

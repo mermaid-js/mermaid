@@ -6,6 +6,7 @@ import svgDraw from './svgDraw';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
+import { appendMarker } from '../../markers';
 
 let idCache = {};
 const padding = 20;
@@ -30,10 +31,7 @@ const getGraphId = function (label) {
  * @param {SVGSVGElement} elem The SVG element to append to
  */
 const insertMarkers = function (elem) {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'extensionStart')
+  appendMarker(elem, 'extensionStart')
     .attr('class', 'extension')
     .attr('refX', 0)
     .attr('refY', 7)
@@ -43,10 +41,7 @@ const insertMarkers = function (elem) {
     .append('path')
     .attr('d', 'M 1,7 L18,13 V 1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'extensionEnd')
+  appendMarker(elem, 'extensionEnd')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -55,10 +50,7 @@ const insertMarkers = function (elem) {
     .append('path')
     .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'compositionStart')
+  appendMarker(elem, 'compositionStart')
     .attr('class', 'extension')
     .attr('refX', 0)
     .attr('refY', 7)
@@ -68,10 +60,7 @@ const insertMarkers = function (elem) {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'compositionEnd')
+  appendMarker(elem, 'compositionEnd')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -80,10 +69,7 @@ const insertMarkers = function (elem) {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'aggregationStart')
+  appendMarker(elem, 'aggregationStart')
     .attr('class', 'extension')
     .attr('refX', 0)
     .attr('refY', 7)
@@ -93,10 +79,7 @@ const insertMarkers = function (elem) {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'aggregationEnd')
+  appendMarker(elem, 'aggregationEnd')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -105,10 +88,7 @@ const insertMarkers = function (elem) {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'dependencyStart')
+  appendMarker(elem, 'dependencyStart')
     .attr('class', 'extension')
     .attr('refX', 0)
     .attr('refY', 7)
@@ -118,10 +98,7 @@ const insertMarkers = function (elem) {
     .append('path')
     .attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'dependencyEnd')
+  appendMarker(elem, 'dependencyEnd')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
