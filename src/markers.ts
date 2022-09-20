@@ -14,6 +14,24 @@ export const appendMarker = function (g: SVGGraphicsElement, name: string): SVGM
   return g.append('defs').append('marker').attr('id', markerId(g, name));
 };
 
+/** @returns {string} A new marker element with a unique id */
+const absolute = function () {
+  let absolute = '';
+
+  // @ts-ignore TODO Fix ts errors
+  if (getConfig().state.arrowMarkerAbsolute) {
+    absolute =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search;
+    absolute = absolute.replace(/\(/g, '\\(');
+    absolute = absolute.replace(/\)/g, '\\)');
+    return absolute;
+  }
+};
+
 /**
  * Get a marker url.
  *
@@ -26,7 +44,7 @@ export const appendMarker = function (g: SVGGraphicsElement, name: string): SVGM
 export const markerUrl = function (path: SVGPathElement, name: string): string {
   let absolute = '';
 
-  // @ts-ignore TOO Fix ts errors
+  // @ts-ignore TODO Fix ts errors
   if (getConfig().state.arrowMarkerAbsolute) {
     absolute =
       window.location.protocol +
@@ -38,7 +56,7 @@ export const markerUrl = function (path: SVGPathElement, name: string): string {
     absolute = absolute.replace(/\)/g, '\\)');
   }
 
-  return 'url(' + absolute + '#' + markerId(path, name);
+  return 'url(' + absolute + '#' + markerId(path, name) + ')';
 };
 
 /**
@@ -48,16 +66,15 @@ export const markerUrl = function (path: SVGPathElement, name: string): string {
  * @returns {Node | null} SVG node
  */
 const diagramId = function (elem: SVGElement): string {
-  // @ts-ignore TOO Fix ts errors
-  const node = elem.node();
-  let svg: Node = node;
+  // @ts-ignore TODO Fix ts errors
+  let node = elem && elem.node && elem.node();
 
-  if (node.tagName.toLowerCase() !== 'svg') {
-    svg = node.nearestViewportElement;
+  if (node && node.tagName.toLowerCase() !== 'svg') {
+    node = node.nearestViewportElement;
   }
 
-  // @ts-ignore TOO Fix ts errors
-  return svg && svg.getAttribute('id');
+  // @ts-ignore TODO Fix ts errors
+  return node && node.getAttribute('id');
 };
 
 /**
@@ -73,6 +90,8 @@ const markerId = function (elem: SVGElement, name: string) {
   if (name) {
     return diagramId(elem) ? diagramId(elem) + '-' + name : name;
   }
+
+  return null;
 };
 
 export default {
