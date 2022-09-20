@@ -30,6 +30,7 @@ const insertMarkers = function (elem) {
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
+    .attr('class', 'arrowheadPath')
     .append('path')
     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
 };

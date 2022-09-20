@@ -25,14 +25,12 @@ const diagramId = function (elem: SVGElement): string {
  * This ensures that markers are correctly referenced when they are multiple diagrams on a page.
  *
  * @param {SVGElement} elem Element referencing the marker
- * @param {string} name Marker name
- * @returns {string} A marker id
+ * @param {string | null} name Marker name
+ * @returns {string | null} A marker id
  */
-const markerId = function (elem: SVGElement, name: string): string {
-  if (diagramId(elem)) {
-    return diagramId(elem) + '-' + name;
-  } else {
-    return name;
+const markerId = function (elem: SVGElement, name: string) {
+  if (name) {
+    return diagramId(elem) ? diagramId(elem) + '-' + name : name;
   }
 };
 

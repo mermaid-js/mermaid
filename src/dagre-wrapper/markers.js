@@ -115,7 +115,7 @@ const lollipop = (elem, type) => {
 
 const point = (elem, type) => {
   appendMarker(elem, 'pointEnd')
-    .attr('class', 'marker ' + type)
+    .attr('class', 'marker point ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 9)
     .attr('refY', 5)
@@ -130,7 +130,7 @@ const point = (elem, type) => {
     .style('stroke-dasharray', '1,0');
 
   appendMarker(elem, 'pointStart')
-    .attr('class', 'marker ' + type)
+    .attr('class', 'marker point ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 0)
     .attr('refY', 5)
@@ -215,8 +215,9 @@ const cross = (elem, type) => {
     .style('stroke-dasharray', '1,0');
 };
 
-const barb = (elem) => {
+const barb = (elem, type) => {
   appendMarker(elem, 'barbEnd')
+    .attr('class', 'marker barb ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -224,7 +225,8 @@ const barb = (elem) => {
     .attr('markerUnits', 'strokeWidth')
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
+    .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z')
+    .attr('class', 'arrowMarkerPath');
 };
 
 // TODO rename the class diagram markers to something shape descriptive and semantic free

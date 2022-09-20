@@ -1,9 +1,5 @@
 const getStyles = (options) =>
   `
-defs #statediagram-barbEnd {
-    fill: ${options.transitionColor};
-    stroke: ${options.transitionColor};
-  }
 g.stateGroup text {
   fill: ${options.nodeBorder};
   stroke: none;
@@ -111,9 +107,6 @@ g.stateGroup line {
   fill: ${options.mainBkg};
   stroke: ${options.stateBorder || options.nodeBorder};;
   stroke-width: 1px;
-}
-#statediagram-barbEnd {
-  fill: ${options.lineColor};
 }
 
 .statediagram-cluster rect {
