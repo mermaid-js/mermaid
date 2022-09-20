@@ -258,9 +258,11 @@ export const merge = function (otherBranch, custom_id, override_type, custom_tag
   log.debug('in mergeBranch');
 };
 
-export const cherryPick = function (sourceId, targetId) {
+export const cherryPick = function (sourceId, targetId, tag) {
+  log.debug('Entering cherryPick:', sourceId, targetId, tag);
   sourceId = common.sanitizeText(sourceId, configApi.getConfig());
   targetId = common.sanitizeText(targetId, configApi.getConfig());
+  tag = common.sanitizeText(tag, configApi.getConfig());
 
   if (!sourceId || typeof commits[sourceId] === 'undefined') {
     let error = new Error(
@@ -328,13 +330,13 @@ export const cherryPick = function (sourceId, targetId) {
       parents: [head == null ? null : head.id, sourceCommit.id],
       branch: curBranch,
       type: commitType.CHERRY_PICK,
-      tag: 'cherry-pick:' + sourceCommit.id,
+      tag: tag ?? 'cherry-pick:' + sourceCommit.id,
     };
     head = commit;
     commits[commit.id] = commit;
     branches[curBranch] = commit.id;
     log.debug(branches);
-    log.debug('in cheeryPick');
+    log.debug('in cherryPick');
   }
 };
 export const checkout = function (branch) {

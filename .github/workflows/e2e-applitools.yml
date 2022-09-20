@@ -1,0 +1,73 @@
+name: E2E (Applitools)
+
+on:
+  workflow_dispatch:
+    # Because we want to limit Applitools usage, so we only want to start this
+    # workflow on rare occasions/manually.
+    inputs:
+      parent_branch:
+        required: true
+        type: string
+        default: master
+        description: 'Parent branch to use for PRs'
+
+permissions:
+  contents: read
+
+env:
+  # on PRs from forks, this secret will always be empty, for security reasons
+  USE_APPLI: ${{ secrets.APPLITOOLS_API_KEY && 'true' || '' }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - if: ${{ ! env.USE_APPLI }}
+        name: Warn if not using Applitools
+        run: |
+          echo "::error,title=Not using Applitols::APPLITOOLS_API_KEY is empty, disabling Applitools for this run."
+      - uses: actions/checkout@v3
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Yarn
+        run: npm i yarn --global
+
+      - name: Install Packages
+        run: |
+          yarn install --frozen-lockfile
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
+
+      - name: Run Build
+        run: yarn build
+
+      - if: ${{ env.USE_APPLI }}
+        name: Notify applitools of new batch
+        # Copied from docs https://applitools.com/docs/topics/integrations/github-integration-ci-setup.html
+        run: curl -L -d '' -X POST "$APPLITOOLS_SERVER_URL/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$GITHUB_SHA&BranchName=${APPLITOOLS_BRANCH}$&ParentBranchName=$APPLITOOLS_PARENT_BRANCH"
+        env:
+          # e.g. mermaid-js/mermaid/my-branch
+          APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
+          APPLITOOLS_PARENT_BRANCH: ${{ github.inputs.parent_branch }}
+          APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+          APPLITOOLS_SERVER_URL: 'https://eyesapi.applitools.com'
+
+      - name: Run E2E Tests
+        run: yarn e2e
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
+          # Mermaid applitools.config.js uses this to pick batch name.
+          APPLI_BRANCH: ${{ github.ref_name }}
+          APPLITOOLS_BATCH_ID: ${{ github.sha }}
+          # e.g. mermaid-js/mermaid/my-branch
+          APPLITOOLS_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
+          APPLITOOLS_PARENT_BRANCH: ${{ github.inputs.parent_branch }}
+          APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+          APPLITOOLS_SERVER_URL: 'https://eyesapi.applitools.com'
