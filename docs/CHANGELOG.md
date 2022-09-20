@@ -42,7 +42,7 @@ It is also possible to override site-wide theme settings locally, for a specific
 
 **Following is an example:**
 
-```mmd
+```mermaid
 %%{init: {'theme':'base'}}%%
   graph TD
     a --> b
