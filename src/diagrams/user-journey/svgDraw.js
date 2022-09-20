@@ -1,4 +1,5 @@
 import { arc as d3arc } from 'd3';
+import { markerId } from '../../utils';
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -449,8 +450,6 @@ const _drawTextCandidateFunc = (function () {
     return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'old' ? byText : byTspan;
   };
 })();
-
-import { markerId } from '../../utils';
 
 const initGraphics = function (graphics) {
   graphics
