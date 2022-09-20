@@ -62,7 +62,7 @@ describe('when parsing subgraphs', function () {
     expect(subgraph.id).toBe('some-id');
   });
 
-  xit('should handle subgraph without id and space in title', function () {
+  it.skip('should handle subgraph without id and space in title', function () {
     const res = flow.parser.parse('graph TB\nsubgraph Some Title\n\ta1-->a2\nend');
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);

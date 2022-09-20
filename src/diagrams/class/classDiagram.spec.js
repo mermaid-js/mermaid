@@ -1,7 +1,7 @@
 import { parser } from './parser/classDiagram';
 import classDb from './classDb';
-
-const spyOn = jest.spyOn;
+import { vi } from 'vitest';
+const spyOn = vi.spyOn;
 
 describe('class diagram, ', function () {
   describe('when parsing an info graph it', function () {
@@ -14,7 +14,7 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
     });
-    xit('should handle a leading newline axa', function () {
+    it.skip('should handle a leading newline axa', function () {
       const str = '\nclassDiagram\n' + 'class Car';
 
       try {

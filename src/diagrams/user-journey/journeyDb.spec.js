@@ -1,4 +1,5 @@
 import journeyDb from './journeyDb';
+import { convert } from '../../tests/util';
 
 describe('when using the journeyDb', function () {
   beforeEach(function () {
@@ -13,13 +14,13 @@ describe('when using the journeyDb', function () {
       journeyDb.clear();
     });
 
-    it.each`
+    it.each(convert`
       fn               | expected
       ${'getTasks'}    | ${[]}
       ${'getAccTitle'} | ${''}
       ${'getSections'} | ${[]}
       ${'getActors'}   | ${[]}
-    `('should clear $fn', ({ fn, expected }) => {
+    `)('should clear $fn', ({ fn, expected }) => {
       expect(journeyDb[fn]()).toEqual(expected);
     });
   });
@@ -31,18 +32,18 @@ describe('when using the journeyDb', function () {
       journeyDb.addTask('test2', '1: id2');
       journeyDb.clear();
     });
-    it.each`
+    it.each(convert`
       fn                     | expected
       ${'getTasks'}          | ${[]}
       ${'getAccTitle'}       | ${''}
       ${'getAccDescription'} | ${''}
       ${'getSections'}       | ${[]}
-    `('should clear $fn', ({ fn, expected }) => {
+    `)('should clear $fn', ({ fn, expected }) => {
       expect(journeyDb[fn]()).toEqual(expected);
     });
   });
 
-  describe('tasks and actors should be added', function () {
+  it('tasks and actors should be added', function () {
     journeyDb.setAccTitle('Shopping');
     journeyDb.setAccDescription('A user journey for family shopping');
     journeyDb.addSection('Journey to the shops');

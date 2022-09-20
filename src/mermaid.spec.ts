@@ -1,19 +1,12 @@
-// mocks the mermaidAPI.render function (see `./__mocks__/mermaidAPI`)
-jest.mock('./mermaidAPI');
-// jest.mock only works well with CJS, see https://github.com/facebook/jest/issues/9430
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { default: mermaid } = require('./mermaid');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { mermaidAPI } = require('./mermaidAPI');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { default: flowDb } = require('./diagrams/flowchart/flowDb');
+import mermaid from './mermaid';
+import { mermaidAPI } from './mermaidAPI';
+import { vi, describe, it, beforeEach, afterEach, expect } from 'vitest';
+const spyOn = vi.spyOn;
 
-import flowParser from './diagrams/flowchart/parser/flow';
-
-const spyOn = jest.spyOn;
+vi.mock('./mermaidAPI');
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 describe('when using mermaid and ', function () {
@@ -63,11 +56,6 @@ describe('when using mermaid and ', function () {
   });
 
   describe('checking validity of input ', function () {
-    beforeEach(function () {
-      flowParser.parser.yy = flowDb;
-      flowDb.clear();
-      flowDb.setGen('gen-2');
-    });
     it('should throw for an invalid definition', function () {
       expect(() => mermaid.parse('this is not a mermaid diagram definition')).toThrow();
     });

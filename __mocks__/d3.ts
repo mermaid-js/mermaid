@@ -1,4 +1,7 @@
-let NewD3 = function () {
+// @ts-nocheck TODO: Fix TS
+import { vi } from 'vitest';
+
+const NewD3 = function () {
   /**
    *
    */
@@ -56,9 +59,9 @@ export const MockD3 = (name, parent) => {
     children.push(mockElem);
     return mockElem;
   };
-  elem.lower = jest.fn(() => elem);
-  elem.attr = jest.fn(() => elem);
-  elem.text = jest.fn(() => elem);
-  elem.style = jest.fn(() => elem);
+  elem.lower = vi.fn(() => elem);
+  elem.attr = vi.fn(() => elem);
+  elem.text = vi.fn(() => elem);
+  elem.style = vi.fn(() => elem);
   return elem;
 };
