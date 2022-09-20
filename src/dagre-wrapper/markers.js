@@ -1,41 +1,13 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 
 import { log } from '../logger';
-import { getConfig } from '../config';
-import { svgNode } from '../utils';
+import { markerId } from '../utils';
 
 // Only add the number of markers that the diagram needs
 export const insertMarkers = (elem, markerArray, type, id) => {
   markerArray.forEach((markerName) => {
     markers[markerName](elem, type, id);
   });
-};
-
-export const markerId = (elem, name) => {
-  const svg = svgNode(elem);
-
-  if (svg) {
-    return svg.getAttribute('id') + '-' + name;
-  }
-
-  return name;
-};
-
-export const markerUrl = (elem, name, map) => {
-  let absolute = '';
-
-  if (getConfig().state.arrowMarkerAbsolute) {
-    absolute =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    absolute = absolute.replace(/\(/g, '\\(');
-    absolute = absolute.replace(/\)/g, '\\)');
-  }
-
-  return `url(${absolute}#${markerId(elem, map & [name] || name)})`;
 };
 
 const extension = (elem, type, id) => {

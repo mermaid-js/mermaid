@@ -450,11 +450,13 @@ const _drawTextCandidateFunc = (function () {
   };
 })();
 
+import { markerId } from '../../utils';
+
 const initGraphics = function (graphics) {
   graphics
     .append('defs')
     .append('marker')
-    .attr('id', 'arrowhead')
+    .attr('id', markerId(graphics, 'arrowhead'))
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)

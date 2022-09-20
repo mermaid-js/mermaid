@@ -20,6 +20,7 @@ import { log } from './logger';
 import { detectType } from './diagram-api/detectType';
 import assignWithDepth from './assignWithDepth';
 import { MermaidConfig } from './config.type';
+import { getConfig } from './config';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -861,6 +862,66 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
+/**
+ * Gets the outermost SVG node containing an element.
+ *
+ * @param {SVGElement} elem Element to get
+ * @returns {Node} Outermost SVG node containing elem
+ */
+export const svgNode: Node = function (elem: SVGElement) {
+  const node = elem.node();
+
+  if (node.tagName.toLowerCase() === 'svg') {
+    return node;
+  }
+
+  return node.farthestViewportElement;
+};
+
+/**
+ * Returns a marker id pre-fixed with its SVG element id.
+ *
+ * This ensures that markers are correctly referenced
+ * when they are multiple diagrams on a page.
+ *
+ * @param {SVGElement} elem Element referencing the marker
+ * @param {string} name Name of the marker
+ * @returns {string} A marker id
+ */
+export const markerId: string = function (elem: SVGElement, name: string) {
+  const svg = svgNode(elem);
+
+  if (svg) {
+    return svg.getAttribute('id') + '-' + name;
+  }
+
+  return name;
+};
+
+/**
+ * Gets a unique marker url.
+ *
+ * @param {SVGElement} elem Element referencing the marker
+ * @param {string} name Name of the marker
+ * @returns {string} A marker id
+ */
+export const markerUrl = (elem, name) => {
+  let absolute = '';
+
+  if (getConfig().state.arrowMarkerAbsolute) {
+    absolute =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search;
+    absolute = absolute.replace(/\(/g, '\\(');
+    absolute = absolute.replace(/\)/g, '\\)');
+  }
+
+  return `url(${absolute}#${markerId(elem, name)})`;
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -884,14 +945,7 @@ export default {
   initIdGenerator: initIdGenerator,
   directiveSanitizer,
   sanitizeCss,
-};
-
-/**
- * Gets the outermost SVG node containing an element.
- *
- * @param {SVGElement} elem Element to get
- * @returns {Node} Outermost SVG node containing elem
- */
-export const svgNode: Node = function (elem: SVGElement) {
-  return elem.node().farthestViewportElement;
+  svgNode,
+  markerId,
+  markerUrl,
 };

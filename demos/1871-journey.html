@@ -15,25 +15,27 @@
 
   <body>
     <pre class="mermaid">
+        %%{init:{"theme":"base", "themeVariables": {"textColor":"red"}}}%%
         journey
-        section Go to work
-          Make tea: 5: Me
-          Go upstairs: 3: Me
-          Do work: 1: Me, Cat
-        section Go home
-          Go downstairs: 5: Me
-          Sit down: 5: Me
+          A: B
+				</pre>
+    <pre class="mermaid">
+        %%{init:{"theme":"base", "themeVariables": {"textColor":"blue"}}}%%
+        journey
+          A: B
 				</pre>
 
-    <script src="./mermaid.js"></script>
+    <!-- <script src="./mermaid.js"></script> -->
+    <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.js"></script>
+
     <script>
       mermaid.initialize({
-        theme: 'forest',
+        // theme: 'forest',
         logLevel: 3,
-        securityLevel: 'loose',
-        flowchart: { curve: 'basis' },
-        gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorMargin: 50 },
+        // securityLevel: 'loose',
+        // flowchart: { curve: 'basis' },
+        // gantt: { axisFormat: '%m/%d/%Y' },
+        // sequence: { actorMargin: 50 },
       });
     </script>
   </body>
