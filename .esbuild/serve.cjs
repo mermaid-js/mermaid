@@ -1,6 +1,6 @@
 const esbuild = require('esbuild');
 const http = require('http');
-const { iifeBuild, esmBuild, getEntryPoints } = require('./util.cjs');
+const { iifeBuild, esmBuild } = require('./util.cjs');
 const express = require('express');
 
 // Start 2 esbuild servers. One for IIFE and one for ESM
@@ -13,11 +13,11 @@ const express = require('express');
 const getEntryPointsAndExtensions = (format) => {
   return {
     entryPoints: {
-      ...getEntryPoints(format === 'iife' ? '' : '.esm'),
+      mermaid: './src/mermaid',
       e2e: 'cypress/platform/viewer.js',
       'bundle-test': 'cypress/platform/bundle-test.js',
     },
-    outExtension: { '.js': format === 'iife' ? '.js' : '.mjs' },
+    outExtension: { '.js': format === 'iife' ? '.js' : '.esm.mjs' },
   };
 };
 
@@ -53,13 +53,16 @@ const generateHandler = (server) => {
   const iifeServer = await esbuild.serve(
     {},
     {
-      ...iifeBuild({ minify: false }),
+      ...iifeBuild({ minify: false, outfile: undefined, outdir: 'dist' }),
       ...getEntryPointsAndExtensions('iife'),
     }
   );
   const esmServer = await esbuild.serve(
     {},
-    { ...esmBuild({ minify: false }), ...getEntryPointsAndExtensions('esm') }
+    {
+      ...esmBuild({ minify: false, outfile: undefined, outdir: 'dist' }),
+      ...getEntryPointsAndExtensions('esm'),
+    }
   );
   const app = express();
 
