@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
 
 /**
- * @file Transform documentation source files into files suitable for publishing
- *   and optionally copy the transformed files from the source directory to the
- *   directory used for the final, published documentation directory. The list
- *   of files transformed and copied to final documentation directory are logged
- *   to the console. If a file in the source directory has the same contents in
+ * @file Transform documentation source files into files suitable for publishing and optionally copy
+ *   the transformed files from the source directory to the directory used for the final, published
+ *   documentation directory. The list of files transformed and copied to final documentation
+ *   directory are logged to the console. If a file in the source directory has the same contents in
  *   the final directory, nothing is done (the final directory is up-to-date).
  * @example
  *   docs
@@ -24,12 +23,12 @@
  *   If the --git option is used, the command `git add docs` will be run after all transformations (and/or verifications) have completed successfully
  *   If not files were transformed, the git command is not run.
  *
- * @todo Ensure that the documentation source and final paths are correct by
- *   using process.cwd() to get their absolute paths. Ensures that the location
- *   of those 2 directories is not dependent on where this file resides.
+ * @todo Ensure that the documentation source and final paths are correct by using process.cwd() to
+ *   get their absolute paths. Ensures that the location of those 2 directories is not dependent on
+ *   where this file resides.
  *
- * @todo Write a test file for this. (Will need to be able to deal .mts file.
- *   Jest has trouble with it.)
+ * @todo Write a test file for this. (Will need to be able to deal .mts file. Jest has trouble with
+ *   it.)
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { exec } from 'child_process';
@@ -68,14 +67,13 @@ const prettierConfig: prettier.Config = {
 let filesWereTransformed = false;
 
 /**
- * Given a source file name and path, return the documentation destination full
- * path and file name Create the destination path if it does not already exist.
+ * Given a source file name and path, return the documentation destination full path and file name
+ * Create the destination path if it does not already exist.
  *
  * @param {string} file - Name of the file (including full path)
- * @returns {string} Name of the file with the path changed from the source
- *   directory to final documentation directory
- * @todo Possible Improvement: combine with lint-staged to only copy files that
- *   have changed
+ * @returns {string} Name of the file with the path changed from the source directory to final
+ *   documentation directory
+ * @todo Possible Improvement: combine with lint-staged to only copy files that have changed
  */
 const changeToFinalDocDir = (file: string): string => {
   const newDir = file.replace(SOURCE_DOCS_DIR, FINAL_DOCS_DIR);
@@ -84,8 +82,8 @@ const changeToFinalDocDir = (file: string): string => {
 };
 
 /**
- * Log messages to the console showing if the transformed file copied to the
- * final documentation directory or still needs to be copied.
+ * Log messages to the console showing if the transformed file copied to the final documentation
+ * directory or still needs to be copied.
  *
  * @param {string} filename Name of the file that was transformed
  * @param {boolean} wasCopied Whether or not the file was copied
@@ -101,14 +99,13 @@ const logWasOrShouldBeTransformed = (filename: string, wasCopied: boolean) => {
 };
 
 /**
- * If the file contents were transformed, set the _filesWereTransformed_ flag to
- * true and copy the transformed contents to the final documentation directory
- * if the doCopy flag is true. Log messages to the console.
+ * If the file contents were transformed, set the _filesWereTransformed_ flag to true and copy the
+ * transformed contents to the final documentation directory if the doCopy flag is true. Log
+ * messages to the console.
  *
  * @param {string} filename Name of the file that will be verified
- * @param {boolean} [doCopy=false] Whether we should copy that
- *   transformedContents to the final documentation directory. Default is
- *   `false`. Default is `false`
+ * @param {boolean} [doCopy=false] Whether we should copy that transformedContents to the final
+ *   documentation directory. Default is `false`. Default is `false`
  * @param {string} [transformedContent] New contents for the file
  */
 const copyTransformedContents = (filename: string, doCopy = false, transformedContent?: string) => {
@@ -133,15 +130,14 @@ const readSyncedUTF8file = (filename: string): string => {
 };
 
 /**
- * Transform a markdown file and write the transformed file to the directory for
- * published documentation
+ * Transform a markdown file and write the transformed file to the directory for published
+ * documentation
  *
- * 1. Add a `mermaid-example` block before every `mermaid` or `mmd` block On the
- *    docsify site (one place where the documentation is published), this will
- *    show the code used for the mermaid diagram
+ * 1. Add a `mermaid-example` block before every `mermaid` or `mmd` block On the docsify site (one
+ *    place where the documentation is published), this will show the code used for the mermaid
+ *    diagram
  * 2. Add the text that says the file is automatically generated
- * 3. Use prettier to format the file Verify that the file has been changed and
- *    write out the changes
+ * 3. Use prettier to format the file Verify that the file has been changed and write out the changes
  *
  * @param file {string} name of the file that will be verified
  */
@@ -168,11 +164,11 @@ const transformMarkdown = (file: string) => {
 };
 
 /**
- * Transform an HTML file and write the transformed file to the directory for
- * published documentation
+ * Transform an HTML file and write the transformed file to the directory for published
+ * documentation
  *
- * - Add the text that says the file is automatically generated Verify that the
- *   file has been changed and write out the changes
+ * - Add the text that says the file is automatically generated Verify that the file has been changed
+ *   and write out the changes
  *
  * @param filename {string} name of the HTML file to transform
  */
@@ -204,6 +200,9 @@ const transformHtml = (filename: string) => {
 
 /** Main method (entry point) */
 (async () => {
+  if (verifyOnly) {
+    console.log('Verifying that all files are in sync with the source files');
+  }
   const sourceDirGlob = join('.', SOURCE_DOCS_DIR, '**');
   const includeFilesStartingWithDot = true;
 
