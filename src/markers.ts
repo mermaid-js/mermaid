@@ -1,52 +1,54 @@
-// @ts-nocheck : TODO Fix ts errors
 import { getConfig } from './config';
 
 /**
- * Gets the SVG node for an element.
+ * Get the SVG id for an element.
  *
  * @param {SVGElement} elem Element within an SVG node
- * @returns {Node?} SVG node
+ * @returns {Node | null} SVG node
  */
-const svgNode: Node? = function (elem: SVGElement) {
+const diagramId = function (elem: SVGElement): string {
+  // @ts-ignore TOO Fix ts errors
   const node = elem.node();
+  let svg: Node = node;
 
-  if (node.tagName.toLowerCase() === 'svg') {
-    return node;
+  if (node.tagName.toLowerCase() !== 'svg') {
+    svg = node.nearestViewportElement;
   }
 
-  return node.nearestViewportElement;
+  // @ts-ignore TOO Fix ts errors
+  return svg && svg.getAttribute('id');
 };
 
 /**
- * Returns a marker id pre-fixed with its SVG element id.
+ * Return a unique marker id based on the given name
  *
- * This ensures that markers are correctly referenced
- * when they are multiple diagrams on a page.
+ * This ensures that markers are correctly referenced when they are multiple diagrams on a page.
  *
  * @param {SVGElement} elem Element referencing the marker
- * @param {string} name Name of the marker
+ * @param {string} name Marker name
  * @returns {string} A marker id
  */
-const markerId: string = function (elem: SVGElement, name: string) {
-  const svg = svgNode(elem);
-
-  if (svg) {
-    return svg.getAttribute('id') + '-' + name;
+const markerId = function (elem: SVGElement, name: string): string {
+  if (diagramId(elem)) {
+    return diagramId(elem) + '-' + name;
+  } else {
+    return name;
   }
-
-  return name;
 };
 
 /**
- * Gets a marker url.
+ * Get a marker url.
  *
- * @param {SVGPathElement} path Path element referencing the marker
- * @param {string} name Name of the marker
+ * The url will have a unique id based on the given name.
+ *
+ * @param {SVGPathElement} path Path element using the marker
+ * @param {string} name Marker name
  * @returns {string} A marker id
  */
-export const markerUrl = function (path: SVGPathElement, name: string) {
+export const markerUrl = function (path: SVGPathElement, name: string): string {
   let absolute = '';
 
+  // @ts-ignore TOO Fix ts errors
   if (getConfig().state.arrowMarkerAbsolute) {
     absolute =
       window.location.protocol +
@@ -58,11 +60,21 @@ export const markerUrl = function (path: SVGPathElement, name: string) {
     absolute = absolute.replace(/\)/g, '\\)');
   }
 
-  return `url(${absolute}#${markerId(path, name)})`;
+  return 'url(' + absolute + '#' + markerId(path, name);
 };
 
-export const appendMarker = function (elem, name) {
-  return elem.append('defs').append('marker').attr('id', markerId(elem, name));
+/**
+ * Append a marker to a graphics element.
+ *
+ * A marker will be appended with a unique id based on the given name.
+ *
+ * @param {SVGGraphicsElement} g The graphics element
+ * @param {string} name Marker name
+ * @returns {SVGMarkerElement} A new marker element with a unique id
+ */
+export const appendMarker = function (g: SVGGraphicsElement, name: string): SVGMarkerElement {
+  // @ts-ignore TODO Fix ts errors
+  return g.append('defs').append('marker').attr('id', markerId(g, name));
 };
 
 export default {
