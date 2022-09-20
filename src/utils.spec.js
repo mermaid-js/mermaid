@@ -2,6 +2,7 @@ import utils from './utils';
 import assignWithDepth from './assignWithDepth';
 import { detectType } from './diagram-api/detectType';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
+import memoize from 'lodash/memoize';
 addDiagrams();
 
 describe('when assignWithDepth: should merge objects within objects', function () {
@@ -121,20 +122,30 @@ describe('when assignWithDepth: should merge objects within objects', function (
 });
 describe('when memoizing', function () {
   it('should return the same value', function () {
-    const fib = utils.memoize(function (n, canary) {
-      canary.flag = true;
-      if (n < 2) {
-        return 1;
-      } else {
-        //We'll console.log a loader every time we have to recurse
-        return fib(n - 2, canary) + fib(n - 1, canary);
-      }
-    });
+    const fib = memoize(
+      function (n, x, canary) {
+        canary.flag = true;
+        if (n < 2) {
+          return 1;
+        } else {
+          //We'll console.log a loader every time we have to recurse
+          return fib(n - 2, x, canary) + fib(n - 1, x, canary);
+        }
+      },
+      (n, x, _) => `${n}${x}`
+    );
     let canary = { flag: false };
-    fib(10, canary);
+    fib(10, 'a', canary);
     expect(canary.flag).toBe(true);
     canary = { flag: false };
-    fib(10, canary);
+    fib(10, 'a', canary);
+    expect(canary.flag).toBe(false);
+    fib(10, 'b', canary);
+    fib(10, 'b', canary);
+    expect(canary.flag).toBe(true);
+    canary = { flag: false };
+    fib(10, 'b', canary);
+    fib(10, 'a', canary);
     expect(canary.flag).toBe(false);
   });
 });

@@ -47,9 +47,9 @@ function wrap(text, width) {
   });
 }
 
-const defaultBkg = function (elem, node, section, conf) {
+const defaultBkg = function (elem, node, section) {
   const rd = 5;
-  const r = elem
+  elem
     .append('path')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
@@ -68,25 +68,22 @@ const defaultBkg = function (elem, node, section, conf) {
     .attr('x2', node.width)
     .attr('y2', node.height);
 };
-const rectBkg = function (elem, node, section, conf) {
-  const r = elem
+const rectBkg = function (elem, node) {
+  elem
     .append('rect')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
     .attr('height', node.height)
     .attr('width', node.width);
 };
-const cloudBkg = function (elem, node, section, conf) {
-  const rd = 5;
-  const r = elem;
+const cloudBkg = function (elem, node) {
   const w = node.width;
   const h = node.height;
-  const r0 = 0.1 * w;
   const r1 = 0.15 * w;
   const r2 = 0.25 * w;
   const r3 = 0.35 * w;
   const r4 = 0.2 * w;
-  const p = elem
+  elem
     .append('path')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
@@ -109,12 +106,11 @@ const cloudBkg = function (elem, node, section, conf) {
     H0 V0 Z`
     );
 };
-const bangBkg = function (elem, node, section, conf) {
-  const rd = 5;
+const bangBkg = function (elem, node) {
   const w = node.width;
   const h = node.height;
   const r = 0.15 * w;
-  const p = elem
+  elem
     .append('path')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
@@ -141,16 +137,15 @@ const bangBkg = function (elem, node, section, conf) {
     H0 V0 Z`
     );
 };
-const circleBkg = function (elem, node, section, conf) {
-  const r = elem
+const circleBkg = function (elem, node) {
+  elem
     .append('circle')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
     .attr('r', node.width / 2);
-  // .attr('width', node.width);
 };
-const roundedRectBkg = function (elem, node, section, conf) {
-  const r = elem
+const roundedRectBkg = function (elem, node) {
+  elem
     .append('rect')
     .attr('id', 'node-' + node.id)
     .attr('class', 'node-bkg node-' + db.type2Str(node.type))
@@ -183,7 +178,6 @@ export const drawNode = function (elem, node, section, conf) {
     .append('text')
     .text(node.descr)
     .attr('dy', '1em')
-    // .attr('dy', '0')
     .attr('alignment-baseline', 'middle')
     .attr('dominant-baseline', 'middle')
     .attr('text-anchor', 'middle')
@@ -195,18 +189,12 @@ export const drawNode = function (elem, node, section, conf) {
   if (node.icon) {
     if (node.type === db.nodeType.CIRCLE) {
       node.height += 50;
-      const orgWidth = node.width;
       node.width += 50;
-      // node.width = Math.max(orgWidth, 100);
-      const widthDiff = Math.abs(node.width - orgWidth);
       const icon = nodeElem
         .append('foreignObject')
         .attr('height', '50px')
         .attr('width', node.width)
         .attr('style', 'text-align: center;');
-      // .attr('x', 0)
-      // .attr('y', 0)
-      // .attr('class', 'node-icon ' + node.icon);
       icon
         .append('div')
         .attr('class', 'icon-container')
@@ -226,9 +214,7 @@ export const drawNode = function (elem, node, section, conf) {
         .attr('width', '60px')
         .attr('height', node.height)
         .attr('style', 'text-align: center;margin-top:' + heightDiff / 2 + 'px;');
-      // .attr('x', 0)
-      // .attr('y', 0)
-      // .attr('class', 'node-icon ' + node.icon);
+
       icon
         .append('div')
         .attr('class', 'icon-container')
@@ -258,15 +244,11 @@ export const drawNode = function (elem, node, section, conf) {
       circleBkg(bkgElem, node, section, conf);
       break;
     case db.nodeType.CLOUD:
-      // bkgElem.attr('transform', 'translate(' + node.width / 2 + ', ' + +node.height / 2 + ')');
       cloudBkg(bkgElem, node, section, conf);
       break;
     case db.nodeType.BANG:
-      // bkgElem.attr('transform', 'translate(' + node.width / 2 + ', ' + +node.height / 2 + ')');
       bangBkg(bkgElem, node, section, conf);
       break;
-    default:
-    // defaultBkg(bkgElem, node, section, conf);
   }
 
   // Position the node to its coordinate
@@ -277,17 +259,7 @@ export const drawNode = function (elem, node, section, conf) {
   return node.height;
 };
 
-export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, section, conf) {
-  // edgesElem
-  //   .append('line')
-  //   .attr('x1', parent.x + parent.width / 2)
-  //   .attr('y1', parent.y + parent.height / 2)
-  //   .attr('x2', mindmap.x + mindmap.width / 2)
-  //   .attr('y2', mindmap.y + mindmap.height / 2)
-  //   .attr('class', 'edge section-edge-' + section + ' edge-depth-' + depth);
-
-  //<path d="M100,250 Q250,100 400,250 T700,250" />
-
+export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, section) {
   const sx = parent.x + parent.width / 2;
   const sy = parent.y + parent.height / 2;
   const ex = mindmap.x + mindmap.width / 2;
@@ -308,7 +280,7 @@ export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, sec
     .attr('class', 'edge section-edge-' + section + ' edge-depth-' + depth);
 };
 
-export const positionNode = function (node, conf) {
+export const positionNode = function (node) {
   const nodeElem = db.getElementById(node.id);
 
   const x = node.x || 0;

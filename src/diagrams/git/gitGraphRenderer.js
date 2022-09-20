@@ -1,7 +1,6 @@
 import { select } from 'd3';
-import { configureSvgSize } from '../../setupGraphViewbox';
+import { getConfig, setupGraphViewbox } from '../../diagram-api/diagramAPI';
 import { log } from '../../logger';
-import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
 
 let allCommitsDict = {};
@@ -91,7 +90,9 @@ const drawCommits = (svg, commits, modifyGraph) => {
     if (modifyGraph) {
       let typeClass;
       let commitSymbolType =
-        typeof commit.customType !== 'undefined' ? commit.customType : commit.type;
+        typeof commit.customType !== 'undefined' && commit.customType !== ''
+          ? commit.customType
+          : commit.type;
       switch (commitSymbolType) {
         case commitType.NORMAL:
           typeClass = 'commit-normal';
@@ -521,18 +522,8 @@ export const draw = function (txt, id, ver, diagObj) {
   drawArrows(diagram, allCommitsDict);
   drawCommits(diagram, allCommitsDict, true);
 
-  const padding = gitGraphConfig.diagramPadding;
-  const svgBounds = diagram.node().getBBox();
-  const width = svgBounds.width + padding * 2;
-  const height = svgBounds.height + padding * 2;
-
-  configureSvgSize(diagram, height, width, conf.useMaxWidth);
-  const vBox = `${
-    svgBounds.x -
-    padding -
-    (gitGraphConfig.showBranches && gitGraphConfig.rotateCommitLabel === true ? 30 : 0)
-  } ${svgBounds.y - padding} ${width} ${height}`;
-  diagram.attr('viewBox', vBox);
+  // Setup the view box and size of the svg element
+  setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, conf.useMaxWidth);
 };
 
 export default {

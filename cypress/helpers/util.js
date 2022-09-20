@@ -44,15 +44,13 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
   }
   const useAppli = Cypress.env('useAppli');
   //const useAppli = false;
-  const branch = Cypress.env('codeBranch');
   cy.log('Hello ' + useAppli ? 'Appli' : 'image-snapshot');
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   if (useAppli) {
     cy.eyesOpen({
-      appName: 'Mermaid-' + branch,
+      appName: 'Mermaid',
       testName: name,
-      batchName: branch,
     });
   }
 
@@ -96,15 +94,13 @@ export const urlSnapshotTest = (url, _options, api = false, validation) => {
     options.fontSize = '16px';
   }
   const useAppli = Cypress.env('useAppli');
-  const branch = Cypress.env('codeBranch');
   cy.log('Hello ' + useAppli ? 'Appli' : 'image-snapshot');
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   if (useAppli) {
     cy.eyesOpen({
-      appName: 'Mermaid-' + branch,
+      appName: 'Mermaid',
       testName: name,
-      batchName: branch,
     });
   }
 

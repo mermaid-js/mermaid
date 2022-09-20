@@ -1,3 +1,4 @@
+'use strict';
 /**
  * @function assignWithDepth Extends the functionality of {@link ObjectConstructor.assign} with the
  *   ability to merge arbitrary-depth objects For each key in src with path `k` (recursively)

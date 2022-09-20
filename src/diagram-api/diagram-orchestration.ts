@@ -96,8 +96,35 @@ import { journeyDetector } from '../diagrams/user-journey/journeyDetector';
 import journeyDb from '../diagrams/user-journey/journeyDb';
 import journeyRenderer from '../diagrams/user-journey/journeyRenderer';
 import journeyStyles from '../diagrams/user-journey/styles';
+import { getConfig, setConfig } from '../config';
+
+import errorRenderer from '../diagrams/error/errorRenderer';
+import errorStyles from '../diagrams/error/styles';
 
 export const addDiagrams = () => {
+  registerDiagram(
+    'error',
+    // Special diagram with error messages but setup as a regular diagram
+    {
+      db: {
+        clear: () => {
+          // Quite ok, clear needs to be there for error to work as a regular diagram
+        },
+      },
+      styles: errorStyles,
+      renderer: errorRenderer,
+      parser: {
+        parser: { yy: {} },
+        parse: () => {
+          // no op
+        },
+      },
+      init: () => {
+        // no op
+      },
+    },
+    (text) => text.toLowerCase().trim() === 'error'
+  );
   registerDiagram(
     'c4',
     {
@@ -275,11 +302,12 @@ export const addDiagrams = () => {
       renderer: flowRendererV2,
       styles: flowStyles,
       init: (cnf) => {
-        flowRenderer.setConf(cnf.flowchart);
         if (!cnf.flowchart) {
           cnf.flowchart = {};
         }
+        // TODO, broken as of 2022-09-14 (13809b50251845475e6dca65cc395761be38fbd2)
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        flowRenderer.setConf(cnf.flowchart);
         flowDb.clear();
         flowDb.setGen('gen-1');
       },
@@ -294,11 +322,13 @@ export const addDiagrams = () => {
       renderer: flowRendererV2,
       styles: flowStyles,
       init: (cnf) => {
-        flowRendererV2.setConf(cnf.flowchart);
         if (!cnf.flowchart) {
           cnf.flowchart = {};
         }
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        // flowchart-v2 uses dagre-wrapper, which doesn't have access to flowchart cnf
+        setConfig({ flowchart: { arrowMarkerAbsolute: cnf.arrowMarkerAbsolute } });
+        flowRendererV2.setConf(cnf.flowchart);
         flowDb.clear();
         flowDb.setGen('gen-2');
       },

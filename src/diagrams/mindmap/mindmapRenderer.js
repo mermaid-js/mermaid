@@ -85,9 +85,8 @@ function rightToLeft(mindmap) {
 /**
  * @param mindmap
  * @param dir
- * @param conf
  */
-function layout(mindmap, dir, conf) {
+function layout(mindmap, dir) {
   const bb = new BoundingBox(30, 60);
 
   const layout = new Layout(bb);

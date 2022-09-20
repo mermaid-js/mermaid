@@ -213,42 +213,43 @@ describe('Git Graph diagram', () => {
       `
       gitGraph
       checkout main
-      commit
+      %% Make sure to manually set the ID of all commits, for consistent visual tests
+      commit id: "1-abcdefg"
       checkout main
       branch branch1
-      commit
+      commit id: "2-abcdefg"
       checkout main
       merge branch1
       branch branch2
-      commit
+      commit id: "3-abcdefg"
       checkout main
       merge branch2
       branch branch3
-      commit
+      commit id: "4-abcdefg"
       checkout main
       merge branch3
       branch branch4
-      commit
+      commit id: "5-abcdefg"
       checkout main
       merge branch4
       branch branch5
-      commit
+      commit id: "6-abcdefg"
       checkout main
       merge branch5
       branch branch6
-      commit
+      commit id: "7-abcdefg"
       checkout main
       merge branch6
       branch branch7
-      commit
+      commit id: "8-abcdefg"
       checkout main
       merge branch7
       branch branch8
-      commit
+      commit id: "9-abcdefg"
       checkout main
       merge branch8
       branch branch9
-      commit
+      commit id: "10-abcdefg"
       `,
       {}
     );
