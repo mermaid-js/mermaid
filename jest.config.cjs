@@ -7,7 +7,7 @@ module.exports = {
   transform: {
     '^.+\\.[jt]sx?$': 'esbuild-jest',
     '^.+\\.jison$': [
-      path.resolve(__dirname, './src/jison/transformer.js'),
+      path.resolve(__dirname, './src/jison/transformer.cjs'),
       { 'token-stack': true },
     ],
   },
