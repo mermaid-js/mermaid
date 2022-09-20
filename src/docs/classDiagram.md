@@ -493,14 +493,14 @@ It is also possible to attach a class to a list of nodes in one statement:
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 
-```mermaid-example
+```mmd
 classDiagram
     class Animal:::cssClass
 ```
 
 Or:
 
-```mermaid-example
+```mmd
 classDiagram
     class Animal:::cssClass {
         -int sizeInFeet
