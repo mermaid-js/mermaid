@@ -627,6 +627,38 @@ describe('when parsing a gitGraph', function () {
     expect(commits[cherryPickCommitID].branch).toBe('main');
   });
 
+  it('should support cherry-picking commits with custom tag', function () {
+    const str = `gitGraph
+    commit id: "ZERO"
+    branch develop
+    commit id:"A"
+    checkout main
+    cherry-pick id:"A" tag:"MyTag"
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    const cherryPickCommitID = Object.keys(commits)[2];
+    expect(commits[cherryPickCommitID].tag).toBe('MyTag');
+    expect(commits[cherryPickCommitID].branch).toBe('main');
+  });
+
+  it('should support cherry-picking commits with no tag', function () {
+    const str = `gitGraph
+    commit id: "ZERO"
+    branch develop
+    commit id:"A"
+    checkout main
+    cherry-pick id:"A" tag:""
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    const cherryPickCommitID = Object.keys(commits)[2];
+    expect(commits[cherryPickCommitID].tag).toBe('');
+    expect(commits[cherryPickCommitID].branch).toBe('main');
+  });
+
   it('should throw error when try to branch existing branch: main', function () {
     const str = `gitGraph
     commit
