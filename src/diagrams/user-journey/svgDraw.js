@@ -1,5 +1,5 @@
 import { arc as d3arc } from 'd3';
-import { markerId, appendMarker } from '../../utils';
+import { appendMarker } from '../../markers';
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');

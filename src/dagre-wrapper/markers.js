@@ -1,7 +1,7 @@
 /** Setup arrow head and define the marker. The result is appended to the svg. */
 
 import { log } from '../logger';
-import { markerId } from '../utils';
+import { appendMarker } from '../markers';
 
 // Only add the number of markers that the diagram needs
 export const insertMarkers = (elem, markerArray, type, id) => {
@@ -10,12 +10,8 @@ export const insertMarkers = (elem, markerArray, type, id) => {
   });
 };
 
-const extension = (elem, type, id) => {
-  log.trace('Making markers for ', id);
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'extensionStart'))
+const extension = (elem, type) => {
+  appendMarker(elem, 'extensionStart')
     .attr('class', 'marker extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -25,10 +21,7 @@ const extension = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 1,7 L18,13 V 1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'extensionEnd'))
+  appendMarker(elem, 'extensionEnd')
     .attr('class', 'marker extension ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -40,10 +33,7 @@ const extension = (elem, type, id) => {
 };
 
 const composition = (elem, type) => {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'compositionStart'))
+  appendMarker(elem, 'compositionStart')
     .attr('class', 'marker composition ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -53,10 +43,7 @@ const composition = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'compositionEnd'))
+  appendMarker(elem, 'compositionEnd')
     .attr('class', 'marker composition ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -68,10 +55,7 @@ const composition = (elem, type) => {
 };
 
 const aggregation = (elem, type) => {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'aggregationStart'))
+  appendMarker(elem, 'aggregationStart')
     .attr('class', 'marker aggregation ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -81,10 +65,7 @@ const aggregation = (elem, type) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'aggregationEnd'))
+  appendMarker(elem, 'aggregationEnd')
     .attr('class', 'marker aggregation ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -96,10 +77,7 @@ const aggregation = (elem, type) => {
 };
 
 const dependency = (elem, type) => {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'dependencyStart'))
+  appendMarker(elem, 'dependencyStart')
     .attr('class', 'marker dependency ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -109,10 +87,7 @@ const dependency = (elem, type) => {
     .append('path')
     .attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
 
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'dependencyEnd'))
+  appendMarker(elem, 'dependencyEnd')
     .attr('class', 'marker dependency ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -124,10 +99,7 @@ const dependency = (elem, type) => {
 };
 
 const lollipop = (elem, type) => {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'lollipopStart'))
+  appendMarker(elem, 'lollipopStart')
     .attr('class', 'marker lollipop ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -143,9 +115,7 @@ const lollipop = (elem, type) => {
 };
 
 const point = (elem, type) => {
-  elem
-    .append('marker')
-    .attr('id', markerId(elem, 'pointEnd'))
+  appendMarker(elem, 'pointEnd')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 9)
@@ -160,9 +130,7 @@ const point = (elem, type) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 
-  elem
-    .append('marker')
-    .attr('id', markerId(elem, 'pointStart'))
+  appendMarker(elem, 'pointStart')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 0)
@@ -179,9 +147,7 @@ const point = (elem, type) => {
 };
 
 const circle = (elem, type) => {
-  elem
-    .append('marker')
-    .attr('id', markerId(elem, 'circleEnd'))
+  appendMarker(elem, 'circleEnd')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 11)
@@ -198,9 +164,7 @@ const circle = (elem, type) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 
-  elem
-    .append('marker')
-    .attr('id', markerId(elem, 'circleStart'))
+  appendMarker(elem, 'circleStart')
     .attr('class', 'marker ' + type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', -1)
@@ -219,9 +183,7 @@ const circle = (elem, type) => {
 };
 
 const cross = (elem, type) => {
-  elem
-    .append('marker')
-    .attr('id', markerId(elem, 'crossEnd'))
+  appendMarker(elem, 'crossEnd')
     .attr('class', 'marker cross ' + type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', 12)
@@ -237,9 +199,7 @@ const cross = (elem, type) => {
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 
-  elem
-    .append('marker')
-    .attr('id', markerId(elem, 'crossStart'))
+  appendMarker(elem, 'crossStart')
     .attr('class', 'marker cross ' + type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', -1)
@@ -257,10 +217,7 @@ const cross = (elem, type) => {
 };
 
 const barb = (elem, type) => {
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(elem, 'barbEnd'))
+  appendMarker(elem, 'barbEnd')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)

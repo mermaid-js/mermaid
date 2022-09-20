@@ -3,6 +3,7 @@ import createLabel from './createLabel';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
 import utils from '../utils';
+import markers from '../markers';
 import { evaluate } from '../diagrams/common/common';
 
 let edgeLabels = {};
@@ -459,8 +460,8 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     .attr('id', edge.id)
     .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''))
     .attr('style', edge.style)
-    .attr('marker-start', utils.markerUrl(elem, startMarkerName(edge.arrowTypeStart)))
-    .attr('marker-end', utils.markerUrl(elem, endMarkerName(edge.arrowTypeEnd)));
+    .attr('marker-start', markers.markerUrl(elem, startMarkerName(edge.arrowTypeStart)))
+    .attr('marker-end', markers.markerUrl(elem, endMarkerName(edge.arrowTypeEnd)));
 
   // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach(point => {

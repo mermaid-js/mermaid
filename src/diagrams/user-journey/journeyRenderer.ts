@@ -4,7 +4,7 @@ import svgDraw from './svgDraw';
 import { getConfig } from '../../config';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
-import { markerUrl } from '../../utils';
+import { markerUrl } from '../../markers';
 
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
