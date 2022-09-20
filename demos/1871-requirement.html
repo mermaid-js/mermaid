@@ -1,0 +1,33 @@
+<html>
+  <head> </head>
+
+  <body>
+    <h2>Requirement Diagram</h2>
+    <pre class="mermaid">
+      %%{init:{"theme":"base", "themeVariables": {"lineColor":"red"}}}%%
+      requirementDiagram
+
+      requirement B {
+      id: 1
+      text: the test text.
+      risk: high
+      verifymethod: test
+      }
+  
+      element A {
+      type: simulation
+      }
+  
+      A - satisfies -> B
+        </pre
+    >
+
+    <script src="./mermaid.js"></script>
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.js"></script> -->
+    <script>
+      mermaid.initialize({
+        logLevel: 1,
+      });
+    </script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 import common from '../common/common';
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import { appendMarker } from '../../markers';
+import { appendMarker, markerUrl } from '../../markers';
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -221,7 +221,6 @@ export const drawRels = (elem, rels, conf) => {
     let offsetX = rel.offsetX ? parseInt(rel.offsetX) : 0;
     let offsetY = rel.offsetY ? parseInt(rel.offsetY) : 0;
 
-    let url = '';
     if (i === 0) {
       let line = relsElem.append('line');
       line.attr('x1', rel.startPoint.x);
@@ -232,9 +231,9 @@ export const drawRels = (elem, rels, conf) => {
       line.attr('stroke-width', '1');
       line.attr('stroke', strokeColor);
       line.style('fill', 'none');
-      if (rel.type !== 'rel_b') line.attr('marker-end', 'url(' + url + '#arrowhead)');
+      if (rel.type !== 'rel_b') line.attr('marker-end', markerUrl(elem, 'arrowhead)'));
       if (rel.type === 'birel' || rel.type === 'rel_b')
-        line.attr('marker-start', 'url(' + url + '#arrowend)');
+        line.attr('marker-start', markerUrl(elem, 'arrowend'));
       i = -1;
     } else {
       let line = relsElem.append('path');
@@ -257,9 +256,9 @@ export const drawRels = (elem, rels, conf) => {
             .replaceAll('stopx', rel.endPoint.x)
             .replaceAll('stopy', rel.endPoint.y)
         );
-      if (rel.type !== 'rel_b') line.attr('marker-end', 'url(' + url + '#arrowhead)');
+      if (rel.type !== 'rel_b') line.attr('marker-end', markerUrl(elem, 'arrowhead)'));
       if (rel.type === 'birel' || rel.type === 'rel_b')
-        line.attr('marker-start', 'url(' + url + '#arrowend)');
+        line.attr('marker-start', markerUrl(elem, 'arrowend)'));
     }
 
     let messageConf = conf.messageFont();

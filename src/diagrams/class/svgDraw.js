@@ -2,6 +2,7 @@ import { line, curveBasis } from 'd3';
 import utils from '../../utils';
 import { log } from '../../logger';
 import { parseGenericTypes } from '../common/common';
+import { markerUrl } from '../../markers';
 
 let edgeCount = 0;
 export const drawEdge = function (elem, path, relation, conf, diagObj) {
@@ -40,32 +41,15 @@ export const drawEdge = function (elem, path, relation, conf, diagObj) {
     .attr('d', lineFunction(lineData))
     .attr('id', 'edge' + edgeCount)
     .attr('class', 'relation');
-  let url = '';
-  if (conf.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
-  }
 
   if (relation.relation.lineType == 1) {
     svgPath.attr('class', 'relation dashed-line');
   }
   if (relation.relation.type1 !== 'none') {
-    svgPath.attr(
-      'marker-start',
-      'url(' + url + '#' + getRelationType(relation.relation.type1) + 'Start' + ')'
-    );
+    svgPath.attr('marker-start', markerUrl(elem, getRelationType(relation.relation.type1)));
   }
   if (relation.relation.type2 !== 'none') {
-    svgPath.attr(
-      'marker-end',
-      'url(' + url + '#' + getRelationType(relation.relation.type2) + 'End' + ')'
-    );
+    svgPath.attr('marker-end', markerUrl(elem, getRelationType(relation.relation.type2)));
   }
 
   let x, y;

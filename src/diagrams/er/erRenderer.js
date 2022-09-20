@@ -9,6 +9,7 @@ import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 import { parseGenericTypes } from '../common/common';
+import { markerUrl } from '../../markers';
 
 let conf = {};
 
@@ -443,59 +444,37 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     svgPath.attr('stroke-dasharray', '8,8');
   }
 
-  // TODO: Understand this better
-  let url = '';
-  if (conf.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
-  }
-
   // Decide which start and end markers it needs. It may be possible to be more concise here
   // by reversing a start marker to make an end marker...but this will do for now
 
   // Note that the 'A' entity's marker is at the end of the relationship and the 'B' entity's marker is at the start
   switch (rel.relSpec.cardA) {
     case diagObj.db.Cardinality.ZERO_OR_ONE:
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
+      svgPath.attr('marker-end', markerUrl(svgPath, erMarkers.ERMarkers.ZERO_OR_ONE_END));
       break;
     case diagObj.db.Cardinality.ZERO_OR_MORE:
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
+      svgPath.attr('marker-end', markerUrl(svgPath, erMarkers.ERMarkers.ZERO_OR_MORE_END));
       break;
     case diagObj.db.Cardinality.ONE_OR_MORE:
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
+      svgPath.attr('marker-end', markerUrl(svgPath, erMarkers.ERMarkers.ONE_OR_MORE_END));
       break;
     case diagObj.db.Cardinality.ONLY_ONE:
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
+      svgPath.attr('marker-end', markerUrl(svgPath, erMarkers.ERMarkers.ONLY_ONE_END));
       break;
   }
 
   switch (rel.relSpec.cardB) {
     case diagObj.db.Cardinality.ZERO_OR_ONE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
-      );
+      svgPath.attr('marker-start', markerUrl(svgPath, erMarkers.ERMarkers.ZERO_OR_ONE_STAR));
       break;
     case diagObj.db.Cardinality.ZERO_OR_MORE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
-      );
+      svgPath.attr('marker-start', markerUrl(svgPath, erMarkers.ERMarkers.ZERO_OR_MORE_STAR));
       break;
     case diagObj.db.Cardinality.ONE_OR_MORE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
-      );
+      svgPath.attr('marker-start', markerUrl(svgPath, erMarkers.ERMarkers.ONE_OR_MORE_STAR));
       break;
     case diagObj.db.Cardinality.ONLY_ONE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+      svgPath.attr('marker-start', markerUrl(svgPath, erMarkers.ERMarkers.ONLY_ONE_START));
       break;
   }
 

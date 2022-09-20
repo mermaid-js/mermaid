@@ -7,6 +7,7 @@ import common from '../common/common';
 import markers from './requirementMarkers';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';
+import { markerUrl } from '../../markers';
 
 let conf = {};
 let relCnt = 0;
@@ -170,21 +171,10 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .attr('fill', 'none');
 
   if (rel.type == diagObj.db.Relationships.CONTAINS) {
-    svgPath.attr(
-      'marker-start',
-      'url(' + common.getUrl(conf.arrowMarkerAbsolute) + '#' + rel.type + '_line_ending' + ')'
-    );
+    svgPath.attr('marker-start', markerUrl(svg, rel.type + '_line_ending'));
   } else {
     svgPath.attr('stroke-dasharray', '10,7');
-    svgPath.attr(
-      'marker-end',
-      'url(' +
-        common.getUrl(conf.arrowMarkerAbsolute) +
-        '#' +
-        markers.ReqMarkers.ARROW +
-        '_line_ending' +
-        ')'
-    );
+    svgPath.attr('marker-end', markerUrl(svg, markers.ReqMarkers.ARROW + '_line_ending'));
   }
 
   addEdgeLabel(svg, svgPath, conf, `<<${rel.type}>>`);
