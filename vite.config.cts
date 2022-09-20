@@ -1,4 +1,4 @@
-import { Generator } from 'jison';
+import { transformJison } from './.esbuild/jisonTransformer.cjs';
 import { defineConfig } from 'vitest/config';
 
 const fileRegex = /\.jison$/;
@@ -14,7 +14,7 @@ export function jisonPlugin() {
         console.log('Transforming', id);
         return {
           // @ts-ignore no typings for jison
-          code: new Generator(src, { 'token-stack': true }).generate(),
+          code: transformJison(src),
           map: null, // provide source map if available
         };
       }
