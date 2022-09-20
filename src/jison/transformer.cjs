@@ -3,6 +3,6 @@ const { transformJison } = require('../../.esbuild/jisonTransformer.cjs');
 
 module.exports = {
   process(sourceText, sourcePath, options) {
-    return { code: transformJison(sourceText, false) };
+    return { code: transformJison(sourceText) };
   },
 };
