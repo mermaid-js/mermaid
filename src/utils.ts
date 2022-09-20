@@ -885,3 +885,13 @@ export default {
   directiveSanitizer,
   sanitizeCss,
 };
+
+/**
+ * Gets the outermost SVG node containing an element.
+ *
+ * @param {SVGElement} elem Element to get
+ * @returns {Node} Outermost SVG node containing elem
+ */
+export const svgNode: Node = function (elem: SVGElement) {
+  return elem.node().farthestViewportElement;
+};

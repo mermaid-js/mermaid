@@ -2,6 +2,7 @@
 
 import { log } from '../logger';
 import { getConfig } from '../config';
+import { svgNode } from '../utils';
 
 // Only add the number of markers that the diagram needs
 export const insertMarkers = (elem, markerArray, type, id) => {
@@ -9,8 +10,6 @@ export const insertMarkers = (elem, markerArray, type, id) => {
     markers[markerName](elem, type, id);
   });
 };
-
-export const svgNode = (elem) => elem.node().farthestViewportElement;
 
 export const markerId = (elem, name) => {
   const svg = svgNode(elem);
