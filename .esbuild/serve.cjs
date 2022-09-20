@@ -71,8 +71,8 @@ const generateHandler = (server) => {
   app.all('/mermaid.js', generateHandler(iifeServer));
   app.all('/mermaid.esm.mjs', generateHandler(esmServer));
 
-  app.all('/e2e.js', generateHandler(iifeServer));
-  app.all('/bundle-test.js', generateHandler(iifeServer));
+  app.all('/e2e.esm.mjs', generateHandler(esmServer));
+  app.all('/bundle-test.esm.mjs', generateHandler(esmServer));
   app.listen(9000, () => {
     console.log(`Listening on http://localhost:9000`);
   });
