@@ -1,5 +1,5 @@
 import { arc as d3arc } from 'd3';
-import { markerId } from '../../utils';
+import { markerId, appendMarker } from '../../utils';
 
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect');
@@ -452,10 +452,7 @@ const _drawTextCandidateFunc = (function () {
 })();
 
 const initGraphics = function (graphics) {
-  graphics
-    .append('defs')
-    .append('marker')
-    .attr('id', markerId(graphics, 'arrowhead'))
+  appendMarker(graphics, 'arrowhead')
     .attr('refX', 5)
     .attr('refY', 2)
     .attr('markerWidth', 6)

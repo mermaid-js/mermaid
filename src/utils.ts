@@ -922,6 +922,10 @@ export const markerUrl = (elem, name) => {
   return `url(${absolute}#${markerId(elem, name)})`;
 };
 
+export const appendMarker = function (elem, name) {
+  return elem.append('defs').append('marker').attr('id', markerId(elem, name));
+};
+
 export default {
   assignWithDepth,
   wrapLabel,
@@ -947,5 +951,6 @@ export default {
   sanitizeCss,
   svgNode,
   markerId,
+  appendMarker,
   markerUrl,
 };
