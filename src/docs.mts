@@ -105,7 +105,7 @@ const logWasOrShouldBeTransformed = (filename: string, wasCopied: boolean) => {
  *
  * @param {string} filename Name of the file that will be verified
  * @param {boolean} [doCopy=false] Whether we should copy that transformedContents to the final
- *   documentation directory. Default is `false`. Default is `false`
+ *   documentation directory. Default is `false`
  * @param {string} [transformedContent] New contents for the file
  */
 const copyTransformedContents = (filename: string, doCopy = false, transformedContent?: string) => {
@@ -145,11 +145,14 @@ const transformMarkdown = (file: string) => {
   const doc = readSyncedUTF8file(file);
   const ast: Root = remark.parse(doc);
   const out = flatmap(ast, (c: Code) => {
-    if (c.type !== 'code' || !c.lang?.startsWith('mermaid')) {
+    if (c.type !== 'code') {
       return [c];
     }
     if (c.lang === 'mermaid' || c.lang === 'mmd') {
       c.lang = 'mermaid-example';
+    }
+    if (c.lang !== 'mermaid-example') {
+      return [c];
     }
     return [c, Object.assign({}, c, { lang: 'mermaid' })];
   });

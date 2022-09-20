@@ -42,6 +42,12 @@ It is also possible to override site-wide theme settings locally, for a specific
 
 **Following is an example:**
 
+```mermaid-example
+%%{init: {'theme':'base'}}%%
+  graph TD
+    a --> b
+```
+
 ```mermaid
 %%{init: {'theme':'base'}}%%
   graph TD
@@ -58,7 +64,25 @@ The easiest way to make a custom theme is to start with the base theme, and just
 
 Here is an example of overriding `primaryColor` and giving everything a different look, using `%%init%%`.
 
-```mmd
+```mermaid-example
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
+```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#ff0000'}}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
