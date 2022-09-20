@@ -10,16 +10,16 @@ export const insertMarkers = (elem, markerArray, type, id) => {
   });
 };
 
+export const svgNode = (elem) => elem.node().farthestViewportElement;
+
 export const markerId = (elem, name) => {
-  let id = name;
+  const svg = svgNode(elem);
 
-  elem &&
-    elem.select((_, __, nodes, ___) => {
-      const svg = nodes[0].farthestViewportElement;
-      id = svg.getAttribute('id') + '-' + name;
-    });
+  if (svg) {
+    return svg.getAttribute('id') + '-' + name;
+  }
 
-  return id;
+  return name;
 };
 
 export const markerUrl = (elem, name, map) => {

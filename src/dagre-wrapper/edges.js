@@ -485,6 +485,6 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
   return paths;
 };
 
-const markerName = (arrowType) => arrowType.replace('arrow_', '');
+const markerName = (arrowType) => arrowType && arrowType.replace('arrow_', '');
 const startMarkerName = (arrowType) => markerName(arrowType) + 'Start';
 const endMarkerName = (arrowType) => markerName(arrowType) + 'End';
