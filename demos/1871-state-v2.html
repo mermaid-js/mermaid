@@ -1,22 +1,11 @@
 <html>
   <head>
-    <title>State v2 TV</title>
+    <title>stateDiagram-v2</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
   </head>
 
   <body>
-    <h2>Theme Variables</h2>
-    The marker stroke should be from the theme variable:
-    <pre>
-    %%{init:{"theme":"base", "themeVariables": {"lineColor":"red"}}}%%
-    stateDiagram-v2
-    [*] --> First
-    state First {
-        [*] --> second
-        second --> [*]
-    }
-  </pre
-    >
+    <h2>stateDiagram-v2</h2>
     <pre class="mermaid">
       %%{init:{"theme":"base", "themeVariables": {"lineColor":"red"}}}%%
       stateDiagram-v2
@@ -27,15 +16,6 @@
       }  </pre
     >
 
-    <pre>
-    %%{init:{"theme":"base", "themeVariables": {"lineColor":"blue"}}}%%
-    stateDiagram-v2
-    [*] --> First
-    state First {
-        [*] --> second
-        second --> [*]
-    }
-    </pre>
     <pre class="mermaid">
     %%{init:{"theme":"base", "themeVariables": {"lineColor":"blue"}}}%%
     stateDiagram-v2
