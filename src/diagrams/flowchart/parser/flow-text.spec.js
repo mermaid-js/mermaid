@@ -284,7 +284,7 @@ describe('[Text] when parsing', () => {
 
       expect(edges[0].text).toBe('text including graph space and v');
     });
-    // xit('should handle text on open links',function(){
+    // it.skip('should handle text on open links',function(){
     //    const res = flow.parser.parse('graph TD;A-- text including graph space --B');
     //
     //    const vert = flow.parser.yy.getVertices();
@@ -324,7 +324,7 @@ describe('[Text] when parsing', () => {
       expect(vert['C'].type).toBe('round');
       expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
     });
-    // xit('should handle åäö, minus and space and br',function(){
+    // it.skip('should handle åäö, minus and space and br',function(){
     //    const res = flow.parser.parse('graph TD; A[Object&#40;foo,bar&#41;]-->B(Thing);');
     //
     //    const vert = flow.parser.yy.getVertices();
