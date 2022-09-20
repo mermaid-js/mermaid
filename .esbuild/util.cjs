@@ -1,4 +1,4 @@
-const { Generator } = require('jison');
+const { transformJison } = require('./jisonTransformer.cjs');
 const fs = require('fs');
 const { dependencies } = require('../package.json');
 
@@ -93,9 +93,7 @@ const jisonPlugin = {
     build.onLoad({ filter: /\.jison$/ }, async (args) => {
       // Load the file from the file system
       const source = await fs.promises.readFile(args.path, 'utf8');
-      const contents = new Generator(source, { 'token-stack': true }).generate({
-        moduleMain: '() => {}', // disable moduleMain (default one requires Node.JS modules)
-      });
+      const contents = transformJison(source);
       return { contents, warnings: [] };
     });
   },

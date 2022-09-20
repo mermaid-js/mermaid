@@ -5,6 +5,7 @@
   "main": "dist/mermaid.core.mjs",
   "module": "dist/mermaid.core.mjs",
   "types": "dist/mermaid.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "require": "./dist/mermaid.min.js",
