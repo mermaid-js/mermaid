@@ -23,8 +23,8 @@ ORDER ||--|{ LINE-ITEM : contains
 CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
     </pre>
 
-    <script src="./mermaid.esm.mjs" type="module"></script>
-    <script>
+    <script type="module">
+      import mermaid from './mermaid.esm.mjs';
       mermaid.initialize({
         theme: 'forest',
         // themeCSS: '.node rect { fill: red; }',

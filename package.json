@@ -92,7 +92,7 @@
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
-    "concurrently": "^7.0.0",
+    "concurrently": "^7.4.0",
     "coveralls": "^3.0.2",
     "cypress": "^10.0.0",
     "cypress-image-snapshot": "^4.0.1",
