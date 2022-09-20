@@ -5,7 +5,7 @@ import utils from '../../utils';
 import common from '../common/common';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
-
+import { markerUrl } from '../../markers';
 /**
  * Draws a start state as a black circle
  *
@@ -431,23 +431,8 @@ export const drawEdge = function (elem, path, relation) {
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', 'edge' + edgeCount)
-    .attr('class', 'transition');
-  let url = '';
-  if (getConfig().state.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
-  }
-
-  svgPath.attr(
-    'marker-end',
-    'url(' + url + '#' + getRelationType(stateDb.relationType.DEPENDENCY) + 'End' + ')'
-  );
+    .attr('class', 'transition')
+    .attr('marker-end', markerUrl(elem, getRelationType(stateDb.relationType.DEPENDENCY) + 'End'));
 
   if (typeof relation.title !== 'undefined') {
     const label = elem.append('g').attr('class', 'stateLabel');
