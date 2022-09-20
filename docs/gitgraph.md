@@ -393,44 +393,6 @@ Let see an example:
        commit id:"C"
 ```
 
-By default, the cherry-picked commit from commit with id `A` will be labeled `cherry-pick:A`. You can provide your own custom tag instead to override this behavior, using the same syntax as the `commit` keyword:
-
-```mermaid-example
-    gitGraph
-       commit id: "ZERO"
-       branch develop
-       commit id:"A"
-       checkout main
-       commit id:"ONE"
-       checkout develop
-       commit id:"B"
-       checkout main
-       commit id:"TWO"
-       cherry-pick id:"A" tag:"fix"
-       commit id:"THREE"
-       checkout develop
-       commit id:"C"
-```
-
-```mermaid
-    gitGraph
-       commit id: "ZERO"
-       branch develop
-       commit id:"A"
-       checkout main
-       commit id:"ONE"
-       checkout develop
-       commit id:"B"
-       checkout main
-       commit id:"TWO"
-       cherry-pick id:"A" tag:"fix"
-       commit id:"THREE"
-       checkout develop
-       commit id:"C"
-```
-
-To suppress the tag entirely, use `tag:""` (empty string).
-
 ## Gitgraph specific configuration options
 
 In Mermaid, you have the option to configure the gitgraph diagram. You can configure the following options:
