@@ -1,32 +1,37 @@
-import { transformJison } from './.esbuild/jisonTransformer.cjs';
+import jison from './.esbuild/jison';
+import { resolve } from 'path';
 import { defineConfig } from 'vitest/config';
 
-const fileRegex = /\.jison$/;
-
-/** Transforms jison to js. */
-export function jisonPlugin() {
-  return {
-    name: 'transform-jison',
-
-    transform(src: string, id: string) {
-      if (fileRegex.test(id)) {
-        // eslint-disable-next-line no-console
-        console.log('Transforming', id);
-        return {
-          // @ts-ignore no typings for jison
-          code: transformJison(src),
-          map: null, // provide source map if available
-        };
-      }
-    },
-  };
-}
-
 export default defineConfig({
+  build: {
+    lib: {
+      entry: resolve(__dirname, 'src/mermaid.ts'),
+      name: 'mermaid',
+      // the proper extensions will be added
+      fileName: 'mermaid',
+    },
+    rollupOptions: {
+      // make sure to externalize deps that shouldn't be bundled
+      // into your library
+      external: ['require', 'fs', 'path'],
+      output: [
+        {
+          name: 'mermaid',
+          format: 'esm',
+          sourcemap: true,
+        },
+        {
+          name: 'mermaid',
+          format: 'umd',
+          sourcemap: true,
+        },
+      ],
+    },
+  },
   resolve: {
     extensions: ['.jison', '.js', '.ts', '.json'],
   },
-  plugins: [jisonPlugin()],
+  plugins: [jison()],
   test: {
     environment: 'jsdom',
     globals: true,

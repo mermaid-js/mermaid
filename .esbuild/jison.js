@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { transformJison } = require('./jisonTransformer');
+const { transformJison } = require('./jisonTransformer.cjs');
 const fileRegex = /\.(jison)$/;
 
 export default function jison() {
