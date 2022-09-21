@@ -403,7 +403,15 @@ word of warning, one could go overboard with this making the flowchart harder to
 markdown form. The Swedish word `lagom` comes to mind. It means, not too much and not too little.
 This goes for expressive syntaxes as well.
 
-```mmd
+```mermaid-example
+flowchart TB
+    A --> C
+    A --> D
+    B --> C
+    B --> D
+```
+
+```mermaid
 flowchart TB
     A --> C
     A --> D
@@ -778,7 +786,13 @@ Beginner's tip—a full example using interactive links in a html context:
 
 Comments can be entered within a flow diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
 
-```mmd
+```mermaid-example
+flowchart LR
+%% this is a comment A -- text --> B{node}
+   A -- text --> B -- text2 --> C
+```
+
+```mermaid
 flowchart LR
 %% this is a comment A -- text --> B{node}
    A -- text --> B -- text2 --> C
