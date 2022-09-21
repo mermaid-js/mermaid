@@ -29,10 +29,13 @@
     "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
     "build:watch": "yarn build:code --watch",
     "build:esbuild": "concurrently \"yarn build:code\" \"yarn build:types\"",
-    "build": "yarn clean; yarn build:esbuild",
+    "build": "yarn clean && yarn build:esbuild",
     "dev": "node .esbuild/serve.cjs",
     "docs:build": "ts-node-esm src/docs.mts",
     "docs:verify": "yarn docs:build --verify",
+    "vdocs:dev": "vitepress dev vdocs",
+    "vdocs:build": "vitepress build vdocs",
+    "vdocs:serve": "vitepress serve vdocs",
     "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md && prettier --write src/docs/Setup.md",
     "release": "yarn build",
     "lint": "eslint --cache --ignore-path .gitignore . && yarn lint:jison && prettier --check .",
@@ -76,7 +79,8 @@
     "lodash": "^4.17.21",
     "moment-mini": "^2.24.0",
     "non-layered-tidy-tree-layout": "^2.0.2",
-    "stylis": "^4.1.2"
+    "stylis": "^4.1.2",
+    "vitepress-plugin-mermaid": "^2.0.7"
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.25.7",
@@ -126,6 +130,8 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.8.3",
     "unist-util-flatmap": "^1.0.0",
+    "vitepress": "^1.0.0-alpha.15",
+    "vitepress-plugin-search": "^1.0.4-alpha.7",
     "vitest": "^0.23.1"
   },
   "resolutions": {
