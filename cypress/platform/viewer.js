@@ -3,7 +3,8 @@ import mermaid2 from '../../src/mermaid';
 
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
- * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
+ * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
+ * page.
  */
 const contentLoaded = function () {
   let pos = document.location.href.indexOf('?graph=');
@@ -32,8 +33,8 @@ const contentLoaded = function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
-    global.mermaid.initialize(graphObj.mermaid);
-    global.mermaid.init();
+    mermaid2.initialize(graphObj.mermaid);
+    mermaid2.init();
   }
 };
 
