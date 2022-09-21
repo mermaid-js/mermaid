@@ -14,9 +14,10 @@ export const appendMarker = function (g: SVGGraphicsElement, name: string): SVGM
   return g.append('defs').append('marker').attr('id', markerId(g, name));
 };
 
-const isAbsoluteUrl = () =>
+const isAbsoluteUrl = function () {
   // @ts-ignore TODO Fix ts errors
-  getConfig().state.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute;
+  return getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute;
+};
 
 const absoluteUrl = function () {
   if (isAbsoluteUrl()) {
