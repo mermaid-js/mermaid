@@ -1,8 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { transformJison } = require('../../.esbuild/jisonTransformer.cjs');
+const { Generator } = require('jison');
 
 module.exports = {
   process(sourceText, sourcePath, options) {
-    return { code: transformJison(sourceText) };
+    return { code: new Generator(sourceText, options.transformerConfig).generate() };
   },
 };
