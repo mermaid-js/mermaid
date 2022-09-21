@@ -51,9 +51,8 @@ They also serve as proof of concept, for the variety of things that can be built
 
 ## CMS
 
-
 - [VitePress](https://vitepress.vuejs.org/)
-  - [Plugin for Mermaid.js](http://localhost:3000/vitepress-plugin-mermaid/)
+  - [Plugin for Mermaid.js](https://emersonbottero.github.io/vitepress-plugin-mermaid/)
 - [VuePress](https://vuepress.vuejs.org/)
   - [Plugin for Mermaid.js](https://github.com/eFrane/vuepress-plugin-mermaidjs)
 - [Grav CMS](https://getgrav.org/)
