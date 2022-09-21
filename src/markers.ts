@@ -15,21 +15,15 @@ export const appendMarker = function (g: SVGGraphicsElement, name: string): SVGM
 };
 
 /** @returns {string} A new marker element with a unique id */
-const absolute = function () {
-  let absolute = '';
-
+const absoluteUrl = function () {
   // @ts-ignore TODO Fix ts errors
   if (getConfig().state.arrowMarkerAbsolute) {
-    absolute =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    absolute = absolute.replace(/\(/g, '\\(');
-    absolute = absolute.replace(/\)/g, '\\)');
-    return absolute;
+    const location = window.location;
+    const absolute = location.protocol + '//' + location.host + location.pathname + location.search;
+    return absolute.replace(/\(/g, '\\(').replace(/\)/g, '\\)');
   }
+
+  return '';
 };
 
 /**
@@ -42,28 +36,16 @@ const absolute = function () {
  * @returns {string} A marker id
  */
 export const markerUrl = function (path: SVGPathElement, name: string): string {
-  let absolute = '';
-
-  // @ts-ignore TODO Fix ts errors
-  if (getConfig().state.arrowMarkerAbsolute) {
-    absolute =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    absolute = absolute.replace(/\(/g, '\\(');
-    absolute = absolute.replace(/\)/g, '\\)');
-  }
-
-  return 'url(' + absolute + '#' + markerId(path, name) + ')';
+  return 'url(' + absoluteUrl() + '#' + markerId(path, name) + ')';
 };
 
 /**
- * Get the SVG id for an element.
+ * Returns the diagram id for an element.
  *
- * @param {SVGElement} elem Element within an SVG node
- * @returns {Node | null} SVG node
+ * The id returned is the "id" attribute of the element's SVG node.
+ *
+ * @param {SVGElement} elem An element
+ * @returns {string | null} The diagram id
  */
 const diagramId = function (elem: SVGElement): string {
   // @ts-ignore TODO Fix ts errors
