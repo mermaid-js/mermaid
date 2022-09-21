@@ -47,7 +47,7 @@ commit(?=\s|$)                          return 'COMMIT';
 branch(?=\s|$)                          return 'BRANCH';
 "order:"                                return 'ORDER';
 merge(?=\s|$)                           return 'MERGE';
-cherry-pick(?=\s|$)                     return 'CHERRY_PICK';
+cherry\-pick(?=\s|$)                    return 'CHERRY_PICK';
 // "reset"                                 return 'RESET';
 checkout(?=\s|$)                        return 'CHECKOUT';
 "LR"                                    return 'DIR';
@@ -57,6 +57,7 @@ checkout(?=\s|$)                        return 'CHECKOUT';
 "options"\r?\n                          this.begin("options"); //
 <options>[ \r\n\t]+"end"                this.popState();       // not used anymore in the renderer, fixed for backward compatibility
 <options>[\s\S]+(?=[ \r\n\t]+"end")     return 'OPT';          //
+["]["]                                  return 'EMPTYSTR';
 ["]                                     this.begin("string");
 <string>["]                             this.popState();
 <string>[^"]*                           return 'STR';
@@ -117,7 +118,11 @@ branchStatement
     ;
 
 cherryPickStatement
-    : CHERRY_PICK COMMIT_ID STR {yy.cherryPick($3)}
+    : CHERRY_PICK COMMIT_ID STR {yy.cherryPick($3, '', undefined)}
+    | CHERRY_PICK COMMIT_ID STR COMMIT_TAG STR {yy.cherryPick($3, '', $5)}
+    | CHERRY_PICK COMMIT_ID STR COMMIT_TAG EMPTYSTR {yy.cherryPick($3, '', '')}
+    | CHERRY_PICK COMMIT_TAG STR COMMIT_ID STR {yy.cherryPick($5, '', $3)}
+    | CHERRY_PICK COMMIT_TAG EMPTYSTR COMMIT_ID STR {yy.cherryPick($3, '', '')}
     ;
 
 mergeStatement
