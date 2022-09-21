@@ -1,5 +1,5 @@
 /** Created by knut on 15-01-14. */
-import { sanitizeText, getConfig, log as _log } from '../../diagram-api/diagramAPI';
+import { sanitizeText, getConfig, log as _log } from 'mermaid/diagramAPI';
 
 let nodes = [];
 let cnt = 0;

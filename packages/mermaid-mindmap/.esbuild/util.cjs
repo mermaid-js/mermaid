@@ -19,7 +19,7 @@ const buildOptions = (override = {}) => {
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.mjs', '.json', '.jison'],
     external: ['require', 'fs', 'path'],
-    entryPoints: ['src/mermaid.ts'],
+    entryPoints: ['src/registry.ts'],
     outfile: 'dist/mermaid-mindmap.min.js',
     plugins: [jisonPlugin],
     sourcemap: 'external',
