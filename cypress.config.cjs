@@ -4,6 +4,7 @@ const { defineConfig } = require('cypress');
 const { addMatchImageSnapshotPlugin } = require('cypress-image-snapshot/plugin');
 
 module.exports = defineConfig({
+  projectId: 'n2sma2',
   e2e: {
     specPattern: 'cypress/integration/**/*.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {

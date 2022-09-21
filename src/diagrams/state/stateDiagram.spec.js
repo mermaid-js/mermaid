@@ -389,7 +389,7 @@ describe('state diagram, ', function () {
     });
   });
   describe('when parsing an ignored info graph it', function () {
-    xit('should handle if statements', function () {
+    it.skip('should handle if statements', function () {
       const str = `stateDiagram\n
       [*] --> "Order Submitted"
       if "Payment Accepted" then
