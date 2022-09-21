@@ -1,7 +1,7 @@
 import { getConfig } from './config';
 
 /**
- * Append a marker to a graphics element.
+ * Append a marker to a graphics element assigning it a unique id.
  *
  * A marker will be appended with a unique id based on the given name.
  *

@@ -1,6 +1,7 @@
 // jest.mock('./config');
 
 import { markerUrl } from './markers';
+import { setSiteConfig } from './config';
 
 describe('markers', function () {
   const { location } = window;
@@ -8,11 +9,10 @@ describe('markers', function () {
   beforeAll(() => {
     delete window.location;
     window.location = {
-      protocol: 'protocol',
-      host: 'host',
-      location: 'location',
-      pathname: 'pathname',
-      search: 'search',
+      protocol: 'protocol:',
+      host: 'host:port',
+      pathname: '/pathname',
+      search: '?search',
     };
   });
 
@@ -24,10 +24,6 @@ describe('markers', function () {
     window.location = location;
   });
 
-  it('calls `reload`', () => {
-    expect(window.location.host).toBe('host');
-  });
-
   describe('#markerUrl', function () {
     it('should return #<name> if no parent SVG', function () {
       expect(markerUrl('_', 'foo')).toBe('url(#foo)');
@@ -36,20 +32,19 @@ describe('markers', function () {
     it('should return #null if no name provided', function () {
       expect(markerUrl('_', undefined)).toBe('url(#null)');
       expect(markerUrl('_', null)).toBe('url(#null)');
+      expect(markerUrl('_', '')).toBe('url(#null)');
     });
 
-    it.skip('should support absolute urls (state diagrams)', function () {
-      jest.mock('./config', () => {
-        return {
-          getConfig: jest.fn(() => {
-            return {
-              state: { arrowMarkerAbsolute: true },
-            };
-          }),
-        };
-      });
+    it('should support absolute urls for state diagrams)', function () {
+      setSiteConfig({ state: { arrowMarkerAbsolute: true } });
 
-      expect(markerUrl('_', 'foo')).toBe('url()');
+      expect(markerUrl('_', 'foo')).toBe('url(protocol://host:port/pathname?search#foo)');
+    });
+
+    it('should support absolute urls for state diagrams)', function () {
+      setSiteConfig({ state: { arrowMarkerAbsolute: true } });
+
+      expect(markerUrl('_', 'foo')).toBe('url(protocol://host:port/pathname?search#foo)');
     });
   });
 });
