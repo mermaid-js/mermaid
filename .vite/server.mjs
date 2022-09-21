@@ -5,16 +5,17 @@ async function createServer() {
   const app = express();
 
   // Create Vite server in middleware mode
-  const vite = await createViteServer({
-    configFile: './vite.config.cts',
-    server: { middlewareMode: true },
-    appType: 'custom', // don't include Vite's default HTML handling middlewares
-  });
+  // const vite = await createViteServer({
+  //   configFile: './vite.config.cts',
+  //   server: { middlewareMode: true },
+  //   appType: 'custom', // don't include Vite's default HTML handling middlewares
+  // });
 
+  app.use(express.static('dist'));
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
   // Use vite's connect instance as middleware
-  app.use(vite.middlewares);
+  // app.use(vite.middlewares);
 
   app.use('*', async (req, res) => {
     // Since `appType` is `'custom'`, should serve response here.

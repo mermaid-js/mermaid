@@ -10,6 +10,7 @@ export default defineConfig({
       // the proper extensions will be added
       fileName: 'mermaid',
     },
+    minify: 'esbuild',
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
@@ -19,11 +20,13 @@ export default defineConfig({
           name: 'mermaid',
           format: 'esm',
           sourcemap: true,
+          entryFileNames: 'mermaid.esm.js',
         },
         {
           name: 'mermaid',
           format: 'umd',
           sourcemap: true,
+          entryFileNames: 'mermaid.js',
         },
       ],
     },
