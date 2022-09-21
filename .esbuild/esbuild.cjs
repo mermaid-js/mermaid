@@ -6,15 +6,16 @@ const handler = (e) => {
   process.exit(1);
 };
 const watch = process.argv.includes('--watch');
+const pkg = 'mermaid';
 
 // mermaid.js
-build(iifeBuild({ minify: false, watch })).catch(handler);
+build(iifeBuild(pkg, { minify: false, watch })).catch(handler);
 // mermaid.esm.mjs
-build(esmBuild({ minify: false, watch })).catch(handler);
+build(esmBuild(pkg, { minify: false, watch })).catch(handler);
 
 // mermaid.min.js
-build(iifeBuild()).catch(handler);
+build(iifeBuild(pkg)).catch(handler);
 // mermaid.esm.min.mjs
-build(esmBuild()).catch(handler);
+build(esmBuild(pkg)).catch(handler);
 // mermaid.core.mjs (node_modules unbundled)
-build(esmCoreBuild()).catch(handler);
+build(esmCoreBuild(pkg)).catch(handler);

@@ -4,25 +4,36 @@ const { dependencies } = require('../package.json');
 
 /** @typedef {import('esbuild').BuildOptions} Options */
 
+const packageOptionsMap = {
+  mermaid: {
+    globalName: 'mermaid',
+    entryPoints: ['packages/mermaid/src/mermaid.ts'],
+  },
+};
+
 /**
+ * @param {string} pkg - Package name.
  * @param {Options} override
  * @returns {Options}
  */
-const buildOptions = (override = {}) => {
+const buildOptions = (pkg, override = {}) => {
+  const packageOptions = packageOptionsMap[pkg];
+  if (!packageOptions) {
+    throw new Error(`Unknown package: ${pkg}`);
+  }
   return {
     bundle: true,
     minify: true,
     keepNames: true,
     banner: { js: '"use strict";' },
-    globalName: 'mermaid',
     platform: 'browser',
     tsconfig: 'tsconfig.json',
     resolveExtensions: ['.ts', '.js', '.mjs', '.json', '.jison'],
     external: ['require', 'fs', 'path'],
-    entryPoints: ['src/mermaid.ts'],
-    outfile: 'dist/mermaid.min.js',
     plugins: [jisonPlugin],
     sourcemap: 'external',
+    outdir: 'dist',
+    ...packageOptions,
     ...override,
   };
 };
@@ -32,13 +43,14 @@ const buildOptions = (override = {}) => {
  *
  * For ESM browser use.
  *
+ * @param {string} pkg - Package name.
  * @param {Options} override - Override options.
  * @returns {Options} ESBuild build options.
  */
-exports.esmBuild = (override = { minify: true }) => {
-  return buildOptions({
+exports.esmBuild = (pkg, override = { minify: true }) => {
+  return buildOptions(pkg, {
     format: 'esm',
-    outfile: `dist/mermaid.esm${override.minify ? '.min' : ''}.mjs`,
+    outExtension: { '.js': `.esm${override.minify ? '.min' : ''}.mjs` },
     ...override,
   });
 };
@@ -49,13 +61,14 @@ exports.esmBuild = (override = { minify: true }) => {
  * This build does not bundle `./node_modules/`, as it is designed to be used with
  * Webpack/ESBuild/Vite to use mermaid inside an app/website.
  *
+ * @param {string} pkg - Package name.
  * @param {Options} override - Override options.
  * @returns {Options} ESBuild build options.
  */
-exports.esmCoreBuild = (override) => {
-  return buildOptions({
+exports.esmCoreBuild = (pkg, override) => {
+  return buildOptions(pkg, {
     format: 'esm',
-    outfile: `dist/mermaid.core.mjs`,
+    outExtension: { '.js': '.core.mjs' },
     external: ['require', 'fs', 'path', ...Object.keys(dependencies)],
     platform: 'neutral',
     ...override,
@@ -67,12 +80,13 @@ exports.esmCoreBuild = (override) => {
  *
  * For IIFE browser use (where ESM is not yet supported).
  *
+ * @param {string} pkg - Package name.
  * @param {Options} override - Override options.
  * @returns {Options} ESBuild build options.
  */
-exports.iifeBuild = (override = { minify: true }) => {
-  return buildOptions({
-    outfile: `dist/mermaid${override.minify ? '.min' : ''}.js`,
+exports.iifeBuild = (pkg, override = { minify: true }) => {
+  return buildOptions(pkg, {
+    outExtension: { '.js': `${override.minify ? '.min' : ''}.js` },
     format: 'iife',
     footer: {
       js: 'mermaid = mermaid.default;',
