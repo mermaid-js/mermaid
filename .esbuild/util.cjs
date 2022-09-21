@@ -1,4 +1,4 @@
-const { Generator } = require('jison');
+const { transformJison } = require('./jisonTransformer.cjs');
 const fs = require('fs');
 const { dependencies } = require('../package.json');
 
@@ -17,21 +17,16 @@ const buildOptions = (override = {}) => {
     globalName: 'mermaid',
     platform: 'browser',
     tsconfig: 'tsconfig.json',
-    resolveExtensions: ['.ts', '.js', '.json', '.jison'],
+    resolveExtensions: ['.ts', '.js', '.mjs', '.json', '.jison'],
     external: ['require', 'fs', 'path'],
-    outdir: 'dist',
+    entryPoints: ['src/mermaid.ts'],
+    outfile: 'dist/mermaid.min.js',
     plugins: [jisonPlugin],
     sourcemap: 'external',
     ...override,
   };
 };
 
-const getOutFiles = (extension) => {
-  return {
-    [`mermaid${extension}`]: 'src/mermaid.ts',
-    [`diagramAPI${extension}`]: 'src/diagram-api/diagramAPI.ts',
-  };
-};
 /**
  * Build options for mermaid.esm.* build.
  *
@@ -43,8 +38,7 @@ const getOutFiles = (extension) => {
 exports.esmBuild = (override = { minify: true }) => {
   return buildOptions({
     format: 'esm',
-    entryPoints: getOutFiles(`.esm${override.minify ? '.min' : ''}`),
-    outExtension: { '.js': '.mjs' },
+    outfile: `dist/mermaid.esm${override.minify ? '.min' : ''}.mjs`,
     ...override,
   });
 };
@@ -61,8 +55,7 @@ exports.esmBuild = (override = { minify: true }) => {
 exports.esmCoreBuild = (override) => {
   return buildOptions({
     format: 'esm',
-    entryPoints: getOutFiles(`.core`),
-    outExtension: { '.js': '.mjs' },
+    outfile: `dist/mermaid.core.mjs`,
     external: ['require', 'fs', 'path', ...Object.keys(dependencies)],
     platform: 'neutral',
     ...override,
@@ -79,8 +72,11 @@ exports.esmCoreBuild = (override) => {
  */
 exports.iifeBuild = (override = { minify: true }) => {
   return buildOptions({
-    entryPoints: getOutFiles(override.minify ? '.min' : ''),
+    outfile: `dist/mermaid${override.minify ? '.min' : ''}.js`,
     format: 'iife',
+    footer: {
+      js: 'mermaid = mermaid.default;',
+    },
     ...override,
   });
 };
@@ -91,9 +87,7 @@ const jisonPlugin = {
     build.onLoad({ filter: /\.jison$/ }, async (args) => {
       // Load the file from the file system
       const source = await fs.promises.readFile(args.path, 'utf8');
-      const contents = new Generator(source, { 'token-stack': true }).generate({
-        moduleMain: '() => {}', // disable moduleMain (default one requires Node.JS modules)
-      });
+      const contents = transformJison(source);
       return { contents, warnings: [] };
     });
   },
