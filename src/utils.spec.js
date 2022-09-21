@@ -1,3 +1,4 @@
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import utils from './utils';
 import assignWithDepth from './assignWithDepth';
 import { detectType } from './diagram-api/detectType';
@@ -303,14 +304,22 @@ describe('when formatting urls', function () {
 });
 
 describe('when initializing the id generator', function () {
-  it('should return a random number generator based on Date', function (done) {
+  beforeEach(() => {
+    // tell vitest we use mocked time
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    // restoring date after each test run
+    vi.useRealTimers();
+  });
+
+  it('should return a random number generator based on Date', function () {
     const idGenerator = new utils.initIdGenerator(false);
     expect(typeof idGenerator.next).toEqual('function');
     const lastId = idGenerator.next();
-    setTimeout(() => {
-      expect(idGenerator.next() > lastId).toBe(true);
-      done();
-    }, 5);
+    vi.advanceTimersByTime(1000);
+    expect(idGenerator.next() > lastId).toBe(true);
   });
 
   it('should return a non random number generator', function () {

@@ -1,7 +1,8 @@
 import { parser } from './gantt';
 import ganttDb from '../ganttDb';
-
-const spyOn = jest.spyOn;
+import { convert } from '../../../tests/util';
+import { vi } from 'vitest';
+const spyOn = vi.spyOn;
 const parserFnConstructor = (str) => {
   return () => {
     parser.parse(str);
@@ -92,14 +93,14 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[0].id).toEqual('des1');
     expect(tasks[0].task).toEqual('Design jison grammar');
   });
-  it.each`
+  it.each(convert`
     tags                     | milestone | done     | crit     | active
     ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
     ${'done'}                | ${false}  | ${true}  | ${false} | ${false}
     ${'crit'}                | ${false}  | ${false} | ${true}  | ${false}
     ${'active'}              | ${false}  | ${false} | ${false} | ${true}
     ${'crit,milestone,done'} | ${true}   | ${true}  | ${true}  | ${false}
-  `('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
+  `)('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
     const str =
       'gantt\n' +
       'dateFormat YYYY-MM-DD\n' +

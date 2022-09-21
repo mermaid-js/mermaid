@@ -4,9 +4,6 @@ import flowRenderer from './flowRenderer';
 import Diagram from '../../Diagram';
 import { addDiagrams } from '../../diagram-api/diagram-orchestration';
 addDiagrams();
-afterEach(() => {
-  jest.restoreAllMocks();
-});
 
 describe('when using mermaid and ', function () {
   describe('when calling addEdges ', function () {
