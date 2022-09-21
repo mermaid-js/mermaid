@@ -14,10 +14,12 @@ export const appendMarker = function (g: SVGGraphicsElement, name: string): SVGM
   return g.append('defs').append('marker').attr('id', markerId(g, name));
 };
 
-/** @returns {string} A new marker element with a unique id */
-const absoluteUrl = function () {
+const isAbsoluteUrl = () =>
   // @ts-ignore TODO Fix ts errors
-  if (getConfig().state.arrowMarkerAbsolute) {
+  getConfig().state.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute;
+
+const absoluteUrl = function () {
+  if (isAbsoluteUrl()) {
     const location = window.location;
     const absolute = location.protocol + '//' + location.host + location.pathname + location.search;
     return absolute.replace(/\(/g, '\\(').replace(/\)/g, '\\)');
