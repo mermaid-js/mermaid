@@ -99,7 +99,7 @@
     "cypress": "^10.0.0",
     "cypress-image-snapshot": "^4.0.1",
     "documentation": "13.2.0",
-    "esbuild": "^0.15.6",
+    "esbuild": "^0.15.8",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-cypress": "^2.12.1",
