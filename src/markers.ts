@@ -45,7 +45,6 @@ const diagramId = function (elem: SVGElement): string {
     }
   }
 
-  // @ts-ignore TODO Fix ts errors
   return node && node.getAttribute('id');
 };
 

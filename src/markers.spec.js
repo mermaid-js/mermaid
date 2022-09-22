@@ -45,4 +45,17 @@ describe('markers', () => {
       expect(markerUrlForName('marker')).toBe('url(' + window.location.href + '#marker)');
     });
   });
+
+  describe('appendMarker()', () => {
+    it('should add a marker', () => {
+      document.body.innerHTML = `
+      <svg id="svg-1">
+        <g id="g">
+        <svg id="svg-2">
+          <text id="b"/>
+        </svg>
+      </svg>
+    `;
+    });
+  });
 });

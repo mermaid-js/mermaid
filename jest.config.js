@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
   testEnvironment: 'jsdom',
   preset: 'ts-jest',
-  extensionsToTreatAsEsm: ['.ts'],
+  package: ['.ts'],
   transform: {
     '^.+\\.[jt]sx?$': 'esbuild-jest',
     '^.+\\.jison$': [

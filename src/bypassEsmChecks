@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# This will cause jest to bypass the check that ES modules can only
+# be loaded if its "package.json" has type set to "module".
+#
+# This enables experimental jest support for loading ES modules in your tests.
+#
+# Only tested with "jest-resolve" version 28.1.3.
+
+shouldLoadAsEsm="node_modules/jest-resolve/build/shouldLoadAsEsm.js"
+line_number=87
+
+# The "-i ''" is required for inplace subsitutions on the standard macOS bash.
+# Try just "-i" if you are on another bash and get an error.
+sed -i "''" "${line_number}s/return cachedLookup/return false/" ${shouldLoadAsEsm}
