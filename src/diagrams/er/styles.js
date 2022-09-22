@@ -6,15 +6,19 @@ const getStyles = (options) =>
   }
 
   .attributeBoxOdd {
-    fill: #ffffff;
+    fill: ${options.attributeBackgroundColorOdd};
     stroke: ${options.nodeBorder};
   }
 
   .attributeBoxEven {
-    fill: #f2f2f2;
+    fill:  ${options.attributeBackgroundColorEven};
     stroke: ${options.nodeBorder};
   }
-
+ 
+  .attributeBoxText {
+    color: ${options.attributeTextColor};
+  }
+  
   .relationshipLabelBox {
     fill: ${options.tertiaryColor};
     opacity: 0.7;
@@ -24,9 +28,9 @@ const getStyles = (options) =>
       }
   }
 
-    .relationshipLine {
-      stroke: ${options.lineColor};
-    }
+  .relationshipLine {
+    stroke: ${options.lineColor};
+  }
 `;
 
 export default getStyles;
