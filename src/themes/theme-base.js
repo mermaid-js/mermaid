@@ -3,7 +3,6 @@ import { mkBorder } from './theme-helpers';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
-  oldAttributeBoxTextColor,
 } from './erDiagram-oldHardcodedValues';
 
 class Theme {
@@ -229,7 +228,6 @@ class Theme {
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
 
-    this.attributeTextColor = this.attributeTextColor || oldAttributeBoxTextColor;
     this.attributeBackgroundColorOdd =
       this.attributeBackgroundColorOdd || oldAttributeBackgroundColorOdd;
     this.attributeBackgroundColorEven =

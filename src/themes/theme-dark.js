@@ -1,10 +1,5 @@
 import { invert, lighten, darken, rgba, adjust } from 'khroma';
 import { mkBorder } from './theme-helpers';
-import {
-  oldAttributeBackgroundColorEven,
-  oldAttributeBackgroundColorOdd,
-  oldAttributeBoxTextColor,
-} from './erDiagram-oldHardcodedValues';
 
 class Theme {
   constructor() {
@@ -228,7 +223,6 @@ class Theme {
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
 
-    this.attributeTextColor = this.attributeTextColor || oldAttributeBoxTextColor;
     this.attributeBackgroundColorOdd =
       this.attributeBackgroundColorOdd || lighten(this.background, 12);
     this.attributeBackgroundColorEven =

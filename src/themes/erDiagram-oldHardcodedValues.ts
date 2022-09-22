@@ -5,4 +5,3 @@
  */
 export const oldAttributeBackgroundColorOdd = '#ffffff';
 export const oldAttributeBackgroundColorEven = '#f2f2f2';
-export const oldAttributeBoxTextColor = '#ff0000';

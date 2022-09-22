@@ -3,7 +3,6 @@ import { mkBorder } from './theme-helpers';
 import {
   oldAttributeBackgroundColorEven,
   oldAttributeBackgroundColorOdd,
-  oldAttributeBoxTextColor,
 } from './erDiagram-oldHardcodedValues';
 
 // const Color = require ( 'khroma/dist/color' ).default
@@ -270,7 +269,6 @@ class Theme {
     /* -------------------------------------------------- */
     /* EntityRelationship diagrams                        */
 
-    this.attributeTextColor = this.attributeTextColor || oldAttributeBoxTextColor;
     this.attributeBackgroundColorOdd =
       this.attributeBackgroundColorOdd || oldAttributeBackgroundColorOdd;
     this.attributeBackgroundColorEven =
