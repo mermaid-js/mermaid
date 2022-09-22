@@ -230,9 +230,9 @@ class Theme {
 
     this.attributeTextColor = this.attributeTextColor || oldAttributeBoxTextColor;
     this.attributeBackgroundColorOdd =
-      this.attributeBackgroundColorOdd || oldAttributeBackgroundColorOdd;
+      this.attributeBackgroundColorOdd || lighten(this.background, 12);
     this.attributeBackgroundColorEven =
-      this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
+      this.attributeBackgroundColorEven || lighten(this.background, 2);
     /* -------------------------------------------------- */
   }
   calculate(overrides) {
