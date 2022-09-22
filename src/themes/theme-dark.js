@@ -1,5 +1,11 @@
 import { invert, lighten, darken, rgba, adjust } from 'khroma';
 import { mkBorder } from './theme-helpers';
+import {
+  oldAttributeBackgroundColorEven,
+  oldAttributeBackgroundColorOdd,
+  oldAttributeBoxTextColor,
+} from './erDiagram-oldHardcodedValues';
+
 class Theme {
   constructor() {
     this.background = '#333';
@@ -28,8 +34,8 @@ class Theme {
     this.fontSize = '16px';
     this.labelBackground = '#181818';
     this.textColor = '#ccc';
-    /* Flowchart variables */
 
+    /* Flowchart variables */
     this.nodeBkg = 'calculated';
     this.nodeBorder = 'calculated';
     this.clusterBkg = 'calculated';
@@ -218,6 +224,16 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+
+    /* -------------------------------------------------- */
+    /* EntityRelationship diagrams                        */
+
+    this.attributeTextColor = this.attributeTextColor || oldAttributeBoxTextColor;
+    this.attributeBackgroundColorOdd =
+      this.attributeBackgroundColorOdd || oldAttributeBackgroundColorOdd;
+    this.attributeBackgroundColorEven =
+      this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
+    /* -------------------------------------------------- */
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

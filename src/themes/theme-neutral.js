@@ -1,5 +1,10 @@
 import { invert, darken, lighten, adjust } from 'khroma';
 import { mkBorder } from './theme-helpers';
+import {
+  oldAttributeBackgroundColorEven,
+  oldAttributeBackgroundColorOdd,
+  oldAttributeBoxTextColor,
+} from './erDiagram-oldHardcodedValues';
 
 // const Color = require ( 'khroma/dist/color' ).default
 // Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
@@ -261,6 +266,16 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+
+    /* -------------------------------------------------- */
+    /* EntityRelationship diagrams                        */
+
+    this.attributeTextColor = this.attributeTextColor || oldAttributeBoxTextColor;
+    this.attributeBackgroundColorOdd =
+      this.attributeBackgroundColorOdd || oldAttributeBackgroundColorOdd;
+    this.attributeBackgroundColorEven =
+      this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
+    /* -------------------------------------------------- */
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
