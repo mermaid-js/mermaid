@@ -12,7 +12,10 @@ token
 
 package-lock.json
 
-.vscode/
+# ignore files in /.vscode/ except for /.vscode/launch.json
+/.vscode/**
+!/.vscode/launch.json
+
 cypress/platform/current.html
 cypress/platform/experimental.html
 local/
