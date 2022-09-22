@@ -5,6 +5,9 @@ import { setSiteConfig } from './config';
 
 describe('markers', () => {
   describe('markerUrl()', () => {
+    const markerUrlForElement = (id) => markerUrl(select('#' + id), id);
+    const markerUrlForName = (name) => markerUrl(select('empty'), name);
+
     it('should use parent SVG element id as a prefix', () => {
       document.body.innerHTML = `
       <svg id="svg-1">
@@ -24,32 +27,27 @@ describe('markers', () => {
       <text id="e"/>
     `;
 
-      expect(markerUrl(select('#a'), 'A')).toBe('url(#svg-1-A)');
-      expect(markerUrl(select('#b'), 'B')).toBe('url(#svg-2-B)');
-      expect(markerUrl(select('#c'), 'C')).toBe('url(#svg-3-C)');
-      expect(markerUrl(select('#d'), 'D')).toBe('url(#svg-4-D)');
-      expect(markerUrl(select('#e'), 'E')).toBe('url(#E)');
+      expect(markerUrlForElement('a')).toBe('url(#svg-1-a)');
+      expect(markerUrlForElement('b')).toBe('url(#svg-2-b)');
+      expect(markerUrlForElement('c')).toBe('url(#svg-3-c)');
+      expect(markerUrlForElement('d')).toBe('url(#svg-4-d)');
+      expect(markerUrlForElement('e')).toBe('url(#e)');
     });
 
     it('should return "url(#null)" if no name provided', () => {
-      expect(markerUrl(select('_'), undefined)).toBe('url(#null)');
-      expect(markerUrl(select('_'), null)).toBe('url(#null)');
-      expect(markerUrl(select('_'), '')).toBe('url(#null)');
+      expect(markerUrlForName(undefined)).toBe('url(#null)');
+      expect(markerUrlForName(null)).toBe('url(#null)');
+      expect(markerUrlForName('')).toBe('url(#null)');
     });
-
-    const expectedAbsoluteUrl = () => {
-      const location = window.location;
-      return location.protocol + '//' + location.host + location.pathname + location.search;
-    };
 
     it('absolute urls should be configurable for flowcharts', () => {
       setSiteConfig({ flowchart: { arrowMarkerAbsolute: true } });
-      expect(markerUrl(select('_'), 'foo')).toBe('url(' + expectedAbsoluteUrl() + '#foo)');
+      expect(markerUrlForName('james')).toBe('url(' + window.location.href + '#james)');
     });
 
     it('absolute urls should be configurable for state diagrams', () => {
       setSiteConfig({ state: { arrowMarkerAbsolute: true } });
-      expect(markerUrl(select('_'), 'foo')).toBe('url(' + expectedAbsoluteUrl() + '#foo)');
+      expect(markerUrlForName('bond')).toBe('url(' + window.location.href + '#bond)');
     });
   });
 });
