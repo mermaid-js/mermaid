@@ -1,48 +1,55 @@
+const { select } = jest.requireActual('d3');
+
 import { markerUrl } from './markers';
 import { setSiteConfig } from './config';
 
-describe('markers', function () {
-  const { location } = window;
+describe('markers', () => {
+  describe('markerUrl()', () => {
+    it('should use parent SVG element id as a prefix', () => {
+      document.body.innerHTML = `
+      <svg id="svg-1">
+        <text id="a"/>
+        <svg id="svg-2">
+          <text id="b"/>
+        </svg>
+      </svg>
+    
+      <svg id="svg-3">
+        <text id="c"/>
+        <svg id="svg-4">
+          <text id="d"/>
+        </svg>
+      </svg>
+      
+      <text id="e"/>
+    `;
 
-  beforeAll(() => {
-    delete window.location;
-    window.location = {
-      protocol: 'protocol:',
-      host: 'host:port',
-      pathname: '/pathname',
-      search: '?search',
-    };
-  });
-
-  afterAll(() => {
-    window.location = location;
-  });
-
-  describe('#markerUrl', () => {
-    it('should return "url(#<name>)" if no parent SVG', function () {
-      expect(markerUrl('_', 'foo')).toBe('url(#foo)');
+      expect(markerUrl(select('#a'), 'A')).toBe('url(#svg-1-A)');
+      expect(markerUrl(select('#b'), 'B')).toBe('url(#svg-2-B)');
+      expect(markerUrl(select('#c'), 'C')).toBe('url(#svg-3-C)');
+      expect(markerUrl(select('#d'), 'D')).toBe('url(#svg-4-D)');
+      expect(markerUrl(select('#e'), 'E')).toBe('url(#E)');
     });
 
     it('should return "url(#null)" if no name provided', () => {
-      expect(markerUrl('_', undefined)).toBe('url(#null)');
-      expect(markerUrl('_', null)).toBe('url(#null)');
-      expect(markerUrl('_', '')).toBe('url(#null)');
+      expect(markerUrl(select('_'), undefined)).toBe('url(#null)');
+      expect(markerUrl(select('_'), null)).toBe('url(#null)');
+      expect(markerUrl(select('_'), '')).toBe('url(#null)');
     });
 
-    it('should be configurable for flowchart absolute urls)', () => {
-      setSiteConfig({ flowchart: { arrowMarkerAbsolute: false } });
-      expect(markerUrl('_', 'foo')).toBe('url(#foo)');
+    const expectedAbsoluteUrl = () => {
+      const location = window.location;
+      return location.protocol + '//' + location.host + location.pathname + location.search;
+    };
 
+    it('absolute urls should be configurable for flowcharts', () => {
       setSiteConfig({ flowchart: { arrowMarkerAbsolute: true } });
-      expect(markerUrl('_', 'foo')).toBe('url(protocol://host:port/pathname?search#foo)');
+      expect(markerUrl(select('_'), 'foo')).toBe('url(' + expectedAbsoluteUrl() + '#foo)');
     });
 
-    it('should be configurable for state diagram absolute urls)', () => {
-      setSiteConfig({ state: { arrowMarkerAbsolute: false } });
-      expect(markerUrl('_', 'foo')).toBe('url(#foo)');
-
+    it('absolute urls should be configurable for state diagrams', () => {
       setSiteConfig({ state: { arrowMarkerAbsolute: true } });
-      expect(markerUrl('_', 'foo')).toBe('url(protocol://host:port/pathname?search#foo)');
+      expect(markerUrl(select('_'), 'foo')).toBe('url(' + expectedAbsoluteUrl() + '#foo)');
     });
   });
 });

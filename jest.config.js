@@ -4,6 +4,7 @@ const path = require('path');
 module.exports = {
   testEnvironment: 'jsdom',
   preset: 'ts-jest',
+  extensionsToTreatAsEsm: ['.ts'],
   transform: {
     '^.+\\.[jt]sx?$': 'esbuild-jest',
     '^.+\\.jison$': [
@@ -11,12 +12,12 @@ module.exports = {
       { 'token-stack': true },
     ],
   },
+  transformIgnorePatterns: ['/node_modules/?!(d3)/'],
+  testPathIgnorePatterns: ['/node_modules/', '.cache', './cypress'],
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '^.+\\.jison$', // might be able to fix in future if .jison adds source-map support
   ],
-  transformIgnorePatterns: ['/node_modules/(?!dagre-d3-renderer/lib|khroma).*\\.js'],
-  testPathIgnorePatterns: ['/node_modules/', '.cache', './cypress'],
   moduleNameMapper: {
     '\\.(css|scss)$': 'identity-obj-proxy',
   },

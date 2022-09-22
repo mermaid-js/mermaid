@@ -45,7 +45,6 @@
     "ci": "jest src/.*",
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
-    "test:debug": "jest --watch src/dagre-wrapper/markers.spec.js",
     "prepublishOnly": "yarn build && yarn test",
     "prepare": "concurrently \"husky install\" \"yarn build\"",
     "pre-commit": "lint-staged"

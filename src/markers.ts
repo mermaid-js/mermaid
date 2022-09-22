@@ -14,52 +14,17 @@ export const appendMarker = function (g: SVGGraphicsElement, name: string): SVGM
   return g.append('defs').append('marker').attr('id', markerId(g, name));
 };
 
-const isAbsoluteUrl = function () {
-  // @ts-ignore TODO Fix ts errors
-  return getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute;
-};
-
-const absoluteUrl = function () {
-  if (isAbsoluteUrl()) {
-    const location = window.location;
-    const absolute = location.protocol + '//' + location.host + location.pathname + location.search;
-    return absolute.replace(/\(/g, '\\(').replace(/\)/g, '\\)');
-  }
-
-  return '';
-};
-
 /**
- * Get a marker url.
+ * Get the url of a marker.
  *
  * The url will have a unique id based on the given name.
  *
- * @param {SVGPathElement} path Path element using the marker
+ * @param {SVGElement} path En element using the marker
  * @param {string} name Marker name
  * @returns {string} A marker id
  */
-export const markerUrl = function (path: SVGPathElement, name: string): string {
-  return 'url(' + absoluteUrl() + '#' + markerId(path, name) + ')';
-};
-
-/**
- * Returns the diagram id for an element.
- *
- * The id returned is the "id" attribute of the element's SVG node.
- *
- * @param {SVGElement} elem An element
- * @returns {string | null} The diagram id
- */
-const diagramId = function (elem: SVGElement): string {
-  // @ts-ignore TODO Fix ts errors
-  let node = elem && elem.node && elem.node();
-
-  if (node && node.tagName.toLowerCase() !== 'svg') {
-    node = node.nearestViewportElement;
-  }
-
-  // @ts-ignore TODO Fix ts errors
-  return node && node.getAttribute('id');
+export const markerUrl = function (path: SVGElement, name: string): string {
+  return 'url(' + url() + '#' + markerId(path, name) + ')';
 };
 
 /**
@@ -72,11 +37,40 @@ const diagramId = function (elem: SVGElement): string {
  * @returns {string | null} A marker id
  */
 const markerId = function (elem: SVGElement, name: string) {
-  if (name) {
-    return diagramId(elem) ? diagramId(elem) + '-' + name : name;
+  if (!name) {
+    return null;
   }
 
-  return null;
+  return diagramId(elem) ? diagramId(elem) + '-' + name : name;
+};
+
+const absoluteUrl = function () {
+  return window.location.href.replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+};
+
+const url = function () {
+  return urlShouldBeAbsolute() ? absoluteUrl() : '';
+};
+
+const urlShouldBeAbsolute = function () {
+  // @ts-ignore TODO Fix ts errors
+  return getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute;
+};
+
+const diagramId = function (elem: SVGElement): string {
+  // @ts-ignore TODO Fix ts errors
+  let node = elem && elem.node && elem.node();
+
+  while (node && node.tagName && node.tagName.toLowerCase() !== 'svg') {
+    node = node.parentNode;
+
+    if (!node.tagName) {
+      node = null;
+    }
+  }
+
+  // @ts-ignore TODO Fix ts errors
+  return node && node.getAttribute('id');
 };
 
 export default {
