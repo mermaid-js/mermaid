@@ -16,29 +16,12 @@
   <body>
     <pre class="mermaid">
       erDiagram
+      title This is a title
+      accDescription Test a description
 
       CUSTOMER ||--o{ ORDER : places
       ORDER ||--|{ LINE-ITEM : contains
-      ORDER }|..|{ DELIVERY-ADDRESS : uses
-      DELIVERY-ADDRESS }|--|| CUSTOMER : has
-
-      CUSTOMER ||--o{ ORDER : places
-      CUSTOMER {
-          string name
-          string region
-          string custNumber
-          string sector
-      }
-      ORDER ||--|{ LINE-ITEM : contains
-      ORDER {
-          int orderNumber
-          string deliveryAddress
-      }
-      LINE-ITEM {
-          string productCode
-          int quantity
-          float pricePerUnit
-      }
+      CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
 
       DELIVERY-ADDRESS {
       int customerId
