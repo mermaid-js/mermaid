@@ -1,6 +1,6 @@
 {
   "name": "@mermaid-js/mermaid-mindmap",
-  "version": "9.2.0-rc1",
+  "version": "9.2.0-rc2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid-mindmap.core.mjs",
   "module": "dist/mermaid-mindmap.core.mjs",
@@ -59,7 +59,10 @@
     "mermaid": "*",
     "non-layered-tidy-tree-layout": "^2.0.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "concurrently": "^7.4.0",
+    "rimraf": "^3.0.2"
+  },
   "resolutions": {
     "d3": "^7.0.0"
   },
