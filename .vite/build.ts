@@ -2,18 +2,15 @@ import { build, InlineConfig } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
-import { readFileSync } from 'node:fs';
-
+import pkg from '../package.json' assert { type: 'json' };
 type OutputOptions = Exclude<
   Exclude<InlineConfig['build'], undefined>['rollupOptions'],
   undefined
 >['output'];
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const { dependencies } = JSON.parse(
-  readFileSync(resolve(__dirname, '../package.json'), { encoding: 'utf8' })
-);
+const { dependencies } = pkg;
 const watch = process.argv.includes('--watch');
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 interface BuildOptions {
   minify: boolean | 'esbuild';
@@ -23,7 +20,7 @@ interface BuildOptions {
 
 export const getBuildConfig = ({ minify, core, watch }: BuildOptions): InlineConfig => {
   const external = ['require', 'fs', 'path'];
-  let output: OutputOptions = [
+  let output: OutputOptions | OutputOptions[] = [
     {
       name: 'mermaid',
       format: 'esm',
