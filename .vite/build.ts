@@ -20,7 +20,7 @@ interface BuildOptions {
 
 export const getBuildConfig = ({ minify, core, watch }: BuildOptions): InlineConfig => {
   const external = ['require', 'fs', 'path'];
-  let output: OutputOptions | OutputOptions[] = [
+  let output: OutputOptions = [
     {
       name: 'mermaid',
       format: 'esm',
