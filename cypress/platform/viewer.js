@@ -1,5 +1,8 @@
-import { Base64 } from '../../node_modules/js-base64';
 import mermaid2 from '../../packages/mermaid/src/mermaid';
+
+function b64ToUtf8(str) {
+  return decodeURIComponent(escape(window.atob(str)));
+}
 
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
@@ -11,7 +14,7 @@ const contentLoaded = function () {
   if (pos > 0) {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
-    const graphObj = JSON.parse(Base64.decode(graphBase64));
+    const graphObj = JSON.parse(b64ToUtf8(graphBase64));
     if (graphObj.mermaid && graphObj.mermaid.theme === 'dark') {
       document.body.style.background = '#3f3f3f';
     }
@@ -67,7 +70,7 @@ const contentLoadedApi = function () {
   if (pos > 0) {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
-    const graphObj = JSON.parse(Base64.decode(graphBase64));
+    const graphObj = JSON.parse(b64ToUtf8(graphBase64));
     // const graph = 'hello'
     if (Array.isArray(graphObj.code)) {
       const numCodes = graphObj.code.length;
