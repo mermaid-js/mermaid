@@ -12,10 +12,10 @@ async function createServer() {
     appType: 'custom', // don't include Vite's default HTML handling middlewares
   });
 
+  app.use(vite.middlewares);
   app.use(express.static('dist'));
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
-  app.use(vite.middlewares);
 
   app.listen(9000, () => {
     console.log(`Listening on http://localhost:9000`);
