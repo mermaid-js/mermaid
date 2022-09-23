@@ -78,7 +78,8 @@ describe('markers', () => {
       appendMarker(g, 'marker2');
       appendMarker(g, 'marker3');
 
-      expect(g.selectAll('defs').size()).toBe(1);
+      expect(g.selectAll('g defs').size()).toBe(1);
+      expect(g.selectAll('g defs marker').size()).toBe(3);
     });
   });
 });
