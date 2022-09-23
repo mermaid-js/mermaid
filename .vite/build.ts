@@ -3,28 +3,51 @@ import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
 import pkg from '../package.json' assert { type: 'json' };
-import { OutputOptions } from 'vite/node_modules/rollup';
+
 const { dependencies } = pkg;
 const watch = process.argv.includes('--watch');
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
+type OutputOptions = Exclude<
+  Exclude<InlineConfig['build'], undefined>['rollupOptions'],
+  undefined
+>['output'];
+
+const packageOptions = {
+  mermaid: {
+    name: 'mermaid',
+    file: 'mermaid.ts',
+  },
+  'mermaid-mindmap': {
+    name: 'mermaid-mindmap',
+    file: 'registry.ts',
+  },
+};
 
 interface BuildOptions {
   minify: boolean | 'esbuild';
   core?: boolean;
   watch?: boolean;
+  packageName: keyof typeof packageOptions;
 }
 
-export const getBuildConfig = ({ minify, core, watch }: BuildOptions): InlineConfig => {
+export const getBuildConfig = ({
+  minify,
+  core,
+  watch,
+  packageName,
+}: BuildOptions): InlineConfig => {
   const external = ['require', 'fs', 'path'];
-  let output: OutputOptions | OutputOptions[] = [
+  const { name, file } = packageOptions[packageName];
+  let output: OutputOptions = [
     {
-      name: 'mermaid',
+      name,
       format: 'esm',
       sourcemap: true,
       entryFileNames: `[name].esm${minify ? '.min' : ''}.mjs`,
     },
     {
-      name: 'mermaid',
+      name,
       format: 'umd',
       sourcemap: true,
       entryFileNames: `[name]${minify ? '.min' : ''}.js`,
@@ -34,7 +57,7 @@ export const getBuildConfig = ({ minify, core, watch }: BuildOptions): InlineCon
   if (core) {
     external.push(...Object.keys(dependencies));
     output = {
-      name: 'mermaid',
+      name,
       format: 'esm',
       sourcemap: true,
       entryFileNames: `[name].core.mjs`,
@@ -45,11 +68,12 @@ export const getBuildConfig = ({ minify, core, watch }: BuildOptions): InlineCon
     configFile: false,
     build: {
       emptyOutDir: false,
+      outDir: resolve(__dirname, `../packages/${packageName}/dist`),
       lib: {
-        entry: resolve(__dirname, '../src/mermaid.ts'),
-        name: 'mermaid',
+        entry: resolve(__dirname, `../packages/${packageName}/src/${file}`),
+        name,
         // the proper extensions will be added
-        fileName: 'mermaid',
+        fileName: name,
       },
       minify,
       rollupOptions: {
@@ -72,10 +96,23 @@ export const getBuildConfig = ({ minify, core, watch }: BuildOptions): InlineCon
   return config;
 };
 
+const buildPackage = async (packageName: keyof typeof packageOptions) => {
+  return Promise.allSettled([
+    build(getBuildConfig({ minify: false, packageName })),
+    build(getBuildConfig({ minify: 'esbuild', packageName })),
+    build(getBuildConfig({ minify: true, core: true, packageName })),
+  ]);
+};
+
+const main = async () => {
+  const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
+  for (const pkg of packageNames) {
+    await buildPackage(pkg);
+  }
+};
+
 if (watch) {
-  build(getBuildConfig({ minify: false, watch }));
+  build(getBuildConfig({ minify: false, watch, packageName: 'mermaid' }));
 } else {
-  build(getBuildConfig({ minify: false }));
-  build(getBuildConfig({ minify: 'esbuild' }));
-  build(getBuildConfig({ minify: true, core: true }));
+  void main();
 }

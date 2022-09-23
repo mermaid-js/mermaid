@@ -27,7 +27,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build:vite": "ts-node-esm .vite/build.ts",
-    "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
+    "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly",
     "build:watch": "yarn build:code --watch",
     "build": "yarn clean; concurrently \"yarn build:vite\" \"yarn build:types\"",
     "dev": "concurrently \"yarn build:vite --watch\" \"ts-node-esm .vite/server\"",
@@ -122,7 +122,6 @@
     "prettier-plugin-jsdoc": "^0.4.2",
     "remark": "^14.0.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.79.1",
     "start-server-and-test": "^1.12.6",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.3",
