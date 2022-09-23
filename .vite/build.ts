@@ -36,13 +36,17 @@ export const getBuildConfig = ({ minify, core, watch }: BuildOptions): InlineCon
   ];
 
   if (core) {
+    // Core build is used to generate file without bundled dependencies.
+    // This is used by downstream projects to bundle dependencies themselves.
     external.push(...Object.keys(dependencies));
-    output = {
-      name: 'mermaid',
-      format: 'esm',
-      sourcemap: true,
-      entryFileNames: `[name].core.mjs`,
-    };
+    // This needs to be an array. Otherwise vite will build esm & umd with same name and overwrite esm with umd.
+    output = [
+      {
+        format: 'esm',
+        sourcemap: true,
+        entryFileNames: `[name].core.mjs`,
+      },
+    ];
   }
 
   const config: InlineConfig = {
@@ -81,5 +85,5 @@ if (watch) {
 } else {
   build(getBuildConfig({ minify: false }));
   build(getBuildConfig({ minify: 'esbuild' }));
-  build(getBuildConfig({ minify: true, core: true }));
+  build(getBuildConfig({ minify: false, core: true }));
 }
