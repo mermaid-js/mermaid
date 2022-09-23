@@ -2,9 +2,9 @@
   "name": "mermaid",
   "version": "9.2.0-rc2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
-  "main": "dist/mermaid.core.mjs",
-  "module": "dist/mermaid.core.mjs",
-  "types": "dist/mermaid.d.ts",
+  "main": "./dist/mermaid.core.mjs",
+  "module": "./dist/mermaid.core.mjs",
+  "types": "./dist/mermaid.d.ts",
   "type": "module",
   "exports": {
     ".": {
@@ -46,7 +46,6 @@
     "test:watch": "vitest --coverage --watch",
     "prepublishOnly": "yarn build && yarn test",
     "todo-prepare": "concurrently \"husky install\" \"yarn build\"",
-    "prepare": "concurrently \"yarn build\"",
     "pre-commit": "lint-staged"
   },
   "repository": {
