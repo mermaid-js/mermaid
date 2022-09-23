@@ -1,3 +1,4 @@
+// @ts-ignore no @types for jison
 import { Generator } from 'jison';
 import { defineConfig } from 'vitest/config';
 
