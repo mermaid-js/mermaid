@@ -2,11 +2,18 @@ import { build, InlineConfig } from 'vite';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import jisonPlugin from './jisonPlugin.js';
-import pkg from '../package.json' assert { type: 'json' };
-import { OutputOptions } from 'vite/node_modules/rollup';
-const { dependencies } = pkg;
-const watch = process.argv.includes('--watch');
+import { readFileSync } from 'node:fs';
+
+type OutputOptions = Exclude<
+  Exclude<InlineConfig['build'], undefined>['rollupOptions'],
+  undefined
+>['output'];
+
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const { dependencies } = JSON.parse(
+  readFileSync(resolve(__dirname, '../package.json'), { encoding: 'utf8' })
+);
+const watch = process.argv.includes('--watch');
 
 interface BuildOptions {
   minify: boolean | 'esbuild';
@@ -16,7 +23,7 @@ interface BuildOptions {
 
 export const getBuildConfig = ({ minify, core, watch }: BuildOptions): InlineConfig => {
   const external = ['require', 'fs', 'path'];
-  let output: OutputOptions | OutputOptions[] = [
+  let output: OutputOptions = [
     {
       name: 'mermaid',
       format: 'esm',
