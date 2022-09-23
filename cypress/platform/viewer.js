@@ -70,7 +70,7 @@ const contentLoadedApi = function () {
   if (pos > 0) {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
-    const graphObj = JSON.parse(window.btoa(graphBase64));
+    const graphObj = JSON.parse(b64ToUtf8(graphBase64));
     // const graph = 'hello'
     if (Array.isArray(graphObj.code)) {
       const numCodes = graphObj.code.length;
