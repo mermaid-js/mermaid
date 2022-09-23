@@ -1,5 +1,5 @@
 import express from 'express';
-import { build, createServer as createViteServer } from 'vite';
+import { createServer as createViteServer } from 'vite';
 // import { getBuildConfig } from './build';
 
 async function createServer() {

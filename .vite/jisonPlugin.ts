@@ -5,7 +5,7 @@ export default function jison() {
   return {
     name: 'jison',
 
-    transform(src, id) {
+    transform(src: string, id: string) {
       if (fileRegex.test(id)) {
         return {
           code: transformJison(src),

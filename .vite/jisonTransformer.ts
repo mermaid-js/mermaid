@@ -1,6 +1,8 @@
+// @ts-ignore No typings for jison
 import jison from 'jison';
 
-export const transformJison = (src) => {
+export const transformJison = (src: string): string => {
+  // @ts-ignore No typings for jison
   const parser = new jison.Generator(src, {
     moduleType: 'js',
     'token-stack': true,
