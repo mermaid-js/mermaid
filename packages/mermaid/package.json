@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "9.2.0-rc1",
+  "version": "9.2.0-rc2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.mjs",
   "module": "dist/mermaid.core.mjs",
@@ -33,7 +33,7 @@
     "dev": "node .esbuild/serve.cjs",
     "docs:build": "ts-node-esm src/docs.mts",
     "docs:verify": "yarn docs:build --verify",
-    "postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md && prettier --write src/docs/Setup.md",
+    "todo-postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md && prettier --write src/docs/Setup.md",
     "release": "yarn build",
     "lint": "eslint --cache --ignore-path .gitignore . && yarn lint:jison && prettier --check .",
     "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",
@@ -45,7 +45,8 @@
     "test": "yarn lint && vitest run",
     "test:watch": "vitest --coverage --watch",
     "prepublishOnly": "yarn build && yarn test",
-    "prepare": "concurrently \"husky install\" \"yarn build\"",
+    "todo-prepare": "concurrently \"husky install\" \"yarn build\"",
+    "prepare": "concurrently \"yarn build\"",
     "pre-commit": "lint-staged"
   },
   "repository": {

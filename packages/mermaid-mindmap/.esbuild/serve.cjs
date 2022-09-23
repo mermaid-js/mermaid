@@ -14,8 +14,8 @@ const getEntryPointsAndExtensions = (format) => {
   return {
     entryPoints: {
       mermaid: './src/mermaid',
-      e2e: 'cypress/platform/viewer.js',
-      'bundle-test': 'cypress/platform/bundle-test.js',
+      e2e: './cypress/platform/viewer.js',
+      'bundle-test': './cypress/platform/bundle-test.js',
     },
     outExtension: { '.js': format === 'iife' ? '.js' : '.esm.mjs' },
   };

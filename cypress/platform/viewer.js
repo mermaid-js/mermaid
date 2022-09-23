@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64';
-import mermaid2 from '../../src/mermaid';
+import mermaid2 from '../../packages/mermaid/src/mermaid';
 
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
