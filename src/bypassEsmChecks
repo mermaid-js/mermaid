@@ -8,7 +8,7 @@
 # Only tested with "jest-resolve" version 28.1.3.
 
 shouldLoadAsEsm="node_modules/jest-resolve/build/shouldLoadAsEsm.js"
-line_number=87
+line_number=87 # the source at line 71 ends up being at line 87 when distributed.
 
 # The "-i ''" is required for inplace subsitutions on the standard macOS bash.
 # Try just "-i" if you are on another bash and get an error.

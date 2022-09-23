@@ -36,10 +36,10 @@ export const markerUrl = function (elem: SVGElement, name: string): string {
 };
 
 const url = function () {
-  return urlShouldBeAbsolute() ? window.location.href : '';
+  return shouldBeAbsolute() ? window.location.href : '';
 };
 
-const urlShouldBeAbsolute = function () {
+const shouldBeAbsolute = function () {
   // @ts-ignore TODO Fix ts errors
   return getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute;
 };
