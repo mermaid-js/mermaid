@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code.
