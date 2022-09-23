@@ -165,47 +165,7 @@ graph TD
     <pre class="mermaid" style="width: 100%">
         info
     </pre>
-    <pre class="mermaid" style="width: 100%">
-requirementDiagram
-      accTitle: My req Diagram
-      accDescr: My req Diagram Description
 
-    requirement test_req {
-    id: 1
-    text: the test text.
-    risk: high
-    verifymethod: test
-    }
-
-    functionalRequirement test_req2 {
-    id: 1.1
-    text: the second test text.
-    risk: low
-    verifymethod: inspection
-    }
-
-    performanceRequirement test_req3 {
-    id: 1.2
-    text: the third test text.
-    risk: medium
-    verifymethod: demonstration
-    }
-
-    element test_entity {
-    type: simulation
-    }
-
-    element test_entity2 {
-    type: word doc
-    docRef: reqs/test_entity
-    }
-
-
-    test_entity - satisfies -> test_req2
-    test_req - traces -> test_req2
-    test_req - contains -> test_req3
-    test_req <- copies - test_entity2
-    </pre>
     <pre class="mermaid" style="width: 100%">
 gantt
     dateFormat  YYYY-MM-DD
@@ -320,29 +280,7 @@ flowchart TD
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
     </pre>
-    <pre class="mermaid" style="width: 100%">
-        classDiagram
-          Animal "1" <|-- Duck
-          Animal <|-- Fish
-          Animal <--o Zebra
-          Animal : +int age
-          Animal : +String gender
-          Animal: +isMammal()
-          Animal: +mate()
-          class Duck{
-            +String beakColor
-            +swim()
-            +quack()
-          }
-          class Fish{
-            -int sizeInFeet
-            -canEat()
-          }
-          class Zebra{
-            +bool is_wild
-            +run()
-          }
-    </pre>
+
     <pre class="mermaid" style="width: 100%">
         erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
@@ -359,7 +297,9 @@ flowchart TD
     }
     </pre>
 
-    <script src="./mermaid.js"></script>
+    <!-- <script src="./mermaid.js"></script> -->
+    <script src="./packages/mermaid-mindmap/dist/mermaid-mindmap.js"></script>
+    <script src="./packages/mermaid/dist/mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);

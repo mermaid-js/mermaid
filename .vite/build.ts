@@ -20,6 +20,10 @@ const packageOptions = {
   },
   'mermaid-mindmap': {
     name: 'mermaid-mindmap',
+    file: 'diagram.ts',
+  },
+  'mermaid-mindmap-detector': {
+    name: 'mermaid-mindmap-detector',
     file: 'registry.ts',
   },
 };

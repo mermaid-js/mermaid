@@ -1,6 +1,6 @@
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
- * functionality and to render the diagrams to svg code.
+ * functionality and to render the diagrams to svg code!
  */
 import { MermaidConfig } from './config.type';
 import { log } from './logger';
@@ -210,6 +210,8 @@ const mermaid: {
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
+  // Array of functions to use for detecting diagram types
+  detectors: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 } = {
   startOnLoad: true,
   diagrams: {},
@@ -222,6 +224,7 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
+  detectors: [],
 };
 
 export default mermaid;

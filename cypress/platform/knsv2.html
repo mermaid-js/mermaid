@@ -45,22 +45,14 @@
   </head>
   <body>
     <div>Security check</div>
-    <div class="flex">
-      <pre id="diagram" class="mermaid">
-    flowchart TD
-    A[myClass1] --> B[default] & C[default]
-    B[default] & C[default] --> D[myClass2]
-    classDef default stroke-width:2px,fill:none,stroke:silver
-    classDef node color:red
-    classDef myClass1 color:#0000ff
-    classDef myClass2 stroke:#0000ff,fill:#ccccff
-    class A myClass1
-    class D myClass2
-  </pre
-      >
-      <div id="res" class=""></div>
-    </div>
-    <script src="./mermaid.js"></script>
+    <pre id="diagram" class="mermaid">
+        mindmap
+          root
+            ch1
+            ch2
+    </pre>
+    <script src="./packages/mermaid-mindmap/dist/mermaid-mindmap.js"></script>
+    <script src="./packages/mermaid/dist/mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
