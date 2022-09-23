@@ -4,47 +4,7 @@
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
   </head>
 
-  <style>
-    #L1 rect {
-      fill: pink !important;
-    }
-    #L2 rect {
-      fill: lightgreen !important;
-    }
-    #L3 rect {
-      fill: lightblue !important;
-    }
-  </style>
-
   <body>
-    <pre class="mermaid">
-      graph
-
-      subgraph L1
-        1
-      end
-
-      subgraph L2
-        2a
-        2b
-        2c
-      end
-      
-      subgraph L3
-        3a
-        3b
-        3c
-        3d
-      end
-      
-      1 --> 2a
-      1 --> 2b
-      1 --> 2c
-      2a --> 3a
-      2a --> 3b
-      2b --> 3c
-      2c --> 3d
-    </pre>
     <h2>graph</h2>
     <pre class="mermaid">
       %%{init:{"theme":"base", "themeVariables": {"lineColor":"red"}}}%%
