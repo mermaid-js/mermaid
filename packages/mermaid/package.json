@@ -46,7 +46,6 @@
     "test:watch": "vitest --coverage --watch",
     "prepublishOnly": "yarn build && yarn test",
     "todo-prepare": "concurrently \"husky install\" \"yarn build\"",
-    "prepare": "concurrently \"yarn build\"",
     "pre-commit": "lint-staged"
   },
   "repository": {

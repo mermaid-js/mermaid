@@ -20,7 +20,6 @@
   ],
   "scripts": {
     "clean": "rimraf dist",
-    "build:code": "node .esbuild/esbuild.cjs",
     "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
     "build:watch": "yarn build:code --watch",
     "build:esbuild": "concurrently \"yarn build:code\" \"yarn build:types\"",

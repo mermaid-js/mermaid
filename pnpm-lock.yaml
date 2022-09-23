@@ -32,7 +32,6 @@ importers:
       dagre-d3: ^0.6.4
       documentation: 13.2.0
       dompurify: 2.4.0
-      esbuild: ^0.15.8
       eslint: ^8.23.1
       eslint-config-prettier: ^8.5.0
       eslint-plugin-cypress: ^2.12.1
@@ -48,7 +47,6 @@ importers:
       husky: ^8.0.0
       identity-obj-proxy: ^3.0.0
       jison: ^0.4.18
-      js-base64: 3.7.2
       jsdom: ^20.0.0
       khroma: ^2.0.0
       lint-staged: ^13.0.0
@@ -102,7 +100,6 @@ importers:
       cypress: 10.8.0
       cypress-image-snapshot: 4.0.1_cypress@10.8.0+jest@26.6.3
       documentation: 13.2.0
-      esbuild: 0.15.8
       eslint: 8.23.1
       eslint-config-prettier: 8.5.0_eslint@8.23.1
       eslint-plugin-cypress: 2.12.1_eslint@8.23.1
@@ -116,7 +113,6 @@ importers:
       husky: 8.0.1
       identity-obj-proxy: 3.0.0
       jison: 0.4.18
-      js-base64: 3.7.2
       jsdom: 20.0.0
       lint-staged: 13.0.3
       moment: 2.29.4
@@ -262,7 +258,7 @@ importers:
       '@braintree/sanitize-url': ^6.0.0
       concurrently: ^7.4.0
       d3: ^7.0.0
-      mermaid: '*'
+      mermaid: workspace:*
       non-layered-tidy-tree-layout: ^2.0.2
       rimraf: ^3.0.2
     dependencies:

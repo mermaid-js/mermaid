@@ -44,13 +44,13 @@ export const getBuildConfig = ({
       name,
       format: 'esm',
       sourcemap: true,
-      entryFileNames: `[name].esm${minify ? '.min' : ''}.mjs`,
+      entryFileNames: `${name}.esm${minify ? '.min' : ''}.mjs`,
     },
     {
       name,
       format: 'umd',
       sourcemap: true,
-      entryFileNames: `[name]${minify ? '.min' : ''}.js`,
+      entryFileNames: `${name}${minify ? '.min' : ''}.js`,
     },
   ];
 
@@ -61,9 +61,10 @@ export const getBuildConfig = ({
     // This needs to be an array. Otherwise vite will build esm & umd with same name and overwrite esm with umd.
     output = [
       {
+        name,
         format: 'esm',
         sourcemap: true,
-        entryFileNames: `[name].core.mjs`,
+        entryFileNames: `${name}.core.mjs`,
       },
     ];
   }
