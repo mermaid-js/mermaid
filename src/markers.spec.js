@@ -1,4 +1,4 @@
-const { select } = jest.requireActual('d3');
+const { select, selectAll } = jest.requireActual('d3');
 
 import { appendMarker, markerUrl } from './markers';
 import { setSiteConfig } from './config';
@@ -53,24 +53,32 @@ describe('markers', () => {
         <g>
       </svg>
     `;
-
       const g = select('g');
-      appendMarker(g, 'marker');
-      const marker = select('g > defs > marker');
 
-      expect(marker.attr('id')).toBe('svg-1-marker');
+      appendMarker(g, 'marker1');
+      const marker1 = appendMarker(g, 'marker1');
+
+      expect(marker1.attr('id')).toBe('svg-1-marker1');
     });
 
     it('should just use the marker name for the id if no parent SVG found', () => {
-      document.body.innerHTML = `
-        <g>
-    `;
-
+      document.body.innerHTML = '<g>';
       const g = select('g');
-      appendMarker(g, 'marker');
-      const marker = select('g > defs > marker');
 
-      expect(marker.attr('id')).toBe('marker');
+      const marker1 = appendMarker(g, 'marker1');
+
+      expect(marker1.attr('id')).toBe('marker1');
+    });
+
+    it('should place all markers in the same <defs> element', () => {
+      document.body.innerHTML = '<g>';
+      const g = select('g');
+
+      appendMarker(g, 'marker1');
+      appendMarker(g, 'marker2');
+      appendMarker(g, 'marker3');
+
+      expect(g.selectAll('defs').size()).toBe(1);
     });
   });
 });

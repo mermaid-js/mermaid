@@ -13,7 +13,13 @@ import { getConfig } from './config';
  */
 export const appendMarker = function (g: SVGGraphicsElement, name: string): SVGMarkerElement {
   // @ts-ignore TODO Fix ts errors
-  return g.append('defs').append('marker').attr('id', markerId(g, name));
+  let defs = g.select('defs');
+
+  if (defs.empty()) {
+    defs = g.append('defs');
+  }
+
+  return defs.append('marker').attr('id', markerId(g, name));
 };
 
 /**
@@ -29,6 +35,15 @@ export const markerUrl = function (elem: SVGElement, name: string): string {
   return 'url(' + url() + '#' + markerId(elem, name) + ')';
 };
 
+const url = function () {
+  return urlShouldBeAbsolute() ? window.location.href : '';
+};
+
+const urlShouldBeAbsolute = function () {
+  // @ts-ignore TODO Fix ts errors
+  return getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute;
+};
+
 const markerId = function (elem: SVGElement, name: string) {
   return diagramId(elem) ? diagramId(elem) + '-' + name : name;
 };
@@ -37,29 +52,20 @@ const diagramId = function (elem: SVGElement): string | null {
   // @ts-ignore TODO Fix ts errors
   let node = elem.node();
 
-  while (traverse(node)) {
-    node = node.parentNode;
-
+  while (tagName(node) !== 'svg') {
     // Happens when we reach the Document object
-    if (!node.tagName) {
+    if (!node?.tagName) {
       return null;
     }
+
+    node = node.parentNode;
   }
 
-  return node && node.getAttribute('id');
+  return node?.getAttribute('id');
 };
 
-const traverse = function (node: any): boolean {
-  return node && node.tagName && node.tagName.toLowerCase() !== 'svg';
-};
-
-const url = function () {
-  return urlShouldBeAbsolute() ? window.location.href : '';
-};
-
-const urlShouldBeAbsolute = function () {
-  // @ts-ignore TODO Fix ts errors
-  return getConfig().flowchart.arrowMarkerAbsolute || getConfig().state.arrowMarkerAbsolute;
+const tagName = function (node: any): string | null {
+  return node?.tagName?.toLowerCase();
 };
 
 export default {
