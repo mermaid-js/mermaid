@@ -100,28 +100,6 @@ const breakToPlaceholder = (s: string): string => {
 };
 
 /**
- * Gets the current URL
- *
- * @param {boolean} useAbsolute Whether to return the absolute URL or not
- * @returns {string} The current URL
- */
-const getUrl = (useAbsolute: boolean): string => {
-  let url = '';
-  if (useAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replaceAll(/\(/g, '\\(');
-    url = url.replaceAll(/\)/g, '\\)');
-  }
-
-  return url;
-};
-
-/**
  * Converts a string/boolean into a boolean
  *
  * @param {string | boolean} val String or boolean to convert
@@ -161,6 +139,5 @@ export default {
   splitBreaks,
   lineBreakRegex,
   removeScript,
-  getUrl,
   evaluate,
 };

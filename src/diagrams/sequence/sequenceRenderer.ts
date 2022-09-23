@@ -409,18 +409,6 @@ const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
     line.attr('class', 'messageLine0');
   }
 
-  let url = '';
-  if (conf.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
-  }
-
   line.attr('stroke-width', 2);
   line.attr('stroke', 'none'); // handled by theme/css anyway
   line.style('fill', 'none'); // remove any fill colour
