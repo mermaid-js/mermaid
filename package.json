@@ -27,7 +27,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build:vite": "ts-node-esm --transpileOnly --project=.vite/tsconfig.json .vite/build.ts",
-    "build:types": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly",
+    "build:types": "concurrently \"tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly\" \"tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly\"",
     "build:watch": "yarn build:code --watch",
     "build": "yarn clean; concurrently \"yarn build:vite\" \"yarn build:types\"",
     "dev": "concurrently \"yarn build:vite --watch\" \"ts-node-esm .vite/server\"",
