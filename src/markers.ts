@@ -33,19 +33,24 @@ const markerId = function (elem: SVGElement, name: string) {
   return diagramId(elem) ? diagramId(elem) + '-' + name : name;
 };
 
-const diagramId = function (elem: SVGElement): string {
+const diagramId = function (elem: SVGElement): string | null {
   // @ts-ignore TODO Fix ts errors
-  let node = elem && elem.node && elem.node();
+  let node = elem.node();
 
-  while (node && node.tagName && node.tagName.toLowerCase() !== 'svg') {
+  while (traverse(node)) {
     node = node.parentNode;
 
+    // Happens when we reach the Document object
     if (!node.tagName) {
-      node = null;
+      return null;
     }
   }
 
   return node && node.getAttribute('id');
+};
+
+const traverse = function (node: any): boolean {
+  return node && node.tagName && node.tagName.toLowerCase() !== 'svg';
 };
 
 const url = function () {
