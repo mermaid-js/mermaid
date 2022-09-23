@@ -26,7 +26,6 @@
   "scripts": {
     "clean": "rimraf dist",
     "build:vite": "ts-node-esm .vite/build.ts",
-    "build:esbuild": "node .esbuild/esbuild.cjs",
     "build:types": "tsc -p ./tsconfig.json --emitDeclarationOnly",
     "build:watch": "yarn build:code --watch",
     "build": "yarn clean; concurrently \"yarn build:vite\" \"yarn build:types\"",
