@@ -1,6 +1,6 @@
 const { select } = jest.requireActual('d3');
 
-import { markerUrl } from './markers';
+import { appendMarker, markerUrl } from './markers';
 import { setSiteConfig } from './config';
 
 describe('markers', () => {
@@ -47,15 +47,30 @@ describe('markers', () => {
   });
 
   describe('appendMarker()', () => {
-    it('should add a marker', () => {
+    it('should prefix the marker id with the id of its parent SVG', () => {
       document.body.innerHTML = `
       <svg id="svg-1">
-        <g id="g">
-        <svg id="svg-2">
-          <text id="b"/>
-        </svg>
+        <g>
       </svg>
     `;
+
+      const g = select('g');
+      appendMarker(g, 'marker');
+      const marker = select('g > defs > marker');
+
+      expect(marker.attr('id')).toBe('svg-1-marker');
+    });
+
+    it('should just use the marker name for the id if no parent SVG found', () => {
+      document.body.innerHTML = `
+        <g>
+    `;
+
+      const g = select('g');
+      appendMarker(g, 'marker');
+      const marker = select('g > defs > marker');
+
+      expect(marker.attr('id')).toBe('marker');
     });
   });
 });
