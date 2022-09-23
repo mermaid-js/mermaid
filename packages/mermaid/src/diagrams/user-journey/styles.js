@@ -132,8 +132,6 @@ const getStyles = (options) =>
   .actor-5 {
     ${options.actor5 ? `fill: ${options.actor5}` : ''};
   }
-
-  }
 `;
 
 export default getStyles;

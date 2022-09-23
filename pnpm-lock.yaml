@@ -61,11 +61,13 @@ importers:
       prettier-plugin-jsdoc: ^0.4.2
       remark: ^14.0.2
       rimraf: ^3.0.2
+      rollup: ^2.79.1
       start-server-and-test: ^1.12.6
       stylis: ^4.1.2
       ts-node: ^10.9.1
       typescript: ^4.8.3
       unist-util-flatmap: ^1.0.0
+      vite: ^3.0.9
       vitest: ^0.23.1
     dependencies:
       '@braintree/sanitize-url': 6.0.0
@@ -124,10 +126,12 @@ importers:
       prettier-plugin-jsdoc: 0.4.2_prettier@2.7.1
       remark: 14.0.2
       rimraf: 3.0.2
+      rollup: 2.79.1
       start-server-and-test: 1.14.0
       ts-node: 10.9.1_typescript@4.8.3
       typescript: 4.8.3
       unist-util-flatmap: 1.0.0
+      vite: 3.1.3
       vitest: 0.23.4_y2hohvmcqnhseytaw4yjcnsnkm
 
   packages/mermaid:
@@ -9472,6 +9476,14 @@ packages:
 
   /rollup/2.78.1:
     resolution: {integrity: sha512-VeeCgtGi4P+o9hIg+xz4qQpRl6R401LWEXBmxYKOV4zlF82lyhgh2hTZnheFUbANE8l2A41F458iwj2vEYaXJg==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /rollup/2.79.1:
+    resolution: {integrity: sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:

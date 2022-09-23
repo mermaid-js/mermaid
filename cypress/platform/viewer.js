@@ -1,4 +1,4 @@
-import { Base64 } from 'js-base64';
+import { Base64 } from '../../node_modules/js-base64';
 import mermaid2 from '../../packages/mermaid/src/mermaid';
 
 /**
