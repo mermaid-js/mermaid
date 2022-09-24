@@ -1,13 +1,1 @@
-@media (min-width: 1440px) {
-  .VPDoc:not(.has-sidebar) .container[data-v-10119189] {
-    max-width: 100%;
-  }
-
-  .VPDoc.has-aside .content-container[data-v-10119189] {
-    max-width: 100%;
-  }
-}
-
-:root {
-  --vp-layout-max-width: 100%;
-}
+Use this file to add custom css

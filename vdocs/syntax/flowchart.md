@@ -637,12 +637,20 @@ It is possible to add icons from fontawesome.
 
 The icons are accessed via the syntax fa:#icon class name#.
 
-```mermaid-example
+```mmd
 flowchart TD
     B["fab:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
-    B-->D(fa:fa-spinner);
+    B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
+```
+
+```mermaid
+flowchart TD
+    B[<img class='fab' src='https://raw.githubusercontent.com/FortAwesome/Font-Awesome/afecf2af5d897b763e5e8e28d46aad2f710ccad6/svgs/brands/twitter.svg'> for peace .]
+    B-->C[<img class='fab' src='https://raw.githubusercontent.com/FortAwesome/Font-Awesome/afecf2af5d897b763e5e8e28d46aad2f710ccad6/svgs/solid/ban.svg'> forbidden .]
+    B-->D(<img class='fab' src='https://raw.githubusercontent.com/FortAwesome/Font-Awesome/afecf2af5d897b763e5e8e28d46aad2f710ccad6/svgs/solid/spinner.svg'> .)
+    B-->E(A <img class='fab' src='https://raw.githubusercontent.com/FortAwesome/Font-Awesome/afecf2af5d897b763e5e8e28d46aad2f710ccad6/svgs/solid/camera-retro.svg'> perhaps? .)
 ```
 
 ?> Mermaid is now only compatible with Font Awesome versions 4 and 5. Check that you are using the correct version of Font Awesome.
@@ -675,3 +683,17 @@ mermaid.flowchartConfig = {
     width: 100%
 }
 ```
+
+<style>
+.fa, .fab, .fal, .far, .fas {
+    width: 16px;
+    height: 16px;
+    filter: opacity(0.5);
+}
+
+.dark .fa, .dark .fab, .dark .fal, .dark .far, .dark .fas {
+    width: 16px;
+    height: 16px;
+    filter: invert(1) opacity(0.5);
+}
+</style>

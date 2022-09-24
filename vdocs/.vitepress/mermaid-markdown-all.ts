@@ -1,5 +1,5 @@
 import { MermaidMarkdown } from 'vitepress-plugin-mermaid';
-const shiki = require('shiki');
+import shiki from 'shiki';
 
 export default {
   config: async (md) => {

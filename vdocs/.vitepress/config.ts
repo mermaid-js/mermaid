@@ -1,5 +1,5 @@
 import { version } from '../../package.json';
-import MermaidMarkdown from './mermaid-markdown-all';
+import ExampleMarkdown from './mermaid-markdown-all';
 import { defineConfig } from 'vitepress';
 
 export default defineConfig({
@@ -7,7 +7,7 @@ export default defineConfig({
   title: 'Mermaid',
   description: 'Create diagrams and visualizations using text and code.',
   base: '/mermaid-docs/',
-  markdown: MermaidMarkdown,
+  markdown: ExampleMarkdown,
   themeConfig: {
     nav: nav(),
 
