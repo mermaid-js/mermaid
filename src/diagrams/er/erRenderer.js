@@ -1,7 +1,5 @@
 import graphlib from 'graphlib';
 import { line, curveBasis, select } from 'd3';
-// import erDb from './erDb';
-// import erParser from './parser/erDiagram';
 import dagre from 'dagre';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
@@ -31,8 +29,10 @@ export const setConf = function (cnf) {
  *
  * @param groupNode The svg group node for the entity
  * @param entityTextNode The svg node for the entity label text
- * @param attributes An array of attributes defined for the entity (each attribute has a type and a name)
- * @returns {object} The bounding box of the entity, after attributes have been added. The bounding box has a .width and .height
+ * @param attributes An array of attributes defined for the entity (each attribute has a type and a
+ *   name)
+ * @returns {object} The bounding box of the entity, after attributes have been added. The bounding
+ *   box has a .width and .height
  */
 const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const heightPadding = conf.entityPadding / 3; // Padding internal to attribute boxes
@@ -288,7 +288,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       heightOffset += attributeNode.height + heightPadding * 2;
 
       // Flip the attribute style for row banding
-      attribStyle = attribStyle == 'attributeBoxOdd' ? 'attributeBoxEven' : 'attributeBoxOdd';
+      attribStyle = attribStyle === 'attributeBoxOdd' ? 'attributeBoxEven' : 'attributeBoxOdd';
     });
   } else {
     // Ensure the entity box is a decent size without any attributes
@@ -382,9 +382,16 @@ const adjustEntities = function (svgNode, graph) {
         );
     }
   });
-  return;
 };
 
+/**
+ * Construct a name for an edge based on the names of the 2 entities and the role (relationship)
+ * between them. Remove any spaces from it
+ *
+ * @param rel - A (parsed) relationship (e.g. one of the objects in the list returned by
+ *   erDb.getRelationships)
+ * @returns {string}
+ */
 const getEdgeName = function (rel) {
   return (rel.entityA + rel.roleA + rel.entityB).replace(/\s/g, '');
 };
@@ -393,7 +400,7 @@ const getEdgeName = function (rel) {
  * Add each relationship to the graph
  *
  * @param relationships The relationships to be added
- * @param g The graph
+ * @param {Graph} g The graph
  * @returns {Array} The array of relationships
  */
 const addRelationships = function (relationships, g) {
@@ -535,8 +542,6 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .attr('height', labelBBox.height)
     .attr('fill', 'white')
     .attr('fill-opacity', '85%');
-
-  return;
 };
 
 /**
@@ -552,7 +557,7 @@ export const draw = function (text, id, _version, diagObj) {
   log.info('Drawing ER diagram');
   //  diag.db.clear();
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -581,7 +586,7 @@ export const draw = function (text, id, _version, diagObj) {
   // 1. Create all the entities in the svg node at 0,0, but with the correct dimensions (allowing for text content)
   // 2. Make sure they are all added to the graph
   // 3. Add all the edges (relationships) to the graph as well
-  // 4. Let dagre do its magic to layout the graph.  This assigns:
+  // 4. Let dagre do its magic to lay out the graph.  This assigns:
   //    - the centre co-ordinates for each node, bearing in mind the dimensions and edge relationships
   //    - the path co-ordinates for each edge
   //    But it has no impact on the svg child nodes - the diagram remains with every entity rooted at 0,0
