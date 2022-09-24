@@ -66,6 +66,7 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
+    "@types/uuid": "^8.3.4",
     "d3": "^7.0.0",
     "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
@@ -76,7 +77,8 @@
     "lodash": "^4.17.21",
     "moment-mini": "^2.24.0",
     "non-layered-tidy-tree-layout": "^2.0.2",
-    "stylis": "^4.1.2"
+    "stylis": "^4.1.2",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.25.7",
