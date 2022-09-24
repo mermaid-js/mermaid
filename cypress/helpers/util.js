@@ -1,4 +1,6 @@
-import { Base64 } from 'js-base64';
+const utf8ToB64 = (str) => {
+  return window.btoa(unescape(encodeURIComponent(str)));
+};
 
 export const mermaidUrl = (graphStr, options, api) => {
   const obj = {
@@ -6,7 +8,7 @@ export const mermaidUrl = (graphStr, options, api) => {
     mermaid: options,
   };
   const objStr = JSON.stringify(obj);
-  let url = 'http://localhost:9000/e2e.html?graph=' + Base64.encodeURI(objStr);
+  let url = 'http://localhost:9000/e2e.html?graph=' + utf8ToB64(objStr);
   if (api) {
     url = 'http://localhost:9000/xss.html?graph=' + graphStr;
   }
