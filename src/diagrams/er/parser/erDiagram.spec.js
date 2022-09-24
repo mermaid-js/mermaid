@@ -31,29 +31,10 @@ describe('when parsing ER diagram it...', function () {
       }).toThrow();
     });
     describe('has non A-Za-z0-9_- chars', function () {
-      const allowed = [
-        '!',
-        '@',
-        '#',
-        '$',
-        '^',
-        '&',
-        '*',
-        '(',
-        ')',
-        '-',
-        '_',
-        '=',
-        '+',
-        '[',
-        ']',
-        '{',
-        '}',
-        ';',
-        ':',
-        '.',
-        '?',
-      ];
+      // these were entered using the Mac keyboard utility.
+      const chars =
+        "~ ` ! @ # $ ^ & * ( ) - _ = + [ ] { } | / ; : ' . ? ¡ ⁄ ™ € £ ‹ ¢ › ∞ ﬁ § ‡ • ° ª · º ‚ ≠ ± œ Œ ∑ „ ® † ˇ ¥ Á ¨ ˆ ˆ Ø π ∏ “ « » å Å ß Í ∂ Î ƒ Ï © ˙ Ó ∆ Ô ˚  ¬ Ò … Ú æ Æ Ω ¸ ≈ π ˛ ç Ç √ ◊ ∫ ı ˜ µ Â ≤ ¯ ≥ ˘ ÷ ¿";
+      const allowed = chars.split(' ');
 
       allowed.forEach((allowedChar) => {
         const singleOccurrence = `Blo${allowedChar}rf`;
@@ -118,14 +99,39 @@ describe('when parsing ER diagram it...', function () {
         expect(entities.hasOwnProperty(name)).toBe(false);
       }).toThrow();
     });
+    it('cannot contain \\ because it could start and escape code', function () {
+      expect(() => {
+        erDiagram.parser.parse(`erDiagram\n "Blo\\rf"\n`);
+        const entities = erDb.getEntities();
+        expect(entities.hasOwnProperty(name)).toBe(false);
+      }).toThrow();
+    });
 
-    it('can contain - _ ', function () {
-      const hyphens = 'DUCK-BILLED-PLATYPUS';
-      const underscores = 'CHARACTER_SET';
-      erDiagram.parser.parse(`erDiagram\n${hyphens}\n${underscores}\n`);
+    it('cannot newline, backspace, or vertical characters', function () {
+      const disallowed = ['\n', '\r', '\b', '\v'];
+      disallowed.forEach((badChar) => {
+        const badName = `Blo${badChar}rf`;
+        expect(() => {
+          erDiagram.parser.parse(`erDiagram\n "${badName}"\n`);
+          const entities = erDb.getEntities();
+          expect(entities.hasOwnProperty(badName)).toBe(false);
+        }).toThrow();
+      });
+    });
+
+    // skip this: jison cannot handle non-english letters
+    it.skip('[skipped test] can contain àáâäæãåā', function () {
+      const beyondEnglishName = 'DUCK-àáâäæãåā';
+      erDiagram.parser.parse(`erDiagram\n${beyondEnglishName}\n`);
       const entities = erDb.getEntities();
-      expect(entities.hasOwnProperty('DUCK-BILLED-PLATYPUS')).toBe(true);
-      expect(entities.hasOwnProperty('CHARACTER_SET')).toBe(true);
+      expect(entities.hasOwnProperty(beyondEnglishName)).toBe(true);
+    });
+
+    it('can contain - _ without needing ""', function () {
+      const hyphensUnderscore = 'DUCK-BILLED_PLATYPUS';
+      erDiagram.parser.parse(`erDiagram\n${hyphensUnderscore}\n`);
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(hyphensUnderscore)).toBe(true);
     });
   });
 

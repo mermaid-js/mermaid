@@ -24,7 +24,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 [\n]+                           return 'NEWLINE';
 \s+                             /* skip whitespace */
 [\s]+                           return 'SPACE';
-\"[A-Za-z0-9\!\@\#\$\^\&\*\(\)\-_\=\+\[\]\{\};:\.\?]+\"     return 'ENTITY_NAME';
+\"[^"%\r\n\v\b\\]+\"            return 'ENTITY_NAME';
 \"[^"]*\"                       return 'WORD';
 "erDiagram"                     return 'ER_DIAGRAM';
 "{"                             { this.begin("block"); return 'BLOCK_START'; }
