@@ -7,6 +7,7 @@
   "module": "dist/mermaid.core.mjs",
   "types": "dist/mermaid.d.ts",
   "type": "module",
+  "packageManager": "pnpm@7.12.2",
   "exports": {
     ".": {
       "require": "./dist/mermaid.min.js",
