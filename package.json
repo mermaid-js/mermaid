@@ -7,6 +7,7 @@
   "module": "dist/mermaid.core.mjs",
   "types": "dist/mermaid.d.ts",
   "type": "module",
+  "packageManager": "pnpm@7.12.2",
   "exports": {
     ".": {
       "require": "./dist/mermaid.min.js",
@@ -31,13 +32,13 @@
     "build:watch": "pnpm build:code --watch",
     "build": "pnpm clean; concurrently \"pnpm build:vite\" \"pnpm build:types\"",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server\"",
-    "docs:build": "ts-node-esm --transpileOnly src/docs.mts",
+    "docs:build": "ts-node-esm --transpileOnly packages/mermaid/src/docs.mts",
     "docs:verify": "pnpm docs:build --verify",
     "todo-postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md && prettier --write src/docs/Setup.md",
     "release": "pnpm build",
     "lint": "eslint --cache --ignore-path .gitignore . && pnpm lint:jison && prettier --check .",
     "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",
-    "lint:jison": "ts-node-esm --transpileOnly src/jison/lint.mts",
+    "lint:jison": "ts-node-esm --transpileOnly packages/mermaid/src/jison/lint.mts",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",

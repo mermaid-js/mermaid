@@ -16,29 +16,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/cache@v3
-        id: yarn-and-build-cache
-        with:
-          path: |
-            ~/.cache/Cypress
-            build
-            node_modules
-          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node_modules-build-
+      - uses: pnpm/action-setup@v2
+        # uses version from "packageManager" field in package.json
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: yarn
+          cache: pnpm
           node-version: ${{ matrix.node-version }}
 
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v3
+        uses: cypress-io/github-action@v4
         with:
-          start: yarn dev
+          start: pnpm run dev
           wait-on: 'http://localhost:9000'
           record: true
           headless: true
