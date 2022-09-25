@@ -1,12 +1,14 @@
 import { version } from '../../package.json';
 import ExampleMarkdown from './mermaid-markdown-all';
 import { defineConfig } from 'vitepress';
+import { update } from 'lodash';
 
 export default defineConfig({
   lang: 'en-US',
   title: 'Mermaid',
   description: 'Create diagrams and visualizations using text and code.',
   base: '/mermaid-docs/',
+  lastUpdated: true,
   markdown: ExampleMarkdown,
   themeConfig: {
     nav: nav(),
@@ -19,6 +21,19 @@ export default defineConfig({
       // "/misc/": sidebarMisc(),
       // "/community/": sidebarCommunity(),
     },
+
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2014-present Knut Sveidqvist',
+    },
+
+    // TODO: update to mermaid
+    editLink: {
+      pattern: 'https://github.com/emersonbottero/mermaid/edit/develop/vdocs/:path',
+      text: 'Edit this page on GitHub',
+    },
+
+    socialLinks: [{ icon: 'github', link: 'https://github.com/emersonbottero/mermaid' }],
   },
 });
 
