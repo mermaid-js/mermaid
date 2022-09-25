@@ -22,11 +22,6 @@ export default defineConfig({
       // "/community/": sidebarCommunity(),
     },
 
-    footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2014-present Knut Sveidqvist',
-    },
-
     // TODO: update to mermaid
     editLink: {
       pattern: 'https://github.com/emersonbottero/mermaid/edit/develop/vdocs/:path',
