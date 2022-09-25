@@ -32,7 +32,7 @@
     "build:watch": "pnpm build:code --watch",
     "build": "pnpm clean; concurrently \"pnpm build:vite\" \"pnpm build:types\"",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server\"",
-    "docs:build": "ts-node-esm --transpileOnly src/docs.mts",
+    "docs:build": "ts-node-esm --transpileOnly packages/mermaid/src/docs.mts",
     "docs:verify": "pnpm docs:build --verify",
     "todo-postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md && prettier --write src/docs/Setup.md",
     "release": "pnpm build",
