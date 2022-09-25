@@ -20,26 +20,32 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: pnpm/action-setup@v2
+        # uses version from "packageManager" field in package.json
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: yarn
+          cache: pnpm
           node-version: ${{ matrix.node-version }}
-
-      - name: Install Yarn
-        run: npm i yarn --global
 
       - name: Install Packages
         run: |
-          yarn install --frozen-lockfile
+          pnpm install --frozen-lockfile
         env:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Run Build
-        run: yarn build
+        run: pnpm run build
 
-      - name: Upload Build as Artifact
+      - name: Upload Mermaid Build as Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: dist
-          path: dist
+          name: mermaid-build
+          path: packages/mermaid/dist
+
+      - name: Upload Mermaid Mindmap Build as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mermaid-mindmap-build
+          path: packages/mermaid-mindmap/dist
