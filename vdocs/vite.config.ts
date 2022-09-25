@@ -1,15 +1,15 @@
-import { node } from 'stylis';
 import { defineConfig } from 'vite';
 import path from 'path';
-// import { SearchPlugin } from 'vitepress-plugin-search';
+import { SearchPlugin } from 'vitepress-plugin-search';
 
 const virtualModuleId = 'virtual:mermaid-config';
 const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
 export default defineConfig({
   plugins: [
-    //  SearchPlugin(),
+    SearchPlugin(),
     {
+      // TODO: will be fixed in the next vitepress release.
       name: 'fix-virtual',
 
       async resolveId(id) {

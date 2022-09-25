@@ -40,15 +40,15 @@ mermaidAPI.initialize({
 When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array.
 
 ```mmd
-%%{init: {'theme':'base'}}%%
+%%{init: {'theme':'neutral'}}%%
   graph TD
     a --> b
 ```
 
-Here is an example of how `%%init%%` can set the theme to 'base', this assumes that `themeVariables` are set to default:
+Here is an example of how `%%init%%` can set the theme to 'neutral', this assumes that `themeVariables` are set to default:
 
 ```mermaid-example
-%%{init: {'theme':'base'}}%%
+%%{init: {'theme':'neutral'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -251,12 +251,12 @@ The Theming Engine does not admit color codes and will only accept proper color 
 # Examples:
 
 When adjusting a theme it might be helpful to look at how your preferred theme goes with the diagrams, to evaluate whether everything is visible and looks good.
-In the following examples, the directive `init` is used, with the `theme` being declared as `base`. For more information on using directives, read the documentation for [Version 8.6.0](/8.6.0_docs.md)
+In the following examples, the directive `init` is used, with the `theme` being declared as `neutral`. For more information on using directives, read the documentation for [Version 8.6.0](/8.6.0_docs.md)
 
 ### Flowchart
 
 ```mmd
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+%%{init: {'securityLevel': 'loose', 'theme':'neutral'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -274,7 +274,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ```
 
 ```mermaid
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+%%{init: {'securityLevel': 'loose', 'theme':'neutral'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -294,7 +294,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ### Flowchart (beta)
 
 ```mermaid-example
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+%%{init: {'securityLevel': 'loose', 'theme':'neutral'}}%%
         flowchart TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -314,7 +314,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ### Sequence diagram
 
 ```mermaid-example
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+%%{init: {'securityLevel': 'loose', 'theme':'neutral'}}%%
         sequenceDiagram
           autonumber
           par Action 1
@@ -335,7 +335,7 @@ In the following examples, the directive `init` is used, with the `theme` being 
 ### Class diagram
 
 ```mermaid-example
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+%%{init: {'securityLevel': 'loose', 'theme':'neutral'}}%%
 
 classDiagram
 	Animal "1" <|-- Duck
@@ -395,7 +395,7 @@ gantt
 ### State diagram
 
 ```mermaid-example
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+%%{init: {'securityLevel': 'loose', 'theme':'neutral'}}%%
       stateDiagram
         [*] --> Active
 
@@ -427,7 +427,7 @@ gantt
 ### State diagram (beta)
 
 ```mermaid-example
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+%%{init: {'securityLevel': 'loose', 'theme':'neutral'}}%%
 stateDiagram-v2
         [*] --> Active
 

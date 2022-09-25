@@ -7174,15 +7174,15 @@ vitepress-plugin-mermaid@^2.0.8:
   resolved "https://registry.yarnpkg.com/vitepress-plugin-mermaid/-/vitepress-plugin-mermaid-2.0.8.tgz#7a2447d9fa5835fdc00195859d7864d35aeb19a9"
   integrity sha512-ywWxTeg9kMv7ZPf/igCBF4ZHhWZAyRtbPnA12ICQuNK2AMp7r5IHOfnuX1EJQf8gNdsh8bcvvSvm8Ll92fdOTw==
 
-vitepress-plugin-search@^1.0.4-alpha.7:
-  version "1.0.4-alpha.7"
-  resolved "https://registry.yarnpkg.com/vitepress-plugin-search/-/vitepress-plugin-search-1.0.4-alpha.7.tgz#b0514b5fdb94fb6449465d9ab3207dc68cfc1333"
-  integrity sha512-2Ice0wP93lQRVFh9U0atZLMoGggik0BtFsz+CuuWVlUhHkw7qxgRwtGarTRKijht4G8gRQ0N6Qrw56pcCGXoYw==
+vitepress-plugin-search@^1.0.4-alpha.8:
+  version "1.0.4-alpha.8"
+  resolved "https://registry.yarnpkg.com/vitepress-plugin-search/-/vitepress-plugin-search-1.0.4-alpha.8.tgz#4ede5085e9176744e90c9e0c4a4828c1fcdd904f"
+  integrity sha512-ej27VG/cQrr325eYu8ZtTtWrGoHjqOVTw6UHWOmV1htAnGhxdh5sDlUQk/O+/yVy0BSTCGKCRqvVuvhHv0MrEA==
 
-vitepress@^1.0.0-alpha.15:
-  version "1.0.0-alpha.15"
-  resolved "https://registry.yarnpkg.com/vitepress/-/vitepress-1.0.0-alpha.15.tgz#26ff8a8b5bae298ac6e47e5fec20d873a3a5960a"
-  integrity sha512-+pHJQCpnv0wVgLRyonisrj7Y77PVhbns2nTLxV9GkH3T+RTY/W2JmRatzBg5WciMaPyO8Ms6F3YElO5PULVv3w==
+vitepress@^1.0.0-alpha.16:
+  version "1.0.0-alpha.16"
+  resolved "https://registry.yarnpkg.com/vitepress/-/vitepress-1.0.0-alpha.16.tgz#792936bdbece6e4d8c88598e09a063b52dd81f24"
+  integrity sha512-IXW3jA2Y9BsoYlpVuVcAy2XEu1wuoq2xmPvSDPVFrh8HV+oVpuvbPUCHqG6smEcu86xw3g4JjreqAwPlpPn6gw==
   dependencies:
     "@docsearch/css" "^3.2.1"
     "@docsearch/js" "^3.2.1"
