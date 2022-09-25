@@ -9,7 +9,8 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['src/tests/setup.ts'],
+    // TODO: should we move this to a mermaid-core package?
+    setupFiles: ['packages/mermaid/src/tests/setup.ts'],
     coverage: {
       reporter: ['text', 'json', 'html', 'lcov'],
     },
