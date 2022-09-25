@@ -20,23 +20,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: pnpm/action-setup@v2
+        # uses version from "packageManager" field in package.json
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: yarn
+          cache: pnpm
           node-version: ${{ matrix.node-version }}
-
-      - name: Install Yarn
-        run: npm i yarn --global
 
       - name: Install Packages
         run: |
-          yarn install --frozen-lockfile
+          pnpm install --frozen-lockfile
         env:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Run Linting
-        run: yarn lint
+        run: pnpm run lint
 
       - name: Verify Docs
-        run: yarn docs:verify
+        run: pnpm run docs:verify
