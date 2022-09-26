@@ -1795,13 +1795,14 @@ describe('when rendering a sequenceDiagram with directives', function () {
     diagram.renderer.bounds.init();
   });
 
-  it('should handle one actor, when theme is dark and logLevel is 1 DX1', function () {
+  it('should handle one actor, when theme is dark and logLevel is 1 DX1 (dfg1)', function () {
     const str = `
 %%{init: { "theme": "dark", "logLevel": 1 } }%%
 sequenceDiagram
 %%{wrap}%%
 participant Alice
 `;
+    diagram = new Diagram(str);
 
     diagram.renderer.bounds.init();
     mermaidAPI.parse(str);
@@ -1819,14 +1820,14 @@ participant Alice
       models.lastActor().y + models.lastActor().height + mermaid.sequence.boxMargin
     );
   });
-  it('should handle one actor, when logLevel is 3', function () {
+  it('should handle one actor, when logLevel is 3 (dfg0)', function () {
     const str = `
 %%{initialize: { "logLevel": 3 }}%%
 sequenceDiagram
 participant Alice
 `;
 
-    mermaidAPI.parse(str);
+    // diagram.parse(str);
     diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();

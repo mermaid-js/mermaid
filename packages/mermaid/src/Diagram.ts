@@ -20,6 +20,7 @@ export class Diagram {
     this.db.clear?.();
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
+    console.log('Setting db to !', this.db);
     this.parser.parser.yy = this.db;
     if (diagram.init) {
       diagram.init(cnf);
