@@ -121,6 +121,7 @@ const main = async () => {
 
 if (watch) {
   build(getBuildConfig({ minify: false, watch, entryName: 'mermaid' }));
+  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
 } else {
   void main();
 }

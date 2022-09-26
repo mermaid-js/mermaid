@@ -1,6 +1,16 @@
 import { parser as mindmap } from './parser/mindmap';
 import * as mindmapDB from './mindmapDb';
-import { setLogLevel } from '../../diagram-api/diagramAPI';
+import { injectUtils } from './mermaidUtils';
+// Todo fix utils functions for tests
+import {
+  log,
+  setLogLevel,
+  getConfig,
+  sanitizeText,
+  setupGraphViewBox,
+} from '../../mermaid/src/diagram-api/diagramAPI';
+
+injectUtils(log, setLogLevel, getConfig, sanitizeText, setupGraphViewBox);
 
 describe('when parsing a mindmap ', function () {
   beforeEach(function () {

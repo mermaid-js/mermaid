@@ -1,5 +1,6 @@
 import mermaid from './mermaid';
 import { mermaidAPI } from './mermaidAPI';
+import './diagram-api/diagram-orchestration';
 import { vi, describe, it, beforeEach, afterEach, expect } from 'vitest';
 const spyOn = vi.spyOn;
 
@@ -67,7 +68,7 @@ describe('when using mermaid and ', function () {
       expect(() => mermaid.parse('graph TQ;A--x|text including URL space|B;')).toThrow();
     });
 
-    it('should not throw for a valid sequenceDiagram definition', function () {
+    it('should not throw for a valid sequenceDiagram definition (mmds1)', function () {
       const text =
         'sequenceDiagram\n' +
         'Alice->Bob: Hello Bob, how are you?\n\n' +

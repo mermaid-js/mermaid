@@ -67,16 +67,19 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
+    "@types/node": "^18.7.21",
     "d3": "^7.0.0",
     "dagre": "^0.8.5",
     "dagre-d3": "^0.6.4",
     "dompurify": "2.4.0",
     "fast-clone": "^1.5.13",
     "graphlib": "^2.1.8",
+    "jest": "^29.0.3",
     "khroma": "^2.0.0",
     "lodash": "^4.17.21",
     "moment-mini": "^2.24.0",
     "non-layered-tidy-tree-layout": "^2.0.2",
+    "rollup": "^2.79.1",
     "stylis": "^4.1.2"
   },
   "devDependencies": {

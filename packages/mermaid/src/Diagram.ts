@@ -15,12 +15,13 @@ export class Diagram {
     this.type = detectType(txt, cnf);
     const diagram = getDiagram(this.type);
     log.debug('Type ' + this.type);
+    // console.log('Type ' + this.type);
     // Setup diagram
     this.db = diagram.db;
     this.db.clear?.();
     this.renderer = diagram.renderer;
     this.parser = diagram.parser;
-    console.log('Setting db to !', this.db);
+    // console.log('Setting db to !', this.db);
     this.parser.parser.yy = this.db;
     if (diagram.init) {
       diagram.init(cnf);

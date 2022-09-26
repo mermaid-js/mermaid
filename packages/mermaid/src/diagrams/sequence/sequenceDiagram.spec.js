@@ -1827,7 +1827,7 @@ sequenceDiagram
 participant Alice
 `;
 
-    // diagram.parse(str);
+    diagram.parse(str);
     diagram.renderer.draw(str, 'tst', '1.2.3', diagram);
 
     const { bounds, models } = diagram.renderer.bounds.getBounds();

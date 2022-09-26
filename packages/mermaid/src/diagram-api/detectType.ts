@@ -34,6 +34,8 @@ const detectors: Record<string, DiagramDetector> = {};
 export const detectType = function (text: string, config?: MermaidConfig): string {
   text = text.replace(directive, '').replace(anyComment, '\n');
 
+  // console.log(detectors);
+
   for (const [key, detector] of Object.entries(detectors)) {
     if (detector(text, config)) {
       return key;

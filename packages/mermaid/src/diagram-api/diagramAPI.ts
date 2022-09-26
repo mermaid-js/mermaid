@@ -39,7 +39,7 @@ export const registerDetector = (id: string, detector: DiagramDetector) => {
 export const registerDiagram = (
   id: string,
   diagram: DiagramDefinition,
-  callback: (
+  callback?: (
     _log: any,
     _setLogLevel: any,
     _getConfig: any,

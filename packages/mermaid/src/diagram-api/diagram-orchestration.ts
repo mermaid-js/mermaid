@@ -1,4 +1,9 @@
-import { registerDiagram } from './diagramAPI';
+import {
+  registerDiagram,
+  registerDetector,
+  DiagramDefinition,
+  DiagramDetector,
+} from './diagramAPI';
 
 // // @ts-ignore: TODO Fix ts errors
 // import mindmapParser from '../diagrams/mindmap/parser/mindmap';
@@ -101,8 +106,17 @@ import { setConfig } from '../config';
 import errorRenderer from '../diagrams/error/errorRenderer';
 import errorStyles from '../diagrams/error/styles';
 
+const registerDiagramAndDetector = (
+  id: string,
+  diagram: DiagramDefinition,
+  detector: DiagramDetector
+) => {
+  registerDiagram(id, diagram);
+  registerDetector(id, detector);
+};
+
 export const addDiagrams = () => {
-  registerDiagram(
+  registerDiagramAndDetector(
     'error',
     // Special diagram with error messages but setup as a regular diagram
     {
@@ -122,10 +136,11 @@ export const addDiagrams = () => {
       init: () => {
         // no op
       },
-    },
-    (text) => text.toLowerCase().trim() === 'error'
+    }
   );
-  registerDiagram(
+  registerDetector('error', (text) => text.toLowerCase().trim() === 'error');
+
+  registerDiagramAndDetector(
     'c4',
     {
       parser: c4Parser,
@@ -138,7 +153,7 @@ export const addDiagrams = () => {
     },
     c4Detector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'class',
     {
       parser: classParser,
@@ -155,7 +170,7 @@ export const addDiagrams = () => {
     },
     classDetector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'classDiagram',
     {
       parser: classParser,
@@ -172,7 +187,7 @@ export const addDiagrams = () => {
     },
     classDetectorV2
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'er',
     {
       parser: erParser,
@@ -182,7 +197,7 @@ export const addDiagrams = () => {
     },
     erDetector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'gantt',
     {
       parser: ganttParser,
@@ -192,7 +207,7 @@ export const addDiagrams = () => {
     },
     ganttDetector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'info',
     {
       parser: infoParser,
@@ -202,7 +217,7 @@ export const addDiagrams = () => {
     },
     infoDetector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'pie',
     {
       parser: pieParser,
@@ -212,7 +227,7 @@ export const addDiagrams = () => {
     },
     pieDetector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'requirement',
     {
       parser: requirementParser,
@@ -222,7 +237,7 @@ export const addDiagrams = () => {
     },
     requirementDetector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'sequence',
     {
       parser: sequenceParser,
@@ -245,7 +260,7 @@ export const addDiagrams = () => {
     },
     sequenceDetector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'state',
     {
       parser: stateParser,
@@ -262,7 +277,7 @@ export const addDiagrams = () => {
     },
     stateDetector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'stateDiagram',
     {
       parser: stateParser,
@@ -279,7 +294,7 @@ export const addDiagrams = () => {
     },
     stateDetectorV2
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'journey',
     {
       parser: journeyParser,
@@ -294,7 +309,7 @@ export const addDiagrams = () => {
     journeyDetector
   );
 
-  registerDiagram(
+  registerDiagramAndDetector(
     'flowchart',
     {
       parser: flowParser,
@@ -314,7 +329,7 @@ export const addDiagrams = () => {
     },
     flowDetector
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'flowchart-v2',
     {
       parser: flowParser,
@@ -335,7 +350,7 @@ export const addDiagrams = () => {
     },
     flowDetectorV2
   );
-  registerDiagram(
+  registerDiagramAndDetector(
     'gitGraph',
     { parser: gitGraphParser, db: gitGraphDb, renderer: gitGraphRenderer, styles: gitGraphStyles },
     gitGraphDetector
