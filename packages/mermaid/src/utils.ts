@@ -72,7 +72,6 @@ const directiveWithoutOpen =
  *    g-->h
  * ```
  * @param {string} text The text defining the graph
- * @param {any} config
  * @returns {object} The json object representing the init passed to mermaid.initialize()
  */
 export const detectInit = function (text: string, config?: MermaidConfig): MermaidConfig {

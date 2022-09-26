@@ -6,6 +6,15 @@ import { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
+import { addDetector } from './diagram-api/detectType';
+import {
+  registerDiagram,
+  DiagramDefinition,
+  setLogLevel,
+  getConfig,
+  setupGraphViewbox,
+  sanitizeText,
+} from './diagram-api/diagramAPI';
 import { isDetailedError } from './utils';
 
 /**
@@ -44,6 +53,10 @@ const init = function (
   callback?: Function
 ) {
   try {
+    console.error('Detectors in init', mermaid.detectors); // eslint-disable-line
+    mermaid.detectors.forEach(({ id, detector }) => {
+      addDetector(id, detector);
+    });
     initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
@@ -197,6 +210,22 @@ const parse = (txt: string) => {
   return mermaidAPI.parse(txt, mermaid.parseError);
 };
 
+const connectDiagram = (
+  id: string,
+  diagram: DiagramDefinition,
+  callback: (
+    _log: any,
+    _setLogLevel: any,
+    _getConfig: any,
+    _sanitizeText: any,
+    _setupGraphViewbox: any
+  ) => void
+) => {
+  registerDiagram(id, diagram, callback);
+  // Todo move this connect call to after the diagram is actually loaded
+  callback(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
+};
+
 const mermaid: {
   startOnLoad: boolean;
   diagrams: any;
@@ -212,6 +241,7 @@ const mermaid: {
   setParseErrorHandler: typeof setParseErrorHandler;
   // Array of functions to use for detecting diagram types
   detectors: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+  connectDiagram: (id: string, diagram: DiagramDefinition, callback: (id: string) => void) => void;
 } = {
   startOnLoad: true,
   diagrams: {},
@@ -225,6 +255,7 @@ const mermaid: {
   contentLoaded,
   setParseErrorHandler,
   detectors: [],
+  connectDiagram: connectDiagram,
 };
 
 export default mermaid;

@@ -1,5 +1,5 @@
 /** Created by knut on 15-01-14. */
-import { sanitizeText, getConfig, log as _log } from 'mermaid/diagramAPI';
+import { sanitizeText, getConfig, log as _log } from './mermaidUtils';
 
 let nodes = [];
 let cnt = 0;
@@ -133,6 +133,7 @@ export const type2Str = (type) => {
 };
 // Expose logger to grammar
 export const log = _log;
+export let graphType = 'mindmap';
 export const getNodeById = (id) => nodes[id];
 export const getElementById = (id) => elements[id];
 // export default {

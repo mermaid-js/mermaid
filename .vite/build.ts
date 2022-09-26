@@ -16,14 +16,17 @@ type OutputOptions = Exclude<
 const packageOptions = {
   mermaid: {
     name: 'mermaid',
+    packageName: 'mermaid',
     file: 'mermaid.ts',
   },
   'mermaid-mindmap': {
     name: 'mermaid-mindmap',
+    packageName: 'mermaid-mindmap',
     file: 'diagram.ts',
   },
   'mermaid-mindmap-detector': {
     name: 'mermaid-mindmap-detector',
+    packageName: 'mermaid-mindmap',
     file: 'registry.ts',
   },
 };
@@ -32,17 +35,13 @@ interface BuildOptions {
   minify: boolean | 'esbuild';
   core?: boolean;
   watch?: boolean;
-  packageName: keyof typeof packageOptions;
+  entryName: keyof typeof packageOptions;
 }
 
-export const getBuildConfig = ({
-  minify,
-  core,
-  watch,
-  packageName,
-}: BuildOptions): InlineConfig => {
+export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions): InlineConfig => {
   const external = ['require', 'fs', 'path'];
-  const { name, file } = packageOptions[packageName];
+  console.log(entryName, packageOptions[entryName]);
+  const { name, file, packageName } = packageOptions[entryName];
   let output: OutputOptions = [
     {
       name,
@@ -105,11 +104,11 @@ export const getBuildConfig = ({
   return config;
 };
 
-const buildPackage = async (packageName: keyof typeof packageOptions) => {
+const buildPackage = async (entryName: keyof typeof packageOptions) => {
   return Promise.allSettled([
-    build(getBuildConfig({ minify: false, packageName })),
-    build(getBuildConfig({ minify: 'esbuild', packageName })),
-    build(getBuildConfig({ minify: false, core: true, packageName })),
+    build(getBuildConfig({ minify: false, entryName })),
+    build(getBuildConfig({ minify: 'esbuild', entryName })),
+    build(getBuildConfig({ minify: false, core: true, entryName })),
   ]);
 };
 
@@ -121,7 +120,7 @@ const main = async () => {
 };
 
 if (watch) {
-  build(getBuildConfig({ minify: false, watch, packageName: 'mermaid' }));
+  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid' }));
 } else {
   void main();
 }

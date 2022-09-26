@@ -45,12 +45,17 @@
   </head>
   <body>
     <div>Security check</div>
+    <pre id="diagram" class="mermaid2">
+flowchart LR
+      A --> B
+    </pre>
     <pre id="diagram" class="mermaid">
         mindmap
           root
             ch1
             ch2
     </pre>
+    <script src="./packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script>
     <script src="./packages/mermaid-mindmap/dist/mermaid-mindmap.js"></script>
     <script src="./packages/mermaid/dist/mermaid.js"></script>
     <script>
@@ -58,19 +63,13 @@
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
-        startOnLoad: false,
+        startOnLoad: true,
         logLevel: 0,
+        basePath: './packages/',
         // themeVariables: {relationLabelColor: 'red'}
       });
       function callback() {
         alert('It worked');
-      }
-
-      // document.querySelector('#diagram').innerHTML = diagram;
-      try {
-        mermaid.initThrowsErrors(undefined, '#diagram');
-      } catch (err) {
-        console.log('Caught error:', err);
       }
     </script>
   </body>

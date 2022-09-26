@@ -26,12 +26,20 @@ export class Diagram {
       log.debug('Initialized diagram ' + this.type, cnf);
     }
     this.txt += '\n';
-    this.parser.parser.yy.graphType = this.type;
-    this.parser.parser.yy.parseError = (str: string, hash: string) => {
-      const error = { str, hash };
-      throw error;
-    };
-    this.parse(this.txt, parseError);
+    try {
+      this.parser.parser.yy.graphType = this.type;
+      this.parser.parser.yy.parseError = (str: string, hash: string) => {
+        const error = { str, hash };
+        throw error;
+      };
+    } catch (error) {
+      log.error('error', error);
+    }
+    try {
+      this.parse(this.txt, parseError);
+    } catch (error) {
+      log.error('error', error);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types

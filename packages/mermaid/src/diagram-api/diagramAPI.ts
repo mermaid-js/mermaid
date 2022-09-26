@@ -27,18 +27,32 @@ export interface DiagramDefinition {
 }
 
 const diagrams: Record<string, DiagramDefinition> = {};
+const connectCallbacks: Record<string, any> = {}; // TODO fix, eslint-disable-line @typescript-eslint/no-explicit-any
+export interface Detectors {
+  [key: string]: DiagramDetector;
+}
+
+export const registerDetector = (id: string, detector: DiagramDetector) => {
+  addDetector(id, detector);
+};
 
 export const registerDiagram = (
   id: string,
   diagram: DiagramDefinition,
-  detector: DiagramDetector
+  callback: (
+    _log: any,
+    _setLogLevel: any,
+    _getConfig: any,
+    _sanitizeText: any,
+    _setupGraphViewbox: any
+  ) => void
 ) => {
   if (diagrams[id]) {
     log.warn(`Diagram ${id} already registered.`);
   }
   diagrams[id] = diagram;
-  addDetector(id, detector);
   addStylesForDiagram(id, diagram.styles);
+  connectCallbacks[id] = callback;
 };
 
 export const getDiagram = (name: string): DiagramDefinition => {

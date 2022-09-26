@@ -1,27 +1,27 @@
 // @ts-ignore: TODO Fix ts errors
-// import mindmapParser from './parser/mindmap';
-// import * as mindmapDb from './mindmapDb';
 import { mindmapDetector } from './mindmapDetector';
-// import mindmapRenderer from './mindmapRenderer';
-// import mindmapStyles from './styles';
 
-import mermaid from 'mermaid';
+if (typeof document !== 'undefined') {
+  if (window.mermaid && typeof window.mermaid.detectors === 'object') {
+    window.mermaid.detectors.push({ id: 'mindmap', detector: mindmapDetector });
+  } else {
+    console.error('window.mermaid.detectors not found'); // eslint-disable-line no-console
+    window.mermaid = {};
+    window.mermaid.detectors = [{ id: 'mindmap', detector: mindmapDetector }];
+    console.error('Detectors now:', window.mermaid.detectors); // eslint-disable-line no-console
+  }
 
-console.log('mindmapDb', mermaid.mermaidAPI.getConfig()); // eslint-disable-line no-console
-// registerDiagram()
-
-// if (typeof document !== 'undefined') {
-//   /*!
-//    * Wait for document loaded before starting the execution
-//    */
-//   window.addEventListener(
-//     'load',
-//     () => {
-//       if (window.mermaid && typeof window.mermaid.detectors === 'object') {
-//         window.mermaid.detectors.push(mindmapDetector);
-//         console.log(window.mermaid.detectors); // eslint-disable-line no-console
-//       }
-//     },
-//     false
-//   );
-// }
+  /*!
+   * Wait for document loaded before starting the execution.
+   */
+  window.addEventListener(
+    'load',
+    () => {
+      if (window.mermaid && typeof window.mermaid.detectors === 'object') {
+        window.mermaid.detectors.push({ id: 'mindmap', detector: mindmapDetector });
+        // console.error(window.mermaid.detectors); // eslint-disable-line no-console
+      }
+    },
+    false
+  );
+}
