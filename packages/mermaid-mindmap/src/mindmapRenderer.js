@@ -215,51 +215,53 @@ function positionNodes(node, conf) {
  * @param {any} version
  * @param diagObj
  */
+
 export const draw = (text, id, version, diagObj) => {
   const conf = getConfig();
-  try {
-    log.debug('Renering info diagram\n' + text);
 
-    const securityLevel = getConfig().securityLevel;
-    // Handle root and Document for when rendering in sanbox mode
-    let sandboxElement;
-    if (securityLevel === 'sandbox') {
-      sandboxElement = select('#i' + id);
-    }
-    const root =
-      securityLevel === 'sandbox'
-        ? select(sandboxElement.nodes()[0].contentDocument.body)
-        : select('body');
-    // Parse the graph definition
+  // This is done only for throwing the error if the text is not valid.
+  diagObj.db.clear();
+  // Parse the graph definition
+  diagObj.parser.parse(text);
 
-    const svg = root.select('#' + id);
+  log.debug('Renering info diagram\n' + text);
 
-    svg.append('g');
-    const mm = diagObj.db.getMindmap();
-
-    // Draw the graph and start with drawing the nodes without proper position
-    // this gives us the size of the nodes and we can set the positions later
-
-    const edgesElem = svg.append('g');
-    edgesElem.attr('class', 'mindmap-edges');
-    const nodesElem = svg.append('g');
-    nodesElem.attr('class', 'mindmap-nodes');
-    drawNodes(nodesElem, mm, -1, conf);
-
-    // Next step is to layout the mindmap, giving each node a position
-
-    const positionedMindmap = layoutMindmap(mm, conf);
-
-    // After this we can draw, first the edges and the then nodes with the correct position
-    drawEdges(edgesElem, positionedMindmap, null, 0, -1, conf);
-    positionNodes(positionedMindmap, conf);
-
-    // Setup the view box and size of the svg element
-    setupGraphViewbox(undefined, svg, conf.mindmap.padding, conf.mindmap.useMaxWidth);
-  } catch (e) {
-    log.error('Error while rendering info diagram');
-    log.error(e.message);
+  const securityLevel = getConfig().securityLevel;
+  // Handle root and Document for when rendering in sanbox mode
+  let sandboxElement;
+  if (securityLevel === 'sandbox') {
+    sandboxElement = select('#i' + id);
   }
+  const root =
+    securityLevel === 'sandbox'
+      ? select(sandboxElement.nodes()[0].contentDocument.body)
+      : select('body');
+  // Parse the graph definition
+
+  const svg = root.select('#' + id);
+
+  svg.append('g');
+  const mm = diagObj.db.getMindmap();
+
+  // Draw the graph and start with drawing the nodes without proper position
+  // this gives us the size of the nodes and we can set the positions later
+
+  const edgesElem = svg.append('g');
+  edgesElem.attr('class', 'mindmap-edges');
+  const nodesElem = svg.append('g');
+  nodesElem.attr('class', 'mindmap-nodes');
+  drawNodes(nodesElem, mm, -1, conf);
+
+  // Next step is to layout the mindmap, giving each node a position
+
+  const positionedMindmap = layoutMindmap(mm, conf);
+
+  // After this we can draw, first the edges and the then nodes with the correct position
+  drawEdges(edgesElem, positionedMindmap, null, 0, -1, conf);
+  positionNodes(positionedMindmap, conf);
+
+  // Setup the view box and size of the svg element
+  setupGraphViewbox(undefined, svg, conf.mindmap.padding, conf.mindmap.useMaxWidth);
 };
 
 export default {

@@ -5,10 +5,10 @@ if (typeof document !== 'undefined') {
   if (window.mermaid && typeof window.mermaid.detectors === 'object') {
     window.mermaid.detectors.push({ id: 'mindmap', detector: mindmapDetector });
   } else {
-    console.error('window.mermaid.detectors not found'); // eslint-disable-line no-console
+    // console.error('window.mermaid.detectors was not found!'); // eslint-disable-line no-console
     window.mermaid = {};
     window.mermaid.detectors = [{ id: 'mindmap', detector: mindmapDetector }];
-    console.error('Detectors now:', window.mermaid.detectors); // eslint-disable-line no-console
+    // console.error('Detectors now:', window.mermaid.detectors); // eslint-disable-line no-console
   }
 
   /*!

@@ -45,12 +45,12 @@
   </head>
   <body>
     <div>Security check</div>
-    <pre id="diagram" class="mermaid2">
-flowchart LR
-      A --> B
-    </pre>
     <pre id="diagram" class="mermaid">
-        mindmap
+flowchart LR
+      A -> B
+    </pre>
+    <pre id="diagram" class="mermaid2">
+        mindmap((
           root
             ch1
             ch2
@@ -71,6 +71,10 @@ flowchart LR
       function callback() {
         alert('It worked');
       }
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
     </script>
   </body>
 </html>

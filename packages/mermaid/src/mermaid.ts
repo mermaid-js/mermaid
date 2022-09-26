@@ -53,7 +53,7 @@ const init = function (
   callback?: Function
 ) {
   try {
-    console.error('Detectors in init', mermaid.detectors); // eslint-disable-line
+    log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
     mermaid.detectors.forEach(({ id, detector }) => {
       addDetector(id, detector);
     });

@@ -29,7 +29,7 @@
     "clean": "rimraf dist",
     "build:vite": "ts-node-esm --transpileOnly --project=.vite/tsconfig.json .vite/build.ts",
     "build:types": "concurrently \"tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly\" \"tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly\"",
-    "build:watch": "pnpm build:code --watch",
+    "build:watch": "pnpm build:vite --watch",
     "build": "pnpm clean; concurrently \"pnpm build:vite\" \"pnpm build:types\"",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server\"",
     "docs:build": "ts-node-esm --transpileOnly packages/mermaid/src/docs.mts",

@@ -97,7 +97,7 @@ export const getBuildConfig = ({ minify, core, watch, entryName }: BuildOptions)
 
   if (watch && config.build) {
     config.build.watch = {
-      include: 'src/**',
+      include: ['packages/mermaid-mindmap/src/**', 'packages/mermaid/src/**'],
     };
   }
 

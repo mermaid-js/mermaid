@@ -41,10 +41,13 @@ export const injectUtils = (
   _sanitizeText: any,
   _setupGraphViewbox: any
 ) => {
+  _log.info('Mermaid utils injected');
+  log.trace = _log.trace;
   log.debug = _log.debug;
   log.info = _log.info;
   log.warn = _log.warn;
   log.error = _log.error;
+  log.fatal = _log.fatal;
   setLogLevel = _setLogLevel;
   getConfig = _getConfig;
   sanitizeText = _sanitizeText;
@@ -55,6 +58,7 @@ export const injectUtils = (
 const warning = (..._args: any[]) => {
   console.error('Log function was called before initialization');
 };
+
 export let log = {
   trace: warning,
   debug: warning,
