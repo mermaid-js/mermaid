@@ -22,7 +22,7 @@ import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import ganttDb from './diagrams/gantt/ganttDb';
-import Diagram from './Diagram';
+import Diagram, { getDiagramFromText } from './Diagram';
 import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
@@ -115,12 +115,12 @@ export const decodeEntities = function (text: string): string {
  *   element will be removed when rendering is completed.
  * @returns {void}
  */
-const render = function (
+const render = async function (
   id: string,
   text: string,
   cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   container?: Element
-): void {
+): Promise<void> {
   if (!hasLoadedDiagrams) {
     addDiagrams();
     hasLoadedDiagrams = true;
@@ -232,7 +232,8 @@ const render = function (
   let diag;
   let parseEncounteredException;
   try {
-    diag = new Diagram(text);
+    // diag = new Diagram(text);
+    diag = await getDiagramFromText(text);
   } catch (error) {
     diag = new Diagram('error');
     parseEncounteredException = error;

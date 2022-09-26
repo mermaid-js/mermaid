@@ -1,7 +1,7 @@
 import * as configApi from './config';
 import { log } from './logger';
-import { getDiagram } from './diagram-api/diagramAPI';
-import { detectType } from './diagram-api/detectType';
+import { getDiagram, loadDiagram } from './diagram-api/diagramAPI';
+import { detectType, getPathForDiagram } from './diagram-api/detectType';
 import { isDetailedError } from './utils';
 export class Diagram {
   type = 'graph';
@@ -67,3 +67,21 @@ export class Diagram {
 }
 
 export default Diagram;
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const getDiagramFromText = async (txt: string, parseError?: Function) => {
+  const type = detectType(txt, configApi.getConfig());
+  try {
+    // Trying to find the diagram
+    getDiagram(type);
+  } catch (error) {
+    // Diagram not avaiable, loading it
+    const path = getPathForDiagram(type);
+    // await loadDiagram('./packages/mermaid-mindmap/dist/mermaid-mindmap.js');
+    await loadDiagram(path + 'mermaid-' + type + '.js');
+    // new diagram will try getDiagram again and if fails then it is a valid throw
+  }
+  // If either of the above worked, we have the diagram
+  // logic and can continue
+  return new Diagram(txt, parseError);
+};

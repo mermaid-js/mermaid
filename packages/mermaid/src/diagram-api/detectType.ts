@@ -1,12 +1,13 @@
 import { MermaidConfig } from '../config.type';
 
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
+export type DetectorRecord = { detector: DiagramDetector; path: string };
 
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
 
-const detectors: Record<string, DiagramDetector> = {};
+const detectors: Record<string, DetectorRecord> = {};
 
 /**
  * @function detectType Detects the type of the graph text. Takes into consideration the possible
@@ -36,8 +37,8 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
 
   // console.log(detectors);
 
-  for (const [key, detector] of Object.entries(detectors)) {
-    if (detector(text, config)) {
+  for (const [key, detectorRecord] of Object.entries(detectors)) {
+    if (detectorRecord.detector(text, config)) {
       return key;
     }
   }
@@ -46,6 +47,13 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
   return 'flowchart';
 };
 
-export const addDetector = (key: string, detector: DiagramDetector) => {
-  detectors[key] = detector;
+export const addDetector = (key: string, detector: DiagramDetector, path: string) => {
+  detectors[key] = { detector, path };
+};
+
+export const getPathForDiagram = (id: string) => {
+  const detectorRecord = detectors[id];
+  if (detectorRecord) {
+    return detectorRecord.path;
+  }
 };

@@ -22,7 +22,7 @@ const packageOptions = {
   'mermaid-mindmap': {
     name: 'mermaid-mindmap',
     packageName: 'mermaid-mindmap',
-    file: 'diagram.ts',
+    file: 'add-diagram.ts',
   },
   'mermaid-mindmap-detector': {
     name: 'mermaid-mindmap-detector',

@@ -32,8 +32,8 @@ export interface Detectors {
   [key: string]: DiagramDetector;
 }
 
-export const registerDetector = (id: string, detector: DiagramDetector) => {
-  addDetector(id, detector);
+export const registerDetector = (id: string, detector: DiagramDetector, path: string) => {
+  addDetector(id, detector, path);
 };
 
 export const registerDiagram = (
@@ -61,3 +61,19 @@ export const getDiagram = (name: string): DiagramDefinition => {
   }
   throw new Error(`Diagram ${name} not found.`);
 };
+
+/**
+ *
+ * @param sScriptSrc
+ */
+export const loadDiagram = (sScriptSrc: string) =>
+  new Promise((resolve) => {
+    const oHead = document.getElementsByTagName('HEAD')[0];
+    const oScript = document.createElement('script');
+    oScript.type = 'text/javascript';
+    oScript.src = sScriptSrc;
+    oHead.appendChild(oScript);
+    oScript.onload = () => {
+      resolve(true);
+    };
+  });

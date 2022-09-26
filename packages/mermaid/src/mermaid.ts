@@ -54,8 +54,8 @@ const init = function (
 ) {
   try {
     log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
-    mermaid.detectors.forEach(({ id, detector }) => {
-      addDetector(id, detector);
+    mermaid.detectors.forEach(({ id, detector, path }) => {
+      addDetector(id, detector, path);
     });
     initThrowsErrors(config, nodes, callback);
   } catch (e) {

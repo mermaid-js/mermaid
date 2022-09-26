@@ -19,7 +19,7 @@ describe('DiagramAPI', () => {
     const detector: DiagramDetector = (str: string) => {
       return str.match('loki') !== null;
     };
-    registerDetector('loki', detector);
+    registerDetector('loki', detector, '');
     registerDiagram(
       'loki',
       {

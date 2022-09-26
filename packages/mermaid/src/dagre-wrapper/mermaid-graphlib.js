@@ -39,8 +39,6 @@ const edgeInCluster = (edge, clusterId) => {
     log.debug('Tilt, ', clusterId, ',not in decendants');
     return false;
   }
-  log.info('Here ');
-
   if (decendants[clusterId].indexOf(edge.v) >= 0) return true;
   if (isDecendant(edge.v, clusterId)) return true;
   if (isDecendant(edge.w, clusterId)) return true;

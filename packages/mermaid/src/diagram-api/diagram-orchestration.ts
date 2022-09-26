@@ -112,7 +112,7 @@ const registerDiagramAndDetector = (
   detector: DiagramDetector
 ) => {
   registerDiagram(id, diagram);
-  registerDetector(id, detector);
+  registerDetector(id, detector, '');
 };
 
 export const addDiagrams = () => {
@@ -136,9 +136,9 @@ export const addDiagrams = () => {
       init: () => {
         // no op
       },
-    }
+    },
+    (text) => text.toLowerCase().trim() === 'error'
   );
-  registerDetector('error', (text) => text.toLowerCase().trim() === 'error');
 
   registerDiagramAndDetector(
     'c4',
