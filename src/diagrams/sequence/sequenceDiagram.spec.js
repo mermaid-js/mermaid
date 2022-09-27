@@ -257,6 +257,28 @@ Bob-->Alice-in-Wonderland:I am good thanks!`;
     expect(messages[0].from).toBe('Alice-in-Wonderland');
     expect(messages[1].from).toBe('Bob');
   });
+
+  it('should handle dashes in participant names', function () {
+    const str = `
+sequenceDiagram
+participant Alice-in-Wonderland
+participant Bob
+Alice-in-Wonderland->Bob:Hello Bob, how are - you?
+Bob-->Alice-in-Wonderland:I am good thanks!`;
+
+    mermaidAPI.parse(str);
+    const actors = diagram.db.getActors();
+    expect(Object.keys(actors)).toEqual(['Alice-in-Wonderland', 'Bob']);
+    expect(actors['Alice-in-Wonderland'].description).toBe('Alice-in-Wonderland');
+    expect(actors.Bob.description).toBe('Bob');
+
+    const messages = diagram.db.getMessages();
+
+    expect(messages.length).toBe(2);
+    expect(messages[0].from).toBe('Alice-in-Wonderland');
+    expect(messages[1].from).toBe('Bob');
+  });
+
   it('should alias participants', function () {
     const str = `
 sequenceDiagram
