@@ -249,7 +249,7 @@ Bob-->Alice-in-Wonderland:I am good thanks!`;
     mermaidAPI.parse(str);
     const actors = diagram.db.getActors();
     expect(actors['Alice-in-Wonderland'].description).toBe('Alice-in-Wonderland');
-    actors.Bob.description = 'Bob';
+    expect(actors.Bob.description).toBe('Bob');
 
     const messages = diagram.db.getMessages();
 
