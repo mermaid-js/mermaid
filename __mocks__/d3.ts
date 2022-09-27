@@ -54,6 +54,11 @@ export const MockD3 = (name, parent) => {
       return parent;
     },
   };
+  elem.select = (name) => {
+    const mockElem = MockD3(name, elem);
+    children.push(mockElem);
+    return mockElem;
+  };
   elem.append = (name) => {
     const mockElem = MockD3(name, elem);
     children.push(mockElem);
