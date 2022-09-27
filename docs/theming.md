@@ -41,7 +41,13 @@ mermaidAPI.initialize({
 
 When Generating a diagram using on a webpage that supports mermaid. It is also possible to override site-wide theme settings locally, for a specific diagram, using directives, as long as it is not prohibited by the `secure` array.
 
-```mmd
+```mermaid-example
+%%{init: {'theme':'base'}}%%
+  graph TD
+    a --> b
+```
+
+```mermaid
 %%{init: {'theme':'base'}}%%
   graph TD
     a --> b
@@ -329,7 +335,25 @@ In the following examples, the directive `init` is used, with the `theme` being 
 
 ### Flowchart
 
-```mmd
+```mermaid-example
+%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
+        graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+```
+
+```mermaid
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)

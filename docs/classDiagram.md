@@ -336,7 +336,12 @@ classE o-- classF : aggregation
 
 Relations can logically represent an N:M association:
 
-```mmd
+```mermaid-example
+classDiagram
+    Animal <|--|> Zebra
+```
+
+```mermaid
 classDiagram
     Animal <|--|> Zebra
 ```
@@ -468,7 +473,17 @@ class Color{
 
 Comments can be entered within a class diagram, which will be ignored by the parser. Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text until the next newline will be treated as a comment, including any class diagram syntax.
 
-```mmd
+```mermaid-example
+classDiagram
+%% This whole line is a comment classDiagram class Shape <<interface>>
+class Shape{
+    <<interface>>
+    noOfVertices
+    draw()
+}
+```
+
+```mermaid
 classDiagram
 %% This whole line is a comment classDiagram class Shape <<interface>>
 class Shape{
@@ -538,7 +553,15 @@ You would define these actions on a separate line after all classes have been de
 
 _URL Link:_
 
-```mmd
+```mermaid-example
+classDiagram
+class Shape
+link Shape "https://www.github.com" "This is a tooltip for a link"
+class Shape2
+click Shape2 href "https://www.github.com" "This is a tooltip for a link"
+```
+
+```mermaid
 classDiagram
 class Shape
 link Shape "https://www.github.com" "This is a tooltip for a link"
@@ -548,7 +571,15 @@ click Shape2 href "https://www.github.com" "This is a tooltip for a link"
 
 _Callback:_
 
-```mmd
+```mermaid-example
+classDiagram
+class Shape
+callback Shape "callbackFunction" "This is a tooltip for a callback"
+class Shape2
+click Shape2 call callbackFunction() "This is a tooltip for a callback"
+```
+
+```mermaid
 classDiagram
 class Shape
 callback Shape "callbackFunction" "This is a tooltip for a callback"
@@ -660,14 +691,27 @@ It is also possible to attach a class to a list of nodes in one statement:
 
 A shorter form of adding a class is to attach the classname to the node using the `:::` operator:
 
-```mmd
+```mermaid-example
+classDiagram
+    class Animal:::cssClass
+```
+
+```mermaid
 classDiagram
     class Animal:::cssClass
 ```
 
 Or:
 
-```mmd
+```mermaid-example
+classDiagram
+    class Animal:::cssClass {
+        -int sizeInFeet
+        -canEat()
+    }
+```
+
+```mermaid
 classDiagram
     class Animal:::cssClass {
         -int sizeInFeet

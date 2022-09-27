@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "zixuanchen.vitest-explorer",
+    "luniclynx.bison"
+  ]
+}

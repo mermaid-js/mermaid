@@ -9,10 +9,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [16.x]
+        containers: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        id: yarn-and-build-cache
+        with:
+          path: |
+            ~/.cache/Cypress
+            build
+            node_modules
+          key: ${{ runner.os }}-node_modules-build-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-build-
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -20,19 +33,20 @@ jobs:
           cache: yarn
           node-version: ${{ matrix.node-version }}
 
-      - name: Install Yarn
-        run: npm i yarn --global
-
-      - name: Install Packages
-        run: |
-          yarn install --frozen-lockfile
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v3
+        # If CYPRESS_RECORD_KEY is set, run in parallel on all containers
+        # Otherwise (e.g. if running from fork), we run on a single container only
+        if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
+        with:
+          start: yarn dev
+          wait-on: 'http://localhost:9000'
+          # Disable recording if we don't have an API key
+          # e.g. if this action was run from a fork
+          record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+          headless: true
         env:
-          CYPRESS_CACHE_FOLDER: .cache/Cypress
-
-      - name: Run Build
-        run: yarn build
-
-      - name: Run E2E Tests
-        run: yarn e2e
-        env:
-          CYPRESS_CACHE_FOLDER: .cache/Cypress
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
