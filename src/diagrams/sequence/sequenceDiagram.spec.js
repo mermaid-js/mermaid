@@ -19,7 +19,7 @@ function addConf(conf, key, value) {
 let diagram;
 
 describe('more than one sequence diagram', () => {
-  it.only('should not have duplicated messages', () => {
+  it('should not have duplicated messages', () => {
     const diagram1 = new Diagram(`
         sequenceDiagram
         Alice->Bob:Hello Bob, how are you?
@@ -1795,7 +1795,7 @@ describe('when rendering a sequenceDiagram with directives', function () {
   //   diagram.renderer.bounds.init();
   // });
 
-  it.only('should handle one actor, when theme is dark and logLevel is 1 DX1', function () {
+  it('should handle one actor, when theme is dark and logLevel is 1 DX1', function () {
     const str = `
 %%{init: { "theme": "dark", "logLevel": 1 } }%%
 sequenceDiagram
