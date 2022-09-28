@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Mermaid Quick Test Page</title>
+    <title>States Mermaid Quick Test Page</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
     <style>
       div.mermaid {
@@ -16,22 +16,66 @@
   <body>
     <pre class="mermaid">
 		stateDiagram
-		title This is a title
-        accDescription This is an accessible description
-        State1
+		  accTitle: This is the accessible title
+      accDescr:This is an accessible description
+      State1 --> State2
     </pre>
+
+    <hr />
 
     <pre class="mermaid">
 		stateDiagram-v2
-		title This is a title
-        accDescription This is an accessible description
-        State1
+		  accTitle: This is the accessible title
+      accDescr: This is an accessible description
+      [*] --> Still
+      Still --> [*]
+      Still --> Moving
+      Moving --> Still
+      Moving --> Crash
+      Crash --> [*]
+    </pre>
+
+    <hr />
+
+    <pre class="mermaid">
+    stateDiagram
+      accTitle: very very simple state
+    accDescr: This is a state diagram showing one state
+    State1
+    </pre>
+
+    <hr />
+
+    <pre class="mermaid">
+    stateDiagram
+    [*] --> First
+    state First {
+    [*] --> second
+    second --> [*]
+    }
+    </pre>
+    <pre class="mermaid">
+    stateDiagram
+    State1: The state with a note
+    note right of State1
+    Important information! You can write
+    notes.
+    end note
+    State1 --> State2
+    note left of State2 : This is the note to the left.
+    </pre>
+    <pre class="mermaid">
+    stateDiagram
+    State1
+    note right of State1
+    Line1<br>Line2<br />Line3<br />Line4<br />Line5
+    end note
     </pre>
 
     <script src="./mermaid.js"></script>
     <script>
       mermaid.initialize({
-        theme: 'forest',
+        theme: 'base',
         // themeCSS: '.node rect { fill: red; }',
         logLevel: 3,
         securityLevel: 'loose',

@@ -424,6 +424,8 @@ flowchart LR
   B1 --> B2
 ```
 
+**A clarification is in order here.** The direction statement affects the layout of a subgraph but only as long as it does not have any links leading in or out of it. The reason for this is that if you have links in or out then the graph of nodes is not longer the set of nodes in the subgraph but actually the set of nodes of the parent including the ones in the subgraph. One can see it as that the direction of the container gets injected in the subgraph with a link.
+
 ## Interaction
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
