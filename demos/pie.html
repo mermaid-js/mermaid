@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>ER diagram | Mermaid Quick Test Page</title>
+    <title>Mermaid Quick Test Page</title>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
     <style>
       div.mermaid {
@@ -15,13 +15,23 @@
 
   <body>
     <pre class="mermaid">
-      erDiagram
-        accTitle: A very simple Entity-Relationship demo
-        accDescr: Shows the relationships between Customer, Order, Line-Item, and Delivery-Address
+      pie title Pets adopted by volunteers
+      accTitle: simple pie char demo
+      accDescr: pie chart with 3 sections: dogs, cats, rats. Most are dogs.
+    "Dogs" : 386
+    "Cats" : 85
+    "Rats" : 15
+    </pre>
 
-        CUSTOMER ||--o{ ORDER : places
-        ORDER ||--|{ LINE-ITEM : contains
-        CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
+    <pre class="mermaid">
+    pie
+      title Key elements in Product X
+        accTitle: Key elements in Product X
+      accDescr: This is a pie chart showing the key elements in Product X.
+      "Calcium" : 42.96
+      "Potassium" : 50.05
+      "Magnesium" : 10.01
+      "Iron" :  5
     </pre>
 
     <script type="module">
@@ -31,8 +41,8 @@
         // themeCSS: '.node rect { fill: red; }',
         logLevel: 3,
         securityLevel: 'loose',
-        flowchart: { curve: 'basis' },
-        gantt: { axisFormat: '%m/%d/%Y' },
+        // flowchart: { curve: 'basis' },
+        // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50 },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
       });
