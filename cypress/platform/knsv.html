@@ -38,13 +38,17 @@
     </style>
   </head>
   <body>
-    <pre class="mermaid2" style="width: 50%">
-flowchart LR
-  a ---
-    </pre>
     <pre class="mermaid" style="width: 50%">
 flowchart LR
-  a2 ---
+  subgraph one
+    direction LR
+    A[myClass1] --> B[default]
+    subgraph two
+      direction BT
+      C[myClass2] --> D[default]
+    end
+  end
+
     </pre>
     <pre class="mermaid2" style="width: 50%">
 flowchart LR
@@ -79,7 +83,7 @@ flowchart TD
     end
     end
     </pre>
-    <pre class="mermaid" style="width: 50%">
+    <pre class="mermaid2" style="width: 50%">
 flowchart TD
 
   release-branch[Create Release Branch]:::relClass
@@ -131,7 +135,7 @@ flowchart TD
       class A someclass;
       class C someclass;
     </pre>
-    <pre class="mermaid" style="width: 50%">
+    <pre class="mermaid2" style="width: 50%">
    sequenceDiagram
       title: My Sequence Diagram Title
       accTitle: My Acc Sequence Diagram
@@ -141,14 +145,14 @@ flowchart TD
       John-->>Alice: Great!
       Alice-)John: See you later!
     </pre>
-    <pre class="mermaid" style="width: 50%">
+    <pre class="mermaid2" style="width: 50%">
 graph TD
     A -->|000| B
     B -->|111| C
 
     linkStyle 1 stroke:#ff3,stroke-width:4px,color:red;
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
   journey
       accTitle: My User Journey Diagram
       accDescr: My User Journey Diagram Description
@@ -162,11 +166,51 @@ graph TD
         Go downstairs: 5: Me
         Sit down: 5: Me
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
         info
     </pre>
+    <pre class="mermaid2" style="width: 100%">
+requirementDiagram
+      accTitle: My req Diagram
+      accDescr: My req Diagram Description
 
-    <pre class="mermaid" style="width: 100%">
+    requirement test_req {
+    id: 1
+    text: the test text.
+    risk: high
+    verifymethod: test
+    }
+
+    functionalRequirement test_req2 {
+    id: 1.1
+    text: the second test text.
+    risk: low
+    verifymethod: inspection
+    }
+
+    performanceRequirement test_req3 {
+    id: 1.2
+    text: the third test text.
+    risk: medium
+    verifymethod: demonstration
+    }
+
+    element test_entity {
+    type: simulation
+    }
+
+    element test_entity2 {
+    type: word doc
+    docRef: reqs/test_entity
+    }
+
+
+    test_entity - satisfies -> test_req2
+    test_req - traces -> test_req2
+    test_req - contains -> test_req3
+    test_req <- copies - test_entity2
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
 gantt
     dateFormat  YYYY-MM-DD
     title       Adding GANTT diagram functionality to mermaid
@@ -198,7 +242,7 @@ gantt
     Add gantt diagram to demo page      :20h
     Add another diagram to demo page    :48h
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
 stateDiagram
   state Active {
     Idle
@@ -226,7 +270,7 @@ stateDiagram
           end
           B ->> A: Return
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
 classDiagram
 accTitle: My class diagram
 accDescr: My class diagram Description
@@ -251,7 +295,7 @@ class Class10 {
         A->>Bob: Hola
         Bob-->A: Pasten !
     </pre>
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
       gitGraph
        commit id: "ZERO"
        branch develop
@@ -280,8 +324,30 @@ flowchart TD
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
     </pre>
-
-    <pre class="mermaid" style="width: 100%">
+    <pre class="mermaid2" style="width: 100%">
+        classDiagram
+          Animal "1" <|-- Duck
+          Animal <|-- Fish
+          Animal <--o Zebra
+          Animal : +int age
+          Animal : +String gender
+          Animal: +isMammal()
+          Animal: +mate()
+          class Duck{
+            +String beakColor
+            +swim()
+            +quack()
+          }
+          class Fish{
+            -int sizeInFeet
+            -canEat()
+          }
+          class Zebra{
+            +bool is_wild
+            +run()
+          }
+    </pre>
+    <pre class="mermaid2" style="width: 100%">
         erDiagram
     CAR ||--o{ NAMED-DRIVER : allows
     CAR {
