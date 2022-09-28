@@ -16,18 +16,30 @@
   <body>
     <pre class="mermaid">
       erDiagram
-        accTitle: A very simple Entity-Relationship demo
-        accDescr: Shows the relationships between Customer, Order, Line-Item, and Delivery-Address
+        title: This is a title
+        accDescription_ Test a description
 
         CUSTOMER ||--o{ ORDER : places
         ORDER ||--|{ LINE-ITEM : contains
         CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
+
+        DELIVERY-ADDRESS {
+          int customerId
+          string addressLine1
+          string addressLine2
+          string city
+          string county
+          string state
+          string region
+          string country
+          string postalCode
+        }
     </pre>
 
     <script type="module">
       import mermaid from '../src/mermaid';
       mermaid.initialize({
-        theme: 'forest',
+        theme: 'base',
         // themeCSS: '.node rect { fill: red; }',
         logLevel: 3,
         securityLevel: 'loose',
