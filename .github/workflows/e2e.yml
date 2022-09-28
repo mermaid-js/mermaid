@@ -39,6 +39,5 @@ jobs:
           # e.g. if this action was run from a fork
           record: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
           parallel: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
-          headless: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
