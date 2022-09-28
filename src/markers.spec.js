@@ -1,9 +1,15 @@
-const { select, selectAll } = jest.requireActual('d3');
-
+import { vi } from 'vitest';
+import { select } from 'd3';
 import { appendMarker, markerUrl } from './markers';
 import { setSiteConfig } from './config';
 
 describe('markers', () => {
+  vi.mock('d3', async () => {
+    const d3 = await vi.importActual('d3');
+
+    return { ...d3, get: vi.fn() };
+  });
+
   describe('markerUrl()', () => {
     const markerUrlForName = (name) => markerUrl(select('empty'), name);
 

@@ -19,7 +19,7 @@ function addConf(conf, key, value) {
 let diagram;
 
 describe('more than one sequence diagram', () => {
-  it('should not have duplicated messages', () => {
+  it.only('should not have duplicated messages', () => {
     const diagram1 = new Diagram(`
         sequenceDiagram
         Alice->Bob:Hello Bob, how are you?
@@ -1786,16 +1786,16 @@ describe('when rendering a sequenceDiagram with directives', function () {
     mermaidAPI.initialize({ sequence: conf });
   });
 
-  let conf;
-  beforeEach(function () {
-    mermaidAPI.reset();
-    // diagram.db = sequenceDb;
-    diagram.db.clear();
-    conf = diagram.db.getConfig();
-    diagram.renderer.bounds.init();
-  });
+  // let conf;
+  // beforeEach(function () {
+  //   mermaidAPI.reset();
+  //   diagram.db = sequenceDb;
+  //   diagram.db.clear();
+  //   conf = diagram.db.getConfig();
+  //   diagram.renderer.bounds.init();
+  // });
 
-  it('should handle one actor, when theme is dark and logLevel is 1 DX1', function () {
+  it.only('should handle one actor, when theme is dark and logLevel is 1 DX1', function () {
     const str = `
 %%{init: { "theme": "dark", "logLevel": 1 } }%%
 sequenceDiagram
