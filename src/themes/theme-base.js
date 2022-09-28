@@ -1,5 +1,10 @@
 import { darken, lighten, adjust, invert } from 'khroma';
 import { mkBorder } from './theme-helpers';
+import {
+  oldAttributeBackgroundColorEven,
+  oldAttributeBackgroundColorOdd,
+} from './erDiagram-oldHardcodedValues';
+
 class Theme {
   constructor() {
     /** # Base variables */
@@ -219,6 +224,15 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+
+    /* -------------------------------------------------- */
+    /* EntityRelationship diagrams                        */
+
+    this.attributeBackgroundColorOdd =
+      this.attributeBackgroundColorOdd || oldAttributeBackgroundColorOdd;
+    this.attributeBackgroundColorEven =
+      this.attributeBackgroundColorEven || oldAttributeBackgroundColorEven;
+    /* -------------------------------------------------- */
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
