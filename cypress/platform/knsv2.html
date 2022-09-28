@@ -45,12 +45,11 @@
   </head>
   <body>
     <div>Security check</div>
-    <pre id="diagram" class="mermaid2">
-            flowchart LR
-          A -> B
+    <pre id="diagram" class="mermaid">
+info
         </pre
     >
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
             mindmap
           root
             ch1
@@ -58,6 +57,7 @@
         </pre
     >
     <script src="./packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script>
+    <script src="./packages/mermaid-mindmap/dist/mermaid-example-diagram-detector.js"></script>
     <script src="./packages/mermaid/dist/mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {

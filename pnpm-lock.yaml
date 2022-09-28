@@ -259,24 +259,15 @@ importers:
       unist-util-flatmap: 1.0.0
       vitest: 0.23.4_y2hohvmcqnhseytaw4yjcnsnkm
 
-  packages/mermaid-mindmap:
+  packages/mermaid-example-diagram:
     specifiers:
-      '@braintree/sanitize-url': ^6.0.0
       concurrently: ^7.4.0
-      d3: ^7.0.0
-      mermaid: workspace:*
-      non-layered-tidy-tree-layout: ^2.0.2
       rimraf: ^3.0.2
-    dependencies:
-      '@braintree/sanitize-url': 6.0.0
-      d3: 7.6.1
-      mermaid: link:../mermaid
-      non-layered-tidy-tree-layout: 2.0.2
     devDependencies:
       concurrently: 7.4.0
       rimraf: 3.0.2
 
-  packages/rm-mermaid-mindmap-detector:
+  packages/mermaid-mindmap:
     specifiers:
       '@braintree/sanitize-url': ^6.0.0
       concurrently: ^7.4.0
