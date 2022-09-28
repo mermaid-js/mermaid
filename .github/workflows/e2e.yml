@@ -21,6 +21,9 @@ jobs:
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
+        # Need to skip setup if Cypress run is skipped, otherwise an error
+        # is thrown since the pnpm cache step fails
+        if: ${{ ( env.CYPRESS_RECORD_KEY != '' ) || ( matrix.containers == 1 ) }}
         with:
           cache: pnpm
           node-version: ${{ matrix.node-version }}
