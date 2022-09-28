@@ -3,30 +3,18 @@ import { addFunction } from '../../interactionDb';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { appendMarker } from '../../markers';
 
-export const drawRect = function (elem, rectData) {
-  const rectElem = elem.append('rect');
-  rectElem.attr('x', rectData.x);
-  rectElem.attr('y', rectData.y);
-  rectElem.attr('fill', rectData.fill);
-  rectElem.attr('stroke', rectData.stroke);
-  rectElem.attr('width', rectData.width);
-  rectElem.attr('height', rectData.height);
-  rectElem.attr('rx', rectData.rx);
-  rectElem.attr('ry', rectData.ry);
-
-  if (typeof rectData.class !== 'undefined') {
-    rectElem.attr('class', rectData.class);
-  }
-
-  return rectElem;
-};
-
-// const sanitizeUrl = function (s) {
-//   return s
-//     .replace(/&/g, '&amp;')
-//     .replace(/</g, '&lt;')
-//     .replace(/javascript:/g, '');
-// };
+export const drawRect = (elem, data) =>
+  elem
+    .append('rect')
+    .attr('x', data.x)
+    .attr('y', data.y)
+    .attr('fill', data.fill)
+    .attr('stroke', data.stroke)
+    .attr('width', data.width)
+    .attr('height', data.height)
+    .attr('rx', data.rx)
+    .attr('ry', data.ry)
+    .attr('class', data.class);
 
 const addPopupInteraction = (id, actorCnt) => {
   addFunction(() => {
@@ -643,6 +631,7 @@ export const drawBackgroundRect = function (elem, bounds) {
     class: 'rect',
   });
   rectElem.lower();
+  return rectElem;
 };
 
 export const insertDatabaseIcon = function (elem) {
