@@ -1,6 +1,6 @@
 import { setConfig } from '../../../config';
 import erDb from '../erDb';
-import erDiagram from './erDiagram';
+import erDiagram from './erDiagram'; // jison file
 
 setConfig({
   securityLevel: 'strict',
@@ -21,14 +21,118 @@ describe('when parsing ER diagram it...', function () {
     expect(erDb.getRelationships().length).toBe(0);
   });
 
-  it('should allow hyphens and underscores in entity names', function () {
-    const line1 = 'DUCK-BILLED-PLATYPUS';
-    const line2 = 'CHARACTER_SET';
-    erDiagram.parser.parse(`erDiagram\n${line1}\n${line2}`);
+  describe('entity name', () => {
+    it('cannot be empty quotes ""', function () {
+      const name = '""';
+      expect(() => {
+        erDiagram.parser.parse(`erDiagram\n ${name}\n`);
+        const entities = erDb.getEntities();
+        expect(entities.hasOwnProperty(name)).toBe(false);
+      }).toThrow();
+    });
+    describe('has non A-Za-z0-9_- chars', function () {
+      // these were entered using the Mac keyboard utility.
+      const chars =
+        "~ ` ! @ # $ ^ & * ( ) - _ = + [ ] { } | / ; : ' . ? ¡ ⁄ ™ € £ ‹ ¢ › ∞ ﬁ § ‡ • ° ª · º ‚ ≠ ± œ Œ ∑ „ ® † ˇ ¥ Á ¨ ˆ ˆ Ø π ∏ “ « » å Å ß Í ∂ Î ƒ Ï © ˙ Ó ∆ Ô ˚  ¬ Ò … Ú æ Æ Ω ¸ ≈ π ˛ ç Ç √ ◊ ∫ ı ˜ µ Â ≤ ¯ ≥ ˘ ÷ ¿";
+      const allowed = chars.split(' ');
 
-    const entities = erDb.getEntities();
-    expect(entities.hasOwnProperty('DUCK-BILLED-PLATYPUS')).toBe(true);
-    expect(entities.hasOwnProperty('CHARACTER_SET')).toBe(true);
+      allowed.forEach((allowedChar) => {
+        const singleOccurrence = `Blo${allowedChar}rf`;
+        const repeatedOccurrence = `Blo${allowedChar}${allowedChar}rf`;
+        const cannontStartWith = `${allowedChar}Blorf`;
+        const endsWith = `Blorf${allowedChar}`;
+
+        it(`${singleOccurrence} fails if not surrounded by quotes`, function () {
+          const name = singleOccurrence;
+          expect(() => {
+            erDiagram.parser.parse(`erDiagram\n ${name}\n`);
+            const entities = erDb.getEntities();
+            expect(entities.hasOwnProperty(name)).toBe(false);
+          }).toThrow();
+        });
+
+        it(`"${singleOccurrence}" single occurrence`, function () {
+          const name = singleOccurrence;
+          erDiagram.parser.parse(`erDiagram\n "${name}"\n`);
+          const entities = erDb.getEntities();
+          expect(entities.hasOwnProperty(name)).toBe(true);
+        });
+
+        it(`"${repeatedOccurrence}" repeated occurrence`, function () {
+          const name = repeatedOccurrence;
+          erDiagram.parser.parse(`erDiagram\n "${name}"\n`);
+          const entities = erDb.getEntities();
+          expect(entities.hasOwnProperty(name)).toBe(true);
+        });
+
+        it(`"${singleOccurrence}" ends with`, function () {
+          const name = endsWith;
+          erDiagram.parser.parse(`erDiagram\n "${name}"\n`);
+          const entities = erDb.getEntities();
+          expect(entities.hasOwnProperty(name)).toBe(true);
+        });
+
+        it(`"${cannontStartWith}" cannot start with the character`, function () {
+          const name = repeatedOccurrence;
+          expect(() => {
+            erDiagram.parser.parse(`erDiagram\n "${name}"\n`);
+            const entities = erDb.getEntities();
+            expect(entities.hasOwnProperty(name)).toBe(false);
+          }).toThrow();
+        });
+      });
+
+      const allCombined = allowed.join('');
+
+      it(`a${allCombined} (all non-alphanumerics) in one, starting with 'a'`, function () {
+        const name = 'a' + allCombined;
+        erDiagram.parser.parse(`erDiagram\n "${name}"\n`);
+        const entities = erDb.getEntities();
+        expect(entities.hasOwnProperty(name)).toBe(true);
+      });
+    });
+
+    it('cannot contain % because it interfers with parsing comments', function () {
+      expect(() => {
+        erDiagram.parser.parse(`erDiagram\n "Blo%rf"\n`);
+        const entities = erDb.getEntities();
+        expect(entities.hasOwnProperty(name)).toBe(false);
+      }).toThrow();
+    });
+    it('cannot contain \\ because it could start and escape code', function () {
+      expect(() => {
+        erDiagram.parser.parse(`erDiagram\n "Blo\\rf"\n`);
+        const entities = erDb.getEntities();
+        expect(entities.hasOwnProperty(name)).toBe(false);
+      }).toThrow();
+    });
+
+    it('cannot newline, backspace, or vertical characters', function () {
+      const disallowed = ['\n', '\r', '\b', '\v'];
+      disallowed.forEach((badChar) => {
+        const badName = `Blo${badChar}rf`;
+        expect(() => {
+          erDiagram.parser.parse(`erDiagram\n "${badName}"\n`);
+          const entities = erDb.getEntities();
+          expect(entities.hasOwnProperty(badName)).toBe(false);
+        }).toThrow();
+      });
+    });
+
+    // skip this: jison cannot handle non-english letters
+    it.skip('[skipped test] can contain àáâäæãåā', function () {
+      const beyondEnglishName = 'DUCK-àáâäæãåā';
+      erDiagram.parser.parse(`erDiagram\n${beyondEnglishName}\n`);
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(beyondEnglishName)).toBe(true);
+    });
+
+    it('can contain - _ without needing ""', function () {
+      const hyphensUnderscore = 'DUCK-BILLED_PLATYPUS';
+      erDiagram.parser.parse(`erDiagram\n${hyphensUnderscore}\n`);
+      const entities = erDb.getEntities();
+      expect(entities.hasOwnProperty(hyphensUnderscore)).toBe(true);
+    });
   });
 
   it('should allow an entity with a single attribute to be defined', function () {
@@ -447,27 +551,23 @@ describe('when parsing ER diagram it...', function () {
     }).toThrowError();
   });
 
-  it('should allow an empty quoted label', function () {
-    erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : ""');
-    const rels = erDb.getRelationships();
-    expect(rels[0].roleA).toBe('');
-  });
+  describe('relationship labels', function () {
+    it('should allow an empty quoted label', function () {
+      erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : ""');
+      const rels = erDb.getRelationships();
+      expect(rels[0].roleA).toBe('');
+    });
 
-  it('should allow an non-empty quoted label', function () {
-    erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : "places"');
-    const rels = erDb.getRelationships();
-    expect(rels[0].roleA).toBe('places');
-  });
+    it('should allow an non-empty quoted label', function () {
+      erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : "places"');
+      const rels = erDb.getRelationships();
+      expect(rels[0].roleA).toBe('places');
+    });
 
-  it('should allow an non-empty unquoted label', function () {
-    erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : places');
-    const rels = erDb.getRelationships();
-    expect(rels[0].roleA).toBe('places');
-  });
-
-  it('should allow an entity name with a dot', function () {
-    erDiagram.parser.parse('erDiagram\nCUSTOMER.PROP ||--|{ ORDER : places');
-    const rels = erDb.getRelationships();
-    expect(rels[0].entityA).toBe('CUSTOMER.PROP');
+    it('should allow an non-empty unquoted label', function () {
+      erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : places');
+      const rels = erDb.getRelationships();
+      expect(rels[0].roleA).toBe('places');
+    });
   });
 });
