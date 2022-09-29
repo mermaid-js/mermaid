@@ -118,6 +118,7 @@
     "js-base64": "3.7.2",
     "jsdom": "^20.0.0",
     "lint-staged": "^13.0.0",
+    "markdown-it": "^13.0.1",
     "moment": "^2.23.0",
     "path-browserify": "^1.0.1",
     "prettier": "^2.7.1",
@@ -130,7 +131,7 @@
     "unist-util-flatmap": "^1.0.0",
     "vitepress": "^1.0.0-alpha.16",
     "vitepress-plugin-mermaid": "^2.0.8",
-    "vitepress-plugin-search": "^1.0.4-alpha.8",
+    "vitepress-plugin-search": "^1.0.4-alpha.11",
     "vitest": "^0.23.1"
   },
   "resolutions": {
