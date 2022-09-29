@@ -1,6 +1,6 @@
 {
-  "src/docs/**": ["yarn docs:build --git"],
-  "src/docs.mts": ["yarn docs:build --git"],
+  "src/docs/**": ["pnpm run docs:build --git"],
+  "src/docs.mts": ["pnpm run docs:build --git"],
   "*.{ts,js,json,html,md,mts}": ["eslint --fix", "prettier --write"],
-  "*.jison": ["yarn lint:jison"]
+  "*.jison": ["pnpm run lint:jison"]
 }
