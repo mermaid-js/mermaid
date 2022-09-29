@@ -20,6 +20,7 @@ importers:
       '@types/node': ^18.7.21
       '@types/prettier': ^2.7.1
       '@types/stylis': ^4.0.2
+      '@types/uuid': ^8.3.4
       '@typescript-eslint/eslint-plugin': ^5.37.0
       '@typescript-eslint/parser': ^5.37.0
       '@vitest/coverage-c8': ^0.23.2
@@ -67,11 +68,13 @@ importers:
       ts-node: ^10.9.1
       typescript: ^4.8.3
       unist-util-flatmap: ^1.0.0
+      uuid: ^9.0.0
       vite: ^3.0.9
       vitest: ^0.23.1
     dependencies:
       '@braintree/sanitize-url': 6.0.0
       '@types/node': 18.7.21
+      '@types/uuid': 8.3.4
       d3: 7.6.1
       dagre: 0.8.5
       dagre-d3: 0.6.4
@@ -84,6 +87,7 @@ importers:
       non-layered-tidy-tree-layout: 2.0.2
       rollup: 2.79.1
       stylis: 4.1.2
+      uuid: 9.0.0
     devDependencies:
       '@applitools/eyes-cypress': 3.27.1
       '@commitlint/cli': 17.1.2
@@ -3082,6 +3086,10 @@ packages:
   /@types/unist/2.0.6:
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
     dev: true
+
+  /@types/uuid/8.3.4:
+    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
+    dev: false
 
   /@types/yargs-parser/21.0.0:
     resolution: {integrity: sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA==}
@@ -12083,6 +12091,11 @@ packages:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
     dev: true
+
+  /uuid/9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
+    dev: false
 
   /uvu/0.5.6:
     resolution: {integrity: sha512-+g8ENReyr8YsOc6fv/NVJs2vFdHBnBNdfE49rshrTzDWOlUx4Gq7KOS2GD8eqhy2j+Ejq29+SbKH8yjkAqXqoA==}
