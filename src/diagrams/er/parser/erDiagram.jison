@@ -24,6 +24,7 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 [\n]+                           return 'NEWLINE';
 \s+                             /* skip whitespace */
 [\s]+                           return 'SPACE';
+\"[^"%\r\n\v\b\\]+\"            return 'ENTITY_NAME';
 \"[^"]*\"                       return 'WORD';
 "erDiagram"                     return 'ER_DIAGRAM';
 "{"                             { this.begin("block"); return 'BLOCK_START'; }
@@ -102,8 +103,8 @@ statement
     ;
 
 entityName
-    : 'ALPHANUM' { $$ = $1; /*console.log('Entity: ' + $1);*/ }
-    | 'ALPHANUM' '.' entityName { $$ = $1 + $2 + $3; }
+    : 'ALPHANUM'      { $$ = $1; }
+    | 'ENTITY_NAME'      { $$ = $1.replace(/"/g, ''); }
     ;
 
 attributes
@@ -156,6 +157,7 @@ relType
 
 role
     : 'WORD'      { $$ = $1.replace(/"/g, ''); }
+    | 'ENTITY_NAME' { $$ = $1.replace(/"/g, ''); }
     | 'ALPHANUM'  { $$ = $1; }
     ;
 

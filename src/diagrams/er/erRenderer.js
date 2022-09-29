@@ -1,7 +1,5 @@
 import graphlib from 'graphlib';
 import { line, curveBasis, select } from 'd3';
-// import erDb from './erDb';
-// import erParser from './parser/erDiagram';
 import dagre from 'dagre';
 import { getConfig } from '../../config';
 import { log } from '../../logger';
@@ -9,8 +7,16 @@ import erMarkers from './erMarkers';
 import { configureSvgSize } from '../../setupGraphViewbox';
 import addSVGAccessibilityFields from '../../accessibility';
 import { parseGenericTypes } from '../common/common';
+import { v4 as uuid4 } from 'uuid';
 
+/** Regex used to remove chars from the entity name so the result can be used in an id */
+const BAD_ID_CHARS_REGEXP = /[^A-Za-z0-9]([\W])*/g;
+
+// Configuration
 let conf = {};
+
+// Map so we can look up the id of an entity based on the name
+let entityNameIds = new Map();
 
 /**
  * Allows the top-level API module to inject config specific to this renderer, storing it in the
@@ -31,8 +37,10 @@ export const setConf = function (cnf) {
  *
  * @param groupNode The svg group node for the entity
  * @param entityTextNode The svg node for the entity label text
- * @param attributes An array of attributes defined for the entity (each attribute has a type and a name)
- * @returns {object} The bounding box of the entity, after attributes have been added. The bounding box has a .width and .height
+ * @param attributes An array of attributes defined for the entity (each attribute has a type and a
+ *   name)
+ * @returns {object} The bounding box of the entity, after attributes have been added. The bounding
+ *   box has a .width and .height
  */
 const drawAttributes = (groupNode, entityTextNode, attributes) => {
   const heightPadding = conf.entityPadding / 3; // Padding internal to attribute boxes
@@ -288,7 +296,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       heightOffset += attributeNode.height + heightPadding * 2;
 
       // Flip the attribute style for row banding
-      attribStyle = attribStyle == 'attributeBoxOdd' ? 'attributeBoxEven' : 'attributeBoxOdd';
+      attribStyle = attribStyle === 'attributeBoxOdd' ? 'attributeBoxEven' : 'attributeBoxOdd';
     });
   } else {
     // Ensure the entity box is a decent size without any attributes
@@ -313,15 +321,18 @@ const drawEntities = function (svgNode, entities, graph) {
   const keys = Object.keys(entities);
   let firstOne;
 
-  keys.forEach(function (id) {
-    // Create a group for each entity
-    const groupNode = svgNode.append('g').attr('id', id);
+  keys.forEach(function (entityName) {
+    const entityId = generateId(entityName, 'entity');
+    entityNameIds.set(entityName, entityId);
 
-    firstOne = firstOne === undefined ? id : firstOne;
+    // Create a group for each entity
+    const groupNode = svgNode.append('g').attr('id', entityId);
+
+    firstOne = firstOne === undefined ? entityId : firstOne;
 
     // Label the entity - this is done first so that we can get the bounding box
     // which then determines the size of the rectangle
-    const textId = 'entity-' + id;
+    const textId = 'text-' + entityId;
     const textNode = groupNode
       .append('text')
       .attr('class', 'er entityLabel')
@@ -334,12 +345,12 @@ const drawEntities = function (svgNode, entities, graph) {
         'style',
         'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
       )
-      .text(id);
+      .text(entityName);
 
     const { width: entityWidth, height: entityHeight } = drawAttributes(
       groupNode,
       textNode,
-      entities[id].attributes
+      entities[entityName].attributes
     );
 
     // Draw the rectangle - insert it before the text so that the text is not obscured
@@ -356,12 +367,12 @@ const drawEntities = function (svgNode, entities, graph) {
 
     const rectBBox = rectNode.node().getBBox();
 
-    // Add the entity to the graph
-    graph.setNode(id, {
+    // Add the entity to the graph using the entityId
+    graph.setNode(entityId, {
       width: rectBBox.width,
       height: rectBBox.height,
       shape: 'rect',
-      id: id,
+      id: entityId,
     });
   });
   return firstOne;
@@ -382,9 +393,16 @@ const adjustEntities = function (svgNode, graph) {
         );
     }
   });
-  return;
 };
 
+/**
+ * Construct a name for an edge based on the names of the 2 entities and the role (relationship)
+ * between them. Remove any spaces from it
+ *
+ * @param rel - A (parsed) relationship (e.g. one of the objects in the list returned by
+ *   erDb.getRelationships)
+ * @returns {string}
+ */
 const getEdgeName = function (rel) {
   return (rel.entityA + rel.roleA + rel.entityB).replace(/\s/g, '');
 };
@@ -393,12 +411,17 @@ const getEdgeName = function (rel) {
  * Add each relationship to the graph
  *
  * @param relationships The relationships to be added
- * @param g The graph
+ * @param {Graph} g The graph
  * @returns {Array} The array of relationships
  */
 const addRelationships = function (relationships, g) {
   relationships.forEach(function (r) {
-    g.setEdge(r.entityA, r.entityB, { relationship: r }, getEdgeName(r));
+    g.setEdge(
+      entityNameIds.get(r.entityA),
+      entityNameIds.get(r.entityB),
+      { relationship: r },
+      getEdgeName(r)
+    );
   });
   return relationships;
 }; // addRelationships
@@ -418,7 +441,11 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   relCnt++;
 
   // Find the edge relating to this relationship
-  const edge = g.edge(rel.entityA, rel.entityB, getEdgeName(rel));
+  const edge = g.edge(
+    entityNameIds.get(rel.entityA),
+    entityNameIds.get(rel.entityB),
+    getEdgeName(rel)
+  );
 
   // Get a function that will generate the line path
   const lineFunction = line()
@@ -535,8 +562,6 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .attr('height', labelBBox.height)
     .attr('fill', 'white')
     .attr('fill-opacity', '85%');
-
-  return;
 };
 
 /**
@@ -552,7 +577,7 @@ export const draw = function (text, id, _version, diagObj) {
   log.info('Drawing ER diagram');
   //  diag.db.clear();
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -581,7 +606,7 @@ export const draw = function (text, id, _version, diagObj) {
   // 1. Create all the entities in the svg node at 0,0, but with the correct dimensions (allowing for text content)
   // 2. Make sure they are all added to the graph
   // 3. Add all the edges (relationships) to the graph as well
-  // 4. Let dagre do its magic to layout the graph.  This assigns:
+  // 4. Let dagre do its magic to lay out the graph.  This assigns:
   //    - the centre co-ordinates for each node, bearing in mind the dimensions and edge relationships
   //    - the path co-ordinates for each edge
   //    But it has no impact on the svg child nodes - the diagram remains with every entity rooted at 0,0
@@ -646,6 +671,35 @@ export const draw = function (text, id, _version, diagObj) {
 
   addSVGAccessibilityFields(diagObj.db, svg, id);
 }; // draw
+
+/**
+ * Return a unique id based on the given string. Start with the prefix, then a hyphen, then the
+ * simplified str, then a hyphen, then a unique uuid. (Hyphens are only included if needed.)
+ * Although the official XML standard for ids says that many more characters are valid in the id,
+ * this keeps things simple by accepting only A-Za-z0-9.
+ *
+ * @param {string} [str?=''] Given string to use as the basis for the id. Default is `''`
+ * @param {string} [prefix?=''] String to put at the start, followed by '-'. Default is `''`
+ * @param str
+ * @param prefix
+ * @returns {string}
+ * @see https://www.w3.org/TR/xml/#NT-Name
+ */
+export function generateId(str = '', prefix = '') {
+  const simplifiedStr = str.replace(BAD_ID_CHARS_REGEXP, '');
+  return `${strWithHyphen(prefix)}${strWithHyphen(simplifiedStr)}${uuid4()}`;
+}
+
+/**
+ * Append a hyphen to a string only if the string isn't empty
+ *
+ * @param {string} str
+ * @returns {string}
+ * @todo This could be moved into a string utility file/class.
+ */
+function strWithHyphen(str = '') {
+  return str.length > 0 ? `${str}-` : '';
+}
 
 export default {
   setConf,

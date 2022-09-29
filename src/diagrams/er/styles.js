@@ -6,12 +6,12 @@ const getStyles = (options) =>
   }
 
   .attributeBoxOdd {
-    fill: #ffffff;
+    fill: ${options.attributeBackgroundColorOdd};
     stroke: ${options.nodeBorder};
   }
 
   .attributeBoxEven {
-    fill: #f2f2f2;
+    fill:  ${options.attributeBackgroundColorEven};
     stroke: ${options.nodeBorder};
   }
 
