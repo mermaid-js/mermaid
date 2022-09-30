@@ -9,13 +9,13 @@ We are transforming the Mermaid repository to a so called mono-repo. This is a p
 - Make it possible to add diagrams from outside of the Mermaid repository
 - Separate the release flow between different diagrams and the Mermaid core
 
-As such be aware of sime changes..
+As such be aware of some changes..
 
 # We use pnpm now
 
 # The source code has moved
 
-It is now localted in the src forunder for respoective package located as subfoders in packages.
+It is now located in the src folder for each respective package located as subfolders in packages.
 
 English | [简体中文](./README.zh-CN.md)
 
