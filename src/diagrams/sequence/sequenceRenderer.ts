@@ -239,7 +239,7 @@ const drawNote = function (elem, noteModel) {
 
   const textHeight = Math.round(
     textElem
-      .map((te) => (te._groups || te)[0][0].getBBox().height)
+      .map((te) => (te._groups || te)[0][0]?.getBBox().height || 0)
       .reduce((acc, curr) => acc + curr)
   );
 

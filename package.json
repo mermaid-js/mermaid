@@ -43,6 +43,7 @@
     "ci": "vitest run",
     "test": "yarn lint && vitest run",
     "test:watch": "vitest --coverage --watch",
+    "test:debug": "vitest --watch src/diagrams/sequence/seq*.spec.js",
     "prepublishOnly": "yarn build && yarn test",
     "prepare": "concurrently \"husky install\" \"yarn build\"",
     "pre-commit": "lint-staged"

@@ -2,6 +2,8 @@ import flowDb from './flowDb';
 import flowParser from './parser/flow';
 import flowRenderer from './flowRenderer';
 import Diagram from '../../Diagram';
+import * as d3 from 'd3';
+
 import { addDiagrams } from '../../diagram-api/diagram-orchestration';
 addDiagrams();
 
@@ -31,7 +33,6 @@ describe('when using mermaid and ', function () {
 
     it('should handle edges without text', function () {
       const diag = new Diagram('graph TD;A-->B;');
-      diag.db.getVertices();
       const edges = diag.db.getEdges();
 
       const mockG = {
@@ -62,21 +63,18 @@ describe('when using mermaid and ', function () {
     });
 
     it('should handle edges with styles defined', function () {
-      const diag = new Diagram('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
-      diag.db.getVertices();
-      const edges = diag.db.getEdges();
+      const diagram = new Diagram('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
+      const edges = diagram.db.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B-');
-          expect(options.arrowhead).toBe('none');
+        setEdge: function (_, __, options) {
           expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
         },
       };
 
-      flowRenderer.addEdges(edges, mockG, diag);
+      flowRenderer.addEdges(edges, mockG, diagram);
     });
+
     it('should handle edges with interpolation defined', function () {
       const diag = new Diagram('graph TD;A---B; linkStyle 0 interpolate basis');
       diag.db.getVertices();
@@ -84,10 +82,10 @@ describe('when using mermaid and ', function () {
 
       const mockG = {
         setEdge: function (start, end, options) {
-          expect(start).toContain('flowchart-A-');
-          expect(end).toContain('flowchart-B-');
+          expect(start).toMatch(/^flowchart-A-\d+$/);
+          expect(end).toMatch(/^flowchart-B-\d+$/);
           expect(options.arrowhead).toBe('none');
-          expect(options.curve).toBe('basis'); // mocked as string
+          expect(options.curve).toBe(d3.curveBasis);
         },
       };
 

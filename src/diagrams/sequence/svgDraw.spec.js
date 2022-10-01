@@ -10,7 +10,7 @@ describe('svgDraw', function () {
   });
 
   describe('drawRect', () => {
-    it.only('should append a rectangle', () => {
+    it('should append a rectangle', () => {
       const rect = svgDraw.drawRect(svg, {
         x: '10',
         y: '20',
@@ -38,7 +38,7 @@ describe('svgDraw', function () {
   });
 
   describe('drawText', function () {
-    it.only('should append a single text element', function () {
+    it('should append a single text element', function () {
       const texts = svgDraw.drawText(svg, {
         x: '10',
         y: '10',
@@ -63,7 +63,7 @@ describe('svgDraw', function () {
       expect(texts[0].style('font-weight')).toBe('500');
     });
 
-    it.only('should append multiple text elements when <br> present', function () {
+    it('should append multiple text elements when <br> present', function () {
       const texts = svgDraw.drawText(svg, {
         x: '10',
         y: '20',
@@ -85,7 +85,7 @@ describe('svgDraw', function () {
   });
 
   describe('drawBackgroundRect', function () {
-    it.only('should append a rect before the previous element within a given bound', function () {
+    it('should append a rect before the previous element within a given bound', function () {
       const rect = svgDraw.drawBackgroundRect(svg, {
         startx: '50',
         starty: '200',

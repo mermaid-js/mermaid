@@ -256,7 +256,7 @@ export const drawText = function (elem, textData) {
       typeof textData.textMargin !== 'undefined' &&
       textData.textMargin > 0
     ) {
-      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+      textHeight += (textElem._groups || textElem)[0][0]?.getBBox().height || 0;
       prevTextHeight = textHeight;
     }
 
@@ -389,14 +389,9 @@ const drawActorTypeParticipant = function (elem, actor, conf) {
     conf
   );
 
-  let height = actor.height;
-  if (rectElem.node) {
-    const bounds = rectElem.node().getBBox();
-    actor.height = bounds.height;
-    height = bounds.height;
-  }
+  actor.height = rectElem.node()?.getBBox().height || actor.height;
 
-  return height;
+  return actor.height;
 };
 
 const drawActorTypeActor = function (elem, actor, conf) {
