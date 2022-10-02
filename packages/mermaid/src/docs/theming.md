@@ -113,7 +113,7 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 ```
 
 | Variable             | Default/Base/Factor value      | Calc | Description                                                                                                                      |
-| -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- | --- | --- |
+| -------------------- | ------------------------------ | ---- | -------------------------------------------------------------------------------------------------------------------------------- |
 | darkMode             | false                          |      | Boolean Value that dictates how to calculate colors. "true" will activate darkmode.                                              |
 | background           | #f4f4f4                        |      | Used to calculate color for items that should either be background colored or contrasting to the background.                     |
 | fontFamily           | "trebuchet ms", verdana, arial |      |                                                                                                                                  |
@@ -124,7 +124,7 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 | secondaryColor       | based on primaryColor          | \*   |                                                                                                                                  |
 | secondaryBorderColor | based on secondaryColor        | \*   | Color to be used as border in nodes using secondaryColor                                                                         |
 | secondaryTextColor   | based on secondaryColor        | \*   | Color to be used as text color in nodes using secondaryColor                                                                     |
-| tertiaryColor        | based on primaryColor          | \*   |                                                                                                                                  |     |     |
+| tertiaryColor        | based on primaryColor          | \*   |                                                                                                                                  |
 | tertiaryBorderColor  | based on tertiaryColor         | \*   | Color to be used as border in nodes using tertiaryColor                                                                          |
 | tertiaryTextColor    | based on tertiaryColor         | \*   | Color to be used as text color in nodes using tertiaryColor                                                                      |
 | noteBkgColor         | #fff5ad                        |      | Color used as background in notes                                                                                                |
@@ -135,6 +135,7 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 | mainBkg              | based on primaryColor          | \*   | Background in flowchart objects like rects/circles, class diagram classes, sequence diagram etc                                  |
 | errorBkgColor        | tertiaryColor                  | \*   | Color for syntax error message                                                                                                   |
 | errorTextColor       | tertiaryTextColor              | \*   | Color for syntax error message                                                                                                   |
+
 
 # What follows are Variables, specific to different diagrams and charts.
 
