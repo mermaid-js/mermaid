@@ -1,62 +1,67 @@
 import mermaid from './mermaid';
-import { mermaidAPI } from './mermaidAPI';
-import './diagram-api/diagram-orchestration';
-import { vi, describe, it, beforeEach, afterEach, expect } from 'vitest';
-const spyOn = vi.spyOn;
+import { getConfig, setConfig } from './config';
+import { MermaidConfig } from './config.type';
+import { describe, it, beforeEach, afterEach, expect } from 'vitest';
 
-vi.mock('./mermaidAPI');
+describe('mermaid', () => {
+  const initialContent = '<div class="mermaid">graph TD;a</div>';
 
-afterEach(() => {
-  vi.restoreAllMocks();
-});
+  beforeEach(() => {
+    document.body.innerHTML = initialContent;
+  });
 
-describe('when using mermaid and ', function () {
-  describe('when detecting chart type ', function () {
-    it('should not start rendering with mermaid.startOnLoad set to false', function () {
+  describe('#contentLoaded', () => {
+    let startOnLoad: boolean;
+    let initialConfig: MermaidConfig;
+
+    beforeEach(() => {
+      startOnLoad = mermaid.startOnLoad;
+      initialConfig = getConfig();
+    });
+
+    afterEach(() => {
+      mermaid.startOnLoad = startOnLoad;
+      setConfig(initialConfig);
+    });
+
+    it('should render when mermaid.startOnLoad and config.startOnLoad are true', () => {
+      mermaid.startOnLoad = true;
+      setConfig({ startOnLoad: true });
+
+      mermaid.contentLoaded();
+      expect(document.body.innerHTML).not.toBe(initialContent);
+    });
+
+    it('should not render when mermaid.startOnLoad is false', () => {
       mermaid.startOnLoad = false;
-      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
-      spyOn(mermaid, 'init');
+
       mermaid.contentLoaded();
-      expect(mermaid.init).not.toHaveBeenCalled();
+      expect(document.body.innerHTML).toBe(initialContent);
     });
 
-    it('should start rendering with both startOnLoad set', function () {
-      mermaid.startOnLoad = true;
-      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
-      spyOn(mermaid, 'init');
+    it('should not render when config.startOnLoad is undefined', () => {
+      setConfig({ startOnLoad: undefined });
+
       mermaid.contentLoaded();
-      expect(mermaid.init).toHaveBeenCalled();
+      expect(document.body.innerHTML).toBe(initialContent);
     });
 
-    it('should start rendering with mermaid.startOnLoad', function () {
-      mermaid.startOnLoad = true;
-      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
-      spyOn(mermaid, 'init');
-      mermaid.contentLoaded();
-      expect(mermaid.init).toHaveBeenCalled();
-    });
+    it('should not render when config.startOnLoad set to false', () => {
+      setConfig({ startOnLoad: false });
 
-    it('should start rendering as a default with no changes performed', function () {
-      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
-      spyOn(mermaid, 'init');
       mermaid.contentLoaded();
-      expect(mermaid.init).toHaveBeenCalled();
+      expect(document.body.innerHTML).toBe(initialContent);
     });
   });
 
-  describe('when using #initThrowsErrors', function () {
-    it('should accept single node', async () => {
-      const node = document.createElement('div');
-      node.appendChild(document.createTextNode('graph TD;\na;'));
-
-      mermaid.initThrowsErrors(undefined, node);
-      // mermaidAPI.render function has been mocked, since it doesn't yet work
-      // in Node.JS (only works in browser)
-      expect(mermaidAPI.render).toHaveBeenCalled();
+  describe('#initThrowsErrors', () => {
+    it('should render', async () => {
+      mermaid.initThrowsErrors(undefined, 'div');
+      expect(document.body.innerHTML).not.toBe(initialContent);
     });
   });
 
-  describe('checking validity of input ', function () {
+  describe('#parse', () => {
     it('should throw for an invalid definition', function () {
       expect(() => mermaid.parse('this is not a mermaid diagram definition')).toThrow();
     });
@@ -82,7 +87,7 @@ describe('when using mermaid and ', function () {
       expect(() => mermaid.parse(text)).not.toThrow();
     });
 
-    it('should throw for an invalid sequenceDiagram definition', function () {
+    it('should throw for an invalid sequenceDiagram definition', () => {
       const text =
         'sequenceDiagram\n' +
         'Alice:->Bob: Hello Bob, how are you?\n\n' +
@@ -96,7 +101,7 @@ describe('when using mermaid and ', function () {
       expect(() => mermaid.parse(text)).toThrow();
     });
 
-    it('should return false for invalid definition WITH a parseError() callback defined', function () {
+    it('should return false for invalid definition WITH a parseError() callback defined', () => {
       let parseErrorWasCalled = false;
       mermaid.setParseErrorHandler(() => {
         parseErrorWasCalled = true;

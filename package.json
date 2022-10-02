@@ -45,7 +45,6 @@
     "ci": "vitest run",
     "test": "pnpm lint && vitest run",
     "test:watch": "vitest --coverage --watch",
-    "test:debug": "vitest --watch src/diagrams/sequence/seq*.spec.js",
     "prepublishOnly": "pnpm build && pnpm test",
     "prepare": "concurrently \"husky install\" \"pnpm build\"",
     "pre-commit": "lint-staged"
