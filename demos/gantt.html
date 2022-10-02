@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -13,6 +13,7 @@
   </head>
 
   <body>
+    <h1>Gantt chart diagram demos</h1>
     <!-- accDescription Tasks for Q4 -->
     <pre class="mermaid">
       gantt
@@ -27,6 +28,7 @@
         Task in sec      :2014-01-12  , 12d
         another task      : 24d
     </pre>
+    <hr />
 
     <pre class="mermaid">
     gantt
@@ -44,6 +46,8 @@
       开发	:a, 2021-10-09, 4d
       测试	:after a, 4d
     </pre>
+    <hr />
+
     <pre class="mermaid">
     gantt
     title Exclusive end dates (Manual date should end on 3d)
@@ -53,6 +57,8 @@
     2 Days: 1, 2019-01-01,2d
     Manual Date: 2, 2019-01-01,2019-01-03
     </pre>
+    <hr />
+
     <pre class="mermaid">
     gantt
     title Inclusive end dates (Manual date should end on 4th)
@@ -63,6 +69,8 @@
     2 Days: 1, 2019-01-01,2d
     Manual Date: 2, 2019-01-01,2019-01-03
     </pre>
+    <hr />
+
     <pre class="mermaid">
     gantt
     title Hide today marker (vertical line should not be visible)
@@ -72,6 +80,8 @@
     section Section1
     Today: 1, -1h
     </pre>
+    <hr />
+
     <pre class="mermaid">
     gantt
     title Style today marker (vertical line should be 5px wide and half-transparent blue)
@@ -81,6 +91,7 @@
     section Section1
     Today: 1, -1h
     </pre>
+    <hr />
 
     <pre class="mermaid">
     gantt
@@ -120,6 +131,8 @@
     Add gantt diagram to demo page : 20h
     Add another diagram to demo page : 48h
     </pre>
+    <hr />
+
     <pre class="mermaid">
     gantt
     dateFormat YYYY-MM-DD
@@ -151,6 +164,7 @@
     Add gantt diagram to demo page : 20h
     Add another diagram to demo page : 48h
     </pre>
+    <hr />
 
     <script>
       function ganttTestClick(a, b, c) {
@@ -167,6 +181,7 @@
         }, 100);
       }
     </script>
+
     <script src="./mermaid.js"></script>
     <script>
       mermaid.initialize({
