@@ -18,41 +18,37 @@ jobs:
         node-version: [16.x]
     steps:
       - uses: actions/checkout@v3
-        # if: ${{ github.event_name == 'pull_request' }}
-        # with:
-        # fetch-depth: 0
-        # repository: ${{ github.event.pull_request.head.repo.full_name }}
-        # ref: ${{ github.event.pull_request.head.ref }}
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Run changed-files using the fork point of a pull request
-        id: changed-files-fork-point
+      - name: Check if source docs are changed
+        id: changed-docs
         uses: tj-actions/changed-files@v29
         with:
-          # use_fork_point: 'true'
           files: |
             packages/mermaid/src/docs/*
             packages/mermaid/src/docs.mts
 
       - uses: pnpm/action-setup@v2
-        if: steps.changed-files-fork-point.outputs.only_modified == 'true'
-        # uses version from "packageManager" field in package.json
+        if: steps.changed-docs.outputs.only_modified == 'true'
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
-        if: steps.changed-files-fork-point.outputs.only_modified == 'true'
+        if: steps.changed-docs.outputs.only_modified == 'true'
         with:
           cache: pnpm
           node-version: ${{ matrix.node-version }}
 
       - name: Install Packages
-        if: steps.changed-files-fork-point.outputs.only_modified == 'true'
+        if: steps.changed-docs.outputs.only_modified == 'true'
         run: |
           pnpm install --frozen-lockfile
         env:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Run step if any file(s) in the docs folder change
-        if: steps.changed-files-fork-point.outputs.only_modified == 'true'
+        if: steps.changed-docs.outputs.only_modified == 'true'
         run: |
           echo "Only files in the src/docs folder has changed."
           echo "List all the files that have changed: ${{ steps.changed-files-specific.outputs.all_changed_files }}"
@@ -60,7 +56,7 @@ jobs:
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
-        if: steps.changed-files-fork-point.outputs.only_modified == 'true'
+        if: steps.changed-docs.outputs.only_modified == 'true'
         with:
           message: 'Update docs'
           add: 'docs/*'
