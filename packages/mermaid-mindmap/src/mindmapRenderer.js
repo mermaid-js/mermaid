@@ -4,8 +4,13 @@ import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
 import svgDraw from './svgDraw';
 import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
 import cytoscape from 'cytoscape';
+import coseBilkent from 'cytoscape-cose-bilkent';
+import fcose from 'cytoscape-fcose';
 import clone from 'fast-clone';
 import * as db from './mindmapDb';
+
+cytoscape.use(fcose);
+cytoscape.use(coseBilkent);
 
 /**
  * @param {any} svg The svg element to draw the diagram onto
@@ -28,17 +33,47 @@ function drawNodes(svg, mindmap, section, conf) {
  * @param parent
  * @param depth
  * @param section
+ * @param edgesEl
+ * @param cy
  * @param conf
  */
-function drawEdges(edgesElem, mindmap, parent, depth, section, conf) {
-  if (parent) {
-    svgDraw.drawEdge(edgesElem, mindmap, parent, depth, section, conf);
-  }
-  if (mindmap.children) {
-    mindmap.children.forEach((child, index) => {
-      drawEdges(edgesElem, child, mindmap, depth + 1, section < 0 ? index : section, conf);
-    });
-  }
+// edgesElem, cy, conf
+function drawEdges(edgesEl, cy, conf) {
+  cy.edges().map((edge, id) => {
+    const data = edge.data();
+    if (edge[0]._private.bodyBounds) {
+      const bounds = edge[0]._private.rscratch;
+      log.info(
+        id,
+        // 'x:',
+        // edge.controlPoints(),
+        // 'y:',
+        // edge[0]._private.rscratch
+        // 'w:',
+        // edge.boundingbox().w,
+        // 'h:',
+        // edge.boundingbox().h,
+        // edge.midPoint()
+        data
+      );
+      // data.el.attr('transform', `translate(${node.position().x}, ${node.position().y})`);
+      // edgesEl
+      //   .insert('line')
+      //   .attr('x1', bounds.startX)
+      //   .attr('y1', bounds.startY)
+      //   .attr('x2', bounds.endX)
+      //   .attr('y2', bounds.endY)
+      //   .attr('class', 'path');
+      edgesEl
+        .insert('path')
+        // Todo use regular line function
+        .attr(
+          'd',
+          `M ${bounds.startX},${bounds.startY} L ${bounds.midX},${bounds.midY} L${bounds.endX},${bounds.endY} `
+        )
+        .attr('class', 'edge section-edge-' + data.section + ' edge-depth-' + data.depth);
+    }
+  });
 }
 
 /**
@@ -53,159 +88,159 @@ function eachNode(mindmap, callback) {
     });
   }
 }
-/** @param {object} mindmap */
-function transpose(mindmap) {
-  eachNode(mindmap, (node) => {
-    const orgWidth = node.width;
-    const orgX = node.x;
-    node.width = node.height;
-    node.height = orgWidth;
-    node.x = node.y;
-    node.y = orgX;
-  });
-  return mindmap;
-}
-/** @param {object} mindmap */
-function bottomToUp(mindmap) {
-  log.debug('bottomToUp', mindmap);
-  eachNode(mindmap.result, (node) => {
-    // node.y = node.y - (node.y - bb.top) * 2 - node.height;
-    node.y = node.y - (node.y - 0) * 2 - node.height;
-  });
-  return mindmap;
-}
-/** @param {object} mindmap The mindmap hierarchy */
-function rightToLeft(mindmap) {
-  eachNode(mindmap.result, (node) => {
-    // node.y = node.y - (node.y - bb.top) * 2 - node.height;
-    node.x = node.x - (node.x - 0) * 2 - node.width;
-  });
-  return mindmap;
-}
 
 /**
- * @param mindmap
- * @param dir
+ * @param {any} svg The svg element to draw the diagram onto
+ * @param {object} mindmap The maindmap data and hierarchy
+ * @param section
+ * @param cy
+ * @param {object} conf The configuration object
+ * @param level
  */
-function layout(mindmap, dir) {
-  const bb = new BoundingBox(30, 60);
-
-  const layout = new Layout(bb);
-  switch (dir) {
-    case 'TB':
-      return layout.layout(mindmap);
-    case 'BT':
-      return bottomToUp(layout.layout(mindmap));
-    case 'RL': {
-      transpose(mindmap);
-      let newRes = layout.layout(mindmap);
-      transpose(newRes.result);
-      return rightToLeft(newRes);
-    }
-    case 'LR': {
-      transpose(mindmap);
-      let newRes = layout.layout(mindmap);
-      transpose(newRes.result);
-      return newRes;
-    }
-    default:
-  }
-}
-const dirFromIndex = (index) => {
-  const dirNum = (index + 2) % 4;
-  switch (dirNum) {
-    case 0:
-      return 'LR';
-    case 1:
-      return 'RL';
-    case 2:
-      return 'TB';
-    case 3:
-      return 'BT';
-    default:
-      return 'TB';
-  }
-};
-
-const mergeTrees = (node, trees) => {
-  node.x = trees[0].result.x;
-  node.y = trees[0].result.y;
-  trees.forEach((tree) => {
-    tree.result.children.forEach((child) => {
-      const dx = node.x - tree.result.x;
-      const dy = node.y - tree.result.y;
-      eachNode(child, (childNode) => {
-        const orgNode = db.getNodeById(childNode.id);
-        if (orgNode) {
-          orgNode.x = childNode.x + dx;
-          orgNode.y = childNode.y + dy;
-        }
+function addNodes(mindmap, cy, conf, level) {
+  const node = cy.add({
+    group: 'nodes',
+    data: {
+      id: mindmap.id,
+      labelText: mindmap.descr,
+      height: mindmap.height,
+      width: mindmap.width,
+      level: level,
+      nodeId: mindmap.id,
+      padding: mindmap.padding,
+      type: mindmap.type,
+    },
+    position: {
+      x: mindmap.x,
+      y: mindmap.y,
+    },
+  });
+  if (mindmap.children) {
+    mindmap.children.forEach((child, index) => {
+      addNodes(child, cy, conf, level + 1);
+      const edge = cy.add({
+        group: 'edges',
+        data: {
+          id: `${mindmap.id}_${child.id}`,
+          source: mindmap.id,
+          target: child.id,
+          depth: level,
+          section: child.section,
+        },
       });
     });
-  });
-  return node;
-};
+  }
+}
 
 /**
  * @param node
  * @param conf
+ * @param cy
  */
 function layoutMindmap(node, conf) {
-  // BoundingBox(gap, bottomPadding)
-  // const bb = new BoundingBox(10, 10);
-  // const layout = new Layout(bb);
-  // // const layout = new HorizontalLayout(bb);
-  if (node.children.length === 0) {
-    return node;
-  }
-  const trees = [];
-  // node.children.forEach((child, index) => {
-  //   const tree = clone(node);
-  //   tree.children = [tree.children[index]];
-  //   trees.push(layout(tree, dirFromIndex(index), conf));
-  // });
+  return new Promise((resolve) => {
+    // BoundingBox(gap, bottomPadding)
+    // const bb = new BoundingBox(10, 10);
+    // const layout = new Layout(bb);
+    // // const layout = new HorizontalLayout(bb);
+    if (node.children.length === 0) {
+      return node;
+    }
 
-  let cnt = 0;
-  // For each direction, create a new tree with the same root, and add a ubset of the children to it.
-  for (let i = 0; i < 4; i++) {
-    // Calculate the number of the children of the root node that will be used in this direction
-    const numChildren =
-      Math.floor(node.children.length / 4) + (node.children.length % 4 > i ? 1 : 0);
-    // Copy the original root node
-    const tree = clone(node);
-    // Setup the new copy with the children to be rendered in this direction
-    tree.children = [];
-    for (let j = 0; j < numChildren; j++) {
-      tree.children.push(node.children[cnt]);
-      cnt++;
-    }
-    if (tree.children.length > 0) {
-      trees.push(layout(tree, dirFromIndex(i), conf));
-    }
-  }
-  // Let each node know the direct of its tree for when we draw the branches.
-  trees.forEach((tree, index) => {
-    tree.result.direction = dirFromIndex(index);
-    eachNode(tree.result, (node) => {
-      node.direction = dirFromIndex(index);
+    const cy = cytoscape({
+      // styleEnabled: false,
+      // animate: false,
+      // ready: function () {
+      //   log.info('Ready', this);
+      // },
+      container: document.getElementById('cy'), // container to render in
+
+      style: [
+        // the stylesheet for the graph
+        {
+          selector: 'node',
+          style: {
+            'background-color': '#666',
+            label: 'data(labelText)',
+          },
+        },
+
+        {
+          selector: 'edge',
+          style: {
+            width: 3,
+            'line-color': '#ccc',
+            'target-arrow-color': '#ccc',
+            'target-arrow-shape': 'triangle',
+            'curve-style': 'bezier',
+            label: 'data(id)',
+          },
+        },
+      ],
+    });
+    addNodes(node, cy, conf, 0);
+
+    // Make cytoscape care about the dimensisions of the nodes
+    cy.nodes().forEach(function (n) {
+      n.layoutDimensions = () => {
+        const data = n.data();
+        // console.log(
+        //   'id',
+        //   data.id,
+        //   ' node',
+        //   data.nodeId,
+        //   ' layoutDimensions',
+        //   data.width,
+        //   'x',
+        //   data.height
+        // );
+        return { w: data.width, h: data.height };
+      };
+    });
+
+    // // Merge the trees into a single tree
+    // mergeTrees(node, trees);
+    cy.layout({
+      // name: 'grid',
+      // name: 'circle',
+      // name: 'cose',
+      // name: 'fcose',
+      name: 'cose-bilkent',
+      quality: 'proof',
+      // randomize: false,
+      // seed: 2,
+      // name: 'breadthfirst',
+      // headless: true,
+      styleEnabled: false,
+      animate: false,
+    }).run();
+    cy.ready((e) => {
+      log.info('Ready', e);
+
+      resolve({ positionedMindmap: node, cy });
     });
   });
-
-  // Merge the trees into a single tree
-  mergeTrees(node, trees);
-  return node;
 }
 /**
  * @param node
+ * @param cy
+ * @param positionedMindmap
  * @param conf
  */
-function positionNodes(node, conf) {
-  svgDraw.positionNode(node, conf);
-  if (node.children) {
-    node.children.forEach((child) => {
-      positionNodes(child, conf);
-    });
-  }
+function positionNodes(cy, conf) {
+  cy.nodes().map((node, id) => {
+    const data = node.data();
+    data.x = node.position().x;
+    data.y = node.position().y;
+    svgDraw.positionNode(data);
+    const el = db.getElementById(data.nodeId);
+    log.info('Id:', id, 'Position: (', node.position().x, ', ', node.position().y, ')', data);
+    el.attr(
+      'transform',
+      `translate(${node.position().x - data.width / 2}, ${node.position().y - data.height / 2})`
+    );
+    el.attr('attr', `apa-${id})`);
+  });
 }
 
 /**
@@ -217,7 +252,7 @@ function positionNodes(node, conf) {
  * @param diagObj
  */
 
-export const draw = (text, id, version, diagObj) => {
+export const draw = async (text, id, version, diagObj) => {
   const conf = getConfig();
 
   // This is done only for throwing the error if the text is not valid.
@@ -255,11 +290,11 @@ export const draw = (text, id, version, diagObj) => {
 
   // Next step is to layout the mindmap, giving each node a position
 
-  const positionedMindmap = layoutMindmap(mm, conf);
+  const { positionedMindmap, cy } = await layoutMindmap(mm, conf);
 
-  // After this we can draw, first the edges and the then nodes with the correct position
-  drawEdges(edgesElem, positionedMindmap, null, 0, -1, conf);
-  positionNodes(positionedMindmap, conf);
+  // // After this we can draw, first the edges and the then nodes with the correct position
+  drawEdges(edgesElem, cy, conf);
+  positionNodes(cy, conf);
 
   // Setup the view box and size of the svg element
   setupGraphViewbox(undefined, svg, conf.mindmap.padding, conf.mindmap.useMaxWidth);
