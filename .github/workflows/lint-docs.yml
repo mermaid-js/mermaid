@@ -18,17 +18,17 @@ jobs:
         node-version: [16.x]
     steps:
       - uses: actions/checkout@v3
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          # repository: ${{ github.event.pull_request.head.repo.full_name }}
-          # ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
+        # if: ${{ github.event_name == 'pull_request' }}
+        # with:
+        # fetch-depth: 0
+        # repository: ${{ github.event.pull_request.head.repo.full_name }}
+        # ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Run changed-files using the fork point of a pull request
         id: changed-files-fork-point
         uses: tj-actions/changed-files@v29
         with:
-          use_fork_point: 'true'
+          # use_fork_point: 'true'
           files: |
             packages/mermaid/src/docs/*
             packages/mermaid/src/docs.mts
