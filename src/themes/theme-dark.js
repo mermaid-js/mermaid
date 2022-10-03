@@ -1,5 +1,6 @@
 import { invert, lighten, darken, rgba, adjust } from 'khroma';
 import { mkBorder } from './theme-helpers';
+
 class Theme {
   constructor() {
     this.background = '#333';
@@ -28,8 +29,8 @@ class Theme {
     this.fontSize = '16px';
     this.labelBackground = '#181818';
     this.textColor = '#ccc';
-    /* Flowchart variables */
 
+    /* Flowchart variables */
     this.nodeBkg = 'calculated';
     this.nodeBorder = 'calculated';
     this.clusterBkg = 'calculated';
@@ -218,6 +219,15 @@ class Theme {
     this.commitLabelColor = this.commitLabelColor || this.secondaryTextColor;
     this.commitLabelBackground = this.commitLabelBackground || this.secondaryColor;
     this.commitLabelFontSize = this.commitLabelFontSize || '10px';
+
+    /* -------------------------------------------------- */
+    /* EntityRelationship diagrams                        */
+
+    this.attributeBackgroundColorOdd =
+      this.attributeBackgroundColorOdd || lighten(this.background, 12);
+    this.attributeBackgroundColorEven =
+      this.attributeBackgroundColorEven || lighten(this.background, 2);
+    /* -------------------------------------------------- */
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
