@@ -1,4 +1,4 @@
-import graphlib from 'graphlib';
+import { Graph } from 'graphlib';
 import { line, curveBasis, select } from 'd3';
 import dagre from 'dagre';
 import { getConfig } from '../../config';
@@ -602,7 +602,7 @@ export const draw = function (text, id, _version, diagObj) {
   // the direction from parent to child in a one-to-many as this influences graphlib to
   // put the parent above the child (does it?), which is intuitive.  Most relationships
   // in ER diagrams are one-to-many.
-  g = new graphlib.Graph({
+  g = new Graph({
     multigraph: true,
     directed: true,
     compound: false,

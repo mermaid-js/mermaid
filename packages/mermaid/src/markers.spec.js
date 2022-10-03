@@ -1,10 +1,9 @@
-import { vi } from 'vitest';
 import { select } from 'd3';
 import { appendMarker, markerUrl } from './markers';
 import { setSiteConfig } from './config';
 
 describe('markers', () => {
-  describe('markerUrl()', () => {
+  describe('#markerUrl', () => {
     const markerUrlForName = (name) => markerUrl(select('empty'), name);
 
     it('should use parent SVG element id as a prefix', () => {
@@ -46,7 +45,7 @@ describe('markers', () => {
     });
   });
 
-  describe('appendMarker()', () => {
+  describe('#appendMarker', () => {
     it('should prefix the marker id with the id of its parent SVG', () => {
       document.body.innerHTML = `
       <svg id="svg-1">

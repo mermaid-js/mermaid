@@ -1808,15 +1808,6 @@ describe('when rendering a sequenceDiagram with directives', function () {
     mermaidAPI.initialize({ sequence: conf });
   });
 
-  // let conf;
-  // beforeEach(function () {
-  //   mermaidAPI.reset();
-  //   diagram.db = sequenceDb;
-  //   diagram.db.clear();
-  //   conf = diagram.db.getConfig();
-  //   diagram.renderer.bounds.init();
-  // });
-
   it('should handle one actor, when theme is dark and logLevel is 1 DX1 (dfg1)', function () {
     const str = `
 %%{init: { "theme": "dark", "logLevel": 1 } }%%
