@@ -1,0 +1,63 @@
+name: Lint Docs
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v2
+        # uses version from "packageManager" field in package.json
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Packages
+        run: |
+          pnpm install --frozen-lockfile
+        env:
+          CYPRESS_CACHE_FOLDER: .cache/Cypress
+
+      - name: Run changed-files using the fork point of a pull request
+        id: changed-files-fork-point
+        uses: tj-actions/changed-files@v29
+        with:
+          use_fork_point: 'true'
+          files: |
+            packages/mermaid/src/docs/*
+            packages/mermaid/src/docs.mts
+
+      - name: Run step if any file(s) in the docs folder change
+        if: steps.changed-files-fork-point.outputs.any_modified == 'true'
+        run: |
+          echo "Only files in the src/docs folder has changed."
+          echo "List all the files that have changed: ${{ steps.changed-files-specific.outputs.all_changed_files }}"
+          yarn docs:build
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        if: steps.changed-files-fork-point.outputs.any_modified == 'true'
+        with:
+          message: 'Update docs'
+          add: 'docs/*'
