@@ -92,7 +92,7 @@
     "@types/eslint": "^8.4.6",
     "@types/express": "^4.17.13",
     "@types/jsdom": "^20.0.0",
-    "@types/lodash": "^4.14.185",
+    "@types/lodash": "^4.14.186",
     "@types/prettier": "^2.7.1",
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
