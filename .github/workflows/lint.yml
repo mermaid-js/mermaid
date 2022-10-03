@@ -55,6 +55,7 @@ jobs:
           use_fork_point: 'true'
           files: |
             packages/mermaid/src/docs/*
+            packages/mermaid/src/docs.mts
 
       - name: Run step if any file(s) in the docs folder change
         if: steps.changed-files-fork-point.outputs.any_modified == 'true'
@@ -68,7 +69,7 @@ jobs:
         if: steps.changed-files-fork-point.outputs.any_modified == 'true'
         with:
           message: 'Update docs'
-          add: 'packages/mermaid/docs/*'
+          add: 'docs/*'
 
       - name: Verify Docs
         run: pnpm run docs:verify
