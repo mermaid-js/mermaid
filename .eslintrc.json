@@ -15,6 +15,7 @@
   },
   "extends": [
     "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
     "plugin:jsdoc/recommended",
     "plugin:json/recommended",
     "plugin:markdown/recommended",
@@ -22,6 +23,7 @@
   ],
   "plugins": ["@typescript-eslint", "html", "jest", "jsdoc", "json"],
   "rules": {
+    "no-console": "error",
     "no-prototype-builtins": "off",
     "no-unused-vars": "off",
     "jsdoc/check-indentation": "off",
@@ -35,6 +37,16 @@
     "jsdoc/require-returns": "off",
     "jsdoc/require-returns-description": "off",
     "cypress/no-async-tests": "off",
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": "allow-with-description",
+        "ts-nocheck": "allow-with-description",
+        "ts-check": "allow-with-description",
+        "minimumDescriptionLength": 10
+      }
+    ],
     "json/*": ["error", "allowComments"],
     "no-empty": ["error", { "allowEmptyCatch": true }]
   },
@@ -44,6 +56,19 @@
       "rules": {
         "no-undef": "off",
         "jsdoc/require-jsdoc": "off"
+      }
+    },
+    {
+      "files": ["./cypress/**", "./demos/**"],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["./**/*.spec.{ts,js}", "./cypress/**", "./demos/**", "./**/docs/**"],
+      "rules": {
+        "jsdoc/require-jsdoc": "off",
+        "@typescript-eslint/no-unused-vars": "off"
       }
     }
   ]

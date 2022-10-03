@@ -1,3 +1,6 @@
 dist/**
 .github/**
 docs/Setup.md
+cypress.config.js
+cypress/plugins/index.js
+coverage

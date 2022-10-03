@@ -1,5 +1,22 @@
 # mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE)
 
+# Whoa, whats going on here?
+
+We are transforming the Mermaid repository to a so called mono-repo. This is a part of the effort to decouple the diagrams from the core of mermaid. This will:
+
+- Make it possible to select which diagrams to include on your site
+- Open up for lazy loading
+- Make it possible to add diagrams from outside of the Mermaid repository
+- Separate the release flow between different diagrams and the Mermaid core
+
+As such be aware of some changes..
+
+# We use pnpm now
+
+# The source code has moved
+
+It is now located in the src folder for each respective package located as subfolders in packages.
+
 English | [简体中文](./README.zh-CN.md)
 
 <img src="./img/header.png" alt="" />

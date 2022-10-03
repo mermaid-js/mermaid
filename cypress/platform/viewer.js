@@ -1,16 +1,20 @@
-import { Base64 } from 'js-base64';
-import mermaid2 from '../../src/mermaid';
+import mermaid2 from '../../packages/mermaid/src/mermaid';
+
+function b64ToUtf8(str) {
+  return decodeURIComponent(escape(window.atob(str)));
+}
 
 /**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
- * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the page.
+ * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
+ * page.
  */
 const contentLoaded = function () {
   let pos = document.location.href.indexOf('?graph=');
   if (pos > 0) {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
-    const graphObj = JSON.parse(Base64.decode(graphBase64));
+    const graphObj = JSON.parse(b64ToUtf8(graphBase64));
     if (graphObj.mermaid && graphObj.mermaid.theme === 'dark') {
       document.body.style.background = '#3f3f3f';
     }
@@ -32,8 +36,8 @@ const contentLoaded = function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
-    global.mermaid.initialize(graphObj.mermaid);
-    global.mermaid.init();
+    mermaid2.initialize(graphObj.mermaid);
+    mermaid2.init();
   }
 };
 
@@ -66,7 +70,7 @@ const contentLoadedApi = function () {
   if (pos > 0) {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
-    const graphObj = JSON.parse(Base64.decode(graphBase64));
+    const graphObj = JSON.parse(b64ToUtf8(graphBase64));
     // const graph = 'hello'
     if (Array.isArray(graphObj.code)) {
       const numCodes = graphObj.code.length;

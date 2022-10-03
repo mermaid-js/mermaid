@@ -15,7 +15,7 @@ describe('XSS', () => {
 
   it('should not allow tags in the css', () => {
     const str =
-      'eyJjb2RlIjoiJSV7aW5pdDogeyAnZm9udEZhbWlseSc6ICdcXFwiPjwvc3R5bGU-PGltZyBzcmM9eCBvbmVycm9yPXhzc0F0dGFjaygpPid9IH0lJVxuZ3JhcGggTFJcbiAgICAgQSAtLT4gQiIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0IiwiZmxvd2NoYXJ0Ijp7Imh0bWxMYWJlbHMiOmZhbHNlfX0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9';
+      'eyJjb2RlIjoiJSV7aW5pdDogeyAnZm9udEZhbWlseSc6ICdcXFwiPjwvc3R5bGU+PGltZyBzcmM9eCBvbmVycm9yPXhzc0F0dGFjaygpPid9IH0lJVxuZ3JhcGggTFJcbiAgICAgQSAtLT4gQiIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0IiwiZmxvd2NoYXJ0Ijp7Imh0bWxMYWJlbHMiOmZhbHNlfX0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9';
 
     const url = mermaidUrl(
       str,
@@ -81,6 +81,9 @@ describe('XSS', () => {
     cy.get('#the-malware').should('not.exist');
   });
   it('should not allow manipulating antiscript to run javascript using onerror in state diagrams with dagre d3', () => {
+    cy.on('uncaught:exception', (_err, _runnable) => {
+      return false; // continue rendering even if there if mermaid throws an error
+    });
     cy.visit('http://localhost:9000/xss9.html');
     cy.wait(1000);
     cy.get('#the-malware').should('not.exist');

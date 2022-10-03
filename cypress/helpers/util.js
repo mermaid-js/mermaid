@@ -1,4 +1,6 @@
-import { Base64 } from 'js-base64';
+const utf8ToB64 = (str) => {
+  return window.btoa(unescape(encodeURIComponent(str)));
+};
 
 export const mermaidUrl = (graphStr, options, api) => {
   const obj = {
@@ -6,7 +8,7 @@ export const mermaidUrl = (graphStr, options, api) => {
     mermaid: options,
   };
   const objStr = JSON.stringify(obj);
-  let url = 'http://localhost:9000/e2e.html?graph=' + Base64.encodeURI(objStr);
+  let url = 'http://localhost:9000/e2e.html?graph=' + utf8ToB64(objStr);
   if (api) {
     url = 'http://localhost:9000/xss.html?graph=' + graphStr;
   }
@@ -44,15 +46,13 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
   }
   const useAppli = Cypress.env('useAppli');
   //const useAppli = false;
-  const branch = Cypress.env('codeBranch');
   cy.log('Hello ' + useAppli ? 'Appli' : 'image-snapshot');
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   if (useAppli) {
     cy.eyesOpen({
-      appName: 'Mermaid-' + branch,
+      appName: 'Mermaid',
       testName: name,
-      batchName: branch,
     });
   }
 
@@ -96,15 +96,13 @@ export const urlSnapshotTest = (url, _options, api = false, validation) => {
     options.fontSize = '16px';
   }
   const useAppli = Cypress.env('useAppli');
-  const branch = Cypress.env('codeBranch');
   cy.log('Hello ' + useAppli ? 'Appli' : 'image-snapshot');
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 
   if (useAppli) {
     cy.eyesOpen({
-      appName: 'Mermaid-' + branch,
+      appName: 'Mermaid',
       testName: name,
-      batchName: branch,
     });
   }
 

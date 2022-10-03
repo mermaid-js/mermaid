@@ -1,0 +1,39 @@
+commit
+branch develop
+checkout develop
+commit
+branch featureB
+checkout featureB
+commit
+checkout master
+branch hotfix
+checkout hotfix
+commit
+checkout develop
+commit
+checkout featureB
+commit
+checkout master
+merge hotfix
+checkout featureB
+commit
+checkout develop
+branch featureA
+commit
+checkout develop
+merge hotfix
+checkout featureA
+commit
+checkout featureB
+commit
+checkout develop
+merge featureA
+branch release
+checkout release
+commit
+checkout master
+commit
+checkout release
+merge master
+checkout develop
+merge release
