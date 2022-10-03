@@ -64,7 +64,7 @@ const diagramId = function (elem: SVGElement): string | null {
   return node?.getAttribute('id');
 };
 
-const tagName = function (node: any): string | null {
+const tagName = function (node: Element): string | null {
   return node?.tagName?.toLowerCase();
 };
 

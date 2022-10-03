@@ -3,7 +3,6 @@ import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { log } from '../../logger';
 import { configureSvgSize } from '../../setupGraphViewbox';
-import common from '../common/common';
 import markers from './requirementMarkers';
 import { getConfig } from '../../config';
 import addSVGAccessibilityFields from '../../accessibility';

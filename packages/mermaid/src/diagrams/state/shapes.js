@@ -427,7 +427,7 @@ export const drawEdge = function (elem, path, relation) {
     })
     .curve(curveBasis);
 
-  const svgPath = elem
+  elem
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', 'edge' + edgeCount)
