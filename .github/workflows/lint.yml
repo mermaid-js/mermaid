@@ -57,7 +57,7 @@ jobs:
             packages/mermaid/src/docs/*
 
       - name: Run step if any file(s) in the docs folder change
-        if: steps.changed-files-fork-point.outputs.only_modified == 'true'
+        if: steps.changed-files-fork-point.outputs.any_modified == 'true'
         run: |
           echo "Only files in the src/docs folder has changed."
           echo "List all the files that have changed: ${{ steps.changed-files-specific.outputs.all_changed_files }}"
@@ -65,7 +65,7 @@ jobs:
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
-        if: steps.changed-files-fork-point.outputs.only_modified == 'true'
+        if: steps.changed-files-fork-point.outputs.any_modified == 'true'
         with:
           message: 'Update docs'
           add: 'packages/mermaid/docs/*'
