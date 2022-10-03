@@ -30,23 +30,23 @@ jobs:
         with:
           fetch-depth: 2
 
+      - uses: pnpm/action-setup@v2
+        # uses version from "packageManager" field in package.json
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache: yarn
+          cache: pnpm
           node-version: ${{ matrix.node-version }}
-
-      - name: Install Yarn
-        run: npm i yarn --global
 
       - name: Install Packages
         run: |
-          yarn install --frozen-lockfile
+          pnpm install --frozen-lockfile
         env:
           CYPRESS_CACHE_FOLDER: .cache/Cypress
 
       - name: Run Linting
-        run: yarn lint
+        run: pnpm run lint
 
       - name: Run changed-files using the fork point of a pull request
         id: changed-files-fork-point
@@ -71,4 +71,4 @@ jobs:
           add: 'docs/*'
 
       - name: Verify Docs
-        run: yarn docs:verify
+        run: pnpm run docs:verify

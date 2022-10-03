@@ -13,7 +13,7 @@ async function createServer() {
   });
 
   app.use(vite.middlewares);
-  app.use(express.static('dist'));
+  app.use(express.static('./packages/mermaid/dist'));
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
 

@@ -1,4 +1,4 @@
-import mermaid2 from '../../src/mermaid';
+import mermaid2 from '../../packages/mermaid/src/mermaid';
 
 function b64ToUtf8(str) {
   return decodeURIComponent(escape(window.atob(str)));
