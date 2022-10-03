@@ -275,14 +275,14 @@ importers:
     specifiers:
       '@braintree/sanitize-url': ^6.0.0
       concurrently: ^7.4.0
+      cytoscape: ^3.23.0
       d3: ^7.0.0
-      mermaid: workspace:*
       non-layered-tidy-tree-layout: ^2.0.2
       rimraf: ^3.0.2
     dependencies:
       '@braintree/sanitize-url': 6.0.0
+      cytoscape: 3.23.0
       d3: 7.6.1
-      mermaid: link:../mermaid
       non-layered-tidy-tree-layout: 2.0.2
     devDependencies:
       concurrently: 7.4.0
@@ -4881,6 +4881,14 @@ packages:
       yauzl: 2.10.0
     dev: true
 
+  /cytoscape/3.23.0:
+    resolution: {integrity: sha512-gRZqJj/1kiAVPkrVFvz/GccxsXhF3Qwpptl32gKKypO4IlqnKBjTOu+HbXtEggSGzC5KCaHp3/F7GgENrtsFkA==}
+    engines: {node: '>=0.10'}
+    dependencies:
+      heap: 0.2.7
+      lodash: 4.17.21
+    dev: false
+
   /d3-array/3.2.0:
     resolution: {integrity: sha512-3yXFQo0oG3QCxbF06rMPFyGRMGJNS7NvsV1+2joOjbBE+9xvWQ8+GcMJAjRCzw06zQ3/arXeJgbPYcjUCuC+3g==}
     engines: {node: '>=12'}
@@ -7250,6 +7258,10 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
     dev: true
+
+  /heap/0.2.7:
+    resolution: {integrity: sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==}
+    dev: false
 
   /highlight.js/10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}

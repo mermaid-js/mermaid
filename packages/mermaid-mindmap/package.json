@@ -54,8 +54,8 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
+    "cytoscape": "^3.23.0",
     "d3": "^7.0.0",
-    "mermaid": "workspace:*",
     "non-layered-tidy-tree-layout": "^2.0.2"
   },
   "devDependencies": {

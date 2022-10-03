@@ -3,7 +3,6 @@ import { select } from 'd3';
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
 import svgDraw from './svgDraw';
 import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
-import cytoscape from 'cytoscape';
 import clone from 'fast-clone';
 import * as db from './mindmapDb';
 

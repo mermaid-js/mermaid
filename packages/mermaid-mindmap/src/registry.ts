@@ -33,7 +33,7 @@ if (typeof document !== 'undefined') {
           detector: mindmapDetector,
           path: baseFolder,
         });
-        // console.error(window.mermaid.detectors); // eslint-disable-line no-console
+        console.error(window.mermaid.detectors); // eslint-disable-line no-console
       }
     },
     false

@@ -13,12 +13,23 @@ export const getMessage = () => {
   return message;
 };
 
+/**
+ * Sets the info flag
+ *
+ * @param {boolean} inf
+ */
 export const setInfo = (inf) => {
   info = inf;
 };
 
+/** @returns Returns the info flag */
 export const getInfo = () => {
   return info;
+};
+
+export const clear = () => {
+  message = '';
+  info = false;
 };
 
 export default {
@@ -26,8 +37,5 @@ export default {
   getMessage,
   setInfo,
   getInfo,
-  clear: () => {
-    message = '';
-    info = false;
-  },
+  clear,
 };

@@ -45,20 +45,28 @@
   </head>
   <body>
     <div>Security check</div>
-    <pre id="diagram" class="mermaid">
-info
-        </pre
-    >
     <pre id="diagram" class="mermaid2">
-            mindmap
-          root
-            ch1
-            ch2
+example-diagram
         </pre
     >
-    <script src="./packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script>
-    <script src="./packages/mermaid-mindmap/dist/mermaid-example-diagram-detector.js"></script>
-    <script src="./packages/mermaid/dist/mermaid.js"></script>
+    <pre id="diagram" class="mermaid">
+mindmap
+  root
+    child1((Circle))
+        grandchild 1
+        grandchild 2
+    child2(Round rectangle)
+        grandchild 3
+        grandchild 4
+    child3[Square]
+        grandchild 5
+        ::icon(mdi mdi-fire)
+        gc6((grand<br/>child 6))
+        ::icon(mdi mdi-fire)
+        </pre>
+    <script src="./mermaid-mindmap-detector.js"></script>
+    <script src="./mermaid-example-diagram-detector.js"></script>
+    <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);

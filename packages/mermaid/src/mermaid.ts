@@ -105,6 +105,7 @@ const initThrowsErrors = function (
     mermaidAPI.updateSiteConfig({ startOnLoad: config?.startOnLoad });
   }
 
+  // generate the id of the diagram
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt;
@@ -222,7 +223,7 @@ const connectDiagram = (
   ) => void
 ) => {
   registerDiagram(id, diagram, callback);
-  // Todo move this connect call to after the diagram is actually loaded
+  // Todo move this connect call to after the diagram is actually loaded.
   callback(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
 };
 
