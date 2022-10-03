@@ -2,14 +2,11 @@
 import { select } from 'd3';
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
 import svgDraw from './svgDraw';
-import { BoundingBox, Layout } from 'non-layered-tidy-tree-layout';
 import cytoscape from 'cytoscape';
 import coseBilkent from 'cytoscape-cose-bilkent';
-import fcose from 'cytoscape-fcose';
-import clone from 'fast-clone';
 import * as db from './mindmapDb';
 
-cytoscape.use(fcose);
+// Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);
 
 /**
@@ -35,38 +32,15 @@ function drawNodes(svg, mindmap, section, conf) {
  * @param section
  * @param edgesEl
  * @param cy
- * @param conf
  */
-// edgesElem, cy, conf
-function drawEdges(edgesEl, cy, conf) {
+function drawEdges(edgesEl, cy) {
   cy.edges().map((edge, id) => {
     const data = edge.data();
     if (edge[0]._private.bodyBounds) {
       const bounds = edge[0]._private.rscratch;
-      log.info(
-        id,
-        // 'x:',
-        // edge.controlPoints(),
-        // 'y:',
-        // edge[0]._private.rscratch
-        // 'w:',
-        // edge.boundingbox().w,
-        // 'h:',
-        // edge.boundingbox().h,
-        // edge.midPoint()
-        data
-      );
-      // data.el.attr('transform', `translate(${node.position().x}, ${node.position().y})`);
-      // edgesEl
-      //   .insert('line')
-      //   .attr('x1', bounds.startX)
-      //   .attr('y1', bounds.startY)
-      //   .attr('x2', bounds.endX)
-      //   .attr('y2', bounds.endY)
-      //   .attr('class', 'path');
+      log.trace('Edge: ', id, data);
       edgesEl
         .insert('path')
-        // Todo use regular line function
         .attr(
           'd',
           `M ${bounds.startX},${bounds.startY} L ${bounds.midX},${bounds.midY} L${bounds.endX},${bounds.endY} `
@@ -74,19 +48,6 @@ function drawEdges(edgesEl, cy, conf) {
         .attr('class', 'edge section-edge-' + data.section + ' edge-depth-' + data.depth);
     }
   });
-}
-
-/**
- * @param mindmap
- * @param callback
- */
-function eachNode(mindmap, callback) {
-  callback(mindmap);
-  if (mindmap.children) {
-    mindmap.children.forEach((child) => {
-      eachNode(child, callback);
-    });
-  }
 }
 
 /**
@@ -98,7 +59,7 @@ function eachNode(mindmap, callback) {
  * @param level
  */
 function addNodes(mindmap, cy, conf, level) {
-  const node = cy.add({
+  cy.add({
     group: 'nodes',
     data: {
       id: mindmap.id,
@@ -116,9 +77,9 @@ function addNodes(mindmap, cy, conf, level) {
     },
   });
   if (mindmap.children) {
-    mindmap.children.forEach((child, index) => {
+    mindmap.children.forEach((child) => {
       addNodes(child, cy, conf, level + 1);
-      const edge = cy.add({
+      cy.add({
         group: 'edges',
         data: {
           id: `${mindmap.id}_${child.id}`,
@@ -139,85 +100,45 @@ function addNodes(mindmap, cy, conf, level) {
  */
 function layoutMindmap(node, conf) {
   return new Promise((resolve) => {
-    // BoundingBox(gap, bottomPadding)
-    // const bb = new BoundingBox(10, 10);
-    // const layout = new Layout(bb);
-    // // const layout = new HorizontalLayout(bb);
     if (node.children.length === 0) {
       return node;
     }
 
+    // Add temporary render element
+    const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
     const cy = cytoscape({
-      // styleEnabled: false,
-      // animate: false,
-      // ready: function () {
-      //   log.info('Ready', this);
-      // },
       container: document.getElementById('cy'), // container to render in
-
       style: [
-        // the stylesheet for the graph
-        {
-          selector: 'node',
-          style: {
-            'background-color': '#666',
-            label: 'data(labelText)',
-          },
-        },
-
         {
           selector: 'edge',
           style: {
-            width: 3,
-            'line-color': '#ccc',
-            'target-arrow-color': '#ccc',
-            'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
-            label: 'data(id)',
           },
         },
       ],
     });
+    // Remove element after layout
+    renderEl.remove();
     addNodes(node, cy, conf, 0);
 
     // Make cytoscape care about the dimensisions of the nodes
     cy.nodes().forEach(function (n) {
       n.layoutDimensions = () => {
         const data = n.data();
-        // console.log(
-        //   'id',
-        //   data.id,
-        //   ' node',
-        //   data.nodeId,
-        //   ' layoutDimensions',
-        //   data.width,
-        //   'x',
-        //   data.height
-        // );
         return { w: data.width, h: data.height };
       };
     });
 
-    // // Merge the trees into a single tree
-    // mergeTrees(node, trees);
     cy.layout({
-      // name: 'grid',
-      // name: 'circle',
-      // name: 'cose',
-      // name: 'fcose',
       name: 'cose-bilkent',
       quality: 'proof',
-      // randomize: false,
-      // seed: 2,
-      // name: 'breadthfirst',
       // headless: true,
       styleEnabled: false,
       animate: false,
     }).run();
     cy.ready((e) => {
       log.info('Ready', e);
-
-      resolve({ positionedMindmap: node, cy });
+      resolve(cy);
     });
   });
 }
@@ -227,7 +148,7 @@ function layoutMindmap(node, conf) {
  * @param positionedMindmap
  * @param conf
  */
-function positionNodes(cy, conf) {
+function positionNodes(cy) {
   cy.nodes().map((node, id) => {
     const data = node.data();
     data.x = node.position().x;
@@ -290,7 +211,7 @@ export const draw = async (text, id, version, diagObj) => {
 
   // Next step is to layout the mindmap, giving each node a position
 
-  const { positionedMindmap, cy } = await layoutMindmap(mm, conf);
+  const cy = await layoutMindmap(mm, conf);
 
   // // After this we can draw, first the edges and the then nodes with the correct position
   drawEdges(edgesElem, cy, conf);
