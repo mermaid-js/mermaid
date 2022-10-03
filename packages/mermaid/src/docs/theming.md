@@ -136,7 +136,6 @@ Variables that are unique to some diagrams can be affected by changes in Theme V
 | errorBkgColor        | tertiaryColor                  | \*   | Color for syntax error message                                                                                                   |
 | errorTextColor       | tertiaryTextColor              | \*   | Color for syntax error message                                                                                                   |
 
-
 # What follows are Variables, specific to different diagrams and charts.
 
 ## Some Theme Variables serve as, or affect the Default Values for Specific Diagram Variables, unless changed using `%%init%%` .
