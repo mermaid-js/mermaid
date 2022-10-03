@@ -22,10 +22,22 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
 
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5
+
+      - uses: nrwl/last-successful-commit-action@v1
+        id: last_successful_commit_pull_request
+        with:
+          branch: ${{ steps.branch-name.outputs.base_ref_branch }}
+          workflow_id: 'lint-docs.yml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Check if source docs are changed
         id: changed-docs
         uses: tj-actions/changed-files@v29
         with:
+          base_sha: ${{ steps.last_successful_commit_pull_request.outputs.commit_hash }}
           files: |
             packages/mermaid/src/docs/*
             packages/mermaid/src/docs.mts
