@@ -19,7 +19,6 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
   error: warning,
   fatal: warning,
 };
-
 export let setLogLevel: (level: keyof typeof LEVELS | number | string) => void;
 export let getConfig: () => object;
 export let sanitizeText: (str: string) => string;
