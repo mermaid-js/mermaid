@@ -107,7 +107,7 @@
     "coveralls": "^3.1.1",
     "cypress": "^10.0.0",
     "cypress-image-snapshot": "^4.0.1",
-    "esbuild": "^0.15.8",
+    "esbuild": "^0.15.10",
     "documentation": "13.2.0",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
