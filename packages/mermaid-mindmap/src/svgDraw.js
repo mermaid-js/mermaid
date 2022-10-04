@@ -164,6 +164,7 @@ const roundedRectBkg = function (elem, node) {
  */
 export const drawNode = function (elem, node, section, conf) {
   const nodeElem = elem.append('g');
+  node.section = section;
   nodeElem.attr(
     'class',
     (node.class ? node.class + ' ' : '') +
@@ -252,9 +253,9 @@ export const drawNode = function (elem, node, section, conf) {
   }
 
   // Position the node to its coordinate
-  if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
-    nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
-  }
+  // if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
+  //   nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
+  // }
   db.setElementForId(node.id, nodeElem);
   return node.height;
 };

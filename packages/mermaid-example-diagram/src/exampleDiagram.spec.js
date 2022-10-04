@@ -7,8 +7,8 @@ describe('when parsing an info graph it', function () {
     ex.yy = db;
   });
 
-  it('should handle an info definition', function () {
-    let str = `info
+  it('should handle an example-diagram definition', function () {
+    let str = `example-diagram
     showInfo`;
 
     ex.parse(str);
