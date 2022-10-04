@@ -103,24 +103,24 @@ describe('Interaction', () => {
       cy.visit(url);
     });
     it('should handle a click on a node without a bound function', () => {
-      cy.get('body').find('g#flowchart-Function-4').click();
+      cy.contains('Function1').parents('.node').click();
       cy.get('.created-by-click').should('not.exist');
     });
 
     it('should handle a click on a node with a bound function where the node starts with a number', () => {
-      cy.get('body').find('g[id="flowchart-1Function-10"]').click();
+      cy.contains('1Function').parents('.node').click();
       cy.get('.created-by-click').should('not.exist');
     });
 
     it('should handle a click on a node with a bound url', () => {
-      cy.get('body').find('g#flowchart-URL-5').click();
+      cy.contains('URL1').find('.node').click();
       cy.location().should(({ href }) => {
         expect(href).to.eq('http://localhost:9000/webpackUsage.html');
       });
     });
 
     it('should handle a click on a node with a bound url where the node starts with a number', () => {
-      cy.get('body').find('g[id="flowchart-2URL-11"]').click();
+      cy.contains('2URL').find('.node').click();
       cy.location().should(({ href }) => {
         expect(href).to.eq('http://localhost:9000/webpackUsage.html');
       });
@@ -159,18 +159,17 @@ describe('Interaction', () => {
     });
 
     it('should handle a click on a node with a bound function', () => {
-      cy.get('body').find('g#flowchart-Function-4').click();
+      cy.contains('Function1').parents('.node').click();
       cy.get('.created-by-click').should('not.exist');
     });
 
     it('should handle a click on a node with a bound function where the node starts with a number', () => {
-      cy.get('body').find('g[id="flowchart-1Function-10"]').click();
-      cy.get('.created-by-click').should('not.exist');
+      cy.contains('1Function').parents('.node').click();
       cy.get('.created-by-click').should('not.exist');
     });
 
     it('should handle a click on a node with a bound url', () => {
-      cy.get('body').find('g#flowchart-URL-5').click();
+      cy.contains('URL1').find('.node').click();
       cy.location().should(({ href }) => {
         expect(href).to.eq('http://localhost:9000/webpackUsage.html');
       });
