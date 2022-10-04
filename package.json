@@ -99,7 +99,7 @@
     "@types/lodash": "^4.14.186",
     "@types/prettier": "^2.7.1",
     "@types/stylis": "^4.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
     "@vitest/coverage-c8": "^0.23.2",
     "@vitest/ui": "^0.23.4",
