@@ -1,9 +1,7 @@
 describe('Interaction', () => {
   describe('Security level loose', () => {
     beforeEach(() => {
-      const url = 'http://localhost:9000/click_security_loose.html';
-      cy.viewport(1440, 1024);
-      cy.visit(url);
+      cy.visit('http://localhost:9000/click_security_loose.html');
     });
 
     it('Graph: should handle a click on a node with a bound function', () => {
@@ -54,7 +52,6 @@ describe('Interaction', () => {
     });
 
     it('Flowchart-v2: should handle a click on a node with a bound url where the node starts with a number', () => {
-      // cy.contains('').click();
       cy.contains('20URL').find('.node').click();
       cy.location().should(({ href }) => {
         expect(href).to.eq('http://localhost:9000/webpackUsage.html');
@@ -62,45 +59,43 @@ describe('Interaction', () => {
     });
 
     it('should handle a click on a task with a bound URL clicking on the rect', () => {
-      cy.get('body').find('rect#cl1').click({ force: true });
+      cy.get('rect#cl1').click({ force: true });
       cy.location().should(({ href }) => {
         expect(href).to.eq('http://localhost:9000/webpackUsage.html');
       });
     });
 
     it('should handle a click on a task with a bound URL clicking on the text', () => {
-      cy.get('body').find('text#cl1-text').click({ force: true });
+      cy.get('text#cl1-text').click({ force: true });
       cy.location().should(({ href }) => {
         expect(href).to.eq('http://localhost:9000/webpackUsage.html');
       });
     });
 
     it('should handle a click on a task with a bound function without args', () => {
-      cy.get('body').find('rect#cl2').click({ force: true });
+      cy.get('rect#cl2').click({ force: true });
       cy.get('.created-by-gant-click').should('have.text', 'Clicked By Gant cl2');
     });
 
     it('should handle a click on a task with a bound function with args', () => {
-      cy.get('body').find('rect#cl3').click({ force: true });
+      cy.get('rect#cl3').click({ force: true });
       cy.get('.created-by-gant-click').should('have.text', 'Clicked By Gant test1 test2 test3');
     });
 
     it('should handle a click on a task with a bound function without args', () => {
-      cy.get('body').find('text#cl2-text').click({ force: true });
+      cy.get('text#cl2-text').click({ force: true });
       cy.get('.created-by-gant-click').should('have.text', 'Clicked By Gant cl2');
     });
 
     it('should handle a click on a task with a bound function with args ', () => {
-      cy.get('body').find('text#cl3-text').click({ force: true });
+      cy.get('text#cl3-text').click({ force: true });
       cy.get('.created-by-gant-click').should('have.text', 'Clicked By Gant test1 test2 test3');
     });
   });
 
   describe('Interaction - security level tight', () => {
     beforeEach(() => {
-      const url = 'http://localhost:9000/click_security_strict.html';
-      cy.viewport(1440, 1024);
-      cy.visit(url);
+      cy.visit('http://localhost:9000/click_security_strict.html');
     });
     it('should handle a click on a node without a bound function', () => {
       cy.contains('Function1').parents('.node').click();
@@ -127,35 +122,33 @@ describe('Interaction', () => {
     });
 
     it('should handle a click on a task with a bound URL clicking on the rect', () => {
-      cy.get('body').find('rect#cl1').click({ force: true });
+      cy.get('rect#cl1').click({ force: true });
       cy.location().should(({ href }) => {
         expect(href).to.eq('http://localhost:9000/webpackUsage.html');
       });
     });
 
     it('should handle a click on a task with a bound URL clicking on the text', () => {
-      cy.get('body').find('text#cl1-text').click({ force: true });
+      cy.get('text#cl1-text').click({ force: true });
       cy.location().should(({ href }) => {
         expect(href).to.eq('http://localhost:9000/webpackUsage.html');
       });
     });
 
     it('should handle a click on a task with a bound function', () => {
-      cy.get('body').find('rect#cl2').click({ force: true });
+      cy.get('rect#cl2').click({ force: true });
       cy.get('.created-by-gant-click').should('not.exist');
     });
 
     it('should handle a click on a task with a bound function', () => {
-      cy.get('body').find('text#cl2-text').click({ force: true });
+      cy.get('text#cl2-text').click({ force: true });
       cy.get('.created-by-gant-click').should('not.exist');
     });
   });
 
   describe('Interaction - security level other, missspelling', () => {
     beforeEach(() => {
-      const url = 'http://localhost:9000/click_security_other.html';
-      cy.viewport(1440, 1024);
-      cy.visit(url);
+      cy.visit('http://localhost:9000/click_security_other.html');
     });
 
     it('should handle a click on a node with a bound function', () => {
@@ -176,12 +169,12 @@ describe('Interaction', () => {
     });
 
     it('should handle a click on a task with a bound function', () => {
-      cy.get('body').find('rect#cl2').click({ force: true });
+      cy.get('rect#cl2').click({ force: true });
       cy.get('.created-by-gant-click').should('not.exist');
     });
 
     it('should handle a click on a task with a bound function', () => {
-      cy.get('body').find('text#cl2-text').click({ force: true });
+      cy.get('text#cl2-text').click({ force: true });
       cy.get('.created-by-gant-click').should('not.exist');
     });
   });
