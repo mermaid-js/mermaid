@@ -132,11 +132,7 @@ export const type2Str = (type) => {
   }
 };
 
-export let parseError; // = (str, hash)
-//  => {
-//   const error = { str, hash };
-//   throw error;
-// };
+export let parseError;
 export const setErrorHandler = (handler) => {
   parseError = handler;
 };
@@ -146,17 +142,3 @@ export const getLogger = () => log;
 
 export const getNodeById = (id) => nodes[id];
 export const getElementById = (id) => elements[id];
-// export default {
-// //   getMindmap,
-//   // addNode,
-//   // clear,
-//   // nodeType,
-//   // getType,
-//   // decorateNode,
-//   // setElementForId,
-//   getElementById: (id) => elements[id],
-//   // getNodeById: (id) => nodes.find((node) => node.id === id),
-//   getNodeById: (id) => nodes[id],
-//   // type2Str,
-//   // parseError
-// };
