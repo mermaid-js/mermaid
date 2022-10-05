@@ -7,6 +7,10 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
       href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap"
       rel="stylesheet"
     />
@@ -25,6 +29,12 @@
       }
       .mermaid svg {
         /* font-size: 18px !important; */
+        background-color: #eee;
+        background-image: radial-gradient(#fff 1%, transparent 11%),
+          radial-gradient(#fff 1%, transparent 11%);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        background-repeat: repeat;
       }
       .malware {
         position: fixed;
@@ -52,6 +62,16 @@ example-diagram
     <pre id="diagram" class="mermaid">
 mindmap
   root
+    A
+    B
+    C
+    D
+    E
+    A2
+    B2
+    C2
+    D2
+    E2
     child1((Circle))
         grandchild 1
         grandchild 2
@@ -63,8 +83,10 @@ mindmap
         ::icon(mdi mdi-fire)
         gc6((grand<br/>child 6))
         ::icon(mdi mdi-fire)
+          gc7((grand<br/>grand<br/>child 8))
         </pre>
-    <script src="./mermaid-mindmap-detector.js"></script>
+    <!-- <div id="cy"></div> -->
+    <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script>
     <script src="./mermaid-example-diagram-detector.js"></script>
     <script src="./mermaid.js"></script>
     <script>
@@ -72,10 +94,11 @@ mindmap
         // console.error('Mermaid error: ', err);
       };
       mermaid.initialize({
+        theme: 'forest',
         startOnLoad: true,
         logLevel: 0,
         basePath: './packages/',
-        // themeVariables: {relationLabelColor: 'red'}
+        // themeVariables: { darkMode: true },
       });
       function callback() {
         alert('It worked');

@@ -41,6 +41,7 @@ class Theme {
     this.arrowheadColor = '#333333';
     this.fontFamily = '"trebuchet ms", verdana, arial, sans-serif';
     this.fontSize = '16px';
+    this.THEME_COLOR_LIMIT = 12;
 
     /* Flowchart variables */
 
@@ -107,6 +108,44 @@ class Theme {
   updateColors() {
     this.secondBkg = lighten(this.contrast, 55);
     this.border2 = this.contrast;
+
+    /* Color Scale */
+    /* Each color-set will have a background, a forgroupnd and a border color */
+
+    this.cScale0 = this.cScale0 || '#555';
+    this.cScale1 = this.cScale1 || '#F4F4F4';
+    this.cScale2 = this.cScale2 || '#555';
+    this.cScale3 = this.cScale3 || '#BBB';
+    this.cScale4 = this.cScale4 || '#777';
+    this.cScale5 = this.cScale5 || '#999';
+    this.cScale6 = this.cScale6 || '#DDD';
+    this.cScale7 = this.cScale7 || '#FFF';
+    this.cScale8 = this.cScale8 || '#DDD';
+    this.cScale9 = this.cScale9 || '#BBB';
+    this.cScale10 = this.cScale10 || '#999';
+    this.cScale11 = this.cScale11 || '#777';
+
+    // Setup the inverted color for the set
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['cScaleInv' + i] = this['cScaleInv' + i] || invert(this['cScale' + i]);
+    }
+    // Setup the peer color for the set, useful for borders
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      if (this.darkMode) {
+        this['cScalePeer' + i] = this['cScalePeer' + i] || lighten(this['cScale' + i], 10);
+      } else {
+        this['cScalePeer' + i] = this['cScalePeer' + i] || darken(this['cScale' + i], 10);
+      }
+    }
+
+    // Setup the label color for the set
+    this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
+
+    this['cScaleLabel0'] = this['cScaleLabel0'] || this.cScale1;
+    this['cScaleLabel2'] = this['cScaleLabel2'] || this.cScale1;
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
+    }
 
     /* Flowchart variables */
 
@@ -185,18 +224,11 @@ class Theme {
     this.fillType7 = adjust(this.secondaryColor, { h: 128 });
 
     // /* pie */
-    this.pie1 = this.pie1 || '#F4F4F4';
-    this.pie2 = this.pie2 || '#555';
-    this.pie3 = this.pie3 || '#BBB';
-    this.pie4 = this.pie4 || '#777';
-    this.pie5 = this.pie5 || '#999';
-    this.pie6 = this.pie6 || '#DDD';
-    this.pie7 = this.pie7 || '#FFF';
-    this.pie8 = this.pie8 || '#DDD';
-    this.pie9 = this.pie9 || '#BBB';
-    this.pie10 = this.pie10 || '#999';
-    this.pie11 = this.pie11 || '#777';
-    this.pie12 = this.pie12 || '#555';
+    /* Pie diagram */
+    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+      this['pie' + i] = this['cScale' + i];
+    }
+    this.pie12 = this.pie0;
     this.pieTitleTextSize = this.pieTitleTextSize || '25px';
     this.pieTitleTextColor = this.pieTitleTextColor || this.taskTextDarkColor;
     this.pieSectionTextSize = this.pieSectionTextSize || '17px';
@@ -206,19 +238,6 @@ class Theme {
     this.pieStrokeColor = this.pieStrokeColor || 'black';
     this.pieStrokeWidth = this.pieStrokeWidth || '2px';
     this.pieOpacity = this.pieOpacity || '0.7';
-
-    // this.pie1 = this.pie1 || '#212529';
-    // this.pie2 = this.pie2 || '#343A40';
-    // this.pie3 = this.pie3 || '#495057';
-    // this.pie4 = this.pie4 || '#6C757D';
-    // this.pie5 = this.pie5 || adjust(this.secondaryColor, { l: -10 });
-    // this.pie6 = this.pie6 || adjust(this.tertiaryColor, { l: -10 });
-    // this.pie7 = this.pie7 || adjust(this.primaryColor, { h: +60, l: -10 });
-    // this.pie8 = this.pie8 || adjust(this.primaryColor, { h: -60, l: -10 });
-    // this.pie9 = this.pie9 || adjust(this.primaryColor, { h: 120, l: 0 });
-    // this.pie10 = this.pie10 || adjust(this.primaryColor, { h: +60, l: -20 });
-    // this.pie11 = this.pie11 || adjust(this.primaryColor, { h: -60, l: -20 });
-    // this.pie12 = this.pie12 || adjust(this.primaryColor, { h: 120, l: -10 });
 
     /* requirement-diagram */
     this.requirementBackground = this.requirementBackground || this.primaryColor;

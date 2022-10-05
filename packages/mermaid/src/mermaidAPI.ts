@@ -308,9 +308,9 @@ const render = async function (
   svg.insertBefore(style1, firstChild);
 
   try {
-    diag.renderer.draw(text, id, pkg.version, diag);
+    await diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
-    errorRenderer.draw(text, id, pkg.version);
+    await errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
 

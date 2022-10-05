@@ -1,5 +1,6 @@
 import { select } from 'd3';
 import * as db from './mindmapDb';
+const MAX_SECTIONS = 12;
 
 /**
  * @param {string} text The text to be wrapped
@@ -159,16 +160,19 @@ const roundedRectBkg = function (elem, node) {
  * @param {object} elem The D3 dom element in which the node is to be added
  * @param {object} node The node to be added
  * @param section
+ * @param fullSection
  * @param {object} conf The configuration object
  * @returns {number} The height nodes dom element
  */
-export const drawNode = function (elem, node, section, conf) {
+export const drawNode = function (elem, node, fullSection, conf) {
+  const section = (fullSection % MAX_SECTIONS) - 1;
   const nodeElem = elem.append('g');
+  node.section = section;
   nodeElem.attr(
     'class',
     (node.class ? node.class + ' ' : '') +
       'mindmap-node ' +
-      (section === -1 ? 'section-root' : 'section-' + section)
+      (section < 0 ? 'section-root' : 'section-' + section)
   );
   const bkgElem = nodeElem.append('g');
 
@@ -252,14 +256,15 @@ export const drawNode = function (elem, node, section, conf) {
   }
 
   // Position the node to its coordinate
-  if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
-    nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
-  }
+  // if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
+  //   nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
+  // }
   db.setElementForId(node.id, nodeElem);
   return node.height;
 };
 
-export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, section) {
+export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, fullSection) {
+  const section = (fullSection % MAX_SECTIONS) - 1;
   const sx = parent.x + parent.width / 2;
   const sy = parent.y + parent.height / 2;
   const ex = mindmap.x + mindmap.width / 2;
