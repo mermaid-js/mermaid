@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -15,6 +15,13 @@
 
   <body>
     <h1>Mermaid quick test and demo pages</h1>
+    <p>
+      Some of these pages have duplicates; some are slow to load because they have so many graphs.
+    </p>
+    <p>
+      If you'd like to clean up one of the pages, please feel free to
+      <a href="https://github.com/mermaid-js/mermaid/pulls">submit a pull request (PR).</a>
+    </p>
 
     <ul>
       <li>
@@ -25,6 +32,9 @@
       </li>
       <li>
         <h2><a href="./dataflowchart.html">Data flow charts</a></h2>
+      </li>
+      <li>
+        <h2><a href="./er.html">Entity Relation diagram</a></h2>
       </li>
       <li>
         <h2><a href="./flowchart.html">Flow charts</a></h2>
@@ -51,93 +61,5 @@
         <h2><a href="./state.html">State</a></h2>
       </li>
     </ul>
-
-    <script src="./mermaid.js"></script>
-    <script>
-      const ALLOWED_TAGS = [
-        'a',
-        'b',
-        'blockquote',
-        'br',
-        'dd',
-        'div',
-        'dl',
-        'dt',
-        'em',
-        'foreignObject',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'h7',
-        'h8',
-        'hr',
-        'i',
-        'li',
-        'ul',
-        'ol',
-        'p',
-        'pre',
-        'span',
-        'strike',
-        'strong',
-        'table',
-        'tbody',
-        'td',
-        'tfoot',
-        'th',
-        'thead',
-        'tr',
-      ];
-      mermaid.initialize({
-        theme: 'forest',
-        // themeCSS: '.node rect { fill: red; }',
-        logLevel: 3,
-        securityLevel: 'loose',
-        flowchart: { curve: 'basis' },
-        gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorMargin: 50 },
-        dompurifyConfig: {
-          USE_PROFILES: {
-            svg: true,
-          },
-          ADD_TAGS: ALLOWED_TAGS,
-          ADD_ATTR: ['transform-origin'],
-        },
-        // sequenceDiagram: { actorMargin: 300 } // deprecated
-      });
-    </script>
-    <script>
-      function ganttTestClick(a, b, c) {
-        console.log('a:', a);
-        console.log('b:', b);
-        console.log('c:', c);
-      }
-      function testClick(nodeId) {
-        console.log('clicked', nodeId);
-        var originalBgColor = document.querySelector('body').style.backgroundColor;
-        document.querySelector('body').style.backgroundColor = 'yellow';
-        setTimeout(function () {
-          document.querySelector('body').style.backgroundColor = originalBgColor;
-        }, 100);
-      }
-    </script>
-    <script>
-      const testLineEndings = (test, input) => {
-        try {
-          mermaid.render(test, input, () => {
-            //no-op
-          });
-        } catch (err) {
-          console.error('Error in %s:\n\n%s', test, err);
-        }
-      };
-
-      testLineEndings('CR', 'graph LR\rsubgraph CR\rA --> B\rend');
-      testLineEndings('LF', 'graph LR\nsubgraph LF\nA --> B\nend');
-      testLineEndings('CRLF', 'graph LR\r\nsubgraph CRLF\r\nA --> B\r\nend');
-    </script>
   </body>
 </html>
