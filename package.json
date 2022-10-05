@@ -12,10 +12,8 @@
     ".": {
       "require": "./dist/mermaid.min.js",
       "import": "./dist/mermaid.core.mjs",
-      "types": "./dist/mermaid.d.ts"
-    },
-    "./*": "./*"
-  },
+      "types": "./dist/mermaid.d.ts"},
+    "./*": "./*"},
   "keywords": [
     "diagram",
     "markdown",
@@ -23,8 +21,7 @@
     "sequence diagram",
     "gantt",
     "class diagram",
-    "git graph"
-  ],
+    "git graph"],
   "scripts": {
     "clean": "rimraf dist",
     "build:vite": "ts-node-esm --transpileOnly --project=.vite/tsconfig.json .vite/build.ts",
@@ -51,24 +48,19 @@
     "test:watch": "vitest --coverage --watch",
     "prepublishOnly": "pnpm build && pnpm test",
     "prepare": "concurrently \"husky install\" \"pnpm build\"",
-    "pre-commit": "lint-staged"
-  },
+    "pre-commit": "lint-staged"},
   "repository": {
     "type": "git",
-    "url": "https://github.com/mermaid-js/mermaid"
-  },
+    "url": "https://github.com/mermaid-js/mermaid"},
   "author": "Knut Sveidqvist",
   "license": "MIT",
   "standard": {
     "ignore": [
       "**/parser/*.js",
       "dist/**/*.js",
-      "cypress/**/*.js"
-    ],
+      "cypress/**/*.js"],
     "globals": [
-      "page"
-    ]
-  },
+      "page"]},
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
     "@types/uuid": "^8.3.4",
@@ -85,8 +77,7 @@
     "non-layered-tidy-tree-layout": "^2.0.2",
     "rollup": "^2.79.1",
     "stylis": "^4.1.2",
-    "uuid": "^9.0.0"
-  },
+    "uuid": "^9.0.0"},
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.27.1",
     "@commitlint/cli": "^17.1.2",
@@ -140,16 +131,11 @@
     "vitepress-plugin-mermaid": "^2.0.8",
     "vitepress-plugin-search": "^1.0.4-alpha.11",
     "vite": "^3.1.4",
-    "vitest": "^0.23.4"
-  },
+    "vitest": "^0.23.4"},
   "resolutions": {
-    "d3": "^7.0.0"
-  },
+    "d3": "^7.0.0"},
   "files": [
-    "dist"
-  ],
+    "dist"],
   "sideEffects": [
     "**/*.css",
-    "**/*.scss"
-  ]
-}
+    "**/*.scss"]}
