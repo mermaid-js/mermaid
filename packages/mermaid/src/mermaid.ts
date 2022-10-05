@@ -45,7 +45,7 @@ import { isDetailedError } from './utils';
  * @param nodes
  * @param callback
  */
-const init = function (
+const init = async function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
@@ -69,7 +69,7 @@ const init = function (
   }
 };
 
-const initThrowsErrors = function (
+const initThrowsErrors = async function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
@@ -108,7 +108,7 @@ const initThrowsErrors = function (
   // generate the id of the diagram
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
-  let txt;
+  let txt: string;
   const errors = [];
 
   // element is the current div with mermaid class
@@ -136,7 +136,7 @@ const initThrowsErrors = function (
       log.debug('Detected early reinit: ', init);
     }
     try {
-      mermaidAPI.render(
+      await mermaidAPI.render(
         id,
         txt,
         (svgCode: string, bindFunctions?: (el: Element) => void) => {
