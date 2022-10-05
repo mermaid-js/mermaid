@@ -12,7 +12,7 @@ export class Diagram {
   constructor(public txt: string, parseError?: Function) {
     const cnf = configApi.getConfig();
     this.txt = txt;
-    this.type = detectType(txt, cnf);
+    this.type = await detectType(txt, cnf);
     const diagram = getDiagram(this.type);
     log.debug('Type ' + this.type);
     // Setup diagram
@@ -76,9 +76,9 @@ export const getDiagramFromText = async (txt: string, parseError?: Function) => 
     getDiagram(type);
   } catch (error) {
     // Diagram not avaiable, loading it
-    const path = getPathForDiagram(type);
+    // const path = getPathForDiagram(type);
     // await loadDiagram('./packages/mermaid-mindmap/dist/mermaid-mindmap.js');
-    await loadDiagram(path + 'mermaid-' + type + '.js');
+    // await loadDiagram(path + 'mermaid-' + type + '.js');
     // new diagram will try getDiagram again and if fails then it is a valid throw
   }
   // If either of the above worked, we have the diagram
