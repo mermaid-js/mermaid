@@ -487,13 +487,6 @@ async function initialize(options: MermaidConfig) {
 
   setLogLevel(config.logLevel);
 
-  if (typeof config.extraDiagrams !== 'undefined' && config.extraDiagrams.length > 0) {
-    // config.extraDiagrams.forEach(async (diagram: string) => {
-    await import(config.extraDiagrams[0]);
-    const { id, detector } = window['mermaid-mindmap-detector']; //eslint-disable-line
-    addDetector(id, detector);
-    // });
-  }
   if (!hasLoadedDiagrams) {
     addDiagrams();
     hasLoadedDiagrams = true;

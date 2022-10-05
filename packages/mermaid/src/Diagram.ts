@@ -1,7 +1,7 @@
 import * as configApi from './config';
 import { log } from './logger';
-import { getDiagram, loadDiagram } from './diagram-api/diagramAPI';
-import { detectType, getPathForDiagram } from './diagram-api/detectType';
+import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
+import { detectType, getDiagramLoader } from './diagram-api/detectType';
 import { isDetailedError } from './utils';
 export class Diagram {
   type = 'graph';
@@ -12,7 +12,7 @@ export class Diagram {
   constructor(public txt: string, parseError?: Function) {
     const cnf = configApi.getConfig();
     this.txt = txt;
-    this.type = await detectType(txt, cnf);
+    this.type = detectType(txt, cnf);
     const diagram = getDiagram(this.type);
     log.debug('Type ' + this.type);
     // Setup diagram
@@ -75,8 +75,23 @@ export const getDiagramFromText = async (txt: string, parseError?: Function) => 
     // Trying to find the diagram
     getDiagram(type);
   } catch (error) {
+    const loader = getDiagramLoader(type);
+    if (!loader) {
+      throw new Error(`Diagram ${type} not found.`);
+    }
     // Diagram not avaiable, loading it
     // const path = getPathForDiagram(type);
+    const { diagram } = await loader(); // eslint-disable-line @typescript-eslint/no-explicit-any
+    registerDiagram(
+      type,
+      {
+        db: diagram.db,
+        renderer: diagram.renderer,
+        parser: diagram.parser,
+        styles: diagram.styles,
+      },
+      diagram.injectUtils
+    );
     // await loadDiagram('./packages/mermaid-mindmap/dist/mermaid-mindmap.js');
     // await loadDiagram(path + 'mermaid-' + type + '.js');
     // new diagram will try getDiagram again and if fails then it is a valid throw

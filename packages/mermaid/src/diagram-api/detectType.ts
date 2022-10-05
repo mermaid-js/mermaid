@@ -1,12 +1,13 @@
 import { MermaidConfig } from '../config.type';
 
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
-
+export type DiagramLoader = (() => any) | null;
+export type DetectorRecord = { detector: DiagramDetector; loader: DiagramLoader };
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
 
-const detectors: Record<string, DiagramDetector> = {};
+const detectors: Record<string, DetectorRecord> = {};
 
 /**
  * @function detectType Detects the type of the graph text. Takes into consideration the possible
@@ -36,7 +37,7 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
 
   // console.log(detectors);
 
-  for (const [key, detector] of Object.entries(detectors)) {
+  for (const [key, { detector }] of Object.entries(detectors)) {
     const diagram = detector(text, config);
     if (diagram) {
       return key;
@@ -47,6 +48,12 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
   return 'flowchart';
 };
 
-export const addDetector = (key: string, detector: DiagramDetector) => {
-  detectors[key] = detector;
+export const addDetector = (
+  key: string,
+  detector: DiagramDetector,
+  loader: DiagramLoader | null
+) => {
+  detectors[key] = { detector, loader };
 };
+
+export const getDiagramLoader = (key: string) => detectors[key].loader;
