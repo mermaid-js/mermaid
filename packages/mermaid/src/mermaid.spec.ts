@@ -1,7 +1,6 @@
 import mermaid from './mermaid';
 import { mermaidAPI } from './mermaidAPI';
 import './diagram-api/diagram-orchestration';
-import { vi, describe, it, beforeEach, afterEach, expect } from 'vitest';
 const spyOn = vi.spyOn;
 
 vi.mock('./mermaidAPI');
