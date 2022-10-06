@@ -57,15 +57,11 @@ const init = async function (
     const conf = mermaidAPI.getConfig();
     if (typeof conf.extraDiagrams !== 'undefined' && conf.extraDiagrams.length > 0) {
       // config.extraDiagrams.forEach(async (diagram: string) => {
-      const apa = await import(conf.extraDiagrams[0]);
-      // Todo figure out how to get the diagram properly
-      //@ts-ignore temporary code
-      const did = window['mermaid-mindmap-detector'].default.id; //eslint-disable-line
-      //@ts-ignore temporary code
-      const detector = window['mermaid-mindmap-detector'].default.detector; //eslint-disable-line
-      //@ts-ignore temporary code
-      const loader = window['mermaid-mindmap-detector'].default.loadDiagram; //eslint-disable-line
-      addDetector(did, detector, loader);
+      const { id, detector, loadDiagram } = await import(conf.extraDiagrams[0]);
+      // TODO: Remove
+      // eslint-disable-next-line no-console
+      console.log(id, detector, loadDiagram);
+      addDetector(id, detector, loadDiagram);
       // });
     }
     mermaid.detectors.forEach(({ id, detector, path }) => {

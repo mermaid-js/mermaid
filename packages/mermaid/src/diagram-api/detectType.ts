@@ -54,6 +54,9 @@ export const addDetector = (
   loader: DiagramLoader | null
 ) => {
   detectors[key] = { detector, loader };
+  // TODO: Remove
+  // eslint-disable-next-line no-console
+  console.log(detectors);
 };
 
 export const getDiagramLoader = (key: string) => detectors[key].loader;
