@@ -19,17 +19,13 @@ describe('DiagramAPI', () => {
     const detector: DiagramDetector = (str: string) => {
       return str.match('loki') !== null;
     };
-    registerDetector('loki', detector, '');
-    registerDiagram(
-      'loki',
-      {
-        db: {},
-        parser: {},
-        renderer: {},
-        styles: {},
-      },
-      (text: string) => text.includes('loki')
-    );
+    registerDetector('loki', detector);
+    registerDiagram('loki', {
+      db: {},
+      parser: {},
+      renderer: {},
+      styles: {},
+    });
     expect(getDiagram('loki')).not.toBeNull();
     expect(detectType('loki diagram')).toBe('loki');
   });

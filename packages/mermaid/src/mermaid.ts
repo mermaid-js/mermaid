@@ -45,7 +45,7 @@ import { isDetailedError } from './utils';
  * @param nodes
  * @param callback
  */
-const init = function (
+const init = async function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
@@ -54,10 +54,20 @@ const init = function (
 ) {
   try {
     log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
+    const conf = mermaidAPI.getConfig();
+    if (typeof conf.extraDiagrams !== 'undefined' && conf.extraDiagrams.length > 0) {
+      // config.extraDiagrams.forEach(async (diagram: string) => {
+      const { id, detector, loadDiagram } = await import(conf.extraDiagrams[0]);
+      // TODO: Remove
+      // eslint-disable-next-line no-console
+      console.log(id, detector, loadDiagram);
+      addDetector(id, detector, loadDiagram);
+      // });
+    }
     mermaid.detectors.forEach(({ id, detector, path }) => {
       addDetector(id, detector, path);
     });
-    initThrowsErrors(config, nodes, callback);
+    await initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
     if (isDetailedError(e)) {
@@ -69,7 +79,7 @@ const init = function (
   }
 };
 
-const initThrowsErrors = function (
+const initThrowsErrors = async function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
@@ -108,7 +118,7 @@ const initThrowsErrors = function (
   // generate the id of the diagram
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
-  let txt;
+  let txt: string;
   const errors = [];
 
   // element is the current div with mermaid class
@@ -136,7 +146,7 @@ const initThrowsErrors = function (
       log.debug('Detected early reinit: ', init);
     }
     try {
-      mermaidAPI.render(
+      await mermaidAPI.render(
         id,
         txt,
         (svgCode: string, bindFunctions?: (el: Element) => void) => {
@@ -164,8 +174,8 @@ const initThrowsErrors = function (
   }
 };
 
-const initialize = function (config: MermaidConfig) {
-  mermaidAPI.initialize(config);
+const initialize = async function (config: MermaidConfig) {
+  await mermaidAPI.initialize(config);
 };
 
 /**
