@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -9,6 +9,10 @@
       div.mermaid {
         /* font-family: 'trebuchet ms', verdana, arial; */
         font-family: 'Courier New', Courier, monospace !important;
+      }
+      .diagram-title {
+        fill: red;
+        font-size: 24pt;
       }
     </style>
   </head>
@@ -51,8 +55,8 @@ erDiagram
       }
     </pre>
 
+    <script src="./mermaid.js"></script>
     <script type="module">
-      import mermaid from '../src/mermaid';
       mermaid.initialize({
         theme: 'default',
 
