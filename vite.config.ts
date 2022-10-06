@@ -15,4 +15,12 @@ export default defineConfig({
       reporter: ['text', 'json', 'html', 'lcov'],
     },
   },
+  build: {
+    /** If you set esmExternals to true, this plugins assumes that
+     all external dependencies are ES modules */
+
+    commonjsOptions: {
+      esmExternals: true,
+    },
+  },
 });

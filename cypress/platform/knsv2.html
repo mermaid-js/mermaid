@@ -86,9 +86,10 @@ mindmap
           gc7((grand<br/>grand<br/>child 8))
         </pre>
     <!-- <div id="cy"></div> -->
-    <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script>
-    <script src="./mermaid-example-diagram-detector.js"></script>
+    <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
+    <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
     <script src="./mermaid.js"></script>
+
     <script>
       mermaid.parseError = function (err, hash) {
         // console.error('Mermaid error: ', err);
@@ -97,8 +98,10 @@ mindmap
         theme: 'forest',
         startOnLoad: true,
         logLevel: 0,
-        basePath: './packages/',
+        // basePath: './packages/',
         // themeVariables: { darkMode: true },
+        extraDiagrams: ['./mermaid-mindmap-detector.js'],
+        // extraDiagrams: ['../../mermaid-mindmap/registry.ts'],
       });
       function callback() {
         alert('It worked');

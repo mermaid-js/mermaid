@@ -18,6 +18,7 @@ import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
+import { addDetector } from './diagram-api/detectType';
 import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
@@ -461,7 +462,7 @@ const handleDirective = function (p: any, directive: any, type: string): void {
 };
 
 /** @param {MermaidConfig} options */
-function initialize(options: MermaidConfig) {
+async function initialize(options: MermaidConfig) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily) {
     if (!options.themeVariables?.fontFamily) {
@@ -485,6 +486,7 @@ function initialize(options: MermaidConfig) {
     typeof options === 'object' ? configApi.setSiteConfig(options) : configApi.getSiteConfig();
 
   setLogLevel(config.logLevel);
+
   if (!hasLoadedDiagrams) {
     addDiagrams();
     hasLoadedDiagrams = true;

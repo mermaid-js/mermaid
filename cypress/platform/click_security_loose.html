@@ -17,38 +17,38 @@
     graph TB
       FunctionTest1-->URLTest1
       click FunctionTest1 clickByFlow "Add a div"
-      click URLTest1 "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+      click URLTest1 "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>"
       </pre>
       <pre class="mermaid">
   graph TB
     1Function--->2URL
     click 1Function clickByFlow "Add a div"
-    click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+    click 2URL "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>"
       </pre>
       <pre class="mermaid">
     flowchart TB
       FunctionTest2-->URLTest2
       click FunctionTest2 clickByFlow "Add a div"
-      click URLTest2 "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>" _self
+      click URLTest2 "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>" _self
       </pre>
       <pre class="mermaid">
   flowchart TB
     10Function--->20URL
     click 10Function clickByFlow "Add a div"
-    click 20URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>" _self
+    click 20URL "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>" _self
       </pre>
 
       <pre class="mermaid">
   classDiagram
     class ShapeLink
-    link ShapeLink "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
+    link ShapeLink "http://localhost:9000/empty.html" "This is a tooltip for a link"
     class ShapeCallback
     callback ShapeCallback "clickByClass" "This is a tooltip for a callback"
       </pre>
       <pre class="mermaid">
   classDiagram-v2
     class ShapeLink2
-    link ShapeLink2 "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
+    link ShapeLink2 "http://localhost:9000/empty.html" "This is a tooltip for a link"
     class ShapeCallback2
     callback ShapeCallback2 "clickByClass" "This is a tooltip for a callback"
       </pre>
@@ -85,7 +85,7 @@
     Calling a Callback (look at the console log) :cl2, after cl1, 3d
     Calling a Callback with args :cl3, after cl1, 3d
 
-    click cl1 href "http://localhost:9000/webpackUsage.html"
+    click cl1 href "http://localhost:9000/empty.html"
     click cl2 call clickByGantt()
     click cl3 call clickByGantt("test1", test2, test3)
 
@@ -99,19 +99,19 @@
       graph TB
         FunctionArgTest2-->URL
         click FunctionArgTest2 call clickByFlowArg(ARGUMENT) "Add a div"
-        click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+        click URL "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>"
       </pre>
       <pre class="mermaid">
       flowchart TB
         2FunctionArg-->URL
         click 2FunctionArg call clickByFlowArg(ARGUMENT) "Add a div"
-        click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+        click URL "http://localhost:9000/empty.html" "Visit <strong>mermaid docs</strong>"
       </pre>
 
       <pre class="mermaid">
       classDiagram
       class ShapeLink
-      link ShapeLink "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
+      link ShapeLink "http://localhost:9000/empty.html" "This is a tooltip for a link"
       class ShapeCallback
       click ShapeCallback call clickByClass(123) "This is a tooltip for a callback"
       </pre>
@@ -119,7 +119,7 @@
       <pre class="mermaid">
       classDiagram-v2
         class ShapeLink2
-        link ShapeLink2 "http://localhost:9000/webpackUsage.html" "This is a tooltip for a link"
+        link ShapeLink2 "http://localhost:9000/empty.html" "This is a tooltip for a link"
         class ShapeCallback2
         click ShapeCallback2 call clickByClass(123) "This is a tooltip for a callback"
       </pre>

@@ -36,6 +36,8 @@ const contentLoaded = function () {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
 
+    graphObj.mermaid.extraDiagrams = ['/mermaid-mindmap-detector.js'];
+
     mermaid2.initialize(graphObj.mermaid);
     mermaid2.init();
   }
