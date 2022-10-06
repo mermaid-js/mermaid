@@ -8,11 +8,18 @@ export class Diagram {
   parser;
   renderer;
   db;
+  private detectTypeFailed = false;
   // eslint-disable-next-line @typescript-eslint/ban-types
   constructor(public txt: string, parseError?: Function) {
     const cnf = configApi.getConfig();
     this.txt = txt;
-    this.type = detectType(txt, cnf);
+    try {
+      this.type = detectType(txt, cnf);
+    } catch (e) {
+      this.handleError(e, parseError);
+      this.type = 'error';
+      this.detectTypeFailed = true;
+    }
     const diagram = getDiagram(this.type);
     log.debug('Type ' + this.type);
     // Setup diagram
@@ -32,29 +39,37 @@ export class Diagram {
 
   // eslint-disable-next-line @typescript-eslint/ban-types
   parse(text: string, parseError?: Function): boolean {
+    if (this.detectTypeFailed) {
+      return false;
+    }
     try {
       text = text + '\n';
       this.db.clear();
       this.parser.parse(text);
       return true;
     } catch (error) {
-      // Is this the correct way to access mermiad's parseError()
-      // method ? (or global.mermaid.parseError()) ?
-      if (parseError) {
-        if (isDetailedError(error)) {
-          // handle case where error string and hash were
-          // wrapped in object like`const error = { str, hash };`
-          parseError(error.str, error.hash);
-        } else {
-          // assume it is just error string and pass it on
-          parseError(error);
-        }
-      } else {
-        // No mermaid.parseError() handler defined, so re-throw it
-        throw error;
-      }
+      this.handleError(error, parseError);
     }
     return false;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  handleError(error: unknown, parseError?: Function) {
+    // Is this the correct way to access mermiad's parseError()
+    // method ? (or global.mermaid.parseError()) ?
+    if (parseError) {
+      if (isDetailedError(error)) {
+        // handle case where error string and hash were
+        // wrapped in object like`const error = { str, hash };`
+        parseError(error.str, error.hash);
+      } else {
+        // assume it is just error string and pass it on
+        parseError(error);
+      }
+    } else {
+      // No mermaid.parseError() handler defined, so re-throw it
+      throw error;
+    }
   }
 
   getParser() {

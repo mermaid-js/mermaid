@@ -48,7 +48,8 @@
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "ci": "vitest run",
     "test": "pnpm lint && vitest run",
-    "test:watch": "vitest --coverage --watch",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
     "prepublishOnly": "pnpm build && pnpm test",
     "prepare": "concurrently \"husky install\" \"pnpm build\"",
     "pre-commit": "lint-staged"
