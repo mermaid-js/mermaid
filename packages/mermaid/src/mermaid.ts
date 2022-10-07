@@ -58,9 +58,6 @@ const init = async function (
     if (typeof conf.extraDiagrams !== 'undefined' && conf.extraDiagrams.length > 0) {
       // config.extraDiagrams.forEach(async (diagram: string) => {
       const { id, detector, loadDiagram } = await import(conf.extraDiagrams[0]);
-      // TODO: Remove
-      // eslint-disable-next-line no-console
-      console.log(id, detector, loadDiagram);
       addDetector(id, detector, loadDiagram);
       // });
     }
