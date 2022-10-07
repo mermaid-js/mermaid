@@ -6,6 +6,16 @@ So you want to help? That's great!
 
 Here are a few things to know to get you started on the right path.
 
+Step 1. Fork the project
+
+Step 2. Copy the URL by clicking the code button just below settings
+
+Step 3. Copy the project to your local system.
+
+Step 4. Use command --> git clone URL
+
+**_NOTE_** :  Don't type URL while using git clone URL. Paste the copied link from step2 in place of URL.
+
 ## Development Installation
 
 ```bash
