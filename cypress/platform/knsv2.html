@@ -55,10 +55,6 @@
   </head>
   <body>
     <div>Security check</div>
-    <pre id="diagram" class="mermaid2">
-example-diagram
-        </pre
-    >
     <pre id="diagram" class="mermaid">
 mindmap
   root
@@ -85,6 +81,10 @@ mindmap
         ::icon(mdi mdi-fire)
           gc7((grand<br/>grand<br/>child 8))
         </pre>
+    <pre id="diagram" class="mermaid">
+      example-diagram
+    </pre>
+
     <!-- <div id="cy"></div> -->
     <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
     <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
@@ -100,8 +100,11 @@ mindmap
         logLevel: 0,
         // basePath: './packages/',
         // themeVariables: { darkMode: true },
-        extraDiagrams: ['./mermaid-mindmap-detector.esm.mjs'],
-        // extraDiagrams: ['../../mermaid-mindmap/registry.ts'],
+        lazyLoadedDiagrams: [
+          './mermaid-mindmap-detector.esm.mjs',
+          './mermaid-example-diagram-detector.esm.mjs',
+        ],
+        // lazyLoadedDiagrams: ['../../mermaid-mindmap/registry.ts'],
       });
       function callback() {
         alert('It worked');

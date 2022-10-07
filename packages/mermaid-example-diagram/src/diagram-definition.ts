@@ -5,13 +5,10 @@ import renderer from './exampleDiagramRenderer';
 import styles from './styles';
 import { injectUtils } from './mermaidUtils';
 
-window.mermaid.connectDiagram(
-  'example-diagram',
-  {
-    db,
-    renderer,
-    parser,
-    styles,
-  },
-  injectUtils
-);
+export const diagram = {
+  db,
+  renderer,
+  parser,
+  styles,
+  injectUtils,
+};
