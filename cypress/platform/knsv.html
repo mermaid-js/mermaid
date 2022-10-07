@@ -368,7 +368,6 @@ flowchart TD
     </pre>
 
     <!-- <script src="./mermaid.js"></script> -->
-    <script src="./mermaid-mindmap-detector.js"></script>
     <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
@@ -386,6 +385,7 @@ flowchart TD
           htmlLabels: false,
           fontFamily: 'courier',
         },
+        extraDiagrams: ['./mermaid-mindmap-detector.js'],
       });
       function callback() {
         alert('It worked');

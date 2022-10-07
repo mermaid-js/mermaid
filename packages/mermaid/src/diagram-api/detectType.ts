@@ -1,8 +1,8 @@
 import { MermaidConfig } from '../config.type';
 
 export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
-export type DetectorRecord = { detector: DiagramDetector; path: string };
-
+export type DiagramLoader = (() => Promise<unknown>) | null;
+export type DetectorRecord = { detector: DiagramDetector; loader: DiagramLoader };
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
@@ -34,9 +34,9 @@ const detectors: Record<string, DetectorRecord> = {};
  */
 export const detectType = function (text: string, config?: MermaidConfig): string {
   text = text.replace(directive, '').replace(anyComment, '\n');
-
-  for (const [key, detectorRecord] of Object.entries(detectors)) {
-    if (detectorRecord.detector(text, config)) {
+  for (const [key, { detector }] of Object.entries(detectors)) {
+    const diagram = detector(text, config);
+    if (diagram) {
       return key;
     }
   }
@@ -44,13 +44,12 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
   throw new Error(`No diagram type detected for text: ${text}`);
 };
 
-export const addDetector = (key: string, detector: DiagramDetector, path: string) => {
-  detectors[key] = { detector, path };
+export const addDetector = (
+  key: string,
+  detector: DiagramDetector,
+  loader: DiagramLoader | null
+) => {
+  detectors[key] = { detector, loader };
 };
 
-export const getPathForDiagram = (id: string) => {
-  const detectorRecord = detectors[id];
-  if (detectorRecord) {
-    return detectorRecord.path;
-  }
-};
+export const getDiagramLoader = (key: string) => detectors[key].loader;

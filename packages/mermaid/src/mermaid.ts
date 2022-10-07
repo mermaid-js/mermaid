@@ -54,10 +54,17 @@ const init = async function (
 ) {
   try {
     log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
+    const conf = mermaidAPI.getConfig();
+    if (typeof conf.extraDiagrams !== 'undefined' && conf.extraDiagrams.length > 0) {
+      // config.extraDiagrams.forEach(async (diagram: string) => {
+      const { id, detector, loadDiagram } = await import(conf.extraDiagrams[0]);
+      addDetector(id, detector, loadDiagram);
+      // });
+    }
     mermaid.detectors.forEach(({ id, detector, path }) => {
       addDetector(id, detector, path);
     });
-    initThrowsErrors(config, nodes, callback);
+    await initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
     if (isDetailedError(e)) {
@@ -164,8 +171,8 @@ const initThrowsErrors = async function (
   }
 };
 
-const initialize = function (config: MermaidConfig) {
-  mermaidAPI.initialize(config);
+const initialize = async function (config: MermaidConfig) {
+  await mermaidAPI.initialize(config);
 };
 
 /**

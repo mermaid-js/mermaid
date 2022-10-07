@@ -18,12 +18,21 @@ export const getConfig = _getConfig;
 export const sanitizeText = (text: string) => _sanitizeText(text, getConfig());
 export const setupGraphViewbox = _setupGraphViewbox;
 
+export interface InjectUtils {
+  _log: any;
+  _setLogLevel: any;
+  _getConfig: any;
+  _sanitizeText: any;
+  _setupGraphViewbox: any;
+}
+
 export interface DiagramDefinition {
   db: any;
   renderer: any;
   parser: any;
   styles: any;
   init?: (config: MermaidConfig) => void;
+  injectUtils?: (utils: InjectUtils) => void;
 }
 
 const diagrams: Record<string, DiagramDefinition> = {};
@@ -32,8 +41,8 @@ export interface Detectors {
   [key: string]: DiagramDetector;
 }
 
-export const registerDetector = (id: string, detector: DiagramDetector, path: string) => {
-  addDetector(id, detector, path);
+export const registerDetector = (id: string, detector: DiagramDetector) => {
+  addDetector(id, detector, null);
 };
 
 export const registerDiagram = (
@@ -52,7 +61,9 @@ export const registerDiagram = (
   }
   diagrams[id] = diagram;
   addStylesForDiagram(id, diagram.styles);
-  connectCallbacks[id] = callback;
+  if (typeof callback !== 'undefined') {
+    callback(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
+  }
 };
 
 export const getDiagram = (name: string): DiagramDefinition => {
