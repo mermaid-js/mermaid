@@ -372,11 +372,11 @@ const buildLegacyDisplay = function (text) {
 
     const parameters = text.substring(methodStart + 1, methodEnd);
     const classifier = text.substring(methodEnd + 1, 1);
-    cssStyle = parseClassifier(classifier);
+    cssStyle = parseClassifier(text.substring(methodEnd + 1, methodEnd + 2));
 
     displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
 
-    if (methodEnd < memberText.length) {
+    if (methodEnd < text.length) {
       returnType = text.substring(methodEnd + 2).trim();
       if (returnType !== '') {
         returnType = ' : ' + parseGenericTypes(returnType);
