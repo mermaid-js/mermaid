@@ -54,7 +54,7 @@ const init = async function (
 ) {
   try {
     log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
-    const conf = config; // TODO OR mermaidAPI.getConfig(); ?
+    const conf = mermaidAPI.getConfig();
     if (conf?.extraDiagrams && conf.extraDiagrams.length > 0) {
       await Promise.allSettled(
         conf.extraDiagrams.map(async (diagram: string) => {
