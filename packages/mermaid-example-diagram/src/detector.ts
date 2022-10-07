@@ -1,3 +1,6 @@
+// @ts-ignore: TODO Fix ts errors
+export const id = 'example-diagram';
+
 /**
  * Detector function that will be called by mermaid to determine if the diagram is this type of digram.
  *
@@ -7,4 +10,9 @@
 
 export const detector = (txt: string) => {
   return txt.match(/^\s*example-diagram/) !== null;
+};
+
+export const loadDiagram = async () => {
+  const { diagram } = await import('./diagram-definition');
+  return { id, diagram };
 };

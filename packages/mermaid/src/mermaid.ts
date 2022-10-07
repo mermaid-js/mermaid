@@ -55,11 +55,11 @@ const init = async function (
   try {
     log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
     const conf = mermaidAPI.getConfig();
-    if (typeof conf.extraDiagrams !== 'undefined' && conf.extraDiagrams.length > 0) {
-      // config.extraDiagrams.forEach(async (diagram: string) => {
-      const { id, detector, loadDiagram } = await import(conf.extraDiagrams[0]);
-      addDetector(id, detector, loadDiagram);
-      // });
+    if (typeof conf.lazyLoadedDiagrams !== 'undefined' && conf.lazyLoadedDiagrams.length > 0) {
+      for (let i = 0; i < conf.lazyLoadedDiagrams.length; i++) {
+        const { id, detector, loadDiagram } = await import(conf.lazyLoadedDiagrams[i]);
+        addDetector(id, detector, loadDiagram);
+      }
     }
     mermaid.detectors.forEach(({ id, detector, path }) => {
       addDetector(id, detector, path);

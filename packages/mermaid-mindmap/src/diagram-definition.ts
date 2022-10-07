@@ -5,7 +5,7 @@ import mindmapRenderer from './mindmapRenderer';
 import mindmapStyles from './styles';
 import { injectUtils } from './mermaidUtils';
 
-export const mindmap = {
+export const diagram = {
   db: mindmapDb,
   renderer: mindmapRenderer,
   parser: mindmapParser,

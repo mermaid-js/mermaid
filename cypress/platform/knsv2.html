@@ -55,11 +55,24 @@
   </head>
   <body>
     <div>Security check</div>
-    <pre id="diagram" class="mermaid2">
-example-diagram
-        </pre
-    >
     <pre id="diagram" class="mermaid">
+classDiagram
+        direction LR
+        class Student {
+          -idCard : IdCard
+        }
+        class IdCard{
+          -id : int
+          -name : string
+        }
+        class Bike{
+          -id : int
+          -name : string
+        }
+        Student "1" --o "1" IdCard : carries
+        Student "1" --o "1" Bike : rides
+    </pre>
+    <pre id="diagram" class="mermaid2">
 mindmap
   root
     A
@@ -85,9 +98,14 @@ mindmap
         ::icon(mdi mdi-fire)
           gc7((grand<br/>grand<br/>child 8))
         </pre>
+    <pre id="diagram" class="mermaid2">
+      example-diagram
+    </pre>
+
     <!-- <div id="cy"></div> -->
     <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
     <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
     <script src="./mermaid.js"></script>
 
     <script>
@@ -100,8 +118,11 @@ mindmap
         logLevel: 0,
         // basePath: './packages/',
         // themeVariables: { darkMode: true },
-        extraDiagrams: ['./mermaid-mindmap-detector.esm.mjs'],
-        // extraDiagrams: ['../../mermaid-mindmap/registry.ts'],
+        lazyLoadedDiagrams: [
+          './mermaid-mindmap-detector.esm.mjs',
+          './mermaid-example-diagram-detector.esm.mjs',
+        ],
+        // lazyLoadedDiagrams: ['../../mermaid-mindmap/registry.ts'],
       });
       function callback() {
         alert('It worked');

@@ -22,22 +22,22 @@ const packageOptions = {
   'mermaid-mindmap': {
     name: 'mermaid-mindmap',
     packageName: 'mermaid-mindmap',
-    file: 'add-diagram.ts',
+    file: 'diagram-definition.ts',
   },
   'mermaid-mindmap-detector': {
     name: 'mermaid-mindmap-detector',
     packageName: 'mermaid-mindmap',
-    file: 'registry.ts',
+    file: 'detector.ts',
   },
   'mermaid-example-diagram': {
     name: 'mermaid-example-diagram',
     packageName: 'mermaid-example-diagram',
-    file: 'add-diagram.ts',
+    file: 'diagram-definition.ts',
   },
   'mermaid-example-diagram-detector': {
     name: 'mermaid-example-diagram-detector',
     packageName: 'mermaid-example-diagram',
-    file: 'registry.ts',
+    file: 'detector.ts',
   },
 };
 

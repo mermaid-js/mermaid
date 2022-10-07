@@ -115,7 +115,7 @@ const config: Partial<MermaidConfig> = {
    * Default value: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
    */
   secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
-  extraDiagrams: [],
+  lazyLoadedDiagrams: [],
   /**
    * This option controls if the generated ids of nodes in the SVG are generated randomly or based
    * on a seed. If set to false, the IDs are generated based on the current date and thus are not

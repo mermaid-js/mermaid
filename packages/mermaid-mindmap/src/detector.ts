@@ -5,6 +5,6 @@ export const detector = (txt: string) => {
 };
 
 export const loadDiagram = async () => {
-  const { mindmap } = await import('./add-diagram');
-  return { id, diagram: mindmap };
+  const { diagram } = await import('./diagram-definition');
+  return { id, diagram };
 };

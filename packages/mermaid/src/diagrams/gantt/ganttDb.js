@@ -217,10 +217,12 @@ const getStartDate = function (prevTime, dateFormat, str) {
   } else {
     log.debug('Invalid date:' + str);
     log.debug('With date format:' + dateFormat.trim());
+    const d = new Date(str);
+    if (typeof d === 'undefined' || isNaN(d.getTime())) {
+      throw new Error('Invalid date:' + str);
+    }
+    return d;
   }
-
-  // Default date - now
-  return new Date();
 };
 
 /**
