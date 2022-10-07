@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,6 +14,7 @@
   </head>
 
   <body>
+    <h1>Pie chart demos</h1>
     <pre class="mermaid">
       pie title Pets adopted by volunteers
       accTitle: simple pie char demo
@@ -23,6 +24,7 @@
     "Rats" : 15
     </pre>
 
+    <hr />
     <pre class="mermaid">
     pie
       title Key elements in Product X
@@ -35,7 +37,7 @@
     </pre>
 
     <script type="module">
-      import mermaid from '../src/mermaid';
+      import mermaid from '../packages/mermaid';
       mermaid.initialize({
         theme: 'forest',
         // themeCSS: '.node rect { fill: red; }',

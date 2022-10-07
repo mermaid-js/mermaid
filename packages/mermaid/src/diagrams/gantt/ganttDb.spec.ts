@@ -1,7 +1,6 @@
 // @ts-nocheck TODO: Fix TS
 import moment from 'moment-mini';
 import ganttDb from './ganttDb';
-import { it, describe } from 'vitest';
 import { convert } from '../../tests/util';
 
 describe('when using the ganttDb', function () {
