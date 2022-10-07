@@ -347,9 +347,10 @@ const buildMethodDisplay = function (parsedText) {
 };
 
 const buildLegacyDisplay = function (text) {
-  // if for some reason we don't have any match, use old format to parse text
+  // if for some reason we dont have any match, use old format to parse text
   let displayText = '';
   let cssStyle = '';
+  let memberText = '';
   let returnType = '';
   let methodStart = text.indexOf('(');
   let methodEnd = text.indexOf(')');
@@ -370,21 +371,21 @@ const buildLegacyDisplay = function (text) {
     }
 
     const parameters = text.substring(methodStart + 1, methodEnd);
-    const classifier = text.substring(methodEnd + 1, methodEnd + 2);
+    const classifier = text.substring(methodEnd + 1, 1);
     cssStyle = parseClassifier(classifier);
 
     displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
 
-    if (methodEnd <= text.length) {
+    if (methodEnd < memberText.length) {
       returnType = text.substring(methodEnd + 2).trim();
       if (returnType !== '') {
         returnType = ' : ' + parseGenericTypes(returnType);
         displayText += returnType;
       }
-    } else {
-      // finally - if all else fails, just send the text back as written (other than parsing for generic types)
-      displayText = parseGenericTypes(text);
     }
+  } else {
+    // finally - if all else fails, just send the text back as written (other than parsing for generic types)
+    displayText = parseGenericTypes(text);
   }
 
   return {
@@ -392,7 +393,6 @@ const buildLegacyDisplay = function (text) {
     cssStyle,
   };
 };
-
 /**
  * Adds a <tspan> for a member in a diagram
  *

@@ -56,6 +56,23 @@
   <body>
     <div>Security check</div>
     <pre id="diagram" class="mermaid">
+      classDiagram
+        direction LR
+        class Student {
+          -idCard : IdCard
+        }
+        class IdCard{
+          -id : int
+          -name : string
+        }
+        class Bike{
+          -id : int
+          -name : string
+        }
+        Student "1" --o "1" IdCard : carries
+        Student "1" --o "1" Bike : rides
+    </pre>
+    <pre id="diagram" class="mermaid2">
 mindmap
   root
     A
@@ -81,13 +98,14 @@ mindmap
         ::icon(mdi mdi-fire)
           gc7((grand<br/>grand<br/>child 8))
         </pre>
-    <pre id="diagram" class="mermaid">
+    <pre id="diagram" class="mermaid2">
       example-diagram
     </pre>
 
     <!-- <div id="cy"></div> -->
     <!-- <script src="http://localhost:9000/packages/mermaid-mindmap/dist/mermaid-mindmap-detector.js"></script> -->
     <!-- <script src="./mermaid-example-diagram-detector.js"></script>    -->
+    <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script> -->
     <script src="./mermaid.js"></script>
 
     <script>
