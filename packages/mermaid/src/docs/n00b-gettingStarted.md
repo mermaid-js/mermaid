@@ -85,7 +85,7 @@ c. The `mermaid.initialize()` call, which dictates the appearance of diagrams an
 
 ```html
 <body>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.min.js"></script>
 </body>
 ```
 
@@ -133,7 +133,7 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
 ```html
 <html>
   <body>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.min.js"></script>
     <script>
       mermaid.initialize({ startOnLoad: true });
     </script>

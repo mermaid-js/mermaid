@@ -190,13 +190,13 @@ To Deploy Mermaid:
 **To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.min.js"></script>
 <script>
   mermaid.initialize({ startOnLoad: true });
 </script>
 ```
 
-**Doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitions and render them into SVG charts.**
+**Doing so will command the mermaid parser to look for the `<div>` or `<pre>` tags with `class="mermaid"`. From these tags mermaid will try to read the diagram/chart definitions and render them into SVG charts.**
 
 **Examples can be found at** [Other examples](/examples)
 

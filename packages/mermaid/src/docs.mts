@@ -41,6 +41,8 @@ import { remark } from 'remark';
 // @ts-ignore No typescript declaration file
 import flatmap from 'unist-util-flatmap';
 
+const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
+
 // These paths are from the root of the mono-repo, not from the
 // mermaid sub-directory
 const SOURCE_DOCS_DIR = 'packages/mermaid/src/docs';
@@ -144,7 +146,7 @@ const readSyncedUTF8file = (filename: string): string => {
  * @param file {string} name of the file that will be verified
  */
 const transformMarkdown = (file: string) => {
-  const doc = readSyncedUTF8file(file);
+  const doc = readSyncedUTF8file(file).replace(/<MERMAID_VERSION>/g, version);
   const ast: Root = remark.parse(doc);
   const out = flatmap(ast, (c: Code) => {
     if (c.type !== 'code') {

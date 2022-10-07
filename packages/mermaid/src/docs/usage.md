@@ -44,7 +44,7 @@ The easiest way to integrate mermaid on a web page requires three elements:
 1.  Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.Example:
 
     ```html
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.min.js"></script>
     ```
 
 2.  The `mermaidAPI` call, in a separate `script` tag. Example:
@@ -84,7 +84,7 @@ locate the graph definitions inside the `div` tags with `class="mermaid"` and re
       B-->C[fa:fa-ban forbidden]
       B-->D(fa:fa-spinner);
     </pre>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.min.js"></script>
     <script>
       mermaid.initialize({ startOnLoad: true });
     </script>
