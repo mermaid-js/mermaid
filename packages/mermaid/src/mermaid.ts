@@ -9,13 +9,13 @@ import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
 import {
   registerDiagram,
-  DiagramDefinition,
   setLogLevel,
   getConfig,
   setupGraphViewbox,
   sanitizeText,
 } from './diagram-api/diagramAPI';
 import { isDetailedError } from './utils';
+import { DiagramDefinition } from './diagram-api/types';
 
 /**
  * ## init
@@ -54,12 +54,14 @@ const init = async function (
 ) {
   try {
     log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
-    const conf = mermaidAPI.getConfig();
-    if (typeof conf.extraDiagrams !== 'undefined' && conf.extraDiagrams.length > 0) {
-      // config.extraDiagrams.forEach(async (diagram: string) => {
-      const { id, detector, loadDiagram } = await import(conf.extraDiagrams[0]);
-      addDetector(id, detector, loadDiagram);
-      // });
+    const conf = config; // TODO OR mermaidAPI.getConfig(); ?
+    if (conf?.extraDiagrams && conf.extraDiagrams.length > 0) {
+      await Promise.allSettled(
+        conf.extraDiagrams.map(async (diagram: string) => {
+          const { id, detector, loadDiagram } = await import(diagram);
+          addDetector(id, detector, loadDiagram);
+        })
+      );
     }
     mermaid.detectors.forEach(({ id, detector, path }) => {
       addDetector(id, detector, path);

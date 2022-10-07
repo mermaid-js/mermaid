@@ -1,4 +1,4 @@
-import type { DiagramDetector } from '../../diagram-api/detectType';
+import type { DiagramDetector } from '../../diagram-api/types';
 
 export const flowDetector: DiagramDetector = (txt, config) => {
   // If we have confired to only use new flow charts this function shohuld always return false

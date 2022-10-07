@@ -1,6 +1,7 @@
-import { detectType, DiagramDetector } from './detectType';
+import { detectType } from './detectType';
 import { getDiagram, registerDiagram, registerDetector } from './diagramAPI';
 import { addDiagrams } from './diagram-orchestration';
+import { DiagramDetector } from './types';
 
 addDiagrams();
 

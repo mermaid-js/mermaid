@@ -1,8 +1,6 @@
 import { MermaidConfig } from '../config.type';
+import { DetectorRecord, DiagramDetector, DiagramLoader } from './types';
 
-export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
-export type DiagramLoader = (() => Promise<unknown>) | null;
-export type DetectorRecord = { detector: DiagramDetector; loader: DiagramLoader };
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
@@ -44,11 +42,10 @@ export const detectType = function (text: string, config?: MermaidConfig): strin
   throw new Error(`No diagram type detected for text: ${text}`);
 };
 
-export const addDetector = (
-  key: string,
-  detector: DiagramDetector,
-  loader: DiagramLoader | null
-) => {
+export const addDetector = (key: string, detector: DiagramDetector, loader?: DiagramLoader) => {
+  if (detectors[key]) {
+    throw new Error(`Detector with key ${key} already exists`);
+  }
   detectors[key] = { detector, loader };
 };
 

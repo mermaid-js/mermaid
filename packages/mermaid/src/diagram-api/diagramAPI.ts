@@ -1,10 +1,10 @@
-import { addDetector, DiagramDetector as _DiagramDetector } from './detectType';
+import { addDetector } from './detectType';
 import { log as _log, setLogLevel as _setLogLevel } from '../logger';
 import { getConfig as _getConfig } from '../config';
 import { sanitizeText as _sanitizeText } from '../diagrams/common/common';
-import { MermaidConfig } from '../config.type';
 import { setupGraphViewbox as _setupGraphViewbox } from '../setupGraphViewbox';
 import { addStylesForDiagram } from '../styles';
+import { DiagramDefinition, DiagramDetector } from './types';
 
 /*
   Packaging and exposing resources for externa diagrams so that they can import
@@ -13,27 +13,9 @@ import { addStylesForDiagram } from '../styles';
 */
 export const log = _log;
 export const setLogLevel = _setLogLevel;
-export type DiagramDetector = _DiagramDetector;
 export const getConfig = _getConfig;
 export const sanitizeText = (text: string) => _sanitizeText(text, getConfig());
 export const setupGraphViewbox = _setupGraphViewbox;
-
-export interface InjectUtils {
-  _log: any;
-  _setLogLevel: any;
-  _getConfig: any;
-  _sanitizeText: any;
-  _setupGraphViewbox: any;
-}
-
-export interface DiagramDefinition {
-  db: any;
-  renderer: any;
-  parser: any;
-  styles: any;
-  init?: (config: MermaidConfig) => void;
-  injectUtils?: (utils: InjectUtils) => void;
-}
 
 const diagrams: Record<string, DiagramDefinition> = {};
 const connectCallbacks: Record<string, any> = {}; // TODO fix, eslint-disable-line @typescript-eslint/no-explicit-any

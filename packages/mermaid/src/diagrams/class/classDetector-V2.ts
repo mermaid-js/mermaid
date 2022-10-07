@@ -1,4 +1,4 @@
-import type { DiagramDetector } from '../../diagram-api/detectType';
+import type { DiagramDetector } from '../../diagram-api/types';
 
 export const classDetectorV2: DiagramDetector = (txt, config) => {
   // If we have confgured to use dagre-wrapper then we should return true in this function for classDiagram code thus making it use the new class diagram

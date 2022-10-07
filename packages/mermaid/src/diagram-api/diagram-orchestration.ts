@@ -1,9 +1,5 @@
-import {
-  registerDiagram,
-  registerDetector,
-  DiagramDefinition,
-  DiagramDetector,
-} from './diagramAPI';
+import { registerDiagram, registerDetector } from './diagramAPI';
+import { DiagramDefinition, DiagramDetector } from './types';
 
 // // @ts-ignore: TODO Fix ts errors
 // import mindmapParser from '../diagrams/mindmap/parser/mindmap';
