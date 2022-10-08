@@ -41,7 +41,9 @@ import { remark } from 'remark';
 // @ts-ignore No typescript declaration file
 import flatmap from 'unist-util-flatmap';
 
-const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
+const version = (
+  JSON.parse(readFileSync('packages/mermaid/package.json', 'utf8')).version as string
+).split('.')[0];
 
 // These paths are from the root of the mono-repo, not from the
 // mermaid sub-directory
