@@ -2,9 +2,11 @@
 	"version": "0.2",
 	"language": "en",
 	"words": [
+		"Gantt",
+		"Jaoude",
+		"redmine"
 	],
-	"ignoreWords": [
-  ],
+	"ignoreWords": [],
 	"patterns": [
 		{
 			"name": "Markdown links",
