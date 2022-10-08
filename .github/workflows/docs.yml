@@ -25,4 +25,4 @@ jobs:
       - run: npm install -g cspell
         name: Install cSpell
       - run: cspell --config ./cSpell.json "packages/mermaid/src/docs/**/*.md" --no-progress
-        name: run cSpell
+        name: Run cSpell
