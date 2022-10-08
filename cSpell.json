@@ -90,5 +90,7 @@
 		"Multi-line code blocks",
 		"HTML Tags"
 	],
-	"ignorePaths": []
+  "ignorePaths": [
+    "packages/mermaid/src/docs/CHANGELOG.md"
+  ]
 }
