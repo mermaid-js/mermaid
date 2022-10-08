@@ -7,7 +7,6 @@
 		"Asciidoctor",
 		"Astah",
 		"Bisheng",
-		"classdiagram",
 		"codedoc",
 		"customizability",
 		"Docsy",
@@ -91,7 +90,5 @@
 		"Multi-line code blocks",
 		"HTML Tags"
 	],
-	"ignorePaths": [
-    "packages/mermaid/src/docs/CHANGELOG.md"
-  ]
+	"ignorePaths": []
 }
