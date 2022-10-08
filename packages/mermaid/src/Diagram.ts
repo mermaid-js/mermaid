@@ -81,10 +81,8 @@ export class Diagram {
   }
 }
 
-export default Diagram;
-
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const getDiagramFromText = async (txt: string, parseError?: Function) => {
+export const getDiagramFromText = async (txt: string, parseError?: Function): Promise<Diagram> => {
   const type = detectType(txt, configApi.getConfig());
   try {
     // Trying to find the diagram
@@ -94,24 +92,14 @@ export const getDiagramFromText = async (txt: string, parseError?: Function) => 
     if (!loader) {
       throw new Error(`Diagram ${type} not found.`);
     }
-    // Diagram not avaiable, loading it
-    // const path = getPathForDiagram(type);
-    const { diagram } = await loader(); // eslint-disable-line @typescript-eslint/no-explicit-any
-    registerDiagram(
-      type,
-      {
-        db: diagram.db,
-        renderer: diagram.renderer,
-        parser: diagram.parser,
-        styles: diagram.styles,
-      },
-      diagram.injectUtils
-    );
-    // await loadDiagram('./packages/mermaid-mindmap/dist/mermaid-mindmap.js');
-    // await loadDiagram(path + 'mermaid-' + type + '.js');
+    // Diagram not available, loading it
+    const { diagram } = await loader();
+    registerDiagram(type, diagram, undefined, diagram.injectUtils);
     // new diagram will try getDiagram again and if fails then it is a valid throw
   }
   // If either of the above worked, we have the diagram
   // logic and can continue
   return new Diagram(txt, parseError);
 };
+
+export default Diagram;
