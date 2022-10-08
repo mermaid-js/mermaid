@@ -1,5 +1,5 @@
 import { detectType } from './detectType';
-import { getDiagram, registerDiagram, registerDetector } from './diagramAPI';
+import { getDiagram, registerDiagram } from './diagramAPI';
 import { addDiagrams } from './diagram-orchestration';
 import { DiagramDetector } from './types';
 
@@ -22,13 +22,16 @@ describe('DiagramAPI', () => {
     const detector: DiagramDetector = (str: string) => {
       return str.match('loki') !== null;
     };
-    registerDetector('loki', detector);
-    registerDiagram('loki', {
-      db: {},
-      parser: {},
-      renderer: {},
-      styles: {},
-    });
+    registerDiagram(
+      'loki',
+      {
+        db: {},
+        parser: {},
+        renderer: {},
+        styles: {},
+      },
+      detector
+    );
     expect(getDiagram('loki')).not.toBeNull();
     expect(detectType('loki diagram')).toBe('loki');
   });

@@ -53,7 +53,6 @@ const init = async function (
   callback?: Function
 ) {
   try {
-    log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
     const conf = mermaidAPI.getConfig();
     if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
       // Load all lazy loaded diagrams in parallel
@@ -64,9 +63,6 @@ const init = async function (
         })
       );
     }
-    mermaid.detectors.forEach(({ id, detector, path }) => {
-      addDetector(id, detector, path);
-    });
     await initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
@@ -251,7 +247,6 @@ const mermaid: {
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
   // Array of functions to use for detecting diagram types
-  detectors: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   connectDiagram: (id: string, diagram: DiagramDefinition, callback: (id: string) => void) => void;
 } = {
   startOnLoad: true,
@@ -265,7 +260,6 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
-  detectors: [],
   connectDiagram: connectDiagram,
 };
 

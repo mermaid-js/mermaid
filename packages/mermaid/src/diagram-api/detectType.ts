@@ -1,4 +1,5 @@
 import { MermaidConfig } from '../config.type';
+import { log } from '../logger';
 import { DetectorRecord, DiagramDetector, DiagramLoader } from './types';
 
 const directive =
@@ -47,6 +48,7 @@ export const addDetector = (key: string, detector: DiagramDetector, loader?: Dia
     throw new Error(`Detector with key ${key} already exists`);
   }
   detectors[key] = { detector, loader };
+  log.debug(`Detector with key ${key} added${loader ? ' with loader' : ''}`);
 };
 
 export const getDiagramLoader = (key: string) => detectors[key].loader;
