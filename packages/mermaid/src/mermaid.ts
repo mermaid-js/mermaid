@@ -217,22 +217,6 @@ const parse = (txt: string) => {
   return mermaidAPI.parse(txt, mermaid.parseError);
 };
 
-const connectDiagram = (
-  id: string,
-  diagram: DiagramDefinition,
-  callback: (
-    _log: any,
-    _setLogLevel: any,
-    _getConfig: any,
-    _sanitizeText: any,
-    _setupGraphViewbox: any
-  ) => void
-) => {
-  registerDiagram(id, diagram, callback);
-  // Todo move this connect call to after the diagram is actually loaded.
-  callback(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
-};
-
 const mermaid: {
   startOnLoad: boolean;
   diagrams: any;
@@ -246,8 +230,6 @@ const mermaid: {
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
-  // Array of functions to use for detecting diagram types
-  connectDiagram: (id: string, diagram: DiagramDefinition, callback: (id: string) => void) => void;
 } = {
   startOnLoad: true,
   diagrams: {},
@@ -260,7 +242,6 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
-  connectDiagram: connectDiagram,
 };
 
 export default mermaid;
