@@ -57,7 +57,6 @@ importers:
       lint-staged: ^13.0.3
       lodash: ^4.17.21
       markdown-it: ^13.0.1
-      moment: ^2.23.0
       moment-mini: ^2.24.0
       non-layered-tidy-tree-layout: ^2.0.2
       path-browserify: ^1.0.1
@@ -135,7 +134,6 @@ importers:
       jsdom: 20.0.1
       lint-staged: 13.0.3
       markdown-it: 13.0.1
-      moment: 2.29.4
       path-browserify: 1.0.1
       pnpm: 7.13.2
       prettier: 2.7.1

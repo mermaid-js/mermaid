@@ -26,11 +26,10 @@
     "git graph"
   ],
   "scripts": {
-    "clean": "rimraf dist",
     "build:vite": "ts-node-esm --transpileOnly --project=.vite/tsconfig.json .vite/build.ts",
     "build:types": "concurrently \"tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly\" \"tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly\"",
     "build:watch": "pnpm build:vite --watch",
-    "build": "pnpm clean; concurrently \"pnpm build:vite\" \"pnpm build:types\"",
+    "build": "pnpm run -r clean && concurrently \"pnpm build:vite\" \"pnpm build:types\"",
     "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server\"",
     "docs:build": "ts-node-esm --transpileOnly packages/mermaid/src/docs.mts",
     "docs:verify": "pnpm docs:build --verify",
@@ -127,7 +126,6 @@
     "jsdom": "^20.0.1",
     "lint-staged": "^13.0.3",
     "markdown-it": "^13.0.1",
-    "moment": "^2.23.0",
     "path-browserify": "^1.0.1",
     "pnpm": "^7.13.2",
     "prettier": "^2.7.1",
