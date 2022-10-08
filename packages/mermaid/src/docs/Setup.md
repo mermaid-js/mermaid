@@ -763,14 +763,14 @@ Default value: true
 
 | Parameter       | Description | Type    | Required | Values                  |
 | --------------- | ----------- | ------- | -------- | ----------------------- |
-| defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+| defaultRenderer | See notes   | boolean | 4        | `dagre-d3`, `dagre-wrapper` |
 
 **Notes:**
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
+`dagre-d3` `dagre-wrapper` - wrapper for `dagre` implemented in mermaid
 
-Default value: 'dagre-d3'
+Default value: `dagre-d3`
 
 ## er
 
