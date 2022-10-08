@@ -123,7 +123,7 @@ deterministic. This is the default behavior.
 
 **Notes**:
 
-This matters if your files are checked into sourcecontrol e.g. git and should not change unless
+This matters if your files are checked into source control e.g. git and should not change unless
 content is changed.
 
 Default value: false
