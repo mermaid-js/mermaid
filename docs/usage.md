@@ -200,9 +200,8 @@ fetch the graph definition from the site (perhaps from a textarea), render it an
 The example below show an outline of how this could be used. The example just logs the resulting SVG to the JavaScript console.
 
 ```html
-<script src="mermaid.js"></script>
-
-<script>
+<script type="module">
+  import mermaid from './mermaid.mjs';
   mermaid.mermaidAPI.initialize({ startOnLoad: false });
   $(function () {
     // Example of using the API var
