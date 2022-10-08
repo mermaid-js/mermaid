@@ -735,8 +735,8 @@ Default value: true
 
 ## defaultRenderer
 
-| Parameter       | Description | Type    | Required | Values                  |
-| --------------- | ----------- | ------- | -------- | ----------------------- |
+| Parameter       | Description | Type    | Required | Values                      |
+| --------------- | ----------- | ------- | -------- | --------------------------- |
 | defaultRenderer | See notes   | boolean | 4        | `dagre-d3`, `dagre-wrapper` |
 
 **Notes**:
@@ -761,8 +761,8 @@ Default value: true
 
 ## defaultRenderer
 
-| Parameter       | Description | Type    | Required | Values                  |
-| --------------- | ----------- | ------- | -------- | ----------------------- |
+| Parameter       | Description | Type    | Required | Values                      |
+| --------------- | ----------- | ------- | -------- | --------------------------- |
 | defaultRenderer | See notes   | boolean | 4        | `dagre-d3`, `dagre-wrapper` |
 
 **Notes:**
