@@ -1,6 +1,6 @@
 # Mindmap
 
-> Mindmap: This is an experimental diagram for now. The syntax and properties can change in future releases. The syntax is stabel except for the icon integration which is the experimental part.
+> Mindmap: This is an experimental diagram for now. The syntax and properties can change in future releases. The syntax is stable except for the icon integration which is the experimental part.
 
 "A mind map is a diagram used to visually organize information into a hierarchy, showing relationships among pieces of the whole. It is often created around a single concept, drawn as an image in the center of a blank page, to which associated representations of ideas such as images, words and parts of words are added. Major ideas are connected directly to the central concept, and other ideas branch out from those major ideas." Wikipedia
 
