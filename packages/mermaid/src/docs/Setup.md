@@ -992,7 +992,7 @@ Default value: 4
 | --------------- | ----------- | ------- | -------- | ------------------ |
 | c4BoundaryInRow | See Notes   | Integer | Required | Any Positive Value |
 
-**Notes:** How many boundarys to place in each row.
+**Notes:** How many boundaries to place in each row.
 
 Default value: 2
 
