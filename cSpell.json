@@ -7,9 +7,12 @@
 		"Gitgraph",
 		"Jaoude",
 		"knsv",
+		"Knut",
 		"Mindmaps",
+		"mitigations",
 		"Plantuml",
-		"redmine"
+		"redmine",
+		"Sveidqvist"
 	],
 	"ignoreWords": [],
 	"patterns": [
