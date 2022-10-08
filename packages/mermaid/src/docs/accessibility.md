@@ -17,7 +17,7 @@ The diagram authors can now add the accessibility options in the diagram definit
 - `accTitle: "Your Accessibility Title"` or
 - `accDescr: "Your Accessibility Description"`
 
-**When these two options are defined, they will add a coressponding `<title>` and `<desc>` tag in the SVG.**
+**When these two options are defined, they will add a corresponding `<title>` and `<desc>` tag in the SVG.**
 
 Let us take a look at the following example with a flowchart diagram:
 
