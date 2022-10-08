@@ -19,9 +19,10 @@
     "plugin:jsdoc/recommended",
     "plugin:json/recommended",
     "plugin:markdown/recommended",
+    "plugin:@cspell/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "html", "jest", "jsdoc", "json"],
+  "plugins": ["@typescript-eslint", "html", "jest", "jsdoc", "json", "@cspell"],
   "rules": {
     "no-console": "error",
     "no-prototype-builtins": "off",
