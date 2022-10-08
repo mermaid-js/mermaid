@@ -55,9 +55,10 @@ const init = async function (
   try {
     log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
     const conf = mermaidAPI.getConfig();
-    if (conf?.extraDiagrams && conf.extraDiagrams.length > 0) {
+    if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
+      // Load all lazy loaded diagrams in parallel
       await Promise.allSettled(
-        conf.extraDiagrams.map(async (diagram: string) => {
+        conf.lazyLoadedDiagrams.map(async (diagram: string) => {
           const { id, detector, loadDiagram } = await import(diagram);
           addDetector(id, detector, loadDiagram);
         })
