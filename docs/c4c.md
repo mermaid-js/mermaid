@@ -220,7 +220,7 @@ The following unfinished features are not supported in the short term.
 
 - - \[x] RelIndex \* Compatible with C4-Plantuml syntax, but ignores the index parameter. The sequence number is determined by the order in which the rel statements are written.
 
-- \[ ] Custom tags/stereotypes support and skin param updates
+- \[ ] Custom tags/stereotypes support and skinparam updates
 
 - - \[ ] AddElementTag(tagStereo, ?bgColor, ?fontColor, ?borderColor, ?shadowing, ?shape, ?sprite, ?techn, ?legendText, ?legendSprite): Introduces a new element tag. The styles of the tagged elements are updated and the tag is displayed in the calculated legend.
 
