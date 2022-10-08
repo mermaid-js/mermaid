@@ -2,9 +2,13 @@
 	"version": "0.2",
 	"language": "en",
 	"words": [
+		"customizability",
 		"Gantt",
+		"Gitgraph",
 		"Jaoude",
 		"knsv",
+		"Mindmaps",
+		"Plantuml",
 		"redmine"
 	],
 	"ignoreWords": [],
