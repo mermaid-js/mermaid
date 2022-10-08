@@ -7,15 +7,7 @@ import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
-import {
-  registerDiagram,
-  setLogLevel,
-  getConfig,
-  setupGraphViewbox,
-  sanitizeText,
-} from './diagram-api/diagramAPI';
 import { isDetailedError } from './utils';
-import { DiagramDefinition } from './diagram-api/types';
 
 /**
  * ## init

@@ -18,7 +18,6 @@ export const sanitizeText = (text: string) => _sanitizeText(text, getConfig());
 export const setupGraphViewbox = _setupGraphViewbox;
 
 const diagrams: Record<string, DiagramDefinition> = {};
-const connectCallbacks: Record<string, any> = {}; // TODO fix, eslint-disable-line @typescript-eslint/no-explicit-any
 export interface Detectors {
   [key: string]: DiagramDetector;
 }
@@ -54,19 +53,3 @@ export const getDiagram = (name: string): DiagramDefinition => {
   }
   throw new Error(`Diagram ${name} not found.`);
 };
-
-/**
- *
- * @param sScriptSrc
- */
-export const loadDiagram = (sScriptSrc: string) =>
-  new Promise((resolve) => {
-    const oHead = document.getElementsByTagName('HEAD')[0];
-    const oScript = document.createElement('script');
-    oScript.type = 'text/javascript';
-    oScript.src = sScriptSrc;
-    oHead.appendChild(oScript);
-    oScript.onload = () => {
-      resolve(true);
-    };
-  });
