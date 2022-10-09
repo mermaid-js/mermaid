@@ -39,16 +39,16 @@ Less strict here, it is OK to commit directly in the `develop` branch if you are
 
 The documentation is written in **Markdown**. For more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
 
-### Documentation source files are in /src/docs
+### Documentation source files are in [`/packages/mermaid/src/docs`](packages/mermaid/src/docs)
 
-The source files for the project documentation are located in the `/src/docs` directory. This is where you should make changes.
-The files under `/src/docs` are processed to generate the published documentation, and the resulting files are put into the `/docs` directory.
+The source files for the project documentation are located in the [`/packages/mermaid/src/docs`](packages/mermaid/src/docs) directory. This is where you should make changes.
+The files under `/packages/mermaid/src/docs` are processed to generate the published documentation, and the resulting files are put into the `/docs` directory.
 
 ```mermaid
 flowchart LR
   classDef default fill:#fff,color:black,stroke:black
 
-  source["files in /src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
+  source["files in /packages/mermaid/src/docs\n(changes should be done here)"] -- automatic processing\nto generate the final documentation--> published["files in /docs\ndisplayed on the official documentation site"]
 
 ```
 
@@ -137,7 +137,7 @@ it('should render forks and joins', () => {
 
 Finally, if it is not in the documentation, no one will know about it and then **no one will use it**. Wouldn't that be sad? With all the effort that was put into the feature?
 
-The source files for documentation are in `/src/docs` and are written in markdown. Just pick the right section and start typing. See the [Committing Documentation](#committing-documentation) section for more about how the documentation is generated.
+The source files for documentation are in `/packages/mermaid/src/docs` and are written in markdown. Just pick the right section and start typing. See the [Committing Documentation](#committing-documentation) section for more about how the documentation is generated.
 
 #### Adding to or changing the documentation organization
 

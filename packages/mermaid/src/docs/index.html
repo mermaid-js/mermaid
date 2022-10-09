@@ -46,7 +46,7 @@
       src="https://plausible.io/js/plausible.js"
     ></script>
     <script>
-      var require = {
+      const require = {
         paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs' },
       };
     </script>
@@ -68,16 +68,16 @@
   <body>
     <div id="app"></div>
     <script>
-      var initEditor = exports.default;
-      var parser = new DOMParser();
-      var currentCodeExample = 0;
-      var colorize = [];
+      let initEditor = exports.default;
+      let parser = new DOMParser();
+      let currentCodeExample = 0;
+      let colorize = [];
 
       function colorizeEverything(html) {
         initEditor(monaco);
         return new Promise((resolve, reject) => {
           monaco.editor.setTheme('mermaid');
-          var parsed = parser.parseFromString(html, 'text/html').body;
+          const parsed = parser.parseFromString(html, 'text/html').body;
           Promise.all(
             [...parsed.querySelectorAll('pre[id*="code"]')].map((codeBlock) =>
               monaco.editor.colorize(codeBlock.innerText, 'mermaid')
@@ -134,7 +134,7 @@
           function (hook, vm) {
             hook.beforeEach(function (html) {
               url = 'https://github.com/mermaid-js/mermaid/blob/develop/src/docs/' + vm.route.file;
-              var editHtml = '[:memo: Edit this Page](' + url + ')\n';
+              const editHtml = '[:memo: Edit this Page](' + url + ')\n';
               return editHtml + html;
             });
 
@@ -153,7 +153,6 @@
         ],
       };
 
-      var num = 0;
       const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
       const conf = {

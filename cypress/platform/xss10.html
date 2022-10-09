@@ -93,7 +93,7 @@
         throw new Error('XSS Succeeded');
       }
 
-      var diagram = 'classDiagram\n';
+      let diagram = 'classDiagram\n';
       diagram += 'class Square~<img/src';
       diagram += "='1'/onerror=xssAttack()>~{\n";
       diagram += 'id A\n';
