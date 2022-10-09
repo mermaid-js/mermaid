@@ -92,7 +92,7 @@
         document.getElementsByTagName('body')[0].appendChild(div);
         throw new Error('XSS Succeeded');
       }
-      var diagram = 'graph LR\n';
+      let diagram = 'graph LR\n';
       diagram += 'B-->D("<img onerror=location=`java';
       // diagram += "script\u003aalert\u0028document.domain\u0029\` src=x>\"\);\n";
       diagram += 'script\x3a;xssAttack\u0028\u0029` src=x>");\n';

@@ -442,7 +442,7 @@ Examples of tooltip usage below:
 
 ```html
 <script>
-  var callback = function () {
+  const callback = function () {
     alert('A callback was triggered');
   };
 </script>
@@ -495,10 +495,10 @@ Beginner's tip—a full example using interactive links in a html context:
   </pre>
 
   <script>
-    var callback = function () {
+    const callback = function () {
       alert('A callback was triggered');
     };
-    var config = {
+    const config = {
       startOnLoad: true,
       flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
       securityLevel: 'loose',

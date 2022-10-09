@@ -208,14 +208,14 @@ The example below show an outline of how this could be used. The example just lo
 
 <script>
   mermaid.mermaidAPI.initialize({ startOnLoad: false });
-  $(function () {
+  $(async function () {
     // Example of using the API var
     element = document.querySelector('#graphDiv');
-    var insertSvg = function (svgCode, bindFunctions) {
+    const insertSvg = function (svgCode, bindFunctions) {
       element.innerHTML = svgCode;
     };
-    var graphDefinition = 'graph TB\na-->b';
-    var graph = mermaid.mermaidAPI.render('graphDiv', graphDefinition, insertSvg);
+    const graphDefinition = 'graph TB\na-->b';
+    const graph = await mermaid.mermaidAPI.render('graphDiv', graphDefinition, insertSvg);
   });
 </script>
 ```
@@ -339,7 +339,7 @@ on what kind of integration you use.
 ```html
 <script src="../dist/mermaid.js"></script>
 <script>
-  var config = { startOnLoad: true, flowchart: { useMaxWidth: false, htmlLabels: true } };
+  let config = { startOnLoad: true, flowchart: { useMaxWidth: false, htmlLabels: true } };
   mermaid.initialize(config);
 </script>
 ```
