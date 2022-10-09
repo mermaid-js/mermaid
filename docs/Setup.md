@@ -74,15 +74,15 @@ Theme , the CSS style sheet
 
 | Parameter     | Description                       | Type   | Required | Values                                     |
 | ------------- | --------------------------------- | ------ | -------- | ------------------------------------------ |
-| securityLevel | Level of trust for parsed diagram | string | Required | 'sandbox', 'strict', 'loose', 'antiscript' |
+| securityLevel | Level of trust for parsed diagram | string | Required | `sandbox`, `strict`, `loose`, `antiscript` |
 
 **Notes**:
 
-- **strict**: (**default**) tags in text are encoded, click functionality is disabled
-- **loose**: tags in text are allowed, click functionality is enabled
-- **antiscript**: html tags in text are allowed, (only script element is removed), click
+- **`strict`**: (**default**) tags in text are encoded, click functionality is disabled
+- **`loose`**: tags in text are allowed, click functionality is enabled
+- **`antiscript`**: html tags in text are allowed, (only script element is removed), click
   functionality is enabled
-- **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This
+- **`sandbox`**: With this security level all rendering takes place in a sandboxed iframe. This
   prevent any JavaScript from running in the context. This may hinder interactive functionality
   of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
 
@@ -121,11 +121,11 @@ Default value: \['secure', 'securityLevel', 'startOnLoad', 'maxTextSize']
 
 This option controls if the generated ids of nodes in the SVG are generated randomly or based
 on a seed. If set to false, the IDs are generated based on the current date and thus are not
-deterministic. This is the default behaviour.
+deterministic. This is the default behavior.
 
 **Notes**:
 
-This matters if your files are checked into sourcecontrol e.g. git and should not change unless
+This matters if your files are checked into source control e.g. git and should not change unless
 content is changed.
 
 Default value: false
@@ -212,16 +212,16 @@ Default value: true
 
 ### defaultRenderer
 
-| Parameter       | Description | Type    | Required | Values                  |
-| --------------- | ----------- | ------- | -------- | ----------------------- |
-| defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+| Parameter       | Description | Type    | Required | Values                      |
+| --------------- | ----------- | ------- | -------- | --------------------------- |
+| defaultRenderer | See notes   | boolean | 4        | `dagre-d3`, `dagre-wrapper` |
 
 **Notes:**
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
+`dagre-d3` `dagre-wrapper` - wrapper for `dagre` implemented in mermaid
 
-Default value: 'dagre-wrapper'
+Default value: `dagre-wrapper`
 
 ## sequence
 
@@ -737,16 +737,16 @@ Default value: true
 
 ## defaultRenderer
 
-| Parameter       | Description | Type    | Required | Values                  |
-| --------------- | ----------- | ------- | -------- | ----------------------- |
-| defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+| Parameter       | Description | Type    | Required | Values                      |
+| --------------- | ----------- | ------- | -------- | --------------------------- |
+| defaultRenderer | See notes   | boolean | 4        | `dagre-d3`, `dagre-wrapper` |
 
 **Notes**:
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
+`dagre-d3` `dagre-wrapper` - wrapper for `dagre` implemented in mermaid
 
-Default value: 'dagre-d3'
+Default value: `dagre-d3`
 
 ## useMaxWidth
 
@@ -763,16 +763,16 @@ Default value: true
 
 ## defaultRenderer
 
-| Parameter       | Description | Type    | Required | Values                  |
-| --------------- | ----------- | ------- | -------- | ----------------------- |
-| defaultRenderer | See notes   | boolean | 4        | dagre-d3, dagre-wrapper |
+| Parameter       | Description | Type    | Required | Values                      |
+| --------------- | ----------- | ------- | -------- | --------------------------- |
+| defaultRenderer | See notes   | boolean | 4        | `dagre-d3`, `dagre-wrapper` |
 
 **Notes:**
 
 Decides which rendering engine that is to be used for the rendering. Legal values are:
-dagre-d3 dagre-wrapper - wrapper for dagre implemented in mermaid
+`dagre-d3` `dagre-wrapper` - wrapper for `dagre` implemented in mermaid
 
-Default value: 'dagre-d3'
+Default value: `dagre-d3`
 
 ## er
 
@@ -994,7 +994,7 @@ Default value: 4
 | --------------- | ----------- | ------- | -------- | ------------------ |
 | c4BoundaryInRow | See Notes   | Integer | Required | Any Positive Value |
 
-**Notes:** How many boundarys to place in each row.
+**Notes:** How many boundaries to place in each row.
 
 Default value: 2
 
@@ -1561,7 +1561,7 @@ Returns **void**
 
 ```html
 <script>
-  var config = {
+  const config = {
     theme: 'default',
     logLevel: 'fatal',
     securityLevel: 'strict',

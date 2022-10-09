@@ -112,7 +112,7 @@ const registerDiagramAndDetector = (
   detector: DiagramDetector
 ) => {
   registerDiagram(id, diagram);
-  registerDetector(id, detector, '');
+  registerDetector(id, detector);
 };
 
 export const addDiagrams = () => {

@@ -41,10 +41,6 @@
     "cypress": "cypress run",
     "cypress:open": "cypress open",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
-    "ci": "vitest run",
-    "test": "yarn lint && vitest run",
-    "test:watch": "vitest --coverage --watch",
-    "prepublishOnly": "yarn build && yarn test",
     "todo-prepare": "concurrently \"husky install\" \"yarn build\"",
     "pre-commit": "lint-staged"
   },
@@ -92,8 +88,6 @@
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
-    "@vitest/coverage-c8": "^0.23.2",
-    "@vitest/ui": "^0.23.2",
     "concurrently": "^7.4.0",
     "coveralls": "^3.1.1",
     "cypress": "^10.0.0",
@@ -125,8 +119,7 @@
     "start-server-and-test": "^1.12.6",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.3",
-    "unist-util-flatmap": "^1.0.0",
-    "vitest": "^0.23.1"
+    "unist-util-flatmap": "^1.0.0"
   },
   "resolutions": {
     "d3": "^7.0.0"

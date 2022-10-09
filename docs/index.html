@@ -29,7 +29,7 @@
       src="https://plausible.io/js/plausible.js"
     ></script>
     <script>
-      let require = {
+      const require = {
         paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs' },
       };
     </script>
@@ -60,7 +60,7 @@
         initEditor(monaco);
         return new Promise((resolve, reject) => {
           monaco.editor.setTheme('mermaid');
-          let parsed = parser.parseFromString(html, 'text/html').body;
+          const parsed = parser.parseFromString(html, 'text/html').body;
           Promise.all(
             [...parsed.querySelectorAll('pre[id*="code"]')].map((codeBlock) =>
               monaco.editor.colorize(codeBlock.innerText, 'mermaid')
@@ -136,7 +136,6 @@
         ],
       };
 
-      let num = 0;
       const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
       const conf = {
