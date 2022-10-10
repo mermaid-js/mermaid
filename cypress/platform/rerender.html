@@ -19,7 +19,7 @@
       function rerender(text) {
         const graphText = `graph TD
         A[${text}] -->|Get money| B(Go shopping)`;
-        mermaid.mermaidAPI.render('id', graphText).then((svg) => {
+        mermaid.mermaidAPI.renderAsync('id', graphText).then((svg) => {
           console.log('\x1b[35m%s\x1b[0m', '>> graph', svg);
           document.getElementById('graph').innerHTML = svg;
         });

@@ -17,10 +17,10 @@
       (async () => {
         try {
           console.log('rendering');
-          await mermaid.mermaidAPI.render('graphDiv', `>`);
+          await mermaid.mermaidAPI.renderAsync('graphDiv', `>`);
         } catch (e) {}
 
-        await mermaid.mermaidAPI.render('graphDiv', `graph LR\n a --> b`, (html) => {
+        await mermaid.mermaidAPI.renderAsync('graphDiv', `graph LR\n a --> b`, (html) => {
           document.getElementById('graph').innerHTML = html;
         });
       })();
