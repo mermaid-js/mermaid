@@ -152,5 +152,8 @@
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
-  ]
+  ],
+  "volta": {
+    "node": "16.17.1"
+  }
 }
