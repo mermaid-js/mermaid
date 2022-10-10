@@ -39,23 +39,9 @@ We have compiled some Video [Tutorials](./Tutorials.md) on how to use the mermai
 
 > Note:This topic explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
 
-The easiest way to integrate mermaid on a web page requires three elements:
+The easiest way to integrate mermaid on a web page requires two elements:
 
-1.  Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.Example:
-
-    ```html
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    ```
-
-2.  The `mermaidAPI` call, in a separate `script` tag. Example:
-
-    ```html
-    <script>
-      mermaid.initialize({ startOnLoad: true });
-    </script>
-    ```
-
-3.  A graph definition, inside `<div>` tags labeled `class=mermaid`. Example:
+- A graph definition, inside `<pre>` tags labeled `class=mermaid`. Example:
 
 ```html
 <pre class="mermaid">
@@ -66,8 +52,18 @@ The easiest way to integrate mermaid on a web page requires three elements:
 </pre>
 ```
 
-**Following these directions, mermaid starts at page load and (when the page has loaded) it will
-locate the graph definitions inside the `div` tags with `class="mermaid"` and return diagrams in SVG form, following given definitions.**
+- Inclusion of the mermaid address in the html page body using a `script` tag as an ESM import, and the `mermaidAPI` call.
+
+Example:
+
+```html
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+```
+
+**Following these directions, mermaid starts at page load and (when the page has loaded) it will locate the graph definitions inside the `pre` tags with `class="mermaid"` and return diagrams in SVG form, following given definitions.**
 
 ## Simple full example:
 
@@ -84,8 +80,8 @@ locate the graph definitions inside the `div` tags with `class="mermaid"` and re
       B-->C[fa:fa-ban forbidden]
       B-->D(fa:fa-spinner);
     </pre>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
@@ -204,9 +200,8 @@ fetch the graph definition from the site (perhaps from a textarea), render it an
 The example below show an outline of how this could be used. The example just logs the resulting SVG to the JavaScript console.
 
 ```html
-<script src="mermaid.js"></script>
-
-<script>
+<script type="module">
+  import mermaid from './mermaid.mjs';
   mermaid.mermaidAPI.initialize({ startOnLoad: false });
   $(async function () {
     // Example of using the API var

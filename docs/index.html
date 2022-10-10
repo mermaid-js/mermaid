@@ -21,8 +21,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
     />
-    <script src="//cdn.jsdelivr.net/npm/mermaid@9.1.7/dist/mermaid.min.js"></script>
-    <!-- <script src="http://localhost:9000/mermaid.js"></script> -->
     <script
       defer=""
       data-domain="mermaid-js.github.io"
@@ -50,6 +48,10 @@
 
   <body>
     <div id="app"></div>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+      window.mermaid = mermaid;
+    </script>
     <script>
       let initEditor = exports.default;
       let parser = new DOMParser();
@@ -99,6 +101,7 @@
                 colorize.push(currentCodeExample);
                 return '<pre id="code' + currentCodeExample + '">' + escapeHTML(code) + '</pre>';
               } else if (lang === 'mermaid') {
+                // TODO: This will need to be updated when render is async.
                 return (
                   '<pre class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</pre>'
                 );
