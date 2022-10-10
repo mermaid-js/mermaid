@@ -14,16 +14,14 @@
       mermaid.init({ startOnLoad: false });
 
       mermaid.mermaidAPI.initialize({ securityLevel: 'strict' });
-      (async () => {
-        try {
-          console.log('rendering');
-          await mermaid.mermaidAPI.renderAsync('graphDiv', `>`);
-        } catch (e) {}
+      try {
+        console.log('rendering');
+        mermaid.mermaidAPI.render('graphDiv', `>`);
+      } catch (e) {}
 
-        await mermaid.mermaidAPI.renderAsync('graphDiv', `graph LR\n a --> b`, (html) => {
-          document.getElementById('graph').innerHTML = html;
-        });
-      })();
+      mermaid.mermaidAPI.render('graphDiv', `graph LR\n a --> b`, (html) => {
+        document.getElementById('graph').innerHTML = html;
+      });
     </script>
   </body>
 </html>
