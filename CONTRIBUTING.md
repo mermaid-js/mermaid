@@ -10,6 +10,12 @@ Below link will help you making a copy of the repository in your local system.
 
 https://docs.github.com/en/get-started/quickstart/fork-a-repo
 
+## Requirements
+
+- [volta](https://volta.sh/) to manage node versions.
+- [Node.js](https://nodejs.org/en/). `volta install node`
+- [pnpm](https://pnpm.io/) package manager. `volta install pnpm`
+
 ## Development Installation
 
 ```bash
