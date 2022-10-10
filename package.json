@@ -126,7 +126,7 @@
     "lint-staged": "^13.0.3",
     "markdown-it": "^13.0.1",
     "path-browserify": "^1.0.1",
-    "pnpm": "^7.13.2",
+    "pnpm": "^7.13.3",
     "prettier": "^2.7.1",
     "prettier-plugin-jsdoc": "^0.4.2",
     "remark": "^14.0.2",
