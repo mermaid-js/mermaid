@@ -54,8 +54,10 @@ const init = async function (
           addDetector(id, detector, loadDiagram);
         })
       );
+      await initThrowsErrorsAsync(config, nodes, callback);
+    } else {
+      initThrowsErrors(config, nodes, callback);
     }
-    await initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
     if (isDetailedError(e)) {
@@ -67,7 +69,7 @@ const init = async function (
   }
 };
 
-const initThrowsErrors = async function (
+const initThrowsErrors = function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
   nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
@@ -134,7 +136,7 @@ const initThrowsErrors = async function (
       log.debug('Detected early reinit: ', init);
     }
     try {
-      await mermaidAPI.render(
+      mermaidAPI.render(
         id,
         txt,
         (svgCode: string, bindFunctions?: (el: Element) => void) => {
@@ -162,8 +164,107 @@ const initThrowsErrors = async function (
   }
 };
 
-const initialize = async function (config: MermaidConfig) {
-  await mermaidAPI.initialize(config);
+/**
+ * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ */
+
+const initThrowsErrorsAsync = async function (
+  config?: MermaidConfig,
+  // eslint-disable-next-line no-undef
+  nodes?: string | HTMLElement | NodeListOf<HTMLElement>,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  callback?: Function
+) {
+  const conf = mermaidAPI.getConfig();
+  // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
+  if (config) {
+    // This is a legacy way of setting config. It is not documented and should be removed in the future.
+    // @ts-ignore: TODO Fix ts errors
+    mermaid.sequenceConfig = config;
+  }
+
+  // if last argument is a function this is the callback function
+  log.debug(`${!callback ? 'No ' : ''}Callback function found`);
+  let nodesToProcess: ArrayLike<HTMLElement>;
+  if (typeof nodes === 'undefined') {
+    nodesToProcess = document.querySelectorAll('.mermaid');
+  } else if (typeof nodes === 'string') {
+    nodesToProcess = document.querySelectorAll(nodes);
+  } else if (nodes instanceof HTMLElement) {
+    nodesToProcess = [nodes];
+  } else if (nodes instanceof NodeList) {
+    nodesToProcess = nodes;
+  } else {
+    throw new Error('Invalid argument nodes for mermaid.init');
+  }
+
+  log.debug(`Found ${nodesToProcess.length} diagrams`);
+  if (typeof config?.startOnLoad !== 'undefined') {
+    log.debug('Start On Load: ' + config?.startOnLoad);
+    mermaidAPI.updateSiteConfig({ startOnLoad: config?.startOnLoad });
+  }
+
+  // generate the id of the diagram
+  const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
+
+  let txt: string;
+  const errors = [];
+
+  // element is the current div with mermaid class
+  for (const element of Array.from(nodesToProcess)) {
+    log.info('Rendering diagram: ' + element.id);
+    /*! Check if previously processed */
+    if (element.getAttribute('data-processed')) {
+      continue;
+    }
+    element.setAttribute('data-processed', 'true');
+
+    const id = `mermaid-${idGenerator.next()}`;
+
+    // Fetch the graph definition including tags
+    txt = element.innerHTML;
+
+    // transforms the html to pure text
+    txt = utils
+      .entityDecode(txt)
+      .trim()
+      .replace(/<br\s*\/?>/gi, '<br/>');
+
+    const init = utils.detectInit(txt);
+    if (init) {
+      log.debug('Detected early reinit: ', init);
+    }
+    try {
+      await mermaidAPI.renderAsync(
+        id,
+        txt,
+        (svgCode: string, bindFunctions?: (el: Element) => void) => {
+          element.innerHTML = svgCode;
+          if (typeof callback !== 'undefined') {
+            callback(id);
+          }
+          if (bindFunctions) bindFunctions(element);
+        },
+        element
+      );
+    } catch (error) {
+      log.warn('Catching Error (bootstrap)', error);
+      // @ts-ignore: TODO Fix ts errors
+      const mermaidError = { error, str: error.str, hash: error.hash, message: error.str };
+      if (typeof mermaid.parseError === 'function') {
+        mermaid.parseError(mermaidError);
+      }
+      errors.push(mermaidError);
+    }
+  }
+  if (errors.length > 0) {
+    // TODO: We should be throwing an error object.
+    throw errors[0];
+  }
+};
+
+const initialize = function (config: MermaidConfig) {
+  mermaidAPI.initialize(config);
 };
 
 /**
