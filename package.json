@@ -139,7 +139,7 @@
     "vitepress": "^1.0.0-alpha.19",
     "vitepress-plugin-mermaid": "^2.0.8",
     "vitepress-plugin-search": "^1.0.4-alpha.11",
-    "vitest": "^0.23.4"
+    "vitest": "^0.24.0"
   },
   "resolutions": {
     "d3": "^7.0.0"
