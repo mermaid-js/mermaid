@@ -1,6 +1,7 @@
-import { detectType, DiagramDetector } from './detectType';
-import { getDiagram, registerDiagram, registerDetector } from './diagramAPI';
+import { detectType } from './detectType';
+import { getDiagram, registerDiagram } from './diagramAPI';
 import { addDiagrams } from './diagram-orchestration';
+import { DiagramDetector } from './types';
 
 addDiagrams();
 
@@ -15,17 +16,22 @@ describe('DiagramAPI', () => {
 
   it('should handle diagram registrations', () => {
     expect(() => getDiagram('loki')).toThrow();
-    expect(() => detectType('loki diagram')).not.toThrow(); // TODO: #3391
+    expect(() => detectType('loki diagram')).toThrow(
+      'No diagram type detected for text: loki diagram'
+    );
     const detector: DiagramDetector = (str: string) => {
       return str.match('loki') !== null;
     };
-    registerDetector('loki', detector);
-    registerDiagram('loki', {
-      db: {},
-      parser: {},
-      renderer: {},
-      styles: {},
-    });
+    registerDiagram(
+      'loki',
+      {
+        db: {},
+        parser: {},
+        renderer: {},
+        styles: {},
+      },
+      detector
+    );
     expect(getDiagram('loki')).not.toBeNull();
     expect(detectType('loki diagram')).toBe('loki');
   });
