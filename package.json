@@ -70,7 +70,7 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
-    "@types/node": "^18.8.1",
+    "@types/node": "^18.8.3",
     "@types/uuid": "^8.3.4",
     "d3": "^7.0.0",
     "dagre": "^0.8.5",
