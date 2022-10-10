@@ -108,7 +108,7 @@
     "cypress-image-snapshot": "^4.0.1",
     "documentation": "13.2.0",
     "esbuild": "^0.15.10",
-    "eslint": "^8.24.0",
+    "eslint": "^8.25.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-html": "^7.1.0",
