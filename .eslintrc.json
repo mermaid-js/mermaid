@@ -22,7 +22,7 @@
     "plugin:@cspell/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "html", "jest", "jsdoc", "json"],
+  "plugins": ["@typescript-eslint", "html", "jest", "jsdoc", "json", "@cspell"],
   "rules": {
     "no-console": "error",
     "no-prototype-builtins": "off",
