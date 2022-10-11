@@ -456,8 +456,8 @@ export const defaultStyle = function () {
 export const addSubGraph = function (_id, list, _title) {
   // console.log('addSubGraph', _id, list, _title);
   let id = _id.trim();
-  let title = _title;
-  if (_id === _title && _title.match(/\s/)) {
+  let title = _title.trim();
+  if (id === title && title.match(/\s/)) {
     id = undefined;
   }
   /** @param a */
