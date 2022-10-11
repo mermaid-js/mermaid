@@ -2,9 +2,9 @@ import * as configApi from './config';
 import { log } from './logger';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
 import { detectType, getDiagramLoader } from './diagram-api/detectType';
-import { isDetailedError } from './utils';
+import { isDetailedError, type DetailedError } from './utils';
 
-export type ParseErrorFunction = (str: string, hash?: any) => void;
+export type ParseErrorFunction = (err: string | DetailedError, hash?: any) => void;
 
 export class Diagram {
   type = 'graph';
