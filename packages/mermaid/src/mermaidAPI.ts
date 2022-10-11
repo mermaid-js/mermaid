@@ -33,6 +33,8 @@ import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
 
+const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram'];
+
 /**
  * @param text
  * @param parseError
@@ -255,8 +257,8 @@ const render = async function (
   }
 
   // classDef
-  if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    const classes: any = flowRenderer.getClasses(text, diag);
+  if (CLASSDEF_DIAGRAMS.includes(graphType)) {
+    const classes: any = diag.renderer.getClasses(text, diag);
     const htmlLabels = cnf.htmlLabels || cnf.flowchart?.htmlLabels;
     for (const className in classes) {
       if (htmlLabels) {
