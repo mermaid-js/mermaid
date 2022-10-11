@@ -15,6 +15,7 @@
 
   <body>
     <h1>State diagram demos</h1>
+    <h2>Very simple showing change from State1 to State2</h2>
     <pre class="mermaid">
 		stateDiagram
 		  accTitle: This is the accessible title
@@ -24,16 +25,43 @@
 
     <hr />
 
+    <h2>This has classDef statements to apply style classes to specific states</h2>
+    <h4>Here are the <code>classDef</code> statements:</h4>
+    <p>
+      <code>
+        classDef notMoving fill:white<br />
+        classDef movement font-style:italic;<br />
+        classDef badBadEvent fill:#f00,color:white,font-weight:bold<br />
+      </code>
+    </p>
+    <h4>And these are how they are applied:</h4>
+    <p>
+      <code>
+        class Still notMoving<br />
+        class Moving, Crash movement<br />
+        class Crash badBadEvent<br />
+      </code>
+    </p>
     <pre class="mermaid">
 		stateDiagram-v2
 		  accTitle: This is the accessible title
       accDescr: This is an accessible description
+
+      classDef notMoving fill:white
+      classDef movement font-style:italic;
+      classDef badBadEvent fill:#f00,color:white,font-weight:bold
+
       [*] --> Still
       Still --> [*]
       Still --> Moving
       Moving --> Still
       Moving --> Crash
       Crash --> [*]
+
+      class Still notMoving
+      class Moving, Crash movement
+      class Crash badBadEvent
+
     </pre>
 
     <hr />
@@ -46,14 +74,29 @@
     </pre>
 
     <hr />
-
+    <h2>This shows Composite states</h2>
     <pre class="mermaid">
-    stateDiagram
+
+
+    stateDiagram-v2
     [*] --> First
+    First --> Second
+    First --> Third
+
     state First {
-    [*] --> second
-    second --> [*]
+        [*] --> 1st
+        1st --> [*]
     }
+    state Second {
+        [*] --> 2nd
+        2nd --> [*]
+    }
+    state Third {
+        [*] --> 3rd
+        3rd --> [*]
+    }
+
+
     </pre>
     <pre class="mermaid">
     stateDiagram
