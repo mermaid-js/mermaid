@@ -1,10 +1,13 @@
 import { parser } from './parser/stateDiagram';
 import stateDb from './stateDb';
+import stateDiagram from './parser/stateDiagram.jison';
 
 describe('state diagram, ', function () {
   describe('when parsing an info graph it', function () {
     beforeEach(function () {
       parser.yy = stateDb;
+      stateDiagram.parser.yy = stateDb;
+      stateDiagram.parser.yy.clear();
     });
 
     it('super simple', function () {
@@ -119,6 +122,30 @@ describe('state diagram, ', function () {
       `;
 
       parser.parse(str);
+    });
+
+    describe('relationship labels', () => {
+      it('simple states with : labels', () => {
+        const diagram = `
+          stateDiagram-v2
+          [*] --> State1
+          State1 --> State2 : Transition 1
+          State1 --> State3 : Transition 2
+          State1 --> State4 : Transition 3
+          State1 --> [*]
+        `;
+
+        stateDiagram.parser.parse(diagram);
+        stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+
+        const rels = stateDb.getRelations();
+        const rel_1_2 = rels.find((rel) => rel.id1 === 'State1' && rel.id2 === 'State2');
+        expect(rel_1_2.relationTitle).toEqual('Transition 1');
+        const rel_1_3 = rels.find((rel) => rel.id1 === 'State1' && rel.id2 === 'State3');
+        expect(rel_1_3.relationTitle).toEqual('Transition 2');
+        const rel_1_4 = rels.find((rel) => rel.id1 === 'State1' && rel.id2 === 'State4');
+        expect(rel_1_4.relationTitle).toEqual('Transition 3');
+      });
     });
 
     it('scale', function () {
@@ -355,7 +382,7 @@ describe('state diagram, ', function () {
 
       parser.parse(str);
     });
-    it('should handle notes for composit states', function () {
+    it('should handle notes for composite (nested) states', function () {
       const str = `stateDiagram-v2\n
       [*] --> NotShooting
 
@@ -371,6 +398,29 @@ describe('state diagram, ', function () {
       `;
 
       parser.parse(str);
+    });
+
+    it('A composite state should be able to link to itself', () => {
+      const diagram = `
+          stateDiagram-v2
+            state Active {
+              Idle
+            }
+            Inactive --> Idle: ACT
+            Active --> Active: LOG
+        `;
+
+      stateDiagram.parser.parse(diagram);
+      stateDiagram.parser.yy.extract(stateDiagram.parser.yy.getRootDocV2());
+
+      const states = stateDb.getStates();
+      expect(states['Active'].doc[0].id).toEqual('Idle');
+
+      const rels = stateDb.getRelations();
+      const rel_Inactive_Idle = rels.find((rel) => rel.id1 === 'Inactive' && rel.id2 === 'Idle');
+      expect(rel_Inactive_Idle.relationTitle).toEqual('ACT');
+      const rel_Active_Active = rels.find((rel) => rel.id1 === 'Active' && rel.id2 === 'Active');
+      expect(rel_Active_Active.relationTitle).toEqual('LOG');
     });
   });
 });
