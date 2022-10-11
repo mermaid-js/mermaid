@@ -49,7 +49,16 @@
       }
     ],
     "json/*": ["error", "allowComments"],
-    "no-empty": ["error", { "allowEmptyCatch": true }]
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "@cspell/spellchecker": [
+      "warn",
+      {
+        "checkIdentifiers": false,
+        "checkStrings": false,
+        "checkStringTemplates": false,
+        "customWordListFile": { "path": "./myWords.txt" }
+      }
+    ]
   },
   "overrides": [
     {

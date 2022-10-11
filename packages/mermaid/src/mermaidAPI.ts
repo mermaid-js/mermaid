@@ -110,7 +110,7 @@ export const decodeEntities = function (text: string): string {
  * @param {string} id The id of the element to be rendered
  * @param {string} text The graph definition
  * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
- *   is called after rendering is finished with the svg code as inparam.
+ *   is called after rendering is finished with the svg code as param.
  * @param {Element} container Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
@@ -152,7 +152,7 @@ const render = async function (
     }
 
     if (cnf.securityLevel === 'sandbox') {
-      // IF we are in sandboxed mode, we do everyting mermaid related
+      // IF we are in sandboxed mode, we do everything mermaid related
       // in a sandboxed div
       const iframe = select(container)
         .append('iframe')
@@ -201,7 +201,7 @@ const render = async function (
     // d+id it will contain a svg with the id "id"
 
     if (cnf.securityLevel === 'sandbox') {
-      // IF we are in sandboxed mode, we do everyting mermaid related
+      // IF we are in sandboxed mode, we do everything mermaid related
       // in a sandboxed div
       const iframe = select('body')
         .append('iframe')
@@ -250,7 +250,7 @@ const render = async function (
   let userStyles = '';
   // user provided theme CSS
   // If you add more configuration driven data into the user styles make sure that the value is
-  // sanitized bye the santiizeCSS function
+  // sanitized bye the sanitizeCSS function
   if (cnf.themeCSS !== undefined) {
     userStyles += `\n${cnf.themeCSS}`;
   }

@@ -110,7 +110,7 @@ class Theme {
     this.border2 = this.contrast;
 
     /* Color Scale */
-    /* Each color-set will have a background, a forgroupnd and a border color */
+    /* Each color-set will have a background, a foreground and a border color */
 
     this.cScale0 = this.cScale0 || '#555';
     this.cScale1 = this.cScale1 || '#F4F4F4';
