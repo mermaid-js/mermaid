@@ -16,7 +16,7 @@ jobs:
     name: 'Docs: Spellcheck'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         name: Check out the code
       - uses: actions/setup-node@v1
         name: Setup node
