@@ -11,19 +11,27 @@ import {
   clear as commonClear,
 } from '../../commonDb';
 
-const DEFAULT_DIRECTION = 'TB';
+import {
+  DEFAULT_DIAGRAM_DIRECTION,
+  STMT_STATE,
+  STMT_RELATION,
+  STMT_CLASSDEF,
+  STMT_APPLYCLASS,
+  DEFAULT_STATE_TYPE,
+  DIVIDER_TYPE,
+} from './stateCommon';
+
 const START_NODE = '[*]';
 const START_TYPE = 'start';
 const END_NODE = START_NODE;
 const END_TYPE = 'end';
-const DEFAULT_TYPE = 'default';
 
 const COLOR_KEYWORD = 'color';
 const FILL_KEYWORD = 'fill';
 const BG_FILL = 'bgFill';
 const STYLECLASS_SEP = ',';
 
-let direction = DEFAULT_DIRECTION;
+let direction = DEFAULT_DIAGRAM_DIRECTION;
 let rootDoc = [];
 let classes = []; // style classes defined by a classDef
 
@@ -69,11 +77,11 @@ const setRootDoc = (o) => {
 const getRootDoc = () => rootDoc;
 
 const docTranslator = (parent, node, first) => {
-  if (node.stmt === 'relation') {
+  if (node.stmt === STMT_RELATION) {
     docTranslator(parent, node.state1, true);
     docTranslator(parent, node.state2, false);
   } else {
-    if (node.stmt === 'state') {
+    if (node.stmt === STMT_STATE) {
       if (node.id === '[*]') {
         node.id = first ? parent.id + '_start' : parent.id + '_end';
         node.start = first;
@@ -86,7 +94,7 @@ const docTranslator = (parent, node, first) => {
       let currentDoc = [];
       let i;
       for (i = 0; i < node.doc.length; i++) {
-        if (node.doc[i].type === 'divider') {
+        if (node.doc[i].type === DIVIDER_TYPE) {
           // debugger;
           const newNode = clone(node.doc[i]);
           newNode.doc = clone(currentDoc);
@@ -100,7 +108,7 @@ const docTranslator = (parent, node, first) => {
       // If any divider was encountered
       if (doc.length > 0 && currentDoc.length > 0) {
         const newNode = {
-          stmt: 'state',
+          stmt: STMT_STATE,
           id: generateId(),
           type: 'divider',
           doc: clone(currentDoc),
@@ -149,7 +157,7 @@ const extract = (_doc) => {
 
   doc.forEach((item) => {
     switch (item.stmt) {
-      case 'state':
+      case STMT_STATE:
         addState(
           item.id,
           item.type,
@@ -161,13 +169,13 @@ const extract = (_doc) => {
           item.textStyles
         );
         break;
-      case 'relation':
+      case STMT_RELATION:
         addRelation(item.state1, item.state2, item.description);
         break;
-      case 'classDef':
+      case STMT_CLASSDEF:
         addStyleClass(item.id, item.classes);
         break;
-      case 'applyClass':
+      case STMT_APPLYCLASS:
         setCssClass(item.id, item.styleClass);
         break;
     }
@@ -188,7 +196,7 @@ const extract = (_doc) => {
  */
 export const addState = function (
   id,
-  type = DEFAULT_TYPE,
+  type = DEFAULT_STATE_TYPE,
   doc = null,
   descr = null,
   note = null,
@@ -309,7 +317,7 @@ function startIdIfNeeded(id = '') {
  * @param {string} type
  * @returns {string} - the type that should be used
  */
-function startTypeIfNeeded(id = '', type = DEFAULT_TYPE) {
+function startTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
   return id === START_NODE ? START_TYPE : type;
 }
 
@@ -338,7 +346,7 @@ function endIdIfNeeded(id = '') {
  * @param {string} type
  * @returns {string} - the type that should be used
  */
-function endTypeIfNeeded(id = '', type = DEFAULT_TYPE) {
+function endTypeIfNeeded(id = '', type = DEFAULT_STATE_TYPE) {
   return id === END_NODE ? END_TYPE : type;
 }
 
