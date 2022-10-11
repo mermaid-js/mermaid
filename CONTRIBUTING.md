@@ -21,7 +21,8 @@ https://docs.github.com/en/get-started/quickstart/fork-a-repo
 ```bash
 git clone git@github.com:mermaid-js/mermaid.git
 cd mermaid
-pnpm install
+# npx is required for first install as volta support for pnpm is not added yet.
+npx pnpm install
 pnpm test
 ```
 
