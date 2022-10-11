@@ -529,6 +529,16 @@ foo()
 
       parser.parse(str);
     });
+
+    it('should handle "note for"', function () {
+      const str = 'classDiagram\n' + 'Class11 <|.. Class12\n' + 'note for Class11 "test"\n';
+      parser.parse(str);
+    });
+
+    it('should handle "note"', function () {
+      const str = 'classDiagram\n' + 'note "test"\n';
+      parser.parse(str);
+    });
   });
 
   describe('when fetching data from a classDiagram graph it', function () {
