@@ -309,6 +309,9 @@ const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: an
 const parse = (txt: string) => {
   return mermaidAPI.parse(txt, mermaid.parseError);
 };
+const parseAsync = (txt: string) => {
+  return mermaidAPI.parseAsync(txt, mermaid.parseError);
+};
 
 const mermaid: {
   startOnLoad: boolean;
@@ -317,6 +320,7 @@ const mermaid: {
   parseError?: Function;
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
+  parseAsync: typeof parseAsync;
   render: typeof mermaidAPI.render;
   init: typeof init;
   initThrowsErrors: typeof initThrowsErrors;
@@ -328,6 +332,7 @@ const mermaid: {
   diagrams: {},
   mermaidAPI,
   parse,
+  parseAsync,
   render: mermaidAPI.render,
   init,
   initThrowsErrors,

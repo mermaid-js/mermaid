@@ -43,6 +43,18 @@ function parse(text: string, parseError?: Function): boolean {
   const diagram = new Diagram(text, parseError);
   return diagram.parse(text, parseError);
 }
+/* eslint-disable @typescript-eslint/ban-types */
+/**
+ *
+ * @param text
+ * @param parseError
+ */
+async function parseAsync(text: string, parseError?: Function): Promise<boolean> {
+  addDiagrams();
+  const diagram = await getDiagramFromText(text, parseError);
+  return diagram.parse(text, parseError);
+}
+/* eslint-enable @typescript-eslint/ban-types */
 
 export const encodeEntities = function (text: string): string {
   let txt = text;
@@ -760,6 +772,7 @@ export const mermaidAPI = Object.freeze({
   render,
   renderAsync,
   parse,
+  parseAsync,
   parseDirective,
   initialize,
   getConfig: configApi.getConfig,
@@ -778,6 +791,7 @@ export const mermaidAPI = Object.freeze({
 setLogLevel(configApi.getConfig().logLevel);
 configApi.reset(configApi.getConfig());
 export default mermaidAPI;
+
 /**
  * ## mermaidAPI configuration defaults
  *
