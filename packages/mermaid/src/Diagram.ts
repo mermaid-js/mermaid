@@ -3,14 +3,16 @@ import { log } from './logger';
 import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
 import { detectType, getDiagramLoader } from './diagram-api/detectType';
 import { isDetailedError } from './utils';
+
+export type ParseErrorFunction = (str: string, hash?: any) => void;
+
 export class Diagram {
   type = 'graph';
   parser;
   renderer;
   db;
   private detectTypeFailed = false;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  constructor(public txt: string, parseError?: Function) {
+  constructor(public txt: string, parseError?: ParseErrorFunction) {
     const cnf = configApi.getConfig();
     this.txt = txt;
     try {
@@ -37,8 +39,7 @@ export class Diagram {
     this.parse(this.txt, parseError);
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  parse(text: string, parseError?: Function): boolean {
+  parse(text: string, parseError?: ParseErrorFunction): boolean {
     if (this.detectTypeFailed) {
       return false;
     }
@@ -53,23 +54,24 @@ export class Diagram {
     return false;
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  handleError(error: unknown, parseError?: Function) {
+  handleError(error: unknown, parseError?: ParseErrorFunction) {
     // Is this the correct way to access mermiad's parseError()
     // method ? (or global.mermaid.parseError()) ?
-    if (parseError) {
-      if (isDetailedError(error)) {
-        // handle case where error string and hash were
-        // wrapped in object like`const error = { str, hash };`
-        parseError(error.str, error.hash);
-      } else {
-        // assume it is just error string and pass it on
-        parseError(error);
-      }
-    } else {
+
+    if (parseError === undefined) {
       // No mermaid.parseError() handler defined, so re-throw it
       throw error;
     }
+
+    if (isDetailedError(error)) {
+      // Handle case where error string and hash were
+      // wrapped in object like`const error = { str, hash };`
+      parseError(error.str, error.hash);
+      return;
+    }
+
+    // Otherwise, assume it is just an error string and pass it on
+    parseError(error as string);
   }
 
   getParser() {
@@ -81,8 +83,10 @@ export class Diagram {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export const getDiagramFromText = async (txt: string, parseError?: Function): Promise<Diagram> => {
+export const getDiagramFromText = async (
+  txt: string,
+  parseError?: ParseErrorFunction
+): Promise<Diagram> => {
   const type = detectType(txt, configApi.getConfig());
   try {
     // Trying to find the diagram
