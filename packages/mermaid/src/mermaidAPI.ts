@@ -43,18 +43,18 @@ function parse(text: string, parseError?: Function): boolean {
   const diagram = new Diagram(text, parseError);
   return diagram.parse(text, parseError);
 }
-/* eslint-disable @typescript-eslint/ban-types */
+
 /**
  *
  * @param text
  * @param parseError
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 async function parseAsync(text: string, parseError?: Function): Promise<boolean> {
   addDiagrams();
   const diagram = await getDiagramFromText(text, parseError);
   return diagram.parse(text, parseError);
 }
-/* eslint-enable @typescript-eslint/ban-types */
 
 export const encodeEntities = function (text: string): string {
   let txt = text;

@@ -47,13 +47,7 @@ const init = async function (
   try {
     const conf = mermaidAPI.getConfig();
     if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
-      // Load all lazy loaded diagrams in parallel
-      await Promise.allSettled(
-        conf.lazyLoadedDiagrams.map(async (diagram: string) => {
-          const { id, detector, loadDiagram } = await import(diagram);
-          addDetector(id, detector, loadDiagram);
-        })
-      );
+      await registerLazyLoadedDiagrams(conf);
       await initThrowsErrorsAsync(config, nodes, callback);
     } else {
       initThrowsErrors(config, nodes, callback);
@@ -164,6 +158,26 @@ const initThrowsErrors = function (
   }
 };
 
+let lazyLoadingPromise: Promise<unknown> | undefined;
+/**
+ * @param conf
+ * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ */
+const registerLazyLoadedDiagrams = async (conf: MermaidConfig) => {
+  // Only lazy load once
+  // TODO: This is a hack. We should either throw error when new diagrams are added, or load them anyway.
+  if (lazyLoadingPromise === undefined) {
+    // Load all lazy loaded diagrams in parallel
+    lazyLoadingPromise = Promise.allSettled(
+      (conf?.lazyLoadedDiagrams ?? []).map(async (diagram: string) => {
+        const { id, detector, loadDiagram } = await import(diagram);
+        addDetector(id, detector, loadDiagram);
+      })
+    );
+  }
+  await lazyLoadingPromise;
+};
+
 /**
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
@@ -268,6 +282,15 @@ const initialize = function (config: MermaidConfig) {
 };
 
 /**
+ * @param config
+ * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ */
+const initializeAsync = async function (config: MermaidConfig) {
+  await registerLazyLoadedDiagrams(config);
+  mermaidAPI.initialize(config);
+};
+
+/**
  * ##contentLoaded Callback function that is called when page is loaded. This functions fetches
  * configuration for mermaid rendering and calls init for rendering the mermaid diagrams on the
  * page.
@@ -300,7 +323,7 @@ if (typeof document !== 'undefined') {
  * This is provided for environments where the mermaid object can't directly have a new member added
  * to it (eg. dart interop wrapper). (Initially there is no parseError member of mermaid).
  *
- * @param {function (err, hash)} newParseErrorHandler New parseError() callback.
+ * @param newParseErrorHandler New parseError() callback.
  */
 const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: any) => void) {
   mermaid.parseError = newParseErrorHandler;
@@ -309,6 +332,11 @@ const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: an
 const parse = (txt: string) => {
   return mermaidAPI.parse(txt, mermaid.parseError);
 };
+
+/**
+ * @param txt
+ * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ */
 const parseAsync = (txt: string) => {
   return mermaidAPI.parseAsync(txt, mermaid.parseError);
 };
@@ -325,6 +353,7 @@ const mermaid: {
   init: typeof init;
   initThrowsErrors: typeof initThrowsErrors;
   initialize: typeof initialize;
+  initializeAsync: typeof initializeAsync;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
 } = {
@@ -337,6 +366,7 @@ const mermaid: {
   init,
   initThrowsErrors,
   initialize,
+  initializeAsync,
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
