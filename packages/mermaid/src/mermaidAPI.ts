@@ -20,7 +20,6 @@ import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
 import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
-import flowRenderer from './diagrams/flowchart/flowRenderer';
 import ganttDb from './diagrams/gantt/ganttDb';
 import Diagram, { getDiagramFromText } from './Diagram';
 import errorRenderer from './diagrams/error/errorRenderer';
@@ -33,6 +32,7 @@ import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
 
+// diagram names that support classDef statements
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram'];
 
 /**
