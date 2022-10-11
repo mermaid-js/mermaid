@@ -36,15 +36,29 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 <block>[\n]+                    /* nothing */
 <block>"}"                      { this.popState(); return 'BLOCK_STOP'; }
 <block>.                        return yytext[0];
+
+"one or zero"                   return 'ZERO_OR_ONE';
+"one or more"                   return 'ONE_OR_MORE';
+"one or many"                   return 'ONE_OR_MORE';
 \|o                             return 'ZERO_OR_ONE';
+"zero or one"                   return 'ZERO_OR_ONE';
+"zero or more"                  return 'ZERO_OR_MORE';
+"zero or many"                  return 'ZERO_OR_MORE';
 \}o                             return 'ZERO_OR_MORE';
+"many(0)"                       return 'ZERO_OR_MORE';
+"many(1)"                       return 'ONE_OR_MORE';
+"many"                          return 'ZERO_OR_MORE';
 \}\|                            return 'ONE_OR_MORE';
+"one"                           return 'ONLY_ONE';
+"only one"                      return 'ONLY_ONE';
 \|\|                            return 'ONLY_ONE';
 o\|                             return 'ZERO_OR_ONE';
 o\{                             return 'ZERO_OR_MORE';
 \|\{                            return 'ONE_OR_MORE';
 \.\.                            return 'NON_IDENTIFYING';
 \-\-                            return 'IDENTIFYING';
+"to"                            return 'IDENTIFYING';
+"optionally to"                 return 'NON_IDENTIFYING';
 \.\-                            return 'NON_IDENTIFYING';
 \-\.                            return 'NON_IDENTIFYING';
 [A-Za-z][A-Za-z0-9\-_]*         return 'ALPHANUM';
