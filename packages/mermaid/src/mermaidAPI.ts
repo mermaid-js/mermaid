@@ -110,7 +110,283 @@ export const decodeEntities = function (text: string): string {
  *   element will be removed when rendering is completed.
  * @returns {void}
  */
-const render = async function (
+const render = function (
+  id: string,
+  text: string,
+  cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
+  container?: Element
+): void {
+  addDiagrams();
+  configApi.reset();
+  text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
+  const graphInit = utils.detectInit(text);
+  if (graphInit) {
+    directiveSanitizer(graphInit);
+    configApi.addDirective(graphInit);
+  }
+  const cnf = configApi.getConfig();
+
+  log.debug(cnf);
+
+  // Check the maximum allowed text size
+  if (text.length > cnf.maxTextSize!) {
+    text = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+  }
+
+  let root: any = select('body');
+
+  // In regular execution the container will be the div with a mermaid class
+  if (typeof container !== 'undefined') {
+    // A container was provided by the caller
+    if (container) {
+      container.innerHTML = '';
+    }
+
+    if (cnf.securityLevel === 'sandbox') {
+      // IF we are in sandboxed mode, we do everyting mermaid related
+      // in a sandboxed div
+      const iframe = select(container)
+        .append('iframe')
+        .attr('id', 'i' + id)
+        .attr('style', 'width: 100%; height: 100%;')
+        .attr('sandbox', '');
+      // const iframeBody = ;
+      root = select(iframe.nodes()[0]!.contentDocument!.body);
+      root.node().style.margin = 0;
+    } else {
+      root = select(container);
+    }
+
+    root
+      .append('div')
+      .attr('id', 'd' + id)
+      .attr('style', 'font-family: ' + cnf.fontFamily)
+      .append('svg')
+      .attr('id', id)
+      .attr('width', '100%')
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
+      .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+      .append('g');
+  } else {
+    // No container was provided
+    // If there is an existing element with the id, we remove it
+    // this likely a previously rendered diagram
+    const existingSvg = document.getElementById(id);
+    if (existingSvg) {
+      existingSvg.remove();
+    }
+
+    // Remove previous tpm element if it exists
+    let element;
+    if (cnf.securityLevel === 'sandbox') {
+      element = document.querySelector('#i' + id);
+    } else {
+      element = document.querySelector('#d' + id);
+    }
+
+    if (element) {
+      element.remove();
+    }
+
+    // Add the tmp div used for rendering with the id `d${id}`
+    // d+id it will contain a svg with the id "id"
+
+    if (cnf.securityLevel === 'sandbox') {
+      // IF we are in sandboxed mode, we do everyting mermaid related
+      // in a sandboxed div
+      const iframe = select('body')
+        .append('iframe')
+        .attr('id', 'i' + id)
+        .attr('style', 'width: 100%; height: 100%;')
+        .attr('sandbox', '');
+
+      root = select(iframe.nodes()[0]!.contentDocument!.body);
+      root.node().style.margin = 0;
+    } else {
+      root = select('body');
+    }
+
+    // This is the temporary div
+    root
+      .append('div')
+      .attr('id', 'd' + id)
+      // this is the seed of the svg to be rendered
+      .append('svg')
+      .attr('id', id)
+      .attr('width', '100%')
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
+      .append('g');
+  }
+
+  text = encodeEntities(text);
+
+  // Important that we do not create the diagram until after the directives have been included
+  let diag;
+  let parseEncounteredException;
+  try {
+    // diag = new Diagram(text);
+    diag = getDiagramFromText(text);
+    if ('then' in diag) {
+      throw new Error('Diagram is a promise');
+    }
+  } catch (error) {
+    diag = new Diagram('error');
+    parseEncounteredException = error;
+  }
+  // Get the tmp element containing the the svg
+  const element = root.select('#d' + id).node();
+  const graphType = diag.type;
+
+  // insert inline style into svg
+  const svg = element.firstChild;
+  const firstChild = svg.firstChild;
+
+  let userStyles = '';
+  // user provided theme CSS
+  // If you add more configuration driven data into the user styles make sure that the value is
+  // sanitized bye the santiizeCSS function
+  if (cnf.themeCSS !== undefined) {
+    userStyles += `\n${cnf.themeCSS}`;
+  }
+  // user provided theme CSS
+  if (cnf.fontFamily !== undefined) {
+    userStyles += `\n:root { --mermaid-font-family: ${cnf.fontFamily}}`;
+  }
+  // user provided theme CSS
+  if (cnf.altFontFamily !== undefined) {
+    userStyles += `\n:root { --mermaid-alt-font-family: ${cnf.altFontFamily}}`;
+  }
+
+  // classDef
+  if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
+    const classes: any = flowRenderer.getClasses(text, diag);
+    const htmlLabels = cnf.htmlLabels || cnf.flowchart?.htmlLabels;
+    for (const className in classes) {
+      if (htmlLabels) {
+        userStyles += `\n.${className} > * { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
+        userStyles += `\n.${className} span { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
+      } else {
+        userStyles += `\n.${className} path { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
+        userStyles += `\n.${className} rect { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
+        userStyles += `\n.${className} polygon { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
+        userStyles += `\n.${className} ellipse { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
+        userStyles += `\n.${className} circle { ${classes[className].styles.join(
+          ' !important; '
+        )} !important; }`;
+        if (classes[className].textStyles) {
+          userStyles += `\n.${className} tspan { ${classes[className].textStyles.join(
+            ' !important; '
+          )} !important; }`;
+        }
+      }
+    }
+  }
+
+  const stylis = (selector: string, styles: string) =>
+    serialize(compile(`${selector}{${styles}}`), stringify);
+  const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
+
+  const style1 = document.createElement('style');
+  style1.innerHTML = `#${id} ` + rules;
+  svg.insertBefore(style1, firstChild);
+
+  try {
+    diag.renderer.draw(text, id, pkg.version, diag);
+  } catch (e) {
+    errorRenderer.draw(text, id, pkg.version);
+    throw e;
+  }
+
+  root
+    .select(`[id="${id}"]`)
+    .selectAll('foreignobject > *')
+    .attr('xmlns', 'http://www.w3.org/1999/xhtml');
+
+  // Fix for when the base tag is used
+  let svgCode = root.select('#d' + id).node().innerHTML;
+
+  log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  if (!evaluate(cnf.arrowMarkerAbsolute) && cnf.securityLevel !== 'sandbox') {
+    svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
+  }
+
+  svgCode = decodeEntities(svgCode);
+
+  // Fix for when the br tag is used
+  svgCode = svgCode.replace(/<br>/g, '<br/>');
+
+  if (cnf.securityLevel === 'sandbox') {
+    const svgEl = root.select('#d' + id + ' svg').node();
+    const width = '100%';
+    let height = '100%';
+    if (svgEl) {
+      height = svgEl.viewBox.baseVal.height + 'px';
+    }
+    svgCode = `<iframe style="width:${width};height:${height};border:0;margin:0;" src="data:text/html;base64,${btoa(
+      '<body style="margin:0">' + svgCode + '</body>'
+    )}" sandbox="allow-top-navigation-by-user-activation allow-popups">
+  The “iframe” tag is not supported by your browser.
+</iframe>`;
+  } else {
+    if (cnf.securityLevel !== 'loose') {
+      svgCode = DOMPurify.sanitize(svgCode, {
+        ADD_TAGS: ['foreignobject'],
+        ADD_ATTR: ['dominant-baseline'],
+      });
+    }
+  }
+
+  if (typeof cb !== 'undefined') {
+    switch (graphType) {
+      case 'flowchart':
+      case 'flowchart-v2':
+        cb(svgCode, flowDb.bindFunctions);
+        break;
+      case 'gantt':
+        cb(svgCode, ganttDb.bindFunctions);
+        break;
+      case 'class':
+      case 'classDiagram':
+        cb(svgCode, classDb.bindFunctions);
+        break;
+      default:
+        cb(svgCode);
+    }
+  } else {
+    log.debug('CB = undefined!');
+  }
+  attachFunctions();
+
+  const tmpElementSelector = cnf.securityLevel === 'sandbox' ? '#i' + id : '#d' + id;
+  const node = select(tmpElementSelector).node();
+  if (node && 'remove' in node) {
+    node.remove();
+  }
+
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
+
+  return svgCode;
+};
+
+/**
+ * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ */
+
+const renderAsync = async function (
   id: string,
   text: string,
   cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
@@ -302,7 +578,7 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
-    await errorRenderer.draw(text, id, pkg.version);
+    errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
 
@@ -453,7 +729,7 @@ const handleDirective = function (p: any, directive: any, type: string): void {
 };
 
 /** @param {MermaidConfig} options */
-async function initialize(options: MermaidConfig) {
+function initialize(options: MermaidConfig) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily) {
     if (!options.themeVariables?.fontFamily) {
@@ -482,6 +758,7 @@ async function initialize(options: MermaidConfig) {
 
 export const mermaidAPI = Object.freeze({
   render,
+  renderAsync,
   parse,
   parseDirective,
   initialize,
