@@ -7,7 +7,23 @@ import { configureSvgSize } from '../../setupGraphViewbox';
 import common from '../common/common';
 import addSVGAccessibilityFields from '../../accessibility';
 
+const DEFAULT_DIR = 'TD';
+
+// When information is parsed and processed (extracted) by stateDb.extract()
+// These are globals so the information can be accessed as needed (e.g. in setUpNode, etc.)
+let diagramStates = [];
+let diagramClasses = [];
+
+// List of nodes created from the parsed diagram statement items
+let nodeDb = {};
+
+let graphItemCount = 0; // used to construct ids, etc.
+
+// Configuration
 const conf = {};
+
+// -----------------------------------------------------------------------
+
 export const setConf = function (cnf) {
   const keys = Object.keys(cnf);
   for (let i = 0; i < keys.length; i++) {
@@ -15,150 +31,187 @@ export const setConf = function (cnf) {
   }
 };
 
-let nodeDb = {};
-
 /**
  * Returns the all the styles from classDef statements in the graph definition.
  *
- * @param {any} text
- * @param diag
+ * @param {string} text - the diagram text to be parsed
+ * @param {Diagram} diagramObj
  * @returns {object} ClassDef styles
  */
-export const getClasses = function (text, diag) {
+export const getClasses = function (text, diagramObj) {
   log.trace('Extracting classes');
-  diag.sb.clear();
+  if (diagramClasses.length > 0) return diagramClasses; // we have already extracted the classes
 
-  // Parse the graph definition
-  diag.parser.parse(text);
-  return diag.sb.getClasses();
+  diagramObj.db.clear();
+  try {
+    // Parse the graph definition
+    diagramObj.parser.parse(text);
+    // must run extract() to turn the parsed statements into states, relationships, classes, etc.
+    diagramObj.db.extract(diagramObj.db.getRootDocV2());
+
+    return diagramObj.db.getClasses();
+  } catch (e) {
+    return e;
+  }
 };
 
-const setupNode = (g, parent, node, altFlag) => {
-  // Add the node
-  if (node.id !== 'root') {
+/**
+ * Get classes from the db info item.
+ * If there aren't any or if dbInfoItem isn't defined, return an empty string.
+ * Else create 1 string from the list of classes found
+ *
+ * @param {undefined | null | object} dbInfoItem
+ * @returns {string}
+ */
+function getClassesFromDbInfo(dbInfoItem) {
+  if (typeof dbInfoItem === 'undefined' || dbInfoItem === null) return '';
+  else {
+    if (dbInfoItem.classes) {
+      return dbInfoItem.classes.join(' ');
+    } else return '';
+  }
+}
+
+/**
+ * Create a graph node based on the statement information
+ *
+ * @param g - graph
+ * @param {object} parent
+ * @param {object} parsedItem - parsed statement item
+ * @param {object} diagramDb
+ * @param {boolean} altFlag - for clusters, add the "statediagram-cluster-alt" CSS class
+ * @todo This duplicates some of what is done in stateDb.js extract method
+ */
+const setupNode = (g, parent, parsedItem, diagramDb, altFlag) => {
+  const itemId = parsedItem.id;
+  const classStr = getClassesFromDbInfo(diagramStates[itemId]);
+
+  if (itemId !== 'root') {
     let shape = 'rect';
-    if (node.start === true) {
+    if (parsedItem.start === true) {
       shape = 'start';
     }
-    if (node.start === false) {
+    if (parsedItem.start === false) {
       shape = 'end';
     }
-    if (node.type !== 'default') {
-      shape = node.type;
+    if (parsedItem.type !== 'default') {
+      shape = parsedItem.type;
     }
 
-    if (!nodeDb[node.id]) {
-      nodeDb[node.id] = {
-        id: node.id,
+    // Add the node to our list (nodeDb)
+    if (!nodeDb[itemId]) {
+      nodeDb[itemId] = {
+        id: itemId,
         shape,
-        description: common.sanitizeText(node.id, getConfig()),
-        classes: 'statediagram-state',
+        description: common.sanitizeText(itemId, getConfig()),
+        classes: classStr + ' statediagram-state',
       };
     }
 
-    // Build of the array of description strings accordinging
-    if (node.description) {
-      if (Array.isArray(nodeDb[node.id].description)) {
+    const newNode = nodeDb[itemId];
+
+    // Build of the array of description strings
+    if (parsedItem.description) {
+      if (Array.isArray(newNode.description)) {
         // There already is an array of strings,add to it
-        nodeDb[node.id].shape = 'rectWithTitle';
-        nodeDb[node.id].description.push(node.description);
+        newNode.shape = 'rectWithTitle';
+        newNode.description.push(parsedItem.description);
       } else {
-        if (nodeDb[node.id].description.length > 0) {
-          // if there is a description already transformit to an array
-          nodeDb[node.id].shape = 'rectWithTitle';
-          if (nodeDb[node.id].description === node.id) {
+        if (newNode.description.length > 0) {
+          // if there is a description already transform it to an array
+          newNode.shape = 'rectWithTitle';
+          if (newNode.description === itemId) {
             // If the previous description was the is, remove it
-            nodeDb[node.id].description = [node.description];
+            newNode.description = [parsedItem.description];
           } else {
-            nodeDb[node.id].description = [nodeDb[node.id].description, node.description];
+            newNode.description = [newNode.description, parsedItem.description];
           }
         } else {
-          nodeDb[node.id].shape = 'rect';
-          nodeDb[node.id].description = node.description;
+          newNode.shape = 'rect';
+          newNode.description = parsedItem.description;
         }
       }
-      nodeDb[node.id].description = common.sanitizeTextOrArray(
-        nodeDb[node.id].description,
-        getConfig()
-      );
+      newNode.description = common.sanitizeTextOrArray(newNode.description, getConfig());
     }
 
-    //
-    if (nodeDb[node.id].description.length === 1 && nodeDb[node.id].shape === 'rectWithTitle') {
-      nodeDb[node.id].shape = 'rect';
+    // update the node shape
+    if (newNode.description.length === 1 && newNode.shape === 'rectWithTitle') {
+      newNode.shape = 'rect';
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
     // one with description
 
     // group
-    if (!nodeDb[node.id].type && node.doc) {
-      log.info('Setting cluster for ', node.id, getDir(node));
-      nodeDb[node.id].type = 'group';
-      nodeDb[node.id].dir = getDir(node);
-      nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
-      nodeDb[node.id].classes =
-        nodeDb[node.id].classes +
+    if (!newNode.type && parsedItem.doc) {
+      log.info('Setting cluster for ', itemId, getDir(parsedItem));
+      newNode.type = 'group';
+      newNode.dir = getDir(parsedItem);
+      newNode.shape = parsedItem.type === 'divider' ? 'divider' : 'roundedWithTitle';
+
+      newNode.classes =
+        newNode.classes +
         ' ' +
         (altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster');
     }
 
+    // This is what will be added to the graph
     const nodeData = {
       labelStyle: '',
-      shape: nodeDb[node.id].shape,
-      labelText: nodeDb[node.id].description,
-      // typeof nodeDb[node.id].description === 'object'
-      //   ? nodeDb[node.id].description[0]
-      //   : nodeDb[node.id].description,
-      classes: nodeDb[node.id].classes, //classStr,
+      shape: newNode.shape,
+      labelText: newNode.description,
+      // typeof newNode.description === 'object'
+      //   ? newNode.description[0]
+      //   : newNode.description,
+      classes: newNode.classes,
       style: '', //styles.style,
-      id: node.id,
-      dir: nodeDb[node.id].dir,
-      domId: 'state-' + node.id + '-' + cnt,
-      type: nodeDb[node.id].type,
+      id: itemId,
+      dir: newNode.dir,
+      domId: 'state-' + itemId + '-' + graphItemCount,
+      type: newNode.type,
       padding: 15, //getConfig().flowchart.padding
     };
 
-    if (node.note) {
+    if (parsedItem.note) {
       // Todo: set random id
       const noteData = {
         labelStyle: '',
         shape: 'note',
-        labelText: node.note.text,
+        labelText: parsedItem.note.text,
         classes: 'statediagram-note', //classStr,
-        style: '', //styles.style,
-        id: node.id + '----note-' + cnt,
-        domId: 'state-' + node.id + '----note-' + cnt,
-        type: nodeDb[node.id].type,
+        style: '', // styles.style,
+        id: itemId + '----note-' + graphItemCount,
+        domId: 'state-' + itemId + '----note-' + graphItemCount,
+        type: newNode.type,
         padding: 15, //getConfig().flowchart.padding
       };
       const groupData = {
         labelStyle: '',
         shape: 'noteGroup',
-        labelText: node.note.text,
-        classes: nodeDb[node.id].classes, //classStr,
-        style: '', //styles.style,
-        id: node.id + '----parent',
-        domId: 'state-' + node.id + '----parent-' + cnt,
+        labelText: parsedItem.note.text,
+        classes: newNode.classes, //classStr,
+        style: '', // styles.style,
+        id: itemId + '----parent',
+        domId: 'state-' + itemId + '----parent-' + graphItemCount,
         type: 'group',
         padding: 0, //getConfig().flowchart.padding
       };
-      cnt++;
+      graphItemCount++;
 
-      g.setNode(node.id + '----parent', groupData);
+      g.setNode(itemId + '----parent', groupData);
 
       g.setNode(noteData.id, noteData);
-      g.setNode(node.id, nodeData);
+      g.setNode(itemId, nodeData);
 
-      g.setParent(node.id, node.id + '----parent');
-      g.setParent(noteData.id, node.id + '----parent');
+      g.setParent(itemId, itemId + '----parent');
+      g.setParent(noteData.id, itemId + '----parent');
 
-      let from = node.id;
+      let from = itemId;
       let to = noteData.id;
 
-      if (node.note.position === 'left of') {
+      if (parsedItem.note.position === 'left of') {
         from = noteData.id;
-        to = node.id;
+        to = itemId;
       }
       g.setEdge(from, to, {
         arrowhead: 'none',
@@ -172,66 +225,92 @@ const setupNode = (g, parent, node, altFlag) => {
         thickness: 'normal',
       });
     } else {
-      g.setNode(node.id, nodeData);
+      g.setNode(itemId, nodeData);
     }
   }
 
   if (parent) {
     if (parent.id !== 'root') {
-      log.trace('Setting node ', node.id, ' to be child of its parent ', parent.id);
-      g.setParent(node.id, parent.id);
+      log.trace('Setting node ', itemId, ' to be child of its parent ', parent.id);
+      g.setParent(itemId, parent.id);
     }
   }
-  if (node.doc) {
+  if (parsedItem.doc) {
     log.trace('Adding nodes children ');
-    setupDoc(g, node, node.doc, !altFlag);
+    setupDoc(g, parsedItem, parsedItem.doc, diagramDb, !altFlag);
   }
 };
-let cnt = 0;
-const setupDoc = (g, parent, doc, altFlag) => {
-  // cnt = 0;
+
+/**
+ * Turn parsed statements (item.stmt) into nodes, relationships, etc. for a document.
+ * (A document may be nested within others.)
+ *
+ * @param g
+ * @param parentParsedItem - parsed Item that is the parent of this document (doc)
+ * @param doc - the document to set up
+ * @param diagramDb
+ * @param altFlag
+ * @todo This duplicates some of what is done in stateDb.js extract method
+ */
+const setupDoc = (g, parentParsedItem, doc, diagramDb, altFlag) => {
+  // graphItemCount = 0;
   log.trace('items', doc);
   doc.forEach((item) => {
-    if (item.stmt === 'state' || item.stmt === 'default') {
-      setupNode(g, parent, item, altFlag);
-    } else if (item.stmt === 'relation') {
-      setupNode(g, parent, item.state1, altFlag);
-      setupNode(g, parent, item.state2, altFlag);
-      const edgeData = {
-        id: 'edge' + cnt,
-        arrowhead: 'normal',
-        arrowTypeEnd: 'arrow_barb',
-        style: 'fill:none',
-        labelStyle: '',
-        label: common.sanitizeText(item.description, getConfig()),
-        arrowheadStyle: 'fill: #333',
-        labelpos: 'c',
-        labelType: 'text',
-        thickness: 'normal',
-        classes: 'transition',
-      };
-      let startId = item.state1.id;
-      let endId = item.state2.id;
-
-      g.setEdge(startId, endId, edgeData, cnt);
-      cnt++;
+    switch (item.stmt) {
+      case 'state':
+        setupNode(g, parentParsedItem, item, diagramDb, altFlag);
+        break;
+      case 'default':
+        setupNode(g, parentParsedItem, item, diagramDb, altFlag);
+        break;
+      case 'relation':
+        {
+          setupNode(g, parentParsedItem, item.state1, diagramDb, altFlag);
+          setupNode(g, parentParsedItem, item.state2, diagramDb, altFlag);
+          const edgeData = {
+            id: 'edge' + graphItemCount,
+            arrowhead: 'normal',
+            arrowTypeEnd: 'arrow_barb',
+            style: 'fill:none',
+            labelStyle: '',
+            label: common.sanitizeText(item.description, getConfig()),
+            arrowheadStyle: 'fill: #333',
+            labelpos: 'c',
+            labelType: 'text',
+            thickness: 'normal',
+            classes: 'transition',
+          };
+          g.setEdge(item.state1.id, item.state2.id, edgeData, graphItemCount);
+          graphItemCount++;
+        }
+        break;
     }
   });
 };
-const getDir = (nodes, defaultDir) => {
-  let dir = defaultDir || 'TB';
-  if (nodes.doc) {
-    for (let i = 0; i < nodes.doc.length; i++) {
-      const node = nodes.doc[i];
-      if (node.stmt === 'dir') {
-        dir = node.value;
+
+/**
+ * Get the direction from the statement items.  Default is TB  (top to bottom).
+ * Look through all of the documents (docs) in the parsedItems
+ *
+ * @param {object[]} parsedItem - the parsed statement item to look through
+ * @param [defaultDir='TB'] - the direction to use if none is found
+ * @returns {string}
+ */
+const getDir = (parsedItem, defaultDir = DEFAULT_DIR) => {
+  let dir = defaultDir;
+  if (parsedItem.doc) {
+    for (let i = 0; i < parsedItem.doc.length; i++) {
+      const parsedItemDoc = parsedItem.doc[i];
+      if (parsedItemDoc.stmt === 'dir') {
+        dir = parsedItemDoc.value;
       }
     }
   }
   return dir;
 };
+
 /**
- * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ * Draws a state diagram in the tag with id: id based on the graph definition in text.
  *
  * @param {any} text
  * @param {any} id
@@ -244,17 +323,20 @@ export const draw = function (text, id, _version, diag) {
   nodeDb = {};
   // Fetch the default direction, use TD if none was found
   let dir = diag.db.getDirection();
-  if (typeof dir === 'undefined') {
-    dir = 'LR';
-  }
+  if (typeof dir === 'undefined') dir = DEFAULT_DIR;
 
   const { securityLevel, state: conf } = getConfig();
   const nodeSpacing = conf.nodeSpacing || 50;
   const rankSpacing = conf.rankSpacing || 50;
 
   log.info(diag.db.getRootDocV2());
+
+  // This parses the diagram text and sets the classes, relations, styles, classDefs, etc.
   diag.db.extract(diag.db.getRootDocV2());
   log.info(diag.db.getRootDocV2());
+
+  diagramStates = diag.db.getStates();
+  diagramClasses = diag.db.getClasses();
 
   // Create the input mermaid.graph
   const g = new graphlib.Graph({
@@ -272,7 +354,7 @@ export const draw = function (text, id, _version, diag) {
       return {};
     });
 
-  setupNode(g, undefined, diag.db.getRootDocV2(), true);
+  setupNode(g, undefined, diag.db.getRootDocV2(), diag.db, true);
 
   // Set up an SVG group so that we can translate the final graph.
   let sandboxElement;
