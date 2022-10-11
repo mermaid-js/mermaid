@@ -8,7 +8,7 @@ import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
 import { isDetailedError } from './utils';
-import { ParseErrorFunction } from './Diagram';
+import type { ParseErrorFunction } from './Diagram';
 
 /**
  * ## init
