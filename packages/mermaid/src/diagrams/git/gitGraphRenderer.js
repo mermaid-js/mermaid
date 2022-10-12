@@ -495,7 +495,6 @@ const drawBranches = (svg, branches) => {
  */
 export const draw = function (txt, id, ver, diagObj) {
   clear();
-  const conf = getConfig();
   const gitGraphConfig = getConfig().gitGraph;
   // try {
   log.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
@@ -523,7 +522,7 @@ export const draw = function (txt, id, ver, diagObj) {
   drawCommits(diagram, allCommitsDict, true);
 
   // Setup the view box and size of the svg element
-  setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, conf.useMaxWidth);
+  setupGraphViewbox(undefined, diagram, gitGraphConfig.diagramPadding, gitGraphConfig.useMaxWidth);
 };
 
 export default {
