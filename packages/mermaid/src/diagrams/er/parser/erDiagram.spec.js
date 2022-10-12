@@ -582,14 +582,24 @@ describe('when parsing ER diagram it...', function () {
     expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
   });
 
-  it('should handle only-one-to-only-one relationships (aliases "only one")', function () {
-    erDiagram.parser.parse('erDiagram\nA only one optionally to only one B : has');
+  it('should handle only-one-to-only-one relationships (aliases "only one" and  "1+")', function () {
+    erDiagram.parser.parse('erDiagram\nA only one optionally to 1+ B : has');
+    const rels = erDb.getRelationships();
+
+    expect(Object.keys(erDb.getEntities()).length).toBe(2);
+    expect(rels.length).toBe(1);
+    expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONE_OR_MORE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+  });
+
+  it('should handle zero-or-more-to-only-one relationships (aliases "0+" and  "1")', function () {
+    erDiagram.parser.parse('erDiagram\nA 0+ optionally to 1 B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
     expect(rels.length).toBe(1);
     expect(rels[0].relSpec.cardA).toBe(erDb.Cardinality.ONLY_ONE);
-    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ONLY_ONE);
+    expect(rels[0].relSpec.cardB).toBe(erDb.Cardinality.ZERO_OR_MORE);
   });
 
   it('should represent identifying relationships properly', function () {
