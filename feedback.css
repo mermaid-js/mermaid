@@ -1,0 +1,12 @@
+h1
+{
+    background-color: rgb(226, 136, 136);
+    text-align: center;
+    color: aliceblue;
+    border: 5px dashed;
+    border-color: aliceblue;
+}
+body
+{
+    background-color: rgb(110, 165, 89);
+}

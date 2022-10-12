@@ -1,0 +1,35 @@
+body
+{
+    background-color: rgb(110, 165, 89);
+}
+h1
+{
+    background-color: rgb(226, 136, 136);
+    text-align: center;
+    color: aliceblue;
+    border: 5px dashed;
+    border-color: aliceblue;
+}
+h2
+{
+    background-color: rgb(226, 136, 136);
+    text-align: center;
+    color: aliceblue;
+    border: 3px dashed ;
+    border-color: aliceblue;
+}
+img {
+    border: 5px dashed;
+    border-color: aliceblue;
+}
+p{
+    
+    border: 5px solid;
+    border-color: aliceblue;
+    color: black;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+#aa{
+    font-size: 20px;
+    color: rgb(248, 139, 6);
+}
