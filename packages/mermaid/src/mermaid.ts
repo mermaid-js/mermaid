@@ -8,6 +8,7 @@ import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
 import { isDetailedError } from './utils';
+import { registerDiagram } from './diagram-api/diagramAPI';
 
 /**
  * ## init
@@ -178,6 +179,22 @@ const registerLazyLoadedDiagrams = async (conf: MermaidConfig) => {
   await lazyLoadingPromise;
 };
 
+const loadExternalDiagrams = async (conf: MermaidConfig) => {
+  // Only lazy load once
+  // TODO: This is a hack. We should either throw error when new diagrams are added, or load them anyway.
+  if (lazyLoadingPromise === undefined) {
+    // Load all lazy loaded diagrams in parallel
+    lazyLoadingPromise = Promise.allSettled(
+      (conf?.lazyLoadedDiagrams ?? []).map(async (url: string) => {
+        const { id, detector, loadDiagram } = await import(url);
+        const { diagram } = await loadDiagram();
+        registerDiagram(id, diagram, detector, diagram.injectUtils);
+      })
+    );
+  }
+  await lazyLoadingPromise;
+};
+
 /**
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
@@ -286,7 +303,11 @@ const initialize = function (config: MermaidConfig) {
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
 const initializeAsync = async function (config: MermaidConfig) {
-  await registerLazyLoadedDiagrams(config);
+  if (config.loadExternalDiagramsAtStartup) {
+    await loadExternalDiagrams(config);
+  } else {
+    await registerLazyLoadedDiagrams(config);
+  }
   mermaidAPI.initialize(config);
 };
 
