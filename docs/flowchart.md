@@ -315,13 +315,13 @@ flowchart LR
 ### Dotted link
 
 ```mermaid-example
-flowchart LR;
-   A-.->B;
+flowchart LR
+   A-.->B
 ```
 
 ```mermaid
-flowchart LR;
-   A-.->B;
+flowchart LR
+   A-.->B
 ```
 
 ### Dotted link with text
@@ -866,13 +866,13 @@ A shorter form of adding a class is to attach the classname to the node using th
 ```mermaid-example
 flowchart LR
     A:::someclass --> B
-    classDef someclass fill:#f96;
+    classDef someclass fill:#f96
 ```
 
 ```mermaid
 flowchart LR
     A:::someclass --> B
-    classDef someclass fill:#f96;
+    classDef someclass fill:#f96
 ```
 
 ### Css classes
@@ -895,14 +895,14 @@ below:
 **Example definition**
 
 ```mermaid-example
-flowchart LR;
+flowchart LR
     A-->B[AAA<span>BBB</span>]
     B-->D
     class A cssClass
 ```
 
 ```mermaid
-flowchart LR;
+flowchart LR
     A-->B[AAA<span>BBB</span>]
     B-->D
     class A cssClass
@@ -924,7 +924,7 @@ The icons are accessed via the syntax fa:#icon class name#.
 flowchart TD
     B["fab:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
-    B-->D(fa:fa-spinner);
+    B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
@@ -932,7 +932,7 @@ flowchart TD
 flowchart TD
     B["fab:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
-    B-->D(fa:fa-spinner);
+    B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
 ```
 
