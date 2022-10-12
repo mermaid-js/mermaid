@@ -167,6 +167,15 @@ flowchart LR
     A --- B
 ```
 
+### An invisisble link
+
+This can be a usefull tool in some instances where you want to alter the default positining of a node.
+
+```mermaid-example
+flowchart LR
+    A ~~~ B
+```
+
 ### Text on links
 
 ```mermaid-example
