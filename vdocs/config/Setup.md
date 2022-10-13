@@ -29,7 +29,7 @@ mermaid.initialize({ flowchart: { htmlLabels: false } });
 **Example 2:**
 
 ```js
-var config = {
+const config = {
   startOnLoad: true,
   flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
 
@@ -1560,7 +1560,7 @@ Returns **void**
 
 ```html
 <script>
-  var config = {
+  const config = {
     theme: 'default',
     logLevel: 'fatal',
     securityLevel: 'strict',

@@ -1561,7 +1561,7 @@ Returns **void**
 
 ```html
 <script>
-  var config = {
+  const config = {
     theme: 'default',
     logLevel: 'fatal',
     securityLevel: 'strict',

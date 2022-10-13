@@ -1,4 +1,4 @@
-import type { DiagramDetector } from '../../diagram-api/detectType';
+import type { DiagramDetector } from '../../diagram-api/types';
 
 export const stateDetector: DiagramDetector = (txt, config) => {
   // If we have confired to only use new state diagrams this function should always return false

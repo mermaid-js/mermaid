@@ -1,4 +1,4 @@
-import type { DiagramDetector } from '../../diagram-api/detectType';
+import type { DiagramDetector } from '../../diagram-api/types';
 
 export const flowDetectorV2: DiagramDetector = (txt, config) => {
   // If we have confgured to use dagre-wrapper then we should return true in this function for graph code thus making it use the new flowchart diagram

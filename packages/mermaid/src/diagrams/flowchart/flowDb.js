@@ -429,8 +429,7 @@ export const clear = function (ver = 'gen-1') {
   vertices = {};
   classes = {};
   edges = [];
-  funs = [];
-  funs.push(setupToolTips);
+  funs = [setupToolTips];
   subGraphs = [];
   subGraphLookup = {};
   subCount = 0;

@@ -11,17 +11,13 @@ import Diagram from '../Diagram';
 // Normally, we could just do the following to get the original `parse()`
 // implementation, however, requireActual returns a promise and it's not documented how to use withing mock file.
 
-let hasLoadedDiagrams = false;
 /**
  * @param text
  * @param parseError
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
 function parse(text: string, parseError?: Function): boolean {
-  if (!hasLoadedDiagrams) {
-    addDiagrams();
-    hasLoadedDiagrams = true;
-  }
+  addDiagrams();
   const diagram = new Diagram(text, parseError);
   return diagram.parse(text, parseError);
 }
