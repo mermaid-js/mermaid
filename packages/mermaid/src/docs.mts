@@ -35,7 +35,7 @@ import { exec } from 'child_process';
 import { globby } from 'globby';
 import { JSDOM } from 'jsdom';
 import type { Code, Root } from 'mdast';
-import { join, dirname } from 'path';
+import { posix, dirname } from 'path';
 import prettier from 'prettier';
 import { remark } from 'remark';
 // @ts-ignore No typescript declaration file
@@ -210,30 +210,28 @@ const transformHtml = (filename: string) => {
   copyTransformedContents(filename, !verifyOnly, formattedHTML);
 };
 
+const getFilesFromGlobs = async (globs: string[]): Promise<string[]> => {
+  return await globby(globs, { dot: true });
+};
+
 /** Main method (entry point) */
 (async () => {
   if (verifyOnly) {
     console.log('Verifying that all files are in sync with the source files');
   }
-  const sourceDirGlob = join('.', SOURCE_DOCS_DIR, '**');
-  const includeFilesStartingWithDot = true;
+  const sourceDirGlob = posix.join('.', SOURCE_DOCS_DIR, '**');
+  const action = verifyOnly ? 'Verifying' : 'Transforming';
 
-  console.log('Transforming markdown files...');
-  const mdFiles = await globby([join(sourceDirGlob, '*.md')], {
-    dot: includeFilesStartingWithDot,
-  });
+  const mdFiles = await getFilesFromGlobs([posix.join(sourceDirGlob, '*.md')]);
+  console.log(`${action} ${mdFiles.length} markdown files...`);
   mdFiles.forEach(transformMarkdown);
 
-  console.log('Transforming html files...');
-  const htmlFiles = await globby([join(sourceDirGlob, '*.html')], {
-    dot: includeFilesStartingWithDot,
-  });
+  const htmlFiles = await getFilesFromGlobs([posix.join(sourceDirGlob, '*.html')]);
+  console.log(`${action} ${htmlFiles.length} html files...`);
   htmlFiles.forEach(transformHtml);
 
-  console.log('Transforming all other files...');
-  const otherFiles = await globby([sourceDirGlob, '!**/*.md', '!**/*.html'], {
-    dot: includeFilesStartingWithDot,
-  });
+  const otherFiles = await getFilesFromGlobs([sourceDirGlob, '!**/*.md', '!**/*.html']);
+  console.log(`${action} ${otherFiles.length} other files...`);
   otherFiles.forEach((file: string) => {
     copyTransformedContents(file, !verifyOnly); // no transformation
   });
@@ -244,7 +242,7 @@ const transformHtml = (filename: string) => {
       process.exit(1);
     }
     if (git) {
-      console.log('Adding changes in ${FINAL_DOCS_DIR} folder to git');
+      console.log(`Adding changes in ${FINAL_DOCS_DIR} folder to git`);
       exec('git add docs');
     }
   }
