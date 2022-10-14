@@ -35,7 +35,12 @@ export const registerDiagram = (
   ) => void
 ) => {
   if (diagrams[id]) {
-    throw new Error(`Diagram ${id} already registered.`);
+    log.warn(`Diagram ${id} already registered.`);
+    // The error throw is commented out to as it breaks pages where you have multiple diagrams,
+    // it can happen that rendering of the same type of diagram is initiated while the previous
+    // one is still being imported. import deals with this and only one diagram is imported in
+    // the end.
+    // throw new Error(`Diagram ${id} already registered.`);
   }
   diagrams[id] = diagram;
   if (detector) {
