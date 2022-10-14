@@ -32,3 +32,5 @@ cypress/snapshots/
 .eslintcache
 .tsbuildinfo
 tsconfig.tsbuildinfo
+
+local*.html

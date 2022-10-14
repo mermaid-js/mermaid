@@ -24,14 +24,13 @@ mindmap
     Tools
       Pen and paper
       Mermaid
-
 ```
 
 ## Syntax
 
 The syntax for creating Mindmaps is simple and relies on indentation for setting the levels in the hierarchy.
 
-In the following example you can see how there are 3 different levels. One with starting at the left of the text and another level with two rows starting at the same column, defining the node A. At the end there is one more level where the text is indented further then the previous lines defining the nodes B and C.
+In the following example you can see how there are 3 different levels of indentation. The leftmost indentation is the root of the mindmap. There can only be one root and if you by misstake add two of them on the same level there will be a syntax error. Rows with larger indentation will be connected as children to the previous row with lower indentation. Based on that you can see in the example how the nodes B and C both are children to node A whci in turn is a child of the node Root.
 
 ```
 mindmap
@@ -41,7 +40,7 @@ mindmap
             C
 ```
 
-In summary is a simple text outline where there are one node at the root level called `Root` which has one child `A`. `A` in turn has two children `B`and `C`. In the diagram below we can see this rendered as a mindmap.
+In the diagram below you can see the example rendered as a mindmap.
 
 ```mermaid
 mindmap
@@ -145,7 +144,7 @@ mindmap
           C
 ```
 
-This outline is unclear as `B` clearly is a child of `A` but when we move on to `C` the clarity is lost. `C` is not a child of `B` with a higher indentation nor does it have the same indentation as `B`. The only thing that is clear is that the first node with smaller indentation, indicating a parent, is A. Then Mermaid relies on this known truth and compensates for the unclear indentation and selects `A` as a parent of `C` leading till the same diagram with `B` and `C` as siblings.
+This outline is unclear as `B` clearly is a child of `A` but when we move on to `C` the clarity is lost. `C` is not a child of `B` with a higher indentation nor does it have the same indentation as `B`. The only thing that is clear is that the first node with smaller indentation, indicating a parent, is A. Mermaid will rely on this known truth and compensates for the unclear indentation and selects `A` as a parent of `C` leading till the same diagram with `B` and `C` as siblings.
 
 ```mermaid
 mindmap
