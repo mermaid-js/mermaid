@@ -49,14 +49,39 @@
   <body>
     <div id="app"></div>
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+      // import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs';
+      // import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9.2.0-rc6/dist/mermaid.esm.min.mjs';
+      import mermaid from 'http://localhost:9000/mermaid.esm.mjs';
+      console.log(mermaid); // eslint-disable-line
       window.mermaid = mermaid;
+      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      const conf = {
+        logLevel: 4,
+        startOnLoad: true,
+        themeCSS: '.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }',
+        lazyLoadedDiagrams: [
+          // 'https://cdn.jsdelivr.net/npm/mermaid@9.2.0-rc5/dist/mermaid.esm.min.mjs',
+          'http://localhost:9000/mermaid-mindmap-detector.esm.mjs',
+        ],
+      };
+      if (isDarkMode) conf.theme = 'dark';
+
+      async function loadMermaid() {
+        await mermaid.initialize(conf);
+        console.log('mermaid initialized'); // eslint-disable-line
+      }
+      mermaid.parseError = (e) => {
+        console.log('parse error', e); // eslint-disable-line
+      };
+      await loadMermaid();
     </script>
     <script>
       let initEditor = exports.default;
       let parser = new DOMParser();
       let currentCodeExample = 0;
       let colorize = [];
+      let num = 0;
 
       function colorizeEverything(html) {
         initEditor(monaco);
@@ -97,14 +122,12 @@
           renderer: {
             code: function (code, lang) {
               if (lang === 'mermaid-example') {
+                console.log('An example'); // eslint-disable-line
                 currentCodeExample++;
                 colorize.push(currentCodeExample);
                 return '<pre id="code' + currentCodeExample + '">' + escapeHTML(code) + '</pre>';
               } else if (lang === 'mermaid') {
-                // TODO: This will need to be updated when render is async.
-                return (
-                  '<pre class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + '</pre>'
-                );
+                return '<pre class="mermaid">' + code + '</pre>';
               }
               return this.origin.code.apply(this, arguments);
             },
@@ -123,6 +146,10 @@
               const editHtml = '[:memo: Edit this Page](' + url + ')\n';
               return editHtml + html;
             });
+            // Invoked on each page load after new HTML has been appended to the DOM
+            hook.doneEach(function () {
+              window.mermaid.init();
+            });
 
             hook.afterEach(function (html, next) {
               next(html);
@@ -138,28 +165,17 @@
           },
         ],
       };
-
-      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      const conf = {
-        logLevel: 4,
-        startOnLoad: false,
-        themeCSS: '.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }',
-      };
-      if (isDarkMode) conf.theme = 'dark';
-      mermaid.initialize(conf);
     </script>
     <script>
       window.onhashchange = function (a) {
-        //code
-        if (location) {
-          ga('send', 'pageview', location.hash);
-        }
+        // if (location && ga) {
+        //   ga('send', 'pageview', location.hash);
+        // }
       };
     </script>
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/ga.min.js"></script>
+    <!-- <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/ga.min.js"></script> -->
     <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-coffeescript.min.js"></script>
   </body>
 </html>
