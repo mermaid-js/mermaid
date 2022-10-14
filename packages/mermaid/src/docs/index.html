@@ -50,8 +50,8 @@
     <div id="app"></div>
     <script type="module">
       // import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
-      // import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9.2.0-rc6/dist/mermaid.esm.min.mjs';
-      import mermaid from 'http://localhost:9000/mermaid.esm.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@9.2.0-rc6/dist/mermaid.esm.min.mjs';
+      // import mermaid from 'http://localhost:9000/mermaid.esm.mjs';
       console.log(mermaid); // eslint-disable-line
       window.mermaid = mermaid;
       const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -61,8 +61,8 @@
         startOnLoad: true,
         themeCSS: '.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }',
         lazyLoadedDiagrams: [
-          // 'https://cdn.jsdelivr.net/npm/mermaid@9.2.0-rc5/dist/mermaid.esm.min.mjs',
-          'http://localhost:9000/mermaid-mindmap-detector.esm.mjs',
+          'https://cdn.jsdelivr.net/npm/@mermaid-js/mermaid-mindmap@9.2.0-rc3/dist/mermaid-mindmap-detector.esm.mjs',
+          // 'http://localhost:9000/mermaid-mindmap-detector.esm.mjs',
         ],
       };
       if (isDarkMode) conf.theme = 'dark';
