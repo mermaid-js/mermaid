@@ -34,7 +34,7 @@ function drawNodes(svg, mindmap, section, conf) {
  * @param cy
  */
 function drawEdges(edgesEl, cy) {
-  cy.edges().map((edge, id) => {
+  cy?.edges().map((edge, id) => {
     const data = edge.data();
     if (edge[0]._private.bodyBounds) {
       const bounds = edge[0]._private.rscratch;
@@ -100,9 +100,10 @@ function addNodes(mindmap, cy, conf, level) {
  */
 function layoutMindmap(node, conf) {
   return new Promise((resolve) => {
-    if (node.children.length === 0) {
-      return node;
-    }
+    // if (node.children.length === 0) {
+    //   resolve(node);
+    //   return;
+    // }
 
     // Add temporary render element
     const renderEl = select('body').append('div').attr('id', 'cy').attr('style', 'display:none');
