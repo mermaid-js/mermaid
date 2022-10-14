@@ -22,7 +22,7 @@ import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import ganttDb from './diagrams/gantt/ganttDb';
-import Diagram, { getDiagramFromText } from './Diagram';
+import Diagram, { getDiagramFromText, type ParseErrorFunction } from './Diagram';
 import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
@@ -37,8 +37,7 @@ import { evaluate } from './diagrams/common/common';
  * @param text
  * @param parseError
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
-function parse(text: string, parseError?: Function): boolean {
+function parse(text: string, parseError?: ParseErrorFunction): boolean {
   addDiagrams();
   const diagram = new Diagram(text, parseError);
   return diagram.parse(text, parseError);

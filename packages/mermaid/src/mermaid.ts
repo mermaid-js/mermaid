@@ -8,6 +8,7 @@ import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
 import { isDetailedError } from './utils';
+import type { ParseErrorFunction } from './Diagram';
 
 /**
  * ## init
@@ -62,7 +63,7 @@ const init = async function (
       log.warn(e.str);
     }
     if (mermaid.parseError) {
-      mermaid.parseError(e);
+      mermaid.parseError(e as string);
     }
   }
 };
@@ -212,8 +213,7 @@ const parse = (txt: string) => {
 const mermaid: {
   startOnLoad: boolean;
   diagrams: any;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  parseError?: Function;
+  parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
   render: typeof mermaidAPI.render;

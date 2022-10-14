@@ -6,7 +6,7 @@
 import * as configApi from '../config';
 import { vi } from 'vitest';
 import { addDiagrams } from '../diagram-api/diagram-orchestration';
-import Diagram from '../Diagram';
+import Diagram, { type ParseErrorFunction } from '../Diagram';
 
 // Normally, we could just do the following to get the original `parse()`
 // implementation, however, requireActual returns a promise and it's not documented how to use withing mock file.
@@ -15,8 +15,7 @@ import Diagram from '../Diagram';
  * @param text
  * @param parseError
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
-function parse(text: string, parseError?: Function): boolean {
+function parse(text: string, parseError?: ParseErrorFunction): boolean {
   addDiagrams();
   const diagram = new Diagram(text, parseError);
   return diagram.parse(text, parseError);
