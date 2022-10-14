@@ -159,7 +159,7 @@ const initThrowsErrors = function (
   }
 };
 
-let lazyLoadingPromise: Promise<unknown> | undefined;
+let lazyLoadingPromise: Promise<unknown> | undefined = undefined;
 /**
  * @param conf
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
@@ -179,12 +179,15 @@ const registerLazyLoadedDiagrams = async (conf: MermaidConfig) => {
   await lazyLoadingPromise;
 };
 
+let loadingPromise: Promise<unknown> | undefined = undefined;
+
 const loadExternalDiagrams = async (conf: MermaidConfig) => {
   // Only lazy load once
   // TODO: This is a hack. We should either throw error when new diagrams are added, or load them anyway.
-  if (lazyLoadingPromise === undefined) {
+  if (loadingPromise === undefined) {
+    log.debug(`Loading ${conf?.lazyLoadedDiagrams?.length} external diagrams`);
     // Load all lazy loaded diagrams in parallel
-    lazyLoadingPromise = Promise.allSettled(
+    loadingPromise = Promise.allSettled(
       (conf?.lazyLoadedDiagrams ?? []).map(async (url: string) => {
         const { id, detector, loadDiagram } = await import(url);
         const { diagram } = await loadDiagram();
@@ -192,7 +195,7 @@ const loadExternalDiagrams = async (conf: MermaidConfig) => {
       })
     );
   }
-  await lazyLoadingPromise;
+  await loadingPromise;
 };
 
 /**
