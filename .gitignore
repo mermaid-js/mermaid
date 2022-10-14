@@ -33,3 +33,5 @@ cypress/snapshots/
 .tsbuildinfo
 tsconfig.tsbuildinfo
 knsv*.html
+
+local*.html
