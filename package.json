@@ -102,8 +102,8 @@
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
-    "@vitest/coverage-c8": "^0.23.4",
-    "@vitest/ui": "^0.23.4",
+    "@vitest/coverage-c8": "0.24.1",
+    "@vitest/ui": "0.24.1",
     "concurrently": "^7.4.0",
     "coveralls": "^3.1.1",
     "cypress": "^10.0.0",
@@ -141,7 +141,7 @@
     "vitepress": "^1.0.0-alpha.19",
     "vitepress-plugin-mermaid": "^2.0.8",
     "vitepress-plugin-search": "^1.0.4-alpha.11",
-    "vitest": "^0.23.4"
+    "vitest": "0.24.1"
   },
   "resolutions": {
     "d3": "^7.0.0"
