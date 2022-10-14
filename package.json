@@ -26,6 +26,7 @@
     "git graph"
   ],
   "scripts": {
+    "build:mermaid": "ts-node-esm --transpileOnly --project=.vite/tsconfig.json .vite/build.ts --mermaid",
     "build:vite": "ts-node-esm --transpileOnly --project=.vite/tsconfig.json .vite/build.ts",
     "build:types": "concurrently \"tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly\" \"tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly\"",
     "build:watch": "pnpm build:vite --watch",

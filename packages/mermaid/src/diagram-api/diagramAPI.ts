@@ -34,6 +34,7 @@ export const registerDiagram = (
     _setupGraphViewbox: any
   ) => void
 ) => {
+  log.debug(`Registering diagram ${id}`);
   if (diagrams[id]) {
     log.warn(`Diagram ${id} already registered.`);
     // The error throw is commented out to as it breaks pages where you have multiple diagrams,
@@ -50,11 +51,19 @@ export const registerDiagram = (
   if (typeof callback !== 'undefined') {
     callback(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
   }
+  log.debug(`Registered diagram ${id}. ${Object.keys(diagrams).join(', ')} diagrams registered.`);
 };
 
 export const getDiagram = (name: string): DiagramDefinition => {
+  log.debug(`Getting diagram ${name}. ${Object.keys(diagrams).join(', ')} diagrams registered.`);
   if (name in diagrams) {
     return diagrams[name];
   }
-  throw new Error(`Diagram ${name} not found.`);
+  throw new DiagramNotFoundError(name);
 };
+
+export class DiagramNotFoundError extends Error {
+  constructor(message: string) {
+    super(`Diagram ${message} not found.`);
+  }
+}

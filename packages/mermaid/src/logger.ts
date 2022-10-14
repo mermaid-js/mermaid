@@ -30,6 +30,8 @@ export const log: Record<keyof typeof LEVELS, typeof console.log> = {
  * @param {LogLevel} [level="fatal"] The level to set the logging to. Default is `"fatal"`
  */
 export const setLogLevel = function (level: keyof typeof LEVELS | number | string = 'fatal') {
+  // TODO: Even if we call initialize with loglevel 0, many initial logs are skipped as LL is set to 5 initially.
+
   let numericLevel: number = LEVELS.fatal;
   if (typeof level === 'string') {
     level = level.toLowerCase();
@@ -39,6 +41,7 @@ export const setLogLevel = function (level: keyof typeof LEVELS | number | strin
   } else if (typeof level === 'number') {
     numericLevel = level;
   }
+  numericLevel = 0;
   log.trace = () => {};
   log.debug = () => {};
   log.info = () => {};

@@ -6,6 +6,7 @@ import pkg from '../package.json' assert { type: 'json' };
 
 const { dependencies } = pkg;
 const watch = process.argv.includes('--watch');
+const mermaidOnly = process.argv.includes('--mermaid');
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 type OutputOptions = Exclude<
@@ -129,14 +130,19 @@ const buildPackage = async (entryName: keyof typeof packageOptions) => {
 const main = async () => {
   const packageNames = Object.keys(packageOptions) as (keyof typeof packageOptions)[];
   for (const pkg of packageNames) {
+    if (mermaidOnly && pkg !== 'mermaid') {
+      continue;
+    }
     await buildPackage(pkg);
   }
 };
 
 if (watch) {
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid' }));
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
-  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+  build(getBuildConfig({ minify: false, watch, core: true, entryName: 'mermaid' }));
+  if (!mermaidOnly) {
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
+    build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+  }
 } else {
   void main();
 }
