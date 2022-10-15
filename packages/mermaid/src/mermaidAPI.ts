@@ -33,6 +33,29 @@ import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
 
+const MAX_TEXTLENGTH_EXCEEDED_MSG =
+  'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+
+const SECURITY_LVL_SANDBOX = 'sandbox';
+const SECURITY_LVL_LOOSE = 'loose';
+
+const XMLNS_XHTML_STD = 'http://www.w3.org/1999/xhtml';
+const XMLNS_SVG_STD = 'http://www.w3.org/2000/svg';
+const XMLNS_XLINK_STD = 'http://www.w3.org/1999/xlink';
+
+// ------------------------------
+// iFrame
+const IFRAME_WIDTH = '100%';
+const IFRAME_HEIGHT = '100%';
+const IFRAME_STYLES = 'border:0;margin:0;';
+const IFRAME_BODY_STYLE = 'margin:0';
+const IFRAME_SANDBOX_OPTS = 'allow-top-navigation-by-user-activation allow-popups';
+const IFRAME_NOT_SUPPORTED_MSG = 'The “iframe” tag is not supported by your browser.';
+
+const DOMPURIFY_TAGS = 'foreignobject';
+const DOMPURIFY_ATTR = 'dominant-baseline';
+// --------------------------------------------------------------------------------
+
 /**
  * @param text
  * @param parseError
@@ -84,6 +107,7 @@ export const decodeEntities = function (text: string): string {
 
   return txt;
 };
+
 /**
  * Function that renders an svg with a graph from a chart definition. Usage example below.
  *
@@ -116,6 +140,7 @@ const render = async function (
   container?: Element
 ): Promise<void> {
   addDiagrams();
+
   configApi.reset();
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(text);
@@ -129,19 +154,19 @@ const render = async function (
 
   // Check the maximum allowed text size
   if (text.length > cnf.maxTextSize!) {
-    text = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+    text = MAX_TEXTLENGTH_EXCEEDED_MSG;
   }
 
   let root: any = select('body');
 
   // In regular execution the container will be the div with a mermaid class
   if (typeof container !== 'undefined') {
-    // A container was provided by the caller
+    // A container was provided by the caller. Clear the inner HTML if there is any
     if (container) {
       container.innerHTML = '';
     }
 
-    if (cnf.securityLevel === 'sandbox') {
+    if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
       // IF we are in sandboxed mode, we do everyting mermaid related
       // in a sandboxed div
       const iframe = select(container)
@@ -163,8 +188,8 @@ const render = async function (
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
-      .attr('xmlns', 'http://www.w3.org/2000/svg')
-      .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+      .attr('xmlns', XMLNS_SVG_STD)
+      .attr('xmlns:xlink', XMLNS_XLINK_STD)
       .append('g');
   } else {
     // No container was provided
@@ -177,7 +202,7 @@ const render = async function (
 
     // Remove previous tpm element if it exists
     let element;
-    if (cnf.securityLevel === 'sandbox') {
+    if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
       element = document.querySelector('#i' + id);
     } else {
       element = document.querySelector('#d' + id);
@@ -190,7 +215,7 @@ const render = async function (
     // Add the tmp div used for rendering with the id `d${id}`
     // d+id it will contain a svg with the id "id"
 
-    if (cnf.securityLevel === 'sandbox') {
+    if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
       // IF we are in sandboxed mode, we do everyting mermaid related
       // in a sandboxed div
       const iframe = select('body')
@@ -213,7 +238,7 @@ const render = async function (
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
-      .attr('xmlns', 'http://www.w3.org/2000/svg')
+      .attr('xmlns', XMLNS_SVG_STD)
       .append('g');
   }
 
@@ -305,16 +330,13 @@ const render = async function (
     throw e;
   }
 
-  root
-    .select(`[id="${id}"]`)
-    .selectAll('foreignobject > *')
-    .attr('xmlns', 'http://www.w3.org/1999/xhtml');
+  root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
   // Fix for when the base tag is used
   let svgCode = root.select('#d' + id).node().innerHTML;
 
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
-  if (!evaluate(cnf.arrowMarkerAbsolute) && cnf.securityLevel !== 'sandbox') {
+  if (!evaluate(cnf.arrowMarkerAbsolute) && cnf.securityLevel !== SECURITY_LVL_SANDBOX) {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 
@@ -323,23 +345,23 @@ const render = async function (
   // Fix for when the br tag is used
   svgCode = svgCode.replace(/<br>/g, '<br/>');
 
-  if (cnf.securityLevel === 'sandbox') {
+  if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
     const svgEl = root.select('#d' + id + ' svg').node();
-    const width = '100%';
-    let height = '100%';
+    const width = IFRAME_WIDTH;
+    let height = IFRAME_HEIGHT;
     if (svgEl) {
       height = svgEl.viewBox.baseVal.height + 'px';
     }
-    svgCode = `<iframe style="width:${width};height:${height};border:0;margin:0;" src="data:text/html;base64,${btoa(
-      '<body style="margin:0">' + svgCode + '</body>'
-    )}" sandbox="allow-top-navigation-by-user-activation allow-popups">
-  The “iframe” tag is not supported by your browser.
+    svgCode = `<iframe style="width:${width};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${btoa(
+      `<body style="${IFRAME_BODY_STYLE}">` + svgCode + '</body>'
+    )}" sandbox="${IFRAME_SANDBOX_OPTS}">
+  ${IFRAME_NOT_SUPPORTED_MSG}
 </iframe>`;
   } else {
-    if (cnf.securityLevel !== 'loose') {
+    if (cnf.securityLevel !== SECURITY_LVL_LOOSE) {
       svgCode = DOMPurify.sanitize(svgCode, {
-        ADD_TAGS: ['foreignobject'],
-        ADD_ATTR: ['dominant-baseline'],
+        ADD_TAGS: [DOMPURIFY_TAGS],
+        ADD_ATTR: [DOMPURIFY_ATTR],
       });
     }
   }
@@ -365,7 +387,7 @@ const render = async function (
   }
   attachFunctions();
 
-  const tmpElementSelector = cnf.securityLevel === 'sandbox' ? '#i' + id : '#d' + id;
+  const tmpElementSelector = cnf.securityLevel === SECURITY_LVL_SANDBOX ? '#i' + id : '#d' + id;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
