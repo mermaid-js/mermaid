@@ -32,3 +32,6 @@ cypress/snapshots/
 .eslintcache
 .tsbuildinfo
 tsconfig.tsbuildinfo
+
+#docs generate from code
+packages/mermaid/docs/config/setup

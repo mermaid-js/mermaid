@@ -8,14 +8,20 @@ import { MermaidConfig } from './config.type';
  *
  * These are the default options which can be overridden with the initialization call like so:
  *
- * **Example 1:**<pre> mermaid.initialize({ flowchart:{ htmlLabels: false } }); </pre>
- *
- * **Example 2:**<pre> <script> var config = { startOnLoad:true, flowchart:{ useMaxWidth:true,
+ * **Example 1:**
+ * ```js
+ * mermaid.initialize({ flowchart:{ htmlLabels: false } });
+ *```
+ 
+ * **Example 2:**
+ * ```js
+ * var config = { startOnLoad:true, flowchart:{ useMaxWidth:true,
  * htmlLabels:true, curve:'cardinal', },
  *
  *     securityLevel:'loose',
  *
- * }; mermaid.initialize(config); </script> </pre>
+ * }; mermaid.initialize(config);
+ * ```
  *
  * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults).
  * A description of each option follows below.
