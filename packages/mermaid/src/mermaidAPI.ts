@@ -45,6 +45,7 @@ const XMLNS_XLINK_STD = 'http://www.w3.org/1999/xlink';
 
 // ------------------------------
 // iFrame
+const SANDBOX_IFRAME_STYLE = 'width: 100%; height: 100%;';
 const IFRAME_WIDTH = '100%';
 const IFRAME_HEIGHT = '100%';
 const IFRAME_STYLES = 'border:0;margin:0;';
@@ -52,9 +53,11 @@ const IFRAME_BODY_STYLE = 'margin:0';
 const IFRAME_SANDBOX_OPTS = 'allow-top-navigation-by-user-activation allow-popups';
 const IFRAME_NOT_SUPPORTED_MSG = 'The “iframe” tag is not supported by your browser.';
 
-const DOMPURIFY_TAGS = 'foreignobject';
-const DOMPURIFY_ATTR = 'dominant-baseline';
-// --------------------------------------------------------------------------------
+// DOMPurify settings for svgCode
+const DOMPURE_TAGS = ['foreignobject'];
+const DOMPURE_ATTR = ['dominant-baseline'];
+
+// ----------------------------------------------------------------------------
 
 /**
  * @param text
@@ -66,6 +69,11 @@ function parse(text: string, parseError?: ParseErrorFunction): boolean {
   return diagram.parse(text, parseError);
 }
 
+/**
+ *
+ * @param {string} text - text to be encoded
+ * @returns {string}
+ */
 export const encodeEntities = function (text: string): string {
   let txt = text;
 
@@ -92,6 +100,11 @@ export const encodeEntities = function (text: string): string {
   return txt;
 };
 
+/**
+ *
+ * @param {string} text - text to be decoded
+ * @returns {string}
+ */
 export const decodeEntities = function (text: string): string {
   let txt = text;
 
@@ -160,6 +173,11 @@ const render = async function (
 
   let root: any = select('body');
 
+  const isSandboxed = config.securityLevel === SECURITY_LVL_SANDBOX;
+  const isLooseSecurityLevel = config.securityLevel === SECURITY_LVL_LOOSE;
+
+  const fontFamily = config.fontFamily;
+
   // -------------------------------------------------------------------------------
   // Define the root d3 node
 
@@ -170,13 +188,13 @@ const render = async function (
       svgContainingElement.innerHTML = '';
     }
 
-    if (config.securityLevel === SECURITY_LVL_SANDBOX) {
+    if (isSandboxed) {
       // IF we are in sandboxed mode, we do everyting mermaid related
       // in a sandboxed div
       const iframe = select(svgContainingElement)
         .append('iframe')
         .attr('id', iFrameID)
-        .attr('style', 'width: 100%; height: 100%;')
+        .attr('style', SANDBOX_IFRAME_STYLE)
         .attr('sandbox', '');
       // const iframeBody = ;
       root = select(iframe.nodes()[0]!.contentDocument!.body);
@@ -188,7 +206,7 @@ const render = async function (
     root
       .append('div')
       .attr('id', enclosingDivID)
-      .attr('style', 'font-family: ' + config.fontFamily)
+      .attr('style', 'font-family: ' + fontFamily)
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
@@ -206,7 +224,7 @@ const render = async function (
 
     // Remove previous temporary element if it exists
     let element;
-    if (config.securityLevel === SECURITY_LVL_SANDBOX) {
+    if (isSandboxed) {
       element = document.querySelector(iFrameID_selector);
     } else {
       element = document.querySelector(enclosingDivID_selector);
@@ -219,13 +237,12 @@ const render = async function (
     // Add the tmp div used for rendering with the id `d${id}`
     // d+id it will contain a svg with the id "id"
 
-    if (config.securityLevel === SECURITY_LVL_SANDBOX) {
-      // IF we are in sandboxed mode, we do everyting mermaid related
-      // in a sandboxed div
+    if (isSandboxed) {
+      // IF we are in sandboxed mode, we do everything mermaid relate in a (sandboxed) iFrame
       const iframe = select('body')
         .append('iframe')
         .attr('id', iFrameID)
-        .attr('style', 'width: 100%; height: 100%;')
+        .attr('style', SANDBOX_IFRAME_STYLE)
         .attr('sandbox', '');
 
       root = select(iframe.nodes()[0]!.contentDocument!.body);
@@ -291,8 +308,8 @@ const render = async function (
     userStyles += `\n${config.themeCSS}`;
   }
   // user provided theme CSS
-  if (config.fontFamily !== undefined) {
-    userStyles += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+  if (fontFamily !== undefined) {
+    userStyles += `\n:root { --mermaid-font-family: ${fontFamily}}`;
   }
   // user provided theme CSS
   if (config.altFontFamily !== undefined) {
@@ -371,26 +388,29 @@ const render = async function (
   svgCode = svgCode.replace(/<br>/g, '<br/>');
 
   // -------------------------------------------------------------------------------
-  // Inser svgCode into an iFrame if we are sandboxed
-  if (config.securityLevel === SECURITY_LVL_SANDBOX) {
+
+  if (isSandboxed) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     const width = IFRAME_WIDTH;
     let height = IFRAME_HEIGHT;
+
+    // set the svg element height to px
     if (svgEl) {
       height = svgEl.viewBox.baseVal.height + 'px';
     }
+    // Insert iFrame code into svg code
     svgCode = `<iframe style="width:${width};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${btoa(
       `<body style="${IFRAME_BODY_STYLE}">` + svgCode + '</body>'
     )}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
 </iframe>`;
   } else {
-    if (config.securityLevel !== SECURITY_LVL_LOOSE) {
+    if (isLooseSecurityLevel) {
       // -------------------------------------------------------------------------------
       // Sanitize the svgCode using DOMPurify
       svgCode = DOMPurify.sanitize(svgCode, {
-        ADD_TAGS: [DOMPURIFY_TAGS],
-        ADD_ATTR: [DOMPURIFY_ATTR],
+        ADD_TAGS: DOMPURE_TAGS,
+        ADD_ATTR: DOMPURE_ATTR,
       });
     }
   }
@@ -420,8 +440,7 @@ const render = async function (
 
   // -------------------------------------------------------------------------------
   // Remove the temporary element if appropriate
-  const tmpElementSelector =
-    config.securityLevel === SECURITY_LVL_SANDBOX ? iFrameID_selector : enclosingDivID_selector;
+  const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
