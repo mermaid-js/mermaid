@@ -142,7 +142,10 @@ const render = async function (
   addDiagrams();
 
   configApi.reset();
+
+  // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
+
   const graphInit = utils.detectInit(text);
   if (graphInit) {
     directiveSanitizer(graphInit);
@@ -163,6 +166,9 @@ const render = async function (
   const enclosingDivID_selector = '#' + enclosingDivID;
 
   let root: any = select('body');
+
+  // -------------------------------------------------------------------------------
+  // Define the root d3 node
 
   // In regular execution the container will be the div with a mermaid class
   if (typeof container !== 'undefined') {
@@ -247,7 +253,12 @@ const render = async function (
       .append('g');
   }
 
+  // -------------------------------------------------------------------------------
+  //
   text = encodeEntities(text);
+
+  // -------------------------------------------------------------------------------
+  // Create the diagram
 
   // Important that we do not create the diagram until after the directives have been included
   let diag;
@@ -259,9 +270,13 @@ const render = async function (
     diag = new Diagram('error');
     parseEncounteredException = error;
   }
+
   // Get the tmp element containing the the svg
   const element = root.select(enclosingDivID_selector).node();
   const graphType = diag.type;
+
+  // -------------------------------------------------------------------------------
+  // Create and insert the styles (user styles, theme styles, config styles)
 
   // insert inline style into svg
   const svg = element.firstChild;
@@ -328,6 +343,8 @@ const render = async function (
   style1.innerHTML = `#${id} ` + rules;
   svg.insertBefore(style1, firstChild);
 
+  // -------------------------------------------------------------------------------
+  // Draw the diagram with the renderer
   try {
     await diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
@@ -335,6 +352,8 @@ const render = async function (
     throw e;
   }
 
+  // -------------------------------------------------------------------------------
+  // Clean up SVG code
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
   // Fix for when the base tag is used
@@ -350,6 +369,8 @@ const render = async function (
   // Fix for when the br tag is used
   svgCode = svgCode.replace(/<br>/g, '<br/>');
 
+  // -------------------------------------------------------------------------------
+  // Inser svgCode into an iFrame if we are sandboxed
   if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     const width = IFRAME_WIDTH;
@@ -364,6 +385,8 @@ const render = async function (
 </iframe>`;
   } else {
     if (cnf.securityLevel !== SECURITY_LVL_LOOSE) {
+      // -------------------------------------------------------------------------------
+      // Sanitize the svgCode using DOMPurify
       svgCode = DOMPurify.sanitize(svgCode, {
         ADD_TAGS: [DOMPURIFY_TAGS],
         ADD_ATTR: [DOMPURIFY_ATTR],
@@ -371,6 +394,8 @@ const render = async function (
     }
   }
 
+  // -------------------------------------------------------------------------------
+  // Do any callbacks (cb = callback)
   if (typeof cb !== 'undefined') {
     switch (graphType) {
       case 'flowchart':
@@ -392,6 +417,8 @@ const render = async function (
   }
   attachFunctions();
 
+  // -------------------------------------------------------------------------------
+  // Remove the temporary element if appropriate
   const tmpElementSelector =
     cnf.securityLevel === SECURITY_LVL_SANDBOX ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
