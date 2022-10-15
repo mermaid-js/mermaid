@@ -41,13 +41,14 @@ export const setLogLevel = function (level: keyof typeof LEVELS | number | strin
   } else if (typeof level === 'number') {
     numericLevel = level;
   }
-  numericLevel = 0;
+
   log.trace = () => {};
   log.debug = () => {};
   log.info = () => {};
   log.warn = () => {};
   log.error = () => {};
   log.fatal = () => {};
+
   if (numericLevel <= LEVELS.fatal) {
     log.fatal = console.error
       ? console.error.bind(console, format('FATAL'), 'color: orange')
