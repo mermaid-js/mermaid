@@ -7,15 +7,8 @@ import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
-import {
-  registerDiagram,
-  DiagramDefinition,
-  setLogLevel,
-  getConfig,
-  setupGraphViewbox,
-  sanitizeText,
-} from './diagram-api/diagramAPI';
 import { isDetailedError } from './utils';
+import type { ParseErrorFunction } from './Diagram';
 
 /**
  * ## init
@@ -53,17 +46,16 @@ const init = async function (
   callback?: Function
 ) {
   try {
-    log.info('Detectors in init', mermaid.detectors); // eslint-disable-line
     const conf = mermaidAPI.getConfig();
-    if (typeof conf.lazyLoadedDiagrams !== 'undefined' && conf.lazyLoadedDiagrams.length > 0) {
-      for (let i = 0; i < conf.lazyLoadedDiagrams.length; i++) {
-        const { id, detector, loadDiagram } = await import(conf.lazyLoadedDiagrams[i]);
-        addDetector(id, detector, loadDiagram);
-      }
+    if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
+      // Load all lazy loaded diagrams in parallel
+      await Promise.allSettled(
+        conf.lazyLoadedDiagrams.map(async (diagram: string) => {
+          const { id, detector, loadDiagram } = await import(diagram);
+          addDetector(id, detector, loadDiagram);
+        })
+      );
     }
-    mermaid.detectors.forEach(({ id, detector, path }) => {
-      addDetector(id, detector, path);
-    });
     await initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
@@ -71,7 +63,7 @@ const init = async function (
       log.warn(e.str);
     }
     if (mermaid.parseError) {
-      mermaid.parseError(e);
+      mermaid.parseError(e as string);
     }
   }
 };
@@ -218,27 +210,10 @@ const parse = (txt: string) => {
   return mermaidAPI.parse(txt, mermaid.parseError);
 };
 
-const connectDiagram = (
-  id: string,
-  diagram: DiagramDefinition,
-  callback: (
-    _log: any,
-    _setLogLevel: any,
-    _getConfig: any,
-    _sanitizeText: any,
-    _setupGraphViewbox: any
-  ) => void
-) => {
-  registerDiagram(id, diagram, callback);
-  // Todo move this connect call to after the diagram is actually loaded.
-  callback(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
-};
-
 const mermaid: {
   startOnLoad: boolean;
   diagrams: any;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  parseError?: Function;
+  parseError?: ParseErrorFunction;
   mermaidAPI: typeof mermaidAPI;
   parse: typeof parse;
   render: typeof mermaidAPI.render;
@@ -247,9 +222,6 @@ const mermaid: {
   initialize: typeof initialize;
   contentLoaded: typeof contentLoaded;
   setParseErrorHandler: typeof setParseErrorHandler;
-  // Array of functions to use for detecting diagram types
-  detectors: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-  connectDiagram: (id: string, diagram: DiagramDefinition, callback: (id: string) => void) => void;
 } = {
   startOnLoad: true,
   diagrams: {},
@@ -262,8 +234,6 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
-  detectors: [],
-  connectDiagram: connectDiagram,
 };
 
 export default mermaid;

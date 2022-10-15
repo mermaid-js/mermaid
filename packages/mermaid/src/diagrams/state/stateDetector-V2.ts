@@ -1,4 +1,4 @@
-import type { DiagramDetector } from '../../diagram-api/detectType';
+import type { DiagramDetector } from '../../diagram-api/types';
 
 export const stateDetectorV2: DiagramDetector = (text, config) => {
   if (text.match(/^\s*stateDiagram-v2/) !== null) return true;

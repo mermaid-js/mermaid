@@ -93,7 +93,7 @@
         throw new Error('XSS Succeeded');
       }
 
-      var diagram = 'classDiagram\n';
+      let diagram = 'classDiagram\n';
       diagram += 'classA <-- classB : <ifr';
       diagram += "ame/srcdoc='<scr";
       diagram += 'ipt>parent.xssAttack(`XSS`)</';

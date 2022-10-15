@@ -30,7 +30,7 @@
     "build:types": "concurrently \"tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly\" \"tsc -p ./packages/mermaid-mindmap/tsconfig.json --emitDeclarationOnly\"",
     "build:watch": "pnpm build:vite --watch",
     "build": "pnpm run -r clean && concurrently \"pnpm build:vite\" \"pnpm build:types\"",
-    "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server\"",
+    "dev": "concurrently \"pnpm build:vite --watch\" \"ts-node-esm .vite/server.ts\"",
     "docs:build": "ts-node-esm --transpileOnly packages/mermaid/src/docs.mts",
     "docs:verify": "pnpm docs:build --verify",
     "todo-postbuild": "documentation build src/mermaidAPI.ts src/config.ts src/defaultConfig.ts --shallow -f md --markdown-toc false > src/docs/Setup.md && prettier --write src/docs/Setup.md",
@@ -47,7 +47,8 @@
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "ci": "vitest run",
     "test": "pnpm lint && vitest run",
-    "test:watch": "vitest --coverage --watch",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
     "prepublishOnly": "pnpm build && pnpm test",
     "prepare": "concurrently \"husky install\" \"pnpm build\"",
     "pre-commit": "lint-staged"
@@ -97,12 +98,13 @@
     "@types/express": "^4.17.14",
     "@types/jsdom": "^20.0.0",
     "@types/lodash": "^4.14.186",
+    "@types/mdast": "^3.0.10",
     "@types/prettier": "^2.7.1",
     "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
-    "@vitest/coverage-c8": "^0.23.4",
-    "@vitest/ui": "^0.23.4",
+    "@vitest/coverage-c8": "0.24.1",
+    "@vitest/ui": "0.24.1",
     "concurrently": "^7.4.0",
     "coveralls": "^3.1.1",
     "cypress": "^10.0.0",
@@ -140,7 +142,7 @@
     "vitepress": "^1.0.0-alpha.19",
     "vitepress-plugin-mermaid": "^2.0.8",
     "vitepress-plugin-search": "^1.0.4-alpha.11",
-    "vitest": "^0.23.4"
+    "vitest": "0.24.1"
   },
   "resolutions": {
     "d3": "^7.0.0"
@@ -151,5 +153,8 @@
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
-  ]
+  ],
+  "volta": {
+    "node": "18.5.0"
+  }
 }
