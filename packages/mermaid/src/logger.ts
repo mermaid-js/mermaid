@@ -41,7 +41,7 @@ export const setLogLevel = function (level: keyof typeof LEVELS | number | strin
   } else if (typeof level === 'number') {
     numericLevel = level;
   }
-  numericLevel = 0;
+
   log.trace = () => {};
   log.debug = () => {};
   log.info = () => {};
