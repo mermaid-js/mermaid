@@ -1,9 +1,78 @@
 'use strict';
 import mermaid from './mermaid';
 import mermaidAPI from './mermaidAPI';
+import { encodeEntities, decodeEntities } from './mermaidAPI';
+
 import assignWithDepth from './assignWithDepth';
 
 describe('when using mermaidAPI and ', function () {
+  describe('encodeEntities', () => {
+    it('removes the ending ; from style [text1]:[optional word]#[text2]; with ', () => {
+      const text = 'style this; is ; everything :something#not-nothing; and this too;';
+      expect(encodeEntities(text)).toEqual(
+        'style this; is ; everything :something#not-nothing; and this too'
+      );
+    });
+    it('removes the ending ; from classDef [text1]:[optional word]#[text2]; with ', () => {
+      const text = 'classDef this; is ; everything :something#not-nothing; and this too;';
+      expect(encodeEntities(text)).toEqual(
+        'classDef this; is ; everything :something#not-nothing; and this too'
+      );
+    });
+
+    describe('replaces words starting with # and ending with ;', () => {
+      const testStr = 'Hello #there;';
+
+      it('removes the #', () => {
+        const result = encodeEntities(testStr);
+        expect(result.substring(0, 7)).toEqual('Hello ﬂ');
+      });
+
+      it('prefix is ﬂ°° if is all digits', () => {
+        const result = encodeEntities('Hello #77653;');
+        expect(result.substring(6, result.length)).toEqual('ﬂ°°77653¶ß');
+      });
+
+      it('prefix is ﬂ° if is not all digits', () => {
+        const result = encodeEntities(testStr);
+        expect(result.substring(6, result.length)).toEqual('ﬂ°there¶ß');
+      });
+      it('always removes the semi-colon and ends with ¶ß', () => {
+        const result = encodeEntities(testStr);
+        expect(result.substring(result.length - 2, result.length)).toEqual('¶ß');
+      });
+    });
+
+    it('does all the replacements on the given text', () => {
+      const text =
+        'style this; is ; everything :something#not-nothing; and this too; \n' +
+        'classDef this; is ; everything :something#not-nothing; and this too; \n' +
+        'Hello #there; #andHere;#77653;';
+
+      const result = encodeEntities(text);
+      expect(result).toEqual(
+        'style this; is ; everything :something#not-nothing; and this too \n' +
+          'classDef this; is ; everything :something#not-nothing; and this too \n' +
+          'Hello ﬂ°there¶ß ﬂ°andHere¶ßﬂ°°77653¶ß'
+      );
+    });
+  });
+
+  describe('decodeEntities', () => {
+    it('replaces ﬂ°° with &#', () => {
+      expect(decodeEntities('ﬂ°°hﬂ°°iﬂ°°')).toEqual('&#h&#i&#');
+    });
+    it('replaces ﬂ° with &', () => {
+      expect(decodeEntities('ﬂ°hﬂ°iﬂ°')).toEqual('&h&i&');
+    });
+    it('replaces ¶ß with ;', () => {
+      expect(decodeEntities('¶ßh¶ßi¶ß')).toEqual(';h;i;');
+    });
+    it('runs all the replacements on the given text', () => {
+      expect(decodeEntities('¶ßﬂ°¶ßﬂ°°¶ß')).toEqual(';&;&#;');
+    });
+  });
+
   describe('doing initialize ', function () {
     beforeEach(function () {
       document.body.innerHTML = '';
