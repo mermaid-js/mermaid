@@ -157,6 +157,11 @@ const render = async function (
     text = MAX_TEXTLENGTH_EXCEEDED_MSG;
   }
 
+  const iFrameID = 'i' + id;
+  const iFrameID_selector = '#' + iFrameID;
+  const enclosingDivID = 'd' + id;
+  const enclosingDivID_selector = '#' + enclosingDivID;
+
   let root: any = select('body');
 
   // In regular execution the container will be the div with a mermaid class
@@ -171,7 +176,7 @@ const render = async function (
       // in a sandboxed div
       const iframe = select(container)
         .append('iframe')
-        .attr('id', 'i' + id)
+        .attr('id', iFrameID)
         .attr('style', 'width: 100%; height: 100%;')
         .attr('sandbox', '');
       // const iframeBody = ;
@@ -183,7 +188,7 @@ const render = async function (
 
     root
       .append('div')
-      .attr('id', 'd' + id)
+      .attr('id', enclosingDivID)
       .attr('style', 'font-family: ' + cnf.fontFamily)
       .append('svg')
       .attr('id', id)
@@ -203,7 +208,7 @@ const render = async function (
     // Remove previous tpm element if it exists
     let element;
     if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
-      element = document.querySelector('#i' + id);
+      element = document.querySelector(iFrameID_selector);
     } else {
       element = document.querySelector('#d' + id);
     }
@@ -220,7 +225,7 @@ const render = async function (
       // in a sandboxed div
       const iframe = select('body')
         .append('iframe')
-        .attr('id', 'i' + id)
+        .attr('id', iFrameID)
         .attr('style', 'width: 100%; height: 100%;')
         .attr('sandbox', '');
 
@@ -233,7 +238,7 @@ const render = async function (
     // This is the temporary div
     root
       .append('div')
-      .attr('id', 'd' + id)
+      .attr('id', enclosingDivID)
       // this is the seed of the svg to be rendered
       .append('svg')
       .attr('id', id)
@@ -255,7 +260,7 @@ const render = async function (
     parseEncounteredException = error;
   }
   // Get the tmp element containing the the svg
-  const element = root.select('#d' + id).node();
+  const element = root.select(enclosingDivID_selector).node();
   const graphType = diag.type;
 
   // insert inline style into svg
@@ -333,7 +338,7 @@ const render = async function (
   root.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', XMLNS_XHTML_STD);
 
   // Fix for when the base tag is used
-  let svgCode = root.select('#d' + id).node().innerHTML;
+  let svgCode = root.select(enclosingDivID_selector).node().innerHTML;
 
   log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
   if (!evaluate(cnf.arrowMarkerAbsolute) && cnf.securityLevel !== SECURITY_LVL_SANDBOX) {
@@ -346,7 +351,7 @@ const render = async function (
   svgCode = svgCode.replace(/<br>/g, '<br/>');
 
   if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
-    const svgEl = root.select('#d' + id + ' svg').node();
+    const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     const width = IFRAME_WIDTH;
     let height = IFRAME_HEIGHT;
     if (svgEl) {
@@ -387,7 +392,8 @@ const render = async function (
   }
   attachFunctions();
 
-  const tmpElementSelector = cnf.securityLevel === SECURITY_LVL_SANDBOX ? '#i' + id : '#d' + id;
+  const tmpElementSelector =
+    cnf.securityLevel === SECURITY_LVL_SANDBOX ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
