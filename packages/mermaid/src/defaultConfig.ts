@@ -119,10 +119,12 @@ const config: Partial<MermaidConfig> = {
   /**
    * This option controls if the generated ids of nodes in the SVG are generated randomly or based
    * on a seed. If set to false, the IDs are generated based on the current date and thus are not
+   // eslint-disable-next-line @cspell/spellchecker
    * deterministic. This is the default behaviour.
    *
    * **Notes**:
    *
+   // eslint-disable-next-line @cspell/spellchecker
    * This matters if your files are checked into sourcecontrol e.g. git and should not change unless
    * content is changed.
    *
@@ -1168,7 +1170,7 @@ const config: Partial<MermaidConfig> = {
      * | --------------- | ----------- | ------- | -------- | ------------------ |
      * | c4BoundaryInRow | See Notes   | Integer | Required | Any Positive Value |
      *
-     * **Notes:** How many boundarys to place in each row.
+     * **Notes:** How many boundaries to place in each row.
      *
      * Default value: 2
      */

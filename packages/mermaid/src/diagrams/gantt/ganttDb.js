@@ -229,7 +229,7 @@ const getStartDate = function (prevTime, dateFormat, str) {
  * Parse a string as a moment duration.
  *
  * The string have to be compound by a value and a shorthand duration unit. For example `5d`
- * representes 5 days.
+ * represents 5 days.
  *
  * Shorthand unit supported are:
  *

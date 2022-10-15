@@ -509,7 +509,7 @@ export const anchorElement = function (elem) {
  *
  * @param {any} elem - Element to append activation rect.
  * @param {any} bounds - Activation box bounds.
- * @param {any} verticalPos - Precise y cooridnate of bottom activation box edge.
+ * @param {any} verticalPos - Precise y coordinate of bottom activation box edge.
  * @param {any} conf - Sequence diagram config object.
  * @param {any} actorActivations - Number of activations on the actor.
  */
@@ -527,10 +527,10 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
 /**
  * Draws a loop in the diagram
  *
- * @param {any} elem - Elemenet to append the loop to.
+ * @param {any} elem - Element to append the loop to.
  * @param {any} loopModel - LoopModel of the given loop.
  * @param {any} labelText - Text within the loop.
- * @param {any} conf - Diagrom configuration
+ * @param {any} conf - Diagram configuration
  * @returns {any}
  */
 export const drawLoop = function (elem, loopModel, labelText, conf) {

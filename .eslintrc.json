@@ -55,8 +55,7 @@
       {
         "checkIdentifiers": false,
         "checkStrings": false,
-        "checkStringTemplates": false,
-        "customWordListFile": { "path": "./myWords.txt" }
+        "checkStringTemplates": false
       }
     ]
   },

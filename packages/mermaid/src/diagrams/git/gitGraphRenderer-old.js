@@ -218,18 +218,18 @@ function cloneNode(svg, selector) {
 
 /**
  * @param svg
- * @param commitid
+ * @param commitId
  * @param branches
  * @param direction
  */
-function renderCommitHistory(svg, commitid, branches, direction) {
+function renderCommitHistory(svg, commitId, branches, direction) {
   let commit;
   const numCommits = Object.keys(allCommitsDict).length;
-  if (typeof commitid === 'string') {
+  if (typeof commitId === 'string') {
     do {
-      commit = allCommitsDict[commitid];
+      commit = allCommitsDict[commitId];
       logger.debug('in renderCommitHistory', commit.id, commit.seq);
-      if (svg.select('#node-' + commitid).size() > 0) {
+      if (svg.select('#node-' + commitId).size() > 0) {
         return;
       }
       svg
@@ -291,15 +291,15 @@ function renderCommitHistory(svg, commitid, branches, direction) {
           .attr('class', 'commit-msg')
           .text(', ' + commit.message);
       }
-      commitid = commit.parent;
-    } while (commitid && allCommitsDict[commitid]);
+      commitId = commit.parent;
+    } while (commitId && allCommitsDict[commitId]);
   }
 
-  if (Array.isArray(commitid)) {
-    logger.debug('found merge commmit', commitid);
-    renderCommitHistory(svg, commitid[0], branches, direction);
+  if (Array.isArray(commitId)) {
+    logger.debug('found merge commmit', commitId);
+    renderCommitHistory(svg, commitId[0], branches, direction);
     branchNum++;
-    renderCommitHistory(svg, commitid[1], branches, direction);
+    renderCommitHistory(svg, commitId[1], branches, direction);
     branchNum--;
   }
 }

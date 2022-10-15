@@ -1,5 +1,6 @@
 /*
- * Borrowed with love from from dagrge-d3. Many thanks to cpettitt!
+ // eslint-disable-next-line @cspell/spellchecker
+ * Borrowed with love from from dagre-d3. Many thanks to cpettitt!
  */
 
 import node from './intersect-node.js';

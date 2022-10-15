@@ -1,3 +1,4 @@
+// eslint-disable-next-line @cspell/spellchecker
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
 import svgDraw from './svgDraw';
@@ -261,7 +262,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
 
     // Draw the box with the attached line
     svgDraw.drawTask(diagram, task, conf);
-    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, 300 + 5 * 30); // stopy is the length of the descenders.
+    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, 300 + 5 * 30); // stopY is the length of the descenders.
   }
 };
 

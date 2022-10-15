@@ -60,7 +60,7 @@ export const sanitizeTextOrArray = (
 export const lineBreakRegex = /<br\s*\/?>/gi;
 
 /**
- * Whether or not a text has any linebreaks
+ * Whether or not a text has any line breaks
  *
  * @param {string} text The text to test
  * @returns {boolean} Whether or not the text has breaks
@@ -80,7 +80,7 @@ export const splitBreaks = (text: string): string[] => {
 };
 
 /**
- * Converts placeholders to linebreaks in HTML
+ * Converts placeholders to line breaks in HTML
  *
  * @param {string} s HTML with placeholders
  * @returns {string} HTML with breaks instead of placeholders

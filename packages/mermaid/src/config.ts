@@ -166,7 +166,7 @@ export const sanitize = (options: any) => {
     }
   });
   // Check that there no attempts of xss, there should be no tags at all in the directive
-  // blocking data urls as base64 urls can contain svgs with inline script tags
+  // blocking data urls as base64 urls can contain svg's with inline script tags
   Object.keys(options).forEach((key) => {
     if (typeof options[key] === 'string') {
       if (

@@ -39,6 +39,7 @@ import { join, dirname } from 'path';
 import prettier from 'prettier';
 import { remark } from 'remark';
 // @ts-ignore No typescript declaration file
+// eslint-disable-next-line @cspell/spellchecker
 import flatmap from 'unist-util-flatmap';
 
 // These paths are from the root of the mono-repo, not from the

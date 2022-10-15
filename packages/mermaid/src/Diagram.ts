@@ -79,7 +79,7 @@ export const getDiagramFromText = async (txt: string, parseError?: Function) => 
     if (!loader) {
       throw new Error(`Diagram ${type} not found.`);
     }
-    // Diagram not avaiable, loading it
+    // Diagram not available, loading it
     // const path = getPathForDiagram(type);
     const { diagram } = await loader(); // eslint-disable-line @typescript-eslint/no-explicit-any
     registerDiagram(

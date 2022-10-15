@@ -1,3 +1,4 @@
+// eslint-disable-next-line @cspell/spellchecker
 // @ts-nocheck TODO: fix file
 import { select, selectAll } from 'd3';
 import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';
@@ -204,8 +205,8 @@ export const bounds = {
  * Draws an note in the diagram with the attached line
  *
  * @param {any} elem - The diagram to draw to.
- * @param {{ x: number; y: number; message: string; width: number }} noteModel - Startx: x axis
- *   start position, verticalPos: y axis position, messsage: the message to be shown, width: Set
+ * @param {{ x: number; y: number; message: string; width: number }} noteModel - startX: x axis
+ *   start position, verticalPos: y axis position, message: the message to be shown, width: Set
  *   this with a custom width to override the default configured width.
  */
 const drawNote = function (elem, noteModel) {
@@ -280,7 +281,7 @@ const actorFont = (cnf) => {
  *
  * @param {any} diagram - The parent of the message element
  * @param {any} msgModel - The model containing fields describing a message
- * @returns {number} LineStarty - The Y coordinate at which the message line starts
+ * @returns {number} lineStartY - The Y coordinate at which the message line starts
  */
 const boundMessage = function (diagram, msgModel) {
   bounds.bumpVerticalPos(10);
@@ -587,12 +588,12 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
  * @param {any} _text The text of the diagram
  * @param {any} id The id of the diagram which will be used as a DOM element id¨
  * @param {any} _version Mermaid version from package.json
- * @param {any} diagObj A stanard diagram containing the db and the text and type etc of the diagram
+ * @param {any} diagObj A standard diagram containing the db and the text and type etc of the diagram
  */
 export const draw = function (_text, id, _version, diagObj) {
   const { securityLevel, sequence } = configApi.getConfig();
   conf = sequence;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);

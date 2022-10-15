@@ -310,7 +310,7 @@ const cutPathAtIntersect = (_points, boundryNode) => {
     // const node = clusterDb[edge.toCluster].node;
     log.info('abc88 checking point', point, boundryNode);
 
-    // check if point is inside the boundry rect
+    // check if point is inside the boundary rect
     if (!outsideNode(boundryNode, point) && !isInside) {
       // First point inside the rect found
       // Calc the intersection coord between the point anf the last point outside the rect
@@ -429,7 +429,7 @@ export const insertEdge = function (elem, e, edge, clusterDb, diagramType, graph
     })
     .curve(curve);
 
-  // Contruct stroke classes based on properties
+  // Construct stroke classes based on properties
   let strokeClasses;
   switch (edge.thickness) {
     case 'normal':
