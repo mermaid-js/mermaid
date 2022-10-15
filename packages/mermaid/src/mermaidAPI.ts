@@ -124,42 +124,35 @@ export const decodeEntities = function (text: string): string {
  * });
  * ```
  *
- * @param {string} id The id of the element to be rendered
- * @param {string} text The graph definition
+ * @param {string} id The id for the SVG element (the element to be rendered)
+ * @param {string} text The text for the graph definition
  * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
  *   is called after rendering is finished with the svg code as inparam.
- * @param {Element} container Selector to element in which a div with the graph temporarily will be
- *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
- *   element will be removed when rendering is completed.
+ * @param {Element} svgContainingElement  HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
+ *   inserted. If no svgContainingElement is provided then the SVG element will be appended to the body.
  * @returns {void}
  */
 const render = async function (
   id: string,
   text: string,
   cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
-  container?: Element
+  svgContainingElement?: Element
 ): Promise<void> {
   addDiagrams();
 
   configApi.reset();
+  const config = configApi.getConfig();
+  log.debug(config);
+
+  // Check the maximum allowed text size
+  if (text.length > config.maxTextSize!) {
+    text = MAX_TEXTLENGTH_EXCEEDED_MSG;
+  }
 
   // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
 
-  const graphInit = utils.detectInit(text);
-  if (graphInit) {
-    directiveSanitizer(graphInit);
-    configApi.addDirective(graphInit);
-  }
-  const cnf = configApi.getConfig();
-
-  log.debug(cnf);
-
-  // Check the maximum allowed text size
-  if (text.length > cnf.maxTextSize!) {
-    text = MAX_TEXTLENGTH_EXCEEDED_MSG;
-  }
-
+  const idSelector = '#' + id;
   const iFrameID = 'i' + id;
   const iFrameID_selector = '#' + iFrameID;
   const enclosingDivID = 'd' + id;
@@ -170,17 +163,17 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Define the root d3 node
 
-  // In regular execution the container will be the div with a mermaid class
-  if (typeof container !== 'undefined') {
-    // A container was provided by the caller. Clear the inner HTML if there is any
-    if (container) {
-      container.innerHTML = '';
+  // In regular execution the svgContainingElement will be the element with a mermaid class
+  if (typeof svgContainingElement !== 'undefined') {
+    // A svgContainingElement was provided by the caller. Clear the inner HTML if there is any
+    if (svgContainingElement) {
+      svgContainingElement.innerHTML = '';
     }
 
-    if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
+    if (config.securityLevel === SECURITY_LVL_SANDBOX) {
       // IF we are in sandboxed mode, we do everyting mermaid related
       // in a sandboxed div
-      const iframe = select(container)
+      const iframe = select(svgContainingElement)
         .append('iframe')
         .attr('id', iFrameID)
         .attr('style', 'width: 100%; height: 100%;')
@@ -189,13 +182,13 @@ const render = async function (
       root = select(iframe.nodes()[0]!.contentDocument!.body);
       root.node().style.margin = 0;
     } else {
-      root = select(container);
+      root = select(svgContainingElement);
     }
 
     root
       .append('div')
       .attr('id', enclosingDivID)
-      .attr('style', 'font-family: ' + cnf.fontFamily)
+      .attr('style', 'font-family: ' + config.fontFamily)
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
@@ -203,7 +196,7 @@ const render = async function (
       .attr('xmlns:xlink', XMLNS_XLINK_STD)
       .append('g');
   } else {
-    // No container was provided
+    // No svgContainingElement was provided
     // If there is an existing element with the id, we remove it
     // this likely a previously rendered diagram
     const existingSvg = document.getElementById(id);
@@ -211,12 +204,12 @@ const render = async function (
       existingSvg.remove();
     }
 
-    // Remove previous tpm element if it exists
+    // Remove previous temporary element if it exists
     let element;
-    if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
+    if (config.securityLevel === SECURITY_LVL_SANDBOX) {
       element = document.querySelector(iFrameID_selector);
     } else {
-      element = document.querySelector('#d' + id);
+      element = document.querySelector(enclosingDivID_selector);
     }
 
     if (element) {
@@ -226,7 +219,7 @@ const render = async function (
     // Add the tmp div used for rendering with the id `d${id}`
     // d+id it will contain a svg with the id "id"
 
-    if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
+    if (config.securityLevel === SECURITY_LVL_SANDBOX) {
       // IF we are in sandboxed mode, we do everyting mermaid related
       // in a sandboxed div
       const iframe = select('body')
@@ -263,6 +256,14 @@ const render = async function (
   // Important that we do not create the diagram until after the directives have been included
   let diag;
   let parseEncounteredException;
+
+  // Add Directives (Must do this before creating the diagram.)
+  const graphInit = utils.detectInit(text);
+  if (graphInit) {
+    directiveSanitizer(graphInit);
+    configApi.addDirective(graphInit);
+  }
+
   try {
     // diag = new Diagram(text);
     diag = await getDiagramFromText(text);
@@ -286,22 +287,22 @@ const render = async function (
   // user provided theme CSS
   // If you add more configuration driven data into the user styles make sure that the value is
   // sanitized bye the santiizeCSS function
-  if (cnf.themeCSS !== undefined) {
-    userStyles += `\n${cnf.themeCSS}`;
+  if (config.themeCSS !== undefined) {
+    userStyles += `\n${config.themeCSS}`;
   }
   // user provided theme CSS
-  if (cnf.fontFamily !== undefined) {
-    userStyles += `\n:root { --mermaid-font-family: ${cnf.fontFamily}}`;
+  if (config.fontFamily !== undefined) {
+    userStyles += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
   }
   // user provided theme CSS
-  if (cnf.altFontFamily !== undefined) {
-    userStyles += `\n:root { --mermaid-alt-font-family: ${cnf.altFontFamily}}`;
+  if (config.altFontFamily !== undefined) {
+    userStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
   }
 
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     const classes: any = flowRenderer.getClasses(text, diag);
-    const htmlLabels = cnf.htmlLabels || cnf.flowchart?.htmlLabels;
+    const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels;
     for (const className in classes) {
       if (htmlLabels) {
         userStyles += `\n.${className} > * { ${classes[className].styles.join(
@@ -337,10 +338,10 @@ const render = async function (
 
   const stylis = (selector: string, styles: string) =>
     serialize(compile(`${selector}{${styles}}`), stringify);
-  const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
+  const rules = stylis(`${idSelector}`, getStyles(graphType, userStyles, config.themeVariables));
 
   const style1 = document.createElement('style');
-  style1.innerHTML = `#${id} ` + rules;
+  style1.innerHTML = `${idSelector} ` + rules;
   svg.insertBefore(style1, firstChild);
 
   // -------------------------------------------------------------------------------
@@ -359,8 +360,8 @@ const render = async function (
   // Fix for when the base tag is used
   let svgCode = root.select(enclosingDivID_selector).node().innerHTML;
 
-  log.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
-  if (!evaluate(cnf.arrowMarkerAbsolute) && cnf.securityLevel !== SECURITY_LVL_SANDBOX) {
+  log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
+  if (!evaluate(config.arrowMarkerAbsolute) && config.securityLevel !== SECURITY_LVL_SANDBOX) {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 
@@ -371,7 +372,7 @@ const render = async function (
 
   // -------------------------------------------------------------------------------
   // Inser svgCode into an iFrame if we are sandboxed
-  if (cnf.securityLevel === SECURITY_LVL_SANDBOX) {
+  if (config.securityLevel === SECURITY_LVL_SANDBOX) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     const width = IFRAME_WIDTH;
     let height = IFRAME_HEIGHT;
@@ -384,7 +385,7 @@ const render = async function (
   ${IFRAME_NOT_SUPPORTED_MSG}
 </iframe>`;
   } else {
-    if (cnf.securityLevel !== SECURITY_LVL_LOOSE) {
+    if (config.securityLevel !== SECURITY_LVL_LOOSE) {
       // -------------------------------------------------------------------------------
       // Sanitize the svgCode using DOMPurify
       svgCode = DOMPurify.sanitize(svgCode, {
@@ -420,7 +421,7 @@ const render = async function (
   // -------------------------------------------------------------------------------
   // Remove the temporary element if appropriate
   const tmpElementSelector =
-    cnf.securityLevel === SECURITY_LVL_SANDBOX ? iFrameID_selector : enclosingDivID_selector;
+    config.securityLevel === SECURITY_LVL_SANDBOX ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
   if (node && 'remove' in node) {
     node.remove();
