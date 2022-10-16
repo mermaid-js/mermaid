@@ -1,4 +1,4 @@
-/** Created by knut on 15-01-14. */
+/** Created by knut on 23-07-2022. */
 import { sanitizeText, getConfig, log } from './mermaidUtils';
 import type { DetailedError } from 'mermaid/dist/utils';
 

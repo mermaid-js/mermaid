@@ -1,4 +1,4 @@
-/** Created by knut on 14-12-11. */
+/** Created by knut on 23-07-2022. */
 import { select } from 'd3';
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
 import svgDraw from './svgDraw';
