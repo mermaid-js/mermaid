@@ -285,6 +285,7 @@ importers:
       cytoscape-cose-bilkent: ^4.1.0
       cytoscape-fcose: ^2.1.0
       d3: ^7.0.0
+      mermaid: workspace:*
       non-layered-tidy-tree-layout: ^2.0.2
       rimraf: ^3.0.2
     dependencies:
@@ -296,6 +297,7 @@ importers:
       non-layered-tidy-tree-layout: 2.0.2
     devDependencies:
       concurrently: 7.4.0
+      mermaid: link:../mermaid
       rimraf: 3.0.2
 
 packages:
