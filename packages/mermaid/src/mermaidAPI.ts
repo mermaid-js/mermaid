@@ -86,10 +86,10 @@ function parse(text: string, parseError?: ParseErrorFunction): boolean {
 export const encodeEntities = function (text: string): string {
   let txt = text;
 
-  txt = txt.replace(/style.*:\S*#.*;/g, function (s) {
+  txt = txt.replace(/style.*:\S*#.*;/g, function (s): string {
     return s.substring(0, s.length - 1);
   });
-  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s) {
+  txt = txt.replace(/classDef.*:\S*#.*;/g, function (s): string {
     return s.substring(0, s.length - 1);
   });
 
@@ -320,6 +320,31 @@ function sandboxedIframe(parentNode: D3Element, iFrameId: string): D3Element {
 }
 
 /**
+ * Remove any existing elements from the given document
+ *
+ * @param {Document} doc - the document to removed elements from
+ * @param {string} isSandboxed - whether or not we are in sandboxed mode
+ * @param {string} id - id for any existing SVG element
+ * @param {string} divSelector - selector for any existing enclosing div element
+ * @param {string} iFrameSelector - selector for any existing iFrame element
+ */
+export const removeExistingElements = (
+  doc: Document,
+  isSandboxed: boolean,
+  id: string,
+  divSelector: string,
+  iFrameSelector: string
+) => {
+  // Remove existing SVG element if it exists
+  const existingSvg = doc.getElementById(id);
+  if (existingSvg) existingSvg.remove();
+
+  // Remove previous temporary element if it exists
+  const element = isSandboxed ? doc.querySelector(iFrameSelector) : doc.querySelector(divSelector);
+  if (element) element.remove();
+};
+
+/**
  * Function that renders an svg with a graph from a chart definition. Usage example below.
  *
  * ```javascript
@@ -384,8 +409,8 @@ const render = async function (
 
   // -------------------------------------------------------------------------------
   // Define the root d3 node
-
   // In regular execution the svgContainingElement will be the element with a mermaid class
+
   if (typeof svgContainingElement !== 'undefined') {
     if (svgContainingElement) svgContainingElement.innerHTML = '';
 
@@ -400,19 +425,9 @@ const render = async function (
     appendDivSvgG(root, id, enclosingDivID, `font-family: ${fontFamily}`, XMLNS_XLINK_STD);
   } else {
     // No svgContainingElement was provided
-    // If there is an existing element with the id, we remove it
-    // this likely a previously rendered diagram
-    const existingSvg = document.getElementById(id);
-    if (existingSvg) existingSvg.remove();
 
-    // Remove previous temporary element if it exists
-    let element;
-    if (isSandboxed) {
-      element = document.querySelector(iFrameID_selector);
-    } else {
-      element = document.querySelector(enclosingDivID_selector);
-    }
-    if (element) element.remove();
+    // If there is an existing element with the id, we remove it. This likely a previously rendered diagram
+    removeExistingElements(document, isSandboxed, id, iFrameID_selector, enclosingDivID_selector);
 
     // Add the temporary div used for rendering with the enclosingDivID.
     // This temporary div will contain a svg with the id == id
@@ -420,7 +435,6 @@ const render = async function (
     if (isSandboxed) {
       // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed) iFrame
       const iframe = sandboxedIframe(select('body'), iFrameID);
-
       root = select(iframe.nodes()[0]!.contentDocument!.body);
       root.node().style.margin = 0;
     } else root = select('body');

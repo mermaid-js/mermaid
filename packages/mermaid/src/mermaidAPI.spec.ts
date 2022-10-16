@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 import mermaid from './mermaid';
 import { MermaidConfig } from './config.type';
 
-import mermaidAPI from './mermaidAPI';
+import mermaidAPI, { removeExistingElements } from './mermaidAPI';
 import {
   encodeEntities,
   decodeEntities,
@@ -451,6 +451,76 @@ describe('when using mermaidAPI and ', function () {
       expect(compile).toHaveBeenCalled();
       expect(serialize).toHaveBeenCalled();
       expect(result).toEqual('stylis serialized css');
+    });
+  });
+
+  describe('removeExistingElements', () => {
+    const svgId = 'svgId';
+    const tempDivId = 'tempDivId';
+    const tempIframeId = 'tempIFrameId';
+    const givenDocument = new Document();
+    const rootHtml = givenDocument.createElement('html');
+    givenDocument.append(rootHtml);
+
+    const svgElement = givenDocument.createElement('svg'); // doesn't matter what the tag is in the test
+    svgElement.id = svgId;
+    const tempDivElement = givenDocument.createElement('div'); // doesn't matter what the tag is in the test
+    tempDivElement.id = tempDivId;
+    const tempiFrameElement = givenDocument.createElement('div'); // doesn't matter what the tag is in the test
+    tempiFrameElement.id = tempIframeId;
+
+    it('removes an existing element with given id', () => {
+      rootHtml.appendChild(svgElement);
+      expect(givenDocument.getElementById(svgElement.id)).toEqual(svgElement);
+      removeExistingElements(givenDocument, false, svgId, tempDivId, tempIframeId);
+      expect(givenDocument.getElementById(svgElement.id)).toBeNull();
+    });
+
+    describe('is in sandboxed mode', () => {
+      const inSandboxedMode = true;
+
+      it('removes an existing element with the given iFrame selector', () => {
+        tempiFrameElement.append(svgElement);
+        rootHtml.append(tempiFrameElement);
+        rootHtml.append(tempDivElement);
+
+        expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
+        expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
+        expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
+        removeExistingElements(
+          givenDocument,
+          inSandboxedMode,
+          svgId,
+          '#' + tempDivId,
+          '#' + tempIframeId
+        );
+        expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
+        expect(givenDocument.getElementById(tempIframeId)).toBeNull();
+        expect(givenDocument.getElementById(svgId)).toBeNull();
+      });
+    });
+    describe('not in sandboxed mode', () => {
+      const inSandboxedMode = false;
+
+      it('removes an existing element with the given enclosing div selector', () => {
+        tempDivElement.append(svgElement);
+        rootHtml.append(tempDivElement);
+        rootHtml.append(tempiFrameElement);
+
+        expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
+        expect(givenDocument.getElementById(tempDivId)).toEqual(tempDivElement);
+        expect(givenDocument.getElementById(svgId)).toEqual(svgElement);
+        removeExistingElements(
+          givenDocument,
+          inSandboxedMode,
+          svgId,
+          '#' + tempDivId,
+          '#' + tempIframeId
+        );
+        expect(givenDocument.getElementById(tempIframeId)).toEqual(tempiFrameElement);
+        expect(givenDocument.getElementById(tempDivId)).toBeNull();
+        expect(givenDocument.getElementById(svgId)).toBeNull();
+      });
     });
   });
 
