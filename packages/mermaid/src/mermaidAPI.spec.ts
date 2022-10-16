@@ -41,7 +41,7 @@ import { MockedD3 } from './tests/MockedD3';
 
 // -------------------------------------------------------------------------------------
 
-describe('when using mermaidAPI and ', function () {
+describe('mermaidAPI', function () {
   describe('encodeEntities', () => {
     it('removes the ending ; from style [text1]:[optional word]#[text2]; with ', () => {
       const text = 'style this; is ; everything :something#not-nothing; and this too;';
@@ -524,13 +524,13 @@ describe('when using mermaidAPI and ', function () {
     });
   });
 
-  describe('doing initialize ', function () {
+  describe('initialize', function () {
     beforeEach(function () {
       document.body.innerHTML = '';
       mermaidAPI.globalReset();
     });
 
-    it('should copy a literal into the configuration', function () {
+    it('copies a literal into the configuration', function () {
       const orgConfig: any = mermaidAPI.getConfig();
       expect(orgConfig.testLiteral).toBe(undefined);
 
@@ -542,7 +542,7 @@ describe('when using mermaidAPI and ', function () {
       expect(config.testLiteral).toBe(true);
     });
 
-    it('should copy a an object into the configuration', function () {
+    it('copies a an object into the configuration', function () {
       const orgConfig: any = mermaidAPI.getConfig();
       expect(orgConfig.testObject).toBe(undefined);
 
@@ -568,7 +568,7 @@ describe('when using mermaidAPI and ', function () {
       expect(config.testObject.test3).toBe(true);
     });
 
-    it('should reset mermaid config to global defaults', function () {
+    it('resets mermaid config to global defaults', function () {
       const config = {
         logLevel: 0,
         securityLevel: 'loose',
@@ -585,7 +585,7 @@ describe('when using mermaidAPI and ', function () {
       expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
     });
 
-    it('should prevent changes to site defaults (sneaky)', function () {
+    it('prevents changes to site defaults (sneaky)', function () {
       const config: any = {
         logLevel: 0,
       };
@@ -604,7 +604,7 @@ describe('when using mermaidAPI and ', function () {
       expect(mermaidAPI.getSiteConfig()).toEqual(siteConfig);
       expect(mermaidAPI.getConfig()).toEqual(siteConfig);
     });
-    it('should prevent clobbering global defaults (direct)', function () {
+    it('prevents clobbering global defaults (direct)', function () {
       const config = assignWithDepth({}, mermaidAPI.defaultConfig);
       assignWithDepth(config, { logLevel: 0 });
 
@@ -620,7 +620,7 @@ describe('when using mermaidAPI and ', function () {
       );
       expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
     });
-    it('should prevent changes to global defaults (direct)', function () {
+    it('prevents changes to global defaults (direct)', function () {
       let error: any = { message: '' };
       try {
         mermaidAPI.defaultConfig['logLevel'] = 0;
@@ -632,7 +632,7 @@ describe('when using mermaidAPI and ', function () {
       );
       expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
     });
-    it('should prevent sneaky changes to global defaults (assignWithDepth)', function () {
+    it('prevents sneaky changes to global defaults (assignWithDepth)', function () {
       const config = {
         logLevel: 0,
       };
@@ -649,22 +649,22 @@ describe('when using mermaidAPI and ', function () {
     });
   });
   describe('dompurify config', function () {
-    it('should allow dompurify config to be set', function () {
+    it('allows dompurify config to be set', function () {
       mermaidAPI.initialize({ dompurifyConfig: { ADD_ATTR: ['onclick'] } });
 
       expect(mermaidAPI!.getConfig()!.dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
     });
   });
-  describe('test mermaidApi.parse() for checking validity of input ', function () {
+  describe('parse', function () {
     mermaid.parseError = undefined; // ensure it parseError undefined
-    it('should throw for an invalid definition (with no mermaid.parseError() defined)', function () {
+    it('throws for an invalid definition (with no mermaid.parseError() defined)', function () {
       expect(mermaid.parseError).toEqual(undefined);
       expect(() => mermaidAPI.parse('this is not a mermaid diagram definition')).toThrow();
     });
-    it('should not throw for a valid definition', function () {
+    it('does not throw for a valid definition', function () {
       expect(() => mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).not.toThrow();
     });
-    it('it should return false for invalid definition WITH a parseError() callback defined', function () {
+    it('returns false for invalid definition WITH a parseError() callback defined', function () {
       let parseErrorWasCalled = false;
       // also test setParseErrorHandler() call working to set mermaid.parseError
       expect(
@@ -674,7 +674,7 @@ describe('when using mermaidAPI and ', function () {
       ).toEqual(false);
       expect(parseErrorWasCalled).toEqual(true);
     });
-    it('should return true for valid definition', function () {
+    it('returns true for valid definition', function () {
       expect(mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).toEqual(true);
     });
   });
