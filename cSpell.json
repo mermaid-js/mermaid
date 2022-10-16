@@ -52,7 +52,13 @@
     "Ashish",
     "bbox",
     "techn",
-    "cytoscape"
+    "cytoscape",
+    "Lucida",
+    "Bilkent",
+    "cpettitt",
+    "antiscript",
+    "ts-nocheck",
+    "setupGraphViewbox"
   ],
   "patterns": [
     {

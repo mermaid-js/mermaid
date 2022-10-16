@@ -130,7 +130,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
-    diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility autonumbers
+    diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(false);
   });
   it('should show sequence numbers when autonumber is enabled', function () {
@@ -142,7 +142,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str);
-    diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility autonumbers
+    diagram.renderer.draw(str, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(true);
   });
   it('should handle a sequenceDiagram definition with a title:', function () {
@@ -1871,7 +1871,7 @@ Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
     mermaidAPI.parse(str1, diagram);
-    diagram.renderer.draw(str1, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility autonumbers
+    diagram.renderer.draw(str1, 'tst', '1.2.3', diagram); // needs to be rendered for the correct value of visibility auto numbers
     expect(diagram.db.showSequenceNumbers()).toBe(true);
 
     const str2 = `
