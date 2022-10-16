@@ -45,17 +45,26 @@ const XMLNS_XLINK_STD = 'http://www.w3.org/1999/xlink';
 
 // ------------------------------
 // iFrame
-const SANDBOX_IFRAME_STYLE = 'width: 100%; height: 100%;';
 const IFRAME_WIDTH = '100%';
 const IFRAME_HEIGHT = '100%';
 const IFRAME_STYLES = 'border:0;margin:0;';
 const IFRAME_BODY_STYLE = 'margin:0';
 const IFRAME_SANDBOX_OPTS = 'allow-top-navigation-by-user-activation allow-popups';
-const IFRAME_NOT_SUPPORTED_MSG = 'The “iframe” tag is not supported by your browser.';
+const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your browser.';
 
 // DOMPurify settings for svgCode
 const DOMPURE_TAGS = ['foreignobject'];
 const DOMPURE_ATTR = ['dominant-baseline'];
+
+// This is what is returned from getClasses(...) methods.
+// It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
+// It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
+// @ts-ignore This is an alias for a js construct used in diagrams.
+type DiagramStyleClassDef = any;
+
+// This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
+// @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
+type D3Element = any;
 
 // ----------------------------------------------------------------------------
 
@@ -121,6 +130,174 @@ export const decodeEntities = function (text: string): string {
   return txt;
 };
 
+// append !important; to each cssClass followed by a final !important, all enclosed in { }
+//
+/**
+ * Create a CSS style that starts with the given class name, then the element,
+ * with an enclosing block that has each of the cssClasses followed by !important;
+ * @param {string} cssClass
+ * @param {string} element
+ * @param {string[]} cssClasses
+ * @returns {string}
+ */
+export const cssImportantStyles = (
+  cssClass: string,
+  element: string,
+  cssClasses: string[] = []
+): string => {
+  return `\n.${cssClass} ${element} { ${cssClasses.join(' !important; ')} !important; }`;
+};
+
+/**
+ * Create the user styles
+ *
+ * @param {MermaidConfig} config
+ * @param {string} graphType
+ * @param {null | DiagramStyleClassDef[]} classDefs - the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...)
+ * @returns {string} the string with all the user styles
+ */
+export const createCssStyles = (
+  config: MermaidConfig,
+  graphType: string,
+  classDefs: DiagramStyleClassDef[] | null | undefined
+): string => {
+  let cssStyles = '';
+
+  // user provided theme CSS info
+  // If you add more configuration driven data into the user styles make sure that the value is
+  // sanitized by the santizeCSS function  @todo TODO where is this method?  what should be used to replace it?  refactor so that it's always sanitized
+  if (config.themeCSS !== undefined) cssStyles += `\n${config.themeCSS}`;
+
+  if (config.fontFamily !== undefined)
+    cssStyles += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+
+  if (config.altFontFamily !== undefined)
+    cssStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
+
+  // classDefs defined in the diagram text
+  if (classDefs !== undefined && classDefs !== null && classDefs.length > 0) {
+    if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
+      const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels;
+
+      const cssHtmlElements = ['> *', 'span']; // @todo TODO make a constant
+      const cssShapeElements = ['rect', 'polygon', 'ellipse', 'circle']; // @todo TODO make a constant
+
+      const cssElements = htmlLabels ? cssHtmlElements : cssShapeElements;
+
+      // create the CSS styles needed for each styleClass definition and css element
+      for (const classId in classDefs) {
+        const styleClassDef = classDefs[classId];
+        // create the css styles for each cssElement and the styles (only if there are styles)
+        if (styleClassDef['styles'] && styleClassDef['styles'].length > 0) {
+          cssElements.forEach((cssElement) => {
+            cssStyles += cssImportantStyles(
+              styleClassDef['id'],
+              cssElement,
+              styleClassDef['styles']
+            );
+          });
+        }
+        // create the css styles for the tspan element and the text styles (only if there are textStyles)
+        if (styleClassDef['textStyles'] && styleClassDef['textStyles'].length > 0) {
+          cssStyles += cssImportantStyles(
+            styleClassDef['id'],
+            'tspan',
+            styleClassDef['textStyles']
+          );
+        }
+      }
+    }
+  }
+  return cssStyles;
+};
+
+export const cleanUpSvgCode = (
+  svgCode = '',
+  inSandboxMode: boolean,
+  useArrowMarkerUrls: boolean
+): string => {
+  let cleanedUpSvg = svgCode;
+
+  // Replace marker-end urls with just the # anchor (remove the preceding part of the URL)
+  if (!useArrowMarkerUrls && !inSandboxMode) {
+    cleanedUpSvg = cleanedUpSvg.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#');
+  }
+
+  cleanedUpSvg = decodeEntities(cleanedUpSvg);
+
+  // replace old br tags with newer style
+  cleanedUpSvg = cleanedUpSvg.replace(/<br>/g, '<br/>');
+
+  return cleanedUpSvg;
+};
+
+/**
+ * Put the svgCode into an iFrame. Return the iFrame code
+ *
+ * @param {string} svgCode
+ * @param {D3Element} svgElement - the d3 node that has the current svgElement so we can get the height from it
+ * @returns {string} - the code with the iFrame that now contains the svgCode
+ * @todo  TODO replace btoa(). Replace with  buf.toString('base64')?
+ */
+export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
+  let height = IFRAME_HEIGHT; // default iFrame height
+  if (svgElement) height = svgElement.viewBox.baseVal.height + 'px';
+  const base64encodedSrc = btoa('<body style="' + IFRAME_BODY_STYLE + '">' + svgCode + '</body>');
+  return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
+  ${IFRAME_NOT_SUPPORTED_MSG}
+</iframe>`;
+};
+
+/**
+ * Append an enclosing div, then svg, then g (group) to the d3 parentRoot. Set attributes.
+ * Only set the style attribute on the enclosing div if divStyle is given.
+ * Only set the xmlns:xlink attribute on svg if svgXlink is given.
+ * Return the last node appended
+ *
+ * @param {D3Element} parentRoot - the d3 node to append things to
+ * @param {string} id
+ * @param enclosingDivId
+ * @param {string} divStyle
+ * @param {string} svgXlink
+ * @returns {D3Element} - returns the parentRoot that had nodes appended
+ */
+export const appendDivSvgG = (
+  parentRoot: D3Element,
+  id: string,
+  enclosingDivId: string,
+  divStyle?: string,
+  svgXlink?: string
+): D3Element => {
+  const enclosingDiv = parentRoot.append('div');
+  enclosingDiv.attr('id', enclosingDivId);
+  if (divStyle) enclosingDiv.attr('style', divStyle);
+
+  const svgNode = enclosingDiv
+    .append('svg')
+    .attr('id', id)
+    .attr('width', '100%')
+    .attr('xmlns', XMLNS_SVG_STD);
+  if (svgXlink) svgNode.attr('xmlns:xlink', svgXlink);
+
+  svgNode.append('g');
+  return parentRoot;
+};
+
+/** Append an iFrame node to the given parentNode and set the id, style, and 'sandbox' attributes
+ *  Return the appended iframe d3 node
+ *
+ * @param {D3Element} parentNode
+ * @param {string} iFrameId - id to use for the iFrame
+ * @returns {D3Element} the appended iframe d3 node
+ */
+function sandboxedIframe(parentNode: D3Element, iFrameId: string): D3Element {
+  return parentNode
+    .append('iframe')
+    .attr('id', iFrameId)
+    .attr('style', 'width: 100%; height: 100%;')
+    .attr('sandbox', '');
+}
+
 /**
  * Function that renders an svg with a graph from a chart definition. Usage example below.
  *
@@ -154,13 +331,19 @@ const render = async function (
   addDiagrams();
 
   configApi.reset();
+
+  // Add Directives. Must do this before getting the config and before creating the diagram.
+  const graphInit = utils.detectInit(text);
+  if (graphInit) {
+    directiveSanitizer(graphInit);
+    configApi.addDirective(graphInit);
+  }
+
   const config = configApi.getConfig();
   log.debug(config);
 
   // Check the maximum allowed text size
-  if (text.length > config.maxTextSize!) {
-    text = MAX_TEXTLENGTH_EXCEEDED_MSG;
-  }
+  if (text.length > config.maxTextSize!) text = MAX_TEXTLENGTH_EXCEEDED_MSG;
 
   // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
@@ -183,44 +366,23 @@ const render = async function (
 
   // In regular execution the svgContainingElement will be the element with a mermaid class
   if (typeof svgContainingElement !== 'undefined') {
-    // A svgContainingElement was provided by the caller. Clear the inner HTML if there is any
-    if (svgContainingElement) {
-      svgContainingElement.innerHTML = '';
-    }
+    if (svgContainingElement) svgContainingElement.innerHTML = '';
 
     if (isSandboxed) {
-      // IF we are in sandboxed mode, we do everyting mermaid related
-      // in a sandboxed div
-      const iframe = select(svgContainingElement)
-        .append('iframe')
-        .attr('id', iFrameID)
-        .attr('style', SANDBOX_IFRAME_STYLE)
-        .attr('sandbox', '');
-      // const iframeBody = ;
+      // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed )iFrame
+      const iframe = sandboxedIframe(select(svgContainingElement), iFrameID);
       root = select(iframe.nodes()[0]!.contentDocument!.body);
       root.node().style.margin = 0;
     } else {
       root = select(svgContainingElement);
     }
-
-    root
-      .append('div')
-      .attr('id', enclosingDivID)
-      .attr('style', 'font-family: ' + fontFamily)
-      .append('svg')
-      .attr('id', id)
-      .attr('width', '100%')
-      .attr('xmlns', XMLNS_SVG_STD)
-      .attr('xmlns:xlink', XMLNS_XLINK_STD)
-      .append('g');
+    appendDivSvgG(root, id, enclosingDivID, `font-family: ${fontFamily}`, XMLNS_XLINK_STD);
   } else {
     // No svgContainingElement was provided
     // If there is an existing element with the id, we remove it
     // this likely a previously rendered diagram
     const existingSvg = document.getElementById(id);
-    if (existingSvg) {
-      existingSvg.remove();
-    }
+    if (existingSvg) existingSvg.remove();
 
     // Remove previous temporary element if it exists
     let element;
@@ -229,42 +391,22 @@ const render = async function (
     } else {
       element = document.querySelector(enclosingDivID_selector);
     }
+    if (element) element.remove();
 
-    if (element) {
-      element.remove();
-    }
-
-    // Add the tmp div used for rendering with the id `d${id}`
-    // d+id it will contain a svg with the id "id"
+    // Add the temporary div used for rendering with the enclosingDivID.
+    // This temporary div will contain a svg with the id == id
 
     if (isSandboxed) {
-      // IF we are in sandboxed mode, we do everything mermaid relate in a (sandboxed) iFrame
-      const iframe = select('body')
-        .append('iframe')
-        .attr('id', iFrameID)
-        .attr('style', SANDBOX_IFRAME_STYLE)
-        .attr('sandbox', '');
+      // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed) iFrame
+      const iframe = sandboxedIframe(select('body'), iFrameID);
 
       root = select(iframe.nodes()[0]!.contentDocument!.body);
       root.node().style.margin = 0;
-    } else {
-      root = select('body');
-    }
+    } else root = select('body');
 
-    // This is the temporary div
-    root
-      .append('div')
-      .attr('id', enclosingDivID)
-      // this is the seed of the svg to be rendered
-      .append('svg')
-      .attr('id', id)
-      .attr('width', '100%')
-      .attr('xmlns', XMLNS_SVG_STD)
-      .append('g');
+    appendDivSvgG(root, id, enclosingDivID);
   }
 
-  // -------------------------------------------------------------------------------
-  //
   text = encodeEntities(text);
 
   // -------------------------------------------------------------------------------
@@ -274,13 +416,6 @@ const render = async function (
   let diag;
   let parseEncounteredException;
 
-  // Add Directives (Must do this before creating the diagram.)
-  const graphInit = utils.detectInit(text);
-  if (graphInit) {
-    directiveSanitizer(graphInit);
-    configApi.addDirective(graphInit);
-  }
-
   try {
     // diag = new Diagram(text);
     diag = await getDiagramFromText(text);
@@ -289,7 +424,7 @@ const render = async function (
     parseEncounteredException = error;
   }
 
-  // Get the tmp element containing the the svg
+  // Get the tmp div element containing the svg
   const element = root.select(enclosingDivID_selector).node();
   const graphType = diag.type;
 
@@ -300,62 +435,12 @@ const render = async function (
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
 
-  let userStyles = '';
-  // user provided theme CSS
-  // If you add more configuration driven data into the user styles make sure that the value is
-  // sanitized bye the santiizeCSS function
-  if (config.themeCSS !== undefined) {
-    userStyles += `\n${config.themeCSS}`;
-  }
-  // user provided theme CSS
-  if (fontFamily !== undefined) {
-    userStyles += `\n:root { --mermaid-font-family: ${fontFamily}}`;
-  }
-  // user provided theme CSS
-  if (config.altFontFamily !== undefined) {
-    userStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
-  }
-
-  // classDef
-  if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    const classes: any = flowRenderer.getClasses(text, diag);
-    const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels;
-    for (const className in classes) {
-      if (htmlLabels) {
-        userStyles += `\n.${className} > * { ${classes[className].styles.join(
-          ' !important; '
-        )} !important; }`;
-        userStyles += `\n.${className} span { ${classes[className].styles.join(
-          ' !important; '
-        )} !important; }`;
-      } else {
-        userStyles += `\n.${className} path { ${classes[className].styles.join(
-          ' !important; '
-        )} !important; }`;
-        userStyles += `\n.${className} rect { ${classes[className].styles.join(
-          ' !important; '
-        )} !important; }`;
-        userStyles += `\n.${className} polygon { ${classes[className].styles.join(
-          ' !important; '
-        )} !important; }`;
-        userStyles += `\n.${className} ellipse { ${classes[className].styles.join(
-          ' !important; '
-        )} !important; }`;
-        userStyles += `\n.${className} circle { ${classes[className].styles.join(
-          ' !important; '
-        )} !important; }`;
-        if (classes[className].textStyles) {
-          userStyles += `\n.${className} tspan { ${classes[className].textStyles.join(
-            ' !important; '
-          )} !important; }`;
-        }
-      }
-    }
-  }
+  const userDefClasses: any = flowRenderer.getClasses(text, diag);
+  const cssStyles = createCssStyles(config, graphType, userDefClasses);
 
   const stylis = (selector: string, styles: string) =>
     serialize(compile(`${selector}{${styles}}`), stringify);
-  const rules = stylis(`${idSelector}`, getStyles(graphType, userStyles, config.themeVariables));
+  const rules = stylis(`${idSelector}`, getStyles(graphType, cssStyles, config.themeVariables));
 
   const style1 = document.createElement('style');
   style1.innerHTML = `${idSelector} ` + rules;
@@ -378,35 +463,13 @@ const render = async function (
   let svgCode = root.select(enclosingDivID_selector).node().innerHTML;
 
   log.debug('config.arrowMarkerAbsolute', config.arrowMarkerAbsolute);
-  if (!evaluate(config.arrowMarkerAbsolute) && config.securityLevel !== SECURITY_LVL_SANDBOX) {
-    svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
-  }
-
-  svgCode = decodeEntities(svgCode);
-
-  // Fix for when the br tag is used
-  svgCode = svgCode.replace(/<br>/g, '<br/>');
-
-  // -------------------------------------------------------------------------------
+  svgCode = cleanUpSvgCode(svgCode, isSandboxed, evaluate(config.arrowMarkerAbsolute));
 
   if (isSandboxed) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
-    const width = IFRAME_WIDTH;
-    let height = IFRAME_HEIGHT;
-
-    // set the svg element height to px
-    if (svgEl) {
-      height = svgEl.viewBox.baseVal.height + 'px';
-    }
-    // Insert iFrame code into svg code
-    svgCode = `<iframe style="width:${width};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${btoa(
-      `<body style="${IFRAME_BODY_STYLE}">` + svgCode + '</body>'
-    )}" sandbox="${IFRAME_SANDBOX_OPTS}">
-  ${IFRAME_NOT_SUPPORTED_MSG}
-</iframe>`;
+    svgCode = putIntoIFrame(svgCode, svgEl);
   } else {
     if (isLooseSecurityLevel) {
-      // -------------------------------------------------------------------------------
       // Sanitize the svgCode using DOMPurify
       svgCode = DOMPurify.sanitize(svgCode, {
         ADD_TAGS: DOMPURE_TAGS,
@@ -433,22 +496,17 @@ const render = async function (
       default:
         cb(svgCode);
     }
-  } else {
-    log.debug('CB = undefined!');
-  }
+  } else log.debug('CB = undefined!');
+
   attachFunctions();
 
   // -------------------------------------------------------------------------------
   // Remove the temporary element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
-  if (node && 'remove' in node) {
-    node.remove();
-  }
+  if (node && 'remove' in node) node.remove();
 
-  if (parseEncounteredException) {
-    throw parseEncounteredException;
-  }
+  if (parseEncounteredException) throw parseEncounteredException;
 
   return svgCode;
 };

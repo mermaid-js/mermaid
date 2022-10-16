@@ -1,9 +1,38 @@
 'use strict';
+import { vi } from 'vitest';
+
 import mermaid from './mermaid';
 import mermaidAPI from './mermaidAPI';
-import { encodeEntities, decodeEntities } from './mermaidAPI';
+import {
+  encodeEntities,
+  decodeEntities,
+  createCssStyles,
+  appendDivSvgG,
+  cleanUpSvgCode,
+  putIntoIFrame,
+} from './mermaidAPI';
 
 import assignWithDepth from './assignWithDepth';
+
+// To mock a module, first define a mock for it, then import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
+vi.mock('./styles', () => {
+  return {
+    addStylesForDiagram: vi.fn(),
+    default: vi.fn().mockReturnValue(' .userStyle { font-weight:bold; }'),
+  };
+});
+import getStyles from './styles';
+
+vi.mock('stylis', () => {
+  return {
+    stringify: vi.fn(),
+    compile: vi.fn(),
+    serialize: vi.fn().mockReturnValue('stylis serialized css'),
+  };
+});
+import { compile, serialize } from 'stylis';
+
+import { MockedD3 } from './tests/MockedD3';
 
 describe('when using mermaidAPI and ', function () {
   describe('encodeEntities', () => {
@@ -72,6 +101,309 @@ describe('when using mermaidAPI and ', function () {
       expect(decodeEntities('¶ßﬂ°¶ßﬂ°°¶ß')).toEqual(';&;&#;');
     });
   });
+
+  describe('cleanUpSvgCode', () => {
+    it('replaces marker end URLs with just the anchor if not sandboxed and not useMarkerUrls', () => {
+      const markerFullUrl = 'marker-end="url(some-URI#that)"';
+      let useArrowMarkerUrls = false;
+      let isSandboxed = false;
+      let result = cleanUpSvgCode(markerFullUrl, isSandboxed, useArrowMarkerUrls);
+      expect(result).toEqual('marker-end="url(#that)"');
+
+      useArrowMarkerUrls = true;
+      result = cleanUpSvgCode(markerFullUrl, isSandboxed, useArrowMarkerUrls);
+      expect(result).toEqual(markerFullUrl); // not changed
+
+      useArrowMarkerUrls = false;
+      isSandboxed = true;
+      result = cleanUpSvgCode(markerFullUrl, isSandboxed, useArrowMarkerUrls);
+      expect(result).toEqual(markerFullUrl); // not changed
+    });
+
+    it('decodesEntities', () => {
+      const result = cleanUpSvgCode('¶ß brrrr', true, true);
+      expect(result).toEqual('; brrrr');
+    });
+
+    it('replaces old style br tags with new style', () => {
+      const result = cleanUpSvgCode('<br> brrrr<br>', true, true);
+      expect(result).toEqual('<br/> brrrr<br/>');
+    });
+  });
+
+  describe('putIntoIFrame', () => {
+    const inputSvgCode = 'this is the SVG code';
+
+    it('uses the default SVG iFrame height is used if no svgElement given', () => {
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toMatch(/style="(.*)height:100%(.*);"/);
+    });
+    it('default style attributes are: width: 100%, height: 100%, border: 0, margin: 0', () => {
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toMatch(/style="(.*)width:100%(.*);"/);
+      expect(result).toMatch(/style="(.*)height:100%(.*);"/);
+      expect(result).toMatch(/style="(.*)border:0(.*);"/);
+      expect(result).toMatch(/style="(.*)margin:0(.*);"/);
+    });
+    it('sandbox="allow-top-navigation-by-user-activation allow-popups">', () => {
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toMatch(/sandbox="allow-top-navigation-by-user-activation allow-popups">/);
+    });
+    it('msg shown is "The "iframe" tag is not supported by your browser.\\n" if iFrames are not supported in the browser', () => {
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toMatch(/\s*The "iframe" tag is not supported by your browser\./);
+    });
+
+    it('sets src to base64 version of <body style="IFRAME_SVG_BODY_STYLE">svgCode<//body>', () => {
+      const base64encodedSrc = btoa('<body style="' + 'margin:0' + '">' + inputSvgCode + '</body>');
+      const expectedRegExp = new RegExp('src="data:text/html;base64,' + base64encodedSrc + '"');
+
+      const result = putIntoIFrame(inputSvgCode);
+      expect(result).toMatch(expectedRegExp);
+    });
+
+    it('uses the height and appends px from the svgElement given', () => {
+      const faux_svgElement = {
+        viewBox: {
+          baseVal: {
+            height: 42,
+          },
+        },
+      };
+
+      const result = putIntoIFrame(inputSvgCode, faux_svgElement);
+      expect(result).toMatch(/style="(.*)height:42px;/);
+    });
+  });
+
+  const fauxParentNode = new MockedD3();
+  const fauxEnclosingDiv = new MockedD3();
+  const fauxSvgNode = new MockedD3();
+
+  describe('appendDivSvgG', () => {
+    const fauxGNode = new MockedD3();
+    const parent_append_spy = vi.spyOn(fauxParentNode, 'append').mockReturnValue(fauxEnclosingDiv);
+    const div_append_spy = vi.spyOn(fauxEnclosingDiv, 'append').mockReturnValue(fauxSvgNode);
+    const div_attr_spy = vi.spyOn(fauxEnclosingDiv, 'attr').mockReturnValue(fauxEnclosingDiv);
+    const svg_append_spy = vi.spyOn(fauxSvgNode, 'append').mockReturnValue(fauxGNode);
+    const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
+
+    it('appends a div node', () => {
+      appendDivSvgG(fauxParentNode, 'theId');
+      expect(parent_append_spy).toHaveBeenCalledWith('div');
+      expect(div_append_spy).toHaveBeenCalledWith('svg');
+    });
+    it('the id for the div is "d" with the id appended', () => {
+      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
+      expect(div_attr_spy).toHaveBeenCalledWith('id', 'dtheId');
+    });
+
+    it('sets the style for the div if one is given', () => {
+      appendDivSvgG(fauxParentNode, 'theId', 'dtheId', 'given div style', 'given x link');
+      expect(div_attr_spy).toHaveBeenCalledWith('style', 'given div style');
+    });
+
+    it('appends a svg node to the div node', () => {
+      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
+      expect(div_attr_spy).toHaveBeenCalledWith('id', 'dtheId');
+    });
+    it('sets the svg width to 100%', () => {
+      appendDivSvgG(fauxParentNode, 'theId');
+      expect(svg_attr_spy).toHaveBeenCalledWith('width', '100%');
+    });
+    it('the svg id is the id', () => {
+      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
+      expect(svg_attr_spy).toHaveBeenCalledWith('id', 'theId');
+    });
+    it('the svg xml namespace is the 2000 standard', () => {
+      appendDivSvgG(fauxParentNode, 'theId');
+      expect(svg_attr_spy).toHaveBeenCalledWith('xmlns', 'http://www.w3.org/2000/svg');
+    });
+    it('sets the  svg xlink if one is given', () => {
+      appendDivSvgG(fauxParentNode, 'theId', 'dtheId', 'div style', 'given x link');
+      expect(svg_attr_spy).toHaveBeenCalledWith('xmlns:xlink', 'given x link');
+    });
+    it('appends a g (group) node to the svg node', () => {
+      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
+      expect(svg_append_spy).toHaveBeenCalledWith('g');
+    });
+    it('returns the given parentRoot d3 nodes', () => {
+      expect(appendDivSvgG(fauxParentNode, 'theId', 'dtheId')).toEqual(fauxParentNode);
+    });
+  });
+
+  describe('createCssStyles', () => {
+    const serif = 'serif';
+    const sansSerif = 'sans-serif';
+    const mocked_config_with_htmlLabels = {
+      themeCSS: 'default',
+      fontFamily: serif,
+      altFontFamily: sansSerif,
+      htmlLabels: '',
+    };
+
+    it('gets the cssStyles from the theme', () => {
+      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', null);
+      expect(styles).toMatch(/^\ndefault(.*)/);
+    });
+    it('gets the fontFamily from the config', () => {
+      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', null);
+      expect(styles).toMatch(/(.*)\n:root \{ --mermaid-font-family: serif(.*)/);
+    });
+    it('gets the alt fontFamily from the config', () => {
+      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', null);
+      expect(styles).toMatch(/(.*)\n:root \{ --mermaid-alt-font-family: sans-serif(.*)/);
+    });
+
+    describe('there are some classDefs', () => {
+      const classDef1 = { id: 'classDef1', styles: ['style1-1', 'style1-2'], textStyles: [] };
+      const classDef2 = { id: 'classDef2', styles: [], textStyles: ['textStyle2-1'] };
+      const classDef3 = { id: 'classDef3', textStyles: ['textStyle3-1', 'textStyle3-2'] };
+      const classDefs = [classDef1, classDef2, classDef3];
+
+      describe('the graph supports classDefs', () => {
+        const graphType = 'flowchart-v2';
+
+        const REGEXP_SPECIALS = ['^', '$', '?', '(', '{', '[', '.', '*', '!'];
+
+        // prefix any special RegExp characters in the given string with a \ so we can use the literal character in a RegExp
+        function escapeForRegexp(str) {
+          const strChars = str.split(''); // split into array of every char
+          const strEscaped = strChars.map((char) => {
+            if (REGEXP_SPECIALS.includes(char)) return `\\${char}`;
+            else return char;
+          });
+          return strEscaped.join('');
+        }
+        function expect_styles_matchesHtmlElements(styles, htmlElement) {
+          expect(styles).toMatch(
+            new RegExp(
+              `\\.classDef1 ${escapeForRegexp(
+                htmlElement
+              )} \\{ style1-1 !important; style1-2 !important; }`
+            )
+          );
+          // no CSS styles are created if there are no styles for a classDef
+          expect(styles).not.toMatch(
+            new RegExp(`\\.classDef2 ${escapeForRegexp(htmlElement)} \\{ style(.*) !important; }`)
+          );
+          expect(styles).not.toMatch(
+            new RegExp(`\\.classDef3 ${escapeForRegexp(htmlElement)} \\{ style(.*) !important; }`)
+          );
+        }
+
+        function expect_textStyles_matchesHtmlElements(styles, htmlElement) {
+          expect(styles).toMatch(
+            new RegExp(
+              `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{ textStyle2-1 !important; }`
+            )
+          );
+          expect(styles).toMatch(
+            new RegExp(
+              `\\.classDef3 ${escapeForRegexp(
+                htmlElement
+              )} \\{ textStyle3-1 !important; textStyle3-2 !important; }`
+            )
+          );
+
+          // no CSS styles are created if there are no textStyles for a classDef
+          expect(styles).not.toMatch(
+            new RegExp(
+              `\\.classDef1 ${escapeForRegexp(htmlElement)} \\{ textStyle(.*) !important; }`
+            )
+          );
+        }
+
+        function expect_correct_styles_with_htmlElements(mocked_config) {
+          describe('creates styles for "> *" and  "span" elements', () => {
+            const htmlElements = ['> *', 'span'];
+
+            it('creates CSS styles for every style and textStyle in every classDef', () => {
+              // @todo TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result
+
+              const styles = createCssStyles(mocked_config, graphType, classDefs);
+              htmlElements.forEach((htmlElement) => {
+                expect_styles_matchesHtmlElements(styles, htmlElement);
+              });
+              expect_textStyles_matchesHtmlElements(styles, 'tspan');
+            });
+          });
+        }
+
+        it('there are htmlLabels in the configuration', () => {
+          expect_correct_styles_with_htmlElements(mocked_config_with_htmlLabels);
+        });
+
+        it('there are flowchart.htmlLabels in the configuration', () => {
+          const mocked_config_flowchart_htmlLabels = {
+            themeCSS: 'default',
+            fontFamily: 'serif',
+            altFontFamily: 'sans-serif',
+            flowchart: {
+              htmlLabels: 'flowchart-htmlLables',
+            },
+          };
+          expect_correct_styles_with_htmlElements(mocked_config_flowchart_htmlLabels);
+        });
+
+        describe('no htmlLabels in the configuration', () => {
+          const mocked_config_no_htmlLabels = {
+            themeCSS: 'default',
+            fontFamily: 'serif',
+            altFontFamily: 'sans-serif',
+          };
+
+          describe('creates styles for shape elements "rect", "polygon", "ellipse", and "circle"', () => {
+            const htmlElements = ['rect', 'polygon', 'ellipse', 'circle'];
+
+            it('creates CSS styles for every style and textStyle in every classDef', () => {
+              // @todo TODO Can't figure out how to spy on the cssImportantStyles method. That would be a much better approach than manually checking the result
+
+              const styles = createCssStyles(mocked_config_no_htmlLabels, graphType, classDefs);
+              htmlElements.forEach((htmlElement) => {
+                expect_styles_matchesHtmlElements(styles, htmlElement);
+              });
+              expect_textStyles_matchesHtmlElements(styles, 'tspan');
+            });
+          });
+        });
+      });
+    });
+  });
+
+  // describe('createUserStyles', () => {
+  //   const mockConfig = {
+  //     themeCSS: 'default',
+  //     htmlLabels: 'htmlLabels',
+  //     themeVariables: { fontFamily: 'serif' },
+  //   };
+  //   const classDef1 = { id: 'classDef1', styles: ['style1-1'], textStyles: [] };
+  //
+  //   it('gets the css styles created', () => {
+  //     // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
+  //
+  //     createUserStyles(mockConfig, 'flowchart-v2', [classDef1], 'someId');
+  //     const expectedStyles =
+  //       '\ndefault' +
+  //       '\n.classDef1 > * { style1-1 !important; }' +
+  //       '\n.classDef1 span { style1-1 !important; }';
+  //     expect(getStyles).toHaveBeenCalledWith('flowchart-v2', expectedStyles, {
+  //       fontFamily: 'serif',
+  //     });
+  //   });
+  //
+  //   it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
+  //     createUserStyles(mockConfig, 'someDiagram', null, 'someId');
+  //     expect(getStyles).toHaveBeenCalled();
+  //   });
+  //
+  //   it('returns the result of compiling, stringifying, and serializing the css code with stylis', () => {
+  //     const result = createUserStyles(mockConfig, 'someDiagram', null, 'someId');
+  //     expect(compile).toHaveBeenCalled();
+  //     expect(serialize).toHaveBeenCalled();
+  //     expect(result).toEqual('stylis serialized css');
+  //   });
+  // });
 
   describe('doing initialize ', function () {
     beforeEach(function () {
