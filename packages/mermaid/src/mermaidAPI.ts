@@ -39,9 +39,9 @@ const MAX_TEXTLENGTH_EXCEEDED_MSG =
 const SECURITY_LVL_SANDBOX = 'sandbox';
 const SECURITY_LVL_LOOSE = 'loose';
 
-const XMLNS_XHTML_STD = 'http://www.w3.org/1999/xhtml';
 const XMLNS_SVG_STD = 'http://www.w3.org/2000/svg';
 const XMLNS_XLINK_STD = 'http://www.w3.org/1999/xlink';
+const XMLNS_XHTML_STD = 'http://www.w3.org/1999/xhtml';
 
 // ------------------------------
 // iFrame
@@ -87,12 +87,10 @@ export const encodeEntities = function (text: string): string {
   let txt = text;
 
   txt = txt.replace(/style.*:\S*#.*;/g, function (s) {
-    const innerTxt = s.substring(0, s.length - 1);
-    return innerTxt;
+    return s.substring(0, s.length - 1);
   });
   txt = txt.replace(/classDef.*:\S*#.*;/g, function (s) {
-    const innerTxt = s.substring(0, s.length - 1);
-    return innerTxt;
+    return s.substring(0, s.length - 1);
   });
 
   txt = txt.replace(/#\w+;/g, function (s) {
@@ -211,6 +209,29 @@ export const createCssStyles = (
   return cssStyles;
 };
 
+export const createUserStyles = (
+  config: MermaidConfig,
+  graphType: string,
+  classDefs: null | DiagramStyleClassDef,
+  svgId: string
+): string => {
+  const userCSSstyles = createCssStyles(config, graphType, classDefs);
+  const allStyles = getStyles(graphType, userCSSstyles, config.themeVariables);
+
+  // Now turn all of the styles into a (compiled) string that starts with the id
+  // use the stylis library to compile the css, turn the results into a valid CSS string (serialize(...., stringify))
+  // @see https://github.com/thysultan/stylis
+  return serialize(compile(`${svgId}{${allStyles}}`), stringify);
+};
+
+/**
+ * Clean up svgCode. Do replacements needed
+ *
+ * @param {string} svgCode
+ * @param {boolean} inSandboxMode - security level
+ * @param {boolean} useArrowMarkerUrls - should arrow marker's use full urls? (vs. just the anchors)
+ * @returns {string} the cleaned up svgCode
+ */
 export const cleanUpSvgCode = (
   svgCode = '',
   inSandboxMode: boolean,
@@ -424,23 +445,22 @@ const render = async function (
     parseEncounteredException = error;
   }
 
-  // Get the tmp div element containing the svg
+  // Get the temporary div element containing the svg
   const element = root.select(enclosingDivID_selector).node();
   const graphType = diag.type;
 
   // -------------------------------------------------------------------------------
   // Create and insert the styles (user styles, theme styles, config styles)
 
-  // insert inline style into svg
+  // Insert an element into svg. This is where we put the styles
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
-
-  const userDefClasses: any = flowRenderer.getClasses(text, diag);
-  const cssStyles = createCssStyles(config, graphType, userDefClasses);
-
-  const stylis = (selector: string, styles: string) =>
-    serialize(compile(`${selector}{${styles}}`), stringify);
-  const rules = stylis(`${idSelector}`, getStyles(graphType, cssStyles, config.themeVariables));
+  const rules = createUserStyles(
+    config,
+    graphType,
+    flowRenderer.getClasses(text, diag),
+    idSelector
+  );
 
   const style1 = document.createElement('style');
   style1.innerHTML = `${idSelector} ` + rules;

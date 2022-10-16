@@ -2,11 +2,14 @@
 import { vi } from 'vitest';
 
 import mermaid from './mermaid';
+import { MermaidConfig } from './config.type';
+
 import mermaidAPI from './mermaidAPI';
 import {
   encodeEntities,
   decodeEntities,
   createCssStyles,
+  createUserStyles,
   appendDivSvgG,
   cleanUpSvgCode,
   putIntoIFrame,
@@ -14,7 +17,9 @@ import {
 
 import assignWithDepth from './assignWithDepth';
 
-// To mock a module, first define a mock for it, then import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
+// --------------
+// Mocks
+//   To mock a module, first define a mock for it, then (if used explicitly in the tests) import it. Be sure the path points to exactly the same file as is imported in mermaidAPI (the module being tested)
 vi.mock('./styles', () => {
   return {
     addStylesForDiagram: vi.fn(),
@@ -33,6 +38,8 @@ vi.mock('stylis', () => {
 import { compile, serialize } from 'stylis';
 
 import { MockedD3 } from './tests/MockedD3';
+
+// -------------------------------------------------------------------------------------
 
 describe('when using mermaidAPI and ', function () {
   describe('encodeEntities', () => {
@@ -184,12 +191,14 @@ describe('when using mermaidAPI and ', function () {
     const fauxGNode = new MockedD3();
     const parent_append_spy = vi.spyOn(fauxParentNode, 'append').mockReturnValue(fauxEnclosingDiv);
     const div_append_spy = vi.spyOn(fauxEnclosingDiv, 'append').mockReturnValue(fauxSvgNode);
+    // @ts-ignore @todo TODO why is this getting a type error?
     const div_attr_spy = vi.spyOn(fauxEnclosingDiv, 'attr').mockReturnValue(fauxEnclosingDiv);
     const svg_append_spy = vi.spyOn(fauxSvgNode, 'append').mockReturnValue(fauxGNode);
+    // @ts-ignore @todo TODO why is this getting a type error?
     const svg_attr_spy = vi.spyOn(fauxSvgNode, 'attr').mockReturnValue(fauxSvgNode);
 
     it('appends a div node', () => {
-      appendDivSvgG(fauxParentNode, 'theId');
+      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
       expect(parent_append_spy).toHaveBeenCalledWith('div');
       expect(div_append_spy).toHaveBeenCalledWith('svg');
     });
@@ -208,7 +217,7 @@ describe('when using mermaidAPI and ', function () {
       expect(div_attr_spy).toHaveBeenCalledWith('id', 'dtheId');
     });
     it('sets the svg width to 100%', () => {
-      appendDivSvgG(fauxParentNode, 'theId');
+      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
       expect(svg_attr_spy).toHaveBeenCalledWith('width', '100%');
     });
     it('the svg id is the id', () => {
@@ -216,7 +225,7 @@ describe('when using mermaidAPI and ', function () {
       expect(svg_attr_spy).toHaveBeenCalledWith('id', 'theId');
     });
     it('the svg xml namespace is the 2000 standard', () => {
-      appendDivSvgG(fauxParentNode, 'theId');
+      appendDivSvgG(fauxParentNode, 'theId', 'dtheId');
       expect(svg_attr_spy).toHaveBeenCalledWith('xmlns', 'http://www.w3.org/2000/svg');
     });
     it('sets the  svg xlink if one is given', () => {
@@ -235,11 +244,11 @@ describe('when using mermaidAPI and ', function () {
   describe('createCssStyles', () => {
     const serif = 'serif';
     const sansSerif = 'sans-serif';
-    const mocked_config_with_htmlLabels = {
+    const mocked_config_with_htmlLabels: MermaidConfig = {
       themeCSS: 'default',
       fontFamily: serif,
       altFontFamily: sansSerif,
-      htmlLabels: '',
+      htmlLabels: true,
     };
 
     it('gets the cssStyles from the theme', () => {
@@ -267,7 +276,7 @@ describe('when using mermaidAPI and ', function () {
         const REGEXP_SPECIALS = ['^', '$', '?', '(', '{', '[', '.', '*', '!'];
 
         // prefix any special RegExp characters in the given string with a \ so we can use the literal character in a RegExp
-        function escapeForRegexp(str) {
+        function escapeForRegexp(str: string) {
           const strChars = str.split(''); // split into array of every char
           const strEscaped = strChars.map((char) => {
             if (REGEXP_SPECIALS.includes(char)) return `\\${char}`;
@@ -275,7 +284,9 @@ describe('when using mermaidAPI and ', function () {
           });
           return strEscaped.join('');
         }
-        function expect_styles_matchesHtmlElements(styles, htmlElement) {
+
+        // Common test expecting given styles to have .classDef1 and .classDef2 statements but not .classDef3
+        function expect_styles_matchesHtmlElements(styles: string, htmlElement: string) {
           expect(styles).toMatch(
             new RegExp(
               `\\.classDef1 ${escapeForRegexp(
@@ -292,13 +303,14 @@ describe('when using mermaidAPI and ', function () {
           );
         }
 
-        function expect_textStyles_matchesHtmlElements(styles, htmlElement) {
-          expect(styles).toMatch(
+        // Common test expecting given textStyles to have .classDef2 and .classDef3 statements but not .classDef1
+        function expect_textStyles_matchesHtmlElements(textStyles: string, htmlElement: string) {
+          expect(textStyles).toMatch(
             new RegExp(
               `\\.classDef2 ${escapeForRegexp(htmlElement)} \\{ textStyle2-1 !important; }`
             )
           );
-          expect(styles).toMatch(
+          expect(textStyles).toMatch(
             new RegExp(
               `\\.classDef3 ${escapeForRegexp(
                 htmlElement
@@ -307,14 +319,15 @@ describe('when using mermaidAPI and ', function () {
           );
 
           // no CSS styles are created if there are no textStyles for a classDef
-          expect(styles).not.toMatch(
+          expect(textStyles).not.toMatch(
             new RegExp(
               `\\.classDef1 ${escapeForRegexp(htmlElement)} \\{ textStyle(.*) !important; }`
             )
           );
         }
 
-        function expect_correct_styles_with_htmlElements(mocked_config) {
+        // common suite and tests to verify that the right styles are created with the right htmlElements
+        function expect_correct_styles_with_htmlElements(mocked_config: MermaidConfig) {
           describe('creates styles for "> *" and  "span" elements', () => {
             const htmlElements = ['> *', 'span'];
 
@@ -335,12 +348,12 @@ describe('when using mermaidAPI and ', function () {
         });
 
         it('there are flowchart.htmlLabels in the configuration', () => {
-          const mocked_config_flowchart_htmlLabels = {
+          const mocked_config_flowchart_htmlLabels: MermaidConfig = {
             themeCSS: 'default',
             fontFamily: 'serif',
             altFontFamily: 'sans-serif',
             flowchart: {
-              htmlLabels: 'flowchart-htmlLables',
+              htmlLabels: true,
             },
           };
           expect_correct_styles_with_htmlElements(mocked_config_flowchart_htmlLabels);
@@ -371,39 +384,75 @@ describe('when using mermaidAPI and ', function () {
     });
   });
 
-  // describe('createUserStyles', () => {
-  //   const mockConfig = {
-  //     themeCSS: 'default',
-  //     htmlLabels: 'htmlLabels',
-  //     themeVariables: { fontFamily: 'serif' },
-  //   };
-  //   const classDef1 = { id: 'classDef1', styles: ['style1-1'], textStyles: [] };
-  //
-  //   it('gets the css styles created', () => {
-  //     // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
-  //
-  //     createUserStyles(mockConfig, 'flowchart-v2', [classDef1], 'someId');
-  //     const expectedStyles =
-  //       '\ndefault' +
-  //       '\n.classDef1 > * { style1-1 !important; }' +
-  //       '\n.classDef1 span { style1-1 !important; }';
-  //     expect(getStyles).toHaveBeenCalledWith('flowchart-v2', expectedStyles, {
-  //       fontFamily: 'serif',
-  //     });
-  //   });
-  //
-  //   it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
-  //     createUserStyles(mockConfig, 'someDiagram', null, 'someId');
-  //     expect(getStyles).toHaveBeenCalled();
-  //   });
-  //
-  //   it('returns the result of compiling, stringifying, and serializing the css code with stylis', () => {
-  //     const result = createUserStyles(mockConfig, 'someDiagram', null, 'someId');
-  //     expect(compile).toHaveBeenCalled();
-  //     expect(serialize).toHaveBeenCalled();
-  //     expect(result).toEqual('stylis serialized css');
-  //   });
-  // });
+  describe('createUserStyles', () => {
+    const mockConfig = {
+      themeCSS: 'default',
+      htmlLabels: true,
+      themeVariables: { fontFamily: 'serif' },
+    };
+
+    //
+    // export interface MermaidConfig {
+    //     lazyLoadedDiagrams?: string[];
+    //     theme?: string;
+    //     themeVariables?: any;
+    //     themeCSS?: string;
+    //     maxTextSize?: number;
+    //     darkMode?: boolean;
+    //     htmlLabels?: boolean;
+    //     fontFamily?: string;
+    //     altFontFamily?: string;
+    //     logLevel?: number;
+    //     securityLevel?: string;
+    //     startOnLoad?: boolean;
+    //     arrowMarkerAbsolute?: boolean;
+    //     secure?: string[];
+    //     deterministicIds?: boolean;
+    //     deterministicIDSeed?: string;
+    //     flowchart?: FlowchartDiagramConfig;
+    //     sequence?: SequenceDiagramConfig;
+    //     gantt?: GanttDiagramConfig;
+    //     journey?: JourneyDiagramConfig;
+    //     class?: ClassDiagramConfig;
+    //     state?: StateDiagramConfig;
+    //     er?: ErDiagramConfig;
+    //     pie?: PieDiagramConfig;
+    //     requirement?: RequirementDiagramConfig;
+    //     mindmap?: MindmapDiagramConfig;
+    //     gitGraph?: GitGraphDiagramConfig;
+    //     c4?: C4DiagramConfig;
+    //     dompurifyConfig?: DOMPurify.Config;
+    //     wrap?: boolean;
+    //     fontSize?: number;
+    //   }
+
+    const classDef1 = { id: 'classDef1', styles: ['style1-1'], textStyles: [] };
+
+    it('gets the css styles created', () => {
+      // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
+
+      createUserStyles(mockConfig, 'flowchart-v2', [classDef1], 'someId');
+      const expectedStyles =
+        '\ndefault' +
+        '\n.classDef1 > * { style1-1 !important; }' +
+        '\n.classDef1 span { style1-1 !important; }';
+      expect(getStyles).toHaveBeenCalledWith('flowchart-v2', expectedStyles, {
+        fontFamily: 'serif',
+      });
+    });
+
+    it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
+      createUserStyles(mockConfig, 'someDiagram', null, 'someId');
+      expect(getStyles).toHaveBeenCalled();
+    });
+
+    it('returns the result of compiling, stringifying, and serializing the css code with stylis', () => {
+      const result = createUserStyles(mockConfig, 'someDiagram', null, 'someId');
+      expect(compile).toHaveBeenCalled();
+      expect(serialize).toHaveBeenCalled();
+      expect(result).toEqual('stylis serialized css');
+    });
+  });
 
   describe('doing initialize ', function () {
     beforeEach(function () {
@@ -412,16 +461,19 @@ describe('when using mermaidAPI and ', function () {
     });
 
     it('should copy a literal into the configuration', function () {
-      const orgConfig = mermaidAPI.getConfig();
+      const orgConfig: any = mermaidAPI.getConfig();
       expect(orgConfig.testLiteral).toBe(undefined);
 
-      mermaidAPI.initialize({ testLiteral: true });
-      const config = mermaidAPI.getConfig();
+      const testConfig: any = { testLiteral: true };
+
+      mermaidAPI.initialize(testConfig);
+      const config: any = mermaidAPI.getConfig();
 
       expect(config.testLiteral).toBe(true);
     });
+
     it('should copy a an object into the configuration', function () {
-      const orgConfig = mermaidAPI.getConfig();
+      const orgConfig: any = mermaidAPI.getConfig();
       expect(orgConfig.testObject).toBe(undefined);
 
       const object = {
@@ -429,19 +481,25 @@ describe('when using mermaidAPI and ', function () {
         test2: false,
       };
 
-      mermaidAPI.initialize({ testObject: object });
-      let config = mermaidAPI.getConfig();
+      const testConfig: any = { testObject: object };
+
+      mermaidAPI.initialize(testConfig);
+
+      let config: any = mermaidAPI.getConfig();
 
       expect(config.testObject.test1).toBe(1);
-      mermaidAPI.updateSiteConfig({ testObject: { test3: true } });
+
+      const testObjSetting: any = { testObject: { test3: true } };
+      mermaidAPI.updateSiteConfig(testObjSetting);
       config = mermaidAPI.getConfig();
 
       expect(config.testObject.test1).toBe(1);
       expect(config.testObject.test2).toBe(false);
       expect(config.testObject.test3).toBe(true);
     });
+
     it('should reset mermaid config to global defaults', function () {
-      let config = {
+      const config = {
         logLevel: 0,
         securityLevel: 'loose',
       };
@@ -458,7 +516,7 @@ describe('when using mermaidAPI and ', function () {
     });
 
     it('should prevent changes to site defaults (sneaky)', function () {
-      let config = {
+      const config: any = {
         logLevel: 0,
       };
       mermaidAPI.initialize(config);
@@ -477,11 +535,12 @@ describe('when using mermaidAPI and ', function () {
       expect(mermaidAPI.getConfig()).toEqual(siteConfig);
     });
     it('should prevent clobbering global defaults (direct)', function () {
-      let config = assignWithDepth({}, mermaidAPI.defaultConfig);
+      const config = assignWithDepth({}, mermaidAPI.defaultConfig);
       assignWithDepth(config, { logLevel: 0 });
 
-      let error = { message: '' };
+      let error: any = { message: '' };
       try {
+        // @ts-ignore This is a read-only property. Typescript will not allow assignment, but regular javascript might.
         mermaidAPI['defaultConfig'] = config;
       } catch (e) {
         error = e;
@@ -492,7 +551,7 @@ describe('when using mermaidAPI and ', function () {
       expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
     });
     it('should prevent changes to global defaults (direct)', function () {
-      let error = { message: '' };
+      let error: any = { message: '' };
       try {
         mermaidAPI.defaultConfig['logLevel'] = 0;
       } catch (e) {
@@ -504,10 +563,10 @@ describe('when using mermaidAPI and ', function () {
       expect(mermaidAPI.defaultConfig['logLevel']).toBe(5);
     });
     it('should prevent sneaky changes to global defaults (assignWithDepth)', function () {
-      let config = {
+      const config = {
         logLevel: 0,
       };
-      let error = { message: '' };
+      let error: any = { message: '' };
       try {
         assignWithDepth(mermaidAPI.defaultConfig, config);
       } catch (e) {
@@ -522,7 +581,8 @@ describe('when using mermaidAPI and ', function () {
   describe('dompurify config', function () {
     it('should allow dompurify config to be set', function () {
       mermaidAPI.initialize({ dompurifyConfig: { ADD_ATTR: ['onclick'] } });
-      expect(mermaidAPI.getConfig().dompurifyConfig.ADD_ATTR).toEqual(['onclick']);
+
+      expect(mermaidAPI!.getConfig()!.dompurifyConfig!.ADD_ATTR).toEqual(['onclick']);
     });
   });
   describe('test mermaidApi.parse() for checking validity of input ', function () {
