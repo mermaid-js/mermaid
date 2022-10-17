@@ -44,6 +44,7 @@ importers:
       eslint-plugin-jsdoc: 39.3.6
       eslint-plugin-json: 3.1.0
       eslint-plugin-markdown: 3.0.0
+      eslint-plugin-no-only-tests: ^3.0.0
       express: 4.18.2
       fast-clone: 1.5.13
       globby: 13.1.2
@@ -125,6 +126,7 @@ importers:
       eslint-plugin-jsdoc: 39.3.6_eslint@8.25.0
       eslint-plugin-json: 3.1.0
       eslint-plugin-markdown: 3.0.0_eslint@8.25.0
+      eslint-plugin-no-only-tests: 3.0.0
       express: 4.18.2
       globby: 13.1.2
       husky: 8.0.1
@@ -5713,6 +5715,11 @@ packages:
       mdast-util-from-markdown: 0.8.5
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /eslint-plugin-no-only-tests/3.0.0:
+    resolution: {integrity: sha512-I0PeXMs1vu21ap45hey4HQCJRqpcoIvGcNTPJe+UhUm8TwjQ6//mCrDqF8q0WS6LgmRDwQ4ovQej0AQsAHb5yg==}
+    engines: {node: '>=5.0.0'}
     dev: true
 
   /eslint-scope/5.1.1:
