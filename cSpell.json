@@ -58,7 +58,11 @@
     "cpettitt",
     "antiscript",
     "ts-nocheck",
-    "setupGraphViewbox"
+    "setupGraphViewbox",
+    "flatmap",
+    "Kaufmann",
+    "viewports",
+    "edgechromium"
   ],
   "patterns": [
     {

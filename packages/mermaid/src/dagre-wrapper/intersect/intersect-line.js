@@ -7,7 +7,6 @@
  * @param q2
  */
 function intersectLine(p1, p2, q1, q2) {
-  // eslint-disable-next-line @cspell/spellchecker
   // Algorithm from J. Avro, (ed.) Graphics Gems, No 2, Morgan Kaufmann, 1994,
   // p7 and p473.
 
