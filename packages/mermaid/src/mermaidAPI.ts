@@ -455,10 +455,11 @@ const handleDirective = function (p: any, directive: any, type: string): void {
 /** @param {MermaidConfig} options */
 async function initialize(options: MermaidConfig) {
   // Handle legacy location of font-family configuration
-  if (options?.fontFamily) {
-    if (!options.themeVariables?.fontFamily) {
-      options.themeVariables = { fontFamily: options.fontFamily };
+  if (options.fontFamily) {
+    if (!options.themeVariables) {
+      options.themeVariables = {};
     }
+    options.themeVariables.fontFamily = options.fontFamily;
   }
 
   // Set default options
