@@ -53,7 +53,12 @@
     "bbox",
     "techn",
     "cytoscape",
-    "ts-nocheck"
+    "Lucida",
+    "Bilkent",
+    "cpettitt",
+    "antiscript",
+    "ts-nocheck",
+    "setupGraphViewbox"
   ],
   "patterns": [
     {

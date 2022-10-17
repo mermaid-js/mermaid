@@ -292,15 +292,15 @@ const boundMessage = function (diagram, msgModel) {
 
   bounds.bumpVerticalPos(lineHeight);
 
-  let lineStarty;
+  let lineStartY;
   let totalOffset = textDims.height - 10;
   const textWidth = textDims.width;
 
   if (startx === stopx) {
-    lineStarty = bounds.getVerticalPos() + totalOffset;
+    lineStartY = bounds.getVerticalPos() + totalOffset;
     if (!conf.rightAngles) {
       totalOffset += conf.boxMargin;
-      lineStarty = bounds.getVerticalPos() + totalOffset;
+      lineStartY = bounds.getVerticalPos() + totalOffset;
     }
     totalOffset += 30;
     const dx = Math.max(textWidth / 2, conf.width / 2);
@@ -312,15 +312,15 @@ const boundMessage = function (diagram, msgModel) {
     );
   } else {
     totalOffset += conf.boxMargin;
-    lineStarty = bounds.getVerticalPos() + totalOffset;
-    bounds.insert(startx, lineStarty - 10, stopx, lineStarty);
+    lineStartY = bounds.getVerticalPos() + totalOffset;
+    bounds.insert(startx, lineStartY - 10, stopx, lineStartY);
   }
   bounds.bumpVerticalPos(totalOffset);
   msgModel.height += totalOffset;
   msgModel.stopy = msgModel.starty + msgModel.height;
   bounds.insert(msgModel.fromBounds, msgModel.starty, msgModel.toBounds, msgModel.stopy);
 
-  return lineStarty;
+  return lineStartY;
 };
 
 /**
@@ -328,10 +328,10 @@ const boundMessage = function (diagram, msgModel) {
  *
  * @param {any} diagram - The parent of the message element
  * @param {any} msgModel - The model containing fields describing a message
- * @param {number} lineStarty - The Y coordinate at which the message line starts
+ * @param {number} lineStartY - The Y coordinate at which the message line starts
  * @param diagObj
  */
-const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
+const drawMessage = function (diagram, msgModel, lineStartY, diagObj) {
   const { startx, stopx, starty, message, type, sequenceIndex, sequenceVisible } = msgModel;
   const textDims = utils.calculateTextDimensions(message, messageFont(conf));
   const textObj = svgDraw.getTextObj();
@@ -360,8 +360,8 @@ const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
         .append('path')
         .attr(
           'd',
-          `M  ${startx},${lineStarty} H ${startx + Math.max(conf.width / 2, textWidth / 2)} V ${
-            lineStarty + 25
+          `M  ${startx},${lineStartY} H ${startx + Math.max(conf.width / 2, textWidth / 2)} V ${
+            lineStartY + 25
           } H ${startx}`
         );
     } else {
@@ -372,27 +372,27 @@ const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
           'M ' +
             startx +
             ',' +
-            lineStarty +
+            lineStartY +
             ' C ' +
             (startx + 60) +
             ',' +
-            (lineStarty - 10) +
+            (lineStartY - 10) +
             ' ' +
             (startx + 60) +
             ',' +
-            (lineStarty + 30) +
+            (lineStartY + 30) +
             ' ' +
             startx +
             ',' +
-            (lineStarty + 20)
+            (lineStartY + 20)
         );
     }
   } else {
     line = diagram.append('line');
     line.attr('x1', startx);
-    line.attr('y1', lineStarty);
+    line.attr('y1', lineStartY);
     line.attr('x2', stopx);
-    line.attr('y2', lineStarty);
+    line.attr('y2', lineStartY);
   }
   // Make an SVG Container
   // Draw the line
@@ -440,7 +440,7 @@ const drawMessage = function (diagram, msgModel, lineStarty, diagObj) {
     diagram
       .append('text')
       .attr('x', startx)
-      .attr('y', lineStarty + 4)
+      .attr('y', lineStartY + 4)
       .attr('font-family', 'sans-serif')
       .attr('font-size', '12px')
       .attr('text-anchor', 'middle')
@@ -811,8 +811,8 @@ export const draw = function (_text, id, _version, diagObj) {
           msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
           msgModel.sequenceVisible = diagObj.db.showSequenceNumbers();
-          const lineStarty = boundMessage(diagram, msgModel);
-          messagesToDraw.push({ messageModel: msgModel, lineStarty: lineStarty });
+          const lineStartY = boundMessage(diagram, msgModel);
+          messagesToDraw.push({ messageModel: msgModel, lineStartY: lineStartY });
           bounds.models.addMessage(msgModel);
         } catch (e) {
           log.error('error while drawing message', e);
@@ -836,7 +836,7 @@ export const draw = function (_text, id, _version, diagObj) {
     }
   });
 
-  messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStarty, diagObj));
+  messagesToDraw.forEach((e) => drawMessage(diagram, e.messageModel, e.lineStartY, diagObj));
 
   if (conf.mirrorActors) {
     // Draw actors below diagram
