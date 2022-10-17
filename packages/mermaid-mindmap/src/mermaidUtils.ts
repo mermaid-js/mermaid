@@ -1,4 +1,4 @@
-import type { MermaidConfig } from 'mermaid/dist/config.type';
+import type { MermaidConfig } from 'mermaid';
 
 const warning = (s: string) => {
   // Todo remove debug code

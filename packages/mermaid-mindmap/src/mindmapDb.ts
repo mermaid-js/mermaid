@@ -1,6 +1,6 @@
 /** Created by knut on 23-07-2022. */
 import { sanitizeText, getConfig, log } from './mermaidUtils';
-import type { DetailedError } from 'mermaid/dist/utils';
+import type { DetailedError } from 'mermaid';
 
 interface Node {
   id: number;
