@@ -1,4 +1,3 @@
-// eslint-disable-next-line @cspell/spellchecker
 // @ts-nocheck TODO: Fix TS
 import moment from 'moment-mini';
 import ganttDb from './ganttDb';

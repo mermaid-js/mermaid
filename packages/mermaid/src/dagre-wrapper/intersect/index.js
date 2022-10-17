@@ -1,5 +1,4 @@
 /*
- // eslint-disable-next-line @cspell/spellchecker
  * Borrowed with love from from dagre-d3. Many thanks to cpettitt!
  */
 

@@ -1,4 +1,3 @@
-// eslint-disable-next-line @cspell/spellchecker
 // @ts-nocheck TODO: fix file
 import { select, selectAll } from 'd3';
 import svgDraw, { drawText, fixLifeLineHeights } from './svgDraw';

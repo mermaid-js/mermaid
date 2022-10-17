@@ -1,4 +1,3 @@
-// eslint-disable-next-line @cspell/spellchecker
 // @ts-nocheck TODO: fix file
 import { select } from 'd3';
 import svgDraw from './svgDraw';

@@ -1,4 +1,3 @@
-// eslint-disable-next-line @cspell/spellchecker
 // @ts-nocheck : TODO Fix ts errors
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import {
