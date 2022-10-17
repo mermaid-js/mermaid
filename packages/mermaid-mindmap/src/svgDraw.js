@@ -259,7 +259,7 @@ export const drawNode = function (elem, node, fullSection, conf) {
   // if (typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
   //   nodeElem.attr('transform', 'translate(' + node.x + ',' + node.y + ')');
   // }
-  db.setElementForId(node.id, nodeElem);
+  setElementById(node.id, nodeElem);
   return node.height;
 };
 
@@ -286,7 +286,7 @@ export const drawEdge = function drawEdge(edgesElem, mindmap, parent, depth, ful
 };
 
 export const positionNode = function (node) {
-  const nodeElem = db.getElementById(node.id);
+  const nodeElem = getElementById(node.id);
 
   const x = node.x || 0;
   const y = node.y || 0;
@@ -295,3 +295,17 @@ export const positionNode = function (node) {
 };
 
 export default { drawNode, positionNode, drawEdge };
+
+let elements = {};
+
+export const setElementById = (id, element) => {
+  elements[id] = element;
+};
+
+export const getElementById = (id) => {
+  return elements[id];
+};
+
+export const clearElementRefs = () => {
+  elements = {};
+};
