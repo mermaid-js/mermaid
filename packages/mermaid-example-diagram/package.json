@@ -50,8 +50,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "concurrently": "^7.4.0",
-    "rimraf": "^3.0.2"
+    "concurrently": "7.4.0",
+    "rimraf": "3.0.2"
   },
   "resolutions": {
     "d3": "^7.0.0"
