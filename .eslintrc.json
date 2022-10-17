@@ -61,22 +61,23 @@
   },
   "overrides": [
     {
-      "files": "./**/*.html",
-      "rules": {
-        "no-undef": "off",
-        "jsdoc/require-jsdoc": "off"
-      }
-    },
-    {
-      "files": ["./cypress/**", "./demos/**"],
+      "files": ["cypress/**", "demos/**"],
       "rules": {
         "no-console": "off"
       }
     },
     {
-      "files": ["./**/*.spec.{ts,js}", "./cypress/**", "./demos/**", "./**/docs/**"],
+      "files": ["*.spec.{ts,js}", "cypress/**", "demos/**", "**/docs/**"],
       "rules": {
         "jsdoc/require-jsdoc": "off",
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["*.html", "*.md", "**/*.md/*"],
+      "rules": {
+        "no-var": "error",
+        "no-undef": "off",
         "@typescript-eslint/no-unused-vars": "off"
       }
     }

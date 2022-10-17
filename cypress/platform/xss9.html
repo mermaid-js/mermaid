@@ -93,7 +93,7 @@
         throw new Error('XSS Succeeded');
       }
 
-      var diagram = 'stateDiagram-v2\n';
+      let diagram = 'stateDiagram-v2\n';
       diagram += "<img/src='1'/onerror=xssAttack()> --> B";
       // diagram += "script\u003aalert\u0028document.domain\u0029\` src=x>\"\);\n";
       console.log(diagram);

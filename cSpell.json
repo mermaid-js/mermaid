@@ -52,7 +52,8 @@
     "Ashish",
     "bbox",
     "techn",
-    "cytoscape"
+    "cytoscape",
+    "ts-nocheck"
   ],
   "patterns": [
     {

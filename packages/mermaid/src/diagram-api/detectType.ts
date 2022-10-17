@@ -1,8 +1,7 @@
 import { MermaidConfig } from '../config.type';
+import { log } from '../logger';
+import { DetectorRecord, DiagramDetector, DiagramLoader } from './types';
 
-export type DiagramDetector = (text: string, config?: MermaidConfig) => boolean;
-export type DiagramLoader = (() => any) | null;
-export type DetectorRecord = { detector: DiagramDetector; loader: DiagramLoader };
 const directive =
   /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
 const anyComment = /\s*%%.*\n/gm;
@@ -34,26 +33,22 @@ const detectors: Record<string, DetectorRecord> = {};
  */
 export const detectType = function (text: string, config?: MermaidConfig): string {
   text = text.replace(directive, '').replace(anyComment, '\n');
-
-  // console.log(detectors);
-
   for (const [key, { detector }] of Object.entries(detectors)) {
     const diagram = detector(text, config);
     if (diagram) {
       return key;
     }
   }
-  // TODO: #3391
-  // throw new Error(`No diagram type detected for text: ${text}`);
-  return 'flowchart';
+
+  throw new Error(`No diagram type detected for text: ${text}`);
 };
 
-export const addDetector = (
-  key: string,
-  detector: DiagramDetector,
-  loader: DiagramLoader | null
-) => {
+export const addDetector = (key: string, detector: DiagramDetector, loader?: DiagramLoader) => {
+  if (detectors[key]) {
+    throw new Error(`Detector with key ${key} already exists`);
+  }
   detectors[key] = { detector, loader };
+  log.debug(`Detector with key ${key} added${loader ? ' with loader' : ''}`);
 };
 
 export const getDiagramLoader = (key: string) => detectors[key].loader;

@@ -93,7 +93,7 @@
         throw new Error('XSS Succeeded');
       }
 
-      var diagram = `sequenceDiagram
+      let diagram = `sequenceDiagram
     participant John
     links John: {"XSS": "javas`;
       diagram += `cript:alert('AudioParam')"}`;

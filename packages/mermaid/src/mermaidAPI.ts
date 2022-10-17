@@ -18,12 +18,11 @@ import { compile, serialize, stringify } from 'stylis';
 import pkg from '../package.json';
 import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
-import { addDetector } from './diagram-api/detectType';
 import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import ganttDb from './diagrams/gantt/ganttDb';
-import Diagram, { getDiagramFromText } from './Diagram';
+import Diagram, { getDiagramFromText, type ParseErrorFunction } from './Diagram';
 import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
@@ -34,18 +33,12 @@ import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
 
-let hasLoadedDiagrams = false;
-
 /**
  * @param text
  * @param parseError
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
-function parse(text: string, parseError?: Function): boolean {
-  if (!hasLoadedDiagrams) {
-    addDiagrams();
-    hasLoadedDiagrams = true;
-  }
+function parse(text: string, parseError?: ParseErrorFunction): boolean {
+  addDiagrams();
   const diagram = new Diagram(text, parseError);
   return diagram.parse(text, parseError);
 }
@@ -122,10 +115,7 @@ const render = async function (
   cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
   container?: Element
 ): Promise<void> {
-  if (!hasLoadedDiagrams) {
-    addDiagrams();
-    hasLoadedDiagrams = true;
-  }
+  addDiagrams();
   configApi.reset();
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
   const graphInit = utils.detectInit(text);
@@ -486,11 +476,7 @@ async function initialize(options: MermaidConfig) {
     typeof options === 'object' ? configApi.setSiteConfig(options) : configApi.getSiteConfig();
 
   setLogLevel(config.logLevel);
-
-  if (!hasLoadedDiagrams) {
-    addDiagrams();
-    hasLoadedDiagrams = true;
-  }
+  addDiagrams();
 }
 
 export const mermaidAPI = Object.freeze({

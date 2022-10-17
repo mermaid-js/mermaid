@@ -3,7 +3,7 @@
 import DOMPurify from 'dompurify';
 
 export interface MermaidConfig {
-  lazyLoadedDiagrams?: any;
+  lazyLoadedDiagrams?: string[];
   theme?: string;
   themeVariables?: any;
   themeCSS?: string;

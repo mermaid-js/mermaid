@@ -82,23 +82,13 @@ The API works by pulling rendering instructions from the source `mermaid.js` in 
 
 ### Requirements for the Mermaid API.
 
-When writing the .html file, we give three instructions inside the html code to the web browser:
+When writing the .html file, we give two instructions inside the html code to the web browser:
 
-a. A reference for fetching the online mermaid renderer, through the `mermaid.js` or `mermaid.min.js`.
+a. The mermaid code for the diagram we want to create.
 
-b. The mermaid code for the diagram we want to create.
+b. The importing of mermaid library through the `mermaid.esm.js` or `mermaid.esm.min.mjs` and the `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process .
 
-c. The `mermaid.initialize()` call, which dictates the appearance of diagrams and also starts the rendering process .
-
-**a. A reference to the external CDN in a `<script src>` tag, or a reference to mermaid.js as a separate file.:**
-
-```html
-<body>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-</body>
-```
-
-**b. The embedded mermaid diagram definition inside a `<pre class="mermaid">`:**
+**a. The embedded mermaid diagram definition inside a `<pre class="mermaid">`:**
 
 ```html
 <body>
@@ -114,13 +104,14 @@ c. The `mermaid.initialize()` call, which dictates the appearance of diagrams an
 
 **Notes**: Every Mermaid chart/graph/diagram definition, should have separate `<pre>` tags.
 
-**c. The `mermaid.initialize()` call.**
+**b. The import of mermaid and the `mermaid.initialize()` call.**
 
 `mermaid.initialize()` call takes all the definitions contained in all the `<pre class="mermaid">` tags that it finds in the html body and renders them into diagrams. Example:
 
 ```html
 <body>
-  <script>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
   </script>
 </body>
@@ -142,11 +133,6 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
 ```html
 <html>
   <body>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <script>
-      mermaid.initialize({ startOnLoad: true });
-    </script>
-
     Here is one mermaid diagram:
     <pre class="mermaid">
             graph TD 
@@ -163,6 +149,11 @@ Rendering in Mermaid is initialized by `mermaid.initialize()` call. You can plac
             B -->|tcp_456| C[Server1] 
             B -->|tcp_456| D[Server2]
     </pre>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@<MERMAID_VERSION>/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
   </body>
 </html>
 ```
@@ -188,8 +179,8 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
             B --> C[Server1] 
             B --> D[Server2]
     </pre>
-    <script src="The\Path\In\Your\Package\mermaid.js"></script>
-    <script>
+    <script type="module">
+      import mermaid from 'The/Path/In/Your/Package/mermaid.ems.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
@@ -213,4 +204,4 @@ In this example mermaid.js is referenced in `src` as a separate JavaScript file,
 
 **Comments from Knut Sveidqvist, creator of mermaid:**
 
-- In early versions of mermaid, the `<script src>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflects the previous way which still works.
+- In early versions of mermaid, the `<script>` tag was invoked in the `<head>` part of the web page. Nowadays we can place it in the `<body>` as seen above. Older parts of the documentation frequently reflects the previous way which still works.
