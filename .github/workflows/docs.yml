@@ -5,12 +5,12 @@ on:
     branches:
       - develop
     paths:
-      - 'packages/mermaid/docs/**/*'
+      - 'packages/mermaid/src/docs/**/*'
   pull_request:
     branches:
       - develop
     paths:
-      - 'packages/mermaid/docs/**/*'
+      - 'packages/mermaid/src/docs/**/*'
 jobs:
   spellcheck:
     name: 'Docs: Spellcheck'
@@ -24,5 +24,5 @@ jobs:
           node-version: '16'
       - run: npm install -g cspell
         name: Install cSpell
-      - run: cspell --config ./cSpell.json "packages/mermaid/docs/**/*.md" --no-progress
+      - run: cspell --config ./cSpell.json "packages/mermaid/src/docs/**/*.md" --no-progress
         name: Run cSpell
