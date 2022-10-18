@@ -6,7 +6,7 @@ This is list of publicly available Tutorials for using Mermaid.JS . This is inte
 
 **Note that these tutorials might display an older interface, but the usage of the live-editor will largely be the same.**
 
-For most purposes, you can use the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor), to quickly and easily render a diagram.
+For most purposes, you can use the [Live Editor](https://mermaid.live), to quickly and easily render a diagram.
 
 ## Live-Editor Tutorials
 

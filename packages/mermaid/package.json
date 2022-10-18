@@ -128,6 +128,7 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.8.3",
     "unist-util-flatmap": "^1.0.0",
+    "vite": "^3.1.4",
     "vitepress": "^1.0.0-alpha.19",
     "vitepress-plugin-mermaid": "^2.0.8",
     "vitepress-plugin-search": "^1.0.4-alpha.11"

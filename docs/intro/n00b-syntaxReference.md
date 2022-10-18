@@ -6,7 +6,7 @@ Mermaid's syntax is used to create diagrams. You'll find that it is not too tric
 
 Syntax, together with Deployment and Configuration constitute the whole of Mermaid.
 
-Diagram Examples can be found in the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor), it is also a great practice area.
+Diagram Examples can be found in the [Mermaid Live Editor](https://mermaid.live), it is also a great practice area.
 
 ## Syntax Structure
 
@@ -54,7 +54,7 @@ One should **beware the use of some words or symbols** that can break diagrams. 
 
 ### Mermaid Live Editor
 
-Now, that you've seen what you should not add to your diagrams, you can play around with them in the [Mermaid Live Editor](https://mermaid-js.github.io/mermaid-live-editor).
+Now, that you've seen what you should not add to your diagrams, you can play around with them in the [Mermaid Live Editor](https://mermaid.live).
 
 # Configuration
 
@@ -64,7 +64,7 @@ If you are interested in altering and customizing your Mermaid Diagrams, you wil
 This section will introduce the different methods of configuring the behaviors and appearances of Mermaid Diagrams.
 The following are the most commonly used methods, and they are all tied to Mermaid [Deployment](n00b-gettingStarted) methods.
 
-### Configuration Section in the [Live Editor](https://mermaid-js.github.io/mermaid-live-editor).
+### Configuration Section in the [Live Editor](https://mermaid.live).
 
 Here you can edit certain values to change the behavior and appearance of the diagram.
 
