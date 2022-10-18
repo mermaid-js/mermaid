@@ -31,7 +31,7 @@
     "build:esbuild": "concurrently \"pnpm build:code\" \"pnpm build:types\"",
     "build": "pnpm clean; pnpm build:esbuild",
     "dev": "node .esbuild/serve.cjs",
-    "predocs:build": "rimraf docs/.vitepress/dist",
+    "predocs:build": "rimraf docs",
     "docs:build": "ts-node-esm src/docs.mts",
     "docs:verify": "pnpm docs:build --verify",
     "docs:code": "typedoc --plugin typedoc-plugin-markdown --readme none --hideBreadcrumbs --hideInPageTOC --namedAnchors --out src/docs/config/setup --entryPointStrategy expand src/defaultConfig.ts src/config.ts src/mermaidAPI.ts",
