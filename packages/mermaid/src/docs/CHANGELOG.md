@@ -11,10 +11,10 @@ All changes are in descending order, beginning with the newest (latest) version.
 🔖 [Release Notes](https://github.com/mermaid-js/mermaid/releases/tag/8.7.0) |
 📜 [Full Changelog](https://github.com/mermaid-js/mermaid/compare/8.6.0...8.7.0)
 
-This version brings with it a system for [dynamic and integrated configuration of the diagram themes](../config/theming.md).
+This version brings with it a system for [dynamic and integrated configuration of the diagram themes](config/theming.md).
 The objective of this is to increase the customizability of mermaid and the ease of Styling, with the customization of themes through the `%%init%%` directive and `initialize` calls.
 
-Themes follow and build upon the Levels of Configuration and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](../getting-started/8.6.0_docs.md).
+Themes follow and build upon the Levels of Configuration and employ `directives` to modify and create custom configurations, as they were introduced in Version [8.6.0](config/8.6.0_docs.md).
 
 **These Theming Configurations, similar to directives, will also be made applicable in the Live-Editor, for easier styling.**
 

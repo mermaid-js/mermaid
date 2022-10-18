@@ -31,15 +31,15 @@
     "build:esbuild": "concurrently \"pnpm build:code\" \"pnpm build:types\"",
     "build": "pnpm clean; pnpm build:esbuild",
     "dev": "node .esbuild/serve.cjs",
-    "predocs:build": "rimraf docs/.vitepress/dist",
+    "predocs:build": "rimraf docs",
     "docs:build": "ts-node-esm src/docs.mts",
     "docs:verify": "pnpm docs:build --verify",
-    "docs:code": "typedoc --plugin typedoc-plugin-markdown --readme none --hideBreadcrumbs --hideInPageTOC --namedAnchors --out docs/config/setup --entryPointStrategy expand src/defaultConfig.ts src/config.ts src/mermaidAPI.ts",
+    "docs:code": "typedoc --plugin typedoc-plugin-markdown --readme none --hideBreadcrumbs --hideInPageTOC --namedAnchors --out src/docs/config/setup --entryPointStrategy expand src/defaultConfig.ts src/config.ts src/mermaidAPI.ts",
     "predocs:dev": "pnpm docs:code",
-    "docs:dev": "vitepress dev docs",
+    "docs:dev": "vitepress dev src/docs",
     "predocs:bundle": "pnpm docs:code",
-    "docs:bundle": "vitepress build docs",
-    "docs:serve": "vitepress serve docs",
+    "docs:bundle": "vitepress build src/docs",
+    "docs:serve": "vitepress serve src/docs",
     "release": "pnpm build",
     "lint": "eslint --cache --ignore-path .gitignore . && pnpm lint:jison && prettier --check .",
     "lint:fix": "eslint --fix --ignore-path .gitignore . && prettier --write .",
@@ -77,11 +77,7 @@
     "khroma": "^2.0.0",
     "lodash": "^4.17.21",
     "moment-mini": "^2.24.0",
-    "non-layered-tidy-tree-layout": "^2.0.2",
-    "shiki": "^0.11.1",
-    "stylis": "^4.1.2",
-    "typedoc": "^0.23.16",
-    "typedoc-plugin-markdown": "^3.13.6"
+    "non-layered-tidy-tree-layout": "^2.0.2"
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "^3.25.7",
@@ -131,7 +127,11 @@
     "vite": "^3.1.4",
     "vitepress": "^1.0.0-alpha.19",
     "vitepress-plugin-mermaid": "^2.0.8",
-    "vitepress-plugin-search": "^1.0.4-alpha.11"
+    "vitepress-plugin-search": "^1.0.4-alpha.11",
+    "shiki": "^0.11.1",
+    "stylis": "^4.1.2",
+    "typedoc": "^0.23.16",
+    "typedoc-plugin-markdown": "^3.13.6"
   },
   "resolutions": {
     "d3": "^7.0.0"

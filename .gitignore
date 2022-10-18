@@ -34,4 +34,4 @@ cypress/snapshots/
 tsconfig.tsbuildinfo
 
 #docs generate from code
-packages/mermaid/docs/config/setup
+packages/mermaid/src/docs/config/setup
