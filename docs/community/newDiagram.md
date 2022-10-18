@@ -30,7 +30,7 @@ There are some jison specific sub steps here where the parser stores the data en
 
 In the extract of the grammar above, it is defined that a call to the setTitle method in the data object will be done when parsing and the title keyword is encountered.
 
-> **Note**
+> **Note**\
 > Make sure that the `parseError` function for the parser is defined and calling `mermaid.parseError`. This way a common way of detecting parse errors is provided for the end-user.
 
 For more info look in the example diagram type:
