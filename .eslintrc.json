@@ -56,7 +56,7 @@
         "checkStrings": false,
         "checkStringTemplates": false
       }
-    ]
+    ],
     "no-empty": [
       "error",
       {
