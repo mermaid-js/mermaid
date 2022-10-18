@@ -94,7 +94,7 @@ class Theme {
     this.errorTextColor = '#552222';
   }
   updateColors() {
-    /* Each color-set will have a background, a forgroupnd and a border color */
+    /* Each color-set will have a background, a foreground and a border color */
     this.cScale0 = this.cScale0 || this.primaryColor;
     this.cScale1 = this.cScale1 || this.secondaryColor;
     this.cScale2 = this.cScale2 || this.tertiaryColor;

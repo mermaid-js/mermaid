@@ -65,17 +65,6 @@ describe('when parsing a gantt diagram it', function () {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
-  /**
-   * Beslutsflöde inligt nedan. Obs bla bla bla
-   *
-   *     graph TD
-   *     A[Hard pledge] -- text on link -->B(Round edge)
-   *     B --> C{to do or not to do}
-   *     C -->|Too| D[Result one]
-   *     C -->|Doo| E[Result two]
-   *
-   * Params bapa - a unique bapap
-   */
   it('should handle a task definition', function () {
     const str =
       'gantt\n' +

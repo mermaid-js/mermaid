@@ -39,6 +39,7 @@ export const parseDirective = function (statement, context, type) {
 //  * @param currentCommit
 //  * @param otherCommit
 //  */
+// eslint-disable-next-line @cspell/spellchecker
 // function isfastforwardable(currentCommit, otherCommit) {
 //   log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
 //   let cnt = 0;
@@ -384,14 +385,14 @@ export const checkout = function (branch) {
 /**
  * @param arr
  * @param key
- * @param newval
+ * @param newVal
  */
-function upsert(arr, key, newval) {
+function upsert(arr, key, newVal) {
   const index = arr.indexOf(key);
   if (index === -1) {
-    arr.push(newval);
+    arr.push(newVal);
   } else {
-    arr.splice(index, 1, newval);
+    arr.splice(index, 1, newVal);
   }
 }
 

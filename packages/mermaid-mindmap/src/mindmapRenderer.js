@@ -11,7 +11,7 @@ cytoscape.use(coseBilkent);
 
 /**
  * @param {any} svg The svg element to draw the diagram onto
- * @param {object} mindmap The maindmap data and hierarchy
+ * @param {object} mindmap The mindmap data and hierarchy
  * @param section
  * @param {object} conf The configuration object
  */
@@ -52,7 +52,7 @@ function drawEdges(edgesEl, cy) {
 
 /**
  * @param {any} svg The svg element to draw the diagram onto
- * @param {object} mindmap The maindmap data and hierarchy
+ * @param {object} mindmap The mindmap data and hierarchy
  * @param section
  * @param cy
  * @param {object} conf The configuration object
@@ -96,7 +96,6 @@ function addNodes(mindmap, cy, conf, level) {
 /**
  * @param node
  * @param conf
- * @param cy
  */
 function layoutMindmap(node, conf) {
   return new Promise((resolve) => {
@@ -121,7 +120,7 @@ function layoutMindmap(node, conf) {
     renderEl.remove();
     addNodes(node, cy, conf, 0);
 
-    // Make cytoscape care about the dimensisions of the nodes
+    // Make cytoscape care about the dimensions of the nodes
     cy.nodes().forEach(function (n) {
       n.layoutDimensions = () => {
         const data = n.data();
@@ -143,10 +142,7 @@ function layoutMindmap(node, conf) {
   });
 }
 /**
- * @param node
  * @param cy
- * @param positionedMindmap
- * @param conf
  */
 function positionNodes(cy) {
   cy.nodes().map((node, id) => {
@@ -184,7 +180,7 @@ export const draw = async (text, id, version, diagObj) => {
   log.debug('Renering info diagram\n' + text);
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);

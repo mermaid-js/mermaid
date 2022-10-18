@@ -54,7 +54,7 @@ export const draw = function (text, id, version, diagObj) {
   diagObj.parser.parse(text + '\n');
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -261,7 +261,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
 
     // Draw the box with the attached line
     svgDraw.drawTask(diagram, task, conf);
-    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, 300 + 5 * 30); // stopy is the length of the descenders.
+    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, 300 + 5 * 30); // stopY is the length of the descenders.
   }
 };
 

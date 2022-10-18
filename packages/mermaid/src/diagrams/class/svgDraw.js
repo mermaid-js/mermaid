@@ -347,7 +347,7 @@ const buildMethodDisplay = function (parsedText) {
 };
 
 const buildLegacyDisplay = function (text) {
-  // if for some reason we dont have any match, use old format to parse text
+  // if for some reason we don't have any match, use old format to parse text
   let displayText = '';
   let cssStyle = '';
   let memberText = '';

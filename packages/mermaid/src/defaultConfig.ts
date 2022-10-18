@@ -119,11 +119,11 @@ const config: Partial<MermaidConfig> = {
   /**
    * This option controls if the generated ids of nodes in the SVG are generated randomly or based
    * on a seed. If set to false, the IDs are generated based on the current date and thus are not
-   * deterministic. This is the default behaviour.
+   * deterministic. This is the default behavior.
    *
    * **Notes**:
    *
-   * This matters if your files are checked into sourcecontrol e.g. git and should not change unless
+   * This matters if your files are checked into source control e.g. git and should not change unless
    * content is changed.
    *
    * Default value: false
@@ -633,9 +633,9 @@ const config: Partial<MermaidConfig> = {
     numberSectionStyles: 4,
 
     /**
-     * | Parameter  | Description                 | Type | Required | Values           |
-     * | ---------- | --------------------------- | ---- | -------- | ---------------- |
-     * | axisFormat | Datetime format of the axis | 3    | Required | Date in yy-mm-dd |
+     * | Parameter  | Description                  | Type | Required | Values           |
+     * | ---------- | ---------------------------- | ---- | -------- | ---------------- |
+     * | axisFormat | Date/time format of the axis | 3    | Required | Date in yy-mm-dd |
      *
      * **Notes:**
      *
@@ -1168,7 +1168,7 @@ const config: Partial<MermaidConfig> = {
      * | --------------- | ----------- | ------- | -------- | ------------------ |
      * | c4BoundaryInRow | See Notes   | Integer | Required | Any Positive Value |
      *
-     * **Notes:** How many boundarys to place in each row.
+     * **Notes:** How many boundaries to place in each row.
      *
      * Default value: 2
      */
