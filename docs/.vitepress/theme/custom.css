@@ -15,3 +15,7 @@
   --vp-home-hero-image-background-image: linear-gradient(-45deg, #bd34fe 50%, #ff3670 50%);
   --vp-home-hero-image-filter: blur(72px);
 }
+
+.vp-doc > div {
+  width: 100%;
+}
