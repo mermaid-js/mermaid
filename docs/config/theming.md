@@ -156,7 +156,7 @@ You can create your own themes, by changing any of the given variables below. If
 
 ## Theme Variables Reference Table
 
-> Note
+> **Note**
 > Variables that are unique to some diagrams can be affected by changes in Theme Variables
 
 | Variable             | Default/Base/Factor value      | Calc | Description                                                                                                                      |

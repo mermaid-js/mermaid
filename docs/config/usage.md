@@ -119,7 +119,7 @@ Values:
 - **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
 - **sandbox**: With this security level all rendering takes place in a sandboxed iframe. This prevent any JavaScript running in the context. This may hinder interactive functionality of the diagram like scripts, popups in sequence diagram or links to other tabs/targets etc.
 
-> Note
+> **Note**
 > This changes the default behaviour of mermaid so that after upgrade to 8.2, unless the `securityLevel` is not changed, tags in flowcharts are encoded as tags and clicking is disabled.
 > **sandbox** security level is still in the beta version.
 
@@ -186,7 +186,7 @@ Or with no config object, and a jQuery selection:
 mermaid.init(undefined, $('#someId .yetAnotherClass'));
 ```
 
-> Warning
+> **Warning**
 > This type of integration is deprecated. Instead the preferred way of handling more complex integration is to use the mermaidAPI instead.
 
 ## Usage with webpack
@@ -341,7 +341,7 @@ on what kind of integration you use.
 </script>
 ```
 
-> Note
+> **Note**
 > This is the preferred way of configuring mermaid.
 
 ### The following methods are deprecated and are kept only for backwards compatibility.
@@ -358,7 +358,7 @@ approach are:
 mermaid.startOnLoad = true;
 ```
 
-> Warning
+> **Warning**
 > This way of setting the configuration is deprecated. Instead the preferred way is to use the initialize method. This functionality is only kept for backwards compatibility.
 
 ## Using the mermaid_config
@@ -373,7 +373,7 @@ approach are:
 mermaid_config.startOnLoad = true;
 ```
 
-> Warning
+> **Warning**
 > This way of setting the configuration is deprecated. Instead the preferred way is to use the initialize method. This functionality is only kept for backwards compatibility.
 
 ## Using the mermaid.init call
@@ -387,5 +387,5 @@ To set some configuration via the mermaid object. The two parameters that are su
 mermaid_config.startOnLoad = true;
 ```
 
-> Warning
+> **Warning**
 > This way of setting the configuration is deprecated. Instead the preferred way is to use the initialize method. This functionality is only kept for backwards compatibility.
