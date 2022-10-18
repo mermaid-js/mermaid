@@ -50,7 +50,7 @@
     ],
     "json/*": ["error", "allowComments"],
     "@cspell/spellchecker": [
-      "warn",
+      "error",
       {
         "checkIdentifiers": false,
         "checkStrings": false,
