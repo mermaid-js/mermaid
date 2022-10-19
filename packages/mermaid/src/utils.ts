@@ -173,7 +173,9 @@ export const detectDirective = function (text, type = null) {
  */
 export const isSubstringInArray = function (str, arr) {
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i].match(str)) return i;
+    if (arr[i].match(str)) {
+      return i;
+    }
   }
   return -1;
 };
@@ -227,7 +229,9 @@ export const runFunc = (functionName, ...params) => {
   let obj = window;
   for (let i = 0; i < len; i++) {
     obj = obj[arrPaths[i]];
-    if (!obj) return;
+    if (!obj) {
+      return;
+    }
   }
 
   obj[fnName](...params);
@@ -276,8 +280,12 @@ const traverseEdge = (points) => {
         // The point is remainingDistance from prevPoint in the vector between prevPoint and point
         // Calculate the coordinates
         const distanceRatio = remainingDistance / vectorDistance;
-        if (distanceRatio <= 0) center = prevPoint;
-        if (distanceRatio >= 1) center = { x: point.x, y: point.y };
+        if (distanceRatio <= 0) {
+          center = prevPoint;
+        }
+        if (distanceRatio >= 1) {
+          center = { x: point.x, y: point.y };
+        }
         if (distanceRatio > 0 && distanceRatio < 1) {
           center = {
             x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
@@ -330,8 +338,12 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
         // The point is remainingDistance from prevPoint in the vector between prevPoint and point
         // Calculate the coordinates
         const distanceRatio = remainingDistance / vectorDistance;
-        if (distanceRatio <= 0) center = prevPoint;
-        if (distanceRatio >= 1) center = { x: point.x, y: point.y };
+        if (distanceRatio <= 0) {
+          center = prevPoint;
+        }
+        if (distanceRatio >= 1) {
+          center = { x: point.x, y: point.y };
+        }
         if (distanceRatio > 0 && distanceRatio < 1) {
           center = {
             x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
@@ -389,8 +401,12 @@ const calcTerminalLabelPosition = (terminalMarkerSize, position, _points) => {
         // The point is remainingDistance from prevPoint in the vector between prevPoint and point
         // Calculate the coordinates
         const distanceRatio = remainingDistance / vectorDistance;
-        if (distanceRatio <= 0) center = prevPoint;
-        if (distanceRatio >= 1) center = { x: point.x, y: point.y };
+        if (distanceRatio <= 0) {
+          center = prevPoint;
+        }
+        if (distanceRatio >= 1) {
+          center = { x: point.x, y: point.y };
+        }
         if (distanceRatio > 0 && distanceRatio < 1) {
           center = {
             x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
@@ -712,7 +728,9 @@ export const initIdGenerator = class iterator {
   }
 
   next() {
-    if (!this.deterministic) return Date.now();
+    if (!this.deterministic) {
+      return Date.now();
+    }
 
     return this.count++;
   }
@@ -834,7 +852,9 @@ export function isDetailedError(error: unknown): error is DetailedError {
 
 /** @param error */
 export function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
+  if (error instanceof Error) {
+    return error.message;
+  }
   return String(error);
 }
 

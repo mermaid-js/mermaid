@@ -389,11 +389,15 @@ const parseDirective = function (p: any, statement: string, context: string, typ
           currentDirective = {};
           break;
         case 'type_directive':
-          if (!currentDirective) throw new Error('currentDirective is undefined');
+          if (!currentDirective) {
+            throw new Error('currentDirective is undefined');
+          }
           currentDirective.type = statement.toLowerCase();
           break;
         case 'arg_directive':
-          if (!currentDirective) throw new Error('currentDirective is undefined');
+          if (!currentDirective) {
+            throw new Error('currentDirective is undefined');
+          }
           currentDirective.args = JSON.parse(statement);
           break;
         case 'close_directive':

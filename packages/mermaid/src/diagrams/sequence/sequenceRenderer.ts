@@ -762,8 +762,11 @@ export const draw = function (_text, id, _version, diagObj) {
       case diagObj.db.LINETYPE.AUTONUMBER:
         sequenceIndex = msg.message.start || sequenceIndex;
         sequenceIndexStep = msg.message.step || sequenceIndexStep;
-        if (msg.message.visible) diagObj.db.enableSequenceNumbers();
-        else diagObj.db.disableSequenceNumbers();
+        if (msg.message.visible) {
+          diagObj.db.enableSequenceNumbers();
+        } else {
+          diagObj.db.disableSequenceNumbers();
+        }
         break;
       case diagObj.db.LINETYPE.CRITICAL_START:
         adjustLoopHeightForWrap(

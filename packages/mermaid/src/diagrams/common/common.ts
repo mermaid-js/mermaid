@@ -8,7 +8,9 @@ import { MermaidConfig } from '../../config.type';
  * @returns {string[]} The rows in that string
  */
 export const getRows = (s?: string): string[] => {
-  if (!s) return [''];
+  if (!s) {
+    return [''];
+  }
   const str = breakToPlaceholder(s).replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
@@ -39,7 +41,9 @@ const sanitizeMore = (text: string, config: MermaidConfig) => {
 };
 
 export const sanitizeText = (text: string, config: MermaidConfig): string => {
-  if (!text) return text;
+  if (!text) {
+    return text;
+  }
   if (config.dompurifyConfig) {
     text = DOMPurify.sanitize(sanitizeMore(text, config), config.dompurifyConfig).toString();
   } else {
@@ -52,7 +56,9 @@ export const sanitizeTextOrArray = (
   a: string | string[] | string[][],
   config: MermaidConfig
 ): string | string[] => {
-  if (typeof a === 'string') return sanitizeText(a, config);
+  if (typeof a === 'string') {
+    return sanitizeText(a, config);
+  }
   // TODO: Refactor to avoid flat.
   return a.flat().map((x: string) => sanitizeText(x, config));
 };

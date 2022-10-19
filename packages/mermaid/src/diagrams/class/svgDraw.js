@@ -190,7 +190,9 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   let isFirst = true;
   classDef.annotations.forEach(function (member) {
     const titleText2 = title.append('tspan').text('«' + member + '»');
-    if (!isFirst) titleText2.attr('dy', conf.textHeight);
+    if (!isFirst) {
+      titleText2.attr('dy', conf.textHeight);
+    }
     isFirst = false;
   });
 
@@ -203,7 +205,9 @@ export const drawClass = function (elem, classDef, conf, diagObj) {
   const classTitle = title.append('tspan').text(classTitleString).attr('class', 'title');
 
   // If class has annotations the title needs to have an offset of the text height
-  if (!isFirst) classTitle.attr('dy', conf.textHeight);
+  if (!isFirst) {
+    classTitle.attr('dy', conf.textHeight);
+  }
 
   const titleHeight = title.node().getBBox().height;
 

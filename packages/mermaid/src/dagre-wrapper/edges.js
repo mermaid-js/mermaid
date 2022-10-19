@@ -336,7 +336,9 @@ const cutPathAtIntersect = (_points, boundryNode) => {
       log.warn('abc88 outside', point, lastPointOutside);
       lastPointOutside = point;
       // points.push(point);
-      if (!isInside) points.push(point);
+      if (!isInside) {
+        points.push(point);
+      }
     }
   });
   log.warn('abc88 returning points', points);

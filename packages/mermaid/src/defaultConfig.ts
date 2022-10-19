@@ -1833,8 +1833,12 @@ const config: Partial<MermaidConfig> = {
   fontSize: 16,
 };
 
-if (config.class) config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-if (config.gitGraph) config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+if (config.class) {
+  config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+}
+if (config.gitGraph) {
+  config.gitGraph.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+}
 
 const keyify = (obj: any, prefix = ''): string[] =>
   Object.keys(obj).reduce((res: string[], el): string[] => {

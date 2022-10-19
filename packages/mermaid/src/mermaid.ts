@@ -143,7 +143,9 @@ const initThrowsErrors = async function (
           if (typeof callback !== 'undefined') {
             callback(id);
           }
-          if (bindFunctions) bindFunctions(element);
+          if (bindFunctions) {
+            bindFunctions(element);
+          }
         },
         element
       );

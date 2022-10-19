@@ -414,7 +414,9 @@ export const drawRels = function (diagram, rels, getC4ShapeObj, diagObj) {
     let relTextWrap = rel.wrap && conf.wrap;
     let relConf = messageFont(conf);
     let diagramType = diagObj.db.getC4Type();
-    if (diagramType === 'C4Dynamic') rel.label.text = i + ': ' + rel.label.text;
+    if (diagramType === 'C4Dynamic') {
+      rel.label.text = i + ': ' + rel.label.text;
+    }
     let textLimitWidth = calculateTextWidth(rel.label.text, relConf);
     calcC4ShapeTextWH('label', rel, relTextWrap, relConf, textLimitWidth);
 
@@ -555,7 +557,9 @@ function drawInsideBoundary(
       );
     }
     // draw boundary
-    if (currentBoundary.alias !== 'global') drawBoundary(diagram, currentBoundary, currentBounds);
+    if (currentBoundary.alias !== 'global') {
+      drawBoundary(diagram, currentBoundary, currentBounds);
+    }
     parentBounds.data.stopy = Math.max(
       currentBounds.data.stopy + conf.c4ShapeMargin,
       parentBounds.data.stopy

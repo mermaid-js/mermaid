@@ -293,9 +293,13 @@ const cylinder = (parent, node) => {
       // ellipsis equation: x*x / a*a + y*y / b*b = 1
       // solve for y to get adjusted value for pos.y
       let y = ry * ry * (1 - (x * x) / (rx * rx));
-      if (y != 0) y = Math.sqrt(y);
+      if (y != 0) {
+        y = Math.sqrt(y);
+      }
       y = ry - y;
-      if (point.y - node.y > 0) y = -y;
+      if (point.y - node.y > 0) {
+        y = -y;
+      }
 
       pos.y += y;
     }

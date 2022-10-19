@@ -399,7 +399,9 @@ function upsert(arr, key, newVal) {
 /** @param commitArr */
 function prettyPrintCommitHistory(commitArr) {
   const commit = commitArr.reduce((out, commit) => {
-    if (out.seq > commit.seq) return out;
+    if (out.seq > commit.seq) {
+      return out;
+    }
     return commit;
   }, commitArr[0]);
   let line = '';
@@ -412,7 +414,9 @@ function prettyPrintCommitHistory(commitArr) {
   });
   const label = [line, commit.id, commit.seq];
   for (let branch in branches) {
-    if (branches[branch] === commit.id) label.push(branch);
+    if (branches[branch] === commit.id) {
+      label.push(branch);
+    }
   }
   log.debug(label.join(' '));
   if (commit.parents && commit.parents.length == 2) {
@@ -452,7 +456,9 @@ export const clear = function () {
 export const getBranchesAsObjArray = function () {
   const branchesArray = Object.values(branchesConfig)
     .map((branchConfig, i) => {
-      if (branchConfig.order !== null) return branchConfig;
+      if (branchConfig.order !== null) {
+        return branchConfig;
+      }
       return {
         ...branchConfig,
         order: parseFloat(`0.${i}`, 10),

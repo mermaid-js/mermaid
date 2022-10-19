@@ -74,7 +74,9 @@ export const draw = function (text, id, version, diagObj) {
   const title = diagObj.db.getDiagramTitle();
 
   const actorNames = diagObj.db.getActors();
-  for (const member in actors) delete actors[member];
+  for (const member in actors) {
+    delete actors[member];
+  }
   let actorPos = 0;
   actorNames.forEach((actorName) => {
     actors[actorName] = {

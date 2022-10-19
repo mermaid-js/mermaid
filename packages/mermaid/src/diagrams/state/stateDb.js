@@ -148,7 +148,9 @@ export const addState = function (id, type, doc, descr, note) {
   }
   if (descr) {
     log.info('Adding state ', id, descr);
-    if (typeof descr === 'string') addDescription(id, descr.trim());
+    if (typeof descr === 'string') {
+      addDescription(id, descr.trim());
+    }
 
     if (typeof descr === 'object') {
       descr.forEach((des) => addDescription(id, des.trim()));
