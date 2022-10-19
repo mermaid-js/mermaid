@@ -1,10 +1,9 @@
-/** Created by knut on 14-12-11. */
+/** Created by knut on 23-07-2022. */
 import { select } from 'd3';
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
 import svgDraw, { getElementById, clearElementRefs } from './svgDraw';
 import cytoscape from 'cytoscape';
 import coseBilkent from 'cytoscape-cose-bilkent';
-import * as db from './mindmapDb';
 
 // Inject the layout algorithm into cytoscape
 cytoscape.use(coseBilkent);

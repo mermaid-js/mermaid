@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "concurrently": "^7.4.0",
+    "mermaid": "workspace:*",
     "rimraf": "^3.0.2"
   },
   "resolutions": {

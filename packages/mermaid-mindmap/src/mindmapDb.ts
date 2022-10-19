@@ -1,15 +1,28 @@
-/** Created by knut on 15-01-14. */
+/** Created by knut on 23-07-2022. */
 import { sanitizeText, getConfig, log } from './mermaidUtils';
+import type { DetailedError } from 'mermaid';
 
-let nodes = [];
+interface Node {
+  id: number;
+  nodeId: string;
+  level: number;
+  descr: string;
+  type: number;
+  children: Node[];
+  width: number;
+  padding: number;
+  icon?: string;
+  class?: string;
+}
+
+let nodes: Node[] = [];
 let cnt = 0;
-
 export const clear = () => {
   nodes = [];
   cnt = 0;
 };
 
-const getParent = function (level) {
+const getParent = function (level: number) {
   for (let i = nodes.length - 1; i >= 0; i--) {
     if (nodes[i].level < level) {
       return nodes[i];
@@ -22,28 +35,21 @@ const getParent = function (level) {
 export const getMindmap = () => {
   return nodes.length > 0 ? nodes[0] : null;
 };
-export const addNode = (level, id, descr, type) => {
+
+export const addNode = (level: number, id: string, descr: string, type: number) => {
   log.info('addNode', level, id, descr, type);
   const conf = getConfig();
-  const node = {
-    id: `id-${cnt++}`,
+  const padding = conf.mindmap?.padding ?? 15;
+  const node: Node = {
+    id: cnt++,
     nodeId: sanitizeText(id),
     level,
     descr: sanitizeText(descr),
     type,
     children: [],
-    width: getConfig().mindmap.maxNodeWidth,
+    width: getConfig().mindmap?.maxNodeWidth ?? 200,
+    padding: type === nodeType.ROUNDED_RECT || type === nodeType.RECT ? 2 * padding : padding,
   };
-  switch (node.type) {
-    case nodeType.ROUNDED_RECT:
-      node.padding = 2 * conf.mindmap.padding;
-      break;
-    case nodeType.RECT:
-      node.padding = 2 * conf.mindmap.padding;
-      break;
-    default:
-      node.padding = conf.mindmap.padding;
-  }
   const parent = getParent(level);
   if (parent) {
     parent.children.push(node);
@@ -55,9 +61,10 @@ export const addNode = (level, id, descr, type) => {
       nodes.push(node);
     } else {
       // Syntax error ... there can only bee one root
-      let error = new Error(
+      const error = new Error(
         'There can be only one root. No parent could be found for ("' + node.descr + '")'
       );
+      // @ts-ignore TODO: Add mermaid error
       error.hash = {
         text: 'branch ' + name,
         token: 'branch ' + name,
@@ -80,7 +87,7 @@ export const nodeType = {
   BANG: 5,
 };
 
-export const getType = (startStr, endStr) => {
+export const getType = (startStr: string, endStr: string): number => {
   log.debug('In get type', startStr, endStr);
   switch (startStr) {
     case '[':
@@ -98,7 +105,7 @@ export const getType = (startStr, endStr) => {
   }
 };
 
-export const decorateNode = (decoration) => {
+export const decorateNode = (decoration: { icon: string; class: string }) => {
   const node = nodes[nodes.length - 1];
   if (decoration && decoration.icon) {
     node.icon = sanitizeText(decoration.icon);
@@ -108,7 +115,7 @@ export const decorateNode = (decoration) => {
   }
 };
 
-export const type2Str = (type) => {
+export const type2Str = (type: number) => {
   switch (type) {
     case nodeType.DEFAULT:
       return 'no-border';
@@ -127,12 +134,13 @@ export const type2Str = (type) => {
   }
 };
 
-export let parseError;
-export const setErrorHandler = (handler) => {
+export type ParseErrorFunction = (err: string | DetailedError, hash?: any) => void;
+export let parseError: ParseErrorFunction;
+export const setErrorHandler = (handler: ParseErrorFunction) => {
   parseError = handler;
 };
 
 // Expose logger to grammar
 export const getLogger = () => log;
 
-export const getNodeById = (id) => nodes[id];
+export const getNodeById = (id: number): Node => nodes[id];
