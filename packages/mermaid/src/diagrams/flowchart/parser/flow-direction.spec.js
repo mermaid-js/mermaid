@@ -2,11 +2,7 @@ import flowDb from '../flowDb';
 import flow from './flow';
 import filter from 'lodash/filter';
 import { setConfig } from '../../../config';
-// import DOMPurify from 'dompurify';
 
-// const domPurify = DOMPurify.createDOMPurify(window);
-
-// const clean = DOMPurify.sanitize(dirty);
 setConfig({
   securityLevel: 'strict',
 });

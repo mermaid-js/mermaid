@@ -64,6 +64,7 @@ export const addClasses = function (classes, g, _id, diagObj) {
     // if (evaluate(getConfig().flowchart.htmlLabels)) {
     //   const node = {
     //     label: vertexText.replace(
+    // eslint-disable-next-line @cspell/spellchecker
     //       /fa[lrsb]?:fa-[\w-]+/g,
     //       s => `<i class='${s.replace(':', ' ')}'></i>`
     //     )

@@ -235,7 +235,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
 
         // Check if any edge leaves the cluster (not the actual cluster, that's a link from the box)
         if (edge.v !== id && edge.w !== id) {
-          // Any edge where either the one of the nodes is decending to the cluster but not the other
+          // Any edge where either the one of the nodes is descending to the cluster but not the other
           // if (decendants[id].indexOf(edge.v) < 0 && decendants[id].indexOf(edge.w) < 0) {
 
           const d1 = isDecendant(edge.v, id);

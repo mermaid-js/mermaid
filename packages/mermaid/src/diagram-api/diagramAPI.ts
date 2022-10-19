@@ -7,9 +7,9 @@ import { addStylesForDiagram } from '../styles';
 import { DiagramDefinition, DiagramDetector } from './types';
 
 /*
-  Packaging and exposing resources for externa diagrams so that they can import
-  diagramAPI and have access to selct parts of mermaid common code reqiored to
-  create diagrams worling like the internal diagrams.
+  Packaging and exposing resources for external diagrams so that they can import
+  diagramAPI and have access to select parts of mermaid common code required to
+  create diagrams working like the internal diagrams.
 */
 export const log = _log;
 export const setLogLevel = _setLogLevel;

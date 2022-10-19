@@ -167,7 +167,7 @@ describe('Entity Relationship Diagram', () => {
     cy.get('svg');
   });
 
-  it.only('should render entities with generic and array attributes', () => {
+  it('should render entities with generic and array attributes', () => {
     renderGraph(
       `
     erDiagram
