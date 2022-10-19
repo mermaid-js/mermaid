@@ -17,11 +17,9 @@ interface Node {
 
 let nodes: Node[] = [];
 let cnt = 0;
-let elements: Record<number, HTMLElement> = {};
 export const clear = () => {
   nodes = [];
   cnt = 0;
-  elements = {};
 };
 
 const getParent = function (level: number) {
@@ -107,10 +105,6 @@ export const getType = (startStr: string, endStr: string): number => {
   }
 };
 
-export const setElementForId = (id: number, element: HTMLElement) => {
-  elements[id] = element;
-};
-
 export const decorateNode = (decoration: { icon: string; class: string }) => {
   const node = nodes[nodes.length - 1];
   if (decoration && decoration.icon) {
@@ -150,5 +144,3 @@ export const setErrorHandler = (handler: ParseErrorFunction) => {
 export const getLogger = () => log;
 
 export const getNodeById = (id: number): Node => nodes[id];
-export const getElementById = (id: number | string): HTMLElement =>
-  elements[typeof id === 'string' ? parseInt(id) : id];
