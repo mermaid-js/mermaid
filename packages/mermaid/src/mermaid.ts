@@ -7,7 +7,7 @@ import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
-import { isDetailedError } from './utils';
+import { isDetailedError, DetailedError } from './utils';
 import { registerDiagram } from './diagram-api/diagramAPI';
 
 /**
@@ -103,7 +103,7 @@ const initThrowsErrors = function (
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt: string;
-  const errors = [];
+  const errors: DetailedError[] = [];
 
   // element is the current div with mermaid class
   for (const element of Array.from(nodesToProcess)) {
@@ -144,8 +144,12 @@ const initThrowsErrors = function (
       );
     } catch (error) {
       log.warn('Catching Error (bootstrap)', error);
-      // @ts-ignore: TODO Fix ts errors
-      const mermaidError = { error, str: error.str, hash: error.hash, message: error.str };
+      const mermaidError: DetailedError = {
+        error,
+        str: error.str,
+        hash: error.hash,
+        message: error.str,
+      };
       if (typeof mermaid.parseError === 'function') {
         mermaid.parseError(mermaidError);
       }
@@ -240,7 +244,7 @@ const initThrowsErrorsAsync = async function (
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt: string;
-  const errors = [];
+  const errors: DetailedError[] = [];
 
   // element is the current div with mermaid class
   for (const element of Array.from(nodesToProcess)) {
@@ -281,8 +285,12 @@ const initThrowsErrorsAsync = async function (
       );
     } catch (error) {
       log.warn('Catching Error (bootstrap)', error);
-      // @ts-ignore: TODO Fix ts errors
-      const mermaidError = { error, str: error.str, hash: error.hash, message: error.str };
+      const mermaidError: DetailedError = {
+        error,
+        str: error.str,
+        hash: error.hash,
+        message: error.str,
+      };
       if (typeof mermaid.parseError === 'function') {
         mermaid.parseError(mermaidError);
       }
@@ -355,22 +363,21 @@ const parse = (txt: string) => {
   return mermaidAPI.parse(txt, mermaid.parseError);
 };
 
-// @ts-ignore: TODO Fix ts errors
-const executionQueue = [];
+const executionQueue: (() => Promise<unknown>)[] = [];
 let executionQueueRunning = false;
 const executeQueue = async () => {
   if (executionQueueRunning) {
     return;
   }
   executionQueueRunning = true;
-  // @ts-ignore: TODO Fix ts errors
   while (executionQueue.length > 0) {
-    // @ts-ignore: TODO Fix ts errors
     const f = executionQueue.shift();
-    try {
-      await f();
-    } catch (e) {
-      log.error('Error executing queue', e);
+    if (f) {
+      try {
+        await f();
+      } catch (e) {
+        log.error('Error executing queue', e);
+      }
     }
   }
   executionQueueRunning = false;
@@ -497,10 +504,8 @@ const mermaid: {
   mermaidAPI,
   parse,
   parseAsync,
-  // parseAsync: mermaidAPI.parseAsync,
   render: mermaidAPI.render,
   renderAsync,
-  // renderAsync: mermaidAPI.renderAsync,
   init,
   initThrowsErrors,
   initialize,
@@ -508,8 +513,6 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
-  // test1,
-  // executeQueue,
 };
 
 export default mermaid;

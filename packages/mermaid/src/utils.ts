@@ -825,6 +825,8 @@ export const sanitizeCss = (str) => {
 export interface DetailedError {
   str: string;
   hash: any;
+  error?: Error;
+  message?: string;
 }
 
 /** @param error */
