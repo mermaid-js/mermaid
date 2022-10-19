@@ -121,7 +121,7 @@ class Theme {
   }
   updateColors() {
     /* Color Scale */
-    /* Each color-set will have a background, a forgroupnd and a border color */
+    /* Each color-set will have a background, a foreground and a border color */
     this.cScale0 = this.cScale0 || this.primaryColor;
     this.cScale1 = this.cScale1 || this.secondaryColor;
     this.cScale2 = this.cScale2 || this.tertiaryColor;
@@ -147,11 +147,18 @@ class Theme {
       this['cScaleInv' + i] = this['cScaleInv' + i] || adjust(this['cScale' + i], { h: 180 });
     }
 
-    // Setup teh label color for the set
-    this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
+    // Setup the label color for the set
+    this.scaleLabelColor =
+      this.scaleLabelColor !== 'calculated' && this.scaleLabelColor
+        ? this.scaleLabelColor
+        : this.labelTextColor;
 
-    for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
-      this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;
+    if (this.labelTextColor !== 'calculated') {
+      this.cScaleLabel0 = this.cScaleLabel0 || invert(this.labelTextColor);
+      this.cScaleLabel3 = this.cScaleLabel3 || invert(this.labelTextColor);
+      for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
+        this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.labelTextColor;
+      }
     }
 
     /* Flowchart variables */

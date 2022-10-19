@@ -368,7 +368,7 @@ export const removeExistingElements = (
  * @param {string} id The id for the SVG element (the element to be rendered)
  * @param {string} text The text for the graph definition
  * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
- *   is called after rendering is finished with the svg code as inparam.
+ *   is called after rendering is finished with the svg code as in param.
  * @param {Element} svgContainingElement  HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
  *   inserted. If no svgContainingElement is provided then the SVG element will be appended to the body.
  * @returns {void}

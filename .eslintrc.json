@@ -19,9 +19,10 @@
     "plugin:jsdoc/recommended",
     "plugin:json/recommended",
     "plugin:markdown/recommended",
+    "plugin:@cspell/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "html", "jest", "jsdoc", "json"],
+  "plugins": ["@typescript-eslint", "no-only-tests", "html", "jest", "jsdoc", "json", "@cspell"],
   "rules": {
     "no-console": "error",
     "no-prototype-builtins": "off",
@@ -48,7 +49,21 @@
       }
     ],
     "json/*": ["error", "allowComments"],
-    "no-empty": ["error", { "allowEmptyCatch": true }]
+    "@cspell/spellchecker": [
+      "error",
+      {
+        "checkIdentifiers": false,
+        "checkStrings": false,
+        "checkStringTemplates": false
+      }
+    ],
+    "no-empty": [
+      "error",
+      {
+        "allowEmptyCatch": true
+      }
+    ],
+    "no-only-tests/no-only-tests": "error"
   },
   "overrides": [
     {

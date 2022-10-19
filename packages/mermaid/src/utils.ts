@@ -109,7 +109,7 @@ export const detectInit = function (text: string, config?: MermaidConfig): Merma
  *
  *   ```mermaid
  *   graph LR
- *    %%{somedirective}%%
+ *    %%{someDirective}%%
  *    a-->b
  *    b-->c
  *    c-->d
@@ -215,7 +215,7 @@ export const formatUrl = (linkStr, config) => {
 /**
  * Runs a function
  *
- * @param {string} functionName A dot seperated path to the function relative to the `window`
+ * @param {string} functionName A dot separated path to the function relative to the `window`
  * @param {...any} params Parameters to pass to the function
  */
 export const runFunc = (functionName, ...params) => {

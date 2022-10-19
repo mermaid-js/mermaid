@@ -27,7 +27,7 @@ export const draw = function (text, id, version, diagObj) {
   // parser.parse(text);
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -610,7 +610,7 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * From this stackexchange question:
+   * From this stack exchange question:
    * http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
    *
    * @param arr
@@ -629,7 +629,7 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * From this stackexchange question:
+   * From this stack exchange question:
    * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
    *
    * @param arr

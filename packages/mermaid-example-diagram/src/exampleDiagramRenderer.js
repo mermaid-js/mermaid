@@ -16,7 +16,7 @@ export const draw = (text, id, version) => {
     log.debug('Rendering example diagram\n' + text, 'Conf: ');
     const THEME_COLOR_LIMIT = getConfig().themeVariables.THEME_COLOR_LIMIT;
     const securityLevel = getConfig().securityLevel;
-    // Handle root and Document for when rendering in sanbox mode
+    // Handle root and Document for when rendering in sandbox mode
     let sandboxElement;
     if (securityLevel === 'sandbox') {
       sandboxElement = select('#i' + id);

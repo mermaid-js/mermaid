@@ -9,16 +9,15 @@ import { getConfig } from '../../config';
  * @param {any} text
  * @param {any} id
  * @param {any} version
- * @param diagObj
  */
-export const draw = (text, id, version, diagObj) => {
+export const draw = (text, id, version) => {
   try {
     // const parser = infoParser.parser;
     // parser.yy = db;
     log.debug('Rendering info diagram\n' + text);
 
     const securityLevel = getConfig().securityLevel;
-    // Handle root and Document for when rendering in sanbox mode
+    // Handle root and Document for when rendering in sandbox mode
     let sandboxElement;
     if (securityLevel === 'sandbox') {
       sandboxElement = select('#i' + id);

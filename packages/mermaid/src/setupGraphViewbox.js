@@ -1,7 +1,7 @@
 import { log } from './logger';
 
 /**
- * Applys d3 attributes
+ * Applies d3 attributes
  *
  * @param {any} d3Elem D3 Element to apply the attributes onto
  * @param {[string, string][]} attrs Object.keys equivalent format of key to value mapping of attributes

@@ -45,7 +45,6 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
     options.fontSize = '16px';
   }
   const useAppli = Cypress.env('useAppli');
-  //const useAppli = false;
   cy.log('Hello ' + useAppli ? 'Appli' : 'image-snapshot');
   const name = (options.name || cy.state('runnable').fullTitle()).replace(/\s+/g, '-');
 

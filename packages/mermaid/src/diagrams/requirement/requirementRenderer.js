@@ -311,7 +311,7 @@ export const draw = (text, id, _version, diagObj) => {
   diagObj.parser.parse(text);
 
   const securityLevel = conf.securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);

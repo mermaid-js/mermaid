@@ -1,6 +1,6 @@
 import { getConfig } from '../../config';
 
-export default (dir, _branches, _commits) => {
+export default (dir, _branches) => {
   const config = getConfig().gitGraph;
   const branches = [];
   const commits = [];

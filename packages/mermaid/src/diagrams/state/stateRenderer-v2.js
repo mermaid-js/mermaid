@@ -56,7 +56,7 @@ const setupNode = (g, parent, node, altFlag) => {
       };
     }
 
-    // Build of the array of description strings accordinging
+    // Build of the array of description strings according
     if (node.description) {
       if (Array.isArray(nodeDb[node.id].description)) {
         // There already is an array of strings,add to it
@@ -64,7 +64,7 @@ const setupNode = (g, parent, node, altFlag) => {
         nodeDb[node.id].description.push(node.description);
       } else {
         if (nodeDb[node.id].description.length > 0) {
-          // if there is a description already transformit to an array
+          // if there is a description already transform it to an array
           nodeDb[node.id].shape = 'rectWithTitle';
           if (nodeDb[node.id].description === node.id) {
             // If the previous description was the is, remove it
