@@ -3,11 +3,10 @@ import { sanitizeText, getConfig, log } from './mermaidUtils';
 
 let nodes = [];
 let cnt = 0;
-let elements = {};
+
 export const clear = () => {
   nodes = [];
   cnt = 0;
-  elements = {};
 };
 
 const getParent = function (level) {
@@ -27,7 +26,7 @@ export const addNode = (level, id, descr, type) => {
   log.info('addNode', level, id, descr, type);
   const conf = getConfig();
   const node = {
-    id: cnt++,
+    id: `id-${cnt++}`,
     nodeId: sanitizeText(id),
     level,
     descr: sanitizeText(descr),
@@ -99,10 +98,6 @@ export const getType = (startStr, endStr) => {
   }
 };
 
-export const setElementForId = (id, element) => {
-  elements[id] = element;
-};
-
 export const decorateNode = (decoration) => {
   const node = nodes[nodes.length - 1];
   if (decoration && decoration.icon) {
@@ -141,4 +136,3 @@ export const setErrorHandler = (handler) => {
 export const getLogger = () => log;
 
 export const getNodeById = (id) => nodes[id];
-export const getElementById = (id) => elements[id];

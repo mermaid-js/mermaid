@@ -1,6 +1,6 @@
 import * as configApi from './config';
 import { log } from './logger';
-import { getDiagram, registerDiagram } from './diagram-api/diagramAPI';
+import { DiagramNotFoundError, getDiagram, registerDiagram } from './diagram-api/diagramAPI';
 import { detectType, getDiagramLoader } from './diagram-api/detectType';
 import { isDetailedError } from './utils';
 export class Diagram {
@@ -92,9 +92,13 @@ export const getDiagramFromText = (
     getDiagram(type);
     return new Diagram(txt, parseError);
   } catch (error) {
+    if (!(error instanceof DiagramNotFoundError)) {
+      log.error(error);
+      throw error;
+    }
     const loader = getDiagramLoader(type);
     if (!loader) {
-      throw new Error(`Diagram ${type} not found.`);
+      throw new Error(`Loader for ${type} not found.`);
     }
     // TODO: Uncomment for v10
     // // Diagram not available, loading it

@@ -27,6 +27,7 @@ const genSections = (options) => {
     .node-icon-${i - 1} {
       font-size: 40px;
       color: ${options['cScaleLabel' + i]};
+      // fill: ${options['cScaleLabel' + i]};
       // color: ${options['gitInv' + i]};
     }
     .section-edge-${i - 1}{
@@ -36,7 +37,7 @@ const genSections = (options) => {
       stroke-width: ${sw};
     }
     .section-${i - 1} line {
-      stroke: ${options['lineColor' + i]} ;
+      stroke: ${options['cScaleInv' + i]} ;
       stroke-width: 3;
     }
 

@@ -1,7 +1,7 @@
 /** Created by knut on 14-12-11. */
 import { select } from 'd3';
 import { log, getConfig, setupGraphViewbox } from './mermaidUtils';
-import svgDraw from './svgDraw';
+import svgDraw, { getElementById, clearElementRefs } from './svgDraw';
 import cytoscape from 'cytoscape';
 import coseBilkent from 'cytoscape-cose-bilkent';
 import * as db from './mindmapDb';
@@ -155,7 +155,7 @@ function positionNodes(cy) {
     data.x = node.position().x;
     data.y = node.position().y;
     svgDraw.positionNode(data);
-    const el = db.getElementById(data.nodeId);
+    const el = getElementById(data.nodeId);
     log.info('Id:', id, 'Position: (', node.position().x, ', ', node.position().y, ')', data);
     el.attr(
       'transform',
@@ -179,6 +179,7 @@ export const draw = async (text, id, version, diagObj) => {
 
   // This is done only for throwing the error if the text is not valid.
   diagObj.db.clear();
+  clearElementRefs();
   // Parse the graph definition
   diagObj.parser.parse(text);
 
