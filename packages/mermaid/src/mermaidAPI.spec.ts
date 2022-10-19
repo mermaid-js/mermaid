@@ -256,11 +256,11 @@ describe('mermaidAPI', function () {
       expect(styles).toMatch(/^\ndefault(.*)/);
     });
     it('gets the fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', null);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', {});
       expect(styles).toMatch(/(.*)\n:root \{ --mermaid-font-family: serif(.*)/);
     });
     it('gets the alt fontFamily from the config', () => {
-      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', null);
+      const styles = createCssStyles(mocked_config_with_htmlLabels, 'graphType', undefined);
       expect(styles).toMatch(/(.*)\n:root \{ --mermaid-alt-font-family: sans-serif(.*)/);
     });
 
@@ -268,7 +268,7 @@ describe('mermaidAPI', function () {
       const classDef1 = { id: 'classDef1', styles: ['style1-1', 'style1-2'], textStyles: [] };
       const classDef2 = { id: 'classDef2', styles: [], textStyles: ['textStyle2-1'] };
       const classDef3 = { id: 'classDef3', textStyles: ['textStyle3-1', 'textStyle3-2'] };
-      const classDefs = [classDef1, classDef2, classDef3];
+      const classDefs = { classDef1, classDef2, classDef3 };
 
       describe('the graph supports classDefs', () => {
         const graphType = 'flowchart-v2';
@@ -431,7 +431,7 @@ describe('mermaidAPI', function () {
     it('gets the css styles created', () => {
       // @todo TODO if a single function in the module can be mocked, do it for createCssStyles and mock the results.
 
-      createUserStyles(mockConfig, 'flowchart-v2', [classDef1], 'someId');
+      createUserStyles(mockConfig, 'flowchart-v2', { classDef1 }, 'someId');
       const expectedStyles =
         '\ndefault' +
         '\n.classDef1 > * { style1-1 !important; }' +
@@ -442,12 +442,12 @@ describe('mermaidAPI', function () {
     });
 
     it('calls getStyles to get css for all graph, user css styles, and config theme variables', () => {
-      createUserStyles(mockConfig, 'someDiagram', null, 'someId');
+      createUserStyles(mockConfig, 'someDiagram', {}, 'someId');
       expect(getStyles).toHaveBeenCalled();
     });
 
     it('returns the result of compiling, stringifying, and serializing the css code with stylis', () => {
-      const result = createUserStyles(mockConfig, 'someDiagram', null, 'someId');
+      const result = createUserStyles(mockConfig, 'someDiagram', {}, 'someId');
       expect(compile).toHaveBeenCalled();
       expect(serialize).toHaveBeenCalled();
       expect(result).toEqual('stylis serialized css');

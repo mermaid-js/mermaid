@@ -279,7 +279,8 @@ export const getClasses = function (text, diagObj) {
     diagObj.parse(text);
     return diagObj.db.getClasses();
   } catch (e) {
-    return;
+    log.error(e);
+    return {};
   }
 };
 

@@ -838,6 +838,10 @@ export function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
+export const isNonEmptyArray = (array: unknown[] | undefined): array is unknown[] => {
+  return array && array.length > 0;
+};
+
 export default {
   assignWithDepth,
   wrapLabel,

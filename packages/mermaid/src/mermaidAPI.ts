@@ -28,7 +28,7 @@ import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
 import getStyles from './styles';
 import theme from './themes';
-import utils, { directiveSanitizer } from './utils';
+import utils, { directiveSanitizer, isNonEmptyArray } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
@@ -59,8 +59,11 @@ const DOMPURE_ATTR = ['dominant-baseline'];
 // This is what is returned from getClasses(...) methods.
 // It is slightly renamed to ..StyleClassDef instead of just ClassDef because "class" is a greatly ambiguous and overloaded word.
 // It makes it clear we're working with a style class definition, even though defining the type is currently difficult.
-// @ts-ignore This is an alias for a js construct used in diagrams.
-type DiagramStyleClassDef = any;
+interface DiagramStyleClassDef {
+  id: string;
+  styles?: string[];
+  textStyles?: string[];
+}
 
 // This makes it clear that we're working with a d3 selected element of some kind, even though it's hard to specify the exact type.
 // @ts-ignore Could replicate the type definition in d3. This also makes it possible to use the untyped info from the js diagram files.
@@ -151,29 +154,32 @@ export const cssImportantStyles = (
  *
  * @param {MermaidConfig} config
  * @param {string} graphType
- * @param {null | DiagramStyleClassDef[]} classDefs - the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...)
+ * @param {Record<string, DiagramStyleClassDef> | null | undefined} classDefs - the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...)
  * @returns {string} the string with all the user styles
  */
 export const createCssStyles = (
   config: MermaidConfig,
   graphType: string,
-  classDefs: DiagramStyleClassDef[] | null | undefined
+  classDefs: Record<string, DiagramStyleClassDef> | null | undefined = {}
 ): string => {
   let cssStyles = '';
 
   // user provided theme CSS info
   // If you add more configuration driven data into the user styles make sure that the value is
   // sanitized by the santizeCSS function  @todo TODO where is this method?  what should be used to replace it?  refactor so that it's always sanitized
-  if (config.themeCSS !== undefined) cssStyles += `\n${config.themeCSS}`;
+  if (config.themeCSS !== undefined) {
+    cssStyles += `\n${config.themeCSS}`;
+  }
 
-  if (config.fontFamily !== undefined)
+  if (config.fontFamily !== undefined) {
     cssStyles += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
-
-  if (config.altFontFamily !== undefined)
+  }
+  if (config.altFontFamily !== undefined) {
     cssStyles += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
+  }
 
   // classDefs defined in the diagram text
-  if (classDefs !== undefined && classDefs !== null && classDefs.length > 0) {
+  if (classDefs && Object.keys(classDefs).length > 0) {
     if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
       const htmlLabels = config.htmlLabels || config.flowchart?.htmlLabels;
 
@@ -186,22 +192,14 @@ export const createCssStyles = (
       for (const classId in classDefs) {
         const styleClassDef = classDefs[classId];
         // create the css styles for each cssElement and the styles (only if there are styles)
-        if (styleClassDef['styles'] && styleClassDef['styles'].length > 0) {
+        if (isNonEmptyArray(styleClassDef.styles)) {
           cssElements.forEach((cssElement) => {
-            cssStyles += cssImportantStyles(
-              styleClassDef['id'],
-              cssElement,
-              styleClassDef['styles']
-            );
+            cssStyles += cssImportantStyles(styleClassDef.id, cssElement, styleClassDef.styles);
           });
         }
         // create the css styles for the tspan element and the text styles (only if there are textStyles)
-        if (styleClassDef['textStyles'] && styleClassDef['textStyles'].length > 0) {
-          cssStyles += cssImportantStyles(
-            styleClassDef['id'],
-            'tspan',
-            styleClassDef['textStyles']
-          );
+        if (isNonEmptyArray(styleClassDef.textStyles)) {
+          cssStyles += cssImportantStyles(styleClassDef.id, 'tspan', styleClassDef.textStyles);
         }
       }
     }
@@ -212,7 +210,7 @@ export const createCssStyles = (
 export const createUserStyles = (
   config: MermaidConfig,
   graphType: string,
-  classDefs: null | DiagramStyleClassDef,
+  classDefs: Record<string, DiagramStyleClassDef>,
   svgId: string
 ): string => {
   const userCSSstyles = createCssStyles(config, graphType, classDefs);
@@ -261,8 +259,7 @@ export const cleanUpSvgCode = (
  * @todo  TODO replace btoa(). Replace with  buf.toString('base64')?
  */
 export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
-  let height = IFRAME_HEIGHT; // default iFrame height
-  if (svgElement) height = svgElement.viewBox.baseVal.height + 'px';
+  const height = svgElement ? svgElement.viewBox.baseVal.height + 'px' : IFRAME_HEIGHT;
   const base64encodedSrc = btoa('<body style="' + IFRAME_BODY_STYLE + '">' + svgCode + '</body>');
   return `<iframe style="width:${IFRAME_WIDTH};height:${height};${IFRAME_STYLES}" src="data:text/html;base64,${base64encodedSrc}" sandbox="${IFRAME_SANDBOX_OPTS}">
   ${IFRAME_NOT_SUPPORTED_MSG}
@@ -291,14 +288,18 @@ export const appendDivSvgG = (
 ): D3Element => {
   const enclosingDiv = parentRoot.append('div');
   enclosingDiv.attr('id', enclosingDivId);
-  if (divStyle) enclosingDiv.attr('style', divStyle);
+  if (divStyle) {
+    enclosingDiv.attr('style', divStyle);
+  }
 
   const svgNode = enclosingDiv
     .append('svg')
     .attr('id', id)
     .attr('width', '100%')
     .attr('xmlns', XMLNS_SVG_STD);
-  if (svgXlink) svgNode.attr('xmlns:xlink', svgXlink);
+  if (svgXlink) {
+    svgNode.attr('xmlns:xlink', svgXlink);
+  }
 
   svgNode.append('g');
   return parentRoot;
@@ -337,11 +338,15 @@ export const removeExistingElements = (
 ) => {
   // Remove existing SVG element if it exists
   const existingSvg = doc.getElementById(id);
-  if (existingSvg) existingSvg.remove();
+  if (existingSvg) {
+    existingSvg.remove();
+  }
 
   // Remove previous temporary element if it exists
   const element = isSandboxed ? doc.querySelector(iFrameSelector) : doc.querySelector(divSelector);
-  if (element) element.remove();
+  if (element) {
+    element.remove();
+  }
 };
 
 /**
@@ -389,7 +394,10 @@ const render = async function (
   log.debug(config);
 
   // Check the maximum allowed text size
-  if (text.length > config.maxTextSize!) text = MAX_TEXTLENGTH_EXCEEDED_MSG;
+  // TODO: Remove magic number
+  if (text.length > (config?.maxTextSize ?? 50000)) {
+    text = MAX_TEXTLENGTH_EXCEEDED_MSG;
+  }
 
   // clean up text CRLFs
   text = text.replace(/\r\n?/g, '\n'); // parser problems on CRLF ignore all CR and leave LF;;
@@ -472,6 +480,7 @@ const render = async function (
   const rules = createUserStyles(
     config,
     graphType,
+    // @ts-ignore convert flowRender to TS.
     flowRenderer.getClasses(text, diag),
     idSelector
   );
@@ -485,7 +494,7 @@ const render = async function (
   try {
     await diag.renderer.draw(text, id, pkg.version, diag);
   } catch (e) {
-    await errorRenderer.draw(text, id, pkg.version);
+    errorRenderer.draw(text, id, pkg.version);
     throw e;
   }
 
@@ -502,14 +511,12 @@ const render = async function (
   if (isSandboxed) {
     const svgEl = root.select(enclosingDivID_selector + ' svg').node();
     svgCode = putIntoIFrame(svgCode, svgEl);
-  } else {
-    if (isLooseSecurityLevel) {
-      // Sanitize the svgCode using DOMPurify
-      svgCode = DOMPurify.sanitize(svgCode, {
-        ADD_TAGS: DOMPURE_TAGS,
-        ADD_ATTR: DOMPURE_ATTR,
-      });
-    }
+  } else if (isLooseSecurityLevel) {
+    // Sanitize the svgCode using DOMPurify
+    svgCode = DOMPurify.sanitize(svgCode, {
+      ADD_TAGS: DOMPURE_TAGS,
+      ADD_ATTR: DOMPURE_ATTR,
+    });
   }
 
   // -------------------------------------------------------------------------------
@@ -530,7 +537,9 @@ const render = async function (
       default:
         cb(svgCode);
     }
-  } else log.debug('CB = undefined!');
+  } else {
+    log.debug('CB = undefined!');
+  }
 
   attachFunctions();
 
@@ -538,9 +547,13 @@ const render = async function (
   // Remove the temporary element if appropriate
   const tmpElementSelector = isSandboxed ? iFrameID_selector : enclosingDivID_selector;
   const node = select(tmpElementSelector).node();
-  if (node && 'remove' in node) node.remove();
+  if (node && 'remove' in node) {
+    node.remove();
+  }
 
-  if (parseEncounteredException) throw parseEncounteredException;
+  if (parseEncounteredException) {
+    throw parseEncounteredException;
+  }
 
   return svgCode;
 };
