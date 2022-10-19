@@ -65,6 +65,31 @@ const init = async function (
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+const handleError = (error: unknown, errors: DetailedError[], parseError?: Function) => {
+  log.warn(error);
+  if (isDetailedError(error)) {
+    // handle case where error string and hash were
+    // wrapped in object like`const error = { str, hash };`
+    if (parseError) {
+      parseError(error.str, error.hash);
+    }
+    errors.push({ ...error, message: error.str, error });
+  } else {
+    // assume it is just error string and pass it on
+    if (parseError) {
+      parseError(error);
+    }
+    if (error instanceof Error) {
+      errors.push({
+        str: error.message,
+        message: error.message,
+        hash: error.name,
+        error,
+      });
+    }
+  }
+};
 const initThrowsErrors = function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
@@ -144,17 +169,7 @@ const initThrowsErrors = function (
         element
       );
     } catch (error) {
-      log.warn('Catching Error (bootstrap)', error);
-      const mermaidError: DetailedError = {
-        error,
-        str: error.str,
-        hash: error.hash,
-        message: error.str,
-      };
-      if (typeof mermaid.parseError === 'function') {
-        mermaid.parseError(mermaidError);
-      }
-      errors.push(mermaidError);
+      handleError(error, errors, mermaid.parseError);
     }
   }
   if (errors.length > 0) {
@@ -285,17 +300,7 @@ const initThrowsErrorsAsync = async function (
         element
       );
     } catch (error) {
-      log.warn('Catching Error (bootstrap)', error);
-      const mermaidError: DetailedError = {
-        error,
-        str: error.str,
-        hash: error.hash,
-        message: error.str,
-      };
-      if (typeof mermaid.parseError === 'function') {
-        mermaid.parseError(mermaidError);
-      }
-      errors.push(mermaidError);
+      handleError(error, errors, mermaid.parseError);
     }
   }
   if (errors.length > 0) {

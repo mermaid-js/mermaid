@@ -825,7 +825,7 @@ export const sanitizeCss = (str) => {
 export interface DetailedError {
   str: string;
   hash: any;
-  error?: Error;
+  error?: any;
   message?: string;
 }
 
