@@ -121,7 +121,10 @@ class Theme {
     }
 
     // Setup teh label color for the set
-    this.scaleLabelColor = this.scaleLabelColor || (this.darkMode ? 'black' : this.labelTextColor);
+    this.scaleLabelColor =
+      this.scaleLabelColor !== 'calculated' && this.scaleLabelColor
+        ? this.scaleLabelColor
+        : this.labelTextColor;
 
     for (let i = 0; i < this.THEME_COLOR_LIMIT; i++) {
       this['cScaleLabel' + i] = this['cScaleLabel' + i] || this.scaleLabelColor;

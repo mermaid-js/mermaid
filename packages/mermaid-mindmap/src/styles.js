@@ -22,13 +22,10 @@ const genSections = (options) => {
     }
     .section-${i - 1} text {
      fill: ${options['cScaleLabel' + i]};
-    //  fill: ${options['gitInv' + i]};
     }
     .node-icon-${i - 1} {
       font-size: 40px;
       color: ${options['cScaleLabel' + i]};
-      // fill: ${options['cScaleLabel' + i]};
-      // color: ${options['gitInv' + i]};
     }
     .section-edge-${i - 1}{
       stroke: ${options['cScale' + i]};

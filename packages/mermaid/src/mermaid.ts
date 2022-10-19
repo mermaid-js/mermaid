@@ -72,7 +72,6 @@ const initThrowsErrors = function (
   callback?: Function
 ) {
   const conf = mermaidAPI.getConfig();
-  // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   if (config) {
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
     // @ts-ignore: TODO Fix ts errors
@@ -210,7 +209,6 @@ const initThrowsErrorsAsync = async function (
   callback?: Function
 ) {
   const conf = mermaidAPI.getConfig();
-  // console.log('Starting rendering diagrams (init) - mermaid.init', conf);
   if (config) {
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
     // @ts-ignore: TODO Fix ts errors
@@ -357,12 +355,124 @@ const parse = (txt: string) => {
   return mermaidAPI.parse(txt, mermaid.parseError);
 };
 
+// @ts-ignore: TODO Fix ts errors
+const executionQueue = [];
+let executionQueueRunning = false;
+const executeQueue = async () => {
+  if (executionQueueRunning) {
+    return;
+  }
+  executionQueueRunning = true;
+  // @ts-ignore: TODO Fix ts errors
+  while (executionQueue.length > 0) {
+    // @ts-ignore: TODO Fix ts errors
+    const f = executionQueue.shift();
+    try {
+      await f();
+    } catch (e) {
+      log.error('Error executing queue', e);
+    }
+  }
+  executionQueueRunning = false;
+};
+
 /**
  * @param txt
  * @deprecated This is an internal function and should not be used. Will be removed in v10.
  */
 const parseAsync = (txt: string) => {
-  return mermaidAPI.parseAsync(txt, mermaid.parseError);
+  return new Promise((resolve, reject) => {
+    // This promise will resolve when the mermaidAPI.render call is done.
+    // It will be queued first and will be executed when it is first in line
+    const performCall = () =>
+      new Promise((res, rej) => {
+        mermaidAPI.parseAsync(txt, mermaid.parseError).then(
+          (r) => {
+            // This resolves for the promise for the queue handling
+            res(r);
+            // This fullfills the promise sent to the value back to the original caller
+            resolve(r);
+          },
+          (e) => {
+            log.error('Error parsing', e);
+            rej(e);
+            reject(e);
+          }
+        );
+      });
+    executionQueue.push(performCall);
+    executeQueue();
+  });
+};
+
+// const asynco = (id: string, delay: number) =>
+//   new Promise((res) => {
+//     setTimeout(() => {
+//       // This resolves for the promise for the queue handling
+//       res(id);
+//     }, delay);
+//   });
+
+/**
+ * @param txt
+ * @param id
+ * @param delay
+ * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ */
+// const test1 = (id: string, delay: number) => {
+//   const p = new Promise((resolve, reject) => {
+//     // This promise will resolve when the mermaidAPI.render call is done.
+//     // It will be queued first and will be executed when it is first in line
+//     const performCall = () =>
+//       new Promise((res) => {
+//         asynco(id, delay).then((r) => {
+//           // This resolves for the promise for the queue handling
+//           res(r);
+//           // This fullfills the promise sent to the value back to the original caller
+//           resolve(r + ' result to caller');
+//         });
+//       });
+//     executionQueue.push(performCall);
+//   });
+//   return p;
+// };
+
+/**
+ * @param txt
+ * @param id
+ * @param text
+ * @param cb
+ * @param container
+ * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ */
+const renderAsync = (
+  id: string,
+  text: string,
+  cb: (svgCode: string, bindFunctions?: (element: Element) => void) => void,
+  container?: Element
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    // This promise will resolve when the mermaidAPI.render call is done.
+    // It will be queued first and will be executed when it is first in line
+    const performCall = () =>
+      new Promise((res, rej) => {
+        mermaidAPI.renderAsync(id, text, cb, container).then(
+          (r) => {
+            // This resolves for the promise for the queue handling
+            res(r);
+            // This fullfills the promise sent to the value back to the original caller
+            resolve(r);
+          },
+          (e) => {
+            log.error('Error parsing', e);
+            rej(e);
+            reject(e);
+          }
+        );
+      });
+    executionQueue.push(performCall);
+    executeQueue();
+  });
 };
 
 const mermaid: {
@@ -374,6 +484,7 @@ const mermaid: {
   parse: typeof parse;
   parseAsync: typeof parseAsync;
   render: typeof mermaidAPI.render;
+  renderAsync: typeof renderAsync;
   init: typeof init;
   initThrowsErrors: typeof initThrowsErrors;
   initialize: typeof initialize;
@@ -386,7 +497,10 @@ const mermaid: {
   mermaidAPI,
   parse,
   parseAsync,
+  // parseAsync: mermaidAPI.parseAsync,
   render: mermaidAPI.render,
+  renderAsync,
+  // renderAsync: mermaidAPI.renderAsync,
   init,
   initThrowsErrors,
   initialize,
@@ -394,6 +508,8 @@ const mermaid: {
   parseError: undefined,
   contentLoaded,
   setParseErrorHandler,
+  // test1,
+  // executeQueue,
 };
 
 export default mermaid;
