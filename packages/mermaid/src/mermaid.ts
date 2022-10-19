@@ -2,14 +2,15 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid
  * functionality and to render the diagrams to svg code!
  */
-import { MermaidConfig } from './config.type';
+import type { MermaidConfig } from './config.type';
 import { log } from './logger';
 import utils from './utils';
 import { mermaidAPI } from './mermaidAPI';
 import { addDetector } from './diagram-api/detectType';
-import { isDetailedError, DetailedError } from './utils';
+import { isDetailedError, type DetailedError } from './utils';
 import { registerDiagram } from './diagram-api/diagramAPI';
 
+export type { MermaidConfig, DetailedError };
 /**
  * ## init
  *

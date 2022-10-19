@@ -294,11 +294,9 @@ export const positionNode = function (node) {
   nodeElem.attr('transform', 'translate(' + x + ',' + y + ')');
 };
 
-export default { drawNode, positionNode, drawEdge };
-
 let elements = {};
 
-export const setElementById = (id, element) => {
+const setElementById = (id, element) => {
   elements[id] = element;
 };
 
@@ -309,3 +307,5 @@ export const getElementById = (id) => {
 export const clearElementRefs = () => {
   elements = {};
 };
+
+export default { drawNode, positionNode, drawEdge };
