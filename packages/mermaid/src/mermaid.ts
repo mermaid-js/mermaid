@@ -217,9 +217,20 @@ const loadExternalDiagrams = async (conf: MermaidConfig) => {
 };
 
 /**
- * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ * Equivalent to {@link init()}, except an error will be thrown on error.
+ *
+ * @alpha
+ * @deprecated This is an internal function and will very likely be modified in v10, or earlier.
+ * We recommend staying with {@link initThrowsErrors} if you don't need `lazyLoadedDiagrams`.
+ *
+ * @param config - **Deprecated** Mermaid sequenceConfig.
+ * @param nodes - One of:
+ * - A DOM Node
+ * - An array of DOM nodes (as would come from a jQuery selector)
+ * - A W3C selector, a la `.mermaid` (default)
+ * @param callback - Function that is called with the id of each generated mermaid diagram.
+ * @returns Resolves on success, otherwise the {@link Promise} will be rejected with an Error.
  */
-
 const initThrowsErrorsAsync = async function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
