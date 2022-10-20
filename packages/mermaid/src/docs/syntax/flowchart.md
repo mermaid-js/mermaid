@@ -502,10 +502,10 @@ Beginner's tip—a full example using interactive links in a html context:
   </pre>
 
   <script>
-    var callback = function () {
+    const callback = function () {
       alert('A callback was triggered');
     };
-    var config = {
+    const config = {
       startOnLoad: true,
       flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
       securityLevel: 'loose',
@@ -594,7 +594,7 @@ A shorter form of adding a class is to attach the classname to the node using th
 ```mermaid-example
 flowchart LR
     A:::someclass --> B
-    classDef someclass fill:#f96;
+    classDef someclass fill:#f96
 ```
 
 ### Css classes

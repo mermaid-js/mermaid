@@ -11,7 +11,7 @@ export default defineConfig({
   themeConfig: {
     nav: nav(),
     editLink: {
-      pattern: 'https://github.com/mermaid-js/mermaid/edit/develop/docs/:path',
+      pattern: 'https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/src/docs/:path',
       text: 'Edit this page on GitHub',
     },
 
