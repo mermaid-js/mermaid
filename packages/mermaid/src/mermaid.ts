@@ -57,6 +57,18 @@ const init = async function (
   }
 };
 
+/**
+ * Equivalent to {@link init()}, except an error will be thrown on error.
+ *
+ * @param config - **Deprecated** Mermaid sequenceConfig.
+ * @param nodes - One of:
+ * - A DOM Node
+ * - An array of DOM nodes (as would come from a jQuery selector)
+ * - A W3C selector, a la `.mermaid` (default)
+ * @param callback - Function that is called with the id of each generated mermaid diagram.
+ *
+ * @returns Resolves on success, otherwise the {@link Promise} will be rejected with an Error.
+ */
 const initThrowsErrors = async function (
   config?: MermaidConfig,
   // eslint-disable-next-line no-undef
