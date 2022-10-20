@@ -45,7 +45,12 @@ const edgeInCluster = (edge, clusterId) => {
     log.debug('Tilt, ', clusterId, ',not in decendants');
     return false;
   }
-return decendants[clusterId].indexOf(edge.v) >= 0 || isDecendant(edge.v, clusterId) || isDecendant(edge.w, clusterId) || decendants[clusterId].indexOf(edge.w) >= 0;
+  return (
+    decendants[clusterId].indexOf(edge.v) >= 0 ||
+    isDecendant(edge.v, clusterId) ||
+    isDecendant(edge.w, clusterId) ||
+    decendants[clusterId].indexOf(edge.w) >= 0
+  );
 };
 
 const copy = (clusterId, graph, newGraph, rootId) => {
