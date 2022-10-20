@@ -84,14 +84,22 @@ const initThrowsErrors = async function (
     mermaid.sequenceConfig = config;
   }
 
+  const errors = [];
+
   if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
     // Load all lazy loaded diagrams in parallel
-    await Promise.allSettled(
+    const results = await Promise.allSettled(
       conf.lazyLoadedDiagrams.map(async (diagram: string) => {
         const { id, detector, loadDiagram } = await import(diagram);
         addDetector(id, detector, loadDiagram);
       })
     );
+    for (const result of results) {
+      if (result.status == 'rejected') {
+        log.warn(`Failed to lazyLoadedDiagram due to `, result.reason);
+        errors.push(result.reason);
+      }
+    }
   }
 
   // if last argument is a function this is the callback function
@@ -119,7 +127,6 @@ const initThrowsErrors = async function (
   const idGenerator = new utils.initIdGenerator(conf.deterministicIds, conf.deterministicIDSeed);
 
   let txt: string;
-  const errors = [];
 
   // element is the current div with mermaid class
   for (const element of Array.from(nodesToProcess)) {
