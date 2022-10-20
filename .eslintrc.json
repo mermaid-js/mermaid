@@ -24,6 +24,7 @@
   ],
   "plugins": ["@typescript-eslint", "no-only-tests", "html", "jest", "jsdoc", "json", "@cspell"],
   "rules": {
+    "curly": "error",
     "no-console": "error",
     "no-prototype-builtins": "off",
     "no-unused-vars": "off",

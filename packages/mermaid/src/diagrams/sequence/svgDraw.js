@@ -31,7 +31,9 @@ const addPopupInteraction = (id, actorCnt) => {
   addFunction(() => {
     const arr = document.querySelectorAll(id);
     // This will be the case when running in sandboxed mode
-    if (arr.length === 0) return;
+    if (arr.length === 0) {
+      return;
+    }
     arr[0].addEventListener('mouseover', function () {
       popupMenuUpFunc('actor' + actorCnt + '_popup');
     });
@@ -322,7 +324,9 @@ export const drawLabel = function (elem, txtObject) {
 let actorCnt = -1;
 
 export const fixLifeLineHeights = (diagram, bounds) => {
-  if (!diagram.selectAll) return;
+  if (!diagram.selectAll) {
+    return;
+  }
   diagram
     .selectAll('.actor-line')
     .attr('class', '200')

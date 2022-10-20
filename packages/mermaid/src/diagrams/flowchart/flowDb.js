@@ -699,7 +699,9 @@ const destructLink = (_str, _startStr) => {
       startInfo.type = info.type;
     } else {
       // x-- xyz -->  - not supported
-      if (startInfo.type !== info.type) return { type: 'INVALID', stroke: 'INVALID' };
+      if (startInfo.type !== info.type) {
+        return { type: 'INVALID', stroke: 'INVALID' };
+      }
 
       startInfo.type = 'double_' + startInfo.type;
     }

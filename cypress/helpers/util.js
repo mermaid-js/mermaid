@@ -58,7 +58,9 @@ export const imgSnapshotTest = (graphStr, _options, api = false, validation) => 
   const url = mermaidUrl(graphStr, options, api);
 
   cy.visit(url);
-  if (validation) cy.get('svg').should(validation);
+  if (validation) {
+    cy.get('svg').should(validation);
+  }
   cy.get('svg');
   // Default name to test title
 
@@ -106,7 +108,9 @@ export const urlSnapshotTest = (url, _options, api = false, validation) => {
   }
 
   cy.visit(url);
-  if (validation) cy.get('svg').should(validation);
+  if (validation) {
+    cy.get('svg').should(validation);
+  }
   cy.get('body');
   // Default name to test title
 

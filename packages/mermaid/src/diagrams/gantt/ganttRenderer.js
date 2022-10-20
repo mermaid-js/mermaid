@@ -427,7 +427,9 @@ export const draw = function (text, id, version, diagObj) {
     );
     const maxTime = tasks.reduce((max, { endTime }) => (max ? Math.max(max, endTime) : endTime), 0);
     const dateFormat = diagObj.db.getDateFormat();
-    if (!minTime || !maxTime) return;
+    if (!minTime || !maxTime) {
+      return;
+    }
 
     const excludeRanges = [];
     let range = null;
@@ -552,7 +554,9 @@ export const draw = function (text, id, version, diagObj) {
           const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
           tspan.setAttribute('alignment-baseline', 'central');
           tspan.setAttribute('x', '10');
-          if (j > 0) tspan.setAttribute('dy', '1em');
+          if (j > 0) {
+            tspan.setAttribute('dy', '1em');
+          }
           tspan.textContent = rows[j];
           svgLabel.appendChild(tspan);
         }

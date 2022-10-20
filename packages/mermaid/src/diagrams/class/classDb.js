@@ -49,7 +49,9 @@ const splitClassNameAndType = function (id) {
 export const addClass = function (id) {
   let classId = splitClassNameAndType(id);
   // Only add class if not exists
-  if (typeof classes[classId.className] !== 'undefined') return;
+  if (typeof classes[classId.className] !== 'undefined') {
+    return;
+  }
 
   classes[classId.className] = {
     id: classId.className,
@@ -185,7 +187,9 @@ export const cleanupLabel = function (label) {
 export const setCssClass = function (ids, className) {
   ids.split(',').forEach(function (_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+    if (_id[0].match(/\d/)) {
+      id = MERMAID_DOM_ID_PREFIX + id;
+    }
     if (typeof classes[id] !== 'undefined') {
       classes[id].cssClasses.push(className);
     }
@@ -220,7 +224,9 @@ export const setLink = function (ids, linkStr, target) {
   const config = configApi.getConfig();
   ids.split(',').forEach(function (_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+    if (_id[0].match(/\d/)) {
+      id = MERMAID_DOM_ID_PREFIX + id;
+    }
     if (typeof classes[id] !== 'undefined') {
       classes[id].link = utils.formatUrl(linkStr, config);
       if (config.securityLevel === 'sandbox') {
