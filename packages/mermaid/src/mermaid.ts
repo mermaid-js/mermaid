@@ -45,16 +45,6 @@ const init = async function (
   callback?: Function
 ) {
   try {
-    const conf = mermaidAPI.getConfig();
-    if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
-      // Load all lazy loaded diagrams in parallel
-      await Promise.allSettled(
-        conf.lazyLoadedDiagrams.map(async (diagram: string) => {
-          const { id, detector, loadDiagram } = await import(diagram);
-          addDetector(id, detector, loadDiagram);
-        })
-      );
-    }
     await initThrowsErrors(config, nodes, callback);
   } catch (e) {
     log.warn('Syntax Error rendering');
@@ -80,6 +70,16 @@ const initThrowsErrors = async function (
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
     // @ts-ignore: TODO Fix ts errors
     mermaid.sequenceConfig = config;
+  }
+
+  if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
+    // Load all lazy loaded diagrams in parallel
+    await Promise.allSettled(
+      conf.lazyLoadedDiagrams.map(async (diagram: string) => {
+        const { id, detector, loadDiagram } = await import(diagram);
+        addDetector(id, detector, loadDiagram);
+      })
+    );
   }
 
   // if last argument is a function this is the callback function
