@@ -67,30 +67,22 @@ flowchart LR
 
 ### The official documentation site
 
-**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Docsify](https://docsify.js.org), a simple documentation site generator.**
+**[The mermaid documentation site](https://mermaid-js.github.io/mermaid/) is powered by [Vitepress](https://vitepress.vuejs.org/), a simple documentation site generator.**
 
-If you want to preview the whole documentation site on your machine, you need to install `docsify-cli`:
-
-```sh
-$ npm i docsify-cli -g
-```
-
-If you are more familiar with Yarn, you can use the following command:
+If you want to preview the whole documentation site on your machine:
 
 ```sh
-$ yarn global add docsify-cli
+$ cd mermaid
+$ pnpm i
+$ pnpm docs:dev
 ```
 
-The above command will install `docsify-cli` globally.
-If the installation is successful, the command `docsify` will be available in your `PATH`.
-
-You can now run the following command to serve the documentation site:
+You can now build and serve the documentation site:
 
 ```sh
-$ docsify serve docs
+$ pnpm docs:bundle
+$ pnpm docs:serve
 ```
-
-Once the local HTTP server is listening, you can point your browser at http://localhost:3000.
 
 ## Branching
 
@@ -152,7 +144,7 @@ The source files for documentation are in `/packages/mermaid/src/docs` and are w
 
 #### Adding to or changing the documentation organization
 
-If you want to add a new section or change the organization (structure), then you need to make sure to **change the side navigation** in `docs/_sidebar.md`.
+If you want to add a new section or change the organization (structure), then you need to make sure to **change the side navigation** in `mermaid/src/docs/.vitepress/config.js`.
 
 When changes are committed and then released, they become part of the `master` branch and become part of the published documentation on https://mermaid-js.github.io/mermaid/
 
