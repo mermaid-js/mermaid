@@ -11,11 +11,11 @@ sequenceDiagram
     Alice-)John: See you later!
 ```
 
-::: note
+```note
 A note on nodes, the word "end" could potentially break the diagram, due to the way that the mermaid language is scripted.
 
 If unavoidable, one must use parentheses(), quotation marks "", or brackets {},[], to enclose the word "end". i.e : (end), [end], {end}.
-:::
+```
 
 ## Syntax
 

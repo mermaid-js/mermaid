@@ -15,7 +15,7 @@ For instance:
 
 There are some jison specific sub steps here where the parser stores the data encountered when parsing the diagram, this data is later used by the renderer. You can during the parsing call a object provided to the parser by the user of the parser. This object can be called during parsing for storing data.
 
-```
+```jison
 statement
 	: 'participant' actor  { $$='actor'; }
 	| signal               { $$='signal'; }
@@ -26,9 +26,9 @@ statement
 
 In the extract of the grammar above, it is defined that a call to the setTitle method in the data object will be done when parsing and the title keyword is encountered.
 
-::: tip
+```note
 Make sure that the `parseError` function for the parser is defined and calling `mermaid.parseError`. This way a common way of detecting parse errors is provided for the end-user.
-:::
+```
 
 For more info look in the example diagram type:
 
@@ -120,8 +120,7 @@ Here some pointers on how to handle these different areas.
 Here is example handling from flowcharts:
 Jison:
 
-```
-
+```jison
 /* lexical grammar */
 %lex
 %x open_directive
@@ -179,7 +178,8 @@ accDescr {
 
 In a similar way to the directives the jison syntax are quite similar between the diagrams.
 
-```
+```jison
+
 * lexical grammar */
 %lex
 %x acc_title
@@ -199,6 +199,7 @@ statement
     : acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
     | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
     | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
+
 ```
 
 The functions for setting title and description are provided by a common module. This is the import from flowDb.js:
