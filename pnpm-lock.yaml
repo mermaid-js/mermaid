@@ -1,164 +1,164 @@
 lockfileVersion: 5.4-inlineSpecifiers
 
 overrides:
-  d3: 7.6.1
+  d3: ^7.6.1
 
 importers:
 
   .:
     devDependencies:
       '@applitools/eyes-cypress':
-        specifier: 3.27.6
+        specifier: ^3.27.6
         version: 3.27.6
       '@commitlint/cli':
-        specifier: 17.2.0
+        specifier: ^17.2.0
         version: 17.2.0
       '@commitlint/config-conventional':
-        specifier: 17.2.0
+        specifier: ^17.2.0
         version: 17.2.0
       '@cspell/eslint-plugin':
-        specifier: 6.14.2
+        specifier: ^6.14.2
         version: 6.14.2
       '@types/eslint':
-        specifier: 8.4.10
+        specifier: ^8.4.10
         version: 8.4.10
       '@types/express':
-        specifier: 4.17.14
+        specifier: ^4.17.14
         version: 4.17.14
       '@types/jsdom':
-        specifier: 20.0.1
+        specifier: ^20.0.1
         version: 20.0.1
       '@types/lodash':
-        specifier: 4.14.188
+        specifier: ^4.14.188
         version: 4.14.188
       '@types/mdast':
-        specifier: 3.0.10
+        specifier: ^3.0.10
         version: 3.0.10
       '@types/node':
         specifier: ^18.11.9
         version: 18.11.9
       '@types/prettier':
-        specifier: 2.7.1
+        specifier: ^2.7.1
         version: 2.7.1
       '@typescript-eslint/eslint-plugin':
-        specifier: 5.42.1
+        specifier: ^5.42.1
         version: 5.42.1_2udltptbznfmezdozpdoa2aemq
       '@typescript-eslint/parser':
-        specifier: 5.42.1
+        specifier: ^5.42.1
         version: 5.42.1_rmayb2veg2btbq6mbmnyivgasy
       '@vitest/coverage-c8':
-        specifier: 0.25.1
+        specifier: ^0.25.1
         version: 0.25.1_iyb77cyw3lw7duusvxyjdsflhu
       '@vitest/ui':
-        specifier: 0.25.1
+        specifier: ^0.25.1
         version: 0.25.1
       concurrently:
-        specifier: 7.5.0
+        specifier: ^7.5.0
         version: 7.5.0
       coveralls:
-        specifier: 3.1.1
+        specifier: ^3.1.1
         version: 3.1.1
       cypress:
-        specifier: 10.11.0
+        specifier: ^10.11.0
         version: 10.11.0
       cypress-image-snapshot:
-        specifier: 4.0.1
+        specifier: ^4.0.1
         version: 4.0.1_bg25yee4qeg7mpleuvd346a3tq
       esbuild:
-        specifier: 0.15.13
+        specifier: ^0.15.13
         version: 0.15.13
       eslint:
-        specifier: 8.27.0
+        specifier: ^8.27.0
         version: 8.27.0
       eslint-config-prettier:
-        specifier: 8.5.0
+        specifier: ^8.5.0
         version: 8.5.0_eslint@8.27.0
       eslint-plugin-cypress:
-        specifier: 2.12.1
+        specifier: ^2.12.1
         version: 2.12.1_eslint@8.27.0
       eslint-plugin-html:
-        specifier: 7.1.0
+        specifier: ^7.1.0
         version: 7.1.0
       eslint-plugin-jest:
-        specifier: 27.1.5
+        specifier: ^27.1.5
         version: 27.1.5_kdswgjmqcx7mthqz7ow2zlfevy
       eslint-plugin-jsdoc:
-        specifier: 39.6.2
+        specifier: ^39.6.2
         version: 39.6.2_eslint@8.27.0
       eslint-plugin-json:
-        specifier: 3.1.0
+        specifier: ^3.1.0
         version: 3.1.0
       eslint-plugin-markdown:
-        specifier: 3.0.0
+        specifier: ^3.0.0
         version: 3.0.0_eslint@8.27.0
       eslint-plugin-no-only-tests:
-        specifier: 3.1.0
+        specifier: ^3.1.0
         version: 3.1.0
       eslint-plugin-tsdoc:
-        specifier: 0.2.17
+        specifier: ^0.2.17
         version: 0.2.17
       express:
-        specifier: 4.18.2
+        specifier: ^4.18.2
         version: 4.18.2
       globby:
-        specifier: 13.1.2
+        specifier: ^13.1.2
         version: 13.1.2
       husky:
-        specifier: 8.0.2
+        specifier: ^8.0.2
         version: 8.0.2
       identity-obj-proxy:
-        specifier: 3.0.0
+        specifier: ^3.0.0
         version: 3.0.0
       jest:
-        specifier: 29.3.1
+        specifier: ^29.3.1
         version: 29.3.1_odkjkoia5xunhxkdrka32ib6vi
       jison:
-        specifier: 0.4.18
+        specifier: ^0.4.18
         version: 0.4.18
       jsdom:
-        specifier: 20.0.2
+        specifier: ^20.0.2
         version: 20.0.2
       lint-staged:
-        specifier: 13.0.3
+        specifier: ^13.0.3
         version: 13.0.3
       path-browserify:
-        specifier: 1.0.1
+        specifier: ^1.0.1
         version: 1.0.1
       pnpm:
-        specifier: 7.15.0
+        specifier: ^7.15.0
         version: 7.15.0
       prettier:
-        specifier: 2.7.1
+        specifier: ^2.7.1
         version: 2.7.1
       prettier-plugin-jsdoc:
-        specifier: 0.4.2
+        specifier: ^0.4.2
         version: 0.4.2_prettier@2.7.1
       rimraf:
-        specifier: 3.0.2
+        specifier: ^3.0.2
         version: 3.0.2
       start-server-and-test:
-        specifier: 1.14.0
+        specifier: ^1.14.0
         version: 1.14.0
       ts-node:
-        specifier: 10.9.1
+        specifier: ^10.9.1
         version: 10.9.1_cbe7ovvae6zqfnmtgctpgpys54
       typescript:
-        specifier: 4.8.4
+        specifier: ^4.8.4
         version: 4.8.4
       vite:
-        specifier: 3.2.3
+        specifier: ^3.2.3
         version: 3.2.3_@types+node@18.11.9
       vitepress:
-        specifier: 1.0.0-alpha.28
+        specifier: ^1.0.0-alpha.28
         version: 1.0.0-alpha.28_ysryt2e75uhznkanan6iyjk4mi
       vitepress-plugin-mermaid:
-        specifier: 2.0.8
+        specifier: ^2.0.8
         version: 2.0.8_2q5vfj2vm6nj3r62ddjdsi7aoe
       vitepress-plugin-search:
-        specifier: 1.0.4-alpha.15
+        specifier: ^1.0.4-alpha.15
         version: 1.0.4-alpha.15_s3edpouswd4dgoi2en7bdlrp54
       vitest:
-        specifier: 0.25.1
+        specifier: ^0.25.1
         version: 0.25.1_iyb77cyw3lw7duusvxyjdsflhu
 
   packages/mermaid:
@@ -167,7 +167,7 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       d3:
-        specifier: 7.6.1
+        specifier: ^7.6.1
         version: 7.6.1
       dagre:
         specifier: ^0.8.5
@@ -204,103 +204,103 @@ importers:
         version: 9.0.0
     devDependencies:
       '@types/d3':
-        specifier: 7.4.0
+        specifier: ^7.4.0
         version: 7.4.0
       '@types/dompurify':
-        specifier: 2.4.0
+        specifier: ^2.4.0
         version: 2.4.0
       '@types/jsdom':
-        specifier: 20.0.1
+        specifier: ^20.0.1
         version: 20.0.1
       '@types/lodash':
-        specifier: 4.14.188
+        specifier: ^4.14.188
         version: 4.14.188
       '@types/micromatch':
-        specifier: 4.0.2
+        specifier: ^4.0.2
         version: 4.0.2
       '@types/prettier':
-        specifier: 2.7.1
+        specifier: ^2.7.1
         version: 2.7.1
       '@types/stylis':
-        specifier: 4.0.2
+        specifier: ^4.0.2
         version: 4.0.2
       '@types/uuid':
-        specifier: 8.3.4
+        specifier: ^8.3.4
         version: 8.3.4
       '@typescript-eslint/eslint-plugin':
-        specifier: 5.42.1
+        specifier: ^5.42.1
         version: 5.42.1_2udltptbznfmezdozpdoa2aemq
       '@typescript-eslint/parser':
-        specifier: 5.42.1
+        specifier: ^5.42.1
         version: 5.42.1_rmayb2veg2btbq6mbmnyivgasy
       chokidar:
-        specifier: 3.5.3
+        specifier: ^3.5.3
         version: 3.5.3
       concurrently:
-        specifier: 7.5.0
+        specifier: ^7.5.0
         version: 7.5.0
       coveralls:
-        specifier: 3.1.1
+        specifier: ^3.1.1
         version: 3.1.1
       globby:
-        specifier: 13.1.2
+        specifier: ^13.1.2
         version: 13.1.2
       identity-obj-proxy:
-        specifier: 3.0.0
+        specifier: ^3.0.0
         version: 3.0.0
       jison:
-        specifier: 0.4.18
+        specifier: ^0.4.18
         version: 0.4.18
       js-base64:
-        specifier: 3.7.2
+        specifier: ^3.7.2
         version: 3.7.2
       jsdom:
-        specifier: 20.0.2
+        specifier: ^20.0.2
         version: 20.0.2
       micromatch:
         specifier: ^4.0.5
         version: 4.0.5
       moment:
-        specifier: 2.29.4
+        specifier: ^2.29.4
         version: 2.29.4
       path-browserify:
-        specifier: 1.0.1
+        specifier: ^1.0.1
         version: 1.0.1
       prettier:
-        specifier: 2.7.1
+        specifier: ^2.7.1
         version: 2.7.1
       remark:
-        specifier: 14.0.2
+        specifier: ^14.0.2
         version: 14.0.2
       rimraf:
-        specifier: 3.0.2
+        specifier: ^3.0.2
         version: 3.0.2
       shiki:
         specifier: ^0.11.1
         version: 0.11.1
       start-server-and-test:
-        specifier: 1.14.0
+        specifier: ^1.14.0
         version: 1.14.0
       typedoc:
-        specifier: 0.23.18
+        specifier: ^0.23.18
         version: 0.23.18_typescript@4.8.4
       typedoc-plugin-markdown:
-        specifier: 3.13.6
+        specifier: ^3.13.6
         version: 3.13.6_typedoc@0.23.18
       typescript:
-        specifier: 4.8.4
+        specifier: ^4.8.4
         version: 4.8.4
       unist-util-flatmap:
-        specifier: 1.0.0
+        specifier: ^1.0.0
         version: 1.0.0
 
   packages/mermaid-example-diagram:
     devDependencies:
       concurrently:
-        specifier: 7.5.0
+        specifier: ^7.5.0
         version: 7.5.0
       rimraf:
-        specifier: 3.0.2
+        specifier: ^3.0.2
         version: 3.0.2
 
   packages/mermaid-mindmap:
@@ -318,7 +318,7 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0_cytoscape@3.23.0
       d3:
-        specifier: 7.6.1
+        specifier: ^7.6.1
         version: 7.6.1
       khroma:
         specifier: ^2.0.0
@@ -328,13 +328,13 @@ importers:
         version: 2.0.2
     devDependencies:
       concurrently:
-        specifier: 7.5.0
+        specifier: ^7.5.0
         version: 7.5.0
       mermaid:
         specifier: workspace:*
         version: link:../mermaid
       rimraf:
-        specifier: 3.0.2
+        specifier: ^3.0.2
         version: 3.0.2
 
   tests/webpack:
@@ -3537,7 +3537,7 @@ packages:
   /axios/0.21.4_debug@4.3.2:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.2
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
     dev: true
@@ -6047,7 +6047,7 @@ packages:
     resolution: {integrity: sha512-XGozTsMPYkm+6b5QL3Z9wQcJjNYxp0CYn3U1gO7dwD6PAqU1SVWZxI9CCg3z+ml3YfqdPnrBehaBrnH2AGKbNA==}
     dev: true
 
-  /follow-redirects/1.15.2_debug@4.3.2:
+  /follow-redirects/1.15.2:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
     engines: {node: '>=4.0'}
     peerDependencies:
@@ -6055,8 +6055,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dependencies:
-      debug: 4.3.2
     dev: true
 
   /foreground-child/2.0.0:
@@ -6633,7 +6631,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.2_debug@4.3.2
+      follow-redirects: 1.15.2
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
