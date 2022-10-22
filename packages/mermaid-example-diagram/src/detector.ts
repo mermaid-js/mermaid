@@ -4,7 +4,7 @@ export const id = 'example-diagram';
 /**
  * Detector function that will be called by mermaid to determine if the diagram is this type of diagram.
  *
- * @param txt The diagram text will be passed to the detector
+ * @param txt - The diagram text will be passed to the detector
  * @returns True if the diagram text matches a diagram of this type
  */
 

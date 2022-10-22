@@ -15,7 +15,7 @@ export const setConf = function (cnf) {
 
 const actors = {};
 
-/** @param {any} diagram */
+/** @param diagram - The diagram to draw to. */
 function drawActorLegend(diagram) {
   const conf = getConfig().journey;
   // Draw the actors
@@ -157,8 +157,8 @@ export const bounds = {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _self = this;
     let cnt = 0;
-    /** @param {any} type */
-    function updateFn(type) {
+    /** @param type - Set to `activation` if activation */
+    function updateFn(type?: 'activation') {
       return function updateItemBounds(item) {
         cnt++;
         // The loop sequenceItems is a stack so the biggest margins in the beginning of the sequenceItems

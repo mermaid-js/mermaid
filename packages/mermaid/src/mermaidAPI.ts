@@ -9,8 +9,6 @@
  * page or do something completely different.
  *
  * In addition to the render function, a number of behavioral configuration options are available.
- *
- * @name mermaidAPI
  */
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
@@ -34,8 +32,8 @@ import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
 
 /**
- * @param text
- * @param parseError
+ * @param text - The mermaid diagram definition.
+ * @param parseError - If set, handles errors.
  */
 function parse(text: string, parseError?: ParseErrorFunction): boolean {
   addDiagrams();
@@ -100,14 +98,13 @@ export const decodeEntities = function (text: string): string {
  * });
  * ```
  *
- * @param {string} id The id of the element to be rendered
- * @param {string} text The graph definition
- * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
- *   is called after rendering is finished with the svg code as param.
- * @param {Element} container Selector to element in which a div with the graph temporarily will be
+ * @param id - The id of the element to be rendered
+ * @param text - The graph definition
+ * @param cb - Callback which is called after rendering is finished with the svg code as param.
+ * @param container - Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
- * @returns {void}
+ * @returns - Resolves when finished rendering.
  */
 const render = async function (
   id: string,
@@ -455,7 +452,7 @@ const handleDirective = function (p: any, directive: any, type: string): void {
   }
 };
 
-/** @param {MermaidConfig} options */
+/** @param options - Initial Mermaid options */
 async function initialize(options: MermaidConfig) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily) {
