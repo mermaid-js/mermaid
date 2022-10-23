@@ -94,7 +94,7 @@ export const getDiagramFromText = async (txt: string, parseError?: Function): Pr
     }
     // Diagram not available, loading it
     const { diagram } = await loader();
-    registerDiagram(type, diagram, undefined, diagram.injectUtils);
+    registerDiagram(type, diagram, undefined);
     // new diagram will try getDiagram again and if fails then it is a valid throw
   }
   // If either of the above worked, we have the diagram

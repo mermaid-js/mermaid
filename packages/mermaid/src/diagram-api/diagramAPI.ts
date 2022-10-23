@@ -22,17 +22,16 @@ export interface Detectors {
   [key: string]: DiagramDetector;
 }
 
+/**
+ *
+ * @param id
+ * @param diagram
+ * @param detector
+ */
 export const registerDiagram = (
   id: string,
   diagram: DiagramDefinition,
-  detector?: DiagramDetector,
-  callback?: (
-    _log: any,
-    _setLogLevel: any,
-    _getConfig: any,
-    _sanitizeText: any,
-    _setupGraphViewbox: any
-  ) => void
+  detector?: DiagramDetector
 ) => {
   if (diagrams[id]) {
     throw new Error(`Diagram ${id} already registered.`);
@@ -42,8 +41,9 @@ export const registerDiagram = (
     addDetector(id, detector);
   }
   addStylesForDiagram(id, diagram.styles);
-  if (typeof callback !== 'undefined') {
-    callback(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
+
+  if (diagram.injectUtils) {
+    diagram.injectUtils(log, setLogLevel, getConfig, sanitizeText, setupGraphViewbox);
   }
 };
 
