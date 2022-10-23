@@ -23,10 +23,28 @@ export interface Detectors {
 }
 
 /**
+ * Registers the given diagram with Mermaid.
  *
- * @param id
- * @param diagram
- * @param detector
+ * Can be used for third-party custom diagrams.
+ *
+ * For third-party diagrams that are rarely used, we recommend instead setting
+ * the `lazyLoadedDiagrams` param in the Mermaid config, as that will instead
+ * only load the diagram when needed.
+ *
+ * @param id - A unique ID for the given diagram.
+ * @param diagram - The diagram definition.
+ * @param detector - Function that returns `true` if a given mermaid text is this diagram definition.
+ *
+ * @example How to add `@mermaid-js/mermaid-mindmap` to mermaid
+ *
+ * ```js
+ * import {
+ *   diagram as mindmap, detector as mindmapDetector, id as mindmapId
+ * } from "@mermaid-js/mermaid-mindmap";
+ * import mermaid from "mermaid";
+ *
+ * mermaid.mermaidAPI.registerDiagram(mindmapId, mindmap, mindmapDetector);
+ * ```
  */
 export const registerDiagram = (
   id: string,

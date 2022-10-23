@@ -12,3 +12,5 @@ export const diagram = {
   styles: mindmapStyles,
   injectUtils,
 };
+
+export { detector, id } from './detector';
