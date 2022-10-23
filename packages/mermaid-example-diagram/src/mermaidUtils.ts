@@ -35,18 +35,19 @@ export let setupGraphViewbox: (
 
 /**
  * Function called by mermaid that injects utility functions that help the diagram to be a good citizen.
- * @param _log
- * @param _setLogLevel
- * @param _getConfig
- * @param _sanitizeText
- * @param _setupGraphViewbox
+ *
+ * @param _log - log from mermaid/src/diagramAPI.ts
+ * @param _setLogLevel - setLogLevel from mermaid/src/diagramAPI.ts
+ * @param _getConfig - getConfig from mermaid/src/diagramAPI.ts
+ * @param _sanitizeText - sanitizeText from mermaid/src/diagramAPI.ts
+ * @param _setupGraphViewbox - setupGraphViewbox from mermaid/src/diagramAPI.ts
  */
 export const injectUtils = (
   _log: Record<keyof typeof LEVELS, typeof console.log>,
-  _setLogLevel: any,
-  _getConfig: any,
-  _sanitizeText: any,
-  _setupGraphViewbox: any
+  _setLogLevel: typeof setLogLevel,
+  _getConfig: typeof getConfig,
+  _sanitizeText: typeof sanitizeText,
+  _setupGraphViewbox: typeof setupGraphViewbox
 ) => {
   _log.debug('Mermaid utils injected into example-diagram');
   log.trace = _log.trace;

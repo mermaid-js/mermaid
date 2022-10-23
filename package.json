@@ -120,6 +120,7 @@
     "eslint-plugin-json": "3.1.0",
     "eslint-plugin-markdown": "3.0.0",
     "eslint-plugin-no-only-tests": "^3.0.0",
+    "eslint-plugin-tsdoc": "^0.2.17",
     "express": "4.18.2",
     "globby": "13.1.2",
     "husky": "8.0.1",
