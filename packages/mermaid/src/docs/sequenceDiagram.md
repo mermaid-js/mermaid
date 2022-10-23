@@ -66,7 +66,7 @@ Messages can be of two displayed either solid or with a dotted line.
 [Actor][Arrow][Actor]:Message text
 ```
 
-There are six types of arrows currently supported:
+There are eight types of arrows currently supported:
 
 | Type | Description                                      |
 | ---- | ------------------------------------------------ |
