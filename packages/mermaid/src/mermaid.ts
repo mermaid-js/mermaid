@@ -19,12 +19,6 @@ import type { ParseErrorFunction } from './Diagram';
  * elements with the attribute already set. This way the init function can be triggered several
  * times.
  *
- * Optionally, `init` can accept in the second argument one of the following:
- *
- * - A DOM Node
- * - An array of DOM nodes (as would come from a jQuery selector)
- * - A W3C selector, a la `.mermaid`
- *
  * ```mermaid
  * graph LR;
  *  a(Find elements)-->b{Processed}
@@ -34,9 +28,12 @@ import type { ParseErrorFunction } from './Diagram';
  *
  * Renders the mermaid diagrams
  *
- * @param config
- * @param nodes
- * @param callback
+ * @param config - **Deprecated**, please set configuration in {@link initialize}.
+ * @param nodes - **Default**: `.mermaid`. One of the following:
+ * - A DOM Node
+ * - An array of DOM nodes (as would come from a jQuery selector)
+ * - A W3C selector, a la `.mermaid`
+ * @param callback - Called once for each rendered diagram's id.
  */
 const init = async function (
   config?: MermaidConfig,
@@ -202,7 +199,7 @@ if (typeof document !== 'undefined') {
  * This is provided for environments where the mermaid object can't directly have a new member added
  * to it (eg. dart interop wrapper). (Initially there is no parseError member of mermaid).
  *
- * @param {function (err, hash)} newParseErrorHandler New parseError() callback.
+ * @param newParseErrorHandler - New parseError() callback.
  */
 const setParseErrorHandler = function (newParseErrorHandler: (err: any, hash: any) => void) {
   mermaid.parseError = newParseErrorHandler;

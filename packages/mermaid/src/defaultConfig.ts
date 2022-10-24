@@ -8,19 +8,27 @@ import { MermaidConfig } from './config.type';
  *
  * These are the default options which can be overridden with the initialization call like so:
  *
- * **Example 1:**<pre> mermaid.initialize({ flowchart:{ htmlLabels: false } }); </pre>
+ * **Example 1:**
  *
- * **Example 2:**<pre> <script> var config = { startOnLoad:true, flowchart:{ useMaxWidth:true,
- * htmlLabels:true, curve:'cardinal', },
+ * ```js
+ * mermaid.initialize({ flowchart:{ htmlLabels: false } });
+ * ```
  *
- *     securityLevel:'loose',
+ * **Example 2:**
  *
- * }; mermaid.initialize(config); </script> </pre>
+ * ```html
+ * <script>
+ * var config = {
+ *   startOnLoad:true,
+ *   flowchart:{ useMaxWidth:true, htmlLabels:true, curve:'cardinal'},
+ *   securityLevel:'loose',
+ * };
+ * mermaid.initialize(config);
+ * </script>
+ * ```
  *
  * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults).
  * A description of each option follows below.
- *
- * @name Configuration
  */
 const config: Partial<MermaidConfig> = {
   /**
@@ -30,8 +38,16 @@ const config: Partial<MermaidConfig> = {
    * | --------- | --------------- | ------ | -------- | ---------------------------------------------- |
    * | theme     | Built in Themes | string | Optional | 'default', 'forest', 'dark', 'neutral', 'null' |
    *
-   * **Notes:** To disable any pre-defined mermaid theme, use "null".<pre> "theme": "forest",
-   * "themeCSS": ".node rect { fill: red; }" </pre>
+   * **Notes:** To disable any pre-defined mermaid theme, use "null".
+   *
+   * @example
+   *
+   * ```js
+   * {
+   *   "theme": "forest",
+   *   "themeCSS": ".node rect { fill: red; }"
+   * }
+   * ```
    */
   theme: 'default',
   themeVariables: theme['default'].getThemeVariables(),
