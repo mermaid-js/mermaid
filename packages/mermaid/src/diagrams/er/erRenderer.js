@@ -357,7 +357,7 @@ const drawEntities = function (svgNode, entities, graph) {
     const rectNode = groupNode
       .insert('rect', '#' + textId)
       .attr('class', 'er entityBox')
-      .attr('fill', conf.fill)
+      .style('fill', conf.fill)
       .attr('fill-opacity', '100%')
       .attr('stroke', conf.stroke)
       .attr('x', 0)
