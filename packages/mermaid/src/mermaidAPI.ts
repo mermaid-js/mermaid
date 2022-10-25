@@ -9,8 +9,6 @@
  * page or do something completely different.
  *
  * In addition to the render function, a number of behavioral configuration options are available.
- *
- * @name mermaidAPI
  */
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
@@ -21,7 +19,7 @@ import { addDiagrams } from './diagram-api/diagram-orchestration';
 import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
 import ganttDb from './diagrams/gantt/ganttDb';
-import Diagram, { getDiagramFromText } from './Diagram';
+import Diagram, { getDiagramFromText, type ParseErrorFunction } from './Diagram';
 import errorRenderer from './diagrams/error/errorRenderer';
 import { attachFunctions } from './interactionDb';
 import { log, setLogLevel } from './logger';
@@ -36,11 +34,10 @@ import { evaluate } from './diagrams/common/common';
 const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram'];
 
 /**
- * @param text
- * @param parseError
+ * @param text - The mermaid diagram definition.
+ * @param parseError - If set, handles errors.
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
-function parse(text: string, parseError?: Function): boolean {
+function parse(text: string, parseError?: ParseErrorFunction): boolean {
   addDiagrams();
   const diagram = new Diagram(text, parseError);
   return diagram.parse(text, parseError);
@@ -103,14 +100,13 @@ export const decodeEntities = function (text: string): string {
  * });
  * ```
  *
- * @param {string} id The id of the element to be rendered
- * @param {string} text The graph definition
- * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
- *   is called after rendering is finished with the svg code as inparam.
- * @param {Element} container Selector to element in which a div with the graph temporarily will be
+ * @param id - The id of the element to be rendered
+ * @param text - The graph definition
+ * @param cb - Callback which is called after rendering is finished with the svg code as param.
+ * @param container - Selector to element in which a div with the graph temporarily will be
  *   inserted. If one is provided a hidden div will be inserted in the body of the page instead. The
  *   element will be removed when rendering is completed.
- * @returns {void}
+ * @returns - Resolves when finished rendering.
  */
 const render = async function (
   id: string,
@@ -145,7 +141,7 @@ const render = async function (
     }
 
     if (cnf.securityLevel === 'sandbox') {
-      // IF we are in sandboxed mode, we do everyting mermaid related
+      // IF we are in sandboxed mode, we do everything mermaid related
       // in a sandboxed div
       const iframe = select(container)
         .append('iframe')
@@ -194,7 +190,7 @@ const render = async function (
     // d+id it will contain a svg with the id "id"
 
     if (cnf.securityLevel === 'sandbox') {
-      // IF we are in sandboxed mode, we do everyting mermaid related
+      // IF we are in sandboxed mode, we do everything mermaid related
       // in a sandboxed div
       const iframe = select('body')
         .append('iframe')
@@ -243,7 +239,7 @@ const render = async function (
   let userStyles = '';
   // user provided theme CSS
   // If you add more configuration driven data into the user styles make sure that the value is
-  // sanitized bye the santiizeCSS function
+  // sanitized bye the sanitizeCSS function
   if (cnf.themeCSS !== undefined) {
     userStyles += `\n${cnf.themeCSS}`;
   }
@@ -392,11 +388,15 @@ const parseDirective = function (p: any, statement: string, context: string, typ
           currentDirective = {};
           break;
         case 'type_directive':
-          if (!currentDirective) throw new Error('currentDirective is undefined');
+          if (!currentDirective) {
+            throw new Error('currentDirective is undefined');
+          }
           currentDirective.type = statement.toLowerCase();
           break;
         case 'arg_directive':
-          if (!currentDirective) throw new Error('currentDirective is undefined');
+          if (!currentDirective) {
+            throw new Error('currentDirective is undefined');
+          }
           currentDirective.args = JSON.parse(statement);
           break;
         case 'close_directive':
@@ -454,7 +454,7 @@ const handleDirective = function (p: any, directive: any, type: string): void {
   }
 };
 
-/** @param {MermaidConfig} options */
+/** @param options - Initial Mermaid options */
 async function initialize(options: MermaidConfig) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily) {

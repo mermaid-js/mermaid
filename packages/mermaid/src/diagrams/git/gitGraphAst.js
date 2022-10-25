@@ -39,6 +39,7 @@ export const parseDirective = function (statement, context, type) {
 //  * @param currentCommit
 //  * @param otherCommit
 //  */
+// eslint-disable-next-line @cspell/spellchecker
 // function isfastforwardable(currentCommit, otherCommit) {
 //   log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
 //   let cnt = 0;
@@ -384,21 +385,23 @@ export const checkout = function (branch) {
 /**
  * @param arr
  * @param key
- * @param newval
+ * @param newVal
  */
-function upsert(arr, key, newval) {
+function upsert(arr, key, newVal) {
   const index = arr.indexOf(key);
   if (index === -1) {
-    arr.push(newval);
+    arr.push(newVal);
   } else {
-    arr.splice(index, 1, newval);
+    arr.splice(index, 1, newVal);
   }
 }
 
 /** @param commitArr */
 function prettyPrintCommitHistory(commitArr) {
   const commit = commitArr.reduce((out, commit) => {
-    if (out.seq > commit.seq) return out;
+    if (out.seq > commit.seq) {
+      return out;
+    }
     return commit;
   }, commitArr[0]);
   let line = '';
@@ -411,7 +414,9 @@ function prettyPrintCommitHistory(commitArr) {
   });
   const label = [line, commit.id, commit.seq];
   for (let branch in branches) {
-    if (branches[branch] === commit.id) label.push(branch);
+    if (branches[branch] === commit.id) {
+      label.push(branch);
+    }
   }
   log.debug(label.join(' '));
   if (commit.parents && commit.parents.length == 2) {
@@ -451,7 +456,9 @@ export const clear = function () {
 export const getBranchesAsObjArray = function () {
   const branchesArray = Object.values(branchesConfig)
     .map((branchConfig, i) => {
-      if (branchConfig.order !== null) return branchConfig;
+      if (branchConfig.order !== null) {
+        return branchConfig;
+      }
       return {
         ...branchConfig,
         order: parseFloat(`0.${i}`, 10),

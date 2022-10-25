@@ -80,6 +80,10 @@ g.classGroup line {
   stroke-dasharray: 3;
 }
 
+.dotted-line{
+  stroke-dasharray: 1 2;
+}
+
 #compositionStart, .composition {
   fill: ${options.lineColor} !important;
   stroke: ${options.lineColor} !important;

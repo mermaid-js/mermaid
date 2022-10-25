@@ -89,7 +89,9 @@ export const setConf = function (cnf) {
  */
 export const getClasses = function (text, diagramObj) {
   log.trace('Extracting classes');
-  if (diagramClasses.length > 0) return diagramClasses; // we have already extracted the classes
+  if (diagramClasses.length > 0) {
+    return diagramClasses; // we have already extracted the classes
+  }
 
   diagramObj.db.clear();
   try {
@@ -113,11 +115,14 @@ export const getClasses = function (text, diagramObj) {
  * @returns {string}
  */
 function getClassesFromDbInfo(dbInfoItem) {
-  if (typeof dbInfoItem === 'undefined' || dbInfoItem === null) return '';
-  else {
+  if (typeof dbInfoItem === 'undefined' || dbInfoItem === null) {
+    return '';
+  } else {
     if (dbInfoItem.classes) {
       return dbInfoItem.classes.join(' ');
-    } else return '';
+    } else {
+      return '';
+    }
   }
 }
 
@@ -151,9 +156,15 @@ const setupNode = (g, parent, parsedItem, diagramDb, altFlag) => {
 
   if (itemId !== 'root') {
     let shape = SHAPE_STATE;
-    if (parsedItem.start === true) shape = SHAPE_START;
-    if (parsedItem.start === false) shape = SHAPE_END;
-    if (parsedItem.type !== DEFAULT_STATE_TYPE) shape = parsedItem.type;
+    if (parsedItem.start === true) {
+      shape = SHAPE_START;
+    }
+    if (parsedItem.start === false) {
+      shape = SHAPE_END;
+    }
+    if (parsedItem.type !== DEFAULT_STATE_TYPE) {
+      shape = parsedItem.type;
+    }
 
     // Add the node to our list (nodeDb)
     if (!nodeDb[itemId]) {
@@ -382,7 +393,9 @@ export const draw = function (text, id, _version, diag) {
   nodeDb = {};
   // Fetch the default direction, use TD if none was found
   let dir = diag.db.getDirection();
-  if (typeof dir === 'undefined') dir = DEFAULT_DIAGRAM_DIRECTION;
+  if (typeof dir === 'undefined') {
+    dir = DEFAULT_DIAGRAM_DIRECTION;
+  }
 
   const { securityLevel, state: conf } = getConfig();
   const nodeSpacing = conf.nodeSpacing || 50;

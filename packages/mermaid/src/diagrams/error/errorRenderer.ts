@@ -8,7 +8,7 @@ let conf = {};
 /**
  * Merges the value of `conf` with the passed `cnf`
  *
- * @param {object} cnf Config to merge
+ * @param cnf - Config to merge
  */
 export const setConf = function (cnf: any) {
   conf = { ...conf, ...cnf };
@@ -17,11 +17,11 @@ export const setConf = function (cnf: any) {
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
  *
- * @param text
- * @param {string} id The text for the error
- * @param {string} mermaidVersion The version
+ * @param _text - Mermaid graph definition.
+ * @param id - The text for the error
+ * @param mermaidVersion - The version
  */
-export const draw = (text: string, id: string, mermaidVersion: string) => {
+export const draw = (_text: string, id: string, mermaidVersion: string) => {
   try {
     log.debug('Renering svg for syntax error\n');
 

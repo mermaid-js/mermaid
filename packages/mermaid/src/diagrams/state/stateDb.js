@@ -228,7 +228,9 @@ export const addState = function (
 
   if (descr) {
     log.info('Setting state description', id, descr);
-    if (typeof descr === 'string') addDescription(id, descr.trim());
+    if (typeof descr === 'string') {
+      addDescription(id, descr.trim());
+    }
 
     if (typeof descr === 'object') {
       descr.forEach((des) => addDescription(id, des.trim()));
@@ -437,7 +439,7 @@ const getDividerId = () => {
 
 /**
  * Called when the parser comes across a (style) class definition
- * @example classDef someclass fill:#f96;
+ * @example classDef my-style fill:#f96;
  *
  * @param {string} id - the id of this (style) class
  * @param  {string} styleAttributes - the string with 1 or more style attributes (each separated by a comma)

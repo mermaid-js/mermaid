@@ -85,9 +85,33 @@ Cardinality is a property that describes how many elements of another entity can
 |     `}o`     |     `o{`      | Zero or more (no upper limit) |
 |    `}\|`     |     `\|{`     | One or more (no upper limit)  |
 
+**Aliases**
+
+| Value (left) | Value (right) | Alias for    |
+| :----------: | :-----------: | ------------ |
+| one or zero  |  one or zero  | Zero or one  |
+| zero or one  |  zero or one  | Zero or one  |
+| one or more  |  one or more  | One or more  |
+| one or many  |  one or many  | One or more  |
+|   many(1)    |    many(1)    | One or more  |
+|      1+      |      1+       | One or more  |
+| zero or more | zero or more  | Zero or more |
+| zero or many | zero or many  | Zero or more |
+|   many(0)    |    many(1)    | Zero or more |
+|      0+      |      0+       | Zero or more |
+|   only one   |   only one    | Exactly one  |
+|      1       |       1       | Exactly one  |
+
 ### Identification
 
 Relationships may be classified as either _identifying_ or _non-identifying_ and these are rendered with either solid or dashed lines respectively. This is relevant when one of the entities in question can not have independent existence without the other. For example a firm that insures people to drive cars might need to store data on `NAMED-DRIVER`s. In modelling this we might start out by observing that a `CAR` can be driven by many `PERSON` instances, and a `PERSON` can drive many `CAR`s - both entities can exist without the other, so this is a non-identifying relationship that we might specify in Mermaid as: `PERSON }|..|{ CAR : "driver"`. Note the two dots in the middle of the relationship that will result in a dashed line being drawn between the two entities. But when this many-to-many relationship is resolved into two one-to-many relationships, we observe that a `NAMED-DRIVER` cannot exist without both a `PERSON` and a `CAR` - the relationships become identifying and would be specified using hyphens, which translate to a solid line:
+
+**Aliases**
+
+|     Value     |     Alias for     |
+| :-----------: | :---------------: |
+|      to       |   _identifying_   |
+| optionally to | _non-identifying_ |
 
 ```mmd
 erDiagram
@@ -155,6 +179,7 @@ erDiagram
         string lastName
         int age
     }
+    MANUFACTURER only one to zero or more CAR
 ```
 
 ### Other Things

@@ -15,7 +15,7 @@ export const setConf = function (cnf) {
 
 const actors = {};
 
-/** @param {any} diagram */
+/** @param diagram - The diagram to draw to. */
 function drawActorLegend(diagram) {
   const conf = getConfig().journey;
   // Draw the actors
@@ -54,7 +54,7 @@ export const draw = function (text, id, version, diagObj) {
   diagObj.parser.parse(text + '\n');
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -74,7 +74,9 @@ export const draw = function (text, id, version, diagObj) {
   const title = diagObj.db.getDiagramTitle();
 
   const actorNames = diagObj.db.getActors();
-  for (const member in actors) delete actors[member];
+  for (const member in actors) {
+    delete actors[member];
+  }
   let actorPos = 0;
   actorNames.forEach((actorName) => {
     actors[actorName] = {
@@ -155,8 +157,8 @@ export const bounds = {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const _self = this;
     let cnt = 0;
-    /** @param {any} type */
-    function updateFn(type) {
+    /** @param type - Set to `activation` if activation */
+    function updateFn(type?: 'activation') {
       return function updateItemBounds(item) {
         cnt++;
         // The loop sequenceItems is a stack so the biggest margins in the beginning of the sequenceItems
@@ -261,7 +263,7 @@ export const drawTasks = function (diagram, tasks, verticalPos) {
 
     // Draw the box with the attached line
     svgDraw.drawTask(diagram, task, conf);
-    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, 300 + 5 * 30); // stopy is the length of the descenders.
+    bounds.insert(task.x, task.y, task.x + task.width + conf.taskMargin, 300 + 5 * 30); // stopY is the length of the descenders.
   }
 };
 

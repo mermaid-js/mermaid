@@ -13,7 +13,8 @@
     "sandboxed",
     "Sveidqvist",
     "verdana",
-    "Visio"
+    "Visio",
+    "mermiad"
   ],
   "ignoreWords": [
     "Adamiecki",
@@ -38,7 +39,31 @@
     "Podlite",
     "redmine",
     "sphinxcontrib",
-    "Tuleap"
+    "Tuleap",
+    "dagre",
+    "vitepress",
+    "docsify",
+    "colour",
+    "graphlib",
+    "acyclicer",
+    "ranksep",
+    "descr",
+    "substate",
+    "Ashish",
+    "bbox",
+    "techn",
+    "cytoscape",
+    "Lucida",
+    "Bilkent",
+    "cpettitt",
+    "antiscript",
+    "ts-nocheck",
+    "setupGraphViewbox",
+    "flatmap",
+    "Kaufmann",
+    "viewports",
+    "edgechromium",
+    "statediagram"
   ],
   "patterns": [
     {

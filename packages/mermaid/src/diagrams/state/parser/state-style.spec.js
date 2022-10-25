@@ -36,7 +36,7 @@ describe('ClassDefs and classes when parsing a State diagram', () => {
         expect(styleClasses['exampleClass'].styles[2]).toEqual('font-style:italic');
       });
 
-      // need to look at what the lexer is doing.  see the work on the chevotrain parser
+      // need to look at what the lexer is doing
       it('an attribute can have a dot in the style', function () {
         stateDiagram.parser.parse(
           'stateDiagram-v2\n classDef exampleStyleClass background:#bbb,border:1.5px solid red;'

@@ -56,7 +56,7 @@ export const updateCurrentConfig = (siteCfg: MermaidConfig, _directives: any[]) 
  * function _Default value: At default, will mirror Global Config_
  *
  * @param conf - The base currentConfig to use as siteConfig
- * @returns {object} - The siteConfig
+ * @returns The new siteConfig
  */
 export const setSiteConfig = (conf: MermaidConfig): MermaidConfig => {
   siteConfig = assignWithDepth({}, defaultConfig);
@@ -91,7 +91,7 @@ export const updateSiteConfig = (conf: MermaidConfig): MermaidConfig => {
  *
  * **Notes**: Returns **any** values in siteConfig.
  *
- * @returns {object} - The siteConfig
+ * @returns The siteConfig
  */
 export const getSiteConfig = (): MermaidConfig => {
   return assignWithDepth({}, siteConfig);
@@ -107,8 +107,8 @@ export const getSiteConfig = (): MermaidConfig => {
  * keys. Any values found in conf with key found in siteConfig.secure will be replaced with the
  * corresponding siteConfig value.
  *
- * @param {any} conf - The potential currentConfig
- * @returns {any} - The currentConfig merged with the sanitized conf
+ * @param conf - The potential currentConfig
+ * @returns The currentConfig merged with the sanitized conf
  */
 export const setConfig = (conf: MermaidConfig): MermaidConfig => {
   // sanitize(conf);
@@ -131,7 +131,7 @@ export const setConfig = (conf: MermaidConfig): MermaidConfig => {
  *
  * **Notes**: Returns **any** the currentConfig
  *
- * @returns {any} - The currentConfig
+ * @returns The currentConfig
  */
 export const getConfig = (): MermaidConfig => {
   return assignWithDepth({}, currentConfig);
@@ -146,7 +146,7 @@ export const getConfig = (): MermaidConfig => {
  * Ensures options parameter does not attempt to override siteConfig secure keys **Notes**: modifies
  * options in-place
  *
- * @param {any} options - The potential setConfig parameter
+ * @param options - The potential setConfig parameter
  */
 export const sanitize = (options: any) => {
   // Checking that options are not in the list of excluded options
@@ -166,7 +166,7 @@ export const sanitize = (options: any) => {
     }
   });
   // Check that there no attempts of xss, there should be no tags at all in the directive
-  // blocking data urls as base64 urls can contain svgs with inline script tags
+  // blocking data urls as base64 urls can contain svg's with inline script tags
   Object.keys(options).forEach((key) => {
     if (typeof options[key] === 'string') {
       if (
@@ -186,7 +186,7 @@ export const sanitize = (options: any) => {
 /**
  * Pushes in a directive to the configuration
  *
- * @param {object} directive The directive to push in
+ * @param directive - The directive to push in
  */
 export const addDirective = (directive: any) => {
   if (directive.fontFamily) {
@@ -217,7 +217,8 @@ export const addDirective = (directive: any) => {
  *
  * **Notes**: (default: current siteConfig ) (optional, default `getSiteConfig()`)
  *
- * @param config
+ * @param config - base set of values, which currentConfig could be **reset** to.
+ * Defaults to the current siteConfig (e.g returned by {@link getSiteConfig}).
  */
 export const reset = (config = siteConfig): void => {
   // Replace current config with siteConfig

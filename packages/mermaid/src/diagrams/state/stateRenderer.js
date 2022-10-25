@@ -47,7 +47,7 @@ const insertMarkers = function (elem) {
 export const draw = function (text, id, _version, diagObj) {
   conf = getConfig().state;
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -120,7 +120,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
   }
 
   // Set an object for the graph label
-  if (parentId)
+  if (parentId) {
     graph.setGraph({
       rankdir: 'LR',
       multigraph: true,
@@ -133,7 +133,7 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
       // ranksep: 5,
       // nodesep: 1
     });
-  else {
+  } else {
     graph.setGraph({
       rankdir: 'TB',
       multigraph: true,
@@ -268,7 +268,9 @@ const renderDoc = (doc, diagram, parentId, altBkg, root, domDocument, diagObj) =
         let pWidth = 0;
         let pShift = 0;
         if (parent) {
-          if (parent.parentElement) pWidth = parent.parentElement.getBBox().width;
+          if (parent.parentElement) {
+            pWidth = parent.parentElement.getBBox().width;
+          }
           pShift = parseInt(parent.getAttribute('data-x-shift'), 10);
           if (Number.isNaN(pShift)) {
             pShift = 0;

@@ -137,7 +137,7 @@ export const drawDescrState = (g, stateDef) => {
 
 /** Adds the creates a box around the existing content and adds a panel for the id on top of the content. */
 /**
- * Function that creates an title row and a frame around a substate for a composit state diagram.
+ * Function that creates an title row and a frame around a substate for a composite state diagram.
  * The function returns a new d3 svg object with updated width and height properties;
  *
  * @param {any} g The d3 svg object for the substate to framed
@@ -178,7 +178,7 @@ export const addTitleAndBox = (g, stateDef, altBkg) => {
   // descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
   if (stateDef.doc) {
-    // cnsole.warn(
+    // console.warn(
     //   stateDef.id,
     //   'orgX: ',
     //   orgX,
@@ -217,7 +217,9 @@ export const addTitleAndBox = (g, stateDef, altBkg) => {
     .attr('rx', '0');
 
   title.attr('x', startX + pad);
-  if (titleWidth <= orgWidth) title.attr('x', orgX + (width - dblPad) / 2 - titleWidth / 2 + pad);
+  if (titleWidth <= orgWidth) {
+    title.attr('x', orgX + (width - dblPad) / 2 - titleWidth / 2 + pad);
+  }
 
   // Title background
   g.insert('rect', ':first-child')
@@ -379,14 +381,27 @@ export const drawState = function (elem, stateDef) {
 
   const g = elem.append('g').attr('id', id).attr('class', 'stateGroup');
 
-  if (stateDef.type === 'start') drawStartState(g);
-  if (stateDef.type === 'end') drawEndState(g);
-  if (stateDef.type === 'fork' || stateDef.type === 'join') drawForkJoinState(g, stateDef);
-  if (stateDef.type === 'note') drawNote(stateDef.note.text, g);
-  if (stateDef.type === 'divider') drawDivider(g);
-  if (stateDef.type === 'default' && stateDef.descriptions.length === 0)
+  if (stateDef.type === 'start') {
+    drawStartState(g);
+  }
+  if (stateDef.type === 'end') {
+    drawEndState(g);
+  }
+  if (stateDef.type === 'fork' || stateDef.type === 'join') {
+    drawForkJoinState(g, stateDef);
+  }
+  if (stateDef.type === 'note') {
+    drawNote(stateDef.note.text, g);
+  }
+  if (stateDef.type === 'divider') {
+    drawDivider(g);
+  }
+  if (stateDef.type === 'default' && stateDef.descriptions.length === 0) {
     drawSimpleState(g, stateDef);
-  if (stateDef.type === 'default' && stateDef.descriptions.length > 0) drawDescrState(g, stateDef);
+  }
+  if (stateDef.type === 'default' && stateDef.descriptions.length > 0) {
+    drawDescrState(g, stateDef);
+  }
 
   const stateBox = g.node().getBBox();
   stateInfo.width = stateBox.width + 2 * getConfig().state.padding;

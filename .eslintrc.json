@@ -16,26 +16,17 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:jsdoc/recommended",
     "plugin:json/recommended",
     "plugin:markdown/recommended",
+    "plugin:@cspell/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "html", "jest", "jsdoc", "json"],
+  "plugins": ["@typescript-eslint", "no-only-tests", "html", "jest", "jsdoc", "json", "@cspell"],
   "rules": {
+    "curly": "error",
     "no-console": "error",
     "no-prototype-builtins": "off",
     "no-unused-vars": "off",
-    "jsdoc/check-indentation": "off",
-    "jsdoc/check-alignment": "off",
-    "jsdoc/check-line-alignment": "off",
-    "jsdoc/multiline-blocks": "off",
-    "jsdoc/newline-after-description": "off",
-    "jsdoc/tag-lines": "off",
-    "jsdoc/require-param-description": "off",
-    "jsdoc/require-param-type": "off",
-    "jsdoc/require-returns": "off",
-    "jsdoc/require-returns-description": "off",
     "cypress/no-async-tests": "off",
     "@typescript-eslint/ban-ts-comment": [
       "error",
@@ -48,13 +39,50 @@
       }
     ],
     "json/*": ["error", "allowComments"],
-    "no-empty": ["error", { "allowEmptyCatch": true }]
+    "@cspell/spellchecker": [
+      "error",
+      {
+        "checkIdentifiers": false,
+        "checkStrings": false,
+        "checkStringTemplates": false
+      }
+    ],
+    "no-empty": [
+      "error",
+      {
+        "allowEmptyCatch": true
+      }
+    ],
+    "no-only-tests/no-only-tests": "error"
   },
   "overrides": [
     {
       "files": ["cypress/**", "demos/**"],
       "rules": {
         "no-console": "off"
+      }
+    },
+    {
+      "files": ["*.{js,jsx,mjs,cjs}"],
+      "extends": ["plugin:jsdoc/recommended"],
+      "rules": {
+        "jsdoc/check-indentation": "off",
+        "jsdoc/check-alignment": "off",
+        "jsdoc/check-line-alignment": "off",
+        "jsdoc/multiline-blocks": "off",
+        "jsdoc/newline-after-description": "off",
+        "jsdoc/tag-lines": "off",
+        "jsdoc/require-param-description": "off",
+        "jsdoc/require-param-type": "off",
+        "jsdoc/require-returns": "off",
+        "jsdoc/require-returns-description": "off"
+      }
+    },
+    {
+      "files": ["*.{ts,tsx}"],
+      "plugins": ["tsdoc"],
+      "rules": {
+        "tsdoc/syntax": "error"
       }
     },
     {

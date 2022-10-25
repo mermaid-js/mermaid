@@ -148,7 +148,7 @@ export const draw = function (text, id, _version, diagObj) {
   log.info('Rendering diagram ' + text);
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -208,12 +208,42 @@ export const draw = function (text, id, _version, diagObj) {
     );
   });
 
+  const notes = diagObj.db.getNotes();
+  notes.forEach(function (note) {
+    log.debug(`Adding note: ${JSON.stringify(note)}`);
+    const node = svgDraw.drawNote(diagram, note, conf, diagObj);
+    idCache[node.id] = node;
+
+    // Add nodes to the graph. The first argument is the node id. The second is
+    // metadata about the node. In this case we're going to add labels to each of
+    // our nodes.
+    g.setNode(node.id, node);
+    if (note.class && note.class in classes) {
+      g.setEdge(
+        note.id,
+        getGraphId(note.class),
+        {
+          relation: {
+            id1: note.id,
+            id2: note.class,
+            relation: {
+              type1: 'none',
+              type2: 'none',
+              lineType: 10,
+            },
+          },
+        },
+        'DEFAULT'
+      );
+    }
+  });
+
   dagre.layout(g);
   g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
       log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       root
-        .select('#' + diagObj.db.lookUpDomId(v))
+        .select('#' + (diagObj.db.lookUpDomId(v) || v))
         .attr(
           'transform',
           'translate(' +
