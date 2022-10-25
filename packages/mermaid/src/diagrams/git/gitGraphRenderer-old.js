@@ -357,7 +357,9 @@ export const draw = function (txt, id, ver) {
       branchNum++;
     }
     svg.attr('height', function () {
-      if (direction === 'BT') return Object.keys(allCommitsDict).length * config.nodeSpacing;
+      if (direction === 'BT') {
+        return Object.keys(allCommitsDict).length * config.nodeSpacing;
+      }
       return (branches.length + 1) * config.branchOffset;
     });
   } catch (e) {

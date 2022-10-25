@@ -50,8 +50,11 @@ export class MockedD3 {
     } else {
       const idOnly = beforeSelector[0] == '#' ? beforeSelector.substring(1) : beforeSelector;
       const foundIndex = this._children.findIndex((child) => child.id === idOnly);
-      if (foundIndex < 0) this._children.push(newMock);
-      else this._children.splice(foundIndex, 0, newMock);
+      if (foundIndex < 0) {
+        this._children.push(newMock);
+      } else {
+        this._children.splice(foundIndex, 0, newMock);
+      }
     }
     return newMock;
   };
@@ -62,8 +65,12 @@ export class MockedD3 {
     if (arguments.length === 1) {
       return this.attribs.get(attrName);
     } else {
-      if (attrName === 'id') this.id = attrValue; // also set the id explicitly
-      if (attrValue !== undefined) this.attribs.set(attrName, attrValue);
+      if (attrName === 'id') {
+        this.id = attrValue; // also set the id explicitly
+      }
+      if (attrValue !== undefined) {
+        this.attribs.set(attrName, attrValue);
+      }
       return this;
     }
   }

@@ -11,10 +11,7 @@ import Diagram, { type ParseErrorFunction } from '../Diagram';
 // Normally, we could just do the following to get the original `parse()`
 // implementation, however, requireActual returns a promise and it's not documented how to use withing mock file.
 
-/**
- * @param text
- * @param parseError
- */
+/** {@inheritDoc mermaidAPI.parse} */
 function parse(text: string, parseError?: ParseErrorFunction): boolean {
   addDiagrams();
   const diagram = new Diagram(text, parseError);

@@ -26,6 +26,7 @@ export const calculateSvgSizeAttrs = function (height, width, useMaxWidth) {
     attrs.set('width', '100%');
     attrs.set('style', `max-width: ${width}px;`);
   } else {
+    attrs.set('height', height);
     attrs.set('width', width);
   }
   return attrs;

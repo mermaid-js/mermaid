@@ -10,7 +10,6 @@
  *
  * In addition to the render function, a number of behavioral configuration options are available.
  *
- * @name mermaidAPI
  */
 import { select } from 'd3';
 import { compile, serialize, stringify } from 'stylis';
@@ -72,8 +71,8 @@ type D3Element = any;
 // ----------------------------------------------------------------------------
 
 /**
- * @param text
- * @param parseError
+ * @param text - The mermaid diagram definition.
+ * @param parseError - If set, handles errors.
  */
 function parse(text: string, parseError?: ParseErrorFunction): boolean {
   addDiagrams();
@@ -83,8 +82,8 @@ function parse(text: string, parseError?: ParseErrorFunction): boolean {
 
 /**
  *
- * @param {string} text - text to be encoded
- * @returns {string}
+ * @param  text - text to be encoded
+ * @returns
  */
 export const encodeEntities = function (text: string): string {
   let txt = text;
@@ -112,8 +111,8 @@ export const encodeEntities = function (text: string): string {
 
 /**
  *
- * @param {string} text - text to be decoded
- * @returns {string}
+ * @param  text - text to be decoded
+ * @returns
  */
 export const decodeEntities = function (text: string): string {
   let txt = text;
@@ -136,10 +135,10 @@ export const decodeEntities = function (text: string): string {
 /**
  * Create a CSS style that starts with the given class name, then the element,
  * with an enclosing block that has each of the cssClasses followed by !important;
- * @param {string} cssClass
- * @param {string} element
- * @param {string[]} cssClasses
- * @returns {string}
+ * @param cssClass - CSS class name
+ * @param element - CSS element
+ * @param cssClasses - list of CSS styles to append after the element
+ * @returns - the constructed string
  */
 export const cssImportantStyles = (
   cssClass: string,
@@ -152,10 +151,10 @@ export const cssImportantStyles = (
 /**
  * Create the user styles
  *
- * @param {MermaidConfig} config
- * @param {string} graphType
- * @param {Record<string, DiagramStyleClassDef> | null | undefined} classDefs - the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...)
- * @returns {string} the string with all the user styles
+ * @param  config - configuration that has style and theme settings to use
+ * @param graphType - used for checking if classDefs should be applied
+ * @param  classDefs - the classDefs in the diagram text. Might be null if none were defined. Usually is the result of a call to getClasses(...)
+ * @returns  the string with all the user styles
  */
 export const createCssStyles = (
   config: MermaidConfig,
@@ -225,10 +224,10 @@ export const createUserStyles = (
 /**
  * Clean up svgCode. Do replacements needed
  *
- * @param {string} svgCode
- * @param {boolean} inSandboxMode - security level
- * @param {boolean} useArrowMarkerUrls - should arrow marker's use full urls? (vs. just the anchors)
- * @returns {string} the cleaned up svgCode
+ * @param svgCode - the code to clean up
+ * @param inSandboxMode - security level
+ * @param useArrowMarkerUrls - should arrow marker's use full urls? (vs. just the anchors)
+ * @returns the cleaned up svgCode
  */
 export const cleanUpSvgCode = (
   svgCode = '',
@@ -253,10 +252,10 @@ export const cleanUpSvgCode = (
 /**
  * Put the svgCode into an iFrame. Return the iFrame code
  *
- * @param {string} svgCode
- * @param {D3Element} svgElement - the d3 node that has the current svgElement so we can get the height from it
- * @returns {string} - the code with the iFrame that now contains the svgCode
- * @todo  TODO replace btoa(). Replace with  buf.toString('base64')?
+ * @param svgCode - the svg code to put inside the iFrame
+ * @param svgElement - the d3 node that has the current svgElement so we can get the height from it
+ * @returns  - the code with the iFrame that now contains the svgCode
+ * TODO replace btoa(). Replace with  buf.toString('base64')?
  */
 export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
   const height = svgElement ? svgElement.viewBox.baseVal.height + 'px' : IFRAME_HEIGHT;
@@ -272,12 +271,12 @@ export const putIntoIFrame = (svgCode = '', svgElement?: D3Element): string => {
  * Only set the xmlns:xlink attribute on svg if svgXlink is given.
  * Return the last node appended
  *
- * @param {D3Element} parentRoot - the d3 node to append things to
- * @param {string} id
- * @param enclosingDivId
- * @param {string} divStyle
- * @param {string} svgXlink
- * @returns {D3Element} - returns the parentRoot that had nodes appended
+ * @param parentRoot - the d3 node to append things to
+ * @param id - the value to set the id attr to
+ * @param enclosingDivId - the id to set the enclosing div to
+ * @param divStyle - if given, the style to set the enclosing div to
+ * @param svgXlink - if given, the link to set the new svg element to
+ * @returns - returns the parentRoot that had nodes appended
  */
 export const appendDivSvgG = (
   parentRoot: D3Element,
@@ -305,12 +304,13 @@ export const appendDivSvgG = (
   return parentRoot;
 };
 
-/** Append an iFrame node to the given parentNode and set the id, style, and 'sandbox' attributes
+/**
+ * Append an iFrame node to the given parentNode and set the id, style, and 'sandbox' attributes
  *  Return the appended iframe d3 node
  *
- * @param {D3Element} parentNode
- * @param {string} iFrameId - id to use for the iFrame
- * @returns {D3Element} the appended iframe d3 node
+ * @param parentNode - the d3 node to append the iFrame node to
+ * @param iFrameId - id to use for the iFrame
+ * @returns the appended iframe d3 node
  */
 function sandboxedIframe(parentNode: D3Element, iFrameId: string): D3Element {
   return parentNode
@@ -323,11 +323,11 @@ function sandboxedIframe(parentNode: D3Element, iFrameId: string): D3Element {
 /**
  * Remove any existing elements from the given document
  *
- * @param {Document} doc - the document to removed elements from
- * @param {string} isSandboxed - whether or not we are in sandboxed mode
- * @param {string} id - id for any existing SVG element
- * @param {string} divSelector - selector for any existing enclosing div element
- * @param {string} iFrameSelector - selector for any existing iFrame element
+ * @param doc - the document to removed elements from
+ * @param isSandboxed - whether or not we are in sandboxed mode
+ * @param id - id for any existing SVG element
+ * @param divSelector - selector for any existing enclosing div element
+ * @param iFrameSelector - selector for any existing iFrame element
  */
 export const removeExistingElements = (
   doc: Document,
@@ -365,13 +365,11 @@ export const removeExistingElements = (
  * });
  * ```
  *
- * @param {string} id The id for the SVG element (the element to be rendered)
- * @param {string} text The text for the graph definition
- * @param {(svgCode: string, bindFunctions?: (element: Element) => void) => void} cb Callback which
- *   is called after rendering is finished with the svg code as in param.
- * @param {Element} svgContainingElement  HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
+ * @param id - The id for the SVG element (the element to be rendered)
+ * @param text - The text for the graph definition
+ * @param cb - Callback which is called after rendering is finished with the svg code as in param.
+ * @param svgContainingElement - HTML element where the svg will be inserted. (Is usually element with the .mermaid class)
  *   inserted. If no svgContainingElement is provided then the SVG element will be appended to the body.
- * @returns {void}
  */
 const render = async function (
   id: string,
@@ -420,7 +418,9 @@ const render = async function (
   // In regular execution the svgContainingElement will be the element with a mermaid class
 
   if (typeof svgContainingElement !== 'undefined') {
-    if (svgContainingElement) svgContainingElement.innerHTML = '';
+    if (svgContainingElement) {
+      svgContainingElement.innerHTML = '';
+    }
 
     if (isSandboxed) {
       // If we are in sandboxed mode, we do everything mermaid related in a (sandboxed )iFrame
@@ -445,7 +445,9 @@ const render = async function (
       const iframe = sandboxedIframe(select('body'), iFrameID);
       root = select(iframe.nodes()[0]!.contentDocument!.body);
       root.node().style.margin = 0;
-    } else root = select('body');
+    } else {
+      root = select('body');
+    }
 
     appendDivSvgG(root, id, enclosingDivID);
   }
@@ -569,11 +571,15 @@ const parseDirective = function (p: any, statement: string, context: string, typ
           currentDirective = {};
           break;
         case 'type_directive':
-          if (!currentDirective) throw new Error('currentDirective is undefined');
+          if (!currentDirective) {
+            throw new Error('currentDirective is undefined');
+          }
           currentDirective.type = statement.toLowerCase();
           break;
         case 'arg_directive':
-          if (!currentDirective) throw new Error('currentDirective is undefined');
+          if (!currentDirective) {
+            throw new Error('currentDirective is undefined');
+          }
           currentDirective.args = JSON.parse(statement);
           break;
         case 'close_directive':
@@ -631,7 +637,9 @@ const handleDirective = function (p: any, directive: any, type: string): void {
   }
 };
 
-/** @param {MermaidConfig} options */
+/**
+ * @param  options - Initial Mermaid options
+ * */
 async function initialize(options: MermaidConfig) {
   // Handle legacy location of font-family configuration
   if (options?.fontFamily) {

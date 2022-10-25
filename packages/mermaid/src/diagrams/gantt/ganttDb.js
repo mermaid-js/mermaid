@@ -153,7 +153,9 @@ export const isInvalidDate = function (date, dateFormat, excludes, includes) {
 };
 
 const checkTaskDates = function (task, dateFormat, excludes, includes) {
-  if (!excludes.length || task.manualEndTime) return;
+  if (!excludes.length || task.manualEndTime) {
+    return;
+  }
   let startTime = moment(task.startTime, dateFormat, true);
   startTime.add(1, 'd');
   let endTime = moment(task.endTime, dateFormat, true);

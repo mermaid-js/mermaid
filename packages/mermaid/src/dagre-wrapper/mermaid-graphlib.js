@@ -23,7 +23,9 @@ const isDecendant = (id, ancenstorId) => {
     ' = ',
     decendants[ancenstorId].indexOf(id) >= 0
   );
-  if (decendants[ancenstorId].indexOf(id) >= 0) return true;
+  if (decendants[ancenstorId].indexOf(id) >= 0) {
+    return true;
+  }
 
   return false;
 };
@@ -32,19 +34,23 @@ const edgeInCluster = (edge, clusterId) => {
   log.info('Decendants of ', clusterId, ' is ', decendants[clusterId]);
   log.info('Edge is ', edge);
   // Edges to/from the cluster is not in the cluster, they are in the parent
-  if (edge.v === clusterId) return false;
-  if (edge.w === clusterId) return false;
+  if (edge.v === clusterId) {
+    return false;
+  }
+  if (edge.w === clusterId) {
+    return false;
+  }
 
   if (!decendants[clusterId]) {
     log.debug('Tilt, ', clusterId, ',not in decendants');
     return false;
   }
-  if (decendants[clusterId].indexOf(edge.v) >= 0) return true;
-  if (isDecendant(edge.v, clusterId)) return true;
-  if (isDecendant(edge.w, clusterId)) return true;
-  if (decendants[clusterId].indexOf(edge.w) >= 0) return true;
-
-  return false;
+  return (
+    decendants[clusterId].indexOf(edge.v) >= 0 ||
+    isDecendant(edge.v, clusterId) ||
+    isDecendant(edge.w, clusterId) ||
+    decendants[clusterId].indexOf(edge.w) >= 0
+  );
 };
 
 const copy = (clusterId, graph, newGraph, rootId) => {
@@ -306,8 +312,12 @@ export const adjustClustersAndEdges = (graph, depth) => {
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
-      if (v !== e.v) edge.fromCluster = e.v;
-      if (w !== e.w) edge.toCluster = e.w;
+      if (v !== e.v) {
+        edge.fromCluster = e.v;
+      }
+      if (w !== e.w) {
+        edge.toCluster = e.w;
+      }
       log.warn('Fix Replacing with XXX', v, w, e.name);
       graph.setEdge(v, w, edge, e.name);
     }
@@ -446,7 +456,9 @@ export const extractor = (graph, depth) => {
 };
 
 const sorter = (graph, nodes) => {
-  if (nodes.length === 0) return [];
+  if (nodes.length === 0) {
+    return [];
+  }
   let result = Object.assign(nodes);
   nodes.forEach((node) => {
     const children = graph.children(node);

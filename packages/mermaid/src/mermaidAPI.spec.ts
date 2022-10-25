@@ -279,8 +279,11 @@ describe('mermaidAPI', function () {
         function escapeForRegexp(str: string) {
           const strChars = str.split(''); // split into array of every char
           const strEscaped = strChars.map((char) => {
-            if (REGEXP_SPECIALS.includes(char)) return `\\${char}`;
-            else return char;
+            if (REGEXP_SPECIALS.includes(char)) {
+              return `\\${char}`;
+            } else {
+              return char;
+            }
           });
           return strEscaped.join('');
         }

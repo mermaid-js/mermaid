@@ -135,6 +135,99 @@ export const addClasses = function (classes, g, _id, diagObj) {
 };
 
 /**
+ * Function that adds the additional vertices (notes) found during parsing to the graph to be rendered.
+ *
+ * @param {{text: string; class: string; placement: number}[]} notes
+ *   Object containing the additional vertices (notes).
+ * @param {SVGGElement} g The graph that is to be drawn.
+ * @param {number} startEdgeId starting index for note edge
+ * @param classes
+ */
+export const addNotes = function (notes, g, startEdgeId, classes) {
+  log.info(notes);
+
+  // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
+  notes.forEach(function (note, i) {
+    const vertex = note;
+
+    /**
+     * Variable for storing the classes for the vertex
+     *
+     * @type {string}
+     */
+    let cssNoteStr = '';
+
+    const styles = { labelStyle: '', style: '' };
+
+    // Use vertex id as text in the box if no text is provided by the graph definition
+    let vertexText = vertex.text;
+
+    let radious = 0;
+    let _shape = 'note';
+    // Add the node
+    g.setNode(vertex.id, {
+      labelStyle: styles.labelStyle,
+      shape: _shape,
+      labelText: sanitizeText(vertexText),
+      noteData: vertex,
+      rx: radious,
+      ry: radious,
+      class: cssNoteStr,
+      style: styles.style,
+      id: vertex.id,
+      domId: vertex.id,
+      tooltip: '',
+      type: 'note',
+      padding: getConfig().flowchart.padding,
+    });
+
+    log.info('setNode', {
+      labelStyle: styles.labelStyle,
+      shape: _shape,
+      labelText: vertexText,
+      rx: radious,
+      ry: radious,
+      style: styles.style,
+      id: vertex.id,
+      type: 'note',
+      padding: getConfig().flowchart.padding,
+    });
+
+    if (!vertex.class || !(vertex.class in classes)) {
+      return;
+    }
+    const edgeId = startEdgeId + i;
+    const edgeData = {};
+    //Set relationship style and line type
+    edgeData.classes = 'relation';
+    edgeData.pattern = 'dotted';
+
+    edgeData.id = `edgeNote${edgeId}`;
+    // Set link type for rendering
+    edgeData.arrowhead = 'none';
+
+    log.info(`Note edge: ${JSON.stringify(edgeData)}, ${JSON.stringify(vertex)}`);
+    //Set edge extra labels
+    edgeData.startLabelRight = '';
+    edgeData.endLabelLeft = '';
+
+    //Set relation arrow types
+    edgeData.arrowTypeStart = 'none';
+    edgeData.arrowTypeEnd = 'none';
+    let style = 'fill:none';
+    let labelStyle = '';
+
+    edgeData.style = style;
+    edgeData.labelStyle = labelStyle;
+
+    edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
+
+    // Add the edge to the graph
+    g.setEdge(vertex.id, vertex.class, edgeData, edgeId);
+  });
+};
+
+/**
  * Add edges to graph based on parsed graph definition
  *
  * @param relations
@@ -305,10 +398,12 @@ export const draw = function (text, id, _version, diagObj) {
   // Fetch the vertices/nodes and edges/links from the parsed graph definition
   const classes = diagObj.db.getClasses();
   const relations = diagObj.db.getRelations();
+  const notes = diagObj.db.getNotes();
 
   log.info(relations);
   addClasses(classes, g, id, diagObj);
   addRelations(relations, g);
+  addNotes(notes, g, relations.length + 1, classes);
 
   // Add custom shapes
   // flowChartShapes.addToRenderV2(addShape);
