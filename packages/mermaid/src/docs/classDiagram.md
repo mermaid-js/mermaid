@@ -9,7 +9,9 @@ Mermaid can render class diagrams.
 
 ```mermaid-example
 classDiagram
+    note "From Duck till Zebra"
     Animal <|-- Duck
+    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
     Animal <|-- Fish
     Animal <|-- Zebra
     Animal : +int age
@@ -374,6 +376,10 @@ click className href "url" "tooltip"
 - _reference_ is either the url link, or the function name for callback.
 - (_optional_) tooltip is a string to be displayed when hovering over element (note: The styles of the tooltip are set by the class .mermaidTooltip.)
 - note: callback function will be called with the nodeId as parameter.
+
+## Notes
+
+It is possible to add notes on digram using `note "line1\nline2"` or note for class using `note for class "line1\nline2"`
 
 ### Examples
 

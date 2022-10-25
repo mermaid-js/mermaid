@@ -16,6 +16,7 @@ const MERMAID_DOM_ID_PREFIX = 'classid-';
 
 let relations = [];
 let classes = {};
+let notes = [];
 let classCounter = 0;
 
 let funs = [];
@@ -84,6 +85,7 @@ export const lookUpDomId = function (id) {
 export const clear = function () {
   relations = [];
   classes = {};
+  notes = [];
   funs = [];
   funs.push(setupToolTips);
   commonClear();
@@ -98,6 +100,10 @@ export const getClasses = function () {
 
 export const getRelations = function () {
   return relations;
+};
+
+export const getNotes = function () {
+  return notes;
 };
 
 export const addRelation = function (relation) {
@@ -168,6 +174,15 @@ export const addMembers = function (className, members) {
     members.reverse();
     members.forEach((member) => addMember(className, member));
   }
+};
+
+export const addNote = function (text, className) {
+  const note = {
+    id: `note${notes.length}`,
+    class: className,
+    text: text,
+  };
+  notes.push(note);
 };
 
 export const cleanupLabel = function (label) {
@@ -375,7 +390,9 @@ export default {
   clear,
   getClass,
   getClasses,
+  getNotes,
   addAnnotation,
+  addNote,
   getRelations,
   addRelation,
   getDirection,
