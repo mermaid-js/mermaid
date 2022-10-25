@@ -10,7 +10,7 @@ All Flowcharts are composed of **nodes**, the geometric shapes and **edges**, th
 
 It can also accommodate different arrow types, multi directional arrows, and linking to and from subgraphs.
 
-> **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).\*\*
+> **Important note**: Do not type the word "end" as a Flowchart node. Capitalize all or any one the letters to keep the flowchart from breaking, i.e, "End" or "END". Or you can apply this [workaround](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897).
 
 ### A node (default)
 
@@ -787,10 +787,10 @@ Beginner's tip—a full example using interactive links in a html context:
   </pre>
 
   <script>
-    var callback = function () {
+    const callback = function () {
       alert('A callback was triggered');
     };
-    var config = {
+    const config = {
       startOnLoad: true,
       flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
       securityLevel: 'loose',
@@ -882,13 +882,13 @@ A shorter form of adding a class is to attach the classname to the node using th
 ```mermaid-example
 flowchart LR
     A:::someclass --> B
-    classDef someclass fill:#f96;
+    classDef someclass fill:#f96
 ```
 
 ```mermaid
 flowchart LR
     A:::someclass --> B
-    classDef someclass fill:#f96;
+    classDef someclass fill:#f96
 ```
 
 ### Css classes

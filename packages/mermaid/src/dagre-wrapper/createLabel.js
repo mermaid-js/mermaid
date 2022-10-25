@@ -44,7 +44,9 @@ function addHtmlLabel(node) {
 
 const createLabel = (_vertexText, style, isTitle, isNode) => {
   let vertexText = _vertexText || '';
-  if (typeof vertexText === 'object') vertexText = vertexText[0];
+  if (typeof vertexText === 'object') {
+    vertexText = vertexText[0];
+  }
   if (evaluate(getConfig().flowchart.htmlLabels)) {
     // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
     vertexText = vertexText.replace(/\\n|\n/g, '<br />');

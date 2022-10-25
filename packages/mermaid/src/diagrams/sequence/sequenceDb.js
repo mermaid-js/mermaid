@@ -26,7 +26,9 @@ export const parseDirective = function (statement, context, type) {
 export const addActor = function (id, name, description, type) {
   // Don't allow description nulling
   const old = actors[id];
-  if (old && name === old.name && description == null) return;
+  if (old && name === old.name && description == null) {
+    return;
+  }
 
   // Don't allow null descriptions, either
   if (description == null || description.text == null) {

@@ -27,7 +27,7 @@ export const draw = function (text, id, version, diagObj) {
   // parser.parse(text);
 
   const securityLevel = getConfig().securityLevel;
-  // Handle root and Document for when rendering in sanbox mode
+  // Handle root and Document for when rendering in sandbox mode
   let sandboxElement;
   if (securityLevel === 'sandbox') {
     sandboxElement = select('#i' + id);
@@ -427,7 +427,9 @@ export const draw = function (text, id, version, diagObj) {
     );
     const maxTime = tasks.reduce((max, { endTime }) => (max ? Math.max(max, endTime) : endTime), 0);
     const dateFormat = diagObj.db.getDateFormat();
-    if (!minTime || !maxTime) return;
+    if (!minTime || !maxTime) {
+      return;
+    }
 
     const excludeRanges = [];
     let range = null;
@@ -552,7 +554,9 @@ export const draw = function (text, id, version, diagObj) {
           const tspan = doc.createElementNS('http://www.w3.org/2000/svg', 'tspan');
           tspan.setAttribute('alignment-baseline', 'central');
           tspan.setAttribute('x', '10');
-          if (j > 0) tspan.setAttribute('dy', '1em');
+          if (j > 0) {
+            tspan.setAttribute('dy', '1em');
+          }
           tspan.textContent = rows[j];
           svgLabel.appendChild(tspan);
         }
@@ -610,7 +614,7 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * From this stackexchange question:
+   * From this stack exchange question:
    * http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
    *
    * @param arr
@@ -629,7 +633,7 @@ export const draw = function (text, id, version, diagObj) {
   }
 
   /**
-   * From this stackexchange question:
+   * From this stack exchange question:
    * http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
    *
    * @param arr

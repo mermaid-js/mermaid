@@ -1,17 +1,28 @@
 import { version } from '../../../package.json';
-import MermaidMarkdown from './mermaid-markdown-all';
+import MermaidExample from './mermaid-markdown-all';
+import { MermaidMarkdown } from 'vitepress-plugin-mermaid';
+import CustomMarkdown from './blocks-markdown';
 import { defineConfig } from 'vitepress';
+
+const allMarkdownTransformers = {
+  config: async (md) => {
+    MermaidMarkdown(md);
+    await MermaidExample(md);
+    CustomMarkdown(md);
+  },
+};
 
 export default defineConfig({
   lang: 'en-US',
   title: 'Mermaid',
   description: 'Create diagrams and visualizations using text and code.',
-  base: '/mermaid-docs/',
-  markdown: MermaidMarkdown,
+  base: '/mermaid-js/',
+  markdown: allMarkdownTransformers,
+  head: [['link', { rel: 'icon', type: 'image/x-icon', href: '/mermaid-js/favicon.ico' }]],
   themeConfig: {
     nav: nav(),
     editLink: {
-      pattern: 'https://github.com/mermaid-js/mermaid/edit/develop/docs/:path',
+      pattern: 'https://github.com/mermaid-js/mermaid/edit/develop/packages/mermaid/src/docs/:path',
       text: 'Edit this page on GitHub',
     },
 

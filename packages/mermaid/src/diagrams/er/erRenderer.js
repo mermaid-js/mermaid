@@ -357,7 +357,7 @@ const drawEntities = function (svgNode, entities, graph) {
     const rectNode = groupNode
       .insert('rect', '#' + textId)
       .attr('class', 'er entityBox')
-      .attr('fill', conf.fill)
+      .style('fill', conf.fill)
       .attr('fill-opacity', '100%')
       .attr('stroke', conf.stroke)
       .attr('x', 0)
@@ -644,7 +644,7 @@ export const draw = function (text, id, _version, diagObj) {
   // inserted - this represents the insertion point for relationship paths
   const firstEntity = drawEntities(svg, diagObj.db.getEntities(), g);
 
-  // TODO: externalise the addition of entities to the graph - it's a bit 'buried' in the above
+  // TODO: externalize the addition of entities to the graph - it's a bit 'buried' in the above
 
   // Add all the relationships to the graph
   const relationships = addRelationships(diagObj.db.getRelationships(), g);

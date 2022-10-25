@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[defaultConfig.ts:1855](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/defaultConfig.ts#L1855)
+[defaultConfig.ts:1884](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/defaultConfig.ts#L1884)
 
 ---
 
@@ -37,23 +37,20 @@ mermaid.initialize({ flowchart: { htmlLabels: false } });
 
 **Example 2:**
 
-```js
-let config = {
-  startOnLoad: true,
-  flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
-
-  securityLevel: 'loose',
-};
-mermaid.initialize(config);
+```html
+<script>
+  var config = {
+    startOnLoad: true,
+    flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
+    securityLevel: 'loose',
+  };
+  mermaid.initialize(config);
+</script>
 ```
 
 A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults).
 A description of each option follows below.
 
-**`Name`**
-
-Configuration
-
 #### Defined in
 
-[defaultConfig.ts:31](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/defaultConfig.ts#L31)
+[defaultConfig.ts:48](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/defaultConfig.ts#L48)

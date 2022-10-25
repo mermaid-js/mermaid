@@ -19,3 +19,9 @@
 .vp-doc > div {
   width: 100%;
 }
+
+a.edit {
+  margin: 12px;
+  position: relative;
+  top: 10px;
+}

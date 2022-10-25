@@ -56,6 +56,8 @@ accDescr\s*"{"\s*                                { this.begin("acc_descr_multili
 "callback"            return 'CALLBACK';
 "link"                return 'LINK';
 "click"               return 'CLICK';
+"note for"            return 'NOTE_FOR';
+"note"                return 'NOTE';
 "<<"                  return 'ANNOTATION_START';
 ">>"                  return 'ANNOTATION_END';
 [~]                   this.begin("generic");
@@ -263,6 +265,7 @@ statement
     | annotationStatement
     | clickStatement
     | cssClassStatement
+    | noteStatement
     | directive
     | direction
     | acc_title acc_title_value  { $$=$2.trim();yy.setAccTitle($$); }
@@ -298,6 +301,11 @@ relationStatement
     | className STR relation className      { $$ = {id1:$1, id2:$4, relation:$3, relationTitle1:$2, relationTitle2:'none'}}
     | className relation STR className      { $$ = {id1:$1, id2:$4, relation:$2, relationTitle1:'none', relationTitle2:$3}; }
     | className STR relation STR className  { $$ = {id1:$1, id2:$5, relation:$3, relationTitle1:$2, relationTitle2:$4} }
+    ;
+
+noteStatement
+    : NOTE_FOR className noteText  { yy.addNote($3, $2); }
+    | NOTE noteText                { yy.addNote($2); }
     ;
 
 relation
@@ -350,5 +358,7 @@ textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 alphaNumToken  : UNICODE_TEXT | NUM | ALPHA;
 
 classLiteralName : BQUOTE_STR;
+
+noteText : STR;
 
 %%

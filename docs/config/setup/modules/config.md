@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[config.ts:7](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L7)
+[config.ts:7](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L7)
 
 ## Functions
 
@@ -36,7 +36,7 @@ Pushes in a directive to the configuration
 
 #### Defined in
 
-[config.ts:191](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L191)
+[config.ts:191](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L191)
 
 ---
 
@@ -56,11 +56,11 @@ Pushes in a directive to the configuration
 
 `MermaidConfig`
 
-- The currentConfig
+The currentConfig
 
 #### Defined in
 
-[config.ts:136](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L136)
+[config.ts:136](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L136)
 
 ---
 
@@ -80,11 +80,11 @@ Pushes in a directive to the configuration
 
 `MermaidConfig`
 
-- The siteConfig
+The siteConfig
 
 #### Defined in
 
-[config.ts:96](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L96)
+[config.ts:96](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L96)
 
 ---
 
@@ -108,9 +108,9 @@ Pushes in a directive to the configuration
 
 #### Parameters
 
-| Name     | Type            | Default value |
-| :------- | :-------------- | :------------ |
-| `config` | `MermaidConfig` | `siteConfig`  |
+| Name     | Type            | Default value | Description                                                                                                                                                   |
+| :------- | :-------------- | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `config` | `MermaidConfig` | `siteConfig`  | base set of values, which currentConfig could be **reset** to. Defaults to the current siteConfig (e.g returned by [getSiteConfig](config.md#getsiteconfig)). |
 
 #### Returns
 
@@ -118,7 +118,7 @@ Pushes in a directive to the configuration
 
 #### Defined in
 
-[config.ts:222](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L222)
+[config.ts:223](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L223)
 
 ---
 
@@ -147,7 +147,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:151](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L151)
+[config.ts:151](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L151)
 
 ---
 
@@ -167,7 +167,7 @@ options in-place
 
 #### Defined in
 
-[config.ts:75](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L75)
+[config.ts:75](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L75)
 
 ---
 
@@ -195,11 +195,11 @@ corresponding siteConfig value.
 
 `MermaidConfig`
 
-- The currentConfig merged with the sanitized conf
+The currentConfig merged with the sanitized conf
 
 #### Defined in
 
-[config.ts:113](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L113)
+[config.ts:113](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L113)
 
 ---
 
@@ -228,11 +228,11 @@ function _Default value: At default, will mirror Global Config_
 
 `MermaidConfig`
 
-- The siteConfig
+The new siteConfig
 
 #### Defined in
 
-[config.ts:61](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L61)
+[config.ts:61](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L61)
 
 ---
 
@@ -253,7 +253,7 @@ function _Default value: At default, will mirror Global Config_
 
 #### Defined in
 
-[config.ts:14](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L14)
+[config.ts:14](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L14)
 
 ---
 
@@ -273,4 +273,4 @@ function _Default value: At default, will mirror Global Config_
 
 #### Defined in
 
-[config.ts:79](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/config.ts#L79)
+[config.ts:79](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/config.ts#L79)

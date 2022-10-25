@@ -21,17 +21,20 @@ For instance:
 
 There are some jison specific sub steps here where the parser stores the data encountered when parsing the diagram, this data is later used by the renderer. You can during the parsing call a object provided to the parser by the user of the parser. This object can be called during parsing for storing data.
 
-    statement
-    	: 'participant' actor  { $$='actor'; }
-    	| signal               { $$='signal'; }
-    	| note_statement       { $$='note';  }
-    	| 'title' message      { yy.setTitle($2);  }
-    	;
+```jison
+statement
+	: 'participant' actor  { $$='actor'; }
+	| signal               { $$='signal'; }
+	| note_statement       { $$='note';  }
+	| 'title' message      { yy.setTitle($2);  }
+	;
+```
 
 In the extract of the grammar above, it is defined that a call to the setTitle method in the data object will be done when parsing and the title keyword is encountered.
 
-> **Note**\
-> Make sure that the `parseError` function for the parser is defined and calling `mermaid.parseError`. This way a common way of detecting parse errors is provided for the end-user.
+```note
+Make sure that the `parseError` function for the parser is defined and calling `mermaid.parseError`. This way a common way of detecting parse errors is provided for the end-user.
+```
 
 For more info look in the example diagram type:
 
@@ -123,8 +126,7 @@ Here some pointers on how to handle these different areas.
 Here is example handling from flowcharts:
 Jison:
 
-```
-
+```jison
 /* lexical grammar */
 %lex
 %x open_directive
@@ -180,25 +182,29 @@ The syntax for adding title and description looks like this:
 
 In a similar way to the directives the jison syntax are quite similar between the diagrams.
 
-    * lexical grammar */
-    %lex
-    %x acc_title
-    %x acc_descr
-    %x acc_descr_multiline
+```jison
 
-    %%
-    accTitle\s*":"\s*                                { this.begin("acc_title");return 'acc_title'; }
-    <acc_title>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_title_value"; }
-    accDescr\s*":"\s*                                { this.begin("acc_descr");return 'acc_descr'; }
-    <acc_descr>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_descr_value"; }
-    accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
-    <acc_descr_multiline>[\}]                        { this.popState(); }
-    <acc_descr_multiline>[^\}]*                      return "acc_descr_multiline_value";
+* lexical grammar */
+%lex
+%x acc_title
+%x acc_descr
+%x acc_descr_multiline
 
-    statement
-        : acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
-        | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
-        | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
+%%
+accTitle\s*":"\s*                                { this.begin("acc_title");return 'acc_title'; }
+<acc_title>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_title_value"; }
+accDescr\s*":"\s*                                { this.begin("acc_descr");return 'acc_descr'; }
+<acc_descr>(?!\n|;|#)*[^\n]*                     { this.popState(); return "acc_descr_value"; }
+accDescr\s*"{"\s*                                { this.begin("acc_descr_multiline");}
+<acc_descr_multiline>[\}]                        { this.popState(); }
+<acc_descr_multiline>[^\}]*                      return "acc_descr_multiline_value";
+
+statement
+    : acc_title acc_title_value  { $$=$2.trim();yy.setTitle($$); }
+    | acc_descr acc_descr_value  { $$=$2.trim();yy.setAccDescription($$); }
+    | acc_descr_multiline_value { $$=$1.trim();yy.setAccDescription($$); }
+
+```
 
 The functions for setting title and description are provided by a common module. This is the import from flowDb.js:
 

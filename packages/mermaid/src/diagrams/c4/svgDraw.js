@@ -13,7 +13,9 @@ export const drawRect = function (elem, rectData) {
   rectElem.attr('ry', rectData.ry);
 
   if (rectData.attrs !== 'undefined' && rectData.attrs !== null) {
-    for (let attrKey in rectData.attrs) rectElem.attr(attrKey, rectData.attrs[attrKey]);
+    for (let attrKey in rectData.attrs) {
+      rectElem.attr(attrKey, rectData.attrs[attrKey]);
+    }
   }
 
   if (rectData.class !== 'undefined') {
@@ -231,9 +233,12 @@ export const drawRels = (elem, rels, conf) => {
       line.attr('stroke-width', '1');
       line.attr('stroke', strokeColor);
       line.style('fill', 'none');
-      if (rel.type !== 'rel_b') line.attr('marker-end', 'url(' + url + '#arrowhead)');
-      if (rel.type === 'birel' || rel.type === 'rel_b')
+      if (rel.type !== 'rel_b') {
+        line.attr('marker-end', 'url(' + url + '#arrowhead)');
+      }
+      if (rel.type === 'birel' || rel.type === 'rel_b') {
         line.attr('marker-start', 'url(' + url + '#arrowend)');
+      }
       i = -1;
     } else {
       let line = relsElem.append('path');
@@ -256,9 +261,12 @@ export const drawRels = (elem, rels, conf) => {
             .replaceAll('stopx', rel.endPoint.x)
             .replaceAll('stopy', rel.endPoint.y)
         );
-      if (rel.type !== 'rel_b') line.attr('marker-end', 'url(' + url + '#arrowhead)');
-      if (rel.type === 'birel' || rel.type === 'rel_b')
+      if (rel.type !== 'rel_b') {
+        line.attr('marker-end', 'url(' + url + '#arrowhead)');
+      }
+      if (rel.type === 'birel' || rel.type === 'rel_b') {
         line.attr('marker-start', 'url(' + url + '#arrowend)');
+      }
     }
 
     let messageConf = conf.messageFont();
@@ -314,7 +322,9 @@ const drawBoundary = function (elem, boundary, conf) {
   let fontColor = boundary.fontColor ? boundary.fontColor : 'black';
 
   let attrsValue = { 'stroke-width': 1.0, 'stroke-dasharray': '7.0,7.0' };
-  if (boundary.nodeType) attrsValue = { 'stroke-width': 1.0 };
+  if (boundary.nodeType) {
+    attrsValue = { 'stroke-width': 1.0 };
+  }
   let rectData = {
     x: boundary.x,
     y: boundary.y,

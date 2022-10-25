@@ -16,6 +16,7 @@ const MERMAID_DOM_ID_PREFIX = 'classid-';
 
 let relations = [];
 let classes = {};
+let notes = [];
 let classCounter = 0;
 
 let funs = [];
@@ -49,7 +50,9 @@ const splitClassNameAndType = function (id) {
 export const addClass = function (id) {
   let classId = splitClassNameAndType(id);
   // Only add class if not exists
-  if (typeof classes[classId.className] !== 'undefined') return;
+  if (typeof classes[classId.className] !== 'undefined') {
+    return;
+  }
 
   classes[classId.className] = {
     id: classId.className,
@@ -82,6 +85,7 @@ export const lookUpDomId = function (id) {
 export const clear = function () {
   relations = [];
   classes = {};
+  notes = [];
   funs = [];
   funs.push(setupToolTips);
   commonClear();
@@ -96,6 +100,10 @@ export const getClasses = function () {
 
 export const getRelations = function () {
   return relations;
+};
+
+export const getNotes = function () {
+  return notes;
 };
 
 export const addRelation = function (relation) {
@@ -168,6 +176,15 @@ export const addMembers = function (className, members) {
   }
 };
 
+export const addNote = function (text, className) {
+  const note = {
+    id: `note${notes.length}`,
+    class: className,
+    text: text,
+  };
+  notes.push(note);
+};
+
 export const cleanupLabel = function (label) {
   if (label.substring(0, 1) === ':') {
     return common.sanitizeText(label.substr(1).trim(), configApi.getConfig());
@@ -185,7 +202,9 @@ export const cleanupLabel = function (label) {
 export const setCssClass = function (ids, className) {
   ids.split(',').forEach(function (_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+    if (_id[0].match(/\d/)) {
+      id = MERMAID_DOM_ID_PREFIX + id;
+    }
     if (typeof classes[id] !== 'undefined') {
       classes[id].cssClasses.push(className);
     }
@@ -220,7 +239,9 @@ export const setLink = function (ids, linkStr, target) {
   const config = configApi.getConfig();
   ids.split(',').forEach(function (_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+    if (_id[0].match(/\d/)) {
+      id = MERMAID_DOM_ID_PREFIX + id;
+    }
     if (typeof classes[id] !== 'undefined') {
       classes[id].link = utils.formatUrl(linkStr, config);
       if (config.securityLevel === 'sandbox') {
@@ -369,7 +390,9 @@ export default {
   clear,
   getClass,
   getClasses,
+  getNotes,
   addAnnotation,
+  addNote,
   getRelations,
   addRelation,
   getDirection,

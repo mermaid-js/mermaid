@@ -101,7 +101,7 @@ Messages can be of two displayed either solid or with a dotted line.
 
     [Actor][Arrow][Actor]:Message text
 
-There are six types of arrows currently supported:
+There are eight types of arrows currently supported:
 
 | Type | Description                                      |
 | ---- | ------------------------------------------------ |
@@ -731,7 +731,7 @@ text.actor {
 Is it possible to adjust the margins for rendering the sequence diagram.
 
 This is done by defining `mermaid.sequenceConfig` or by the CLI to use a json file with the configuration.
-How to use the CLI is described in the [mermaidCLI](../config/mermaidCLI) page.
+How to use the CLI is described in the [mermaidCLI](mermaidCLI) page.
 `mermaid.sequenceConfig` can be set to a JSON string with config parameters or the corresponding object.
 
 ```javascript

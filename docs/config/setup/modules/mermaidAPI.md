@@ -16,11 +16,11 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 ### <a id="mermaidapi" name="mermaidapi"></a> mermaidAPI
 
-• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `Promise`<`void`> ; `parse`: (`text`: `string`, `parseError?`: `Function`) => `boolean` ; `parseDirective`: (`p`: `any`, `statement`: `string`, `context`: `string`, `type`: `string`) => `void` ; `render`: (`id`: `string`, `text`: `string`, `cb`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `container?`: `Element`) => `Promise`<`void`> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
+• `Const` **mermaidAPI**: `Readonly`<{ `defaultConfig`: `MermaidConfig` = configApi.defaultConfig; `getConfig`: () => `MermaidConfig` = configApi.getConfig; `getSiteConfig`: () => `MermaidConfig` = configApi.getSiteConfig; `globalReset`: () => `void` ; `initialize`: (`options`: `MermaidConfig`) => `Promise`<`void`> ; `parse`: (`text`: `string`, `parseError?`: `ParseErrorFunction`) => `boolean` ; `parseDirective`: (`p`: `any`, `statement`: `string`, `context`: `string`, `type`: `string`) => `void` ; `render`: (`id`: `string`, `text`: `string`, `cb`: (`svgCode`: `string`, `bindFunctions?`: (`element`: `Element`) => `void`) => `void`, `container?`: `Element`) => `Promise`<`void`> ; `reset`: () => `void` ; `setConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.setConfig; `updateSiteConfig`: (`conf`: `MermaidConfig`) => `MermaidConfig` = configApi.updateSiteConfig }>
 
 #### Defined in
 
-[mermaidAPI.ts:483](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/mermaidAPI.ts#L483)
+[mermaidAPI.ts:483](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/mermaidAPI.ts#L483)
 
 ## Functions
 
@@ -40,7 +40,7 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 #### Defined in
 
-[mermaidAPI.ts:73](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/mermaidAPI.ts#L73)
+[mermaidAPI.ts:70](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/mermaidAPI.ts#L70)
 
 ---
 
@@ -60,4 +60,4 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 #### Defined in
 
-[mermaidAPI.ts:47](https://github.com/emersonbottero/mermaid/blob/c8b377bf/packages/mermaid/src/mermaidAPI.ts#L47)
+[mermaidAPI.ts:44](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/mermaidAPI.ts#L44)
