@@ -334,6 +334,31 @@ describe('when parsing a gitGraph', function () {
     expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
   });
 
+  it('should allow quoted branch names', function () {
+    const str = `gitGraph:
+    commit
+    branch "branch"
+    checkout "branch"
+    commit
+    checkout main
+    merge "branch"
+    `;
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+    expect(Object.keys(commits).length).toBe(3);
+    expect(parser.yy.getCurrentBranch()).toBe('main');
+    expect(parser.yy.getDirection()).toBe('LR');
+    expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
+    const commit1 = Object.keys(commits)[0];
+    const commit2 = Object.keys(commits)[1];
+    const commit3 = Object.keys(commits)[2];
+    expect(commits[commit1].branch).toBe('main');
+    expect(commits[commit2].branch).toBe('branch');
+    expect(commits[commit3].branch).toBe('main');
+    expect(parser.yy.getBranchesAsObjArray()).toStrictEqual([{ name: 'main' }, { name: 'branch' }]);
+  });
+
   it('should allow _-./ characters in branch names', function () {
     const str = `gitGraph:
     commit
