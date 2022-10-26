@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[defaultConfig.ts:1884](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/defaultConfig.ts#L1884)
+[defaultConfig.ts:1869](https://github.com/emersonbottero/mermaid/blob/b62873a1/packages/mermaid/src/defaultConfig.ts#L1869)
 
 ---
 
@@ -53,4 +53,4 @@ A description of each option follows below.
 
 #### Defined in
 
-[defaultConfig.ts:48](https://github.com/emersonbottero/mermaid/blob/563aff2d/packages/mermaid/src/defaultConfig.ts#L48)
+[defaultConfig.ts:33](https://github.com/emersonbottero/mermaid/blob/b62873a1/packages/mermaid/src/defaultConfig.ts#L33)
