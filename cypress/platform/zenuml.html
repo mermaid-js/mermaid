@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Mermaid Quick Test Page</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=" />
+    <link rel="stylesheet" href="https://unpkg.com/vue-sequence/dist/vue-sequence.css" />
+    <style>
+      div.mermaid {
+        /* font-family: 'trebuchet ms', verdana, arial; */
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Zen UML demos</h1>
+    <pre class="mermaid">
+		zenuml
+			A.method() {
+        if(x) {
+          B.method() {
+            selfCall() { return X }
+          }
+        }
+      }
+	</pre
+    >
+    <script src="./mermaid.js"></script>
+    <script>
+      window.process = {
+        env: {},
+      };
+      mermaid.parseError = function (err, hash) {
+        console.error('In parse error:');
+        console.error(err);
+      };
+      mermaid.initialize({
+        maxTextSize: 900000,
+        startOnLoad: true,
+        securityLevel: 'loose',
+        logLevel: 0,
+        fontFamily: 'courier',
+        lazyLoadedDiagrams: ['./mermaid-zenuml-detector.esm.mjs'],
+      });
+    </script>
+  </body>
+</html>
