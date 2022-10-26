@@ -81,12 +81,10 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       .attr('id', `${attrPrefix}-type`)
       .attr('x', 0)
       .attr('y', 0)
-      .attr('dominant-baseline', 'middle')
-      .attr('text-anchor', 'left')
-      .attr(
-        'style',
-        'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
-      )
+      .style('dominant-baseline', 'middle')
+      .style('text-anchor', 'left')
+      .style('font-family', getConfig().fontFamily)
+      .style('font-size', attrFontSize + 'px')
       .text(attributeType);
 
     // Add a text node for the attribute name
@@ -96,12 +94,10 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       .attr('id', `${attrPrefix}-name`)
       .attr('x', 0)
       .attr('y', 0)
-      .attr('dominant-baseline', 'middle')
-      .attr('text-anchor', 'left')
-      .attr(
-        'style',
-        'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
-      )
+      .style('dominant-baseline', 'middle')
+      .style('text-anchor', 'left')
+      .style('font-family', getConfig().fontFamily)
+      .style('font-size', attrFontSize + 'px')
       .text(item.attributeName);
 
     const attributeNode = {};
@@ -122,12 +118,10 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         .attr('id', `${attrPrefix}-key`)
         .attr('x', 0)
         .attr('y', 0)
-        .attr('dominant-baseline', 'middle')
-        .attr('text-anchor', 'left')
-        .attr(
-          'style',
-          'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
-        )
+        .style('dominant-baseline', 'middle')
+        .style('text-anchor', 'left')
+        .style('font-family', getConfig().fontFamily)
+        .style('font-size', attrFontSize + 'px')
         .text(item.attributeKeyType || '');
 
       attributeNode.kn = keyTypeNode;
@@ -143,12 +137,10 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         .attr('id', `${attrPrefix}-comment`)
         .attr('x', 0)
         .attr('y', 0)
-        .attr('dominant-baseline', 'middle')
-        .attr('text-anchor', 'left')
-        .attr(
-          'style',
-          'font-family: ' + getConfig().fontFamily + '; font-size: ' + attrFontSize + 'px'
-        )
+        .style('dominant-baseline', 'middle')
+        .style('text-anchor', 'left')
+        .style('font-family', getConfig().fontFamily)
+        .style('font-size', attrFontSize + 'px')
         .text(item.attributeComment || '');
 
       attributeNode.cn = commentNode;
@@ -218,9 +210,9 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       const typeRect = groupNode
         .insert('rect', '#' + attributeNode.tn.node().id)
         .attr('class', `er ${attribStyle}`)
-        .attr('fill', conf.fill)
-        .attr('fill-opacity', '100%')
-        .attr('stroke', conf.stroke)
+        .style('fill', conf.fill)
+        .style('fill-opacity', '100%')
+        .style('stroke', conf.stroke)
         .attr('x', 0)
         .attr('y', heightOffset)
         .attr('width', maxTypeWidth + widthPadding * 2 + spareColumnWidth)
@@ -238,9 +230,9 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       const nameRect = groupNode
         .insert('rect', '#' + attributeNode.nn.node().id)
         .attr('class', `er ${attribStyle}`)
-        .attr('fill', conf.fill)
-        .attr('fill-opacity', '100%')
-        .attr('stroke', conf.stroke)
+        .style('fill', conf.fill)
+        .style('fill-opacity', '100%')
+        .style('stroke', conf.stroke)
         .attr('x', nameXOffset)
         .attr('y', heightOffset)
         .attr('width', maxNameWidth + widthPadding * 2 + spareColumnWidth)
@@ -260,9 +252,9 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         const keyTypeRect = groupNode
           .insert('rect', '#' + attributeNode.kn.node().id)
           .attr('class', `er ${attribStyle}`)
-          .attr('fill', conf.fill)
-          .attr('fill-opacity', '100%')
-          .attr('stroke', conf.stroke)
+          .style('fill', conf.fill)
+          .style('fill-opacity', '100%')
+          .style('stroke', conf.stroke)
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
           .attr('width', maxKeyWidth + widthPadding * 2 + spareColumnWidth)
@@ -283,9 +275,9 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         groupNode
           .insert('rect', '#' + attributeNode.cn.node().id)
           .attr('class', `er ${attribStyle}`)
-          .attr('fill', conf.fill)
-          .attr('fill-opacity', '100%')
-          .attr('stroke', conf.stroke)
+          .style('fill', conf.fill)
+          .style('fill-opacity', '100%')
+          .style('stroke', conf.stroke)
           .attr('x', keyTypeAndCommentXOffset)
           .attr('y', heightOffset)
           .attr('width', maxCommentWidth + widthPadding * 2 + spareColumnWidth)
@@ -339,12 +331,10 @@ const drawEntities = function (svgNode, entities, graph) {
       .attr('id', textId)
       .attr('x', 0)
       .attr('y', 0)
-      .attr('dominant-baseline', 'middle')
-      .attr('text-anchor', 'middle')
-      .attr(
-        'style',
-        'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
-      )
+      .style('dominant-baseline', 'middle')
+      .style('text-anchor', 'middle')
+      .style('font-family', getConfig().fontFamily)
+      .style('font-size', conf.fontSize + 'px')
       .text(entityName);
 
     const { width: entityWidth, height: entityHeight } = drawAttributes(
@@ -358,8 +348,8 @@ const drawEntities = function (svgNode, entities, graph) {
       .insert('rect', '#' + textId)
       .attr('class', 'er entityBox')
       .style('fill', conf.fill)
-      .attr('fill-opacity', '100%')
-      .attr('stroke', conf.stroke)
+      .style('fill-opacity', '100%')
+      .style('stroke', conf.stroke)
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', entityWidth)
@@ -462,8 +452,8 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .insert('path', '#' + insert)
     .attr('class', 'er relationshipLine')
     .attr('d', lineFunction(edge.points))
-    .attr('stroke', conf.stroke)
-    .attr('fill', 'none');
+    .style('stroke', conf.stroke)
+    .style('fill', 'none');
 
   // ...and with dashes if necessary
   if (rel.relSpec.relType === diagObj.db.Identification.NON_IDENTIFYING) {
@@ -541,12 +531,10 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .attr('id', labelId)
     .attr('x', labelPoint.x)
     .attr('y', labelPoint.y)
-    .attr('text-anchor', 'middle')
-    .attr('dominant-baseline', 'middle')
-    .attr(
-      'style',
-      'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
-    )
+    .style('text-anchor', 'middle')
+    .style('dominant-baseline', 'middle')
+    .style('font-family', getConfig().fontFamily)
+    .style('font-size', conf.fontSize + 'px')
     .text(rel.roleA);
 
   // Figure out how big the opaque 'container' rectangle needs to be
@@ -560,8 +548,8 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
     .attr('y', labelPoint.y - labelBBox.height / 2)
     .attr('width', labelBBox.width)
     .attr('height', labelBBox.height)
-    .attr('fill', 'white')
-    .attr('fill-opacity', '85%');
+    .style('fill', 'white')
+    .style('fill-opacity', '85%');
 };
 
 /**
