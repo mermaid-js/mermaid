@@ -47,7 +47,7 @@ In our release process we rely heavily on visual regression tests using [applito
 
 ## Diagram Types
 
-### [Flowchart](./flowchart.md?id=flowcharts-basic-syntax)
+### [Flowchart](diagrams/flowchart.md?id=flowcharts-basic-syntax)
 
 ```mermaid-example
 graph TD;
@@ -67,7 +67,7 @@ graph TD;
 
 ![Flowchart](img/flow.png)
 
-### [Sequence diagram](./sequenceDiagram.md)
+### [Sequence diagram](diagrams/sequence.md)
 
 ```mermaid-example
 sequenceDiagram
@@ -99,7 +99,7 @@ sequenceDiagram
 
 ![Sequence diagram](img/sequence.png)
 
-### [Gantt diagram](./gantt.md)
+### [Gantt diagram](diagrams/gantt.md)
 
 ```mermaid-example
 gantt
@@ -129,7 +129,7 @@ Future task2               :         des4, after des3, 5d
 
 ![Gantt diagram](img/gantt.png)
 
-### [Class diagram](./classDiagram.md)
+### [Class diagram](diagrams/class.md)
 
 ```mermaid-example
 classDiagram
@@ -195,7 +195,7 @@ Class08 <--> C2: Cool label
        commit
 ```
 
-### [Entity Relationship Diagram - :exclamation: experimental](./entityRelationshipDiagram.md)
+### [Entity Relationship Diagram - :exclamation: experimental](diagrams/er.md)
 
 ```mermaid-example
 erDiagram
@@ -215,7 +215,7 @@ erDiagram
 
 ![ER diagram](img/simple-er.png)
 
-### [User Journey Diagram](./user-journey.md)
+### [User Journey Diagram](diagrams/user-journey.md)
 
 ```mermaid-example
 journey

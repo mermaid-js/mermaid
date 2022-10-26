@@ -8,18 +8,18 @@
 
 - 📊 Diagram Syntax
 
-  - [Flowchart](flowchart.md)
-  - [Sequence Diagram](sequenceDiagram.md)
-  - [Class Diagram](classDiagram.md)
-  - [State Diagram](stateDiagram.md)
-  - [Entity Relationship Diagram](entityRelationshipDiagram.md)
-  - [User Journey](user-journey.md)
-  - [Gantt](gantt.md)
-  - [Pie Chart](pie.md)
-  - [Requirement Diagram](requirementDiagram.md)
-  - [Gitgraph (Git) Diagram 🔥](gitgraph.md)
-  - [C4C Diagram (Context) Diagram 🦺⚠️](c4c.md)
-  - [Mindmaps 🦺⚠️](mindmap.md)
+  - [Flowchart](diagrams/flowchart.md)
+  - [Sequence Diagram](diagrams/sequence.md)
+  - [Class Diagram](diagrams/class.md)
+  - [State Diagram](diagrams/state.md)
+  - [Entity Relationship Diagram](diagrams/er.md)
+  - [User Journey](diagrams/user-journey.md)
+  - [Gantt](diagrams/gantt.md)
+  - [Pie Chart](diagrams/pie.md)
+  - [Requirement Diagram](diagrams/requirement.md)
+  - [Gitgraph (Git) Diagram 🔥](diagrams/git.md)
+  - [C4C Diagram (Context) Diagram 🦺⚠️](diagrams/c4.md)
+  - [Mindmaps 🦺⚠️](diagrams/mindmap.md)
   - [Other Examples](examples.md)
 
 - ⚙️ Deployment and Configuration
