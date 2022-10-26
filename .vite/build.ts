@@ -29,6 +29,16 @@ const packageOptions = {
     packageName: 'mermaid-mindmap',
     file: 'detector.ts',
   },
+  'mermaid-zenuml': {
+    name: 'mermaid-zenuml',
+    packageName: 'mermaid-zenuml',
+    file: 'diagram-definition.ts',
+  },
+  'mermaid-zenuml-detector': {
+    name: 'mermaid-zenuml-detector',
+    packageName: 'mermaid-zenuml',
+    file: 'detector.ts',
+  },
   'mermaid-example-diagram': {
     name: 'mermaid-example-diagram',
     packageName: 'mermaid-example-diagram',
@@ -137,6 +147,7 @@ if (watch) {
   build(getBuildConfig({ minify: false, watch, entryName: 'mermaid' }));
   build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-mindmap' }));
   build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-example-diagram' }));
+  build(getBuildConfig({ minify: false, watch, entryName: 'mermaid-zenuml' }));
 } else {
   void main();
 }
