@@ -20,7 +20,7 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 #### Defined in
 
-[mermaidAPI.ts:483](https://github.com/emersonbottero/mermaid/blob/b62873a1/packages/mermaid/src/mermaidAPI.ts#L483)
+[mermaidAPI.ts:485](https://github.com/emersonbottero/mermaid/blob/455839c0/packages/mermaid/src/mermaidAPI.ts#L485)
 
 ## Functions
 
@@ -40,7 +40,7 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 #### Defined in
 
-[mermaidAPI.ts:70](https://github.com/emersonbottero/mermaid/blob/b62873a1/packages/mermaid/src/mermaidAPI.ts#L70)
+[mermaidAPI.ts:72](https://github.com/emersonbottero/mermaid/blob/455839c0/packages/mermaid/src/mermaidAPI.ts#L72)
 
 ---
 
@@ -60,4 +60,4 @@ Renames and re-exports [mermaidAPI](mermaidAPI.md#mermaidapi)
 
 #### Defined in
 
-[mermaidAPI.ts:44](https://github.com/emersonbottero/mermaid/blob/b62873a1/packages/mermaid/src/mermaidAPI.ts#L44)
+[mermaidAPI.ts:46](https://github.com/emersonbottero/mermaid/blob/455839c0/packages/mermaid/src/mermaidAPI.ts#L46)

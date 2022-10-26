@@ -159,7 +159,7 @@ const transformAnnotation = (content: string, type: 'warning' | 'tip' | 'note') 
     console.log(`found ${matches.length} of ${type}`);
 
     const formatted = matches.map((element) =>
-      element.replace(`::: ${type}`, `> **${text}**  `).replace(':::', '>').replace('\n', '\n> ')
+      element.replace(`::: ${type}`, `> **${text}**  `).replace(':::', '>').split('\n').join('\n> ')
     );
     let n = 0;
     for (const match of matches) {
