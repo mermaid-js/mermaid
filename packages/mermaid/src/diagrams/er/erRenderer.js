@@ -77,7 +77,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     // Add a text node for the attribute type
     const typeNode = groupNode
       .append('text')
-      .attr('class', 'er entityLabel')
+      .classed('er entityLabel', true)
       .attr('id', `${attrPrefix}-type`)
       .attr('x', 0)
       .attr('y', 0)
@@ -90,7 +90,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     // Add a text node for the attribute name
     const nameNode = groupNode
       .append('text')
-      .attr('class', 'er entityLabel')
+      .classed('er entityLabel', true)
       .attr('id', `${attrPrefix}-name`)
       .attr('x', 0)
       .attr('y', 0)
@@ -114,7 +114,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     if (hasKeyType) {
       const keyTypeNode = groupNode
         .append('text')
-        .attr('class', 'er entityLabel')
+        .classed('er entityLabel', true)
         .attr('id', `${attrPrefix}-key`)
         .attr('x', 0)
         .attr('y', 0)
@@ -133,7 +133,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
     if (hasComment) {
       const commentNode = groupNode
         .append('text')
-        .attr('class', 'er entityLabel')
+        .classed('er entityLabel', true)
         .attr('id', `${attrPrefix}-comment`)
         .attr('x', 0)
         .attr('y', 0)
@@ -209,7 +209,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       // Insert a rectangle for the type
       const typeRect = groupNode
         .insert('rect', '#' + attributeNode.tn.node().id)
-        .attr('class', `er ${attribStyle}`)
+        .classed(`er ${attribStyle}`, true)
         .style('fill', conf.fill)
         .style('fill-opacity', '100%')
         .style('stroke', conf.stroke)
@@ -229,7 +229,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
       // Insert a rectangle for the name
       const nameRect = groupNode
         .insert('rect', '#' + attributeNode.nn.node().id)
-        .attr('class', `er ${attribStyle}`)
+        .classed(`er ${attribStyle}`, true)
         .style('fill', conf.fill)
         .style('fill-opacity', '100%')
         .style('stroke', conf.stroke)
@@ -251,7 +251,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         // Insert a rectangle for the key type
         const keyTypeRect = groupNode
           .insert('rect', '#' + attributeNode.kn.node().id)
-          .attr('class', `er ${attribStyle}`)
+          .classed(`er ${attribStyle}`, true)
           .style('fill', conf.fill)
           .style('fill-opacity', '100%')
           .style('stroke', conf.stroke)
@@ -274,7 +274,7 @@ const drawAttributes = (groupNode, entityTextNode, attributes) => {
         // Insert a rectangle for the comment
         groupNode
           .insert('rect', '#' + attributeNode.cn.node().id)
-          .attr('class', `er ${attribStyle}`)
+          .classed(`er ${attribStyle}`, 'true')
           .style('fill', conf.fill)
           .style('fill-opacity', '100%')
           .style('stroke', conf.stroke)
@@ -327,7 +327,7 @@ const drawEntities = function (svgNode, entities, graph) {
     const textId = 'text-' + entityId;
     const textNode = groupNode
       .append('text')
-      .attr('class', 'er entityLabel')
+      .classed('er entityLabel', true)
       .attr('id', textId)
       .attr('x', 0)
       .attr('y', 0)
@@ -346,7 +346,7 @@ const drawEntities = function (svgNode, entities, graph) {
     // Draw the rectangle - insert it before the text so that the text is not obscured
     const rectNode = groupNode
       .insert('rect', '#' + textId)
-      .attr('class', 'er entityBox')
+      .classed('er entityBox', true)
       .style('fill', conf.fill)
       .style('fill-opacity', '100%')
       .style('stroke', conf.stroke)
@@ -450,7 +450,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   // Insert the line at the right place
   const svgPath = svg
     .insert('path', '#' + insert)
-    .attr('class', 'er relationshipLine')
+    .classed('er relationshipLine', true)
     .attr('d', lineFunction(edge.points))
     .style('stroke', conf.stroke)
     .style('fill', 'none');
@@ -527,7 +527,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
 
   const labelNode = svg
     .append('text')
-    .attr('class', 'er relationshipLabel')
+    .classed('er relationshipLabel', true)
     .attr('id', labelId)
     .attr('x', labelPoint.x)
     .attr('y', labelPoint.y)
@@ -543,7 +543,7 @@ const drawRelationshipFromLayout = function (svg, rel, g, insert, diagObj) {
   // Insert the opaque rectangle before the text label
   svg
     .insert('rect', '#' + labelId)
-    .attr('class', 'er relationshipLabelBox')
+    .classed('er relationshipLabelBox', true)
     .attr('x', labelPoint.x - labelBBox.width / 2)
     .attr('y', labelPoint.y - labelBBox.height / 2)
     .attr('width', labelBBox.width)
