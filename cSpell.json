@@ -69,7 +69,8 @@
     "flatmap",
     "Kaufmann",
     "viewports",
-    "edgechromium"
+    "edgechromium",
+    "statediagram"
   ],
   "patterns": [
     {
