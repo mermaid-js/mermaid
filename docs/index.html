@@ -151,8 +151,9 @@
             hook.afterEach(function (html, next) {
               next(html);
               (async () => {
-                while (!window.hasOwnProperty('monaco'))
+                while (!window.hasOwnProperty('monaco')) {
                   await new Promise((resolve) => setTimeout(resolve, 1000));
+                }
                 colorizeEverything(html).then(
                   (newHTML) =>
                     (document.querySelector('article.markdown-section').innerHTML = newHTML)
@@ -170,7 +171,9 @@
         startOnLoad: false,
         themeCSS: '.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }',
       };
-      if (isDarkMode) conf.theme = 'dark';
+      if (isDarkMode) {
+        conf.theme = 'dark';
+      }
       mermaid.initialize(conf);
     </script>
     <script>

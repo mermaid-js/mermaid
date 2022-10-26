@@ -18,7 +18,6 @@ import * as configApi from './config';
 import { addDiagrams } from './diagram-api/diagram-orchestration';
 import classDb from './diagrams/class/classDb';
 import flowDb from './diagrams/flowchart/flowDb';
-import flowRenderer from './diagrams/flowchart/flowRenderer';
 import ganttDb from './diagrams/gantt/ganttDb';
 import Diagram, { getDiagramFromText, type ParseErrorFunction } from './Diagram';
 import errorRenderer from './diagrams/error/errorRenderer';
@@ -30,6 +29,9 @@ import utils, { directiveSanitizer } from './utils';
 import DOMPurify from 'dompurify';
 import { MermaidConfig } from './config.type';
 import { evaluate } from './diagrams/common/common';
+
+// diagram names that support classDef statements
+const CLASSDEF_DIAGRAMS = ['graph', 'flowchart', 'flowchart-v2', 'stateDiagram'];
 
 /**
  * @param text - The mermaid diagram definition.
@@ -251,8 +253,8 @@ const render = async function (
   }
 
   // classDef
-  if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    const classes: any = flowRenderer.getClasses(text, diag);
+  if (CLASSDEF_DIAGRAMS.includes(graphType)) {
+    const classes: any = diag.renderer.getClasses(text, diag);
     const htmlLabels = cnf.htmlLabels || cnf.flowchart?.htmlLabels;
     for (const className in classes) {
       if (htmlLabels) {
