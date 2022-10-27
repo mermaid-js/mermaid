@@ -18,7 +18,7 @@ import { MermaidConfig } from './config.type';
  *
  * ```html
  * <script>
- * var config = {
+ * const config = {
  *   startOnLoad:true,
  *   flowchart:{ useMaxWidth:true, htmlLabels:true, curve:'cardinal'},
  *   securityLevel:'loose',

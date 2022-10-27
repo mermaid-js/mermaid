@@ -1,21 +1,4 @@
-// import { deflate } from 'pako';
-// import { fromUint8Array } from 'js-base64';
 import shiki from 'shiki';
-
-// const serializeState = (state: State, serde: SerdeType = 'pako'): string => {
-// 	if (serdes[serde] === undefined) {
-// 		throw new Error(`Unknown serde type: ${serde}`);
-// 	}
-// 	const json = JSON.stringify(state);
-// 	const serialized = serdes[serde].serialize(json);
-// 	return `${serde}:${serialized}`;
-// };
-
-// const serialize = (state: string): string => {
-//   const data = new TextEncoder().encode(state);
-//   const compressed = deflate(data, { level: 9 });
-//   return fromUint8Array(compressed, true);
-// };
 
 const MermaidExample = async (md) => {
   const fence = md.renderer.rules.fence.bind(md.renderer.rules);
@@ -34,10 +17,6 @@ const MermaidExample = async (md) => {
       code =
         '<h5>Code:</h5>' +
         `<div class="language-mermaid">` +
-        // TODO: compute edit link!
-        // `<a class="edit" href="https://mermaid.live/edit#pako:${serialize(
-        //   token.content
-        // )}"  target=”_blank”>✒️</a>` +
         `<button class="copy"></button><span class="lang">mermaid</span>` +
         code +
         '</div>';

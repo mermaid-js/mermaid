@@ -135,19 +135,19 @@ const copyTransformedContents = (filename: string, doCopy = false, transformedCo
 
 const transformAnnotation = (content: string, type: 'warning' | 'tip' | 'note') => {
   let transformed = content;
-  let regex = /::: note\n[\s\S]+?:::/gm;
+  let regex = /```note\n[\s\S]+?```/gm;
   let text = 'Note';
 
   switch (type) {
     case 'note':
-      regex = /::: note\s?\n[\s\S]+?:::/gm;
+      regex = /```note\s?\n[\s\S]+?```/gm;
       break;
     case 'tip':
-      regex = /::: tip\s?\n[\s\S]+?:::/gm;
+      regex = /```tip\s?\n[\s\S]+?```/gm;
       text = 'Note';
       break;
     case 'warning':
-      regex = /::: warning\s?\n[\s\S]+?:::/gm;
+      regex = /```warning\s?\n[\s\S]+?```/gm;
       text = 'Warning';
       break;
     default:
@@ -159,7 +159,11 @@ const transformAnnotation = (content: string, type: 'warning' | 'tip' | 'note') 
     console.log(`found ${matches.length} of ${type}`);
 
     const formatted = matches.map((element) =>
-      element.replace(`::: ${type}`, `> **${text}**  `).replace(':::', '>').split('\n').join('\n> ')
+      element
+        .replace(`\`\`\`${type}`, `> **${text}**  `)
+        .replace('```', '>')
+        .split('\n')
+        .join('\n> ')
     );
     let n = 0;
     for (const match of matches) {

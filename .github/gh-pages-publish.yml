@@ -1,5 +1,8 @@
 name: Build and Deploy Docs
-on: [push]
+on:
+  push:
+    branches:
+      - master
 permissions:
   contents: write
 jobs:

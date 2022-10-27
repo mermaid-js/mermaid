@@ -14,7 +14,7 @@
 
 #### Defined in
 
-[defaultConfig.ts:1869](https://github.com/emersonbottero/mermaid/blob/455839c0/packages/mermaid/src/defaultConfig.ts#L1869)
+defaultConfig.ts:1869
 
 ---
 
@@ -39,7 +39,7 @@ mermaid.initialize({ flowchart: { htmlLabels: false } });
 
 ```html
 <script>
-  var config = {
+  const config = {
     startOnLoad: true,
     flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'cardinal' },
     securityLevel: 'loose',
@@ -53,4 +53,4 @@ A description of each option follows below.
 
 #### Defined in
 
-[defaultConfig.ts:33](https://github.com/emersonbottero/mermaid/blob/455839c0/packages/mermaid/src/defaultConfig.ts#L33)
+defaultConfig.ts:33

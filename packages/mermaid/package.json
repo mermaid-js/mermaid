@@ -34,7 +34,7 @@
     "predocs:build": "rimraf docs && pnpm docs:code",
     "docs:build": "ts-node-esm src/docs.mts",
     "docs:verify": "pnpm docs:build --verify",
-    "docs:code": "typedoc --plugin typedoc-plugin-markdown --readme none --hideBreadcrumbs --hideInPageTOC --namedAnchors --out src/docs/config/setup --entryPointStrategy expand src/defaultConfig.ts src/config.ts src/mermaidAPI.ts",
+    "docs:code": "typedoc --plugin typedoc-plugin-markdown --readme none --hideBreadcrumbs --gitRemote disable --hideInPageTOC --namedAnchors --out src/docs/config/setup --entryPointStrategy expand src/defaultConfig.ts src/config.ts src/mermaidAPI.ts",
     "predocs:dev": "pnpm docs:code",
     "docs:dev": "vitepress dev src/docs",
     "predocs:bundle": "pnpm docs:code",
@@ -77,7 +77,8 @@
     "khroma": "^2.0.0",
     "lodash": "^4.17.21",
     "moment-mini": "^2.24.0",
-    "non-layered-tidy-tree-layout": "^2.0.2"
+    "non-layered-tidy-tree-layout": "^2.0.2",
+    "stylis": "^4.1.2"
   },
   "devDependencies": {
     "@applitools/eyes-cypress": "3.27.5",
