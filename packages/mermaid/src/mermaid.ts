@@ -177,10 +177,12 @@ const initThrowsErrors = function (
   }
 };
 
-let lazyLoadingPromise: Promise<unknown> | undefined = undefined;
+let lazyLoadingPromise: Promise<PromiseSettledResult<void>[]> | undefined = undefined;
 /**
- * @param conf
- * @deprecated This is an internal function and should not be used. Will be removed in v10.
+ * This is an internal function and should not be made public, as it will likely change.
+ * @internal
+ * @param conf - Mermaid config.
+ * @returns An array of {@link PromiseSettledResult}, showing the status of imports.
  */
 const registerLazyLoadedDiagrams = async (conf: MermaidConfig) => {
   // Only lazy load once
@@ -194,7 +196,7 @@ const registerLazyLoadedDiagrams = async (conf: MermaidConfig) => {
       })
     );
   }
-  await lazyLoadingPromise;
+  return await lazyLoadingPromise;
 };
 
 let loadingPromise: Promise<unknown> | undefined = undefined;
@@ -229,7 +231,7 @@ const loadExternalDiagrams = async (conf: MermaidConfig) => {
  * - An array of DOM nodes (as would come from a jQuery selector)
  * - A W3C selector, a la `.mermaid` (default)
  * @param callback - Function that is called with the id of each generated mermaid diagram.
- * @returns Resolves on success, otherwise the {@link Promise} will be rejected with an Error.
+ * @returns Resolves on success, otherwise the {@link Promise} will be rejected.
  */
 const initThrowsErrorsAsync = async function (
   config?: MermaidConfig,
@@ -240,7 +242,12 @@ const initThrowsErrorsAsync = async function (
 ) {
   const conf = mermaidAPI.getConfig();
 
-  await registerLazyLoadedDiagrams(conf);
+  const registerLazyLoadedDiagramsErrors: Error[] = [];
+  for (const registerResult of await registerLazyLoadedDiagrams(conf)) {
+    if (registerResult.status == 'rejected') {
+      registerLazyLoadedDiagramsErrors.push(registerResult.reason);
+    }
+  }
 
   if (config) {
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
@@ -316,9 +323,10 @@ const initThrowsErrorsAsync = async function (
       handleError(error, errors, mermaid.parseError);
     }
   }
-  if (errors.length > 0) {
+  const allErrors = [...registerLazyLoadedDiagramsErrors, ...errors];
+  if (allErrors.length > 0) {
     // TODO: We should be throwing an error object.
-    throw errors[0];
+    throw allErrors[0];
   }
 };
 

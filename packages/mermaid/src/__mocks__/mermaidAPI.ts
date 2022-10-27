@@ -25,6 +25,7 @@ function parse(text: string, parseError?: Function): boolean {
 // original version cannot be modified since it was frozen with `Object.freeze()`
 export const mermaidAPI = {
   render: vi.fn(),
+  renderAsync: vi.fn(),
   parse,
   parseDirective: vi.fn(),
   initialize: vi.fn(),
