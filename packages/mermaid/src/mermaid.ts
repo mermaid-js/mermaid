@@ -513,6 +513,7 @@ const mermaid: {
   renderAsync: typeof renderAsync;
   init: typeof init;
   initThrowsErrors: typeof initThrowsErrors;
+  initThrowsErrorsAsync: typeof initThrowsErrorsAsync;
   initialize: typeof initialize;
   initializeAsync: typeof initializeAsync;
   contentLoaded: typeof contentLoaded;
@@ -527,6 +528,7 @@ const mermaid: {
   renderAsync,
   init,
   initThrowsErrors,
+  initThrowsErrorsAsync,
   initialize,
   initializeAsync,
   parseError: undefined,
