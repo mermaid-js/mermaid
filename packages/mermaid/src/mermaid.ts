@@ -49,7 +49,6 @@ const init = async function (
   try {
     const conf = mermaidAPI.getConfig();
     if (conf?.lazyLoadedDiagrams && conf.lazyLoadedDiagrams.length > 0) {
-      await registerLazyLoadedDiagrams(conf);
       await initThrowsErrorsAsync(config, nodes, callback);
     } else {
       initThrowsErrors(config, nodes, callback);
@@ -229,6 +228,9 @@ const initThrowsErrorsAsync = async function (
   callback?: Function
 ) {
   const conf = mermaidAPI.getConfig();
+
+  await registerLazyLoadedDiagrams(conf);
+
   if (config) {
     // This is a legacy way of setting config. It is not documented and should be removed in the future.
     // @ts-ignore: TODO Fix ts errors
