@@ -164,7 +164,6 @@ Class01 <|-- AveryLongClass : Cool
 Class09 --> C2 : Where am I?
 Class09 --* C3
 Class09 --|> Class07
-note "I love this diagram!\nDo you love it?"
 Class07 : equals()
 Class07 : Object[] elementData
 Class01 : size()
@@ -175,7 +174,6 @@ class Class10 {
   int id
   size()
 }
-note for Class10 "Cool class\nI said it's very cool class!"
 ```
 
 ### State diagram [<a href="https://mermaid-js.github.io/mermaid/#/stateDiagram">docs</a> - <a href="https://mermaid.live/edit#pako:eNpdkEFvgzAMhf8K8nEqpYSNthx22Xbcqcexg0sCiZQQlDhIFeK_L8A6TfXp6fOz9ewJGssFVOAJSbwr7ByadGR1n8T6evpO0vQ1uZDSekOrXGFsPqJPO6q-2-imH8f_0TeHXm50lfelsAMjnEHFY6xpMdRAUhhRQxUlFy0GTTXU_RytYeAx-AdXZB1ULWovdoCB7OXWN1CRC-Ju-r3uz6UtchGHJqDbsPygU57iysb2reoWHpyOWBINvsqypb3vFMlw3TfWZF5xiY7keC6zkpUnZIUojwW-FAVvrvn51LLnvOXHQ84Q5nn-AVtLcwk">live editor</a>]
